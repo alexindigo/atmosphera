@@ -21,6 +21,16 @@ ColumnLayout {
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
 
+  // Threshold settings
+  property int valueCpuWarningThreshold: widgetData.cpuWarningThreshold !== undefined ? widgetData.cpuWarningThreshold : widgetMetadata.cpuWarningThreshold
+  property int valueCpuCriticalThreshold: widgetData.cpuCriticalThreshold !== undefined ? widgetData.cpuCriticalThreshold : widgetMetadata.cpuCriticalThreshold
+  property int valueTempWarningThreshold: widgetData.tempWarningThreshold !== undefined ? widgetData.tempWarningThreshold : widgetMetadata.tempWarningThreshold
+  property int valueTempCriticalThreshold: widgetData.tempCriticalThreshold !== undefined ? widgetData.tempCriticalThreshold : widgetMetadata.tempCriticalThreshold
+  property int valueMemWarningThreshold: widgetData.memWarningThreshold !== undefined ? widgetData.memWarningThreshold : widgetMetadata.memWarningThreshold
+  property int valueMemCriticalThreshold: widgetData.memCriticalThreshold !== undefined ? widgetData.memCriticalThreshold : widgetMetadata.memCriticalThreshold
+  property int valueDiskWarningThreshold: widgetData.diskWarningThreshold !== undefined ? widgetData.diskWarningThreshold : widgetMetadata.diskWarningThreshold
+  property int valueDiskCriticalThreshold: widgetData.diskCriticalThreshold !== undefined ? widgetData.diskCriticalThreshold : widgetMetadata.diskCriticalThreshold
+
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {})
     settings.usePrimaryColor = valueUsePrimaryColor
@@ -30,6 +40,14 @@ ColumnLayout {
     settings.showMemoryAsPercent = valueShowMemoryAsPercent
     settings.showNetworkStats = valueShowNetworkStats
     settings.showDiskUsage = valueShowDiskUsage
+    settings.cpuWarningThreshold = valueCpuWarningThreshold
+    settings.cpuCriticalThreshold = valueCpuCriticalThreshold
+    settings.tempWarningThreshold = valueTempWarningThreshold
+    settings.tempCriticalThreshold = valueTempCriticalThreshold
+    settings.memWarningThreshold = valueMemWarningThreshold
+    settings.memCriticalThreshold = valueMemCriticalThreshold
+    settings.diskWarningThreshold = valueDiskWarningThreshold
+    settings.diskCriticalThreshold = valueDiskCriticalThreshold
     return settings
   }
 
@@ -94,5 +112,215 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.system-monitor.storage-usage.description")
     checked: valueShowDiskUsage
     onToggled: checked => valueShowDiskUsage = checked
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+  }
+
+  NHeader {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.system-monitor.thresholds.header")
+    description: I18n.tr("bar.widget-settings.system-monitor.thresholds.description")
+  }
+
+  // CPU Usage Thresholds
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+    visible: valueShowCpuUsage
+
+    // Warning threshold
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.cpu-warning-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueCpuWarningThreshold
+        onValueChanged: valueCpuWarningThreshold = value
+        suffix: "%"
+      }
+    }
+
+    // Critical threshold
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.cpu-critical-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueCpuCriticalThreshold
+        onValueChanged: valueCpuCriticalThreshold = value
+        suffix: "%"
+      }
+    }
+  }
+
+  // Temperature Thresholds
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+    visible: valueShowCpuTemp
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.temp-warning-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueTempWarningThreshold
+        onValueChanged: valueTempWarningThreshold = value
+        suffix: "°C"
+      }
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.temp-critical-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueTempCriticalThreshold
+        onValueChanged: valueTempCriticalThreshold = value
+        suffix: "°C"
+      }
+    }
+  }
+
+  // Memory Usage Thresholds
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+    visible: valueShowMemoryUsage
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.mem-warning-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueMemWarningThreshold
+        onValueChanged: valueMemWarningThreshold = value
+        suffix: "%"
+      }
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.mem-critical-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueMemCriticalThreshold
+        onValueChanged: valueMemCriticalThreshold = value
+        suffix: "%"
+      }
+    }
+  }
+
+  // Storage Space Thresholds
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+    visible: valueShowDiskUsage
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.disk-warning-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueDiskWarningThreshold
+        onValueChanged: valueDiskWarningThreshold = value
+        suffix: "%"
+      }
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NText {
+        text: I18n.tr("bar.widget-settings.system-monitor.disk-critical-threshold.label")
+        pointSize: Style.fontSizeS
+        Layout.alignment: Qt.AlignVCenter
+      }
+
+      NSpinBox {
+        Layout.fillWidth: true
+        from: 0
+        to: 100
+        stepSize: 5
+        value: valueDiskCriticalThreshold
+        onValueChanged: valueDiskCriticalThreshold = value
+        suffix: "%"
+      }
+    }
   }
 }

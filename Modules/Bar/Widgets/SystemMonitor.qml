@@ -52,13 +52,25 @@ Rectangle {
   readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
+  // Threshold settings from widget configuration
+  readonly property int cpuWarningThreshold: (widgetSettings.cpuWarningThreshold !== undefined) ? widgetSettings.cpuWarningThreshold : widgetMetadata.cpuWarningThreshold
+  readonly property int cpuCriticalThreshold: (widgetSettings.cpuCriticalThreshold !== undefined) ? widgetSettings.cpuCriticalThreshold : widgetMetadata.cpuCriticalThreshold
+  readonly property int tempWarningThreshold: (widgetSettings.tempWarningThreshold !== undefined) ? widgetSettings.tempWarningThreshold : widgetMetadata.tempWarningThreshold
+  readonly property int tempCriticalThreshold: (widgetSettings.tempCriticalThreshold !== undefined) ? widgetSettings.tempCriticalThreshold : widgetMetadata.tempCriticalThreshold
+  readonly property int memWarningThreshold: (widgetSettings.memWarningThreshold !== undefined) ? widgetSettings.memWarningThreshold : widgetMetadata.memWarningThreshold
+  readonly property int memCriticalThreshold: (widgetSettings.memCriticalThreshold !== undefined) ? widgetSettings.memCriticalThreshold : widgetMetadata.memCriticalThreshold
+  readonly property int diskWarningThreshold: (widgetSettings.diskWarningThreshold !== undefined) ? widgetSettings.diskWarningThreshold : widgetMetadata.diskWarningThreshold
+  readonly property int diskCriticalThreshold: (widgetSettings.diskCriticalThreshold !== undefined) ? widgetSettings.diskCriticalThreshold : widgetMetadata.diskCriticalThreshold
+
   // Warning threshold calculation properties
-  readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuUsage > 80
-  readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuUsage > 90
-  readonly property bool tempWarning: showCpuTemp && SystemStatService.cpuTemp > 80
-  readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > 90
-  readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > 80
-  readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > 90
+  readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuUsage > cpuWarningThreshold
+  readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuUsage > cpuCriticalThreshold
+  readonly property bool tempWarning: showCpuTemp && SystemStatService.cpuTemp > tempWarningThreshold
+  readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > tempCriticalThreshold
+  readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > memWarningThreshold
+  readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
+  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents["/"] > diskWarningThreshold
+  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents["/"] > diskCriticalThreshold
 
   TextMetrics {
     id: percentMetrics
