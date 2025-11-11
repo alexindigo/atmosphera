@@ -173,6 +173,12 @@ Rectangle {
 
   function toggleDrawer(button) {
     TooltipService.hideImmediately()
+
+    // Close the tray menu if it's open
+    if (trayMenuWindow && trayMenuWindow.visible) {
+      trayMenuWindow.close()
+    }
+
     const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
     if (panel) {
       panel.widgetSection = root.section
@@ -323,6 +329,12 @@ Rectangle {
                            if (trayMenuWindow && trayMenuWindow.visible) {
                              trayMenuWindow.close()
                              return
+                           }
+
+                           // Close the drawer if it's open (when opening menu for pinned item)
+                           const drawerPanel = PanelService.getPanel("trayDrawerPanel", screen)
+                           if (drawerPanel && drawerPanel.visible) {
+                             drawerPanel.close()
                            }
 
                            if (modelData.hasMenu && modelData.menu && trayMenu.item) {
