@@ -79,6 +79,7 @@ ColumnLayout {
 
     NToggle {
       id: leftClickUpdateText
+      enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
       onEntered: TooltipService.show(Screen, leftClickUpdateText, I18n.tr("bar.widget-settings.custom-button.left-click.update-text"), "auto")
@@ -102,6 +103,7 @@ ColumnLayout {
 
     NToggle {
       id: rightClickUpdateText
+      enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
       onEntered: TooltipService.show(Screen, rightClickUpdateText, I18n.tr("bar.widget-settings.custom-button.right-click.update-text"), "auto")
@@ -125,6 +127,7 @@ ColumnLayout {
 
     NToggle {
       id: middleClickUpdateText
+      enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
       onEntered: TooltipService.show(Screen, middleClickUpdateText, I18n.tr("bar.widget-settings.custom-button.middle-click.update-text"), "auto")

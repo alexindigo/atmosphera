@@ -213,12 +213,14 @@ Item {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-c", leftClickExec])
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`)
-      if (leftClickUpdateText) runTextCommand()
     } else if (!hasExec) {
       // No script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel", screen)
       settingsPanel.requestedTab = SettingsPanel.Tab.Bar
       settingsPanel.open()
+    }
+    if (!textStream && leftClickUpdateText) {
+      runTextCommand()
     }
   }
 
@@ -226,7 +228,9 @@ Item {
     if (rightClickExec) {
       Quickshell.execDetached(["sh", "-c", rightClickExec])
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`)
-      if (rightClickUpdateText) runTextCommand()
+    }
+    if (!textStream && rightClickUpdateText) {
+      runTextCommand()
     }
   }
 
@@ -234,7 +238,9 @@ Item {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-c", middleClickExec])
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`)
-      if (middleClickUpdateText) runTextCommand()
+    }
+    if (!textStream && middleClickUpdateText) {
+      runTextCommand()
     }
   }
 
