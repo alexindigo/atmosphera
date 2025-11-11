@@ -8,6 +8,7 @@ import "Backgrounds" as Backgrounds
 
 // All panels
 import qs.Modules.Bar
+import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
@@ -41,9 +42,9 @@ PanelWindow {
   readonly property alias settingsPanel: settingsPanel
   readonly property alias setupWizardPanel: setupWizardPanel
   readonly property alias trayDrawerPanel: trayDrawerPanel
-  readonly property alias trayMenuPanel: trayMenuPanel
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
+  readonly property alias trayMenuWindow: trayMenuWindow
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
@@ -285,22 +286,12 @@ PanelWindow {
     TrayDrawerPanel {
       id: trayDrawerPanel
       screen: root.screen
+      trayMenuWindow: root.trayMenuWindow
       z: 50
 
       Component.onCompleted: {
         objectName = "trayDrawerPanel-" + (screen?.name || "unknown")
         PanelService.registerPanel(trayDrawerPanel)
-      }
-    }
-
-    TrayMenuPanel {
-      id: trayMenuPanel
-      screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "trayMenuPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayMenuPanel)
       }
     }
 
@@ -326,6 +317,50 @@ PanelWindow {
       }
     }
 
+    // ----------------------------------------------
+    // Shared TrayMenu window for context menus (used by both Tray widget and TrayDrawerPanel)
+    PanelWindow {
+      id: trayMenuWindow
+      anchors.top: true
+      anchors.left: true
+      anchors.right: true
+      anchors.bottom: true
+      visible: false
+      color: Color.transparent
+      screen: root.screen
+
+      // Expose the trayMenu Loader directly
+      readonly property alias trayMenuLoader: trayMenu
+
+      function open() {
+        visible = true
+      }
+
+      function close() {
+        visible = false
+        if (trayMenu.item) {
+          trayMenu.item.hideMenu()
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        onClicked: trayMenuWindow.close()
+      }
+
+      Loader {
+        id: trayMenu
+        source: "../Bar/Extras/TrayMenu.qml"
+        onLoaded: {
+          if (item) {
+            item.screen = root.screen
+          }
+        }
+      }
+    }
+
+    // ----------------------------------------------
     // Bar placeholder - just for background positioning (actual bar content is in BarContentWindow)
     Item {
       id: barPlaceholder

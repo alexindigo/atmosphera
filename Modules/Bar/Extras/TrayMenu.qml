@@ -7,16 +7,37 @@ import qs.Widgets
 
 PopupWindow {
   id: root
-  property QsMenuHandle menu
+  property var trayItem: null
   property var anchorItem: null
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
   property bool isHovered: rootMouseArea.containsMouse
   property ShellScreen screen
-  property var trayItem: null
   property string widgetSection: ""
   property int widgetIndex: -1
+
+  // Derive menu from trayItem (only used for non-submenus)
+  readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
+
+  // Compute if current tray item is pinned
+  readonly property bool isPinned: {
+    if (!trayItem || widgetSection === "" || widgetIndex < 0)
+      return false
+    var widgets = Settings.data.bar.widgets[widgetSection]
+    if (!widgets || widgetIndex >= widgets.length)
+      return false
+    var widgetSettings = widgets[widgetIndex]
+    if (!widgetSettings || widgetSettings.id !== "Tray")
+      return false
+    var pinnedList = widgetSettings.pinned || []
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+    for (var i = 0; i < pinnedList.length; i++) {
+      if (pinnedList[i] === itemName)
+        return true
+    }
+    return false
+  }
 
   readonly property int menuWidth: 180
 
@@ -283,9 +304,9 @@ PopupWindow {
       Rectangle {
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: 28
-        color: addToFavoriteMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
+        color: pinUnpinMouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.2) : Qt.alpha(Color.mPrimary, 0.08)
         radius: Style.radiusS
-        border.color: Qt.alpha(Color.mPrimary, addToFavoriteMouseArea.containsMouse ? 0.4 : 0.2)
+        border.color: Qt.alpha(Color.mPrimary, pinUnpinMouseArea.containsMouse ? 0.4 : 0.2)
         border.width: Style.borderS
 
         RowLayout {
@@ -295,7 +316,7 @@ PopupWindow {
           spacing: Style.marginS
 
           NIcon {
-            icon: "pin" //addToFavoriteEntry.isFavorite ? "unpin" : "pin"
+            icon: root.isPinned ? "unpin" : "pin"
             pointSize: Style.fontSizeS
             applyUiScale: false
             verticalAlignment: Text.AlignVCenter
@@ -305,7 +326,7 @@ PopupWindow {
           NText {
             Layout.fillWidth: true
             color: Color.mPrimary
-            text: addToFavoriteEntry.isFavorite ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
+            text: root.isPinned ? I18n.tr("settings.bar.tray.unpin-application") : I18n.tr("settings.bar.tray.pin-application")
             pointSize: Style.fontSizeS
             font.weight: Font.Medium
             verticalAlignment: Text.AlignVCenter
@@ -314,87 +335,81 @@ PopupWindow {
         }
 
         MouseArea {
-          id: addToFavoriteMouseArea
+          id: pinUnpinMouseArea
           anchors.fill: parent
           hoverEnabled: true
 
           onClicked: {
-            if (addToFavoriteEntry.isFavorite) {
-              root.removeFromFavorites()
+            if (root.isPinned) {
+              root.removeFromPinned()
             } else {
-              root.addToFavorites()
+              root.addToPinned()
             }
-            root.close()
           }
         }
       }
     }
   }
 
-  function addToFavorites() {
+  function addToPinned() {
     if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot add as favorite: missing tray item or widget info")
+      Logger.w("TrayMenu", "Cannot pin: missing tray item or widget info")
       return
     }
     const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
     if (!itemName) {
-      Logger.w("TrayMenu", "Cannot add as favorite: tray item has no name")
+      Logger.w("TrayMenu", "Cannot pin: tray item has no name")
       return
     }
     var widgets = Settings.data.bar.widgets[widgetSection]
     if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot add as favorite: invalid widget index")
+      Logger.w("TrayMenu", "Cannot pin: invalid widget index")
       return
     }
     var widgetSettings = widgets[widgetIndex]
     if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot add as favorite: widget is not a Tray widget")
+      Logger.w("TrayMenu", "Cannot pin: widget is not a Tray widget")
       return
     }
-    var favorites = widgetSettings.favorites || []
-    var newFavorites = favorites.slice()
-    newFavorites.push(itemName)
+    var pinnedList = widgetSettings.pinned || []
+    var newPinned = pinnedList.slice()
+    newPinned.push(itemName)
     var newSettings = Object.assign({}, widgetSettings)
-    newSettings.favorites = newFavorites
+    newSettings.pinned = newPinned
     widgets[widgetIndex] = newSettings
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()
-    if (root.screen) {
-      const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
-      if (panel)
-        panel.close()
-    }
   }
 
-  function removeFromFavorites() {
+  function removeFromPinned() {
     if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot remove from favorites: missing tray item or widget info")
+      Logger.w("TrayMenu", "Cannot unpin: missing tray item or widget info")
       return
     }
     const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
     if (!itemName) {
-      Logger.w("TrayMenu", "Cannot remove from favorites: tray item has no name")
+      Logger.w("TrayMenu", "Cannot unpin: tray item has no name")
       return
     }
     var widgets = Settings.data.bar.widgets[widgetSection]
     if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot remove from favorites: invalid widget index")
+      Logger.w("TrayMenu", "Cannot unpin: invalid widget index")
       return
     }
     var widgetSettings = widgets[widgetIndex]
     if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot remove from favorites: widget is not a Tray widget")
+      Logger.w("TrayMenu", "Cannot unpin: widget is not a Tray widget")
       return
     }
-    var favorites = widgetSettings.favorites || []
-    var newFavorites = []
-    for (var i = 0; i < favorites.length; i++) {
-      if (favorites[i] !== itemName) {
-        newFavorites.push(favorites[i])
+    var pinnedList = widgetSettings.pinned || []
+    var newPinned = []
+    for (var i = 0; i < pinnedList.length; i++) {
+      if (pinnedList[i] !== itemName) {
+        newPinned.push(pinnedList[i])
       }
     }
     var newSettings = Object.assign({}, widgetSettings)
-    newSettings.favorites = newFavorites
+    newSettings.pinned = newPinned
     widgets[widgetIndex] = newSettings
     Settings.data.bar.widgets[widgetSection] = widgets
     Settings.saveImmediate()

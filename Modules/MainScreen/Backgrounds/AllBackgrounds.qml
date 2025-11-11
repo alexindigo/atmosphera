@@ -142,13 +142,6 @@ Item {
         backgroundColor: Color.mSurface
       }
 
-      // TrayMenu
-      PanelBackground {
-        panel: root.windowRoot.trayMenuPanel
-        shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
-      }
-
       // Wallpaper
       PanelBackground {
         panel: root.windowRoot.wallpaperPanel

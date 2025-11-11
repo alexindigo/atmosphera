@@ -15,6 +15,18 @@ Rectangle {
 
   property ShellScreen screen
 
+  // Get shared tray menu window from MainScreen (via screen's parent MainScreen)
+  readonly property var trayMenuWindow: {
+    // Access via PanelService to get the MainScreen that contains the trayMenuWindow
+    if (!screen)
+      return null
+    // Get any panel from this screen to access its parent MainScreen
+    const drawerPanel = PanelService.getPanel("trayDrawerPanel", screen)
+    return drawerPanel?.trayMenuWindow || null
+  }
+
+  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
   property string section: ""
@@ -38,10 +50,10 @@ Rectangle {
   readonly property real iconSize: Math.round(Style.capsuleHeight * 0.65)
 
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || [] // Pinned items (shown inline)
+  property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
-  property var filteredItems: [] // Items to show inline (pinned/favorites)
-  property var dropdownItems: [] // Items to show in drawer (unpinned/non-favorites)
+  property var filteredItems: [] // Items to show inline (pinned)
+  property var dropdownItems: [] // Items to show in drawer (unpinned)
 
   // Debounce timer for updateFilteredItems to prevent excessive calls
   // when multiple events (e.g., SystemTray changes, settings saves)
@@ -89,41 +101,41 @@ Rectangle {
       filteredItems = newItems
       dropdownItems = []
     } else {
-      // Build inline (pinned/favorites) and drawer (unpinned/non-favorites) lists
-      // If favorites list is empty, all items go to drawer (none inline)
-      // If favorites list has items, favorites are inline, rest go to drawer
-      if (favorites && favorites.length > 0) {
-        let fav = []
+      // Build inline (pinned) and drawer (unpinned) lists
+      // If pinned list is empty, all items go to drawer (none inline)
+      // If pinned list has items, pinned items are inline, rest go to drawer
+      if (pinned && pinned.length > 0) {
+        let pinnedItems = []
         for (var k = 0; k < newItems.length; k++) {
           const item2 = newItems[k]
           const title2 = item2.tooltipTitle || item2.name || item2.id || ""
-          for (var m = 0; m < favorites.length; m++) {
-            const rule2 = favorites[m]
+          for (var m = 0; m < pinned.length; m++) {
+            const rule2 = pinned[m]
             if (wildCardMatch(title2, rule2)) {
-              fav.push(item2)
+              pinnedItems.push(item2)
               break
             }
           }
         }
-        filteredItems = fav
+        filteredItems = pinnedItems
 
-        // Non-favorites (unpinned) go to drawer
-        let nonFav = []
+        // Unpinned items go to drawer
+        let unpinnedItems = []
         for (var v = 0; v < newItems.length; v++) {
           const cand = newItems[v]
-          let isFavorite = false
+          let isPinned = false
           for (var f = 0; f < filteredItems.length; f++) {
             if (filteredItems[f] === cand) {
-              isFavorite = true
+              isPinned = true
               break
             }
           }
-          if (!isFavorite)
-            nonFav.push(cand)
+          if (!isPinned)
+            unpinnedItems.push(cand)
         }
-        dropdownItems = nonFav
+        dropdownItems = unpinnedItems
       } else {
-        // No favorites (pinned): all items go to drawer (none inline)
+        // No pinned items: all items go to drawer (none inline)
         filteredItems = []
         dropdownItems = newItems
       }
@@ -171,7 +183,7 @@ Rectangle {
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
-    if (trayMenu.item) {
+    if (trayMenu && trayMenu.item) {
       trayMenu.item.screen = screen
     }
   }
@@ -331,7 +343,6 @@ Rectangle {
                                menuX = (width / 2) - (trayMenu.item.width / 2)
                                menuY = Style.barHeight
                              }
-                             trayMenu.item.menu = modelData.menu
                              trayMenu.item.trayItem = modelData
                              trayMenu.item.widgetSection = root.section
                              trayMenu.item.widgetIndex = root.sectionWidgetIndex
@@ -379,40 +390,6 @@ Rectangle {
       }
       onClicked: toggleDrawer(this)
       onRightClicked: toggleDrawer(this)
-    }
-  }
-
-  // --------------------------
-  PanelWindow {
-    id: trayMenuWindow
-    anchors.top: true
-    anchors.left: true
-    anchors.right: true
-    anchors.bottom: true
-    visible: false
-    color: Color.transparent
-    screen: screen
-
-    function open() {
-      visible = true
-    }
-
-    function close() {
-      visible = false
-      if (trayMenu.item) {
-        trayMenu.item.hideMenu()
-      }
-    }
-
-    // Clicking outside of the rectangle to close
-    MouseArea {
-      anchors.fill: parent
-      onClicked: trayMenuWindow.close()
-    }
-
-    Loader {
-      id: trayMenu
-      source: "../Extras/TrayMenu.qml"
     }
   }
 }
