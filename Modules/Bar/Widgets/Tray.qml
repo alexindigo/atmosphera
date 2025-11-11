@@ -15,6 +15,18 @@ Rectangle {
 
   property ShellScreen screen
 
+  // Get shared tray menu window from MainScreen (via screen's parent MainScreen)
+  readonly property var trayMenuWindow: {
+    // Access via PanelService to get the MainScreen that contains the trayMenuWindow
+    if (!screen)
+      return null
+    // Get any panel from this screen to access its parent MainScreen
+    const drawerPanel = PanelService.getPanel("trayDrawerPanel", screen)
+    return drawerPanel?.trayMenuWindow || null
+  }
+
+  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
   property string section: ""
@@ -38,10 +50,10 @@ Rectangle {
   readonly property real iconSize: Math.round(Style.capsuleHeight * 0.65)
 
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> favorites: widgetSettings.favorites || widgetMetadata.favorites || [] // Pinned items (shown inline)
+  property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
-  property var filteredItems: [] // Items to show inline (pinned/favorites)
-  property var dropdownItems: [] // Items to show in drawer (unpinned/non-favorites)
+  property var filteredItems: [] // Items to show inline (pinned)
+  property var dropdownItems: [] // Items to show in drawer (unpinned)
 
   // Debounce timer for updateFilteredItems to prevent excessive calls
   // when multiple events (e.g., SystemTray changes, settings saves)
@@ -89,41 +101,41 @@ Rectangle {
       filteredItems = newItems
       dropdownItems = []
     } else {
-      // Build inline (pinned/favorites) and drawer (unpinned/non-favorites) lists
-      // If favorites list is empty, all items go to drawer (none inline)
-      // If favorites list has items, favorites are inline, rest go to drawer
-      if (favorites && favorites.length > 0) {
-        let fav = []
+      // Build inline (pinned) and drawer (unpinned) lists
+      // If pinned list is empty, all items go to drawer (none inline)
+      // If pinned list has items, pinned items are inline, rest go to drawer
+      if (pinned && pinned.length > 0) {
+        let pinnedItems = []
         for (var k = 0; k < newItems.length; k++) {
           const item2 = newItems[k]
           const title2 = item2.tooltipTitle || item2.name || item2.id || ""
-          for (var m = 0; m < favorites.length; m++) {
-            const rule2 = favorites[m]
+          for (var m = 0; m < pinned.length; m++) {
+            const rule2 = pinned[m]
             if (wildCardMatch(title2, rule2)) {
-              fav.push(item2)
+              pinnedItems.push(item2)
               break
             }
           }
         }
-        filteredItems = fav
+        filteredItems = pinnedItems
 
-        // Non-favorites (unpinned) go to drawer
-        let nonFav = []
+        // Unpinned items go to drawer
+        let unpinnedItems = []
         for (var v = 0; v < newItems.length; v++) {
           const cand = newItems[v]
-          let isFavorite = false
+          let isPinned = false
           for (var f = 0; f < filteredItems.length; f++) {
             if (filteredItems[f] === cand) {
-              isFavorite = true
+              isPinned = true
               break
             }
           }
-          if (!isFavorite)
-            nonFav.push(cand)
+          if (!isPinned)
+            unpinnedItems.push(cand)
         }
-        dropdownItems = nonFav
+        dropdownItems = unpinnedItems
       } else {
-        // No favorites (pinned): all items go to drawer (none inline)
+        // No pinned items: all items go to drawer (none inline)
         filteredItems = []
         dropdownItems = newItems
       }
@@ -166,6 +178,13 @@ Rectangle {
       panel.widgetSection = root.section
       panel.widgetIndex = root.sectionWidgetIndex
       panel.toggle(this)
+    }
+  }
+
+  function onLoaded() {
+    // When the widget is fully initialized with its props set the screen for the trayMenu
+    if (trayMenu && trayMenu.item) {
+      trayMenu.item.screen = screen
     }
   }
 
@@ -285,54 +304,56 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
+                           trayMenuWindow.close()
 
                            if (!modelData.onlyMenu) {
                              modelData.activate()
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
-                           // Close any open menu first
-                           PanelService.getPanel("trayMenuPanel", root.screen)?.close()
 
-                           modelData.secondaryActivate && modelData.secondaryActivate()
+                           // Close any open menu first
+
+                           // TODO RESTORE LATER
+                           //  trayMenuWindow.close()
+                           //  modelData.secondaryActivate && modelData.secondaryActivate()
                          } else if (mouse.button === Qt.RightButton) {
                            TooltipService.hideImmediately()
 
                            // Close the menu if it was visible
-                           const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
-                           if (menuPanel && menuPanel.visible) {
-                             menuPanel.close()
+                           if (trayMenuWindow && trayMenuWindow.visible) {
+                             trayMenuWindow.close()
                              return
                            }
 
-                           if (modelData.hasMenu && modelData.menu) {
-                             const panel = PanelService.getPanel("trayMenuPanel", root.screen)
-                             if (panel) {
-                               panel.menu = modelData.menu
-                               panel.trayItem = modelData
-                               panel.widgetSection = root.section
-                               panel.widgetIndex = root.sectionWidgetIndex
-                               panel.openAt(parent)
-                               // Prevent onEntered from immediately closing the panel
-                               trayIcon.menuJustOpened = true
+                           if (modelData.hasMenu && modelData.menu && trayMenu.item) {
+                             trayMenuWindow.open()
+
+                             // Position menu based on bar position
+                             let menuX, menuY
+                             if (barPosition === "left") {
+                               // For left bar: position menu to the right of the bar
+                               menuX = width + Style.marginM
+                               menuY = 0
+                             } else if (barPosition === "right") {
+                               // For right bar: position menu to the left of the bar
+                               menuX = -trayMenu.item.width - Style.marginM
+                               menuY = 0
                              } else {
-                               Logger.i("Tray", "TrayMenu not available")
+                               // For horizontal bars: center horizontally and position below
+                               menuX = (width / 2) - (trayMenu.item.width / 2)
+                               menuY = Style.barHeight
                              }
+                             trayMenu.item.trayItem = modelData
+                             trayMenu.item.widgetSection = root.section
+                             trayMenu.item.widgetIndex = root.sectionWidgetIndex
+                             trayMenu.item.showAt(parent, menuX, menuY)
                            } else {
-                             Logger.i("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set")
                            }
                          }
                        }
             onEntered: {
-              // Don't close menu immediately after opening it
-              if (!trayIcon.menuJustOpened) {
-                // Only close the menu if we're hovering over a DIFFERENT tray icon
-                const menuPanel = PanelService.getPanel("trayMenuPanel", root.screen)
-                if (menuPanel && menuPanel.trayItem !== modelData) {
-                  menuPanel.close()
-                }
-              }
-              trayIcon.menuJustOpened = false
+              trayMenuWindow.close()
               TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
             }
             onExited: TooltipService.hide()
