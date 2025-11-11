@@ -34,8 +34,8 @@ PanelWindow {
   readonly property string barPosition: Settings.data.bar.position || "top"
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
-  readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-  readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+  readonly property real barMarginH: Math.round(barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0)
+  readonly property real barMarginV: Math.round(barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0)
 
   // Anchor to the bar's edge
   anchors {

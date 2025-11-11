@@ -326,7 +326,7 @@ PanelWindow {
       }
     }
 
-    // Bar placeholder - just for background positioning (actual bar content is in BarContentWindow)
+    // Bar background placeholder - just for background positioning (actual bar content is in BarContentWindow)
     Item {
       id: barPlaceholder
 
@@ -336,28 +336,29 @@ PanelWindow {
       // Screen reference
       property ShellScreen screen: root.screen
 
-      // Bar positioning properties (match Bar.qml logic)
+      // Bar background positioning properties
       readonly property string barPosition: Settings.data.bar.position || "top"
       readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barFloating: Settings.data.bar.floating || false
-      readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-      readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+      readonly property real barMarginH: barFloating ? Math.round(Settings.data.bar.marginHorizontal * Style.marginXL) : 0
+      readonly property real barMarginV: barFloating ? Math.round(Settings.data.bar.marginVertical * Style.marginXL) : 0
+      readonly property real attachmentOverlap: 1 // Attachment overlap to fix hairline gap with fractional scaling
 
       // Expose bar dimensions directly on this Item for BarBackground
       // Use screen dimensions directly
       x: {
         if (barPosition === "right")
-          return screen.width - Style.barHeight - barMarginH
+          return screen.width - Style.barHeight - barMarginH - attachmentOverlap // Extend left towards panels
         return barMarginH
       }
       y: {
         if (barPosition === "bottom")
-          return screen.height - Style.barHeight - barMarginV
+          return screen.height - Style.barHeight - barMarginV - attachmentOverlap
         return barMarginV
       }
       width: {
         if (barIsVertical) {
-          return Style.barHeight + 1
+          return Style.barHeight + attachmentOverlap
         }
         return screen.width - barMarginH * 2
       }
@@ -365,7 +366,7 @@ PanelWindow {
         if (barIsVertical) {
           return screen.height - barMarginV * 2
         }
-        return Style.barHeight
+        return Style.barHeight + attachmentOverlap
       }
 
       // Corner states (same as Bar.qml)
