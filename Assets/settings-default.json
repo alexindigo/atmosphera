@@ -213,7 +213,8 @@
     "respectExpireTimeout": false,
     "lowUrgencyDuration": 3,
     "normalUrgencyDuration": 8,
-    "criticalUrgencyDuration": 15
+    "criticalUrgencyDuration": 15,
+    "enableKeyboardLayoutToast": true
   },
   "osd": {
     "enabled": true,
