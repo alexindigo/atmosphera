@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Command to execute when the button is left-clicked.",
-          "label": "Left click"
+          "label": "Left click",
+          "update-text": "Update displayed text on left-click"
         },
         "middle-click": {
           "description": "Command to execute when the button is middle-clicked.",
-          "label": "Middle click"
+          "label": "Middle click",
+          "update-text": "Update displayed text on middle-click"
         },
         "parse-json": {
           "description": "Parse the command output as a JSON object to dynamically set text and icon.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Command to execute when the button is right-clicked.",
-          "label": "Right click"
+          "label": "Right click",
+          "update-text": "Update displayed text on right-click"
         },
         "text-stream": {
           "description": "Streamed lines from the command will be displayed as text on the button.",

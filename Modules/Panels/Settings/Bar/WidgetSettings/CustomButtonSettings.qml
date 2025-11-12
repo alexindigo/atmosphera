@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
@@ -21,8 +22,11 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {})
     settings.icon = valueIcon
     settings.leftClickExec = leftClickExecInput.text
+    settings.leftClickUpdateText = leftClickUpdateText.checked
     settings.rightClickExec = rightClickExecInput.text
+    settings.rightClickUpdateText = rightClickUpdateText.checked
     settings.middleClickExec = middleClickExecInput.text
+    settings.middleClickUpdateText = middleClickUpdateText.checked
     settings.textCommand = textCommandInput.text
     settings.textCollapse = textCollapseInput.text
     settings.textStream = valueTextStream
@@ -61,31 +65,76 @@ ColumnLayout {
     }
   }
 
-  NTextInput {
-    id: leftClickExecInput
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.left-click.label")
-    description: I18n.tr("bar.widget-settings.custom-button.left-click.description")
-    placeholderText: I18n.tr("placeholders.enter-command")
-    text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
+  RowLayout {
+    spacing: Style.marginM
+
+    NTextInput {
+      id: leftClickExecInput
+      Layout.fillWidth: true
+      label: I18n.tr("bar.widget-settings.custom-button.left-click.label")
+      description: I18n.tr("bar.widget-settings.custom-button.left-click.description")
+      placeholderText: I18n.tr("placeholders.enter-command")
+      text: widgetData?.leftClickExec || widgetMetadata.leftClickExec
+    }
+
+    NToggle {
+      id: leftClickUpdateText
+      enabled: !valueTextStream
+      Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+      Layout.bottomMargin: Style.marginS
+      onEntered: TooltipService.show(Screen, leftClickUpdateText, I18n.tr("bar.widget-settings.custom-button.left-click.update-text"), "auto")
+      onExited: TooltipService.hide()
+      checked: widgetData?.leftClickUpdateText ?? widgetMetadata.leftClickUpdateText
+      onToggled: isChecked => checked = isChecked
+    }
   }
 
-  NTextInput {
-    id: rightClickExecInput
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.right-click.label")
-    description: I18n.tr("bar.widget-settings.custom-button.right-click.description")
-    placeholderText: I18n.tr("placeholders.enter-command")
-    text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
+  RowLayout {
+    spacing: Style.marginM
+
+    NTextInput {
+      id: rightClickExecInput
+      Layout.fillWidth: true
+      label: I18n.tr("bar.widget-settings.custom-button.right-click.label")
+      description: I18n.tr("bar.widget-settings.custom-button.right-click.description")
+      placeholderText: I18n.tr("placeholders.enter-command")
+      text: widgetData?.rightClickExec || widgetMetadata.rightClickExec
+    }
+
+    NToggle {
+      id: rightClickUpdateText
+      enabled: !valueTextStream
+      Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+      Layout.bottomMargin: Style.marginS
+      onEntered: TooltipService.show(Screen, rightClickUpdateText, I18n.tr("bar.widget-settings.custom-button.right-click.update-text"), "auto")
+      onExited: TooltipService.hide()
+      checked: widgetData?.rightClickUpdateText ?? widgetMetadata.rightClickUpdateText
+      onToggled: isChecked => checked = isChecked
+    }
   }
 
-  NTextInput {
-    id: middleClickExecInput
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.custom-button.middle-click.label")
-    description: I18n.tr("bar.widget-settings.custom-button.middle-click.description")
-    placeholderText: I18n.tr("placeholders.enter-command")
-    text: widgetData.middleClickExec || widgetMetadata.middleClickExec
+  RowLayout {
+    spacing: Style.marginM
+
+    NTextInput {
+      id: middleClickExecInput
+      Layout.fillWidth: true
+      label: I18n.tr("bar.widget-settings.custom-button.middle-click.label")
+      description: I18n.tr("bar.widget-settings.custom-button.middle-click.description")
+      placeholderText: I18n.tr("placeholders.enter-command")
+      text: widgetData.middleClickExec || widgetMetadata.middleClickExec
+    }
+
+    NToggle {
+      id: middleClickUpdateText
+      enabled: !valueTextStream
+      Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+      Layout.bottomMargin: Style.marginS
+      onEntered: TooltipService.show(Screen, middleClickUpdateText, I18n.tr("bar.widget-settings.custom-button.middle-click.update-text"), "auto")
+      onExited: TooltipService.hide()
+      checked: widgetData?.middleClickUpdateText ?? widgetMetadata.middleClickUpdateText
+      onToggled: isChecked => checked = isChecked
+    }
   }
 
   NDivider {
