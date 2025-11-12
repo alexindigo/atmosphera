@@ -74,7 +74,7 @@ SmartPanel {
   readonly property int columns: Math.max(1, Math.min(maxColumns, itemCount))
   readonly property int rows: Math.max(1, Math.ceil(itemCount / Math.max(1, columns)))
 
-  // Add 2*gap margins around the grid
+  // Static fallback sizes
   preferredWidth: (columns * cellSize) + ((columns - 1) * innerSpacing) + (2 * outerPadding)
   preferredHeight: (rows * cellSize) + ((rows - 1) * innerSpacing) + (2 * outerPadding)
 
@@ -119,6 +119,10 @@ SmartPanel {
 
   panelContent: Item {
     id: content
+
+    // Dynamic content sizing that SmartPanel will watch for changes
+    property real contentPreferredWidth: (root.columns * root.cellSize) + ((root.columns - 1) * root.innerSpacing) + (2 * root.outerPadding)
+    property real contentPreferredHeight: (root.rows * root.cellSize) + ((root.rows - 1) * root.innerSpacing) + (2 * root.outerPadding)
 
     Grid {
       id: grid
