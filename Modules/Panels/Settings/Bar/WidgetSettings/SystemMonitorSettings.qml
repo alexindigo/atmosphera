@@ -48,6 +48,20 @@ ColumnLayout {
     settings.memCriticalThreshold = valueMemCriticalThreshold
     settings.diskWarningThreshold = valueDiskWarningThreshold
     settings.diskCriticalThreshold = valueDiskCriticalThreshold
+    // Ensure critical thresholds are not less than their warning counterparts.
+    if (settings.cpuCriticalThreshold < settings.cpuWarningThreshold) {
+      settings.cpuCriticalThreshold = Math.min(100, settings.cpuWarningThreshold)
+    }
+    if (settings.tempCriticalThreshold < settings.tempWarningThreshold) {
+      settings.tempCriticalThreshold = Math.min(100, settings.tempWarningThreshold)
+    }
+    if (settings.memCriticalThreshold < settings.memWarningThreshold) {
+      settings.memCriticalThreshold = Math.min(100, settings.memWarningThreshold)
+    }
+    if (settings.diskCriticalThreshold < settings.diskWarningThreshold) {
+      settings.diskCriticalThreshold = Math.min(100, settings.diskWarningThreshold)
+    }
+
     return settings
   }
 
