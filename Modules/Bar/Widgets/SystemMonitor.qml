@@ -185,7 +185,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color to bar background when indicator active
-            color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor
+            color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface
           }
         }
 
@@ -257,7 +257,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color when temp indicator active
-            color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor
+            color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : Color.mOnSurface
           }
         }
 
@@ -322,7 +322,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color when memory indicator active
-            color: (memWarning || memCritical) ? Color.mSurfaceVariant : textColor
+            color: (memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface
           }
 
 
@@ -470,7 +470,7 @@ Rectangle {
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
           // Invert color when disk indicator active
-          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor
+          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface
         }
 
         NText {
