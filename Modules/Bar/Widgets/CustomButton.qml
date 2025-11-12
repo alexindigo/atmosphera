@@ -34,8 +34,11 @@ Item {
 
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec
+  readonly property bool leftClickUpdateText: widgetSettings.leftClickUpdateText ?? widgetMetadata.leftClickUpdateText
   readonly property string rightClickExec: widgetSettings.rightClickExec || widgetMetadata.rightClickExec
+  readonly property bool rightClickUpdateText: widgetSettings.rightClickUpdateText ?? widgetMetadata.rightClickUpdateText
   readonly property string middleClickExec: widgetSettings.middleClickExec || widgetMetadata.middleClickExec
+  readonly property bool middleClickUpdateText: widgetSettings.middleClickUpdateText ?? widgetMetadata.middleClickUpdateText
   readonly property string textCommand: widgetSettings.textCommand !== undefined ? widgetSettings.textCommand : (widgetMetadata.textCommand || "")
   readonly property bool textStream: widgetSettings.textStream !== undefined ? widgetSettings.textStream : (widgetMetadata.textStream || false)
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
@@ -210,11 +213,14 @@ Item {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-c", leftClickExec])
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`)
-    } else if (!hasExec) {
+    } else if (!hasExec && !leftClickUpdateText) {
       // No script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel", screen)
       settingsPanel.requestedTab = SettingsPanel.Tab.Bar
       settingsPanel.open()
+    }
+    if (!textStream && leftClickUpdateText) {
+      runTextCommand()
     }
   }
 
@@ -223,12 +229,18 @@ Item {
       Quickshell.execDetached(["sh", "-c", rightClickExec])
       Logger.i("CustomButton", `Executing command: ${rightClickExec}`)
     }
+    if (!textStream && rightClickUpdateText) {
+      runTextCommand()
+    }
   }
 
   function onMiddleClicked() {
     if (middleClickExec) {
       Quickshell.execDetached(["sh", "-c", middleClickExec])
       Logger.i("CustomButton", `Executing command: ${middleClickExec}`)
+    }
+    if (!textStream && middleClickUpdateText) {
+      runTextCommand()
     }
   }
 
