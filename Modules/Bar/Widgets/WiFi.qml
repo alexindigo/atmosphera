@@ -78,7 +78,7 @@ Item {
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
     forceClose: isBarVertical || root.displayMode === "alwaysHide" || !pill.text
     onClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
-    onRightClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
+    onRightClicked: NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
     tooltipText: {
       if (pill.text !== "") {
         return pill.text

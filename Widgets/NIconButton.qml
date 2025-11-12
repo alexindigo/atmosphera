@@ -30,7 +30,7 @@ Rectangle {
   signal clicked
   signal rightClicked
   signal middleClicked
-  signal wheel
+  signal wheel(int angleDelta)
 
   implicitWidth: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
   implicitHeight: applyUiScale ? Math.round(baseSize * Style.uiScaleRatio) : Math.round(baseSize)
