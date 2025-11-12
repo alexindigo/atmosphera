@@ -57,13 +57,13 @@ Item {
     sourceComponent: Item {
       anchors.fill: parent
 
-      // Bar container (background rendered by AllBackgrounds)
+      // Bar container - Content
       Item {
         id: bar
 
         // Position and size the bar content based on orientation
-        x: (root.barPosition === "right") ? (parent.width - Style.barHeight) : 0.5
-        y: (root.barPosition === "bottom") ? (parent.height - Style.barHeight) : 0.5
+        x: (root.barPosition === "right") ? (parent.width - Style.barHeight) : 0
+        y: (root.barPosition === "bottom") ? (parent.height - Style.barHeight) : 0
         width: root.barIsVertical ? Style.barHeight : parent.width
         height: root.barIsVertical ? parent.height : Style.barHeight
 
