@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Browse File",
         "browse-library": "Browse Library",
+        "colorize-distro-logo": {
+          "description": "Apply theme colors to your distribution logo.",
+          "label": "Colorize distro logo"
+        },
         "icon": {
           "description": "Select an icon from the library or a custom file.",
           "label": "Icon"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Use your distribution's logo instead of a custom icon.",
           "label": "Use distro logo instead of icon"
-        },
-        "colorize-distro-logo": {
-          "description": "Apply theme colors to your distribution logo.",
-          "label": "Colorize distro logo"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Show workspace numbers",
-          "description": "Display workspace numbers in the top-left corner of task groups."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Show numbers only when occupied",
-          "description": "Only show workspace numbers for workspaces that have open windows."
+          "description": "Only show workspace numbers for workspaces that have open windows.",
+          "label": "Show numbers only when occupied"
+        },
+        "show-workspace-numbers": {
+          "description": "Display workspace numbers in the top-left corner of task groups.",
+          "label": "Show workspace numbers"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
             "description-missing": "Requires {app} to be installed"
           },
-          "spicetify": {
-            "description": "Write {filepath}. Comfy theme needs to be installed and activated manually.",
-            "description-missing": "Requires {app} to be installed"
-          },
           "description": "Application-specific theming.",
           "discord": {
             "description": "Write {filepath} for {client}. Hyprluna theme needs to be activated manually.",
@@ -894,6 +890,10 @@
           "label": "Programs",
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "spicetify": {
+            "description": "Write {filepath}. Comfy theme needs to be installed and activated manually.",
             "description-missing": "Requires {app} to be installed"
           },
           "vicinae": {
@@ -1374,11 +1374,11 @@
           "description": "How long normal priority notifications stay visible.",
           "label": "Normal urgency"
         },
+        "reset": "Reset timeout duration",
         "respect-expire": {
           "description": "Use the expire timeout set in the notification.",
           "label": "Respect expire timeout"
         },
-	"reset": "Reset timeout duration",
         "section": {
           "description": "Configure how long notifications stay visible based on their urgency level.",
           "label": "Notification duration"
@@ -1388,16 +1388,6 @@
         "section": {
           "description": "Show notification on specific monitors. Defaults to all if none are chosen.",
           "label": "Monitors display"
-        }
-      },
-      "toast": {
-        "section": {
-          "description": "Configure toast appearance and behavior.",
-          "label": "Toast"
-        },
-        "enabled": {
-          "description": "Show a toast when the keyboard layout changes.",
-          "label": "Keyboard layout"
         }
       },
       "settings": {
@@ -1430,7 +1420,17 @@
           "label": "Appearance"
         }
       },
-      "title": "Notifications"
+      "title": "Notifications",
+      "toast": {
+        "keyboard": {
+          "description": "Show a toast when the keyboard layout changes.",
+          "label": "Keyboard layout"
+        },
+        "section": {
+          "description": "Configure toast appearance and behavior.",
+          "label": "Toast"
+        }
+      }
     },
     "osd": {
       "always-on-top": {

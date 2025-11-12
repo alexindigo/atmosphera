@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "浏览文件",
         "browse-library": "浏览库",
+        "colorize-distro-logo": {
+          "description": "将主题颜色应用到您的发行版徽标。",
+          "label": "为发行版徽标着色"
+        },
         "icon": {
           "description": "从库中选择图标或自定义文件。",
           "label": "图标"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "使用您的发行版徽标而不是自定义图标。",
           "label": "使用发行版徽标而不是图标"
-        },
-        "colorize-distro-logo": {
-          "description": "将主题颜色应用到您的发行版徽标。",
-          "label": "为发行版徽标着色"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "显示工作区编号",
-          "description": "在任务组左上角显示工作区编号"
-        },
         "show-numbers-only-when-occupied": {
-          "label": "仅在有窗口时显示编号",
-          "description": "只为有打开窗口的工作区显示编号"
+          "description": "只为有打开窗口的工作区显示编号",
+          "label": "仅在有窗口时显示编号"
+        },
+        "show-workspace-numbers": {
+          "description": "在任务组左上角显示工作区编号",
+          "label": "显示工作区编号"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
             "description-missing": "需要安装 {app}"
           },
-          "spicetify": {
-            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
-            "description-missing": "需要安装 {app}"
-          },
           "description": "应用程序特定主题。",
           "discord": {
             "description": "为 {client} 写入 {filepath}",
@@ -894,6 +890,10 @@
           "label": "程序",
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
+            "description-missing": "需要安装 {app}"
+          },
+          "spicetify": {
+            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
             "description-missing": "需要安装 {app}"
           },
           "vicinae": {
@@ -1374,6 +1374,7 @@
           "description": "正常优先级通知保持可见的时间。",
           "label": "正常紧急度"
         },
+        "reset": "重置超时时长",
         "respect-expire": {
           "description": "使用通知中设置的过期超时。",
           "label": "尊重过期超时"
@@ -1419,7 +1420,17 @@
           "label": "外观"
         }
       },
-      "title": "通知"
+      "title": "通知",
+      "toast": {
+        "keyboard": {
+          "description": "当键盘布局改变时显示一个Toast提示。",
+          "label": "键盘布局"
+        },
+        "section": {
+          "description": "配置Toast的外观和行为。",
+          "label": "吐司"
+        }
+      }
     },
     "osd": {
       "always-on-top": {

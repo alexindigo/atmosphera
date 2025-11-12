@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Dosyaya Göz At",
         "browse-library": "Kütüphaneye Göz At",
+        "colorize-distro-logo": {
+          "description": "Dağıtım logonuza tema renklerini uygula.",
+          "label": "Dağıtım logosunu renklendir"
+        },
         "icon": {
           "description": "Kütüphaneden veya özel bir dosyadan bir ikon seçin.",
           "label": "İkon"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Özel ikon yerine dağıtımınızın logosunu kullanın.",
           "label": "Dağıtım logosunu ikon yerine kullan"
-        },
-        "colorize-distro-logo": {
-          "description": "Dağıtım logonuza tema renklerini uygula.",
-          "label": "Dağıtım logosunu renklendir"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Çalışma alanı numaralarını göster",
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Yalnızca dolu olduğunda numaraları göster",
-          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster."
+          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster.",
+          "label": "Yalnızca dolu olduğunda numaraları göster"
+        },
+        "show-workspace-numbers": {
+          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster.",
+          "label": "Çalışma alanı numaralarını göster"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
-          "spicetify": {
-            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
-            "description-missing": "Kurulum için {app} gereklidir"
-          },
           "description": "Uygulamaya özel temalandırma.",
           "discord": {
             "description": "{client} için {filepath} dosyasına yaz. Hyprluna temasının manuel olarak etkinleştirilmesi gerekir.",
@@ -894,6 +890,10 @@
           "label": "Programlar",
           "pywalfox": {
             "description": "{filepath} dosyasına yaz ve pywalfox güncellemesini çalıştır",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
+          "spicetify": {
+            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "vicinae": {
@@ -1374,6 +1374,7 @@
           "description": "Normal öncelikli bildirimlerin ne kadar süreyle görüneceği.",
           "label": "Normal öncelikli"
         },
+        "reset": "Zaman aşımı süresini sıfırla",
         "respect-expire": {
           "description": "Bildirimde ayarlanan sona erme zaman aşımını kullanın.",
           "label": "Sona erme zaman aşımına uyar"
@@ -1419,7 +1420,17 @@
           "label": "Görünüm"
         }
       },
-      "title": "Bildirimler"
+      "title": "Bildirimler",
+      "toast": {
+        "keyboard": {
+          "description": "Klavye düzeni değiştiğinde bir bildirim göster.",
+          "label": "Klavye düzeni"
+        },
+        "section": {
+          "description": "Toast görünümünü ve davranışını yapılandırın.",
+          "label": "Tost"
+        }
+      }
     },
     "osd": {
       "always-on-top": {

@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Bestand kiezen",
         "browse-library": "Bibliotheek doorbladeren",
+        "colorize-distro-logo": {
+          "description": "Pas themakleuren toe op je distributielogo.",
+          "label": "Distributielogo inkleuren"
+        },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek of een aangepast bestand.",
           "label": "Pictogram"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Gebruik het logo van je distributie in plaats van een aangepast pictogram.",
           "label": "Distributielogo gebruiken in plaats van pictogram"
-        },
-        "colorize-distro-logo": {
-          "description": "Pas themakleuren toe op je distributielogo.",
-          "label": "Distributielogo inkleuren"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Werkruimtenummers tonen",
-          "description": "Toon werkruimtenummers in de linkerbovenhoek van taakgroepen."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Nummers alleen tonen wanneer bezet",
-          "description": "Toon werkruimtenummers alleen voor werkruimten met open vensters."
+          "description": "Toon werkruimtenummers alleen voor werkruimten met open vensters.",
+          "label": "Nummers alleen tonen wanneer bezet"
+        },
+        "show-workspace-numbers": {
+          "description": "Toon werkruimtenummers in de linkerbovenhoek van taakgroepen.",
+          "label": "Werkruimtenummers tonen"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "Schrijf {filepath}. Het Hyprluna-thema moet handmatig worden geïnstalleerd en geactiveerd.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           },
-          "spicetify": {
-            "description": "Schrijf {filepath}. Het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
-          },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
             "description": "Schrijf {filepath} voor {client}. Het Hyprluna-thema moet handmatig worden geactiveerd.",
@@ -894,6 +890,10 @@
           "label": "Programma's",
           "pywalfox": {
             "description": "Schrijf {filepath} en voer pywalfox update uit.",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
+          "spicetify": {
+            "description": "Schrijf {filepath}. Het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           },
           "vicinae": {
@@ -1374,6 +1374,7 @@
           "description": "Hoe lang meldingen met normale prioriteit zichtbaar blijven.",
           "label": "Normale urgentie"
         },
+        "reset": "Timeoutduur resetten",
         "respect-expire": {
           "description": "Gebruik de vervaltijd die in de melding is ingesteld.",
           "label": "Vervaltijd respecteren"
@@ -1419,7 +1420,17 @@
           "label": "Uiterlijk"
         }
       },
-      "title": "Meldingen"
+      "title": "Meldingen",
+      "toast": {
+        "keyboard": {
+          "description": "Toon een toastmelding wanneer de toetsenbordindeling verandert.",
+          "label": "Toetsenbordindeling"
+        },
+        "section": {
+          "description": "Configureer het uiterlijk en gedrag van toasts.",
+          "label": "Toast"
+        }
+      }
     },
     "osd": {
       "always-on-top": {

@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Explorar archivo",
         "browse-library": "Explorar biblioteca",
+        "colorize-distro-logo": {
+          "description": "Aplica los colores del tema a tu logotipo de distribución.",
+          "label": "Colorear logotipo de la distribución"
+        },
         "icon": {
           "description": "Selecciona un icono de la biblioteca o un archivo personalizado.",
           "label": "Icono"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Usar el logo de tu distribución en lugar de un icono personalizado.",
           "label": "Usar logo de la distribución en lugar de icono"
-        },
-        "colorize-distro-logo": {
-          "description": "Aplica los colores del tema a tu logotipo de distribución.",
-          "label": "Colorear logotipo de la distribución"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Mostrar números de espacio de trabajo",
-          "description": "Mostrar números de espacio de trabajo en la esquina superior izquierda de los grupos de tareas."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Mostrar números solo cuando estén ocupados",
-          "description": "Mostrar números de espacio de trabajo solo para espacios de trabajo con ventanas abiertas."
+          "description": "Mostrar números de espacio de trabajo solo para espacios de trabajo con ventanas abiertas.",
+          "label": "Mostrar números solo cuando estén ocupados"
+        },
+        "show-workspace-numbers": {
+          "description": "Mostrar números de espacio de trabajo en la esquina superior izquierda de los grupos de tareas.",
+          "label": "Mostrar números de espacio de trabajo"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
             "description-missing": "Requiere que {app} esté instalado/a."
           },
-          "spicetify": {
-            "description": "Escribe {filepath}. El tema Comfy debe ser instalado y activado manualmente.",
-            "description-missing": "Requiere que {app} esté instalado/a."
-          },
           "description": "Tematización específica de aplicaciones.",
           "discord": {
             "description": "Escribir {filepath} para {client}",
@@ -895,6 +891,10 @@
           "pywalfox": {
             "description": "Escribir {filepath} y ejecutar pywalfox update",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "spicetify": {
+            "description": "Escribe {filepath}. El tema Comfy debe ser instalado y activado manualmente.",
+            "description-missing": "Requiere que {app} esté instalado/a."
           },
           "vicinae": {
             "description": "Escribir {filepath} y recargar",
@@ -1374,6 +1374,7 @@
           "description": "Cuánto tiempo permanecen visibles las notificaciones de prioridad normal.",
           "label": "Urgencia normal"
         },
+        "reset": "Restablecer la duración del tiempo de espera",
         "respect-expire": {
           "description": "Usa el tiempo de expiración establecido en la notificación.",
           "label": "Respetar tiempo de expiración"
@@ -1419,7 +1420,17 @@
           "label": "Apariencia"
         }
       },
-      "title": "Notificaciones"
+      "title": "Notificaciones",
+      "toast": {
+        "keyboard": {
+          "description": "Mostrar una notificación cuando cambie la distribución del teclado.",
+          "label": "Distribución del teclado"
+        },
+        "section": {
+          "description": "Configurar la apariencia y el comportamiento de las notificaciones toast.",
+          "label": "Tostada"
+        }
+      }
     },
     "osd": {
       "always-on-top": {

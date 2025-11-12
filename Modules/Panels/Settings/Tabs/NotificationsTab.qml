@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.System
 import qs.Widgets
 
 ColumnLayout {
@@ -139,19 +140,18 @@ ColumnLayout {
 
       RowLayout {
         spacing: Style.marginL
-	Layout.fillWidth: true
-
-
-      NValueSlider {
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.lowUrgencyDuration
-        onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
-        text: Settings.data.notifications.lowUrgencyDuration + "s"
-      }
-	// Reset button container
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.lowUrgencyDuration
+          onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
+          text: Settings.data.notifications.lowUrgencyDuration + "s"
+        }
+        // Reset button container
         Item {
           Layout.preferredWidth: 30 * Style.uiScaleRatio
           Layout.preferredHeight: 30 * Style.uiScaleRatio
@@ -166,7 +166,7 @@ ColumnLayout {
           }
         }
       }
-    }    
+    }
 
     // Normal Urgency Duration
     ColumnLayout {
@@ -180,19 +180,19 @@ ColumnLayout {
 
       RowLayout {
         spacing: Style.marginL
-	Layout.fillWidth: true
-
-      NValueSlider {
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.normalUrgencyDuration
-        onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
-        text: Settings.data.notifications.normalUrgencyDuration + "s"
-      }
-	
-	// Reset button container
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.normalUrgencyDuration
+          onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
+          text: Settings.data.notifications.normalUrgencyDuration + "s"
+        }
+
+        // Reset button container
         Item {
           Layout.preferredWidth: 30 * Style.uiScaleRatio
           Layout.preferredHeight: 30 * Style.uiScaleRatio
@@ -206,7 +206,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
           }
         }
-      }   
+      }
     }
 
     // Critical Urgency Duration
@@ -221,17 +221,17 @@ ColumnLayout {
 
       RowLayout {
         spacing: Style.marginL
-	Layout.fillWidth: true
-
-      NValueSlider {
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.criticalUrgencyDuration
-        onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
-        text: Settings.data.notifications.criticalUrgencyDuration + "s"
-      }
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.criticalUrgencyDuration
+          onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
+          text: Settings.data.notifications.criticalUrgencyDuration + "s"
+        }
         // Reset button container
         Item {
           Layout.preferredWidth: 30 * Style.uiScaleRatio
@@ -248,7 +248,7 @@ ColumnLayout {
         }
       }
     }
-    
+
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL
@@ -299,8 +299,8 @@ ColumnLayout {
     }
 
     NToggle {
-      label: I18n.tr("settings.notifications.toast.enabled.label")
-      description: I18n.tr("settings.notifications.toast.enabled.description")
+      label: I18n.tr("settings.notifications.toast.keyboard.label")
+      description: I18n.tr("settings.notifications.toast.keyboard.description")
       checked: Settings.data.notifications.enableKeyboardLayoutToast
       onToggled: checked => Settings.data.notifications.enableKeyboardLayoutToast = checked
     }

@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Navegar por Arquivo",
         "browse-library": "Navegar na Biblioteca",
+        "colorize-distro-logo": {
+          "description": "Aplicar as cores do tema ao logotipo da sua distribuição.",
+          "label": "Colorir logo da distribuição"
+        },
         "icon": {
           "description": "Selecione um ícone da biblioteca ou um arquivo personalizado.",
           "label": "Ícone"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Usar o logo da sua distribuição em vez de um ícone personalizado.",
           "label": "Usar logo da distribuição em vez de ícone"
-        },
-        "colorize-distro-logo": {
-          "description": "Aplicar as cores do tema ao logotipo da sua distribuição.",
-          "label": "Colorir logo da distribuição"
         }
       },
       "custom-button": {
@@ -283,13 +283,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Mostrar números do espaço de trabalho",
-          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Mostrar números apenas quando ocupados",
-          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas."
+          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas.",
+          "label": "Mostrar números apenas quando ocupados"
+        },
+        "show-workspace-numbers": {
+          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
+          "label": "Mostrar números do espaço de trabalho"
         }
       },
       "tray": {
@@ -878,10 +878,6 @@
             "description": "Escreva em {filepath}. O tema Hyprluna precisa ser instalado e ativado manualmente.",
             "description-missing": "Requer que o {app} esteja instalado."
           },
-          "spicetify": {
-            "description": "Escreva em {filepath}. O tema Comfy precisa ser instalado e ativado manualmente.",
-            "description-missing": "Requer que o {app} esteja instalado."
-          },
           "description": "Tematização específica de aplicativos.",
           "discord": {
             "description": "Escrever {filepath} para {client}",
@@ -895,6 +891,10 @@
           "pywalfox": {
             "description": "Escrever {filepath} e executar pywalfox update",
             "description-missing": "Requer que o {app} esteja instalado"
+          },
+          "spicetify": {
+            "description": "Escreva em {filepath}. O tema Comfy precisa ser instalado e ativado manualmente.",
+            "description-missing": "Requer que o {app} esteja instalado."
           },
           "vicinae": {
             "description": "Escrever {filepath} e recarregar",
@@ -1374,6 +1374,7 @@
           "description": "Por quanto tempo as notificações de prioridade normal permanecem visíveis.",
           "label": "Urgência normal"
         },
+        "reset": "Redefinir duração do tempo limite",
         "respect-expire": {
           "description": "Usa o tempo de expiração definido na notificação.",
           "label": "Respeitar tempo de expiração"
@@ -1419,7 +1420,17 @@
           "label": "Aparência"
         }
       },
-      "title": "Notificações"
+      "title": "Notificações",
+      "toast": {
+        "keyboard": {
+          "description": "Mostrar uma notificação quando o layout do teclado mudar.",
+          "label": "Layout do teclado"
+        },
+        "section": {
+          "description": "Configurar a aparência e o comportamento do toast.",
+          "label": "Torrada"
+        }
+      }
     },
     "osd": {
       "always-on-top": {
