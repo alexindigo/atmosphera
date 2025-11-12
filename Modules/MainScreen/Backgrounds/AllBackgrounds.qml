@@ -67,91 +67,91 @@ Item {
 
       // Audio
       PanelBackground {
-        panel: root.windowRoot.audioPanel
+        panel: root.windowRoot.audioPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Battery
       PanelBackground {
-        panel: root.windowRoot.batteryPanel
+        panel: root.windowRoot.batteryPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Bluetooth
       PanelBackground {
-        panel: root.windowRoot.bluetoothPanel
+        panel: root.windowRoot.bluetoothPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Calendar
       PanelBackground {
-        panel: root.windowRoot.calendarPanel
+        panel: root.windowRoot.calendarPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Control Center
       PanelBackground {
-        panel: root.windowRoot.controlCenterPanel
+        panel: root.windowRoot.controlCenterPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Launcher
       PanelBackground {
-        panel: root.windowRoot.launcherPanel
+        panel: root.windowRoot.launcherPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
       }
 
       // Notification History
       PanelBackground {
-        panel: root.windowRoot.notificationHistoryPanel
+        panel: root.windowRoot.notificationHistoryPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Session Menu
       PanelBackground {
-        panel: root.windowRoot.sessionMenuPanel
+        panel: root.windowRoot.sessionMenuPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Settings
       PanelBackground {
-        panel: root.windowRoot.settingsPanel
+        panel: root.windowRoot.settingsPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Setup Wizard
       PanelBackground {
-        panel: root.windowRoot.setupWizardPanel
+        panel: root.windowRoot.setupWizardPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // TrayDrawer
       PanelBackground {
-        panel: root.windowRoot.trayDrawerPanel
+        panel: root.windowRoot.trayDrawerPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // Wallpaper
       PanelBackground {
-        panel: root.windowRoot.wallpaperPanel
+        panel: root.windowRoot.wallpaperPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
 
       // WiFi
       PanelBackground {
-        panel: root.windowRoot.wifiPanel
+        panel: root.windowRoot.wifiPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: Color.mSurface
       }
