@@ -125,6 +125,7 @@ ColumnLayout {
       Layout.bottomMargin: Style.marginL
     }
 
+    // User Interface
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
@@ -165,6 +166,7 @@ ColumnLayout {
       }
     }
 
+    // Border Radius
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
