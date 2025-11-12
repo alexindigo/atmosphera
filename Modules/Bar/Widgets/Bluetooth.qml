@@ -56,7 +56,7 @@ Item {
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
     forceClose: isBarVertical || root.displayMode === "alwaysHide" || BluetoothService.connectedDevices.length === 0
     onClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
-    onRightClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
+    onRightClicked: BluetoothService.setBluetoothEnabled(!BluetoothService.enabled)
     tooltipText: {
       if (pill.text !== "") {
         return pill.text
