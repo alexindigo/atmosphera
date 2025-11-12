@@ -10,6 +10,7 @@ import Quickshell.Io
 import Quickshell.Widgets
 import qs.Commons
 import qs.Services.Hardware
+import qs.Services.Keyboard
 import qs.Services.Location
 import qs.Services.Media
 import qs.Services.Compositor
@@ -73,7 +74,7 @@ Loader {
 
           Item {
             id: keyboardLayout
-            property string currentLayout: (typeof KeyboardLayoutService !== 'undefined' && KeyboardLayoutService.currentLayout) ? KeyboardLayoutService.currentLayout : "Unknown"
+            property string currentLayout: KeyboardLayoutService.currentLayout
           }
 
           Image {
