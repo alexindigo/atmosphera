@@ -226,6 +226,25 @@ ColumnLayout {
                    }
       }
     }
+
+    NDivider {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginL
+      Layout.bottomMargin: Style.marginL
+    }
+
+    // Toast Configuration
+    NHeader {
+      label: I18n.tr("settings.notifications.toast.section.label")
+      description: I18n.tr("settings.notifications.toast.section.description")
+    }
+
+    NToggle {
+      label: I18n.tr("settings.notifications.toast.enabled.label")
+      description: I18n.tr("settings.notifications.toast.enabled.description")
+      checked: Settings.data.notifications.enableKeyboardLayoutToast
+      onToggled: checked => Settings.data.notifications.enableKeyboardLayoutToast = checked
+    }
   }
 
   NDivider {

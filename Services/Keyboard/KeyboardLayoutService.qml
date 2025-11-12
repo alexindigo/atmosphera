@@ -57,10 +57,12 @@ Singleton {
     const layoutChanged = isInitialized && currentLayout !== previousLayout && currentLayout !== I18n.tr("system.unknown-layout") && previousLayout !== "" && previousLayout !== I18n.tr("system.unknown-layout")
 
     if (layoutChanged) {
-      const message = I18n.tr("toast.keyboard-layout.changed", {
-                                "layout": currentLayout.toUpperCase()
-                              })
-      ToastService.showNotice(message, "", "", 2000)
+      if (Settings.data.notifications.enableKeyboardLayoutToast) {
+        const message = I18n.tr("toast.keyboard-layout.changed", {
+                                  "layout": currentLayout.toUpperCase()
+                                })
+        ToastService.showNotice(message, "", "", 2000)
+      }
       Logger.d("KeyboardLayout", "Layout changed from", previousLayout, "to", currentLayout)
     }
 

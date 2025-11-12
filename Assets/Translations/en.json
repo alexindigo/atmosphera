@@ -1389,6 +1389,16 @@
           "label": "Monitors display"
         }
       },
+      "toast": {
+        "section": {
+          "description": "Configure toast appearance and behavior.",
+          "label": "Toast"
+        },
+        "enabled": {
+          "description": "Show a toast when the keyboard layout changes.",
+          "label": "Keyboard layout"
+        }
+      },
       "settings": {
         "always-on-top": {
           "description": "Display notifications above fullscreen windows and other layers.",
