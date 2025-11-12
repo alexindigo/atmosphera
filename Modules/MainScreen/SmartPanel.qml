@@ -43,6 +43,9 @@ Item {
   // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
   property real edgeSnapDistance: 50
 
+  // Edge snapping: if panel is within this distance (in pixels) from a screen edge, snap
+  property bool exclusiveKeyboard: false
+
   // Track whether panel is open
   property bool isPanelOpen: false
 

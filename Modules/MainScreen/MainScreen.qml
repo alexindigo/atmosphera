@@ -63,7 +63,11 @@ PanelWindow {
     if (CompositorService.isNiri) {
       return root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     } else {
-      return root.isPanelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+      if (!root.isPanelOpen) {
+        return WlrKeyboardFocus.None
+      } else {
+        return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
+      }
     }
   }
 

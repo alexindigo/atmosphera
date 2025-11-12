@@ -19,6 +19,8 @@ SmartPanel {
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
 
+  exclusiveKeyboard: true
+
   panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
 
   // Positioning
