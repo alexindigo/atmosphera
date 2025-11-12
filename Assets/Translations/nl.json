@@ -1348,6 +1348,37 @@
       },
       "title": "Vergrendelscherm"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Stel in hoe lang de afteltimer duurt voordat energieacties worden uitgevoerd.",
+        "label": "Afteltimer duur"
+      },
+      "enable-countdown": {
+        "description": "Toon een afteltimer voordat energieacties worden uitgevoerd.",
+        "label": "Afteltimer inschakelen"
+      },
+      "position": {
+        "description": "Kies waar het Sessiemenu-paneel verschijnt wanneer het wordt geopend.",
+        "label": "Positie"
+      },
+      "show-header": {
+        "description": "Toon de titel en sluitknop bovenaan het Sessiemenu.",
+        "label": "Koptekst tonen"
+      },
+      "entries": {
+        "section": {
+          "description": "Aanpassen welke energieacties in het Sessiemenu verschijnen en in welke volgorde.",
+          "label": "Energieacties"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
+          "label": "Algemeen"
+        }
+      },
+      "title": "Sessiemenu"
+    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth inschakelen"

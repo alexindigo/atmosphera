@@ -122,6 +122,7 @@ Singleton {
     "settings-osd": "picture-in-picture",
     "settings-about": "info-square-rounded",
     "settings-lock-screen": "lock",
+    "settings-session-menu": "power",
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",
     "bt-device-headphones": "headphones",

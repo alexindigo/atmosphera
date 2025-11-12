@@ -1348,6 +1348,37 @@
       },
       "title": "Sperrbildschirm"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Legen Sie fest, wie lange der Countdown-Timer vor der Ausführung von Energieaktionen dauert.",
+        "label": "Countdown-Dauer"
+      },
+      "enable-countdown": {
+        "description": "Zeige einen Countdown-Timer vor der Ausführung von Energieaktionen.",
+        "label": "Countdown-Timer aktivieren"
+      },
+      "position": {
+        "description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Zeige den Titel und die Schließen-Schaltfläche oben im Sitzungsmenü.",
+        "label": "Kopfzeile anzeigen"
+      },
+      "entries": {
+        "section": {
+          "description": "Anpassen, welche Energieaktionen im Sitzungsmenü angezeigt werden und in welcher Reihenfolge.",
+          "label": "Energieaktionen"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
+          "label": "Allgemein"
+        }
+      },
+      "title": "Sitzungsmenü"
+    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth aktivieren"

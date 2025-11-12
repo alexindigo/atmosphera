@@ -76,6 +76,7 @@ SmartPanel {
     Network,
     Notifications,
     ScreenRecorder,
+    SessionMenu,
     UserInterface,
     Wallpaper
   }
@@ -160,6 +161,10 @@ SmartPanel {
   Component {
     id: lockScreenTab
     LockScreenTab {}
+  }
+  Component {
+    id: sessionMenuTab
+    SessionMenuTab {}
   }
 
   // Order *DOES* matter
@@ -249,6 +254,11 @@ SmartPanel {
                      "label": "settings.hooks.title",
                      "icon": "settings-hooks",
                      "source": hooksTab
+                   }, {
+                     "id": SettingsPanel.Tab.SessionMenu,
+                     "label": "settings.session-menu.title",
+                     "icon": "settings-session-menu",
+                     "source": sessionMenuTab
                    }, {
                      "id": SettingsPanel.Tab.About,
                      "label": "settings.about.title",

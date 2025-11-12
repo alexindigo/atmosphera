@@ -1351,6 +1351,37 @@
       },
       "title": "Lock screen"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Set how long the countdown timer lasts before executing power actions.",
+        "label": "Countdown duration"
+      },
+      "enable-countdown": {
+        "description": "Show a countdown timer before executing power actions.",
+        "label": "Enable countdown timer"
+      },
+      "position": {
+        "description": "Choose where the Session Menu panel appears when opened.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Display the title and close button at the top of the Session Menu.",
+        "label": "Show header"
+      },
+      "entries": {
+        "section": {
+          "description": "Customize which power actions appear in the Session Menu and in what order.",
+          "label": "Power actions"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configure the Session Menu panel behavior and appearance.",
+          "label": "General"
+        }
+      },
+      "title": "Session Menu"
+    },
     "network": {
       "bluetooth": {
         "label": "Enable Bluetooth"

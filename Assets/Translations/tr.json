@@ -1348,6 +1348,37 @@
       },
       "title": "Ekran Kilit"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Güç eylemlerini çalıştırmadan önce geri sayım zamanlayıcısının ne kadar süreceğini ayarlayın.",
+        "label": "Geri sayım süresi"
+      },
+      "enable-countdown": {
+        "description": "Güç eylemlerini çalıştırmadan önce bir geri sayım zamanlayıcısı göster.",
+        "label": "Geri sayım zamanlayıcısını etkinleştir"
+      },
+      "position": {
+        "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",
+        "label": "Konum"
+      },
+      "show-header": {
+        "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
+        "label": "Başlığı göster"
+      },
+      "entries": {
+        "section": {
+          "description": "Oturum Menüsünde hangi güç eylemlerinin görüneceğini ve hangi sırada görüneceğini özelleştirin.",
+          "label": "Güç eylemleri"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
+          "label": "Genel"
+        }
+      },
+      "title": "Oturum Menüsü"
+    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth'u Etkinleştir"

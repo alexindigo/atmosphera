@@ -1348,6 +1348,37 @@
       },
       "title": "Tela de bloqueio"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Definir por quanto tempo o temporizador de contagem regressiva dura antes de executar ações de energia.",
+        "label": "Duração da contagem regressiva"
+      },
+      "enable-countdown": {
+        "description": "Mostrar um temporizador de contagem regressiva antes de executar ações de energia.",
+        "label": "Ativar temporizador de contagem regressiva"
+      },
+      "position": {
+        "description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",
+        "label": "Posição"
+      },
+      "show-header": {
+        "description": "Exibir o título e o botão de fechar na parte superior do Menu de sessão.",
+        "label": "Mostrar cabeçalho"
+      },
+      "entries": {
+        "section": {
+          "description": "Personalizar quais ações de energia aparecem no Menu de sessão e em que ordem.",
+          "label": "Ações de energia"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",
+          "label": "Geral"
+        }
+      },
+      "title": "Menu de sessão"
+    },
     "network": {
       "bluetooth": {
         "label": "Ativar Bluetooth"

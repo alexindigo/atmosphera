@@ -339,6 +339,30 @@ Singleton {
       property bool wifiEnabled: true
     }
 
+    // session menu
+    property JsonObject sessionMenu: JsonObject {
+      property bool enableCountdown: true
+      property int countdownDuration: 10000
+      property string position: "center"
+      property bool showHeader: true
+      property list<var> powerOptions: [{
+          "action": "lock",
+          "enabled": true
+        }, {
+          "action": "suspend",
+          "enabled": true
+        }, {
+          "action": "reboot",
+          "enabled": true
+        }, {
+          "action": "logout",
+          "enabled": true
+        }, {
+          "action": "shutdown",
+          "enabled": true
+        }]
+    }
+
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true

@@ -1348,6 +1348,37 @@
       },
       "title": "Écran de verrouillage"
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Durée du compte à rebours"
+      },
+      "enable-countdown": {
+        "description": "Afficher un compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Activer le compte à rebours"
+      },
+      "position": {
+        "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
+        "label": "Afficher l'en-tête"
+      },
+      "entries": {
+        "section": {
+          "description": "Personnaliser les actions d'alimentation qui apparaissent dans le Menu de session et leur ordre.",
+          "label": "Actions d'alimentation"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
+          "label": "Général"
+        }
+      },
+      "title": "Menu de session"
+    },
     "network": {
       "bluetooth": {
         "label": "Activer le Bluetooth"
