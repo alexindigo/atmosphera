@@ -674,7 +674,7 @@ Singleton {
       // Read raw JSON file to access properties not in adapter schema
       try {
         var rawJson = settingsFileView.text()
-        
+
         if (rawJson) {
           var parsed = JSON.parse(rawJson)
           if (parsed.appLauncher && parsed.appLauncher.backgroundOpacity !== undefined) {

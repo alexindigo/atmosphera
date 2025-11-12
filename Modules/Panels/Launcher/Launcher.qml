@@ -19,8 +19,6 @@ SmartPanel {
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
 
-  exclusiveKeyboard: true
-
   // Positioning
   readonly property string panelPosition: {
     if (Settings.data.appLauncher.position === "follow_bar") {

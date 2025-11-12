@@ -12,6 +12,9 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
+  // Do not give exclusive focus to the TrayDrawer or it will prevent the dropdown menu to request it.
+  exclusiveKeyboard: false
+
   // Widget info for menu functionality
   property string widgetSection: ""
   property int widgetIndex: -1

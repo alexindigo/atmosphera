@@ -24,9 +24,8 @@ PanelWindow {
   // Reference to the SmartPanel wrapper (for keyboard handlers)
   property var panelWrapper: null
 
-  // Color properties (forwarded from SmartPanel)
-  property color panelBackgroundColor: Color.mSurface
-  property color panelBorderColor: Color.mOutline
+  // Keyboard focus
+  property bool exclusiveKeyboard: true
 
   // Track whether panel is open
   property bool isPanelOpen: false
@@ -129,17 +128,7 @@ PanelWindow {
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-panel-content-" + placeholder.panelName + "-" + (placeholder.screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
-
-  // Different compositor handle the keyboard focus differently (inc. mouse)
-  // This ensures all keyboard shortcuts work reliably (Escape, etc.)
-  // Also ensures that the launcher get proper focus on launch.
-  WlrLayershell.keyboardFocus: {
-    if (CompositorService.isNiri) {
-      return root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    } else {
-      return root.isPanelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    }
-  }
+  WlrLayershell.keyboardFocus: !root.isPanelOpen ? WlrKeyboardFocus.None : (exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand)
 
   // Anchor to all edges to make fullscreen
   anchors {

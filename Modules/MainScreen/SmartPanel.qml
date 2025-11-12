@@ -28,8 +28,6 @@ Item {
   property real preferredHeight: 900
   property real preferredWidthRatio
   property real preferredHeightRatio
-  property color panelBackgroundColor: Color.mSurface
-  property color panelBorderColor: Color.mOutline
   property var buttonItem: null
   property bool forceAttachToBar: false
 
@@ -40,6 +38,9 @@ Item {
   property bool panelAnchorBottom: false
   property bool panelAnchorLeft: false
   property bool panelAnchorRight: false
+
+  // Keyboard focus
+  property bool exclusiveKeyboard: true
 
   // Track if window has been created (for lazy loading)
   property bool windowCreated: false
@@ -190,8 +191,7 @@ Item {
       placeholder: panelPlaceholder
       panelContent: root.panelContent
       panelWrapper: root // Pass reference to SmartPanel for keyboard handlers
-      panelBackgroundColor: root.panelBackgroundColor
-      panelBorderColor: root.panelBorderColor
+      exclusiveKeyboard: root.exclusiveKeyboard
 
       // Forward signals
       onPanelOpened: root.opened()
