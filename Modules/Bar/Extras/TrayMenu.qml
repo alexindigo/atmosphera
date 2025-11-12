@@ -206,6 +206,14 @@ PopupWindow {
                 if (modelData && !modelData.isSeparator && !modelData.hasChildren) {
                   modelData.triggered()
                   root.hideMenu()
+
+                  // Close the drawer if it's open
+                  if (screen) {
+                    const panel = PanelService.getPanel("trayDrawerPanel", screen)
+                    if (panel && panel.visible) {
+                      panel.close()
+                    }
+                  }
                 }
               }
 
