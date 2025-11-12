@@ -1684,6 +1684,10 @@
           "description": "Buscar fondos de pantalla también en subcarpetas del directorio de fondos de pantalla.",
           "label": "Buscar en subcarpetas"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Oculta los nombres de archivo del fondo de pantalla en el selector.",
+          "label": "Ocultar nombres de archivo"
+        },
         "section": {
           "description": "Controla cómo se gestionan y muestran los fondos de pantalla.",
           "label": "Configuración del fondo de pantalla"

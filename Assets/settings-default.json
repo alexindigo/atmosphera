@@ -123,7 +123,8 @@
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
     "monitors": [],
-    "panelPosition": "follow_bar"
+    "panelPosition": "follow_bar",
+    "hideWallpaperFilenames": false
   },
   "appLauncher": {
     "enableClipboardHistory": false,

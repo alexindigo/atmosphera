@@ -262,6 +262,7 @@ Singleton {
       property real transitionEdgeSmoothness: 0.05
       property list<var> monitors: []
       property string panelPosition: "follow_bar"
+      property bool hideWallpaperFilenames: true
     }
 
     // applauncher

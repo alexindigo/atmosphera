@@ -1684,6 +1684,10 @@
           "description": "Auch nach Hintergrundbildern in Unterordnern des Hintergrundbild-Verzeichnisses suchen.",
           "label": "Unterordner durchsuchen"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
+          "label": "Dateinamen ausblenden"
+        },
         "section": {
           "description": "Steuern Sie, wie Hintergrundbilder verwaltet und angezeigt werden.",
           "label": "Hintergrundbild-Einstellungen"

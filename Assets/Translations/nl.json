@@ -1684,6 +1684,10 @@
           "description": "Zoek ook naar achtergronden in submappen van de achtergrondmap.",
           "label": "Submappen doorzoeken"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
+          "label": "Bestandsnamen verbergen"
+        },
         "section": {
           "description": "Bepaal hoe achtergronden worden beheerd en weergegeven.",
           "label": "Achtergrondinstellingen"

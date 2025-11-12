@@ -1684,6 +1684,10 @@
           "description": "同时在壁纸目录的子文件夹中搜索壁纸。",
           "label": "搜索子文件夹"
         },
+        "hide-wallpaper-filenames": {
+          "description": "在选择器中隐藏壁纸文件名。",
+          "label": "隐藏文件名。"
+        },
         "section": {
           "description": "控制壁纸的管理和显示方式。",
           "label": "壁纸设置"

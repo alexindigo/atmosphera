@@ -561,6 +561,7 @@ SmartPanel {
 
           NText {
             text: filename
+            visible: !Settings.data.wallpaper.hideWallpaperFilenames
             color: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             Layout.fillWidth: true

@@ -1684,6 +1684,10 @@
           "description": "Rechercher également des fonds d'écran dans les sous-dossiers du répertoire des fonds d'écran.",
           "label": "Rechercher dans les sous-dossiers"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
+          "label": "Masquer les noms de fichiers"
+        },
         "section": {
           "description": "Contrôlez comment les fonds d'écran sont gérés et affichés.",
           "label": "Paramètres du fond d'écran"

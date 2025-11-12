@@ -1687,6 +1687,10 @@
           "description": "Also search for wallpapers in subfolders of the wallpaper directory.",
           "label": "Search subfolders"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Hide wallpaper filenames in the selector.",
+          "label": "Hide filenames"
+        },
         "section": {
           "description": "Control how wallpapers are managed and displayed.",
           "label": "Wallpaper settings"
