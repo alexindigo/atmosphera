@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Mostrar información del uso del espacio en disco.",
           "label": "Uso de almacenamiento"
+        },
+        "thresholds": {
+          "header": "Configuración de Umbrales",
+          "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan."
+        },
+        "cpu-warning-threshold": {
+          "label": "Uso de CPU (Advertencia)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Uso de CPU (Crítico)"
+        },
+        "temp-warning-threshold": {
+          "label": "Temperatura de CPU (Advertencia)"
+        },
+        "temp-critical-threshold": {
+          "label": "Temperatura de CPU (Crítico)"
+        },
+        "mem-warning-threshold": {
+          "label": "Uso de memoria (Advertencia)"
+        },
+        "mem-critical-threshold": {
+          "label": "Uso de memoria (Crítico)"
+        },
+        "disk-warning-threshold": {
+          "label": "Espacio de almacenamiento (Advertencia)"
+        },
+        "disk-critical-threshold": {
+          "label": "Espacio de almacenamiento (Crítico)"
         }
       },
       "taskbar": {

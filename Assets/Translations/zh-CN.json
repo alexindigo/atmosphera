@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
+        },
+        "thresholds": {
+          "header": "阈值设置",
+          "description": "配置系统指标提示的阈值，超出阈值时将以高亮色进行提示。"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU 使用率（警告）"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU 使用率（严重）"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU 温度（警告）"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU 温度（严重）"
+        },
+        "mem-warning-threshold": {
+          "label": "内存使用率（警告）"
+        },
+        "mem-critical-threshold": {
+          "label": "内存使用率（严重）"
+        },
+        "disk-warning-threshold": {
+          "label": "存储空间（警告）"
+        },
+        "disk-critical-threshold": {
+          "label": "存储空间（严重）"
         }
       },
       "taskbar": {

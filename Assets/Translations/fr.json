@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Afficher les informations d'utilisation de l'espace disque.",
           "label": "Utilisation du stockage"
+        },
+        "thresholds": {
+          "header": "Seuils",
+          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites."
+        },
+        "cpu-warning-threshold": {
+          "label": "Utilisation CPU (Avertissement)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Utilisation CPU (Critique)"
+        },
+        "temp-warning-threshold": {
+          "label": "Température CPU (Avertissement)"
+        },
+        "temp-critical-threshold": {
+          "label": "Température CPU (Critique)"
+        },
+        "mem-warning-threshold": {
+          "label": "Utilisation mémoire (Avertissement)"
+        },
+        "mem-critical-threshold": {
+          "label": "Utilisation mémoire (Critique)"
+        },
+        "disk-warning-threshold": {
+          "label": "Espace disque (Avertissement)"
+        },
+        "disk-critical-threshold": {
+          "label": "Espace disque (Critique)"
         }
       },
       "taskbar": {

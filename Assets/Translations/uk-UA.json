@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Показувати інформацію про використання дискового простору.",
           "label": "Використання сховища"
+        },
+        "thresholds": {
+          "header": "Налаштування порогів",
+          "description": "Встановіть пороги для оповіщень системних метрик. Виділяє при перевищенні."
+        },
+        "cpu-warning-threshold": {
+          "label": "Використання ЦП (Попередження)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Використання ЦП (Критичний)"
+        },
+        "temp-warning-threshold": {
+          "label": "Температура ЦП (Попередження)"
+        },
+        "temp-critical-threshold": {
+          "label": "Температура ЦП (Критичний)"
+        },
+        "mem-warning-threshold": {
+          "label": "Використання пам'яті (Попередження)"
+        },
+        "mem-critical-threshold": {
+          "label": "Використання пам'яті (Критичний)"
+        },
+        "disk-warning-threshold": {
+          "label": "Місце на диску (Попередження)"
+        },
+        "disk-critical-threshold": {
+          "label": "Місце на диску (Критичний)"
         }
       },
       "taskbar": {

@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Mostrar informações de uso do espaço em disco.",
           "label": "Uso de armazenamento"
+        },
+        "thresholds": {
+          "header": "Configuração de Limiares",
+          "description": "Estabelece limites para alertas de métricas do sistema. Destaca quando superados."
+        },
+        "cpu-warning-threshold": {
+          "label": "Uso da CPU (Aviso)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Uso da CPU (Crítico)"
+        },
+        "temp-warning-threshold": {
+          "label": "Temperatura da CPU (Aviso)"
+        },
+        "temp-critical-threshold": {
+          "label": "Temperatura da CPU (Crítico)"
+        },
+        "mem-warning-threshold": {
+          "label": "Uso da memória (Aviso)"
+        },
+        "mem-critical-threshold": {
+          "label": "Uso da memória (Crítico)"
+        },
+        "disk-warning-threshold": {
+          "label": "Espaço de armazenamento (Aviso)"
+        },
+        "disk-critical-threshold": {
+          "label": "Espaço de armazenamento (Crítico)"
         }
       },
       "taskbar": {

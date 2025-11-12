@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Показывать информацию об использовании дискового пространства.",
           "label": "Использование хранилища"
+        },
+        "thresholds": {
+          "header": "Пороговые значения",
+          "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении."
+        },
+        "cpu-warning-threshold": {
+          "label": "Загрузка ЦП (Предупреждение)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Загрузка ЦП (Критический)"
+        },
+        "temp-warning-threshold": {
+          "label": "Температура ЦП (Предупреждение)"
+        },
+        "temp-critical-threshold": {
+          "label": "Температура ЦП (Критический)"
+        },
+        "mem-warning-threshold": {
+          "label": "Использование памяти (Предупреждение)"
+        },
+        "mem-critical-threshold": {
+          "label": "Использование памяти (Критический)"
+        },
+        "disk-warning-threshold": {
+          "label": "Место на диске (Предупреждение)"
+        },
+        "disk-critical-threshold": {
+          "label": "Место на диске (Критический)"
         }
       },
       "taskbar": {

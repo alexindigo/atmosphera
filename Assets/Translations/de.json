@@ -132,7 +132,7 @@
           "label": "Symbol"
         },
         "left-click": {
-          "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links angeklickt wird.",
+          "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche mit der linken Maustaste angeklickt wird.",
           "label": "Linksklick"
         },
         "middle-click": {
@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
           "label": "Speichernutzung"
+        },
+        "thresholds": {
+          "header": "Schwellenwerte",
+          "description": "Schwellenwerte für visuelle Indikatoren konfigurieren. Warn-/Kritik-Indikatoren erscheinen in hervorgehobenen Farben bei Überschreitung."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU-Auslastung (Warnung)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU-Auslastung (Kritisch)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU-Temperatur (Warnung)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU-Temperatur (Kritisch)"
+        },
+        "mem-warning-threshold": {
+          "label": "Speicherverbrauch (Warnung)"
+        },
+        "mem-critical-threshold": {
+          "label": "Speicherverbrauch (Kritisch)"
+        },
+        "disk-warning-threshold": {
+          "label": "Speicherplatz (Warnung)"
+        },
+        "disk-critical-threshold": {
+          "label": "Speicherplatz (Kritisch)"
         }
       },
       "taskbar": {

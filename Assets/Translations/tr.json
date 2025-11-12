@@ -262,6 +262,34 @@
         "storage-usage": {
           "description": "Disk alanı kullanım bilgilerini göster.",
           "label": "Depolama kullanımı"
+        },
+        "thresholds": {
+          "header": "Eşik Ayarları",
+          "description": "Sistem metrik eşiklerini ayarlayın. Aşıldığında vurgular."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Kullanımı (Uyarı)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Kullanımı (Kritik)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Sıcaklığı (Uyarı)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Sıcaklığı (Kritik)"
+        },
+        "mem-warning-threshold": {
+          "label": "Bellek Kullanımı (Uyarı)"
+        },
+        "mem-critical-threshold": {
+          "label": "Bellek Kullanımı (Kritik)"
+        },
+        "disk-warning-threshold": {
+          "label": "Depolama Alanı (Uyarı)"
+        },
+        "disk-critical-threshold": {
+          "label": "Depolama Alanı (Kritik)"
         }
       },
       "taskbar": {
