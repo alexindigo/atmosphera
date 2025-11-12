@@ -1579,6 +1579,10 @@
         "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
         "label": "Desktop abdunkeln"
       },
+      "panel-background-opacity": {
+        "description": "Hintergrunddeckkraft für alle Paneele festlegen (Launcher, Control Center, Einstellungen usw.).",
+        "label": "Paneel-Hintergrunddeckkraft"
+      },
       "panels-attached-to-bar": {
         "description": "Die Paneele rasten an der Stange und den Bildschirmrändern ein und sorgen so für ein nahtloses Erscheinungsbild mit stilvollen, umgekehrten Ecken.",
         "label": "Paneele an Kanten ausrichten"

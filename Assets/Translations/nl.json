@@ -1579,6 +1579,10 @@
         "description": "Dim de desktop wanneer panelen of menu's geopend zijn.",
         "label": "Desktop dimmen"
       },
+      "panel-background-opacity": {
+        "description": "Stel de achtergronddoorzichtigheid in voor alle panelen (Launcher, Control Center, Instellingen, enz.).",
+        "label": "Paneel achtergronddoorzichtigheid"
+      },
       "panels-attached-to-bar": {
         "description": "Panelen vergrendelen aan de balk en schermranden, voor een naadloze look met stijlvolle omgekeerde hoeken.",
         "label": "Panelen aan randen vastklikken"

@@ -1579,6 +1579,10 @@
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
       },
+      "panel-background-opacity": {
+        "description": "Definir a opacidade de fundo para todos os painéis (Launcher, Centro de Controle, Configurações, etc.).",
+        "label": "Opacidade de fundo do painel"
+      },
       "panels-attached-to-bar": {
         "description": "Os painéis travam na barra e nas bordas da tela, criando uma aparência perfeita com cantos invertidos elegantes.",
         "label": "Ajustar Painéis às Bordas"

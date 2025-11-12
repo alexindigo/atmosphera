@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 21
+  property int settingsVersion: 22
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -213,6 +213,7 @@ Singleton {
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
+      property real panelBackgroundOpacity: 1.0
       property bool panelsAttachedToBar: true
       property bool settingsPanelAttachToBar: false
     }
@@ -268,7 +269,6 @@ Singleton {
       property bool enableClipboardHistory: false
       // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "center"
-      property real backgroundOpacity: 1.0
       property list<string> pinnedExecs: []
       property bool useApp2Unit: false
       property bool sortByMostUsed: true
@@ -665,6 +665,29 @@ Singleton {
       adapter.templates.discord = anyDiscordEnabled
 
       Logger.i("Settings", "Migrated Discord templates to unified 'discord' property (enabled:", anyDiscordEnabled + ")")
+    }
+
+    // -----------------
+    // 6th. Migrate panel background opacity (version 21 → 22)
+    // Move appLauncher.backgroundOpacity to ui.panelBackgroundOpacity
+    if (adapter.settingsVersion < 22) {
+      // Read raw JSON file to access properties not in adapter schema
+      try {
+        var rawJson = settingsFileView.text()
+        
+        if (rawJson) {
+          var parsed = JSON.parse(rawJson)
+          if (parsed.appLauncher && parsed.appLauncher.backgroundOpacity !== undefined) {
+            var oldOpacity = parsed.appLauncher.backgroundOpacity
+            if (adapter.ui) {
+              adapter.ui.panelBackgroundOpacity = oldOpacity
+              Logger.i("Settings", "Migrated appLauncher.backgroundOpacity to ui.panelBackgroundOpacity (value:", oldOpacity + ")")
+            }
+          }
+        }
+      } catch (error) {
+        Logger.w("Settings", "Failed to read raw JSON for migration:", error)
+      }
     }
   }
 

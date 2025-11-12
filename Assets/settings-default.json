@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 21,
+  "settingsVersion": 22,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -81,6 +81,7 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
+    "panelBackgroundOpacity": 1,
     "panelsAttachedToBar": true,
     "settingsPanelAttachToBar": false
   },
@@ -127,7 +128,6 @@
   "appLauncher": {
     "enableClipboardHistory": false,
     "position": "center",
-    "backgroundOpacity": 1,
     "pinnedExecs": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,

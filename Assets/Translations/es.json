@@ -1579,6 +1579,10 @@
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
         "label": "Dim escritorio"
       },
+      "panel-background-opacity": {
+        "description": "Establecer la opacidad de fondo para todos los paneles (Launcher, Centro de control, Configuración, etc.).",
+        "label": "Opacidad de fondo del panel"
+      },
       "panels-attached-to-bar": {
         "description": "Los paneles se fijan a la barra y a los bordes de la pantalla, creando una apariencia impecable con elegantes esquinas invertidas.",
         "label": "Ajustar paneles a los bordes"

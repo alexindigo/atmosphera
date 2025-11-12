@@ -1579,6 +1579,10 @@
         "description": "Paneller veya menüler açıkken masaüstünü karart.",
         "label": "Masaüstünü karart"
       },
+      "panel-background-opacity": {
+        "description": "Tüm paneller için arka plan opaklığını ayarlayın (Launcher, Control Center, Ayarlar vb.).",
+        "label": "Panel arka plan opaklığı"
+      },
       "panels-attached-to-bar": {
         "description": "Paneller çubuğa ve ekran kenarlarına kilitlenerek şık ters köşelerle kusursuz bir görünüm oluşturur.",
         "label": "Kenarları Yakala"

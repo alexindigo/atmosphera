@@ -69,91 +69,91 @@ Item {
       PanelBackground {
         panel: root.windowRoot.audioPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Battery
       PanelBackground {
         panel: root.windowRoot.batteryPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Bluetooth
       PanelBackground {
         panel: root.windowRoot.bluetoothPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Calendar
       PanelBackground {
         panel: root.windowRoot.calendarPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Control Center
       PanelBackground {
         panel: root.windowRoot.controlCenterPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Launcher
       PanelBackground {
         panel: root.windowRoot.launcherPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Notification History
       PanelBackground {
         panel: root.windowRoot.notificationHistoryPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Session Menu
       PanelBackground {
         panel: root.windowRoot.sessionMenuPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Settings
       PanelBackground {
         panel: root.windowRoot.settingsPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Setup Wizard
       PanelBackground {
         panel: root.windowRoot.setupWizardPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // TrayDrawer
       PanelBackground {
         panel: root.windowRoot.trayDrawerPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // Wallpaper
       PanelBackground {
         panel: root.windowRoot.wallpaperPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
 
       // WiFi
       PanelBackground {
         panel: root.windowRoot.wifiPanel
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       }
     }
 

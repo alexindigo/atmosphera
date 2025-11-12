@@ -1579,6 +1579,10 @@
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
         "label": "Dim bureau"
       },
+      "panel-background-opacity": {
+        "description": "Définir l'opacité de fond pour tous les panneaux (Lanceur, Centre de contrôle, Paramètres, etc.).",
+        "label": "Opacité de fond des panneaux"
+      },
       "panels-attached-to-bar": {
         "description": "Les panneaux se verrouillent sur la barre et les bords de l'écran, créant un aspect homogène avec d'élégants coins inversés.",
         "label": "Aligner les panneaux aux bords"

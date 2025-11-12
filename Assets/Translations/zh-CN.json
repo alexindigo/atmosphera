@@ -1579,6 +1579,10 @@
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
       },
+      "panel-background-opacity": {
+        "description": "设置所有面板的背景不透明度（启动器、控制中心、设置等）。",
+        "label": "面板背景不透明度"
+      },
       "panels-attached-to-bar": {
         "description": "面板锁定到边栏和屏幕边缘，形成无缝外观，并具有时尚的倒角。",
         "label": "将面板对齐到边缘"

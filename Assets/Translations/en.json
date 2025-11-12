@@ -1582,6 +1582,10 @@
         "description": "Dim the desktop when panels or menus are open.",
         "label": "Dim desktop"
       },
+      "panel-background-opacity": {
+        "description": "Set the background opacity for all panels (Launcher, Control Center, Settings, etc.).",
+        "label": "Panel background opacity"
+      },
       "panels-attached-to-bar": {
         "description": "Panels lock to the bar and screen edges, creating a seamless look with stylish inverted corners.",
         "label": "Snap panels to edges"
