@@ -1440,6 +1440,10 @@
         "description": "OSD'yi tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",
         "label": "Her zaman üstte"
       },
+      "background-opacity": {
+        "description": "OSD arka planının şeffaflığını kontrol eder.",
+        "label": "Arka plan opaklığı"
+      },
       "description": "Ses ve parlaklık kaplamaları gibi ekran göstergelerini yapılandırın.",
       "duration": {
         "auto-hide": {

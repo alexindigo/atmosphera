@@ -250,7 +250,8 @@
     "location": "top_right",
     "monitors": [],
     "autoHideMs": 2000,
-    "overlayLayer": true
+    "overlayLayer": true,
+    "backgroundOpacity": 1
   },
   "audio": {
     "volumeStep": 5,

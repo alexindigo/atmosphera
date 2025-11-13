@@ -1440,6 +1440,10 @@
         "description": "Display OSD above fullscreen windows and other layers.",
         "label": "Always on top"
       },
+      "background-opacity": {
+        "description": "Controls the transparency of the OSD background.",
+        "label": "Background opacity"
+      },
       "description": "Configure on-screen indicators such as volume and brightness overlays.",
       "duration": {
         "auto-hide": {

@@ -11,15 +11,15 @@ ColumnLayout {
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
-    const arr = (list || []).slice()
+    const arr = (list || []).slice();
     if (!arr.includes(name))
-      arr.push(name)
-    return arr
+      arr.push(name);
+    return arr;
   }
   function removeMonitor(list, name) {
     return (list || []).filter(function (n) {
-      return n !== name
-    })
+      return n !== name;
+    });
   }
 
   // Display
@@ -30,31 +30,40 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.osd.location.label")
       description: I18n.tr("settings.osd.location.description")
-      model: [{
+      model: [
+        {
           "key": "top",
           "name": I18n.tr("options.osd.position.top_center")
-        }, {
+        },
+        {
           "key": "top_left",
           "name": I18n.tr("options.osd.position.top_left")
-        }, {
+        },
+        {
           "key": "top_right",
           "name": I18n.tr("options.osd.position.top_right")
-        }, {
+        },
+        {
           "key": "bottom",
           "name": I18n.tr("options.osd.position.bottom_center")
-        }, {
+        },
+        {
           "key": "bottom_left",
           "name": I18n.tr("options.osd.position.bottom_left")
-        }, {
+        },
+        {
           "key": "bottom_right",
           "name": I18n.tr("options.osd.position.bottom_right")
-        }, {
+        },
+        {
           "key": "left",
           "name": I18n.tr("options.osd.position.center_left")
-        }, {
+        },
+        {
           "key": "right",
           "name": I18n.tr("options.osd.position.center_right")
-        }]
+        }
+      ]
       currentKey: Settings.data.osd.location || "top_right"
       onSelected: key => Settings.data.osd.location = key
     }
@@ -88,6 +97,21 @@ ColumnLayout {
       description: I18n.tr("settings.osd.always-on-top.description")
       checked: Settings.data.osd.overlayLayer
       onToggled: checked => Settings.data.osd.overlayLayer = checked
+    }
+
+    NLabel {
+      label: I18n.tr("settings.osd.background-opacity.label", "Background opacity")
+      description: I18n.tr("settings.osd.background-opacity.description", "Controls the transparency of the OSD background.")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 100
+      stepSize: 1
+      value: Settings.data.osd.backgroundOpacity * 100
+      onMoved: value => Settings.data.osd.backgroundOpacity = value / 100
+      text: Math.round(Settings.data.osd.backgroundOpacity * 100) + "%"
     }
 
     NLabel {
@@ -128,22 +152,22 @@ ColumnLayout {
         Layout.fillWidth: true
         label: modelData.name || I18n.tr("system.unknown")
         description: {
-          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          const compositorScale = CompositorService.getDisplayScale(modelData.name);
           I18n.tr("system.monitor-description", {
-                    "model": modelData.model,
-                    "width": modelData.width * compositorScale,
-                    "height": modelData.height * compositorScale,
-                    "scale": compositorScale
-                  })
+            "model": modelData.model,
+            "width": modelData.width * compositorScale,
+            "height": modelData.height * compositorScale,
+            "scale": compositorScale
+          });
         }
         checked: (Settings.data.osd.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
-                     if (checked) {
-                       Settings.data.osd.monitors = addMonitor(Settings.data.osd.monitors, modelData.name)
-                     } else {
-                       Settings.data.osd.monitors = removeMonitor(Settings.data.osd.monitors, modelData.name)
-                     }
-                   }
+          if (checked) {
+            Settings.data.osd.monitors = addMonitor(Settings.data.osd.monitors, modelData.name);
+          } else {
+            Settings.data.osd.monitors = removeMonitor(Settings.data.osd.monitors, modelData.name);
+          }
+        }
       }
     }
   }

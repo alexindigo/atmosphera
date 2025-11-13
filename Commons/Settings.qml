@@ -385,6 +385,7 @@ Singleton {
       property list<string> monitors: []
       property int autoHideMs: 2000
       property bool overlayLayer: true
+      property real backgroundOpacity: 1.0
     }
 
     // audio
