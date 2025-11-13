@@ -42,6 +42,7 @@ Singleton {
     "powersaver": "leaf",
     "storage": "database",
     "ethernet": "sitemap",
+    "ethernet-off": "sitemap-off",
     "keyboard": "keyboard",
     "shutdown": "power",
     "lock": "lock",

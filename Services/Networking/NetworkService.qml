@@ -304,29 +304,29 @@ Singleton {
     id: connectivityCheckProcess
     running: false
     command: ["nmcli", "networking", "connectivity", "check"]
-    
+
     property int failedChecks: 0
-    
+
     stdout: StdioCollector {
       onStreamFinished: {
         const result = text.trim()
         if (!result) {
           return
         }
- 
+
         if (result === "none" && root.networkConnectivity !== result) {
           root.networkConnectivity = result
           connectivityCheckProcess.failedChecks = 0
           root.scan()
         }
-          
+
         if (result === "full" && root.networkConnectivity !== result) {
           root.networkConnectivity = result
           root.internetConnectivity = true
           connectivityCheckProcess.failedChecks = 0
           root.scan()
         }
-          
+
         if ((result === "limited" || result === "portal") && root.networkConnectivity !== result) {
           connectivityCheckProcess.failedChecks++
           if (connectivityCheckProcess.failedChecks === 3) {
@@ -334,7 +334,7 @@ Singleton {
             pingCheckProcess.running = true
           }
         }
-        
+
         if (result === "unknown" && root.networkConnectivity !== result) {
           root.networkConnectivity = result
           connectivityCheckProcess.failedChecks = 0
@@ -350,14 +350,10 @@ Singleton {
       }
     }
   }
-  
+
   Process {
     id: pingCheckProcess
-    command: ["sh", "-c", 
-      "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " +
-      "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " +
-      "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"
-    ]
+    command: ["sh", "-c", "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " + "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " + "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"]
 
     onExited: (exitCode, exitStatus) => {
       if (exitCode === 0) {

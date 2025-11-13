@@ -11,7 +11,7 @@ NIconButtonHot {
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
-        return "ethernet"
+        return NetworkService.internetConnectivity ? "ethernet" : "ethernet-off"
       }
       let connected = false
       let signalStrength = 0
@@ -25,7 +25,7 @@ NIconButtonHot {
       return connected ? NetworkService.signalIcon(signalStrength, true) : "wifi-off"
     } catch (error) {
       Logger.e("Wi-Fi", "Error getting icon:", error)
-      return "signal_wifi_bad"
+      return "wifi-off"
     }
   }
 
