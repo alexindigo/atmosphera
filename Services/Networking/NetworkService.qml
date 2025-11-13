@@ -18,6 +18,8 @@ Singleton {
   property bool ethernetConnected: false
   property string disconnectingFrom: ""
   property string forgettingNetwork: ""
+  property string networkConnectivity: "unknown"
+  property bool internetConnectivity: true
   property bool ignoreScanResults: false
   property bool scanPending: false
 
@@ -96,6 +98,16 @@ Singleton {
     running: true
     repeat: true
     onTriggered: ethernetStateProcess.running = true
+  }
+
+  // Internet connectivity check timer
+  // Always running every 15s
+  Timer {
+    id: connectivityCheckTimer
+    interval: 15000
+    running: true
+    repeat: true
+    onTriggered: connectivityCheckProcess.running = true
   }
 
   // Core functions
@@ -211,6 +223,8 @@ Singleton {
 
   // Helper functions
   function signalIcon(signal, isConnected = false) {
+    if (isConnected && !root.internetConnectivity)
+      return "world-off"
     if (signal >= 80)
       return "wifi"
     if (signal >= 50)
@@ -282,6 +296,79 @@ Singleton {
           Logger.w("Network", "Error changing Wi-Fi state: " + text)
         }
       }
+    }
+  }
+
+  // Process to check the internet connectivity of the connected network
+  Process {
+    id: connectivityCheckProcess
+    running: false
+    command: ["nmcli", "networking", "connectivity", "check"]
+    
+    property int failedChecks: 0
+    
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const result = text.trim()
+        if (!result) {
+          return
+        }
+ 
+        if (result === "none" && root.networkConnectivity !== result) {
+          root.networkConnectivity = result
+          connectivityCheckProcess.failedChecks = 0
+          root.scan()
+        }
+          
+        if (result === "full" && root.networkConnectivity !== result) {
+          root.networkConnectivity = result
+          root.internetConnectivity = true
+          connectivityCheckProcess.failedChecks = 0
+          root.scan()
+        }
+          
+        if ((result === "limited" || result === "portal") && root.networkConnectivity !== result) {
+          connectivityCheckProcess.failedChecks++
+          if (connectivityCheckProcess.failedChecks === 3) {
+            root.networkConnectivity = result
+            pingCheckProcess.running = true
+          }
+        }
+        
+        if (result === "unknown" && root.networkConnectivity !== result) {
+          root.networkConnectivity = result
+          connectivityCheckProcess.failedChecks = 0
+        }
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.w("Network", "Connectivity check error: " + text)
+        }
+      }
+    }
+  }
+  
+  Process {
+    id: pingCheckProcess
+    command: ["sh", "-c", 
+      "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " +
+      "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " +
+      "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"
+    ]
+
+    onExited: (exitCode, exitStatus) => {
+      if (exitCode === 0) {
+        connectivityCheckProcess.failedChecks = 0
+      } else {
+        root.internetConnectivity = false
+        Logger.i("Network", "No internet connectivity")
+        ToastService.showWarning(root.cachedLastConnected, I18n.tr("toast.internet.limited"))
+        connectivityCheckProcess.failedChecks = 0
+      }
+      root.scan()
     }
   }
 
