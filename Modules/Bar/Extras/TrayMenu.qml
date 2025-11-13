@@ -45,12 +45,18 @@ PopupWindow {
   implicitWidth: menuWidth
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
+  implicitHeight: Math.min(screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
   anchor.rect.x: anchorX
-  anchor.rect.y: anchorY - (isSubMenu ? 0 : 4)
+  anchor.rect.y: {
+    if (isSubMenu) {
+      const offsetY = Settings.data.bar.position === "bottom" ? -10 : 10
+      return anchorY + offsetY
+    }
+    return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight
+  }
 
   function showAt(item, x, y) {
     if (!item) {
@@ -234,7 +240,7 @@ PopupWindow {
                                  } else if (barPosition === "left") {
                                    openLeft = false
                                  } else {
-                                   openLeft = false
+                                   openLeft = (root.widgetSection === "right")
                                  }
 
                                  // Open new submenu

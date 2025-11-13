@@ -262,6 +262,7 @@ Rectangle {
       onRightClicked: toggleDrawer(this)
     }
 
+    // Pinned items
     Repeater {
       id: repeater
       model: root.filteredItems
@@ -327,12 +328,12 @@ Rectangle {
                              modelData.activate()
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
-
-                           // Close any open menu first
-
-                           // TODO RESTORE LATER
-                           //  trayMenuWindow.close()
-                           //  modelData.secondaryActivate && modelData.secondaryActivate()
+                           // Close the menu if it was visible
+                           if (trayMenuWindow && trayMenuWindow.visible) {
+                             trayMenuWindow.close()
+                             return
+                           }
+                           modelData.secondaryActivate && modelData.secondaryActivate()
                          } else if (mouse.button === Qt.RightButton) {
                            TooltipService.hideImmediately()
 
@@ -364,7 +365,7 @@ Rectangle {
                              } else {
                                // For horizontal bars: center horizontally and position below
                                menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = Style.barHeight
+                               menuY = (barPosition === "top") ? Style.barHeight : -Style.barHeight
                              }
                              trayMenu.item.trayItem = modelData
                              trayMenu.item.widgetSection = root.section
