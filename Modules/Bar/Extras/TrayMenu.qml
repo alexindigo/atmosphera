@@ -40,17 +40,23 @@ PopupWindow {
     return false
   }
 
-  readonly property int menuWidth: 180
+  readonly property int menuWidth: 220
 
   implicitWidth: menuWidth
 
   // Use the content height of the Flickable for implicit height
-  implicitHeight: Math.min(screen ? screen.height * 0.9 : Screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
+  implicitHeight: Math.min(screen.height * 0.9, flickable.contentHeight + (Style.marginS * 2))
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
   anchor.rect.x: anchorX
-  anchor.rect.y: anchorY - (isSubMenu ? 0 : 4)
+  anchor.rect.y: {
+    if (isSubMenu) {
+      const offsetY = Settings.data.bar.position === "bottom" ? -10 : 10
+      return anchorY + offsetY
+    }
+    return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight
+  }
 
   function showAt(item, x, y) {
     if (!item) {
@@ -157,6 +163,7 @@ PopupWindow {
           }
 
           Rectangle {
+            id: innerRect
             anchors.fill: parent
             color: mouseArea.containsMouse ? Color.mTertiary : Color.transparent
             radius: Style.radiusS
@@ -201,102 +208,75 @@ PopupWindow {
               anchors.fill: parent
               hoverEnabled: true
               enabled: (modelData?.enabled ?? true) && !(modelData?.isSeparator ?? false) && root.visible
+              acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-              onClicked: {
-                if (modelData && !modelData.isSeparator && !modelData.hasChildren) {
-                  modelData.triggered()
-                  root.hideMenu()
-
-                  // Close the drawer if it's open
-                  if (screen) {
-                    const panel = PanelService.getPanel("trayDrawerPanel", screen)
-                    if (panel && panel.visible) {
-                      panel.close()
-                    }
-                  }
-                }
-              }
-
-              onEntered: {
-                if (!root.visible)
-                  return
-
-                // Close all sibling submenus
-                for (var i = 0; i < columnLayout.children.length; i++) {
-                  const sibling = columnLayout.children[i]
-                  if (sibling !== entry && sibling?.subMenu) {
-                    sibling.subMenu.hideMenu()
-                    sibling.subMenu.destroy()
-                    sibling.subMenu = null
-                  }
-                }
-
-                // Create submenu if needed
-                if (modelData?.hasChildren) {
-                  if (entry.subMenu) {
-                    entry.subMenu.hideMenu()
-                    entry.subMenu.destroy()
-                  }
-
-                  // Need a slight overlap so that menu don't close when moving the mouse to a submenu
-                  const submenuWidth = menuWidth // Assuming a similar width as the parent
-                  const overlap = 4 // A small overlap to bridge the mouse path
-
-                  // Determine submenu opening direction based on bar position and available space
-                  let openLeft = false
-
-                  // Check bar position first
-                  const barPosition = Settings.data.bar.position
-                  const globalPos = entry.mapToItem(null, 0, 0)
-
-                  if (barPosition === "right") {
-                    // Bar is on the right, prefer opening submenus to the left
-                    openLeft = true
-                  } else if (barPosition === "left") {
-                    // Bar is on the left, prefer opening submenus to the right
-                    openLeft = false
-                  } else {
-                    // Bar is horizontal (top/bottom) or undefined, use space-based logic
-                    openLeft = (globalPos.x + entry.width + submenuWidth > screen.width)
-
-                    // Secondary check: ensure we don't open off-screen
-                    if (openLeft && globalPos.x - submenuWidth < 0) {
-                      // Would open off the left edge, force right opening
-                      openLeft = false
-                    } else if (!openLeft && globalPos.x + entry.width + submenuWidth > screen.width) {
-                      // Would open off the right edge, force left opening
-                      openLeft = true
-                    }
-                  }
-
-                  // Position with overlap
-                  const anchorX = openLeft ? -submenuWidth + overlap : entry.width - overlap
-
-                  // Create submenu
-                  entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
-                                                                                    "menu": modelData,
-                                                                                    "anchorItem": entry,
-                                                                                    "anchorX": anchorX,
-                                                                                    "anchorY": 0,
-                                                                                    "isSubMenu": true,
-                                                                                    "screen": screen
-                                                                                  })
-
-                  if (entry.subMenu) {
-                    entry.subMenu.showAt(entry, anchorX, 0)
-                  }
-                }
-              }
-
-              onExited: {
-                Qt.callLater(() => {
-                               if (entry.subMenu && !entry.subMenu.isHovered) {
+              onClicked: mouse => {
+                           if (modelData && !modelData.isSeparator) {
+                             if (modelData.hasChildren) {
+                               // Click on items with children toggles submenu
+                               if (entry.subMenu) {
+                                 // Close existing submenu
                                  entry.subMenu.hideMenu()
                                  entry.subMenu.destroy()
                                  entry.subMenu = null
+                               } else {
+                                 // Close any other open submenus first
+                                 for (var i = 0; i < columnLayout.children.length; i++) {
+                                   const sibling = columnLayout.children[i]
+                                   if (sibling !== entry && sibling.subMenu) {
+                                     sibling.subMenu.hideMenu()
+                                     sibling.subMenu.destroy()
+                                     sibling.subMenu = null
+                                   }
+                                 }
+
+                                 // Determine submenu opening direction
+                                 let openLeft = false
+                                 const barPosition = Settings.data.bar.position
+                                 const globalPos = entry.mapToItem(null, 0, 0)
+
+                                 if (barPosition === "right") {
+                                   openLeft = true
+                                 } else if (barPosition === "left") {
+                                   openLeft = false
+                                 } else {
+                                   openLeft = (root.widgetSection === "right")
+                                 }
+
+                                 // Open new submenu
+                                 entry.subMenu = Qt.createComponent("TrayMenu.qml").createObject(root, {
+                                                                                                   "menu": modelData,
+                                                                                                   "isSubMenu": true,
+                                                                                                   "screen": root.screen
+                                                                                                 })
+
+                                 if (entry.subMenu) {
+                                   const overlap = 60
+                                   entry.subMenu.anchorItem = entry
+                                   entry.subMenu.anchorX = openLeft ? -overlap : overlap
+                                   entry.subMenu.anchorY = 0
+                                   entry.subMenu.visible = true
+                                   // Force anchor update with new position
+                                   Qt.callLater(() => {
+                                                  entry.subMenu.anchor.updateAnchor()
+                                                })
+                                 }
                                }
-                             })
-              }
+                             } else {
+                               // Click on regular items triggers them
+                               modelData.triggered()
+                               root.hideMenu()
+
+                               // Close the drawer if it's open
+                               if (root.screen) {
+                                 const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
+                                 if (panel && panel.visible) {
+                                   panel.close()
+                                 }
+                               }
+                             }
+                           }
+                         }
             }
           }
 
