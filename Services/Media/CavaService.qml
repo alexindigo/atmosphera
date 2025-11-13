@@ -16,7 +16,7 @@ Singleton {
    *   - LockScreen is opened
    *   - A control center is open
    */
-  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
+  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.panelWrapper.objectName.startsWith("controlCenterPanel"))
 
   property var values: Array(barsCount).fill(0)
   property int barsCount: 32
