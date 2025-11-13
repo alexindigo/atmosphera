@@ -28,6 +28,7 @@ Item {
   property string currentLayout: ""
   property string currentLayoutSymbol: ""
   property string currentKeyboardLayout: ""
+  property string selectedMonitor: ""
 
   // Constants
   readonly property var mmsgCommands: ({
@@ -281,6 +282,36 @@ Item {
     }
   }
 
+  Process {
+    id: monitorStateProcess
+    running: false
+    command: ["mmsg", "-g"]
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        try {
+          const parts = line.trim().split(/\s+/)
+          if (parts.length >= 3 && parts[1] === "selmon") {
+            const outputName = parts[0]
+            const isSelected = parts[2] === "1"
+            if (isSelected) {
+              selectedMonitor = outputName
+              Logger.d("MangoService", `Initial selected monitor: ${outputName}`)
+            }
+          }
+        } catch (e) {
+          Logger.e("MangoService", "Monitor state parsing error:", e, line)
+        }
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("MangoService", "Monitor state query failed:", exitCode)
+      }
+    }
+  }
+
   // Initialization
   function initialize() {
     if (initialized) {
@@ -291,6 +322,8 @@ Item {
     try {
       Logger.i("MangoService", "Initializing MangoWC service...")
       
+      // Query monitor state first to establish selected monitor before parsing windows
+      queryMonitorState()
       eventStream.running = true
       queryWorkspaces()
       queryWindows()
@@ -435,13 +468,18 @@ Item {
 
     for (const [outputName, data] of Object.entries(windowData)) {
       if (data.title || data.appId) {
+        // Windows from mmsg -g -c are already the focused windows for their respective outputs
+        // A window is focused if it's from the currently selected monitor
+        // If selectedMonitor is not yet set, assume first window is focused (fallback)
+        const isFocused = selectedMonitor ? (outputName === selectedMonitor) : (windowsList.length === 0)
+        
         const windowInfo = {
           id: outputName,
           title: data.title || "",
           appId: data.appId || "",
           class: data.appId || "",
           workspaceId: getCurrentActiveTagId(),
-          isFocused: false,
+          isFocused: isFocused,
           output: outputName,
           fullscreen: data.fullscreen || false,
           floating: data.floating || false,
@@ -459,16 +497,11 @@ Item {
 
         windowsList.push(windowInfo)
         newWindowCache[outputName] = windowInfo
-      }
-    }
-
-    for (let i = 0; i < windowsList.length; i++) {
-      const window = windowsList[i]
-      const outputData = monitorCache[window.output]
-      if (outputData && outputData.focused) {
-        window.isFocused = true
-        newFocusedIndex = i
-        break
+        
+        if (isFocused) {
+          newFocusedIndex = windowsList.length - 1
+          Logger.d("MangoService", `Focused window detected: ${data.title} on ${outputName}`)
+        }
       }
     }
 
@@ -530,6 +563,17 @@ Item {
     const eventType = parts[1]
 
     switch (eventType) {
+      case "selmon":
+        if (parts.length >= 3) {
+          const monitorName = parts[0]
+          const isSelected = parts[2] === "1"
+          if (isSelected) {
+            selectedMonitor = monitorName
+            Logger.d("MangoService", `Selected monitor changed to: ${monitorName}`)
+          }
+        }
+        updateTimer.restart()
+        break
       case "tag":
       case "title":
       case "appid":
@@ -540,7 +584,6 @@ Item {
       case "scale_factor":
       case "monitor":
       case "client":
-      case "selmon":
         updateTimer.restart()
         break
     }
@@ -567,11 +610,16 @@ Item {
     outputsProcess.running = true
   }
 
+  function queryMonitorState() {
+    monitorStateProcess.running = true
+  }
+
   // Utilities
   function safeUpdate() {
     try {
       queryWorkspaces()
       queryWindows()
+      queryMonitorState()
     } catch (e) {
       Logger.e("MangoService", "Safe update failed:", e)
     }
