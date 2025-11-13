@@ -653,6 +653,7 @@
     "reboot": "重启",
     "shutdown": "关机",
     "suspend": "挂起",
+    "hibernate": "休眠",
     "title": "会话菜单"
   },
   "settings": {

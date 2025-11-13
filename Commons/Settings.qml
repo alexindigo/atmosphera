@@ -353,6 +353,9 @@ Singleton {
           "action": "suspend",
           "enabled": true
         }, {
+          "action": "hibernate",
+          "enabled": true
+        }, {
           "action": "reboot",
           "enabled": true
         }, {

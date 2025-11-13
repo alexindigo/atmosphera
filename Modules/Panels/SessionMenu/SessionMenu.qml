@@ -65,6 +65,11 @@ SmartPanel {
       "title": I18n.tr("session-menu.suspend"),
       "isShutdown": false
     },
+    "hibernate": {
+      "icon": "hibernate",
+      "title": I18n.tr("session-menu.hibernate"),
+      "isShutdown": false
+    },
     "reboot": {
       "icon": "reboot",
       "title": I18n.tr("session-menu.reboot"),
@@ -158,6 +163,9 @@ SmartPanel {
       } else {
         CompositorService.suspend()
       }
+      break
+    case "hibernate":
+      CompositorService.hibernate()
       break
     case "reboot":
       CompositorService.reboot()

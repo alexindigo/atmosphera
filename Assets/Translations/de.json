@@ -652,7 +652,8 @@
     "logout": "Abmelden",
     "reboot": "Neu starten",
     "shutdown": "Herunterfahren",
-    "suspend": "Ruhezustand",
+    "suspend": "Energiesparmodus",
+    "hibernate": "Ruhezustand",
     "title": "Sitzungsmenü"
   },
   "settings": {

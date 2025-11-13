@@ -653,6 +653,7 @@
     "reboot": "Redémarrer",
     "shutdown": "Éteindre",
     "suspend": "Mettre en veille",
+    "hibernate": "Mise en veille prolongée",
     "title": "Menu de session"
   },
   "settings": {

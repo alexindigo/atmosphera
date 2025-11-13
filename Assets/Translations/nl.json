@@ -653,6 +653,7 @@
     "reboot": "Opnieuw opstarten",
     "shutdown": "Uitschakelen",
     "suspend": "Onderbreken",
+    "hibernate": "Slaperstand",
     "title": "Sessie-menu"
   },
   "settings": {

@@ -23,6 +23,11 @@ ColumnLayout {
       "enabled": true,
       "required": false
     }, {
+      "id": "hibernate",
+      "text": I18n.tr("session-menu.hibernate"),
+      "enabled": true,
+      "required": false
+    }, {
       "id": "reboot",
       "text": I18n.tr("session-menu.reboot"),
       "enabled": true,
