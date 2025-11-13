@@ -1567,6 +1567,15 @@
       },
       "title": "Sitzungsmenü"
     },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Konfigurieren Sie das Verhalten und Aussehen des Systemmonitors.",
+          "label": "Allgemein"
+        }
+      },
+      "title": "Systemmonitor"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",

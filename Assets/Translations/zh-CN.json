@@ -1474,7 +1474,6 @@
           "description": "配置屏显菜单（OSD）的可见性与行为。",
           "label": "常规"
         }
-
       },
       "title": "屏显菜单"
     },
@@ -1567,6 +1566,15 @@
         "label": "显示标题"
       },
       "title": "会话菜单"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "配置系统监视器的行为和外观。",
+          "label": "通用"
+        }
+      },
+      "title": "系统监视器"
     },
     "user-interface": {
       "animation-disable": {

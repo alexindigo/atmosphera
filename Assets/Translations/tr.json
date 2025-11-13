@@ -1567,6 +1567,15 @@
       },
       "title": "Oturum Menüsü"
     },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Sistem İzleyicisinin davranışını ve görünümünü yapılandırın.",
+          "label": "Genel"
+        }
+      },
+      "title": "Sistem İzleme"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Daha hızlı ve daha duyarlı bir deneyim için tüm animasyonları devre dışı bırakın.",

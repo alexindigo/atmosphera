@@ -1567,6 +1567,15 @@
       },
       "title": "Menu de sessão"
     },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configure o comportamento e a aparência do Monitor do Sistema.",
+          "label": "Geral"
+        }
+      },
+      "title": "Monitor do Sistema"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",

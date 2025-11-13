@@ -1567,6 +1567,15 @@
       },
       "title": "Sessiemenu"
     },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configureer het gedrag en de weergave van de Systeemmonitor.",
+          "label": "Algemeen"
+        }
+      },
+      "title": "Systeemmonitor"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Schakel alle animaties uit voor een snellere, responsievere ervaring.",

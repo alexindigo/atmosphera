@@ -123,6 +123,7 @@ Singleton {
     "settings-about": "info-square-rounded",
     "settings-lock-screen": "lock",
     "settings-session-menu": "power",
+    "settings-system-monitor": "activity",
     "bluetooth": "bluetooth",
     "bt-device-generic": "bluetooth",
     "bt-device-headphones": "headphones",

@@ -77,6 +77,7 @@ SmartPanel {
     Notifications,
     ScreenRecorder,
     SessionMenu,
+    SystemMonitor,
     UserInterface,
     Wallpaper
   }
@@ -166,6 +167,10 @@ SmartPanel {
     id: sessionMenuTab
     SessionMenuTab {}
   }
+  Component {
+    id: systemMonitorTab
+    SystemMonitorTab {}
+  }
 
   // Order *DOES* matter
   function updateTabsModel() {
@@ -250,15 +255,21 @@ SmartPanel {
                      "icon": "settings-screen-recorder",
                      "source": screenRecorderTab
                    }, {
-                     "id": SettingsPanel.Tab.Hooks,
-                     "label": "settings.hooks.title",
-                     "icon": "settings-hooks",
-                     "source": hooksTab
-                   }, {
                      "id": SettingsPanel.Tab.SessionMenu,
                      "label": "settings.session-menu.title",
                      "icon": "settings-session-menu",
                      "source": sessionMenuTab
+                   }, //  {
+                   //    "id": SettingsPanel.Tab.SystemMonitor,
+                   //    "label": "settings.system-monitor.title",
+                   //    "icon": "settings-system-monitor",
+                   //    "source": systemMonitorTab
+                   //  },
+                   {
+                     "id": SettingsPanel.Tab.Hooks,
+                     "label": "settings.hooks.title",
+                     "icon": "settings-hooks",
+                     "source": hooksTab
                    }, {
                      "id": SettingsPanel.Tab.About,
                      "label": "settings.about.title",

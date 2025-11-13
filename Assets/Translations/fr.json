@@ -1567,6 +1567,15 @@
       },
       "title": "Menu de session"
     },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du Moniteur Système.",
+          "label": "Général"
+        }
+      },
+      "title": "Moniteur système"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
