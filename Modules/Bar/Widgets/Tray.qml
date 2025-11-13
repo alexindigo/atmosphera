@@ -343,10 +343,9 @@ Rectangle {
                              return
                            }
 
-                           // Close the drawer if it's open (when opening menu for pinned item)
-                           const drawerPanel = PanelService.getPanel("trayDrawerPanel", screen)
-                           if (drawerPanel && drawerPanel.visible) {
-                             drawerPanel.close()
+                           // Close any opened panel
+                           if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                             PanelService.openedPanel.close()
                            }
 
                            if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
