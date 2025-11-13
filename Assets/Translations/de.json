@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links angeklickt wird.",
-          "label": "Linksklick"
+          "label": "Linksklick",
+          "update-text": "Text auf Linksklick aktualisieren"
         },
         "middle-click": {
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche mit der mittleren Maustaste angeklickt wird.",
-          "label": "Mittelklick"
+          "label": "Mittelklick",
+          "update-text": "Text auf Mittelklick aktualisieren"
         },
         "parse-json": {
           "description": "Die Befehlsausgabe als JSON-Objekt parsen, um Text und Symbol dynamisch festzulegen.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche rechts angeklickt wird.",
-          "label": "Rechtsklick"
+          "label": "Rechtsklick",
+          "update-text": "Text beim Rechtsklick aktualisieren"
         },
         "text-stream": {
           "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
@@ -1348,37 +1351,6 @@
       },
       "title": "Sperrbildschirm"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Legen Sie fest, wie lange der Countdown-Timer vor der Ausführung von Energieaktionen dauert.",
-        "label": "Countdown-Dauer"
-      },
-      "enable-countdown": {
-        "description": "Zeige einen Countdown-Timer vor der Ausführung von Energieaktionen.",
-        "label": "Countdown-Timer aktivieren"
-      },
-      "position": {
-        "description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",
-        "label": "Position"
-      },
-      "show-header": {
-        "description": "Zeige den Titel und die Schließen-Schaltfläche oben im Sitzungsmenü.",
-        "label": "Kopfzeile anzeigen"
-      },
-      "entries": {
-        "section": {
-          "description": "Anpassen, welche Energieaktionen im Sitzungsmenü angezeigt werden und in welcher Reihenfolge.",
-          "label": "Energieaktionen"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
-          "label": "Allgemein"
-        }
-      },
-      "title": "Sitzungsmenü"
-    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth aktivieren"
@@ -1560,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Legen Sie fest, wie lange der Countdown-Timer vor der Ausführung von Energieaktionen dauert.",
+        "label": "Countdown-Dauer"
+      },
+      "enable-countdown": {
+        "description": "Zeige einen Countdown-Timer vor der Ausführung von Energieaktionen.",
+        "label": "Countdown-Timer aktivieren"
+      },
+      "entries": {
+        "section": {
+          "description": "Anpassen, welche Energieaktionen im Sitzungsmenü angezeigt werden und in welcher Reihenfolge.",
+          "label": "Energieaktionen"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
+          "label": "Allgemein"
+        }
+      },
+      "position": {
+        "description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Zeige den Titel und die Schließen-Schaltfläche oben im Sitzungsmenü.",
+        "label": "Kopfzeile anzeigen"
+      },
+      "title": "Sitzungsmenü"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",
@@ -1675,6 +1678,10 @@
           "label": "Hintergrundbild-Ordner",
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
+          "label": "Dateinamen ausblenden"
+        },
         "monitor-specific": {
           "description": "Unterschiedlichen Hintergrundbild-Ordner für jeden Monitor festlegen.",
           "label": "Monitor-spezifische Verzeichnisse",
@@ -1683,10 +1690,6 @@
         "recursive-search": {
           "description": "Auch nach Hintergrundbildern in Unterordnern des Hintergrundbild-Verzeichnisses suchen.",
           "label": "Unterordner durchsuchen"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
-          "label": "Dateinamen ausblenden"
         },
         "section": {
           "description": "Steuern Sie, wie Hintergrundbilder verwaltet und angezeigt werden.",

@@ -1351,37 +1351,6 @@
       },
       "title": "Lock screen"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Set how long the countdown timer lasts before executing power actions.",
-        "label": "Countdown duration"
-      },
-      "enable-countdown": {
-        "description": "Show a countdown timer before executing power actions.",
-        "label": "Enable countdown timer"
-      },
-      "position": {
-        "description": "Choose where the Session Menu panel appears when opened.",
-        "label": "Position"
-      },
-      "show-header": {
-        "description": "Display the title and close button at the top of the Session Menu.",
-        "label": "Show header"
-      },
-      "entries": {
-        "section": {
-          "description": "Customize which power actions appear in the Session Menu and in what order.",
-          "label": "Power actions"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Configure the Session Menu panel behavior and appearance.",
-          "label": "General"
-        }
-      },
-      "title": "Session Menu"
-    },
     "network": {
       "bluetooth": {
         "label": "Enable Bluetooth"
@@ -1563,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Set how long the countdown timer lasts before executing power actions.",
+        "label": "Countdown duration"
+      },
+      "enable-countdown": {
+        "description": "Show a countdown timer before executing power actions.",
+        "label": "Enable countdown timer"
+      },
+      "entries": {
+        "section": {
+          "description": "Customize which power actions appear in the Session Menu and in what order.",
+          "label": "Power actions"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configure the Session Menu panel behavior and appearance.",
+          "label": "General"
+        }
+      },
+      "position": {
+        "description": "Choose where the Session Menu panel appears when opened.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Display the title and close button at the top of the Session Menu.",
+        "label": "Show header"
+      },
+      "title": "Session Menu"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Disable all animations for a faster, more responsive experience.",
@@ -1678,6 +1678,10 @@
           "label": "Wallpaper folder",
           "tooltip": "Browse for wallpaper folder"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Hide wallpaper filenames in the selector.",
+          "label": "Hide filenames"
+        },
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",
           "label": "Monitor-specific directories",
@@ -1686,10 +1690,6 @@
         "recursive-search": {
           "description": "Also search for wallpapers in subfolders of the wallpaper directory.",
           "label": "Search subfolders"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Hide wallpaper filenames in the selector.",
-          "label": "Hide filenames"
         },
         "section": {
           "description": "Control how wallpapers are managed and displayed.",

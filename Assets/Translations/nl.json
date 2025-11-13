@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Commando dat wordt uitgevoerd wanneer met de linkermuisknop op de knop wordt geklikt.",
-          "label": "Linkermuisklik"
+          "label": "Linkermuisklik",
+          "update-text": "Tekst bijwerken bij linksklik"
         },
         "middle-click": {
           "description": "Commando dat wordt uitgevoerd wanneer met de middelste muisknop op de knop wordt geklikt.",
-          "label": "Middelste muisklik"
+          "label": "Middelste muisklik",
+          "update-text": "Tekst bijwerken bij middelste muisklik"
         },
         "parse-json": {
           "description": "Interpreteer de commando-uitvoer als JSON-object om tekst en pictogram dynamisch in te stellen.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Commando dat wordt uitgevoerd wanneer met de rechtermuisknop op de knop wordt geklikt.",
-          "label": "Rechtermuisklik"
+          "label": "Rechtermuisklik",
+          "update-text": "Tekst bijwerken die wordt weergegeven bij rechtsklikken"
         },
         "text-stream": {
           "description": "Gestreamde regels uit het commando worden als tekst op de knop weergegeven.",
@@ -1348,37 +1351,6 @@
       },
       "title": "Vergrendelscherm"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Stel in hoe lang de afteltimer duurt voordat energieacties worden uitgevoerd.",
-        "label": "Afteltimer duur"
-      },
-      "enable-countdown": {
-        "description": "Toon een afteltimer voordat energieacties worden uitgevoerd.",
-        "label": "Afteltimer inschakelen"
-      },
-      "position": {
-        "description": "Kies waar het Sessiemenu-paneel verschijnt wanneer het wordt geopend.",
-        "label": "Positie"
-      },
-      "show-header": {
-        "description": "Toon de titel en sluitknop bovenaan het Sessiemenu.",
-        "label": "Koptekst tonen"
-      },
-      "entries": {
-        "section": {
-          "description": "Aanpassen welke energieacties in het Sessiemenu verschijnen en in welke volgorde.",
-          "label": "Energieacties"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
-          "label": "Algemeen"
-        }
-      },
-      "title": "Sessiemenu"
-    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth inschakelen"
@@ -1560,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Stel in hoe lang de afteltimer duurt voordat energieacties worden uitgevoerd.",
+        "label": "Afteltimer duur"
+      },
+      "enable-countdown": {
+        "description": "Toon een afteltimer voordat energieacties worden uitgevoerd.",
+        "label": "Afteltimer inschakelen"
+      },
+      "entries": {
+        "section": {
+          "description": "Aanpassen welke energieacties in het Sessiemenu verschijnen en in welke volgorde.",
+          "label": "Energieacties"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
+          "label": "Algemeen"
+        }
+      },
+      "position": {
+        "description": "Kies waar het Sessiemenu-paneel verschijnt wanneer het wordt geopend.",
+        "label": "Positie"
+      },
+      "show-header": {
+        "description": "Toon de titel en sluitknop bovenaan het Sessiemenu.",
+        "label": "Koptekst tonen"
+      },
+      "title": "Sessiemenu"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Schakel alle animaties uit voor een snellere, responsievere ervaring.",
@@ -1675,6 +1678,10 @@
           "label": "Achtergrondmap",
           "tooltip": "Bladeren naar achtergrondmap"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
+          "label": "Bestandsnamen verbergen"
+        },
         "monitor-specific": {
           "description": "Stel een andere achtergrondmap in voor elke monitor.",
           "label": "Monitor-specifieke mappen",
@@ -1683,10 +1690,6 @@
         "recursive-search": {
           "description": "Zoek ook naar achtergronden in submappen van de achtergrondmap.",
           "label": "Submappen doorzoeken"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
-          "label": "Bestandsnamen verbergen"
         },
         "section": {
           "description": "Bepaal hoe achtergronden worden beheerd en weergegeven.",

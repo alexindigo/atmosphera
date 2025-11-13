@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Butona sol tıklandığında yürütülecek komut.",
-          "label": "Sol tıklama"
+          "label": "Sol tıklama",
+          "update-text": "Sol tıklamayla görüntülenen metni güncelle"
         },
         "middle-click": {
           "description": "Butona orta tıklandığında yürütülecek komut.",
-          "label": "Orta tıklama"
+          "label": "Orta tıklama",
+          "update-text": "Orta tıklamayla görüntülenen metni güncelle"
         },
         "parse-json": {
           "description": "Komut çıktısını metin ve ikon dinamik olarak ayarlamak için bir JSON nesnesi olarak ayrıştırın.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Butona sağ tıklandığında yürütülecek komut.",
-          "label": "Sağ tıklama"
+          "label": "Sağ tıklama",
+          "update-text": "Sağ tıklamada görüntülenen metni güncelle"
         },
         "text-stream": {
           "description": "Komuttan gelen akış satırları butonda metin olarak gösterilecektir.",
@@ -1348,37 +1351,6 @@
       },
       "title": "Ekran Kilit"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Güç eylemlerini çalıştırmadan önce geri sayım zamanlayıcısının ne kadar süreceğini ayarlayın.",
-        "label": "Geri sayım süresi"
-      },
-      "enable-countdown": {
-        "description": "Güç eylemlerini çalıştırmadan önce bir geri sayım zamanlayıcısı göster.",
-        "label": "Geri sayım zamanlayıcısını etkinleştir"
-      },
-      "position": {
-        "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",
-        "label": "Konum"
-      },
-      "show-header": {
-        "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
-        "label": "Başlığı göster"
-      },
-      "entries": {
-        "section": {
-          "description": "Oturum Menüsünde hangi güç eylemlerinin görüneceğini ve hangi sırada görüneceğini özelleştirin.",
-          "label": "Güç eylemleri"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
-          "label": "Genel"
-        }
-      },
-      "title": "Oturum Menüsü"
-    },
     "network": {
       "bluetooth": {
         "label": "Bluetooth'u Etkinleştir"
@@ -1560,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Güç eylemlerini çalıştırmadan önce geri sayım zamanlayıcısının ne kadar süreceğini ayarlayın.",
+        "label": "Geri sayım süresi"
+      },
+      "enable-countdown": {
+        "description": "Güç eylemlerini çalıştırmadan önce bir geri sayım zamanlayıcısı göster.",
+        "label": "Geri sayım zamanlayıcısını etkinleştir"
+      },
+      "entries": {
+        "section": {
+          "description": "Oturum Menüsünde hangi güç eylemlerinin görüneceğini ve hangi sırada görüneceğini özelleştirin.",
+          "label": "Güç eylemleri"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
+          "label": "Genel"
+        }
+      },
+      "position": {
+        "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",
+        "label": "Konum"
+      },
+      "show-header": {
+        "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
+        "label": "Başlığı göster"
+      },
+      "title": "Oturum Menüsü"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Daha hızlı ve daha duyarlı bir deneyim için tüm animasyonları devre dışı bırakın.",
@@ -1675,6 +1678,10 @@
           "label": "Duvar kağıdı klasörü",
           "tooltip": "Duvar kağıdı klasörüne göz atın"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
+          "label": "Dosya adlarını gizle"
+        },
         "monitor-specific": {
           "description": "Her ekran için farklı bir duvar kağıdı klasörü ayarlayın.",
           "label": "Ekran özgü dizinler",
@@ -1683,10 +1690,6 @@
         "recursive-search": {
           "description": "Duvar kağıdı dizinin alt klasörlerinde de duvar kağıdı arayın.",
           "label": "Alt klasörleri ara"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
-          "label": "Dosya adlarını gizle"
         },
         "section": {
           "description": "Duvar kağıtlarının nasıl yönetileceğini ve görüntüleneceğini kontrol edin.",

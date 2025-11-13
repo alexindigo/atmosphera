@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Comando a executar quando o botão é clicado com o botão esquerdo.",
-          "label": "Clique esquerdo"
+          "label": "Clique esquerdo",
+          "update-text": "Atualizar texto exibido ao clicar com o botão esquerdo"
         },
         "middle-click": {
           "description": "Comando a executar quando o botão é clicado com o botão do meio.",
-          "label": "Clique do meio"
+          "label": "Clique do meio",
+          "update-text": "Atualizar texto exibido com clique do meio"
         },
         "parse-json": {
           "description": "Analisa a saída do comando como um objeto JSON para definir dinamicamente o texto e o ícone.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Comando a executar quando o botão é clicado com o botão direito.",
-          "label": "Clique direito"
+          "label": "Clique direito",
+          "update-text": "Atualizar o texto exibido ao clicar com o botão direito."
         },
         "text-stream": {
           "description": "As linhas transmitidas do comando serão exibidas como texto no botão.",
@@ -1348,37 +1351,6 @@
       },
       "title": "Tela de bloqueio"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Definir por quanto tempo o temporizador de contagem regressiva dura antes de executar ações de energia.",
-        "label": "Duração da contagem regressiva"
-      },
-      "enable-countdown": {
-        "description": "Mostrar um temporizador de contagem regressiva antes de executar ações de energia.",
-        "label": "Ativar temporizador de contagem regressiva"
-      },
-      "position": {
-        "description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",
-        "label": "Posição"
-      },
-      "show-header": {
-        "description": "Exibir o título e o botão de fechar na parte superior do Menu de sessão.",
-        "label": "Mostrar cabeçalho"
-      },
-      "entries": {
-        "section": {
-          "description": "Personalizar quais ações de energia aparecem no Menu de sessão e em que ordem.",
-          "label": "Ações de energia"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",
-          "label": "Geral"
-        }
-      },
-      "title": "Menu de sessão"
-    },
     "network": {
       "bluetooth": {
         "label": "Ativar Bluetooth"
@@ -1560,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Definir por quanto tempo o temporizador de contagem regressiva dura antes de executar ações de energia.",
+        "label": "Duração da contagem regressiva"
+      },
+      "enable-countdown": {
+        "description": "Mostrar um temporizador de contagem regressiva antes de executar ações de energia.",
+        "label": "Ativar temporizador de contagem regressiva"
+      },
+      "entries": {
+        "section": {
+          "description": "Personalizar quais ações de energia aparecem no Menu de sessão e em que ordem.",
+          "label": "Ações de energia"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",
+          "label": "Geral"
+        }
+      },
+      "position": {
+        "description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",
+        "label": "Posição"
+      },
+      "show-header": {
+        "description": "Exibir o título e o botão de fechar na parte superior do Menu de sessão.",
+        "label": "Mostrar cabeçalho"
+      },
+      "title": "Menu de sessão"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",
@@ -1675,6 +1678,10 @@
           "label": "Pasta de papéis de parede",
           "tooltip": "Procurar pasta de papéis de parede"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
+          "label": "Ocultar nomes de arquivos"
+        },
         "monitor-specific": {
           "description": "Defina uma pasta de papel de parede diferente para cada monitor.",
           "label": "Diretórios específicos por monitor",
@@ -1683,10 +1690,6 @@
         "recursive-search": {
           "description": "Também buscar papéis de parede em subpastas do diretório de papéis de parede.",
           "label": "Buscar em subpastas"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
-          "label": "Ocultar nomes de arquivos"
         },
         "section": {
           "description": "Controle como os papéis de parede são gerenciados e exibidos.",

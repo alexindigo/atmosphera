@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à gauche.",
-          "label": "Clic gauche"
+          "label": "Clic gauche",
+          "update-text": "Mettre à jour le texte affiché au clic gauche."
         },
         "middle-click": {
           "description": "Commande à exécuter quand le bouton est cliqué au milieu.",
-          "label": "Clic milieu"
+          "label": "Clic milieu",
+          "update-text": "Mettre à jour le texte affiché lors d'un clic molette."
         },
         "parse-json": {
           "description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à droite.",
-          "label": "Clic droit"
+          "label": "Clic droit",
+          "update-text": "Mettre à jour le texte affiché lors d'un clic droit."
         },
         "text-stream": {
           "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
@@ -1348,37 +1351,6 @@
       },
       "title": "Écran de verrouillage"
     },
-    "session-menu": {
-      "countdown-duration": {
-        "description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
-        "label": "Durée du compte à rebours"
-      },
-      "enable-countdown": {
-        "description": "Afficher un compte à rebours avant d'exécuter les actions d'alimentation.",
-        "label": "Activer le compte à rebours"
-      },
-      "position": {
-        "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",
-        "label": "Position"
-      },
-      "show-header": {
-        "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
-        "label": "Afficher l'en-tête"
-      },
-      "entries": {
-        "section": {
-          "description": "Personnaliser les actions d'alimentation qui apparaissent dans le Menu de session et leur ordre.",
-          "label": "Actions d'alimentation"
-        }
-      },
-      "general": {
-        "section": {
-          "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
-          "label": "Général"
-        }
-      },
-      "title": "Menu de session"
-    },
     "network": {
       "bluetooth": {
         "label": "Activer le Bluetooth"
@@ -1560,6 +1532,37 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Durée du compte à rebours"
+      },
+      "enable-countdown": {
+        "description": "Afficher un compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Activer le compte à rebours"
+      },
+      "entries": {
+        "section": {
+          "description": "Personnaliser les actions d'alimentation qui apparaissent dans le Menu de session et leur ordre.",
+          "label": "Actions d'alimentation"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
+          "label": "Général"
+        }
+      },
+      "position": {
+        "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
+        "label": "Afficher l'en-tête"
+      },
+      "title": "Menu de session"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
@@ -1675,6 +1678,10 @@
           "label": "Dossier des fonds d'écran",
           "tooltip": "Parcourir le dossier des fonds d'écran"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
+          "label": "Masquer les noms de fichiers"
+        },
         "monitor-specific": {
           "description": "Définissez un dossier de fond d'écran différent pour chaque moniteur.",
           "label": "Dossiers spécifiques au moniteur",
@@ -1683,10 +1690,6 @@
         "recursive-search": {
           "description": "Rechercher également des fonds d'écran dans les sous-dossiers du répertoire des fonds d'écran.",
           "label": "Rechercher dans les sous-dossiers"
-        },
-        "hide-wallpaper-filenames": {
-          "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
-          "label": "Masquer les noms de fichiers"
         },
         "section": {
           "description": "Contrôlez comment les fonds d'écran sont gérés et affichés.",
