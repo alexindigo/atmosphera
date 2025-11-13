@@ -115,6 +115,8 @@ Rectangle {
       width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
       height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : Math.max(0, Style.capsuleHeight - Style.marginS * 2)
       radius: Math.min(width, height) / 2
+      // Hide the rectangular indicator when the bar is vertical; keep it available for horizontal layout
+      visible: !root.isVertical
       color: critical ? Color.mError : Color.mPrimary
       scale: (warning || critical) ? 1.0 : 0.0
       opacity: (warning || critical) ? 1.0 : 0.0
@@ -185,7 +187,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color to bar background when indicator active
-            color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface
+            color: isVertical ? (cpuCritical ? Color.mError : (cpuWarning ? Color.mPrimary : Color.mOnSurface)) : ((cpuWarning || cpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
           }
         }
 
@@ -206,8 +208,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          // Invert text color to bar background when indicator active
-          color: (cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor
+          // Use warning/critical colors in vertical bar; otherwise invert text color to bar background when indicator active
+          color: isVertical ? (cpuCritical ? Color.mError : (cpuWarning ? Color.mPrimary : textColor)) : ((cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor)
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -257,7 +259,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color when temp indicator active
-            color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : Color.mOnSurface
+            color: isVertical ? (tempCritical ? Color.mError : (tempWarning ? Color.mPrimary : Color.mOnSurface)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
           }
         }
 
@@ -271,8 +273,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : tempTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          // Invert text color to bar background when temp indicator active
-          color: (tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor
+          // Use warning/critical colors in vertical bar; otherwise invert text color to bar background when temp indicator active
+          color: isVertical ? (tempCritical ? Color.mError : (tempWarning ? Color.mPrimary : textColor)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor)
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -322,7 +324,7 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color when memory indicator active
-            color: (memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface
+            color: isVertical ? (memCritical ? Color.mError : (memWarning ? Color.mPrimary : Color.mOnSurface)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
           }
 
 
@@ -338,8 +340,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : (showMemoryAsPercent ? percentTextWidth : memTextWidth)
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          // Invert text color to bar background when memory indicator active
-          color: (memWarning || memCritical) ? Color.mSurfaceVariant : textColor
+          // Use warning/critical colors in vertical bar; otherwise invert text color to bar background when memory indicator active
+          color: isVertical ? (memCritical ? Color.mError : (memWarning ? Color.mPrimary : textColor)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : textColor)
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -470,7 +472,7 @@ Rectangle {
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
           // Invert color when disk indicator active
-          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface
+          color: isVertical ? (diskCritical ? Color.mError : (diskWarning ? Color.mPrimary : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
         }
 
         NText {
@@ -483,8 +485,8 @@ Rectangle {
           Layout.preferredWidth: isVertical ? -1 : percentTextWidth
           horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
           verticalAlignment: Text.AlignVCenter
-          // Invert text color to bar background when disk indicator active
-          color: (diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor
+          // Use warning/critical colors in vertical bar; otherwise invert text color to bar background when disk indicator active
+          color: isVertical ? (diskCritical ? Color.mError : (diskWarning ? Color.mPrimary : textColor)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor)
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
