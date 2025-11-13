@@ -4,8 +4,10 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.System
+import qs.Services.UI
+import qs.Widgets
 
 SmartPanel {
   id: root
@@ -18,11 +20,15 @@ SmartPanel {
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
+  closeWithEscape: false
+
   property int currentStep: 0
   property int totalSteps: 5
 
-  // Override Escape handler to prevent closing the setup wizard
-  function onEscapePressed() {// Do nothing - prevent ESC from closing the setup wizard
+  onOpened: function () {
+    selectedScaleRatio = Settings.data.general.scaleRatio
+    selectedBarPosition = Settings.data.bar.position
+    selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory
   }
 
   // Setup wizard data
@@ -388,15 +394,5 @@ SmartPanel {
   function applyUISettings() {
     Settings.data.general.scaleRatio = selectedScaleRatio
     Settings.data.bar.position = selectedBarPosition
-  }
-
-  Component.onCompleted: {
-    Logger.i("SetupWizard", "Setup wizard opened")
-    // Initialize selections from existing settings to avoid overwriting user config
-    if (Settings && Settings.data) {
-      selectedScaleRatio = Settings.data.general.scaleRatio
-      selectedBarPosition = Settings.data.bar.position
-      selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory
-    }
   }
 }

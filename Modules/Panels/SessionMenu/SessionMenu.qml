@@ -41,6 +41,9 @@ SmartPanel {
   panelAnchorBottom: panelPosition.startsWith("bottom_")
   panelAnchorTop: panelPosition.startsWith("top_")
 
+  // SessionMenu handle it's own closing logic
+  property bool closeWithEscape: false
+
   // Timer properties
   readonly property int timerDuration: Settings.data.sessionMenu.countdownDuration
   property string pendingAction: ""
@@ -209,8 +212,7 @@ SmartPanel {
     if (timerActive) {
       cancelTimer()
     } else {
-      cancelTimer()
-      close()
+      root.close()
     }
   }
 

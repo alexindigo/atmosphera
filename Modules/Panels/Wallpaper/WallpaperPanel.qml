@@ -489,7 +489,6 @@ SmartPanel {
 
             NImageCached {
               id: img
-              maxCacheDimension: 384
               imagePath: wallpaperPath
               cacheFolder: Settings.cacheDirImagesWallpapers
               anchors.fill: parent

@@ -27,6 +27,9 @@ PanelWindow {
   // Keyboard focus
   property bool exclusiveKeyboard: true
 
+  // Support close with escape
+  property bool closeWithEscape: true
+
   // Track whether panel is open
   property bool isPanelOpen: false
 
@@ -49,78 +52,8 @@ PanelWindow {
   signal panelOpened
   signal panelClosed
 
-  // Keyboard event handlers (forwarded from SmartPanel wrapper)
-  function handleEscapePressed() {
-    close()
-  }
-  function handleTabPressed() {
-    if (contentLoader.item && contentLoader.item.onTabPressed) {
-      contentLoader.item.onTabPressed()
-    }
-  }
-  function handleShiftTabPressed() {
-    if (contentLoader.item && contentLoader.item.onShiftTabPressed) {
-      contentLoader.item.onShiftTabPressed()
-    }
-  }
-  function handleUpPressed() {
-    if (contentLoader.item && contentLoader.item.onUpPressed) {
-      contentLoader.item.onUpPressed()
-    }
-  }
-  function handleDownPressed() {
-    if (contentLoader.item && contentLoader.item.onDownPressed) {
-      contentLoader.item.onDownPressed()
-    }
-  }
-  function handleLeftPressed() {
-    if (contentLoader.item && contentLoader.item.onLeftPressed) {
-      contentLoader.item.onLeftPressed()
-    }
-  }
-  function handleRightPressed() {
-    if (contentLoader.item && contentLoader.item.onRightPressed) {
-      contentLoader.item.onRightPressed()
-    }
-  }
-  function handleReturnPressed() {
-    if (contentLoader.item && contentLoader.item.onReturnPressed) {
-      contentLoader.item.onReturnPressed()
-    }
-  }
-  function handleHomePressed() {
-    if (contentLoader.item && contentLoader.item.onHomePressed) {
-      contentLoader.item.onHomePressed()
-    }
-  }
-  function handleEndPressed() {
-    if (contentLoader.item && contentLoader.item.onEndPressed) {
-      contentLoader.item.onEndPressed()
-    }
-  }
-  function handlePageUpPressed() {
-    if (contentLoader.item && contentLoader.item.onPageUpPressed) {
-      contentLoader.item.onPageUpPressed()
-    }
-  }
-  function handlePageDownPressed() {
-    if (contentLoader.item && contentLoader.item.onPageDownPressed) {
-      contentLoader.item.onPageDownPressed()
-    }
-  }
-  function handleCtrlJPressed() {
-    if (contentLoader.item && contentLoader.item.onCtrlJPressed) {
-      contentLoader.item.onCtrlJPressed()
-    }
-  }
-  function handleCtrlKPressed() {
-    if (contentLoader.item && contentLoader.item.onCtrlKPressed) {
-      contentLoader.item.onCtrlKPressed()
-    }
-  }
-
   // Window configuration
-  color: "transparent"
+  color: Color.transparent
   mask: null // No mask - content window is rectangular
   visible: isPanelOpen
 
@@ -239,19 +172,17 @@ PanelWindow {
     // Handle keyboard events directly via Keys handler
     Keys.onPressed: event => {
                       Logger.d("SmartPanelWindow", "Key pressed:", event.key, "for panel:", placeholder.panelName)
-
                       if (event.key === Qt.Key_Escape) {
-                        Logger.d("SmartPanelWindow", "Escape - closing panel")
-                        root.close()
-                        event.accepted = true
+                        panelWrapper.onEscapePressed()
+                        if (closeWithEscape) {
+                          root.close()
+                          event.accepted = true
+                        }
                       } else if (panelWrapper) {
-                        // Forward to panelWrapper's onXXXPressed methods (defined in SmartPanel/Launcher)
                         if (event.key === Qt.Key_Up && panelWrapper.onUpPressed) {
-                          Logger.d("SmartPanelWindow", "Up - forwarding to panelWrapper")
                           panelWrapper.onUpPressed()
                           event.accepted = true
                         } else if (event.key === Qt.Key_Down && panelWrapper.onDownPressed) {
-                          Logger.d("SmartPanelWindow", "Down - forwarding to panelWrapper")
                           panelWrapper.onDownPressed()
                           event.accepted = true
                         } else if (event.key === Qt.Key_Left && panelWrapper.onLeftPressed) {

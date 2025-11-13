@@ -42,6 +42,9 @@ Item {
   // Keyboard focus
   property bool exclusiveKeyboard: true
 
+  // Support close with escape
+  property bool closeWithEscape: true
+
   // Track if window has been created (for lazy loading)
   property bool windowCreated: false
 
@@ -192,6 +195,7 @@ Item {
       panelContent: root.panelContent
       panelWrapper: root // Pass reference to SmartPanel for keyboard handlers
       exclusiveKeyboard: root.exclusiveKeyboard
+      closeWithEscape: root.closeWithEscape
 
       // Forward signals
       onPanelOpened: root.opened()
