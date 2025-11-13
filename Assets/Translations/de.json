@@ -1440,6 +1440,10 @@
         "description": "On-Screen Display über Vollbildfenstern und anderen Ebenen anzeigen.",
         "label": "Immer im Vordergrund"
       },
+      "background-opacity": {
+        "description": "Controls the transparency of the OSD background.",
+        "label": "Background opacity"
+      },
       "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
       "duration": {
         "auto-hide": {

@@ -1440,6 +1440,10 @@
         "description": "Mostrar OSD por encima de ventanas de pantalla completa y otras capas.",
         "label": "Siempre encima"
       },
+      "background-opacity": {
+        "description": "Controls the transparency of the OSD background.",
+        "label": "Background opacity"
+      },
       "description": "Configura indicadores superpuestos como volumen y brillo.",
       "duration": {
         "auto-hide": {

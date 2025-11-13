@@ -1440,6 +1440,10 @@
         "description": "Exibir OSD acima de janelas em tela cheia e outras camadas.",
         "label": "Sempre no topo"
       },
+      "background-opacity": {
+        "description": "Controla a transparência do fundo do OSD.",
+        "label": "Opacidade do fundo"
+      },
       "description": "Configure indicadores na tela, como volume e brilho.",
       "duration": {
         "auto-hide": {

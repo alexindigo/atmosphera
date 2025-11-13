@@ -1440,6 +1440,10 @@
         "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches.",
         "label": "Toujours au premier plan"
       },
+      "background-opacity": {
+        "description": "Contrôle la transparence de l'arrière-plan de l'OSD.",
+        "label": "Opacité de l'arrière-plan"
+      },
       "description": "Configurer les indicateurs à l'écran tels que le volume et la luminosité.",
       "duration": {
         "auto-hide": {

@@ -1440,6 +1440,10 @@
         "description": "Toon OSD boven fullscreen-vensters en andere lagen.",
         "label": "Altijd bovenop"
       },
+      "background-opacity": {
+        "description": "Regelt de transparantie van de OSD-achtergrond.",
+        "label": "Achtergrond dekkendheid"
+      },
       "description": "Configureer on-screenindicatoren zoals overlays voor volume en helderheid.",
       "duration": {
         "auto-hide": {

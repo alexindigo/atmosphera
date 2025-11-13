@@ -1440,6 +1440,10 @@
         "description": "在全屏窗口和其他图层之上显示OSD。",
         "label": "始终置顶"
       },
+      "background-opacity": {
+        "description": "调整OSD背景的透明度。",
+        "label": "背景透明度"
+      },
       "description": "配置屏幕叠加指示器，例如音量和亮度。",
       "duration": {
         "auto-hide": {
@@ -1470,6 +1474,7 @@
           "description": "配置屏显菜单（OSD）的可见性与行为。",
           "label": "常规"
         }
+
       },
       "title": "屏显菜单"
     },
