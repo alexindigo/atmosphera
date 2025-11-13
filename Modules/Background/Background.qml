@@ -306,20 +306,37 @@ Variants {
         duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration * 1.6 : Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
         onFinished: {
-          // Assign new image to current BEFORE clearing to prevent flicker
+          // Strategy: Keep transitionProgress at 1.0 (showing nextWallpaper)
+          // until currentWallpaper finishes loading asynchronously
           const tempSource = nextWallpaper.source
-          currentWallpaper.source = tempSource
-          transitionProgress = 0.0
+          const tempSourceSize = nextWallpaper.sourceSize
 
-          // Now clear nextWallpaper after currentWallpaper has the new source
-          // Force complete cleanup to free texture memory (~18-25MB per monitor)
-          Qt.callLater(() => {
-                         nextWallpaper.source = ""
-                         nextWallpaper.sourceSize = undefined
-                         Qt.callLater(() => {
-                                        currentWallpaper.asynchronous = true
-                                      })
-                       })
+          // Enable async loading to prevent blocking
+          currentWallpaper.asynchronous = true
+
+          // Create one-time connection to wait for async load to complete
+          const onCurrentLoaded = function () {
+            if (currentWallpaper.status === Image.Ready || currentWallpaper.status === Image.Error) {
+              // Disconnect this handler
+              currentWallpaper.statusChanged.disconnect(onCurrentLoaded)
+
+              // Now it's safe to reset progress and cleanup
+              transitionProgress = 0.0
+
+              // Force complete cleanup to free texture memory (~18-25MB per monitor)
+              Qt.callLater(() => {
+                             nextWallpaper.source = ""
+                             nextWallpaper.sourceSize = undefined
+                           })
+            }
+          }
+
+          // Connect the handler BEFORE changing source
+          currentWallpaper.statusChanged.connect(onCurrentLoaded)
+
+          // Trigger async load (keeps nextWallpaper visible via progress=1.0)
+          currentWallpaper.sourceSize = tempSourceSize
+          currentWallpaper.source = tempSource
         }
       }
 
