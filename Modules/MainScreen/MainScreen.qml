@@ -67,7 +67,7 @@ PanelWindow {
 
   // Wayland
   WlrLayershell.layer: WlrLayer.Top
-  WlrLayershell.namespace: "noctalia-screen-" + (screen?.name || "unknown")
+  WlrLayershell.namespace: "noctalia-background-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
   WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
