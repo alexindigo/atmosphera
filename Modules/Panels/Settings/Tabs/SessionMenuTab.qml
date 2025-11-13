@@ -39,28 +39,6 @@ ColumnLayout {
       "required": false
     }]
 
-  // Handler for drag start - disables panel background clicks
-  function handleDragStart() {
-    var currentScreen = Quickshell.screens && Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
-    if (currentScreen) {
-      var panel = PanelService.getPanel("settingsPanel", currentScreen)
-      if (panel && panel.disableBackgroundClick) {
-        panel.disableBackgroundClick()
-      }
-    }
-  }
-
-  // Handler for drag end - re-enables panel background clicks
-  function handleDragEnd() {
-    var currentScreen = Quickshell.screens && Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
-    if (currentScreen) {
-      var panel = PanelService.getPanel("settingsPanel", currentScreen)
-      if (panel && panel.enableBackgroundClick) {
-        panel.enableBackgroundClick()
-      }
-    }
-  }
-
   function saveEntries() {
     var toSave = []
     for (var i = 0; i < entriesModel.length; i++) {
@@ -201,12 +179,6 @@ ColumnLayout {
       Layout.fillWidth: true
       model: entriesModel
       disabledIds: []
-      onDragPotentialStarted: {
-        root.handleDragStart()
-      }
-      onDragPotentialEnded: {
-        root.handleDragEnd()
-      }
       onItemToggled: function (index, enabled) {
         var newModel = entriesModel.slice()
         newModel[index] = Object.assign({}, newModel[index], {
