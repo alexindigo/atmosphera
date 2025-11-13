@@ -653,6 +653,7 @@
     "reboot": "Yeniden başlat",
     "shutdown": "Bilgisayarı kapat",
     "suspend": "Askıya al",
+    "hibernate": "Hazırda Bekletme",
     "title": "Oturum Menüsü"
   },
   "settings": {
