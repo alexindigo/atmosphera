@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.UI
+import qs.Services.Keyboard
 
 Item {
   id: root
@@ -126,7 +127,7 @@ Item {
 
     onRunningChanged: {
       if (running) {
-        currentWindow = {}
+        windowsProcess.currentWindow = {}
       }
     }
 
@@ -141,8 +142,8 @@ Item {
           const property = parts[1]
           const value = parts.slice(2).join(' ')
 
-          if (!currentWindow[outputName]) {
-            currentWindow[outputName] = {
+          if (!windowsProcess.currentWindow[outputName]) {
+            windowsProcess.currentWindow[outputName] = {
               id: outputName,
               output: outputName
             }
@@ -150,29 +151,29 @@ Item {
 
           switch (property) {
             case "title":
-              currentWindow[outputName].title = value
+              windowsProcess.currentWindow[outputName].title = value
               break
             case "appid":
-              currentWindow[outputName].appId = value
-              currentWindow[outputName].class = value
+              windowsProcess.currentWindow[outputName].appId = value
+              windowsProcess.currentWindow[outputName].class = value
               break
             case "fullscreen":
-              currentWindow[outputName].fullscreen = (value === "1")
+              windowsProcess.currentWindow[outputName].fullscreen = (value === "1")
               break
             case "floating":
-              currentWindow[outputName].floating = (value === "1")
+              windowsProcess.currentWindow[outputName].floating = (value === "1")
               break
             case "x":
-              currentWindow[outputName].x = parseInt(value)
+              windowsProcess.currentWindow[outputName].x = parseInt(value)
               break
             case "y":
-              currentWindow[outputName].y = parseInt(value)
+              windowsProcess.currentWindow[outputName].y = parseInt(value)
               break
             case "width":
-              currentWindow[outputName].width = parseInt(value)
+              windowsProcess.currentWindow[outputName].width = parseInt(value)
               break
             case "height":
-              currentWindow[outputName].height = parseInt(value)
+              windowsProcess.currentWindow[outputName].height = parseInt(value)
               break
           }
         }
@@ -181,12 +182,12 @@ Item {
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        parseWindows(currentWindow)
+        parseWindows(windowsProcess.currentWindow)
       } else {
         Logger.e("MangoService", "Windows query failed:", exitCode)
       }
       accumulatedOutput = ""
-      currentWindow = {}
+      windowsProcess.currentWindow = {}
     }
   }
 
