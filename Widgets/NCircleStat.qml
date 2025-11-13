@@ -16,6 +16,8 @@ Rectangle {
   // outer width/height footprint of the component
   property real contentScale: 1.0
 
+  readonly property color fillColor: Color.mPrimary
+
   width: 68
   height: 92
   color: flat ? Color.transparent : Color.mSurface
@@ -36,11 +38,12 @@ Rectangle {
 
   // Repaint gauge when animated value changes (throttled by animation)
   onAnimatedValueChanged: repaintTimer.restart()
+  onFillColorChanged: repaintTimer.restart()
 
   // Debounce timer to limit repaint frequency during rapid value changes
   Timer {
     id: repaintTimer
-    interval: 16 // ~60 FPS max
+    interval: 33 // ~30 FPS max
     repeat: false
     onTriggered: gauge.requestPaint()
   }
@@ -100,21 +103,7 @@ Rectangle {
           const ratio = Math.max(0, Math.min(1, root.animatedValue / 100))
           const end = start + (endBg - start) * ratio
 
-          // Calculate gradient start point (25% into the arc)
-          const gradientStartRatio = 0.25
-          const gradientStart = start + (endBg - start) * gradientStartRatio
-
-          // Create linear gradient
-          const startX = cx + r * Math.cos(gradientStart)
-          const startY = cy + r * Math.sin(gradientStart)
-          const endX = cx + r * Math.cos(endBg)
-          const endY = cy + r * Math.sin(endBg)
-
-          const gradient = ctx.createLinearGradient(startX, startY, endX, endY)
-          gradient.addColorStop(0, Color.mPrimary)
-          gradient.addColorStop(1, Color.mOnSurface)
-
-          ctx.strokeStyle = gradient
+          ctx.strokeStyle = root.fillColor
           ctx.beginPath()
           ctx.arc(cx, cy, r, start, end)
           ctx.stroke()
