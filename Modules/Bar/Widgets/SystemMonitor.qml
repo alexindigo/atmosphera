@@ -47,6 +47,10 @@ Rectangle {
     return Math.max(1, (density === "compact") ? base * 0.43 : base * 0.33)
   }
 
+  // Match Workspace widget pill sizing: base ratio depends on bar density
+  readonly property real pillBaseRatio: (density === "compact") ? 0.85 : 0.65
+  readonly property real pillHeight: Style.capsuleHeight * pillBaseRatio
+
   readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3)
   readonly property int tempTextWidth: Math.ceil(tempMetrics.boundingRect.width + 3)
   readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
@@ -113,7 +117,7 @@ Rectangle {
       property int indicatorWidth: Style.capsuleHeight
       
       width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
-      height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : Math.max(0, Style.capsuleHeight - Style.marginS * 2)
+      height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : pillHeight
       radius: Math.min(width, height) / 2
       // Hide the rectangular indicator when the bar is vertical; keep it available for horizontal layout
       visible: !root.isVertical
