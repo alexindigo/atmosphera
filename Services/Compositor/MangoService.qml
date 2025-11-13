@@ -40,6 +40,7 @@ Item {
     },
     action: {
       view: ["mmsg", "-d", "view"],
+      tag: ["mmsg", "-t"],
       focusMaster: ["mmsg", "-d", "focusmaster"],
       killClient: ["mmsg", "-d", "killclient"],
       toggleOverview: ["mmsg", "-d", "toggleoverview"],
@@ -308,7 +309,7 @@ Item {
   function switchToWorkspace(workspace) {
     try {
       const tagId = workspace.idx || workspace.id || defaultWorkspaceId
-      const command = mmsgCommands.action.view.concat([tagId.toString()])
+      const command = mmsgCommands.action.tag.concat([tagId.toString()])
       Quickshell.execDetached(command)
       Logger.d("MangoService", `Switching to workspace ${tagId}`)
     } catch (e) {
