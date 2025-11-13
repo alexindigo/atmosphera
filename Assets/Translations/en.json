@@ -653,6 +653,7 @@
     "reboot": "Reboot",
     "shutdown": "Shutdown",
     "suspend": "Suspend",
+    "hibernate": "Hibernate",
     "title": "Session Menu"
   },
   "settings": {
