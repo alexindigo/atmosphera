@@ -1684,6 +1684,10 @@
           "description": "Também buscar papéis de parede em subpastas do diretório de papéis de parede.",
           "label": "Buscar em subpastas"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
+          "label": "Ocultar nomes de arquivos"
+        },
         "section": {
           "description": "Controle como os papéis de parede são gerenciados e exibidos.",
           "label": "Configurações de papel de parede"

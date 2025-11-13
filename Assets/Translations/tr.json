@@ -1684,6 +1684,10 @@
           "description": "Duvar kağıdı dizinin alt klasörlerinde de duvar kağıdı arayın.",
           "label": "Alt klasörleri ara"
         },
+        "hide-wallpaper-filenames": {
+          "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
+          "label": "Dosya adlarını gizle"
+        },
         "section": {
           "description": "Duvar kağıtlarının nasıl yönetileceğini ve görüntüleneceğini kontrol edin.",
           "label": "Duvar kağıdı ayarları"
