@@ -1441,8 +1441,8 @@
         "label": "Immer im Vordergrund"
       },
       "background-opacity": {
-        "description": "Controls the transparency of the OSD background.",
-        "label": "Background opacity"
+        "description": "Kontrolliert die Transparenz des OSD Hintergrunds.",
+        "label": "Hintergrund-Transparenz"
       },
       "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
       "duration": {
