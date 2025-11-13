@@ -60,62 +60,21 @@ Item {
   signal closed
 
   // Keyboard event handlers - these can be overridden by panel implementations
-  function onEscapePressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleEscapePressed()
-  }
-  function onTabPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleTabPressed()
-  }
-  function onShiftTabPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleShiftTabPressed()
-  }
-  function onUpPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleUpPressed()
-  }
-  function onDownPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleDownPressed()
-  }
-  function onLeftPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleLeftPressed()
-  }
-  function onRightPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleRightPressed()
-  }
-  function onReturnPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleReturnPressed()
-  }
-  function onHomePressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleHomePressed()
-  }
-  function onEndPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleEndPressed()
-  }
-  function onPageUpPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handlePageUpPressed()
-  }
-  function onPageDownPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handlePageDownPressed()
-  }
-  function onCtrlJPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleCtrlJPressed()
-  }
-  function onCtrlKPressed() {
-    if (windowLoader.item)
-      windowLoader.item.handleCtrlKPressed()
-  }
+  // Note: SmartPanelWindow directly calls these functions via panelWrapper reference
+  function onEscapePressed() {}
+  function onTabPressed() {}
+  function onShiftTabPressed() {}
+  function onUpPressed() {}
+  function onDownPressed() {}
+  function onLeftPressed() {}
+  function onRightPressed() {}
+  function onReturnPressed() {}
+  function onHomePressed() {}
+  function onEndPressed() {}
+  function onPageUpPressed() {}
+  function onPageDownPressed() {}
+  function onCtrlJPressed() {}
+  function onCtrlKPressed() {}
 
   // Public control functions
   function toggle(buttonItem, buttonName) {
