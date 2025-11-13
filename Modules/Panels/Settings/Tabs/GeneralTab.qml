@@ -233,7 +233,7 @@ ColumnLayout {
   }
 
   NButton {
-    visible: !DistroService.isNixOS
+    visible: !HostService.isNixOS
     text: I18n.tr("settings.general.launch-setup-wizard")
     onClicked: {
       var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null)

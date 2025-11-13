@@ -81,7 +81,7 @@ ShellRoot {
         BatteryService.init()
         IdleInhibitorService.init()
         PowerProfileService.init()
-        DistroService.init()
+        HostService.init()
         FontService.init()
 
         // Only open the setup wizard for new users
@@ -128,13 +128,13 @@ ShellRoot {
 
   function checkSetupWizard() {
     // Wait for distro service
-    if (!DistroService.isReady) {
+    if (!HostService.isReady) {
       Qt.callLater(checkSetupWizard)
       return
     }
 
     // No setup wizard on NixOS
-    if (DistroService.isNixOS) {
+    if (HostService.isNixOS) {
       Settings.data.setupCompleted = true
       return
     }
