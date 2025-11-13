@@ -23,6 +23,8 @@ Item {
   // Reference to MainScreen (for panel access)
   required property var windowRoot
 
+  readonly property color panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+
   anchors.fill: parent
 
   // Wrapper with layer caching for better shadow performance
@@ -69,91 +71,91 @@ Item {
       PanelBackground {
         panel: root.windowRoot.audioPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Battery
       PanelBackground {
         panel: root.windowRoot.batteryPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Bluetooth
       PanelBackground {
         panel: root.windowRoot.bluetoothPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Calendar
       PanelBackground {
         panel: root.windowRoot.calendarPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Control Center
       PanelBackground {
         panel: root.windowRoot.controlCenterPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Launcher
       PanelBackground {
         panel: root.windowRoot.launcherPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Notification History
       PanelBackground {
         panel: root.windowRoot.notificationHistoryPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Session Menu
       PanelBackground {
         panel: root.windowRoot.sessionMenuPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Settings
       PanelBackground {
         panel: root.windowRoot.settingsPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Setup Wizard
       PanelBackground {
         panel: root.windowRoot.setupWizardPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // TrayDrawer
       PanelBackground {
         panel: root.windowRoot.trayDrawerPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Wallpaper
       PanelBackground {
         panel: root.windowRoot.wallpaperPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // WiFi
       PanelBackground {
         panel: root.windowRoot.wifiPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
     }
 
