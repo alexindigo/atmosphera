@@ -191,12 +191,11 @@ PanelWindow {
                         } else if (event.key === Qt.Key_Right && panelWrapper.onRightPressed) {
                           panelWrapper.onRightPressed()
                           event.accepted = true
-                        } else if (event.key === Qt.Key_Tab) {
-                          if (event.modifiers & Qt.ShiftModifier && panelWrapper.onShiftTabPressed) {
-                            panelWrapper.onShiftTabPressed()
-                          } else if (panelWrapper.onTabPressed) {
-                            panelWrapper.onTabPressed()
-                          }
+                        } else if (event.key === Qt.Key_Tab && panelWrapper.onTabPressed) {
+                          panelWrapper.onTabPressed()
+                          event.accepted = true
+                        } else if (event.key === Qt.Key_Backtab && panelWrapper.onBackTabPressed) {
+                          panelWrapper.onBackTabPressed()
                           event.accepted = true
                         } else if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && panelWrapper.onReturnPressed) {
                           panelWrapper.onReturnPressed()

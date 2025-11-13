@@ -340,7 +340,7 @@ SmartPanel {
     selectNextTab()
   }
 
-  function onShiftTabPressed() {
+  function onBackTabPressed() {
     selectPreviousTab()
   }
 

@@ -63,7 +63,7 @@ Item {
   // Note: SmartPanelWindow directly calls these functions via panelWrapper reference
   function onEscapePressed() {}
   function onTabPressed() {}
-  function onShiftTabPressed() {}
+  function onBackTabPressed() {}
   function onUpPressed() {}
   function onDownPressed() {}
   function onLeftPressed() {}

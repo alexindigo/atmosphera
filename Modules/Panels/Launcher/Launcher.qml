@@ -55,7 +55,7 @@ SmartPanel {
     selectNextWrapped()
   }
 
-  function onShiftTabPressed() {
+  function onBackTabPressed() {
     selectPreviousWrapped()
   }
 
