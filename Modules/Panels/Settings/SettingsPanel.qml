@@ -412,14 +412,14 @@ SmartPanel {
             anchors.fill: parent
             anchors.margins: Style.marginS
             model: root.tabsModel
-            spacing: Style.marginXS
+            spacing: Style.marginXXS
             currentIndex: root.currentTabIndex
             verticalPolicy: ScrollBar.AsNeeded
 
             delegate: Rectangle {
               id: tabItem
               width: sidebarList.verticalScrollBarActive ? sidebarList.width - sidebarList.scrollBarWidth - Style.marginXS : sidebarList.width
-              height: tabEntryRow.implicitHeight + Style.marginM * 2
+              height: tabEntryRow.implicitHeight + Style.marginS * 2
               radius: Style.radiusS
               color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
               readonly property bool selected: index === root.currentTabIndex
