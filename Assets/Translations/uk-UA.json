@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "Використання ЦП (Критичний)"
+        },
         "cpu-temperature": {
           "description": "Показувати показники температури ЦП, якщо доступно.",
           "label": "Температура ЦП"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Відображати поточний відсоток використання ЦП.",
           "label": "Використання ЦП"
+        },
+        "cpu-warning-threshold": {
+          "label": "Використання ЦП (Попередження)"
+        },
+        "disk-critical-threshold": {
+          "label": "Місце на диску (Критичний)"
+        },
+        "disk-warning-threshold": {
+          "label": "Місце на диску (Попередження)"
+        },
+        "mem-critical-threshold": {
+          "label": "Використання пам'яті (Критичний)"
+        },
+        "mem-warning-threshold": {
+          "label": "Використання пам'яті (Попередження)"
         },
         "memory-percentage": {
           "description": "Показувати використання пам'яті у відсотках замість абсолютних значень.",
@@ -265,6 +283,16 @@
         "storage-usage": {
           "description": "Показувати інформацію про використання дискового простору.",
           "label": "Використання сховища"
+        },
+        "temp-critical-threshold": {
+          "label": "Температура ЦП (Критичний)"
+        },
+        "temp-warning-threshold": {
+          "label": "Температура ЦП (Попередження)"
+        },
+        "thresholds": {
+          "description": "Встановіть пороги для оповіщень системних метрик. Виділяє при перевищенні.",
+          "header": "Налаштування порогів"
         }
       },
       "taskbar": {
@@ -647,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} через {seconds} секунд...",
+    "hibernate": "Гібернація",
     "lock": "Заблокувати",
     "lock-and-suspend": "Заблокувати та призупинити",
     "logout": "Вийти",
     "reboot": "Перезавантажити",
     "shutdown": "Вимкнути",
     "suspend": "Призупинити",
-    "hibernate": "Гібернація",
     "title": "Меню сеансу"
   },
   "settings": {
@@ -1569,13 +1597,69 @@
       "title": "Меню сеансу"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "cpu-section": {
+        "label": "Використання ЦП"
+      },
+      "cpu-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "critical-color": {
+        "label": "Критичний колір"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Власні кольори підсвічування"
+      },
+      "disk-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "disk-section": {
+        "label": "Використання диска"
+      },
+      "disk-warning-threshold": {
+        "label": "Поріг попередження"
+      },
       "general": {
         "section": {
           "description": "Налаштуйте поведінку та зовнішній вигляд Системного монітора.",
           "label": "Загальне"
         }
       },
-      "title": "Системний монітор"
+      "highlight-colors-section": {
+        "label": "Кольори підсвічування"
+      },
+      "mem-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "mem-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "memory-section": {
+        "label": "Використання пам'яті"
+      },
+      "temp-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "temp-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "temperature-section": {
+        "label": "Температура ЦП"
+      },
+      "thresholds-section": {
+        "description": "Встановіть пороги для системних метрик; значення вище будуть підсвічені.",
+        "label": "Пороги"
+      },
+      "title": "Системний монітор",
+      "use-custom-highlight-colors": {
+        "description": "Якщо вимкнено, використовуються кольори підсвічування за замовчуванням теми.",
+        "label": "Використовувати власні кольори підсвічування"
+      },
+      "warning-color": {
+        "label": "Колір попередження"
+      }
     },
     "user-interface": {
       "animation-disable": {

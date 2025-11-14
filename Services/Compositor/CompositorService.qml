@@ -13,6 +13,7 @@ Singleton {
   property bool isHyprland: false
   property bool isNiri: false
   property bool isSway: false
+  property bool isMango: false
 
   // Generic workspace and window data
   property ListModel workspaces: ListModel {}
@@ -50,30 +51,43 @@ Singleton {
     const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
     const niriSocket = Quickshell.env("NIRI_SOCKET")
     const swaySock = Quickshell.env("SWAYSOCK")
-    if (niriSocket && niriSocket.length > 0) {
+    const currentDesktop = Quickshell.env("XDG_CURRENT_DESKTOP")
+
+    // Check for MangoWC using XDG_CURRENT_DESKTOP environment variable
+    // MangoWC sets XDG_CURRENT_DESKTOP=mango
+    if (currentDesktop && currentDesktop.toLowerCase().includes("mango")) {
+      isHyprland = false
+      isNiri = false
+      isSway = false
+      isMango = true
+      backendLoader.sourceComponent = mangoComponent
+    } else if (niriSocket && niriSocket.length > 0) {
       isHyprland = false
       isNiri = true
       isSway = false
+      isMango = false
       backendLoader.sourceComponent = niriComponent
     } else if (hyprlandSignature && hyprlandSignature.length > 0) {
       isHyprland = true
       isNiri = false
       isSway = false
+      isMango = false
       backendLoader.sourceComponent = hyprlandComponent
     } else if (swaySock && swaySock.length > 0) {
       isHyprland = false
       isNiri = false
       isSway = true
+      isMango = false
       backendLoader.sourceComponent = swayComponent
     } else {
       // Always fallback to Niri
       isHyprland = false
       isNiri = true
       isSway = false
+      isMango = false
       backendLoader.sourceComponent = niriComponent
     }
   }
-
   Loader {
     id: backendLoader
     onLoaded: {
@@ -134,6 +148,14 @@ Singleton {
     }
   }
 
+  // Mango backend component
+  Component {
+    id: mangoComponent
+    MangoService {
+      id: mangoBackend
+    }
+  }
+
   function setupBackendConnections() {
     if (!backend)
       return
@@ -161,7 +183,7 @@ Singleton {
                                         windowListChanged()
                                       })
 
-    // Property bindings
+    // Property bindings - use automatic property change signal
     backend.focusedWindowIndexChanged.connect(() => {
                                                 focusedWindowIndex = backend.focusedWindowIndex
                                               })

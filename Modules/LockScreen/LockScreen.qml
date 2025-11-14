@@ -15,6 +15,7 @@ import qs.Services.Location
 import qs.Services.Media
 import qs.Services.Compositor
 import qs.Services.UI
+import qs.Services.System
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
 
@@ -336,7 +337,7 @@ Loader {
 
                   // Welcome back + Username on one line
                   NText {
-                    text: I18n.tr("lock-screen.welcome-back") + " " + (Quickshell.env("USER").charAt(0).toUpperCase() + Quickshell.env("USER").slice(1)) + "!"
+                    text: I18n.tr("lock-screen.welcome-back") + " " + HostService.displayName + "!"
                     pointSize: Style.fontSizeXXL
                     font.weight: Font.Medium
                     color: Color.mOnSurface

@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU-gebruik (Kritiek)"
+        },
         "cpu-temperature": {
           "description": "Toon CPU-temperatuur indien beschikbaar.",
           "label": "CPU-temperatuur"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Toon het huidige CPU-gebruik in procent.",
           "label": "CPU-gebruik"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU-gebruik (Waarschuwing)"
+        },
+        "disk-critical-threshold": {
+          "label": "Opslagruimte (Kritiek)"
+        },
+        "disk-warning-threshold": {
+          "label": "Opslagruimte (Waarschuwing)"
+        },
+        "mem-critical-threshold": {
+          "label": "Geheugengebruik (Kritiek)"
+        },
+        "mem-warning-threshold": {
+          "label": "Geheugengebruik (Waarschuwing)"
         },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
@@ -265,6 +283,16 @@
         "storage-usage": {
           "description": "Toon informatie over schijfruimtegebruik.",
           "label": "Opslaggebruik"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU-temperatuur (kritiek)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU-temperatuur (Waarschuwing)"
+        },
+        "thresholds": {
+          "description": "Drempels instellen voor systeemmetriekwaarschuwingen. Markeert wanneer overschreden.",
+          "header": "Drempelinstellingen"
         }
       },
       "taskbar": {
@@ -647,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} over {seconds} seconden...",
+    "hibernate": "Slaperstand",
     "lock": "Vergrendelen",
     "lock-and-suspend": "Vergrendelen en onderbreken",
     "logout": "Afmelden",
     "reboot": "Opnieuw opstarten",
     "shutdown": "Uitschakelen",
     "suspend": "Onderbreken",
-    "hibernate": "Slaperstand",
     "title": "Sessie-menu"
   },
   "settings": {
@@ -1569,13 +1597,69 @@
       "title": "Sessiemenu"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "cpu-section": {
+        "label": "CPU-gebruik"
+      },
+      "cpu-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "critical-color": {
+        "label": "Kritische kleur"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Aangepaste markeerkleuren"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "disk-section": {
+        "label": "Schijfgebruik"
+      },
+      "disk-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
       "general": {
         "section": {
           "description": "Configureer het gedrag en de weergave van de Systeemmonitor.",
           "label": "Algemeen"
         }
       },
-      "title": "Systeemmonitor"
+      "highlight-colors-section": {
+        "label": "Markeerkleuren"
+      },
+      "mem-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "mem-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "memory-section": {
+        "label": "Geheugengebruik"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "temp-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "temperature-section": {
+        "label": "CPU-temperatuur"
+      },
+      "thresholds-section": {
+        "description": "Stel drempelwaarden in voor systeemstatistieken; waarden die hierboven liggen worden gemarkeerd.",
+        "label": "Drempels"
+      },
+      "title": "Systeemmonitor",
+      "use-custom-highlight-colors": {
+        "description": "Indien uitgeschakeld, worden de standaard markeerkleuren van het thema gebruikt.",
+        "label": "Gebruik aangepaste markeerkleuren."
+      },
+      "warning-color": {
+        "label": "Waarschuwingskleur"
+      }
     },
     "user-interface": {
       "animation-disable": {

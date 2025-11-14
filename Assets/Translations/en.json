@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
         "cpu-temperature": {
           "description": "Show CPU temperature readings if available.",
           "label": "CPU temperature"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Display current CPU usage percentage.",
           "label": "CPU usage"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Show memory usage as a percentage instead of absolute values.",
@@ -265,6 +283,16 @@
         "storage-usage": {
           "description": "Show disk space usage information.",
           "label": "Storage usage"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "thresholds": {
+          "description": "Set thresholds for system metric alerts. Highlights when exceeded.",
+          "header": "Threshold Settings"
         }
       },
       "taskbar": {
@@ -647,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} in {seconds} seconds...",
+    "hibernate": "Hibernate",
     "lock": "Lock",
     "lock-and-suspend": "Lock and Suspend",
     "logout": "Logout",
     "reboot": "Reboot",
     "shutdown": "Shutdown",
     "suspend": "Suspend",
-    "hibernate": "Hibernate",
     "title": "Session Menu"
   },
   "settings": {
@@ -1569,13 +1597,69 @@
       "title": "Session Menu"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "cpu-section": {
+        "label": "CPU Usage"
+      },
+      "cpu-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "critical-color": {
+        "label": "Critical Color"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Custom highlight colors"
+      },
+      "disk-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "disk-section": {
+        "label": "Disk Usage"
+      },
+      "disk-warning-threshold": {
+        "label": "Warning Threshold"
+      },
       "general": {
         "section": {
           "description": "Configure the System Monitor behavior and appearance.",
           "label": "General"
         }
       },
-      "title": "System Monitor"
+      "highlight-colors-section": {
+        "label": "Highlight Colors"
+      },
+      "mem-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "mem-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "memory-section": {
+        "label": "Memory Usage"
+      },
+      "temp-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "temp-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "temperature-section": {
+        "label": "CPU Temperature"
+      },
+      "thresholds-section": {
+        "description": "Set thresholds for system metrics, values above these will be highlighted.",
+        "label": "Thresholds"
+      },
+      "title": "System Monitor",
+      "use-custom-highlight-colors": {
+        "description": "When disabled, theme default highlight colors are used.",
+        "label": "Use custom highlight colors"
+      },
+      "warning-color": {
+        "label": "Warning Color"
+      }
     },
     "user-interface": {
       "animation-disable": {

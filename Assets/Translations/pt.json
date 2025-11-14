@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
         "cpu-temperature": {
           "description": "Mostrar leituras de temperatura da CPU se disponíveis.",
           "label": "Temperatura da CPU"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Exibir o percentual atual de uso da CPU.",
           "label": "Uso da CPU"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Mostrar o uso de memória como percentual em vez de valores absolutos.",
@@ -265,6 +283,16 @@
         "storage-usage": {
           "description": "Mostrar informações de uso do espaço em disco.",
           "label": "Uso de armazenamento"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "thresholds": {
+          "description": "Estabelece limites para alertas de métricas do sistema. Destaca quando superados.",
+          "header": "Configuração de Limiares"
         }
       },
       "taskbar": {
@@ -647,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} em {seconds} segundos...",
+    "hibernate": "Hibernação",
     "lock": "Bloquear",
     "lock-and-suspend": "Bloquear e Suspender",
     "logout": "Sair",
     "reboot": "Reiniciar",
     "shutdown": "Desligar",
     "suspend": "Suspender",
-    "hibernate": "Hibernação",
     "title": "Menu da Sessão"
   },
   "settings": {
@@ -1569,13 +1597,69 @@
       "title": "Menu de sessão"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "cpu-section": {
+        "label": "Uso da CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "critical-color": {
+        "label": "Cor crítica"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Cores de destaque personalizadas"
+      },
+      "disk-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "disk-section": {
+        "label": "Uso do disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Limite de aviso"
+      },
       "general": {
         "section": {
           "description": "Configure o comportamento e a aparência do Monitor do Sistema.",
           "label": "Geral"
         }
       },
-      "title": "Monitor do Sistema"
+      "highlight-colors-section": {
+        "label": "Cores de destaque"
+      },
+      "mem-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "mem-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "memory-section": {
+        "label": "Uso de memória"
+      },
+      "temp-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "temp-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "temperature-section": {
+        "label": "Temperatura da CPU"
+      },
+      "thresholds-section": {
+        "description": "Defina limiares para métricas do sistema; valores acima serão destacados.",
+        "label": "Limiares"
+      },
+      "title": "Monitor do Sistema",
+      "use-custom-highlight-colors": {
+        "description": "Quando desativado, são usadas as cores de destaque padrão do tema.",
+        "label": "Usar cores de destaque personalizadas"
+      },
+      "warning-color": {
+        "label": "Cor de aviso"
+      }
     },
     "user-interface": {
       "animation-disable": {
