@@ -512,7 +512,7 @@ Item {
           name: tagId.toString(),
           output: outputName,
           isActive: isActive,
-          isFocused: isFocused && (outputName === selectedMonitor),
+          isFocused: isFocused || (isActive && (outputName === selectedMonitor)),
           isUrgent: isUrgent,
           isOccupied: isOccupied,
           clients: parseInt(clients)
