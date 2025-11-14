@@ -653,6 +653,7 @@
     "reboot": "Перезавантажити",
     "shutdown": "Вимкнути",
     "suspend": "Призупинити",
+    "hibernate": "Гібернація",
     "title": "Меню сеансу"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Записати {filepath}. Тему Hyprluna потрібно встановити та активувати вручну.",
-            "description-missing": "Потрібна установка {app}"
+            "description-missing": "Клієнт Code не виявлено. Встановіть VSCode або VSCodium."
           },
           "description": "Оформлення окремих програм.",
           "discord": {
@@ -1566,6 +1567,15 @@
         "label": "Показувати заголовок"
       },
       "title": "Меню сеансу"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Налаштуйте поведінку та зовнішній вигляд Системного монітора.",
+          "label": "Загальне"
+        }
+      },
+      "title": "Системний монітор"
     },
     "user-interface": {
       "animation-disable": {

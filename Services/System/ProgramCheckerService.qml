@@ -31,6 +31,9 @@ Singleton {
   // Discord client auto-detection
   property var availableDiscordClients: []
 
+  // Code client auto-detection
+  property var availableCodeClients: []
+
   // Signal emitted when all checks are complete
   signal checksCompleted
 
@@ -42,12 +45,16 @@ Singleton {
     for (var i = 0; i < TemplateRegistry.discordClients.length; i++) {
       var client = TemplateRegistry.discordClients[i]
       var clientName = client.name
+      var configPath = client.configPath
+
+      // Use the actual config path from the client, removing ~ prefix
+      var checkPath = configPath.startsWith("~") ? configPath.substring(2) : configPath.substring(1)
 
       // Check if this client requires themes folder to exist
       if (client.requiresThemesFolder) {
-        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+        scriptParts.push("if [ -d \"$HOME/" + checkPath + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
       } else {
-        scriptParts.push("if [ -d \"$HOME/.config/" + clientName + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+        scriptParts.push("if [ -d \"$HOME/" + checkPath + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
       }
     }
 
@@ -90,6 +97,66 @@ Singleton {
 
       if (availableDiscordClients.length === 0) {
         Logger.d("ProgramChecker", "No Discord clients detected")
+      }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+  }
+
+  // Function to detect Code client by checking config directories
+  function detectCodeClient() {
+    // Build shell script to check each client
+    var scriptParts = ["available_clients=\"\";"]
+
+    for (var i = 0; i < TemplateRegistry.codeClients.length; i++) {
+      var client = TemplateRegistry.codeClients[i]
+      var clientName = client.name
+      var configPath = client.configPath
+
+      // Check if the config directory exists
+      scriptParts.push("if [ -d \"$HOME" + configPath.substring(1) + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;")
+    }
+
+    scriptParts.push("echo \"$available_clients\"")
+
+    // Use a Process to check directory existence for all clients
+    codeDetector.command = ["sh", "-c", scriptParts.join(" ")]
+    codeDetector.running = true
+  }
+
+  // Process to detect Code client directories
+  Process {
+    id: codeDetector
+    running: false
+
+    onExited: function (exitCode) {
+      availableCodeClients = []
+
+      if (exitCode === 0) {
+        var detectedClients = stdout.text.trim().split(/\s+/).filter(function (client) {
+          return client.length > 0
+        })
+
+        if (detectedClients.length > 0) {
+          // Build list of available clients
+          for (var i = 0; i < detectedClients.length; i++) {
+            var clientName = detectedClients[i]
+            for (var j = 0; j < TemplateRegistry.codeClients.length; j++) {
+              var client = TemplateRegistry.codeClients[j]
+              if (client.name === clientName) {
+                availableCodeClients.push(client)
+                break
+              }
+            }
+          }
+
+          Logger.i("ProgramChecker", "Detected Code clients:", detectedClients.join(", "))
+        }
+      }
+
+      if (availableCodeClients.length === 0) {
+        Logger.d("ProgramChecker", "No Code clients detected")
       }
     }
 
@@ -140,8 +207,9 @@ Singleton {
 
       // Check next program or emit completion signal
       if (root.completedChecks >= root.totalChecks) {
-        // Run Discord client detection after all checks are complete
+        // Run Discord and Code client detection after all checks are complete
         root.detectDiscordClient()
+        root.detectCodeClient()
         root.checksCompleted()
       } else {
         root.checkNextProgram()

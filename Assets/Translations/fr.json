@@ -653,6 +653,7 @@
     "reboot": "Redémarrer",
     "shutdown": "Éteindre",
     "suspend": "Mettre en veille",
+    "hibernate": "Mise en veille prolongée",
     "title": "Menu de session"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
-            "description-missing": "Nécessite l'installation de {app}"
+            "description-missing": "Aucun client Code détecté. Installez VSCode ou VSCodium."
           },
           "description": "Thématisation spécifique aux applications.",
           "discord": {
@@ -1566,6 +1567,15 @@
         "label": "Afficher l'en-tête"
       },
       "title": "Menu de session"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du Moniteur Système.",
+          "label": "Général"
+        }
+      },
+      "title": "Moniteur système"
     },
     "user-interface": {
       "animation-disable": {

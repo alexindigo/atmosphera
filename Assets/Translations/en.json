@@ -653,6 +653,7 @@
     "reboot": "Reboot",
     "shutdown": "Shutdown",
     "suspend": "Suspend",
+    "hibernate": "Hibernate",
     "title": "Session Menu"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
-            "description-missing": "Requires {app} to be installed"
+            "description-missing": "No Code client detected. Install VSCode or VSCodium."
           },
           "description": "Application-specific theming.",
           "discord": {
@@ -1566,6 +1567,15 @@
         "label": "Show header"
       },
       "title": "Session Menu"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configure the System Monitor behavior and appearance.",
+          "label": "General"
+        }
+      },
+      "title": "System Monitor"
     },
     "user-interface": {
       "animation-disable": {

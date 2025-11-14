@@ -24,22 +24,6 @@ ColumnLayout {
     })
   }
 
-  // Handler for drag start - disables panel background clicks
-  function handleDragStart() {
-    var panel = PanelService.getPanel("settingsPanel", screen)
-    if (panel && panel.disableBackgroundClick) {
-      panel.disableBackgroundClick()
-    }
-  }
-
-  // Handler for drag end - re-enables panel background clicks
-  function handleDragEnd() {
-    var panel = PanelService.getPanel("settingsPanel", screen)
-    if (panel && panel.enableBackgroundClick) {
-      panel.enableBackgroundClick()
-    }
-  }
-
   NHeader {
     label: I18n.tr("settings.bar.appearance.section.label")
     description: I18n.tr("settings.bar.appearance.section.description")
@@ -234,8 +218,6 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-        onDragPotentialStarted: root.handleDragStart()
-        onDragPotentialEnded: root.handleDragEnd()
       }
 
       // Center Section
@@ -251,8 +233,6 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-        onDragPotentialStarted: root.handleDragStart()
-        onDragPotentialEnded: root.handleDragEnd()
       }
 
       // Right Section
@@ -268,8 +248,6 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-        onDragPotentialStarted: root.handleDragStart()
-        onDragPotentialEnded: root.handleDragEnd()
       }
     }
   }

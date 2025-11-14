@@ -162,7 +162,11 @@ Singleton {
                                   "TaskbarGrouped": {
                                     "allowUserSettings": true,
                                     "showWorkspaceNumbers": true,
-                                    "showNumbersOnlyWhenOccupied": true
+                                    "showNumbersOnlyWhenOccupied": true,
+                                    "labelMode": "index",
+                                    "hideUnoccupied": false,
+                                    "characterCount": 2,
+                                    "colorizeIcons": false
                                   },
                                   "Tray": {
                                     "allowUserSettings": true,

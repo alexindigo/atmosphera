@@ -652,7 +652,8 @@
     "logout": "Abmelden",
     "reboot": "Neu starten",
     "shutdown": "Herunterfahren",
-    "suspend": "Ruhezustand",
+    "suspend": "Energiesparmodus",
+    "hibernate": "Ruhezustand",
     "title": "Sitzungsmenü"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Schreibe {Dateipfad}. Das Hyprluna-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description-missing": "Kein Code-Client erkannt. Installieren Sie VSCode oder VSCodium."
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
@@ -1441,8 +1442,8 @@
         "label": "Immer im Vordergrund"
       },
       "background-opacity": {
-        "description": "Controls the transparency of the OSD background.",
-        "label": "Background opacity"
+        "description": "Kontrolliert die Transparenz des OSD Hintergrunds.",
+        "label": "Hintergrund-Transparenz"
       },
       "description": "Bildschirm-Overlays wie Lautstärke- und Helligkeitsanzeigen konfigurieren.",
       "duration": {
@@ -1566,6 +1567,15 @@
         "label": "Kopfzeile anzeigen"
       },
       "title": "Sitzungsmenü"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Konfigurieren Sie das Verhalten und Aussehen des Systemmonitors.",
+          "label": "Allgemein"
+        }
+      },
+      "title": "Systemmonitor"
     },
     "user-interface": {
       "animation-disable": {

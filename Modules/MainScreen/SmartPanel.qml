@@ -15,8 +15,6 @@ import qs.Services.UI
 Item {
   id: root
 
-  // PUBLIC API - unchanged for backward compatibility
-
   // Screen property provided by MainScreen
   property ShellScreen screen: null
 
@@ -63,7 +61,7 @@ Item {
   // Note: SmartPanelWindow directly calls these functions via panelWrapper reference
   function onEscapePressed() {}
   function onTabPressed() {}
-  function onShiftTabPressed() {}
+  function onBackTabPressed() {}
   function onUpPressed() {}
   function onDownPressed() {}
   function onLeftPressed() {}

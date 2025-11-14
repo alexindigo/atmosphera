@@ -114,6 +114,18 @@ Singleton {
                                                                       }
                                                                     })
                                               }
+                                            } else if (app.id === "code") {
+                                              // Handle Code clients specially
+                                              if (Settings.data.templates.code) {
+                                                app.clients.forEach(client => {
+                                                                      // Check if this specific client is detected
+                                                                      if (isCodeClientEnabled(client.name)) {
+                                                                        lines.push(`\n[templates.code_${client.name}]`)
+                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`)
+                                                                        lines.push(`output_path = "${client.path}"`)
+                                                                      }
+                                                                    })
+                                              }
                                             } else {
                                               // Handle regular apps
                                               if (Settings.data.templates[app.id]) {
@@ -134,6 +146,16 @@ Singleton {
     // Check ProgramCheckerService to see if client is detected
     for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
       if (ProgramCheckerService.availableDiscordClients[i].name === clientName) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function isCodeClientEnabled(clientName) {
+    // Check ProgramCheckerService to see if client is detected
+    for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+      if (ProgramCheckerService.availableCodeClients[i].name === clientName) {
         return true
       }
     }
@@ -162,6 +184,10 @@ Singleton {
                                             if (app.id === "discord") {
                                               if (Settings.data.templates.discord) {
                                                 script += processDiscordClients(app, colors, mode, homeDir)
+                                              }
+                                            } else if (app.id === "code") {
+                                              if (Settings.data.templates.code) {
+                                                script += processCodeClients(app, colors, mode, homeDir)
                                               }
                                             } else {
                                               if (Settings.data.templates[app.id]) {
@@ -194,6 +220,39 @@ Singleton {
                                  script += `  echo "Discord client ${client.name} not found at ${baseConfigDir}, skipping"\n`
                                  script += `fi\n`
                                })
+
+    return script
+  }
+
+  function processCodeClients(codeApp, colors, mode, homeDir) {
+    let script = ""
+    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false)
+
+    codeApp.clients.forEach(client => {
+                              if (!isCodeClientEnabled(client.name))
+                              return
+
+                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`
+                              const outputPath = client.path.replace("~", homeDir)
+                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
+                              
+                              // Extract base config directory for checking
+                              var baseConfigDir = ""
+                              if (client.name === "code") {
+                                baseConfigDir = "~/.vscode".replace("~", homeDir)
+                              } else if (client.name === "codium") {
+                                baseConfigDir = "~/.vscode-oss".replace("~", homeDir)
+                              }
+
+                              script += `\n`
+                              script += `if [ -d "${baseConfigDir}" ]; then\n`
+                              script += `  mkdir -p ${outputDir}\n`
+                              script += `  cp '${templatePath}' '${outputPath}'\n`
+                              script += `  ${replaceColorsInFile(outputPath, palette)}`
+                              script += `else\n`
+                              script += `  echo "Code client ${client.name} not found at ${baseConfigDir}, skipping"\n`
+                              script += `fi\n`
+                            })
 
     return script
   }

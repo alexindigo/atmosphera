@@ -49,83 +49,83 @@ Variants {
     function getIcon() {
       if (currentOSDType === "volume") {
         if (AudioService.muted) {
-          return "volume-mute";
+          return "volume-mute"
         }
-        return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high";
+        return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
       } else if (currentOSDType === "inputVolume") {
         if (AudioService.inputMuted) {
-          return "microphone-off";
+          return "microphone-off"
         }
-        return "microphone";
+        return "microphone"
       } else if (currentOSDType === "brightness") {
-        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
+        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
       }
-      return "";
+      return ""
     }
 
     // Get current value (0-1 range)
     function getCurrentValue() {
       if (currentOSDType === "volume") {
-        return isMuted ? 0 : currentVolume;
+        return isMuted ? 0 : currentVolume
       } else if (currentOSDType === "inputVolume") {
-        return isInputMuted ? 0 : currentInputVolume;
+        return isInputMuted ? 0 : currentInputVolume
       } else if (currentOSDType === "brightness") {
-        return currentBrightness;
+        return currentBrightness
       }
-      return 0;
+      return 0
     }
 
     // Get maximum value for current OSD type
     function getMaxValue() {
       if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
-        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
       } else if (currentOSDType === "brightness") {
-        return 1.0;
+        return 1.0
       }
-      return 1.0;
+      return 1.0
     }
 
     // Get display percentage
     function getDisplayPercentage() {
       if (currentOSDType === "volume") {
         if (isMuted)
-          return "0%";
-        const max = getMaxValue();
-        const pct = Math.round(Math.min(max, currentVolume) * 100);
-        return pct + "%";
+          return "0%"
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentVolume) * 100)
+        return pct + "%"
       } else if (currentOSDType === "inputVolume") {
         if (isInputMuted)
-          return "0%";
-        const max = getMaxValue();
-        const pct = Math.round(Math.min(max, currentInputVolume) * 100);
-        return pct + "%";
+          return "0%"
+        const max = getMaxValue()
+        const pct = Math.round(Math.min(max, currentInputVolume) * 100)
+        return pct + "%"
       } else if (currentOSDType === "brightness") {
-        const pct = Math.round(Math.min(1.0, currentBrightness) * 100);
-        return pct + "%";
+        const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
+        return pct + "%"
       }
-      return "";
+      return ""
     }
 
     // Get progress bar color
     function getProgressColor() {
       if (currentOSDType === "volume") {
         if (isMuted)
-          return Color.mError;
-        return Color.mPrimary;
+          return Color.mError
+        return Color.mPrimary
       } else if (currentOSDType === "inputVolume") {
         if (isInputMuted)
-          return Color.mError;
-        return Color.mPrimary;
+          return Color.mError
+        return Color.mPrimary
       }
-      return Color.mPrimary;
+      return Color.mPrimary
     }
 
     // Get icon color
     function getIconColor() {
       if ((currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)) {
-        return Color.mError;
+        return Color.mError
       }
-      return Color.mOnSurface;
+      return Color.mOnSurface
     }
 
     sourceComponent: PanelWindow {
@@ -146,8 +146,8 @@ Variants {
 
       // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
-        const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
-        return (base % 2 === 0) ? base : base + 1;
+        const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
+        return (base % 2 === 0) ? base : base + 1
       }
 
       // Anchor selection based on location (window edges)
@@ -159,46 +159,46 @@ Variants {
       // Margins depending on bar position and chosen location
       margins.top: {
         if (!(anchors.top))
-          return 0;
-        var base = Style.marginM;
+          return 0
+        var base = Style.marginM
         if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0;
-          return Style.barHeight + base + floatExtraV;
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return Style.barHeight + base + floatExtraV
         }
-        return base;
+        return base
       }
 
       margins.bottom: {
         if (!(anchors.bottom))
-          return 0;
-        var base = Style.marginM;
+          return 0
+        var base = Style.marginM
         if (Settings.data.bar.position === "bottom") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0;
-          return Style.barHeight + base + floatExtraV;
+          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+          return Style.barHeight + base + floatExtraV
         }
-        return base;
+        return base
       }
 
       margins.left: {
         if (!(anchors.left))
-          return 0;
-        var base = Style.marginM;
+          return 0
+        var base = Style.marginM
         if (Settings.data.bar.position === "left") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
-          return Style.barHeight + base + floatExtraH;
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return Style.barHeight + base + floatExtraH
         }
-        return base;
+        return base
       }
 
       margins.right: {
         if (!(anchors.right))
-          return 0;
-        var base = Style.marginM;
+          return 0
+        var base = Style.marginM
         if (Settings.data.bar.position === "right") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
-          return Style.barHeight + base + floatExtraH;
+          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
+          return Style.barHeight + base + floatExtraH
         }
-        return base;
+        return base
       }
 
       implicitWidth: verticalMode ? vWidth : hWidth
@@ -249,10 +249,10 @@ Variants {
           id: visibilityTimer
           interval: Style.animationNormal + 50 // Add small buffer
           onTriggered: {
-            osdItem.visible = false;
-            root.currentOSDType = "";
+            osdItem.visible = false
+            root.currentOSDType = ""
             // Deactivate the loader when done
-            root.active = false;
+            root.active = false
           }
         }
 
@@ -265,8 +265,8 @@ Variants {
           color: Qt.alpha(Color.mSurface, Settings.data.osd.backgroundOpacity || 1.0)
           border.color: Qt.alpha(Color.mOutline, Settings.data.osd.backgroundOpacity || 1.0)
           border.width: {
-            const bw = Math.max(2, Style.borderM);
-            return (bw % 2 === 0) ? bw : bw + 1;
+            const bw = Math.max(2, Style.borderM)
+            return (bw % 2 === 0) ? bw : bw + 1
           }
         }
 
@@ -365,9 +365,9 @@ Variants {
             ColumnLayout {
               // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
               property int vMargin: {
-                const styleMargin = Style.marginL;
-                const cornerGuard = Math.round(osdItem.radius);
-                return Math.max(styleMargin, cornerGuard);
+                const styleMargin = Style.marginL
+                const cornerGuard = Math.round(osdItem.radius)
+                return Math.max(styleMargin, cornerGuard)
               }
               property int vMarginTop: Math.round(Math.max(osdItem.radius, Style.marginS))
               property int balanceDelta: Style.marginS
@@ -449,46 +449,46 @@ Variants {
 
         function show() {
           // Cancel any pending hide operations
-          hideTimer.stop();
-          visibilityTimer.stop();
+          hideTimer.stop()
+          visibilityTimer.stop()
 
           // Make visible and animate in
-          osdItem.visible = true;
+          osdItem.visible = true
           // Use Qt.callLater to ensure the visible change is processed before animation
           Qt.callLater(() => {
-            osdItem.opacity = 1;
-            osdItem.scale = 1.0;
-          });
+                         osdItem.opacity = 1
+                         osdItem.scale = 1.0
+                       })
 
           // Start the auto-hide timer
-          hideTimer.start();
+          hideTimer.start()
         }
 
         function hide() {
-          hideTimer.stop();
-          visibilityTimer.stop();
+          hideTimer.stop()
+          visibilityTimer.stop()
 
           // Start fade out animation
-          osdItem.opacity = 0;
-          osdItem.scale = 0.85; // Less dramatic scale change for smoother effect
+          osdItem.opacity = 0
+          osdItem.scale = 0.85 // Less dramatic scale change for smoother effect
 
           // Delay hiding the element until after animation completes
-          visibilityTimer.start();
+          visibilityTimer.start()
         }
 
         function hideImmediately() {
-          hideTimer.stop();
-          visibilityTimer.stop();
-          osdItem.opacity = 0;
-          osdItem.scale = 0.85;
-          osdItem.visible = false;
-          root.currentOSDType = "";
-          root.active = false;
+          hideTimer.stop()
+          visibilityTimer.stop()
+          osdItem.opacity = 0
+          osdItem.scale = 0.85
+          osdItem.visible = false
+          root.currentOSDType = ""
+          root.active = false
         }
       }
 
       function showOSD() {
-        osdItem.show();
+        osdItem.show()
       }
     }
 
@@ -498,34 +498,34 @@ Variants {
 
       function onVolumeChanged() {
         if (volumeInitialized) {
-          showOSD("volume");
+          showOSD("volume")
         }
       }
 
       function onMutedChanged() {
         if (muteInitialized) {
-          showOSD("volume");
+          showOSD("volume")
         }
       }
 
       function onInputVolumeChanged() {
         if (!inputAudioInitialized) {
-          return;
+          return
         }
         if (!AudioService.hasInput) {
-          return;
+          return
         }
-        showOSD("inputVolume");
+        showOSD("inputVolume")
       }
 
       function onInputMutedChanged() {
         if (!inputAudioInitialized) {
-          return;
+          return
         }
         if (!AudioService.hasInput) {
-          return;
+          return
         }
-        showOSD("inputVolume");
+        showOSD("inputVolume")
       }
     }
 
@@ -535,11 +535,11 @@ Variants {
       interval: 500
       running: true
       onTriggered: {
-        volumeInitialized = true;
-        muteInitialized = true;
-        inputAudioInitialized = true;
+        volumeInitialized = true
+        muteInitialized = true
+        inputAudioInitialized = true
         // Brightness initializes on first change to avoid showing OSD on startup
-        connectBrightnessMonitors();
+        connectBrightnessMonitors()
       }
     }
 
@@ -548,65 +548,65 @@ Variants {
       target: BrightnessService
 
       function onMonitorsChanged() {
-        connectBrightnessMonitors();
+        connectBrightnessMonitors()
       }
     }
 
     function disconnectBrightnessMonitors() {
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
-        let monitor = BrightnessService.monitors[i];
-        monitor.brightnessUpdated.disconnect(onBrightnessChanged);
+        let monitor = BrightnessService.monitors[i]
+        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
       }
     }
 
     function connectBrightnessMonitors() {
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
-        let monitor = BrightnessService.monitors[i];
+        let monitor = BrightnessService.monitors[i]
         // Disconnect first to avoid duplicate connections
-        monitor.brightnessUpdated.disconnect(onBrightnessChanged);
-        monitor.brightnessUpdated.connect(onBrightnessChanged);
+        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
+        monitor.brightnessUpdated.connect(onBrightnessChanged)
       }
     }
 
     function onBrightnessChanged(newBrightness) {
-      root.lastUpdatedBrightness = newBrightness;
+      root.lastUpdatedBrightness = newBrightness
 
       if (!brightnessInitialized) {
-        brightnessInitialized = true;
-        return;
+        brightnessInitialized = true
+        return
       }
 
-      showOSD("brightness");
+      showOSD("brightness")
     }
 
     function showOSD(type) {
       // Update the current OSD type
-      currentOSDType = type;
+      currentOSDType = type
 
       // Activate the loader if not already active
       if (!root.active) {
-        root.active = true;
+        root.active = true
       }
 
       // Show the OSD (may need to wait for loader to create the item)
       if (root.item) {
-        root.item.showOSD();
+        root.item.showOSD()
       } else {
         // If item not ready yet, wait for it
         Qt.callLater(() => {
-          if (root.item) {
-            root.item.showOSD();
-          }
-        });
+                       if (root.item) {
+                         root.item.showOSD()
+                       }
+                     })
       }
     }
 
     function hideOSD() {
       if (root.item && root.item.osdItem) {
-        root.item.osdItem.hideImmediately();
+        root.item.osdItem.hideImmediately()
       } else if (root.active) {
         // If loader is active but item isn't ready, just deactivate
-        root.active = false;
+        root.active = false
       }
     }
   }

@@ -38,22 +38,6 @@ ColumnLayout {
       "required": false
     }]
 
-  // Handler for drag start - disables panel background clicks
-  function handleDragStart() {
-    var panel = PanelService.getPanel("settingsPanel", screen)
-    if (panel && panel.disableBackgroundClick) {
-      panel.disableBackgroundClick()
-    }
-  }
-
-  // Handler for drag end - re-enables panel background clicks
-  function handleDragEnd() {
-    var panel = PanelService.getPanel("settingsPanel", screen)
-    if (panel && panel.enableBackgroundClick) {
-      panel.enableBackgroundClick()
-    }
-  }
-
   function saveCards() {
     var toSave = []
     for (var i = 0; i < cardsModel.length; i++) {
@@ -202,12 +186,6 @@ ColumnLayout {
       Layout.fillWidth: true
       model: cardsModel
       disabledIds: Settings.data.location.weatherEnabled ? [] : ["weather-card"]
-      onDragPotentialStarted: {
-        root.handleDragStart()
-      }
-      onDragPotentialEnded: {
-        root.handleDragEnd()
-      }
       onItemToggled: function (index, enabled) {
         //Logger.i("ControlCenterTab", "Item", index, "toggled to", enabled)
         var newModel = cardsModel.slice()
@@ -266,8 +244,6 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-        onDragPotentialStarted: root.handleDragStart()
-        onDragPotentialEnded: root.handleDragEnd()
       }
 
       // Right
@@ -285,8 +261,6 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
-        onDragPotentialStarted: root.handleDragStart()
-        onDragPotentialEnded: root.handleDragEnd()
       }
     }
   }

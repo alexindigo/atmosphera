@@ -653,6 +653,7 @@
     "reboot": "Opnieuw opstarten",
     "shutdown": "Uitschakelen",
     "suspend": "Onderbreken",
+    "hibernate": "Slaperstand",
     "title": "Sessie-menu"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Schrijf {filepath}. Het Hyprluna-thema moet handmatig worden geïnstalleerd en geactiveerd.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description-missing": "Geen Code-client gedetecteerd. Installeer VSCode of VSCodium."
           },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
@@ -1566,6 +1567,15 @@
         "label": "Koptekst tonen"
       },
       "title": "Sessiemenu"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configureer het gedrag en de weergave van de Systeemmonitor.",
+          "label": "Algemeen"
+        }
+      },
+      "title": "Systeemmonitor"
     },
     "user-interface": {
       "animation-disable": {

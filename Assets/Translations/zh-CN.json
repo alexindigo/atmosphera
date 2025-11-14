@@ -653,6 +653,7 @@
     "reboot": "重启",
     "shutdown": "关机",
     "suspend": "挂起",
+    "hibernate": "休眠",
     "title": "会话菜单"
   },
   "settings": {
@@ -879,7 +880,7 @@
         "programs": {
           "code": {
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
-            "description-missing": "需要安装 {app}"
+            "description-missing": "未检测到 Code 客户端。请安装 VSCode 或 VSCodium。"
           },
           "description": "应用程序特定主题。",
           "discord": {
@@ -1474,7 +1475,6 @@
           "description": "配置屏显菜单（OSD）的可见性与行为。",
           "label": "常规"
         }
-
       },
       "title": "屏显菜单"
     },
@@ -1567,6 +1567,15 @@
         "label": "显示标题"
       },
       "title": "会话菜单"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "配置系统监视器的行为和外观。",
+          "label": "通用"
+        }
+      },
+      "title": "系统监视器"
     },
     "user-interface": {
       "animation-disable": {

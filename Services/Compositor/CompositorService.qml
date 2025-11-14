@@ -368,6 +368,11 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"])
   }
 
+  function hibernate() {
+    Logger.i("Compositor", "Hibernate requested")
+    Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"])
+  }
+
   function lockAndSuspend() {
     Logger.i("Compositor", "Lock and suspend requested")
     try {
