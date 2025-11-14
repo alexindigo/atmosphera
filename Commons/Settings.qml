@@ -438,17 +438,6 @@ Singleton {
       property bool code: false
       property bool spicetify: false
       property bool enableUserTemplates: false
-
-      property bool code_code: false
-      property bool code_codium: false
-
-      property bool discord_vesktop: false // To be deleted soon
-      property bool discord_webcord: false // To be deleted soon
-      property bool discord_armcord: false // To be deleted soon
-      property bool discord_equibop: false // To be deleted soon
-      property bool discord_lightcord: false // To be deleted soon
-      property bool discord_dorion: false // To be deleted soon
-      property bool discord_vencord: false // To be deleted soon
     }
 
     // night light
@@ -658,22 +647,34 @@ Singleton {
     // 5th. Migrate Discord templates (version 20 → 21)
     // Consolidate individual discord_* properties into unified discord property
     if (adapter.settingsVersion < 21) {
-      var anyDiscordEnabled = false
+      // Read raw JSON file to access properties not in adapter schema
+      try {
+        var rawJson = settingsFileView.text()
 
-      // Check if any Discord client was enabled
-      const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion", "discord_vencord"]
+        if (rawJson) {
+          var parsed = JSON.parse(rawJson)
+          var anyDiscordEnabled = false
 
-      for (var i = 0; i < discordClients.length; i++) {
-        if (adapter.templates[discordClients[i]]) {
-          anyDiscordEnabled = true
-          break
+          // Check if any Discord client was enabled
+          const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion", "discord_vencord"]
+
+          if (parsed.templates) {
+            for (var i = 0; i < discordClients.length; i++) {
+              if (parsed.templates[discordClients[i]]) {
+                anyDiscordEnabled = true
+                break
+              }
+            }
+          }
+
+          // Set unified discord property
+          adapter.templates.discord = anyDiscordEnabled
+
+          Logger.i("Settings", "Migrated Discord templates to unified 'discord' property (enabled:", anyDiscordEnabled + ")")
         }
+      } catch (error) {
+        Logger.w("Settings", "Failed to read raw JSON for Discord migration:", error)
       }
-
-      // Set unified discord property
-      adapter.templates.discord = anyDiscordEnabled
-
-      Logger.i("Settings", "Migrated Discord templates to unified 'discord' property (enabled:", anyDiscordEnabled + ")")
     }
 
     // -----------------
