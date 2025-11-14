@@ -50,6 +50,8 @@ Item {
         // Ignore the first volume change
         firstVolumeReceived = true
       } else {
+        // Hide any tooltip while the pill is visible / being updated
+        TooltipService.hide()
         pill.show()
         externalHideTimer.restart()
       }
@@ -81,6 +83,9 @@ Item {
                          })
 
     onWheel: function (delta) {
+      // Hide tooltip as soon as the user starts scrolling to adjust volume
+      TooltipService.hide()
+
       wheelAccumulator += delta
       if (wheelAccumulator >= 120) {
         wheelAccumulator = 0
