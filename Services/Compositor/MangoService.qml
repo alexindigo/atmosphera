@@ -38,16 +38,17 @@ Item {
       layout: ["mmsg", "-g", "-l"],
       keyboard: ["mmsg", "-g", "-k"],
       outputs: ["mmsg", "-g", "-A"],
+      monitors: ["mmsg", "-g", "-o"],
       eventStream: ["mmsg", "-w"]
     },
     action: {
-      view: ["mmsg", "-d", "view"],
-      tag: ["mmsg", "-t"],
-      focusMaster: ["mmsg", "-d", "focusmaster"],
-      killClient: ["mmsg", "-d", "killclient"],
-      toggleOverview: ["mmsg", "-d", "toggleoverview"],
-      setLayout: ["mmsg", "-d", "setlayout"],
-      quit: ["mmsg", "-d", "quit"]
+      view: ["mmsg", "-s", "-d", "view"],
+      tag: ["mmsg", "-s", "-t"],
+      focusMaster: ["mmsg", "-s", "-d", "focusmaster"],
+      killClient: ["mmsg", "-s", "-d", "killclient"],
+      toggleOverview: ["mmsg", "-s", "-d", "toggleoverview"],
+      setLayout: ["mmsg", "-s", "-d", "setlayout"],
+      quit: ["mmsg", "-s", "-q"]
     }
   })
 
@@ -285,7 +286,7 @@ Item {
   Process {
     id: monitorStateProcess
     running: false
-    command: ["mmsg", "-g"]
+    command: mmsgCommands.query.monitors
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -312,6 +313,38 @@ Item {
     }
   }
 
+  Process {
+    id: outputEnumProcess
+    running: false
+    command: ["mmsg", "-g", "-O"]
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        try {
+          const trimmed = line.trim()
+          // Handle output enumeration format: "+ eDP-1"
+          const outputName = trimmed.replace(/^\+\s*/, '')
+          if (outputName && !monitorCache[outputName]) {
+            monitorCache[outputName] = {
+              name: outputName,
+              scale: 1.0,
+              active: false,
+              focused: false
+            }
+          }
+        } catch (e) {
+          Logger.e("MangoService", "Output enumeration error:", e, line)
+        }
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("MangoService", "Output enumeration failed:", exitCode)
+      }
+    }
+  }
+
   // Initialization
   function initialize() {
     if (initialized) {
@@ -323,6 +356,7 @@ Item {
       Logger.i("MangoService", "Initializing MangoWC service...")
       
       // Query monitor state first to establish selected monitor before parsing windows
+      queryOutputEnum()
       queryMonitorState()
       eventStream.running = true
       queryWorkspaces()
@@ -343,9 +377,16 @@ Item {
   function switchToWorkspace(workspace) {
     try {
       const tagId = workspace.idx || workspace.id || defaultWorkspaceId
-      const command = mmsgCommands.action.tag.concat([tagId.toString()])
+      const outputName = workspace.output || selectedMonitor || ""
+      let command = [...mmsgCommands.action.tag]
+      
+      if (outputName) {
+        command.push("-o", outputName)
+      }
+      command.push(tagId.toString())
+      
       Quickshell.execDetached(command)
-      Logger.d("MangoService", `Switching to workspace ${tagId}`)
+      Logger.d("MangoService", `Switching to workspace ${tagId} on ${outputName || 'default output'}`)
     } catch (e) {
       Logger.e("MangoService", "Failed to switch workspace:", e)
     }
@@ -354,12 +395,15 @@ Item {
   // Window operations
   function focusWindow(window) {
     try {
-      if (window && window.workspaceId) {
-        const command = mmsgCommands.action.view.concat([window.workspaceId.toString()])
+      if (window && window.output) {
+        let command = [...mmsgCommands.action.view]
+        command.push("-o", window.output, window.workspaceId.toString())
         Quickshell.execDetached(command)
         
         Qt.callLater(() => {
-          Quickshell.execDetached(mmsgCommands.action.focusMaster)
+          let focusCommand = [...mmsgCommands.action.focusMaster]
+          focusCommand.push("-o", window.output)
+          Quickshell.execDetached(focusCommand)
         })
       }
     } catch (e) {
@@ -367,9 +411,13 @@ Item {
     }
   }
 
-  function closeWindow() {
+  function closeWindow(window) {
     try {
-      Quickshell.execDetached(mmsgCommands.action.killClient)
+      const command = [...mmsgCommands.action.killClient]
+      if (selectedMonitor) {
+        command.push("-o", selectedMonitor)
+      }
+      Quickshell.execDetached(command)
     } catch (e) {
       Logger.e("MangoService", "Failed to close window:", e)
     }
@@ -378,7 +426,11 @@ Item {
   // MangoWC-specific operations
   function toggleOverview() {
     try {
-      Quickshell.execDetached(mmsgCommands.action.toggleOverview)
+      const command = [...mmsgCommands.action.toggleOverview]
+      if (selectedMonitor) {
+        command.push("-o", selectedMonitor)
+      }
+      Quickshell.execDetached(command)
     } catch (e) {
       Logger.e("MangoService", "Failed to toggle overview:", e)
     }
@@ -386,7 +438,8 @@ Item {
 
   function setLayout(layoutName) {
     try {
-      const command = mmsgCommands.action.setLayout.concat([layoutName])
+      const command = [...mmsgCommands.action.setLayout]
+      command.push(layoutName)
       Quickshell.execDetached(command)
     } catch (e) {
       Logger.e("MangoService", "Failed to set layout:", e)
@@ -406,14 +459,15 @@ Item {
     const lines = output.trim().split('\n')
     const workspacesList = []
     const newWorkspaceCache = {}
+    let outputClients = {}
 
     for (const line of lines) {
       const trimmed = line.trim()
       if (!trimmed) continue
 
-      const match = trimmed.match(/^(\S+)\s+tag\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/)
-      if (match) {
-        const [, outputName, tagNum, state, clients, focused] = match
+      const tagMatch = trimmed.match(/^(\S+)\s+tag\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/)
+      if (tagMatch) {
+        const [, outputName, tagNum, state, clients, focused] = tagMatch
         const tagId = parseInt(tagNum)
         
         const isActive = (parseInt(state) & 1) !== 0
@@ -421,20 +475,64 @@ Item {
         const isOccupied = parseInt(clients) > 0
         const isFocused = isActive && parseInt(focused) === 1
 
+        if (!outputClients[outputName]) {
+          outputClients[outputName] = 0
+        }
+
         const workspaceData = {
           id: tagId,
           idx: tagId,
           name: tagId.toString(),
           output: outputName,
           isActive: isActive,
-          isFocused: isFocused,
+          isFocused: isFocused && (outputName === selectedMonitor),
           isUrgent: isUrgent,
           isOccupied: isOccupied,
           clients: parseInt(clients)
         }
 
-        newWorkspaceCache[tagId] = workspaceData
+        newWorkspaceCache[`${outputName}-${tagId}`] = workspaceData
         workspacesList.push(workspaceData)
+      }
+
+      const clientsMatch = trimmed.match(/^(\S+)\s+clients\s+(\d+)$/)
+      if (clientsMatch) {
+        const [, outputName, clientCount] = clientsMatch
+        outputClients[outputName] = parseInt(clientCount)
+      }
+
+      const tagsMatch = trimmed.match(/^(\S+)\s+tags\s+(\d+)\s+(\d+)\s+(\d+)$/)
+      if (tagsMatch) {
+        const [, outputName, occ, seltags, urg] = tagsMatch
+        // Parse binary tag states for comprehensive workspace info
+        const occBits = occ.padStart(9, '0')
+        const selBits = seltags.padStart(9, '0')
+        const urgBits = urg.padStart(9, '0')
+        
+        for (let i = 0; i < 9; i++) {
+          const tagId = i + 1
+          const isActive = selBits[8-i] === '1'
+          const isUrgent = urgBits[8-i] === '1'
+          const isOccupied = occBits[8-i] === '1'
+          
+          const workspaceData = {
+            id: tagId,
+            idx: tagId,
+            name: tagId.toString(),
+            output: outputName,
+            isActive: isActive,
+            isFocused: false, // Will be determined by selected monitor
+            isUrgent: isUrgent,
+            isOccupied: isOccupied,
+            clients: 0 // Will be updated by tag-specific data
+          }
+          
+          const key = `${outputName}-${tagId}`
+          if (!newWorkspaceCache[key]) {
+            newWorkspaceCache[key] = workspaceData
+            workspacesList.push(workspaceData)
+          }
+        }
       }
 
       const layoutMatch = trimmed.match(/^(\S+)\s+layout\s+(\S+)$/)
@@ -444,21 +542,21 @@ Item {
       }
     }
 
-    if (JSON.stringify(newWorkspaceCache) !== JSON.stringify(workspaceCache)) {
-      workspaceCache = newWorkspaceCache
-      
-      workspacesList.sort((a, b) => {
-        if (a.id !== b.id) return a.id - b.id
-        return a.output.localeCompare(b.output)
-      })
+      if (JSON.stringify(newWorkspaceCache) !== JSON.stringify(workspaceCache)) {
+        workspaceCache = newWorkspaceCache
+        
+        workspacesList.sort((a, b) => {
+          if (a.id !== b.id) return a.id - b.id
+          return a.output.localeCompare(b.output)
+        })
 
-      workspaces.clear()
-      for (var i = 0; i < workspacesList.length; i++) {
-        workspaces.append(workspacesList[i])
+        workspaces.clear()
+        for (var i = 0; i < workspacesList.length; i++) {
+          workspaces.append(workspacesList[i])
+        }
+        
+        workspaceChanged()
       }
-      
-      workspaceChanged()
-    }
   }
 
   function parseWindows(windowData) {
@@ -468,17 +566,25 @@ Item {
 
     for (const [outputName, data] of Object.entries(windowData)) {
       if (data.title || data.appId) {
-        // Windows from mmsg -g -c are already the focused windows for their respective outputs
+        // Windows from mmsg -g -o -c are the focused windows for their respective outputs
         // A window is focused if it's from the currently selected monitor
-        // If selectedMonitor is not yet set, assume first window is focused (fallback)
-        const isFocused = selectedMonitor ? (outputName === selectedMonitor) : (windowsList.length === 0)
+        const isFocused = (outputName === selectedMonitor)
+        
+        // Get the active tag for this output
+        let activeTagId = defaultWorkspaceId
+        for (const [key, tagData] of Object.entries(workspaceCache)) {
+          if (tagData.output === outputName && tagData.isActive) {
+            activeTagId = tagData.id
+            break
+          }
+        }
         
         const windowInfo = {
-          id: outputName,
+          id: `${outputName}-${data.appId || 'unknown'}`,
           title: data.title || "",
           appId: data.appId || "",
           class: data.appId || "",
-          workspaceId: getCurrentActiveTagId(),
+          workspaceId: activeTagId,
           isFocused: isFocused,
           output: outputName,
           fullscreen: data.fullscreen || false,
@@ -496,7 +602,7 @@ Item {
         }
 
         windowsList.push(windowInfo)
-        newWindowCache[outputName] = windowInfo
+        newWindowCache[windowInfo.id] = windowInfo
         
         if (isFocused) {
           newFocusedIndex = windowsList.length - 1
@@ -582,8 +688,11 @@ Item {
       case "layout":
       case "kb_layout":
       case "scale_factor":
-      case "monitor":
-      case "client":
+      case "toggle":
+      case "last_layer":
+      case "keymode":
+      case "clients":
+      case "tags":
         updateTimer.restart()
         break
     }
@@ -610,6 +719,14 @@ Item {
     outputsProcess.running = true
   }
 
+  function queryDisplayScales() {
+    queryOutputs()
+  }
+
+  function queryOutputEnum() {
+    outputEnumProcess.running = true
+  }
+
   function queryMonitorState() {
     monitorStateProcess.running = true
   }
@@ -626,9 +743,15 @@ Item {
   }
 
   function getCurrentActiveTagId() {
-    for (const [tagId, tagData] of Object.entries(workspaceCache)) {
+    for (const [key, tagData] of Object.entries(workspaceCache)) {
+      if (tagData.isActive && tagData.output === selectedMonitor) {
+        return tagData.id
+      }
+    }
+    // Fallback to any active tag if no selected monitor match
+    for (const [key, tagData] of Object.entries(workspaceCache)) {
       if (tagData.isActive) {
-        return parseInt(tagId)
+        return tagData.id
       }
     }
     return defaultWorkspaceId
