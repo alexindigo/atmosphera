@@ -79,7 +79,6 @@ ColumnLayout {
       id: previewCached
       anchors.fill: parent
       anchors.margins: 4
-      maxCacheDimension: 512
       cacheFolder: Settings.cacheDirImagesWallpapers
       imagePath: selectedWallpaper !== "" ? "file://" + selectedWallpaper : ""
       visible: false // used as texture source for the shader
@@ -237,46 +236,22 @@ ColumnLayout {
             Layout.preferredWidth: 120
             Layout.preferredHeight: 80
             color: Color.mSurface
-            radius: Style.radiusM
             border.color: selectedWallpaper === modelData ? Color.mPrimary : Color.mOutline
             border.width: selectedWallpaper === modelData ? 2 : 1
             clip: true
 
-            // Cached thumbnail (used as shader source)
+            // Cached thumbnail
             NImageCached {
               id: thumbCached
               anchors.fill: parent
               anchors.margins: 3
-              maxCacheDimension: 256
-              cacheFolder: Settings.cacheDirImagesWallpapers
-              imagePath: "file://" + modelData
-              visible: false
-            }
-
-            ShaderEffect {
-              anchors.fill: parent
-              anchors.margins: 3
-              property var source: ShaderEffectSource {
-                sourceItem: thumbCached
-                hideSource: true
-                live: true
-                recursive: false
-                format: ShaderEffectSource.RGBA
-              }
-              property real itemWidth: width
-              property real itemHeight: height
-              property real cornerRadius: Style.radiusM - 3
-              property real imageOpacity: 1.0
-              fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
-              supportsAtlasTextures: false
-              blending: true
+              source: "file://" + modelData
             }
 
             // Loading state
             Rectangle {
               anchors.fill: parent
               color: Color.mSurfaceVariant
-              radius: Style.radiusM
               visible: thumbCached.status === Image.Loading
 
               NIcon {
@@ -313,7 +288,6 @@ ColumnLayout {
               anchors.fill: parent
               color: Color.mPrimary
               opacity: hoverHandler.hovered ? 0.1 : 0
-              radius: Style.radiusM
               Behavior on opacity {
                 NumberAnimation {
                   duration: Style.animationFast

@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.System
 import qs.Widgets
 
 ColumnLayout {
@@ -137,14 +138,33 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.low-urgency.description")
       }
 
-      NValueSlider {
+      RowLayout {
+        spacing: Style.marginL
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.lowUrgencyDuration
-        onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
-        text: Settings.data.notifications.lowUrgencyDuration + "s"
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.lowUrgencyDuration
+          onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
+          text: Settings.data.notifications.lowUrgencyDuration + "s"
+        }
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.lowUrgencyDuration = 3
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
 
@@ -158,14 +178,34 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.normal-urgency.description")
       }
 
-      NValueSlider {
+      RowLayout {
+        spacing: Style.marginL
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.normalUrgencyDuration
-        onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
-        text: Settings.data.notifications.normalUrgencyDuration + "s"
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.normalUrgencyDuration
+          onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
+          text: Settings.data.notifications.normalUrgencyDuration + "s"
+        }
+
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.normalUrgencyDuration = 8
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
 
@@ -179,14 +219,33 @@ ColumnLayout {
         description: I18n.tr("settings.notifications.duration.critical-urgency.description")
       }
 
-      NValueSlider {
+      RowLayout {
+        spacing: Style.marginL
         Layout.fillWidth: true
-        from: 1
-        to: 30
-        stepSize: 1
-        value: Settings.data.notifications.criticalUrgencyDuration
-        onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
-        text: Settings.data.notifications.criticalUrgencyDuration + "s"
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 1
+          to: 30
+          stepSize: 1
+          value: Settings.data.notifications.criticalUrgencyDuration
+          onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
+          text: Settings.data.notifications.criticalUrgencyDuration + "s"
+        }
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.notifications.duration.reset")
+            onClicked: Settings.data.notifications.criticalUrgencyDuration = 15
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
       }
     }
 
@@ -225,6 +284,25 @@ ColumnLayout {
                      }
                    }
       }
+    }
+
+    NDivider {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginL
+      Layout.bottomMargin: Style.marginL
+    }
+
+    // Toast Configuration
+    NHeader {
+      label: I18n.tr("settings.notifications.toast.section.label")
+      description: I18n.tr("settings.notifications.toast.section.description")
+    }
+
+    NToggle {
+      label: I18n.tr("settings.notifications.toast.keyboard.label")
+      description: I18n.tr("settings.notifications.toast.keyboard.description")
+      checked: Settings.data.notifications.enableKeyboardLayoutToast
+      onToggled: checked => Settings.data.notifications.enableKeyboardLayoutToast = checked
     }
   }
 

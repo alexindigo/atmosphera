@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.ControlCenter.Cards
 import qs.Services.Location
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -28,6 +29,14 @@ SmartPanel {
     const oneWeek = 1000 * 60 * 60 * 24 * 7
     const weekNumber = 1 + Math.round(diff / oneWeek)
     return weekNumber
+  }
+
+  // Helper function to check if an event is all-day
+  function isAllDayEvent(event) {
+    const duration = event.end - event.start
+    const startDate = new Date(event.start * 1000)
+    const isAtMidnight = startDate.getHours() === 0 && startDate.getMinutes() === 0
+    return duration === 86400 && isAtMidnight
   }
 
   panelContent: Item {
@@ -362,14 +371,6 @@ SmartPanel {
                                                    })
             }
 
-            // Helper function to check if an event is all-day
-            function isAllDayEvent(event) {
-              const duration = event.end - event.start
-              const startDate = new Date(event.start * 1000)
-              const isAtMidnight = startDate.getHours() === 0 && startDate.getMinutes() === 0
-              return duration === 86400 && isAtMidnight
-            }
-
             // Helper function to check if an event is multi-day
             function isMultiDayEvent(event) {
               if (isAllDayEvent(event)) {
@@ -603,9 +604,20 @@ SmartPanel {
                       onEntered: {
                         const events = parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day)
                         if (events.length > 0) {
-                          const summaries = events.map(e => e.summary).join('\n')
-                          TooltipService.show(Screen, parent, summaries)
-                          TooltipService.updateText(summaries)
+                          const summaries = events.map(event => {
+                                                         if (isAllDayEvent(event)) {
+                                                           return event.summary
+                                                         } else {
+                                                           // Always format with '0' padding to ensure proper horizontal alignment
+                                                           const timeFormat = Settings.data.location.use12hourFormat ? "hh:mm AP" : "HH:mm"
+                                                           const start = new Date(event.start * 1000)
+                                                           const startFormatted = I18n.locale.toString(start, timeFormat)
+                                                           const end = new Date(event.end * 1000)
+                                                           const endFormatted = I18n.locale.toString(end, timeFormat)
+                                                           return `${startFormatted}-${endFormatted} ${event.summary}`
+                                                         }
+                                                       }).join('\n')
+                          TooltipService.show(screen, parent, summaries, "auto", Style.tooltipDelay, Settings.data.ui.fontFixed)
                         }
                       }
 

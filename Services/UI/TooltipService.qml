@@ -15,7 +15,7 @@ Singleton {
     Tooltip {}
   }
 
-  function show(screen, target, text, direction, delay) {
+  function show(screen, target, text, direction, delay, fontFamily) {
     if (!Settings.data.ui.tooltipsEnabled) {
       return
     }
@@ -78,7 +78,7 @@ Singleton {
                                         })
 
       // Show the tooltip
-      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay)
+      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay, fontFamily)
 
       return newTooltip
     } else {

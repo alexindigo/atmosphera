@@ -91,6 +91,21 @@ ColumnLayout {
     }
 
     NLabel {
+      label: I18n.tr("settings.osd.background-opacity.label", "Background opacity")
+      description: I18n.tr("settings.osd.background-opacity.description", "Controls the transparency of the OSD background.")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 100
+      stepSize: 1
+      value: Settings.data.osd.backgroundOpacity * 100
+      onMoved: value => Settings.data.osd.backgroundOpacity = value / 100
+      text: Math.round(Settings.data.osd.backgroundOpacity * 100) + "%"
+    }
+
+    NLabel {
       label: I18n.tr("settings.osd.duration.auto-hide.label")
       description: I18n.tr("settings.osd.duration.auto-hide.description")
     }

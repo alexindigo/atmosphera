@@ -15,6 +15,18 @@ NBox {
   // Track whether we have an active media player
   readonly property bool hasActivePlayer: MediaService.currentPlayer && MediaService.canPlay
 
+  property string wallpaper: WallpaperService.getWallpaper(screen.name)
+
+  // External state management
+  Connections {
+    target: WallpaperService
+    function onWallpaperChanged(screenName, path) {
+      if (screenName === screen.name) {
+        wallpaper = path
+      }
+    }
+  }
+
   // Wrapper - rounded rect clipper
   Item {
     anchors.fill: parent
@@ -39,7 +51,7 @@ NBox {
       readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       id: bgImage
       anchors.fill: parent
-      source: MediaService.trackArtUrl || WallpaperService.getWallpaper(screen.name)
+      source: MediaService.trackArtUrl || wallpaper
       sourceSize: Qt.size(dim, dim)
       fillMode: Image.PreserveAspectCrop
     }

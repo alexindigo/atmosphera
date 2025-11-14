@@ -10,6 +10,9 @@ import qs.Modules.MainScreen.Backgrounds
  * Unified shadow system. This component is a ShapePath that will
  * be a child of the unified AllBackgrounds Shape container.
  *
+ * Reads positioning and geometry from PanelPlaceholder (via panel.panelItem).
+ * The actual panel content lives in a separate SmartPanelWindow.
+ *
  * Uses 4-state per-corner system for flexible corner rendering:
  * - State -1: No radius (flat/square corner)
  * - State 0: Normal (inner curve)
@@ -19,7 +22,7 @@ import qs.Modules.MainScreen.Backgrounds
 ShapePath {
   id: root
 
-  // Required reference to the panel component (e.g., windowRoot.controlCenterPanel)
+  // Required reference to PanelPlaceholder (e.g., windowRoot.audioPanelPlaceholder)
   required property var panel
 
   // Required reference to AllBackgrounds shapeContainer
@@ -30,9 +33,9 @@ ShapePath {
 
   required property color backgroundColor
 
-  // Get the actual panelBackground Item from SmartPanel
-  // Only access panelRegion if panel exists and is visible
-  readonly property var panelBg: (panel && panel.visible) ? panel.panelRegion : null
+  // Get the actual panelBackground Item from PanelPlaceholder
+  // Only access panelItem if panel exists and is visible
+  readonly property var panelBg: (panel && panel.visible) ? panel.panelItem : null
 
   // Panel position - panelBg is in screen coordinates already
   readonly property real panelX: panelBg ? panelBg.x : 0

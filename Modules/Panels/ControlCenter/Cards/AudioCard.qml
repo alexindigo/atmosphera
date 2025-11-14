@@ -9,11 +9,18 @@ import qs.Widgets
 NBox {
   id: root
 
-  property real localOutputVolume: AudioService.volume || 0
+  property real localOutputVolume: 0
   property bool localOutputVolumeChanging: false
 
-  property real localInputVolume: AudioService.inputVolume || 0
+  property real localInputVolume: 0
   property bool localInputVolumeChanging: false
+
+  Component.onCompleted: {
+    var vol = AudioService.volume
+    localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+    var inputVol = AudioService.inputVolume
+    localInputVolume = (inputVol !== undefined && !isNaN(inputVol)) ? inputVol : 0
+  }
 
   // Timer to debounce volume changes
   Timer {
@@ -32,10 +39,31 @@ NBox {
 
   // Connections to update local volumes when AudioService changes
   Connections {
+    target: AudioService
+    function onVolumeChanged() {
+      if (!localOutputVolumeChanging) {
+        var vol = AudioService.volume
+        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+      }
+    }
+  }
+
+  Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
       if (!localOutputVolumeChanging) {
-        localOutputVolume = AudioService.volume
+        var vol = AudioService.volume
+        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+      }
+    }
+  }
+
+  Connections {
+    target: AudioService
+    function onInputVolumeChanged() {
+      if (!localInputVolumeChanging) {
+        var vol = AudioService.inputVolume
+        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
       }
     }
   }
@@ -44,7 +72,8 @@ NBox {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
       if (!localInputVolumeChanging) {
-        localInputVolume = AudioService.inputVolume
+        var vol = AudioService.inputVolume
+        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
       }
     }
   }

@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "浏览文件",
         "browse-library": "浏览库",
+        "colorize-distro-logo": {
+          "description": "将主题颜色应用到您的发行版徽标。",
+          "label": "为发行版徽标着色"
+        },
         "icon": {
           "description": "从库中选择图标或自定义文件。",
           "label": "图标"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "使用您的发行版徽标而不是自定义图标。",
           "label": "使用发行版徽标而不是图标"
-        },
-        "colorize-distro-logo": {
-          "description": "将主题颜色应用到您的发行版徽标。",
-          "label": "为发行版徽标着色"
         }
       },
       "custom-button": {
@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "左键点击按钮时执行的命令。",
-          "label": "左键点击"
+          "label": "左键点击",
+          "update-text": "左键单击时更新显示的文本"
         },
         "middle-click": {
           "description": "中键点击按钮时执行的命令。",
-          "label": "中键点击"
+          "label": "中键点击",
+          "update-text": "鼠标中键点击时更新显示的文本"
         },
         "parse-json": {
           "description": "将命令输出解析为 JSON 对象，以动态设置文本和图标。",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "右键点击按钮时执行的命令。",
-          "label": "右键点击"
+          "label": "右键点击",
+          "update-text": "右键单击时更新显示的文本"
         },
         "text-stream": {
           "description": "来自命令的流式输出行将作为文本显示在按钮上。",
@@ -311,13 +314,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "显示工作区编号",
-          "description": "在任务组左上角显示工作区编号"
-        },
         "show-numbers-only-when-occupied": {
-          "label": "仅在有窗口时显示编号",
-          "description": "只为有打开窗口的工作区显示编号"
+          "description": "只为有打开窗口的工作区显示编号",
+          "label": "仅在有窗口时显示编号"
+        },
+        "show-workspace-numbers": {
+          "description": "在任务组左上角显示工作区编号",
+          "label": "显示工作区编号"
         }
       },
       "tray": {
@@ -678,6 +681,7 @@
     "reboot": "重启",
     "shutdown": "关机",
     "suspend": "挂起",
+    "hibernate": "休眠",
     "title": "会话菜单"
   },
   "settings": {
@@ -906,10 +910,6 @@
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
             "description-missing": "需要安装 {app}"
           },
-          "spicetify": {
-            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
-            "description-missing": "需要安装 {app}"
-          },
           "description": "应用程序特定主题。",
           "discord": {
             "description": "为 {client} 写入 {filepath}",
@@ -922,6 +922,10 @@
           "label": "程序",
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
+            "description-missing": "需要安装 {app}"
+          },
+          "spicetify": {
+            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
             "description-missing": "需要安装 {app}"
           },
           "vicinae": {
@@ -1402,6 +1406,7 @@
           "description": "正常优先级通知保持可见的时间。",
           "label": "正常紧急度"
         },
+        "reset": "重置超时时长",
         "respect-expire": {
           "description": "使用通知中设置的过期超时。",
           "label": "尊重过期超时"
@@ -1447,12 +1452,26 @@
           "label": "外观"
         }
       },
-      "title": "通知"
+      "title": "通知",
+      "toast": {
+        "keyboard": {
+          "description": "当键盘布局改变时显示一个Toast提示。",
+          "label": "键盘布局"
+        },
+        "section": {
+          "description": "配置Toast的外观和行为。",
+          "label": "吐司"
+        }
+      }
     },
     "osd": {
       "always-on-top": {
         "description": "在全屏窗口和其他图层之上显示OSD。",
         "label": "始终置顶"
+      },
+      "background-opacity": {
+        "description": "调整OSD背景的透明度。",
+        "label": "背景透明度"
       },
       "description": "配置屏幕叠加指示器，例如音量和亮度。",
       "duration": {
@@ -1546,6 +1565,46 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "设置倒计时计时器在执行电源操作之前持续多长时间。",
+        "label": "倒计时持续时间"
+      },
+      "enable-countdown": {
+        "description": "在执行电源操作之前显示倒计时计时器。",
+        "label": "启用倒计时计时器"
+      },
+      "entries": {
+        "section": {
+          "description": "自定义会话菜单中显示哪些电源操作及其顺序。",
+          "label": "电源操作"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "配置会话菜单面板的行为和外观。",
+          "label": "常规"
+        }
+      },
+      "position": {
+        "description": "选择会话菜单面板打开时出现的位置。",
+        "label": "位置"
+      },
+      "show-header": {
+        "description": "在会话菜单顶部显示标题和关闭按钮。",
+        "label": "显示标题"
+      },
+      "title": "会话菜单"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "配置系统监视器的行为和外观。",
+          "label": "通用"
+        }
+      },
+      "title": "系统监视器"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "禁用所有动画以获得更快、更流畅的体验。",
@@ -1564,6 +1623,10 @@
       "dim-desktop": {
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
+      },
+      "panel-background-opacity": {
+        "description": "设置所有面板的背景不透明度（启动器、控制中心、设置等）。",
+        "label": "面板背景不透明度"
       },
       "panels-attached-to-bar": {
         "description": "面板锁定到边栏和屏幕边缘，形成无缝外观，并具有时尚的倒角。",
@@ -1656,6 +1719,10 @@
           "description": "您的主壁纸文件夹路径。",
           "label": "壁纸文件夹",
           "tooltip": "浏览壁纸文件夹"
+        },
+        "hide-wallpaper-filenames": {
+          "description": "在选择器中隐藏壁纸文件名。",
+          "label": "隐藏文件名。"
         },
         "monitor-specific": {
           "description": "为每个显示器设置不同的壁纸文件夹。",
@@ -1841,10 +1908,10 @@
     "close": "关闭",
     "connect-disconnect-devices": "左键点击连接。右键点击忘记。",
     "delete-notification": "删除通知",
-    "disable-keep-awake": "禁用保持唤醒",
+    "disable-keep-awake": "单击以禁用保持唤醒。\n滚动以调整超时。",
     "do-not-disturb-disabled": "'勿扰模式'已禁用",
     "do-not-disturb-enabled": "'勿扰模式'已启用",
-    "enable-keep-awake": "启用保持唤醒",
+    "enable-keep-awake": "单击以启用保持唤醒。\n滚动以调整超时。",
     "forget-network": "忘记网络",
     "home": "主目录",
     "input-muted": "静音输入设备",

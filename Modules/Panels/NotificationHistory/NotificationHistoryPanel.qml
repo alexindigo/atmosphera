@@ -13,7 +13,7 @@ import qs.Modules.MainScreen
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(340 * Style.uiScaleRatio)
+  preferredWidth: Math.round(420 * Style.uiScaleRatio)
   preferredHeight: Math.round(540 * Style.uiScaleRatio)
 
   onOpened: function () {

@@ -206,6 +206,7 @@ Variants {
 
       color: Color.transparent
 
+      WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
@@ -261,8 +262,8 @@ Variants {
           anchors.fill: parent
           anchors.margins: Style.marginM * 1.5
           radius: Style.radiusL
-          color: Color.mSurface
-          border.color: Color.mOutline
+          color: Qt.alpha(Color.mSurface, Settings.data.osd.backgroundOpacity || 1.0)
+          border.color: Qt.alpha(Color.mOutline, Settings.data.osd.backgroundOpacity || 1.0)
           border.width: {
             const bw = Math.max(2, Style.borderM)
             return (bw % 2 === 0) ? bw : bw + 1
@@ -511,11 +512,17 @@ Variants {
         if (!inputAudioInitialized) {
           return
         }
+        if (!AudioService.hasInput) {
+          return
+        }
         showOSD("inputVolume")
       }
 
       function onInputMutedChanged() {
         if (!inputAudioInitialized) {
+          return
+        }
+        if (!AudioService.hasInput) {
           return
         }
         showOSD("inputVolume")

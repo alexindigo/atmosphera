@@ -489,7 +489,6 @@ SmartPanel {
 
             NImageCached {
               id: img
-              maxCacheDimension: 384
               imagePath: wallpaperPath
               cacheFolder: Settings.cacheDirImagesWallpapers
               anchors.fill: parent
@@ -561,6 +560,7 @@ SmartPanel {
 
           NText {
             text: filename
+            visible: !Settings.data.wallpaper.hideWallpaperFilenames
             color: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
             pointSize: Style.fontSizeXS
             Layout.fillWidth: true

@@ -119,12 +119,34 @@ ColumnLayout {
       }
     }
 
+    // Panel Background Opacity
+    ColumnLayout {
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.user-interface.panel-background-opacity.label")
+        description: I18n.tr("settings.user-interface.panel-background-opacity.description")
+      }
+
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.ui.panelBackgroundOpacity
+        onMoved: value => Settings.data.ui.panelBackgroundOpacity = value
+        text: Math.floor(Settings.data.ui.panelBackgroundOpacity * 100) + "%"
+      }
+    }
+
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL
       Layout.bottomMargin: Style.marginL
     }
 
+    // User Interface
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
@@ -165,6 +187,7 @@ ColumnLayout {
       }
     }
 
+    // Border Radius
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true

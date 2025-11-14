@@ -19,8 +19,6 @@ SmartPanel {
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
 
-  panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
-
   // Positioning
   readonly property string panelPosition: {
     if (Settings.data.appLauncher.position === "follow_bar") {
@@ -52,12 +50,15 @@ SmartPanel {
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
 
-  // Override keyboard handlers from SmartPanel for navigation
+  // Override keyboard handlers from SmartPanel for navigation.
+  // Launcher specific: onTabPressed() and onBackTabPressed() are special here.
+  // They are not coming from SmartPanelWindow as they are consumed by the search field before reaching the panel.
+  // They are instead being forwared from the search field NTextInput below.
   function onTabPressed() {
     selectNextWrapped()
   }
 
-  function onShiftTabPressed() {
+  function onBackTabPressed() {
     selectPreviousWrapped()
   }
 
@@ -348,6 +349,16 @@ SmartPanel {
         Component.onCompleted: {
           if (searchInput.inputItem) {
             searchInput.inputItem.forceActiveFocus()
+            // Intercept Tab keys before TextField handles them
+            searchInput.inputItem.Keys.onPressed.connect(function (event) {
+              if (event.key === Qt.Key_Tab) {
+                root.onTabPressed()
+                event.accepted = true
+              } else if (event.key === Qt.Key_Backtab) {
+                root.onBackTabPressed()
+                event.accepted = true
+              }
+            })
           }
         }
       }

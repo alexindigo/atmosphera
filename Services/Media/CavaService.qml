@@ -16,7 +16,7 @@ Singleton {
    *   - LockScreen is opened
    *   - A control center is open
    */
-  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
+  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.panelWrapper.objectName.startsWith("controlCenterPanel"))
 
   property var values: Array(barsCount).fill(0)
   property int barsCount: 32
@@ -60,12 +60,12 @@ Singleton {
       Logger.d("Cava", "Process running:", running)
     }
     onExited: {
-      Logger.i("Cava", "Process exited")
+      Logger.d("Cava", "Process exited")
       stdinEnabled = true
       values = Array(barsCount).fill(0)
     }
     onStarted: {
-      Logger.i("Cava", "Process started")
+      Logger.d("Cava", "Process started")
       for (const k in config) {
         if (typeof config[k] !== "object") {
           write(k + "=" + config[k] + "\n")

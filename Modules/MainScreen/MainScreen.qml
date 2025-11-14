@@ -2,12 +2,14 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+
 import qs.Commons
 import qs.Services.UI
 import "Backgrounds" as Backgrounds
 
 // All panels
 import qs.Modules.Bar
+import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
@@ -41,22 +43,33 @@ PanelWindow {
   readonly property alias settingsPanel: settingsPanel
   readonly property alias setupWizardPanel: setupWizardPanel
   readonly property alias trayDrawerPanel: trayDrawerPanel
-  readonly property alias trayMenuPanel: trayMenuPanel
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
+
+  // Expose panel placeholders for AllBackgrounds
+  readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
+  readonly property var batteryPanelPlaceholder: batteryPanel.panelPlaceholder
+  readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
+  readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
+  readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelPlaceholder
+  readonly property var launcherPanelPlaceholder: launcherPanel.panelPlaceholder
+  readonly property var notificationHistoryPanelPlaceholder: notificationHistoryPanel.panelPlaceholder
+  readonly property var sessionMenuPanelPlaceholder: sessionMenuPanel.panelPlaceholder
+  readonly property var settingsPanelPlaceholder: settingsPanel.panelPlaceholder
+  readonly property var setupWizardPanelPlaceholder: setupWizardPanel.panelPlaceholder
+  readonly property var trayDrawerPanelPlaceholder: trayDrawerPanel.panelPlaceholder
+  readonly property var wallpaperPanelPlaceholder: wallpaperPanel.panelPlaceholder
+  readonly property var wifiPanelPlaceholder: wifiPanel.panelPlaceholder
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
   }
 
   // Wayland
-  // Always use Exclusive keyboard focus when a panel is open
-  // This ensures all keyboard shortcuts work reliably (Escape, etc.)
-  // The centralized shortcuts in this window handle delegation to panels
-  WlrLayershell.keyboardFocus: root.isPanelOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
   WlrLayershell.layer: WlrLayer.Top
-  WlrLayershell.namespace: "noctalia-screen-" + (screen?.name || "unknown")
+  WlrLayershell.namespace: "noctalia-background-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
+  WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
   anchors {
     top: true
@@ -293,17 +306,6 @@ PanelWindow {
       }
     }
 
-    TrayMenuPanel {
-      id: trayMenuPanel
-      screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "trayMenuPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayMenuPanel)
-      }
-    }
-
     WallpaperPanel {
       id: wallpaperPanel
       screen: root.screen
@@ -326,7 +328,8 @@ PanelWindow {
       }
     }
 
-    // Bar placeholder - just for background positioning (actual bar content is in BarContentWindow)
+    // ----------------------------------------------
+    // Bar background placeholder - just for background positioning (actual bar content is in BarContentWindow)
     Item {
       id: barPlaceholder
 
@@ -336,28 +339,29 @@ PanelWindow {
       // Screen reference
       property ShellScreen screen: root.screen
 
-      // Bar positioning properties (match Bar.qml logic)
+      // Bar background positioning properties
       readonly property string barPosition: Settings.data.bar.position || "top"
       readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barFloating: Settings.data.bar.floating || false
-      readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-      readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
+      readonly property real barMarginH: barFloating ? Math.round(Settings.data.bar.marginHorizontal * Style.marginXL) : 0
+      readonly property real barMarginV: barFloating ? Math.round(Settings.data.bar.marginVertical * Style.marginXL) : 0
+      readonly property real attachmentOverlap: 1 // Attachment overlap to fix hairline gap with fractional scaling
 
       // Expose bar dimensions directly on this Item for BarBackground
       // Use screen dimensions directly
       x: {
         if (barPosition === "right")
-          return screen.width - Style.barHeight - barMarginH
+          return screen.width - Style.barHeight - barMarginH - attachmentOverlap // Extend left towards panels
         return barMarginH
       }
       y: {
         if (barPosition === "bottom")
-          return screen.height - Style.barHeight - barMarginV
+          return screen.height - Style.barHeight - barMarginV - attachmentOverlap
         return barMarginV
       }
       width: {
         if (barIsVertical) {
-          return Style.barHeight + 1
+          return Style.barHeight + attachmentOverlap
         }
         return screen.width - barMarginH * 2
       }
@@ -365,7 +369,7 @@ PanelWindow {
         if (barIsVertical) {
           return screen.height - barMarginV * 2
         }
-        return Style.barHeight
+        return Style.barHeight + attachmentOverlap
       }
 
       // Corner states (same as Bar.qml)
@@ -436,179 +440,5 @@ PanelWindow {
      *  Screen Corners
      */
     ScreenCorners {}
-  }
-
-  // Centralized keyboard shortcuts - delegate to opened panel
-  // This ensures shortcuts work regardless of panel focus state
-  Shortcut {
-    sequence: "Escape"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onEscapePressed) {
-        PanelService.openedPanel.onEscapePressed()
-      } else if (PanelService.openedPanel) {
-        PanelService.openedPanel.close()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Tab"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onTabPressed) {
-        PanelService.openedPanel.onTabPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Shift+Tab"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onShiftTabPressed) {
-        PanelService.openedPanel.onShiftTabPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Up"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onUpPressed) {
-        PanelService.openedPanel.onUpPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Down"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onDownPressed) {
-        PanelService.openedPanel.onDownPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Return"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onReturnPressed) {
-        PanelService.openedPanel.onReturnPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Enter"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onReturnPressed) {
-        PanelService.openedPanel.onReturnPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Home"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onHomePressed) {
-        PanelService.openedPanel.onHomePressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "End"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onEndPressed) {
-        PanelService.openedPanel.onEndPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "PgUp"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onPageUpPressed) {
-        PanelService.openedPanel.onPageUpPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "PgDown"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onPageDownPressed) {
-        PanelService.openedPanel.onPageDownPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Ctrl+J"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlJPressed) {
-        PanelService.openedPanel.onCtrlJPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Ctrl+K"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlKPressed) {
-        PanelService.openedPanel.onCtrlKPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Ctrl+N"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlNPressed) {
-        PanelService.openedPanel.onCtrlNPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Ctrl+P"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlPPressed) {
-        PanelService.openedPanel.onCtrlPPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Left"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onLeftPressed) {
-        PanelService.openedPanel.onLeftPressed()
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Right"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onRightPressed) {
-        PanelService.openedPanel.onRightPressed()
-      }
-    }
   }
 }

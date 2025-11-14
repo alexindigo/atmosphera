@@ -83,5 +83,20 @@ Variants {
         Logger.d("Shell", "BarExclusionZone created for", modelData?.name)
       }
     }
+
+    // TrayMenuWindow - separate window for tray context menus
+    // This must be a top-level PanelWindow.
+    Loader {
+      active: parent.windowLoaded && parent.shouldBeActive
+      asynchronous: false
+
+      sourceComponent: TrayMenuWindow {
+        screen: modelData
+      }
+
+      onLoaded: {
+        Logger.d("Shell", "TrayMenuWindow created for", modelData?.name)
+      }
+    }
   }
 }

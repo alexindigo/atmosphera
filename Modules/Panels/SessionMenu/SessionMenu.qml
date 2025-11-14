@@ -16,41 +16,97 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round(400 * Style.uiScaleRatio)
-  preferredHeight: Math.round(340 * Style.uiScaleRatio)
+  preferredHeight: {
+    var headerHeight = Settings.data.sessionMenu.showHeader ? Style.baseWidgetSize * 0.6 : 0
 
-  panelAnchorHorizontalCenter: true
-  panelAnchorVerticalCenter: true
+    var dividerHeight = Settings.data.sessionMenu.showHeader ? Style.marginS : 0
+    var buttonHeight = Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
+    var buttonSpacing = Style.marginS
+    var enabledCount = powerOptions.length
+
+    var headerSpacing = Settings.data.sessionMenu.showHeader ? (Style.marginL * 2) : 0
+    var baseHeight = (Style.marginL * 4) + headerHeight + dividerHeight + headerSpacing
+    var buttonsHeight = enabledCount > 0 ? (buttonHeight * enabledCount) + (buttonSpacing * (enabledCount - 1)) : 0
+
+    return Math.round(baseHeight + buttonsHeight)
+  }
+
+  // Positioning
+  readonly property string panelPosition: Settings.data.sessionMenu.position
+
+  panelAnchorHorizontalCenter: panelPosition === "center" || panelPosition.endsWith("_center")
+  panelAnchorVerticalCenter: panelPosition === "center"
+  panelAnchorLeft: panelPosition !== "center" && panelPosition.endsWith("_left")
+  panelAnchorRight: panelPosition !== "center" && panelPosition.endsWith("_right")
+  panelAnchorBottom: panelPosition.startsWith("bottom_")
+  panelAnchorTop: panelPosition.startsWith("top_")
+
+  // SessionMenu handle it's own closing logic
+  property bool closeWithEscape: false
 
   // Timer properties
-  property int timerDuration: 9000 // 9 seconds
+  readonly property int timerDuration: Settings.data.sessionMenu.countdownDuration
   property string pendingAction: ""
   property bool timerActive: false
   property int timeRemaining: 0
 
   // Navigation properties
   property int selectedIndex: 0
-  readonly property var powerOptions: [{
-      "action": "lock",
+
+  // Action metadata mapping
+  readonly property var actionMetadata: {
+    "lock": {
       "icon": "lock",
-      "title": I18n.tr("session-menu.lock")
-    }, {
-      "action": "suspend",
+      "title": I18n.tr("session-menu.lock"),
+      "isShutdown": false
+    },
+    "suspend": {
       "icon": "suspend",
-      "title": I18n.tr("session-menu.suspend")
-    }, {
-      "action": "reboot",
+      "title": I18n.tr("session-menu.suspend"),
+      "isShutdown": false
+    },
+    "hibernate": {
+      "icon": "hibernate",
+      "title": I18n.tr("session-menu.hibernate"),
+      "isShutdown": false
+    },
+    "reboot": {
       "icon": "reboot",
-      "title": I18n.tr("session-menu.reboot")
-    }, {
-      "action": "logout",
+      "title": I18n.tr("session-menu.reboot"),
+      "isShutdown": false
+    },
+    "logout": {
       "icon": "logout",
-      "title": I18n.tr("session-menu.logout")
-    }, {
-      "action": "shutdown",
+      "title": I18n.tr("session-menu.logout"),
+      "isShutdown": false
+    },
+    "shutdown": {
       "icon": "shutdown",
       "title": I18n.tr("session-menu.shutdown"),
       "isShutdown": true
-    }]
+    }
+  }
+
+  // Build powerOptions from settings, filtering enabled ones and adding metadata
+  readonly property var powerOptions: (function () {
+    var options = []
+    var settingsOptions = Settings.data.sessionMenu.powerOptions || []
+
+    for (var i = 0; i < settingsOptions.length; i++) {
+      var settingOption = settingsOptions[i]
+      if (settingOption.enabled && actionMetadata[settingOption.action]) {
+        var metadata = actionMetadata[settingOption.action]
+        options.push({
+                       "action": settingOption.action,
+                       "icon": metadata.icon,
+                       "title": metadata.title,
+                       "isShutdown": metadata.isShutdown
+                     })
+      }
+    }
+
+    return options
+  })()
 
   // Lifecycle handlers
   onOpened: {
@@ -64,6 +120,12 @@ SmartPanel {
 
   // Timer management
   function startTimer(action) {
+    // If countdown is disabled, execute immediately
+    if (!Settings.data.sessionMenu.enableCountdown) {
+      executeAction(action)
+      return
+    }
+
     if (timerActive && pendingAction === action) {
       // Second click - execute immediately
       executeAction(action)
@@ -101,6 +163,9 @@ SmartPanel {
       } else {
         CompositorService.suspend()
       }
+      break
+    case "hibernate":
+      CompositorService.hibernate()
       break
     case "reboot":
       CompositorService.reboot()
@@ -155,8 +220,7 @@ SmartPanel {
     if (timerActive) {
       cancelTimer()
     } else {
-      cancelTimer()
-      close()
+      root.close()
     }
   }
 
@@ -164,7 +228,7 @@ SmartPanel {
     selectNextWrapped()
   }
 
-  function onShiftTabPressed() {
+  function onBackTabPressed() {
     selectPreviousWrapped()
   }
 
@@ -245,6 +309,7 @@ SmartPanel {
 
         // Header with title and close button
         RowLayout {
+          visible: Settings.data.sessionMenu.showHeader
           Layout.fillWidth: true
           Layout.preferredHeight: Style.baseWidgetSize * 0.6
 
@@ -283,6 +348,7 @@ SmartPanel {
         }
 
         NDivider {
+          visible: Settings.data.sessionMenu.showHeader
           Layout.fillWidth: true
         }
 

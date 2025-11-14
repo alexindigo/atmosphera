@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Parcourir les fichiers",
         "browse-library": "Parcourir la bibliothèque",
+        "colorize-distro-logo": {
+          "description": "Appliquez les couleurs du thème au logo de votre distribution.",
+          "label": "Coloriser le logo de la distribution"
+        },
         "icon": {
           "description": "Sélectionnez une icône de la bibliothèque ou un fichier personnalisé.",
           "label": "Icône"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Utiliser le logo de votre distribution au lieu d'une icône personnalisée.",
           "label": "Utiliser le logo de la distribution au lieu de l'icône"
-        },
-        "colorize-distro-logo": {
-          "description": "Appliquez les couleurs du thème au logo de votre distribution.",
-          "label": "Coloriser le logo de la distribution"
         }
       },
       "custom-button": {
@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à gauche.",
-          "label": "Clic gauche"
+          "label": "Clic gauche",
+          "update-text": "Mettre à jour le texte affiché au clic gauche."
         },
         "middle-click": {
           "description": "Commande à exécuter quand le bouton est cliqué au milieu.",
-          "label": "Clic milieu"
+          "label": "Clic milieu",
+          "update-text": "Mettre à jour le texte affiché lors d'un clic molette."
         },
         "parse-json": {
           "description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à droite.",
-          "label": "Clic droit"
+          "label": "Clic droit",
+          "update-text": "Mettre à jour le texte affiché lors d'un clic droit."
         },
         "text-stream": {
           "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
@@ -311,13 +314,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Afficher les numéros d'espace de travail",
-          "description": "Afficher les numéros d'espace de travail dans le coin supérieur gauche des groupes de tâches."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Afficher les numéros seulement lorsqu'occupés",
-          "description": "Afficher les numéros d'espace de travail uniquement pour les espaces de travail avec des fenêtres ouvertes."
+          "description": "Afficher les numéros d'espace de travail uniquement pour les espaces de travail avec des fenêtres ouvertes.",
+          "label": "Afficher les numéros seulement lorsqu'occupés"
+        },
+        "show-workspace-numbers": {
+          "description": "Afficher les numéros d'espace de travail dans le coin supérieur gauche des groupes de tâches.",
+          "label": "Afficher les numéros d'espace de travail"
         }
       },
       "tray": {
@@ -678,6 +681,7 @@
     "reboot": "Redémarrer",
     "shutdown": "Éteindre",
     "suspend": "Mettre en veille",
+    "hibernate": "Mise en veille prolongée",
     "title": "Menu de session"
   },
   "settings": {
@@ -906,10 +910,6 @@
             "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           },
-          "spicetify": {
-            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
-            "description-missing": "Nécessite l'installation de {app}"
-          },
           "description": "Thématisation spécifique aux applications.",
           "discord": {
             "description": "Écrire {filepath} pour {client}",
@@ -923,6 +923,10 @@
           "pywalfox": {
             "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
             "description-missing": "Nécessite que le paquet pywalfox soit installé"
+          },
+          "spicetify": {
+            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
           },
           "vicinae": {
             "description": "Écrire {filepath} et recharger",
@@ -1402,6 +1406,7 @@
           "description": "Durée de visibilité des notifications de priorité normale.",
           "label": "Urgence normale"
         },
+        "reset": "Réinitialiser la durée du délai d'attente",
         "respect-expire": {
           "description": "Utiliser le délai d'expiration défini dans la notification.",
           "label": "Respecter le délai d'expiration"
@@ -1447,12 +1452,26 @@
           "label": "Apparence"
         }
       },
-      "title": "Notifications"
+      "title": "Notifications",
+      "toast": {
+        "keyboard": {
+          "description": "Afficher une notification lorsque la disposition du clavier change.",
+          "label": "Disposition du clavier"
+        },
+        "section": {
+          "description": "Configurer l'apparence et le comportement des notifications toast.",
+          "label": "Pain grillé"
+        }
+      }
     },
     "osd": {
       "always-on-top": {
         "description": "Afficher l'OSD au-dessus des fenêtres plein écran et autres couches.",
         "label": "Toujours au premier plan"
+      },
+      "background-opacity": {
+        "description": "Contrôle la transparence de l'arrière-plan de l'OSD.",
+        "label": "Opacité de l'arrière-plan"
       },
       "description": "Configurer les indicateurs à l'écran tels que le volume et la luminosité.",
       "duration": {
@@ -1546,6 +1565,46 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Durée du compte à rebours"
+      },
+      "enable-countdown": {
+        "description": "Afficher un compte à rebours avant d'exécuter les actions d'alimentation.",
+        "label": "Activer le compte à rebours"
+      },
+      "entries": {
+        "section": {
+          "description": "Personnaliser les actions d'alimentation qui apparaissent dans le Menu de session et leur ordre.",
+          "label": "Actions d'alimentation"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
+          "label": "Général"
+        }
+      },
+      "position": {
+        "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
+        "label": "Afficher l'en-tête"
+      },
+      "title": "Menu de session"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du Moniteur Système.",
+          "label": "Général"
+        }
+      },
+      "title": "Moniteur système"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
@@ -1564,6 +1623,10 @@
       "dim-desktop": {
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
         "label": "Dim bureau"
+      },
+      "panel-background-opacity": {
+        "description": "Définir l'opacité de fond pour tous les panneaux (Lanceur, Centre de contrôle, Paramètres, etc.).",
+        "label": "Opacité de fond des panneaux"
       },
       "panels-attached-to-bar": {
         "description": "Les panneaux se verrouillent sur la barre et les bords de l'écran, créant un aspect homogène avec d'élégants coins inversés.",
@@ -1656,6 +1719,10 @@
           "description": "Chemin vers votre dossier principal de fonds d'écran.",
           "label": "Dossier des fonds d'écran",
           "tooltip": "Parcourir le dossier des fonds d'écran"
+        },
+        "hide-wallpaper-filenames": {
+          "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
+          "label": "Masquer les noms de fichiers"
         },
         "monitor-specific": {
           "description": "Définissez un dossier de fond d'écran différent pour chaque moniteur.",
@@ -1841,10 +1908,10 @@
     "close": "Fermer",
     "connect-disconnect-devices": "Clic gauche pour connecter. Clic droit pour oublier.",
     "delete-notification": "Supprimer la notification",
-    "disable-keep-awake": "Désactiver le mode 'rester éveillé'",
+    "disable-keep-awake": "Cliquez pour désactiver le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
     "do-not-disturb-disabled": "'Ne pas déranger' désactivé",
     "do-not-disturb-enabled": "'Ne pas déranger' activé",
-    "enable-keep-awake": "Activer le mode 'rester éveillé'",
+    "enable-keep-awake": "Cliquez pour activer le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
     "forget-network": "Oublier le réseau",
     "home": "Accueil",
     "input-muted": "Couper l'entrée audio",

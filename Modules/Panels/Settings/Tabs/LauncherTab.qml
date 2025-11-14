@@ -49,37 +49,6 @@ ColumnLayout {
     }
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS
-    Layout.fillWidth: true
-
-    NText {
-      text: I18n.tr("settings.launcher.settings.background-opacity.label")
-      pointSize: Style.fontSizeL
-      font.weight: Style.fontWeightBold
-      color: Color.mOnSurface
-    }
-
-    NText {
-      text: I18n.tr("settings.launcher.settings.background-opacity.description")
-      pointSize: Style.fontSizeXS
-      color: Color.mOnSurfaceVariant
-      wrapMode: Text.WordWrap
-      Layout.fillWidth: true
-    }
-
-    NValueSlider {
-      id: launcherBgOpacity
-      Layout.fillWidth: true
-      from: 0.0
-      to: 1.0
-      stepSize: 0.01
-      value: Settings.data.appLauncher.backgroundOpacity
-      onMoved: value => Settings.data.appLauncher.backgroundOpacity = value
-      text: Math.floor(Settings.data.appLauncher.backgroundOpacity * 100) + "%"
-    }
-  }
-
   NToggle {
     label: I18n.tr("settings.launcher.settings.clipboard-history.label")
     description: I18n.tr("settings.launcher.settings.clipboard-history.description")

@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Dosyaya Göz At",
         "browse-library": "Kütüphaneye Göz At",
+        "colorize-distro-logo": {
+          "description": "Dağıtım logonuza tema renklerini uygula.",
+          "label": "Dağıtım logosunu renklendir"
+        },
         "icon": {
           "description": "Kütüphaneden veya özel bir dosyadan bir ikon seçin.",
           "label": "İkon"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Özel ikon yerine dağıtımınızın logosunu kullanın.",
           "label": "Dağıtım logosunu ikon yerine kullan"
-        },
-        "colorize-distro-logo": {
-          "description": "Dağıtım logonuza tema renklerini uygula.",
-          "label": "Dağıtım logosunu renklendir"
         }
       },
       "custom-button": {
@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Butona sol tıklandığında yürütülecek komut.",
-          "label": "Sol tıklama"
+          "label": "Sol tıklama",
+          "update-text": "Sol tıklamayla görüntülenen metni güncelle"
         },
         "middle-click": {
           "description": "Butona orta tıklandığında yürütülecek komut.",
-          "label": "Orta tıklama"
+          "label": "Orta tıklama",
+          "update-text": "Orta tıklamayla görüntülenen metni güncelle"
         },
         "parse-json": {
           "description": "Komut çıktısını metin ve ikon dinamik olarak ayarlamak için bir JSON nesnesi olarak ayrıştırın.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Butona sağ tıklandığında yürütülecek komut.",
-          "label": "Sağ tıklama"
+          "label": "Sağ tıklama",
+          "update-text": "Sağ tıklamada görüntülenen metni güncelle"
         },
         "text-stream": {
           "description": "Komuttan gelen akış satırları butonda metin olarak gösterilecektir.",
@@ -311,13 +314,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Çalışma alanı numaralarını göster",
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Yalnızca dolu olduğunda numaraları göster",
-          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster."
+          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster.",
+          "label": "Yalnızca dolu olduğunda numaraları göster"
+        },
+        "show-workspace-numbers": {
+          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster.",
+          "label": "Çalışma alanı numaralarını göster"
         }
       },
       "tray": {
@@ -678,6 +681,7 @@
     "reboot": "Yeniden başlat",
     "shutdown": "Bilgisayarı kapat",
     "suspend": "Askıya al",
+    "hibernate": "Hazırda Bekletme",
     "title": "Oturum Menüsü"
   },
   "settings": {
@@ -906,10 +910,6 @@
             "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
-          "spicetify": {
-            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
-            "description-missing": "Kurulum için {app} gereklidir"
-          },
           "description": "Uygulamaya özel temalandırma.",
           "discord": {
             "description": "{client} için {filepath} dosyasına yaz. Hyprluna temasının manuel olarak etkinleştirilmesi gerekir.",
@@ -922,6 +922,10 @@
           "label": "Programlar",
           "pywalfox": {
             "description": "{filepath} dosyasına yaz ve pywalfox güncellemesini çalıştır",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
+          "spicetify": {
+            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "vicinae": {
@@ -1402,6 +1406,7 @@
           "description": "Normal öncelikli bildirimlerin ne kadar süreyle görüneceği.",
           "label": "Normal öncelikli"
         },
+        "reset": "Zaman aşımı süresini sıfırla",
         "respect-expire": {
           "description": "Bildirimde ayarlanan sona erme zaman aşımını kullanın.",
           "label": "Sona erme zaman aşımına uyar"
@@ -1447,12 +1452,26 @@
           "label": "Görünüm"
         }
       },
-      "title": "Bildirimler"
+      "title": "Bildirimler",
+      "toast": {
+        "keyboard": {
+          "description": "Klavye düzeni değiştiğinde bir bildirim göster.",
+          "label": "Klavye düzeni"
+        },
+        "section": {
+          "description": "Toast görünümünü ve davranışını yapılandırın.",
+          "label": "Tost"
+        }
+      }
     },
     "osd": {
       "always-on-top": {
         "description": "OSD'yi tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",
         "label": "Her zaman üstte"
+      },
+      "background-opacity": {
+        "description": "OSD arka planının şeffaflığını kontrol eder.",
+        "label": "Arka plan opaklığı"
       },
       "description": "Ses ve parlaklık kaplamaları gibi ekran göstergelerini yapılandırın.",
       "duration": {
@@ -1546,6 +1565,46 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Güç eylemlerini çalıştırmadan önce geri sayım zamanlayıcısının ne kadar süreceğini ayarlayın.",
+        "label": "Geri sayım süresi"
+      },
+      "enable-countdown": {
+        "description": "Güç eylemlerini çalıştırmadan önce bir geri sayım zamanlayıcısı göster.",
+        "label": "Geri sayım zamanlayıcısını etkinleştir"
+      },
+      "entries": {
+        "section": {
+          "description": "Oturum Menüsünde hangi güç eylemlerinin görüneceğini ve hangi sırada görüneceğini özelleştirin.",
+          "label": "Güç eylemleri"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
+          "label": "Genel"
+        }
+      },
+      "position": {
+        "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",
+        "label": "Konum"
+      },
+      "show-header": {
+        "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
+        "label": "Başlığı göster"
+      },
+      "title": "Oturum Menüsü"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Sistem İzleyicisinin davranışını ve görünümünü yapılandırın.",
+          "label": "Genel"
+        }
+      },
+      "title": "Sistem İzleme"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Daha hızlı ve daha duyarlı bir deneyim için tüm animasyonları devre dışı bırakın.",
@@ -1564,6 +1623,10 @@
       "dim-desktop": {
         "description": "Paneller veya menüler açıkken masaüstünü karart.",
         "label": "Masaüstünü karart"
+      },
+      "panel-background-opacity": {
+        "description": "Tüm paneller için arka plan opaklığını ayarlayın (Launcher, Control Center, Ayarlar vb.).",
+        "label": "Panel arka plan opaklığı"
       },
       "panels-attached-to-bar": {
         "description": "Paneller çubuğa ve ekran kenarlarına kilitlenerek şık ters köşelerle kusursuz bir görünüm oluşturur.",
@@ -1656,6 +1719,10 @@
           "description": "Ana duvar kağıdı klasörünüzün yolu.",
           "label": "Duvar kağıdı klasörü",
           "tooltip": "Duvar kağıdı klasörüne göz atın"
+        },
+        "hide-wallpaper-filenames": {
+          "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
+          "label": "Dosya adlarını gizle"
         },
         "monitor-specific": {
           "description": "Her ekran için farklı bir duvar kağıdı klasörü ayarlayın.",
@@ -1841,10 +1908,10 @@
     "close": "Kapat",
     "connect-disconnect-devices": "Bağlanmak için sol tık. Unutmak için sağ tık.",
     "delete-notification": "Bildiriyi sil",
-    "disable-keep-awake": "Uyanık kalmayı devre dışı bırak",
+    "disable-keep-awake": "Uyanık kalmayı devre dışı bırakmak için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
     "do-not-disturb-disabled": "'Rahatsız etme' devre dışı",
     "do-not-disturb-enabled": "'Rahatsız etme' etkin",
-    "enable-keep-awake": "Uyanık kalmayı etkinleştir",
+    "enable-keep-awake": "Uyanık kalmayı etkinleştirmek için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
     "forget-network": "Ağı unut",
     "home": "Ana Sayfa",
     "input-muted": "Giriş sessizliğini değiştir",

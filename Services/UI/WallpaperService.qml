@@ -422,7 +422,7 @@ Singleton {
     import Quickshell.Io
     Process {
     id: process
-    command: ["find", "` + directory + `", "-type", "f", "(", "-iname", "*.jpg", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.png", "-o", "-iname", "*.gif", "-o", "-iname", "*.pnm", "-o", "-iname", "*.bmp", ")"]
+    command: ["find", "-L", "` + directory + `", "-type", "f", "(", "-iname", "*.jpg", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.png", "-o", "-iname", "*.gif", "-o", "-iname", "*.pnm", "-o", "-iname", "*.bmp", ")"]
     stdout: StdioCollector {}
     stderr: StdioCollector {}
     }

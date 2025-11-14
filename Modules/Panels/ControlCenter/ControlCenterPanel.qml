@@ -71,8 +71,10 @@ SmartPanel {
   readonly property int profileHeight: Math.round(64 * Style.uiScaleRatio)
   readonly property int shortcutsHeight: Math.round(52 * Style.uiScaleRatio)
   readonly property int audioHeight: Math.round(60 * Style.uiScaleRatio)
-  readonly property int weatherHeight: Math.round(190 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
+
+  // We keep a dynamic weather height due to a more complex layout and font scaling
+  property int weatherHeight: Math.round(210 * Style.uiScaleRatio)
 
   onOpened: {
     MediaService.autoSwitchingPaused = true
@@ -149,7 +151,11 @@ SmartPanel {
 
     Component {
       id: weatherCard
-      WeatherCard {}
+      WeatherCard {
+        Component.onCompleted: {
+          root.weatherHeight = this.height
+        }
+      }
     }
 
     Component {

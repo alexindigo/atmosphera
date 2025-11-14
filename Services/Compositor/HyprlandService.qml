@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Keyboard
 
 Item {
   id: root
@@ -43,6 +44,7 @@ Item {
                      safeUpdateWorkspaces()
                      safeUpdateWindows()
                      queryDisplayScales()
+                     queryKeyboardLayout()
                    })
       initialized = true
       Logger.i("HyprlandService", "Service started")
@@ -56,7 +58,6 @@ Item {
     hyprlandMonitorsProcess.running = true
   }
 
-  // Hyprland monitors process for display scale detection
   // Hyprland monitors process for display scale detection
   Process {
     id: hyprlandMonitorsProcess
@@ -112,6 +113,50 @@ Item {
       }
     }
   }
+
+  function queryKeyboardLayout() {
+    hyprlandDevicesProcess.running = true
+  }
+  // Hyprland devices process for keyboard layout detection
+  Process {
+    id: hyprlandDevicesProcess
+    running: false
+    command: ["hyprctl", "devices", "-j"]
+
+    property string accumulatedOutput: ""
+
+    stdout: SplitParser {
+      onRead: function (line) {
+        // Accumulate lines instead of parsing each one
+        hyprlandDevicesProcess.accumulatedOutput += line
+      }
+    }
+
+    onExited: function (exitCode) {
+      if (exitCode !== 0 || !accumulatedOutput) {
+        Logger.e("HyprlandService", "Failed to query devices, exit code:", exitCode)
+        accumulatedOutput = ""
+        return
+      }
+
+      try {
+        const devicesData = JSON.parse(accumulatedOutput)
+        for (const keyboard of devicesData.keyboards) {
+          if (keyboard.main) {
+            const layoutName = keyboard.active_keymap
+            KeyboardLayoutService.setCurrentLayout(layoutName)
+            Logger.d("HyprlandService", "Keyboard layout switched:", layoutName)
+          }
+        }
+      } catch (e) {
+        Logger.e("HyprlandService", "Failed to parse devices:", e)
+      } finally {
+        // Clear accumulated output for next query
+        accumulatedOutput = ""
+      }
+    }
+  }
+
   // Safe update wrapper
   function safeUpdate() {
     safeUpdateWindows()
@@ -330,6 +375,27 @@ Item {
     return defaultValue
   }
 
+  function handleActiveLayoutEvent(ev) {
+    try {
+      let beforeParenthesis
+      const parenthesisPos = ev.lastIndexOf('(')
+
+      if (parenthesisPos === -1) {
+        beforeParenthesis = ev
+      } else {
+        beforeParenthesis = ev.substring(0, parenthesisPos)
+      }
+
+      const layoutNameStart = beforeParenthesis.lastIndexOf(',') + 1
+      const layoutName = ev.substring(layoutNameStart)
+
+      KeyboardLayoutService.setCurrentLayout(layoutName)
+      Logger.d("HyprlandService", "Keyboard layout switched:", layoutName)
+    } catch (e) {
+      Logger.e("HyprlandService", "Error handling activelayout:", e)
+    }
+  }
+
   // Connections to Hyprland
   Connections {
     target: Hyprland.workspaces
@@ -358,8 +424,13 @@ Item {
       updateTimer.restart()
 
       const monitorsEvents = ["configreloaded", "monitoradded", "monitorremoved", "monitoraddedv2", "monitorremovedv2"]
+
       if (monitorsEvents.includes(event.name)) {
         Qt.callLater(queryDisplayScales)
+      }
+
+      if (event.name == "activelayout") {
+        handleActiveLayoutEvent(event.data)
       }
     }
   }

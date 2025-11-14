@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.Keyboard
 
 Item {
   id: root
@@ -15,6 +16,8 @@ Item {
   property int focusedWindowIndex: -1
 
   property bool overviewActive: false
+
+  property var keyboardLayouts: []
 
   // Signals that match the facade interface
   signal workspaceChanged
@@ -191,6 +194,10 @@ Item {
                     queryDisplayScales()
                   } else if (event.ConfigLoaded) {
                     queryDisplayScales()
+                  } else if (event.KeyboardLayoutsChanged) {
+                    handleKeyboardLayoutsChanged(event.KeyboardLayoutsChanged)
+                  } else if (event.KeyboardLayoutSwitched) {
+                    handleKeyboardLayoutSwitched(event.KeyboardLayoutSwitched)
                   }
                 } catch (e) {
                   Logger.e("NiriService", "Error parsing event stream:", e, data)
@@ -388,6 +395,27 @@ Item {
       Logger.d("NiriService", "Overview opened or closed:", eventData.is_open)
     } catch (e) {
       Logger.e("NiriService", "Error handling OverviewOpenedOrClosed:", e)
+    }
+  }
+
+  function handleKeyboardLayoutsChanged(eventData) {
+    try {
+      keyboardLayouts = eventData.keyboard_layouts.names
+      const layoutName = keyboardLayouts[eventData.keyboard_layouts.current_idx]
+      KeyboardLayoutService.setCurrentLayout(layoutName)
+      Logger.d("NiriService", "Keyboard layouts changed:", keyboardLayouts.toString())
+    } catch (e) {
+      Logger.e("NiriService", "Error handling keyboardLayoutsChanged:", e)
+    }
+  }
+
+  function handleKeyboardLayoutSwitched(eventData) {
+    try {
+      const layoutName = keyboardLayouts[eventData.idx]
+      KeyboardLayoutService.setCurrentLayout(layoutName)
+      Logger.d("NiriService", "Keyboard layout switched:", layoutName)
+    } catch (e) {
+      Logger.e("NiriService", "Error handling KeyboardLayoutSwitched:", e)
     }
   }
 

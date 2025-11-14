@@ -97,6 +97,10 @@
       "control-center": {
         "browse-file": "Browse File",
         "browse-library": "Browse Library",
+        "colorize-distro-logo": {
+          "description": "Apply theme colors to your distribution logo.",
+          "label": "Colorize distro logo"
+        },
         "icon": {
           "description": "Select an icon from the library or a custom file.",
           "label": "Icon"
@@ -105,10 +109,6 @@
         "use-distro-logo": {
           "description": "Use your distribution's logo instead of a custom icon.",
           "label": "Use distro logo instead of icon"
-        },
-        "colorize-distro-logo": {
-          "description": "Apply theme colors to your distribution logo.",
-          "label": "Colorize distro logo"
         }
       },
       "custom-button": {
@@ -133,11 +133,13 @@
         },
         "left-click": {
           "description": "Command to execute when the button is left-clicked.",
-          "label": "Left click"
+          "label": "Left click",
+          "update-text": "Update displayed text on left-click"
         },
         "middle-click": {
           "description": "Command to execute when the button is middle-clicked.",
-          "label": "Middle click"
+          "label": "Middle click",
+          "update-text": "Update displayed text on middle-click"
         },
         "parse-json": {
           "description": "Parse the command output as a JSON object to dynamically set text and icon.",
@@ -149,7 +151,8 @@
         },
         "right-click": {
           "description": "Command to execute when the button is right-clicked.",
-          "label": "Right click"
+          "label": "Right click",
+          "update-text": "Update displayed text on right-click"
         },
         "text-stream": {
           "description": "Streamed lines from the command will be displayed as text on the button.",
@@ -311,13 +314,13 @@
         }
       },
       "taskbar-grouped": {
-        "show-workspace-numbers": {
-          "label": "Show workspace numbers",
-          "description": "Display workspace numbers in the top-left corner of task groups."
-        },
         "show-numbers-only-when-occupied": {
-          "label": "Show numbers only when occupied",
-          "description": "Only show workspace numbers for workspaces that have open windows."
+          "description": "Only show workspace numbers for workspaces that have open windows.",
+          "label": "Show numbers only when occupied"
+        },
+        "show-workspace-numbers": {
+          "description": "Display workspace numbers in the top-left corner of task groups.",
+          "label": "Show workspace numbers"
         }
       },
       "tray": {
@@ -678,6 +681,7 @@
     "reboot": "Reboot",
     "shutdown": "Shutdown",
     "suspend": "Suspend",
+    "hibernate": "Hibernate",
     "title": "Session Menu"
   },
   "settings": {
@@ -906,10 +910,6 @@
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
             "description-missing": "Requires {app} to be installed"
           },
-          "spicetify": {
-            "description": "Write {filepath}. Comfy theme needs to be installed and activated manually.",
-            "description-missing": "Requires {app} to be installed"
-          },
           "description": "Application-specific theming.",
           "discord": {
             "description": "Write {filepath} for {client}. Hyprluna theme needs to be activated manually.",
@@ -922,6 +922,10 @@
           "label": "Programs",
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "spicetify": {
+            "description": "Write {filepath}. Comfy theme needs to be installed and activated manually.",
             "description-missing": "Requires {app} to be installed"
           },
           "vicinae": {
@@ -1402,6 +1406,7 @@
           "description": "How long normal priority notifications stay visible.",
           "label": "Normal urgency"
         },
+        "reset": "Reset timeout duration",
         "respect-expire": {
           "description": "Use the expire timeout set in the notification.",
           "label": "Respect expire timeout"
@@ -1447,12 +1452,26 @@
           "label": "Appearance"
         }
       },
-      "title": "Notifications"
+      "title": "Notifications",
+      "toast": {
+        "keyboard": {
+          "description": "Show a toast when the keyboard layout changes.",
+          "label": "Keyboard layout"
+        },
+        "section": {
+          "description": "Configure toast appearance and behavior.",
+          "label": "Toast"
+        }
+      }
     },
     "osd": {
       "always-on-top": {
         "description": "Display OSD above fullscreen windows and other layers.",
         "label": "Always on top"
+      },
+      "background-opacity": {
+        "description": "Controls the transparency of the OSD background.",
+        "label": "Background opacity"
       },
       "description": "Configure on-screen indicators such as volume and brightness overlays.",
       "duration": {
@@ -1546,6 +1565,46 @@
         }
       }
     },
+    "session-menu": {
+      "countdown-duration": {
+        "description": "Set how long the countdown timer lasts before executing power actions.",
+        "label": "Countdown duration"
+      },
+      "enable-countdown": {
+        "description": "Show a countdown timer before executing power actions.",
+        "label": "Enable countdown timer"
+      },
+      "entries": {
+        "section": {
+          "description": "Customize which power actions appear in the Session Menu and in what order.",
+          "label": "Power actions"
+        }
+      },
+      "general": {
+        "section": {
+          "description": "Configure the Session Menu panel behavior and appearance.",
+          "label": "General"
+        }
+      },
+      "position": {
+        "description": "Choose where the Session Menu panel appears when opened.",
+        "label": "Position"
+      },
+      "show-header": {
+        "description": "Display the title and close button at the top of the Session Menu.",
+        "label": "Show header"
+      },
+      "title": "Session Menu"
+    },
+    "system-monitor": {
+      "general": {
+        "section": {
+          "description": "Configure the System Monitor behavior and appearance.",
+          "label": "General"
+        }
+      },
+      "title": "System Monitor"
+    },
     "user-interface": {
       "animation-disable": {
         "description": "Disable all animations for a faster, more responsive experience.",
@@ -1565,6 +1624,10 @@
         "description": "Dim the desktop when panels or menus are open.",
         "label": "Dim desktop"
       },
+      "panel-background-opacity": {
+        "description": "Set the background opacity for all panels (Launcher, Control Center, Settings, etc.).",
+        "label": "Panel background opacity"
+      },
       "panels-attached-to-bar": {
         "description": "Panels lock to the bar and screen edges, creating a seamless look with stylish inverted corners.",
         "label": "Snap panels to edges"
@@ -1583,8 +1646,8 @@
         "label": "Appearance"
       },
       "settings-panel-attached-to-bar": {
-        "description": "Keep the Settings window aligned with the bar for a unified look.",
-        "label": "Snap Settings window to bar"
+        "description": "Keep the settings window aligned with the bar for a unified look.",
+        "label": "Snap settings window to bar"
       },
       "shadows": {
         "description": "Enables drop shadows under bars and panels.",
@@ -1656,6 +1719,10 @@
           "description": "Path to your main wallpaper folder.",
           "label": "Wallpaper folder",
           "tooltip": "Browse for wallpaper folder"
+        },
+        "hide-wallpaper-filenames": {
+          "description": "Hide wallpaper filenames in the selector.",
+          "label": "Hide filenames"
         },
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",
@@ -1841,10 +1908,10 @@
     "close": "Close",
     "connect-disconnect-devices": "Left click to connect. Right click to forget.",
     "delete-notification": "Delete notification",
-    "disable-keep-awake": "Disable keep awake",
+    "disable-keep-awake": "Click to disable keep awake.\nScroll to adjust timeout.",
     "do-not-disturb-disabled": "'Do not disturb' disabled",
     "do-not-disturb-enabled": "'Do not disturb' enabled",
-    "enable-keep-awake": "Enable keep awake",
+    "enable-keep-awake": "Click to enable keep awake.\nScroll to adjust timeout.",
     "forget-network": "Forget network",
     "home": "Home",
     "input-muted": "Toggle input mute",

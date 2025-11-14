@@ -16,7 +16,7 @@ ColumnLayout {
   NText {
     text: label
     pointSize: Style.fontSizeL
-    font.weight: Style.fontWeightBold
+    font.weight: Style.fontWeightSemiBold
     color: labelColor
     visible: label !== ""
     Layout.fillWidth: true

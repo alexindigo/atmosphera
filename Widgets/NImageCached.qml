@@ -12,7 +12,7 @@ Image {
   property string imagePath: ""
   property string imageHash: ""
   property string cacheFolder: Settings.cacheDirImages
-  property int maxCacheDimension: 512
+  property int maxCacheDimension: 384
   readonly property string cachePath: imageHash ? `${cacheFolder}${imageHash}@${maxCacheDimension}x${maxCacheDimension}.png` : ""
 
   asynchronous: true

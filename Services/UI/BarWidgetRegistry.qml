@@ -93,8 +93,11 @@ Singleton {
                                     "allowUserSettings": true,
                                     "icon": "heart",
                                     "leftClickExec": "",
+                                    "leftClickUpdateText": false,
                                     "rightClickExec": "",
+                                    "rightClickUpdateText": false,
                                     "middleClickExec": "",
+                                    "middleClickUpdateText": false,
                                     "textCommand": "",
                                     "textStream": false,
                                     "textIntervalMs": 3000,
@@ -167,13 +170,17 @@ Singleton {
                                   "TaskbarGrouped": {
                                     "allowUserSettings": true,
                                     "showWorkspaceNumbers": true,
-                                    "showNumbersOnlyWhenOccupied": true
+                                    "showNumbersOnlyWhenOccupied": true,
+                                    "labelMode": "index",
+                                    "hideUnoccupied": false,
+                                    "characterCount": 2,
+                                    "colorizeIcons": false
                                   },
                                   "Tray": {
                                     "allowUserSettings": true,
                                     "blacklist": [],
                                     "colorizeIcons": false,
-                                    "favorites": [],
+                                    "pinned": [],
                                     "drawerEnabled": true
                                   },
                                   "WiFi": {

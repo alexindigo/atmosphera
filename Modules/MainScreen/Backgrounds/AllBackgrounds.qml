@@ -23,6 +23,8 @@ Item {
   // Reference to MainScreen (for panel access)
   required property var windowRoot
 
+  readonly property color panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+
   anchors.fill: parent
 
   // Wrapper with layer caching for better shadow performance
@@ -67,100 +69,93 @@ Item {
 
       // Audio
       PanelBackground {
-        panel: root.windowRoot.audioPanel
+        panel: root.windowRoot.audioPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Battery
       PanelBackground {
-        panel: root.windowRoot.batteryPanel
+        panel: root.windowRoot.batteryPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Bluetooth
       PanelBackground {
-        panel: root.windowRoot.bluetoothPanel
+        panel: root.windowRoot.bluetoothPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Calendar
       PanelBackground {
-        panel: root.windowRoot.calendarPanel
+        panel: root.windowRoot.calendarPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Control Center
       PanelBackground {
-        panel: root.windowRoot.controlCenterPanel
+        panel: root.windowRoot.controlCenterPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Launcher
       PanelBackground {
-        panel: root.windowRoot.launcherPanel
+        panel: root.windowRoot.launcherPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.appLauncher.backgroundOpacity)
+        backgroundColor: panelBackgroundColor
       }
 
       // Notification History
       PanelBackground {
-        panel: root.windowRoot.notificationHistoryPanel
+        panel: root.windowRoot.notificationHistoryPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Session Menu
       PanelBackground {
-        panel: root.windowRoot.sessionMenuPanel
+        panel: root.windowRoot.sessionMenuPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Settings
       PanelBackground {
-        panel: root.windowRoot.settingsPanel
+        panel: root.windowRoot.settingsPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Setup Wizard
       PanelBackground {
-        panel: root.windowRoot.setupWizardPanel
+        panel: root.windowRoot.setupWizardPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // TrayDrawer
       PanelBackground {
-        panel: root.windowRoot.trayDrawerPanel
+        panel: root.windowRoot.trayDrawerPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
-      }
-
-      // TrayMenu
-      PanelBackground {
-        panel: root.windowRoot.trayMenuPanel
-        shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // Wallpaper
       PanelBackground {
-        panel: root.windowRoot.wallpaperPanel
+        panel: root.windowRoot.wallpaperPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
 
       // WiFi
       PanelBackground {
-        panel: root.windowRoot.wifiPanel
+        panel: root.windowRoot.wifiPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: Color.mSurface
+        backgroundColor: panelBackgroundColor
       }
     }
 
