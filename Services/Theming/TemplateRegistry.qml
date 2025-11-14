@@ -142,8 +142,7 @@ Singleton {
           "path": "~/.config/Vencord",
           "requiresThemesFolder": false
         }]
-    },
-    {
+    }, {
       "id": "code",
       "name": "VSCode",
       "category": "applications",

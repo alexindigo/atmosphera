@@ -235,7 +235,7 @@ Singleton {
                               const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`
                               const outputPath = client.path.replace("~", homeDir)
                               const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
-                              
+
                               // Extract base config directory for checking
                               var baseConfigDir = ""
                               if (client.name === "code") {

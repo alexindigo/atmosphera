@@ -34,11 +34,13 @@ Variants {
     readonly property bool isMuted: AudioService.muted
     property bool volumeInitialized: false
     property bool muteInitialized: false
+    property real lastKnownVolume: -1 // Track last known volume to detect actual changes
 
     // Input volume properties
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
     property bool inputAudioInitialized: false
+    property real lastKnownInputVolume: -1 // Track last known volume to detect actual changes
 
     // Brightness properties
     property real lastUpdatedBrightness: 0
@@ -497,32 +499,66 @@ Variants {
       target: AudioService
 
       function onVolumeChanged() {
-        if (volumeInitialized) {
+        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
+        if (lastKnownVolume < 0) {
+          lastKnownVolume = AudioService.volume
+          volumeInitialized = true
+          return
+        }
+        if (!volumeInitialized) {
+          return
+        }
+        // Only show OSD if volume actually changed from last known value
+        if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
+          lastKnownVolume = AudioService.volume
           showOSD("volume")
         }
       }
 
       function onMutedChanged() {
-        if (muteInitialized) {
-          showOSD("volume")
+        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
+        if (lastKnownVolume < 0) {
+          lastKnownVolume = AudioService.volume
+          muteInitialized = true
+          return
         }
+        if (!muteInitialized) {
+          return
+        }
+        showOSD("volume")
       }
 
       function onInputVolumeChanged() {
-        if (!inputAudioInitialized) {
-          return
-        }
         if (!AudioService.hasInput) {
           return
         }
-        showOSD("inputVolume")
+        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
+        if (lastKnownInputVolume < 0) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+          return
+        }
+        if (!inputAudioInitialized) {
+          return
+        }
+        // Only show OSD if volume actually changed from last known value
+        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
+          lastKnownInputVolume = AudioService.inputVolume
+          showOSD("inputVolume")
+        }
       }
 
       function onInputMutedChanged() {
-        if (!inputAudioInitialized) {
+        if (!AudioService.hasInput) {
           return
         }
-        if (!AudioService.hasInput) {
+        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
+        if (lastKnownInputVolume < 0) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+          return
+        }
+        if (!inputAudioInitialized) {
           return
         }
         showOSD("inputVolume")
@@ -535,9 +571,16 @@ Variants {
       interval: 500
       running: true
       onTriggered: {
-        volumeInitialized = true
+        // Capture initial volume values to avoid showing OSD on startup
+        if (lastKnownVolume < 0 && AudioService.volume !== undefined) {
+          lastKnownVolume = AudioService.volume
+          volumeInitialized = true
+        }
+        if (lastKnownInputVolume < 0 && AudioService.hasInput && AudioService.inputVolume !== undefined) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+        }
         muteInitialized = true
-        inputAudioInitialized = true
         // Brightness initializes on first change to avoid showing OSD on startup
         connectBrightnessMonitors()
       }
