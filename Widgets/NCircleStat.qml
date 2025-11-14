@@ -16,7 +16,8 @@ Rectangle {
   // outer width/height footprint of the component
   property real contentScale: 1.0
 
-  readonly property color fillColor: Color.mPrimary
+  property color fillColor: Color.mPrimary
+  property color textColor: Color.mOnSurface
 
   width: 68
   height: 92
@@ -118,7 +119,7 @@ Rectangle {
         text: `${Math.round(root.value)}${root.suffix}`
         pointSize: Style.fontSizeM * contentScale * 0.9
         font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+        color: root.fillColor
         horizontalAlignment: Text.AlignHCenter
       }
 
@@ -128,7 +129,7 @@ Rectangle {
         anchors.top: valueLabel.bottom
         anchors.topMargin: 8 * contentScale
         icon: root.icon
-        color: Color.mPrimary
+        color: root.fillColor
         pointSize: Style.fontSizeM
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
