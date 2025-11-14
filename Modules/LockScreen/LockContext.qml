@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Pam
 import qs.Commons
+import qs.Services.System
 
 Scope {
   id: root
@@ -40,7 +41,7 @@ Scope {
   PamContext {
     id: pam
     config: "login"
-    user: Quickshell.env("USER")
+    user: HostService.displayName
 
     onPamMessage: {
       Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
