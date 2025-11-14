@@ -39,6 +39,7 @@ Variants {
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
     property bool inputAudioInitialized: false
+    property real lastKnownInputVolume: -1 // Track last known volume to detect actual changes
 
     // Brightness properties
     property real lastUpdatedBrightness: 0
@@ -509,20 +510,36 @@ Variants {
       }
 
       function onInputVolumeChanged() {
-        if (!inputAudioInitialized) {
-          return
-        }
         if (!AudioService.hasInput) {
           return
         }
-        showOSD("inputVolume")
+        // Capture initial volume on first change to avoid showing OSD on startup
+        if (lastKnownInputVolume < 0) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+          return
+        }
+        if (!inputAudioInitialized) {
+          return
+        }
+        // Only show OSD if volume actually changed from last known value
+        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
+          lastKnownInputVolume = AudioService.inputVolume
+          showOSD("inputVolume")
+        }
       }
 
       function onInputMutedChanged() {
-        if (!inputAudioInitialized) {
+        if (!AudioService.hasInput) {
           return
         }
-        if (!AudioService.hasInput) {
+        // Capture initial state on first change to avoid showing OSD on startup
+        if (lastKnownInputVolume < 0) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+          return
+        }
+        if (!inputAudioInitialized) {
           return
         }
         showOSD("inputVolume")
@@ -537,7 +554,7 @@ Variants {
       onTriggered: {
         volumeInitialized = true
         muteInitialized = true
-        inputAudioInitialized = true
+        // Input volume initializes on first change to avoid showing OSD on startup
         // Brightness initializes on first change to avoid showing OSD on startup
         connectBrightnessMonitors()
       }
