@@ -268,6 +268,26 @@
         }
       },
       "taskbar": {
+        "highlight-colors-section": {
+          "label": "Markeer kleuren"
+        },
+        "use-custom-highlight-colors": {
+          "label": "Aangepaste markeerkleuren gebruiken",
+          "description": "Wanneer uitgeschakeld worden de standaard markeerkleuren van het thema gebruikt."
+        },
+        "custom-highlight-colors-title": {
+          "label": "Aangepaste markeerkleuren"
+        },
+        "warning-color": {
+          "label": "Waarschuwingskleur"
+        },
+        "critical-color": {
+          "label": "Kritieke kleur"
+        },
+        "thresholds-section": {
+          "label": "Drempels",
+          "description": "Stel drempels in voor systeemstatistieken; waarden erboven worden gemarkeerd."
+        },
         "colorize-icons": {
           "description": "Pas themakleuren toe op taakbalkpictogrammen.",
           "label": "Pictogrammen inkleuren"

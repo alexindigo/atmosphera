@@ -1603,6 +1603,26 @@
           "label": "Загальне"
         }
       },
+      "highlight-colors-section": {
+        "label": "Кольори підсвічування"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Використовувати власні кольори підсвічування",
+        "description": "Якщо вимкнено, використовуються кольори підсвічування за замовчуванням теми."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Власні кольори підсвічування"
+      },
+      "warning-color": {
+        "label": "Колір попередження"
+      },
+      "critical-color": {
+        "label": "Критичний колір"
+      },
+      "thresholds-section": {
+        "label": "Пороги",
+        "description": "Встановіть пороги для системних метрик; значення вище будуть підсвічені."
+      },
       "cpu-section": {
         "label": "Використання ЦП"
       },

@@ -1603,6 +1603,26 @@
           "label": "General"
         }
       },
+      "highlight-colors-section": {
+        "label": "Highlight Colors"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Use custom highlight colors",
+        "description": "When disabled, theme default highlight colors are used."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Custom highlight colors"
+      },
+      "warning-color": {
+        "label": "Warning Color"
+      },
+      "critical-color": {
+        "label": "Critical Color"
+      },
+      "thresholds-section": {
+        "label": "Thresholds",
+        "description": "Set thresholds for system metrics, values above these will be highlighted."
+      },
       "cpu-section": {
         "label": "CPU Usage"
       },

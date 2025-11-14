@@ -1603,6 +1603,26 @@
           "label": "Allgemein"
         }
       },
+      "highlight-colors-section": {
+        "label": "Hervorhebungsfarben"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Benutzerdefinierte Hervorhebungsfarben verwenden",
+        "description": "Wenn deaktiviert, werden die Standard-Hervorhebungsfarben des Themes verwendet."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Benutzerdefinierte Hervorhebungsfarben"
+      },
+      "warning-color": {
+        "label": "Warnfarbe"
+      },
+      "critical-color": {
+        "label": "Kritische Farbe"
+      },
+      "thresholds-section": {
+        "label": "Schwellenwerte",
+        "description": "Setzen Sie Schwellenwerte für Systemmetriken; Werte darüber werden hervorgehoben."
+      },
       "cpu-section": {
         "label": "CPU-Auslastung"
       },

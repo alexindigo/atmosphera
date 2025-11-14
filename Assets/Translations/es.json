@@ -1603,6 +1603,26 @@
           "label": "General"
         }
       },
+      "highlight-colors-section": {
+        "label": "Colores de resaltado"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Usar colores de resaltado personalizados",
+        "description": "Cuando está desactivado, se usan los colores de resaltado predeterminados del tema."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Colores de resaltado personalizados"
+      },
+      "warning-color": {
+        "label": "Color de advertencia"
+      },
+      "critical-color": {
+        "label": "Color crítico"
+      },
+      "thresholds-section": {
+        "label": "Umbrales",
+        "description": "Establece umbrales para métricas del sistema; los valores por encima se resaltarán."
+      },
       "cpu-section": {
         "label": "Uso de CPU"
       },

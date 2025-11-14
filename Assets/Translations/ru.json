@@ -1603,6 +1603,26 @@
           "label": "Общее"
         }
       },
+      "highlight-colors-section": {
+        "label": "Цвета выделения"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Использовать пользовательские цвета выделения",
+        "description": "Если отключено, используются цвета выделения по умолчанию темы."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Пользовательские цвета выделения"
+      },
+      "warning-color": {
+        "label": "Цвет предупреждения"
+      },
+      "critical-color": {
+        "label": "Критический цвет"
+      },
+      "thresholds-section": {
+        "label": "Пороги",
+        "description": "Установите пороги для системных метрик; значения выше будут выделены."
+      },
       "cpu-section": {
         "label": "Использование ЦП"
       },

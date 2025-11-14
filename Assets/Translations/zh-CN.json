@@ -1603,6 +1603,26 @@
           "label": "通用"
         }
       },
+      "highlight-colors-section": {
+        "label": "高亮颜色"
+      },
+      "use-custom-highlight-colors": {
+        "label": "使用自定义高亮颜色",
+        "description": "关闭时将使用主题默认高亮颜色。"
+      },
+      "custom-highlight-colors-title": {
+        "label": "自定义高亮颜色"
+      },
+      "warning-color": {
+        "label": "警告颜色"
+      },
+      "critical-color": {
+        "label": "严重颜色"
+      },
+      "thresholds-section": {
+        "label": "阈值",
+        "description": "设置各项系统测量指标的阈值，超过该值将以高亮色进行提示。"
+      },
       "cpu-section": {
         "label": "CPU 使用率"
       },

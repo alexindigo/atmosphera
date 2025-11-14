@@ -1603,6 +1603,26 @@
           "label": "Genel"
         }
       },
+      "highlight-colors-section": {
+        "label": "Vurgulama Renkleri"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Özel vurgulama renklerini kullan",
+        "description": "Devre dışı bırakıldığında, tema varsayılan vurgulama renkleri kullanılır."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Özel vurgulama renkleri"
+      },
+      "warning-color": {
+        "label": "Uyarı rengi"
+      },
+      "critical-color": {
+        "label": "Kritik renk"
+      },
+      "thresholds-section": {
+        "label": "Eşikler",
+        "description": "Sistem metrikleri için eşikler ayarlayın; bu değerlerin üzerindekiler vurgulanacaktır."
+      },
       "cpu-section": {
         "label": "CPU Kullanımı"
       },
