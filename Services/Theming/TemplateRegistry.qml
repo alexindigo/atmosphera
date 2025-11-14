@@ -139,8 +139,8 @@ Singleton {
           "requiresThemesFolder": false
         }, {
           "name": "vencord",
-          "path": "~/.config/discord",
-          "requiresThemesFolder": true
+          "path": "~/.config/Vencord",
+          "requiresThemesFolder": false
         }]
     },
     {
