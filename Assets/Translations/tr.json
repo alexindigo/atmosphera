@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Kullanımı (Kritik)"
+        },
         "cpu-temperature": {
           "description": "Mevcut CPU sıcaklık okumalarını gösterilir.",
           "label": "CPU sıcaklığı"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Mevcut CPU kullanım yüzdesini göster.",
           "label": "CPU kullanımı"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Kullanımı (Uyarı)"
+        },
+        "disk-critical-threshold": {
+          "label": "Depolama Alanı (Kritik)"
+        },
+        "disk-warning-threshold": {
+          "label": "Depolama Alanı (Uyarı)"
+        },
+        "mem-critical-threshold": {
+          "label": "Bellek Kullanımı (Kritik)"
+        },
+        "mem-warning-threshold": {
+          "label": "Bellek Kullanımı (Uyarı)"
         },
         "memory-percentage": {
           "description": "Mutlak değerler yerine bellek kullanımını yüzde olarak göster.",
@@ -266,33 +284,15 @@
           "description": "Disk alanı kullanım bilgilerini göster.",
           "label": "Depolama kullanımı"
         },
-        "thresholds": {
-          "header": "Eşik Ayarları",
-          "description": "Sistem metrik eşiklerini ayarlayın. Aşıldığında vurgular."
-        },
-        "cpu-warning-threshold": {
-          "label": "CPU Kullanımı (Uyarı)"
-        },
-        "cpu-critical-threshold": {
-          "label": "CPU Kullanımı (Kritik)"
+        "temp-critical-threshold": {
+          "label": "CPU Sıcaklığı (Kritik)"
         },
         "temp-warning-threshold": {
           "label": "CPU Sıcaklığı (Uyarı)"
         },
-        "temp-critical-threshold": {
-          "label": "CPU Sıcaklığı (Kritik)"
-        },
-        "mem-warning-threshold": {
-          "label": "Bellek Kullanımı (Uyarı)"
-        },
-        "mem-critical-threshold": {
-          "label": "Bellek Kullanımı (Kritik)"
-        },
-        "disk-warning-threshold": {
-          "label": "Depolama Alanı (Uyarı)"
-        },
-        "disk-critical-threshold": {
-          "label": "Depolama Alanı (Kritik)"
+        "thresholds": {
+          "description": "Sistem metrik eşiklerini ayarlayın. Aşıldığında vurgular.",
+          "header": "Eşik Ayarları"
         }
       },
       "taskbar": {
@@ -675,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} in {seconds} seconds...",
+    "hibernate": "Hazırda Bekletme",
     "lock": "Kilitle",
     "lock-and-suspend": "Kilitle ve Askıya Al",
     "logout": "Oturumu kapat",
     "reboot": "Yeniden başlat",
     "shutdown": "Bilgisayarı kapat",
     "suspend": "Askıya al",
-    "hibernate": "Hazırda Bekletme",
     "title": "Oturum Menüsü"
   },
   "settings": {
@@ -1597,6 +1597,30 @@
       "title": "Oturum Menüsü"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "cpu-section": {
+        "label": "CPU Kullanımı"
+      },
+      "cpu-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "critical-color": {
+        "label": "Kritik renk"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Özel vurgulama renkleri"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "disk-section": {
+        "label": "Disk Kullanımı"
+      },
+      "disk-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
       "general": {
         "section": {
           "description": "Sistem İzleyicisinin davranışını ve görünümünü yapılandırın.",
@@ -1606,69 +1630,36 @@
       "highlight-colors-section": {
         "label": "Vurgulama Renkleri"
       },
-      "use-custom-highlight-colors": {
-        "label": "Özel vurgulama renklerini kullan",
-        "description": "Devre dışı bırakıldığında, tema varsayılan vurgulama renkleri kullanılır."
-      },
-      "custom-highlight-colors-title": {
-        "label": "Özel vurgulama renkleri"
-      },
-      "warning-color": {
-        "label": "Uyarı rengi"
-      },
-      "critical-color": {
-        "label": "Kritik renk"
-      },
-      "thresholds-section": {
-        "label": "Eşikler",
-        "description": "Sistem metrikleri için eşikler ayarlayın; bu değerlerin üzerindekiler vurgulanacaktır."
-      },
-      "cpu-section": {
-        "label": "CPU Kullanımı"
-      },
-      "cpu-warning-threshold": {
-        "label": "Uyarı Eşiği"
-      },
-      "cpu-critical-threshold": {
+      "mem-critical-threshold": {
         "label": "Kritik Eşiği"
-      },
-      "temperature-section": {
-        "label": "CPU Sıcaklığı"
-      },
-      "temp-warning-threshold": {
-        "label": "Uyarı Eşiği"
-      },
-      "temp-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
-      "memory-section": {
-        "label": "Bellek Kullanımı"
       },
       "mem-warning-threshold": {
         "label": "Uyarı Eşiği"
       },
-      "mem-critical-threshold": {
+      "memory-section": {
+        "label": "Bellek Kullanımı"
+      },
+      "temp-critical-threshold": {
         "label": "Kritik Eşiği"
       },
-      "disk-section": {
-        "label": "Disk Kullanımı"
-      },
-      "disk-warning-threshold": {
+      "temp-warning-threshold": {
         "label": "Uyarı Eşiği"
       },
-      "disk-critical-threshold": {
-        "label": "Kritik Eşiği"
+      "temperature-section": {
+        "label": "CPU Sıcaklığı"
       },
-      "network-section": {
-        "label": "Ağ Kullanımı"
+      "thresholds-section": {
+        "description": "Sistem metrikleri için eşikler ayarlayın; bu değerlerin üzerindekiler vurgulanacaktır.",
+        "label": "Eşikler"
       },
-      "network-warning-threshold": {
-        "label": "Uyarı Eşiği"
+      "title": "Sistem İzleme",
+      "use-custom-highlight-colors": {
+        "description": "Devre dışı bırakıldığında, tema varsayılan vurgulama renkleri kullanılır.",
+        "label": "Özel vurgulama renklerini kullan"
       },
-      "network-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
-      "title": "Sistem İzleme"
+      "warning-color": {
+        "label": "Uyarı rengi"
+      }
     },
     "user-interface": {
       "animation-disable": {

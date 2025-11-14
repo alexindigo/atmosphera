@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
         "cpu-temperature": {
           "description": "Mostrar lecturas de temperatura de CPU si están disponibles.",
           "label": "Temperatura de la CPU"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Mostrar el porcentaje actual de uso de CPU.",
           "label": "Uso de CPU"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Mostrar el uso de memoria como porcentaje en lugar de valores absolutos.",
@@ -266,33 +284,15 @@
           "description": "Mostrar información del uso del espacio en disco.",
           "label": "Uso de almacenamiento"
         },
-        "thresholds": {
-          "header": "Configuración de Umbrales",
-          "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan."
-        },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
         },
         "temp-warning-threshold": {
           "label": "CPU Temperature (Warning)"
         },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
+        "thresholds": {
+          "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan.",
+          "header": "Configuración de Umbrales"
         }
       },
       "taskbar": {
@@ -675,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} en {seconds} segundos...",
+    "hibernate": "Hibernación",
     "lock": "Bloquear",
     "lock-and-suspend": "Bloquear y Suspender",
     "logout": "Cerrar sesión",
     "reboot": "Reiniciar",
     "shutdown": "Apagar",
     "suspend": "Suspender",
-    "hibernate": "Hibernación",
     "title": "Menú de sesión"
   },
   "settings": {
@@ -1597,6 +1597,30 @@
       "title": "Menú de sesión"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "cpu-section": {
+        "label": "Uso de CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "critical-color": {
+        "label": "Color crítico"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Colores de resaltado personalizados"
+      },
+      "disk-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "disk-section": {
+        "label": "Uso de disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
       "general": {
         "section": {
           "description": "Configurar el comportamiento y la apariencia del Monitor del sistema.",
@@ -1606,60 +1630,36 @@
       "highlight-colors-section": {
         "label": "Colores de resaltado"
       },
-      "use-custom-highlight-colors": {
-        "label": "Usar colores de resaltado personalizados",
-        "description": "Cuando está desactivado, se usan los colores de resaltado predeterminados del tema."
-      },
-      "custom-highlight-colors-title": {
-        "label": "Colores de resaltado personalizados"
-      },
-      "warning-color": {
-        "label": "Color de advertencia"
-      },
-      "critical-color": {
-        "label": "Color crítico"
-      },
-      "thresholds-section": {
-        "label": "Umbrales",
-        "description": "Establece umbrales para métricas del sistema; los valores por encima se resaltarán."
-      },
-      "cpu-section": {
-        "label": "Uso de CPU"
-      },
-      "cpu-warning-threshold": {
-        "label": "Umbral de advertencia"
-      },
-      "cpu-critical-threshold": {
+      "mem-critical-threshold": {
         "label": "Umbral crítico"
-      },
-      "temperature-section": {
-        "label": "Temperatura de la CPU"
-      },
-      "temp-warning-threshold": {
-        "label": "Umbral de advertencia"
-      },
-      "temp-critical-threshold": {
-        "label": "Umbral crítico"
-      },
-      "memory-section": {
-        "label": "Uso de memoria"
       },
       "mem-warning-threshold": {
         "label": "Umbral de advertencia"
       },
-      "mem-critical-threshold": {
+      "memory-section": {
+        "label": "Uso de memoria"
+      },
+      "temp-critical-threshold": {
         "label": "Umbral crítico"
       },
-      "disk-section": {
-        "label": "Uso de disco"
-      },
-      "disk-warning-threshold": {
+      "temp-warning-threshold": {
         "label": "Umbral de advertencia"
       },
-      "disk-critical-threshold": {
-        "label": "Umbral crítico"
+      "temperature-section": {
+        "label": "Temperatura de la CPU"
       },
-      "title": "Monitor del sistema"
+      "thresholds-section": {
+        "description": "Establece umbrales para métricas del sistema; los valores por encima se resaltarán.",
+        "label": "Umbrales"
+      },
+      "title": "Monitor del sistema",
+      "use-custom-highlight-colors": {
+        "description": "Cuando está desactivado, se usan los colores de resaltado predeterminados del tema.",
+        "label": "Usar colores de resaltado personalizados"
+      },
+      "warning-color": {
+        "label": "Color de advertencia"
+      }
     },
     "user-interface": {
       "animation-disable": {

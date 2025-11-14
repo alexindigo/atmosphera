@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU 使用率（严重）"
+        },
         "cpu-temperature": {
           "description": "如果可用，显示CPU温度读数。",
           "label": "CPU温度"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "显示当前CPU使用百分比。",
           "label": "CPU使用率"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU 使用率（警告）"
+        },
+        "disk-critical-threshold": {
+          "label": "存储空间（严重）"
+        },
+        "disk-warning-threshold": {
+          "label": "存储空间（警告）"
+        },
+        "mem-critical-threshold": {
+          "label": "内存使用率（严重）"
+        },
+        "mem-warning-threshold": {
+          "label": "内存使用率（警告）"
         },
         "memory-percentage": {
           "description": "以百分比而不是绝对值显示内存使用情况。",
@@ -266,33 +284,15 @@
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
         },
-        "thresholds": {
-          "header": "阈值设置",
-          "description": "配置系统指标提示的阈值，超出阈值时将以高亮色进行提示。"
-        },
-        "cpu-warning-threshold": {
-          "label": "CPU 使用率（警告）"
-        },
-        "cpu-critical-threshold": {
-          "label": "CPU 使用率（严重）"
+        "temp-critical-threshold": {
+          "label": "CPU 温度（严重）"
         },
         "temp-warning-threshold": {
           "label": "CPU 温度（警告）"
         },
-        "temp-critical-threshold": {
-          "label": "CPU 温度（严重）"
-        },
-        "mem-warning-threshold": {
-          "label": "内存使用率（警告）"
-        },
-        "mem-critical-threshold": {
-          "label": "内存使用率（严重）"
-        },
-        "disk-warning-threshold": {
-          "label": "存储空间（警告）"
-        },
-        "disk-critical-threshold": {
-          "label": "存储空间（严重）"
+        "thresholds": {
+          "description": "配置系统指标提示的阈值，超出阈值时将以高亮色进行提示。",
+          "header": "阈值设置"
         }
       },
       "taskbar": {
@@ -675,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "在 {seconds} 秒后将{action}...",
+    "hibernate": "休眠",
     "lock": "锁定",
     "lock-and-suspend": "锁定并挂起",
     "logout": "注销",
     "reboot": "重启",
     "shutdown": "关机",
     "suspend": "挂起",
-    "hibernate": "休眠",
     "title": "会话菜单"
   },
   "settings": {
@@ -1597,6 +1597,30 @@
       "title": "会话菜单"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "cpu-section": {
+        "label": "CPU 使用率"
+      },
+      "cpu-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "critical-color": {
+        "label": "严重颜色"
+      },
+      "custom-highlight-colors-title": {
+        "label": "自定义高亮颜色"
+      },
+      "disk-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "disk-section": {
+        "label": "磁盘使用率"
+      },
+      "disk-warning-threshold": {
+        "label": "警告阈值"
+      },
       "general": {
         "section": {
           "description": "配置系统监视器的行为和外观。",
@@ -1606,69 +1630,36 @@
       "highlight-colors-section": {
         "label": "高亮颜色"
       },
-      "use-custom-highlight-colors": {
-        "label": "使用自定义高亮颜色",
-        "description": "关闭时将使用主题默认高亮颜色。"
-      },
-      "custom-highlight-colors-title": {
-        "label": "自定义高亮颜色"
-      },
-      "warning-color": {
-        "label": "警告颜色"
-      },
-      "critical-color": {
-        "label": "严重颜色"
-      },
-      "thresholds-section": {
-        "label": "阈值",
-        "description": "设置各项系统测量指标的阈值，超过该值将以高亮色进行提示。"
-      },
-      "cpu-section": {
-        "label": "CPU 使用率"
-      },
-      "cpu-warning-threshold": {
-        "label": "警告阈值"
-      },
-      "cpu-critical-threshold": {
+      "mem-critical-threshold": {
         "label": "严重阈值"
-      },
-      "temperature-section": {
-        "label": "CPU 温度"
-      },
-      "temp-warning-threshold": {
-        "label": "警告阈值"
-      },
-      "temp-critical-threshold": {
-        "label": "严重阈值"
-      },
-      "memory-section": {
-        "label": "内存使用率"
       },
       "mem-warning-threshold": {
         "label": "警告阈值"
       },
-      "mem-critical-threshold": {
+      "memory-section": {
+        "label": "内存使用率"
+      },
+      "temp-critical-threshold": {
         "label": "严重阈值"
       },
-      "disk-section": {
-        "label": "磁盘使用率"
-      },
-      "disk-warning-threshold": {
+      "temp-warning-threshold": {
         "label": "警告阈值"
       },
-      "disk-critical-threshold": {
-        "label": "严重阈值"
+      "temperature-section": {
+        "label": "CPU 温度"
       },
-      "network-section": {
-        "label": "网络使用率"
+      "thresholds-section": {
+        "description": "设置各项系统测量指标的阈值，超过该值将以高亮色进行提示。",
+        "label": "阈值"
       },
-      "network-warning-threshold": {
-        "label": "警告阈值"
+      "title": "系统监视器",
+      "use-custom-highlight-colors": {
+        "description": "关闭时将使用主题默认高亮颜色。",
+        "label": "使用自定义高亮颜色"
       },
-      "network-critical-threshold": {
-        "label": "严重阈值"
-      },
-      "title": "系统监视器"
+      "warning-color": {
+        "label": "警告颜色"
+      }
     },
     "user-interface": {
       "animation-disable": {

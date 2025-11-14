@@ -40,26 +40,6 @@
           "description": "Si activé, le visualiseur est masqué sauf lorsqu'un lecteur est en lecture.",
           "label": "Masquer lorsqu'aucun média n'est en lecture"
         },
-        "highlight-colors-section": {
-          "label": "Couleurs de surlignage"
-        },
-        "use-custom-highlight-colors": {
-          "label": "Utiliser des couleurs de surlignage personnalisées",
-          "description": "Si désactivé, les couleurs de surlignage par défaut du thème sont utilisées."
-        },
-        "custom-highlight-colors-title": {
-          "label": "Couleurs de surlignage personnalisées"
-        },
-        "warning-color": {
-          "label": "Couleur d'avertissement"
-        },
-        "critical-color": {
-          "label": "Couleur critique"
-        },
-        "thresholds-section": {
-          "label": "Seuils",
-          "description": "Définissez des seuils pour les métriques système ; les valeurs supérieures seront mises en évidence."
-        },
         "width": {
           "description": "Largeur personnalisée du composant.",
           "label": "Largeur"
@@ -262,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
         "cpu-temperature": {
           "description": "Afficher les lectures de température du CPU si disponibles.",
           "label": "Température du CPU"
@@ -269,6 +252,21 @@
         "cpu-usage": {
           "description": "Afficher le pourcentage d'utilisation actuel du CPU.",
           "label": "Utilisation du CPU"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Afficher l'utilisation de la mémoire en pourcentage au lieu de valeurs absolues.",
@@ -286,33 +284,15 @@
           "description": "Afficher les informations d'utilisation de l'espace disque.",
           "label": "Utilisation du stockage"
         },
-        "thresholds": {
-          "header": "Seuils",
-          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites."
-        },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
         },
         "temp-warning-threshold": {
           "label": "CPU Temperature (Warning)"
         },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
+        "thresholds": {
+          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites.",
+          "header": "Seuils"
         }
       },
       "taskbar": {
@@ -695,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} dans {seconds} secondes...",
+    "hibernate": "Mise en veille prolongée",
     "lock": "Verrouiller",
     "lock-and-suspend": "Verrouiller et Mettre en veille",
     "logout": "Déconnexion",
     "reboot": "Redémarrer",
     "shutdown": "Éteindre",
     "suspend": "Mettre en veille",
-    "hibernate": "Mise en veille prolongée",
     "title": "Menu de session"
   },
   "settings": {
@@ -1617,11 +1597,8 @@
       "title": "Menu de session"
     },
     "system-monitor": {
-      "general": {
-        "section": {
-          "description": "Configurer le comportement et l'apparence du Moniteur Système.",
-          "label": "Général"
-        }
+      "cpu-critical-threshold": {
+        "label": "Seuil critique"
       },
       "cpu-section": {
         "label": "Utilisation CPU"
@@ -1629,25 +1606,13 @@
       "cpu-warning-threshold": {
         "label": "Seuil d'avertissement"
       },
-      "cpu-critical-threshold": {
-        "label": "Seuil critique"
+      "critical-color": {
+        "label": "Couleur critique"
       },
-      "temperature-section": {
-        "label": "Température CPU"
+      "custom-highlight-colors-title": {
+        "label": "Couleurs de surbrillance personnalisées"
       },
-      "temp-warning-threshold": {
-        "label": "Seuil d'avertissement"
-      },
-      "temp-critical-threshold": {
-        "label": "Seuil critique"
-      },
-      "memory-section": {
-        "label": "Utilisation mémoire"
-      },
-      "mem-warning-threshold": {
-        "label": "Seuil d'avertissement"
-      },
-      "mem-critical-threshold": {
+      "disk-critical-threshold": {
         "label": "Seuil critique"
       },
       "disk-section": {
@@ -1656,10 +1621,45 @@
       "disk-warning-threshold": {
         "label": "Seuil d'avertissement"
       },
-      "disk-critical-threshold": {
+      "general": {
+        "section": {
+          "description": "Configurer le comportement et l'apparence du Moniteur Système.",
+          "label": "Général"
+        }
+      },
+      "highlight-colors-section": {
+        "label": "Couleurs de surlignage"
+      },
+      "mem-critical-threshold": {
         "label": "Seuil critique"
       },
-      "title": "Moniteur système"
+      "mem-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "memory-section": {
+        "label": "Utilisation mémoire"
+      },
+      "temp-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "temp-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "temperature-section": {
+        "label": "Température CPU"
+      },
+      "thresholds-section": {
+        "description": "Définir des seuils pour les métriques système ; les valeurs supérieures à ces seuils seront mises en évidence.",
+        "label": "Seuils"
+      },
+      "title": "Moniteur système",
+      "use-custom-highlight-colors": {
+        "description": "Lorsque cette option est désactivée, les couleurs de surbrillance par défaut du thème sont utilisées.",
+        "label": "Utiliser des couleurs de surlignage personnalisées."
+      },
+      "warning-color": {
+        "label": "Couleur d'avertissement"
+      }
     },
     "user-interface": {
       "animation-disable": {

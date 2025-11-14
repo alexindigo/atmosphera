@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
         "cpu-temperature": {
           "description": "Показывать показания температуры процессора, если доступны.",
           "label": "Температура CPU"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Отображать текущий процент использования CPU.",
           "label": "Использование CPU"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Показывать использование памяти в процентах вместо абсолютных значений.",
@@ -266,33 +284,15 @@
           "description": "Показывать информацию об использовании дискового пространства.",
           "label": "Использование хранилища"
         },
-        "thresholds": {
-          "header": "Пороговые значения",
-          "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении."
-        },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
         },
         "temp-warning-threshold": {
           "label": "CPU Temperature (Warning)"
         },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
+        "thresholds": {
+          "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении.",
+          "header": "Пороговые значения"
         }
       },
       "taskbar": {
@@ -675,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} через {seconds} секунд...",
+    "hibernate": "Гибернация",
     "lock": "Блокировать",
     "lock-and-suspend": "Блокировать и приостановить",
     "logout": "Выйти",
     "reboot": "Перезагрузить",
     "shutdown": "Выключить",
     "suspend": "Приостановить",
-    "hibernate": "Гибернация",
     "title": "Меню сеанса"
   },
   "settings": {
@@ -1597,6 +1597,30 @@
       "title": "Меню сеанса"
     },
     "system-monitor": {
+      "cpu-critical-threshold": {
+        "label": "Критический порог"
+      },
+      "cpu-section": {
+        "label": "Использование ЦП"
+      },
+      "cpu-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
+      "critical-color": {
+        "label": "Критический цвет"
+      },
+      "custom-highlight-colors-title": {
+        "label": "Пользовательские цвета выделения"
+      },
+      "disk-critical-threshold": {
+        "label": "Критический порог"
+      },
+      "disk-section": {
+        "label": "Использование диска"
+      },
+      "disk-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
       "general": {
         "section": {
           "description": "Настроить поведение и внешний вид системного монитора.",
@@ -1606,60 +1630,36 @@
       "highlight-colors-section": {
         "label": "Цвета выделения"
       },
-      "use-custom-highlight-colors": {
-        "label": "Использовать пользовательские цвета выделения",
-        "description": "Если отключено, используются цвета выделения по умолчанию темы."
-      },
-      "custom-highlight-colors-title": {
-        "label": "Пользовательские цвета выделения"
-      },
-      "warning-color": {
-        "label": "Цвет предупреждения"
-      },
-      "critical-color": {
-        "label": "Критический цвет"
-      },
-      "thresholds-section": {
-        "label": "Пороги",
-        "description": "Установите пороги для системных метрик; значения выше будут выделены."
-      },
-      "cpu-section": {
-        "label": "Использование ЦП"
-      },
-      "cpu-warning-threshold": {
-        "label": "Порог предупреждения"
-      },
-      "cpu-critical-threshold": {
+      "mem-critical-threshold": {
         "label": "Критический порог"
-      },
-      "temperature-section": {
-        "label": "Температура ЦП"
-      },
-      "temp-warning-threshold": {
-        "label": "Порог предупреждения"
-      },
-      "temp-critical-threshold": {
-        "label": "Критический порог"
-      },
-      "memory-section": {
-        "label": "Использование памяти"
       },
       "mem-warning-threshold": {
         "label": "Порог предупреждения"
       },
-      "mem-critical-threshold": {
+      "memory-section": {
+        "label": "Использование памяти"
+      },
+      "temp-critical-threshold": {
         "label": "Критический порог"
       },
-      "disk-section": {
-        "label": "Использование диска"
-      },
-      "disk-warning-threshold": {
+      "temp-warning-threshold": {
         "label": "Порог предупреждения"
       },
-      "disk-critical-threshold": {
-        "label": "Критический порог"
+      "temperature-section": {
+        "label": "Температура ЦП"
       },
-      "title": "Системный монитор"
+      "thresholds-section": {
+        "description": "Установите пороги для системных метрик; значения выше будут выделены.",
+        "label": "Пороги"
+      },
+      "title": "Системный монитор",
+      "use-custom-highlight-colors": {
+        "description": "Если отключено, используются цвета выделения по умолчанию темы.",
+        "label": "Использовать пользовательские цвета выделения"
+      },
+      "warning-color": {
+        "label": "Цвет предупреждения"
+      }
     },
     "user-interface": {
       "animation-disable": {

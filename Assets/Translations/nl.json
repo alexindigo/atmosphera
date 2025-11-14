@@ -242,6 +242,9 @@
         }
       },
       "system-monitor": {
+        "cpu-critical-threshold": {
+          "label": "CPU-gebruik (Kritiek)"
+        },
         "cpu-temperature": {
           "description": "Toon CPU-temperatuur indien beschikbaar.",
           "label": "CPU-temperatuur"
@@ -249,6 +252,21 @@
         "cpu-usage": {
           "description": "Toon het huidige CPU-gebruik in procent.",
           "label": "CPU-gebruik"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU-gebruik (Waarschuwing)"
+        },
+        "disk-critical-threshold": {
+          "label": "Opslagruimte (Kritiek)"
+        },
+        "disk-warning-threshold": {
+          "label": "Opslagruimte (Waarschuwing)"
+        },
+        "mem-critical-threshold": {
+          "label": "Geheugengebruik (Kritiek)"
+        },
+        "mem-warning-threshold": {
+          "label": "Geheugengebruik (Waarschuwing)"
         },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
@@ -265,29 +283,19 @@
         "storage-usage": {
           "description": "Toon informatie over schijfruimtegebruik.",
           "label": "Opslaggebruik"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU-temperatuur (kritiek)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU-temperatuur (Waarschuwing)"
+        },
+        "thresholds": {
+          "description": "Drempels instellen voor systeemmetriekwaarschuwingen. Markeert wanneer overschreden.",
+          "header": "Drempelinstellingen"
         }
       },
       "taskbar": {
-        "highlight-colors-section": {
-          "label": "Markeer kleuren"
-        },
-        "use-custom-highlight-colors": {
-          "label": "Aangepaste markeerkleuren gebruiken",
-          "description": "Wanneer uitgeschakeld worden de standaard markeerkleuren van het thema gebruikt."
-        },
-        "custom-highlight-colors-title": {
-          "label": "Aangepaste markeerkleuren"
-        },
-        "warning-color": {
-          "label": "Waarschuwingskleur"
-        },
-        "critical-color": {
-          "label": "Kritieke kleur"
-        },
-        "thresholds-section": {
-          "label": "Drempels",
-          "description": "Stel drempels in voor systeemstatistieken; waarden erboven worden gemarkeerd."
-        },
         "colorize-icons": {
           "description": "Pas themakleuren toe op taakbalkpictogrammen.",
           "label": "Pictogrammen inkleuren"
@@ -667,13 +675,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} over {seconds} seconden...",
+    "hibernate": "Slaperstand",
     "lock": "Vergrendelen",
     "lock-and-suspend": "Vergrendelen en onderbreken",
     "logout": "Afmelden",
     "reboot": "Opnieuw opstarten",
     "shutdown": "Uitschakelen",
     "suspend": "Onderbreken",
-    "hibernate": "Slaperstand",
     "title": "Sessie-menu"
   },
   "settings": {
@@ -1589,11 +1597,8 @@
       "title": "Sessiemenu"
     },
     "system-monitor": {
-      "general": {
-        "section": {
-          "description": "Configureer het gedrag en de weergave van de Systeemmonitor.",
-          "label": "Algemeen"
-        }
+      "cpu-critical-threshold": {
+        "label": "Kritieke drempel"
       },
       "cpu-section": {
         "label": "CPU-gebruik"
@@ -1601,25 +1606,13 @@
       "cpu-warning-threshold": {
         "label": "Waarschuwingsdrempel"
       },
-      "cpu-critical-threshold": {
-        "label": "Kritieke drempel"
+      "critical-color": {
+        "label": "Kritische kleur"
       },
-      "temperature-section": {
-        "label": "CPU-temperatuur"
+      "custom-highlight-colors-title": {
+        "label": "Aangepaste markeerkleuren"
       },
-      "temp-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
-      },
-      "temp-critical-threshold": {
-        "label": "Kritieke drempel"
-      },
-      "memory-section": {
-        "label": "Geheugengebruik"
-      },
-      "mem-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
-      },
-      "mem-critical-threshold": {
+      "disk-critical-threshold": {
         "label": "Kritieke drempel"
       },
       "disk-section": {
@@ -1628,10 +1621,45 @@
       "disk-warning-threshold": {
         "label": "Waarschuwingsdrempel"
       },
-      "disk-critical-threshold": {
+      "general": {
+        "section": {
+          "description": "Configureer het gedrag en de weergave van de Systeemmonitor.",
+          "label": "Algemeen"
+        }
+      },
+      "highlight-colors-section": {
+        "label": "Markeerkleuren"
+      },
+      "mem-critical-threshold": {
         "label": "Kritieke drempel"
       },
-      "title": "Systeemmonitor"
+      "mem-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "memory-section": {
+        "label": "Geheugengebruik"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "temp-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "temperature-section": {
+        "label": "CPU-temperatuur"
+      },
+      "thresholds-section": {
+        "description": "Stel drempelwaarden in voor systeemstatistieken; waarden die hierboven liggen worden gemarkeerd.",
+        "label": "Drempels"
+      },
+      "title": "Systeemmonitor",
+      "use-custom-highlight-colors": {
+        "description": "Indien uitgeschakeld, worden de standaard markeerkleuren van het thema gebruikt.",
+        "label": "Gebruik aangepaste markeerkleuren."
+      },
+      "warning-color": {
+        "label": "Waarschuwingskleur"
+      }
     },
     "user-interface": {
       "animation-disable": {
