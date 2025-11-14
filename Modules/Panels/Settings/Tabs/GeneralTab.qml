@@ -33,7 +33,7 @@ ColumnLayout {
 
     NTextInputButton {
       label: I18n.tr("settings.general.profile.picture.label", {
-                       "user": Quickshell.env("USER" || "User")
+                       "user": HostService.displayName
                      })
       description: I18n.tr("settings.general.profile.picture.description")
       text: Settings.data.general.avatarImage

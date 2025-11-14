@@ -7,6 +7,7 @@ import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Panels.ControlCenter.Cards
 import qs.Modules.Panels.Settings
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -37,7 +38,7 @@ NBox {
       Layout.fillWidth: true
       spacing: Style.marginXXS
       NText {
-        text: Quickshell.env("USER") || "user"
+        text: HostService.displayName
         font.weight: Style.fontWeightBold
         font.capitalization: Font.Capitalize
       }
