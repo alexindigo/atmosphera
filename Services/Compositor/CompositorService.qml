@@ -52,7 +52,7 @@ Singleton {
     const niriSocket = Quickshell.env("NIRI_SOCKET")
     const swaySock = Quickshell.env("SWAYSOCK")
     const currentDesktop = Quickshell.env("XDG_CURRENT_DESKTOP")
-    
+
     // Check for MangoWC using XDG_CURRENT_DESKTOP environment variable
     // MangoWC sets XDG_CURRENT_DESKTOP=mango
     if (currentDesktop && currentDesktop.toLowerCase().includes("mango")) {
@@ -61,7 +61,6 @@ Singleton {
       isSway = false
       isMango = true
       backendLoader.sourceComponent = mangoComponent
-      Logger.i("CompositorService", "MangoWC detected via XDG_CURRENT_DESKTOP:", currentDesktop)
     } else if (niriSocket && niriSocket.length > 0) {
       isHyprland = false
       isNiri = true
@@ -89,9 +88,6 @@ Singleton {
       backendLoader.sourceComponent = niriComponent
     }
   }
-
-
-
   Loader {
     id: backendLoader
     onLoaded: {

@@ -22,7 +22,7 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginM
 
-      NToggle {
+    NToggle {
       label: I18n.tr("settings.system-monitor.use-custom-highlight-colors.label")
       description: I18n.tr("settings.system-monitor.use-custom-highlight-colors.description")
       checked: Settings.data.systemMonitor.useCustomColors
@@ -45,7 +45,6 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: Style.marginM
     visible: Settings.data.systemMonitor.useCustomColors
-    
 
     ColumnLayout {
       Layout.fillWidth: true
@@ -61,7 +60,7 @@ ColumnLayout {
         Layout.preferredHeight: Style.baseWidgetSize
         enabled: Settings.data.systemMonitor.useCustomColors
         selectedColor: Settings.data.systemMonitor.warningColor || Color.mTertiary
-        onColorSelected: function(color) {
+        onColorSelected: function (color) {
           Settings.data.systemMonitor.warningColor = color
         }
       }
@@ -81,7 +80,7 @@ ColumnLayout {
         Layout.preferredHeight: Style.baseWidgetSize
         enabled: Settings.data.systemMonitor.useCustomColors
         selectedColor: Settings.data.systemMonitor.criticalColor || Color.mError
-        onColorSelected: function(color) {
+        onColorSelected: function (color) {
           Settings.data.systemMonitor.criticalColor = color
         }
       }

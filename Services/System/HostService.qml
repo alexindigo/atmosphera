@@ -21,16 +21,19 @@ Singleton {
 
   readonly property string displayName: {
     // Explicit override
-    if (envRealName && envRealName.length > 0)
+    if (envRealName && envRealName.length > 0) {
       return envRealName
+    }
 
     // Name from getent
-    if (realName && realName.length > 0)
+    if (realName && realName.length > 0) {
       return realName
+    }
 
     // Fallback: capitalized $USER
-    if (username && username.length > 0)
+    if (username && username.length > 0) {
       return username.charAt(0).toUpperCase() + username.slice(1)
+    }
 
     // Last resort: placeholder
     return "User"

@@ -121,7 +121,7 @@ Rectangle {
       property int indicatorWidth: Style.capsuleHeight
       property color warningColor: Color.mTertiary
       property color criticalColor: Color.mError
-      
+
       width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
       height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : pillHeight
       radius: Math.min(width, height) / 2
@@ -133,15 +133,24 @@ Rectangle {
 
       // Smooth appearance/disappearance animation
       Behavior on scale {
-        NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+        NumberAnimation {
+          duration: Style.animationNormal
+          easing.type: Easing.OutCubic
+        }
       }
 
       Behavior on opacity {
-        NumberAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+        NumberAnimation {
+          duration: Style.animationNormal
+          easing.type: Easing.OutCubic
+        }
       }
 
       Behavior on color {
-        ColorAnimation { duration: Style.animationNormal; easing.type: Easing.OutCubic }
+        ColorAnimation {
+          duration: Style.animationNormal
+          easing.type: Easing.OutCubic
+        }
       }
     }
   }
@@ -340,10 +349,8 @@ Rectangle {
             applyUiScale: false
             anchors.centerIn: parent
             // Invert color when memory indicator active
-              color: isVertical ? (memCritical ? criticalColor : (memWarning ? warningColor : Color.mOnSurface)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+            color: isVertical ? (memCritical ? criticalColor : (memWarning ? warningColor : Color.mOnSurface)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
           }
-
-
         }
 
         NText {

@@ -28,8 +28,10 @@ NBox {
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
         // Highlight color based on thresholds
-        fillColor: (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuCriticalThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError): (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuWarningThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary): Color.mPrimary
-        textColor: (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuCriticalThreshold)? Color.mSurfaceVariant: (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuWarningThreshold)? Color.mSurfaceVariant: Color.mOnSurface
+        fillColor: (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuCriticalThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor
+                                                                                                                                                     || Color.mError) : Color.mError) : (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuWarningThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor
+                                                                                                                                                                                                                                                                                                                         || Color.mTertiary) : Color.mTertiary) : Color.mPrimary
+        textColor: (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuCriticalThreshold) ? Color.mSurfaceVariant : (SystemStatService.cpuUsage > Settings.data.systemMonitor.cpuWarningThreshold) ? Color.mSurfaceVariant : Color.mOnSurface
       }
       NCircleStat {
         value: SystemStatService.cpuTemp
@@ -40,8 +42,10 @@ NBox {
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
         // Highlight color based on thresholds
-        fillColor: (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempCriticalThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError): (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempWarningThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary): Color.mPrimary
-        textColor: (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempCriticalThreshold)? Color.mSurfaceVariant: (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempWarningThreshold)? Color.mSurfaceVariant: Color.mOnSurface
+        fillColor: (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempCriticalThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor
+                                                                                                                                                     || Color.mError) : Color.mError) : (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempWarningThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor
+                                                                                                                                                                                                                                                                                                                         || Color.mTertiary) : Color.mTertiary) : Color.mPrimary
+        textColor: (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempCriticalThreshold) ? Color.mSurfaceVariant : (SystemStatService.cpuTemp > Settings.data.systemMonitor.tempWarningThreshold) ? Color.mSurfaceVariant : Color.mOnSurface
       }
       NCircleStat {
         value: SystemStatService.memPercent
@@ -51,8 +55,10 @@ NBox {
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
         // Highlight color based on thresholds
-        fillColor: (SystemStatService.memPercent > Settings.data.systemMonitor.memCriticalThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError): (SystemStatService.memPercent > Settings.data.systemMonitor.memWarningThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary): Color.mPrimary
-        textColor: (SystemStatService.memPercent > Settings.data.systemMonitor.memCriticalThreshold)? Color.mSurfaceVariant: (SystemStatService.memPercent > Settings.data.systemMonitor.memWarningThreshold)? Color.mSurfaceVariant: Color.mOnSurface
+        fillColor: (SystemStatService.memPercent > Settings.data.systemMonitor.memCriticalThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor
+                                                                                                                                                       || Color.mError) : Color.mError) : (SystemStatService.memPercent > Settings.data.systemMonitor.memWarningThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor
+                                                                                                                                                                                                                                                                                                                             || Color.mTertiary) : Color.mTertiary) : Color.mPrimary
+        textColor: (SystemStatService.memPercent > Settings.data.systemMonitor.memCriticalThreshold) ? Color.mSurfaceVariant : (SystemStatService.memPercent > Settings.data.systemMonitor.memWarningThreshold) ? Color.mSurfaceVariant : Color.mOnSurface
       }
       NCircleStat {
         value: SystemStatService.diskPercents["/"] ?? 0
@@ -62,8 +68,12 @@ NBox {
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
         // Highlight color based on thresholds
-        fillColor: ( (SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskCriticalThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError): ( (SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskWarningThreshold)? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary): Color.mPrimary
-        textColor: ((SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskCriticalThreshold)? Color.mSurfaceVariant: ((SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskWarningThreshold)? Color.mSurfaceVariant: Color.mOnSurface
+        fillColor: ((SystemStatService.diskPercents["/"]
+                     ?? 0) > Settings.data.systemMonitor.diskCriticalThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor
+                                                                                                                                  || Color.mError) : Color.mError) : ((SystemStatService.diskPercents["/"]
+                                                                                                                                                                       ?? 0) > Settings.data.systemMonitor.diskWarningThreshold) ? (Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor
+                                                                                                                                                                                                                                                                                   || Color.mTertiary) : Color.mTertiary) : Color.mPrimary
+        textColor: ((SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskCriticalThreshold) ? Color.mSurfaceVariant : ((SystemStatService.diskPercents["/"] ?? 0) > Settings.data.systemMonitor.diskWarningThreshold) ? Color.mSurfaceVariant : Color.mOnSurface
       }
     }
   }
