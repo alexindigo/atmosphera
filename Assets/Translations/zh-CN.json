@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
+        },
+        "thresholds": {
+          "header": "阈值设置",
+          "description": "配置系统指标提示的阈值，超出阈值时将以高亮色进行提示。"
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU 使用率（警告）"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU 使用率（严重）"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU 温度（警告）"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU 温度（严重）"
+        },
+        "mem-warning-threshold": {
+          "label": "内存使用率（警告）"
+        },
+        "mem-critical-threshold": {
+          "label": "内存使用率（严重）"
+        },
+        "disk-warning-threshold": {
+          "label": "存储空间（警告）"
+        },
+        "disk-critical-threshold": {
+          "label": "存储空间（严重）"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,71 @@
           "description": "配置系统监视器的行为和外观。",
           "label": "通用"
         }
+      },
+      "highlight-colors-section": {
+        "label": "高亮颜色"
+      },
+      "use-custom-highlight-colors": {
+        "label": "使用自定义高亮颜色",
+        "description": "关闭时将使用主题默认高亮颜色。"
+      },
+      "custom-highlight-colors-title": {
+        "label": "自定义高亮颜色"
+      },
+      "warning-color": {
+        "label": "警告颜色"
+      },
+      "critical-color": {
+        "label": "严重颜色"
+      },
+      "thresholds-section": {
+        "label": "阈值",
+        "description": "设置各项系统测量指标的阈值，超过该值将以高亮色进行提示。"
+      },
+      "cpu-section": {
+        "label": "CPU 使用率"
+      },
+      "cpu-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "cpu-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "temperature-section": {
+        "label": "CPU 温度"
+      },
+      "temp-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "temp-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "memory-section": {
+        "label": "内存使用率"
+      },
+      "mem-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "mem-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "disk-section": {
+        "label": "磁盘使用率"
+      },
+      "disk-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "disk-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "network-section": {
+        "label": "网络使用率"
+      },
+      "network-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "network-critical-threshold": {
+        "label": "严重阈值"
       },
       "title": "系统监视器"
     },

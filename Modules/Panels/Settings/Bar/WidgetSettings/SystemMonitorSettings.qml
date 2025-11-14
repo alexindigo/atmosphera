@@ -30,6 +30,7 @@ ColumnLayout {
     settings.showMemoryAsPercent = valueShowMemoryAsPercent
     settings.showNetworkStats = valueShowNetworkStats
     settings.showDiskUsage = valueShowDiskUsage
+
     return settings
   }
 

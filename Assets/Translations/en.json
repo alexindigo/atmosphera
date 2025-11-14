@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "Show disk space usage information.",
           "label": "Storage usage"
+        },
+        "thresholds": {
+          "header": "Threshold Settings",
+          "description": "Set thresholds for system metric alerts. Highlights when exceeded."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,62 @@
           "description": "Configure the System Monitor behavior and appearance.",
           "label": "General"
         }
+      },
+      "highlight-colors-section": {
+        "label": "Highlight Colors"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Use custom highlight colors",
+        "description": "When disabled, theme default highlight colors are used."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Custom highlight colors"
+      },
+      "warning-color": {
+        "label": "Warning Color"
+      },
+      "critical-color": {
+        "label": "Critical Color"
+      },
+      "thresholds-section": {
+        "label": "Thresholds",
+        "description": "Set thresholds for system metrics, values above these will be highlighted."
+      },
+      "cpu-section": {
+        "label": "CPU Usage"
+      },
+      "cpu-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "cpu-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "temperature-section": {
+        "label": "CPU Temperature"
+      },
+      "temp-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "temp-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "memory-section": {
+        "label": "Memory Usage"
+      },
+      "mem-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "mem-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "disk-section": {
+        "label": "Disk Usage"
+      },
+      "disk-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "disk-critical-threshold": {
+        "label": "Critical Threshold"
       },
       "title": "System Monitor"
     },

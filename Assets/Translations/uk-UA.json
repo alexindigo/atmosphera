@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "Показувати інформацію про використання дискового простору.",
           "label": "Використання сховища"
+        },
+        "thresholds": {
+          "header": "Налаштування порогів",
+          "description": "Встановіть пороги для оповіщень системних метрик. Виділяє при перевищенні."
+        },
+        "cpu-warning-threshold": {
+          "label": "Використання ЦП (Попередження)"
+        },
+        "cpu-critical-threshold": {
+          "label": "Використання ЦП (Критичний)"
+        },
+        "temp-warning-threshold": {
+          "label": "Температура ЦП (Попередження)"
+        },
+        "temp-critical-threshold": {
+          "label": "Температура ЦП (Критичний)"
+        },
+        "mem-warning-threshold": {
+          "label": "Використання пам'яті (Попередження)"
+        },
+        "mem-critical-threshold": {
+          "label": "Використання пам'яті (Критичний)"
+        },
+        "disk-warning-threshold": {
+          "label": "Місце на диску (Попередження)"
+        },
+        "disk-critical-threshold": {
+          "label": "Місце на диску (Критичний)"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,71 @@
           "description": "Налаштуйте поведінку та зовнішній вигляд Системного монітора.",
           "label": "Загальне"
         }
+      },
+      "highlight-colors-section": {
+        "label": "Кольори підсвічування"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Використовувати власні кольори підсвічування",
+        "description": "Якщо вимкнено, використовуються кольори підсвічування за замовчуванням теми."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Власні кольори підсвічування"
+      },
+      "warning-color": {
+        "label": "Колір попередження"
+      },
+      "critical-color": {
+        "label": "Критичний колір"
+      },
+      "thresholds-section": {
+        "label": "Пороги",
+        "description": "Встановіть пороги для системних метрик; значення вище будуть підсвічені."
+      },
+      "cpu-section": {
+        "label": "Використання ЦП"
+      },
+      "cpu-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "cpu-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "temperature-section": {
+        "label": "Температура ЦП"
+      },
+      "temp-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "temp-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "memory-section": {
+        "label": "Використання пам'яті"
+      },
+      "mem-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "mem-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "disk-section": {
+        "label": "Використання диска"
+      },
+      "disk-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "disk-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "network-section": {
+        "label": "Використання мережі"
+      },
+      "network-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "network-critical-threshold": {
+        "label": "Критичний поріг"
       },
       "title": "Системний монітор"
     },

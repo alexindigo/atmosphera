@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "Mostrar informações de uso do espaço em disco.",
           "label": "Uso de armazenamento"
+        },
+        "thresholds": {
+          "header": "Configuração de Limiares",
+          "description": "Estabelece limites para alertas de métricas do sistema. Destaca quando superados."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,62 @@
           "description": "Configure o comportamento e a aparência do Monitor do Sistema.",
           "label": "Geral"
         }
+      },
+      "highlight-colors-section": {
+        "label": "Cores de destaque"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Usar cores de destaque personalizadas",
+        "description": "Quando desativado, são usadas as cores de destaque padrão do tema."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Cores de destaque personalizadas"
+      },
+      "warning-color": {
+        "label": "Cor de aviso"
+      },
+      "critical-color": {
+        "label": "Cor crítica"
+      },
+      "thresholds-section": {
+        "label": "Limiares",
+        "description": "Defina limiares para métricas do sistema; valores acima serão destacados."
+      },
+      "cpu-section": {
+        "label": "Uso da CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "cpu-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "temperature-section": {
+        "label": "Temperatura da CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "temp-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "memory-section": {
+        "label": "Uso de memória"
+      },
+      "mem-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "mem-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "disk-section": {
+        "label": "Uso do disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "disk-critical-threshold": {
+        "label": "Limite crítico"
       },
       "title": "Monitor do Sistema"
     },

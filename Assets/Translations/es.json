@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "Mostrar información del uso del espacio en disco.",
           "label": "Uso de almacenamiento"
+        },
+        "thresholds": {
+          "header": "Configuración de Umbrales",
+          "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,62 @@
           "description": "Configurar el comportamiento y la apariencia del Monitor del sistema.",
           "label": "General"
         }
+      },
+      "highlight-colors-section": {
+        "label": "Colores de resaltado"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Usar colores de resaltado personalizados",
+        "description": "Cuando está desactivado, se usan los colores de resaltado predeterminados del tema."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Colores de resaltado personalizados"
+      },
+      "warning-color": {
+        "label": "Color de advertencia"
+      },
+      "critical-color": {
+        "label": "Color crítico"
+      },
+      "thresholds-section": {
+        "label": "Umbrales",
+        "description": "Establece umbrales para métricas del sistema; los valores por encima se resaltarán."
+      },
+      "cpu-section": {
+        "label": "Uso de CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "cpu-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "temperature-section": {
+        "label": "Temperatura de la CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "temp-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "memory-section": {
+        "label": "Uso de memoria"
+      },
+      "mem-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "mem-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "disk-section": {
+        "label": "Uso de disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "disk-critical-threshold": {
+        "label": "Umbral crítico"
       },
       "title": "Monitor del sistema"
     },

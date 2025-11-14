@@ -265,6 +265,34 @@
         "storage-usage": {
           "description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
           "label": "Speichernutzung"
+        },
+        "thresholds": {
+          "header": "Schwellenwerte",
+          "description": "Schwellenwerte für visuelle Indikatoren konfigurieren. Warn-/Kritik-Indikatoren erscheinen in hervorgehobenen Farben bei Überschreitung."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1574,6 +1602,62 @@
           "description": "Konfigurieren Sie das Verhalten und Aussehen des Systemmonitors.",
           "label": "Allgemein"
         }
+      },
+      "highlight-colors-section": {
+        "label": "Hervorhebungsfarben"
+      },
+      "use-custom-highlight-colors": {
+        "label": "Benutzerdefinierte Hervorhebungsfarben verwenden",
+        "description": "Wenn deaktiviert, werden die Standard-Hervorhebungsfarben des Themes verwendet."
+      },
+      "custom-highlight-colors-title": {
+        "label": "Benutzerdefinierte Hervorhebungsfarben"
+      },
+      "warning-color": {
+        "label": "Warnfarbe"
+      },
+      "critical-color": {
+        "label": "Kritische Farbe"
+      },
+      "thresholds-section": {
+        "label": "Schwellenwerte",
+        "description": "Setzen Sie Schwellenwerte für Systemmetriken; Werte darüber werden hervorgehoben."
+      },
+      "cpu-section": {
+        "label": "CPU-Auslastung"
+      },
+      "cpu-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "cpu-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "temperature-section": {
+        "label": "CPU-Temperatur"
+      },
+      "temp-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "memory-section": {
+        "label": "Speicherverbrauch"
+      },
+      "mem-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "mem-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "disk-section": {
+        "label": "Festplattennutzung"
+      },
+      "disk-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritische Schwelle"
       },
       "title": "Systemmonitor"
     },

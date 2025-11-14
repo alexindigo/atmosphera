@@ -40,6 +40,26 @@
           "description": "Si activé, le visualiseur est masqué sauf lorsqu'un lecteur est en lecture.",
           "label": "Masquer lorsqu'aucun média n'est en lecture"
         },
+        "highlight-colors-section": {
+          "label": "Couleurs de surlignage"
+        },
+        "use-custom-highlight-colors": {
+          "label": "Utiliser des couleurs de surlignage personnalisées",
+          "description": "Si désactivé, les couleurs de surlignage par défaut du thème sont utilisées."
+        },
+        "custom-highlight-colors-title": {
+          "label": "Couleurs de surlignage personnalisées"
+        },
+        "warning-color": {
+          "label": "Couleur d'avertissement"
+        },
+        "critical-color": {
+          "label": "Couleur critique"
+        },
+        "thresholds-section": {
+          "label": "Seuils",
+          "description": "Définissez des seuils pour les métriques système ; les valeurs supérieures seront mises en évidence."
+        },
         "width": {
           "description": "Largeur personnalisée du composant.",
           "label": "Largeur"
@@ -265,6 +285,34 @@
         "storage-usage": {
           "description": "Afficher les informations d'utilisation de l'espace disque.",
           "label": "Utilisation du stockage"
+        },
+        "thresholds": {
+          "header": "Seuils",
+          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites."
+        },
+        "cpu-warning-threshold": {
+          "label": "CPU Usage (Warning)"
+        },
+        "cpu-critical-threshold": {
+          "label": "CPU Usage (Critical)"
+        },
+        "temp-warning-threshold": {
+          "label": "CPU Temperature (Warning)"
+        },
+        "temp-critical-threshold": {
+          "label": "CPU Temperature (Critical)"
+        },
+        "mem-warning-threshold": {
+          "label": "Memory Usage (Warning)"
+        },
+        "mem-critical-threshold": {
+          "label": "Memory Usage (Critical)"
+        },
+        "disk-warning-threshold": {
+          "label": "Storage Space (Warning)"
+        },
+        "disk-critical-threshold": {
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1574,6 +1622,42 @@
           "description": "Configurer le comportement et l'apparence du Moniteur Système.",
           "label": "Général"
         }
+      },
+      "cpu-section": {
+        "label": "Utilisation CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "cpu-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "temperature-section": {
+        "label": "Température CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "temp-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "memory-section": {
+        "label": "Utilisation mémoire"
+      },
+      "mem-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "mem-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "disk-section": {
+        "label": "Utilisation disque"
+      },
+      "disk-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "disk-critical-threshold": {
+        "label": "Seuil critique"
       },
       "title": "Moniteur système"
     },
