@@ -5,33 +5,36 @@ import qs.Commons
 import qs.Services.UI
 import qs.Services.Keyboard
 
+// MangoService integrates with MangoWC compositor using mmsg IPC commands
+// for real-time window management, workspace control, and state monitoring
+
 Item {
   id: root
 
-  // Properties matching facade interface
+  // Facade interface properties
   property ListModel workspaces: ListModel {}
   property var windows: []
   property int focusedWindowIndex: -1
 
-  // Signals matching facade interface
+  // Facade interface signals
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
 
-  // Mango-specific properties
-  property bool initialized: false
-  property bool overviewActive: false
-  property var workspaceCache: ({})
-  property var windowCache: ({})
-  property var monitorCache: ({})
-  property string currentLayout: ""
-  property string currentLayoutSymbol: ""
-  property string currentKeyboardLayout: ""
-  property string selectedMonitor: ""
+   // MangoWC-specific state
+   property bool initialized: false
+   property bool overviewActive: false
+   property var workspaceCache: ({}) // Cache for workspace data to detect changes
+   property var windowCache: ({}) // Cache for window data to detect changes
+   property var monitorCache: ({}) // Cache for monitor/scale data
+   property string currentLayout: "" // Current layout name
+   property string currentLayoutSymbol: "" // Current layout symbol (e.g., 'S' for scroller)
+   property string currentKeyboardLayout: "" // Current keyboard layout name
+   property string selectedMonitor: "" // Currently selected/focused monitor
 
-  // Constants
-  readonly property var mmsgCommands: ({
+   // mmsg command templates for MangoWC IPC (mmsg is the MangoWC message interface)
+   readonly property var mmsgCommands: ({
     query: {
       workspaces: ["mmsg", "-g", "-t"],
       windows: ["mmsg", "-g", "-c"],
@@ -52,18 +55,20 @@ Item {
     }
   })
 
-  readonly property string overviewLayoutSymbol: "󰃇"
-  readonly property int defaultWorkspaceId: 1
+   readonly property string overviewLayoutSymbol: "󰃇" // Symbol representing overview layout
+   readonly property int defaultWorkspaceId: 1 // Default workspace ID when none specified
 
-  // Debounce timer for updates
-  Timer {
-    id: updateTimer
-    interval: 50
-    repeat: false
-    onTriggered: safeUpdate()
-  }
+   // Debounce timer for rapid state changes to avoid excessive updates
+   Timer {
+     id: updateTimer
+     interval: 50
+     repeat: false
+     onTriggered: safeUpdate()
+   }
 
-  // Event stream for real-time updates
+
+   // Event stream process for real-time MangoWC state monitoring using mmsg -w
+   // Monitors events: workspace changes, window focus/movement, layout changes, monitor selection
   Process {
     id: eventStream
     running: false
@@ -87,22 +92,24 @@ Item {
     }
   }
 
-  Timer {
-    id: restartTimer
-    interval: 1000
-    onTriggered: {
-      if (initialized) {
-        eventStream.running = true
-      }
-    }
-  }
+   // Restart timer for event stream recovery on failure
+   Timer {
+     id: restartTimer
+     interval: 1000
+     onTriggered: {
+       if (initialized) {
+         eventStream.running = true
+       }
+     }
+   }
 
-  // Query processes
-  Process {
-    id: workspacesProcess
-    running: false
-    command: mmsgCommands.query.workspaces
-    property string accumulatedOutput: ""
+
+   // Process to query workspaces using mmsg -g -t
+   Process {
+     id: workspacesProcess
+     running: false
+     command: mmsgCommands.query.workspaces
+     property string accumulatedOutput: ""
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -120,12 +127,13 @@ Item {
     }
   }
 
-  Process {
-    id: windowsProcess
-    running: false
-    command: mmsgCommands.query.windows
-    property string accumulatedOutput: ""
-    property var currentWindow: ({})
+   // Process to query windows using mmsg -g -c
+   Process {
+     id: windowsProcess
+     running: false
+     command: mmsgCommands.query.windows
+     property string accumulatedOutput: ""
+     property var currentWindow: ({})
 
     onRunningChanged: {
       if (running) {
@@ -193,10 +201,11 @@ Item {
     }
   }
 
-  Process {
-    id: layoutProcess
-    running: false
-    command: mmsgCommands.query.layout
+   // Process to query current layout using mmsg -g -l
+   Process {
+     id: layoutProcess
+     running: false
+     command: mmsgCommands.query.layout
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -219,10 +228,11 @@ Item {
     }
   }
 
-  Process {
-    id: keyboardProcess
-    running: false
-    command: mmsgCommands.query.keyboard
+   // Process to query keyboard layout using mmsg -g -k
+   Process {
+     id: keyboardProcess
+     running: false
+     command: mmsgCommands.query.keyboard
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -248,10 +258,11 @@ Item {
     }
   }
 
-  Process {
-    id: outputsProcess
-    running: false
-    command: mmsgCommands.query.outputs
+   // Process to query output scales using mmsg -g -A
+   Process {
+     id: outputsProcess
+     running: false
+     command: mmsgCommands.query.outputs
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -283,10 +294,11 @@ Item {
     }
   }
 
-  Process {
-    id: monitorStateProcess
-    running: false
-    command: mmsgCommands.query.monitors
+   // Process to query monitor states using mmsg -g -o
+   Process {
+     id: monitorStateProcess
+     running: false
+     command: mmsgCommands.query.monitors
 
     stdout: SplitParser {
       onRead: function (line) {
@@ -313,16 +325,17 @@ Item {
     }
   }
 
-  Process {
-    id: outputEnumProcess
-    running: false
-    command: ["mmsg", "-g", "-O"]
+   // Process to enumerate available outputs using mmsg -g -O
+   Process {
+     id: outputEnumProcess
+     running: false
+     command: ["mmsg", "-g", "-O"]
 
     stdout: SplitParser {
       onRead: function (line) {
         try {
           const trimmed = line.trim()
-          // Handle output enumeration format: "+ eDP-1"
+
           const outputName = trimmed.replace(/^\+\s*/, '')
           if (outputName && !monitorCache[outputName]) {
             monitorCache[outputName] = {
@@ -345,7 +358,8 @@ Item {
     }
   }
 
-  // Initialization
+
+  // Initialize MangoService and establish connection to MangoWC
   function initialize() {
     if (initialized) {
       Logger.w("MangoService", "Already initialized")
@@ -355,7 +369,6 @@ Item {
     try {
       Logger.i("MangoService", "Initializing MangoWC service...")
       
-      // Query monitor state first to establish selected monitor before parsing windows
       queryOutputEnum()
       queryMonitorState()
       eventStream.running = true
@@ -373,36 +386,47 @@ Item {
     }
   }
 
-  // Workspace operations
+
+
+
+  // Switch to a specific workspace/tag
   function switchToWorkspace(workspace) {
     try {
       const tagId = workspace.idx || workspace.id || defaultWorkspaceId
       const outputName = workspace.output || selectedMonitor || ""
       let command = [...mmsgCommands.action.tag]
       
-      if (outputName) {
+      // Only add -o parameter for multi-monitor setups
+      if (outputName && Object.keys(monitorCache).length > 1) {
         command.push("-o", outputName)
       }
       command.push(tagId.toString())
       
       Quickshell.execDetached(command)
-      Logger.d("MangoService", `Switching to workspace ${tagId} on ${outputName || 'default output'}`)
     } catch (e) {
       Logger.e("MangoService", "Failed to switch workspace:", e)
     }
   }
 
-  // Window operations
+
+  // Focus a specific window on its workspace
   function focusWindow(window) {
     try {
       if (window && window.output) {
         let command = [...mmsgCommands.action.view]
-        command.push("-o", window.output, window.workspaceId.toString())
+        const isMultiMonitor = Object.keys(monitorCache).length > 1
+        
+        if (isMultiMonitor) {
+          command.push("-o", window.output)
+        }
+        command.push(window.workspaceId.toString())
         Quickshell.execDetached(command)
         
         Qt.callLater(() => {
           let focusCommand = [...mmsgCommands.action.focusMaster]
-          focusCommand.push("-o", window.output)
+          if (isMultiMonitor) {
+            focusCommand.push("-o", window.output)
+          }
           Quickshell.execDetached(focusCommand)
         })
       }
@@ -414,7 +438,7 @@ Item {
   function closeWindow(window) {
     try {
       const command = [...mmsgCommands.action.killClient]
-      if (selectedMonitor) {
+      if (selectedMonitor && Object.keys(monitorCache).length > 1) {
         command.push("-o", selectedMonitor)
       }
       Quickshell.execDetached(command)
@@ -423,11 +447,11 @@ Item {
     }
   }
 
-  // MangoWC-specific operations
+
   function toggleOverview() {
     try {
       const command = [...mmsgCommands.action.toggleOverview]
-      if (selectedMonitor) {
+      if (selectedMonitor && Object.keys(monitorCache).length > 1) {
         command.push("-o", selectedMonitor)
       }
       Quickshell.execDetached(command)
@@ -454,7 +478,10 @@ Item {
     }
   }
 
-  // Data parsing
+
+   // Parse workspace data from mmsg -g -t output
+   // Handles formats: tag details, tag masks, and binary states
+   // State bits: bit 0 = active/selected, bit 1 = urgent
   function parseWorkspaces(output) {
     const lines = output.trim().split('\n')
     const workspacesList = []
@@ -504,7 +531,7 @@ Item {
       const tagsMatch = trimmed.match(/^(\S+)\s+tags\s+(\d+)\s+(\d+)\s+(\d+)$/)
       if (tagsMatch) {
         const [, outputName, occ, seltags, urg] = tagsMatch
-        // Parse binary tag states for comprehensive workspace info
+
         const occBits = occ.padStart(9, '0')
         const selBits = seltags.padStart(9, '0')
         const urgBits = urg.padStart(9, '0')
@@ -559,18 +586,18 @@ Item {
       }
   }
 
-  function parseWindows(windowData) {
+   // Parse window data from mmsg -g -c output into window list
+   function parseWindows(windowData) {
     const windowsList = []
     const newWindowCache = {}
     let newFocusedIndex = -1
 
     for (const [outputName, data] of Object.entries(windowData)) {
       if (data.title || data.appId) {
-        // Windows from mmsg -g -o -c are the focused windows for their respective outputs
-        // A window is focused if it's from the currently selected monitor
+
         const isFocused = (outputName === selectedMonitor)
         
-        // Get the active tag for this output
+
         let activeTagId = defaultWorkspaceId
         for (const [key, tagData] of Object.entries(workspaceCache)) {
           if (tagData.output === outputName && tagData.isActive) {
@@ -624,7 +651,8 @@ Item {
     }
   }
 
-  function handleLayoutChange(layoutSymbol) {
+   // Handle layout change events and update overview state
+   function handleLayoutChange(layoutSymbol) {
     const wasOverview = overviewActive
     const isOverview = (layoutSymbol === overviewLayoutSymbol)
     
@@ -639,7 +667,8 @@ Item {
     }
   }
 
-  function updateDisplayScales() {
+   // Update display scales and notify CompositorService
+   function updateDisplayScales() {
     const scales = {}
     for (const [outputName, data] of Object.entries(monitorCache)) {
       scales[outputName] = {
@@ -661,8 +690,9 @@ Item {
     displayScalesChanged()
   }
 
-  // Event handling
-  function handleEvent(eventLine) {
+
+   // Handle real-time events from mmsg -w event stream and trigger updates
+   function handleEvent(eventLine) {
     const parts = eventLine.trim().split(/\s+/)
     if (parts.length < 2) return
 
@@ -698,57 +728,67 @@ Item {
     }
   }
 
-  // Queries
-  function queryWorkspaces() {
-    workspacesProcess.running = true
-  }
 
-  function queryWindows() {
-    windowsProcess.running = true
-  }
+   // Start workspace query process
+   function queryWorkspaces() {
+     workspacesProcess.running = true
+   }
 
-  function queryLayout() {
-    layoutProcess.running = true
-  }
+   // Start window query process
+   function queryWindows() {
+     windowsProcess.running = true
+   }
 
-  function queryKeyboard() {
-    keyboardProcess.running = true
-  }
+   // Start layout query process
+   function queryLayout() {
+     layoutProcess.running = true
+   }
 
-  function queryOutputs() {
-    outputsProcess.running = true
-  }
+   // Start keyboard layout query process
+   function queryKeyboard() {
+     keyboardProcess.running = true
+   }
 
-  function queryDisplayScales() {
-    queryOutputs()
-  }
+   // Start output scales query process
+   function queryOutputs() {
+     outputsProcess.running = true
+   }
 
-  function queryOutputEnum() {
-    outputEnumProcess.running = true
-  }
+   // Query display scales (alias for queryOutputs)
+   function queryDisplayScales() {
+     queryOutputs()
+   }
 
-  function queryMonitorState() {
-    monitorStateProcess.running = true
-  }
+   // Start output enumeration process
+   function queryOutputEnum() {
+     outputEnumProcess.running = true
+   }
 
-  // Utilities
-  function safeUpdate() {
-    try {
-      queryWorkspaces()
-      queryWindows()
-      queryMonitorState()
-    } catch (e) {
-      Logger.e("MangoService", "Safe update failed:", e)
-    }
-  }
+   // Start monitor state query process
+   function queryMonitorState() {
+     monitorStateProcess.running = true
+   }
 
-  function getCurrentActiveTagId() {
+
+   // Safely update all state by querying workspaces, windows, and monitor state
+   function safeUpdate() {
+     try {
+       queryWorkspaces()
+       queryWindows()
+       queryMonitorState()
+     } catch (e) {
+       Logger.e("MangoService", "Safe update failed:", e)
+     }
+   }
+
+   // Get the ID of the currently active workspace/tag
+   function getCurrentActiveTagId() {
     for (const [key, tagData] of Object.entries(workspaceCache)) {
       if (tagData.isActive && tagData.output === selectedMonitor) {
         return tagData.id
       }
     }
-    // Fallback to any active tag if no selected monitor match
+
     for (const [key, tagData] of Object.entries(workspaceCache)) {
       if (tagData.isActive) {
         return tagData.id
