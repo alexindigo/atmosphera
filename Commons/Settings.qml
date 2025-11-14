@@ -448,6 +448,7 @@ Singleton {
       property bool discord_equibop: false // To be deleted soon
       property bool discord_lightcord: false // To be deleted soon
       property bool discord_dorion: false // To be deleted soon
+      property bool discord_vencord: false // To be deleted soon
     }
 
     // night light
@@ -660,7 +661,7 @@ Singleton {
       var anyDiscordEnabled = false
 
       // Check if any Discord client was enabled
-      const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion"]
+      const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion", "discord_vencord"]
 
       for (var i = 0; i < discordClients.length; i++) {
         if (adapter.templates[discordClients[i]]) {
