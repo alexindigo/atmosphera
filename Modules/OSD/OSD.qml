@@ -4,229 +4,397 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Widgets
 import qs.Services.Hardware
 import qs.Services.Media
 import qs.Services.System
 
-// Unified OSD component
-// Loader activates only when showing OSD, deactivates when hidden to save resources
+// Unified OSD component that displays volume, input volume, and brightness changes
 Variants {
-  model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || (Settings.data.osd.monitors.length === 0)) && Settings.data.osd.enabled)
+  model: Quickshell.screens.filter(screen => 
+    (Settings.data.osd.monitors.includes(screen.name) || 
+     Settings.data.osd.monitors.length === 0) && 
+    Settings.data.osd.enabled
+  )
 
   delegate: Loader {
     id: root
 
     required property ShellScreen modelData
 
-    // Access the notification model from the service
-    property ListModel notificationModel: NotificationService.activeList
-
-    // Loader is only active when actually showing something
     active: false
 
-    // Current OSD display state
+    // OSD State
     property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
-
-    // Volume properties
-    readonly property real currentVolume: AudioService.volume
-    readonly property bool isMuted: AudioService.muted
+    
+    // Audio Output State
+    property real lastKnownVolume: -1
     property bool volumeInitialized: false
     property bool muteInitialized: false
-    property real lastKnownVolume: -1 // Track last known volume to detect actual changes
-
-    // Input volume properties
-    readonly property real currentInputVolume: AudioService.inputVolume
-    readonly property bool isInputMuted: AudioService.inputMuted
-    property bool inputAudioInitialized: false
-    property real lastKnownInputVolume: -1 // Track last known volume to detect actual changes
-
-    // Brightness properties
+    
+    // Audio Input State
+    property real lastKnownInputVolume: -1
+    property bool inputInitialized: false
+    
+    // Brightness State
     property real lastUpdatedBrightness: 0
-    readonly property real currentBrightness: lastUpdatedBrightness
     property bool brightnessInitialized: false
 
-    // Get appropriate icon based on current OSD type
+    // Current values (computed properties)
+    readonly property real currentVolume: AudioService.volume
+    readonly property bool isMuted: AudioService.muted
+    readonly property real currentInputVolume: AudioService.inputVolume
+    readonly property bool isInputMuted: AudioService.inputMuted
+    readonly property real currentBrightness: lastUpdatedBrightness
+
+    // ============================================================================
+    // Helper Functions
+    // ============================================================================
+
     function getIcon() {
-      if (currentOSDType === "volume") {
-        if (AudioService.muted) {
-          return "volume-mute"
-        }
-        return (AudioService.volume <= Number.EPSILON) ? "volume-zero" : (AudioService.volume <= 0.5) ? "volume-low" : "volume-high"
-      } else if (currentOSDType === "inputVolume") {
-        if (AudioService.inputMuted) {
-          return "microphone-off"
-        }
-        return "microphone"
-      } else if (currentOSDType === "brightness") {
-        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
+      switch (currentOSDType) {
+        case "volume":
+          if (isMuted) return "volume-mute"
+          if (currentVolume <= Number.EPSILON) return "volume-zero"
+          return currentVolume <= 0.5 ? "volume-low" : "volume-high"
+        
+        case "inputVolume":
+          return isInputMuted ? "microphone-off" : "microphone"
+        
+        case "brightness":
+          return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
+        
+        default:
+          return ""
       }
-      return ""
     }
 
-    // Get current value (0-1 range)
     function getCurrentValue() {
-      if (currentOSDType === "volume") {
-        return isMuted ? 0 : currentVolume
-      } else if (currentOSDType === "inputVolume") {
-        return isInputMuted ? 0 : currentInputVolume
-      } else if (currentOSDType === "brightness") {
-        return currentBrightness
+      switch (currentOSDType) {
+        case "volume": return isMuted ? 0 : currentVolume
+        case "inputVolume": return isInputMuted ? 0 : currentInputVolume
+        case "brightness": return currentBrightness
+        default: return 0
       }
-      return 0
     }
 
-    // Get maximum value for current OSD type
     function getMaxValue() {
       if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
         return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-      } else if (currentOSDType === "brightness") {
-        return 1.0
       }
       return 1.0
     }
 
-    // Get display percentage
     function getDisplayPercentage() {
-      if (currentOSDType === "volume") {
-        if (isMuted)
-          return "0%"
-        const max = getMaxValue()
-        const pct = Math.round(Math.min(max, currentVolume) * 100)
-        return pct + "%"
-      } else if (currentOSDType === "inputVolume") {
-        if (isInputMuted)
-          return "0%"
-        const max = getMaxValue()
-        const pct = Math.round(Math.min(max, currentInputVolume) * 100)
-        return pct + "%"
-      } else if (currentOSDType === "brightness") {
-        const pct = Math.round(Math.min(1.0, currentBrightness) * 100)
-        return pct + "%"
-      }
-      return ""
+      const value = getCurrentValue()
+      const max = getMaxValue()
+      const pct = Math.round(Math.min(max, value) * 100)
+      return pct + "%"
     }
 
-    // Get progress bar color
     function getProgressColor() {
-      if (currentOSDType === "volume") {
-        if (isMuted)
-          return Color.mError
-        return Color.mPrimary
-      } else if (currentOSDType === "inputVolume") {
-        if (isInputMuted)
-          return Color.mError
-        return Color.mPrimary
-      }
-      return Color.mPrimary
+      const isMutedState = (currentOSDType === "volume" && isMuted) || 
+                          (currentOSDType === "inputVolume" && isInputMuted)
+      return isMutedState ? Color.mError : Color.mPrimary
     }
 
-    // Get icon color
     function getIconColor() {
-      if ((currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)) {
-        return Color.mError
-      }
-      return Color.mOnSurface
+      const isMutedState = (currentOSDType === "volume" && isMuted) || 
+                          (currentOSDType === "inputVolume" && isInputMuted)
+      return isMutedState ? Color.mError : Color.mOnSurface
     }
+
+    // ============================================================================
+    // Audio Initialization
+    // ============================================================================
+
+    function initializeAudioValues() {
+      // Initialize output volume
+      if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
+        const vol = AudioService.volume
+        if (vol !== undefined && !isNaN(vol)) {
+          lastKnownVolume = vol
+          volumeInitialized = true
+          muteInitialized = true
+        }
+      }
+      
+      // Initialize input volume
+      if (AudioService.hasInput && AudioService.source?.ready && 
+          AudioService.source?.audio && lastKnownInputVolume < 0) {
+        const inputVol = AudioService.inputVolume
+        if (inputVol !== undefined && !isNaN(inputVol)) {
+          lastKnownInputVolume = inputVol
+          inputInitialized = true
+        }
+      }
+    }
+
+    function resetOutputInit() {
+      lastKnownVolume = -1
+      volumeInitialized = false
+      muteInitialized = false
+      Qt.callLater(initializeAudioValues)
+    }
+
+    function resetInputInit() {
+      lastKnownInputVolume = -1
+      inputInitialized = false
+      Qt.callLater(initializeAudioValues)
+    }
+
+    // ============================================================================
+    // Brightness Handling
+    // ============================================================================
+
+    function connectBrightnessMonitors() {
+      for (let i = 0; i < BrightnessService.monitors.length; i++) {
+        const monitor = BrightnessService.monitors[i]
+        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
+        monitor.brightnessUpdated.connect(onBrightnessChanged)
+      }
+    }
+
+    function onBrightnessChanged(newBrightness) {
+      lastUpdatedBrightness = newBrightness
+      
+      if (!brightnessInitialized) {
+        brightnessInitialized = true
+        return
+      }
+      
+      showOSD("brightness")
+    }
+
+    // ============================================================================
+    // OSD Display Control
+    // ============================================================================
+
+    function showOSD(type) {
+      currentOSDType = type
+
+      if (!root.active) {
+        root.active = true
+      }
+
+      if (root.item) {
+        root.item.showOSD()
+      } else {
+        Qt.callLater(() => {
+          if (root.item) root.item.showOSD()
+        })
+      }
+    }
+
+    function hideOSD() {
+      if (root.item?.osdItem) {
+        root.item.osdItem.hideImmediately()
+      } else if (root.active) {
+        root.active = false
+      }
+    }
+
+    // ============================================================================
+    // Signal Connections
+    // ============================================================================
+
+    // Pipewire state monitoring
+    Connections {
+      target: Pipewire
+      
+      function onReadyChanged() {
+        if (Pipewire.ready) Qt.callLater(initializeAudioValues)
+      }
+      
+      function onDefaultAudioSinkChanged() {
+        resetOutputInit()
+      }
+      
+      function onDefaultAudioSourceChanged() {
+        resetInputInit()
+      }
+    }
+
+    // AudioService monitoring
+    Connections {
+      target: AudioService
+      
+      function onSinkChanged() {
+        if (AudioService.sink?.ready && AudioService.sink?.audio) {
+          resetOutputInit()
+        }
+      }
+
+      function onSourceChanged() {
+        if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio) {
+          resetInputInit()
+        }
+      }
+
+      function onVolumeChanged() {
+        if (lastKnownVolume < 0) {
+          initializeAudioValues()
+          if (lastKnownVolume < 0) return
+        }
+        if (!volumeInitialized) return
+        
+        if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
+          lastKnownVolume = AudioService.volume
+          showOSD("volume")
+        }
+      }
+
+      function onMutedChanged() {
+        if (lastKnownVolume < 0) {
+          initializeAudioValues()
+          if (lastKnownVolume < 0) return
+        }
+        if (!muteInitialized) return
+        showOSD("volume")
+      }
+
+      function onInputVolumeChanged() {
+        if (!AudioService.hasInput) return
+        
+        if (lastKnownInputVolume < 0) {
+          initializeAudioValues()
+          if (lastKnownInputVolume < 0) return
+        }
+        if (!inputInitialized) return
+        
+        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
+          lastKnownInputVolume = AudioService.inputVolume
+          showOSD("inputVolume")
+        }
+      }
+
+      function onInputMutedChanged() {
+        if (!AudioService.hasInput) return
+        
+        if (lastKnownInputVolume < 0) {
+          initializeAudioValues()
+          if (lastKnownInputVolume < 0) return
+        }
+        if (!inputInitialized) return
+        showOSD("inputVolume")
+      }
+    }
+
+    // Brightness monitoring
+    Connections {
+      target: BrightnessService
+      function onMonitorsChanged() {
+        connectBrightnessMonitors()
+      }
+    }
+
+    // Initialization timers
+    Timer {
+      id: initTimer
+      interval: 500
+      running: true
+      onTriggered: {
+        if (Pipewire.ready) initializeAudioValues()
+        muteInitialized = true
+        connectBrightnessMonitors()
+      }
+    }
+
+    Timer {
+      id: reinitTimer
+      interval: 1000
+      running: true
+      repeat: true
+      onTriggered: {
+        if (!Pipewire.ready) return
+        
+        const needsOutputInit = lastKnownVolume < 0
+        const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0
+        
+        if (needsOutputInit || needsInputInit) {
+          initializeAudioValues()
+          
+          // Stop timer if both are initialized
+          const outputDone = lastKnownVolume >= 0
+          const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0
+          if (outputDone && inputDone) {
+            running = false
+          }
+        } else {
+          running = false
+        }
+      }
+    }
+
+    // ============================================================================
+    // Visual Component
+    // ============================================================================
 
     sourceComponent: PanelWindow {
       id: panel
       screen: modelData
 
-      readonly property string location: (Settings.data.osd && Settings.data.osd.location) ? Settings.data.osd.location : "top_right"
-      readonly property bool isTop: (location === "top") || (location.length >= 3 && location.substring(0, 3) === "top")
-      readonly property bool isBottom: (location === "bottom") || (location.length >= 6 && location.substring(0, 6) === "bottom")
-      readonly property bool isLeft: (location.indexOf("_left") >= 0) || (location === "left")
-      readonly property bool isRight: (location.indexOf("_right") >= 0) || (location === "right")
-      readonly property bool isCentered: (location === "top" || location === "bottom")
-      readonly property bool verticalMode: (location === "left" || location === "right")
+      // Position configuration
+      readonly property string location: Settings.data.osd?.location || "top_right"
+      readonly property bool isTop: location === "top" || location.startsWith("top")
+      readonly property bool isBottom: location === "bottom" || location.startsWith("bottom")
+      readonly property bool isLeft: location.includes("_left") || location === "left"
+      readonly property bool isRight: location.includes("_right") || location === "right"
+      readonly property bool verticalMode: location === "left" || location === "right"
+
+      // Dimensions
       readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
       readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
       readonly property int vWidth: Math.round(72 * Style.uiScaleRatio)
       readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
-
-      // Ensure an even width to keep the vertical bar perfectly centered
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
-        return (base % 2 === 0) ? base : base + 1
+        return base % 2 === 0 ? base : base + 1
       }
 
-      // Anchor selection based on location (window edges)
       anchors.top: isTop
       anchors.bottom: isBottom
       anchors.left: isLeft
       anchors.right: isRight
 
-      // Margins depending on bar position and chosen location
-      margins.top: {
-        if (!(anchors.top))
-          return 0
-        var base = Style.marginM
-        if (Settings.data.bar.position === "top") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-          return Style.barHeight + base + floatExtraV
+      function calculateMargin(isAnchored, position) {
+        if (!isAnchored) return 0
+        
+        let base = Style.marginM
+        if (Settings.data.bar.position === position) {
+          const isVertical = position === "top" || position === "bottom"
+          const floatExtra = Settings.data.bar.floating ? 
+            (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) * Style.marginXL : 0
+          return Style.barHeight + base + floatExtra
         }
         return base
       }
 
-      margins.bottom: {
-        if (!(anchors.bottom))
-          return 0
-        var base = Style.marginM
-        if (Settings.data.bar.position === "bottom") {
-          var floatExtraV = Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-          return Style.barHeight + base + floatExtraV
-        }
-        return base
-      }
-
-      margins.left: {
-        if (!(anchors.left))
-          return 0
-        var base = Style.marginM
-        if (Settings.data.bar.position === "left") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-          return Style.barHeight + base + floatExtraH
-        }
-        return base
-      }
-
-      margins.right: {
-        if (!(anchors.right))
-          return 0
-        var base = Style.marginM
-        if (Settings.data.bar.position === "right") {
-          var floatExtraH = Settings.data.bar.floating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-          return Style.barHeight + base + floatExtraH
-        }
-        return base
-      }
+      margins.top: calculateMargin(anchors.top, "top")
+      margins.bottom: calculateMargin(anchors.bottom, "bottom")
+      margins.left: calculateMargin(anchors.left, "left")
+      margins.right: calculateMargin(anchors.right, "right")
 
       implicitWidth: verticalMode ? vWidth : hWidth
       implicitHeight: verticalMode ? vHeight : hHeight
-
       color: Color.transparent
 
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-      WlrLayershell.layer: (Settings.data.osd && Settings.data.osd.overlayLayer) ? WlrLayer.Overlay : WlrLayer.Top
+      WlrLayershell.layer: Settings.data.osd?.overlayLayer ? WlrLayer.Overlay : WlrLayer.Top
       exclusionMode: PanelWindow.ExclusionMode.Ignore
 
-      // Rectangle {
-      //   anchors.fill: parent
-      //   color: "#4400FF00"
-      // }
       Item {
         id: osdItem
         anchors.fill: parent
         visible: false
         opacity: 0
-        scale: 0.85 // initial scale for a little zoom effect
+        scale: 0.85
 
         Behavior on opacity {
           NumberAnimation {
-            id: opacityAnimation
             duration: Style.animationNormal
             easing.type: Easing.InOutQuad
           }
@@ -234,7 +402,6 @@ Variants {
 
         Behavior on scale {
           NumberAnimation {
-            id: scaleAnimation
             duration: Style.animationNormal
             easing.type: Easing.InOutQuad
           }
@@ -246,19 +413,16 @@ Variants {
           onTriggered: osdItem.hide()
         }
 
-        // Timer to handle visibility after animations complete
         Timer {
           id: visibilityTimer
-          interval: Style.animationNormal + 50 // Add small buffer
+          interval: Style.animationNormal + 50
           onTriggered: {
             osdItem.visible = false
             root.currentOSDType = ""
-            // Deactivate the loader when done
             root.active = false
           }
         }
 
-        // Background rectangle (source for the effect)
         Rectangle {
           id: background
           anchors.fill: parent
@@ -268,7 +432,7 @@ Variants {
           border.color: Qt.alpha(Color.mOutline, Settings.data.osd.backgroundOpacity || 1.0)
           border.width: {
             const bw = Math.max(2, Style.borderM)
-            return (bw % 2 === 0) ? bw : bw + 1
+            return bw % 2 === 0 ? bw : bw + 1
           }
         }
 
@@ -278,7 +442,6 @@ Variants {
           autoPaddingEnabled: true
         }
 
-        // Content loader on top of the background (not affected by MultiEffect)
         Loader {
           id: contentLoader
           anchors.fill: background
@@ -289,22 +452,48 @@ Variants {
 
         Component {
           id: horizontalContent
-          Item {
-            anchors.fill: parent
+          RowLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: Style.marginL
+            spacing: Style.marginM
 
-            RowLayout {
-              anchors.left: parent.left
-              anchors.right: parent.right
-              anchors.verticalCenter: parent.verticalCenter
-              anchors.margins: Style.marginL
-              spacing: Style.marginM
+            NIcon {
+              icon: root.getIcon()
+              color: root.getIconColor()
+              pointSize: Style.fontSizeXL
+              Layout.alignment: Qt.AlignVCenter
 
-              NIcon {
-                icon: root.getIcon()
-                color: root.getIconColor()
-                pointSize: Style.fontSizeXL
-                Layout.alignment: Qt.AlignVCenter
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationNormal
+                  easing.type: Easing.InOutQuad
+                }
+              }
+            }
 
+            Rectangle {
+              Layout.fillWidth: true
+              height: panel.barThickness
+              radius: Math.round(panel.barThickness / 2)
+              color: Color.mSurfaceVariant
+
+              Rectangle {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: parent.width * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
+                radius: parent.radius
+                color: root.getProgressColor()
+
+                Behavior on width {
+                  NumberAnimation {
+                    duration: Style.animationNormal
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+                
                 Behavior on color {
                   ColorAnimation {
                     duration: Style.animationNormal
@@ -312,29 +501,67 @@ Variants {
                   }
                 }
               }
+            }
 
-              // Progress bar with calculated width
+            NText {
+              text: root.getDisplayPercentage()
+              color: Color.mOnSurface
+              pointSize: Style.fontSizeS
+              family: Settings.data.ui.fontFixed
+              Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+              horizontalAlignment: Text.AlignRight
+              verticalAlignment: Text.AlignVCenter
+              Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
+            }
+          }
+        }
+
+        Component {
+          id: verticalContent
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: Style.marginL
+            anchors.bottomMargin: Style.marginL
+            spacing: Style.marginS
+
+            NText {
+              text: root.getDisplayPercentage()
+              color: Color.mOnSurface
+              pointSize: Style.fontSizeS
+              family: Settings.data.ui.fontFixed
+              Layout.fillWidth: true
+              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+            }
+
+            Item {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+
               Rectangle {
-                Layout.fillWidth: true
-                height: panel.barThickness
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: panel.barThickness
                 radius: Math.round(panel.barThickness / 2)
                 color: Color.mSurfaceVariant
-                width: parent.width * 0.6
 
                 Rectangle {
                   anchors.left: parent.left
-                  anchors.top: parent.top
+                  anchors.right: parent.right
                   anchors.bottom: parent.bottom
-                  width: parent.width * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
+                  height: parent.height * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
                   radius: parent.radius
                   color: root.getProgressColor()
 
-                  Behavior on width {
+                  Behavior on height {
                     NumberAnimation {
                       duration: Style.animationNormal
                       easing.type: Easing.InOutQuad
                     }
                   }
+                  
                   Behavior on color {
                     ColorAnimation {
                       duration: Style.animationNormal
@@ -343,106 +570,18 @@ Variants {
                   }
                 }
               }
-
-              // Percentage text
-              NText {
-                text: root.getDisplayPercentage()
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeS
-                family: Settings.data.ui.fontFixed
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
-                Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
-              }
             }
-          }
-        }
 
-        Component {
-          id: verticalContent
-          Item {
-            anchors.fill: parent
-
-            ColumnLayout {
-              // Ensure inner padding respects the rounded corners; avoid clipping the icon/text
-              property int vMargin: {
-                const styleMargin = Style.marginL
-                const cornerGuard = Math.round(osdItem.radius)
-                return Math.max(styleMargin, cornerGuard)
-              }
-              property int vMarginTop: Math.round(Math.max(osdItem.radius, Style.marginS))
-              property int balanceDelta: Style.marginS
-              anchors.fill: parent
-              anchors.topMargin: vMargin
-              anchors.bottomMargin: vMargin
-              spacing: Style.marginS
-
-              // Percentage text at top
-              Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
-                NText {
-                  id: percentText
-                  text: root.getDisplayPercentage()
-                  color: Color.mOnSurface
-                  pointSize: Style.fontSizeS
-                  family: Settings.data.ui.fontFixed
-                  width: Math.round(50 * Style.uiScaleRatio)
-                  height: parent.height
-                  anchors.centerIn: parent
-                  horizontalAlignment: Text.AlignHCenter
-                  verticalAlignment: Text.AlignVCenter
-                }
-              }
-
-              // Progress bar
-              Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true // Fill remaining space between text and icon
-                Rectangle {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.top: parent.top
-                  anchors.bottom: parent.bottom
-                  width: panel.barThickness
-                  radius: Math.round(panel.barThickness / 2)
-                  color: Color.mSurfaceVariant
-
-                  Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    height: parent.height * Math.min(1.0, root.getCurrentValue() / root.getMaxValue())
-                    radius: parent.radius
-                    color: root.getProgressColor()
-
-                    Behavior on height {
-                      NumberAnimation {
-                        duration: Style.animationNormal
-                        easing.type: Easing.InOutQuad
-                      }
-                    }
-                    Behavior on color {
-                      ColorAnimation {
-                        duration: Style.animationNormal
-                        easing.type: Easing.InOutQuad
-                      }
-                    }
-                  }
-                }
-              }
-
-              // Icon at bottom
-              NIcon {
-                icon: root.getIcon()
-                color: root.getIconColor()
-                pointSize: Style.fontSizeL
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationNormal
-                    easing.type: Easing.InOutQuad
-                  }
+            NIcon {
+              icon: root.getIcon()
+              color: root.getIconColor()
+              pointSize: Style.fontSizeL
+              Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+              
+              Behavior on color {
+                ColorAnimation {
+                  duration: Style.animationNormal
+                  easing.type: Easing.InOutQuad
                 }
               }
             }
@@ -450,31 +589,23 @@ Variants {
         }
 
         function show() {
-          // Cancel any pending hide operations
           hideTimer.stop()
           visibilityTimer.stop()
-
-          // Make visible and animate in
           osdItem.visible = true
-          // Use Qt.callLater to ensure the visible change is processed before animation
+          
           Qt.callLater(() => {
-                         osdItem.opacity = 1
-                         osdItem.scale = 1.0
-                       })
-
-          // Start the auto-hide timer
+            osdItem.opacity = 1
+            osdItem.scale = 1.0
+          })
+          
           hideTimer.start()
         }
 
         function hide() {
           hideTimer.stop()
           visibilityTimer.stop()
-
-          // Start fade out animation
           osdItem.opacity = 0
-          osdItem.scale = 0.85 // Less dramatic scale change for smoother effect
-
-          // Delay hiding the element until after animation completes
+          osdItem.scale = 0.85
           visibilityTimer.start()
         }
 
@@ -491,165 +622,6 @@ Variants {
 
       function showOSD() {
         osdItem.show()
-      }
-    }
-
-    // Volume change monitoring
-    Connections {
-      target: AudioService
-
-      function onVolumeChanged() {
-        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
-        if (lastKnownVolume < 0) {
-          lastKnownVolume = AudioService.volume
-          volumeInitialized = true
-          return
-        }
-        if (!volumeInitialized) {
-          return
-        }
-        // Only show OSD if volume actually changed from last known value
-        if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
-          lastKnownVolume = AudioService.volume
-          showOSD("volume")
-        }
-      }
-
-      function onMutedChanged() {
-        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
-        if (lastKnownVolume < 0) {
-          lastKnownVolume = AudioService.volume
-          muteInitialized = true
-          return
-        }
-        if (!muteInitialized) {
-          return
-        }
-        showOSD("volume")
-      }
-
-      function onInputVolumeChanged() {
-        if (!AudioService.hasInput) {
-          return
-        }
-        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
-        if (lastKnownInputVolume < 0) {
-          lastKnownInputVolume = AudioService.inputVolume
-          inputAudioInitialized = true
-          return
-        }
-        if (!inputAudioInitialized) {
-          return
-        }
-        // Only show OSD if volume actually changed from last known value
-        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
-          lastKnownInputVolume = AudioService.inputVolume
-          showOSD("inputVolume")
-        }
-      }
-
-      function onInputMutedChanged() {
-        if (!AudioService.hasInput) {
-          return
-        }
-        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
-        if (lastKnownInputVolume < 0) {
-          lastKnownInputVolume = AudioService.inputVolume
-          inputAudioInitialized = true
-          return
-        }
-        if (!inputAudioInitialized) {
-          return
-        }
-        showOSD("inputVolume")
-      }
-    }
-
-    // Timer to initialize volume/mute flags after services are ready
-    Timer {
-      id: initTimer
-      interval: 500
-      running: true
-      onTriggered: {
-        // Capture initial volume values to avoid showing OSD on startup
-        if (lastKnownVolume < 0 && AudioService.volume !== undefined) {
-          lastKnownVolume = AudioService.volume
-          volumeInitialized = true
-        }
-        if (lastKnownInputVolume < 0 && AudioService.hasInput && AudioService.inputVolume !== undefined) {
-          lastKnownInputVolume = AudioService.inputVolume
-          inputAudioInitialized = true
-        }
-        muteInitialized = true
-        // Brightness initializes on first change to avoid showing OSD on startup
-        connectBrightnessMonitors()
-      }
-    }
-
-    // Brightness change monitoring
-    Connections {
-      target: BrightnessService
-
-      function onMonitorsChanged() {
-        connectBrightnessMonitors()
-      }
-    }
-
-    function disconnectBrightnessMonitors() {
-      for (var i = 0; i < BrightnessService.monitors.length; i++) {
-        let monitor = BrightnessService.monitors[i]
-        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
-      }
-    }
-
-    function connectBrightnessMonitors() {
-      for (var i = 0; i < BrightnessService.monitors.length; i++) {
-        let monitor = BrightnessService.monitors[i]
-        // Disconnect first to avoid duplicate connections
-        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
-        monitor.brightnessUpdated.connect(onBrightnessChanged)
-      }
-    }
-
-    function onBrightnessChanged(newBrightness) {
-      root.lastUpdatedBrightness = newBrightness
-
-      if (!brightnessInitialized) {
-        brightnessInitialized = true
-        return
-      }
-
-      showOSD("brightness")
-    }
-
-    function showOSD(type) {
-      // Update the current OSD type
-      currentOSDType = type
-
-      // Activate the loader if not already active
-      if (!root.active) {
-        root.active = true
-      }
-
-      // Show the OSD (may need to wait for loader to create the item)
-      if (root.item) {
-        root.item.showOSD()
-      } else {
-        // If item not ready yet, wait for it
-        Qt.callLater(() => {
-                       if (root.item) {
-                         root.item.showOSD()
-                       }
-                     })
-      }
-    }
-
-    function hideOSD() {
-      if (root.item && root.item.osdItem) {
-        root.item.osdItem.hideImmediately()
-      } else if (root.active) {
-        // If loader is active but item isn't ready, just deactivate
-        root.active = false
       }
     }
   }

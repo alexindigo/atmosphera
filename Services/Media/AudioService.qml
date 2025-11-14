@@ -57,7 +57,6 @@ Singleton {
       // Don't reset to 0 if volume is undefined/NaN - preserve last known value
       root._inputMuted = !!source.audio.muted
     } else {
-      // Don't reset volume to 0 when source is unavailable - preserve last known value
       // Only reset muted state
       root._inputMuted = true
     }
