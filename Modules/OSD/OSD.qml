@@ -499,7 +499,7 @@ Variants {
       target: AudioService
 
       function onVolumeChanged() {
-        // Capture initial volume on first change to avoid showing OSD on startup
+        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
         if (lastKnownVolume < 0) {
           lastKnownVolume = AudioService.volume
           volumeInitialized = true
@@ -516,7 +516,7 @@ Variants {
       }
 
       function onMutedChanged() {
-        // Capture initial muted state on first change to avoid showing OSD on startup
+        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
         if (lastKnownVolume < 0) {
           lastKnownVolume = AudioService.volume
           muteInitialized = true
@@ -532,7 +532,7 @@ Variants {
         if (!AudioService.hasInput) {
           return
         }
-        // Capture initial volume on first change to avoid showing OSD on startup
+        // If not initialized yet, capture initial volume silently (fallback if timer hasn't fired)
         if (lastKnownInputVolume < 0) {
           lastKnownInputVolume = AudioService.inputVolume
           inputAudioInitialized = true
@@ -552,7 +552,7 @@ Variants {
         if (!AudioService.hasInput) {
           return
         }
-        // Capture initial state on first change to avoid showing OSD on startup
+        // If not initialized yet, capture initial state silently (fallback if timer hasn't fired)
         if (lastKnownInputVolume < 0) {
           lastKnownInputVolume = AudioService.inputVolume
           inputAudioInitialized = true
@@ -571,7 +571,16 @@ Variants {
       interval: 500
       running: true
       onTriggered: {
-        // Volume and input volume initialize on first change to avoid showing OSD on startup
+        // Capture initial volume values to avoid showing OSD on startup
+        if (lastKnownVolume < 0 && AudioService.volume !== undefined) {
+          lastKnownVolume = AudioService.volume
+          volumeInitialized = true
+        }
+        if (lastKnownInputVolume < 0 && AudioService.hasInput && AudioService.inputVolume !== undefined) {
+          lastKnownInputVolume = AudioService.inputVolume
+          inputAudioInitialized = true
+        }
+        muteInitialized = true
         // Brightness initializes on first change to avoid showing OSD on startup
         connectBrightnessMonitors()
       }
