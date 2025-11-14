@@ -331,6 +331,9 @@ Singleton {
       property int memCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
+      property bool useCustomColors: false
+      property string warningColor: ""
+      property string criticalColor: ""
     }
 
     // dock

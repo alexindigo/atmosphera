@@ -52,8 +52,8 @@ Rectangle {
   readonly property real pillHeight: Style.capsuleHeight * pillBaseRatio
 
   // Highlight colors
-  readonly property color warningColor: Color.mTertiary
-  readonly property color criticalColor: Color.mError
+  readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary
+  readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError
 
   readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3)
   readonly property int tempTextWidth: Math.ceil(tempMetrics.boundingRect.width + 3)
@@ -119,13 +119,15 @@ Rectangle {
       property bool warning: false
       property bool critical: false
       property int indicatorWidth: Style.capsuleHeight
+      property color warningColor: Color.mTertiary
+      property color criticalColor: Color.mError
       
       width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
       height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : pillHeight
       radius: Math.min(width, height) / 2
       // Hide the rectangular indicator when the bar is vertical; keep it available for horizontal layout
       visible: !root.isVertical
-      color: critical ? Color.mError : Color.mTertiary
+      color: critical ? criticalColor : warningColor
       scale: (warning || critical) ? 1.0 : 0.0
       opacity: (warning || critical) ? 1.0 : 0.0
 
@@ -170,6 +172,8 @@ Rectangle {
           item.warning = Qt.binding(() => cpuWarning)
           item.critical = Qt.binding(() => cpuCritical)
           item.indicatorWidth = Qt.binding(() => cpuUsageContainer.width)
+          item.warningColor = Qt.binding(() => root.warningColor)
+          item.criticalColor = Qt.binding(() => root.criticalColor)
         }
       }
 
@@ -242,6 +246,8 @@ Rectangle {
           item.warning = Qt.binding(() => tempWarning)
           item.critical = Qt.binding(() => tempCritical)
           item.indicatorWidth = Qt.binding(() => cpuTempContainer.width)
+          item.warningColor = Qt.binding(() => root.warningColor)
+          item.criticalColor = Qt.binding(() => root.criticalColor)
         }
       }
 
@@ -307,6 +313,8 @@ Rectangle {
           item.warning = Qt.binding(() => memWarning)
           item.critical = Qt.binding(() => memCritical)
           item.indicatorWidth = Qt.binding(() => memoryContainer.width)
+          item.warningColor = Qt.binding(() => root.warningColor)
+          item.criticalColor = Qt.binding(() => root.criticalColor)
         }
       }
 
@@ -460,6 +468,8 @@ Rectangle {
           item.warning = Qt.binding(() => diskWarning)
           item.critical = Qt.binding(() => diskCritical)
           item.indicatorWidth = Qt.binding(() => diskContainer.width)
+          item.warningColor = Qt.binding(() => root.warningColor)
+          item.criticalColor = Qt.binding(() => root.criticalColor)
         }
       }
 

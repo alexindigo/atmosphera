@@ -115,7 +115,10 @@
     "memWarningThreshold": 80,
     "memCriticalThreshold": 90,
     "diskWarningThreshold": 80,
-    "diskCriticalThreshold": 90
+    "diskCriticalThreshold": 90,
+    "useCustomColors": false,
+    "warningColor": "",
+    "criticalColor": ""
   },
   "wallpaper": {
     "enabled": true,

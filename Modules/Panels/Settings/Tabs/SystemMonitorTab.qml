@@ -17,7 +17,88 @@ ColumnLayout {
     description: I18n.tr("settings.system-monitor.general.section.description")
   }
 
-  // CPU Usage Thresholds
+  // Colors Section
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+
+      NToggle {
+      label: I18n.tr("settings.system-monitor.use-custom-highlight-colors.label")
+      description: I18n.tr("settings.system-monitor.use-custom-highlight-colors.description")
+      checked: Settings.data.systemMonitor.useCustomColors
+      onToggled: {
+        // If enabling custom colors and no custom color is saved, persist current theme colors
+        if (checked) {
+          if (!Settings.data.systemMonitor.warningColor || Settings.data.systemMonitor.warningColor === "") {
+            Settings.data.systemMonitor.warningColor = Color.mTertiary.toString()
+          }
+          if (!Settings.data.systemMonitor.criticalColor || Settings.data.systemMonitor.criticalColor === "") {
+            Settings.data.systemMonitor.criticalColor = Color.mError.toString()
+          }
+        }
+        Settings.data.systemMonitor.useCustomColors = checked
+      }
+    }
+  }
+
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+    visible: Settings.data.systemMonitor.useCustomColors
+    
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        text: I18n.tr("settings.system-monitor.warning-color.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NColorPicker {
+        Layout.preferredWidth: Style.sliderWidth
+        Layout.preferredHeight: Style.baseWidgetSize
+        enabled: Settings.data.systemMonitor.useCustomColors
+        selectedColor: Settings.data.systemMonitor.warningColor || Color.mTertiary
+        onColorSelected: function(color) {
+          Settings.data.systemMonitor.warningColor = color
+        }
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        text: I18n.tr("settings.system-monitor.critical-color.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NColorPicker {
+        Layout.preferredWidth: Style.sliderWidth
+        Layout.preferredHeight: Style.baseWidgetSize
+        enabled: Settings.data.systemMonitor.useCustomColors
+        selectedColor: Settings.data.systemMonitor.criticalColor || Color.mError
+        onColorSelected: function(color) {
+          Settings.data.systemMonitor.criticalColor = color
+        }
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NHeader {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.system-monitor.thresholds-section.label")
+    description: I18n.tr("settings.system-monitor.thresholds-section.description")
+  }
+
+  // CPU Usage
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
@@ -74,7 +155,7 @@ ColumnLayout {
     }
   }
 
-  // Temperature Thresholds
+  // Temperature
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
@@ -130,7 +211,7 @@ ColumnLayout {
     }
   }
 
-  // Memory Usage Thresholds
+  // Memory Usage
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
@@ -186,7 +267,7 @@ ColumnLayout {
     }
   }
 
-  // Disk Usage Thresholds
+  // Disk Usage
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
