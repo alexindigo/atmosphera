@@ -122,6 +122,16 @@ PopupWindow {
     border.color: Color.mOutline
     border.width: Math.max(1, Style.borderS)
     radius: Style.radiusM
+
+    // Fade-in animation
+    opacity: root.visible ? 1.0 : 0.0
+
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.OutQuad
+      }
+    }
   }
 
   Flickable {
@@ -130,6 +140,16 @@ PopupWindow {
     anchors.margins: Style.marginS
     contentHeight: columnLayout.implicitHeight
     interactive: true
+
+    // Fade-in animation
+    opacity: root.visible ? 1.0 : 0.0
+
+    Behavior on opacity {
+      NumberAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.OutQuad
+      }
+    }
 
     // Use a ColumnLayout to handle menu item arrangement
     ColumnLayout {
