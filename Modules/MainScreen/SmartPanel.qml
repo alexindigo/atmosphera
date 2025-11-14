@@ -43,8 +43,8 @@ Item {
   // Support close with escape
   property bool closeWithEscape: true
 
-  // Track if window has been created (for lazy loading)
-  property bool windowCreated: false
+  // Track if window should be active (for lazy loading and cleanup)
+  property bool windowActive: false
 
   // Expose panel state (from content window)
   readonly property bool isPanelOpen: windowLoader.item ? windowLoader.item.isPanelOpen : false
@@ -77,8 +77,8 @@ Item {
   // Public control functions
   function toggle(buttonItem, buttonName) {
     // Ensure window is created before toggling
-    if (!windowCreated) {
-      windowCreated = true
+    if (!root.windowActive) {
+      root.windowActive = true
       Qt.callLater(function () {
         if (windowLoader.item) {
           windowLoader.item.toggle(buttonItem, buttonName)
@@ -91,8 +91,8 @@ Item {
 
   function open(buttonItem, buttonName) {
     // Ensure window is created before opening
-    if (!windowCreated) {
-      windowCreated = true
+    if (!root.windowActive) {
+      root.windowActive = true
       Qt.callLater(function () {
         if (windowLoader.item) {
           windowLoader.item.open(buttonItem, buttonName)
@@ -143,10 +143,10 @@ Item {
     parent: root.parent
   }
 
-  // Lazy-load the content window (only created on first open)
+  // Lazy-load the content window (only created when open, destroyed when closed)
   Loader {
     id: windowLoader
-    active: root.windowCreated
+    active: root.windowActive
     sourceComponent: SmartPanelWindow {
       placeholder: panelPlaceholder
       panelContent: root.panelContent
@@ -156,7 +156,13 @@ Item {
 
       // Forward signals
       onPanelOpened: root.opened()
-      onPanelClosed: root.closed()
+      onPanelClosed: {
+        root.closed()
+        // Destroy the window after close animation completes
+        Qt.callLater(function () {
+          root.windowActive = false
+        })
+      }
     }
   }
 
