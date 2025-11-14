@@ -880,7 +880,7 @@
         "programs": {
           "code": {
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
-            "description-missing": "Requires {app} to be installed"
+            "description-missing": "No Code client detected. Install VSCode or VSCodium."
           },
           "description": "Application-specific theming.",
           "discord": {

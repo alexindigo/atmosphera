@@ -880,7 +880,7 @@
         "programs": {
           "code": {
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
-            "description-missing": "需要安装 {app}"
+            "description-missing": "未检测到 Code 客户端。请安装 VSCode 或 VSCodium。"
           },
           "description": "应用程序特定主题。",
           "discord": {

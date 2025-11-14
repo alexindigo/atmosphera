@@ -740,19 +740,48 @@ ColumnLayout {
                    }
       }
 
+      // Code clients - single toggle with dynamic description
       NCheckbox {
+        id: codeToggle
         label: "Code"
-        description: ProgramCheckerService.codeAvailable ? I18n.tr("settings.color-scheme.templates.programs.code.description", {
-                                                                     "filepath": "~/.vscode/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
-                                                                   }) : I18n.tr("settings.color-scheme.templates.programs.code.description-missing", {
-                                                                                  "app": "code"
-                                                                                })
-        checked: Settings.data.templates.code
-        enabled: ProgramCheckerService.codeAvailable
-        opacity: ProgramCheckerService.codeAvailable ? 1.0 : 0.6
+        description: {
+          if (ProgramCheckerService.availableCodeClients.length === 0) {
+            return I18n.tr("settings.color-scheme.templates.programs.code.description-missing")
+          } else {
+            // Show detected clients
+            var clientInfo = []
+            for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+              var client = ProgramCheckerService.availableCodeClients[i]
+              // Capitalize first letter and format nicely
+              var clientName = client.name === "code" ? "VSCode" : "VSCodium"
+              clientInfo.push(clientName)
+            }
+            return "Detected: " + clientInfo.join(", ")
+          }
+        }
+        Layout.fillWidth: true
+        Layout.preferredWidth: -1
+        checked: {
+          // Check if any Code client template is enabled
+          var anyEnabled = false
+          for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+            var client = ProgramCheckerService.availableCodeClients[i]
+            if (Settings.data.templates["code_" + client.name]) {
+              anyEnabled = true
+              break
+            }
+          }
+          return anyEnabled
+        }
+        enabled: ProgramCheckerService.availableCodeClients.length > 0
+        opacity: ProgramCheckerService.availableCodeClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
-                     if (ProgramCheckerService.codeAvailable) {
-                       Settings.data.templates.code = checked
+                     // Enable/disable all detected Code clients
+                     for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+                       var client = ProgramCheckerService.availableCodeClients[i]
+                       Settings.data.templates["code_" + client.name] = checked
+                     }
+                     if (ProgramCheckerService.availableCodeClients.length > 0) {
                        AppThemeService.generate()
                      }
                    }

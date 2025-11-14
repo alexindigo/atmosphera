@@ -142,14 +142,18 @@ Singleton {
           "path": "~/.config/discord",
           "requiresThemesFolder": true
         }]
-    }, // VSCode with hardcoded path (requirement #5)
+    },
     {
       "id": "code",
       "name": "VSCode",
       "category": "applications",
       "input": "code.json",
-      "outputs": [{
+      "clients": [{
+          "name": "code",
           "path": "~/.vscode/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
+        }, {
+          "name": "codium",
+          "path": "~/.vscode-oss/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
         }]
     }, {
       "id": "spicetify",
@@ -175,6 +179,33 @@ Singleton {
                                                   "requiresThemesFolder": client.requiresThemesFolder || false
                                                 })
                                  })
+    }
+    return clients
+  }
+
+  // Extract Code clients for ProgramCheckerService compatibility
+  readonly property var codeClients: {
+    var clients = []
+    var codeApp = applications.find(app => app.id === "code")
+    if (codeApp && codeApp.clients) {
+      codeApp.clients.forEach(client => {
+                                // Extract base config directory from theme path
+                                var themePath = client.path
+                                var baseConfigDir = ""
+                                if (client.name === "code") {
+                                  // For VSCode: ~/.vscode/extensions/... -> ~/.vscode
+                                  baseConfigDir = "~/.vscode"
+                                } else if (client.name === "codium") {
+                                  // For VSCodium: ~/.vscode-oss/extensions/... -> ~/.vscode-oss
+                                  baseConfigDir = "~/.vscode-oss"
+                                }
+                                clients.push({
+                                               "name": client.name,
+                                               "configPath": baseConfigDir,
+                                               "themePath": themePath,
+                                               "requiresThemesFolder": false
+                                             })
+                              })
     }
     return clients
   }
