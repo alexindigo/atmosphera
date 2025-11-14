@@ -677,6 +677,8 @@ ColumnLayout {
         enabled: ProgramCheckerService.availableDiscordClients.length > 0
         opacity: ProgramCheckerService.availableDiscordClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
+                     // Set unified discord property
+                     Settings.data.templates.discord = checked
                      // Enable/disable all detected Discord clients
                      for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
                        var client = ProgramCheckerService.availableDiscordClients[i]
@@ -776,6 +778,8 @@ ColumnLayout {
         enabled: ProgramCheckerService.availableCodeClients.length > 0
         opacity: ProgramCheckerService.availableCodeClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
+                     // Set unified code property
+                     Settings.data.templates.code = checked
                      // Enable/disable all detected Code clients
                      for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
                        var client = ProgramCheckerService.availableCodeClients[i]

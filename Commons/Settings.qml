@@ -439,6 +439,9 @@ Singleton {
       property bool spicetify: false
       property bool enableUserTemplates: false
 
+      property bool code_code: false
+      property bool code_codium: false
+
       property bool discord_vesktop: false // To be deleted soon
       property bool discord_webcord: false // To be deleted soon
       property bool discord_armcord: false // To be deleted soon
