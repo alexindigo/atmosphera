@@ -271,28 +271,28 @@
           "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites."
         },
         "cpu-warning-threshold": {
-          "label": "Utilisation CPU (Avertissement)"
+          "label": "CPU Usage (Warning)"
         },
         "cpu-critical-threshold": {
-          "label": "Utilisation CPU (Critique)"
+          "label": "CPU Usage (Critical)"
         },
         "temp-warning-threshold": {
-          "label": "Température CPU (Avertissement)"
+          "label": "CPU Temperature (Warning)"
         },
         "temp-critical-threshold": {
-          "label": "Température CPU (Critique)"
+          "label": "CPU Temperature (Critical)"
         },
         "mem-warning-threshold": {
-          "label": "Utilisation mémoire (Avertissement)"
+          "label": "Memory Usage (Warning)"
         },
         "mem-critical-threshold": {
-          "label": "Utilisation mémoire (Critique)"
+          "label": "Memory Usage (Critical)"
         },
         "disk-warning-threshold": {
-          "label": "Espace disque (Avertissement)"
+          "label": "Storage Space (Warning)"
         },
         "disk-critical-threshold": {
-          "label": "Espace disque (Critique)"
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1602,6 +1602,42 @@
           "description": "Configurer le comportement et l'apparence du Moniteur Système.",
           "label": "Général"
         }
+      },
+      "cpu-section": {
+        "label": "Utilisation CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "cpu-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "temperature-section": {
+        "label": "Température CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "temp-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "memory-section": {
+        "label": "Utilisation mémoire"
+      },
+      "mem-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "mem-critical-threshold": {
+        "label": "Seuil critique"
+      },
+      "disk-section": {
+        "label": "Utilisation disque"
+      },
+      "disk-warning-threshold": {
+        "label": "Seuil d'avertissement"
+      },
+      "disk-critical-threshold": {
+        "label": "Seuil critique"
       },
       "title": "Moniteur système"
     },

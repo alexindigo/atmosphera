@@ -1603,6 +1603,51 @@
           "label": "通用"
         }
       },
+      "cpu-section": {
+        "label": "CPU 使用率"
+      },
+      "cpu-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "cpu-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "temperature-section": {
+        "label": "CPU 温度"
+      },
+      "temp-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "temp-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "memory-section": {
+        "label": "内存使用率"
+      },
+      "mem-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "mem-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "disk-section": {
+        "label": "磁盘使用率"
+      },
+      "disk-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "disk-critical-threshold": {
+        "label": "严重阈值"
+      },
+      "network-section": {
+        "label": "网络使用率"
+      },
+      "network-warning-threshold": {
+        "label": "警告阈值"
+      },
+      "network-critical-threshold": {
+        "label": "严重阈值"
+      },
       "title": "系统监视器"
     },
     "user-interface": {

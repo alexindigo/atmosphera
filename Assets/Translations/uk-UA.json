@@ -1603,6 +1603,51 @@
           "label": "Загальне"
         }
       },
+      "cpu-section": {
+        "label": "Використання ЦП"
+      },
+      "cpu-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "cpu-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "temperature-section": {
+        "label": "Температура ЦП"
+      },
+      "temp-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "temp-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "memory-section": {
+        "label": "Використання пам'яті"
+      },
+      "mem-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "mem-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "disk-section": {
+        "label": "Використання диска"
+      },
+      "disk-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "disk-critical-threshold": {
+        "label": "Критичний поріг"
+      },
+      "network-section": {
+        "label": "Використання мережі"
+      },
+      "network-warning-threshold": {
+        "label": "Поріг попередження"
+      },
+      "network-critical-threshold": {
+        "label": "Критичний поріг"
+      },
       "title": "Системний монітор"
     },
     "user-interface": {

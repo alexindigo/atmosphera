@@ -271,28 +271,28 @@
           "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении."
         },
         "cpu-warning-threshold": {
-          "label": "Загрузка ЦП (Предупреждение)"
+          "label": "CPU Usage (Warning)"
         },
         "cpu-critical-threshold": {
-          "label": "Загрузка ЦП (Критический)"
+          "label": "CPU Usage (Critical)"
         },
         "temp-warning-threshold": {
-          "label": "Температура ЦП (Предупреждение)"
+          "label": "CPU Temperature (Warning)"
         },
         "temp-critical-threshold": {
-          "label": "Температура ЦП (Критический)"
+          "label": "CPU Temperature (Critical)"
         },
         "mem-warning-threshold": {
-          "label": "Использование памяти (Предупреждение)"
+          "label": "Memory Usage (Warning)"
         },
         "mem-critical-threshold": {
-          "label": "Использование памяти (Критический)"
+          "label": "Memory Usage (Critical)"
         },
         "disk-warning-threshold": {
-          "label": "Место на диске (Предупреждение)"
+          "label": "Storage Space (Warning)"
         },
         "disk-critical-threshold": {
-          "label": "Место на диске (Критический)"
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1602,6 +1602,42 @@
           "description": "Настроить поведение и внешний вид системного монитора.",
           "label": "Общее"
         }
+      },
+      "cpu-section": {
+        "label": "Использование ЦП"
+      },
+      "cpu-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
+      "cpu-critical-threshold": {
+        "label": "Критический порог"
+      },
+      "temperature-section": {
+        "label": "Температура ЦП"
+      },
+      "temp-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
+      "temp-critical-threshold": {
+        "label": "Критический порог"
+      },
+      "memory-section": {
+        "label": "Использование памяти"
+      },
+      "mem-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
+      "mem-critical-threshold": {
+        "label": "Критический порог"
+      },
+      "disk-section": {
+        "label": "Использование диска"
+      },
+      "disk-warning-threshold": {
+        "label": "Порог предупреждения"
+      },
+      "disk-critical-threshold": {
+        "label": "Критический порог"
       },
       "title": "Системный монитор"
     },

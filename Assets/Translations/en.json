@@ -1603,6 +1603,42 @@
           "label": "General"
         }
       },
+      "cpu-section": {
+        "label": "CPU Usage"
+      },
+      "cpu-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "cpu-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "temperature-section": {
+        "label": "CPU Temperature"
+      },
+      "temp-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "temp-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "memory-section": {
+        "label": "Memory Usage"
+      },
+      "mem-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "mem-critical-threshold": {
+        "label": "Critical Threshold"
+      },
+      "disk-section": {
+        "label": "Disk Usage"
+      },
+      "disk-warning-threshold": {
+        "label": "Warning Threshold"
+      },
+      "disk-critical-threshold": {
+        "label": "Critical Threshold"
+      },
       "title": "System Monitor"
     },
     "user-interface": {

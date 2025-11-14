@@ -271,28 +271,28 @@
           "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan."
         },
         "cpu-warning-threshold": {
-          "label": "Uso de CPU (Advertencia)"
+          "label": "CPU Usage (Warning)"
         },
         "cpu-critical-threshold": {
-          "label": "Uso de CPU (Crítico)"
+          "label": "CPU Usage (Critical)"
         },
         "temp-warning-threshold": {
-          "label": "Temperatura de CPU (Advertencia)"
+          "label": "CPU Temperature (Warning)"
         },
         "temp-critical-threshold": {
-          "label": "Temperatura de CPU (Crítico)"
+          "label": "CPU Temperature (Critical)"
         },
         "mem-warning-threshold": {
-          "label": "Uso de memoria (Advertencia)"
+          "label": "Memory Usage (Warning)"
         },
         "mem-critical-threshold": {
-          "label": "Uso de memoria (Crítico)"
+          "label": "Memory Usage (Critical)"
         },
         "disk-warning-threshold": {
-          "label": "Espacio de almacenamiento (Advertencia)"
+          "label": "Storage Space (Warning)"
         },
         "disk-critical-threshold": {
-          "label": "Espacio de almacenamiento (Crítico)"
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1602,6 +1602,42 @@
           "description": "Configurar el comportamiento y la apariencia del Monitor del sistema.",
           "label": "General"
         }
+      },
+      "cpu-section": {
+        "label": "Uso de CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "cpu-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "temperature-section": {
+        "label": "Temperatura de la CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "temp-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "memory-section": {
+        "label": "Uso de memoria"
+      },
+      "mem-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "mem-critical-threshold": {
+        "label": "Umbral crítico"
+      },
+      "disk-section": {
+        "label": "Uso de disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Umbral de advertencia"
+      },
+      "disk-critical-threshold": {
+        "label": "Umbral crítico"
       },
       "title": "Monitor del sistema"
     },

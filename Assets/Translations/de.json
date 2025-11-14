@@ -271,28 +271,28 @@
           "description": "Schwellenwerte für visuelle Indikatoren konfigurieren. Warn-/Kritik-Indikatoren erscheinen in hervorgehobenen Farben bei Überschreitung."
         },
         "cpu-warning-threshold": {
-          "label": "CPU-Auslastung (Warnung)"
+          "label": "CPU Usage (Warning)"
         },
         "cpu-critical-threshold": {
-          "label": "CPU-Auslastung (Kritisch)"
+          "label": "CPU Usage (Critical)"
         },
         "temp-warning-threshold": {
-          "label": "CPU-Temperatur (Warnung)"
+          "label": "CPU Temperature (Warning)"
         },
         "temp-critical-threshold": {
-          "label": "CPU-Temperatur (Kritisch)"
+          "label": "CPU Temperature (Critical)"
         },
         "mem-warning-threshold": {
-          "label": "Speicherverbrauch (Warnung)"
+          "label": "Memory Usage (Warning)"
         },
         "mem-critical-threshold": {
-          "label": "Speicherverbrauch (Kritisch)"
+          "label": "Memory Usage (Critical)"
         },
         "disk-warning-threshold": {
-          "label": "Speicherplatz (Warnung)"
+          "label": "Storage Space (Warning)"
         },
         "disk-critical-threshold": {
-          "label": "Speicherplatz (Kritisch)"
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1602,6 +1602,42 @@
           "description": "Konfigurieren Sie das Verhalten und Aussehen des Systemmonitors.",
           "label": "Allgemein"
         }
+      },
+      "cpu-section": {
+        "label": "CPU-Auslastung"
+      },
+      "cpu-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "cpu-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "temperature-section": {
+        "label": "CPU-Temperatur"
+      },
+      "temp-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "memory-section": {
+        "label": "Speicherverbrauch"
+      },
+      "mem-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "mem-critical-threshold": {
+        "label": "Kritische Schwelle"
+      },
+      "disk-section": {
+        "label": "Festplattennutzung"
+      },
+      "disk-warning-threshold": {
+        "label": "Warnschwelle"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritische Schwelle"
       },
       "title": "Systemmonitor"
     },

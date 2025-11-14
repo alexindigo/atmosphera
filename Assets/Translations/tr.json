@@ -1603,6 +1603,51 @@
           "label": "Genel"
         }
       },
+      "cpu-section": {
+        "label": "CPU Kullanımı"
+      },
+      "cpu-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "cpu-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "temperature-section": {
+        "label": "CPU Sıcaklığı"
+      },
+      "temp-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "memory-section": {
+        "label": "Bellek Kullanımı"
+      },
+      "mem-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "mem-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "disk-section": {
+        "label": "Disk Kullanımı"
+      },
+      "disk-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
+      "network-section": {
+        "label": "Ağ Kullanımı"
+      },
+      "network-warning-threshold": {
+        "label": "Uyarı Eşiği"
+      },
+      "network-critical-threshold": {
+        "label": "Kritik Eşiği"
+      },
       "title": "Sistem İzleme"
     },
     "user-interface": {

@@ -271,28 +271,28 @@
           "description": "Estabelece limites para alertas de métricas do sistema. Destaca quando superados."
         },
         "cpu-warning-threshold": {
-          "label": "Uso da CPU (Aviso)"
+          "label": "CPU Usage (Warning)"
         },
         "cpu-critical-threshold": {
-          "label": "Uso da CPU (Crítico)"
+          "label": "CPU Usage (Critical)"
         },
         "temp-warning-threshold": {
-          "label": "Temperatura da CPU (Aviso)"
+          "label": "CPU Temperature (Warning)"
         },
         "temp-critical-threshold": {
-          "label": "Temperatura da CPU (Crítico)"
+          "label": "CPU Temperature (Critical)"
         },
         "mem-warning-threshold": {
-          "label": "Uso da memória (Aviso)"
+          "label": "Memory Usage (Warning)"
         },
         "mem-critical-threshold": {
-          "label": "Uso da memória (Crítico)"
+          "label": "Memory Usage (Critical)"
         },
         "disk-warning-threshold": {
-          "label": "Espaço de armazenamento (Aviso)"
+          "label": "Storage Space (Warning)"
         },
         "disk-critical-threshold": {
-          "label": "Espaço de armazenamento (Crítico)"
+          "label": "Storage Space (Critical)"
         }
       },
       "taskbar": {
@@ -1602,6 +1602,42 @@
           "description": "Configure o comportamento e a aparência do Monitor do Sistema.",
           "label": "Geral"
         }
+      },
+      "cpu-section": {
+        "label": "Uso da CPU"
+      },
+      "cpu-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "cpu-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "temperature-section": {
+        "label": "Temperatura da CPU"
+      },
+      "temp-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "temp-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "memory-section": {
+        "label": "Uso de memória"
+      },
+      "mem-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "mem-critical-threshold": {
+        "label": "Limite crítico"
+      },
+      "disk-section": {
+        "label": "Uso do disco"
+      },
+      "disk-warning-threshold": {
+        "label": "Limite de aviso"
+      },
+      "disk-critical-threshold": {
+        "label": "Limite crítico"
       },
       "title": "Monitor do Sistema"
     },

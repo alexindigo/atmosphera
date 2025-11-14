@@ -1575,6 +1575,42 @@
           "label": "Algemeen"
         }
       },
+      "cpu-section": {
+        "label": "CPU-gebruik"
+      },
+      "cpu-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "cpu-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "temperature-section": {
+        "label": "CPU-temperatuur"
+      },
+      "temp-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "temp-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "memory-section": {
+        "label": "Geheugengebruik"
+      },
+      "mem-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "mem-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
+      "disk-section": {
+        "label": "Schijfgebruik"
+      },
+      "disk-warning-threshold": {
+        "label": "Waarschuwingsdrempel"
+      },
+      "disk-critical-threshold": {
+        "label": "Kritieke drempel"
+      },
       "title": "Systeemmonitor"
     },
     "user-interface": {
