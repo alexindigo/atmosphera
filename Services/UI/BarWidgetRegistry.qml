@@ -150,15 +150,7 @@ Singleton {
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,
-                                    "showDiskUsage": false,
-                                    "cpuWarningThreshold": 80,
-                                    "cpuCriticalThreshold": 90,
-                                    "tempWarningThreshold": 80,
-                                    "tempCriticalThreshold": 90,
-                                    "memWarningThreshold": 80,
-                                    "memCriticalThreshold": 90,
-                                    "diskWarningThreshold": 80,
-                                    "diskCriticalThreshold": 90
+                                    "showDiskUsage": false
                                   },
                                   "Taskbar": {
                                     "allowUserSettings": true,

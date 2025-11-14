@@ -321,6 +321,18 @@ Singleton {
         }]
     }
 
+    // system monitor
+    property JsonObject systemMonitor: JsonObject {
+      property int cpuWarningThreshold: 80
+      property int cpuCriticalThreshold: 90
+      property int tempWarningThreshold: 80
+      property int tempCriticalThreshold: 90
+      property int memWarningThreshold: 80
+      property int memCriticalThreshold: 90
+      property int diskWarningThreshold: 80
+      property int diskCriticalThreshold: 90
+    }
+
     // dock
     property JsonObject dock: JsonObject {
       property bool enabled: true

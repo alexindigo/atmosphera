@@ -60,15 +60,15 @@ Rectangle {
   readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
-  // Threshold settings from widget configuration
-  readonly property int cpuWarningThreshold: (widgetSettings.cpuWarningThreshold !== undefined) ? widgetSettings.cpuWarningThreshold : widgetMetadata.cpuWarningThreshold
-  readonly property int cpuCriticalThreshold: (widgetSettings.cpuCriticalThreshold !== undefined) ? widgetSettings.cpuCriticalThreshold : widgetMetadata.cpuCriticalThreshold
-  readonly property int tempWarningThreshold: (widgetSettings.tempWarningThreshold !== undefined) ? widgetSettings.tempWarningThreshold : widgetMetadata.tempWarningThreshold
-  readonly property int tempCriticalThreshold: (widgetSettings.tempCriticalThreshold !== undefined) ? widgetSettings.tempCriticalThreshold : widgetMetadata.tempCriticalThreshold
-  readonly property int memWarningThreshold: (widgetSettings.memWarningThreshold !== undefined) ? widgetSettings.memWarningThreshold : widgetMetadata.memWarningThreshold
-  readonly property int memCriticalThreshold: (widgetSettings.memCriticalThreshold !== undefined) ? widgetSettings.memCriticalThreshold : widgetMetadata.memCriticalThreshold
-  readonly property int diskWarningThreshold: (widgetSettings.diskWarningThreshold !== undefined) ? widgetSettings.diskWarningThreshold : widgetMetadata.diskWarningThreshold
-  readonly property int diskCriticalThreshold: (widgetSettings.diskCriticalThreshold !== undefined) ? widgetSettings.diskCriticalThreshold : widgetMetadata.diskCriticalThreshold
+  // Threshold settings from global configuration
+  readonly property int cpuWarningThreshold: Settings.data.systemMonitor.cpuWarningThreshold
+  readonly property int cpuCriticalThreshold: Settings.data.systemMonitor.cpuCriticalThreshold
+  readonly property int tempWarningThreshold: Settings.data.systemMonitor.tempWarningThreshold
+  readonly property int tempCriticalThreshold: Settings.data.systemMonitor.tempCriticalThreshold
+  readonly property int memWarningThreshold: Settings.data.systemMonitor.memWarningThreshold
+  readonly property int memCriticalThreshold: Settings.data.systemMonitor.memCriticalThreshold
+  readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
+  readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
 
   // Warning threshold calculation properties
   readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuUsage > cpuWarningThreshold

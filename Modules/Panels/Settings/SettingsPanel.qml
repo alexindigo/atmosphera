@@ -264,13 +264,12 @@ SmartPanel {
                      "label": "settings.session-menu.title",
                      "icon": "settings-session-menu",
                      "source": sessionMenuTab
-                   }, //  {
-                   //    "id": SettingsPanel.Tab.SystemMonitor,
-                   //    "label": "settings.system-monitor.title",
-                   //    "icon": "settings-system-monitor",
-                   //    "source": systemMonitorTab
-                   //  },
-                   {
+                   }, {
+                      "id": SettingsPanel.Tab.SystemMonitor,
+                      "label": "settings.system-monitor.title",
+                      "icon": "settings-system-monitor",
+                      "source": systemMonitorTab
+                   }, {
                      "id": SettingsPanel.Tab.Hooks,
                      "label": "settings.hooks.title",
                      "icon": "settings-hooks",

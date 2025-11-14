@@ -107,6 +107,16 @@
     "audioSource": "default_output",
     "videoSource": "portal"
   },
+  "systemMonitor": {
+    "cpuWarningThreshold": 80,
+    "cpuCriticalThreshold": 90,
+    "tempWarningThreshold": 80,
+    "tempCriticalThreshold": 90,
+    "memWarningThreshold": 80,
+    "memCriticalThreshold": 90,
+    "diskWarningThreshold": 80,
+    "diskCriticalThreshold": 90
+  },
   "wallpaper": {
     "enabled": true,
     "overviewEnabled": false,
