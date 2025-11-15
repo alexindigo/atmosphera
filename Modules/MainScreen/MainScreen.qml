@@ -80,12 +80,13 @@ PanelWindow {
 
   // Desktop dimming when panels are open
   property bool dimDesktop: Settings.data.general.dimDesktop
+  property real dimmerOpacity: Settings.data.general.dimmerOpacity ?? 0.8
   property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
   property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
 
   color: {
     if (dimDesktop && isPanelOpen) {
-      return Qt.alpha(Color.mShadow, 0.8)
+      return Qt.alpha(Color.mShadow, dimmerOpacity)
     }
     return Color.transparent
   }

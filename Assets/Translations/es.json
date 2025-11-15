@@ -1680,6 +1680,11 @@
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
         "label": "Dim escritorio"
       },
+      "dimmer-opacity": {
+        "description": "Define el nivel de opacidad para el atenuado del escritorio.",
+        "label": "Opacidad del escritorio atenuado",
+        "reset": "Restablecer la opacidad del escritorio atenuado"
+      },
       "panel-background-opacity": {
         "description": "Establecer la opacidad de fondo para todos los paneles (Launcher, Centro de control, Configuración, etc.).",
         "label": "Opacidad de fondo del panel"

@@ -1680,6 +1680,11 @@
         "description": "Dim de desktop wanneer panelen of menu's geopend zijn.",
         "label": "Desktop dimmen"
       },
+      "dimmer-opacity": {
+        "description": "Stel het opaciteitsniveau in voor het dimmen van het bureaublad.",
+        "label": "Doorzichtigheid van gedimde desktop",
+        "reset": "Doorzichtigheid van gedimde desktop resetten"
+      },
       "panel-background-opacity": {
         "description": "Stel de achtergronddoorzichtigheid in voor alle panelen (Launcher, Control Center, Instellingen, enz.).",
         "label": "Paneel achtergronddoorzichtigheid"

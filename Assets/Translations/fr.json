@@ -1680,6 +1680,11 @@
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",
         "label": "Dim bureau"
       },
+      "dimmer-opacity": {
+        "description": "Définir le niveau d'opacité pour l'assombrissement du bureau.",
+        "label": "Opacité du bureau atténué",
+        "reset": "Réinitialiser l'opacité du bureau atténué"
+      },
       "panel-background-opacity": {
         "description": "Définir l'opacité de fond pour tous les panneaux (Lanceur, Centre de contrôle, Paramètres, etc.).",
         "label": "Opacité de fond des panneaux"

@@ -60,6 +60,7 @@
   "general": {
     "avatarImage": "",
     "dimDesktop": true,
+    "dimmerOpacity": 0.8,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -330,3 +331,4 @@
     "chargingMode": 0
   }
 }
+
