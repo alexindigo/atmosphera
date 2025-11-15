@@ -112,31 +112,7 @@ Popup {
   }
 
   function loadWidgetSettings() {
-    const widgetSettingsMap = {
-      "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
-      "AudioVisualizer": "WidgetSettings/AudioVisualizerSettings.qml",
-      "Battery": "WidgetSettings/BatterySettings.qml",
-      "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
-      "Brightness": "WidgetSettings/BrightnessSettings.qml",
-      "Clock": "WidgetSettings/ClockSettings.qml",
-      "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
-      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
-      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
-      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
-      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
-      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
-      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
-      "Spacer": "WidgetSettings/SpacerSettings.qml",
-      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-      "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
-      "Volume": "WidgetSettings/VolumeSettings.qml",
-      "WiFi": "WidgetSettings/WiFiSettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "Taskbar": "WidgetSettings/TaskbarSettings.qml",
-      "Tray": "WidgetSettings/TraySettings.qml"
-    }
-
-    const source = widgetSettingsMap[widgetId]
+    const source = BarWidgetRegistry.widgetSettingsMap[widgetId]
     if (source) {
       // Use setSource to pass properties at creation time
       settingsLoader.setSource(source, {
