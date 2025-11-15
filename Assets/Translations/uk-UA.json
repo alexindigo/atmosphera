@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "Принаймні",
+        "exact": "Точно",
+        "label": "Роздільна здатність",
+        "mode": {
+          "label": "Режим"
+        }
+      },
       "search": "Пошук:",
+      "sorting": {
+        "date_added": "Дата додавання",
+        "favorites": "Обране",
+        "label": "Сортувати за",
+        "random": "Випадково",
+        "relevance": "Релевантність",
+        "toplist": "Топ-лист",
+        "views": "Перегляди"
+      },
+      "order": {
+        "asc": "За зростанням",
+        "desc": "За спаданням",
+        "label": "Порядок"
+      },
+      "wallhaven-settings": {
+        "apply": "Застосувати",
+        "title": "Налаштування Wallhaven"
+      },
       "source": {
         "label": "Джерело",
         "local": "Локальний",

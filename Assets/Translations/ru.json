@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "По крайней мере",
+        "exact": "Точно",
+        "label": "Разрешение",
+        "mode": {
+          "label": "Режим"
+        }
+      },
       "search": "Поиск:",
+      "sorting": {
+        "date_added": "Дата добавления",
+        "favorites": "Избранное",
+        "label": "Сортировать по",
+        "random": "Случайно",
+        "relevance": "Релевантность",
+        "toplist": "Топ-лист",
+        "views": "Просмотры"
+      },
+      "order": {
+        "asc": "По возрастанию",
+        "desc": "По убыванию",
+        "label": "Порядок"
+      },
+      "wallhaven-settings": {
+        "apply": "Применить",
+        "title": "Настройки Wallhaven"
+      },
       "source": {
         "label": "Источник",
         "local": "Локальный",

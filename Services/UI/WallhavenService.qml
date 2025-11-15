@@ -129,7 +129,7 @@ Singleton {
         } else if (xhr.status === 429) {
           var errorMsg = "Rate limit exceeded (45 requests/minute)"
           lastError = errorMsg
-          Logger.e("Wallhaven", errorMsg)
+          Logger.w("Wallhaven", errorMsg)
           searchFailed(errorMsg)
         } else {
           var errorMsg = "API error: " + xhr.status

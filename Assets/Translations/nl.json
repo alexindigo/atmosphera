@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "Ten minste",
+        "exact": "Exact",
+        "label": "Resolutie",
+        "mode": {
+          "label": "Modus"
+        }
+      },
       "search": "Zoeken:",
+      "sorting": {
+        "date_added": "Datum toegevoegd",
+        "favorites": "Favorieten",
+        "label": "Sorteren op",
+        "random": "Willekeurig",
+        "relevance": "Relevantie",
+        "toplist": "Toplijst",
+        "views": "Weergaven"
+      },
+      "order": {
+        "asc": "Oplopend",
+        "desc": "Aflopend",
+        "label": "Volgorde"
+      },
+      "wallhaven-settings": {
+        "apply": "Toepassen",
+        "title": "Wallhaven-instellingen"
+      },
       "source": {
         "label": "Bron",
         "local": "Lokaal",

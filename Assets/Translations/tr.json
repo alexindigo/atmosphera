@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "En az",
+        "exact": "Tam",
+        "label": "Çözünürlük",
+        "mode": {
+          "label": "Mod"
+        }
+      },
       "search": "Ara:",
+      "sorting": {
+        "date_added": "Eklenme tarihi",
+        "favorites": "Favoriler",
+        "label": "Sırala",
+        "random": "Rastgele",
+        "relevance": "Alaka",
+        "toplist": "En iyi liste",
+        "views": "Görüntülemeler"
+      },
+      "order": {
+        "asc": "Artan",
+        "desc": "Azalan",
+        "label": "Sıra"
+      },
+      "wallhaven-settings": {
+        "apply": "Uygula",
+        "title": "Wallhaven Ayarları"
+      },
       "source": {
         "label": "Kaynak",
         "local": "Yerel",

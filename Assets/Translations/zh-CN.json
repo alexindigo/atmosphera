@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "至少",
+        "exact": "精确",
+        "label": "分辨率",
+        "mode": {
+          "label": "模式"
+        }
+      },
       "search": "搜索：",
+      "sorting": {
+        "date_added": "添加日期",
+        "favorites": "收藏",
+        "label": "排序方式",
+        "random": "随机",
+        "relevance": "相关性",
+        "toplist": "排行榜",
+        "views": "浏览量"
+      },
+      "order": {
+        "asc": "升序",
+        "desc": "降序",
+        "label": "顺序"
+      },
+      "wallhaven-settings": {
+        "apply": "应用",
+        "title": "Wallhaven 设置"
+      },
       "source": {
         "label": "来源",
         "local": "本地",

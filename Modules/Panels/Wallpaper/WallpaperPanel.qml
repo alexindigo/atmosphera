@@ -121,7 +121,51 @@ SmartPanel {
       root.contentItem = wallpaperPanel
     }
 
+    // Function to update Wallhaven resolution filter
+    function updateWallhavenResolution() {
+      if (typeof WallhavenService === "undefined") {
+        return
+      }
+
+      var width = Settings.data.wallpaper.wallhavenResolutionWidth || ""
+      var height = Settings.data.wallpaper.wallhavenResolutionHeight || ""
+      var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+
+      if (width && height) {
+        var resolution = width + "x" + height
+        if (mode === "atleast") {
+          WallhavenService.minResolution = resolution
+          WallhavenService.resolutions = ""
+        } else {
+          WallhavenService.minResolution = ""
+          WallhavenService.resolutions = resolution
+        }
+      } else {
+        WallhavenService.minResolution = ""
+        WallhavenService.resolutions = ""
+      }
+
+      // Trigger new search with updated resolution
+      if (Settings.data.wallpaper.useWallhaven) {
+        if (wallhavenView) {
+          wallhavenView.loading = true
+        }
+        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+      }
+    }
+
     color: Color.transparent
+
+    // Wallhaven settings popup
+    Loader {
+      id: wallhavenSettingsPopup
+      source: "WallhavenSettingsPopup.qml"
+      onLoaded: {
+        if (item) {
+          item.screen = screen
+        }
+      }
+    }
 
     // Focus management
     Connections {
@@ -364,6 +408,10 @@ SmartPanel {
               WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
               WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
               WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+              
+              // Update resolution settings
+              wallpaperPanel.updateWallhavenResolution()
+              
               // If the view is already initialized, trigger a new search when switching to it
               if (wallhavenView && wallhavenView.initialized && !WallhavenService.fetching) {
                 wallhavenView.loading = true
@@ -372,266 +420,20 @@ SmartPanel {
             }
           }
         }
-      }
 
-      // Wallhaven category toggles
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-        visible: Settings.data.wallpaper.useWallhaven
-
-        NText {
-          text: I18n.tr("wallpaper.panel.categories.label")
-          color: Color.mOnSurface
-          pointSize: Style.fontSizeM
-          Layout.preferredWidth: implicitWidth
-        }
-
-        Item {
-          Layout.fillWidth: true
-        }
-
-        RowLayout {
-          id: categoriesRow
-          spacing: Style.marginL
-
-          function getCategoryValue(index) {
-            var cats = Settings.data.wallpaper.wallhavenCategories || "111"
-            return cats.length > index && cats.charAt(index) === "1"
-          }
-
-          function updateCategories(general, anime, people) {
-            var categories = (general ? "1" : "0") + (anime ? "1" : "0") + (people ? "1" : "0")
-            Settings.data.wallpaper.wallhavenCategories = categories
-            // Update checkboxes immediately
-            generalToggle.checked = general
-            animeToggle.checked = anime
-            peopleToggle.checked = people
-            if (typeof WallhavenService !== "undefined") {
-              WallhavenService.categories = categories
-              WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+        // Settings button (only visible for Wallhaven)
+        NIconButton {
+          id: wallhavenSettingsButton
+          icon: "settings"
+          tooltipText: I18n.tr("wallpaper.panel.wallhaven-settings.title")
+          baseSize: Style.baseWidgetSize * 0.8
+          visible: Settings.data.wallpaper.useWallhaven
+          onClicked: {
+            if (searchInput.inputItem) {
+              searchInput.inputItem.focus = false
             }
-          }
-
-          Connections {
-            target: Settings.data.wallpaper
-            function onWallhavenCategoriesChanged() {
-              generalToggle.checked = categoriesRow.getCategoryValue(0)
-              animeToggle.checked = categoriesRow.getCategoryValue(1)
-              peopleToggle.checked = categoriesRow.getCategoryValue(2)
-            }
-          }
-
-          Component.onCompleted: {
-            generalToggle.checked = categoriesRow.getCategoryValue(0)
-            animeToggle.checked = categoriesRow.getCategoryValue(1)
-            peopleToggle.checked = categoriesRow.getCategoryValue(2)
-          }
-
-          // General checkbox
-          Item {
-            Layout.preferredWidth: generalCheckboxRow.implicitWidth
-            Layout.preferredHeight: generalCheckboxRow.implicitHeight
-
-            RowLayout {
-              id: generalCheckboxRow
-              anchors.fill: parent
-              spacing: Style.marginS
-
-              NText {
-                text: I18n.tr("wallpaper.panel.categories.general")
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeM
-              }
-
-              Rectangle {
-                id: generalBox
-                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
-                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
-                radius: Style.radiusXS
-                color: generalToggle.checked ? Color.mPrimary : Color.mSurface
-                border.color: Color.mOutline
-                border.width: Style.borderS
-
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationFast
-                  }
-                }
-
-                NIcon {
-                  visible: generalToggle.checked
-                  anchors.centerIn: parent
-                  anchors.horizontalCenterOffset: -1
-                  icon: "check"
-                  color: Color.mOnPrimary
-                  pointSize: Math.max(Style.fontSizeXS, generalBox.width * 0.5)
-                }
-
-                MouseArea {
-                  anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: generalToggle.toggled(!generalToggle.checked)
-                }
-              }
-            }
-          }
-
-          // Anime checkbox
-          Item {
-            Layout.preferredWidth: animeCheckboxRow.implicitWidth
-            Layout.preferredHeight: animeCheckboxRow.implicitHeight
-
-            RowLayout {
-              id: animeCheckboxRow
-              anchors.fill: parent
-              spacing: Style.marginS
-
-              NText {
-                text: I18n.tr("wallpaper.panel.categories.anime")
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeM
-              }
-
-              Rectangle {
-                id: animeBox
-                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
-                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
-                radius: Style.radiusXS
-                color: animeToggle.checked ? Color.mPrimary : Color.mSurface
-                border.color: Color.mOutline
-                border.width: Style.borderS
-
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationFast
-                  }
-                }
-
-                NIcon {
-                  visible: animeToggle.checked
-                  anchors.centerIn: parent
-                  anchors.horizontalCenterOffset: -1
-                  icon: "check"
-                  color: Color.mOnPrimary
-                  pointSize: Math.max(Style.fontSizeXS, animeBox.width * 0.5)
-                }
-
-                MouseArea {
-                  anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: animeToggle.toggled(!animeToggle.checked)
-                }
-              }
-            }
-          }
-
-          // People checkbox
-          Item {
-            Layout.preferredWidth: peopleCheckboxRow.implicitWidth
-            Layout.preferredHeight: peopleCheckboxRow.implicitHeight
-
-            RowLayout {
-              id: peopleCheckboxRow
-              anchors.fill: parent
-              spacing: Style.marginS
-
-              NText {
-                text: I18n.tr("wallpaper.panel.categories.people")
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeM
-              }
-
-              Rectangle {
-                id: peopleBox
-                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
-                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
-                radius: Style.radiusXS
-                color: peopleToggle.checked ? Color.mPrimary : Color.mSurface
-                border.color: Color.mOutline
-                border.width: Style.borderS
-
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationFast
-                  }
-                }
-
-                NIcon {
-                  visible: peopleToggle.checked
-                  anchors.centerIn: parent
-                  anchors.horizontalCenterOffset: -1
-                  icon: "check"
-                  color: Color.mOnPrimary
-                  pointSize: Math.max(Style.fontSizeXS, peopleBox.width * 0.5)
-                }
-
-                MouseArea {
-                  anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: peopleToggle.toggled(!peopleToggle.checked)
-                }
-              }
-            }
-          }
-
-          // Invisible checkboxes to maintain the signal handlers
-          QtObject {
-            id: generalToggle
-            property bool checked: false
-            signal toggled(bool checked)
-            onToggled: checked => {
-              categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2))
-            }
-          }
-
-          QtObject {
-            id: animeToggle
-            property bool checked: false
-            signal toggled(bool checked)
-            onToggled: checked => {
-              categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2))
-            }
-          }
-
-          QtObject {
-            id: peopleToggle
-            property bool checked: false
-            signal toggled(bool checked)
-            onToggled: checked => {
-              categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked)
-            }
-          }
-        }
-      }
-
-      // Wallhaven purity selector
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-        visible: Settings.data.wallpaper.useWallhaven
-
-        NText {
-          text: I18n.tr("wallpaper.panel.purity.label")
-          color: Color.mOnSurface
-          pointSize: Style.fontSizeM
-          Layout.preferredWidth: implicitWidth
-        }
-
-        NComboBox {
-          id: purityComboBox
-          Layout.fillWidth: true
-          model: [
-            { "key": "111", "name": I18n.tr("wallpaper.panel.purity.all") },
-            { "key": "100", "name": I18n.tr("wallpaper.panel.purity.sfw") },
-            { "key": "010", "name": I18n.tr("wallpaper.panel.purity.sketchy") }
-          ]
-          currentKey: Settings.data.wallpaper.wallhavenPurity
-          onSelected: key => {
-            Settings.data.wallpaper.wallhavenPurity = key
-            if (typeof WallhavenService !== "undefined") {
-              WallhavenService.purity = key
-              WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+            if (wallhavenSettingsPopup.item) {
+              wallhavenSettingsPopup.item.showAt(wallhavenSettingsButton)
             }
           }
         }
@@ -1068,6 +870,24 @@ SmartPanel {
         WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
         WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
         WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+        
+        // Initialize resolution settings
+        var width = Settings.data.wallpaper.wallhavenResolutionWidth || ""
+        var height = Settings.data.wallpaper.wallhavenResolutionHeight || ""
+        var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+        if (width && height) {
+          var resolution = width + "x" + height
+          if (mode === "atleast") {
+            WallhavenService.minResolution = resolution
+            WallhavenService.resolutions = ""
+          } else {
+            WallhavenService.minResolution = ""
+            WallhavenService.resolutions = resolution
+          }
+        } else {
+          WallhavenService.minResolution = ""
+          WallhavenService.resolutions = ""
+        }
         
         // Now check if we can actually search (fetching check is in WallhavenService.search)
         loading = true

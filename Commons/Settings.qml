@@ -270,6 +270,9 @@ Singleton {
       property string wallhavenOrder: "desc"
       property string wallhavenCategories: "111" // general,anime,people
       property string wallhavenPurity: "100" // sfw only
+      property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
+      property string wallhavenResolutionWidth: ""
+      property string wallhavenResolutionHeight: ""
     }
 
     // applauncher

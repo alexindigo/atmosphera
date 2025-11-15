@@ -2053,7 +2053,33 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "resolution": {
+        "atleast": "At least",
+        "exact": "Exact",
+        "label": "Resolution",
+        "mode": {
+          "label": "Mode"
+        }
+      },
       "search": "Search",
+      "sorting": {
+        "date_added": "Date added",
+        "favorites": "Favorites",
+        "label": "Sort by",
+        "random": "Random",
+        "relevance": "Relevance",
+        "toplist": "Toplist",
+        "views": "Views"
+      },
+      "order": {
+        "asc": "Ascending",
+        "desc": "Descending",
+        "label": "Order"
+      },
+      "wallhaven-settings": {
+        "apply": "Apply",
+        "title": "Wallhaven Settings"
+      },
       "source": {
         "label": "Source",
         "local": "Local",
