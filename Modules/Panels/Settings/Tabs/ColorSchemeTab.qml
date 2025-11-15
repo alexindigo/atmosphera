@@ -662,28 +662,12 @@ ColumnLayout {
         }
         Layout.fillWidth: true
         Layout.preferredWidth: -1
-        checked: {
-          // Check if any Discord client template is enabled
-          var anyEnabled = false
-          for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
-            var client = ProgramCheckerService.availableDiscordClients[i]
-            if (Settings.data.templates["discord_" + client.name]) {
-              anyEnabled = true
-              break
-            }
-          }
-          return anyEnabled
-        }
+        checked: Settings.data.templates.discord
         enabled: ProgramCheckerService.availableDiscordClients.length > 0
         opacity: ProgramCheckerService.availableDiscordClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
                      // Set unified discord property
                      Settings.data.templates.discord = checked
-                     // Enable/disable all detected Discord clients
-                     for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
-                       var client = ProgramCheckerService.availableDiscordClients[i]
-                       Settings.data.templates["discord_" + client.name] = checked
-                     }
                      if (ProgramCheckerService.availableDiscordClients.length > 0) {
                        AppThemeService.generate()
                      }
@@ -763,28 +747,12 @@ ColumnLayout {
         }
         Layout.fillWidth: true
         Layout.preferredWidth: -1
-        checked: {
-          // Check if any Code client template is enabled
-          var anyEnabled = false
-          for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
-            var client = ProgramCheckerService.availableCodeClients[i]
-            if (Settings.data.templates["code_" + client.name]) {
-              anyEnabled = true
-              break
-            }
-          }
-          return anyEnabled
-        }
+        checked: Settings.data.templates.code
         enabled: ProgramCheckerService.availableCodeClients.length > 0
         opacity: ProgramCheckerService.availableCodeClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
                      // Set unified code property
                      Settings.data.templates.code = checked
-                     // Enable/disable all detected Code clients
-                     for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
-                       var client = ProgramCheckerService.availableCodeClients[i]
-                       Settings.data.templates["code_" + client.name] = checked
-                     }
                      if (ProgramCheckerService.availableCodeClients.length > 0) {
                        AppThemeService.generate()
                      }
