@@ -103,7 +103,6 @@ PopupWindow {
       return
     }
 
-    // IMPORTANT: Set the menu BEFORE loading items
     if (!isSubMenu && trayItem && trayItem.menu) {
       menu = trayItem.menu
     }
@@ -146,11 +145,6 @@ PopupWindow {
     id: rootMouseArea
     anchors.fill: parent
     hoverEnabled: true
-  }
-
-  Item {
-    anchors.fill: parent
-    Keys.onEscapePressed: root.hideMenu()
   }
 
   QsMenuOpener {
