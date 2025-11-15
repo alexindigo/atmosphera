@@ -41,6 +41,11 @@ Singleton {
     isPending = true
     hasActiveRecording = false
 
+    // Close any opened panel
+    if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+      PanelService.openedPanel.close()
+    }
+
     // First, ensure xdg-desktop-portal and a compositor portal are running
     portalCheckProcess.exec({
                               "command": ["sh", "-c", // require core portal AND one of the backends
