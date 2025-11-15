@@ -621,8 +621,10 @@ Popup {
           // Refresh the wallpaper search with current settings
           WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
           
-          // Close the popup after applying
-          root.hide()
+          // Close the popup after applying (delay to prevent click propagation)
+          Qt.callLater(() => {
+            root.hide()
+          })
         }
       }
     }
