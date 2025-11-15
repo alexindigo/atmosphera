@@ -1781,11 +1781,6 @@
           "label": "Hintergrundbild-Ordner",
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
-        "selector": {
-          "description": "Wählen Sie Ihr Hintergrundbild aus.",
-          "label": "Hintergrundbild-Auswahl",
-          "tooltip": "Hintergrundbild-Auswahl öffnen"
-        },
         "hide-wallpaper-filenames": {
           "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
           "label": "Dateinamen ausblenden"
@@ -1805,6 +1800,11 @@
         },
         "select-folder": "Hintergrundbild-Ordner auswählen",
         "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
+        "selector": {
+          "description": "Wählen Sie Ihr Hintergrundbild aus.",
+          "label": "Hintergrundbild-Auswahl",
+          "tooltip": "Hintergrundbild-Auswahl öffnen"
+        },
         "selector-position": {
           "description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
           "label": "Position"

@@ -1781,11 +1781,6 @@
           "label": "壁纸文件夹",
           "tooltip": "浏览壁纸文件夹"
         },
-        "selector": {
-          "description": "选择你的壁纸。",
-          "label": "壁纸选择器",
-          "tooltip": "打开壁纸选择器"
-        },
         "hide-wallpaper-filenames": {
           "description": "在选择器中隐藏壁纸文件名。",
           "label": "隐藏文件名。"
@@ -1805,6 +1800,11 @@
         },
         "select-folder": "选择壁纸文件夹",
         "select-monitor-folder": "选择显示器壁纸文件夹",
+        "selector": {
+          "description": "选择你的壁纸。",
+          "label": "壁纸选择器",
+          "tooltip": "打开壁纸选择器"
+        },
         "selector-position": {
           "description": "选择壁纸选择面板的显示位置。",
           "label": "选择器位置"

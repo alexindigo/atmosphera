@@ -1781,11 +1781,6 @@
           "label": "Carpeta de fondos de pantalla",
           "tooltip": "Buscar carpeta de fondos de pantalla"
         },
-        "selector": {
-          "description": "Elige tu fondo de pantalla.",
-          "label": "Selector de fondo de pantalla",
-          "tooltip": "Abrir el selector de fondo de pantalla"
-        },
         "hide-wallpaper-filenames": {
           "description": "Oculta los nombres de archivo del fondo de pantalla en el selector.",
           "label": "Ocultar nombres de archivo"
@@ -1805,6 +1800,11 @@
         },
         "select-folder": "Seleccionar carpeta de fondos de pantalla",
         "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
+        "selector": {
+          "description": "Elige tu fondo de pantalla.",
+          "label": "Selector de fondo de pantalla",
+          "tooltip": "Abrir el selector de fondo de pantalla"
+        },
         "selector-position": {
           "description": "Elige dónde aparece el panel selector de fondo de pantalla.",
           "label": "Posición"

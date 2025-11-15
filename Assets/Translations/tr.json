@@ -1781,11 +1781,6 @@
           "label": "Duvar kağıdı klasörü",
           "tooltip": "Duvar kağıdı klasörüne göz atın"
         },
-        "selector": {
-          "description": "Duvar kâğıdınızı seçin.",
-          "label": "Duvar kâğıdı seçici",
-          "tooltip": "Duvar kâğıdı seçiciyi aç"
-        },
         "hide-wallpaper-filenames": {
           "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
           "label": "Dosya adlarını gizle"
@@ -1805,6 +1800,11 @@
         },
         "select-folder": "Duvar kağıdı klasörünü seç",
         "select-monitor-folder": "Ekran duvar kağıdı klasörünü seç",
+        "selector": {
+          "description": "Duvar kâğıdınızı seçin.",
+          "label": "Duvar kâğıdı seçici",
+          "tooltip": "Duvar kâğıdı seçiciyi aç"
+        },
         "selector-position": {
           "description": "Duvar kağıdı seçici panelinin nerede görüneceğini seçin.",
           "label": "Pozisyon"

@@ -1781,11 +1781,6 @@
           "label": "Achtergrondmap",
           "tooltip": "Bladeren naar achtergrondmap"
         },
-        "selector": {
-          "description": "Kies je achtergrond.",
-          "label": "Achtergrondkiezer",
-          "tooltip": "Achtergrondkiezer openen"
-        },
         "hide-wallpaper-filenames": {
           "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
           "label": "Bestandsnamen verbergen"
@@ -1805,6 +1800,11 @@
         },
         "select-folder": "Achtergrondmap selecteren",
         "select-monitor-folder": "Achtergrondmap voor monitor selecteren",
+        "selector": {
+          "description": "Kies je achtergrond.",
+          "label": "Achtergrondkiezer",
+          "tooltip": "Achtergrondkiezer openen"
+        },
         "selector-position": {
           "description": "Kies waar het achtergrondselectiepaneel verschijnt.",
           "label": "Positie"
