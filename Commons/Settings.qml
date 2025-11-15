@@ -734,9 +734,13 @@ Singleton {
         if (rawJson) {
           var parsed = JSON.parse(rawJson)
           if (parsed.general && parsed.general.dimDesktop === true) {
-            if (adapter.general.dimmerOpacity === undefined || adapter.general.dimmerOpacity === 0) {
+            // Check if dimmerOpacity exists in raw JSON (not adapter default)
+            var dimmerOpacityInJson = parsed.general.dimmerOpacity
+            
+            // If dimmerOpacity wasn't explicitly set in JSON or was 0, set it to 0.8 (80% dimming)
+            if (dimmerOpacityInJson === undefined || dimmerOpacityInJson === 0) {
               adapter.general.dimmerOpacity = 0.8
-              Logger.i("Settings", "Migrated dimDesktop: set dimmerOpacity to 0.8")
+              Logger.i("Settings", "Migrated dimDesktop=true: set dimmerOpacity to 0.8 (80% dimming)")
             }
           }
         }
