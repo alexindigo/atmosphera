@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 22
+  property int settingsVersion: 23
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -189,7 +189,6 @@ Singleton {
     // general
     property JsonObject general: JsonObject {
       property string avatarImage: ""
-      property bool dimDesktop: true
       property real dimmerOpacity: 0.8
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
@@ -713,6 +712,29 @@ Singleton {
         }
       } catch (error) {
         Logger.w("Settings", "Failed to read raw JSON for migration:", error)
+      }
+    }
+
+    // -----------------
+    // 7th. Migrate dim desktop settings (version 22 → 23)
+    // If dimDesktop is enabled, set dimmerOpacity to 0.8 if it's not already set or is 0
+    // Then remove dimDesktop property as it's no longer needed
+    if (adapter.settingsVersion < 23) {
+      // Read raw JSON file to access dimDesktop property
+      try {
+        var rawJson = settingsFileView.text()
+
+        if (rawJson) {
+          var parsed = JSON.parse(rawJson)
+          if (parsed.general && parsed.general.dimDesktop === true) {
+            if (adapter.general.dimmerOpacity === undefined || adapter.general.dimmerOpacity === 0) {
+              adapter.general.dimmerOpacity = 0.8
+              Logger.i("Settings", "Migrated dimDesktop: set dimmerOpacity to 0.8")
+            }
+          }
+        }
+      } catch (error) {
+        Logger.w("Settings", "Failed to read raw JSON for dimDesktop migration:", error)
       }
     }
   }

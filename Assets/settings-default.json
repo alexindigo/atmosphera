@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 22,
+  "settingsVersion": 23,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -59,7 +59,6 @@
   },
   "general": {
     "avatarImage": "",
-    "dimDesktop": true,
     "dimmerOpacity": 0.8,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,

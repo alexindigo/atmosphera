@@ -25,16 +25,8 @@ ColumnLayout {
       onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
     }
 
-    NToggle {
-      label: I18n.tr("settings.user-interface.dim-desktop.label")
-      description: I18n.tr("settings.user-interface.dim-desktop.description")
-      checked: Settings.data.general.dimDesktop
-      onToggled: checked => Settings.data.general.dimDesktop = checked
-    }
-
-    // when dimDesktop is enabled: dimmer opacity
+    // Dim desktop opacity
     ColumnLayout {
-      visible: Settings.data.general.dimDesktop
       spacing: Style.marginXXS
       Layout.fillWidth: true
 

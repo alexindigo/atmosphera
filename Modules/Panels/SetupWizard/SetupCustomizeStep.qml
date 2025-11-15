@@ -451,7 +451,7 @@ ColumnLayout {
         Layout.bottomMargin: Style.marginS
       }
 
-      // Dim Desktop toggle
+      // Dim Desktop opacity
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginM
@@ -471,23 +471,27 @@ ColumnLayout {
           Layout.fillWidth: true
           spacing: 2
           NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.label")
+            text: I18n.tr("settings.user-interface.dimmer-opacity.label")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
           NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.description")
+            text: I18n.tr("settings.user-interface.dimmer-opacity.description")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
           }
-        }
-        NToggle {
-          checked: Settings.data.general.dimDesktop
-          onToggled: function (checked) {
-            Settings.data.general.dimDesktop = checked
+          NValueSlider {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.marginXS
+            from: 0
+            to: 1
+            stepSize: 0.01
+            value: Settings.data.general.dimmerOpacity
+            onMoved: value => Settings.data.general.dimmerOpacity = value
+            text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
           }
         }
       }
