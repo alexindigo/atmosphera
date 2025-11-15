@@ -117,8 +117,11 @@ PopupWindow {
     // Reset menu items to force reload with new menu
     menuItems = []
 
-    // Trigger menu loading only when showing
-    shouldLoadMenu = true
+    // Reset and trigger menu loading
+    shouldLoadMenu = false
+    Qt.callLater(() => {
+                   shouldLoadMenu = true
+                 })
 
     visible = true
     forceActiveFocus()
