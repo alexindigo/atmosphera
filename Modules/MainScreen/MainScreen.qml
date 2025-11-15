@@ -168,20 +168,6 @@ PanelWindow {
       z: 0 // Behind all content
     }
 
-    // Background MouseArea for closing panels when clicking outside
-    // Active whenever a panel is open - the mask ensures it only receives clicks when panel is open
-    MouseArea {
-      anchors.fill: parent
-      enabled: root.isPanelOpen
-      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-      onClicked: mouse => {
-                   if (PanelService.openedPanel) {
-                     PanelService.openedPanel.close()
-                   }
-                 }
-      z: 0 // Behind panels and bar
-    }
-
     // ---------------------------------------
     // All panels always exist
     // ---------------------------------------
