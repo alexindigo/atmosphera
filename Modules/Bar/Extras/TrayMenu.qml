@@ -150,10 +150,6 @@ PopupWindow {
   QsMenuOpener {
     id: opener
     menu: root.menu
-
-    onMenuChanged: {
-      Qt.callLater(() => root.loadMenuItemsSafely())
-    }
   }
 
   Rectangle {
