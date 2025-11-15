@@ -1,6 +1,7 @@
 [colors]
 background=ffffff
 foreground=000000
+cursor=000000 000000
 
 # Normal colors
 regular0=000000
@@ -21,6 +22,3 @@ bright4=5bcffb
 bright5=ae81ff
 bright6=b6fff5
 bright7=ffffca
-
-[cursor]
-color=000000 000000
