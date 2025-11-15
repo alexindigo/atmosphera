@@ -61,7 +61,17 @@ PanelWindow {
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-panel-content-" + placeholder.panelName + "-" + (placeholder.screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
-  WlrLayershell.keyboardFocus: !root.isPanelOpen ? WlrKeyboardFocus.None : (exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand)
+  WlrLayershell.keyboardFocus: {
+    if (!root.isPanelOpen) {
+      return WlrKeyboardFocus.None
+    }
+    if (CompositorService.isHyprland) {
+      // Exclusive focus on hyprland is too restrictive.
+      return WlrKeyboardFocus.OnDemand
+    } else {
+      return root.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
+    }
+  }
 
   // Anchor to all edges to make fullscreen
   anchors {
