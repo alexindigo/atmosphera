@@ -1776,6 +1776,11 @@
           "label": "Dossier des fonds d'écran",
           "tooltip": "Parcourir le dossier des fonds d'écran"
         },
+        "selector": {
+          "description": "Choisissez votre fond d’écran.",
+          "label": "Sélecteur de fond d’écran",
+          "tooltip": "Ouvrir le sélecteur de fond d’écran"
+        },
         "hide-wallpaper-filenames": {
           "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
           "label": "Masquer les noms de fichiers"

@@ -1776,6 +1776,11 @@
           "label": "Pasta de papéis de parede",
           "tooltip": "Procurar pasta de papéis de parede"
         },
+        "selector": {
+          "description": "Escolha o seu papel de parede.",
+          "label": "Seletor de papel de parede",
+          "tooltip": "Abrir o seletor de papel de parede"
+        },
         "hide-wallpaper-filenames": {
           "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
           "label": "Ocultar nomes de arquivos"
