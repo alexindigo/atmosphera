@@ -61,6 +61,20 @@ ColumnLayout {
       onButtonClicked: mainFolderPicker.open()
     }
 
+    RowLayout {
+      NLabel {
+        label: I18n.tr("settings.wallpaper.settings.selector.label")
+        description: I18n.tr("settings.wallpaper.settings.selector.description")
+        Layout.alignment: Qt.AlignTop
+      }
+
+      NIconButton {
+        icon: "wallpaper-selector"
+        tooltipText: I18n.tr("settings.wallpaper.settings.selector.tooltip")
+        onClicked: PanelService.getPanel("wallpaperPanel", screen)?.toggle()
+      }
+    }
+
     // Recursive search
     NToggle {
       label: I18n.tr("settings.wallpaper.settings.recursive-search.label")

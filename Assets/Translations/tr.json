@@ -1776,6 +1776,11 @@
           "label": "Duvar kağıdı klasörü",
           "tooltip": "Duvar kağıdı klasörüne göz atın"
         },
+        "selector": {
+          "description": "Duvar kâğıdınızı seçin.",
+          "label": "Duvar kâğıdı seçici",
+          "tooltip": "Duvar kâğıdı seçiciyi aç"
+        },
         "hide-wallpaper-filenames": {
           "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
           "label": "Dosya adlarını gizle"

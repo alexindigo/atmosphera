@@ -659,7 +659,7 @@
     "wallpaperSelector": {
       "label": "Hintergrundbild",
       "tooltip": {
-        "action": "Linksklick: Hintergrundbildauswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
+        "action": "Linksklick: Hintergrundbild-Auswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
       }
     },
     "wifi": {
@@ -1776,6 +1776,11 @@
           "label": "Hintergrundbild-Ordner",
           "tooltip": "Nach Hintergrundbild-Ordner suchen"
         },
+        "selector": {
+          "description": "Wählen Sie Ihr Hintergrundbild aus.",
+          "label": "Hintergrundbild-Auswahl",
+          "tooltip": "Hintergrundbild-Auswahl öffnen"
+        },
         "hide-wallpaper-filenames": {
           "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
           "label": "Dateinamen ausblenden"
@@ -1796,7 +1801,7 @@
         "select-folder": "Hintergrundbild-Ordner auswählen",
         "select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
         "selector-position": {
-          "description": "Wählen Sie aus, wo das Hintergrundbildauswahlfeld angezeigt wird.",
+          "description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
           "label": "Position"
         }
       },
