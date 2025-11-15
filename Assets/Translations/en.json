@@ -1680,6 +1680,11 @@
         "description": "Dim the desktop when panels or menus are open.",
         "label": "Dim desktop"
       },
+      "dimmer-opacity": {
+        "description": "Set the opacity level for desktop dimming.",
+        "label": "Dimmed desktop opacity",
+        "reset": "Reset dimmed desktop opacity"
+      },
       "panel-background-opacity": {
         "description": "Set the background opacity for all panels (Launcher, Control Center, Settings, etc.).",
         "label": "Panel background opacity"

@@ -32,6 +32,28 @@ ColumnLayout {
       onToggled: checked => Settings.data.general.dimDesktop = checked
     }
 
+    // when dimDesktop is enabled: dimmer opacity
+    ColumnLayout {
+      visible: Settings.data.general.dimDesktop
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.user-interface.dimmer-opacity.label")
+        description: I18n.tr("settings.user-interface.dimmer-opacity.description")
+      }
+
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.general.dimmerOpacity
+        onMoved: value => Settings.data.general.dimmerOpacity = value
+        text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
+      }
+    }
+
     NToggle {
       label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
       description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")

@@ -1680,6 +1680,11 @@
         "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",
         "label": "Desktop abdunkeln"
       },
+      "dimmer-opacity": {
+        "description": "Deckkraft für das Abdunkeln des Desktops festlegen.",
+        "label": "Deckkraft des gedimmten Desktops",
+        "reset": "Deckkraft des gedimmten Desktops zurücksetzen"
+      },
       "panel-background-opacity": {
         "description": "Hintergrunddeckkraft für alle Paneele festlegen (Launcher, Control Center, Einstellungen usw.).",
         "label": "Paneel-Hintergrunddeckkraft"

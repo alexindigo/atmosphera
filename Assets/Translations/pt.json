@@ -1680,6 +1680,11 @@
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
       },
+      "dimmer-opacity": {
+        "description": "Definir o nível de opacidade para o escurecimento da área de trabalho.",
+        "label": "Opacidade da área de trabalho escurecida",
+        "reset": "Redefinir opacidade da área de trabalho escurecida"
+      },
       "panel-background-opacity": {
         "description": "Definir a opacidade de fundo para todos os painéis (Launcher, Centro de Controle, Configurações, etc.).",
         "label": "Opacidade de fundo do painel"

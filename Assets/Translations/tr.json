@@ -1680,6 +1680,11 @@
         "description": "Paneller veya menüler açıkken masaüstünü karart.",
         "label": "Masaüstünü karart"
       },
+      "dimmer-opacity": {
+        "description": "Masaüstü karartması için opaklık seviyesini ayarlayın.",
+        "label": "Karartılmış masaüstü opaklığı",
+        "reset": "Karartılmış masaüstü opaklığını sıfırla"
+      },
       "panel-background-opacity": {
         "description": "Tüm paneller için arka plan opaklığını ayarlayın (Launcher, Control Center, Ayarlar vb.).",
         "label": "Panel arka plan opaklığı"

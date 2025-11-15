@@ -190,6 +190,7 @@ Singleton {
     property JsonObject general: JsonObject {
       property string avatarImage: ""
       property bool dimDesktop: true
+      property real dimmerOpacity: 0.8
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
       property real scaleRatio: 1.0

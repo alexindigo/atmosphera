@@ -1680,6 +1680,11 @@
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
       },
+      "dimmer-opacity": {
+        "description": "设置桌面变暗时的不透明度。",
+        "label": "变暗桌面不透明度",
+        "reset": "重置变暗桌面不透明度"
+      },
       "panel-background-opacity": {
         "description": "设置所有面板的背景不透明度（启动器、控制中心、设置等）。",
         "label": "面板背景不透明度"
