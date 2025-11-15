@@ -21,7 +21,7 @@ PopupWindow {
   property int widgetIndex: -1
 
   // Track if we should try to load menu items
-  property bool shouldLoadMenu: false
+  property int menuLoadTrigger: 0
   property var menuItems: []
 
   // Menu can be set directly (for submenus) or derived from trayItem
@@ -65,10 +65,8 @@ PopupWindow {
   }
 
   // Only try to load menu items when explicitly requested
-  onShouldLoadMenuChanged: {
-    if (shouldLoadMenu) {
-      loadMenuItemsSafely()
-    }
+  onMenuLoadTriggerChanged: {
+    loadMenuItemsSafely()
   }
 
   function loadMenuItemsSafely() {
@@ -117,11 +115,8 @@ PopupWindow {
     // Reset menu items to force reload with new menu
     menuItems = []
 
-    // Reset and trigger menu loading
-    shouldLoadMenu = false
-    Qt.callLater(() => {
-                   shouldLoadMenu = true
-                 })
+    // Increment trigger to reload menu (always triggers even if already loaded)
+    menuLoadTrigger++
 
     visible = true
     forceActiveFocus()
@@ -164,10 +159,8 @@ PopupWindow {
 
     onMenuChanged: {
       // When menu changes, reset and reload
-      if (root.shouldLoadMenu) {
-        root.menuItems = []
-        Qt.callLater(() => root.loadMenuItemsSafely())
-      }
+      root.menuItems = []
+      Qt.callLater(() => root.loadMenuItemsSafely())
     }
   }
 
@@ -332,7 +325,7 @@ PopupWindow {
                                    entry.subMenu.anchorItem = entry
                                    entry.subMenu.anchorX = openLeft ? -overlap : overlap
                                    entry.subMenu.anchorY = 0
-                                   entry.subMenu.shouldLoadMenu = true
+                                   entry.subMenu.menuLoadTrigger++
                                    entry.subMenu.visible = true
                                    // Force anchor update with new position
                                    Qt.callLater(() => {
