@@ -112,7 +112,7 @@ PanelWindow {
     return monitors.length === 0 || monitors.includes(screenName)
   }
 
-  // Fully reactive mask system, make everything click-through except bar and open panels
+  // Make everything click-through except bar
   mask: Region {
     id: clickableMask
 
@@ -123,9 +123,7 @@ PanelWindow {
     height: root.height
     intersection: Intersection.Xor
 
-    // Only include regions that are actually needed
-    // panelRegions is handled by PanelService, bar is local to this screen
-    regions: [barMaskRegion, backgroundMaskRegion]
+    regions: [barMaskRegion]
 
     // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
     Region {
@@ -133,19 +131,10 @@ PanelWindow {
 
       x: barPlaceholder.x
       y: barPlaceholder.y
+
       // Set width/height to 0 if bar shouldn't show on this screen (makes region empty)
       width: root.barShouldShow ? barPlaceholder.width : 0
       height: root.barShouldShow ? barPlaceholder.height : 0
-      intersection: Intersection.Subtract
-    }
-
-    // Background region for click-to-close - reactive sizing
-    Region {
-      id: backgroundMaskRegion
-      x: 0
-      y: 0
-      width: root.isPanelOpen && !isPanelClosing ? root.width : 0
-      height: root.isPanelOpen && !isPanelClosing ? root.height : 0
       intersection: Intersection.Subtract
     }
   }
