@@ -1776,6 +1776,11 @@
           "label": "壁纸文件夹",
           "tooltip": "浏览壁纸文件夹"
         },
+        "selector": {
+          "description": "选择你的壁纸。",
+          "label": "壁纸选择器",
+          "tooltip": "打开壁纸选择器"
+        },
         "hide-wallpaper-filenames": {
           "description": "在选择器中隐藏壁纸文件名。",
           "label": "隐藏文件名。"

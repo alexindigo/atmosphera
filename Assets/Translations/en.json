@@ -1776,6 +1776,11 @@
           "label": "Wallpaper folder",
           "tooltip": "Browse for wallpaper folder"
         },
+        "selector": {
+          "description": "Choose your wallpaper.",
+          "label": "Wallpaper selector",
+          "tooltip": "Open wallpaper selector"
+        },
         "hide-wallpaper-filenames": {
           "description": "Hide wallpaper filenames in the selector.",
           "label": "Hide filenames"
