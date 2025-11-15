@@ -92,9 +92,10 @@ Singleton {
   // --------------------------------------------
   // Process to fetch disk usage in percent
   // Uses 'df' aka 'disk free'
+  // "-x efivarfs' skips efivarfs mountpoints, for which the `statfs` syscall may cause system-wide stuttering
   Process {
     id: dfProcess
-    command: ["df", "--output=target,pcent"]
+    command: ["df", "--output=target,pcent", "-x", "efivarfs"]
     running: false
     stdout: StdioCollector {
       onStreamFinished: {
