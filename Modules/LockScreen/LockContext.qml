@@ -41,7 +41,7 @@ Scope {
   PamContext {
     id: pam
     config: "login"
-    user: HostService.displayName
+    user: HostService.username
 
     onPamMessage: {
       Logger.i("LockContext", "PAM message:", message, "isError:", messageIsError, "responseRequired:", responseRequired)
