@@ -13,11 +13,7 @@ import qs.Services.System
 
 // Unified OSD component that displays volume, input volume, and brightness changes
 Variants {
-  model: Quickshell.screens.filter(screen => 
-    (Settings.data.osd.monitors.includes(screen.name) || 
-     Settings.data.osd.monitors.length === 0) && 
-    Settings.data.osd.enabled
-  )
+  model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || Settings.data.osd.monitors.length === 0) && Settings.data.osd.enabled)
 
   delegate: Loader {
     id: root
@@ -28,16 +24,16 @@ Variants {
 
     // OSD State
     property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
-    
+
     // Audio Output State
     property real lastKnownVolume: -1
     property bool volumeInitialized: false
     property bool muteInitialized: false
-    
+
     // Audio Input State
     property real lastKnownInputVolume: -1
     property bool inputInitialized: false
-    
+
     // Brightness State
     property real lastUpdatedBrightness: 0
     property bool brightnessInitialized: false
@@ -52,31 +48,33 @@ Variants {
     // ============================================================================
     // Helper Functions
     // ============================================================================
-
     function getIcon() {
       switch (currentOSDType) {
-        case "volume":
-          if (isMuted) return "volume-mute"
-          if (currentVolume <= Number.EPSILON) return "volume-zero"
-          return currentVolume <= 0.5 ? "volume-low" : "volume-high"
-        
-        case "inputVolume":
-          return isInputMuted ? "microphone-off" : "microphone"
-        
-        case "brightness":
-          return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
-        
-        default:
-          return ""
+      case "volume":
+        if (isMuted)
+          return "volume-mute"
+        if (currentVolume <= Number.EPSILON)
+          return "volume-zero"
+        return currentVolume <= 0.5 ? "volume-low" : "volume-high"
+      case "inputVolume":
+        return isInputMuted ? "microphone-off" : "microphone"
+      case "brightness":
+        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
+      default:
+        return ""
       }
     }
 
     function getCurrentValue() {
       switch (currentOSDType) {
-        case "volume": return isMuted ? 0 : currentVolume
-        case "inputVolume": return isInputMuted ? 0 : currentInputVolume
-        case "brightness": return currentBrightness
-        default: return 0
+      case "volume":
+        return isMuted ? 0 : currentVolume
+      case "inputVolume":
+        return isInputMuted ? 0 : currentInputVolume
+      case "brightness":
+        return currentBrightness
+      default:
+        return 0
       }
     }
 
@@ -95,21 +93,18 @@ Variants {
     }
 
     function getProgressColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || 
-                          (currentOSDType === "inputVolume" && isInputMuted)
+      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)
       return isMutedState ? Color.mError : Color.mPrimary
     }
 
     function getIconColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || 
-                          (currentOSDType === "inputVolume" && isInputMuted)
+      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)
       return isMutedState ? Color.mError : Color.mOnSurface
     }
 
     // ============================================================================
     // Audio Initialization
     // ============================================================================
-
     function initializeAudioValues() {
       // Initialize output volume
       if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
@@ -120,10 +115,9 @@ Variants {
           muteInitialized = true
         }
       }
-      
+
       // Initialize input volume
-      if (AudioService.hasInput && AudioService.source?.ready && 
-          AudioService.source?.audio && lastKnownInputVolume < 0) {
+      if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
         const inputVol = AudioService.inputVolume
         if (inputVol !== undefined && !isNaN(inputVol)) {
           lastKnownInputVolume = inputVol
@@ -148,9 +142,8 @@ Variants {
     // ============================================================================
     // Brightness Handling
     // ============================================================================
-
     function connectBrightnessMonitors() {
-      for (let i = 0; i < BrightnessService.monitors.length; i++) {
+      for (var i = 0; i < BrightnessService.monitors.length; i++) {
         const monitor = BrightnessService.monitors[i]
         monitor.brightnessUpdated.disconnect(onBrightnessChanged)
         monitor.brightnessUpdated.connect(onBrightnessChanged)
@@ -159,19 +152,18 @@ Variants {
 
     function onBrightnessChanged(newBrightness) {
       lastUpdatedBrightness = newBrightness
-      
+
       if (!brightnessInitialized) {
         brightnessInitialized = true
         return
       }
-      
+
       showOSD("brightness")
     }
 
     // ============================================================================
     // OSD Display Control
     // ============================================================================
-
     function showOSD(type) {
       currentOSDType = type
 
@@ -183,8 +175,9 @@ Variants {
         root.item.showOSD()
       } else {
         Qt.callLater(() => {
-          if (root.item) root.item.showOSD()
-        })
+                       if (root.item)
+                       root.item.showOSD()
+                     })
       }
     }
 
@@ -203,15 +196,16 @@ Variants {
     // Pipewire state monitoring
     Connections {
       target: Pipewire
-      
+
       function onReadyChanged() {
-        if (Pipewire.ready) Qt.callLater(initializeAudioValues)
+        if (Pipewire.ready)
+          Qt.callLater(initializeAudioValues)
       }
-      
+
       function onDefaultAudioSinkChanged() {
         resetOutputInit()
       }
-      
+
       function onDefaultAudioSourceChanged() {
         resetInputInit()
       }
@@ -220,7 +214,7 @@ Variants {
     // AudioService monitoring
     Connections {
       target: AudioService
-      
+
       function onSinkChanged() {
         if (AudioService.sink?.ready && AudioService.sink?.audio) {
           resetOutputInit()
@@ -236,10 +230,12 @@ Variants {
       function onVolumeChanged() {
         if (lastKnownVolume < 0) {
           initializeAudioValues()
-          if (lastKnownVolume < 0) return
+          if (lastKnownVolume < 0)
+            return
         }
-        if (!volumeInitialized) return
-        
+        if (!volumeInitialized)
+          return
+
         if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
           lastKnownVolume = AudioService.volume
           showOSD("volume")
@@ -249,21 +245,26 @@ Variants {
       function onMutedChanged() {
         if (lastKnownVolume < 0) {
           initializeAudioValues()
-          if (lastKnownVolume < 0) return
+          if (lastKnownVolume < 0)
+            return
         }
-        if (!muteInitialized) return
+        if (!muteInitialized)
+          return
         showOSD("volume")
       }
 
       function onInputVolumeChanged() {
-        if (!AudioService.hasInput) return
-        
+        if (!AudioService.hasInput)
+          return
+
         if (lastKnownInputVolume < 0) {
           initializeAudioValues()
-          if (lastKnownInputVolume < 0) return
+          if (lastKnownInputVolume < 0)
+            return
         }
-        if (!inputInitialized) return
-        
+        if (!inputInitialized)
+          return
+
         if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
           lastKnownInputVolume = AudioService.inputVolume
           showOSD("inputVolume")
@@ -271,13 +272,16 @@ Variants {
       }
 
       function onInputMutedChanged() {
-        if (!AudioService.hasInput) return
-        
+        if (!AudioService.hasInput)
+          return
+
         if (lastKnownInputVolume < 0) {
           initializeAudioValues()
-          if (lastKnownInputVolume < 0) return
+          if (lastKnownInputVolume < 0)
+            return
         }
-        if (!inputInitialized) return
+        if (!inputInitialized)
+          return
         showOSD("inputVolume")
       }
     }
@@ -296,7 +300,8 @@ Variants {
       interval: 500
       running: true
       onTriggered: {
-        if (Pipewire.ready) initializeAudioValues()
+        if (Pipewire.ready)
+          initializeAudioValues()
         muteInitialized = true
         connectBrightnessMonitors()
       }
@@ -308,14 +313,15 @@ Variants {
       running: true
       repeat: true
       onTriggered: {
-        if (!Pipewire.ready) return
-        
+        if (!Pipewire.ready)
+          return
+
         const needsOutputInit = lastKnownVolume < 0
         const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0
-        
+
         if (needsOutputInit || needsInputInit) {
           initializeAudioValues()
-          
+
           // Stop timer if both are initialized
           const outputDone = lastKnownVolume >= 0
           const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0
@@ -331,7 +337,6 @@ Variants {
     // ============================================================================
     // Visual Component
     // ============================================================================
-
     sourceComponent: PanelWindow {
       id: panel
       screen: modelData
@@ -360,13 +365,13 @@ Variants {
       anchors.right: isRight
 
       function calculateMargin(isAnchored, position) {
-        if (!isAnchored) return 0
-        
+        if (!isAnchored)
+          return 0
+
         let base = Style.marginM
         if (Settings.data.bar.position === position) {
           const isVertical = position === "top" || position === "bottom"
-          const floatExtra = Settings.data.bar.floating ? 
-            (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) * Style.marginXL : 0
+          const floatExtra = Settings.data.bar.floating ? (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) * Style.marginXL : 0
           return Style.barHeight + base + floatExtra
         }
         return base
@@ -493,7 +498,7 @@ Variants {
                     easing.type: Easing.InOutQuad
                   }
                 }
-                
+
                 Behavior on color {
                   ColorAnimation {
                     duration: Style.animationNormal
@@ -561,7 +566,7 @@ Variants {
                       easing.type: Easing.InOutQuad
                     }
                   }
-                  
+
                   Behavior on color {
                     ColorAnimation {
                       duration: Style.animationNormal
@@ -577,7 +582,7 @@ Variants {
               color: root.getIconColor()
               pointSize: Style.fontSizeL
               Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-              
+
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationNormal
@@ -592,12 +597,12 @@ Variants {
           hideTimer.stop()
           visibilityTimer.stop()
           osdItem.visible = true
-          
+
           Qt.callLater(() => {
-            osdItem.opacity = 1
-            osdItem.scale = 1.0
-          })
-          
+                         osdItem.opacity = 1
+                         osdItem.scale = 1.0
+                       })
+
           hideTimer.start()
         }
 
