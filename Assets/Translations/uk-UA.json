@@ -580,6 +580,7 @@
     "search-icons": "напр., noctalia, niri, battery, cloud",
     "search-launcher": "Пошук записів... або використовуйте > для команд",
     "search-wallpapers": "Введіть для фільтрації шпалер...",
+    "search-wallhaven": "Пошук у Wallhaven...",
     "select": "Вибрати",
     "test": "Тест"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Попередній місяць",
     "refresh": "Оновити",
     "refresh-devices": "Оновити пристрої",
+    "refresh-wallhaven": "Оновити результати Wallhaven",
     "refresh-wallpaper-list": "Оновити список шпалер",
     "remove-widget": "Видалити віджет",
     "screen-recorder-not-installed": "Запис екрана не встановлено",
@@ -2039,7 +2041,24 @@
         "description": "Застосувати вибрані шпалери до всіх моніторів одночасно.",
         "label": "Застосувати до всіх моніторів"
       },
+      "categories": {
+        "anime": "Аніме",
+        "general": "Загальне",
+        "label": "Категорії",
+        "people": "Люди"
+      },
+      "purity": {
+        "all": "Всі",
+        "label": "Фільтр контенту",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Пошук:",
+      "source": {
+        "label": "Джерело",
+        "local": "Локальний",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Вибір шпалер"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Смуги",
       "wipe": "Змітання"
     },
-    "try-different-search": "Спробуйте інший пошуковий запит."
+    "try-different-search": "Спробуйте інший пошуковий запит.",
+    "wallhaven": {
+      "loading": "Завантаження шпалер...",
+      "no-results": "Шпалери не знайдено. Спробуйте інший пошуковий запит.",
+      "page": "Сторінка {current} з {total}"
+    }
   },
   "weather": {
     "clear-sky": "Ясне небо",

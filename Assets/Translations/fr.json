@@ -580,6 +580,7 @@
     "search-icons": "ex: noctalia, niri, batterie, nuage",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",
     "search-wallpapers": "Tapez pour filtrer les fonds d'écran...",
+    "search-wallhaven": "Rechercher sur Wallhaven...",
     "select": "Sélectionner",
     "test": "Tester"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Mois précédent",
     "refresh": "Actualiser",
     "refresh-devices": "Actualiser les appareils",
+    "refresh-wallhaven": "Actualiser les résultats de Wallhaven",
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
     "screen-recorder-not-installed": "L'enregistreur d'écran n'est pas installé",
@@ -2039,7 +2041,24 @@
         "description": "Appliquer le fond d'écran sélectionné à tous les moniteurs en même temps.",
         "label": "Appliquer à tous les moniteurs"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Général",
+        "label": "Catégories",
+        "people": "Personnes"
+      },
+      "purity": {
+        "all": "Tout",
+        "label": "Filtre de contenu",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Rechercher :",
+      "source": {
+        "label": "Source",
+        "local": "Local",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Sélecteur de fond d'écran"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Rayures",
       "wipe": "Balayage"
     },
-    "try-different-search": "Essayez une autre requête de recherche."
+    "try-different-search": "Essayez une autre requête de recherche.",
+    "wallhaven": {
+      "loading": "Chargement des fonds d'écran...",
+      "no-results": "Aucun fond d'écran trouvé. Essayez une autre requête de recherche.",
+      "page": "Page {current} sur {total}"
+    }
   },
   "weather": {
     "clear-sky": "Ciel dégagé",

@@ -580,6 +580,7 @@
     "search-icons": "bijv. noctalia, niri, battery, cloud",
     "search-launcher": "Items zoeken... of gebruik > voor commando's",
     "search-wallpapers": "Typ om achtergronden te filteren...",
+    "search-wallhaven": "Zoek in Wallhaven...",
     "select": "Selecteren",
     "test": "Test"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Vorige maand",
     "refresh": "Verversen",
     "refresh-devices": "Apparaten verversen",
+    "refresh-wallhaven": "Wallhaven-resultaten verversen",
     "refresh-wallpaper-list": "Achtergrondlijst verversen",
     "remove-widget": "Widget verwijderen",
     "screen-recorder-not-installed": "Schermrecorder is niet geïnstalleerd",
@@ -2039,7 +2041,24 @@
         "description": "Pas de geselecteerde achtergrond in één keer op alle monitoren toe.",
         "label": "Toepassen op alle monitoren"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Algemeen",
+        "label": "Categorieën",
+        "people": "Mensen"
+      },
+      "purity": {
+        "all": "Alles",
+        "label": "Inhoudsfilter",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Zoeken:",
+      "source": {
+        "label": "Bron",
+        "local": "Lokaal",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Achtergrondkiezer"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Strepen",
       "wipe": "Vegen"
     },
-    "try-different-search": "Probeer een andere zoekopdracht."
+    "try-different-search": "Probeer een andere zoekopdracht.",
+    "wallhaven": {
+      "loading": "Achtergronden laden...",
+      "no-results": "Geen achtergronden gevonden. Probeer een andere zoekopdracht.",
+      "page": "Pagina {current} van {total}"
+    }
   },
   "weather": {
     "clear-sky": "Onbewolkt",

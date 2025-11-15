@@ -580,6 +580,7 @@
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",
     "search-wallpapers": "输入以筛选壁纸...",
+    "search-wallhaven": "搜索 Wallhaven...",
     "select": "选择",
     "test": "测试"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "上个月",
     "refresh": "刷新",
     "refresh-devices": "刷新设备",
+    "refresh-wallhaven": "刷新 Wallhaven 结果",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
     "screen-recorder-not-installed": "屏幕录制器未安装",
@@ -2039,7 +2041,24 @@
         "description": "一次性将选定的壁纸应用到所有显示器。",
         "label": "应用到所有显示器"
       },
+      "categories": {
+        "anime": "动漫",
+        "general": "通用",
+        "label": "分类",
+        "people": "人物"
+      },
+      "purity": {
+        "all": "全部",
+        "label": "内容过滤器",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "搜索：",
+      "source": {
+        "label": "来源",
+        "local": "本地",
+        "wallhaven": "Wallhaven"
+      },
       "title": "壁纸选择器"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "条纹",
       "wipe": "擦除"
     },
-    "try-different-search": "尝试不同的搜索查询。"
+    "try-different-search": "尝试不同的搜索查询。",
+    "wallhaven": {
+      "loading": "正在加载壁纸...",
+      "no-results": "未找到壁纸。请尝试不同的搜索查询。",
+      "page": "第 {current} 页，共 {total} 页"
+    }
   },
   "weather": {
     "clear-sky": "晴朗",

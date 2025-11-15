@@ -580,6 +580,7 @@
     "search-icons": "e.g., noctalia, niri, battery, cloud",
     "search-launcher": "Search entries... or use > for commands",
     "search-wallpapers": "Type to filter wallpapers...",
+    "search-wallhaven": "Search Wallhaven...",
     "select": "Select",
     "test": "Test"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Previous month",
     "refresh": "Refresh",
     "refresh-devices": "Refresh devices",
+    "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder is not installed",
@@ -2036,11 +2038,28 @@
     "no-wallpaper": "No wallpaper found.",
     "panel": {
       "apply-all-monitors": {
-        "description": "Apply selected wallpaper to all monitors at once.",
+        "description": "Apply the selected wallpaper to all monitors.",
         "label": "Apply to all monitors"
       },
-      "search": "Search:",
-      "title": "Wallpaper selector"
+      "categories": {
+        "anime": "Anime",
+        "general": "General",
+        "label": "Categories",
+        "people": "People"
+      },
+      "purity": {
+        "all": "All",
+        "label": "Content filter",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "search": "Search",
+      "source": {
+        "label": "Source",
+        "local": "Local",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "Wallpaper Selector"
     },
     "transitions": {
       "disc": "Disc",
@@ -2050,7 +2069,13 @@
       "stripes": "Stripes",
       "wipe": "Wipe"
     },
-    "try-different-search": "Try a different search query."
+    "try-different-search": "Try a different search query.",
+    "unknown": "Unknown",
+    "wallhaven": {
+      "loading": "Loading wallpapers...",
+      "no-results": "No wallpapers found. Try a different search query.",
+      "page": "Page {current} of {total}"
+    }
   },
   "weather": {
     "clear-sky": "Clear sky",

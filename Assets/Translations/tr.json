@@ -580,6 +580,7 @@
     "search-icons": "örn., noctalia, niri, battery, cloud",
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",
     "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
+    "search-wallhaven": "Wallhaven'da ara...",
     "select": "Seç",
     "test": "Test"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Önceki ay",
     "refresh": "Yenile",
     "refresh-devices": "Cihazları yenile",
+    "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
     "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
@@ -2039,7 +2041,24 @@
         "description": "Seçilen duvar kağıdını tüm monitörlere aynı anda uygulayın.",
         "label": "Tüm monitörler için uygula"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Genel",
+        "label": "Kategoriler",
+        "people": "İnsanlar"
+      },
+      "purity": {
+        "all": "Tümü",
+        "label": "İçerik filtresi",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Ara:",
+      "source": {
+        "label": "Kaynak",
+        "local": "Yerel",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Duvar kağıdı seçici"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Çizgiler",
       "wipe": "Silme"
     },
-    "try-different-search": "Farklı bir arama sorgusu deneyin."
+    "try-different-search": "Farklı bir arama sorgusu deneyin.",
+    "wallhaven": {
+      "loading": "Duvar kağıtları yükleniyor...",
+      "no-results": "Duvar kağıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
+      "page": "Sayfa {current} / {total}"
+    }
   },
   "weather": {
     "clear-sky": "Açık hava",

@@ -193,9 +193,17 @@ SmartPanel {
 
         NIconButton {
           icon: "refresh"
-          tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
+          tooltipText: Settings.data.wallpaper.useWallhaven ? I18n.tr("tooltips.refresh-wallhaven") : I18n.tr("tooltips.refresh-wallpaper-list")
           baseSize: Style.baseWidgetSize * 0.8
-          onClicked: WallpaperService.refreshWallpapersList()
+          onClicked: {
+            if (Settings.data.wallpaper.useWallhaven) {
+              if (typeof WallhavenService !== "undefined") {
+                WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+              }
+            } else {
+              WallpaperService.refreshWallpapersList()
+            }
+          }
         }
 
         NIconButton {
@@ -210,6 +218,425 @@ SmartPanel {
         Layout.fillWidth: true
       }
 
+      // Unified search input
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+
+        NText {
+          text: I18n.tr("wallpaper.panel.search")
+          color: Color.mOnSurface
+          pointSize: Style.fontSizeM
+          Layout.preferredWidth: implicitWidth
+        }
+
+        NTextInput {
+          id: searchInput
+          placeholderText: Settings.data.wallpaper.useWallhaven ? I18n.tr("placeholders.search-wallhaven") : I18n.tr("placeholders.search-wallpapers")
+          Layout.fillWidth: true
+          
+          property bool initializing: true
+          Component.onCompleted: {
+            // Initialize text based on current mode
+            if (Settings.data.wallpaper.useWallhaven) {
+              searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+            } else {
+              searchInput.text = wallpaperPanel.filterText || ""
+            }
+            // Give focus to search input
+            if (searchInput.inputItem && searchInput.inputItem.visible) {
+              searchInput.inputItem.forceActiveFocus()
+            }
+            // Mark initialization as complete after a short delay
+            Qt.callLater(function() {
+              searchInput.initializing = false
+            })
+          }
+          
+          Connections {
+            target: Settings.data.wallpaper
+            function onUseWallhavenChanged() {
+              // Update text when mode changes
+              if (Settings.data.wallpaper.useWallhaven) {
+                searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+              } else {
+                searchInput.text = wallpaperPanel.filterText || ""
+              }
+            }
+          }
+
+          onTextChanged: {
+            // Don't trigger search during initialization - Component.onCompleted will handle initial search
+            if (initializing) {
+              return
+            }
+            if (Settings.data.wallpaper.useWallhaven) {
+              wallhavenSearchDebounceTimer.restart()
+            } else {
+              searchDebounceTimer.restart()
+            }
+          }
+
+          onEditingFinished: {
+            if (Settings.data.wallpaper.useWallhaven) {
+              wallhavenSearchDebounceTimer.stop()
+              Settings.data.wallpaper.wallhavenQuery = text
+              if (typeof WallhavenService !== "undefined") {
+                wallhavenView.loading = true
+                WallhavenService.search(text, 1)
+              }
+            }
+          }
+
+          Keys.onDownPressed: {
+            if (Settings.data.wallpaper.useWallhaven) {
+              if (wallhavenView && wallhavenView.gridView) {
+                wallhavenView.gridView.forceActiveFocus()
+              }
+            } else {
+              let currentView = screenRepeater.itemAt(currentScreenIndex)
+              if (currentView && currentView.gridView) {
+                currentView.gridView.forceActiveFocus()
+              }
+            }
+          }
+        }
+      }
+
+      // Debounce timer for Wallhaven search
+      Timer {
+        id: wallhavenSearchDebounceTimer
+        interval: 500
+        onTriggered: {
+          Settings.data.wallpaper.wallhavenQuery = searchInput.text
+          if (typeof WallhavenService !== "undefined") {
+            wallhavenView.loading = true
+            WallhavenService.search(searchInput.text, 1)
+          }
+        }
+      }
+
+      // Source selector
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+
+        NText {
+          text: I18n.tr("wallpaper.panel.source.label")
+          color: Color.mOnSurface
+          pointSize: Style.fontSizeM
+          Layout.preferredWidth: implicitWidth
+        }
+
+        NComboBox {
+          id: sourceComboBox
+          Layout.fillWidth: true
+          model: [
+            { "key": "local", "name": I18n.tr("wallpaper.panel.source.local") },
+            { "key": "wallhaven", "name": I18n.tr("wallpaper.panel.source.wallhaven") }
+          ]
+          currentKey: Settings.data.wallpaper.useWallhaven ? "wallhaven" : "local"
+          property bool skipNextSelected: false
+          Component.onCompleted: {
+            // Skip the first onSelected if it fires during initialization
+            skipNextSelected = true
+            Qt.callLater(function() {
+              skipNextSelected = false
+            })
+          }
+          onSelected: key => {
+            if (skipNextSelected) {
+              return
+            }
+            var useWallhaven = (key === "wallhaven")
+            Settings.data.wallpaper.useWallhaven = useWallhaven
+            // Update search input text based on mode
+            if (useWallhaven) {
+              searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+            } else {
+              searchInput.text = wallpaperPanel.filterText || ""
+            }
+            if (useWallhaven && typeof WallhavenService !== "undefined") {
+              // Update service properties when switching to Wallhaven
+              // Don't search here - Component.onCompleted will handle it when the component is created
+              // This prevents duplicate searches
+              WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories
+              WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
+              WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
+              WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+              // If the view is already initialized, trigger a new search when switching to it
+              if (wallhavenView && wallhavenView.initialized && !WallhavenService.fetching) {
+                wallhavenView.loading = true
+                WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+              }
+            }
+          }
+        }
+      }
+
+      // Wallhaven category toggles
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+        visible: Settings.data.wallpaper.useWallhaven
+
+        NText {
+          text: I18n.tr("wallpaper.panel.categories.label")
+          color: Color.mOnSurface
+          pointSize: Style.fontSizeM
+          Layout.preferredWidth: implicitWidth
+        }
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        RowLayout {
+          id: categoriesRow
+          spacing: Style.marginL
+
+          function getCategoryValue(index) {
+            var cats = Settings.data.wallpaper.wallhavenCategories || "111"
+            return cats.length > index && cats.charAt(index) === "1"
+          }
+
+          function updateCategories(general, anime, people) {
+            var categories = (general ? "1" : "0") + (anime ? "1" : "0") + (people ? "1" : "0")
+            Settings.data.wallpaper.wallhavenCategories = categories
+            // Update checkboxes immediately
+            generalToggle.checked = general
+            animeToggle.checked = anime
+            peopleToggle.checked = people
+            if (typeof WallhavenService !== "undefined") {
+              WallhavenService.categories = categories
+              WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+            }
+          }
+
+          Connections {
+            target: Settings.data.wallpaper
+            function onWallhavenCategoriesChanged() {
+              generalToggle.checked = categoriesRow.getCategoryValue(0)
+              animeToggle.checked = categoriesRow.getCategoryValue(1)
+              peopleToggle.checked = categoriesRow.getCategoryValue(2)
+            }
+          }
+
+          Component.onCompleted: {
+            generalToggle.checked = categoriesRow.getCategoryValue(0)
+            animeToggle.checked = categoriesRow.getCategoryValue(1)
+            peopleToggle.checked = categoriesRow.getCategoryValue(2)
+          }
+
+          // General checkbox
+          Item {
+            Layout.preferredWidth: generalCheckboxRow.implicitWidth
+            Layout.preferredHeight: generalCheckboxRow.implicitHeight
+
+            RowLayout {
+              id: generalCheckboxRow
+              anchors.fill: parent
+              spacing: Style.marginS
+
+              NText {
+                text: I18n.tr("wallpaper.panel.categories.general")
+                color: Color.mOnSurface
+                pointSize: Style.fontSizeM
+              }
+
+              Rectangle {
+                id: generalBox
+                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
+                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
+                radius: Style.radiusXS
+                color: generalToggle.checked ? Color.mPrimary : Color.mSurface
+                border.color: Color.mOutline
+                border.width: Style.borderS
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+
+                NIcon {
+                  visible: generalToggle.checked
+                  anchors.centerIn: parent
+                  anchors.horizontalCenterOffset: -1
+                  icon: "check"
+                  color: Color.mOnPrimary
+                  pointSize: Math.max(Style.fontSizeXS, generalBox.width * 0.5)
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: generalToggle.toggled(!generalToggle.checked)
+                }
+              }
+            }
+          }
+
+          // Anime checkbox
+          Item {
+            Layout.preferredWidth: animeCheckboxRow.implicitWidth
+            Layout.preferredHeight: animeCheckboxRow.implicitHeight
+
+            RowLayout {
+              id: animeCheckboxRow
+              anchors.fill: parent
+              spacing: Style.marginS
+
+              NText {
+                text: I18n.tr("wallpaper.panel.categories.anime")
+                color: Color.mOnSurface
+                pointSize: Style.fontSizeM
+              }
+
+              Rectangle {
+                id: animeBox
+                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
+                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
+                radius: Style.radiusXS
+                color: animeToggle.checked ? Color.mPrimary : Color.mSurface
+                border.color: Color.mOutline
+                border.width: Style.borderS
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+
+                NIcon {
+                  visible: animeToggle.checked
+                  anchors.centerIn: parent
+                  anchors.horizontalCenterOffset: -1
+                  icon: "check"
+                  color: Color.mOnPrimary
+                  pointSize: Math.max(Style.fontSizeXS, animeBox.width * 0.5)
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: animeToggle.toggled(!animeToggle.checked)
+                }
+              }
+            }
+          }
+
+          // People checkbox
+          Item {
+            Layout.preferredWidth: peopleCheckboxRow.implicitWidth
+            Layout.preferredHeight: peopleCheckboxRow.implicitHeight
+
+            RowLayout {
+              id: peopleCheckboxRow
+              anchors.fill: parent
+              spacing: Style.marginS
+
+              NText {
+                text: I18n.tr("wallpaper.panel.categories.people")
+                color: Color.mOnSurface
+                pointSize: Style.fontSizeM
+              }
+
+              Rectangle {
+                id: peopleBox
+                implicitWidth: Math.round(Style.baseWidgetSize * 0.7)
+                implicitHeight: Math.round(Style.baseWidgetSize * 0.7)
+                radius: Style.radiusXS
+                color: peopleToggle.checked ? Color.mPrimary : Color.mSurface
+                border.color: Color.mOutline
+                border.width: Style.borderS
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+
+                NIcon {
+                  visible: peopleToggle.checked
+                  anchors.centerIn: parent
+                  anchors.horizontalCenterOffset: -1
+                  icon: "check"
+                  color: Color.mOnPrimary
+                  pointSize: Math.max(Style.fontSizeXS, peopleBox.width * 0.5)
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  cursorShape: Qt.PointingHandCursor
+                  onClicked: peopleToggle.toggled(!peopleToggle.checked)
+                }
+              }
+            }
+          }
+
+          // Invisible checkboxes to maintain the signal handlers
+          QtObject {
+            id: generalToggle
+            property bool checked: false
+            signal toggled(bool checked)
+            onToggled: checked => {
+              categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2))
+            }
+          }
+
+          QtObject {
+            id: animeToggle
+            property bool checked: false
+            signal toggled(bool checked)
+            onToggled: checked => {
+              categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2))
+            }
+          }
+
+          QtObject {
+            id: peopleToggle
+            property bool checked: false
+            signal toggled(bool checked)
+            onToggled: checked => {
+              categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked)
+            }
+          }
+        }
+      }
+
+      // Wallhaven purity selector
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginM
+        visible: Settings.data.wallpaper.useWallhaven
+
+        NText {
+          text: I18n.tr("wallpaper.panel.purity.label")
+          color: Color.mOnSurface
+          pointSize: Style.fontSizeM
+          Layout.preferredWidth: implicitWidth
+        }
+
+        NComboBox {
+          id: purityComboBox
+          Layout.fillWidth: true
+          model: [
+            { "key": "111", "name": I18n.tr("wallpaper.panel.purity.all") },
+            { "key": "100", "name": I18n.tr("wallpaper.panel.purity.sfw") },
+            { "key": "010", "name": I18n.tr("wallpaper.panel.purity.sketchy") }
+          ]
+          currentKey: Settings.data.wallpaper.wallhavenPurity
+          onSelected: key => {
+            Settings.data.wallpaper.wallhavenPurity = key
+            if (typeof WallhavenService !== "undefined") {
+              WallhavenService.purity = key
+              WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+            }
+          }
+        }
+      }
+
       NToggle {
         label: I18n.tr("wallpaper.panel.apply-all-monitors.label")
         description: I18n.tr("wallpaper.panel.apply-all-monitors.description")
@@ -221,7 +648,7 @@ SmartPanel {
       // Monitor tabs
       NTabBar {
         id: screenTabBar
-        visible: !Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories
+        visible: (!Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories) && !Settings.data.wallpaper.useWallhaven
         Layout.fillWidth: true
         currentIndex: currentScreenIndex
         onCurrentIndexChanged: currentScreenIndex = currentIndex
@@ -238,55 +665,30 @@ SmartPanel {
           }
         }
       }
-      // StackLayout for each screen's wallpaper content
+      // Content stack: Wallhaven or Local
       StackLayout {
-        id: screenStack
+        id: contentStack
         Layout.fillWidth: true
         Layout.fillHeight: true
-        currentIndex: currentScreenIndex
+        currentIndex: Settings.data.wallpaper.useWallhaven ? 1 : 0
 
-        Repeater {
-          id: screenRepeater
-          model: Quickshell.screens
-          delegate: WallpaperScreenView {
-            targetScreen: modelData
-          }
-        }
-      }
+        // Local wallpapers
+        StackLayout {
+          id: screenStack
+          currentIndex: currentScreenIndex
 
-      // Filter input
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-
-        NText {
-          text: I18n.tr("wallpaper.panel.search")
-          color: Color.mOnSurface
-          pointSize: Style.fontSizeM
-          Layout.preferredWidth: implicitWidth
-        }
-
-        NTextInput {
-          id: searchInput
-          placeholderText: I18n.tr("placeholders.search-wallpapers")
-          Layout.fillWidth: true
-
-          onTextChanged: {
-            searchDebounceTimer.restart()
-          }
-
-          Keys.onDownPressed: {
-            let currentView = screenRepeater.itemAt(currentScreenIndex)
-            if (currentView && currentView.gridView) {
-              currentView.gridView.forceActiveFocus()
+          Repeater {
+            id: screenRepeater
+            model: Quickshell.screens
+            delegate: WallpaperScreenView {
+              targetScreen: modelData
             }
           }
+        }
 
-          Component.onCompleted: {
-            if (searchInput.inputItem && searchInput.inputItem.visible) {
-              searchInput.inputItem.forceActiveFocus()
-            }
-          }
+        // Wallhaven wallpapers
+        WallhavenView {
+          id: wallhavenView
         }
       }
     }
@@ -618,6 +1020,405 @@ SmartPanel {
           Item {
             Layout.fillHeight: true
           }
+        }
+      }
+    }
+  }
+
+  // Component for Wallhaven wallpapers view
+  component WallhavenView: Item {
+    id: wallhavenViewRoot
+    property alias gridView: wallhavenGridView
+
+    property var wallpapers: []
+    property bool loading: false
+    property string errorMessage: ""
+    property bool initialized: false
+    property bool searchScheduled: false
+
+    Connections {
+      target: typeof WallhavenService !== "undefined" ? WallhavenService : null
+      function onSearchCompleted(results, meta) {
+        wallhavenViewRoot.wallpapers = results || []
+        wallhavenViewRoot.loading = false
+        wallhavenViewRoot.errorMessage = ""
+        wallhavenViewRoot.searchScheduled = false
+      }
+      function onSearchFailed(error) {
+        wallhavenViewRoot.loading = false
+        wallhavenViewRoot.errorMessage = error || ""
+        wallhavenViewRoot.searchScheduled = false
+      }
+    }
+
+    Component.onCompleted: {
+      // Initialize service properties and perform initial search if Wallhaven is active
+      if (typeof WallhavenService !== "undefined" && Settings.data.wallpaper.useWallhaven && !initialized) {
+        // Set flags immediately to prevent race conditions
+        if (WallhavenService.initialSearchScheduled) {
+          // Another instance already scheduled the search, just initialize properties
+          initialized = true
+          return
+        }
+        
+        // We're the first one - claim the search
+        initialized = true
+        WallhavenService.initialSearchScheduled = true
+        WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories
+        WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
+        WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
+        WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+        
+        // Now check if we can actually search (fetching check is in WallhavenService.search)
+        loading = true
+        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+      }
+    }
+
+
+    ColumnLayout {
+      anchors.fill: parent
+      spacing: Style.marginM
+
+      Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        GridView {
+          id: wallhavenGridView
+
+          anchors.fill: parent
+
+          visible: !loading && errorMessage === "" && (wallpapers && wallpapers.length > 0)
+          interactive: true
+          clip: true
+          focus: true
+          keyNavigationEnabled: true
+          keyNavigationWraps: false
+
+          model: wallpapers || []
+
+        property int columns: (screen.width > 1920) ? 5 : 4
+        property int itemSize: cellWidth
+
+        cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
+        cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
+
+        leftMargin: Style.marginS
+        rightMargin: Style.marginS
+        topMargin: Style.marginS
+        bottomMargin: Style.marginS
+
+        onCurrentIndexChanged: {
+          if (currentIndex >= 0) {
+            let row = Math.floor(currentIndex / columns)
+            let itemY = row * cellHeight
+            let viewportTop = contentY
+            let viewportBottom = viewportTop + height
+
+            if (itemY < viewportTop) {
+              contentY = Math.max(0, itemY - cellHeight)
+            } else if (itemY + cellHeight > viewportBottom) {
+              contentY = itemY + cellHeight - height + cellHeight
+            }
+          }
+        }
+
+        Keys.onPressed: event => {
+                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
+                            if (currentIndex >= 0 && currentIndex < wallpapers.length) {
+                              let wallpaper = wallpapers[currentIndex]
+                              if (typeof WallhavenService !== "undefined") {
+                                WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
+                                  if (success) {
+                                    if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                                      WallpaperService.changeWallpaper(localPath, undefined)
+                                    } else {
+                                      WallpaperService.changeWallpaper(localPath, screen.name)
+                                    }
+                                  }
+                                })
+                              }
+                            }
+                            event.accepted = true
+                          }
+                        }
+
+        ScrollBar.vertical: ScrollBar {
+          policy: ScrollBar.AsNeeded
+          parent: wallhavenGridView
+          x: wallhavenGridView.mirrored ? 0 : wallhavenGridView.width - width
+          y: 0
+          height: wallhavenGridView.height
+
+          property color handleColor: Qt.alpha(Color.mHover, 0.8)
+          property color handleHoverColor: handleColor
+          property color handlePressedColor: handleColor
+          property real handleWidth: 6
+          property real handleRadius: Style.radiusM
+
+          contentItem: Rectangle {
+            implicitWidth: parent.handleWidth
+            implicitHeight: 100
+            radius: parent.handleRadius
+            color: parent.pressed ? parent.handlePressedColor : parent.hovered ? parent.handleHoverColor : parent.handleColor
+            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+
+          background: Rectangle {
+            implicitWidth: parent.handleWidth
+            implicitHeight: 100
+            color: Color.transparent
+            opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+            radius: parent.handleRadius / 2
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+        }
+
+        delegate: ColumnLayout {
+          id: wallhavenItem
+
+          required property var modelData
+          required property int index
+          property string thumbnailUrl: (modelData && typeof WallhavenService !== "undefined") ? WallhavenService.getThumbnailUrl(modelData, "large") : ""
+          property string wallpaperId: (modelData && modelData.id) ? modelData.id : ""
+
+          width: wallhavenGridView.itemSize
+          spacing: Style.marginXS
+
+          Rectangle {
+            id: imageContainer
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.round(wallhavenGridView.itemSize * 0.67)
+            color: Color.transparent
+
+            Image {
+              id: img
+              source: thumbnailUrl
+              anchors.fill: parent
+              fillMode: Image.PreserveAspectCrop
+              asynchronous: true
+              cache: true
+              smooth: true
+              sourceSize.width: Math.round(wallhavenGridView.itemSize * 0.67)
+              sourceSize.height: Math.round(wallhavenGridView.itemSize * 0.67)
+            }
+
+            Rectangle {
+              anchors.fill: parent
+              color: Color.transparent
+              border.color: wallhavenGridView.currentIndex === index ? Color.mHover : Color.mSurface
+              border.width: Math.max(1, Style.borderL * 1.5)
+            }
+
+            Rectangle {
+              anchors.fill: parent
+              color: Color.mSurface
+              opacity: hoverHandler.hovered || wallhavenGridView.currentIndex === index ? 0 : 0.3
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationFast
+                }
+              }
+            }
+
+            HoverHandler {
+              id: hoverHandler
+            }
+
+            TapHandler {
+              onTapped: {
+                wallhavenGridView.currentIndex = index
+                if (typeof WallhavenService !== "undefined") {
+                  WallhavenService.downloadWallpaper(modelData, function (success, localPath) {
+                    if (success) {
+                      if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                        WallpaperService.changeWallpaper(localPath, undefined)
+                      } else {
+                        WallpaperService.changeWallpaper(localPath, screen.name)
+                      }
+                    }
+                  })
+                }
+              }
+            }
+          }
+
+          NText {
+            text: wallpaperId || I18n.tr("wallpaper.unknown")
+            color: hoverHandler.hovered || wallhavenGridView.currentIndex === index ? Color.mOnSurface : Color.mOnSurfaceVariant
+            pointSize: Style.fontSizeXS
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.marginS
+            Layout.rightMargin: Style.marginS
+            Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+          }
+        }
+      }
+
+        // Loading overlay - fills same space as GridView to prevent jumping
+        Rectangle {
+          anchors.fill: parent
+          color: Color.mSurface
+          radius: Style.radiusM
+          border.color: Color.mOutline
+          border.width: Style.borderS
+          visible: loading
+          z: 10
+
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Style.marginL
+            spacing: Style.marginM
+
+            Item {
+              Layout.fillHeight: true
+            }
+
+            NBusyIndicator {
+              size: Style.baseWidgetSize * 1.5
+              color: Color.mPrimary
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: I18n.tr("wallpaper.wallhaven.loading")
+              color: Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeM
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            Item {
+              Layout.fillHeight: true
+            }
+          }
+        }
+
+        // Error overlay
+        Rectangle {
+          anchors.fill: parent
+          color: Color.mSurface
+          radius: Style.radiusM
+          border.color: Color.mOutline
+          border.width: Style.borderS
+          visible: errorMessage !== "" && !loading
+          z: 10
+
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Style.marginL
+            spacing: Style.marginM
+
+            Item {
+              Layout.fillHeight: true
+            }
+
+            NIcon {
+              icon: "alert-circle"
+              pointSize: Style.fontSizeXXL
+              color: Color.mError
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: errorMessage
+              color: Color.mOnSurface
+              wrapMode: Text.WordWrap
+              Layout.alignment: Qt.AlignHCenter
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignHCenter
+            }
+
+            Item {
+              Layout.fillHeight: true
+            }
+          }
+        }
+
+        // Empty state overlay
+        Rectangle {
+          anchors.fill: parent
+          color: Color.mSurface
+          radius: Style.radiusM
+          border.color: Color.mOutline
+          border.width: Style.borderS
+          visible: (!wallpapers || wallpapers.length === 0) && !loading && errorMessage === ""
+          z: 10
+
+          ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Style.marginL
+            spacing: Style.marginM
+
+            Item {
+              Layout.fillHeight: true
+            }
+
+            NIcon {
+              icon: "image"
+              pointSize: Style.fontSizeXXL
+              color: Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignHCenter
+            }
+
+            NText {
+              text: I18n.tr("wallpaper.wallhaven.no-results")
+              color: Color.mOnSurface
+              wrapMode: Text.WordWrap
+              Layout.alignment: Qt.AlignHCenter
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignHCenter
+            }
+
+            Item {
+              Layout.fillHeight: true
+            }
+          }
+        }
+      }
+
+      // Pagination
+      RowLayout {
+        Layout.fillWidth: true
+        visible: !loading && errorMessage === "" && typeof WallhavenService !== "undefined"
+        spacing: Style.marginM
+
+        NIconButton {
+          icon: "chevron-left"
+          enabled: WallhavenService.currentPage > 1 && !WallhavenService.fetching
+          onClicked: WallhavenService.previousPage()
+        }
+
+        NText {
+          text: I18n.tr("wallpaper.wallhaven.page").replace("{current}", WallhavenService.currentPage).replace("{total}", WallhavenService.lastPage)
+          color: Color.mOnSurface
+          Layout.fillWidth: true
+          horizontalAlignment: Text.AlignHCenter
+        }
+
+        NIconButton {
+          icon: "chevron-right"
+          enabled: WallhavenService.currentPage < WallhavenService.lastPage && !WallhavenService.fetching
+          onClicked: WallhavenService.nextPage()
         }
       }
     }

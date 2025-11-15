@@ -580,6 +580,7 @@
     "search-icons": "ex., noctalia, niri, battery, cloud",
     "search-launcher": "Pesquisar entradas... ou use > para comandos",
     "search-wallpapers": "Digite para filtrar papéis de parede...",
+    "search-wallhaven": "Pesquisar no Wallhaven...",
     "select": "Selecionar",
     "test": "Testar"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Mês anterior",
     "refresh": "Atualizar",
     "refresh-devices": "Atualizar dispositivos",
+    "refresh-wallhaven": "Atualizar resultados do Wallhaven",
     "refresh-wallpaper-list": "Atualizar lista de papéis de parede",
     "remove-widget": "Remover widget",
     "screen-recorder-not-installed": "O gravador de tela não está instalado",
@@ -2039,7 +2041,24 @@
         "description": "Aplica o papel de parede selecionado a todos os monitores de uma só vez.",
         "label": "Aplicar a todos os monitores"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Geral",
+        "label": "Categorias",
+        "people": "Pessoas"
+      },
+      "purity": {
+        "all": "Tudo",
+        "label": "Filtro de conteúdo",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Pesquisar:",
+      "source": {
+        "label": "Fonte",
+        "local": "Local",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Seletor de papel de parede"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Listras",
       "wipe": "Limpar"
     },
-    "try-different-search": "Tente uma busca diferente."
+    "try-different-search": "Tente uma busca diferente.",
+    "wallhaven": {
+      "loading": "Carregando papéis de parede...",
+      "no-results": "Nenhum papel de parede encontrado. Tente uma busca diferente.",
+      "page": "Página {current} de {total}"
+    }
   },
   "weather": {
     "clear-sky": "Céu limpo",

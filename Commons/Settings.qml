@@ -263,6 +263,13 @@ Singleton {
       property list<var> monitors: []
       property string panelPosition: "follow_bar"
       property bool hideWallpaperFilenames: false
+      // Wallhaven settings
+      property bool useWallhaven: false
+      property string wallhavenQuery: ""
+      property string wallhavenSorting: "date_added"
+      property string wallhavenOrder: "desc"
+      property string wallhavenCategories: "111" // general,anime,people
+      property string wallhavenPurity: "100" // sfw only
     }
 
     // applauncher

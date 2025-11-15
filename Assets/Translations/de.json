@@ -580,6 +580,7 @@
     "search-icons": "z.B. noctalia, niri, battery, cloud",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
+    "search-wallhaven": "Wallhaven durchsuchen...",
     "select": "Auswählen",
     "test": "Test"
   },
@@ -2010,6 +2011,7 @@
     "previous-month": "Vorheriger Monat",
     "refresh": "Aktualisieren",
     "refresh-devices": "Geräte aktualisieren",
+    "refresh-wallhaven": "Wallhaven-Ergebnisse aktualisieren",
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "remove-widget": "Widget entfernen",
     "screen-recorder-not-installed": "Bildschirmrekorder ist nicht installiert",
@@ -2039,7 +2041,24 @@
         "description": "Ausgewähltes Hintergrundbild auf alle Monitore gleichzeitig anwenden.",
         "label": "Auf alle Monitore anwenden"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Allgemein",
+        "label": "Kategorien",
+        "people": "Personen"
+      },
+      "purity": {
+        "all": "Alle",
+        "label": "Inhaltsfilter",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
       "search": "Suchen:",
+      "source": {
+        "label": "Quelle",
+        "local": "Lokal",
+        "wallhaven": "Wallhaven"
+      },
       "title": "Hintergrundbild-Auswahl"
     },
     "transitions": {
@@ -2050,7 +2069,12 @@
       "stripes": "Streifen",
       "wipe": "Wischen"
     },
-    "try-different-search": "Versuchen Sie eine andere Suchanfrage."
+    "try-different-search": "Versuchen Sie eine andere Suchanfrage.",
+    "wallhaven": {
+      "loading": "Hintergrundbilder werden geladen...",
+      "no-results": "Keine Hintergrundbilder gefunden. Versuchen Sie eine andere Suchanfrage.",
+      "page": "Seite {current} von {total}"
+    }
   },
   "weather": {
     "clear-sky": "Klarer Himmel",
