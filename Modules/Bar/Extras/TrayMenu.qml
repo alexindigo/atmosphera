@@ -152,8 +152,6 @@ PopupWindow {
     menu: root.menu
 
     onMenuChanged: {
-      // When menu changes, reset and reload
-      root.menuItems = []
       Qt.callLater(() => root.loadMenuItemsSafely())
     }
   }
