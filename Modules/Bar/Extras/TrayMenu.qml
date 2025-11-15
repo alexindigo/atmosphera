@@ -24,8 +24,8 @@ PopupWindow {
   property bool shouldLoadMenu: false
   property var menuItems: []
 
-  // Derive menu from trayItem (only used for non-submenus)
-  readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)
+  // Menu can be set directly (for submenus) or derived from trayItem
+  property var menu: null
 
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
@@ -86,6 +86,7 @@ PopupWindow {
           const values = opener.children.values
           if (values && values.length > 0) {
             root.menuItems = [...values]
+            Logger.i("TrayMenu", "Loaded " + root.menuItems.length + " menu items")
           } else {
             Logger.warn("TrayMenu", "opener.children.values is empty")
           }
@@ -104,9 +105,17 @@ PopupWindow {
       return
     }
 
+    // IMPORTANT: Set the menu BEFORE loading items
+    if (!isSubMenu && trayItem && trayItem.menu) {
+      menu = trayItem.menu
+    }
+
     anchorItem = item
     anchorX = x
     anchorY = y
+
+    // Reset menu items to force reload with new menu
+    menuItems = []
 
     // Trigger menu loading only when showing
     shouldLoadMenu = true
@@ -149,6 +158,14 @@ PopupWindow {
   QsMenuOpener {
     id: opener
     menu: root.menu
+
+    onMenuChanged: {
+      // When menu changes, reset and reload
+      if (root.shouldLoadMenu) {
+        root.menuItems = []
+        Qt.callLater(() => root.loadMenuItemsSafely())
+      }
+    }
   }
 
   Rectangle {
