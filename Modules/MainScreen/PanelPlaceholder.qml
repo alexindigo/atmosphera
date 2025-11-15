@@ -56,48 +56,6 @@ Item {
   // Expose panelBackground as panelItem for AllBackgrounds
   readonly property var panelItem: panelBackground
 
-  // Primary anchor edge for window positioning
-  readonly property string primaryAnchorEdge: {
-    if (effectivePanelAnchorTop)
-      return "top"
-    if (effectivePanelAnchorBottom)
-      return "bottom"
-    if (effectivePanelAnchorLeft)
-      return "left"
-    if (effectivePanelAnchorRight)
-      return "right"
-    return "top"
-    // default
-  }
-
-  // Calculate window margins for content-sized panel windows
-  function getWindowMargins() {
-    if (!root.width || !root.height)
-      return {
-        "top": 0,
-        "bottom": 0,
-        "left": 0,
-        "right": 0
-      }
-
-    // Determine which edges are anchored (matching SmartPanelWindow logic)
-    var isPrimaryVertical = primaryAnchorEdge === "top" || primaryAnchorEdge === "bottom"
-    var isPrimaryHorizontal = primaryAnchorEdge === "left" || primaryAnchorEdge === "right"
-
-    // Anchor the primary edge + opposite edges of the other axis
-    var useTop = effectivePanelAnchorTop || primaryAnchorEdge === "top" || isPrimaryHorizontal
-    var useBottom = effectivePanelAnchorBottom || primaryAnchorEdge === "bottom" || isPrimaryHorizontal
-    var useLeft = effectivePanelAnchorLeft || primaryAnchorEdge === "left" || isPrimaryVertical
-    var useRight = effectivePanelAnchorRight || primaryAnchorEdge === "right" || isPrimaryVertical
-
-    return {
-      "top": useTop ? panelBackground.targetY : 0,
-      "bottom": useBottom ? (root.height - panelBackground.targetY - panelBackground.targetHeight) : 0,
-      "left": useLeft ? panelBackground.targetX : 0,
-      "right": useRight ? (root.width - panelBackground.targetX - panelBackground.targetWidth) : 0
-    }
-  }
-
   // Bar configuration
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
