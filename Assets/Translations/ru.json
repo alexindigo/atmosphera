@@ -243,7 +243,7 @@
       },
       "system-monitor": {
         "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
+          "label": "Использование CPU (Критично)"
         },
         "cpu-temperature": {
           "description": "Показывать показания температуры процессора, если доступны.",
@@ -254,19 +254,19 @@
           "label": "Использование CPU"
         },
         "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
+          "label": "Использование CPU (Предупреждение)"
         },
         "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
+          "label": "Место на диске (Критично)"
         },
         "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
+          "label": "Место на диске (Предупреждение)"
         },
         "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
+          "label": "Использование памяти (Критично)"
         },
         "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
+          "label": "Использование памяти (Предупреждение)"
         },
         "memory-percentage": {
           "description": "Показывать использование памяти в процентах вместо абсолютных значений.",
@@ -285,10 +285,10 @@
           "label": "Использование хранилища"
         },
         "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
+          "label": "Температура CPU: (Критично)"
         },
         "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
+          "label": "Температура CPU (Внимание)"
         },
         "thresholds": {
           "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении.",
