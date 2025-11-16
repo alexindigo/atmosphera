@@ -21,76 +21,130 @@ PopupWindow {
 
   // Menu can be set directly (for submenus) or derived from trayItem
   property var menu: null
+  property var stableMenu: null // Debounced menu for opener binding
   property var menuItems: []
   property int loadRetryCount: 0
+  property bool isLoadingMenu: false // Mutex to prevent concurrent access
+
+  // Debounce timer to prevent rapid menu rebinding
+  Timer {
+    id: menuDebounceTimer
+    interval: 50
+    repeat: false
+    onTriggered: {
+      // Update stable menu only after debounce period
+      if (root.visible && root.menu) {
+        root.stableMenu = root.menu
+      } else {
+        root.stableMenu = null
+      }
+    }
+  }
 
   // Timer to defer menu loading to avoid freezing on opener.children access
   // Uses retry mechanism with exponential backoff for reliability
   Timer {
     id: menuLoadTimer
-    interval: 100 // Start with 100ms, increases on retry
+    interval: 150 // Start with 150ms (increased from 100ms for more stability)
     repeat: false
     onTriggered: {
-      if (!root.visible || !root.menu) {
+      // Early exit if not visible, no stable menu, or already loading
+      if (!root.visible || !root.stableMenu || root.isLoadingMenu) {
         root.menuItems = []
         root.loadRetryCount = 0
+        root.isLoadingMenu = false
         return
       }
 
+      // Set loading flag to prevent concurrent access
+      root.isLoadingMenu = true
+
       try {
-        if (opener && opener.children) {
+        if (opener && opener.children && 'values' in opener.children) {
           const values = opener.children.values
           if (values && values.length > 0) {
             root.menuItems = [...values]
             root.loadRetryCount = 0 // Success, reset retry count
+            root.isLoadingMenu = false
           } else {
             // Empty menu - retry if we haven't exceeded max attempts
-            if (root.loadRetryCount < 4) {
+            if (root.loadRetryCount < 3) {
               root.loadRetryCount++
-              menuLoadTimer.interval = 100 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff: 100, 200, 400, 800
+              menuLoadTimer.interval = 150 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff: 150, 300, 600
+              root.isLoadingMenu = false // Release lock before retry
               menuLoadTimer.running = true
             } else {
-              // Max retries exceeded, give up
+              // Max retries exceeded, give up gracefully
               root.menuItems = []
               root.loadRetryCount = 0
+              root.isLoadingMenu = false
             }
           }
         } else {
           // opener.children not ready - retry if we haven't exceeded max attempts
           if (root.loadRetryCount < 3) {
             root.loadRetryCount++
-            menuLoadTimer.interval = 100 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff
+            menuLoadTimer.interval = 150 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff
+            root.isLoadingMenu = false // Release lock before retry
             menuLoadTimer.running = true
           } else {
-            // Max retries exceeded, give up
+            // Max retries exceeded, give up gracefully
             root.menuItems = []
             root.loadRetryCount = 0
+            root.isLoadingMenu = false
           }
         }
       } catch (e) {
         Logger.w("TrayMenu", "Error accessing menu items:", e)
         root.menuItems = []
         root.loadRetryCount = 0
+        root.isLoadingMenu = false
       }
     }
   }
 
   onVisibleChanged: {
     if (visible && menu) {
-      root.loadRetryCount = 0
-      menuLoadTimer.interval = 100 // Reset to initial interval
+      // Cancel all pending operations
+      menuDebounceTimer.running = false
       menuLoadTimer.running = false
-      menuLoadTimer.running = true
+      root.isLoadingMenu = false
+      root.loadRetryCount = 0
+
+      // Start debounce for stable menu
+      menuDebounceTimer.running = true
     } else if (!visible) {
-      root.loadRetryCount = 0
+      // Clean up when hiding
+      menuDebounceTimer.running = false
       menuLoadTimer.running = false
+      root.isLoadingMenu = false
+      root.loadRetryCount = 0
+      root.stableMenu = null
+      root.menuItems = []
     }
   }
 
   onMenuChanged: {
+    // Cancel pending load whenever menu changes
+    menuLoadTimer.running = false
+    root.isLoadingMenu = false
+    root.loadRetryCount = 0
+    root.menuItems = []
+
     if (visible && menu) {
-      root.loadRetryCount = 0
-      menuLoadTimer.interval = 100 // Reset to initial interval
+      // Restart debounce timer
+      menuDebounceTimer.running = false
+      menuDebounceTimer.running = true
+    } else {
+      menuDebounceTimer.running = false
+      root.stableMenu = null
+    }
+  }
+
+  onStableMenuChanged: {
+    if (visible && stableMenu) {
+      // Stable menu is ready, start loading
+      menuLoadTimer.interval = 150 // Reset to initial interval
       menuLoadTimer.running = false
       menuLoadTimer.running = true
     }
@@ -181,7 +235,7 @@ PopupWindow {
 
   QsMenuOpener {
     id: opener
-    menu: root.menu
+    menu: root.stableMenu // Bind to debounced stable menu instead of raw menu
   }
 
   Rectangle {
