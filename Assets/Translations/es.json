@@ -359,13 +359,6 @@
     "health": "Salud: {percent}%",
     "idle": "Inactivo.",
     "no-battery-detected": "No se detectó ninguna batería.",
-    "panel": {
-      "balanced": "Equilibrado ({percent}%)",
-      "disabled": "Administrador de batería deshabilitado",
-      "full": "Capacidad total ({percent}%)",
-      "lifespan": "Vida útil prolongada ({percent}%)",
-      "title": "Umbral de carga"
-    },
     "plugged-in": "Conectado.",
     "time-left": "Tiempo restante: {time}.",
     "time-until-full": "Tiempo hasta carga completa: {time}."
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "Batería baja",
       "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuración inicial requerida",
-      "install-failed": "Error en la instalación",
-      "install-missing": "Faltan archivos requeridos",
-      "install-success": "Instalado correctamente",
-      "install-unsupported": "El sistema no es compatible",
-      "set-failed": "No se pudo establecer el umbral de batería",
-      "set-success-desc": "Umbral de batería establecido en {percent}%",
-      "title": "Umbral de batería",
-      "uninstall-failed": "Error en la desinstalación",
-      "uninstall-setup": "Desinstalando, se requiere autenticación",
-      "uninstall-success": "Desinstalado correctamente"
     },
     "bluetooth": {
       "disabled": "Desactivado",

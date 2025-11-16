@@ -53,8 +53,8 @@ ColumnLayout {
       hoverEnabled: true
 
       onClicked: {
-        root.expanded = !root.expanded
-        root.toggled(root.expanded)
+        root.expanded = !root.expanded;
+        root.toggled(root.expanded);
       }
 
       // Hover effect overlay
@@ -184,6 +184,6 @@ ColumnLayout {
 
   // Initialize expanded state
   Component.onCompleted: {
-    root.expanded = root.defaultExpanded
+    root.expanded = root.defaultExpanded;
   }
 }

@@ -5,111 +5,80 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 
-
 /*
-  Noctalia is not strictly a Material Design project, it supports both some predefined
-  color schemes and dynamic color generation from the wallpaper (using Matugen).
+Noctalia is not strictly a Material Design project, it supports both some predefined
+color schemes and dynamic color generation from the wallpaper (using Matugen).
 
-  We ultimately decided to use a restricted set of colors that follows the
-  Material Design 3 naming convention.
+We ultimately decided to use a restricted set of colors that follows the
+Material Design 3 naming convention.
 
-  NOTE: All color names are prefixed with 'm' (e.g., mPrimary) to prevent QML from
-  misinterpreting them as signals (e.g., the 'onPrimary' property name).
+NOTE: All color names are prefixed with 'm' (e.g., mPrimary) to prevent QML from
+misinterpreting them as signals (e.g., the 'onPrimary' property name).
 */
 Singleton {
   id: root
 
   // --- Key Colors: These are the main accent colors that define your app's style
-  property color mPrimary: customColors.mPrimary
-  property color mOnPrimary: customColors.mOnPrimary
-  property color mSecondary: customColors.mSecondary
-  property color mOnSecondary: customColors.mOnSecondary
-  property color mTertiary: customColors.mTertiary
-  property color mOnTertiary: customColors.mOnTertiary
+  readonly property color mPrimary: customColorsData.mPrimary
+  readonly property color mOnPrimary: customColorsData.mOnPrimary
+  readonly property color mSecondary: customColorsData.mSecondary
+  readonly property color mOnSecondary: customColorsData.mOnSecondary
+  readonly property color mTertiary: customColorsData.mTertiary
+  readonly property color mOnTertiary: customColorsData.mOnTertiary
 
   // --- Utility Colors: These colors serve specific, universal purposes like indicating errors
-  property color mError: customColors.mError
-  property color mOnError: customColors.mOnError
+  readonly property color mError: customColorsData.mError
+  readonly property color mOnError: customColorsData.mOnError
 
   // --- Surface and Variant Colors: These provide additional options for surfaces and their contents, creating visual hierarchy
-  property color mSurface: customColors.mSurface
-  property color mOnSurface: customColors.mOnSurface
+  readonly property color mSurface: customColorsData.mSurface
+  readonly property color mOnSurface: customColorsData.mOnSurface
 
-  property color mSurfaceVariant: customColors.mSurfaceVariant
-  property color mOnSurfaceVariant: customColors.mOnSurfaceVariant
+  readonly property color mSurfaceVariant: customColorsData.mSurfaceVariant
+  readonly property color mOnSurfaceVariant: customColorsData.mOnSurfaceVariant
 
-  property color mOutline: customColors.mOutline
-  property color mShadow: customColors.mShadow
+  readonly property color mOutline: customColorsData.mOutline
+  readonly property color mShadow: customColorsData.mShadow
 
-  property color mHover: customColors.mHover
-  property color mOnHover: customColors.mOnHover
+  readonly property color mHover: customColorsData.mHover
+  readonly property color mOnHover: customColorsData.mOnHover
 
   // --- Absolute Colors
-  property color transparent: "transparent"
-  property color black: "#000000"
-  property color white: "#ffffff"
+  readonly property color transparent: "transparent"
+  readonly property color black: "#000000"
+  readonly property color white: "#ffffff"
 
   // --------------------------------
   // Default colors: RosePine
   QtObject {
     id: defaultColors
 
-    property color mPrimary: "#c7a1d8"
-    property color mOnPrimary: "#1a151f"
+    readonly property color mPrimary: "#c7a1d8"
+    readonly property color mOnPrimary: "#1a151f"
 
-    property color mSecondary: "#a984c4"
-    property color mOnSecondary: "#f3edf7"
+    readonly property color mSecondary: "#a984c4"
+    readonly property color mOnSecondary: "#f3edf7"
 
-    property color mTertiary: "#e0b7c9"
-    property color mOnTertiary: "#20161f"
+    readonly property color mTertiary: "#e0b7c9"
+    readonly property color mOnTertiary: "#20161f"
 
-    property color mError: "#e9899d"
-    property color mOnError: "#1e1418"
+    readonly property color mError: "#e9899d"
+    readonly property color mOnError: "#1e1418"
 
-    property color mSurface: "#1c1822"
-    property color mOnSurface: "#e9e4f0"
+    readonly property color mSurface: "#1c1822"
+    readonly property color mOnSurface: "#e9e4f0"
 
-    property color mSurfaceVariant: "#262130"
-    property color mOnSurfaceVariant: "#a79ab0"
+    readonly property color mSurfaceVariant: "#262130"
+    readonly property color mOnSurfaceVariant: "#a79ab0"
 
-    property color mOutline: "#342c42"
-    property color mShadow: "#120f18"
+    readonly property color mOutline: "#342c42"
+    readonly property color mShadow: "#120f18"
 
-    property color mHover: "#e0b7c9"
-    property color mOnHover: "#20161f"
+    readonly property color mHover: "#e0b7c9"
+    readonly property color mOnHover: "#20161f"
   }
 
   // ----------------------------------------------------------------
-  // Custom colors loaded from colors.json
-  // These can be generated by matugen or simply come from a well know color scheme (Dracula, Gruvbox, Nord, ...)
-  QtObject {
-    id: customColors
-
-    property color mPrimary: customColorsData.mPrimary
-    property color mOnPrimary: customColorsData.mOnPrimary
-
-    property color mSecondary: customColorsData.mSecondary
-    property color mOnSecondary: customColorsData.mOnSecondary
-
-    property color mTertiary: customColorsData.mTertiary
-    property color mOnTertiary: customColorsData.mOnTertiary
-
-    property color mError: customColorsData.mError
-    property color mOnError: customColorsData.mOnError
-
-    property color mSurface: customColorsData.mSurface
-    property color mOnSurface: customColorsData.mOnSurface
-
-    property color mSurfaceVariant: customColorsData.mSurfaceVariant
-    property color mOnSurfaceVariant: customColorsData.mOnSurfaceVariant
-
-    property color mOutline: customColorsData.mOutline
-    property color mShadow: customColorsData.mShadow
-
-    property color mHover: customColorsData.mHover
-    property color mOnHover: customColorsData.mOnHover
-  }
-
   // FileView to load custom colors data from colors.json
   FileView {
     id: customColorsFile
@@ -117,24 +86,25 @@ Singleton {
     printErrors: false
     watchChanges: true
     onFileChanged: {
-      Logger.i("Color", "Reloading colors from disk")
-      reload()
+      Logger.i("Color", "Reloading colors from disk");
+      reload();
     }
     onAdapterUpdated: {
-      Logger.i("Color", "Writing colors to disk")
-      writeAdapter()
+      Logger.i("Color", "Writing colors to disk");
+      writeAdapter();
     }
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
       if (path !== undefined) {
-        reload()
+        reload();
       }
     }
     onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2) {
+      // Error code 2 = ENOENT (No such file or directory)
+      if (error === 2 || error.toString().includes("No such file")) {
         // File doesn't exist, create it with default values
-        writeAdapter()
+        writeAdapter();
       }
     }
     JsonAdapter {

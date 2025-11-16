@@ -359,13 +359,6 @@
     "health": "Saúde: {percent}%",
     "idle": "Ocioso.",
     "no-battery-detected": "Nenhuma bateria detectada.",
-    "panel": {
-      "balanced": "Balanceado ({percent}%)",
-      "disabled": "Gerenciador de bateria desativado",
-      "full": "Capacidade máxima ({percent}%)",
-      "lifespan": "Vida útil prolongada ({percent}%)",
-      "title": "Limite de carga"
-    },
     "plugged-in": "Conectado.",
     "time-left": "Tempo restante: {time}.",
     "time-until-full": "Tempo até carga completa: {time}."
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuração inicial necessária",
-      "install-failed": "Falha na instalação",
-      "install-missing": "Arquivos necessários ausentes",
-      "install-success": "Instalado com sucesso",
-      "install-unsupported": "Sistema não suportado",
-      "set-failed": "Falha ao definir o limite da bateria",
-      "set-success-desc": "Limite da bateria definido para {percent}%",
-      "title": "Limite da bateria",
-      "uninstall-failed": "Falha na desinstalação",
-      "uninstall-setup": "Desinstalando, autenticação necessária",
-      "uninstall-success": "Desinstalado com sucesso"
     },
     "bluetooth": {
       "disabled": "Desativado",

@@ -1,11 +1,11 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
-import QtQuick.Effects
 import qs.Commons
-import qs.Widgets
-import qs.Services.UI
 import qs.Services.System
+import qs.Services.UI
+import qs.Widgets
 
 NIconButton {
   id: root
@@ -21,12 +21,12 @@ NIconButton {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
@@ -34,8 +34,8 @@ NIconButton {
   readonly property string customIconPath: widgetSettings.customIconPath || ""
   readonly property bool colorizeDistroLogo: {
     if (widgetSettings.colorizeDistroLogo !== undefined)
-      return widgetSettings.colorizeDistroLogo
-    return widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false
+      return widgetSettings.colorizeDistroLogo;
+    return widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false;
   }
 
   // If we have a custom path or distro logo, don't use the theme icon.
@@ -51,12 +51,12 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
   onClicked: {
-    var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+    var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
     if (Settings.data.controlCenter.position === "close_to_bar_button") {
       // Willopen the panel next to the bar button.
-      controlCenterPanel?.toggle(this)
+      controlCenterPanel?.toggle(this);
     } else {
-      controlCenterPanel?.toggle()
+      controlCenterPanel?.toggle();
     }
   }
   onRightClicked: PanelService.getPanel("settingsPanel", screen)?.toggle()
@@ -69,10 +69,10 @@ NIconButton {
     height: width
     source: {
       if (customIconPath !== "")
-        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath
+        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath;
       if (useDistroLogo)
-        return HostService.osLogo
-      return ""
+        return HostService.osLogo;
+      return "";
     }
     visible: source !== ""
     smooth: true

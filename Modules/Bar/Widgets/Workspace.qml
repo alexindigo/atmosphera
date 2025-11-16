@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import QtQuick.Layouts
 import QtQuick.Window
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import qs.Commons
@@ -24,23 +24,23 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
   readonly property real baseDimensionRatio: {
-    const b = (density === "compact") ? 0.85 : 0.65
+    const b = (density === "compact") ? 0.85 : 0.65;
     if (widgetSettings.labelMode === "none") {
-      return b * 0.75
+      return b * 0.75;
     }
-    return b
+    return b;
   }
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
@@ -68,76 +68,76 @@ Item {
   implicitHeight: isVertical ? computeHeight() : Style.barHeight
 
   function getWorkspaceWidth(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isActive ? 2.2 : 1
+    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const factor = ws.isActive ? 2.2 : 1;
 
     // For name mode, calculate width based on actual text content
     if (labelMode === "name" && ws.name && ws.name.length > 0) {
-      const displayText = ws.name.substring(0, characterCount)
-      const textWidth = displayText.length * (d * 0.4) // Approximate width per character
-      const padding = d * 0.6 // Padding on both sides
-      return Math.max(d * factor, textWidth + padding)
+      const displayText = ws.name.substring(0, characterCount);
+      const textWidth = displayText.length * (d * 0.4); // Approximate width per character
+      const padding = d * 0.6; // Padding on both sides
+      return Math.max(d * factor, textWidth + padding);
     }
 
-    return d * factor
+    return d * factor;
   }
 
   function getWorkspaceHeight(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio
-    const factor = ws.isActive ? 2.2 : 1
-    return d * factor
+    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const factor = ws.isActive ? 2.2 : 1;
+    return d * factor;
   }
 
   function computeWidth() {
-    let total = 0
+    let total = 0;
     for (var i = 0; i < localWorkspaces.count; i++) {
-      const ws = localWorkspaces.get(i)
-      total += getWorkspaceWidth(ws)
+      const ws = localWorkspaces.get(i);
+      total += getWorkspaceWidth(ws);
     }
-    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
-    total += horizontalPadding * 2
-    return Math.round(total)
+    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills;
+    total += horizontalPadding * 2;
+    return Math.round(total);
   }
 
   function computeHeight() {
-    let total = 0
+    let total = 0;
     for (var i = 0; i < localWorkspaces.count; i++) {
-      const ws = localWorkspaces.get(i)
-      total += getWorkspaceHeight(ws)
+      const ws = localWorkspaces.get(i);
+      total += getWorkspaceHeight(ws);
     }
-    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills
-    total += horizontalPadding * 2
-    return Math.round(total)
+    total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills;
+    total += horizontalPadding * 2;
+    return Math.round(total);
   }
 
   function getFocusedLocalIndex() {
     for (var i = 0; i < localWorkspaces.count; i++) {
       if (localWorkspaces.get(i).isFocused === true)
-        return i
+        return i;
     }
-    return -1
+    return -1;
   }
 
   function switchByOffset(offset) {
     if (localWorkspaces.count === 0)
-      return
-    var current = getFocusedLocalIndex()
+      return;
+    var current = getFocusedLocalIndex();
     if (current < 0)
-      current = 0
-    var next = (current + offset) % localWorkspaces.count
+      current = 0;
+    var next = (current + offset) % localWorkspaces.count;
     if (next < 0)
-      next = localWorkspaces.count - 1
-    const ws = localWorkspaces.get(next)
+      next = localWorkspaces.count - 1;
+    const ws = localWorkspaces.get(next);
     if (ws && ws.idx !== undefined)
-      CompositorService.switchToWorkspace(ws)
+      CompositorService.switchToWorkspace(ws);
   }
 
   Component.onCompleted: {
-    refreshWorkspaces()
+    refreshWorkspaces();
   }
 
   Component.onDestruction: {
-    root.isDestroying = true
+    root.isDestroying = true;
   }
 
   onScreenChanged: refreshWorkspaces()
@@ -146,40 +146,40 @@ Item {
   Connections {
     target: CompositorService
     function onWorkspacesChanged() {
-      refreshWorkspaces()
+      refreshWorkspaces();
     }
   }
 
   function refreshWorkspaces() {
-    localWorkspaces.clear()
+    localWorkspaces.clear();
     if (screen !== null) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
-        const ws = CompositorService.workspaces.get(i)
+        const ws = CompositorService.workspaces.get(i);
         if (ws.output.toLowerCase() === screen.name.toLowerCase()) {
           if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
-            continue
+            continue;
           }
-          localWorkspaces.append(ws)
+          localWorkspaces.append(ws);
         }
       }
     }
-    workspaceRepeaterHorizontal.model = localWorkspaces
-    workspaceRepeaterVertical.model = localWorkspaces
-    updateWorkspaceFocus()
+    workspaceRepeaterHorizontal.model = localWorkspaces;
+    workspaceRepeaterVertical.model = localWorkspaces;
+    updateWorkspaceFocus();
   }
 
   function triggerUnifiedWave() {
-    effectColor = Color.mPrimary
-    masterAnimation.restart()
+    effectColor = Color.mPrimary;
+    masterAnimation.restart();
   }
 
   function updateWorkspaceFocus() {
     for (var i = 0; i < localWorkspaces.count; i++) {
-      const ws = localWorkspaces.get(i)
+      const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
-        root.triggerUnifiedWave()
-        root.workspaceChanged(ws.id, Color.mPrimary)
-        break
+        root.triggerUnifiedWave();
+        root.workspaceChanged(ws.id, Color.mPrimary);
+        break;
       }
     }
   }
@@ -228,8 +228,8 @@ Item {
     interval: 150
     repeat: false
     onTriggered: {
-      root.wheelCooldown = false
-      root.wheelAccumulatedDelta = 0
+      root.wheelCooldown = false;
+      root.wheelAccumulatedDelta = 0;
     }
   }
 
@@ -240,24 +240,24 @@ Item {
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     onWheel: function (event) {
       if (root.wheelCooldown)
-        return
+        return;
       // Prefer vertical delta, fall back to horizontal if needed
-      var dy = event.angleDelta.y
-      var dx = event.angleDelta.x
-      var useDy = Math.abs(dy) >= Math.abs(dx)
-      var delta = useDy ? dy : dx
+      var dy = event.angleDelta.y;
+      var dx = event.angleDelta.x;
+      var useDy = Math.abs(dy) >= Math.abs(dx);
+      var delta = useDy ? dy : dx;
       // One notch is typically 120
-      root.wheelAccumulatedDelta += delta
-      var step = 120
+      root.wheelAccumulatedDelta += delta;
+      var step = 120;
       if (Math.abs(root.wheelAccumulatedDelta) >= step) {
-        var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1
+        var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1;
         // For vertical layout, natural mapping: wheel up -> previous, down -> next (already handled by sign)
         // For horizontal layout, same mapping using vertical wheel
-        root.switchByOffset(direction)
-        root.wheelCooldown = true
-        wheelDebounce.restart()
-        root.wheelAccumulatedDelta = 0
-        event.accepted = true
+        root.switchByOffset(direction);
+        root.wheelCooldown = true;
+        wheelDebounce.restart();
+        root.wheelAccumulatedDelta = 0;
+        event.accepted = true;
       }
     }
   }
@@ -290,9 +290,9 @@ Item {
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
                   if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount)
+                    return model.name.substring(0, characterCount);
                   } else {
-                    return model.idx.toString()
+                    return model.idx.toString();
                   }
                 }
                 family: Settings.data.ui.fontFixed
@@ -303,13 +303,13 @@ Item {
                 wrapMode: Text.Wrap
                 color: {
                   if (model.isFocused)
-                    return Color.mOnPrimary
+                    return Color.mOnPrimary;
                   if (model.isUrgent)
-                    return Color.mOnError
+                    return Color.mOnError;
                   if (model.isOccupied)
-                    return Color.mOnSecondary
+                    return Color.mOnSecondary;
 
-                  return Color.mOnSecondary
+                  return Color.mOnSecondary;
                 }
               }
             }
@@ -318,13 +318,13 @@ Item {
           radius: width * 0.5
           color: {
             if (model.isFocused)
-              return Color.mPrimary
+              return Color.mPrimary;
             if (model.isUrgent)
-              return Color.mError
+              return Color.mError;
             if (model.isOccupied)
-              return Color.mSecondary
+              return Color.mSecondary;
 
-            return Qt.alpha(Color.mSecondary, 0.3)
+            return Qt.alpha(Color.mSecondary, 0.3);
           }
           scale: model.isActive ? 1.0 : 0.9
           z: 0
@@ -334,7 +334,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              CompositorService.switchToWorkspace(model)
+              CompositorService.switchToWorkspace(model);
             }
             hoverEnabled: true
           }
@@ -435,9 +435,9 @@ Item {
                 y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
                 text: {
                   if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount)
+                    return model.name.substring(0, characterCount);
                   } else {
-                    return model.idx.toString()
+                    return model.idx.toString();
                   }
                 }
                 family: Settings.data.ui.fontFixed
@@ -448,13 +448,13 @@ Item {
                 wrapMode: Text.Wrap
                 color: {
                   if (model.isFocused)
-                    return Color.mOnPrimary
+                    return Color.mOnPrimary;
                   if (model.isUrgent)
-                    return Color.mOnError
+                    return Color.mOnError;
                   if (model.isOccupied)
-                    return Color.mOnSecondary
+                    return Color.mOnSecondary;
 
-                  return Color.mOnSurface
+                  return Color.mOnSurface;
                 }
               }
             }
@@ -463,13 +463,13 @@ Item {
           radius: width * 0.5
           color: {
             if (model.isFocused)
-              return Color.mPrimary
+              return Color.mPrimary;
             if (model.isUrgent)
-              return Color.mError
+              return Color.mError;
             if (model.isOccupied)
-              return Color.mSecondary
+              return Color.mSecondary;
 
-            return Color.mOutline
+            return Color.mOutline;
           }
           scale: model.isActive ? 1.0 : 0.9
           z: 0
@@ -479,7 +479,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              CompositorService.switchToWorkspace(model)
+              CompositorService.switchToWorkspace(model);
             }
             hoverEnabled: true
           }

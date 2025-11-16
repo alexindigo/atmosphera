@@ -359,13 +359,6 @@
     "health": "Sağlık: {percent}%",
     "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
-    "panel": {
-      "balanced": "Dengeli ({percent}%)",
-      "disabled": "Pil yöneticisi devre dışı",
-      "full": "Tam kapasite ({percent}%)",
-      "lifespan": "Uzatılmış ömür ({percent}%)",
-      "title": "Şarj eşiği"
-    },
     "plugged-in": "Prize takılı.",
     "time-left": "Kalan süre: {time}.",
     "time-until-full": "Dolma süresi: {time}."
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "Düşük batarya",
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
-    },
-    "battery-manager": {
-      "initial-setup": "Başlangıç kurulumu gerekli",
-      "install-failed": "Kurulum başarısız oldu",
-      "install-missing": "Gerekli dosyalar eksik",
-      "install-success": "Başarıyla kuruldu",
-      "install-unsupported": "Sistem desteklenmiyor",
-      "set-failed": "Batarya eşiği ayarlanamadı",
-      "set-success-desc": "Batarya eşiği % {percent} olarak ayarlandı",
-      "title": "Batarya eşiği",
-      "uninstall-failed": "Kaldırma başarısız oldu",
-      "uninstall-setup": "Kaldırılıyor, kimlik doğrulama gerekli",
-      "uninstall-success": "Başarıyla kaldırıldı"
     },
     "bluetooth": {
       "disabled": "Devre dışı",

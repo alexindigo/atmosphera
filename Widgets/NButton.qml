@@ -39,19 +39,19 @@ Rectangle {
   radius: Style.radiusS
   color: {
     if (!enabled)
-      return outlined ? Color.transparent : Qt.lighter(Color.mSurfaceVariant, 1.2)
+      return outlined ? Color.transparent : Qt.lighter(Color.mSurfaceVariant, 1.2);
     if (hovered)
-      return hoverColor
-    return outlined ? Color.transparent : backgroundColor
+      return hoverColor;
+    return outlined ? Color.transparent : backgroundColor;
   }
 
   border.width: outlined ? Style.borderS : 0
   border.color: {
     if (!enabled)
-      return Color.mOutline
+      return Color.mOutline;
     if (hovered)
-      return backgroundColor
-    return outlined ? backgroundColor : Color.transparent
+      return backgroundColor;
+    return outlined ? backgroundColor : Color.transparent;
   }
 
   opacity: enabled ? 1.0 : 0.6
@@ -87,13 +87,13 @@ Rectangle {
       pointSize: root.iconSize
       color: {
         if (!root.enabled)
-          return Color.mOnSurfaceVariant
+          return Color.mOnSurfaceVariant;
         if (root.outlined) {
           if (root.hovered)
-            return root.textColor
-          return root.backgroundColor
+            return root.textColor;
+          return root.backgroundColor;
         }
-        return root.textColor
+        return root.textColor;
       }
 
       Behavior on color {
@@ -113,13 +113,13 @@ Rectangle {
       font.weight: root.fontWeight
       color: {
         if (!root.enabled)
-          return Color.mOnSurfaceVariant
+          return Color.mOnSurfaceVariant;
         if (root.outlined) {
           if (root.hovered)
-            return root.textColor
-          return root.backgroundColor
+            return root.textColor;
+          return root.backgroundColor;
         }
-        return root.textColor
+        return root.textColor;
       }
 
       Behavior on color {
@@ -141,36 +141,36 @@ Rectangle {
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
     onEntered: {
-      root.hovered = true
-      root.entered()
+      root.hovered = true;
+      root.entered();
       if (tooltipText) {
-        TooltipService.show(Screen, root, root.tooltipText)
+        TooltipService.show(Screen, root, root.tooltipText);
       }
     }
     onExited: {
-      root.hovered = false
-      root.exited()
+      root.hovered = false;
+      root.exited();
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
     }
     onPressed: mouse => {
                  if (tooltipText) {
-                   TooltipService.hide()
+                   TooltipService.hide();
                  }
                  if (mouse.button === Qt.LeftButton) {
-                   root.clicked()
+                   root.clicked();
                  } else if (mouse.button == Qt.RightButton) {
-                   root.rightClicked()
+                   root.rightClicked();
                  } else if (mouse.button == Qt.MiddleButton) {
-                   root.middleClicked()
+                   root.middleClicked();
                  }
                }
 
     onCanceled: {
-      root.hovered = false
+      root.hovered = false;
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
     }
   }

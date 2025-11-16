@@ -5,13 +5,12 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.UI
 
-
 /**
- * SmartPanelWindow - Separate window for panel content
- *
- * This component runs in its own window, separate from MainScreen.
- * It follows the PanelPlaceholder for positioning and contains the actual panel content.
- */
+* SmartPanelWindow - Separate window for panel content
+*
+* This component runs in its own window, separate from MainScreen.
+* It follows the PanelPlaceholder for positioning and contains the actual panel content.
+*/
 PanelWindow {
   id: root
 
@@ -63,13 +62,13 @@ PanelWindow {
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
   WlrLayershell.keyboardFocus: {
     if (!root.isPanelOpen) {
-      return WlrKeyboardFocus.None
+      return WlrKeyboardFocus.None;
     }
     if (CompositorService.isHyprland) {
       // Exclusive focus on hyprland is too restrictive.
-      return WlrKeyboardFocus.OnDemand
+      return WlrKeyboardFocus.OnDemand;
     } else {
-      return root.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
+      return root.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
     }
   }
 
@@ -91,95 +90,95 @@ PanelWindow {
 
   // Sync state to placeholder
   onIsPanelVisibleChanged: {
-    placeholder.isPanelVisible = isPanelVisible
+    placeholder.isPanelVisible = isPanelVisible;
   }
   onIsClosingChanged: {
-    placeholder.isClosing = isClosing
+    placeholder.isClosing = isClosing;
   }
   onOpacityFadeCompleteChanged: {
-    placeholder.opacityFadeComplete = opacityFadeComplete
+    placeholder.opacityFadeComplete = opacityFadeComplete;
   }
 
   // Panel control functions
   function toggle(buttonItem, buttonName) {
     if (!isPanelOpen) {
-      open(buttonItem, buttonName)
+      open(buttonItem, buttonName);
     } else {
-      close()
+      close();
     }
   }
 
   function open(buttonItem, buttonName) {
     if (!buttonItem && buttonName) {
-      buttonItem = BarService.lookupWidget(buttonName, placeholder.screen.name)
+      buttonItem = BarService.lookupWidget(buttonName, placeholder.screen.name);
     }
 
     if (buttonItem) {
-      placeholder.buttonItem = buttonItem
+      placeholder.buttonItem = buttonItem;
       // Map button position to screen coordinates
-      var buttonPos = buttonItem.mapToItem(null, 0, 0)
-      placeholder.buttonPosition = Qt.point(buttonPos.x, buttonPos.y)
-      placeholder.buttonWidth = buttonItem.width
-      placeholder.buttonHeight = buttonItem.height
-      placeholder.useButtonPosition = true
+      var buttonPos = buttonItem.mapToItem(null, 0, 0);
+      placeholder.buttonPosition = Qt.point(buttonPos.x, buttonPos.y);
+      placeholder.buttonWidth = buttonItem.width;
+      placeholder.buttonHeight = buttonItem.height;
+      placeholder.useButtonPosition = true;
     } else {
       // No button provided: reset button position mode
-      placeholder.buttonItem = null
-      placeholder.useButtonPosition = false
+      placeholder.buttonItem = null;
+      placeholder.useButtonPosition = false;
     }
 
     // Set isPanelOpen to trigger content loading
-    isPanelOpen = true
+    isPanelOpen = true;
 
     // Notify PanelService
-    PanelService.willOpenPanel(root)
+    PanelService.willOpenPanel(root);
   }
 
   function close() {
     // Start close sequence: fade opacity first
-    isClosing = true
-    sizeAnimationComplete = false
-    closeFinalized = false
+    isClosing = true;
+    sizeAnimationComplete = false;
+    closeFinalized = false;
 
     // Stop the open animation timer if it's still running
-    opacityTrigger.stop()
-    openWatchdogActive = false
-    openWatchdogTimer.stop()
+    opacityTrigger.stop();
+    openWatchdogActive = false;
+    openWatchdogTimer.stop();
 
     // Start close watchdog timer
-    closeWatchdogActive = true
-    closeWatchdogTimer.restart()
+    closeWatchdogActive = true;
+    closeWatchdogTimer.restart();
 
     // If opacity is already 0, skip directly to size animation
     if (contentWrapper.opacity === 0.0) {
-      opacityFadeComplete = true
+      opacityFadeComplete = true;
     } else {
-      opacityFadeComplete = false
+      opacityFadeComplete = false;
     }
 
-    Logger.d("SmartPanelWindow", "Closing panel", placeholder.panelName)
+    Logger.d("SmartPanelWindow", "Closing panel", placeholder.panelName);
   }
 
   function finalizeClose() {
     // Prevent double-finalization
     if (root.closeFinalized) {
-      Logger.w("SmartPanelWindow", "finalizeClose called but already finalized - ignoring", placeholder.panelName)
-      return
+      Logger.w("SmartPanelWindow", "finalizeClose called but already finalized - ignoring", placeholder.panelName);
+      return;
     }
 
     // Complete the close sequence after animations finish
-    root.closeFinalized = true
-    root.closeWatchdogActive = false
-    closeWatchdogTimer.stop()
+    root.closeFinalized = true;
+    root.closeWatchdogActive = false;
+    closeWatchdogTimer.stop();
 
-    root.isPanelVisible = false
-    root.isPanelOpen = false
-    root.isClosing = false
-    root.opacityFadeComplete = false
-    PanelService.closedPanel(root)
-    panelClosed()
+    root.isPanelVisible = false;
+    root.isPanelOpen = false;
+    root.isClosing = false;
+    root.opacityFadeComplete = false;
+    PanelService.closedPanel(root);
+    panelClosed();
 
-    Logger.d("SmartPanelWindow", "Panel close finalized", placeholder.panelName)
+    Logger.d("SmartPanelWindow", "Panel close finalized", placeholder.panelName);
   }
 
   // Fullscreen container for click-to-close and content
@@ -189,59 +188,59 @@ PanelWindow {
 
     // Handle keyboard events directly via Keys handler
     Keys.onPressed: event => {
-                      Logger.d("SmartPanelWindow", "Key pressed:", event.key, "for panel:", placeholder.panelName)
+                      Logger.d("SmartPanelWindow", "Key pressed:", event.key, "for panel:", placeholder.panelName);
                       if (event.key === Qt.Key_Escape) {
-                        panelWrapper.onEscapePressed()
+                        panelWrapper.onEscapePressed();
                         if (closeWithEscape) {
-                          root.close()
-                          event.accepted = true
+                          root.close();
+                          event.accepted = true;
                         }
                       } else if (panelWrapper) {
                         if (event.key === Qt.Key_Up && panelWrapper.onUpPressed) {
-                          panelWrapper.onUpPressed()
-                          event.accepted = true
+                          panelWrapper.onUpPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Down && panelWrapper.onDownPressed) {
-                          panelWrapper.onDownPressed()
-                          event.accepted = true
+                          panelWrapper.onDownPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Left && panelWrapper.onLeftPressed) {
-                          panelWrapper.onLeftPressed()
-                          event.accepted = true
+                          panelWrapper.onLeftPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Right && panelWrapper.onRightPressed) {
-                          panelWrapper.onRightPressed()
-                          event.accepted = true
+                          panelWrapper.onRightPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Tab && panelWrapper.onTabPressed) {
-                          panelWrapper.onTabPressed()
-                          event.accepted = true
+                          panelWrapper.onTabPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Backtab && panelWrapper.onBackTabPressed) {
-                          panelWrapper.onBackTabPressed()
-                          event.accepted = true
+                          panelWrapper.onBackTabPressed();
+                          event.accepted = true;
                         } else if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && panelWrapper.onReturnPressed) {
-                          panelWrapper.onReturnPressed()
-                          event.accepted = true
+                          panelWrapper.onReturnPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_Home && panelWrapper.onHomePressed) {
-                          panelWrapper.onHomePressed()
-                          event.accepted = true
+                          panelWrapper.onHomePressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_End && panelWrapper.onEndPressed) {
-                          panelWrapper.onEndPressed()
-                          event.accepted = true
+                          panelWrapper.onEndPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_PageUp && panelWrapper.onPageUpPressed) {
-                          panelWrapper.onPageUpPressed()
-                          event.accepted = true
+                          panelWrapper.onPageUpPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_PageDown && panelWrapper.onPageDownPressed) {
-                          panelWrapper.onPageDownPressed()
-                          event.accepted = true
+                          panelWrapper.onPageDownPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_J && (event.modifiers & Qt.ControlModifier) && panelWrapper.onCtrlJPressed) {
-                          panelWrapper.onCtrlJPressed()
-                          event.accepted = true
+                          panelWrapper.onCtrlJPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_K && (event.modifiers & Qt.ControlModifier) && panelWrapper.onCtrlKPressed) {
-                          panelWrapper.onCtrlKPressed()
-                          event.accepted = true
+                          panelWrapper.onCtrlKPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier) && panelWrapper.onCtrlNPressed) {
-                          panelWrapper.onCtrlNPressed()
-                          event.accepted = true
+                          panelWrapper.onCtrlNPressed();
+                          event.accepted = true;
                         } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && panelWrapper.onCtrlPPressed) {
-                          panelWrapper.onCtrlPPressed()
-                          event.accepted = true
+                          panelWrapper.onCtrlPPressed();
+                          event.accepted = true;
                         }
                       }
                     }
@@ -252,8 +251,8 @@ PanelWindow {
       enabled: root.isPanelOpen && !root.isClosing
       acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       onClicked: mouse => {
-                   root.close()
-                   mouse.accepted = true
+                   root.close();
+                   mouse.accepted = true;
                  }
       z: 0
     }
@@ -271,10 +270,10 @@ PanelWindow {
       // Opacity animation
       opacity: {
         if (isClosing)
-          return 0.0
+          return 0.0;
         if (isPanelVisible && sizeAnimationComplete)
-          return 1.0
-        return 0.0
+          return 1.0;
+        return 0.0;
       }
 
       Behavior on opacity {
@@ -287,33 +286,33 @@ PanelWindow {
             // Safety: Zero-duration animation handling
             if (!running && duration === 0) {
               if (root.isClosing && contentWrapper.opacity === 0.0) {
-                root.opacityFadeComplete = true
-                var shouldFinalizeNow = placeholder.panelItem && !placeholder.panelItem.shouldAnimateWidth && !placeholder.panelItem.shouldAnimateHeight
+                root.opacityFadeComplete = true;
+                var shouldFinalizeNow = placeholder.panelItem && !placeholder.panelItem.shouldAnimateWidth && !placeholder.panelItem.shouldAnimateHeight;
                 if (shouldFinalizeNow) {
-                  Logger.d("SmartPanelWindow", "Zero-duration opacity + no size animation - finalizing", placeholder.panelName)
-                  Qt.callLater(root.finalizeClose)
+                  Logger.d("SmartPanelWindow", "Zero-duration opacity + no size animation - finalizing", placeholder.panelName);
+                  Qt.callLater(root.finalizeClose);
                 }
               } else if (root.isPanelVisible && contentWrapper.opacity === 1.0) {
-                root.openWatchdogActive = false
-                openWatchdogTimer.stop()
+                root.openWatchdogActive = false;
+                openWatchdogTimer.stop();
               }
-              return
+              return;
             }
 
             // When opacity fade completes during close, trigger size animation
             if (!running && root.isClosing && contentWrapper.opacity === 0.0) {
-              root.opacityFadeComplete = true
-              var shouldFinalizeNow = placeholder.panelItem && !placeholder.panelItem.shouldAnimateWidth && !placeholder.panelItem.shouldAnimateHeight
+              root.opacityFadeComplete = true;
+              var shouldFinalizeNow = placeholder.panelItem && !placeholder.panelItem.shouldAnimateWidth && !placeholder.panelItem.shouldAnimateHeight;
               if (shouldFinalizeNow) {
-                Logger.d("SmartPanelWindow", "No animation - finalizing immediately", placeholder.panelName)
-                Qt.callLater(root.finalizeClose)
+                Logger.d("SmartPanelWindow", "No animation - finalizing immediately", placeholder.panelName);
+                Qt.callLater(root.finalizeClose);
               } else {
-                Logger.d("SmartPanelWindow", "Animation will run - waiting for size animation", placeholder.panelName)
+                Logger.d("SmartPanelWindow", "Animation will run - waiting for size animation", placeholder.panelName);
               }
             } // When opacity fade completes during open, stop watchdog
             else if (!running && root.isPanelVisible && contentWrapper.opacity === 1.0) {
-              root.openWatchdogActive = false
-              openWatchdogTimer.stop()
+              root.openWatchdogActive = false;
+              openWatchdogTimer.stop();
             }
           }
         }
@@ -330,31 +329,31 @@ PanelWindow {
         onLoaded: {
           // Capture initial content-driven size if available
           if (contentLoader.item) {
-            var hasWidthProp = contentLoader.item.hasOwnProperty('contentPreferredWidth')
-            var hasHeightProp = contentLoader.item.hasOwnProperty('contentPreferredHeight')
+            var hasWidthProp = contentLoader.item.hasOwnProperty('contentPreferredWidth');
+            var hasHeightProp = contentLoader.item.hasOwnProperty('contentPreferredHeight');
 
             if (hasWidthProp || hasHeightProp) {
-              var initialWidth = hasWidthProp ? contentLoader.item.contentPreferredWidth : 0
-              var initialHeight = hasHeightProp ? contentLoader.item.contentPreferredHeight : 0
-              placeholder.updateContentSize(initialWidth, initialHeight)
-              Logger.d("SmartPanelWindow", "Initial content size:", initialWidth, "x", initialHeight, placeholder.panelName)
+              var initialWidth = hasWidthProp ? contentLoader.item.contentPreferredWidth : 0;
+              var initialHeight = hasHeightProp ? contentLoader.item.contentPreferredHeight : 0;
+              placeholder.updateContentSize(initialWidth, initialHeight);
+              Logger.d("SmartPanelWindow", "Initial content size:", initialWidth, "x", initialHeight, placeholder.panelName);
             }
           }
 
           // Calculate position in placeholder
-          placeholder.setPosition()
+          placeholder.setPosition();
 
           // Make panel visible on the next frame
           Qt.callLater(function () {
-            root.isPanelVisible = true
-            opacityTrigger.start()
+            root.isPanelVisible = true;
+            opacityTrigger.start();
 
             // Start open watchdog timer
-            root.openWatchdogActive = true
-            openWatchdogTimer.start()
+            root.openWatchdogActive = true;
+            openWatchdogTimer.start();
 
-            panelOpened()
-          })
+            panelOpened();
+          });
         }
       }
 
@@ -363,7 +362,7 @@ PanelWindow {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => {
-                     mouse.accepted = true // Eat the click to prevent propagation to background
+                     mouse.accepted = true; // Eat the click to prevent propagation to background
                    }
         z: -1 // Behind content but above background click-to-close
       }
@@ -375,13 +374,13 @@ PanelWindow {
 
         function onContentPreferredWidthChanged() {
           if (root.isPanelOpen && root.isPanelVisible && contentLoader.item) {
-            placeholder.updateContentSize(contentLoader.item.contentPreferredWidth, placeholder.contentPreferredHeight)
+            placeholder.updateContentSize(contentLoader.item.contentPreferredWidth, placeholder.contentPreferredHeight);
           }
         }
 
         function onContentPreferredHeightChanged() {
           if (root.isPanelOpen && root.isPanelVisible && contentLoader.item) {
-            placeholder.updateContentSize(placeholder.contentPreferredWidth, contentLoader.item.contentPreferredHeight)
+            placeholder.updateContentSize(placeholder.contentPreferredWidth, contentLoader.item.contentPreferredHeight);
           }
         }
       }
@@ -395,7 +394,7 @@ PanelWindow {
     repeat: false
     onTriggered: {
       if (root.isPanelVisible) {
-        root.sizeAnimationComplete = true
+        root.sizeAnimationComplete = true;
       }
     }
   }
@@ -407,11 +406,11 @@ PanelWindow {
     repeat: false
     onTriggered: {
       if (root.openWatchdogActive) {
-        Logger.w("SmartPanelWindow", "Open watchdog timeout - forcing panel visible state", placeholder.panelName)
-        root.openWatchdogActive = false
+        Logger.w("SmartPanelWindow", "Open watchdog timeout - forcing panel visible state", placeholder.panelName);
+        root.openWatchdogActive = false;
         if (root.isPanelOpen && !root.isPanelVisible) {
-          root.isPanelVisible = true
-          root.sizeAnimationComplete = true
+          root.isPanelVisible = true;
+          root.sizeAnimationComplete = true;
         }
       }
     }
@@ -424,8 +423,8 @@ PanelWindow {
     repeat: false
     onTriggered: {
       if (root.closeWatchdogActive && !root.closeFinalized) {
-        Logger.w("SmartPanelWindow", "Close watchdog timeout - forcing panel close", placeholder.panelName)
-        Qt.callLater(root.finalizeClose)
+        Logger.w("SmartPanelWindow", "Close watchdog timeout - forcing panel close", placeholder.panelName);
+        Qt.callLater(root.finalizeClose);
       }
     }
   }
@@ -437,14 +436,14 @@ PanelWindow {
     function onWidthChanged() {
       // When width shrinks to 0 during close and we're animating width, finalize
       if (root.isClosing && placeholder.panelItem.width === 0 && placeholder.panelItem.shouldAnimateWidth) {
-        Qt.callLater(root.finalizeClose)
+        Qt.callLater(root.finalizeClose);
       }
     }
 
     function onHeightChanged() {
       // When height shrinks to 0 during close and we're animating height, finalize
       if (root.isClosing && placeholder.panelItem.height === 0 && placeholder.panelItem.shouldAnimateHeight) {
-        Qt.callLater(root.finalizeClose)
+        Qt.callLater(root.finalizeClose);
       }
     }
   }

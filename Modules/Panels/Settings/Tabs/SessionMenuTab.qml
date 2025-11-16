@@ -12,87 +12,94 @@ ColumnLayout {
   spacing: Style.marginL
 
   property list<var> entriesModel: []
-  property list<var> entriesDefault: [{
+  property list<var> entriesDefault: [
+    {
       "id": "lock",
       "text": I18n.tr("session-menu.lock"),
       "enabled": true,
       "required": false
-    }, {
+    },
+    {
       "id": "suspend",
       "text": I18n.tr("session-menu.suspend"),
       "enabled": true,
       "required": false
-    }, {
+    },
+    {
       "id": "hibernate",
       "text": I18n.tr("session-menu.hibernate"),
       "enabled": true,
       "required": false
-    }, {
+    },
+    {
       "id": "reboot",
       "text": I18n.tr("session-menu.reboot"),
       "enabled": true,
       "required": false
-    }, {
+    },
+    {
       "id": "logout",
       "text": I18n.tr("session-menu.logout"),
       "enabled": true,
       "required": false
-    }, {
+    },
+    {
       "id": "shutdown",
       "text": I18n.tr("session-menu.shutdown"),
       "enabled": true,
       "required": false
-    }]
+    }
+  ]
 
   function saveEntries() {
-    var toSave = []
+    var toSave = [];
     for (var i = 0; i < entriesModel.length; i++) {
       toSave.push({
                     "action": entriesModel[i].id,
                     "enabled": entriesModel[i].enabled,
                     "countdownEnabled": entriesModel[i].countdownEnabled !== undefined ? entriesModel[i].countdownEnabled : true
-                  })
+                  });
     }
-    Settings.data.sessionMenu.powerOptions = toSave
+    Settings.data.sessionMenu.powerOptions = toSave;
   }
 
   Component.onCompleted: {
-    entriesModel = []
+    entriesModel = [];
 
     // Add the entries available in settings
     for (var i = 0; i < Settings.data.sessionMenu.powerOptions.length; i++) {
-      const settingEntry = Settings.data.sessionMenu.powerOptions[i]
+      const settingEntry = Settings.data.sessionMenu.powerOptions[i];
 
       for (var j = 0; j < entriesDefault.length; j++) {
         if (settingEntry.action === entriesDefault[j].id) {
-          var entry = entriesDefault[j]
-          entry.enabled = settingEntry.enabled
+          var entry = entriesDefault[j];
+          entry.enabled = settingEntry.enabled;
           // Default countdownEnabled to true for backward compatibility
-          entry.countdownEnabled = settingEntry.countdownEnabled !== undefined ? settingEntry.countdownEnabled : true
-          entriesModel.push(entry)
+          entry.countdownEnabled = settingEntry.countdownEnabled !== undefined ? settingEntry.countdownEnabled : true;
+          entriesModel.push(entry);
         }
       }
     }
 
     // Add any missing entries from default
     for (var i = 0; i < entriesDefault.length; i++) {
-      var found = false
+      var found = false;
       for (var j = 0; j < entriesModel.length; j++) {
         if (entriesModel[j].id === entriesDefault[i].id) {
-          found = true
-          break
+          found = true;
+          break;
         }
       }
 
       if (!found) {
-        var entry = entriesDefault[i]
+        var entry = entriesDefault[i];
         // Default countdownEnabled to true for new entries
-        entry.countdownEnabled = true
-        entriesModel.push(entry)
+        entry.countdownEnabled = true;
+        entriesModel.push(entry);
       }
     }
 
-    saveEntries()
+    saveEntries();
   }
 
   NHeader {
@@ -104,31 +111,39 @@ ColumnLayout {
     label: I18n.tr("settings.session-menu.position.label")
     description: I18n.tr("settings.session-menu.position.description")
     Layout.fillWidth: true
-    model: [{
+    model: [
+      {
         "key": "center",
         "name": I18n.tr("options.control-center.position.center")
-      }, {
+      },
+      {
         "key": "top_center",
         "name": I18n.tr("options.control-center.position.top_center")
-      }, {
+      },
+      {
         "key": "top_left",
         "name": I18n.tr("options.control-center.position.top_left")
-      }, {
+      },
+      {
         "key": "top_right",
         "name": I18n.tr("options.control-center.position.top_right")
-      }, {
+      },
+      {
         "key": "bottom_center",
         "name": I18n.tr("options.control-center.position.bottom_center")
-      }, {
+      },
+      {
         "key": "bottom_left",
         "name": I18n.tr("options.control-center.position.bottom_left")
-      }, {
+      },
+      {
         "key": "bottom_right",
         "name": I18n.tr("options.control-center.position.bottom_right")
-      }]
+      }
+    ]
     currentKey: Settings.data.sessionMenu.position
     onSelected: function (key) {
-      Settings.data.sessionMenu.position = key
+      Settings.data.sessionMenu.position = key;
     }
   }
 
@@ -272,47 +287,47 @@ ColumnLayout {
                 z: 1000
 
                 onPressed: mouse => {
-                             delegateItem.dragStartIndex = delegateItem.index
-                             delegateItem.dragTargetIndex = delegateItem.index
-                             delegateItem.dragStartY = delegateItem.y
-                             delegateItem.dragging = true
-                             delegateItem.z = 999
-                             preventStealing = true
+                             delegateItem.dragStartIndex = delegateItem.index;
+                             delegateItem.dragTargetIndex = delegateItem.index;
+                             delegateItem.dragStartY = delegateItem.y;
+                             delegateItem.dragging = true;
+                             delegateItem.z = 999;
+                             preventStealing = true;
                            }
 
                 onPositionChanged: mouse => {
                                      if (delegateItem.dragging) {
-                                       var dy = mouse.y - height / 2
-                                       var newY = delegateItem.y + dy
-                                       newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height))
-                                       delegateItem.y = newY
-                                       var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + Style.marginS))
-                                       targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1))
-                                       delegateItem.dragTargetIndex = targetIndex
+                                       var dy = mouse.y - height / 2;
+                                       var newY = delegateItem.y + dy;
+                                       newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height));
+                                       delegateItem.y = newY;
+                                       var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + Style.marginS));
+                                       targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1));
+                                       delegateItem.dragTargetIndex = targetIndex;
                                      }
                                    }
 
                 onReleased: {
-                  preventStealing = false
+                  preventStealing = false;
                   if (delegateItem.dragStartIndex !== -1 && delegateItem.dragTargetIndex !== -1 && delegateItem.dragStartIndex !== delegateItem.dragTargetIndex) {
-                    var newModel = entriesModel.slice()
-                    var item = newModel.splice(delegateItem.dragStartIndex, 1)[0]
-                    newModel.splice(delegateItem.dragTargetIndex, 0, item)
-                    entriesModel = newModel
-                    root.saveEntries()
+                    var newModel = entriesModel.slice();
+                    var item = newModel.splice(delegateItem.dragStartIndex, 1)[0];
+                    newModel.splice(delegateItem.dragTargetIndex, 0, item);
+                    entriesModel = newModel;
+                    root.saveEntries();
                   }
-                  delegateItem.dragging = false
-                  delegateItem.dragStartIndex = -1
-                  delegateItem.dragTargetIndex = -1
-                  delegateItem.z = 0
+                  delegateItem.dragging = false;
+                  delegateItem.dragStartIndex = -1;
+                  delegateItem.dragTargetIndex = -1;
+                  delegateItem.z = 0;
                 }
 
                 onCanceled: {
-                  preventStealing = false
-                  delegateItem.dragging = false
-                  delegateItem.dragStartIndex = -1
-                  delegateItem.dragTargetIndex = -1
-                  delegateItem.z = 0
+                  preventStealing = false;
+                  delegateItem.dragging = false;
+                  delegateItem.dragStartIndex = -1;
+                  delegateItem.dragTargetIndex = -1;
+                  delegateItem.z = 0;
                 }
               }
             }
@@ -346,12 +361,12 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  var newModel = entriesModel.slice()
+                  var newModel = entriesModel.slice();
                   newModel[index] = Object.assign({}, newModel[index], {
                                                     "enabled": !modelData.enabled
-                                                  })
-                  entriesModel = newModel
-                  delegateItem.saveEntriesFunc()
+                                                  });
+                  entriesModel = newModel;
+                  delegateItem.saveEntriesFunc();
                 }
               }
             }
@@ -380,12 +395,12 @@ ColumnLayout {
               NToggle {
                 checked: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
                 onToggled: function (checked) {
-                  var newModel = entriesModel.slice()
+                  var newModel = entriesModel.slice();
                   newModel[delegateItem.index] = Object.assign({}, newModel[delegateItem.index], {
                                                                  "countdownEnabled": checked
-                                                               })
-                  entriesModel = newModel
-                  delegateItem.saveEntriesFunc()
+                                                               });
+                  entriesModel = newModel;
+                  delegateItem.saveEntriesFunc();
                 }
               }
             }
@@ -394,34 +409,34 @@ ColumnLayout {
           // Position binding for non-dragging state
           y: {
             if (delegateItem.dragging) {
-              return delegateItem.y
+              return delegateItem.y;
             }
 
-            var draggedIndex = -1
-            var targetIndex = -1
+            var draggedIndex = -1;
+            var targetIndex = -1;
             for (var i = 0; i < listView.count; i++) {
-              var item = listView.itemAtIndex(i)
+              var item = listView.itemAtIndex(i);
               if (item && item.dragging) {
-                draggedIndex = item.dragStartIndex
-                targetIndex = item.dragTargetIndex
-                break
+                draggedIndex = item.dragStartIndex;
+                targetIndex = item.dragTargetIndex;
+                break;
               }
             }
 
             if (draggedIndex !== -1 && targetIndex !== -1 && draggedIndex !== targetIndex) {
-              var currentIndex = delegateItem.index
+              var currentIndex = delegateItem.index;
               if (draggedIndex < targetIndex) {
                 if (currentIndex > draggedIndex && currentIndex <= targetIndex) {
-                  return (currentIndex - 1) * (delegateItem.height + Style.marginS)
+                  return (currentIndex - 1) * (delegateItem.height + Style.marginS);
                 }
               } else {
                 if (currentIndex >= targetIndex && currentIndex < draggedIndex) {
-                  return (currentIndex + 1) * (delegateItem.height + Style.marginS)
+                  return (currentIndex + 1) * (delegateItem.height + Style.marginS);
                 }
               }
             }
 
-            return delegateItem.index * (delegateItem.height + Style.marginS)
+            return delegateItem.index * (delegateItem.height + Style.marginS);
           }
 
           Behavior on y {

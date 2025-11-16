@@ -33,45 +33,45 @@ NBox {
   Layout.fillWidth: true
   Layout.minimumHeight: {
     // header + minimal content area
-    var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio)
+    var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio);
 
-    var widgetCount = widgetModel.length
+    var widgetCount = widgetModel.length;
     if (widgetCount === 0) {
-      return absoluteMin
+      return absoluteMin;
     }
 
     // Calculate rows based on estimated widget layout
-    var availableWidth = parent.width - (Style.marginL * 2)
-    var avgWidgetWidth = 120 * Style.uiScaleRatio // More accurate estimate
-    var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth))
-    var rows = Math.ceil(widgetCount / widgetsPerRow)
+    var availableWidth = parent.width - (Style.marginL * 2);
+    var avgWidgetWidth = 120 * Style.uiScaleRatio; // More accurate estimate
+    var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth));
+    var rows = Math.ceil(widgetCount / widgetsPerRow);
 
     // Header height + spacing + (rows * widget height) + (spacing between rows) + margins
-    var headerHeight = Style.fontSizeL * 2
-    var widgetHeight = Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
-    var widgetAreaHeight = ((rows + 1) * widgetHeight) + ((rows - 1) * Style.marginS)
+    var headerHeight = Style.fontSizeL * 2;
+    var widgetHeight = Style.baseWidgetSize * 1.15 * Style.uiScaleRatio;
+    var widgetAreaHeight = ((rows + 1) * widgetHeight) + ((rows - 1) * Style.marginS);
 
-    return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight)
+    return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight);
   }
 
   // Generate widget color from name checksum
   function getWidgetColor(widget) {
     const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
-                                                               return acc + character.charCodeAt(0)
-                                                             }, 0)
+                                                               return acc + character.charCodeAt(0);
+                                                             }, 0);
     switch (totalSum % 6) {
     case 0:
-      return [Color.mPrimary, Color.mOnPrimary]
+      return [Color.mPrimary, Color.mOnPrimary];
     case 1:
-      return [Color.mSecondary, Color.mOnSecondary]
+      return [Color.mSecondary, Color.mOnSecondary];
     case 2:
-      return [Color.mTertiary, Color.mOnTertiary]
+      return [Color.mTertiary, Color.mOnTertiary];
     case 3:
-      return [Color.mError, Color.mOnError]
+      return [Color.mError, Color.mOnError];
     case 4:
-      return [Color.mOnSurface, Color.mSurface]
+      return [Color.mOnSurface, Color.mSurface];
     case 5:
-      return [Color.mOnSurfaceVariant, Color.mSurfaceVariant]
+      return [Color.mOnSurfaceVariant, Color.mSurfaceVariant];
     }
   }
 
@@ -124,9 +124,9 @@ NBox {
           target: availableWidgets
           function onCountChanged() {
             // Trigger a re-filter by clearing and re-setting the search text
-            var currentSearch = comboBox.searchText
-            comboBox.searchText = ""
-            comboBox.searchText = currentSearch
+            var currentSearch = comboBox.searchText;
+            comboBox.searchText = "";
+            comboBox.searchText = currentSearch;
           }
         }
       }
@@ -143,8 +143,8 @@ NBox {
         Layout.leftMargin: Style.marginS
         onClicked: {
           if (comboBox.currentKey !== "" && !root.isAtMaxCapacity) {
-            addWidget(comboBox.currentKey, sectionId)
-            comboBox.currentKey = ""
+            addWidget(comboBox.currentKey, sectionId);
+            comboBox.currentKey = "";
           }
         }
       }
@@ -204,22 +204,26 @@ NBox {
               id: contextMenu
               parent: Overlay.overlay
               width: 240 * Style.uiScaleRatio
-              model: [{
+              model: [
+                {
                   "label": I18n.tr("tooltips.move-to-left-section"),
                   "action": "left",
                   "icon": "arrow-bar-to-left",
                   "visible": root.availableSections.includes("left") && root.sectionId !== "left"
-                }, {
+                },
+                {
                   "label": I18n.tr("tooltips.move-to-center-section"),
                   "action": "center",
                   "icon": "layout-columns",
                   "visible": root.availableSections.includes("center") && root.sectionId !== "center"
-                }, {
+                },
+                {
                   "label": I18n.tr("tooltips.move-to-right-section"),
                   "action": "right",
                   "icon": "arrow-bar-to-right",
                   "visible": root.availableSections.includes("right") && root.sectionId !== "right"
-                }]
+                }
+              ]
 
               onTriggered: action => root.moveWidget(root.sectionId, index, action)
             }
@@ -235,10 +239,10 @@ NBox {
               onPressed: mouse => {
                            if (mouse.button === Qt.RightButton) {
                              // Check if click is not on the buttons area
-                             const localX = mouse.x
-                             const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth)
+                             const localX = mouse.x;
+                             const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
                              if (localX < buttonsStartX) {
-                               contextMenu.openAtItem(widgetItem, mouse.x, mouse.y)
+                               contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
                              }
                            }
                          }
@@ -273,33 +277,33 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent))
+                      var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
                       function instantiateAndOpen() {
                         var dialog = component.createObject(Overlay.overlay, {
                                                               "widgetIndex": index,
                                                               "widgetData": modelData,
                                                               "widgetId": modelData.id,
                                                               "sectionId": root.sectionId
-                                                            })
+                                                            });
                         if (dialog) {
-                          dialog.updateWidgetSettings.connect(root.updateWidgetSettings)
-                          dialog.open()
+                          dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
+                          dialog.open();
                         } else {
-                          Logger.e("NSectionEditor", "Failed to create settings dialog instance")
+                          Logger.e("NSectionEditor", "Failed to create settings dialog instance");
                         }
                       }
                       if (component.status === Component.Ready) {
-                        instantiateAndOpen()
+                        instantiateAndOpen();
                       } else if (component.status === Component.Error) {
-                        Logger.e("NSectionEditor", component.errorString())
+                        Logger.e("NSectionEditor", component.errorString());
                       } else {
                         component.statusChanged.connect(function () {
                           if (component.status === Component.Ready) {
-                            instantiateAndOpen()
+                            instantiateAndOpen();
                           } else if (component.status === Component.Error) {
-                            Logger.e("NSectionEditor", component.errorString())
+                            Logger.e("NSectionEditor", component.errorString());
                           }
-                        })
+                        });
                       }
                     }
                   }
@@ -315,7 +319,7 @@ NBox {
                   colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                   colorFgHover: Color.mOnPrimary
                   onClicked: {
-                    removeWidget(sectionId, index)
+                    removeWidget(sectionId, index);
                   }
                 }
               }
@@ -410,52 +414,51 @@ NBox {
         // Drop position calculation
         function updateDropIndicator(mouseX, mouseY) {
           if (!dragStarted || draggedIndex === -1) {
-            dropIndicator.opacity = 0
-            pulseAnimation.running = false
-            return
+            dropIndicator.opacity = 0;
+            pulseAnimation.running = false;
+            return;
           }
 
-          let bestIndex = -1
-          let bestPosition = null
-          let minDistance = Infinity
+          let bestIndex = -1;
+          let bestPosition = null;
+          let minDistance = Infinity;
 
           // Check position relative to each widget
           for (var i = 0; i < widgetModel.length; i++) {
             if (i === draggedIndex)
-              continue
-
-            const widget = widgetFlow.children[i]
+              continue;
+            const widget = widgetFlow.children[i];
             if (!widget || widget.widgetIndex === undefined)
-              continue
+              continue;
 
             // Check distance to left edge (insert before)
-            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x, 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x, 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2));
 
             // Check distance to right edge (insert after)
-            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width), 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2))
+            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width), 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2));
 
             if (leftDist < minDistance) {
-              minDistance = leftDist
-              bestIndex = i
-              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS, widget.y)
+              minDistance = leftDist;
+              bestIndex = i;
+              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS, widget.y);
             }
 
             if (rightDist < minDistance) {
-              minDistance = rightDist
-              bestIndex = i + 1
-              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS - dropIndicator.width / 2, widget.y)
+              minDistance = rightDist;
+              bestIndex = i + 1;
+              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS - dropIndicator.width / 2, widget.y);
             }
           }
 
           // Check if we should insert at position 0 (very beginning)
           if (widgetModel.length > 0 && draggedIndex !== 0) {
-            const firstWidget = widgetFlow.children[0]
+            const firstWidget = widgetFlow.children[0];
             if (firstWidget) {
-              const dist = Math.sqrt(Math.pow(mouseX, 2) + Math.pow(mouseY - firstWidget.y, 2))
+              const dist = Math.sqrt(Math.pow(mouseX, 2) + Math.pow(mouseY - firstWidget.y, 2));
               if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
-                minDistance = dist
-                bestIndex = 0
-                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS), firstWidget.y)
+                minDistance = dist;
+                bestIndex = 0;
+                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS), firstWidget.y);
               }
             }
           }
@@ -463,68 +466,67 @@ NBox {
           // Only show indicator if we're close enough and it's a different position
           if (minDistance < 80 && bestIndex !== -1) {
             // Adjust index if we're moving forward
-            let adjustedIndex = bestIndex
+            let adjustedIndex = bestIndex;
             if (bestIndex > draggedIndex) {
-              adjustedIndex = bestIndex - 1
+              adjustedIndex = bestIndex - 1;
             }
 
             // Don't show if it's the same position
             if (adjustedIndex === draggedIndex) {
-              dropIndicator.opacity = 0
-              pulseAnimation.running = false
-              dropTargetIndex = -1
-              return
+              dropIndicator.opacity = 0;
+              pulseAnimation.running = false;
+              dropTargetIndex = -1;
+              return;
             }
 
-            dropTargetIndex = adjustedIndex
+            dropTargetIndex = adjustedIndex;
             if (bestPosition) {
-              dropIndicator.x = bestPosition.x
-              dropIndicator.y = bestPosition.y
-              dropIndicator.opacity = 1
+              dropIndicator.x = bestPosition.x;
+              dropIndicator.y = bestPosition.y;
+              dropIndicator.opacity = 1;
               if (!pulseAnimation.running) {
-                pulseAnimation.running = true
+                pulseAnimation.running = true;
               }
             }
           } else {
-            dropIndicator.opacity = 0
-            pulseAnimation.running = false
-            dropTargetIndex = -1
+            dropIndicator.opacity = 0;
+            pulseAnimation.running = false;
+            dropTargetIndex = -1;
           }
         }
 
         onPressed: mouse => {
-                     startPos = Qt.point(mouse.x, mouse.y)
-                     dragStarted = false
-                     potentialDrag = false
-                     draggedIndex = -1
-                     draggedWidget = null
-                     dropTargetIndex = -1
-                     draggedModelData = null
+                     startPos = Qt.point(mouse.x, mouse.y);
+                     dragStarted = false;
+                     potentialDrag = false;
+                     draggedIndex = -1;
+                     draggedWidget = null;
+                     dropTargetIndex = -1;
+                     draggedModelData = null;
 
                      // Find which widget was clicked
                      for (var i = 0; i < widgetModel.length; i++) {
-                       const widget = widgetFlow.children[i]
+                       const widget = widgetFlow.children[i];
                        if (widget && widget.widgetIndex !== undefined) {
                          if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
-
-                           const localX = mouse.x - widget.x
-                           const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth)
+                           const localX = mouse.x - widget.x;
+                           const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth);
 
                            if (localX < buttonsStartX) {
                              // This is a draggable area - prevent panel close immediately
-                             draggedIndex = widget.widgetIndex
-                             draggedWidget = widget
-                             draggedModelData = widget.modelData
-                             potentialDrag = true
-                             preventStealing = true
+                             draggedIndex = widget.widgetIndex;
+                             draggedWidget = widget;
+                             draggedModelData = widget.modelData;
+                             potentialDrag = true;
+                             preventStealing = true;
 
                              // Signal that interaction started (prevents panel close)
-                             root.dragPotentialStarted()
-                             break
+                             root.dragPotentialStarted();
+                             break;
                            } else {
                              // This is a button area - let the click through
-                             mouse.accepted = false
-                             return
+                             mouse.accepted = false;
+                             return;
                            }
                          }
                        }
@@ -533,28 +535,28 @@ NBox {
 
         onPositionChanged: mouse => {
                              if (draggedIndex !== -1 && potentialDrag) {
-                               const deltaX = mouse.x - startPos.x
-                               const deltaY = mouse.y - startPos.y
-                               const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+                               const deltaX = mouse.x - startPos.x;
+                               const deltaY = mouse.y - startPos.y;
+                               const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
                                if (!dragStarted && distance > dragThreshold) {
-                                 dragStarted = true
+                                 dragStarted = true;
 
                                  // Setup ghost widget
                                  if (draggedWidget) {
-                                   dragGhost.width = draggedWidget.width
-                                   dragGhost.color = root.getWidgetColor(draggedModelData)[0]
-                                   ghostText.text = draggedModelData.id
+                                   dragGhost.width = draggedWidget.width;
+                                   dragGhost.color = root.getWidgetColor(draggedModelData)[0];
+                                   ghostText.text = draggedModelData.id;
                                  }
                                }
 
                                if (dragStarted) {
                                  // Move ghost widget
-                                 dragGhost.x = mouse.x - dragGhost.width / 2
-                                 dragGhost.y = mouse.y - dragGhost.height / 2
+                                 dragGhost.x = mouse.x - dragGhost.width / 2;
+                                 dragGhost.y = mouse.y - dragGhost.height / 2;
 
                                  // Update drop indicator
-                                 updateDropIndicator(mouse.x, mouse.y)
+                                 updateDropIndicator(mouse.x, mouse.y);
                                }
                              }
                            }
@@ -562,52 +564,52 @@ NBox {
         onReleased: mouse => {
                       if (dragStarted && dropTargetIndex !== -1 && dropTargetIndex !== draggedIndex) {
                         // Perform the reorder
-                        reorderWidget(sectionId, draggedIndex, dropTargetIndex)
+                        reorderWidget(sectionId, draggedIndex, dropTargetIndex);
                       }
 
                       // Always signal end of interaction if we started one
                       if (potentialDrag) {
-                        root.dragPotentialEnded()
+                        root.dragPotentialEnded();
                       }
 
                       // Reset everything
-                      dragStarted = false
-                      potentialDrag = false
-                      draggedIndex = -1
-                      draggedWidget = null
-                      dropTargetIndex = -1
-                      draggedModelData = null
-                      preventStealing = false
-                      dropIndicator.opacity = 0
-                      pulseAnimation.running = false
-                      dragGhost.width = 0
+                      dragStarted = false;
+                      potentialDrag = false;
+                      draggedIndex = -1;
+                      draggedWidget = null;
+                      dropTargetIndex = -1;
+                      draggedModelData = null;
+                      preventStealing = false;
+                      dropIndicator.opacity = 0;
+                      pulseAnimation.running = false;
+                      dragGhost.width = 0;
                     }
 
         onExited: {
           if (dragStarted) {
             // Hide drop indicator when mouse leaves, but keep ghost visible
-            dropIndicator.opacity = 0
-            pulseAnimation.running = false
+            dropIndicator.opacity = 0;
+            pulseAnimation.running = false;
           }
         }
 
         onCanceled: {
           // Handle cancel (e.g., ESC key pressed during drag)
           if (potentialDrag) {
-            root.dragPotentialEnded()
+            root.dragPotentialEnded();
           }
 
           // Reset everything
-          dragStarted = false
-          potentialDrag = false
-          draggedIndex = -1
-          draggedWidget = null
-          dropTargetIndex = -1
-          draggedModelData = null
-          preventStealing = false
-          dropIndicator.opacity = 0
-          pulseAnimation.running = false
-          dragGhost.width = 0
+          dragStarted = false;
+          potentialDrag = false;
+          draggedIndex = -1;
+          draggedWidget = null;
+          dropTargetIndex = -1;
+          draggedModelData = null;
+          preventStealing = false;
+          dropIndicator.opacity = 0;
+          pulseAnimation.running = false;
+          dragGhost.width = 0;
         }
       }
     }

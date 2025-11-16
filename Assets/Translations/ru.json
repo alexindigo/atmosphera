@@ -359,13 +359,6 @@
     "health": "Здоровье: {percent}%",
     "idle": "Простой.",
     "no-battery-detected": "Батарея не обнаружена.",
-    "panel": {
-      "balanced": "Сбалансированный ({percent}%)",
-      "disabled": "Диспетчер батареи отключен",
-      "full": "Полная емкость ({percent}%)",
-      "lifespan": "Увеличенный срок службы ({percent}%)",
-      "title": "Порог зарядки"
-    },
     "plugged-in": "Подключено.",
     "time-left": "Осталось времени: {time}.",
     "time-until-full": "Время до полной зарядки: {time}."
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "Низкий заряд батареи",
       "low-desc": "Заряд батареи {percent}%. Пожалуйста, подключите зарядное устройство."
-    },
-    "battery-manager": {
-      "initial-setup": "Требуется начальная настройка",
-      "install-failed": "Сбой установки",
-      "install-missing": "Отсутствуют необходимые файлы",
-      "install-success": "Успешно установлено",
-      "install-unsupported": "Система не поддерживается",
-      "set-failed": "Не удалось установить порог зарядки батареи",
-      "set-success-desc": "Порог зарядки батареи установлен на {percent}%",
-      "title": "Порог зарядки батареи",
-      "uninstall-failed": "Сбой удаления",
-      "uninstall-setup": "Удаление, требуется аутентификация",
-      "uninstall-success": "Успешно удалено"
     },
     "bluetooth": {
       "disabled": "Отключен",

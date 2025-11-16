@@ -3,8 +3,8 @@ import Quickshell
 import Quickshell.Wayland
 
 import qs.Commons
-import qs.Services.UI
 import qs.Modules.MainScreen
+import qs.Services.UI
 
 // ------------------------------
 // MainScreen for each screen (manages bar + all panels)
@@ -16,10 +16,10 @@ Variants {
 
     property bool shouldBeActive: {
       if (!modelData || !modelData.name) {
-        return false
+        return false;
       }
-      Logger.d("Shell", "MainScreen activated for", modelData?.name)
-      return true
+      Logger.d("Shell", "MainScreen activated for", modelData?.name);
+      return true;
     }
 
     property bool windowLoaded: false
@@ -33,7 +33,7 @@ Variants {
 
       onLoaded: {
         // Signal that window is loaded so exclusion zone can be created
-        parent.windowLoaded = true
+        parent.windowLoaded = true;
       }
 
       sourceComponent: MainScreen {
@@ -45,11 +45,11 @@ Variants {
     Loader {
       active: {
         if (!parent.windowLoaded || !parent.shouldBeActive || !BarService.isVisible)
-          return false
+          return false;
 
         // Check if bar is configured for this screen
-        var monitors = Settings.data.bar.monitors || []
-        return monitors.length === 0 || monitors.includes(modelData?.name)
+        var monitors = Settings.data.bar.monitors || [];
+        return monitors.length === 0 || monitors.includes(modelData?.name);
       }
       asynchronous: false
 
@@ -58,7 +58,7 @@ Variants {
       }
 
       onLoaded: {
-        Logger.d("Shell", "BarContentWindow created for", modelData?.name)
+        Logger.d("Shell", "BarContentWindow created for", modelData?.name);
       }
     }
 
@@ -67,11 +67,11 @@ Variants {
     Loader {
       active: {
         if (!parent.windowLoaded || !parent.shouldBeActive || !BarService.isVisible)
-          return false
+          return false;
 
         // Check if bar is configured for this screen
-        var monitors = Settings.data.bar.monitors || []
-        return monitors.length === 0 || monitors.includes(modelData?.name)
+        var monitors = Settings.data.bar.monitors || [];
+        return monitors.length === 0 || monitors.includes(modelData?.name);
       }
       asynchronous: false
 
@@ -80,7 +80,7 @@ Variants {
       }
 
       onLoaded: {
-        Logger.d("Shell", "BarExclusionZone created for", modelData?.name)
+        Logger.d("Shell", "BarExclusionZone created for", modelData?.name);
       }
     }
 
@@ -95,7 +95,7 @@ Variants {
       }
 
       onLoaded: {
-        Logger.d("Shell", "TrayMenuWindow created for", modelData?.name)
+        Logger.d("Shell", "TrayMenuWindow created for", modelData?.name);
       }
     }
   }

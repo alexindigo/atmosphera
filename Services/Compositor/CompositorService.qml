@@ -39,62 +39,62 @@ Singleton {
     // Setup cache path (needs Settings to be available)
     Qt.callLater(() => {
                    if (typeof Settings !== 'undefined' && Settings.cacheDir) {
-                     displayCachePath = Settings.cacheDir + "display.json"
-                     displayCacheFileView.path = displayCachePath
+                     displayCachePath = Settings.cacheDir + "display.json";
+                     displayCacheFileView.path = displayCachePath;
                    }
-                 })
+                 });
 
-    detectCompositor()
+    detectCompositor();
   }
 
   function detectCompositor() {
-    const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
-    const niriSocket = Quickshell.env("NIRI_SOCKET")
-    const swaySock = Quickshell.env("SWAYSOCK")
-    const currentDesktop = Quickshell.env("XDG_CURRENT_DESKTOP")
+    const hyprlandSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE");
+    const niriSocket = Quickshell.env("NIRI_SOCKET");
+    const swaySock = Quickshell.env("SWAYSOCK");
+    const currentDesktop = Quickshell.env("XDG_CURRENT_DESKTOP");
 
     // Check for MangoWC using XDG_CURRENT_DESKTOP environment variable
     // MangoWC sets XDG_CURRENT_DESKTOP=mango
     if (currentDesktop && currentDesktop.toLowerCase().includes("mango")) {
-      isHyprland = false
-      isNiri = false
-      isSway = false
-      isMango = true
-      backendLoader.sourceComponent = mangoComponent
+      isHyprland = false;
+      isNiri = false;
+      isSway = false;
+      isMango = true;
+      backendLoader.sourceComponent = mangoComponent;
     } else if (niriSocket && niriSocket.length > 0) {
-      isHyprland = false
-      isNiri = true
-      isSway = false
-      isMango = false
-      backendLoader.sourceComponent = niriComponent
+      isHyprland = false;
+      isNiri = true;
+      isSway = false;
+      isMango = false;
+      backendLoader.sourceComponent = niriComponent;
     } else if (hyprlandSignature && hyprlandSignature.length > 0) {
-      isHyprland = true
-      isNiri = false
-      isSway = false
-      isMango = false
-      backendLoader.sourceComponent = hyprlandComponent
+      isHyprland = true;
+      isNiri = false;
+      isSway = false;
+      isMango = false;
+      backendLoader.sourceComponent = hyprlandComponent;
     } else if (swaySock && swaySock.length > 0) {
-      isHyprland = false
-      isNiri = false
-      isSway = true
-      isMango = false
-      backendLoader.sourceComponent = swayComponent
+      isHyprland = false;
+      isNiri = false;
+      isSway = true;
+      isMango = false;
+      backendLoader.sourceComponent = swayComponent;
     } else {
       // Always fallback to Niri
-      isHyprland = false
-      isNiri = true
-      isSway = false
-      isMango = false
-      backendLoader.sourceComponent = niriComponent
+      isHyprland = false;
+      isNiri = true;
+      isSway = false;
+      isMango = false;
+      backendLoader.sourceComponent = niriComponent;
     }
   }
   Loader {
     id: backendLoader
     onLoaded: {
       if (item) {
-        root.backend = item
-        setupBackendConnections()
-        backend.initialize()
+        root.backend = item;
+        setupBackendConnections();
+        backend.initialize();
       }
     }
   }
@@ -112,14 +112,14 @@ Singleton {
 
     onLoaded: {
       // Load cached display scales
-      displayScales = displayCacheAdapter.displays || {}
-      displayScalesLoaded = true
+      displayScales = displayCacheAdapter.displays || {};
+      displayScalesLoaded = true;
       // Logger.i("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
     }
 
     onLoadFailed: {
       // Cache doesn't exist yet, will be created on first update
-      displayScalesLoaded = true
+      displayScalesLoaded = true;
       // Logger.i("CompositorService", "No display cache found, will create on first update")
     }
   }
@@ -158,227 +158,227 @@ Singleton {
 
   function setupBackendConnections() {
     if (!backend)
-      return
+      return;
 
     // Connect backend signals to facade signals
     backend.workspaceChanged.connect(() => {
                                        // Sync workspaces when they change
-                                       syncWorkspaces()
+                                       syncWorkspaces();
                                        // Forward the signal
-                                       workspaceChanged()
-                                     })
+                                       workspaceChanged();
+                                     });
 
     backend.activeWindowChanged.connect(() => {
                                           // Sync active window when it changes
                                           // TODO: Avoid re-syncing all windows
-                                          syncWindows()
+                                          syncWindows();
                                           // Forward the signal
-                                          activeWindowChanged()
-                                        })
+                                          activeWindowChanged();
+                                        });
 
     backend.windowListChanged.connect(() => {
                                         // Sync windows when they change
-                                        syncWindows()
+                                        syncWindows();
                                         // Forward the signal
-                                        windowListChanged()
-                                      })
+                                        windowListChanged();
+                                      });
 
     // Property bindings - use automatic property change signal
     backend.focusedWindowIndexChanged.connect(() => {
-                                                focusedWindowIndex = backend.focusedWindowIndex
-                                              })
+                                                focusedWindowIndex = backend.focusedWindowIndex;
+                                              });
 
     // Initial sync
-    syncWorkspaces()
-    syncWindows()
-    focusedWindowIndex = backend.focusedWindowIndex
+    syncWorkspaces();
+    syncWindows();
+    focusedWindowIndex = backend.focusedWindowIndex;
   }
 
   function syncWorkspaces() {
-    workspaces.clear()
-    const ws = backend.workspaces
+    workspaces.clear();
+    const ws = backend.workspaces;
     for (var i = 0; i < ws.count; i++) {
-      workspaces.append(ws.get(i))
+      workspaces.append(ws.get(i));
     }
     // Emit signal to notify listeners that workspace list has been updated
-    workspacesChanged()
+    workspacesChanged();
   }
 
   function syncWindows() {
-    windows.clear()
-    const ws = backend.windows
+    windows.clear();
+    const ws = backend.windows;
     for (var i = 0; i < ws.length; i++) {
-      windows.append(ws[i])
+      windows.append(ws[i]);
     }
     // Emit signal to notify listeners that workspace list has been updated
-    windowListChanged()
+    windowListChanged();
   }
 
   // Update display scales from backend
   function updateDisplayScales() {
     if (!backend || !backend.queryDisplayScales) {
-      Logger.w("CompositorService", "Backend does not support display scale queries")
-      return
+      Logger.w("CompositorService", "Backend does not support display scale queries");
+      return;
     }
 
-    backend.queryDisplayScales()
+    backend.queryDisplayScales();
   }
 
   // Called by backend when display scales are ready
   function onDisplayScalesUpdated(scales) {
-    displayScales = scales
-    saveDisplayScalesToCache()
-    displayScalesChanged()
-    Logger.i("CompositorService", "Display scales updated")
+    displayScales = scales;
+    saveDisplayScalesToCache();
+    displayScalesChanged();
+    Logger.i("CompositorService", "Display scales updated");
   }
 
   // Save display scales to cache
   function saveDisplayScalesToCache() {
     if (!displayCachePath) {
-      return
+      return;
     }
 
-    displayCacheAdapter.displays = displayScales
-    displayCacheFileView.writeAdapter()
+    displayCacheAdapter.displays = displayScales;
+    displayCacheFileView.writeAdapter();
   }
 
   // Public function to get scale for a specific display
   function getDisplayScale(displayName) {
     if (!displayName || !displayScales[displayName]) {
-      return 1.0
+      return 1.0;
     }
-    return displayScales[displayName].scale || 1.0
+    return displayScales[displayName].scale || 1.0;
   }
 
   // Public function to get all display info for a specific display
   function getDisplayInfo(displayName) {
     if (!displayName || !displayScales[displayName]) {
-      return null
+      return null;
     }
-    return displayScales[displayName]
+    return displayScales[displayName];
   }
 
   // Get focused window
   function getFocusedWindow() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      return windows.get(focusedWindowIndex)
+      return windows.get(focusedWindowIndex);
     }
-    return null
+    return null;
   }
 
   // Get focused window title
   function getFocusedWindowTitle() {
     if (focusedWindowIndex >= 0 && focusedWindowIndex < windows.count) {
-      var title = windows.get(focusedWindowIndex).title
+      var title = windows.get(focusedWindowIndex).title;
       if (title !== undefined) {
-        title = title.replace(/(\r\n|\n|\r)/g, "")
+        title = title.replace(/(\r\n|\n|\r)/g, "");
       }
-      return title || ""
+      return title || "";
     }
-    return ""
+    return "";
   }
 
   function getWindowsForWorkspace(workspaceId) {
-    var windowsInWs = []
+    var windowsInWs = [];
     for (var i = 0; i < windows.count; i++) {
-      var window = windows.get(i)
+      var window = windows.get(i);
       if (window.workspaceId === workspaceId) {
-        windowsInWs.push(window)
+        windowsInWs.push(window);
       }
     }
-    return windowsInWs
+    return windowsInWs;
   }
 
   // Generic workspace switching
   function switchToWorkspace(workspace) {
     if (backend && backend.switchToWorkspace) {
-      backend.switchToWorkspace(workspace)
+      backend.switchToWorkspace(workspace);
     } else {
-      Logger.w("Compositor", "No backend available for workspace switching")
+      Logger.w("Compositor", "No backend available for workspace switching");
     }
   }
 
   // Get current workspace
   function getCurrentWorkspace() {
     for (var i = 0; i < workspaces.count; i++) {
-      const ws = workspaces.get(i)
+      const ws = workspaces.get(i);
       if (ws.isFocused) {
-        return ws
+        return ws;
       }
     }
-    return null
+    return null;
   }
 
   // Get active workspaces
   function getActiveWorkspaces() {
-    const activeWorkspaces = []
+    const activeWorkspaces = [];
     for (var i = 0; i < workspaces.count; i++) {
-      const ws = workspaces.get(i)
+      const ws = workspaces.get(i);
       if (ws.isActive) {
-        activeWorkspaces.push(ws)
+        activeWorkspaces.push(ws);
       }
     }
-    return activeWorkspaces
+    return activeWorkspaces;
   }
 
   // Set focused window
   function focusWindow(window) {
     if (backend && backend.focusWindow) {
-      backend.focusWindow(window)
+      backend.focusWindow(window);
     } else {
-      Logger.w("Compositor", "No backend available for window focus")
+      Logger.w("Compositor", "No backend available for window focus");
     }
   }
 
   // Close window
   function closeWindow(window) {
     if (backend && backend.closeWindow) {
-      backend.closeWindow(window)
+      backend.closeWindow(window);
     } else {
-      Logger.w("Compositor", "No backend available for window closing")
+      Logger.w("Compositor", "No backend available for window closing");
     }
   }
 
   // Session management
   function logout() {
     if (backend && backend.logout) {
-      Logger.i("Compositor", "Logout requested")
-      backend.logout()
+      Logger.i("Compositor", "Logout requested");
+      backend.logout();
     } else {
-      Logger.w("Compositor", "No backend available for logout")
+      Logger.w("Compositor", "No backend available for logout");
     }
   }
 
   function shutdown() {
-    Logger.i("Compositor", "Shutdown requested")
-    Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"])
+    Logger.i("Compositor", "Shutdown requested");
+    Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
   }
 
   function reboot() {
-    Logger.i("Compositor", "Reboot requested")
-    Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"])
+    Logger.i("Compositor", "Reboot requested");
+    Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
   }
 
   function suspend() {
-    Logger.i("Compositor", "Suspend requested")
-    Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"])
+    Logger.i("Compositor", "Suspend requested");
+    Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
   }
 
   function hibernate() {
-    Logger.i("Compositor", "Hibernate requested")
-    Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"])
+    Logger.i("Compositor", "Hibernate requested");
+    Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"]);
   }
 
   function lockAndSuspend() {
-    Logger.i("Compositor", "Lock and suspend requested")
+    Logger.i("Compositor", "Lock and suspend requested");
     try {
       if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true
+        PanelService.lockScreen.active = true;
       }
     } catch (e) {
-      Logger.w("Compositor", "Failed to activate lock screen before suspend: " + e)
+      Logger.w("Compositor", "Failed to activate lock screen before suspend: " + e);
     }
     // Queue suspend to the next event loop cycle to allow lock UI to render
-    Qt.callLater(suspend)
+    Qt.callLater(suspend);
   }
 }

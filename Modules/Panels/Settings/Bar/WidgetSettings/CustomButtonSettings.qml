@@ -19,21 +19,21 @@ ColumnLayout {
   property bool valueHideTextInVerticalBar: widgetData.hideTextInVerticalBar !== undefined ? widgetData.hideTextInVerticalBar : widgetMetadata.hideTextInVerticalBar
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.icon = valueIcon
-    settings.leftClickExec = leftClickExecInput.text
-    settings.leftClickUpdateText = leftClickUpdateText.checked
-    settings.rightClickExec = rightClickExecInput.text
-    settings.rightClickUpdateText = rightClickUpdateText.checked
-    settings.middleClickExec = middleClickExecInput.text
-    settings.middleClickUpdateText = middleClickUpdateText.checked
-    settings.textCommand = textCommandInput.text
-    settings.textCollapse = textCollapseInput.text
-    settings.textStream = valueTextStream
-    settings.parseJson = valueParseJson
-    settings.hideTextInVerticalBar = valueHideTextInVerticalBar
-    settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10)
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.icon = valueIcon;
+    settings.leftClickExec = leftClickExecInput.text;
+    settings.leftClickUpdateText = leftClickUpdateText.checked;
+    settings.rightClickExec = rightClickExecInput.text;
+    settings.rightClickUpdateText = rightClickUpdateText.checked;
+    settings.middleClickExec = middleClickExecInput.text;
+    settings.middleClickUpdateText = middleClickUpdateText.checked;
+    settings.textCommand = textCommandInput.text;
+    settings.textCollapse = textCollapseInput.text;
+    settings.textStream = valueTextStream;
+    settings.parseJson = valueParseJson;
+    settings.hideTextInVerticalBar = valueHideTextInVerticalBar;
+    settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10);
+    return settings;
   }
 
   RowLayout {
@@ -61,7 +61,7 @@ ColumnLayout {
     id: iconPicker
     initialIcon: valueIcon
     onIconSelected: function (iconName) {
-      valueIcon = iconName
+      valueIcon = iconName;
     }
   }
 

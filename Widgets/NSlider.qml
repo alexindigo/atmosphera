@@ -115,16 +115,16 @@ Slider {
       propagateComposedEvents: true
 
       onEntered: {
-        root.hovering = true
+        root.hovering = true;
         if (root.tooltipText) {
-          TooltipService.show(Screen, knob, root.tooltipText, root.tooltipDirection)
+          TooltipService.show(Screen, knob, root.tooltipText, root.tooltipDirection);
         }
       }
 
       onExited: {
-        root.hovering = false
+        root.hovering = false;
         if (root.tooltipText) {
-          TooltipService.hide()
+          TooltipService.hide();
         }
       }
     }
@@ -134,7 +134,7 @@ Slider {
       target: root
       function onPressedChanged() {
         if (root.pressed && root.tooltipText) {
-          TooltipService.hide()
+          TooltipService.hide();
         }
       }
     }

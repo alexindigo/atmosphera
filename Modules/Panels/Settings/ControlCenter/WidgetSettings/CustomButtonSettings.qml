@@ -1,6 +1,6 @@
+import QtQml.Models
 import QtQuick
 import QtQuick.Layouts
-import QtQml.Models
 import qs.Commons
 import qs.Widgets
 
@@ -23,34 +23,34 @@ ColumnLayout {
     property bool enableOnStateLogic: (widgetData && widgetData.enableOnStateLogic !== undefined) ? widgetData.enableOnStateLogic : widgetMetadata.enableOnStateLogic
 
     Component.onCompleted: {
-      stateChecksJson = (widgetData && widgetData.stateChecksJson !== undefined) ? widgetData.stateChecksJson : widgetMetadata.stateChecksJson || "[]"
+      stateChecksJson = (widgetData && widgetData.stateChecksJson !== undefined) ? widgetData.stateChecksJson : widgetMetadata.stateChecksJson || "[]";
       try {
-        var initialChecks = JSON.parse(stateChecksJson)
+        var initialChecks = JSON.parse(stateChecksJson);
         if (initialChecks && Array.isArray(initialChecks)) {
           for (var i = 0; i < initialChecks.length; i++) {
-            var item = initialChecks[i]
+            var item = initialChecks[i];
             if (item && typeof item === "object") {
               _settings._stateChecksListModel.append({
                                                        "command": item.command || "",
                                                        "icon": item.icon || ""
-                                                     })
+                                                     });
             } else {
-              console.warn("⚠️ Invalid stateChecks entry at index " + i + ":", item)
+              console.warn("⚠️ Invalid stateChecks entry at index " + i + ":", item);
             }
           }
         }
       } catch (e) {
-        console.error("CustomButtonSettings: Failed to parse stateChecksJson:", e.message)
+        console.error("CustomButtonSettings: Failed to parse stateChecksJson:", e.message);
       }
     }
   }
 
   function saveSettings() {
-    var savedStateChecksArray = []
+    var savedStateChecksArray = [];
     for (var i = 0; i < _settings._stateChecksListModel.count; i++) {
-      savedStateChecksArray.push(_settings._stateChecksListModel.get(i))
+      savedStateChecksArray.push(_settings._stateChecksListModel.get(i));
     }
-    _settings.stateChecksJson = JSON.stringify(savedStateChecksArray)
+    _settings.stateChecksJson = JSON.stringify(savedStateChecksArray);
 
     return {
       "id": widgetData.id,
@@ -61,7 +61,7 @@ ColumnLayout {
       "stateChecksJson": _settings.stateChecksJson,
       "generalTooltipText": _settings.generalTooltipText,
       "enableOnStateLogic": _settings.enableOnStateLogic
-    }
+    };
   }
 
   RowLayout {
@@ -89,7 +89,7 @@ ColumnLayout {
     id: iconPicker
     initialIcon: _settings.icon
     onIconSelected: function (iconName) {
-      _settings.icon = iconName
+      _settings.icon = iconName;
     }
   }
 
@@ -210,7 +210,7 @@ ColumnLayout {
             _settings._stateChecksListModel.set(currentIndex, {
                                                   "command": model.command,
                                                   "icon": iconName
-                                                })
+                                                });
           }
         }
 

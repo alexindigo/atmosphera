@@ -118,17 +118,17 @@ ColumnLayout {
         return {
           "key": k,
           "name": shadowOptionsMap[k].name
-        }
+        };
       })
 
       currentKey: Settings.data.general.shadowDirection
 
       onSelected: function (key) {
-        var opt = shadowOptionsMap[key]
+        var opt = shadowOptionsMap[key];
         if (opt) {
-          Settings.data.general.shadowDirection = key
-          Settings.data.general.shadowOffsetX = opt.p.x
-          Settings.data.general.shadowOffsetY = opt.p.y
+          Settings.data.general.shadowDirection = key;
+          Settings.data.general.shadowOffsetX = opt.p.x;
+          Settings.data.general.shadowOffsetY = opt.p.y;
         }
       }
     }

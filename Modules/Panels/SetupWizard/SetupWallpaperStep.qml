@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import "../../../Helpers/FuzzySort.js" as FuzzySort
 import qs.Commons
 import qs.Services.UI
 import qs.Widgets
-import "../../../Helpers/FuzzySort.js" as FuzzySort
 
 ColumnLayout {
   id: root
@@ -209,20 +209,20 @@ ColumnLayout {
         target: galleryScroll.contentItem
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: event => {
-                   const flick = galleryScroll.contentItem
+                   const flick = galleryScroll.contentItem;
                    if (!flick)
-                   return
-                   const delta = event.pixelDelta.x !== 0 || event.pixelDelta.y !== 0 ? (event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.pixelDelta.x) : (event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x)
+                   return;
+                   const delta = event.pixelDelta.x !== 0 || event.pixelDelta.y !== 0 ? (event.pixelDelta.y !== 0 ? event.pixelDelta.y : event.pixelDelta.x) : (event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x);
                    // Move opposite of wheel to scroll content to the right for wheel down
-                   const step = -delta
-                   const maxX = Math.max(0, flick.contentWidth - flick.width)
-                   let newX = flick.contentX + step
+                   const step = -delta;
+                   const maxX = Math.max(0, flick.contentWidth - flick.width);
+                   let newX = flick.contentX + step;
                    if (newX < 0)
-                   newX = 0
+                   newX = 0;
                    if (newX > maxX)
-                   newX = maxX
-                   flick.contentX = newX
-                   event.accepted = true
+                   newX = maxX;
+                   flick.contentX = newX;
+                   event.accepted = true;
                  }
       }
 
@@ -319,8 +319,8 @@ ColumnLayout {
 
             TapHandler {
               onTapped: {
-                selectedWallpaper = modelData
-                wallpaperChanged(modelData)
+                selectedWallpaper = modelData;
+                wallpaperChanged(modelData);
               }
             }
           }
@@ -386,8 +386,8 @@ ColumnLayout {
       buttonTooltip: I18n.tr("setup.wallpaper.dir.browse")
       Layout.fillWidth: true
       onInputEditingFinished: {
-        selectedDirectory = text
-        directoryChanged(text)
+        selectedDirectory = text;
+        directoryChanged(text);
       }
       onButtonClicked: directoryPicker.open()
     }
@@ -398,41 +398,41 @@ ColumnLayout {
   property list<string> filteredWallpapers: []
 
   function updateFilteredWallpapers() {
-    filteredWallpapers = wallpapersList
+    filteredWallpapers = wallpapersList;
   }
 
   function refreshWallpapers() {
     if (!selectedDirectory || selectedDirectory === "") {
-      wallpapersList = []
-      filteredWallpapers = []
-      return
+      wallpapersList = [];
+      filteredWallpapers = [];
+      return;
     }
     if (typeof WallpaperService !== "undefined" && WallpaperService.getWallpapersList) {
-      var wallpapers = WallpaperService.getWallpapersList(Screen.name)
-      wallpapersList = wallpapers
-      updateFilteredWallpapers()
+      var wallpapers = WallpaperService.getWallpapersList(Screen.name);
+      wallpapersList = wallpapers;
+      updateFilteredWallpapers();
       if (wallpapersList.length > 0 && selectedWallpaper === "") {
-        selectedWallpaper = wallpapersList[0]
+        selectedWallpaper = wallpapersList[0];
       }
     } else {
-      readDirectoryImages(selectedDirectory)
+      readDirectoryImages(selectedDirectory);
     }
   }
 
   function readDirectoryImages(directoryPath) {
-    directoryScanner.command = ["find", directoryPath, "-type", "f", "\\(-iname", "*.jpg", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.png", "-o", "-iname", "*.bmp", "-o", "-iname", "*.webp", "-o", "-iname", "*.svg", "\\)"]
-    directoryScanner.running = true
-    return []
+    directoryScanner.command = ["find", directoryPath, "-type", "f", "\\(-iname", "*.jpg", "-o", "-iname", "*.jpeg", "-o", "-iname", "*.png", "-o", "-iname", "*.bmp", "-o", "-iname", "*.webp", "-o", "-iname", "*.svg", "\\)"];
+    directoryScanner.running = true;
+    return [];
   }
 
   onSelectedDirectoryChanged: {
     if (typeof Settings !== "undefined" && Settings.data && Settings.data.wallpaper) {
-      Settings.data.wallpaper.directory = selectedDirectory
+      Settings.data.wallpaper.directory = selectedDirectory;
     }
     if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
-      WallpaperService.refreshWallpapersList()
+      WallpaperService.refreshWallpapersList();
     }
-    Qt.callLater(refreshWallpapers)
+    Qt.callLater(refreshWallpapers);
   }
 
   Connections {
@@ -440,7 +440,7 @@ ColumnLayout {
     enabled: typeof WallpaperService !== "undefined"
     function onWallpaperListChanged(screenName, count) {
       if (screenName === Screen.name) {
-        Qt.callLater(refreshWallpapers)
+        Qt.callLater(refreshWallpapers);
       }
     }
   }
@@ -455,14 +455,14 @@ ColumnLayout {
 
   Component.onCompleted: {
     if (typeof Settings !== "undefined" && Settings.data && Settings.data.wallpaper && Settings.data.wallpaper.directory) {
-      selectedDirectory = Settings.data.wallpaper.directory
+      selectedDirectory = Settings.data.wallpaper.directory;
     } else {
-      selectedDirectory = Quickshell.env("HOME") + "/Pictures/Wallpapers"
+      selectedDirectory = Quickshell.env("HOME") + "/Pictures/Wallpapers";
     }
     if (typeof WallpaperService !== "undefined" && WallpaperService.currentWallpaper) {
-      selectedWallpaper = WallpaperService.currentWallpaper
+      selectedWallpaper = WallpaperService.currentWallpaper;
     }
-    initialRefreshTimer.start()
+    initialRefreshTimer.start();
   }
 
   NFilePicker {
@@ -472,8 +472,8 @@ ColumnLayout {
     initialPath: selectedDirectory || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
                   if (paths.length > 0) {
-                    selectedDirectory = paths[0]
-                    directoryChanged(paths[0])
+                    selectedDirectory = paths[0];
+                    directoryChanged(paths[0]);
                   }
                 }
   }
@@ -486,18 +486,18 @@ ColumnLayout {
     stderr: StdioCollector {}
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        var lines = stdout.text.split('\n')
-        var images = []
+        var lines = stdout.text.split('\n');
+        var images = [];
         for (var i = 0; i < lines.length; i++) {
-          var line = lines[i].trim()
+          var line = lines[i].trim();
           if (line !== '') {
-            images.push(line)
+            images.push(line);
           }
         }
-        wallpapersList = images
-        updateFilteredWallpapers()
+        wallpapersList = images;
+        updateFilteredWallpapers();
         if (wallpapersList.length > 0 && selectedWallpaper === "") {
-          selectedWallpaper = wallpapersList[0]
+          selectedWallpaper = wallpapersList[0];
         }
       }
     }

@@ -23,12 +23,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   // Widget settings - matching MediaMini pattern
@@ -73,60 +73,60 @@ Item {
   }
 
   function calculatedVerticalDimension() {
-    return Math.round((Style.baseWidgetSize - 5) * scaling)
+    return Math.round((Style.baseWidgetSize - 5) * scaling);
   }
 
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
-    var contentWidth = 0
-    var margins = Style.marginS * scaling * 2 // Left and right margins
+    var contentWidth = 0;
+    var margins = Style.marginS * scaling * 2; // Left and right margins
 
     // Icon width (if visible)
     if (showIcon) {
-      contentWidth += 18 * scaling
-      contentWidth += Style.marginS * scaling // Spacing after icon
+      contentWidth += 18 * scaling;
+      contentWidth += Style.marginS * scaling; // Spacing after icon
     }
 
     // Text width (use the measured width)
-    contentWidth += fullTitleMetrics.contentWidth
+    contentWidth += fullTitleMetrics.contentWidth;
 
     // Additional small margin for text
-    contentWidth += Style.marginXXS * 2
+    contentWidth += Style.marginXXS * 2;
 
     // Add container margins
-    contentWidth += margins
+    contentWidth += margins;
 
-    return Math.ceil(contentWidth)
+    return Math.ceil(contentWidth);
   }
 
   // Dynamic width: adapt to content but respect maximum width setting
   readonly property real dynamicWidth: {
     // If using fixed width mode, always use maxWidth
     if (useFixedWidth) {
-      return maxWidth
+      return maxWidth;
     }
     // Otherwise, adapt to content
     if (!hasFocusedWindow) {
-      return Math.min(calculateContentWidth(), maxWidth)
+      return Math.min(calculateContentWidth(), maxWidth);
     }
     // Use content width but don't exceed user-set maximum width
-    return Math.min(calculateContentWidth(), maxWidth)
+    return Math.min(calculateContentWidth(), maxWidth);
   }
 
   function getAppIcon() {
     try {
       // Try CompositorService first
-      const focusedWindow = CompositorService.getFocusedWindow()
+      const focusedWindow = CompositorService.getFocusedWindow();
       if (focusedWindow && focusedWindow.appId) {
         try {
-          const idValue = focusedWindow.appId
-          const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue)
-          const iconResult = ThemeIcons.iconForAppId(normalizedId.toLowerCase())
+          const idValue = focusedWindow.appId;
+          const normalizedId = (typeof idValue === 'string') ? idValue : String(idValue);
+          const iconResult = ThemeIcons.iconForAppId(normalizedId.toLowerCase());
           if (iconResult && iconResult !== "") {
-            return iconResult
+            return iconResult;
           }
         } catch (iconError) {
-          Logger.w("ActiveWindow", "Error getting icon from CompositorService:", iconError)
+          Logger.w("ActiveWindow", "Error getting icon from CompositorService:", iconError);
         }
       }
 
@@ -134,25 +134,25 @@ Item {
         // Fallback to ToplevelManager
         if (ToplevelManager && ToplevelManager.activeToplevel) {
           try {
-            const activeToplevel = ToplevelManager.activeToplevel
+            const activeToplevel = ToplevelManager.activeToplevel;
             if (activeToplevel.appId) {
-              const idValue2 = activeToplevel.appId
-              const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2)
-              const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase())
+              const idValue2 = activeToplevel.appId;
+              const normalizedId2 = (typeof idValue2 === 'string') ? idValue2 : String(idValue2);
+              const iconResult2 = ThemeIcons.iconForAppId(normalizedId2.toLowerCase());
               if (iconResult2 && iconResult2 !== "") {
-                return iconResult2
+                return iconResult2;
               }
             }
           } catch (fallbackError) {
-            Logger.w("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError)
+            Logger.w("ActiveWindow", "Error getting icon from ToplevelManager:", fallbackError);
           }
         }
       }
 
-      return ThemeIcons.iconFromName(fallbackIcon)
+      return ThemeIcons.iconFromName(fallbackIcon);
     } catch (e) {
-      Logger.w("ActiveWindow", "Error in getAppIcon:", e)
-      return ThemeIcons.iconFromName(fallbackIcon)
+      Logger.w("ActiveWindow", "Error in getAppIcon:", e);
+      return ThemeIcons.iconFromName(fallbackIcon);
     }
   }
 
@@ -228,10 +228,10 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements
-            var iconWidth = (showIcon && windowIcon.visible ? (18 + Style.marginS) : 0)
-            var totalMargins = Style.marginXXS * 2
-            var availableWidth = mainContainer.width - iconWidth - totalMargins
-            return Math.max(20, availableWidth)
+            var iconWidth = (showIcon && windowIcon.visible ? (18 + Style.marginS) : 0);
+            var totalMargins = Style.marginXXS * 2;
+            var availableWidth = mainContainer.width - iconWidth - totalMargins;
+            return Math.max(20, availableWidth);
           }
           Layout.maximumWidth: Layout.preferredWidth
           Layout.alignment: Qt.AlignVCenter
@@ -252,8 +252,8 @@ Item {
             repeat: false
             onTriggered: {
               if (scrollingMode === "always" && titleContainer.needsScrolling) {
-                titleContainer.isScrolling = true
-                titleContainer.isResetting = false
+                titleContainer.isScrolling = true;
+                titleContainer.isResetting = false;
               }
             }
           }
@@ -261,29 +261,29 @@ Item {
           // Update scrolling state based on mode
           property var updateScrollingState: function () {
             if (scrollingMode === "never") {
-              isScrolling = false
-              isResetting = false
+              isScrolling = false;
+              isResetting = false;
             } else if (scrollingMode === "always") {
               if (needsScrolling) {
                 if (mouseArea.containsMouse) {
-                  isScrolling = false
-                  isResetting = true
+                  isScrolling = false;
+                  isResetting = true;
                 } else {
-                  scrollStartTimer.restart()
+                  scrollStartTimer.restart();
                 }
               } else {
-                scrollStartTimer.stop()
-                isScrolling = false
-                isResetting = false
+                scrollStartTimer.stop();
+                isScrolling = false;
+                isResetting = false;
               }
             } else if (scrollingMode === "hover") {
               if (mouseArea.containsMouse && needsScrolling) {
-                isScrolling = true
-                isResetting = false
+                isScrolling = true;
+                isResetting = false;
               } else {
-                isScrolling = false
+                isScrolling = false;
                 if (needsScrolling) {
-                  isResetting = true
+                  isResetting = true;
                 }
               }
             }
@@ -296,7 +296,7 @@ Item {
           Connections {
             target: mouseArea
             function onContainsMouseChanged() {
-              titleContainer.updateScrollingState()
+              titleContainer.updateScrollingState();
             }
           }
 
@@ -322,10 +322,10 @@ Item {
                 color: Color.mOnSurface
                 onTextChanged: {
                   if (root.scrollingMode === "always") {
-                    titleContainer.isScrolling = false
-                    titleContainer.isResetting = false
-                    scrollContainer.scrollX = 0
-                    scrollStartTimer.restart()
+                    titleContainer.isScrolling = false;
+                    titleContainer.isResetting = false;
+                    scrollContainer.scrollX = 0;
+                    scrollStartTimer.restart();
                   }
                 }
               }
@@ -349,7 +349,7 @@ Item {
               duration: 300
               easing.type: Easing.OutQuad
               onFinished: {
-                titleContainer.isResetting = false
+                titleContainer.isResetting = false;
               }
             }
 
@@ -412,11 +412,11 @@ Item {
         acceptedButtons: Qt.LeftButton
         onEntered: {
           if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(Screen, root, windowTitle, BarService.getTooltipDirection())
+            TooltipService.show(Screen, root, windowTitle, BarService.getTooltipDirection());
           }
         }
         onExited: {
-          TooltipService.hide()
+          TooltipService.hide();
         }
       }
     }
@@ -426,18 +426,18 @@ Item {
     target: CompositorService
     function onActiveWindowChanged() {
       try {
-        windowIcon.source = Qt.binding(getAppIcon)
-        windowIconVertical.source = Qt.binding(getAppIcon)
+        windowIcon.source = Qt.binding(getAppIcon);
+        windowIconVertical.source = Qt.binding(getAppIcon);
       } catch (e) {
-        Logger.w("ActiveWindow", "Error in onActiveWindowChanged:", e)
+        Logger.w("ActiveWindow", "Error in onActiveWindowChanged:", e);
       }
     }
     function onWindowListChanged() {
       try {
-        windowIcon.source = Qt.binding(getAppIcon)
-        windowIconVertical.source = Qt.binding(getAppIcon)
+        windowIcon.source = Qt.binding(getAppIcon);
+        windowIconVertical.source = Qt.binding(getAppIcon);
       } catch (e) {
-        Logger.w("ActiveWindow", "Error in onWindowListChanged:", e)
+        Logger.w("ActiveWindow", "Error in onWindowListChanged:", e);
       }
     }
   }

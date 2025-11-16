@@ -21,12 +21,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -40,13 +40,13 @@ Item {
   visible: getMonitor() !== null
 
   function getMonitor() {
-    return BrightnessService.getMonitorForScreen(screen) || null
+    return BrightnessService.getMonitorForScreen(screen) || null;
   }
 
   function getIcon() {
-    var monitor = getMonitor()
-    var brightness = monitor ? monitor.brightness : 0
-    return brightness <= 0.5 ? "brightness-low" : "brightness-high"
+    var monitor = getMonitor();
+    var brightness = monitor ? monitor.brightness : 0;
+    return brightness <= 0.5 ? "brightness-low" : "brightness-high";
   }
 
   // Connection used to open the pill when brightness changes
@@ -57,12 +57,12 @@ Item {
       // Ignore if this is the first time we receive an update.
       // Most likely service just kicked off.
       if (!firstBrightnessReceived) {
-        firstBrightnessReceived = true
-        return
+        firstBrightnessReceived = true;
+        return;
       }
 
-      pill.show()
-      hideTimerAfterChange.restart()
+      pill.show();
+      hideTimerAfterChange.restart();
     }
   }
 
@@ -82,42 +82,42 @@ Item {
     icon: getIcon()
     autoHide: false // Important to be false so we can hover as long as we want
     text: {
-      var monitor = getMonitor()
-      return monitor ? Math.round(monitor.brightness * 100) : ""
+      var monitor = getMonitor();
+      return monitor ? Math.round(monitor.brightness * 100) : "";
     }
     suffix: text.length > 0 ? "%" : "-"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     tooltipText: {
-      var monitor = getMonitor()
+      var monitor = getMonitor();
       if (!monitor)
-        return ""
+        return "";
       return I18n.tr("tooltips.brightness-at", {
                        "brightness": Math.round(monitor.brightness * 100)
-                     })
+                     });
     }
 
     onWheel: function (angle) {
-      var monitor = getMonitor()
+      var monitor = getMonitor();
       if (!monitor)
-        return
+        return;
       if (angle > 0) {
-        monitor.increaseBrightness()
+        monitor.increaseBrightness();
       } else if (angle < 0) {
-        monitor.decreaseBrightness()
+        monitor.decreaseBrightness();
       }
     }
 
     onClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display
-      settingsPanel.open()
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+      settingsPanel.open();
     }
 
     onRightClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display
-      settingsPanel.open()
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+      settingsPanel.open();
     }
   }
 }

@@ -3,10 +3,10 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Bar.Extras
+import qs.Modules.Panels.Settings
 import qs.Services.UI
 import qs.Widgets
-import qs.Modules.Panels.Settings
-import qs.Modules.Bar.Extras
 
 Item {
   id: root
@@ -22,12 +22,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -63,31 +63,31 @@ Item {
     autoHide: false
     forceOpen: _dynamicText !== ""
     tooltipText: {
-      var tooltipLines = []
+      var tooltipLines = [];
 
       if (hasExec) {
         if (leftClickExec !== "") {
-          tooltipLines.push(`Left click: ${leftClickExec}.`)
+          tooltipLines.push(`Left click: ${leftClickExec}.`);
         }
         if (rightClickExec !== "") {
-          tooltipLines.push(`Right click: ${rightClickExec}.`)
+          tooltipLines.push(`Right click: ${rightClickExec}.`);
         }
         if (middleClickExec !== "") {
-          tooltipLines.push(`Middle click: ${middleClickExec}.`)
+          tooltipLines.push(`Middle click: ${middleClickExec}.`);
         }
       }
 
       if (_dynamicTooltip !== "") {
         if (tooltipLines.length > 0) {
-          tooltipLines.push("")
+          tooltipLines.push("");
         }
-        tooltipLines.push(_dynamicTooltip)
+        tooltipLines.push(_dynamicTooltip);
       }
 
       if (tooltipLines.length === 0) {
-        return "Custom button, configure in settings."
+        return "Custom button, configure in settings.";
       } else {
-        return tooltipLines.join("\n")
+        return tooltipLines.join("\n");
       }
     }
 
@@ -135,121 +135,121 @@ Item {
     stderr: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
                 if (textStream) {
-                  Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`)
-                  return
+                  Logger.w("CustomButton", `Streaming text command exited (code: ${exitCode}), restarting...`);
+                  return;
                 }
               }
   }
 
   function parseDynamicContent(content) {
-    var contentStr = String(content || "").trim()
+    var contentStr = String(content || "").trim();
 
     if (parseJson) {
-      var lineToParse = contentStr
+      var lineToParse = contentStr;
 
       if (!textStream && contentStr.includes('\n')) {
-        const lines = contentStr.split('\n').filter(line => line.trim() !== '')
+        const lines = contentStr.split('\n').filter(line => line.trim() !== '');
         if (lines.length > 0) {
-          lineToParse = lines[lines.length - 1]
+          lineToParse = lines[lines.length - 1];
         }
       }
 
       try {
-        const parsed = JSON.parse(lineToParse)
-        const text = parsed.text || ""
-        const icon = parsed.icon || ""
-        const tooltip = parsed.tooltip || ""
+        const parsed = JSON.parse(lineToParse);
+        const text = parsed.text || "";
+        const icon = parsed.icon || "";
+        const tooltip = parsed.tooltip || "";
 
         if (checkCollapse(text)) {
-          _dynamicText = ""
-          _dynamicIcon = ""
-          _dynamicTooltip = ""
-          return
+          _dynamicText = "";
+          _dynamicIcon = "";
+          _dynamicTooltip = "";
+          return;
         }
 
-        _dynamicText = text
-        _dynamicIcon = icon
-        _dynamicTooltip = tooltip
-        return
+        _dynamicText = text;
+        _dynamicIcon = icon;
+        _dynamicTooltip = tooltip;
+        return;
       } catch (e) {
-        Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`)
+        Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`);
       }
     }
 
     if (checkCollapse(contentStr)) {
-      _dynamicText = ""
-      _dynamicIcon = ""
-      _dynamicTooltip = ""
-      return
+      _dynamicText = "";
+      _dynamicIcon = "";
+      _dynamicTooltip = "";
+      return;
     }
 
-    _dynamicText = contentStr
-    _dynamicIcon = ""
-    _dynamicTooltip = ""
+    _dynamicText = contentStr;
+    _dynamicIcon = "";
+    _dynamicTooltip = "";
   }
 
   function checkCollapse(text) {
     if (!textCollapse || textCollapse.length === 0) {
-      return false
+      return false;
     }
 
     if (textCollapse.startsWith("/") && textCollapse.endsWith("/") && textCollapse.length > 1) {
       // Treat as regex
-      var pattern = textCollapse.substring(1, textCollapse.length - 1)
+      var pattern = textCollapse.substring(1, textCollapse.length - 1);
       try {
-        var regex = new RegExp(pattern)
-        return regex.test(text)
+        var regex = new RegExp(pattern);
+        return regex.test(text);
       } catch (e) {
-        Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`)
-        return (textCollapse === text) // Fallback to exact match on invalid regex
+        Logger.w("CustomButton", `Invalid regex for textCollapse: ${textCollapse} - ${e.message}`);
+        return (textCollapse === text); // Fallback to exact match on invalid regex
       }
     } else {
       // Treat as plain string
-      return (textCollapse === text)
+      return (textCollapse === text);
     }
   }
 
   function onClicked() {
     if (leftClickExec) {
-      Quickshell.execDetached(["sh", "-c", leftClickExec])
-      Logger.i("CustomButton", `Executing command: ${leftClickExec}`)
+      Quickshell.execDetached(["sh", "-c", leftClickExec]);
+      Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
     } else if (!hasExec && !leftClickUpdateText) {
       // No script was defined, open settings
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen)
-      settingsPanel.requestedTab = SettingsPanel.Tab.Bar
-      settingsPanel.open()
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      settingsPanel.requestedTab = SettingsPanel.Tab.Bar;
+      settingsPanel.open();
     }
     if (!textStream && leftClickUpdateText) {
-      runTextCommand()
+      runTextCommand();
     }
   }
 
   function onRightClicked() {
     if (rightClickExec) {
-      Quickshell.execDetached(["sh", "-c", rightClickExec])
-      Logger.i("CustomButton", `Executing command: ${rightClickExec}`)
+      Quickshell.execDetached(["sh", "-c", rightClickExec]);
+      Logger.i("CustomButton", `Executing command: ${rightClickExec}`);
     }
     if (!textStream && rightClickUpdateText) {
-      runTextCommand()
+      runTextCommand();
     }
   }
 
   function onMiddleClicked() {
     if (middleClickExec) {
-      Quickshell.execDetached(["sh", "-c", middleClickExec])
-      Logger.i("CustomButton", `Executing command: ${middleClickExec}`)
+      Quickshell.execDetached(["sh", "-c", middleClickExec]);
+      Logger.i("CustomButton", `Executing command: ${middleClickExec}`);
     }
     if (!textStream && middleClickUpdateText) {
-      runTextCommand()
+      runTextCommand();
     }
   }
 
   function runTextCommand() {
     if (!textCommand || textCommand.length === 0)
-      return
+      return;
     if (textProc.running)
-      return
-    textProc.command = ["sh", "-lc", textCommand]
-    textProc.running = true
+      return;
+    textProc.command = ["sh", "-lc", textCommand];
+    textProc.running = true;
   }
 }

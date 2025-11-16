@@ -30,8 +30,8 @@ RowLayout {
     placeholderText: root.placeholderText
     text: root.text
     onEditingFinished: {
-      root.text = text
-      root.editingFinished()
+      root.text = text;
+      root.editingFinished();
     }
     Layout.fillWidth: true
   }
@@ -48,7 +48,7 @@ RowLayout {
     enabled: root.actionButtonEnabled
 
     onClicked: {
-      root.actionClicked()
+      root.actionClicked();
     }
   }
 }

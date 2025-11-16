@@ -20,12 +20,12 @@ Rectangle {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property string barPosition: Settings.data.bar.position
@@ -70,9 +70,9 @@ Rectangle {
             Binding on pointSize {
               value: {
                 if (repeater.model.length == 1) {
-                  return Style.fontSizeS * scaling
+                  return Style.fontSizeS * scaling;
                 } else {
-                  return (index == 0) ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling
+                  return (index == 0) ? Style.fontSizeXS * scaling : Style.fontSizeXXS * scaling;
                 }
               }
             }
@@ -122,15 +122,15 @@ Rectangle {
     hoverEnabled: true
     onEntered: {
       if (!PanelService.getPanel("calendarPanel", screen)?.active) {
-        TooltipService.show(Screen, root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection())
+        TooltipService.show(Screen, root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection());
       }
     }
     onExited: {
-      TooltipService.hide()
+      TooltipService.hide();
     }
     onClicked: {
-      TooltipService.hide()
-      PanelService.getPanel("calendarPanel", screen)?.toggle(this)
+      TooltipService.hide();
+      PanelService.getPanel("calendarPanel", screen)?.toggle(this);
     }
   }
 }

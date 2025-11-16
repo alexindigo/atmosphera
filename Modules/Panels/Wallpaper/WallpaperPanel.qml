@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
+import "../../../Helpers/FuzzySort.js" as FuzzySort
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.Settings
 import qs.Services.UI
 import qs.Widgets
-import "../../../Helpers/FuzzySort.js" as FuzzySort
 
 SmartPanel {
   id: root
@@ -21,12 +21,12 @@ SmartPanel {
   readonly property string panelPosition: {
     if (Settings.data.wallpaper.panelPosition === "follow_bar") {
       if (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") {
-        return `center_${Settings.data.bar.position}`
+        return `center_${Settings.data.bar.position}`;
       } else {
-        return `${Settings.data.bar.position}_center`
+        return `${Settings.data.bar.position}_center`;
       }
     } else {
-      return Settings.data.wallpaper.panelPosition
+      return Settings.data.wallpaper.panelPosition;
     }
   }
   panelAnchorHorizontalCenter: panelPosition === "center" || panelPosition.endsWith("_center")
@@ -42,59 +42,59 @@ SmartPanel {
   // Override keyboard handlers to enable grid navigation
   function onDownPressed() {
     if (!contentItem)
-      return
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView) {
       if (!view.gridView.activeFocus) {
-        view.gridView.forceActiveFocus()
+        view.gridView.forceActiveFocus();
         if (view.gridView.currentIndex < 0) {
-          view.gridView.currentIndex = 0
+          view.gridView.currentIndex = 0;
         }
       } else {
-        view.gridView.moveCurrentIndexDown()
+        view.gridView.moveCurrentIndexDown();
       }
     }
   }
 
   function onUpPressed() {
     if (!contentItem)
-      return
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView?.activeFocus) {
-      view.gridView.moveCurrentIndexUp()
+      view.gridView.moveCurrentIndexUp();
     }
   }
 
   function onLeftPressed() {
     if (!contentItem)
-      return
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView?.activeFocus) {
-      view.gridView.moveCurrentIndexLeft()
+      view.gridView.moveCurrentIndexLeft();
     }
   }
 
   function onRightPressed() {
     if (!contentItem)
-      return
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView?.activeFocus) {
-      view.gridView.moveCurrentIndexRight()
+      view.gridView.moveCurrentIndexRight();
     }
   }
 
   function onReturnPressed() {
     if (!contentItem)
-      return
-    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex)
+      return;
+    let view = contentItem.screenRepeater.itemAt(contentItem.currentScreenIndex);
     if (view?.gridView?.activeFocus) {
-      let gridView = view.gridView
+      let gridView = view.gridView;
       if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
-        let path = gridView.model[gridView.currentIndex]
+        let path = gridView.model[gridView.currentIndex];
         if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-          WallpaperService.changeWallpaper(path, undefined)
+          WallpaperService.changeWallpaper(path, undefined);
         } else {
-          WallpaperService.changeWallpaper(path, view.targetScreen.name)
+          WallpaperService.changeWallpaper(path, view.targetScreen.name);
         }
       }
     }
@@ -107,50 +107,50 @@ SmartPanel {
       if (screen !== null) {
         for (var i = 0; i < Quickshell.screens.length; i++) {
           if (Quickshell.screens[i].name == screen.name) {
-            return i
+            return i;
           }
         }
       }
-      return 0
+      return 0;
     }
     property var currentScreen: Quickshell.screens[currentScreenIndex]
     property string filterText: ""
     property alias screenRepeater: screenRepeater
 
     Component.onCompleted: {
-      root.contentItem = wallpaperPanel
+      root.contentItem = wallpaperPanel;
     }
 
     // Function to update Wallhaven resolution filter
     function updateWallhavenResolution() {
       if (typeof WallhavenService === "undefined") {
-        return
+        return;
       }
 
-      var width = Settings.data.wallpaper.wallhavenResolutionWidth || ""
-      var height = Settings.data.wallpaper.wallhavenResolutionHeight || ""
-      var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+      var width = Settings.data.wallpaper.wallhavenResolutionWidth || "";
+      var height = Settings.data.wallpaper.wallhavenResolutionHeight || "";
+      var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast";
 
       if (width && height) {
-        var resolution = width + "x" + height
+        var resolution = width + "x" + height;
         if (mode === "atleast") {
-          WallhavenService.minResolution = resolution
-          WallhavenService.resolutions = ""
+          WallhavenService.minResolution = resolution;
+          WallhavenService.resolutions = "";
         } else {
-          WallhavenService.minResolution = ""
-          WallhavenService.resolutions = resolution
+          WallhavenService.minResolution = "";
+          WallhavenService.resolutions = resolution;
         }
       } else {
-        WallhavenService.minResolution = ""
-        WallhavenService.resolutions = ""
+        WallhavenService.minResolution = "";
+        WallhavenService.resolutions = "";
       }
 
       // Trigger new search with updated resolution
       if (Settings.data.wallpaper.useWallhaven) {
         if (wallhavenView) {
-          wallhavenView.loading = true
+          wallhavenView.loading = true;
         }
-        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
       }
     }
 
@@ -162,7 +162,7 @@ SmartPanel {
       source: "WallhavenSettingsPopup.qml"
       onLoaded: {
         if (item) {
-          item.screen = screen
+          item.screen = screen;
         }
       }
     }
@@ -173,14 +173,14 @@ SmartPanel {
       function onOpened() {
         // Ensure contentItem is set
         if (!root.contentItem) {
-          root.contentItem = wallpaperPanel
+          root.contentItem = wallpaperPanel;
         }
         // Give initial focus to search input
         Qt.callLater(() => {
                        if (searchInput.inputItem) {
-                         searchInput.inputItem.forceActiveFocus()
+                         searchInput.inputItem.forceActiveFocus();
                        }
-                     })
+                     });
       }
     }
 
@@ -189,12 +189,12 @@ SmartPanel {
       id: searchDebounceTimer
       interval: 150
       onTriggered: {
-        wallpaperPanel.filterText = searchInput.text
+        wallpaperPanel.filterText = searchInput.text;
         // Trigger update on all screen views
         for (var i = 0; i < screenRepeater.count; i++) {
-          let item = screenRepeater.itemAt(i)
+          let item = screenRepeater.itemAt(i);
           if (item && item.updateFiltered) {
-            item.updateFiltered()
+            item.updateFiltered();
           }
         }
       }
@@ -229,9 +229,9 @@ SmartPanel {
           tooltipText: I18n.tr("settings.wallpaper.settings.section.label")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: {
-            var settingsPanel = PanelService.getPanel("settingsPanel", screen)
-            settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper
-            settingsPanel.open()
+            var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+            settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper;
+            settingsPanel.open();
           }
         }
 
@@ -242,10 +242,10 @@ SmartPanel {
           onClicked: {
             if (Settings.data.wallpaper.useWallhaven) {
               if (typeof WallhavenService !== "undefined") {
-                WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+                WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1);
               }
             } else {
-              WallpaperService.refreshWallpapersList()
+              WallpaperService.refreshWallpapersList();
             }
           }
         }
@@ -267,10 +267,10 @@ SmartPanel {
         id: wallhavenSearchDebounceTimer
         interval: 500
         onTriggered: {
-          Settings.data.wallpaper.wallhavenQuery = searchInput.text
+          Settings.data.wallpaper.wallhavenQuery = searchInput.text;
           if (typeof WallhavenService !== "undefined") {
-            wallhavenView.loading = true
-            WallhavenService.search(searchInput.text, 1)
+            wallhavenView.loading = true;
+            WallhavenService.search(searchInput.text, 1);
           }
         }
       }
@@ -300,7 +300,7 @@ SmartPanel {
             text: modelData.name || `Screen ${index + 1}`
             tabIndex: index
             checked: {
-              screenTabBar.currentIndex === index
+              screenTabBar.currentIndex === index;
             }
           }
         }
@@ -320,18 +320,18 @@ SmartPanel {
           Component.onCompleted: {
             // Initialize text based on current mode
             if (Settings.data.wallpaper.useWallhaven) {
-              searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+              searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
             } else {
-              searchInput.text = wallpaperPanel.filterText || ""
+              searchInput.text = wallpaperPanel.filterText || "";
             }
             // Give focus to search input
             if (searchInput.inputItem && searchInput.inputItem.visible) {
-              searchInput.inputItem.forceActiveFocus()
+              searchInput.inputItem.forceActiveFocus();
             }
             // Mark initialization as complete after a short delay
             Qt.callLater(function () {
-              searchInput.initializing = false
-            })
+              searchInput.initializing = false;
+            });
           }
 
           Connections {
@@ -339,9 +339,9 @@ SmartPanel {
             function onUseWallhavenChanged() {
               // Update text when mode changes
               if (Settings.data.wallpaper.useWallhaven) {
-                searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+                searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
               } else {
-                searchInput.text = wallpaperPanel.filterText || ""
+                searchInput.text = wallpaperPanel.filterText || "";
               }
             }
           }
@@ -349,22 +349,22 @@ SmartPanel {
           onTextChanged: {
             // Don't trigger search during initialization - Component.onCompleted will handle initial search
             if (initializing) {
-              return
+              return;
             }
             if (Settings.data.wallpaper.useWallhaven) {
-              wallhavenSearchDebounceTimer.restart()
+              wallhavenSearchDebounceTimer.restart();
             } else {
-              searchDebounceTimer.restart()
+              searchDebounceTimer.restart();
             }
           }
 
           onEditingFinished: {
             if (Settings.data.wallpaper.useWallhaven) {
-              wallhavenSearchDebounceTimer.stop()
-              Settings.data.wallpaper.wallhavenQuery = text
+              wallhavenSearchDebounceTimer.stop();
+              Settings.data.wallpaper.wallhavenQuery = text;
               if (typeof WallhavenService !== "undefined") {
-                wallhavenView.loading = true
-                WallhavenService.search(text, 1)
+                wallhavenView.loading = true;
+                WallhavenService.search(text, 1);
               }
             }
           }
@@ -372,12 +372,12 @@ SmartPanel {
           Keys.onDownPressed: {
             if (Settings.data.wallpaper.useWallhaven) {
               if (wallhavenView && wallhavenView.gridView) {
-                wallhavenView.gridView.forceActiveFocus()
+                wallhavenView.gridView.forceActiveFocus();
               }
             } else {
-              let currentView = screenRepeater.itemAt(currentScreenIndex)
+              let currentView = screenRepeater.itemAt(currentScreenIndex);
               if (currentView && currentView.gridView) {
-                currentView.gridView.forceActiveFocus()
+                currentView.gridView.forceActiveFocus();
               }
             }
           }
@@ -387,50 +387,53 @@ SmartPanel {
           id: sourceComboBox
           Layout.fillWidth: false
 
-          model: [{
+          model: [
+            {
               "key": "local",
               "name": I18n.tr("wallpaper.panel.source.local")
-            }, {
+            },
+            {
               "key": "wallhaven",
               "name": I18n.tr("wallpaper.panel.source.wallhaven")
-            }]
+            }
+          ]
           currentKey: Settings.data.wallpaper.useWallhaven ? "wallhaven" : "local"
           property bool skipNextSelected: false
           Component.onCompleted: {
             // Skip the first onSelected if it fires during initialization
-            skipNextSelected = true
+            skipNextSelected = true;
             Qt.callLater(function () {
-              skipNextSelected = false
-            })
+              skipNextSelected = false;
+            });
           }
           onSelected: key => {
                         if (skipNextSelected) {
-                          return
+                          return;
                         }
-                        var useWallhaven = (key === "wallhaven")
-                        Settings.data.wallpaper.useWallhaven = useWallhaven
+                        var useWallhaven = (key === "wallhaven");
+                        Settings.data.wallpaper.useWallhaven = useWallhaven;
                         // Update search input text based on mode
                         if (useWallhaven) {
-                          searchInput.text = Settings.data.wallpaper.wallhavenQuery || ""
+                          searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
                         } else {
-                          searchInput.text = wallpaperPanel.filterText || ""
+                          searchInput.text = wallpaperPanel.filterText || "";
                         }
                         if (useWallhaven && typeof WallhavenService !== "undefined") {
                           // Update service properties when switching to Wallhaven
                           // Don't search here - Component.onCompleted will handle it when the component is created
                           // This prevents duplicate searches
-                          WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories
-                          WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
-                          WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
-                          WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+                          WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories;
+                          WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity;
+                          WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting;
+                          WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
 
                           // Update resolution settings
-                          wallpaperPanel.updateWallhavenResolution()
+                          wallpaperPanel.updateWallhavenResolution();
 
                           // If the view is already initialized, trigger a new search when switching to it
                           if (wallhavenView && wallhavenView.initialized && !WallhavenService.fetching) {
-                            wallhavenView.loading = true
-                            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+                            wallhavenView.loading = true;
+                            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
                           }
                         }
                       }
@@ -445,10 +448,10 @@ SmartPanel {
           visible: Settings.data.wallpaper.useWallhaven
           onClicked: {
             if (searchInput.inputItem) {
-              searchInput.inputItem.focus = false
+              searchInput.inputItem.focus = false;
             }
             if (wallhavenSettingsPopup.item) {
-              wallhavenSettingsPopup.item.showAt(wallhavenSettingsButton)
+              wallhavenSettingsPopup.item.showAt(wallhavenSettingsButton);
             }
           }
         }
@@ -497,60 +500,60 @@ SmartPanel {
     // Expose updateFiltered as a proper function property
     function updateFiltered() {
       if (!wallpaperPanel.filterText || wallpaperPanel.filterText.trim().length === 0) {
-        filteredWallpapers = wallpapersList
-        return
+        filteredWallpapers = wallpapersList;
+        return;
       }
 
       const results = FuzzySort.go(wallpaperPanel.filterText.trim(), wallpapersWithNames, {
                                      "key": 'name',
                                      "limit": 200
-                                   })
+                                   });
       // Map back to path list
       filteredWallpapers = results.map(function (r) {
-        return r.obj.path
-      })
+        return r.obj.path;
+      });
     }
 
     Component.onCompleted: {
-      refreshWallpaperScreenData()
+      refreshWallpaperScreenData();
     }
 
     Connections {
       target: WallpaperService
       function onWallpaperChanged(screenName, path) {
         if (targetScreen !== null && screenName === targetScreen.name) {
-          currentWallpaper = WallpaperService.getWallpaper(targetScreen.name)
+          currentWallpaper = WallpaperService.getWallpaper(targetScreen.name);
         }
       }
       function onWallpaperDirectoryChanged(screenName, directory) {
         if (targetScreen !== null && screenName === targetScreen.name) {
-          refreshWallpaperScreenData()
+          refreshWallpaperScreenData();
         }
       }
       function onWallpaperListChanged(screenName, count) {
         if (targetScreen !== null && screenName === targetScreen.name) {
-          refreshWallpaperScreenData()
+          refreshWallpaperScreenData();
         }
       }
     }
 
     function refreshWallpaperScreenData() {
       if (targetScreen === null) {
-        return
+        return;
       }
-      wallpapersList = WallpaperService.getWallpapersList(targetScreen.name)
-      Logger.d("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name)
+      wallpapersList = WallpaperService.getWallpapersList(targetScreen.name);
+      Logger.d("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name);
 
       // Pre-compute basenames once for better performance
       wallpapersWithNames = wallpapersList.map(function (p) {
         return {
           "path": p,
           "name": p.split('/').pop()
-        }
-      })
+        };
+      });
 
-      currentWallpaper = WallpaperService.getWallpaper(targetScreen.name)
-      updateFiltered()
+      currentWallpaper = WallpaperService.getWallpaper(targetScreen.name);
+      updateFiltered();
     }
 
     ColumnLayout {
@@ -577,9 +580,9 @@ SmartPanel {
           anchors.fill: parent
           z: -1
           onClicked: {
-            wallpaperGridView.forceActiveFocus()
+            wallpaperGridView.forceActiveFocus();
             if (wallpaperGridView.currentIndex < 0 && filteredWallpapers.length > 0) {
-              wallpaperGridView.currentIndex = 0
+              wallpaperGridView.currentIndex = 0;
             }
           }
         }
@@ -598,16 +601,16 @@ SmartPanel {
         onCurrentIndexChanged: {
           // Synchronize scroll with current item position
           if (currentIndex >= 0) {
-            let row = Math.floor(currentIndex / columns)
-            let itemY = row * cellHeight
-            let viewportTop = contentY
-            let viewportBottom = viewportTop + height
+            let row = Math.floor(currentIndex / columns);
+            let itemY = row * cellHeight;
+            let viewportTop = contentY;
+            let viewportBottom = viewportTop + height;
 
             // If item is out of view, scroll
             if (itemY < viewportTop) {
-              contentY = Math.max(0, itemY - cellHeight)
+              contentY = Math.max(0, itemY - cellHeight);
             } else if (itemY + cellHeight > viewportBottom) {
-              contentY = itemY + cellHeight - height + cellHeight
+              contentY = itemY + cellHeight - height + cellHeight;
             }
           }
         }
@@ -615,14 +618,14 @@ SmartPanel {
         Keys.onPressed: event => {
                           if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
                             if (currentIndex >= 0 && currentIndex < filteredWallpapers.length) {
-                              let path = filteredWallpapers[currentIndex]
+                              let path = filteredWallpapers[currentIndex];
                               if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                                WallpaperService.changeWallpaper(path, undefined)
+                                WallpaperService.changeWallpaper(path, undefined);
                               } else {
-                                WallpaperService.changeWallpaper(path, targetScreen.name)
+                                WallpaperService.changeWallpaper(path, targetScreen.name);
                               }
                             }
-                            event.accepted = true
+                            event.accepted = true;
                           }
                         }
 
@@ -702,12 +705,12 @@ SmartPanel {
               color: Color.transparent
               border.color: {
                 if (isSelected) {
-                  return Color.mSecondary
+                  return Color.mSecondary;
                 }
                 if (wallpaperGridView.currentIndex === index) {
-                  return Color.mHover
+                  return Color.mHover;
                 }
-                return Color.mSurface
+                return Color.mSurface;
               }
               border.width: Math.max(1, Style.borderL * 1.5)
             }
@@ -751,12 +754,12 @@ SmartPanel {
 
             TapHandler {
               onTapped: {
-                wallpaperGridView.forceActiveFocus()
-                wallpaperGridView.currentIndex = index
+                wallpaperGridView.forceActiveFocus();
+                wallpaperGridView.currentIndex = index;
                 if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                  WallpaperService.changeWallpaper(wallpaperPath, undefined)
+                  WallpaperService.changeWallpaper(wallpaperPath, undefined);
                 } else {
-                  WallpaperService.changeWallpaper(wallpaperPath, targetScreen.name)
+                  WallpaperService.changeWallpaper(wallpaperPath, targetScreen.name);
                 }
               }
             }
@@ -841,15 +844,15 @@ SmartPanel {
     Connections {
       target: typeof WallhavenService !== "undefined" ? WallhavenService : null
       function onSearchCompleted(results, meta) {
-        wallhavenViewRoot.wallpapers = results || []
-        wallhavenViewRoot.loading = false
-        wallhavenViewRoot.errorMessage = ""
-        wallhavenViewRoot.searchScheduled = false
+        wallhavenViewRoot.wallpapers = results || [];
+        wallhavenViewRoot.loading = false;
+        wallhavenViewRoot.errorMessage = "";
+        wallhavenViewRoot.searchScheduled = false;
       }
       function onSearchFailed(error) {
-        wallhavenViewRoot.loading = false
-        wallhavenViewRoot.errorMessage = error || ""
-        wallhavenViewRoot.searchScheduled = false
+        wallhavenViewRoot.loading = false;
+        wallhavenViewRoot.errorMessage = error || "";
+        wallhavenViewRoot.searchScheduled = false;
       }
     }
 
@@ -859,39 +862,39 @@ SmartPanel {
         // Set flags immediately to prevent race conditions
         if (WallhavenService.initialSearchScheduled) {
           // Another instance already scheduled the search, just initialize properties
-          initialized = true
-          return
+          initialized = true;
+          return;
         }
 
         // We're the first one - claim the search
-        initialized = true
-        WallhavenService.initialSearchScheduled = true
-        WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories
-        WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
-        WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
-        WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+        initialized = true;
+        WallhavenService.initialSearchScheduled = true;
+        WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories;
+        WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity;
+        WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting;
+        WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
 
         // Initialize resolution settings
-        var width = Settings.data.wallpaper.wallhavenResolutionWidth || ""
-        var height = Settings.data.wallpaper.wallhavenResolutionHeight || ""
-        var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+        var width = Settings.data.wallpaper.wallhavenResolutionWidth || "";
+        var height = Settings.data.wallpaper.wallhavenResolutionHeight || "";
+        var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast";
         if (width && height) {
-          var resolution = width + "x" + height
+          var resolution = width + "x" + height;
           if (mode === "atleast") {
-            WallhavenService.minResolution = resolution
-            WallhavenService.resolutions = ""
+            WallhavenService.minResolution = resolution;
+            WallhavenService.resolutions = "";
           } else {
-            WallhavenService.minResolution = ""
-            WallhavenService.resolutions = resolution
+            WallhavenService.minResolution = "";
+            WallhavenService.resolutions = resolution;
           }
         } else {
-          WallhavenService.minResolution = ""
-          WallhavenService.resolutions = ""
+          WallhavenService.minResolution = "";
+          WallhavenService.resolutions = "";
         }
 
         // Now check if we can actually search (fetching check is in WallhavenService.search)
-        loading = true
-        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+        loading = true;
+        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
       }
     }
 
@@ -930,15 +933,15 @@ SmartPanel {
 
           onCurrentIndexChanged: {
             if (currentIndex >= 0) {
-              let row = Math.floor(currentIndex / columns)
-              let itemY = row * cellHeight
-              let viewportTop = contentY
-              let viewportBottom = viewportTop + height
+              let row = Math.floor(currentIndex / columns);
+              let itemY = row * cellHeight;
+              let viewportTop = contentY;
+              let viewportBottom = viewportTop + height;
 
               if (itemY < viewportTop) {
-                contentY = Math.max(0, itemY - cellHeight)
+                contentY = Math.max(0, itemY - cellHeight);
               } else if (itemY + cellHeight > viewportBottom) {
-                contentY = itemY + cellHeight - height + cellHeight
+                contentY = itemY + cellHeight - height + cellHeight;
               }
             }
           }
@@ -946,10 +949,10 @@ SmartPanel {
           Keys.onPressed: event => {
                             if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
                               if (currentIndex >= 0 && currentIndex < wallpapers.length) {
-                                let wallpaper = wallpapers[currentIndex]
-                                wallhavenDownloadAndApply(wallpaper)
+                                let wallpaper = wallpapers[currentIndex];
+                                wallhavenDownloadAndApply(wallpaper);
                               }
-                              event.accepted = true
+                              event.accepted = true;
                             }
                           }
 
@@ -1054,8 +1057,8 @@ SmartPanel {
 
               TapHandler {
                 onTapped: {
-                  wallhavenGridView.currentIndex = index
-                  wallhavenDownloadAndApply(modelData)
+                  wallhavenGridView.currentIndex = index;
+                  wallhavenDownloadAndApply(modelData);
                 }
               }
             }
@@ -1236,12 +1239,12 @@ SmartPanel {
         WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
           if (success) {
             if (!Settings.data.wallpaper.setWallpaperOnAllMonitors && currentScreenIndex < Quickshell.screens.length) {
-              WallpaperService.changeWallpaper(localPath, Quickshell.screens[currentScreenIndex].name)
+              WallpaperService.changeWallpaper(localPath, Quickshell.screens[currentScreenIndex].name);
             } else {
-              WallpaperService.changeWallpaper(localPath, undefined)
+              WallpaperService.changeWallpaper(localPath, undefined);
             }
           }
-        })
+        });
       }
     }
   }

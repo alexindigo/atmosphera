@@ -25,31 +25,31 @@ RowLayout {
 
   function itemCount() {
     if (!root.model)
-      return 0
+      return 0;
     if (typeof root.model.count === 'number')
-      return root.model.count
+      return root.model.count;
     if (Array.isArray(root.model))
-      return root.model.length
-    return 0
+      return root.model.length;
+    return 0;
   }
 
   function getItem(index) {
     if (!root.model)
-      return null
+      return null;
     if (typeof root.model.get === 'function')
-      return root.model.get(index)
+      return root.model.get(index);
     if (Array.isArray(root.model))
-      return root.model[index]
-    return null
+      return root.model[index];
+    return null;
   }
 
   function findIndexByKey(key) {
     for (var i = 0; i < itemCount(); i++) {
-      var item = getItem(i)
+      var item = getItem(i);
       if (item && item.key === key)
-        return i
+        return i;
     }
-    return -1
+    return -1;
   }
 
   NLabel {
@@ -65,9 +65,9 @@ RowLayout {
     model: model
     currentIndex: findIndexByKey(currentKey)
     onActivated: {
-      var item = getItem(combo.currentIndex)
+      var item = getItem(combo.currentIndex);
       if (item && item.key !== undefined)
-        root.selected(item.key)
+        root.selected(item.key);
     }
 
     background: Rectangle {
@@ -123,16 +123,16 @@ RowLayout {
 
           onHoveredChanged: {
             if (hovered) {
-              ListView.view.currentIndex = itemIndex
+              ListView.view.currentIndex = itemIndex;
             }
           }
 
           onClicked: {
-            var item = root.getItem(itemIndex)
+            var item = root.getItem(itemIndex);
             if (item && item.key !== undefined && parentComboBox) {
-              root.selected(item.key)
-              parentComboBox.currentIndex = itemIndex
-              parentComboBox.popup.close()
+              root.selected(item.key);
+              parentComboBox.currentIndex = itemIndex;
+              parentComboBox.popup.close();
             }
           }
 
@@ -149,8 +149,8 @@ RowLayout {
 
           contentItem: NText {
             text: {
-              var item = root.getItem(index)
-              return item && item.name ? item.name : ""
+              var item = root.getItem(index);
+              return item && item.name ? item.name : "";
             }
             pointSize: Style.fontSizeM
             color: highlighted ? Color.mOnHover : Color.mOnSurface
@@ -177,7 +177,7 @@ RowLayout {
     Connections {
       target: root
       function onCurrentKeyChanged() {
-        combo.currentIndex = root.findIndexByKey(currentKey)
+        combo.currentIndex = root.findIndexByKey(currentKey);
       }
     }
   }

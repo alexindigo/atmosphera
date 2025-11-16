@@ -17,41 +17,41 @@ Singleton {
 
   function show(screen, target, text, direction, delay, fontFamily) {
     if (!Settings.data.ui.tooltipsEnabled) {
-      return
+      return;
     }
 
     // Don't create if no text
     if (!screen || !target || !text) {
-      Logger.i("Tooltip", "No target or text")
-      return
+      Logger.i("Tooltip", "No target or text");
+      return;
     }
 
     // If we have a pending tooltip for a different target, cancel it
     if (pendingTooltip && pendingTooltip.targetItem !== target) {
-      pendingTooltip.hideImmediately()
-      pendingTooltip.destroy()
-      pendingTooltip = null
+      pendingTooltip.hideImmediately();
+      pendingTooltip.destroy();
+      pendingTooltip = null;
     }
 
     // If we have an active tooltip for a different target, hide it
     if (activeTooltip && activeTooltip.targetItem !== target) {
-      activeTooltip.hideImmediately()
+      activeTooltip.hideImmediately();
       // Don't destroy immediately - let it clean itself up
-      activeTooltip = null
+      activeTooltip = null;
     }
 
     // If we already have a tooltip for this target, just update it
     if (activeTooltip && activeTooltip.targetItem === target) {
-      activeTooltip.updateText(text)
-      return activeTooltip
+      activeTooltip.updateText(text);
+      return activeTooltip;
     }
 
     // Create new tooltip instance
-    const newTooltip = tooltipComponent.createObject(null)
+    const newTooltip = tooltipComponent.createObject(null);
 
     if (newTooltip) {
       // Track as pending until it's visible
-      pendingTooltip = newTooltip
+      pendingTooltip = newTooltip;
 
       // Connect cleanup when tooltip hides
       newTooltip.visibleChanged.connect(() => {
@@ -60,59 +60,59 @@ Singleton {
                                             Qt.callLater(() => {
                                                            if (newTooltip && !newTooltip.visible) {
                                                              if (activeTooltip === newTooltip) {
-                                                               activeTooltip = null
+                                                               activeTooltip = null;
                                                              }
                                                              if (pendingTooltip === newTooltip) {
-                                                               pendingTooltip = null
+                                                               pendingTooltip = null;
                                                              }
-                                                             newTooltip.destroy()
+                                                             newTooltip.destroy();
                                                            }
-                                                         })
+                                                         });
                                           } else {
                                             // Tooltip is now visible, move from pending to active
                                             if (pendingTooltip === newTooltip) {
-                                              activeTooltip = newTooltip
-                                              pendingTooltip = null
+                                              activeTooltip = newTooltip;
+                                              pendingTooltip = null;
                                             }
                                           }
-                                        })
+                                        });
 
       // Show the tooltip
-      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay, fontFamily)
+      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay, fontFamily);
 
-      return newTooltip
+      return newTooltip;
     } else {
-      Logger.e("Tooltip", "Failed to create tooltip instance")
+      Logger.e("Tooltip", "Failed to create tooltip instance");
     }
 
-    return null
+    return null;
   }
 
   function hide() {
     if (pendingTooltip) {
-      pendingTooltip.hide()
+      pendingTooltip.hide();
     }
     if (activeTooltip) {
-      activeTooltip.hide()
+      activeTooltip.hide();
     }
   }
 
   function hideImmediately() {
     if (pendingTooltip) {
-      pendingTooltip.hideImmediately()
-      pendingTooltip.destroy()
-      pendingTooltip = null
+      pendingTooltip.hideImmediately();
+      pendingTooltip.destroy();
+      pendingTooltip = null;
     }
     if (activeTooltip) {
-      activeTooltip.hideImmediately()
-      activeTooltip.destroy()
-      activeTooltip = null
+      activeTooltip.hideImmediately();
+      activeTooltip.destroy();
+      activeTooltip = null;
     }
   }
 
   function updateText(newText) {
     if (activeTooltip) {
-      activeTooltip.updateText(newText)
+      activeTooltip.updateText(newText);
     }
   }
 }

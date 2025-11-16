@@ -21,11 +21,11 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
   onClicked: {
-    var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen)
+    var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen);
     if (Settings.data.wallpaper.panelPosition === "follow_bar") {
-      wallpaperPanel?.toggle(this)
+      wallpaperPanel?.toggle(this);
     } else {
-      wallpaperPanel?.toggle()
+      wallpaperPanel?.toggle();
     }
   }
 }

@@ -33,28 +33,28 @@ Item {
 
     function _updatePropertiesFromSettings() {
       if (!widgetSettings) {
-        return
+        return;
       }
 
-      onClickedCommand = widgetSettings.onClicked || ""
-      onRightClickedCommand = widgetSettings.onRightClicked || ""
-      onMiddleClickedCommand = widgetSettings.onMiddleClicked || ""
-      stateChecksJson = widgetSettings.stateChecksJson || "[]" // Populate from widgetSettings
+      onClickedCommand = widgetSettings.onClicked || "";
+      onRightClickedCommand = widgetSettings.onRightClicked || "";
+      onMiddleClickedCommand = widgetSettings.onMiddleClicked || "";
+      stateChecksJson = widgetSettings.stateChecksJson || "[]"; // Populate from widgetSettings
       try {
-        _parsedStateChecks = JSON.parse(stateChecksJson)
+        _parsedStateChecks = JSON.parse(stateChecksJson);
       } catch (e) {
-        console.error("CustomButton: Failed to parse stateChecksJson:", e.message)
-        _parsedStateChecks = []
+        console.error("CustomButton: Failed to parse stateChecksJson:", e.message);
+        _parsedStateChecks = [];
       }
-      generalTooltipText = widgetSettings.generalTooltipText || "Custom Button"
-      enableOnStateLogic = widgetSettings.enableOnStateLogic || false
+      generalTooltipText = widgetSettings.generalTooltipText || "Custom Button";
+      enableOnStateLogic = widgetSettings.enableOnStateLogic || false;
 
-      updateState()
+      updateState();
     }
 
     function onWidgetSettingsChanged() {
       if (widgetSettings) {
-        _updatePropertiesFromSettings()
+        _updatePropertiesFromSettings();
       }
     }
   }
@@ -64,16 +64,16 @@ Item {
     running: false
     command: _currentStateCheckIndex !== -1 && _parsedStateChecks.length > _currentStateCheckIndex ? ["sh", "-c", _parsedStateChecks[_currentStateCheckIndex].command] : []
     onExited: function (exitCode, stdout, stderr) {
-      var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex]
-      var currentCommand = currentCheckItem.command
+      var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex];
+      var currentCommand = currentCheckItem.command;
       if (exitCode === 0) {
         // Command succeeded, this is the active state
-        _isHot = true
-        _activeStateIcon = currentCheckItem.icon || widgetSettings.icon || "heart"
+        _isHot = true;
+        _activeStateIcon = currentCheckItem.icon || widgetSettings.icon || "heart";
       } else {
         // Command failed, try next one
-        _currentStateCheckIndex++
-        _checkNextState()
+        _currentStateCheckIndex++;
+        _checkNextState();
       }
     }
   }
@@ -85,53 +85,53 @@ Item {
     repeat: false
     onTriggered: {
       if (enableOnStateLogic && _parsedStateChecks.length > 0) {
-        _currentStateCheckIndex = 0
-        _checkNextState()
+        _currentStateCheckIndex = 0;
+        _checkNextState();
       } else {
-        _isHot = false
-        _activeStateIcon = widgetSettings.icon || "heart"
+        _isHot = false;
+        _activeStateIcon = widgetSettings.icon || "heart";
       }
     }
   }
 
   function _checkNextState() {
     if (_currentStateCheckIndex < _parsedStateChecks.length) {
-      var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex]
+      var currentCheckItem = _parsedStateChecks[_currentStateCheckIndex];
       if (currentCheckItem && currentCheckItem.command) {
-        stateCheckProcessExecutor.running = true
+        stateCheckProcessExecutor.running = true;
       } else {
-        _currentStateCheckIndex++
-        _checkNextState()
+        _currentStateCheckIndex++;
+        _checkNextState();
       }
     } else {
       // All checks failed
-      _isHot = false
-      _activeStateIcon = widgetSettings.icon || "heart"
+      _isHot = false;
+      _activeStateIcon = widgetSettings.icon || "heart";
     }
   }
 
   function updateState() {
     if (!enableOnStateLogic || _parsedStateChecks.length === 0) {
-      _isHot = false
-      _activeStateIcon = widgetSettings.icon || "heart"
-      return
+      _isHot = false;
+      _activeStateIcon = widgetSettings.icon || "heart";
+      return;
     }
-    stateUpdateTimer.restart()
+    stateUpdateTimer.restart();
   }
 
   function _buildTooltipText() {
-    let tooltip = generalTooltipText
+    let tooltip = generalTooltipText;
     if (onClickedCommand) {
-      tooltip += `\nLeft click: ${onClickedCommand}`
+      tooltip += `\nLeft click: ${onClickedCommand}`;
     }
     if (onRightClickedCommand) {
-      tooltip += `\nRight click: ${onRightClickedCommand}`
+      tooltip += `\nRight click: ${onRightClickedCommand}`;
     }
     if (onMiddleClickedCommand) {
-      tooltip += `\nMiddle click: ${onMiddleClickedCommand}`
+      tooltip += `\nMiddle click: ${onMiddleClickedCommand}`;
     }
 
-    return tooltip
+    return tooltip;
   }
 
   NIconButtonHot {
@@ -141,20 +141,20 @@ Item {
     tooltipText: _buildTooltipText()
     onClicked: {
       if (onClickedCommand) {
-        Quickshell.execDetached(["sh", "-c", onClickedCommand])
-        updateState()
+        Quickshell.execDetached(["sh", "-c", onClickedCommand]);
+        updateState();
       }
     }
     onRightClicked: {
       if (onRightClickedCommand) {
-        Quickshell.execDetached(["sh", "-c", onRightClickedCommand])
-        updateState()
+        Quickshell.execDetached(["sh", "-c", onRightClickedCommand]);
+        updateState();
       }
     }
     onMiddleClicked: {
       if (onMiddleClickedCommand) {
-        Quickshell.execDetached(["sh", "-c", onMiddleClickedCommand])
-        updateState()
+        Quickshell.execDetached(["sh", "-c", onMiddleClickedCommand]);
+        updateState();
       }
     }
   }

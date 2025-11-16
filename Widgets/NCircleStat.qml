@@ -77,37 +77,37 @@ Rectangle {
         layer.smooth: true
 
         Component.onCompleted: {
-          requestPaint()
+          requestPaint();
         }
 
         onPaint: {
-          const ctx = getContext("2d")
-          const w = width, h = height
-          const cx = w / 2, cy = h / 2
-          const r = Math.min(w, h) / 2 - 5 * contentScale
+          const ctx = getContext("2d");
+          const w = width, h = height;
+          const cx = w / 2, cy = h / 2;
+          const r = Math.min(w, h) / 2 - 5 * contentScale;
 
           // Rotated 90° to the right: gap at the bottom
           // Start at 150° and end at 390° (30°) → bottom opening
-          const start = Math.PI * 5 / 6 // 150°
-          const endBg = Math.PI * 13 / 6 // 390° (equivalent to 30°)
+          const start = Math.PI * 5 / 6; // 150°
+          const endBg = Math.PI * 13 / 6; // 390° (equivalent to 30°)
 
-          ctx.reset()
-          ctx.lineWidth = 6 * contentScale
+          ctx.reset();
+          ctx.lineWidth = 6 * contentScale;
 
           // Track uses surface for stronger contrast
-          ctx.strokeStyle = Color.mSurface
-          ctx.beginPath()
-          ctx.arc(cx, cy, r, start, endBg)
-          ctx.stroke()
+          ctx.strokeStyle = Color.mSurface;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, start, endBg);
+          ctx.stroke();
 
           // Value arc with gradient starting at 25%
-          const ratio = Math.max(0, Math.min(1, root.animatedValue / 100))
-          const end = start + (endBg - start) * ratio
+          const ratio = Math.max(0, Math.min(1, root.animatedValue / 100));
+          const end = start + (endBg - start) * ratio;
 
-          ctx.strokeStyle = root.fillColor
-          ctx.beginPath()
-          ctx.arc(cx, cy, r, start, end)
-          ctx.stroke()
+          ctx.strokeStyle = root.fillColor;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, start, end);
+          ctx.stroke();
         }
       }
 

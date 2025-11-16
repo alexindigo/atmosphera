@@ -79,20 +79,20 @@ RowLayout {
       hoverEnabled: true
       onEntered: {
         if (!enabled)
-          return
-        hovering = true
-        root.entered()
+          return;
+        hovering = true;
+        root.entered();
       }
       onExited: {
         if (!enabled)
-          return
-        hovering = false
-        root.exited()
+          return;
+        hovering = false;
+        root.exited();
       }
       onClicked: {
         if (!enabled)
-          return
-        root.toggled(!root.checked)
+          return;
+        root.toggled(!root.checked);
       }
     }
   }

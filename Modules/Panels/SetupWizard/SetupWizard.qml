@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
@@ -26,9 +26,9 @@ SmartPanel {
   property int totalSteps: 5
 
   onOpened: function () {
-    selectedScaleRatio = Settings.data.general.scaleRatio
-    selectedBarPosition = Settings.data.bar.position
-    selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory
+    selectedScaleRatio = Settings.data.general.scaleRatio;
+    selectedBarPosition = Settings.data.bar.position;
+    selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory;
   }
 
   // Setup wizard data
@@ -179,12 +179,12 @@ SmartPanel {
               selectedDirectory: root.selectedWallpaperDirectory
               selectedWallpaper: root.selectedWallpaper
               onDirectoryChanged: function (directory) {
-                root.selectedWallpaperDirectory = directory
-                root.applyWallpaperSettings()
+                root.selectedWallpaperDirectory = directory;
+                root.applyWallpaperSettings();
               }
               onWallpaperChanged: function (wallpaper) {
-                root.selectedWallpaper = wallpaper
-                root.applyWallpaperSettings()
+                root.selectedWallpaper = wallpaper;
+                root.applyWallpaperSettings();
               }
             }
 
@@ -199,12 +199,12 @@ SmartPanel {
               selectedScaleRatio: root.selectedScaleRatio
               selectedBarPosition: root.selectedBarPosition
               onScaleRatioChanged: function (ratio) {
-                root.selectedScaleRatio = ratio
-                root.applyUISettings()
+                root.selectedScaleRatio = ratio;
+                root.applyUISettings();
               }
               onBarPositionChanged: function (position) {
-                root.selectedBarPosition = position
-                root.applyUISettings()
+                root.selectedBarPosition = position;
+                root.applyUISettings();
               }
             }
 
@@ -233,22 +233,28 @@ SmartPanel {
             spacing: Style.marginM
 
             Repeater {
-              model: [{
+              model: [
+                {
                   "icon": "sparkles",
                   "label": "Welcome"
-                }, {
+                },
+                {
                   "icon": "image",
                   "label": "Wallpaper"
-                }, {
+                },
+                {
                   "icon": "palette",
                   "label": "Appearance"
-                }, {
+                },
+                {
                   "icon": "settings",
                   "label": "Customize"
-                }, {
+                },
+                {
                   "icon": "device-desktop",
                   "label": "Dock"
-                }]
+                }
+              ]
               delegate: RowLayout {
                 spacing: Style.marginS
 
@@ -322,7 +328,7 @@ SmartPanel {
               visible: currentStep === 0
               Layout.preferredHeight: 44
               onClicked: {
-                root.completeSetup()
+                root.completeSetup();
               }
             }
 
@@ -337,7 +343,7 @@ SmartPanel {
               Layout.preferredHeight: 44
               onClicked: {
                 if (currentStep > 0) {
-                  currentStep--
+                  currentStep--;
                 }
               }
             }
@@ -347,9 +353,9 @@ SmartPanel {
               Layout.preferredHeight: 44
               onClicked: {
                 if (currentStep < totalSteps - 1) {
-                  currentStep++
+                  currentStep++;
                 } else {
-                  root.completeSetup()
+                  root.completeSetup();
                 }
               }
             }
@@ -360,39 +366,39 @@ SmartPanel {
   }
 
   function completeSetup() {
-    Logger.i("SetupWizard", "Completing setup with selected options")
+    Logger.i("SetupWizard", "Completing setup with selected options");
 
     if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-      Settings.data.wallpaper.directory = selectedWallpaperDirectory
-      WallpaperService.refreshWallpapersList()
+      Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+      WallpaperService.refreshWallpapersList();
     }
 
     if (selectedWallpaper !== "") {
-      WallpaperService.changeWallpaper(selectedWallpaper, undefined)
+      WallpaperService.changeWallpaper(selectedWallpaper, undefined);
     }
 
-    Settings.data.general.scaleRatio = selectedScaleRatio
-    Settings.data.bar.position = selectedBarPosition
-    Settings.data.setupCompleted = true
+    Settings.data.general.scaleRatio = selectedScaleRatio;
+    Settings.data.bar.position = selectedBarPosition;
+    Settings.data.setupCompleted = true;
 
-    Settings.saveImmediate()
-    Logger.i("SetupWizard", "Setup completed successfully")
-    root.close()
+    Settings.saveImmediate();
+    Logger.i("SetupWizard", "Setup completed successfully");
+    root.close();
   }
 
   function applyWallpaperSettings() {
     if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-      Settings.data.wallpaper.directory = selectedWallpaperDirectory
-      WallpaperService.refreshWallpapersList()
+      Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+      WallpaperService.refreshWallpapersList();
     }
 
     if (selectedWallpaper !== "") {
-      WallpaperService.changeWallpaper(selectedWallpaper, undefined)
+      WallpaperService.changeWallpaper(selectedWallpaper, undefined);
     }
   }
 
   function applyUISettings() {
-    Settings.data.general.scaleRatio = selectedScaleRatio
-    Settings.data.bar.position = selectedBarPosition
+    Settings.data.general.scaleRatio = selectedScaleRatio;
+    Settings.data.bar.position = selectedBarPosition;
   }
 }

@@ -17,11 +17,11 @@ ColumnLayout {
   property string valueColorName: widgetData.colorName !== undefined ? widgetData.colorName : widgetMetadata.colorName
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.width = parseInt(widthInput.text) || widgetMetadata.width
-    settings.hideWhenIdle = valueHideWhenIdle
-    settings.colorName = valueColorName
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.width = parseInt(widthInput.text) || widgetMetadata.width;
+    settings.hideWhenIdle = valueHideWhenIdle;
+    settings.colorName = valueColorName;
+    return settings;
   }
 
   NTextInput {
@@ -37,22 +37,28 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.audio-visualizer.color-name.label")
     description: I18n.tr("bar.widget-settings.audio-visualizer.color-name.description")
-    model: [{
+    model: [
+      {
         "key": "primary",
         "name": I18n.tr("options.colors.primary")
-      }, {
+      },
+      {
         "key": "secondary",
         "name": I18n.tr("options.colors.secondary")
-      }, {
+      },
+      {
         "key": "tertiary",
         "name": I18n.tr("options.colors.tertiary")
-      }, {
+      },
+      {
         "key": "onSurface",
         "name": I18n.tr("options.colors.onSurface")
-      }, {
+      },
+      {
         "key": "error",
         "name": I18n.tr("options.colors.error")
-      }]
+      }
+    ]
     currentKey: root.valueColorName
     onSelected: key => root.valueColorName = key
   }

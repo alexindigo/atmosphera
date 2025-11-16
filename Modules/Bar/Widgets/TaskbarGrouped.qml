@@ -26,12 +26,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
@@ -48,40 +48,39 @@ Item {
   property bool wheelCooldown: false
 
   function refreshWorkspaces() {
-    localWorkspaces.clear()
+    localWorkspaces.clear();
     if (!screen)
-      return
-
-    const screenName = screen.name.toLowerCase()
+      return;
+    const screenName = screen.name.toLowerCase();
 
     for (var i = 0; i < CompositorService.workspaces.count; i++) {
-      const ws = CompositorService.workspaces.get(i)
+      const ws = CompositorService.workspaces.get(i);
 
       if (ws.output.toLowerCase() !== screenName)
-        continue
+        continue;
       if (hideUnoccupied && !ws.isOccupied && !ws.isFocused)
-        continue
+        continue;
 
       // Copy all properties from ws and add windows
-      var workspaceData = Object.assign({}, ws)
-      workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id)
+      var workspaceData = Object.assign({}, ws);
+      workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id);
 
-      localWorkspaces.append(workspaceData)
+      localWorkspaces.append(workspaceData);
     }
-    updateWorkspaceFocus()
+    updateWorkspaceFocus();
   }
 
   function triggerUnifiedWave() {
-    effectColor = Color.mPrimary
-    masterAnimation.restart()
+    effectColor = Color.mPrimary;
+    masterAnimation.restart();
   }
 
   function updateWorkspaceFocus() {
     for (var i = 0; i < localWorkspaces.count; i++) {
-      const ws = localWorkspaces.get(i)
+      const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
-        root.triggerUnifiedWave()
-        break
+        root.triggerUnifiedWave();
+        break;
       }
     }
   }
@@ -89,27 +88,27 @@ Item {
   function getFocusedLocalIndex() {
     for (var i = 0; i < localWorkspaces.count; i++) {
       if (localWorkspaces.get(i).isFocused === true)
-        return i
+        return i;
     }
-    return -1
+    return -1;
   }
 
   function switchByOffset(offset) {
     if (localWorkspaces.count === 0)
-      return
-    var current = getFocusedLocalIndex()
+      return;
+    var current = getFocusedLocalIndex();
     if (current < 0)
-      current = 0
-    var next = (current + offset) % localWorkspaces.count
+      current = 0;
+    var next = (current + offset) % localWorkspaces.count;
     if (next < 0)
-      next = localWorkspaces.count - 1
-    const ws = localWorkspaces.get(next)
+      next = localWorkspaces.count - 1;
+    const ws = localWorkspaces.get(next);
     if (ws && ws.idx !== undefined)
-      CompositorService.switchToWorkspace(ws)
+      CompositorService.switchToWorkspace(ws);
   }
 
   Component.onCompleted: {
-    refreshWorkspaces()
+    refreshWorkspaces();
   }
 
   onScreenChanged: refreshWorkspaces()
@@ -122,11 +121,11 @@ Item {
     target: CompositorService
 
     function onWorkspacesChanged() {
-      refreshWorkspaces()
+      refreshWorkspaces();
     }
 
     function onWindowListChanged() {
-      refreshWorkspaces()
+      refreshWorkspaces();
     }
   }
 
@@ -163,8 +162,8 @@ Item {
     interval: 150
     repeat: false
     onTriggered: {
-      root.wheelCooldown = false
-      root.wheelAccumulatedDelta = 0
+      root.wheelCooldown = false;
+      root.wheelAccumulatedDelta = 0;
     }
   }
 
@@ -175,24 +174,24 @@ Item {
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     onWheel: function (event) {
       if (root.wheelCooldown)
-        return
+        return;
       // Prefer vertical delta, fall back to horizontal if needed
-      var dy = event.angleDelta.y
-      var dx = event.angleDelta.x
-      var useDy = Math.abs(dy) >= Math.abs(dx)
-      var delta = useDy ? dy : dx
+      var dy = event.angleDelta.y;
+      var dx = event.angleDelta.x;
+      var useDy = Math.abs(dy) >= Math.abs(dx);
+      var delta = useDy ? dy : dx;
       // One notch is typically 120
-      root.wheelAccumulatedDelta += delta
-      var step = 120
+      root.wheelAccumulatedDelta += delta;
+      var step = 120;
       if (Math.abs(root.wheelAccumulatedDelta) >= step) {
-        var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1
+        var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1;
         // For vertical layout, natural mapping: wheel up -> previous, down -> next (already handled by sign)
         // For horizontal layout, same mapping using vertical wheel
-        root.switchByOffset(direction)
-        root.wheelCooldown = true
-        wheelDebounce.restart()
-        root.wheelAccumulatedDelta = 0
-        event.accepted = true
+        root.switchByOffset(direction);
+        root.wheelCooldown = true;
+        wheelDebounce.restart();
+        root.wheelAccumulatedDelta = 0;
+        event.accepted = true;
       }
     }
   }
@@ -220,7 +219,7 @@ Item {
         enabled: !hasWindows
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
-          CompositorService.switchToWorkspace(workspaceModel)
+          CompositorService.switchToWorkspace(workspaceModel);
         }
       }
 
@@ -296,22 +295,22 @@ Item {
 
               onPressed: function (mouse) {
                 if (!model) {
-                  return
+                  return;
                 }
 
                 if (mouse.button === Qt.LeftButton) {
-                  CompositorService.focusWindow(model)
+                  CompositorService.focusWindow(model);
                 } else if (mouse.button === Qt.RightButton) {
-                  CompositorService.closeWindow(model)
+                  CompositorService.closeWindow(model);
                 }
               }
               onEntered: {
-                taskbarItem.itemHovered = true
-                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection())
+                taskbarItem.itemHovered = true;
+                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
               }
               onExited: {
-                taskbarItem.itemHovered = false
-                TooltipService.hide()
+                taskbarItem.itemHovered = false;
+                TooltipService.hide();
               }
             }
           }
@@ -341,13 +340,13 @@ Item {
 
           color: {
             if (workspaceModel.isFocused)
-              return Color.mPrimary
+              return Color.mPrimary;
             if (workspaceModel.isUrgent)
-              return Color.mError
+              return Color.mError;
             if (hasWindows)
-              return Color.mSecondary
+              return Color.mSecondary;
 
-            return Qt.alpha(Color.mOutline, 0.3)
+            return Qt.alpha(Color.mOutline, 0.3);
           }
 
           scale: workspaceModel.isActive ? 1.0 : 0.9
@@ -409,24 +408,24 @@ Item {
 
           color: {
             if (workspaceModel.isFocused)
-              return Color.mOnPrimary
+              return Color.mOnPrimary;
             if (workspaceModel.isUrgent)
-              return Color.mOnError
+              return Color.mOnError;
             if (hasWindows)
-              return Color.mOnSecondary
+              return Color.mOnSecondary;
 
-            return Color.mOnSurface
+            return Color.mOnSurface;
           }
 
           opacity: {
             if (workspaceModel.isFocused)
-              return 1.0
+              return 1.0;
             if (workspaceModel.isUrgent)
-              return 0.9
+              return 0.9;
             if (hasWindows)
-              return 0.8
+              return 0.8;
 
-            return 0.6
+            return 0.6;
           }
 
           Behavior on opacity {

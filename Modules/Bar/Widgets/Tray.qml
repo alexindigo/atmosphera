@@ -1,7 +1,7 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
@@ -21,8 +21,8 @@ Rectangle {
   // Get shared tray menu window from PanelService (reactive to trigger changes)
   readonly property var trayMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger
-    return PanelService.getTrayMenuWindow(screen)
+    var _ = trayMenuUpdateTrigger;
+    return PanelService.getTrayMenuWindow(screen);
   }
 
   readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
@@ -31,7 +31,7 @@ Rectangle {
     target: PanelService
     function onTrayMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++
+        root.trayMenuUpdateTrigger++;
       }
     }
   }
@@ -45,12 +45,12 @@ Rectangle {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property string barPosition: Settings.data.bar.position
@@ -76,149 +76,149 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
-    let newItems = []
+    let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
-      const trayItems = SystemTray.items.values
+      const trayItems = SystemTray.items.values;
       for (var i = 0; i < trayItems.length; i++) {
-        const item = trayItems[i]
+        const item = trayItems[i];
         if (!item) {
-          continue
+          continue;
         }
 
-        const title = item.tooltipTitle || item.name || item.id || ""
+        const title = item.tooltipTitle || item.name || item.id || "";
 
         // Check if blacklisted
-        let isBlacklisted = false
+        let isBlacklisted = false;
         if (root.blacklist && root.blacklist.length > 0) {
           for (var j = 0; j < root.blacklist.length; j++) {
-            const rule = root.blacklist[j]
+            const rule = root.blacklist[j];
             if (wildCardMatch(title, rule)) {
-              isBlacklisted = true
-              break
+              isBlacklisted = true;
+              break;
             }
           }
         }
 
         if (!isBlacklisted) {
-          newItems.push(item)
+          newItems.push(item);
         }
       }
     }
 
     // If drawer is disabled, show all items inline
     if (!root.drawerEnabled) {
-      filteredItems = newItems
-      dropdownItems = []
+      filteredItems = newItems;
+      dropdownItems = [];
     } else {
       // Build inline (pinned) and drawer (unpinned) lists
       // If pinned list is empty, all items go to drawer (none inline)
       // If pinned list has items, pinned items are inline, rest go to drawer
       if (pinned && pinned.length > 0) {
-        let pinnedItems = []
+        let pinnedItems = [];
         for (var k = 0; k < newItems.length; k++) {
-          const item2 = newItems[k]
-          const title2 = item2.tooltipTitle || item2.name || item2.id || ""
+          const item2 = newItems[k];
+          const title2 = item2.tooltipTitle || item2.name || item2.id || "";
           for (var m = 0; m < pinned.length; m++) {
-            const rule2 = pinned[m]
+            const rule2 = pinned[m];
             if (wildCardMatch(title2, rule2)) {
-              pinnedItems.push(item2)
-              break
+              pinnedItems.push(item2);
+              break;
             }
           }
         }
-        filteredItems = pinnedItems
+        filteredItems = pinnedItems;
 
         // Unpinned items go to drawer
-        let unpinnedItems = []
+        let unpinnedItems = [];
         for (var v = 0; v < newItems.length; v++) {
-          const cand = newItems[v]
-          let isPinned = false
+          const cand = newItems[v];
+          let isPinned = false;
           for (var f = 0; f < filteredItems.length; f++) {
             if (filteredItems[f] === cand) {
-              isPinned = true
-              break
+              isPinned = true;
+              break;
             }
           }
           if (!isPinned)
-            unpinnedItems.push(cand)
+            unpinnedItems.push(cand);
         }
-        dropdownItems = unpinnedItems
+        dropdownItems = unpinnedItems;
       } else {
         // No pinned items: all items go to drawer (none inline)
-        filteredItems = []
-        dropdownItems = newItems
+        filteredItems = [];
+        dropdownItems = newItems;
       }
     }
   }
 
   function updateFilteredItems() {
-    updateDebounceTimer.restart()
+    updateDebounceTimer.restart();
   }
 
   function wildCardMatch(str, rule) {
     if (!str || !rule) {
-      return false
+      return false;
     }
     //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // Escape all special regex characters in the rule
-    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // Convert '*' to '.*' for wildcard matching
-    let pattern = escapedRule.replace(/\\\*/g, '.*')
+    let pattern = escapedRule.replace(/\\\*/g, '.*');
     // Add ^ and $ to match the entire string
-    pattern = '^' + pattern + '$'
+    pattern = '^' + pattern + '$';
 
     //Logger.d("Tray", "wildCardMatch - Generated pattern:", pattern)
     try {
-      const regex = new RegExp(pattern, 'i')
+      const regex = new RegExp(pattern, 'i');
       // 'i' for case-insensitive
       //Logger.d("Tray", "wildCardMatch - Regex test result:", regex.test(str))
-      return regex.test(str)
+      return regex.test(str);
     } catch (e) {
-      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message)
-      return false // If regex is invalid, it won't match
+      Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message);
+      return false; // If regex is invalid, it won't match
     }
   }
 
   function toggleDrawer(button) {
-    TooltipService.hideImmediately()
+    TooltipService.hideImmediately();
 
     // Close the tray menu if it's open
     if (trayMenuWindow && trayMenuWindow.visible) {
-      trayMenuWindow.close()
+      trayMenuWindow.close();
     }
 
-    const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
+    const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
     if (panel) {
-      panel.widgetSection = root.section
-      panel.widgetIndex = root.sectionWidgetIndex
-      panel.toggle(this)
+      panel.widgetSection = root.section;
+      panel.widgetIndex = root.sectionWidgetIndex;
+      panel.toggle(this);
     }
   }
 
   function onLoaded() {
     // When the widget is fully initialized with its props set the screen for the trayMenu
     if (trayMenu && trayMenu.item) {
-      trayMenu.item.screen = screen
+      trayMenu.item.screen = screen;
     }
   }
 
   Connections {
     target: SystemTray.items
     function onValuesChanged() {
-      root.updateFilteredItems()
+      root.updateFilteredItems();
     }
   }
 
   Connections {
     target: Settings
     function onSettingsSaved() {
-      root.updateFilteredItems()
+      root.updateFilteredItems();
     }
   }
 
   Component.onCompleted: {
-    root.updateFilteredItems() // Initial update
+    root.updateFilteredItems(); // Initial update
   }
 
   visible: filteredItems.length > 0 || dropdownItems.length > 0
@@ -248,14 +248,14 @@ Rectangle {
       icon: {
         switch (barPosition) {
         case "bottom":
-          return "caret-up"
+          return "caret-up";
         case "left":
-          return "caret-right"
+          return "caret-right";
         case "right":
-          return "caret-left"
+          return "caret-left";
         case "top":
         default:
-          return "caret-down"
+          return "caret-down";
         }
       }
       onClicked: toggleDrawer(this)
@@ -283,20 +283,20 @@ Rectangle {
           property bool menuJustOpened: false
 
           source: {
-            let icon = modelData?.icon || ""
+            let icon = modelData?.icon || "";
             if (!icon) {
-              return ""
+              return "";
             }
 
             // Process icon path
             if (icon.includes("?path=")) {
-              const chunks = icon.split("?path=")
-              const name = chunks[0]
-              const path = chunks[1]
-              const fileName = name.substring(name.lastIndexOf("/") + 1)
-              return `file://${path}/${fileName}`
+              const chunks = icon.split("?path=");
+              const name = chunks[0];
+              const path = chunks[1];
+              const fileName = name.substring(name.lastIndexOf("/") + 1);
+              return `file://${path}/${fileName}`;
             }
-            return icon
+            return icon;
           }
           opacity: status === Image.Ready ? 1 : 0
 
@@ -315,71 +315,71 @@ Rectangle {
             acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
             onClicked: mouse => {
                          if (!modelData) {
-                           return
+                           return;
                          }
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
                            if (trayMenuWindow) {
-                             trayMenuWindow.close()
+                             trayMenuWindow.close();
                            }
 
                            if (!modelData.onlyMenu) {
-                             modelData.activate()
+                             modelData.activate();
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
                            // Close the menu if it was visible
                            if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close()
-                             return
+                             trayMenuWindow.close();
+                             return;
                            }
-                           modelData.secondaryActivate && modelData.secondaryActivate()
+                           modelData.secondaryActivate && modelData.secondaryActivate();
                          } else if (mouse.button === Qt.RightButton) {
-                           TooltipService.hideImmediately()
+                           TooltipService.hideImmediately();
 
                            // Close the menu if it was visible
                            if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close()
-                             return
+                             trayMenuWindow.close();
+                             return;
                            }
 
                            // Close any opened panel
                            if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
-                             PanelService.openedPanel.close()
+                             PanelService.openedPanel.close();
                            }
 
                            if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                             trayMenuWindow.open()
+                             trayMenuWindow.open();
 
                              // Position menu based on bar position
-                             let menuX, menuY
+                             let menuX, menuY;
                              if (barPosition === "left") {
                                // For left bar: position menu to the right of the bar
-                               menuX = width + Style.marginM
-                               menuY = 0
+                               menuX = width + Style.marginM;
+                               menuY = 0;
                              } else if (barPosition === "right") {
                                // For right bar: position menu to the left of the bar
-                               menuX = -trayMenu.item.width - Style.marginM
-                               menuY = 0
+                               menuX = -trayMenu.item.width - Style.marginM;
+                               menuY = 0;
                              } else {
                                // For horizontal bars: center horizontally and position below
-                               menuX = (width / 2) - (trayMenu.item.width / 2)
-                               menuY = (barPosition === "top") ? Style.barHeight : -Style.barHeight
+                               menuX = (width / 2) - (trayMenu.item.width / 2);
+                               menuY = (barPosition === "top") ? Style.barHeight : -Style.barHeight;
                              }
-                             trayMenu.item.trayItem = modelData
-                             trayMenu.item.widgetSection = root.section
-                             trayMenu.item.widgetIndex = root.sectionWidgetIndex
-                             trayMenu.item.showAt(parent, menuX, menuY)
+                             trayMenu.item.trayItem = modelData;
+                             trayMenu.item.widgetSection = root.section;
+                             trayMenu.item.widgetIndex = root.sectionWidgetIndex;
+                             trayMenu.item.showAt(parent, menuX, menuY);
                            } else {
-                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set")
+                             Logger.d("Tray", "No menu available for", modelData.id, "or trayMenu not set");
                            }
                          }
                        }
             onEntered: {
               if (trayMenuWindow) {
-                trayMenuWindow.close()
+                trayMenuWindow.close();
               }
-              TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+              TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
             }
             onExited: TooltipService.hide()
           }
@@ -403,14 +403,14 @@ Rectangle {
       icon: {
         switch (barPosition) {
         case "bottom":
-          return "caret-up"
+          return "caret-up";
         case "left":
-          return "caret-right"
+          return "caret-right";
         case "right":
-          return "caret-left"
+          return "caret-left";
         case "top":
         default:
-          return "caret-down"
+          return "caret-down";
         }
       }
       onClicked: toggleDrawer(this)

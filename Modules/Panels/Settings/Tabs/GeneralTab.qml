@@ -42,7 +42,7 @@ ColumnLayout {
       buttonTooltip: "Browse for avatar image"
       onInputEditingFinished: Settings.data.general.avatarImage = text
       onButtonClicked: {
-        avatarPicker.openFilePicker()
+        avatarPicker.openFilePicker();
       }
     }
   }
@@ -55,7 +55,7 @@ ColumnLayout {
     nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
     onAccepted: paths => {
                   if (paths.length > 0) {
-                    Settings.data.general.avatarImage = paths[0]
+                    Settings.data.general.avatarImage = paths[0];
                   }
                 }
   }
@@ -91,7 +91,7 @@ ColumnLayout {
         popupHeight: 420
         minimumWidth: 300
         onSelected: function (key) {
-          Settings.data.ui.fontDefault = key
+          Settings.data.ui.fontDefault = key;
         }
       }
 
@@ -105,7 +105,7 @@ ColumnLayout {
         popupHeight: 320
         minimumWidth: 300
         onSelected: function (key) {
-          Settings.data.ui.fontFixed = key
+          Settings.data.ui.fontFixed = key;
         }
       }
 
@@ -205,22 +205,24 @@ ColumnLayout {
       Layout.fillWidth: true
       label: I18n.tr("settings.general.language.select.label")
       description: I18n.tr("settings.general.language.select.description")
-      model: [{
+      model: [
+        {
           "key": "",
           "name": I18n.tr("settings.general.language.select.auto-detect") + " (" + I18n.systemDetectedLangCode + ")"
-        }].concat(I18n.availableLanguages.map(function (langCode) {
-          return {
-            "key": langCode,
-            "name": langCode
-          }
-        }))
+        }
+      ].concat(I18n.availableLanguages.map(function (langCode) {
+        return {
+          "key": langCode,
+          "name": langCode
+        };
+      }))
       currentKey: Settings.data.general.language
       onSelected: key => {
-                    Settings.data.general.language = key
+                    Settings.data.general.language = key;
                     if (key === "") {
-                      I18n.detectLanguage() // Re-detect system language if "Automatic" is selected
+                      I18n.detectLanguage(); // Re-detect system language if "Automatic" is selected
                     } else {
-                      I18n.setLanguage(key) // Set specific language
+                      I18n.setLanguage(key); // Set specific language
                     }
                   }
     }
@@ -236,19 +238,19 @@ ColumnLayout {
     visible: !HostService.isNixOS
     text: I18n.tr("settings.general.launch-setup-wizard")
     onClicked: {
-      var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null)
+      var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
       if (!targetScreen) {
-        return
+        return;
       }
-      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
       if (setupPanel) {
-        setupPanel.open()
+        setupPanel.open();
       } else {
         Qt.callLater(() => {
-                       var sp = PanelService.getPanel("setupWizardPanel", targetScreen)
+                       var sp = PanelService.getPanel("setupWizardPanel", targetScreen);
                        if (sp)
-                       sp.open()
-                     })
+                       sp.open();
+                     });
       }
     }
   }

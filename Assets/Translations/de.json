@@ -359,13 +359,6 @@
     "health": "Zustand: {percent}%",
     "idle": "Leerlauf.",
     "no-battery-detected": "Keine Batterie erkannt.",
-    "panel": {
-      "balanced": "Ausgeglichen ({percent}%)",
-      "disabled": "Batteriemanager deaktiviert",
-      "full": "Volle Kapazität ({percent}%)",
-      "lifespan": "Verlängerte Lebensdauer ({percent}%)",
-      "title": "Ladeschwelle"
-    },
     "plugged-in": "Angeschlossen.",
     "time-left": "Verbleibende Zeit: {time}.",
     "time-until-full": "Zeit bis vollständig geladen: {time}."
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "Niedriger Batteriestand",
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
-    },
-    "battery-manager": {
-      "initial-setup": "Ersteinrichtung erforderlich",
-      "install-failed": "Installation fehlgeschlagen",
-      "install-missing": "Erforderliche Dateien fehlen",
-      "install-success": "Erfolgreich installiert",
-      "install-unsupported": "System wird nicht unterstützt",
-      "set-failed": "Fehler beim Setzen der Batterieschwelle",
-      "set-success-desc": "Batterieschwelle auf {percent}% gesetzt",
-      "title": "Batterieschwelle",
-      "uninstall-failed": "Deinstallation fehlgeschlagen",
-      "uninstall-setup": "Deinstallation, Authentifizierung erforderlich",
-      "uninstall-success": "Erfolgreich deinstalliert"
     },
     "bluetooth": {
       "disabled": "Deaktiviert",

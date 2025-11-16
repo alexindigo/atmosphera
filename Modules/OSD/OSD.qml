@@ -1,15 +1,15 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Services.Pipewire
+import Quickshell.Wayland
 import qs.Commons
-import qs.Widgets
 import qs.Services.Hardware
 import qs.Services.Media
 import qs.Services.System
+import qs.Widgets
 
 // Unified OSD component that displays volume, input volume, and brightness changes
 Variants {
@@ -52,54 +52,54 @@ Variants {
       switch (currentOSDType) {
       case "volume":
         if (isMuted)
-          return "volume-mute"
+          return "volume-mute";
         if (currentVolume <= Number.EPSILON)
-          return "volume-zero"
-        return currentVolume <= 0.5 ? "volume-low" : "volume-high"
+          return "volume-zero";
+        return currentVolume <= 0.5 ? "volume-low" : "volume-high";
       case "inputVolume":
-        return isInputMuted ? "microphone-off" : "microphone"
+        return isInputMuted ? "microphone-off" : "microphone";
       case "brightness":
-        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high"
+        return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       default:
-        return ""
+        return "";
       }
     }
 
     function getCurrentValue() {
       switch (currentOSDType) {
       case "volume":
-        return isMuted ? 0 : currentVolume
+        return isMuted ? 0 : currentVolume;
       case "inputVolume":
-        return isInputMuted ? 0 : currentInputVolume
+        return isInputMuted ? 0 : currentInputVolume;
       case "brightness":
-        return currentBrightness
+        return currentBrightness;
       default:
-        return 0
+        return 0;
       }
     }
 
     function getMaxValue() {
       if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
-        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
       }
-      return 1.0
+      return 1.0;
     }
 
     function getDisplayPercentage() {
-      const value = getCurrentValue()
-      const max = getMaxValue()
-      const pct = Math.round(Math.min(max, value) * 100)
-      return pct + "%"
+      const value = getCurrentValue();
+      const max = getMaxValue();
+      const pct = Math.round(Math.min(max, value) * 100);
+      return pct + "%";
     }
 
     function getProgressColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)
-      return isMutedState ? Color.mError : Color.mPrimary
+      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
+      return isMutedState ? Color.mError : Color.mPrimary;
     }
 
     function getIconColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted)
-      return isMutedState ? Color.mError : Color.mOnSurface
+      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
+      return isMutedState ? Color.mError : Color.mOnSurface;
     }
 
     // ============================================================================
@@ -108,35 +108,35 @@ Variants {
     function initializeAudioValues() {
       // Initialize output volume
       if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
-        const vol = AudioService.volume
+        const vol = AudioService.volume;
         if (vol !== undefined && !isNaN(vol)) {
-          lastKnownVolume = vol
-          volumeInitialized = true
-          muteInitialized = true
+          lastKnownVolume = vol;
+          volumeInitialized = true;
+          muteInitialized = true;
         }
       }
 
       // Initialize input volume
       if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
-        const inputVol = AudioService.inputVolume
+        const inputVol = AudioService.inputVolume;
         if (inputVol !== undefined && !isNaN(inputVol)) {
-          lastKnownInputVolume = inputVol
-          inputInitialized = true
+          lastKnownInputVolume = inputVol;
+          inputInitialized = true;
         }
       }
     }
 
     function resetOutputInit() {
-      lastKnownVolume = -1
-      volumeInitialized = false
-      muteInitialized = false
-      Qt.callLater(initializeAudioValues)
+      lastKnownVolume = -1;
+      volumeInitialized = false;
+      muteInitialized = false;
+      Qt.callLater(initializeAudioValues);
     }
 
     function resetInputInit() {
-      lastKnownInputVolume = -1
-      inputInitialized = false
-      Qt.callLater(initializeAudioValues)
+      lastKnownInputVolume = -1;
+      inputInitialized = false;
+      Qt.callLater(initializeAudioValues);
     }
 
     // ============================================================================
@@ -144,48 +144,48 @@ Variants {
     // ============================================================================
     function connectBrightnessMonitors() {
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
-        const monitor = BrightnessService.monitors[i]
-        monitor.brightnessUpdated.disconnect(onBrightnessChanged)
-        monitor.brightnessUpdated.connect(onBrightnessChanged)
+        const monitor = BrightnessService.monitors[i];
+        monitor.brightnessUpdated.disconnect(onBrightnessChanged);
+        monitor.brightnessUpdated.connect(onBrightnessChanged);
       }
     }
 
     function onBrightnessChanged(newBrightness) {
-      lastUpdatedBrightness = newBrightness
+      lastUpdatedBrightness = newBrightness;
 
       if (!brightnessInitialized) {
-        brightnessInitialized = true
-        return
+        brightnessInitialized = true;
+        return;
       }
 
-      showOSD("brightness")
+      showOSD("brightness");
     }
 
     // ============================================================================
     // OSD Display Control
     // ============================================================================
     function showOSD(type) {
-      currentOSDType = type
+      currentOSDType = type;
 
       if (!root.active) {
-        root.active = true
+        root.active = true;
       }
 
       if (root.item) {
-        root.item.showOSD()
+        root.item.showOSD();
       } else {
         Qt.callLater(() => {
                        if (root.item)
-                       root.item.showOSD()
-                     })
+                       root.item.showOSD();
+                     });
       }
     }
 
     function hideOSD() {
       if (root.item?.osdItem) {
-        root.item.osdItem.hideImmediately()
+        root.item.osdItem.hideImmediately();
       } else if (root.active) {
-        root.active = false
+        root.active = false;
       }
     }
 
@@ -199,15 +199,15 @@ Variants {
 
       function onReadyChanged() {
         if (Pipewire.ready)
-          Qt.callLater(initializeAudioValues)
+          Qt.callLater(initializeAudioValues);
       }
 
       function onDefaultAudioSinkChanged() {
-        resetOutputInit()
+        resetOutputInit();
       }
 
       function onDefaultAudioSourceChanged() {
-        resetInputInit()
+        resetInputInit();
       }
     }
 
@@ -217,72 +217,68 @@ Variants {
 
       function onSinkChanged() {
         if (AudioService.sink?.ready && AudioService.sink?.audio) {
-          resetOutputInit()
+          resetOutputInit();
         }
       }
 
       function onSourceChanged() {
         if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio) {
-          resetInputInit()
+          resetInputInit();
         }
       }
 
       function onVolumeChanged() {
         if (lastKnownVolume < 0) {
-          initializeAudioValues()
+          initializeAudioValues();
           if (lastKnownVolume < 0)
-            return
+            return;
         }
         if (!volumeInitialized)
-          return
-
+          return;
         if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
-          lastKnownVolume = AudioService.volume
-          showOSD("volume")
+          lastKnownVolume = AudioService.volume;
+          showOSD("volume");
         }
       }
 
       function onMutedChanged() {
         if (lastKnownVolume < 0) {
-          initializeAudioValues()
+          initializeAudioValues();
           if (lastKnownVolume < 0)
-            return
+            return;
         }
         if (!muteInitialized)
-          return
-        showOSD("volume")
+          return;
+        showOSD("volume");
       }
 
       function onInputVolumeChanged() {
         if (!AudioService.hasInput)
-          return
-
+          return;
         if (lastKnownInputVolume < 0) {
-          initializeAudioValues()
+          initializeAudioValues();
           if (lastKnownInputVolume < 0)
-            return
+            return;
         }
         if (!inputInitialized)
-          return
-
+          return;
         if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
-          lastKnownInputVolume = AudioService.inputVolume
-          showOSD("inputVolume")
+          lastKnownInputVolume = AudioService.inputVolume;
+          showOSD("inputVolume");
         }
       }
 
       function onInputMutedChanged() {
         if (!AudioService.hasInput)
-          return
-
+          return;
         if (lastKnownInputVolume < 0) {
-          initializeAudioValues()
+          initializeAudioValues();
           if (lastKnownInputVolume < 0)
-            return
+            return;
         }
         if (!inputInitialized)
-          return
-        showOSD("inputVolume")
+          return;
+        showOSD("inputVolume");
       }
     }
 
@@ -290,7 +286,7 @@ Variants {
     Connections {
       target: BrightnessService
       function onMonitorsChanged() {
-        connectBrightnessMonitors()
+        connectBrightnessMonitors();
       }
     }
 
@@ -301,9 +297,9 @@ Variants {
       running: true
       onTriggered: {
         if (Pipewire.ready)
-          initializeAudioValues()
-        muteInitialized = true
-        connectBrightnessMonitors()
+          initializeAudioValues();
+        muteInitialized = true;
+        connectBrightnessMonitors();
       }
     }
 
@@ -314,22 +310,21 @@ Variants {
       repeat: true
       onTriggered: {
         if (!Pipewire.ready)
-          return
-
-        const needsOutputInit = lastKnownVolume < 0
-        const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0
+          return;
+        const needsOutputInit = lastKnownVolume < 0;
+        const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0;
 
         if (needsOutputInit || needsInputInit) {
-          initializeAudioValues()
+          initializeAudioValues();
 
           // Stop timer if both are initialized
-          const outputDone = lastKnownVolume >= 0
-          const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0
+          const outputDone = lastKnownVolume >= 0;
+          const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0;
           if (outputDone && inputDone) {
-            running = false
+            running = false;
           }
         } else {
-          running = false
+          running = false;
         }
       }
     }
@@ -355,8 +350,8 @@ Variants {
       readonly property int vWidth: Math.round(80 * Style.uiScaleRatio)
       readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
       readonly property int barThickness: {
-        const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
-        return base % 2 === 0 ? base : base + 1
+        const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
+        return base % 2 === 0 ? base : base + 1;
       }
 
       anchors.top: isTop
@@ -366,15 +361,15 @@ Variants {
 
       function calculateMargin(isAnchored, position) {
         if (!isAnchored)
-          return 0
+          return 0;
 
-        let base = Style.marginM
+        let base = Style.marginM;
         if (Settings.data.bar.position === position) {
-          const isVertical = position === "top" || position === "bottom"
-          const floatExtra = Settings.data.bar.floating ? (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) * Style.marginXL : 0
-          return Style.barHeight + base + floatExtra
+          const isVertical = position === "top" || position === "bottom";
+          const floatExtra = Settings.data.bar.floating ? (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) * Style.marginXL : 0;
+          return Style.barHeight + base + floatExtra;
         }
-        return base
+        return base;
       }
 
       margins.top: calculateMargin(anchors.top, "top")
@@ -389,7 +384,7 @@ Variants {
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       WlrLayershell.layer: Settings.data.osd?.overlayLayer ? WlrLayer.Overlay : WlrLayer.Top
-      exclusionMode: PanelWindow.ExclusionMode.Ignore
+      WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
       Item {
         id: osdItem
@@ -422,9 +417,9 @@ Variants {
           id: visibilityTimer
           interval: Style.animationNormal + 50
           onTriggered: {
-            osdItem.visible = false
-            root.currentOSDType = ""
-            root.active = false
+            osdItem.visible = false;
+            root.currentOSDType = "";
+            root.active = false;
           }
         }
 
@@ -436,8 +431,8 @@ Variants {
           color: Qt.alpha(Color.mSurface, Settings.data.osd.backgroundOpacity || 1.0)
           border.color: Qt.alpha(Color.mOutline, Settings.data.osd.backgroundOpacity || 1.0)
           border.width: {
-            const bw = Math.max(2, Style.borderM)
-            return bw % 2 === 0 ? bw : bw + 1
+            const bw = Math.max(2, Style.borderM);
+            return bw % 2 === 0 ? bw : bw + 1;
           }
         }
 
@@ -608,39 +603,39 @@ Variants {
         }
 
         function show() {
-          hideTimer.stop()
-          visibilityTimer.stop()
-          osdItem.visible = true
+          hideTimer.stop();
+          visibilityTimer.stop();
+          osdItem.visible = true;
 
           Qt.callLater(() => {
-                         osdItem.opacity = 1
-                         osdItem.scale = 1.0
-                       })
+                         osdItem.opacity = 1;
+                         osdItem.scale = 1.0;
+                       });
 
-          hideTimer.start()
+          hideTimer.start();
         }
 
         function hide() {
-          hideTimer.stop()
-          visibilityTimer.stop()
-          osdItem.opacity = 0
-          osdItem.scale = 0.85
-          visibilityTimer.start()
+          hideTimer.stop();
+          visibilityTimer.stop();
+          osdItem.opacity = 0;
+          osdItem.scale = 0.85;
+          visibilityTimer.start();
         }
 
         function hideImmediately() {
-          hideTimer.stop()
-          visibilityTimer.stop()
-          osdItem.opacity = 0
-          osdItem.scale = 0.85
-          osdItem.visible = false
-          root.currentOSDType = ""
-          root.active = false
+          hideTimer.stop();
+          visibilityTimer.stop();
+          osdItem.opacity = 0;
+          osdItem.scale = 0.85;
+          osdItem.visible = false;
+          root.currentOSDType = "";
+          root.active = false;
         }
       }
 
       function showOSD() {
-        osdItem.show()
+        osdItem.show();
       }
     }
   }

@@ -19,26 +19,29 @@ ColumnLayout {
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : (widgetMetadata ? widgetMetadata.colorizeIcons : false)
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.labelMode = valueLabelMode
-    settings.hideUnoccupied = valueHideUnoccupied
-    settings.showWorkspaceNumbers = valueShowWorkspaceNumbers
-    settings.showNumbersOnlyWhenOccupied = valueShowNumbersOnlyWhenOccupied
-    settings.colorizeIcons = valueColorizeIcons
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.labelMode = valueLabelMode;
+    settings.hideUnoccupied = valueHideUnoccupied;
+    settings.showWorkspaceNumbers = valueShowWorkspaceNumbers;
+    settings.showNumbersOnlyWhenOccupied = valueShowNumbersOnlyWhenOccupied;
+    settings.colorizeIcons = valueColorizeIcons;
+    return settings;
   }
 
   NComboBox {
     id: labelModeCombo
     label: I18n.tr("bar.widget-settings.workspace.label-mode.label")
     description: I18n.tr("bar.widget-settings.workspace.label-mode.description")
-    model: [{
+    model: [
+      {
         "key": "none",
         "name": I18n.tr("options.workspace-labels.none")
-      }, {
+      },
+      {
         "key": "index",
         "name": I18n.tr("options.workspace-labels.index")
-      }, {
+      },
+      {
         "key": "name",
         "name": I18n.tr("options.workspace-labels.name")
       }, {

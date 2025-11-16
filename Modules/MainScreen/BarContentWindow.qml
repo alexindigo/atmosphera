@@ -2,19 +2,18 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services.UI
 import qs.Modules.Bar
-
+import qs.Services.UI
 
 /**
- * BarContentWindow - Separate transparent PanelWindow for bar content
- *
- * This window contains only the bar widgets (content), while the background
- * is rendered in MainScreen's unified Shape system. This separation prevents
- * fullscreen redraws when bar widgets redraw.
- *
- * This component should be instantiated once per screen by AllScreens.qml
- */
+* BarContentWindow - Separate transparent PanelWindow for bar content
+*
+* This window contains only the bar widgets (content), while the background
+* is rendered in MainScreen's unified Shape system. This separation prevents
+* fullscreen redraws when bar widgets redraw.
+*
+* This component should be instantiated once per screen by AllScreens.qml
+*/
 PanelWindow {
   id: barWindow
 
@@ -22,7 +21,7 @@ PanelWindow {
   color: Color.transparent // Transparent - background is in MainScreen below
 
   Component.onCompleted: {
-    Logger.d("BarContentWindow", "Bar content window created for screen:", barWindow.screen?.name)
+    Logger.d("BarContentWindow", "Bar content window created for screen:", barWindow.screen?.name);
   }
 
   // Wayland layer configuration

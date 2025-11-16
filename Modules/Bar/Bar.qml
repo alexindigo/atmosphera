@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Services.UPower
+import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.Bar.Extras
+import qs.Modules.Notification
 import qs.Services.UI
 import qs.Widgets
-import qs.Modules.Notification
-import qs.Modules.Bar.Extras
 
 // Bar Component
 Item {
@@ -34,9 +34,9 @@ Item {
   // Register bar when screen becomes available
   onScreenChanged: {
     if (screen && screen.name) {
-      Logger.d("Bar", "Bar screen set to:", screen.name)
-      Logger.d("Bar", "  Position:", barPosition, "Floating:", barFloating)
-      BarService.registerBar(screen.name)
+      Logger.d("Bar", "Bar screen set to:", screen.name);
+      Logger.d("Bar", "  Position:", barPosition, "Floating:", barFloating);
+      BarService.registerBar(screen.name);
     }
   }
 
@@ -46,12 +46,12 @@ Item {
     anchors.fill: parent
     active: {
       if (root.screen === null || root.screen === undefined) {
-        return false
+        return false;
       }
 
-      var monitors = Settings.data.bar.monitors || []
-      var result = monitors.length === 0 || monitors.includes(root.screen.name)
-      return result
+      var monitors = Settings.data.bar.monitors || [];
+      var result = monitors.length === 0 || monitors.includes(root.screen.name);
+      return result;
     }
 
     sourceComponent: Item {
@@ -75,73 +75,73 @@ Item {
         readonly property int topLeftCornerState: {
           // Floating bar: always simple rounded corners
           if (barFloating)
-            return 0
+            return 0;
           // Top bar: top corners against screen edge = no radius
           if (barPosition === "top")
-            return -1
+            return -1;
           // Left bar: top-left against screen edge = no radius
           if (barPosition === "left")
-            return -1
+            return -1;
           // Bottom/Right bar with outerCorners: inverted corner
           if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "right")) {
-            return barIsVertical ? 1 : 2 // horizontal invert for vertical bars, vertical invert for horizontal
+            return barIsVertical ? 1 : 2; // horizontal invert for vertical bars, vertical invert for horizontal
           }
           // No outerCorners = square
-          return -1
+          return -1;
         }
 
         readonly property int topRightCornerState: {
           // Floating bar: always simple rounded corners
           if (barFloating)
-            return 0
+            return 0;
           // Top bar: top corners against screen edge = no radius
           if (barPosition === "top")
-            return -1
+            return -1;
           // Right bar: top-right against screen edge = no radius
           if (barPosition === "right")
-            return -1
+            return -1;
           // Bottom/Left bar with outerCorners: inverted corner
           if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "left")) {
-            return barIsVertical ? 1 : 2
+            return barIsVertical ? 1 : 2;
           }
           // No outerCorners = square
-          return -1
+          return -1;
         }
 
         readonly property int bottomLeftCornerState: {
           // Floating bar: always simple rounded corners
           if (barFloating)
-            return 0
+            return 0;
           // Bottom bar: bottom corners against screen edge = no radius
           if (barPosition === "bottom")
-            return -1
+            return -1;
           // Left bar: bottom-left against screen edge = no radius
           if (barPosition === "left")
-            return -1
+            return -1;
           // Top/Right bar with outerCorners: inverted corner
           if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "right")) {
-            return barIsVertical ? 1 : 2
+            return barIsVertical ? 1 : 2;
           }
           // No outerCorners = square
-          return -1
+          return -1;
         }
 
         readonly property int bottomRightCornerState: {
           // Floating bar: always simple rounded corners
           if (barFloating)
-            return 0
+            return 0;
           // Bottom bar: bottom corners against screen edge = no radius
           if (barPosition === "bottom")
-            return -1
+            return -1;
           // Right bar: bottom-right against screen edge = no radius
           if (barPosition === "right")
-            return -1
+            return -1;
           // Top/Left bar with outerCorners: inverted corner
           if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "left")) {
-            return barIsVertical ? 1 : 2
+            return barIsVertical ? 1 : 2;
           }
           // No outerCorners = square
-          return -1
+          return -1;
         }
 
         MouseArea {
@@ -151,14 +151,14 @@ Item {
           preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
-              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen)
+              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
               if (Settings.data.controlCenter.position === "close_to_bar_button") {
                 // Will attempt to open the panel next to the bar button if any.
-                controlCenterPanel?.toggle(null, "ControlCenter")
+                controlCenterPanel?.toggle(null, "ControlCenter");
               } else {
-                controlCenterPanel?.toggle()
+                controlCenterPanel?.toggle();
               }
-              mouse.accepted = true
+              mouse.accepted = true;
             }
           }
         }

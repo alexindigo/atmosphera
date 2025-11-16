@@ -57,10 +57,10 @@ Rectangle {
     onEntered: root.isHovered = true
     onExited: root.isHovered = false
     onClicked: {
-      root.clicked()
+      root.clicked();
       // Update parent NTabBar's currentIndex
       if (root.parent && root.parent.parent && root.parent.parent.currentIndex !== undefined) {
-        root.parent.parent.currentIndex = root.tabIndex
+        root.parent.parent.currentIndex = root.tabIndex;
       }
     }
   }

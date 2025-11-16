@@ -1,12 +1,12 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
 import qs.Commons
-import qs.Widgets
 import qs.Modules.MainScreen
 import qs.Services.Media
+import qs.Widgets
 
 SmartPanel {
   id: root
@@ -25,7 +25,7 @@ SmartPanel {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
       if (!localOutputVolumeChanging) {
-        localOutputVolume = AudioService.volume
+        localOutputVolume = AudioService.volume;
       }
     }
   }
@@ -34,7 +34,7 @@ SmartPanel {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
       if (!localInputVolumeChanging) {
-        localInputVolume = AudioService.inputVolume
+        localInputVolume = AudioService.inputVolume;
       }
     }
   }
@@ -46,10 +46,10 @@ SmartPanel {
     repeat: true
     onTriggered: {
       if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
-        AudioService.setVolume(localOutputVolume)
+        AudioService.setVolume(localOutputVolume);
       }
       if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
-        AudioService.setInputVolume(localInputVolume)
+        AudioService.setInputVolume(localInputVolume);
       }
     }
   }
@@ -95,7 +95,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.output-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              AudioService.setOutputMuted(!AudioService.muted)
+              AudioService.setOutputMuted(!AudioService.muted);
             }
           }
 
@@ -104,7 +104,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.input-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              AudioService.setInputMuted(!AudioService.inputMuted)
+              AudioService.setInputMuted(!AudioService.inputMuted);
             }
           }
 
@@ -113,7 +113,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              root.close()
+              root.close();
             }
           }
         }
@@ -179,8 +179,8 @@ SmartPanel {
                   text: modelData.description
                   checked: AudioService.sink?.id === modelData.id
                   onClicked: {
-                    AudioService.setAudioSink(modelData)
-                    localOutputVolume = AudioService.volume
+                    AudioService.setAudioSink(modelData);
+                    localOutputVolume = AudioService.volume;
                   }
                   Layout.fillWidth: true
                 }

@@ -359,13 +359,6 @@
     "health": "健康状况：{percent}%",
     "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
-    "panel": {
-      "balanced": "平衡 ({percent}%)",
-      "disabled": "电池管理器已禁用",
-      "full": "完全容量 ({percent}%)",
-      "lifespan": "延长寿命 ({percent}%)",
-      "title": "充电阈值"
-    },
     "plugged-in": "已接通电源。",
     "time-left": "剩余时间：{time}。",
     "time-until-full": "充满所需时间：{time}。"
@@ -1866,19 +1859,6 @@
     "battery": {
       "low": "电量低",
       "low-desc": "电量为 {percent}%。请连接充电器。"
-    },
-    "battery-manager": {
-      "initial-setup": "需要初始设置",
-      "install-failed": "安装失败",
-      "install-missing": "缺少必要文件",
-      "install-success": "安装成功",
-      "install-unsupported": "系统不受支持",
-      "set-failed": "设置电池阈值失败",
-      "set-success-desc": "电池阈值已设置为 {percent}%",
-      "title": "电池阈值",
-      "uninstall-failed": "卸载失败",
-      "uninstall-setup": "正在卸载，需要身份验证",
-      "uninstall-success": "卸载成功"
     },
     "bluetooth": {
       "disabled": "已禁用",

@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
@@ -26,6 +26,6 @@ NIconButton {
   tooltipText: PowerProfileService.noctaliaPerformanceMode ? I18n.tr("tooltips.noctalia-performance-enabled") : I18n.tr("tooltips.noctalia-performance-disabled")
   tooltipDirection: BarService.getTooltipDirection()
   onClicked: {
-    PowerProfileService.toggleNoctaliaPerformance()
+    PowerProfileService.toggleNoctaliaPerformance();
   }
 }

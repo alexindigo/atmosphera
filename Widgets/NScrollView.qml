@@ -23,33 +23,33 @@ T.ScrollView {
 
   // Configure the internal flickable when it becomes available
   Component.onCompleted: {
-    configureFlickable()
+    configureFlickable();
   }
 
   // Function to configure the underlying Flickable
   function configureFlickable() {
     // Find the internal Flickable (it's usually the first child)
     for (var i = 0; i < children.length; i++) {
-      var child = children[i]
+      var child = children[i];
       if (child.toString().indexOf("Flickable") !== -1) {
         // Configure the flickable to prevent horizontal scrolling
-        child.boundsBehavior = root.boundsBehavior
+        child.boundsBehavior = root.boundsBehavior;
 
         if (root.preventHorizontalScroll) {
-          child.flickableDirection = Flickable.VerticalFlick
-          child.contentWidth = Qt.binding(() => child.width)
+          child.flickableDirection = Flickable.VerticalFlick;
+          child.contentWidth = Qt.binding(() => child.width);
         } else {
-          child.flickableDirection = root.flickableDirection
+          child.flickableDirection = root.flickableDirection;
         }
-        break
+        break;
       }
     }
   }
 
   // Watch for changes in horizontalPolicy
   onHorizontalPolicyChanged: {
-    preventHorizontalScroll = (horizontalPolicy === ScrollBar.AlwaysOff)
-    configureFlickable()
+    preventHorizontalScroll = (horizontalPolicy === ScrollBar.AlwaysOff);
+    configureFlickable();
   }
 
   ScrollBar.vertical: ScrollBar {

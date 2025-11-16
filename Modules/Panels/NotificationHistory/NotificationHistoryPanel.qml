@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Services.Notifications
+import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Services.System
 import qs.Widgets
-import qs.Modules.MainScreen
 
 // Notification History panel
 SmartPanel {
@@ -17,7 +17,7 @@ SmartPanel {
   preferredHeight: Math.round(540 * Style.uiScaleRatio)
 
   onOpened: function () {
-    NotificationService.updateLastSeenTs()
+    NotificationService.updateLastSeenTs();
   }
 
   panelContent: Rectangle {
@@ -67,9 +67,9 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.clear-history")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              NotificationService.clearHistory()
+              NotificationService.clearHistory();
               // Close panel as there is nothing more to see.
-              root.close()
+              root.close();
             }
           }
 
@@ -177,9 +177,9 @@ SmartPanel {
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
                   if (scrollView.expandedId === notificationId) {
-                    scrollView.expandedId = ""
+                    scrollView.expandedId = "";
                   } else {
-                    scrollView.expandedId = notificationId
+                    scrollView.expandedId = notificationId;
                   }
                 }
               }
@@ -227,11 +227,11 @@ SmartPanel {
                         visible: model.urgency !== 1
                         color: {
                           if (model.urgency === 2)
-                            return Color.mError
+                            return Color.mError;
                           else if (model.urgency === 0)
-                            return Color.mOnSurfaceVariant
+                            return Color.mOnSurfaceVariant;
                           else
-                            return Color.transparent
+                            return Color.transparent;
                         }
                       }
 
@@ -312,7 +312,7 @@ SmartPanel {
                     anchors.verticalCenter: parent.verticalCenter
 
                     onClicked: {
-                      NotificationService.removeFromHistory(notificationId)
+                      NotificationService.removeFromHistory(notificationId);
                     }
                   }
                 }
