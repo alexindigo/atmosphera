@@ -68,7 +68,6 @@ ShellRoot {
     sourceComponent: Item {
       Component.onCompleted: {
         Logger.i("Shell", "---------------------------");
-        SystemTrayService.init();
         WallpaperService.init();
         AppThemeService.init();
         ColorSchemeService.init();
