@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Toon werkruimtenummers alleen voor werkruimten met open vensters.",
-          "label": "Nummers alleen tonen wanneer bezet"
+          "description": "Toon alleen de werkomgevinglabels voor werkomgevingen met open vensters.",
+          "label": "Label alleen tonen wanneer bezet"
         },
         "show-workspace-numbers": {
-          "description": "Toon werkruimtenummers in de linkerbovenhoek van taakgroepen.",
-          "label": "Werkruimtenummers tonen"
+          "description": "Toon het label van de werkruimte in de linkerbovenhoek van taakgroepen.",
+          "label": "Werkruimtelabel weergeven"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Zoeken...",
     "search-icons": "bijv. noctalia, niri, battery, cloud",
     "search-launcher": "Items zoeken... of gebruik > voor commando's",
-    "search-wallpapers": "Typ om achtergronden te filteren...",
     "search-wallhaven": "Zoek in Wallhaven...",
+    "search-wallpapers": "Typ om achtergronden te filteren...",
     "select": "Selecteren",
     "test": "Test"
   },
@@ -2047,6 +2047,11 @@
         "label": "Categorieën",
         "people": "Mensen"
       },
+      "order": {
+        "asc": "Oplopend",
+        "desc": "Aflopend",
+        "label": "Volgorde"
+      },
       "purity": {
         "all": "Alles",
         "label": "Inhoudsfilter",
@@ -2071,21 +2076,16 @@
         "toplist": "Toplijst",
         "views": "Weergaven"
       },
-      "order": {
-        "asc": "Oplopend",
-        "desc": "Aflopend",
-        "label": "Volgorde"
-      },
-      "wallhaven-settings": {
-        "apply": "Toepassen",
-        "title": "Wallhaven-instellingen"
-      },
       "source": {
         "label": "Bron",
         "local": "Lokaal",
         "wallhaven": "Wallhaven"
       },
-      "title": "Achtergrondkiezer"
+      "title": "Achtergrondkiezer",
+      "wallhaven-settings": {
+        "apply": "Toepassen",
+        "title": "Wallhaven-instellingen"
+      }
     },
     "transitions": {
       "disc": "Schijf",
@@ -2096,6 +2096,7 @@
       "wipe": "Vegen"
     },
     "try-different-search": "Probeer een andere zoekopdracht.",
+    "unknown": "Onbekend",
     "wallhaven": {
       "loading": "Achtergronden laden...",
       "no-results": "Geen achtergronden gevonden. Probeer een andere zoekopdracht.",

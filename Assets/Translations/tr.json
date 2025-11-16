@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster.",
-          "label": "Yalnızca dolu olduğunda numaraları göster"
+          "description": "Sadece açık pencereleri olan çalışma alanları için çalışma alanı etiketini göster.",
+          "label": "Sadece dolu olduğunda etiketi göster."
         },
         "show-workspace-numbers": {
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster.",
-          "label": "Çalışma alanı numaralarını göster"
+          "description": "Görev gruplarının sol üst köşesinde çalışma alanı etiketini görüntüle.",
+          "label": "Çalışma alanı etiketini göster"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Ara...",
     "search-icons": "örn., noctalia, niri, battery, cloud",
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",
-    "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
     "search-wallhaven": "Wallhaven'da ara...",
+    "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
     "select": "Seç",
     "test": "Test"
   },
@@ -2047,6 +2047,11 @@
         "label": "Kategoriler",
         "people": "İnsanlar"
       },
+      "order": {
+        "asc": "Artan",
+        "desc": "Azalan",
+        "label": "Sıra"
+      },
       "purity": {
         "all": "Tümü",
         "label": "İçerik filtresi",
@@ -2071,21 +2076,16 @@
         "toplist": "En iyi liste",
         "views": "Görüntülemeler"
       },
-      "order": {
-        "asc": "Artan",
-        "desc": "Azalan",
-        "label": "Sıra"
-      },
-      "wallhaven-settings": {
-        "apply": "Uygula",
-        "title": "Wallhaven Ayarları"
-      },
       "source": {
         "label": "Kaynak",
         "local": "Yerel",
         "wallhaven": "Wallhaven"
       },
-      "title": "Duvar kağıdı seçici"
+      "title": "Duvar kağıdı seçici",
+      "wallhaven-settings": {
+        "apply": "Uygula",
+        "title": "Wallhaven Ayarları"
+      }
     },
     "transitions": {
       "disc": "Disk",
@@ -2096,6 +2096,7 @@
       "wipe": "Silme"
     },
     "try-different-search": "Farklı bir arama sorgusu deneyin.",
+    "unknown": "Bilinmiyor",
     "wallhaven": {
       "loading": "Duvar kağıtları yükleniyor...",
       "no-results": "Duvar kağıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
