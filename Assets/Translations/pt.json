@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Mostrar apenas o rótulo da área de trabalho para áreas de trabalho que têm janelas abertas.",
           "label": "Mostrar rótulo somente quando ocupado."
-        },
-        "show-workspace-numbers": {
-          "description": "Exibir o rótulo do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
-          "label": "Mostrar rótulo do espaço de trabalho"
         }
       },
       "tray": {
@@ -564,6 +560,7 @@
     },
     "workspace-labels": {
       "index": "Índice",
+      "index+name": "Índice e Nome",
       "name": "Nome",
       "none": "Nenhum"
     }

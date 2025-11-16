@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "只显示有打开窗口的工作区标签。",
           "label": "仅在被占用时显示标签"
-        },
-        "show-workspace-numbers": {
-          "description": "在任务组左上角显示工作区标签。",
-          "label": "显示工作区标签"
         }
       },
       "tray": {
@@ -564,6 +560,7 @@
     },
     "workspace-labels": {
       "index": "索引",
+      "index+name": "索引和名称",
       "name": "名称",
       "none": "无"
     }

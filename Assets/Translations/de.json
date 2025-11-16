@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Zeige nur die Workspace-Bezeichnung für Workspaces an, die offene Fenster haben.",
           "label": "Zeige Label nur bei Belegung"
-        },
-        "show-workspace-numbers": {
-          "description": "Arbeitsbereichsbezeichnung in der oberen linken Ecke von Aufgabengruppen anzeigen.",
-          "label": "Arbeitsbereichsbezeichnung anzeigen"
         }
       },
       "tray": {
@@ -564,6 +560,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index und Name",
       "name": "Name",
       "none": "Keine"
     }

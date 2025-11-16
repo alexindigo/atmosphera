@@ -36,8 +36,7 @@ Item {
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
   readonly property int characterCount: 2
-  readonly property bool showWorkspaceNumbers: (widgetSettings.showWorkspaceNumbers !== undefined) ? widgetSettings.showWorkspaceNumbers : true
-  readonly property bool showNumbersOnlyWhenOccupied: (widgetSettings.showNumbersOnlyWhenOccupied !== undefined) ? widgetSettings.showNumbersOnlyWhenOccupied : true
+  readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : true
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
   property ListModel localWorkspaces: ListModel {}
   property real masterProgress: 0.0
@@ -322,7 +321,7 @@ Item {
       Item {
         id: workspaceNumberContainer
 
-        visible: root.labelMode !== "none" && root.showWorkspaceNumbers && (!root.showNumbersOnlyWhenOccupied || container.hasWindows)
+        visible: root.labelMode !== "none" && (!root.showLabelsOnlyWhenOccupied || container.hasWindows)
 
         anchors {
           left: parent.left
@@ -389,11 +388,15 @@ Item {
           anchors.centerIn: parent
 
           text: {
-            if (root.labelMode === "name" && workspaceModel.name && workspaceModel.name.length > 0) {
-              return workspaceModel.name.substring(0, root.characterCount)
-            } else {
-              return workspaceModel.idx.toString()
+            if (workspaceModel.name && workspaceModel.name.length > 0) {
+              if (root.labelMode === "name") {
+                return workspaceModel.name.substring(0, root.characterCount)
+              }
+              if (root.labelMode === "index+name") {
+                return (workspaceModel.idx.toString() + " " + workspaceModel.name.substring(0, root.characterCount))
+              }
             }
+            return workspaceModel.idx.toString()
           }
 
           family: Settings.data.ui.fontFixed

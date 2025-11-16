@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Only show workspace label for workspaces that have open windows.",
           "label": "Show label only when occupied"
-        },
-        "show-workspace-numbers": {
-          "description": "Display workspace label in the top-left corner of task groups.",
-          "label": "Show workspace label"
         }
       },
       "tray": {
@@ -564,6 +560,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index and Name",
       "name": "Name",
       "none": "None"
     }
