@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
@@ -12,15 +12,15 @@ ColumnLayout {
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
-    const arr = (list || []).slice()
+    const arr = (list || []).slice();
     if (!arr.includes(name))
-      arr.push(name)
-    return arr
+      arr.push(name);
+    return arr;
   }
   function removeMonitor(list, name) {
     return (list || []).filter(function (n) {
-      return n !== name
-    })
+      return n !== name;
+    });
   }
 
   // General Notification Settings
@@ -50,25 +50,32 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.notifications.settings.location.label")
       description: I18n.tr("settings.notifications.settings.location.description")
-      model: [{
+      model: [
+        {
           "key": "top",
           "name": I18n.tr("options.launcher.position.top_center")
-        }, {
+        },
+        {
           "key": "top_left",
           "name": I18n.tr("options.launcher.position.top_left")
-        }, {
+        },
+        {
           "key": "top_right",
           "name": I18n.tr("options.launcher.position.top_right")
-        }, {
+        },
+        {
           "key": "bottom",
           "name": I18n.tr("options.launcher.position.bottom_center")
-        }, {
+        },
+        {
           "key": "bottom_left",
           "name": I18n.tr("options.launcher.position.bottom_left")
-        }, {
+        },
+        {
           "key": "bottom_right",
           "name": I18n.tr("options.launcher.position.bottom_right")
-        }]
+        }
+      ]
       currentKey: Settings.data.notifications.location || "top_right"
       onSelected: key => Settings.data.notifications.location = key
     }
@@ -267,20 +274,20 @@ ColumnLayout {
         Layout.fillWidth: true
         label: modelData.name || I18n.tr("system.unknown")
         description: {
-          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          const compositorScale = CompositorService.getDisplayScale(modelData.name);
           I18n.tr("system.monitor-description", {
                     "model": modelData.model,
                     "width": modelData.width * compositorScale,
                     "height": modelData.height * compositorScale,
                     "scale": compositorScale
-                  })
+                  });
         }
         checked: (Settings.data.notifications.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
-                       Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors, modelData.name)
+                       Settings.data.notifications.monitors = addMonitor(Settings.data.notifications.monitors, modelData.name);
                      } else {
-                       Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors, modelData.name)
+                       Settings.data.notifications.monitors = removeMonitor(Settings.data.notifications.monitors, modelData.name);
                      }
                    }
       }

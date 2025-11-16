@@ -26,15 +26,15 @@ ColumnLayout {
       placeholderText: I18n.tr("settings.location.location.search.placeholder")
       onEditingFinished: {
         // Verify the location has really changed to avoid extra resets
-        var newLocation = text.trim()
+        var newLocation = text.trim();
         // If empty, set to default location
         if (newLocation === "") {
-          newLocation = Settings.defaultLocation
-          text = Settings.defaultLocation // Update the input field to show the default
+          newLocation = Settings.defaultLocation;
+          text = Settings.defaultLocation; // Update the input field to show the default
         }
         if (newLocation != Settings.data.location.name) {
-          Settings.data.location.name = newLocation
-          LocationService.resetWeather()
+          Settings.data.location.name = newLocation;
+          LocationService.resetWeather();
         }
       }
       Layout.maximumWidth: 420
@@ -130,17 +130,21 @@ ColumnLayout {
       description: I18n.tr("settings.location.date-time.first-day-of-week.description")
       currentKey: Settings.data.location.firstDayOfWeek.toString()
       minimumWidth: 260 * Style.uiScaleRatio
-      model: [{
+      model: [
+        {
           "key": "-1",
           "name": I18n.tr("settings.location.date-time.first-day-of-week.automatic")
-        }, {
+        },
+        {
           "key": "6",
           "name": I18n.locale.dayName(6, Locale.LongFormat)
-        }, // Saturday
+        } // Saturday
+        ,
         {
           "key": "0",
           "name": I18n.locale.dayName(0, Locale.LongFormat)
-        }, // Sunday
+        } // Sunday
+        ,
         {
           "key": "1",
           "name": I18n.locale.dayName(1, Locale.LongFormat)

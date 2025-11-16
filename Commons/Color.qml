@@ -5,16 +5,15 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 
-
 /*
-  Noctalia is not strictly a Material Design project, it supports both some predefined
-  color schemes and dynamic color generation from the wallpaper (using Matugen).
+Noctalia is not strictly a Material Design project, it supports both some predefined
+color schemes and dynamic color generation from the wallpaper (using Matugen).
 
-  We ultimately decided to use a restricted set of colors that follows the
-  Material Design 3 naming convention.
+We ultimately decided to use a restricted set of colors that follows the
+Material Design 3 naming convention.
 
-  NOTE: All color names are prefixed with 'm' (e.g., mPrimary) to prevent QML from
-  misinterpreting them as signals (e.g., the 'onPrimary' property name).
+NOTE: All color names are prefixed with 'm' (e.g., mPrimary) to prevent QML from
+misinterpreting them as signals (e.g., the 'onPrimary' property name).
 */
 Singleton {
   id: root
@@ -87,25 +86,25 @@ Singleton {
     printErrors: false
     watchChanges: true
     onFileChanged: {
-      Logger.i("Color", "Reloading colors from disk")
-      reload()
+      Logger.i("Color", "Reloading colors from disk");
+      reload();
     }
     onAdapterUpdated: {
-      Logger.i("Color", "Writing colors to disk")
-      writeAdapter()
+      Logger.i("Color", "Writing colors to disk");
+      writeAdapter();
     }
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
       if (path !== undefined) {
-        reload()
+        reload();
       }
     }
     onLoadFailed: function (error) {
       // Error code 2 = ENOENT (No such file or directory)
       if (error === 2 || error.toString().includes("No such file")) {
         // File doesn't exist, create it with default values
-        writeAdapter()
+        writeAdapter();
       }
     }
     JsonAdapter {

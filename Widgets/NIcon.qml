@@ -13,14 +13,14 @@ Text {
   visible: (icon !== undefined) && (icon !== "")
   text: {
     if ((icon === undefined) || (icon === "")) {
-      return ""
+      return "";
     }
     if (Icons.get(icon) === undefined) {
-      Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font")
-      Logger.callStack()
-      return Icons.get(Icons.defaultIcon)
+      Logger.w("Icon", `"${icon}"`, "doesn't exist in the icons font");
+      Logger.callStack();
+      return Icons.get(Icons.defaultIcon);
     }
-    return Icons.get(icon)
+    return Icons.get(icon);
   }
   font.family: Icons.fontFamily
   font.pointSize: applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize

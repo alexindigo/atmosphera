@@ -43,8 +43,8 @@ NBox {
         NText {
           text: {
             // Ensure the name is not too long if one had to specify the country
-            const chunks = Settings.data.location.name.split(",")
-            return chunks[0]
+            const chunks = Settings.data.location.name.split(",");
+            return chunks[0];
           }
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
@@ -56,16 +56,16 @@ NBox {
             visible: weatherReady
             text: {
               if (!weatherReady) {
-                return ""
+                return "";
               }
-              var temp = LocationService.data.weather.current_weather.temperature
-              var suffix = "C"
+              var temp = LocationService.data.weather.current_weather.temperature;
+              var suffix = "C";
               if (Settings.data.location.useFahrenheit) {
-                temp = LocationService.celsiusToFahrenheit(temp)
-                var suffix = "F"
+                temp = LocationService.celsiusToFahrenheit(temp);
+                var suffix = "F";
               }
-              temp = Math.round(temp)
-              return `${temp}°${suffix}`
+              temp = Math.round(temp);
+              return `${temp}°${suffix}`;
             }
             pointSize: showLocation ? Style.fontSizeXL : Style.fontSizeXL * 1.6
             font.weight: Style.fontWeightBold
@@ -103,8 +103,8 @@ NBox {
           NText {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             text: {
-              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"))
-              return I18n.locale.toString(weatherDate, "ddd")
+              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"));
+              return I18n.locale.toString(weatherDate, "ddd");
             }
             color: Color.mOnSurface
           }
@@ -117,15 +117,15 @@ NBox {
           NText {
             Layout.alignment: Qt.AlignHCenter
             text: {
-              var max = LocationService.data.weather.daily.temperature_2m_max[index]
-              var min = LocationService.data.weather.daily.temperature_2m_min[index]
+              var max = LocationService.data.weather.daily.temperature_2m_max[index];
+              var min = LocationService.data.weather.daily.temperature_2m_min[index];
               if (Settings.data.location.useFahrenheit) {
-                max = LocationService.celsiusToFahrenheit(max)
-                min = LocationService.celsiusToFahrenheit(min)
+                max = LocationService.celsiusToFahrenheit(max);
+                min = LocationService.celsiusToFahrenheit(min);
               }
-              max = Math.round(max)
-              min = Math.round(min)
-              return `${max}°/${min}°`
+              max = Math.round(max);
+              min = Math.round(min);
+              return `${max}°/${min}°`;
             }
             pointSize: Style.fontSizeXS
             color: Color.mOnSurfaceVariant

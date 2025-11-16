@@ -17,10 +17,10 @@ ColumnLayout {
   property bool valueHideWhenZero: widgetData.hideWhenZero !== undefined ? widgetData.hideWhenZero : widgetMetadata.hideWhenZero
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.showUnreadBadge = valueShowUnreadBadge
-    settings.hideWhenZero = valueHideWhenZero
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.showUnreadBadge = valueShowUnreadBadge;
+    settings.hideWhenZero = valueHideWhenZero;
+    return settings;
   }
 
   NToggle {

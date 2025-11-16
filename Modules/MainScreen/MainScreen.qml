@@ -2,10 +2,9 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+import "Backgrounds" as Backgrounds
 
 import qs.Commons
-import qs.Services.UI
-import "Backgrounds" as Backgrounds
 
 // All panels
 import qs.Modules.Bar
@@ -23,11 +22,11 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
 import qs.Modules.Panels.WiFi
-
+import qs.Services.UI
 
 /**
- * MainScreen - Single PanelWindow per screen that manages all panels and the bar
- */
+* MainScreen - Single PanelWindow per screen that manages all panels and the bar
+*/
 PanelWindow {
   id: root
 
@@ -62,7 +61,7 @@ PanelWindow {
   readonly property var wifiPanelPlaceholder: wifiPanel.panelPlaceholder
 
   Component.onCompleted: {
-    Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
+    Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
   }
 
   // Wayland
@@ -85,9 +84,9 @@ PanelWindow {
 
   color: {
     if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
-      return Qt.alpha(Color.mShadow, dimmerOpacity)
+      return Qt.alpha(Color.mShadow, dimmerOpacity);
     }
-    return Color.transparent
+    return Color.transparent;
   }
 
   Behavior on color {
@@ -101,15 +100,15 @@ PanelWindow {
   readonly property bool barShouldShow: {
     // Check global bar visibility
     if (!BarService.isVisible)
-      return false
+      return false;
 
     // Check screen-specific configuration
-    var monitors = Settings.data.bar.monitors || []
-    var screenName = screen?.name || ""
+    var monitors = Settings.data.bar.monitors || [];
+    var screenName = screen?.name || "";
 
     // If no monitors specified, show on all screens
     // If monitors specified, only show if this screen is in the list
-    return monitors.length === 0 || monitors.includes(screenName)
+    return monitors.length === 0 || monitors.includes(screenName);
   }
 
   // Make everything click-through except bar
@@ -166,8 +165,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "audioPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(audioPanel)
+        objectName = "audioPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(audioPanel);
       }
     }
 
@@ -177,8 +176,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "batteryPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(batteryPanel)
+        objectName = "batteryPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(batteryPanel);
       }
     }
 
@@ -188,8 +187,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "bluetoothPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(bluetoothPanel)
+        objectName = "bluetoothPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(bluetoothPanel);
       }
     }
 
@@ -199,8 +198,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "controlCenterPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(controlCenterPanel)
+        objectName = "controlCenterPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(controlCenterPanel);
       }
     }
 
@@ -210,8 +209,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "calendarPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(calendarPanel)
+        objectName = "calendarPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(calendarPanel);
       }
     }
 
@@ -221,8 +220,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "launcherPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(launcherPanel)
+        objectName = "launcherPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(launcherPanel);
       }
     }
 
@@ -232,8 +231,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "notificationHistoryPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(notificationHistoryPanel)
+        objectName = "notificationHistoryPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(notificationHistoryPanel);
       }
     }
 
@@ -243,8 +242,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "sessionMenuPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(sessionMenuPanel)
+        objectName = "sessionMenuPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(sessionMenuPanel);
       }
     }
 
@@ -254,8 +253,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "settingsPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(settingsPanel)
+        objectName = "settingsPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(settingsPanel);
       }
     }
 
@@ -265,8 +264,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "setupWizardPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(setupWizardPanel)
+        objectName = "setupWizardPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(setupWizardPanel);
       }
     }
 
@@ -276,8 +275,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "trayDrawerPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayDrawerPanel)
+        objectName = "trayDrawerPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(trayDrawerPanel);
       }
     }
 
@@ -287,8 +286,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "wallpaperPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(wallpaperPanel)
+        objectName = "wallpaperPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(wallpaperPanel);
       }
     }
 
@@ -298,8 +297,8 @@ PanelWindow {
       z: 50
 
       Component.onCompleted: {
-        objectName = "wifiPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(wifiPanel)
+        objectName = "wifiPanel-" + (screen?.name || "unknown");
+        PanelService.registerPanel(wifiPanel);
       }
     }
 
@@ -326,94 +325,93 @@ PanelWindow {
       // Use screen dimensions directly
       x: {
         if (barPosition === "right")
-          return screen.width - Style.barHeight - barMarginH - attachmentOverlap // Extend left towards panels
-        return barMarginH
+          return screen.width - Style.barHeight - barMarginH - attachmentOverlap; // Extend left towards panels
+        return barMarginH;
       }
       y: {
         if (barPosition === "bottom")
-          return screen.height - Style.barHeight - barMarginV - attachmentOverlap
-        return barMarginV
+          return screen.height - Style.barHeight - barMarginV - attachmentOverlap;
+        return barMarginV;
       }
       width: {
         if (barIsVertical) {
-          return Style.barHeight + attachmentOverlap
+          return Style.barHeight + attachmentOverlap;
         }
-        return screen.width - barMarginH * 2
+        return screen.width - barMarginH * 2;
       }
       height: {
         if (barIsVertical) {
-          return screen.height - barMarginV * 2
+          return screen.height - barMarginV * 2;
         }
-        return Style.barHeight + attachmentOverlap
+        return Style.barHeight + attachmentOverlap;
       }
 
       // Corner states (same as Bar.qml)
       readonly property int topLeftCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "top")
-          return -1
+          return -1;
         if (barPosition === "left")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "right")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int topRightCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "top")
-          return -1
+          return -1;
         if (barPosition === "right")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "left")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int bottomLeftCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "bottom")
-          return -1
+          return -1;
         if (barPosition === "left")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "right")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int bottomRightCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "bottom")
-          return -1
+          return -1;
         if (barPosition === "right")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "left")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       Component.onCompleted: {
-        Logger.d("MainScreen", "===== Bar placeholder loaded =====")
-        Logger.d("MainScreen", "  Screen:", screen?.name, "Size:", screen?.width, "x", screen?.height)
-        Logger.d("MainScreen", "  Bar position:", barPosition, "| isVertical:", barIsVertical)
-        Logger.d("MainScreen", "  Bar dimensions: x=" + x, "y=" + y, "width=" + width, "height=" + height)
-        Logger.d("MainScreen", "  Style.barHeight =", Style.barHeight)
-        Logger.d("MainScreen", "  Margins: H=" + barMarginH, "V=" + barMarginV, "| Floating:", barFloating)
+        Logger.d("MainScreen", "===== Bar placeholder loaded =====");
+        Logger.d("MainScreen", "  Screen:", screen?.name, "Size:", screen?.width, "x", screen?.height);
+        Logger.d("MainScreen", "  Bar position:", barPosition, "| isVertical:", barIsVertical);
+        Logger.d("MainScreen", "  Bar dimensions: x=" + x, "y=" + y, "width=" + width, "height=" + height);
+        Logger.d("MainScreen", "  Style.barHeight =", Style.barHeight);
+        Logger.d("MainScreen", "  Margins: H=" + barMarginH, "V=" + barMarginV, "| Floating:", barFloating);
       }
     }
 
-
     /**
-     *  Screen Corners
-     */
+    *  Screen Corners
+    */
     ScreenCorners {}
   }
 }

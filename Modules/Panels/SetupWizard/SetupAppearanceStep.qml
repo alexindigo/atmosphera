@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell.Io
 import qs.Commons
 import qs.Services.System
@@ -12,8 +12,8 @@ ColumnLayout {
   spacing: Style.marginM
 
   function extractSchemeName(path) {
-    var basename = path.split('/').pop()
-    return basename.replace('.json', '')
+    var basename = path.split('/').pop();
+    return basename.replace('.json', '');
   }
 
   // Cache for scheme colors (mirrors ColorSchemeTab approach)
@@ -22,30 +22,28 @@ ColumnLayout {
 
   function getSchemeColor(schemeName, key) {
     try {
-      var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-      var data = schemeColorsCache[schemeName]
+      var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+      var data = schemeColorsCache[schemeName];
       if (data && data[mode] && data[mode][key])
-        return data[mode][key]
-    } catch (e) {
-
-    }
-    return Color.mSurfaceVariant
+        return data[mode][key];
+    } catch (e) {}
+    return Color.mSurfaceVariant;
   }
 
   // Match ColorSchemeTab helpers
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {}
-    schemeColorsCache[schemeName] = value
-    cacheVersion++
-    Logger.i("SetupAppearanceStep", `Loaded scheme ${schemeName}`)
+    var value = jsonData || {};
+    schemeColorsCache[schemeName] = value;
+    cacheVersion++;
+    Logger.i("SetupAppearanceStep", `Loaded scheme ${schemeName}`);
   }
 
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
-      Logger.i("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`)
-      schemeColorsCache = {}
-      cacheVersion++
+      Logger.i("SetupAppearanceStep", `Color schemes changed: ${ColorSchemeService.schemes.length}`);
+      schemeColorsCache = {};
+      cacheVersion++;
     }
   }
 
@@ -200,14 +198,14 @@ ColumnLayout {
           checked: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.matugenAvailable
           onToggled: checked => {
                        if (!ProgramCheckerService.matugenAvailable)
-                       return
+                       return;
                        if (checked) {
-                         Settings.data.colorSchemes.useWallpaperColors = true
-                         AppThemeService.generate()
+                         Settings.data.colorSchemes.useWallpaperColors = true;
+                         AppThemeService.generate();
                        } else {
-                         Settings.data.colorSchemes.useWallpaperColors = false
+                         Settings.data.colorSchemes.useWallpaperColors = false;
                          if (Settings.data.colorSchemes.predefinedScheme) {
-                           ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                           ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
                          }
                        }
                      }
@@ -265,31 +263,40 @@ ColumnLayout {
           columnSpacing: Style.marginS
 
           Repeater {
-            model: [{
+            model: [
+              {
                 "key": "scheme-content",
                 "name": "Content"
-              }, {
+              },
+              {
                 "key": "scheme-expressive",
                 "name": "Expressive"
-              }, {
+              },
+              {
                 "key": "scheme-fidelity",
                 "name": "Fidelity"
-              }, {
+              },
+              {
                 "key": "scheme-fruit-salad",
                 "name": "Fruit Salad"
-              }, {
+              },
+              {
                 "key": "scheme-monochrome",
                 "name": "Monochrome"
-              }, {
+              },
+              {
                 "key": "scheme-neutral",
                 "name": "Neutral"
-              }, {
+              },
+              {
                 "key": "scheme-rainbow",
                 "name": "Rainbow"
-              }, {
+              },
+              {
                 "key": "scheme-tonal-spot",
                 "name": "Tonal Spot"
-              }]
+              }
+            ]
             delegate: Rectangle {
               Layout.fillWidth: true
               Layout.preferredHeight: 48
@@ -317,8 +324,8 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  Settings.data.colorSchemes.matugenSchemeType = modelData.key
-                  AppThemeService.generate()
+                  Settings.data.colorSchemes.matugenSchemeType = modelData.key;
+                  AppThemeService.generate();
                 }
               }
 
@@ -443,9 +450,9 @@ ColumnLayout {
                   height: 14
                   radius: width * 0.5
                   color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                    var cached = root.schemeColorsCache[schemeItem.schemeName]
-                    return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary")
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                    var cached = root.schemeColorsCache[schemeItem.schemeName];
+                    return (cached && cached[mode] && cached[mode].mPrimary) || root.getSchemeColor(schemeItem.schemeName, "mPrimary");
                   })() : Color.mPrimary
                 }
                 Rectangle {
@@ -453,9 +460,9 @@ ColumnLayout {
                   height: 14
                   radius: width * 0.5
                   color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                    var cached = root.schemeColorsCache[schemeItem.schemeName]
-                    return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary")
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                    var cached = root.schemeColorsCache[schemeItem.schemeName];
+                    return (cached && cached[mode] && cached[mode].mSecondary) || root.getSchemeColor(schemeItem.schemeName, "mSecondary");
                   })() : Color.mSecondary
                 }
                 Rectangle {
@@ -463,9 +470,9 @@ ColumnLayout {
                   height: 14
                   radius: width * 0.5
                   color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                    var cached = root.schemeColorsCache[schemeItem.schemeName]
-                    return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary")
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                    var cached = root.schemeColorsCache[schemeItem.schemeName];
+                    return (cached && cached[mode] && cached[mode].mTertiary) || root.getSchemeColor(schemeItem.schemeName, "mTertiary");
                   })() : Color.mTertiary
                 }
                 Rectangle {
@@ -473,9 +480,9 @@ ColumnLayout {
                   height: 14
                   radius: width * 0.5
                   color: root.cacheVersion >= 0 ? (function () {
-                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light"
-                    var cached = root.schemeColorsCache[schemeItem.schemeName]
-                    return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError")
+                    var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
+                    var cached = root.schemeColorsCache[schemeItem.schemeName];
+                    return (cached && cached[mode] && cached[mode].mError) || root.getSchemeColor(schemeItem.schemeName, "mError");
                   })() : Color.mError
                 }
               }
@@ -486,9 +493,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  Settings.data.colorSchemes.useWallpaperColors = false
-                  Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName
-                  ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                  Settings.data.colorSchemes.useWallpaperColors = false;
+                  Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName;
+                  ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
                 }
               }
             }
@@ -514,12 +521,12 @@ ColumnLayout {
           path: modelData
           blockLoading: false
           onLoaded: {
-            var schemeName = root.extractSchemeName(path)
+            var schemeName = root.extractSchemeName(path);
             try {
-              var jsonData = JSON.parse(text())
-              root.schemeLoaded(schemeName, jsonData)
+              var jsonData = JSON.parse(text());
+              root.schemeLoaded(schemeName, jsonData);
             } catch (e) {
-              root.schemeLoaded(schemeName, null)
+              root.schemeLoaded(schemeName, null);
             }
           }
         }

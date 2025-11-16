@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
@@ -70,16 +70,20 @@ ColumnLayout {
       Layout.fillWidth: true
       label: I18n.tr("settings.dock.appearance.display.label")
       description: I18n.tr("settings.dock.appearance.display.description")
-      model: [{
+      model: [
+        {
           "key": "always_visible",
           "name": I18n.tr("settings.dock.appearance.display.always-visible")
-        }, {
+        },
+        {
           "key": "auto_hide",
           "name": I18n.tr("settings.dock.appearance.display.auto-hide")
-        }, {
+        },
+        {
           "key": "exclusive",
           "name": I18n.tr("settings.dock.appearance.display.exclusive")
-        }]
+        }
+      ]
       currentKey: Settings.data.dock.displayMode
       onSelected: key => Settings.data.dock.displayMode = key
     }
@@ -176,25 +180,25 @@ ColumnLayout {
         label: modelData.name || "Unknown"
         visible: Settings.data.dock.enabled
         description: {
-          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          const compositorScale = CompositorService.getDisplayScale(modelData.name);
           I18n.tr("system.monitor-description", {
                     "model": modelData.model,
                     "width": modelData.width * compositorScale,
                     "height": modelData.height * compositorScale,
                     "scale": compositorScale
-                  })
+                  });
         }
         checked: (Settings.data.dock.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
-                       const arr = (Settings.data.dock.monitors || []).slice()
+                       const arr = (Settings.data.dock.monitors || []).slice();
                        if (arr.indexOf(modelData.name) === -1)
-                       arr.push(modelData.name)
-                       Settings.data.dock.monitors = arr
+                       arr.push(modelData.name);
+                       Settings.data.dock.monitors = arr;
                      } else {
                        Settings.data.dock.monitors = (Settings.data.dock.monitors || []).filter(function (n) {
-                         return n !== modelData.name
-                       })
+                         return n !== modelData.name;
+                       });
                      }
                    }
       }

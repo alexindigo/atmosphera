@@ -2,13 +2,12 @@ import QtQuick
 import QtQuick.Shapes
 import qs.Commons
 
-
 /**
- * ScreenCorners - Shape component for rendering screen corners
- *
- * Renders concave corners at the screen edges to create a rounded screen effect.
- * Self-contained Shape component (no shadows).
- */
+* ScreenCorners - Shape component for rendering screen corners
+*
+* Renders concave corners at the screen edges to create a rounded screen effect.
+* Self-contained Shape component (no shadows).
+*/
 Item {
   id: root
 

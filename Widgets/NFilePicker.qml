@@ -1,12 +1,12 @@
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 import Qt.labs.folderlistmodel
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import "../Helpers/FuzzySort.js" as FuzzySort
 import qs.Commons
 import qs.Widgets
-import "../Helpers/FuzzySort.js" as FuzzySort
 
 Popup {
   id: root
@@ -29,13 +29,13 @@ Popup {
 
   function openFilePicker() {
     if (!root.currentPath)
-      root.currentPath = root.initialPath
-    shouldResetSelection = true
-    open()
+      root.currentPath = root.initialPath;
+    shouldResetSelection = true;
+    open();
   }
 
   function getFileIcon(fileName) {
-    const ext = fileName.split('.').pop().toLowerCase()
+    const ext = fileName.split('.').pop().toLowerCase();
     const iconMap = {
       "txt": 'filepicker-file-text',
       "md": 'filepicker-file-text',
@@ -76,54 +76,52 @@ Popup {
       "app": 'filepicker-settings',
       "deb": 'filepicker-settings',
       "rpm": 'filepicker-settings'
-    }
-    return iconMap[ext] || 'filepicker-file'
+    };
+    return iconMap[ext] || 'filepicker-file';
   }
 
   function formatFileSize(bytes) {
     if (bytes === 0)
-      return "0 B"
-    const k = 1024, sizes = ["B", "KB", "MB", "GB", "TB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
+      return "0 B";
+    const k = 1024, sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   }
 
   function confirmSelection() {
     if (filePickerPanel.currentSelection.length === 0)
-      return
-
-    root.selectedPaths = filePickerPanel.currentSelection
-    root.accepted(filePickerPanel.currentSelection)
-    root.close()
+      return;
+    root.selectedPaths = filePickerPanel.currentSelection;
+    root.accepted(filePickerPanel.currentSelection);
+    root.close();
   }
 
   function updateFilteredModel() {
-    filteredModel.clear()
-    const searchText = filePickerPanel.filterText.toLowerCase()
+    filteredModel.clear();
+    const searchText = filePickerPanel.filterText.toLowerCase();
 
     for (var i = 0; i < folderModel.count; i++) {
-      const fileName = folderModel.get(i, "fileName")
-      const filePath = folderModel.get(i, "filePath")
-      const fileIsDir = folderModel.get(i, "fileIsDir")
-      const fileSize = folderModel.get(i, "fileSize")
+      const fileName = folderModel.get(i, "fileName");
+      const filePath = folderModel.get(i, "filePath");
+      const fileIsDir = folderModel.get(i, "fileIsDir");
+      const fileSize = folderModel.get(i, "fileSize");
 
       // Skip hidden items if showHiddenFiles is false
       // This additional check ensures hidden files are properly filtered
       if (!root.showHiddenFiles && fileName.startsWith(".")) {
-        continue
+        continue;
       }
 
       // In folder mode, hide files
       if (root.selectionMode === "folders" && !fileIsDir)
-        continue
-
+        continue;
       if (searchText === "" || fileName.toLowerCase().includes(searchText)) {
         filteredModel.append({
                                "fileName": fileName,
                                "filePath": filePath,
                                "fileIsDir": fileIsDir,
                                "fileSize": fileSize
-                             })
+                             });
       }
     }
   }
@@ -157,16 +155,16 @@ Popup {
 
     Keys.onPressed: event => {
                       if (event.modifiers & Qt.ControlModifier && event.key === Qt.Key_F) {
-                        filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
+                        filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar;
                         if (filePickerPanel.showSearchBar)
-                        Qt.callLater(() => searchInput.forceActiveFocus())
-                        event.accepted = true
+                        Qt.callLater(() => searchInput.forceActiveFocus());
+                        event.accepted = true;
                       } else if (event.key === Qt.Key_Escape && filePickerPanel.showSearchBar) {
-                        filePickerPanel.showSearchBar = false
-                        filePickerPanel.searchText = ""
-                        filePickerPanel.filterText = ""
-                        root.updateFilteredModel()
-                        event.accepted = true
+                        filePickerPanel.showSearchBar = false;
+                        filePickerPanel.searchText = "";
+                        filePickerPanel.filterText = "";
+                        root.updateFilteredModel();
+                        event.accepted = true;
                       }
                     }
 
@@ -198,8 +196,8 @@ Popup {
           icon: "filepicker-folder-current"
           visible: root.selectionMode === "folders"
           onClicked: {
-            filePickerPanel.currentSelection = [root.currentPath]
-            root.confirmSelection()
+            filePickerPanel.currentSelection = [root.currentPath];
+            root.confirmSelection();
           }
         }
 
@@ -208,18 +206,18 @@ Popup {
           tooltipText: I18n.tr("tooltips.refresh")
           onClicked: {
             // Force a proper refresh by resetting the folder
-            const currentFolder = folderModel.folder
-            folderModel.folder = ""
-            folderModel.folder = currentFolder
-            Qt.callLater(root.updateFilteredModel)
+            const currentFolder = folderModel.folder;
+            folderModel.folder = "";
+            folderModel.folder = currentFolder;
+            Qt.callLater(root.updateFilteredModel);
           }
         }
         NIconButton {
           icon: "filepicker-close"
           tooltipText: I18n.tr("tooltips.close")
           onClicked: {
-            root.cancelled()
-            root.close()
+            root.cancelled();
+            root.close();
           }
         }
       }
@@ -251,9 +249,9 @@ Popup {
             baseSize: Style.baseWidgetSize * 0.8
             enabled: folderModel.folder.toString() !== "file:///"
             onClicked: {
-              const parentPath = folderModel.parentFolder.toString().replace("file://", "")
-              folderModel.folder = "file://" + parentPath
-              root.currentPath = parentPath
+              const parentPath = folderModel.parentFolder.toString().replace("file://", "");
+              folderModel.folder = "file://" + parentPath;
+              root.currentPath = parentPath;
             }
           }
 
@@ -262,9 +260,9 @@ Popup {
             tooltipText: I18n.tr("tooltips.home")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              const homePath = Quickshell.env("HOME") || "/home"
-              folderModel.folder = "file://" + homePath
-              root.currentPath = homePath
+              const homePath = Quickshell.env("HOME") || "/home";
+              folderModel.folder = "file://" + homePath;
+              root.currentPath = homePath;
             }
           }
 
@@ -273,11 +271,11 @@ Popup {
             tooltipText: filePickerPanel.showSearchBar ? "Close Search" : "Search"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar
+              filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar;
               if (!filePickerPanel.showSearchBar) {
-                filePickerPanel.searchText = ""
-                filePickerPanel.filterText = ""
-                root.updateFilteredModel()
+                filePickerPanel.searchText = "";
+                filePickerPanel.filterText = "";
+                root.updateFilteredModel();
               }
             }
           }
@@ -292,19 +290,19 @@ Popup {
             enabled: !filePickerPanel.showSearchBar
 
             onEditingFinished: {
-              const newPath = text.trim()
+              const newPath = text.trim();
               if (newPath !== "" && newPath !== root.currentPath) {
-                folderModel.folder = "file://" + newPath
-                root.currentPath = newPath
+                folderModel.folder = "file://" + newPath;
+                root.currentPath = newPath;
               } else {
-                text = root.currentPath
+                text = root.currentPath;
               }
             }
             Connections {
               target: root
               function onCurrentPathChanged() {
                 if (!locationInput.activeFocus)
-                  locationInput.text = root.currentPath
+                  locationInput.text = root.currentPath;
               }
             }
           }
@@ -321,15 +319,15 @@ Popup {
 
             text: filePickerPanel.searchText
             onTextChanged: {
-              filePickerPanel.searchText = text
-              filePickerPanel.filterText = text
-              root.updateFilteredModel()
+              filePickerPanel.searchText = text;
+              filePickerPanel.filterText = text;
+              root.updateFilteredModel();
             }
             Keys.onEscapePressed: {
-              filePickerPanel.showSearchBar = false
-              filePickerPanel.searchText = ""
-              filePickerPanel.filterText = ""
-              root.updateFilteredModel()
+              filePickerPanel.showSearchBar = false;
+              filePickerPanel.searchText = "";
+              filePickerPanel.filterText = "";
+              root.updateFilteredModel();
             }
           }
 
@@ -344,12 +342,12 @@ Popup {
             tooltipText: root.showHiddenFiles ? "Hide Hidden Files" : "Show Hidden Files"
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              root.showHiddenFiles = !root.showHiddenFiles
+              root.showHiddenFiles = !root.showHiddenFiles;
               // Force model refresh by resetting the folder
-              const currentFolder = folderModel.folder
-              folderModel.folder = ""
-              folderModel.folder = currentFolder
-              Qt.callLater(root.updateFilteredModel)
+              const currentFolder = folderModel.folder;
+              folderModel.folder = "";
+              folderModel.folder = currentFolder;
+              Qt.callLater(root.updateFilteredModel);
             }
           }
         }
@@ -376,19 +374,19 @@ Popup {
           sortReversed: false
 
           onFolderChanged: {
-            root.currentPath = folder.toString().replace("file://", "")
-            filePickerPanel.currentSelection = []
-            Qt.callLater(root.updateFilteredModel)
+            root.currentPath = folder.toString().replace("file://", "");
+            filePickerPanel.currentSelection = [];
+            Qt.callLater(root.updateFilteredModel);
           }
 
           onStatusChanged: {
             if (status === FolderListModel.Error) {
               if (root.currentPath !== Quickshell.env("HOME")) {
-                folder = "file://" + Quickshell.env("HOME")
-                root.currentPath = Quickshell.env("HOME")
+                folder = "file://" + Quickshell.env("HOME");
+                root.currentPath = Quickshell.env("HOME");
               }
             } else if (status === FolderListModel.Ready) {
-              root.updateFilteredModel()
+              root.updateFilteredModel();
             }
           }
         }
@@ -397,7 +395,7 @@ Popup {
         Connections {
           target: root
           function onShowHiddenFilesChanged() {
-            folderModel.nameFilters = root.showHiddenFiles ? ["*", ".*"] : root.nameFilters
+            folderModel.nameFilters = root.showHiddenFiles ? ["*", ".*"] : root.nameFilters;
           }
         }
 
@@ -523,9 +521,9 @@ Popup {
 
                 property bool isImage: {
                   if (model.fileIsDir)
-                    return false
-                  const ext = model.fileName.split('.').pop().toLowerCase()
-                  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext)
+                    return false;
+                  const ext = model.fileName.split('.').pop().toLowerCase();
+                  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'].includes(ext);
                 }
 
                 Image {
@@ -542,7 +540,7 @@ Popup {
                   sourceSize.height: 120
                   onStatusChanged: {
                     if (status === Image.Error)
-                      visible = false
+                      visible = false;
                   }
 
                   Rectangle {
@@ -564,11 +562,11 @@ Popup {
                   pointSize: Style.fontSizeXXL * 2
                   color: {
                     if (isSelected)
-                      return Color.mSecondary
+                      return Color.mSecondary;
                     else if (mouseArea.containsMouse)
-                      return Color.mOnHover
+                      return Color.mOnHover;
                     else
-                      return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant
+                      return model.fileIsDir ? Color.mPrimary : Color.mOnSurfaceVariant;
                   }
                   anchors.centerIn: parent
                   visible: !iconContainer.isImage || thumbnail.status !== Image.Ready
@@ -598,11 +596,11 @@ Popup {
                 text: model.fileName
                 color: {
                   if (isSelected)
-                    return Color.mSecondary
+                    return Color.mSecondary;
                   else if (mouseArea.containsMouse)
-                    return Color.mOnHover
+                    return Color.mOnHover;
                   else
-                    return Color.mOnSurfaceVariant
+                    return Color.mOnSurfaceVariant;
                 }
                 pointSize: Style.fontSizeS
                 font.weight: isSelected ? Style.fontWeightBold : Style.fontWeightRegular
@@ -625,13 +623,13 @@ Popup {
                              if (model.fileIsDir) {
                                // In folder mode, single click selects the folder
                                if (root.selectionMode === "folders") {
-                                 filePickerPanel.currentSelection = [model.filePath]
+                                 filePickerPanel.currentSelection = [model.filePath];
                                }
                                // In file mode, single click on folder does nothing (must double-click to enter)
                              } else {
                                // Single click on file selects it (only in file mode)
                                if (root.selectionMode === "files") {
-                                 filePickerPanel.currentSelection = [model.filePath]
+                                 filePickerPanel.currentSelection = [model.filePath];
                                }
                              }
                            }
@@ -641,13 +639,13 @@ Popup {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (model.fileIsDir) {
                                      // Double-click on folder always navigates into it
-                                     folderModel.folder = "file://" + model.filePath
-                                     root.currentPath = model.filePath
+                                     folderModel.folder = "file://" + model.filePath;
+                                     root.currentPath = model.filePath;
                                    } else {
                                      // Double-click on file selects and confirms (only in file mode)
                                      if (root.selectionMode === "files") {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
+                                       filePickerPanel.currentSelection = [model.filePath];
+                                       root.confirmSelection();
                                      }
                                    }
                                  }
@@ -670,10 +668,10 @@ Popup {
             height: 40
             color: {
               if (filePickerPanel.currentSelection.includes(model.filePath))
-                return Color.mSecondary
+                return Color.mSecondary;
               if (mouseArea.containsMouse)
-                return Color.mHover
-              return Color.transparent
+                return Color.mHover;
+              return Color.transparent;
             }
             radius: Style.radiusS
             Behavior on color {
@@ -723,13 +721,13 @@ Popup {
                              if (model.fileIsDir) {
                                // In folder mode, single click selects the folder
                                if (root.selectionMode === "folders") {
-                                 filePickerPanel.currentSelection = [model.filePath]
+                                 filePickerPanel.currentSelection = [model.filePath];
                                }
                                // In file mode, single click on folder does nothing (must double-click to enter)
                              } else {
                                // Single click on file selects it (only in file mode)
                                if (root.selectionMode === "files") {
-                                 filePickerPanel.currentSelection = [model.filePath]
+                                 filePickerPanel.currentSelection = [model.filePath];
                                }
                              }
                            }
@@ -739,13 +737,13 @@ Popup {
                                  if (mouse.button === Qt.LeftButton) {
                                    if (model.fileIsDir) {
                                      // Double-click on folder always navigates into it
-                                     folderModel.folder = "file://" + model.filePath
-                                     root.currentPath = model.filePath
+                                     folderModel.folder = "file://" + model.filePath;
+                                     root.currentPath = model.filePath;
                                    } else {
                                      // Double-click on file selects and confirms (only in file mode)
                                      if (root.selectionMode === "files") {
-                                       filePickerPanel.currentSelection = [model.filePath]
-                                       root.confirmSelection()
+                                       filePickerPanel.currentSelection = [model.filePath];
+                                       root.confirmSelection();
                                      }
                                    }
                                  }
@@ -763,12 +761,12 @@ Popup {
         NText {
           text: {
             if (filePickerPanel.searchText.length > 0) {
-              return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)"
+              return "Searching for: \"" + filePickerPanel.searchText + "\" (" + filteredModel.count + " matches)";
             } else if (filePickerPanel.currentSelection.length > 0) {
-              const selectedName = filePickerPanel.currentSelection[0].split('/').pop()
-              return "Selected: " + selectedName
+              const selectedName = filePickerPanel.currentSelection[0].split('/').pop();
+              return "Selected: " + selectedName;
             } else {
-              return filteredModel.count + " items"
+              return filteredModel.count + " items";
             }
           }
           color: filePickerPanel.searchText.length > 0 ? Color.mPrimary : Color.mOnSurfaceVariant
@@ -780,8 +778,8 @@ Popup {
           text: I18n.tr("widgets.file-picker.cancel")
           outlined: true
           onClicked: {
-            root.cancelled()
-            root.close()
+            root.cancelled();
+            root.close();
           }
         }
 
@@ -798,16 +796,16 @@ Popup {
       target: root
       function onShouldResetSelectionChanged() {
         if (root.shouldResetSelection) {
-          filePickerPanel.currentSelection = []
-          root.shouldResetSelection = false
+          filePickerPanel.currentSelection = [];
+          root.shouldResetSelection = false;
         }
       }
     }
 
     Component.onCompleted: {
       if (!root.currentPath)
-        root.currentPath = root.initialPath
-      folderModel.folder = "file://" + root.currentPath
+        root.currentPath = root.initialPath;
+      folderModel.folder = "file://" + root.currentPath;
     }
   }
 }

@@ -22,14 +22,14 @@ ColumnLayout {
   property string scrollIcon: widgetData.scrollLockIcon !== undefined ? widgetData.scrollLockIcon : widgetMetadata.scrollLockIcon
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.showCapsLock = valueShowCapsLock
-    settings.showNumLock = valueShowNumLock
-    settings.showScrollLock = valueShowScrollLock
-    settings.capsLockIcon = capsIcon
-    settings.numLockIcon = numIcon
-    settings.scrollLockIcon = scrollIcon
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.showCapsLock = valueShowCapsLock;
+    settings.showNumLock = valueShowNumLock;
+    settings.showScrollLock = valueShowScrollLock;
+    settings.capsLockIcon = capsIcon;
+    settings.numLockIcon = numIcon;
+    settings.scrollLockIcon = scrollIcon;
+    return settings;
   }
 
   RowLayout {
@@ -61,7 +61,7 @@ ColumnLayout {
     initialIcon: capsIcon
     query: "letter-c"
     onIconSelected: function (iconName) {
-      capsIcon = iconName
+      capsIcon = iconName;
     }
   }
 
@@ -94,7 +94,7 @@ ColumnLayout {
     initialIcon: numIcon
     query: "letter-n"
     onIconSelected: function (iconName) {
-      numIcon = iconName
+      numIcon = iconName;
     }
   }
 
@@ -127,7 +127,7 @@ ColumnLayout {
     initialIcon: scrollIcon
     query: "letter-s"
     onIconSelected: function (iconName) {
-      scrollIcon = iconName
+      scrollIcon = iconName;
     }
   }
 }

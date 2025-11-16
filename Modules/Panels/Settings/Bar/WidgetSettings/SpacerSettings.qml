@@ -13,9 +13,9 @@ ColumnLayout {
   property var widgetMetadata: null
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.width = parseInt(widthInput.text) || widgetMetadata.width
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.width = parseInt(widthInput.text) || widgetMetadata.width;
+    return settings;
   }
 
   NTextInput {

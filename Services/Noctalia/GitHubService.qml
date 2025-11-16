@@ -25,17 +25,17 @@ Singleton {
     onFileChanged: reload()
     onAdapterUpdated: writeAdapter()
     Component.onCompleted: {
-      reload()
+      reload();
     }
     onLoaded: {
-      loadFromCache()
+      loadFromCache();
     }
     onLoadFailed: function (error) {
       if (error.toString().includes("No such file") || error === 2) {
         // Fetch data after a short delay to ensure file is created
         Qt.callLater(() => {
-                       fetchFromGitHub()
-                     })
+                       fetchFromGitHub();
+                     });
       }
     }
 
@@ -50,58 +50,58 @@ Singleton {
 
   // --------------------------------
   function loadFromCache() {
-    const now = Time.timestamp
+    const now = Time.timestamp;
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
-      Logger.d("GitHub", "Cache expired or missing, fetching new data")
-      fetchFromGitHub()
-      return
+      Logger.d("GitHub", "Cache expired or missing, fetching new data");
+      fetchFromGitHub();
+      return;
     }
-    Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)")
+    Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
 
     if (data.version) {
-      root.latestVersion = data.version
+      root.latestVersion = data.version;
     }
     if (data.contributors) {
-      root.contributors = data.contributors
+      root.contributors = data.contributors;
     }
   }
 
   // --------------------------------
   function fetchFromGitHub() {
     if (isFetchingData) {
-      Logger.w("GitHub", "GitHub data is still fetching")
-      return
+      Logger.w("GitHub", "GitHub data is still fetching");
+      return;
     }
 
-    isFetchingData = true
-    versionProcess.running = true
-    contributorsProcess.running = true
+    isFetchingData = true;
+    versionProcess.running = true;
+    contributorsProcess.running = true;
   }
 
   // --------------------------------
   function saveData() {
-    data.timestamp = Time.timestamp
-    Logger.d("GitHub", "Saving data to cache file:", githubDataFile)
-    Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length)
+    data.timestamp = Time.timestamp;
+    Logger.d("GitHub", "Saving data to cache file:", githubDataFile);
+    Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length);
 
     // Ensure cache directory exists
-    Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir])
+    Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
 
     Qt.callLater(() => {
                    // Use direct ID reference to the FileView
-                   githubDataFileView.writeAdapter()
-                   Logger.d("GitHub", "Cache file written successfully")
-                 })
+                   githubDataFileView.writeAdapter();
+                   Logger.d("GitHub", "Cache file written successfully");
+                 });
   }
 
   // --------------------------------
   function resetCache() {
-    data.version = I18n.tr("system.unknown-version")
-    data.contributors = []
-    data.timestamp = 0
+    data.version = I18n.tr("system.unknown-version");
+    data.contributors = [];
+    data.timestamp = 0;
 
     // Try to fetch immediately
-    fetchFromGitHub()
+    fetchFromGitHub();
   }
 
   Process {
@@ -112,26 +112,26 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         try {
-          const response = text
+          const response = text;
           if (response && response.trim()) {
-            const data = JSON.parse(response)
+            const data = JSON.parse(response);
             if (data.tag_name) {
-              const version = data.tag_name
-              root.data.version = version
-              root.latestVersion = version
-              Logger.d("GitHub", "Latest version fetched from GitHub:", version)
+              const version = data.tag_name;
+              root.data.version = version;
+              root.latestVersion = version;
+              Logger.d("GitHub", "Latest version fetched from GitHub:", version);
             } else {
-              Logger.w("GitHub", "No tag_name in GitHub response")
+              Logger.w("GitHub", "No tag_name in GitHub response");
             }
           } else {
-            Logger.w("GitHub", "Empty response from GitHub API")
+            Logger.w("GitHub", "Empty response from GitHub API");
           }
         } catch (e) {
-          Logger.e("GitHub", "Failed to parse version:", e)
+          Logger.e("GitHub", "Failed to parse version:", e);
         }
 
         // Check if both processes are done
-        checkAndSaveData()
+        checkAndSaveData();
       }
     }
   }
@@ -144,27 +144,27 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         try {
-          const response = text
-          Logger.d("GitHub", "Raw contributors response length:", response ? response.length : 0)
+          const response = text;
+          Logger.d("GitHub", "Raw contributors response length:", response ? response.length : 0);
           if (response && response.trim()) {
-            const data = JSON.parse(response)
-            Logger.d("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array")
-            root.data.contributors = data || []
-            root.contributors = root.data.contributors
-            Logger.d("GitHub", "Contributors fetched from GitHub:", root.contributors.length)
+            const data = JSON.parse(response);
+            Logger.d("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array");
+            root.data.contributors = data || [];
+            root.contributors = root.data.contributors;
+            Logger.d("GitHub", "Contributors fetched from GitHub:", root.contributors.length);
           } else {
-            Logger.w("GitHub", "Empty response from GitHub API for contributors")
-            root.data.contributors = []
-            root.contributors = []
+            Logger.w("GitHub", "Empty response from GitHub API for contributors");
+            root.data.contributors = [];
+            root.contributors = [];
           }
         } catch (e) {
-          Logger.e("GitHub", "Failed to parse contributors:", e)
-          root.data.contributors = []
-          root.contributors = []
+          Logger.e("GitHub", "Failed to parse contributors:", e);
+          root.data.contributors = [];
+          root.contributors = [];
         }
 
         // Check if both processes are done
-        checkAndSaveData()
+        checkAndSaveData();
       }
     }
   }
@@ -173,8 +173,8 @@ Singleton {
   function checkAndSaveData() {
     // Only save when both processes are finished
     if (!versionProcess.running && !contributorsProcess.running) {
-      root.isFetchingData = false
-      root.saveData()
+      root.isFetchingData = false;
+      root.saveData();
     }
   }
 }

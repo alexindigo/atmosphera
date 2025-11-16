@@ -90,8 +90,8 @@ Popup {
 
       onClicked: {
         if (enabled) {
-          popup.triggered(modelData.action || modelData.key || index.toString())
-          popup.close()
+          popup.triggered(modelData.action || modelData.key || index.toString());
+          popup.close();
         }
       }
     }
@@ -99,14 +99,14 @@ Popup {
 
   // Helper function to open at mouse position
   function openAt(x, y) {
-    root.x = x
-    root.y = y
-    root.open()
+    root.x = x;
+    root.y = y;
+    root.open();
   }
 
   // Helper function to open at item
   function openAtItem(item, mouseX, mouseY) {
-    var pos = item.mapToItem(root.parent, mouseX || 0, mouseY || 0)
-    openAt(pos.x, pos.y)
+    var pos = item.mapToItem(root.parent, mouseX || 0, mouseY || 0);
+    openAt(pos.x, pos.y);
   }
 }

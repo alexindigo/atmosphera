@@ -22,35 +22,39 @@ ColumnLayout {
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
-      valueHideMode = widgetData.hideMode
+      valueHideMode = widgetData.hideMode;
     }
   }
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.hideMode = valueHideMode
-    settings.showIcon = valueShowIcon
-    settings.scrollingMode = valueScrollingMode
-    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
-    settings.useFixedWidth = valueUseFixedWidth
-    settings.colorizeIcons = valueColorizeIcons
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.hideMode = valueHideMode;
+    settings.showIcon = valueShowIcon;
+    settings.scrollingMode = valueScrollingMode;
+    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
+    settings.useFixedWidth = valueUseFixedWidth;
+    settings.colorizeIcons = valueColorizeIcons;
+    return settings;
   }
 
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.active-window.hide-mode.label")
     description: I18n.tr("bar.widget-settings.active-window.hide-mode.description")
-    model: [{
+    model: [
+      {
         "key": "visible",
         "name": I18n.tr("options.hide-modes.visible")
-      }, {
+      },
+      {
         "key": "hidden",
         "name": I18n.tr("options.hide-modes.hidden")
-      }, {
+      },
+      {
         "key": "transparent",
         "name": I18n.tr("options.hide-modes.transparent")
-      }]
+      }
+    ]
     currentKey: root.valueHideMode
     onSelected: key => root.valueHideMode = key
   }
@@ -91,16 +95,20 @@ ColumnLayout {
   NComboBox {
     label: I18n.tr("bar.widget-settings.active-window.scrolling-mode.label")
     description: I18n.tr("bar.widget-settings.active-window.scrolling-mode.description")
-    model: [{
+    model: [
+      {
         "key": "always",
         "name": I18n.tr("options.scrolling-modes.always")
-      }, {
+      },
+      {
         "key": "hover",
         "name": I18n.tr("options.scrolling-modes.hover")
-      }, {
+      },
+      {
         "key": "never",
         "name": I18n.tr("options.scrolling-modes.never")
-      }]
+      }
+    ]
     currentKey: valueScrollingMode
     onSelected: key => valueScrollingMode = key
     minimumWidth: 200

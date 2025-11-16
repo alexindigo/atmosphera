@@ -11,21 +11,21 @@ NIconButtonHot {
   icon: {
     try {
       if (NetworkService.ethernetConnected) {
-        return NetworkService.internetConnectivity ? "ethernet" : "ethernet-off"
+        return NetworkService.internetConnectivity ? "ethernet" : "ethernet-off";
       }
-      let connected = false
-      let signalStrength = 0
+      let connected = false;
+      let signalStrength = 0;
       for (const net in NetworkService.networks) {
         if (NetworkService.networks[net].connected) {
-          connected = true
-          signalStrength = NetworkService.networks[net].signal
-          break
+          connected = true;
+          signalStrength = NetworkService.networks[net].signal;
+          break;
         }
       }
-      return connected ? NetworkService.signalIcon(signalStrength, true) : "wifi-off"
+      return connected ? NetworkService.signalIcon(signalStrength, true) : "wifi-off";
     } catch (error) {
-      Logger.e("Wi-Fi", "Error getting icon:", error)
-      return "wifi-off"
+      Logger.e("Wi-Fi", "Error getting icon:", error);
+      return "wifi-off";
     }
   }
 

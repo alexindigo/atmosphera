@@ -24,7 +24,7 @@ ColumnLayout {
     for (var i = 0; i < localBlacklist.length; i++) {
       blacklistModel.append({
                               "rule": localBlacklist[i]
-                            })
+                            });
     }
   }
 
@@ -66,19 +66,19 @@ ColumnLayout {
         buttonIcon: "add"
         onButtonClicked: {
           if (newRuleInput.text.length > 0) {
-            var newRule = newRuleInput.text.trim()
-            var exists = false
+            var newRule = newRuleInput.text.trim();
+            var exists = false;
             for (var i = 0; i < blacklistModel.count; i++) {
               if (blacklistModel.get(i).rule === newRule) {
-                exists = true
-                break
+                exists = true;
+                break;
               }
             }
             if (!exists) {
               blacklistModel.append({
                                       "rule": newRule
-                                    })
-              newRuleInput.text = ""
+                                    });
+              newRuleInput.text = "";
             }
           }
         }
@@ -131,7 +131,7 @@ ColumnLayout {
           colorBgHover: Color.mError
           colorFgHover: Color.mOnError
           onClicked: {
-            blacklistModel.remove(index)
+            blacklistModel.remove(index);
           }
         }
       }
@@ -140,16 +140,16 @@ ColumnLayout {
 
   // This function will be called by the dialog to get the new settings
   function saveSettings() {
-    var newBlacklist = []
+    var newBlacklist = [];
     for (var i = 0; i < blacklistModel.count; i++) {
-      newBlacklist.push(blacklistModel.get(i).rule)
+      newBlacklist.push(blacklistModel.get(i).rule);
     }
 
     // Return the updated settings for this widget instance
-    var settings = Object.assign({}, widgetData || {})
-    settings.blacklist = newBlacklist
-    settings.colorizeIcons = root.valueColorizeIcons
-    settings.drawerEnabled = root.valueDrawerEnabled
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.blacklist = newBlacklist;
+    settings.colorizeIcons = root.valueColorizeIcons;
+    settings.drawerEnabled = root.valueDrawerEnabled;
+    return settings;
   }
 }

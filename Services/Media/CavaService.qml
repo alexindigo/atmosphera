@@ -9,13 +9,12 @@ import qs.Services.UI
 Singleton {
   id: root
 
-
   /**
-   * Cava runs if:
-   *   - Bar has an audio visualizer
-   *   - LockScreen is opened
-   *   - A control center is open
-   */
+  * Cava runs if:
+  *   - Bar has an audio visualizer
+  *   - LockScreen is opened
+  *   - A control center is open
+  */
   property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.panelWrapper.objectName.startsWith("controlCenterPanel"))
 
   property var values: Array(barsCount).fill(0)
@@ -57,68 +56,68 @@ Singleton {
     running: root.shouldRun
     command: ["cava", "-p", "/dev/stdin"]
     onRunningChanged: {
-      Logger.d("Cava", "Process running:", running)
+      Logger.d("Cava", "Process running:", running);
     }
     onExited: {
-      Logger.d("Cava", "Process exited")
-      stdinEnabled = true
-      values = Array(barsCount).fill(0)
+      Logger.d("Cava", "Process exited");
+      stdinEnabled = true;
+      values = Array(barsCount).fill(0);
     }
     onStarted: {
-      Logger.d("Cava", "Process started")
+      Logger.d("Cava", "Process started");
       for (const k in config) {
         if (typeof config[k] !== "object") {
-          write(k + "=" + config[k] + "\n")
-          continue
+          write(k + "=" + config[k] + "\n");
+          continue;
         }
-        write("[" + k + "]\n")
-        const obj = config[k]
+        write("[" + k + "]\n");
+        const obj = config[k];
         for (const k2 in obj) {
-          write(k2 + "=" + obj[k2] + "\n")
+          write(k2 + "=" + obj[k2] + "\n");
         }
       }
-      stdinEnabled = false
-      values = Array(barsCount).fill(0)
+      stdinEnabled = false;
+      values = Array(barsCount).fill(0);
     }
     stdout: SplitParser {
       onRead: data => {
-        const newValues = data.slice(0, -1).split(";").map(v => parseInt(v, 10) / 100)
+        const newValues = data.slice(0, -1).split(";").map(v => parseInt(v, 10) / 100);
 
         // Check if all values are effectively zero (< 0.01)
-        const allZero = newValues.every(v => v < 0.01)
+        const allZero = newValues.every(v => v < 0.01);
 
         if (allZero) {
-          root.idleFrameCount++
+          root.idleFrameCount++;
           if (root.idleFrameCount >= root.idleThreshold) {
             // We're idle - stop updating values to save GPU
             if (!root.isIdle) {
-              root.isIdle = true
+              root.isIdle = true;
               // Set all values to 0 one final time
-              root.values = Array(root.barsCount).fill(0)
-              Logger.d("Cava", "Idle detected - stopped rendering")
+              root.values = Array(root.barsCount).fill(0);
+              Logger.d("Cava", "Idle detected - stopped rendering");
             }
             // Don't update values while idle
-            return
+            return;
           }
         } else {
           // Audio detected - resume updates
-          root.idleFrameCount = 0
+          root.idleFrameCount = 0;
           if (root.isIdle) {
-            root.isIdle = false
-            Logger.d("Cava", "Audio detected - resumed rendering")
+            root.isIdle = false;
+            Logger.d("Cava", "Audio detected - resumed rendering");
           }
         }
 
         // Update values only if there's a significant change
         if (!isIdle) {
-          root.values = newValues
+          root.values = newValues;
         }
       }
     }
     stderr: StdioCollector {
       onStreamFinished: {
         if (text.trim()) {
-          Logger.w("Cava", "Error", text)
+          Logger.w("Cava", "Error", text);
         }
       }
     }

@@ -26,60 +26,60 @@ Singleton {
   property real infiniteTrackLength: 922337203685
 
   Component.onCompleted: {
-    updateCurrentPlayer()
+    updateCurrentPlayer();
   }
 
   function getAvailablePlayers() {
     if (!Mpris.players || !Mpris.players.values) {
-      return []
+      return [];
     }
 
-    let allPlayers = Mpris.players.values
-    let finalPlayers = []
-    const genericBrowsers = ["firefox", "chromium", "chrome"]
-    const blacklist = (Settings.data.audio && Settings.data.audio.mprisBlacklist) ? Settings.data.audio.mprisBlacklist : []
+    let allPlayers = Mpris.players.values;
+    let finalPlayers = [];
+    const genericBrowsers = ["firefox", "chromium", "chrome"];
+    const blacklist = (Settings.data.audio && Settings.data.audio.mprisBlacklist) ? Settings.data.audio.mprisBlacklist : [];
 
     // Separate players into specific and generic lists
-    let specificPlayers = []
-    let genericPlayers = []
+    let specificPlayers = [];
+    let genericPlayers = [];
     for (var i = 0; i < allPlayers.length; i++) {
-      const identity = String(allPlayers[i].identity || "").toLowerCase()
+      const identity = String(allPlayers[i].identity || "").toLowerCase();
       const match = blacklist.find(b => {
-                                     const s = String(b || "").toLowerCase()
-                                     return s && (identity.includes(s))
-                                   })
+                                     const s = String(b || "").toLowerCase();
+                                     return s && (identity.includes(s));
+                                   });
       if (match)
-        continue
+        continue;
       if (genericBrowsers.some(b => identity.includes(b))) {
-        genericPlayers.push(allPlayers[i])
+        genericPlayers.push(allPlayers[i]);
       } else {
-        specificPlayers.push(allPlayers[i])
+        specificPlayers.push(allPlayers[i]);
       }
     }
 
-    let matchedGenericIndices = {}
+    let matchedGenericIndices = {};
 
     // For each specific player, try to find and pair it with a generic partner
     for (var i = 0; i < specificPlayers.length; i++) {
-      let specificPlayer = specificPlayers[i]
-      let title1 = String(specificPlayer.trackTitle || "").trim()
-      let wasMatched = false
+      let specificPlayer = specificPlayers[i];
+      let title1 = String(specificPlayer.trackTitle || "").trim();
+      let wasMatched = false;
 
       if (title1) {
         for (var j = 0; j < genericPlayers.length; j++) {
           if (matchedGenericIndices[j])
-            continue
-          let genericPlayer = genericPlayers[j]
-          let title2 = String(genericPlayer.trackTitle || "").trim()
+            continue;
+          let genericPlayer = genericPlayers[j];
+          let title2 = String(genericPlayer.trackTitle || "").trim();
 
           if (title2 && (title1.includes(title2) || title2.includes(title1))) {
-            let dataPlayer = genericPlayer
-            let identityPlayer = specificPlayer
+            let dataPlayer = genericPlayer;
+            let identityPlayer = specificPlayer;
 
-            let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0)
-            let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0)
+            let scoreSpecific = (specificPlayer.trackArtUrl ? 1 : 0);
+            let scoreGeneric = (genericPlayer.trackArtUrl ? 1 : 0);
             if (scoreSpecific > scoreGeneric) {
-              dataPlayer = specificPlayer
+              dataPlayer = specificPlayer;
             }
 
             let virtualPlayer = {
@@ -101,171 +101,171 @@ Singleton {
               "canControl": dataPlayer.canControl || false,
               "_stateSource": dataPlayer,
               "_controlTarget": identityPlayer
-            }
-            finalPlayers.push(virtualPlayer)
-            matchedGenericIndices[j] = true
-            wasMatched = true
-            break
+            };
+            finalPlayers.push(virtualPlayer);
+            matchedGenericIndices[j] = true;
+            wasMatched = true;
+            break;
           }
         }
       }
       if (!wasMatched) {
-        finalPlayers.push(specificPlayer)
+        finalPlayers.push(specificPlayer);
       }
     }
 
     // Add any generic players that were not matched
     for (var i = 0; i < genericPlayers.length; i++) {
       if (!matchedGenericIndices[i]) {
-        finalPlayers.push(genericPlayers[i])
+        finalPlayers.push(genericPlayers[i]);
       }
     }
 
     // Filter for controllable players
-    let controllablePlayers = []
+    let controllablePlayers = [];
     for (var i = 0; i < finalPlayers.length; i++) {
-      let player = finalPlayers[i]
+      let player = finalPlayers[i];
       if (player && player.canControl) {
-        controllablePlayers.push(player)
+        controllablePlayers.push(player);
       }
     }
-    return controllablePlayers
+    return controllablePlayers;
   }
 
   function findActivePlayer() {
-    let availablePlayers = getAvailablePlayers()
+    let availablePlayers = getAvailablePlayers();
     if (availablePlayers.length === 0) {
       //Logger.i("Media", "No active player found")
-      return null
+      return null;
     }
 
     // Prioritize the actively playing player ---
     for (var i = 0; i < availablePlayers.length; i++) {
       if (availablePlayers[i] && availablePlayers[i].playbackState === MprisPlaybackState.Playing) {
-        Logger.d("Media", "Found actively playing player: " + availablePlayers[i].identity)
-        selectedPlayerIndex = i
-        return availablePlayers[i]
+        Logger.d("Media", "Found actively playing player: " + availablePlayers[i].identity);
+        selectedPlayerIndex = i;
+        return availablePlayers[i];
       }
     }
 
     // fallback if nothing is playing)
-    const preferred = (Settings.data.audio.preferredPlayer || "")
+    const preferred = (Settings.data.audio.preferredPlayer || "");
     if (preferred !== "") {
       for (var i = 0; i < availablePlayers.length; i++) {
-        const p = availablePlayers[i]
-        const identity = String(p.identity || "").toLowerCase()
-        const pref = preferred.toLowerCase()
+        const p = availablePlayers[i];
+        const identity = String(p.identity || "").toLowerCase();
+        const pref = preferred.toLowerCase();
         if (identity.includes(pref)) {
-          selectedPlayerIndex = i
-          return p
+          selectedPlayerIndex = i;
+          return p;
         }
       }
     }
 
     if (selectedPlayerIndex < availablePlayers.length) {
-      return availablePlayers[selectedPlayerIndex]
+      return availablePlayers[selectedPlayerIndex];
     } else {
-      selectedPlayerIndex = 0
-      return availablePlayers[0]
+      selectedPlayerIndex = 0;
+      return availablePlayers[0];
     }
   }
 
   property bool autoSwitchingPaused: false
 
   function switchToPlayer(index) {
-    let availablePlayers = getAvailablePlayers()
+    let availablePlayers = getAvailablePlayers();
     if (index >= 0 && index < availablePlayers.length) {
-      let newPlayer = availablePlayers[index]
+      let newPlayer = availablePlayers[index];
       if (newPlayer !== currentPlayer) {
-        currentPlayer = newPlayer
-        selectedPlayerIndex = index
-        currentPosition = currentPlayer ? currentPlayer.position : 0
-        Logger.d("Media", "Manually switched to player " + currentPlayer.identity)
+        currentPlayer = newPlayer;
+        selectedPlayerIndex = index;
+        currentPosition = currentPlayer ? currentPlayer.position : 0;
+        Logger.d("Media", "Manually switched to player " + currentPlayer.identity);
       }
     }
   }
 
   // Switch to the most recently active player
   function updateCurrentPlayer() {
-    let newPlayer = findActivePlayer()
+    let newPlayer = findActivePlayer();
     if (newPlayer !== currentPlayer) {
-      currentPlayer = newPlayer
-      currentPosition = currentPlayer ? currentPlayer.position : 0
-      Logger.d("Media", "Switching player")
+      currentPlayer = newPlayer;
+      currentPosition = currentPlayer ? currentPlayer.position : 0;
+      Logger.d("Media", "Switching player");
     }
   }
 
   function playPause() {
     if (currentPlayer) {
-      let stateSource = currentPlayer._stateSource || currentPlayer
-      let controlTarget = currentPlayer._controlTarget || currentPlayer
+      let stateSource = currentPlayer._stateSource || currentPlayer;
+      let controlTarget = currentPlayer._controlTarget || currentPlayer;
       if (stateSource.playbackState === MprisPlaybackState.Playing) {
-        controlTarget.pause()
+        controlTarget.pause();
       } else {
-        controlTarget.play()
+        controlTarget.play();
       }
     }
   }
 
   function play() {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canPlay) {
-      target.play()
+      target.play();
     }
   }
 
   function stop() {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target) {
-      target.stop()
+      target.stop();
     }
   }
 
   function pause() {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canPause) {
-      target.pause()
+      target.pause();
     }
   }
 
   function next() {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canGoNext) {
-      target.next()
+      target.next();
     }
   }
 
   function previous() {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canGoPrevious) {
-      target.previous()
+      target.previous();
     }
   }
 
   function seek(position) {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canSeek) {
-      target.position = position
-      currentPosition = position
+      target.position = position;
+      currentPosition = position;
     }
   }
 
   function seekRelative(offset) {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canSeek && target.length > 0) {
-      let seekPosition = target.position + offset
-      target.position = seekPosition
-      currentPosition = seekPosition
+      let seekPosition = target.position + offset;
+      target.position = seekPosition;
+      currentPosition = seekPosition;
     }
   }
 
   // Seek to position based on ratio (0.0 to 1.0)
   function seekByRatio(ratio) {
-    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null
+    let target = currentPlayer ? (currentPlayer._controlTarget || currentPlayer) : null;
     if (target && target.canSeek && target.length > 0) {
-      let seekPosition = ratio * target.length
-      target.position = seekPosition
-      currentPosition = seekPosition
+      let seekPosition = ratio * target.length;
+      target.position = seekPosition;
+      currentPosition = seekPosition;
     }
   }
 
@@ -277,9 +277,9 @@ Singleton {
     repeat: true
     onTriggered: {
       if (currentPlayer && !root.isSeeking && currentPlayer.isPlaying && currentPlayer.playbackState === MprisPlaybackState.Playing) {
-        currentPosition = currentPlayer.position
+        currentPosition = currentPlayer.position;
       } else {
-        running = false
+        running = false;
       }
     }
   }
@@ -289,12 +289,12 @@ Singleton {
     target: currentPlayer
     function onPositionChanged() {
       if (!root.isSeeking && currentPlayer) {
-        currentPosition = currentPlayer.position
+        currentPosition = currentPlayer.position;
       }
     }
     function onPlaybackStateChanged() {
       if (!root.isSeeking && currentPlayer) {
-        currentPosition = currentPlayer.position
+        currentPosition = currentPlayer.position;
       }
     }
   }
@@ -302,7 +302,7 @@ Singleton {
   // Reset position when switching to inactive player
   onCurrentPlayerChanged: {
     if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
-      currentPosition = 0
+      currentPosition = 0;
     }
   }
 
@@ -314,10 +314,10 @@ Singleton {
     onTriggered: {
       //Logger.d("MediaService", "playerStateMonitor triggered. autoSwitchingPaused: " + root.autoSwitchingPaused)
       if (autoSwitchingPaused)
-      return
+      return;
       // Only update if we don't have a playing player or if current player is paused
       if (!currentPlayer || !currentPlayer.isPlaying || currentPlayer.playbackState !== MprisPlaybackState.Playing) {
-        updateCurrentPlayer()
+        updateCurrentPlayer();
       }
     }
   }
@@ -326,8 +326,8 @@ Singleton {
   Connections {
     target: Mpris.players
     function onValuesChanged() {
-      Logger.d("Media", "Players changed")
-      updateCurrentPlayer()
+      Logger.d("Media", "Players changed");
+      updateCurrentPlayer();
     }
   }
 }

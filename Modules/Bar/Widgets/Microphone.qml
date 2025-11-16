@@ -23,12 +23,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -48,13 +48,13 @@ Item {
       // Logger.i("Bar:Microphone", "onInputVolumeChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first volume change
-        firstInputVolumeReceived = true
+        firstInputVolumeReceived = true;
       } else {
         // If a tooltip is visible while we show the pill
         // hide it so it doesn't overlap the volume slider.
-        TooltipService.hide()
-        pill.show()
-        externalHideTimer.restart()
+        TooltipService.hide();
+        pill.show();
+        externalHideTimer.restart();
       }
     }
   }
@@ -66,11 +66,11 @@ Item {
       // Logger.i("Bar:Microphone", "onInputMutedChanged")
       if (!firstInputVolumeReceived) {
         // Ignore the first mute change
-        firstInputVolumeReceived = true
+        firstInputVolumeReceived = true;
       } else {
-        TooltipService.hide()
-        pill.show()
-        externalHideTimer.restart()
+        TooltipService.hide();
+        pill.show();
+        externalHideTimer.restart();
       }
     }
   }
@@ -80,7 +80,7 @@ Item {
     running: false
     interval: 1500
     onTriggered: {
-      pill.hide()
+      pill.hide();
     }
   }
 
@@ -101,25 +101,25 @@ Item {
 
     onWheel: function (delta) {
       // As soon as we start scrolling to adjust volume, hide the tooltip
-      TooltipService.hide()
+      TooltipService.hide();
 
-      wheelAccumulator += delta
+      wheelAccumulator += delta;
       if (wheelAccumulator >= 120) {
-        wheelAccumulator = 0
-        AudioService.setInputVolume(AudioService.inputVolume + AudioService.stepVolume)
+        wheelAccumulator = 0;
+        AudioService.setInputVolume(AudioService.inputVolume + AudioService.stepVolume);
       } else if (wheelAccumulator <= -120) {
-        wheelAccumulator = 0
-        AudioService.setInputVolume(AudioService.inputVolume - AudioService.stepVolume)
+        wheelAccumulator = 0;
+        AudioService.setInputVolume(AudioService.inputVolume - AudioService.stepVolume);
       }
     }
     onClicked: {
-      PanelService.getPanel("audioPanel", screen)?.toggle(this)
+      PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      AudioService.setInputMuted(!AudioService.inputMuted)
+      AudioService.setInputMuted(!AudioService.inputMuted);
     }
     onMiddleClicked: {
-      Quickshell.execDetached(["pwvucontrol"])
+      Quickshell.execDetached(["pwvucontrol"]);
     }
   }
 }

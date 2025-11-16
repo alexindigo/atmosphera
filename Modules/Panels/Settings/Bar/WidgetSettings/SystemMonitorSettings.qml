@@ -22,16 +22,16 @@ ColumnLayout {
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.usePrimaryColor = valueUsePrimaryColor
-    settings.showCpuUsage = valueShowCpuUsage
-    settings.showCpuTemp = valueShowCpuTemp
-    settings.showMemoryUsage = valueShowMemoryUsage
-    settings.showMemoryAsPercent = valueShowMemoryAsPercent
-    settings.showNetworkStats = valueShowNetworkStats
-    settings.showDiskUsage = valueShowDiskUsage
+    var settings = Object.assign({}, widgetData || {});
+    settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.showCpuUsage = valueShowCpuUsage;
+    settings.showCpuTemp = valueShowCpuTemp;
+    settings.showMemoryUsage = valueShowMemoryUsage;
+    settings.showMemoryAsPercent = valueShowMemoryAsPercent;
+    settings.showNetworkStats = valueShowNetworkStats;
+    settings.showDiskUsage = valueShowDiskUsage;
 
-    return settings
+    return settings;
   }
 
   NToggle {

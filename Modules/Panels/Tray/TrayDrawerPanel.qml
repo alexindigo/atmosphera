@@ -1,12 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.SystemTray
+import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Services.UI
 import qs.Widgets
-import qs.Modules.MainScreen
 
 // A compact grid panel listing all tray items, opened from the Tray widget
 SmartPanel {
@@ -25,16 +25,16 @@ SmartPanel {
   // Read widget settings for reactivity
   readonly property var widgetSettings: {
     // Reference settingsVersion to force recalculation when it changes
-    var _ = root.settingsVersion
+    var _ = root.settingsVersion;
     if (widgetSection === "" || widgetIndex < 0)
-      return {}
-    var widgets = Settings.data.bar.widgets[widgetSection]
+      return {};
+    var widgets = Settings.data.bar.widgets[widgetSection];
     if (!widgets || widgetIndex >= widgets.length)
-      return {}
-    var settings = widgets[widgetIndex]
+      return {};
+    var settings = widgets[widgetIndex];
     if (!settings || settings.id !== "Tray")
-      return {}
-    return settings
+      return {};
+    return settings;
   }
 
   // Read pinned list directly from settings for reactivity
@@ -42,32 +42,32 @@ SmartPanel {
 
   function wildCardMatch(str, rule) {
     if (!str || !rule)
-      return false
-    let escaped = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    let pattern = '^' + escaped.replace(/\\\*/g, '.*') + '$'
+      return false;
+    let escaped = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let pattern = '^' + escaped.replace(/\\\*/g, '.*') + '$';
     try {
-      return new RegExp(pattern, 'i').test(str)
+      return new RegExp(pattern, 'i').test(str);
     } catch (e) {
-      return false
+      return false;
     }
   }
 
   function isPinned(item) {
     if (!pinnedList || pinnedList.length === 0)
-      return false
-    const title = item?.tooltipTitle || item?.name || item?.id || ""
+      return false;
+    const title = item?.tooltipTitle || item?.name || item?.id || "";
     for (var i = 0; i < pinnedList.length; i++) {
       if (wildCardMatch(title, pinnedList[i]))
-        return true
+        return true;
     }
-    return false
+    return false;
   }
 
   // Dynamic sizing based on item count
   // Show items that are NOT pinned (unpinned items go to drawer)
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
   readonly property var trayValues: trayValuesAll.filter(function (it) {
-    return !root.isPinned(it)
+    return !root.isPinned(it);
   })
   readonly property int itemCount: trayValues.length
   readonly property int maxColumns: 8
@@ -88,14 +88,14 @@ SmartPanel {
     target: Settings
     function onSettingsSaved() {
       // Force refresh by incrementing settingsVersion, which triggers recalculation of pinnedList
-      root.settingsVersion++
+      root.settingsVersion++;
     }
   }
 
   // Auto-close drawer when all items are pinned (drawer becomes empty)
   onTrayValuesChanged: {
     if (visible && trayValues.length === 0) {
-      close()
+      close();
     }
   }
 
@@ -105,8 +105,8 @@ SmartPanel {
   // Get the trayMenu window and loader from PanelService (reactive to trigger changes)
   readonly property var trayMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger
-    return PanelService.getTrayMenuWindow(screen)
+    var _ = trayMenuUpdateTrigger;
+    return PanelService.getTrayMenuWindow(screen);
   }
 
   readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
@@ -115,7 +115,7 @@ SmartPanel {
     target: PanelService
     function onTrayMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++
+        root.trayMenuUpdateTrigger++;
       }
     }
   }
@@ -150,17 +150,17 @@ SmartPanel {
             asynchronous: true
             backer.fillMode: Image.PreserveAspectFit
             source: {
-              let icon = modelData?.icon || ""
+              let icon = modelData?.icon || "";
               if (!icon)
-                return ""
+                return "";
               if (icon.includes("?path=")) {
-                const chunks = icon.split("?path=")
-                const name = chunks[0]
-                const path = chunks[1]
-                const fileName = name.substring(name.lastIndexOf("/") + 1)
-                return `file://${path}/${fileName}`
+                const chunks = icon.split("?path=");
+                const name = chunks[0];
+                const path = chunks[1];
+                const fileName = name.substring(name.lastIndexOf("/") + 1);
+                return `file://${path}/${fileName}`;
               }
-              return icon
+              return icon;
             }
 
             layer.enabled: root.widgetSettings.colorizeIcons !== false
@@ -178,65 +178,64 @@ SmartPanel {
 
               onClicked: mouse => {
                            if (!modelData)
-                           return
-
+                           return;
                            if (mouse.button === Qt.LeftButton) {
                              // Left click: activate tray item
                              if (!modelData.onlyMenu) {
-                               modelData.activate()
+                               modelData.activate();
                              }
                            } else if (mouse.button === Qt.MiddleButton) {
                              // Middle click: activate with middle button
-                             modelData.secondaryActivate && modelData.secondaryActivate()
+                             modelData.secondaryActivate && modelData.secondaryActivate();
                            } else if (mouse.button === Qt.RightButton) {
                              // Right click: open context menu
-                             TooltipService.hideImmediately()
+                             TooltipService.hideImmediately();
 
                              // Close menu if already visible
                              if (trayMenuWindow && trayMenuWindow.visible) {
-                               trayMenuWindow.close()
-                               return
+                               trayMenuWindow.close();
+                               return;
                              }
 
                              if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                               trayMenuWindow.open()
+                               trayMenuWindow.open();
 
                                // Position menu at the tray icon
-                               const barPosition = Settings.data.bar.position
-                               let menuX, menuY
+                               const barPosition = Settings.data.bar.position;
+                               let menuX, menuY;
 
                                if (barPosition === "left") {
-                                 menuX = trayIcon.width + Style.marginM
-                                 menuY = 0
+                                 menuX = trayIcon.width + Style.marginM;
+                                 menuY = 0;
                                } else if (barPosition === "right") {
-                                 menuX = -trayMenu.item.width - Style.marginM
-                                 menuY = 0
+                                 menuX = -trayMenu.item.width - Style.marginM;
+                                 menuY = 0;
                                } else {
                                  // Horizontal bars
-                                 menuX = (trayIcon.width / 2) - (trayMenu.item.width / 2)
-                                 menuY = trayIcon.height + Style.marginS
+                                 menuX = (trayIcon.width / 2) - (trayMenu.item.width / 2);
+                                 menuY = trayIcon.height + Style.marginS;
                                }
 
-                               trayMenu.item.trayItem = modelData
-                               trayMenu.item.widgetSection = root.widgetSection
-                               trayMenu.item.widgetIndex = root.widgetIndex
-                               trayMenu.item.showAt(trayIcon, menuX, menuY)
+                               trayMenu.item.trayItem = modelData;
+                               trayMenu.item.widgetSection = root.widgetSection;
+                               trayMenu.item.widgetIndex = root.widgetIndex;
+                               trayMenu.item.showAt(trayIcon, menuX, menuY);
                              }
                            }
                          }
 
               onWheel: wheel => {
                          if (wheel.angleDelta.y > 0)
-                         modelData?.scrollUp()
+                         modelData?.scrollUp();
                          else if (wheel.angleDelta.y < 0)
-                         modelData?.scrollDown()
+                         modelData?.scrollDown();
                        }
 
               onEntered: {
                 if (trayMenuWindow) {
-                  trayMenuWindow.close()
+                  trayMenuWindow.close();
                 }
-                TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection())
+                TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
               }
               onExited: TooltipService.hide()
             }

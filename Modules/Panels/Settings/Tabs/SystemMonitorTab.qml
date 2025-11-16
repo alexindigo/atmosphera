@@ -30,13 +30,13 @@ ColumnLayout {
         // If enabling custom colors and no custom color is saved, persist current theme colors
         if (checked) {
           if (!Settings.data.systemMonitor.warningColor || Settings.data.systemMonitor.warningColor === "") {
-            Settings.data.systemMonitor.warningColor = Color.mTertiary.toString()
+            Settings.data.systemMonitor.warningColor = Color.mTertiary.toString();
           }
           if (!Settings.data.systemMonitor.criticalColor || Settings.data.systemMonitor.criticalColor === "") {
-            Settings.data.systemMonitor.criticalColor = Color.mError.toString()
+            Settings.data.systemMonitor.criticalColor = Color.mError.toString();
           }
         }
-        Settings.data.systemMonitor.useCustomColors = checked
+        Settings.data.systemMonitor.useCustomColors = checked;
       }
     }
   }
@@ -61,7 +61,7 @@ ColumnLayout {
         enabled: Settings.data.systemMonitor.useCustomColors
         selectedColor: Settings.data.systemMonitor.warningColor || Color.mTertiary
         onColorSelected: function (color) {
-          Settings.data.systemMonitor.warningColor = color
+          Settings.data.systemMonitor.warningColor = color;
         }
       }
     }
@@ -81,7 +81,7 @@ ColumnLayout {
         enabled: Settings.data.systemMonitor.useCustomColors
         selectedColor: Settings.data.systemMonitor.criticalColor || Color.mError
         onColorSelected: function (color) {
-          Settings.data.systemMonitor.criticalColor = color
+          Settings.data.systemMonitor.criticalColor = color;
         }
       }
     }
@@ -124,10 +124,10 @@ ColumnLayout {
         stepSize: 5
         value: Settings.data.systemMonitor.cpuWarningThreshold
         onValueChanged: {
-          Settings.data.systemMonitor.cpuWarningThreshold = value
+          Settings.data.systemMonitor.cpuWarningThreshold = value;
           // Ensure critical >= warning
           if (Settings.data.systemMonitor.cpuCriticalThreshold < value) {
-            Settings.data.systemMonitor.cpuCriticalThreshold = value
+            Settings.data.systemMonitor.cpuCriticalThreshold = value;
           }
         }
         suffix: "%"
@@ -181,9 +181,9 @@ ColumnLayout {
         stepSize: 5
         value: Settings.data.systemMonitor.tempWarningThreshold
         onValueChanged: {
-          Settings.data.systemMonitor.tempWarningThreshold = value
+          Settings.data.systemMonitor.tempWarningThreshold = value;
           if (Settings.data.systemMonitor.tempCriticalThreshold < value) {
-            Settings.data.systemMonitor.tempCriticalThreshold = value
+            Settings.data.systemMonitor.tempCriticalThreshold = value;
           }
         }
         suffix: "°C"
@@ -237,9 +237,9 @@ ColumnLayout {
         stepSize: 5
         value: Settings.data.systemMonitor.memWarningThreshold
         onValueChanged: {
-          Settings.data.systemMonitor.memWarningThreshold = value
+          Settings.data.systemMonitor.memWarningThreshold = value;
           if (Settings.data.systemMonitor.memCriticalThreshold < value) {
-            Settings.data.systemMonitor.memCriticalThreshold = value
+            Settings.data.systemMonitor.memCriticalThreshold = value;
           }
         }
         suffix: "%"
@@ -293,9 +293,9 @@ ColumnLayout {
         stepSize: 5
         value: Settings.data.systemMonitor.diskWarningThreshold
         onValueChanged: {
-          Settings.data.systemMonitor.diskWarningThreshold = value
+          Settings.data.systemMonitor.diskWarningThreshold = value;
           if (Settings.data.systemMonitor.diskCriticalThreshold < value) {
-            Settings.data.systemMonitor.diskCriticalThreshold = value
+            Settings.data.systemMonitor.diskCriticalThreshold = value;
           }
         }
         suffix: "%"

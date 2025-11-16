@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Wayland
@@ -13,9 +13,7 @@ NBox {
 
   property string label: ""
   property string tooltipText: ""
-  property var model: {
-
-  }
+  property var model: {}
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -52,10 +50,10 @@ NBox {
 
         function getContentColor(defaultColor = Color.mOnSurface) {
           if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
-            return Color.mPrimary
+            return Color.mPrimary;
           if (modelData.blocked)
-            return Color.mError
-          return defaultColor
+            return Color.mError;
+          return defaultColor;
         }
 
         Layout.fillWidth: true
@@ -154,33 +152,33 @@ NBox {
             fontWeight: Style.fontWeightMedium
             backgroundColor: {
               if (device.canDisconnect && !isBusy) {
-                return Color.mError
+                return Color.mError;
               }
-              return Color.mPrimary
+              return Color.mPrimary;
             }
             tooltipText: root.tooltipText
             text: {
               if (modelData.pairing) {
-                return I18n.tr("bluetooth.panel.pairing")
+                return I18n.tr("bluetooth.panel.pairing");
               }
               if (modelData.blocked) {
-                return I18n.tr("bluetooth.panel.blocked")
+                return I18n.tr("bluetooth.panel.blocked");
               }
               if (modelData.connected) {
-                return I18n.tr("bluetooth.panel.disconnect")
+                return I18n.tr("bluetooth.panel.disconnect");
               }
-              return I18n.tr("bluetooth.panel.connect")
+              return I18n.tr("bluetooth.panel.connect");
             }
             icon: (isBusy ? "busy" : null)
             onClicked: {
               if (modelData.connected) {
-                BluetoothService.disconnectDevice(modelData)
+                BluetoothService.disconnectDevice(modelData);
               } else {
-                BluetoothService.connectDeviceWithTrust(modelData)
+                BluetoothService.connectDeviceWithTrust(modelData);
               }
             }
             onRightClicked: {
-              BluetoothService.forgetDevice(modelData)
+              BluetoothService.forgetDevice(modelData);
             }
           }
         }

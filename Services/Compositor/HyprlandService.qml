@@ -35,27 +35,26 @@ Item {
   // Initialization
   function initialize() {
     if (initialized)
-      return
-
+      return;
     try {
-      Hyprland.refreshWorkspaces()
-      Hyprland.refreshToplevels()
+      Hyprland.refreshWorkspaces();
+      Hyprland.refreshToplevels();
       Qt.callLater(() => {
-                     safeUpdateWorkspaces()
-                     safeUpdateWindows()
-                     queryDisplayScales()
-                     queryKeyboardLayout()
-                   })
-      initialized = true
-      Logger.i("HyprlandService", "Service started")
+                     safeUpdateWorkspaces();
+                     safeUpdateWindows();
+                     queryDisplayScales();
+                     queryKeyboardLayout();
+                   });
+      initialized = true;
+      Logger.i("HyprlandService", "Service started");
     } catch (e) {
-      Logger.e("HyprlandService", "Failed to initialize:", e)
+      Logger.e("HyprlandService", "Failed to initialize:", e);
     }
   }
 
   // Query display scales
   function queryDisplayScales() {
-    hyprlandMonitorsProcess.running = true
+    hyprlandMonitorsProcess.running = true;
   }
 
   // Hyprland monitors process for display scale detection
@@ -69,20 +68,20 @@ Item {
     stdout: SplitParser {
       onRead: function (line) {
         // Accumulate lines instead of parsing each one
-        hyprlandMonitorsProcess.accumulatedOutput += line
+        hyprlandMonitorsProcess.accumulatedOutput += line;
       }
     }
 
     onExited: function (exitCode) {
       if (exitCode !== 0 || !accumulatedOutput) {
-        Logger.e("HyprlandService", "Failed to query monitors, exit code:", exitCode)
-        accumulatedOutput = ""
-        return
+        Logger.e("HyprlandService", "Failed to query monitors, exit code:", exitCode);
+        accumulatedOutput = "";
+        return;
       }
 
       try {
-        const monitorsData = JSON.parse(accumulatedOutput)
-        const scales = {}
+        const monitorsData = JSON.parse(accumulatedOutput);
+        const scales = {};
 
         for (const monitor of monitorsData) {
           if (monitor.name) {
@@ -97,25 +96,25 @@ Item {
               "active_workspace": monitor.activeWorkspace ? monitor.activeWorkspace.id : -1,
               "vrr": monitor.vrr || false,
               "focused": monitor.focused || false
-            }
+            };
           }
         }
 
         // Notify CompositorService (it will emit displayScalesChanged)
         if (CompositorService && CompositorService.onDisplayScalesUpdated) {
-          CompositorService.onDisplayScalesUpdated(scales)
+          CompositorService.onDisplayScalesUpdated(scales);
         }
       } catch (e) {
-        Logger.e("HyprlandService", "Failed to parse monitors:", e)
+        Logger.e("HyprlandService", "Failed to parse monitors:", e);
       } finally {
         // Clear accumulated output for next query
-        accumulatedOutput = ""
+        accumulatedOutput = "";
       }
     }
   }
 
   function queryKeyboardLayout() {
-    hyprlandDevicesProcess.running = true
+    hyprlandDevicesProcess.running = true;
   }
   // Hyprland devices process for keyboard layout detection
   Process {
@@ -128,60 +127,59 @@ Item {
     stdout: SplitParser {
       onRead: function (line) {
         // Accumulate lines instead of parsing each one
-        hyprlandDevicesProcess.accumulatedOutput += line
+        hyprlandDevicesProcess.accumulatedOutput += line;
       }
     }
 
     onExited: function (exitCode) {
       if (exitCode !== 0 || !accumulatedOutput) {
-        Logger.e("HyprlandService", "Failed to query devices, exit code:", exitCode)
-        accumulatedOutput = ""
-        return
+        Logger.e("HyprlandService", "Failed to query devices, exit code:", exitCode);
+        accumulatedOutput = "";
+        return;
       }
 
       try {
-        const devicesData = JSON.parse(accumulatedOutput)
+        const devicesData = JSON.parse(accumulatedOutput);
         for (const keyboard of devicesData.keyboards) {
           if (keyboard.main) {
-            const layoutName = keyboard.active_keymap
-            KeyboardLayoutService.setCurrentLayout(layoutName)
-            Logger.d("HyprlandService", "Keyboard layout switched:", layoutName)
+            const layoutName = keyboard.active_keymap;
+            KeyboardLayoutService.setCurrentLayout(layoutName);
+            Logger.d("HyprlandService", "Keyboard layout switched:", layoutName);
           }
         }
       } catch (e) {
-        Logger.e("HyprlandService", "Failed to parse devices:", e)
+        Logger.e("HyprlandService", "Failed to parse devices:", e);
       } finally {
         // Clear accumulated output for next query
-        accumulatedOutput = ""
+        accumulatedOutput = "";
       }
     }
   }
 
   // Safe update wrapper
   function safeUpdate() {
-    safeUpdateWindows()
-    safeUpdateWorkspaces()
-    windowListChanged()
+    safeUpdateWindows();
+    safeUpdateWorkspaces();
+    windowListChanged();
   }
 
   // Safe workspace update
   function safeUpdateWorkspaces() {
     try {
-      workspaces.clear()
-      workspaceCache = {}
+      workspaces.clear();
+      workspaceCache = {};
 
       if (!Hyprland.workspaces || !Hyprland.workspaces.values) {
-        return
+        return;
       }
 
-      const hlWorkspaces = Hyprland.workspaces.values
-      const occupiedIds = getOccupiedWorkspaceIds()
+      const hlWorkspaces = Hyprland.workspaces.values;
+      const occupiedIds = getOccupiedWorkspaceIds();
 
       for (var i = 0; i < hlWorkspaces.length; i++) {
-        const ws = hlWorkspaces[i]
+        const ws = hlWorkspaces[i];
         if (!ws || ws.id < 1)
-          continue
-
+          continue;
         const wsData = {
           "id": ws.id,
           "idx": ws.id,
@@ -191,107 +189,105 @@ Item {
           "isFocused": ws.focused === true,
           "isUrgent": ws.urgent === true,
           "isOccupied": occupiedIds[ws.id] === true
-        }
+        };
 
-        workspaceCache[ws.id] = wsData
-        workspaces.append(wsData)
+        workspaceCache[ws.id] = wsData;
+        workspaces.append(wsData);
       }
     } catch (e) {
-      Logger.e("HyprlandService", "Error updating workspaces:", e)
+      Logger.e("HyprlandService", "Error updating workspaces:", e);
     }
   }
 
   // Get occupied workspace IDs safely
   function getOccupiedWorkspaceIds() {
-    const occupiedIds = {}
+    const occupiedIds = {};
 
     try {
       if (!Hyprland.toplevels || !Hyprland.toplevels.values) {
-        return occupiedIds
+        return occupiedIds;
       }
 
-      const hlToplevels = Hyprland.toplevels.values
+      const hlToplevels = Hyprland.toplevels.values;
       for (var i = 0; i < hlToplevels.length; i++) {
-        const toplevel = hlToplevels[i]
+        const toplevel = hlToplevels[i];
         if (!toplevel)
-          continue
-
+          continue;
         try {
-          const wsId = toplevel.workspace ? toplevel.workspace.id : null
+          const wsId = toplevel.workspace ? toplevel.workspace.id : null;
           if (wsId !== null && wsId !== undefined) {
-            occupiedIds[wsId] = true
+            occupiedIds[wsId] = true;
           }
-        } catch (e) {
+        } catch (e)
 
           // Ignore individual toplevel errors
-        }
+        {}
       }
-    } catch (e) {
+    } catch (e)
 
       // Return empty if we can't determine occupancy
-    }
+    {}
 
-    return occupiedIds
+    return occupiedIds;
   }
 
   // Safe window update
   function safeUpdateWindows() {
     try {
-      const windowsList = []
-      windowCache = {}
+      const windowsList = [];
+      windowCache = {};
 
       if (!Hyprland.toplevels || !Hyprland.toplevels.values) {
-        windows = []
-        focusedWindowIndex = -1
-        return
+        windows = [];
+        focusedWindowIndex = -1;
+        return;
       }
 
-      const hlToplevels = Hyprland.toplevels.values
-      let newFocusedIndex = -1
+      const hlToplevels = Hyprland.toplevels.values;
+      let newFocusedIndex = -1;
 
       for (var i = 0; i < hlToplevels.length; i++) {
-        const toplevel = hlToplevels[i]
+        const toplevel = hlToplevels[i];
         if (!toplevel)
-          continue
-
-        const windowData = extractWindowData(toplevel)
+          continue;
+        const windowData = extractWindowData(toplevel);
         if (windowData) {
-          windowsList.push(windowData)
-          windowCache[windowData.id] = windowData
+          windowsList.push(windowData);
+          windowCache[windowData.id] = windowData;
 
           if (windowData.isFocused) {
-            newFocusedIndex = windowsList.length - 1
+            newFocusedIndex = windowsList.length - 1;
           }
         }
       }
 
-      windows = windowsList
+      windows = windowsList;
 
       if (newFocusedIndex !== focusedWindowIndex) {
-        focusedWindowIndex = newFocusedIndex
-        activeWindowChanged()
+        focusedWindowIndex = newFocusedIndex;
+        activeWindowChanged();
       }
     } catch (e) {
-      Logger.e("HyprlandService", "Error updating windows:", e)
+      Logger.e("HyprlandService", "Error updating windows:", e);
     }
   }
 
   // Extract window data safely from a toplevel
   function extractWindowData(toplevel) {
     if (!toplevel)
-      return null
+      return null;
 
     try {
       // Safely extract properties
-      const windowId = safeGetProperty(toplevel, "address", "")
+      const windowId = safeGetProperty(toplevel, "address", "");
       if (!windowId)
-        return null
+        return null;
 
-      const appId = getAppId(toplevel)
-      const title = getAppTitle(toplevel)
-      const wsId = toplevel.workspace ? toplevel.workspace.id : null
-      const focused = toplevel.activated === true
-      const output = toplevel.monitor?.name || ""
+      const appId = getAppId(toplevel);
+      const title = getAppTitle(toplevel);
+      const wsId = toplevel.workspace ? toplevel.workspace.id : null;
+      const focused = toplevel.activated === true;
+      const output = toplevel.monitor?.name || "";
 
       return {
         "id": windowId,
@@ -300,99 +296,93 @@ Item {
         "workspaceId": wsId || -1,
         "isFocused": focused,
         "output": output
-      }
+      };
     } catch (e) {
-      return null
+      return null;
     }
   }
 
   function getAppTitle(toplevel) {
     try {
-      var title = toplevel.wayland.title
+      var title = toplevel.wayland.title;
       if (title)
-        return title
-    } catch (e) {
+        return title;
+    } catch (e) {}
 
-    }
-
-    return safeGetProperty(toplevel, "title", "")
+    return safeGetProperty(toplevel, "title", "");
   }
 
   function getAppId(toplevel) {
     if (!toplevel)
-      return ""
+      return "";
 
-    var appId = ""
+    var appId = "";
 
     // Try the wayland object first!
     // From my (Lemmy) testing it works fine so we could probably get rid of all the other attempts below.
     // Leaving them in for now, just in case...
     try {
-      appId = toplevel.wayland.appId
+      appId = toplevel.wayland.appId;
       if (appId)
-        return appId
-    } catch (e) {
-
-    }
+        return appId;
+    } catch (e) {}
 
     // Try direct properties
-    appId = safeGetProperty(toplevel, "class", "")
+    appId = safeGetProperty(toplevel, "class", "");
     if (appId)
-      return appId
+      return appId;
 
-    appId = safeGetProperty(toplevel, "initialClass", "")
+    appId = safeGetProperty(toplevel, "initialClass", "");
     if (appId)
-      return appId
+      return appId;
 
-    appId = safeGetProperty(toplevel, "appId", "")
+    appId = safeGetProperty(toplevel, "appId", "");
     if (appId)
-      return appId
+      return appId;
 
     // Try lastIpcObject
     try {
-      const ipcData = toplevel.lastIpcObject
+      const ipcData = toplevel.lastIpcObject;
       if (ipcData) {
-        return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "")
+        return String(ipcData.class || ipcData.initialClass || ipcData.appId || ipcData.wm_class || "");
       }
-    } catch (e) {
+    } catch (e) {}
 
-    }
-
-    return ""
+    return "";
   }
 
   // Safe property getter
   function safeGetProperty(obj, prop, defaultValue) {
     try {
-      const value = obj[prop]
+      const value = obj[prop];
       if (value !== undefined && value !== null) {
-        return String(value)
+        return String(value);
       }
-    } catch (e) {
+    } catch (e)
 
       // Property access failed
-    }
-    return defaultValue
+    {}
+    return defaultValue;
   }
 
   function handleActiveLayoutEvent(ev) {
     try {
-      let beforeParenthesis
-      const parenthesisPos = ev.lastIndexOf('(')
+      let beforeParenthesis;
+      const parenthesisPos = ev.lastIndexOf('(');
 
       if (parenthesisPos === -1) {
-        beforeParenthesis = ev
+        beforeParenthesis = ev;
       } else {
-        beforeParenthesis = ev.substring(0, parenthesisPos)
+        beforeParenthesis = ev.substring(0, parenthesisPos);
       }
 
-      const layoutNameStart = beforeParenthesis.lastIndexOf(',') + 1
-      const layoutName = ev.substring(layoutNameStart)
+      const layoutNameStart = beforeParenthesis.lastIndexOf(',') + 1;
+      const layoutName = ev.substring(layoutNameStart);
 
-      KeyboardLayoutService.setCurrentLayout(layoutName)
-      Logger.d("HyprlandService", "Keyboard layout switched:", layoutName)
+      KeyboardLayoutService.setCurrentLayout(layoutName);
+      Logger.d("HyprlandService", "Keyboard layout switched:", layoutName);
     } catch (e) {
-      Logger.e("HyprlandService", "Error handling activelayout:", e)
+      Logger.e("HyprlandService", "Error handling activelayout:", e);
     }
   }
 
@@ -401,8 +391,8 @@ Item {
     target: Hyprland.workspaces
     enabled: initialized
     function onValuesChanged() {
-      safeUpdateWorkspaces()
-      workspaceChanged()
+      safeUpdateWorkspaces();
+      workspaceChanged();
     }
   }
 
@@ -410,7 +400,7 @@ Item {
     target: Hyprland.toplevels
     enabled: initialized
     function onValuesChanged() {
-      updateTimer.restart()
+      updateTimer.restart();
     }
   }
 
@@ -418,19 +408,19 @@ Item {
     target: Hyprland
     enabled: initialized
     function onRawEvent(event) {
-      Hyprland.refreshWorkspaces()
-      safeUpdateWorkspaces()
-      workspaceChanged()
-      updateTimer.restart()
+      Hyprland.refreshWorkspaces();
+      safeUpdateWorkspaces();
+      workspaceChanged();
+      updateTimer.restart();
 
-      const monitorsEvents = ["configreloaded", "monitoradded", "monitorremoved", "monitoraddedv2", "monitorremovedv2"]
+      const monitorsEvents = ["configreloaded", "monitoradded", "monitorremoved", "monitoraddedv2", "monitorremovedv2"];
 
       if (monitorsEvents.includes(event.name)) {
-        Qt.callLater(queryDisplayScales)
+        Qt.callLater(queryDisplayScales);
       }
 
       if (event.name == "activelayout") {
-        handleActiveLayoutEvent(event.data)
+        handleActiveLayoutEvent(event.data);
       }
     }
   }
@@ -438,33 +428,33 @@ Item {
   // Public functions
   function switchToWorkspace(workspace) {
     try {
-      Hyprland.dispatch(`workspace ${workspace.idx}`)
+      Hyprland.dispatch(`workspace ${workspace.idx}`);
     } catch (e) {
-      Logger.e("HyprlandService", "Failed to switch workspace:", e)
+      Logger.e("HyprlandService", "Failed to switch workspace:", e);
     }
   }
 
   function focusWindow(window) {
     try {
-      Hyprland.dispatch(`focuswindow address:0x${window.id.toString()}`)
+      Hyprland.dispatch(`focuswindow address:0x${window.id.toString()}`);
     } catch (e) {
-      Logger.e("HyprlandService", "Failed to switch window:", e)
+      Logger.e("HyprlandService", "Failed to switch window:", e);
     }
   }
 
   function closeWindow(window) {
     try {
-      Hyprland.dispatch(`killwindow address:0x${window.id}`)
+      Hyprland.dispatch(`killwindow address:0x${window.id}`);
     } catch (e) {
-      Logger.e("HyprlandService", "Failed to close window:", e)
+      Logger.e("HyprlandService", "Failed to close window:", e);
     }
   }
 
   function logout() {
     try {
-      Quickshell.execDetached(["hyprctl", "dispatch", "exit"])
+      Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
     } catch (e) {
-      Logger.e("HyprlandService", "Failed to logout:", e)
+      Logger.e("HyprlandService", "Failed to logout:", e);
     }
   }
 }

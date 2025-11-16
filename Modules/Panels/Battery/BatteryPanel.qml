@@ -1,12 +1,12 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Services.Hardware
 import qs.Widgets
-import qs.Modules.MainScreen
 
 SmartPanel {
   id: root
@@ -14,21 +14,25 @@ SmartPanel {
   property var optionsModel: []
 
   function updateOptionsModel() {
-    let newOptions = [{
-                        "id": BatteryService.ChargingMode.Full,
-                        "label": "battery.panel.full"
-                      }, {
-                        "id": BatteryService.ChargingMode.Balanced,
-                        "label": "battery.panel.balanced"
-                      }, {
-                        "id": BatteryService.ChargingMode.Lifespan,
-                        "label": "battery.panel.lifespan"
-                      }]
-    root.optionsModel = newOptions
+    let newOptions = [
+          {
+            "id": BatteryService.ChargingMode.Full,
+            "label": "battery.panel.full"
+          },
+          {
+            "id": BatteryService.ChargingMode.Balanced,
+            "label": "battery.panel.balanced"
+          },
+          {
+            "id": BatteryService.ChargingMode.Lifespan,
+            "label": "battery.panel.lifespan"
+          }
+        ];
+    root.optionsModel = newOptions;
   }
 
   onOpened: {
-    updateOptionsModel()
+    updateOptionsModel();
   }
 
   ButtonGroup {
@@ -49,7 +53,7 @@ SmartPanel {
                         })
           checked: BatteryService.chargingMode === modelData.id
           onClicked: {
-            BatteryService.setChargingMode(modelData.id)
+            BatteryService.setChargingMode(modelData.id);
           }
           Layout.fillWidth: true
         }
@@ -131,7 +135,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              root.close()
+              root.close();
             }
           }
         }

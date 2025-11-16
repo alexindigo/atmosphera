@@ -24,37 +24,36 @@ Item {
 
   function toggleItem(index) {
     if (index < 0 || index >= root.model.length)
-      return
-
-    var item = root.model[index]
+      return;
+    var item = root.model[index];
     if (item.required)
-      return
+      return;
 
     // Create a new array to trigger binding update
-    var newModel = root.model.slice()
+    var newModel = root.model.slice();
     newModel[index] = Object.assign({}, item, {
                                       "enabled": !item.enabled
-                                    })
-    root.model = newModel
+                                    });
+    root.model = newModel;
 
-    root.itemToggled(index, newModel[index].enabled)
+    root.itemToggled(index, newModel[index].enabled);
   }
 
   function moveItem(fromIndex, toIndex) {
     if (fromIndex === toIndex)
-      return
+      return;
     if (fromIndex < 0 || fromIndex >= root.model.length)
-      return
+      return;
     if (toIndex < 0 || toIndex >= root.model.length)
-      return
+      return;
 
     // Create a new array with item moved
-    var newModel = root.model.slice()
-    var item = newModel.splice(fromIndex, 1)[0]
-    newModel.splice(toIndex, 0, item)
-    root.model = newModel
+    var newModel = root.model.slice();
+    var item = newModel.splice(fromIndex, 1)[0];
+    newModel.splice(toIndex, 0, item);
+    root.model = newModel;
 
-    root.itemsReordered(fromIndex, toIndex)
+    root.itemsReordered(fromIndex, toIndex);
   }
 
   ListView {
@@ -134,61 +133,61 @@ Item {
 
             onPressed: mouse => {
                          if (delegateItem.required || delegateItem.isDisabled) {
-                           return
+                           return;
                          }
-                         delegateItem.dragStartIndex = delegateItem.index
-                         delegateItem.dragTargetIndex = delegateItem.index
-                         delegateItem.dragStartY = delegateItem.y
-                         delegateItem.dragging = true
-                         delegateItem.z = 999
+                         delegateItem.dragStartIndex = delegateItem.index;
+                         delegateItem.dragTargetIndex = delegateItem.index;
+                         delegateItem.dragStartY = delegateItem.y;
+                         delegateItem.dragging = true;
+                         delegateItem.z = 999;
 
                          // Signal that interaction started (prevents panel close)
-                         preventStealing = true
-                         root.dragPotentialStarted()
+                         preventStealing = true;
+                         root.dragPotentialStarted();
                        }
 
             onPositionChanged: mouse => {
                                  if (delegateItem.dragging) {
-                                   var dy = mouse.y - dragHandle.height / 2
-                                   var newY = delegateItem.y + dy
+                                   var dy = mouse.y - dragHandle.height / 2;
+                                   var newY = delegateItem.y + dy;
 
                                    // Constrain within bounds
-                                   newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height))
-                                   delegateItem.y = newY
+                                   newY = Math.max(0, Math.min(newY, listView.contentHeight - delegateItem.height));
+                                   delegateItem.y = newY;
 
                                    // Calculate target index (but don't apply yet)
-                                   var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + delegateItem.itemSpacing))
-                                   targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1))
+                                   var targetIndex = Math.floor((newY + delegateItem.height / 2) / (delegateItem.height + delegateItem.itemSpacing));
+                                   targetIndex = Math.max(0, Math.min(targetIndex, listView.count - 1));
 
-                                   delegateItem.dragTargetIndex = targetIndex
+                                   delegateItem.dragTargetIndex = targetIndex;
                                  }
                                }
 
             onReleased: {
               // Always signal end of interaction
-              preventStealing = false
-              root.dragPotentialEnded()
+              preventStealing = false;
+              root.dragPotentialEnded();
 
               // Apply the model change now that drag is complete
               if (delegateItem.dragStartIndex !== -1 && delegateItem.dragTargetIndex !== -1 && delegateItem.dragStartIndex !== delegateItem.dragTargetIndex) {
-                root.moveItem(delegateItem.dragStartIndex, delegateItem.dragTargetIndex)
+                root.moveItem(delegateItem.dragStartIndex, delegateItem.dragTargetIndex);
               }
 
-              delegateItem.dragging = false
-              delegateItem.dragStartIndex = -1
-              delegateItem.dragTargetIndex = -1
-              delegateItem.z = 0
+              delegateItem.dragging = false;
+              delegateItem.dragStartIndex = -1;
+              delegateItem.dragTargetIndex = -1;
+              delegateItem.z = 0;
             }
 
             onCanceled: {
               // Handle cancel (e.g., ESC key pressed during drag)
-              preventStealing = false
-              root.dragPotentialEnded()
+              preventStealing = false;
+              root.dragPotentialEnded();
 
-              delegateItem.dragging = false
-              delegateItem.dragStartIndex = -1
-              delegateItem.dragTargetIndex = -1
-              delegateItem.z = 0
+              delegateItem.dragging = false;
+              delegateItem.dragStartIndex = -1;
+              delegateItem.dragTargetIndex = -1;
+              delegateItem.z = 0;
             }
           }
         }
@@ -233,7 +232,7 @@ Item {
 
             onClicked: {
               if (!delegateItem.required && !delegateItem.isDisabled) {
-                root.toggleItem(delegateItem.index)
+                root.toggleItem(delegateItem.index);
               }
             }
           }
@@ -260,39 +259,39 @@ Item {
       // Position binding for non-dragging state
       y: {
         if (delegateItem.dragging) {
-          return delegateItem.y
+          return delegateItem.y;
         }
 
         // Check if any item is being dragged
-        var draggedIndex = -1
-        var targetIndex = -1
+        var draggedIndex = -1;
+        var targetIndex = -1;
         for (var i = 0; i < listView.count; i++) {
-          var item = listView.itemAtIndex(i)
+          var item = listView.itemAtIndex(i);
           if (item && item.dragging) {
-            draggedIndex = item.dragStartIndex
-            targetIndex = item.dragTargetIndex
-            break
+            draggedIndex = item.dragStartIndex;
+            targetIndex = item.dragTargetIndex;
+            break;
           }
         }
 
         // If an item is being dragged, adjust positions
         if (draggedIndex !== -1 && targetIndex !== -1 && draggedIndex !== targetIndex) {
-          var currentIndex = delegateItem.index
+          var currentIndex = delegateItem.index;
 
           if (draggedIndex < targetIndex) {
             // Dragging down: shift items up between draggedIndex and targetIndex
             if (currentIndex > draggedIndex && currentIndex <= targetIndex) {
-              return (currentIndex - 1) * (delegateItem.height + delegateItem.itemSpacing)
+              return (currentIndex - 1) * (delegateItem.height + delegateItem.itemSpacing);
             }
           } else {
             // Dragging up: shift items down between targetIndex and draggedIndex
             if (currentIndex >= targetIndex && currentIndex < draggedIndex) {
-              return (currentIndex + 1) * (delegateItem.height + delegateItem.itemSpacing)
+              return (currentIndex + 1) * (delegateItem.height + delegateItem.itemSpacing);
             }
           }
         }
 
-        return delegateItem.index * (delegateItem.height + delegateItem.itemSpacing)
+        return delegateItem.index * (delegateItem.height + delegateItem.itemSpacing);
       }
 
       Behavior on y {

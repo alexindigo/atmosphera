@@ -10,11 +10,11 @@ Text {
   property real pointSize: Style.fontSizeM
   property bool applyUiScale: true
   property real fontScale: {
-    const fontScale = (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale)
+    const fontScale = (root.family === Settings.data.ui.fontDefault ? Settings.data.ui.fontDefaultScale : Settings.data.ui.fontFixedScale);
     if (applyUiScale) {
-      return fontScale * Style.uiScaleRatio
+      return fontScale * Style.uiScaleRatio;
     }
-    return fontScale
+    return fontScale;
   }
 
   font.family: root.family

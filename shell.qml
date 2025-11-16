@@ -1,9 +1,8 @@
-
 /*
- * Noctalia – made by https://github.com/noctalia-dev
- * Licensed under the MIT License.
- * Forks and modifications are allowed under the MIT License,
- * but proper credit must be given to the original author.
+* Noctalia – made by https://github.com/noctalia-dev
+* Licensed under the MIT License.
+* Forks and modifications are allowed under the MIT License,
+* but proper credit must be given to the original author.
 */
 
 // Qt & Quickshell Core
@@ -13,24 +12,24 @@ import Quickshell.Services.SystemTray
 
 // Commons & Services
 import qs.Commons
-import qs.Services.Control
-import qs.Services.Theming
-import qs.Services.Hardware
-import qs.Services.Location
-import qs.Services.Networking
-import qs.Services.Power
-import qs.Services.System
-import qs.Services.UI
 
 // Modules
 import qs.Modules.Background
 import qs.Modules.Bar
 import qs.Modules.Dock
-import qs.Modules.MainScreen
 import qs.Modules.LockScreen
+import qs.Modules.MainScreen
 import qs.Modules.Notification
 import qs.Modules.OSD
 import qs.Modules.Toast
+import qs.Services.Control
+import qs.Services.Hardware
+import qs.Services.Location
+import qs.Services.Networking
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.Theming
+import qs.Services.UI
 
 ShellRoot {
   id: shellRoot
@@ -39,28 +38,28 @@ ShellRoot {
   property bool settingsLoaded: false
 
   Component.onCompleted: {
-    Logger.i("Shell", "---------------------------")
-    Logger.i("Shell", "Noctalia Hello!")
+    Logger.i("Shell", "---------------------------");
+    Logger.i("Shell", "Noctalia Hello!");
   }
 
   Connections {
     target: Quickshell
     function onReloadCompleted() {
-      Quickshell.inhibitReloadPopup()
+      Quickshell.inhibitReloadPopup();
     }
   }
 
   Connections {
     target: I18n ? I18n : null
     function onTranslationsLoaded() {
-      i18nLoaded = true
+      i18nLoaded = true;
     }
   }
 
   Connections {
     target: Settings ? Settings : null
     function onSettingsLoaded() {
-      settingsLoaded = true
+      settingsLoaded = true;
     }
   }
   Loader {
@@ -68,25 +67,25 @@ ShellRoot {
 
     sourceComponent: Item {
       Component.onCompleted: {
-        Logger.i("Shell", "---------------------------")
-        SystemTrayService.init()
-        WallpaperService.init()
-        AppThemeService.init()
-        ColorSchemeService.init()
-        LocationService.init()
-        NightLightService.apply()
-        DarkModeService.init()
-        HooksService.init()
-        BluetoothService.init()
-        BatteryService.init()
-        IdleInhibitorService.init()
-        PowerProfileService.init()
-        HostService.init()
-        FontService.init()
+        Logger.i("Shell", "---------------------------");
+        SystemTrayService.init();
+        WallpaperService.init();
+        AppThemeService.init();
+        ColorSchemeService.init();
+        LocationService.init();
+        NightLightService.apply();
+        DarkModeService.init();
+        HooksService.init();
+        BluetoothService.init();
+        BatteryService.init();
+        IdleInhibitorService.init();
+        PowerProfileService.init();
+        HostService.init();
+        FontService.init();
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
-          checkSetupWizard()
+          checkSetupWizard();
         }
       }
 
@@ -101,7 +100,7 @@ ShellRoot {
         id: lockScreen
         Component.onCompleted: {
           // Save a ref. to our lockScreen so we can access it  easily
-          PanelService.lockScreen = lockScreen
+          PanelService.lockScreen = lockScreen;
         }
       }
 
@@ -122,40 +121,40 @@ ShellRoot {
     running: false
     interval: 1000
     onTriggered: {
-      showSetupWizard()
+      showSetupWizard();
     }
   }
 
   function checkSetupWizard() {
     // Wait for distro service
     if (!HostService.isReady) {
-      Qt.callLater(checkSetupWizard)
-      return
+      Qt.callLater(checkSetupWizard);
+      return;
     }
 
     // No setup wizard on NixOS
     if (HostService.isNixOS) {
-      Settings.data.setupCompleted = true
-      return
+      Settings.data.setupCompleted = true;
+      return;
     }
 
     if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardTimer.start()
+      setupWizardTimer.start();
     } else {
-      Settings.data.setupCompleted = true
+      Settings.data.setupCompleted = true;
     }
   }
 
   function showSetupWizard() {
     // Open Setup Wizard as a panel in the same windowing system as Settings/ControlCenter
     if (Quickshell.screens.length > 0) {
-      var targetScreen = Quickshell.screens[0]
-      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen)
+      var targetScreen = Quickshell.screens[0];
+      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
       if (setupPanel) {
-        setupPanel.open()
+        setupPanel.open();
       } else {
         // If not yet loaded, ensure it loads and try again shortly
-        setupWizardTimer.restart()
+        setupWizardTimer.restart();
       }
     }
   }

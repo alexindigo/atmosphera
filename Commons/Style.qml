@@ -7,11 +7,6 @@ import qs.Services.Power
 Singleton {
   id: root
 
-
-  /*
-    Preset sizes for font, radii, ?
-  */
-
   // Font size
   readonly property real fontSizeXXS: 8
   readonly property real fontSizeXS: 9
@@ -86,29 +81,27 @@ Singleton {
   readonly property real barHeight: {
     switch (Settings.data.bar.density) {
       case "mini":
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 22 : 20
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 22 : 20;
       case "compact":
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25;
       case "comfortable":
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37;
       default:
-
       case "default":
-      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31
+      return (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31;
     }
   }
   readonly property real capsuleHeight: {
     switch (Settings.data.bar.density) {
       case "mini":
-      return Math.round(barHeight * 1.0)
+      return Math.round(barHeight * 1.0);
       case "compact":
-      return Math.round(barHeight * 0.85)
+      return Math.round(barHeight * 0.85);
       case "comfortable":
-      return Math.round(barHeight * 0.73)
+      return Math.round(barHeight * 0.73);
       default:
-
       case "default":
-      return Math.round(barHeight * 0.82)
+      return Math.round(barHeight * 0.82);
     }
   }
 }
