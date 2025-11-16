@@ -10,7 +10,6 @@ import qs.Commons
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
-import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
 import qs.Modules.Panels.Calendar
 import qs.Modules.Panels.ControlCenter
@@ -32,7 +31,6 @@ PanelWindow {
 
   // Expose panels as readonly property aliases
   readonly property alias audioPanel: audioPanel
-  readonly property alias batteryPanel: batteryPanel
   readonly property alias bluetoothPanel: bluetoothPanel
   readonly property alias calendarPanel: calendarPanel
   readonly property alias controlCenterPanel: controlCenterPanel
@@ -47,7 +45,6 @@ PanelWindow {
 
   // Expose panel placeholders for AllBackgrounds
   readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
-  readonly property var batteryPanelPlaceholder: batteryPanel.panelPlaceholder
   readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
   readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
   readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelPlaceholder
@@ -167,17 +164,6 @@ PanelWindow {
       Component.onCompleted: {
         objectName = "audioPanel-" + (screen?.name || "unknown");
         PanelService.registerPanel(audioPanel);
-      }
-    }
-
-    BatteryPanel {
-      id: batteryPanel
-      screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "batteryPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(batteryPanel);
       }
     }
 

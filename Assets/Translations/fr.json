@@ -363,13 +363,6 @@
     "health": "État : {percent}%",
     "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
-    "panel": {
-      "balanced": "Équilibré ({percent}%)",
-      "disabled": "Gestionnaire de batterie désactivé",
-      "full": "Capacité totale ({percent}%)",
-      "lifespan": "Durée de vie prolongée ({percent}%)",
-      "title": "Seuil de charge"
-    },
     "plugged-in": "Branché.",
     "time-left": "Temps restant : {time}.",
     "time-until-full": "Temps jusqu'à charge complète : {time}."
@@ -1869,19 +1862,6 @@
     "battery": {
       "low": "Batterie faible",
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuration initiale requise",
-      "install-failed": "Échec de l'installation",
-      "install-missing": "Fichiers requis manquants",
-      "install-success": "Installation réussie",
-      "install-unsupported": "Système non pris en charge",
-      "set-failed": "Échec de la définition du seuil de batterie",
-      "set-success-desc": "Seuil de batterie défini à {percent}%",
-      "title": "Seuil de batterie",
-      "uninstall-failed": "Échec de la désinstallation",
-      "uninstall-setup": "Désinstallation, authentification requise",
-      "uninstall-success": "Désinstallation réussie"
     },
     "bluetooth": {
       "disabled": "Désactivé",

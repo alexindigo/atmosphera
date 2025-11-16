@@ -76,7 +76,6 @@ ShellRoot {
         DarkModeService.init();
         HooksService.init();
         BluetoothService.init();
-        BatteryService.init();
         IdleInhibitorService.init();
         PowerProfileService.init();
         HostService.init();
