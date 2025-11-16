@@ -12,6 +12,7 @@ Singleton {
   property string langCode: ""
   property var locale: Qt.locale()
   property string systemDetectedLangCode: ""
+  property string fullLocaleCode: "" // Preserves regional locale variants
   property var availableLanguages: []
   property var translations: ({})
   property var fallbackTranslations: ({})
@@ -160,6 +161,7 @@ Singleton {
     }
 
     var detectedLang = ""
+    var detectedFullLocale = ""
 
     // First, determine the system's preferred language
     for (var i = 0; i < Qt.locale().uiLanguages.length; i++) {
@@ -167,12 +169,14 @@ Singleton {
 
       if (availableLanguages.includes(fullUserLang)) {
         detectedLang = fullUserLang
+        detectedFullLocale = fullUserLang
         break
       }
 
       const shortUserLang = fullUserLang.substring(0, 2)
       if (availableLanguages.includes(shortUserLang)) {
         detectedLang = shortUserLang
+        detectedFullLocale = fullUserLang
         break
       }
     }
@@ -180,10 +184,12 @@ Singleton {
     // If no system language is found among available languages, fallback
     if (detectedLang === "") {
       detectedLang = availableLanguages.includes("en") ? "en" : availableLanguages[0]
+      detectedFullLocale = detectedLang
     }
 
     root.systemDetectedLangCode = detectedLang
-    Logger.d("I18n", `System detected language: "${root.systemDetectedLangCode}"`)
+    root.fullLocaleCode = detectedFullLocale
+    Logger.d("I18n", `System detected language: "${root.systemDetectedLangCode}" (full locale: "${root.fullLocaleCode}")`)
 
     // Now, apply the language: user-defined, then system-detected
     if (Settings.data.general.language !== "" && availableLanguages.includes(Settings.data.general.language)) {
@@ -191,16 +197,21 @@ Singleton {
       setLanguage(Settings.data.general.language)
     } else {
       Logger.d("I18n", `No user-defined language, using system detected: "${root.systemDetectedLangCode}"`)
-      setLanguage(root.systemDetectedLangCode)
+      setLanguage(root.systemDetectedLangCode, root.fullLocaleCode)
     }
   }
 
   // -------------------------------------------
-  function setLanguage(newLangCode) {
+  function setLanguage(newLangCode, fullLocale) {
+    if (typeof fullLocale === "undefined") {
+      fullLocale = newLangCode
+    }
+
     if (newLangCode !== langCode && availableLanguages.includes(newLangCode)) {
       langCode = newLangCode
-      locale = Qt.locale(langCode)
-      Logger.i("I18n", `Language set to "${langCode}"`)
+      fullLocaleCode = fullLocale
+      locale = Qt.locale(fullLocale)
+      Logger.i("I18n", `Language set to "${langCode}" with locale "${fullLocale}"`)
       languageChanged(langCode)
       loadTranslations()
     } else if (!availableLanguages.includes(newLangCode)) {
