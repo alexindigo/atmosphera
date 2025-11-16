@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Afficher uniquement l'étiquette de l'espace de travail pour les espaces de travail qui ont des fenêtres ouvertes.",
           "label": "Afficher l'étiquette uniquement lorsque c'est occupé."
-        },
-        "show-workspace-numbers": {
-          "description": "Afficher l'étiquette de l'espace de travail dans le coin supérieur gauche des groupes de tâches.",
-          "label": "Afficher l'étiquette de l'espace de travail"
         }
       },
       "tray": {
@@ -557,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index et Nom",
       "name": "Nom",
       "none": "Aucun"
     }

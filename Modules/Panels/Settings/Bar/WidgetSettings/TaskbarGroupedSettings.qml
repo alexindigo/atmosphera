@@ -44,8 +44,10 @@ ColumnLayout {
       {
         "key": "name",
         "name": I18n.tr("options.workspace-labels.name")
-      }
-    ]
+      }, {
+        "key": "index+name",
+        "name": I18n.tr("options.workspace-labels.index+name")
+      }]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => valueLabelMode = key
     minimumWidth: 200
@@ -68,16 +70,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-workspace-numbers.label")
-    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-workspace-numbers.description")
-    checked: root.valueShowWorkspaceNumbers
-    onToggled: checked => root.valueShowWorkspaceNumbers = checked
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-numbers-only-when-occupied.label")
-    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-numbers-only-when-occupied.description")
+    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.label")
+    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.description")
     checked: root.valueShowNumbersOnlyWhenOccupied
     onToggled: checked => root.valueShowNumbersOnlyWhenOccupied = checked
     visible: root.valueShowWorkspaceNumbers

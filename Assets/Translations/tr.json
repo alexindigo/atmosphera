@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Sadece açık pencereleri olan çalışma alanları için çalışma alanı etiketini göster.",
           "label": "Sadece dolu olduğunda etiketi göster."
-        },
-        "show-workspace-numbers": {
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı etiketini görüntüle.",
-          "label": "Çalışma alanı etiketini göster"
         }
       },
       "tray": {
@@ -557,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "İndeks",
+      "index+name": "Dizin ve Ad",
       "name": "İsim",
       "none": "Hiçbiri"
     }

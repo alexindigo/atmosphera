@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Toon alleen de werkomgevinglabels voor werkomgevingen met open vensters.",
           "label": "Label alleen tonen wanneer bezet"
-        },
-        "show-workspace-numbers": {
-          "description": "Toon het label van de werkruimte in de linkerbovenhoek van taakgroepen.",
-          "label": "Werkruimtelabel weergeven"
         }
       },
       "tray": {
@@ -557,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index en Naam",
       "name": "Naam",
       "none": "Geen"
     }
