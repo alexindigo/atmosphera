@@ -9,7 +9,7 @@ Singleton {
 
   // Public properties
   property string baseVersion: "3.1.1"
-  property bool isDevelopment: false
+  property bool isDevelopment: true
 
   property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
 
