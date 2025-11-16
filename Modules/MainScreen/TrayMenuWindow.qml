@@ -41,7 +41,7 @@ PanelWindow {
   function close() {
     visible = false
     if (trayMenu.item) {
-      trayMenu.item.hideMenu()
+      trayMenu.item.hideMenu(false) // Don't close window again (prevents recursion)
     }
   }
 

@@ -16,16 +16,85 @@ PopupWindow {
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
-  property bool isHovered: rootMouseArea.containsMouse
   property string widgetSection: ""
   property int widgetIndex: -1
 
-  // Track if we should try to load menu items
-  property int menuLoadTrigger: 0
-  property var menuItems: []
-
   // Menu can be set directly (for submenus) or derived from trayItem
   property var menu: null
+  property var menuItems: []
+  property int loadRetryCount: 0
+
+  // Timer to defer menu loading to avoid freezing on opener.children access
+  // Uses retry mechanism with exponential backoff for reliability
+  Timer {
+    id: menuLoadTimer
+    interval: 100 // Start with 100ms, increases on retry
+    repeat: false
+    onTriggered: {
+      if (!root.visible || !root.menu) {
+        root.menuItems = []
+        root.loadRetryCount = 0
+        return
+      }
+
+      try {
+        if (opener && opener.children) {
+          const values = opener.children.values
+          if (values && values.length > 0) {
+            root.menuItems = [...values]
+            root.loadRetryCount = 0 // Success, reset retry count
+          } else {
+            // Empty menu - retry if we haven't exceeded max attempts
+            if (root.loadRetryCount < 4) {
+              root.loadRetryCount++
+              menuLoadTimer.interval = 100 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff: 100, 200, 400, 800
+              menuLoadTimer.running = true
+            } else {
+              // Max retries exceeded, give up
+              root.menuItems = []
+              root.loadRetryCount = 0
+            }
+          }
+        } else {
+          // opener.children not ready - retry if we haven't exceeded max attempts
+          if (root.loadRetryCount < 3) {
+            root.loadRetryCount++
+            menuLoadTimer.interval = 100 * Math.pow(2, root.loadRetryCount - 1) // Exponential backoff
+            menuLoadTimer.running = true
+          } else {
+            // Max retries exceeded, give up
+            root.menuItems = []
+            root.loadRetryCount = 0
+          }
+        }
+      } catch (e) {
+        Logger.w("TrayMenu", "Error accessing menu items:", e)
+        root.menuItems = []
+        root.loadRetryCount = 0
+      }
+    }
+  }
+
+  onVisibleChanged: {
+    if (visible && menu) {
+      root.loadRetryCount = 0
+      menuLoadTimer.interval = 100 // Reset to initial interval
+      menuLoadTimer.running = false
+      menuLoadTimer.running = true
+    } else if (!visible) {
+      root.loadRetryCount = 0
+      menuLoadTimer.running = false
+    }
+  }
+
+  onMenuChanged: {
+    if (visible && menu) {
+      root.loadRetryCount = 0
+      menuLoadTimer.interval = 100 // Reset to initial interval
+      menuLoadTimer.running = false
+      menuLoadTimer.running = true
+    }
+  }
 
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
@@ -64,39 +133,6 @@ PopupWindow {
     return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight
   }
 
-  // Only try to load menu items when explicitly requested
-  onMenuLoadTriggerChanged: {
-    loadMenuItemsSafely()
-  }
-
-  function loadMenuItemsSafely() {
-    // Use a timer to defer the access
-    loadTimer.start()
-  }
-
-  Timer {
-    id: loadTimer
-    interval: 50
-    repeat: false
-    onTriggered: {
-      try {
-        if (opener && opener.children && opener.children.values) {
-          const values = opener.children.values
-          if (values && values.length > 0) {
-            root.menuItems = [...values]
-            Logger.i("TrayMenu", "Loaded " + root.menuItems.length + " menu items")
-          } else {
-            Logger.warn("TrayMenu", "opener.children.values is empty")
-          }
-        } else {
-          Logger.warn("TrayMenu", "opener.children not available")
-        }
-      } catch (e) {
-        Logger.w("TrayMenu", "Failed to load menu items: " + e)
-      }
-    }
-  }
-
   function showAt(item, x, y) {
     if (!item) {
       Logger.warn("TrayMenu", "anchorItem is undefined, won't show menu.")
@@ -111,12 +147,6 @@ PopupWindow {
     anchorX = x
     anchorY = y
 
-    // Reset menu items to force reload with new menu
-    menuItems = []
-
-    // Increment trigger to reload menu (always triggers even if already loaded)
-    menuLoadTrigger++
-
     visible = true
     forceActiveFocus()
 
@@ -126,7 +156,7 @@ PopupWindow {
                  })
   }
 
-  function hideMenu() {
+  function hideMenu(closeWindow = true) {
     visible = false
 
     // Clean up all submenus recursively
@@ -138,13 +168,15 @@ PopupWindow {
         child.subMenu = null
       }
     }
-  }
 
-  // Full-sized, transparent MouseArea to track the mouse.
-  MouseArea {
-    id: rootMouseArea
-    anchors.fill: parent
-    hoverEnabled: true
+    // Close the parent TrayMenuWindow if this is not a submenu
+    // closeWindow parameter prevents infinite recursion
+    if (closeWindow && !isSubMenu && screen) {
+      const trayMenuWindow = PanelService.getTrayMenuWindow(screen)
+      if (trayMenuWindow) {
+        trayMenuWindow.close()
+      }
+    }
   }
 
   QsMenuOpener {
