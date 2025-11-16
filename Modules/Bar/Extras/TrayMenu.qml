@@ -45,7 +45,7 @@ PopupWindow {
   // Uses retry mechanism with exponential backoff for reliability
   Timer {
     id: menuLoadTimer
-    interval: 150 // Start with 150ms (increased from 100ms for more stability)
+    interval: 50
     repeat: false
     onTriggered: {
       // Early exit if not visible, no stable menu, or already loading
@@ -189,7 +189,7 @@ PopupWindow {
 
   function showAt(item, x, y) {
     if (!item) {
-      Logger.warn("TrayMenu", "anchorItem is undefined, won't show menu.")
+      Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.")
       return
     }
 
