@@ -921,7 +921,7 @@ SmartPanel {
           property int itemSize: cellWidth
 
           cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-          cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
+          cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + (Settings.data.wallpaper.hideWallpaperFilenames ? 0 : Style.fontSizeXS + Style.marginM)
 
           leftMargin: Style.marginS
           rightMargin: Style.marginS
@@ -1062,6 +1062,7 @@ SmartPanel {
 
             NText {
               text: wallpaperId || I18n.tr("wallpaper.unknown")
+              visible: !Settings.data.wallpaper.hideWallpaperFilenames
               color: hoverHandler.hovered || wallhavenGridView.currentIndex === index ? Color.mOnSurface : Color.mOnSurfaceVariant
               pointSize: Style.fontSizeXS
               Layout.fillWidth: true
