@@ -1199,7 +1199,11 @@ SmartPanel {
       RowLayout {
         Layout.fillWidth: true
         visible: !loading && errorMessage === "" && typeof WallhavenService !== "undefined"
-        spacing: Style.marginM
+        spacing: Style.marginS
+
+        Item {
+          Layout.fillWidth: true
+        }
 
         NIconButton {
           icon: "chevron-left"
@@ -1210,7 +1214,6 @@ SmartPanel {
         NText {
           text: I18n.tr("wallpaper.wallhaven.page").replace("{current}", WallhavenService.currentPage).replace("{total}", WallhavenService.lastPage)
           color: Color.mOnSurface
-          Layout.fillWidth: true
           horizontalAlignment: Text.AlignHCenter
         }
 
@@ -1218,6 +1221,10 @@ SmartPanel {
           icon: "chevron-right"
           enabled: WallhavenService.currentPage < WallhavenService.lastPage && !WallhavenService.fetching
           onClicked: WallhavenService.nextPage()
+        }
+
+        Item {
+          Layout.fillWidth: true
         }
       }
     }
