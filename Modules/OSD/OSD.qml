@@ -352,7 +352,7 @@ Variants {
       // Dimensions
       readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
       readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
-      readonly property int vWidth: Math.round(72 * Style.uiScaleRatio)
+      readonly property int vWidth: Math.round(80 * Style.uiScaleRatio)
       readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio))
@@ -458,11 +458,20 @@ Variants {
         Component {
           id: horizontalContent
           RowLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Style.marginL
+            anchors.fill: parent
+            anchors.leftMargin: Style.marginL
+            anchors.rightMargin: Style.marginL
             spacing: Style.marginM
+            clip: true
+
+            // TextMetrics to measure the maximum possible percentage width (150%)
+            TextMetrics {
+              id: percentageMetrics
+              font.family: Settings.data.ui.fontFixed
+              font.weight: Style.fontWeightMedium
+              font.pointSize: Style.fontSizeS * (Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
+              text: "150%" // Maximum possible value with volumeOverdrive
+            }
 
             NIcon {
               icon: root.getIcon()
@@ -480,6 +489,7 @@ Variants {
 
             Rectangle {
               Layout.fillWidth: true
+              Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
               radius: Math.round(panel.barThickness / 2)
               color: Color.mSurfaceVariant
@@ -516,7 +526,10 @@ Variants {
               Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
               horizontalAlignment: Text.AlignRight
               verticalAlignment: Text.AlignVCenter
-              Layout.preferredWidth: Math.round(50 * Style.uiScaleRatio)
+              Layout.fillWidth: false
+              Layout.preferredWidth: Math.ceil(percentageMetrics.width) + Math.round(8 * Style.uiScaleRatio)
+              Layout.maximumWidth: Math.ceil(percentageMetrics.width) + Math.round(8 * Style.uiScaleRatio)
+              Layout.minimumWidth: Math.ceil(percentageMetrics.width)
             }
           }
         }
@@ -528,6 +541,7 @@ Variants {
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
             spacing: Style.marginS
+            clip: true
 
             NText {
               text: root.getDisplayPercentage()
