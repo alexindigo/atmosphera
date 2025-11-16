@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "只为有打开窗口的工作区显示编号",
-          "label": "仅在有窗口时显示编号"
+          "description": "只显示有打开窗口的工作区标签。",
+          "label": "仅在被占用时显示标签"
         },
         "show-workspace-numbers": {
-          "description": "在任务组左上角显示工作区编号",
-          "label": "显示工作区编号"
+          "description": "在任务组左上角显示工作区标签。",
+          "label": "显示工作区标签"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "搜索...",
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",
-    "search-wallpapers": "输入以筛选壁纸...",
     "search-wallhaven": "搜索 Wallhaven...",
+    "search-wallpapers": "输入以筛选壁纸...",
     "select": "选择",
     "test": "测试"
   },
@@ -2047,6 +2047,11 @@
         "label": "分类",
         "people": "人物"
       },
+      "order": {
+        "asc": "升序",
+        "desc": "降序",
+        "label": "顺序"
+      },
       "purity": {
         "all": "全部",
         "label": "内容过滤器",
@@ -2071,21 +2076,16 @@
         "toplist": "排行榜",
         "views": "浏览量"
       },
-      "order": {
-        "asc": "升序",
-        "desc": "降序",
-        "label": "顺序"
-      },
-      "wallhaven-settings": {
-        "apply": "应用",
-        "title": "Wallhaven 设置"
-      },
       "source": {
         "label": "来源",
         "local": "本地",
         "wallhaven": "Wallhaven"
       },
-      "title": "壁纸选择器"
+      "title": "壁纸选择器",
+      "wallhaven-settings": {
+        "apply": "应用",
+        "title": "Wallhaven 设置"
+      }
     },
     "transitions": {
       "disc": "圆盘",
@@ -2096,6 +2096,7 @@
       "wipe": "擦除"
     },
     "try-different-search": "尝试不同的搜索查询。",
+    "unknown": "未知",
     "wallhaven": {
       "loading": "正在加载壁纸...",
       "no-results": "未找到壁纸。请尝试不同的搜索查询。",

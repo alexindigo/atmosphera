@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Arbeitsbereichsnummern nur für Arbeitsbereiche mit geöffneten Fenstern anzeigen.",
-          "label": "Nur bei belegten Arbeitsbereichen anzeigen"
+          "description": "Zeige nur die Workspace-Bezeichnung für Workspaces an, die offene Fenster haben.",
+          "label": "Zeige Label nur bei Belegung"
         },
         "show-workspace-numbers": {
-          "description": "Arbeitsbereichsnummern in der oberen linken Ecke der Task-Gruppen anzeigen.",
-          "label": "Arbeitsbereichsnummern anzeigen"
+          "description": "Arbeitsbereichsbezeichnung in der oberen linken Ecke von Aufgabengruppen anzeigen.",
+          "label": "Arbeitsbereichsbezeichnung anzeigen"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Suchen...",
     "search-icons": "z.B. noctalia, niri, battery, cloud",
     "search-launcher": "Einträge suchen... oder > für Befehle verwenden",
-    "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "search-wallhaven": "Wallhaven durchsuchen...",
+    "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "select": "Auswählen",
     "test": "Test"
   },
@@ -2047,6 +2047,11 @@
         "label": "Kategorien",
         "people": "Personen"
       },
+      "order": {
+        "asc": "Aufsteigend",
+        "desc": "Absteigend",
+        "label": "Reihenfolge"
+      },
       "purity": {
         "all": "Alle",
         "label": "Inhaltsfilter",
@@ -2071,21 +2076,16 @@
         "toplist": "Topliste",
         "views": "Aufrufe"
       },
-      "order": {
-        "asc": "Aufsteigend",
-        "desc": "Absteigend",
-        "label": "Reihenfolge"
-      },
-      "wallhaven-settings": {
-        "apply": "Anwenden",
-        "title": "Wallhaven-Einstellungen"
-      },
       "source": {
         "label": "Quelle",
         "local": "Lokal",
         "wallhaven": "Wallhaven"
       },
-      "title": "Hintergrundbild-Auswahl"
+      "title": "Hintergrundbild-Auswahl",
+      "wallhaven-settings": {
+        "apply": "Anwenden",
+        "title": "Wallhaven-Einstellungen"
+      }
     },
     "transitions": {
       "disc": "Scheibe",
@@ -2096,6 +2096,7 @@
       "wipe": "Wischen"
     },
     "try-different-search": "Versuchen Sie eine andere Suchanfrage.",
+    "unknown": "Unbekannt",
     "wallhaven": {
       "loading": "Hintergrundbilder werden geladen...",
       "no-results": "Keine Hintergrundbilder gefunden. Versuchen Sie eine andere Suchanfrage.",

@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Mostrar números de espacio de trabajo solo para espacios de trabajo con ventanas abiertas.",
-          "label": "Mostrar números solo cuando estén ocupados"
+          "description": "Mostrar solo la etiqueta del espacio de trabajo para los espacios de trabajo que tienen ventanas abiertas.",
+          "label": "Mostrar etiqueta solo cuando esté ocupado."
         },
         "show-workspace-numbers": {
-          "description": "Mostrar números de espacio de trabajo en la esquina superior izquierda de los grupos de tareas.",
-          "label": "Mostrar números de espacio de trabajo"
+          "description": "Mostrar la etiqueta del espacio de trabajo en la esquina superior izquierda de los grupos de tareas.",
+          "label": "Mostrar etiqueta del espacio de trabajo"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Buscar...",
     "search-icons": "ej., noctalia, niri, battery, cloud",
     "search-launcher": "Buscar entradas... o usa > para comandos",
-    "search-wallpapers": "Escribe para filtrar fondos de pantalla...",
     "search-wallhaven": "Buscar en Wallhaven...",
+    "search-wallpapers": "Escribe para filtrar fondos de pantalla...",
     "select": "Seleccionar",
     "test": "Probar"
   },
@@ -2047,6 +2047,11 @@
         "label": "Categorías",
         "people": "Personas"
       },
+      "order": {
+        "asc": "Ascendente",
+        "desc": "Descendente",
+        "label": "Orden"
+      },
       "purity": {
         "all": "Todo",
         "label": "Filtro de contenido",
@@ -2071,21 +2076,16 @@
         "toplist": "Lista superior",
         "views": "Visualizaciones"
       },
-      "order": {
-        "asc": "Ascendente",
-        "desc": "Descendente",
-        "label": "Orden"
-      },
-      "wallhaven-settings": {
-        "apply": "Aplicar",
-        "title": "Configuración de Wallhaven"
-      },
       "source": {
         "label": "Fuente",
         "local": "Local",
         "wallhaven": "Wallhaven"
       },
-      "title": "Selector de fondo de pantalla"
+      "title": "Selector de fondo de pantalla",
+      "wallhaven-settings": {
+        "apply": "Aplicar",
+        "title": "Configuración de Wallhaven"
+      }
     },
     "transitions": {
       "disc": "Disco",
@@ -2096,6 +2096,7 @@
       "wipe": "Barrido"
     },
     "try-different-search": "Intenta con una búsqueda diferente.",
+    "unknown": "Desconocido",
     "wallhaven": {
       "loading": "Cargando fondos de pantalla...",
       "no-results": "No se encontraron fondos de pantalla. Intenta con una búsqueda diferente.",

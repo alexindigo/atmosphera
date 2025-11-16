@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas.",
-          "label": "Mostrar números apenas quando ocupados"
+          "description": "Mostrar apenas o rótulo da área de trabalho para áreas de trabalho que têm janelas abertas.",
+          "label": "Mostrar rótulo somente quando ocupado."
         },
         "show-workspace-numbers": {
-          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
-          "label": "Mostrar números do espaço de trabalho"
+          "description": "Exibir o rótulo do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
+          "label": "Mostrar rótulo do espaço de trabalho"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Pesquisar...",
     "search-icons": "ex., noctalia, niri, battery, cloud",
     "search-launcher": "Pesquisar entradas... ou use > para comandos",
-    "search-wallpapers": "Digite para filtrar papéis de parede...",
     "search-wallhaven": "Pesquisar no Wallhaven...",
+    "search-wallpapers": "Digite para filtrar papéis de parede...",
     "select": "Selecionar",
     "test": "Testar"
   },
@@ -2047,6 +2047,11 @@
         "label": "Categorias",
         "people": "Pessoas"
       },
+      "order": {
+        "asc": "Crescente",
+        "desc": "Decrescente",
+        "label": "Ordem"
+      },
       "purity": {
         "all": "Tudo",
         "label": "Filtro de conteúdo",
@@ -2071,21 +2076,16 @@
         "toplist": "Lista superior",
         "views": "Visualizações"
       },
-      "order": {
-        "asc": "Crescente",
-        "desc": "Decrescente",
-        "label": "Ordem"
-      },
-      "wallhaven-settings": {
-        "apply": "Aplicar",
-        "title": "Configurações do Wallhaven"
-      },
       "source": {
         "label": "Fonte",
         "local": "Local",
         "wallhaven": "Wallhaven"
       },
-      "title": "Seletor de papel de parede"
+      "title": "Seletor de papel de parede",
+      "wallhaven-settings": {
+        "apply": "Aplicar",
+        "title": "Configurações do Wallhaven"
+      }
     },
     "transitions": {
       "disc": "Disco",
@@ -2096,6 +2096,7 @@
       "wipe": "Limpar"
     },
     "try-different-search": "Tente uma busca diferente.",
+    "unknown": "Desconhecido",
     "wallhaven": {
       "loading": "Carregando papéis de parede...",
       "no-results": "Nenhum papel de parede encontrado. Tente uma busca diferente.",

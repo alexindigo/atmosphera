@@ -315,12 +315,12 @@
       },
       "taskbar-grouped": {
         "show-numbers-only-when-occupied": {
-          "description": "Only show workspace numbers for workspaces that have open windows.",
-          "label": "Show numbers only when occupied"
+          "description": "Only show workspace label for workspaces that have open windows.",
+          "label": "Show label only when occupied"
         },
         "show-workspace-numbers": {
-          "description": "Display workspace numbers in the top-left corner of task groups.",
-          "label": "Show workspace numbers"
+          "description": "Display workspace label in the top-left corner of task groups.",
+          "label": "Show workspace label"
         }
       },
       "tray": {
@@ -579,8 +579,8 @@
     "search": "Search...",
     "search-icons": "e.g., noctalia, niri, battery, cloud",
     "search-launcher": "Search entries... or use > for commands",
-    "search-wallpapers": "Type to filter wallpapers...",
     "search-wallhaven": "Search Wallhaven...",
+    "search-wallpapers": "Type to filter wallpapers...",
     "select": "Select",
     "test": "Test"
   },
@@ -2047,6 +2047,11 @@
         "label": "Categories",
         "people": "People"
       },
+      "order": {
+        "asc": "Ascending",
+        "desc": "Descending",
+        "label": "Order"
+      },
       "purity": {
         "all": "All",
         "label": "Content filter",
@@ -2071,21 +2076,16 @@
         "toplist": "Toplist",
         "views": "Views"
       },
-      "order": {
-        "asc": "Ascending",
-        "desc": "Descending",
-        "label": "Order"
-      },
-      "wallhaven-settings": {
-        "apply": "Apply",
-        "title": "Wallhaven Settings"
-      },
       "source": {
         "label": "Source",
         "local": "Local",
         "wallhaven": "Wallhaven"
       },
-      "title": "Wallpaper Selector"
+      "title": "Wallpaper Selector",
+      "wallhaven-settings": {
+        "apply": "Apply",
+        "title": "Wallhaven Settings"
+      }
     },
     "transitions": {
       "disc": "Disc",
