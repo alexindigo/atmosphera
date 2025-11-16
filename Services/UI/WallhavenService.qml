@@ -112,7 +112,7 @@ Singleton {
                 seed = currentMeta.seed
               }
 
-              Logger.i("Wallhaven", "Search completed:", currentResults.length, "results, page", currentPage, "of", lastPage)
+              Logger.d("Wallhaven", "Search completed:", currentResults.length, "results, page", currentPage, "of", lastPage)
               searchCompleted(currentResults, currentMeta)
             } else {
               var errorMsg = "Invalid API response"

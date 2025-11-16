@@ -262,17 +262,54 @@ SmartPanel {
         Layout.fillWidth: true
       }
 
-      // Unified search input
+      // Debounce timer for Wallhaven search
+      Timer {
+        id: wallhavenSearchDebounceTimer
+        interval: 500
+        onTriggered: {
+          Settings.data.wallpaper.wallhavenQuery = searchInput.text
+          if (typeof WallhavenService !== "undefined") {
+            wallhavenView.loading = true
+            WallhavenService.search(searchInput.text, 1)
+          }
+        }
+      }
+
+      NToggle {
+        label: I18n.tr("wallpaper.panel.apply-all-monitors.label")
+        description: I18n.tr("wallpaper.panel.apply-all-monitors.description")
+        checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
+        onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
+        Layout.fillWidth: true
+      }
+
+      // Monitor tabs
+      NTabBar {
+        id: screenTabBar
+        visible: (!Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories)
+        Layout.fillWidth: true
+        currentIndex: currentScreenIndex
+        onCurrentIndexChanged: currentScreenIndex = currentIndex
+        spacing: Style.marginM
+
+        Repeater {
+          model: Quickshell.screens
+          NTabButton {
+            required property var modelData
+            required property int index
+            text: modelData.name || `Screen ${index + 1}`
+            tabIndex: index
+            checked: {
+              screenTabBar.currentIndex === index
+            }
+          }
+        }
+      }
+
+      // Unified search input and source
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginM
-
-        NText {
-          text: I18n.tr("wallpaper.panel.search")
-          color: Color.mOnSurface
-          pointSize: Style.fontSizeM
-          Layout.preferredWidth: implicitWidth
-        }
 
         NTextInput {
           id: searchInput
@@ -345,36 +382,11 @@ SmartPanel {
             }
           }
         }
-      }
-
-      // Debounce timer for Wallhaven search
-      Timer {
-        id: wallhavenSearchDebounceTimer
-        interval: 500
-        onTriggered: {
-          Settings.data.wallpaper.wallhavenQuery = searchInput.text
-          if (typeof WallhavenService !== "undefined") {
-            wallhavenView.loading = true
-            WallhavenService.search(searchInput.text, 1)
-          }
-        }
-      }
-
-      // Source selector
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-
-        NText {
-          text: I18n.tr("wallpaper.panel.source.label")
-          color: Color.mOnSurface
-          pointSize: Style.fontSizeM
-          Layout.preferredWidth: implicitWidth
-        }
 
         NComboBox {
           id: sourceComboBox
-          Layout.fillWidth: true
+          Layout.fillWidth: false
+
           model: [{
               "key": "local",
               "name": I18n.tr("wallpaper.panel.source.local")
@@ -442,34 +454,6 @@ SmartPanel {
         }
       }
 
-      NToggle {
-        label: I18n.tr("wallpaper.panel.apply-all-monitors.label")
-        description: I18n.tr("wallpaper.panel.apply-all-monitors.description")
-        checked: Settings.data.wallpaper.setWallpaperOnAllMonitors
-        onToggled: checked => Settings.data.wallpaper.setWallpaperOnAllMonitors = checked
-        Layout.fillWidth: true
-      }
-
-      // Monitor tabs
-      NTabBar {
-        id: screenTabBar
-        visible: (!Settings.data.wallpaper.setWallpaperOnAllMonitors || Settings.data.wallpaper.enableMultiMonitorDirectories) && !Settings.data.wallpaper.useWallhaven
-        Layout.fillWidth: true
-        currentIndex: currentScreenIndex
-        onCurrentIndexChanged: currentScreenIndex = currentIndex
-        spacing: Style.marginM
-
-        Repeater {
-          model: Quickshell.screens
-          NTabButton {
-            required property var modelData
-            required property int index
-            text: modelData.name || `Screen ${index + 1}`
-            tabIndex: index
-            checked: screenTabBar.currentIndex === index
-          }
-        }
-      }
       // Content stack: Wallhaven or Local
       StackLayout {
         id: contentStack
@@ -950,17 +934,7 @@ SmartPanel {
                             if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
                               if (currentIndex >= 0 && currentIndex < wallpapers.length) {
                                 let wallpaper = wallpapers[currentIndex]
-                                if (typeof WallhavenService !== "undefined") {
-                                  WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
-                                    if (success) {
-                                      if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                                        WallpaperService.changeWallpaper(localPath, undefined)
-                                      } else {
-                                        WallpaperService.changeWallpaper(localPath, screen.name)
-                                      }
-                                    }
-                                  })
-                                }
+                                wallhavenDownloadAndApply(wallpaper)
                               }
                               event.accepted = true
                             }
@@ -1068,17 +1042,7 @@ SmartPanel {
               TapHandler {
                 onTapped: {
                   wallhavenGridView.currentIndex = index
-                  if (typeof WallhavenService !== "undefined") {
-                    WallhavenService.downloadWallpaper(modelData, function (success, localPath) {
-                      if (success) {
-                        if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                          WallpaperService.changeWallpaper(localPath, undefined)
-                        } else {
-                          WallpaperService.changeWallpaper(localPath, screen.name)
-                        }
-                      }
-                    })
-                  }
+                  wallhavenDownloadAndApply(modelData)
                 }
               }
             }
@@ -1242,6 +1206,21 @@ SmartPanel {
           enabled: WallhavenService.currentPage < WallhavenService.lastPage && !WallhavenService.fetching
           onClicked: WallhavenService.nextPage()
         }
+      }
+    }
+
+    // -------------------------------
+    function wallhavenDownloadAndApply(wallpaper, targetScreen) {
+      if (typeof WallhavenService !== "undefined") {
+        WallhavenService.downloadWallpaper(wallpaper, function (success, localPath) {
+          if (success) {
+            if (!Settings.data.wallpaper.setWallpaperOnAllMonitors && currentScreenIndex < Quickshell.screens.length) {
+              WallpaperService.changeWallpaper(localPath, Quickshell.screens[currentScreenIndex].name)
+            } else {
+              WallpaperService.changeWallpaper(localPath, undefined)
+            }
+          }
+        })
       }
     }
   }
