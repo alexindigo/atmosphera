@@ -266,7 +266,7 @@ Singleton {
       // Wallhaven settings
       property bool useWallhaven: false
       property string wallhavenQuery: ""
-      property string wallhavenSorting: "date_added"
+      property string wallhavenSorting: "relevance"
       property string wallhavenOrder: "desc"
       property string wallhavenCategories: "111" // general,anime,people
       property string wallhavenPurity: "100" // sfw only

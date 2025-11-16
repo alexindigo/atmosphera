@@ -173,7 +173,7 @@ Popup {
             "key": "toplist",
             "name": I18n.tr("wallpaper.panel.sorting.toplist")
           }]
-        currentKey: Settings.data.wallpaper.wallhavenSorting || "date_added"
+        currentKey: Settings.data.wallpaper.wallhavenSorting || "relevance"
         onSelected: key => {
                       Settings.data.wallpaper.wallhavenSorting = key
                       if (typeof WallhavenService !== "undefined") {

@@ -20,7 +20,7 @@ Singleton {
   // Search parameters
   property string categories: "111" // general,anime,people (all enabled by default)
   property string purity: "100" // sfw
-  property string sorting: "date_added" // date_added, relevance, random, views, favorites, toplist
+  property string sorting: "relevance" // date_added, relevance, random, views, favorites, toplist
   property string order: "desc" // desc, asc
   property string topRange: "1M" // 1d, 3d, 1w, 1M, 3M, 6M, 1y
   property string seed: "" // For random sorting

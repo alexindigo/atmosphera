@@ -127,7 +127,7 @@
     "hideWallpaperFilenames": false,
     "useWallhaven": false,
     "wallhavenQuery": "",
-    "wallhavenSorting": "date_added",
+    "wallhavenSorting": "relevance",
     "wallhavenOrder": "desc",
     "wallhavenCategories": "111",
     "wallhavenPurity": "100",
