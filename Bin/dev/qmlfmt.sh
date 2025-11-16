@@ -5,15 +5,11 @@ set -euo pipefail
 # Uses: https://github.com/jesperhh/qmlfmt
 # Install: AUR package "qmlfmt-git" (requires qt6-5compat)
 
-# Find the available QML formatter command and define format_file accordingly
 if command -v qmlfmt &>/dev/null; then
     echo "Using 'qmlfmt' for formatting."
     format_file() { qmlfmt -e -b 360 -t 2 -i 2 -w "$1" || { echo "Failed: $1" >&2; return 1; }; }
-elif command -v qmlformat &>/dev/null; then
-    echo "Using 'qmlformat' for formatting."
-    format_file() { qmlformat -i --indent-width 2 --semicolon-rule essential "$1" || { echo "Failed: $1" >&2; return 1; }; }
 else
-    echo "Neither 'qmlfmt' nor 'qmlformat' found in PATH." >&2
+    echo "No 'qmlfmt' found in PATH." >&2
     exit 1
 fi
 
