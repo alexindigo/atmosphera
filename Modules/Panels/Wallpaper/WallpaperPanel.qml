@@ -572,6 +572,18 @@ SmartPanel {
 
         model: filteredWallpapers
 
+        // Capture clicks on empty areas to give focus to GridView
+        MouseArea {
+          anchors.fill: parent
+          z: -1
+          onClicked: {
+            wallpaperGridView.forceActiveFocus()
+            if (wallpaperGridView.currentIndex < 0 && filteredWallpapers.length > 0) {
+              wallpaperGridView.currentIndex = 0
+            }
+          }
+        }
+
         property int columns: (screen.width > 1920) ? 5 : 4
         property int itemSize: cellWidth
 
@@ -739,6 +751,7 @@ SmartPanel {
 
             TapHandler {
               onTapped: {
+                wallpaperGridView.forceActiveFocus()
                 wallpaperGridView.currentIndex = index
                 if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
                   WallpaperService.changeWallpaper(wallpaperPath, undefined)
