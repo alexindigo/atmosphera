@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 22,
+  "settingsVersion": 23,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -59,7 +59,7 @@
   },
   "general": {
     "avatarImage": "",
-    "dimDesktop": true,
+    "dimmerOpacity": 0.8,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -107,19 +107,6 @@
     "audioSource": "default_output",
     "videoSource": "portal"
   },
-  "systemMonitor": {
-    "cpuWarningThreshold": 80,
-    "cpuCriticalThreshold": 90,
-    "tempWarningThreshold": 80,
-    "tempCriticalThreshold": 90,
-    "memWarningThreshold": 80,
-    "memCriticalThreshold": 90,
-    "diskWarningThreshold": 80,
-    "diskCriticalThreshold": 90,
-    "useCustomColors": false,
-    "warningColor": "",
-    "criticalColor": ""
-  },
   "wallpaper": {
     "enabled": true,
     "overviewEnabled": false,
@@ -137,7 +124,16 @@
     "transitionEdgeSmoothness": 0.05,
     "monitors": [],
     "panelPosition": "follow_bar",
-    "hideWallpaperFilenames": false
+    "hideWallpaperFilenames": false,
+    "useWallhaven": false,
+    "wallhavenQuery": "",
+    "wallhavenSorting": "relevance",
+    "wallhavenOrder": "desc",
+    "wallhavenCategories": "111",
+    "wallhavenPurity": "100",
+    "wallhavenResolutionMode": "atleast",
+    "wallhavenResolutionWidth": "",
+    "wallhavenResolutionHeight": ""
   },
   "appLauncher": {
     "enableClipboardHistory": false,
@@ -203,6 +199,19 @@
         "id": "media-sysmon-card"
       }
     ]
+  },
+  "systemMonitor": {
+    "cpuWarningThreshold": 80,
+    "cpuCriticalThreshold": 90,
+    "tempWarningThreshold": 80,
+    "tempCriticalThreshold": 90,
+    "memWarningThreshold": 80,
+    "memCriticalThreshold": 90,
+    "diskWarningThreshold": 80,
+    "diskCriticalThreshold": 90,
+    "useCustomColors": false,
+    "warningColor": "",
+    "criticalColor": ""
   },
   "dock": {
     "enabled": true,

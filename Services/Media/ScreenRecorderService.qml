@@ -27,38 +27,43 @@ Singleton {
 
   // Start or Stop recording
   function toggleRecording() {
-    (isRecording || isPending) ? stopRecording() : startRecording()
+    (isRecording || isPending) ? stopRecording() : startRecording();
   }
 
   // Start screen recording using Quickshell.execDetached
   function startRecording() {
     if (!isAvailable) {
-      return
+      return;
     }
     if (isRecording || isPending) {
-      return
+      return;
     }
-    isPending = true
-    hasActiveRecording = false
+    isPending = true;
+    hasActiveRecording = false;
+
+    // Close any opened panel
+    if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+      PanelService.openedPanel.close();
+    }
 
     // First, ensure xdg-desktop-portal and a compositor portal are running
     portalCheckProcess.exec({
-                              "command": ["sh", "-c", // require core portal AND one of the backends
-                                "pidof xdg-desktop-portal >/dev/null 2>&1 && (pidof xdg-desktop-portal-wlr >/dev/null 2>&1 || pidof xdg-desktop-portal-hyprland >/dev/null 2>&1 || pidof xdg-desktop-portal-gnome >/dev/null 2>&1 || pidof xdg-desktop-portal-kde >/dev/null 2>&1)"]
-                            })
+                              "command": ["sh", "-c" // require core portal AND one of the backends
+                                , "pidof xdg-desktop-portal >/dev/null 2>&1 && (pidof xdg-desktop-portal-wlr >/dev/null 2>&1 || pidof xdg-desktop-portal-hyprland >/dev/null 2>&1 || pidof xdg-desktop-portal-gnome >/dev/null 2>&1 || pidof xdg-desktop-portal-kde >/dev/null 2>&1)"]
+                            });
   }
 
   function launchRecorder() {
-    var filename = Time.getFormattedTimestamp() + ".mp4"
-    var videoDir = Settings.preprocessPath(settings.directory)
+    var filename = Time.getFormattedTimestamp() + ".mp4";
+    var videoDir = Settings.preprocessPath(settings.directory);
     if (videoDir && !videoDir.endsWith("/")) {
-      videoDir += "/"
+      videoDir += "/";
     }
-    outputPath = videoDir + filename
+    outputPath = videoDir + filename;
 
-    var audioArg = (settings.audioSource === "both") ? `-a "default_output|default_input"` : `-a ${settings.audioSource}`
+    var audioArg = (settings.audioSource === "both") ? `-a "default_output|default_input"` : `-a ${settings.audioSource}`;
 
-    var flags = `-w ${settings.videoSource} -f ${settings.frameRate} -ac ${settings.audioCodec} -k ${settings.videoCodec} ${audioArg} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o "${outputPath}"`
+    var flags = `-w ${settings.videoSource} -f ${settings.frameRate} -ac ${settings.audioCodec} -k ${settings.videoCodec} ${audioArg} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o "${outputPath}"`;
     var command = `
     _gpuscreenrecorder_flatpak_installed() {
     flatpak list --app | grep -q "com.dec05eba.gpu_screen_recorder"
@@ -69,35 +74,35 @@ Singleton {
     flatpak run --command=gpu-screen-recorder --file-forwarding com.dec05eba.gpu_screen_recorder ${flags}
     else
     echo "GPU_SCREEN_RECORDER_NOT_INSTALLED"
-    fi`
+    fi`;
 
     // Use Process instead of execDetached so we can monitor it and read stderr
     recorderProcess.exec({
                            "command": ["sh", "-c", command]
-                         })
+                         });
 
     // Start monitoring - if process ends quickly, it was likely cancelled
-    pendingTimer.running = true
+    pendingTimer.running = true;
   }
 
   // Stop recording using Quickshell.execDetached
   function stopRecording() {
     if (!isRecording && !isPending) {
-      return
+      return;
     }
 
-    ToastService.showNotice(I18n.tr("toast.recording.stopping"), outputPath, "settings-screen-recorder")
+    ToastService.showNotice(I18n.tr("toast.recording.stopping"), outputPath, "settings-screen-recorder");
 
-    Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"])
+    Quickshell.execDetached(["sh", "-c", "pkill -SIGINT -f 'gpu-screen-recorder' || pkill -SIGINT -f 'com.dec05eba.gpu_screen_recorder'"]);
 
-    isRecording = false
-    isPending = false
-    pendingTimer.running = false
-    monitorTimer.running = false
-    hasActiveRecording = false
+    isRecording = false;
+    isPending = false;
+    pendingTimer.running = false;
+    monitorTimer.running = false;
+    hasActiveRecording = false;
 
     // Just in case, force kill after 3 seconds
-    killTimer.running = true
+    killTimer.running = true;
   }
 
   // Process to run and monitor gpu-screen-recorder
@@ -108,37 +113,37 @@ Singleton {
     onExited: function (exitCode, exitStatus) {
       if (isPending) {
         // Process ended while we were pending - likely cancelled or error
-        isPending = false
-        pendingTimer.running = false
+        isPending = false;
+        pendingTimer.running = false;
 
         // Check if gpu-screen-recorder is not installed
-        const stdout = String(recorderProcess.stdout.text || "").trim()
+        const stdout = String(recorderProcess.stdout.text || "").trim();
         if (stdout === "GPU_SCREEN_RECORDER_NOT_INSTALLED") {
-          ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"))
-          return
+          ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"));
+          return;
         }
 
         // If it failed to start, show a clear error toast with stderr
         if (exitCode !== 0) {
-          const err = String(recorderProcess.stderr.text || "").trim()
+          const err = String(recorderProcess.stderr.text || "").trim();
           if (err.length > 0)
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), err)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err);
           else
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"))
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"));
         }
       } else if (isRecording) {
         // Process ended normally while recording
-        isRecording = false
-        monitorTimer.running = false
+        isRecording = false;
+        monitorTimer.running = false;
         // Consider successful save if exitCode == 0
         if (exitCode === 0) {
-          ToastService.showNotice(I18n.tr("toast.recording.saved"), outputPath, "settings-screen-recorder")
+          ToastService.showNotice(I18n.tr("toast.recording.saved"), outputPath, "settings-screen-recorder");
         } else {
-          const err2 = String(recorderProcess.stderr.text || "").trim()
+          const err2 = String(recorderProcess.stderr.text || "").trim();
           if (err2.length > 0)
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), err2)
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), err2);
           else
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"))
+            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"));
         }
       }
     }
@@ -150,11 +155,11 @@ Singleton {
     onExited: function (exitCode, exitStatus) {
       if (exitCode === 0) {
         // Portals available, proceed to launch
-        launchRecorder()
+        launchRecorder();
       } else {
-        isPending = false
-        hasActiveRecording = false
-        ToastService.showError(I18n.tr("toast.recording.no-portals"), I18n.tr("toast.recording.no-portals-desc"))
+        isPending = false;
+        hasActiveRecording = false;
+        ToastService.showError(I18n.tr("toast.recording.no-portals"), I18n.tr("toast.recording.no-portals-desc"));
       }
     }
   }
@@ -167,14 +172,14 @@ Singleton {
     onTriggered: {
       if (isPending && recorderProcess.running) {
         // Process is still running after 2 seconds - assume recording started successfully
-        isPending = false
-        isRecording = true
-        hasActiveRecording = true
-        monitorTimer.running = true
+        isPending = false;
+        isRecording = true;
+        hasActiveRecording = true;
+        monitorTimer.running = true;
         // Don't show a toast when recording starts to avoid having the toast in every video.
       } else if (isPending) {
         // Process not running anymore - was cancelled or failed
-        isPending = false
+        isPending = false;
       }
     }
   }
@@ -187,8 +192,8 @@ Singleton {
     repeat: true
     onTriggered: {
       if (!recorderProcess.running && isRecording) {
-        isRecording = false
-        running = false
+        isRecording = false;
+        running = false;
       }
     }
   }
@@ -199,7 +204,7 @@ Singleton {
     running: false
     repeat: false
     onTriggered: {
-      Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"])
+      Quickshell.execDetached(["sh", "-c", "pkill -9 -f 'gpu-screen-recorder' 2>/dev/null || pkill -9 -f 'com.dec05eba.gpu_screen_recorder' 2>/dev/null || true"]);
     }
   }
 }

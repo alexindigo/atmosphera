@@ -56,20 +56,20 @@ RowLayout {
       acceptedButtons: Qt.NoButton
       hoverEnabled: true
       onEntered: {
-        root.hovering = true
-        root.entered()
+        root.hovering = true;
+        root.entered();
       }
       onExited: {
-        root.hovering = false
-        root.exited()
+        root.hovering = false;
+        root.exited();
       }
       onWheel: wheel => {
                  if (wheel.angleDelta.y > 0 && root.value < root.to) {
-                   let newValue = Math.min(root.to, root.value + root.stepSize)
-                   root.value = newValue
+                   let newValue = Math.min(root.to, root.value + root.stepSize);
+                   root.value = newValue;
                  } else if (wheel.angleDelta.y < 0 && root.value > root.from) {
-                   let newValue = Math.max(root.from, root.value - root.stepSize)
-                   root.value = newValue
+                   let newValue = Math.max(root.from, root.value - root.stepSize);
+                   root.value = newValue;
                  }
                }
     }
@@ -163,8 +163,8 @@ RowLayout {
         cursorShape: Qt.PointingHandCursor
         enabled: root.enabled && root.value > root.from
         onClicked: {
-          let newValue = Math.max(root.from, root.value - root.stepSize)
-          root.value = newValue
+          let newValue = Math.max(root.from, root.value - root.stepSize);
+          root.value = newValue;
         }
       }
     }
@@ -258,8 +258,8 @@ RowLayout {
         cursorShape: Qt.PointingHandCursor
         enabled: root.enabled && root.value < root.to
         onClicked: {
-          let newValue = Math.min(root.to, root.value + root.stepSize)
-          root.value = newValue
+          let newValue = Math.min(root.to, root.value + root.stepSize);
+          root.value = newValue;
         }
       }
     }
@@ -310,29 +310,29 @@ RowLayout {
           }
 
           Keys.onReturnPressed: {
-            applyValue()
-            focus = false
+            applyValue();
+            focus = false;
           }
 
           Keys.onEscapePressed: {
-            text = root.value.toString()
-            focus = false
+            text = root.value.toString();
+            focus = false;
           }
 
           onFocusChanged: {
             if (focus) {
-              selectAll()
+              selectAll();
             } else {
-              applyValue()
+              applyValue();
             }
           }
 
           function applyValue() {
-            let newValue = parseInt(text)
+            let newValue = parseInt(text);
             if (!isNaN(newValue)) {
               // Don't manually set text here - let the binding handle it
-              newValue = Math.max(root.from, Math.min(root.to, newValue))
-              root.value = newValue
+              newValue = Math.max(root.from, Math.min(root.to, newValue));
+              root.value = newValue;
             }
           }
         }

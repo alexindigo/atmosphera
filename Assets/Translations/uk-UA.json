@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
-          "description": "Показувати номери лише для робочих просторів з відкритими вікнами",
-          "label": "Показувати номера лише коли зайнято"
-        },
-        "show-workspace-numbers": {
-          "description": "Показувати номери робочих просторів у лівому верхньому куті групи завдань",
-          "label": "Показувати номери робочих просторів"
+        "show-labels-only-when-occupied": {
+          "description": "Показувати мітку робочого простору лише для робочих просторів, які мають відкриті вікна.",
+          "label": "Показувати мітку лише коли зайнято"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Здоров'я: {percent}%",
     "idle": "Бездіяльність.",
     "no-battery-detected": "Батарею не виявлено.",
-    "panel": {
-      "balanced": "Збалансований ({percent}%)",
-      "disabled": "Менеджер батареї вимкнено",
-      "full": "Повна ємність ({percent}%)",
-      "lifespan": "Подовжений термін служби ({percent}%)",
-      "title": "Поріг зарядки"
-    },
     "plugged-in": "Підключено.",
     "time-left": "Залишилось часу: {time}.",
     "time-until-full": "Час до повного заряду: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Індекс",
+      "index+name": "Індекс та назва",
       "name": "Назва",
       "none": "Немає"
     }
@@ -579,6 +569,7 @@
     "search": "Пошук...",
     "search-icons": "напр., noctalia, niri, battery, cloud",
     "search-launcher": "Пошук записів... або використовуйте > для команд",
+    "search-wallhaven": "Пошук у Wallhaven...",
     "search-wallpapers": "Введіть для фільтрації шпалер...",
     "select": "Вибрати",
     "test": "Тест"
@@ -1680,6 +1671,11 @@
         "description": "Затемнювати робочий стіл, коли відкриті панелі або меню.",
         "label": "Приглушити робочий стіл"
       },
+      "dimmer-opacity": {
+        "description": "Встановити рівень непрозорості для затемнення робочого столу.",
+        "label": "Непрозорість приглушеного робочого столу",
+        "reset": "Скинути непрозорість приглушеного робочого столу"
+      },
       "panel-background-opacity": {
         "description": "Встановити прозорість фону для всіх панелей (Launcher, Центр керування, Налаштування тощо).",
         "label": "Прозорість фону панелей"
@@ -1795,6 +1791,11 @@
         },
         "select-folder": "Вибрати теку шпалер",
         "select-monitor-folder": "Вибрати теку шпалер монітора",
+        "selector": {
+          "description": "Виберіть свої шпалери.",
+          "label": "Вибір шпалер",
+          "tooltip": "Відкрити вибір шпалер"
+        },
         "selector-position": {
           "description": "Виберіть, де відображатиметься панель вибору шпалер.",
           "label": "Позиція"
@@ -1858,19 +1859,6 @@
     "battery": {
       "low": "Низький заряд батареї",
       "low-desc": "Батарея на {percent}%. Будь ласка, підключіть зарядний пристрій."
-    },
-    "battery-manager": {
-      "initial-setup": "Потрібне початкове налаштування",
-      "install-failed": "Помилка встановлення",
-      "install-missing": "Необхідні файли відсутні",
-      "install-success": "Встановлено успішно",
-      "install-unsupported": "Система не підтримується",
-      "set-failed": "Не вдалося встановити поріг батареї",
-      "set-success-desc": "Поріг батареї встановлено на {percent}%",
-      "title": "Поріг батареї",
-      "uninstall-failed": "Помилка видалення",
-      "uninstall-setup": "Видалення, потрібна автентифікація",
-      "uninstall-success": "Видалено успішно"
     },
     "bluetooth": {
       "disabled": "Вимкнено",
@@ -2000,6 +1988,7 @@
     "previous-month": "Попередній місяць",
     "refresh": "Оновити",
     "refresh-devices": "Оновити пристрої",
+    "refresh-wallhaven": "Оновити результати Wallhaven",
     "refresh-wallpaper-list": "Оновити список шпалер",
     "remove-widget": "Видалити віджет",
     "screen-recorder-not-installed": "Запис екрана не встановлено",
@@ -2029,8 +2018,51 @@
         "description": "Застосувати вибрані шпалери до всіх моніторів одночасно.",
         "label": "Застосувати до всіх моніторів"
       },
+      "categories": {
+        "anime": "Аніме",
+        "general": "Загальне",
+        "label": "Категорії",
+        "people": "Люди"
+      },
+      "order": {
+        "asc": "За зростанням",
+        "desc": "За спаданням",
+        "label": "Порядок"
+      },
+      "purity": {
+        "all": "Всі",
+        "label": "Фільтр контенту",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "resolution": {
+        "atleast": "Принаймні",
+        "exact": "Точно",
+        "label": "Роздільна здатність",
+        "mode": {
+          "label": "Режим"
+        }
+      },
       "search": "Пошук:",
-      "title": "Вибір шпалер"
+      "sorting": {
+        "date_added": "Дата додавання",
+        "favorites": "Обране",
+        "label": "Сортувати за",
+        "random": "Випадково",
+        "relevance": "Релевантність",
+        "toplist": "Топ-лист",
+        "views": "Перегляди"
+      },
+      "source": {
+        "label": "Джерело",
+        "local": "Локальний",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "Вибір шпалер",
+      "wallhaven-settings": {
+        "apply": "Застосувати",
+        "title": "Налаштування Wallhaven"
+      }
     },
     "transitions": {
       "disc": "Диск",
@@ -2040,7 +2072,13 @@
       "stripes": "Смуги",
       "wipe": "Змітання"
     },
-    "try-different-search": "Спробуйте інший пошуковий запит."
+    "try-different-search": "Спробуйте інший пошуковий запит.",
+    "unknown": "Невідомо",
+    "wallhaven": {
+      "loading": "Завантаження шпалер...",
+      "no-results": "Шпалери не знайдено. Спробуйте інший пошуковий запит.",
+      "page": "{current} з {total}"
+    }
   },
   "weather": {
     "clear-sky": "Ясне небо",

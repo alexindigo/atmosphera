@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
-          "description": "Mostrar números do espaço de trabalho apenas para espaços de trabalho com janelas abertas.",
-          "label": "Mostrar números apenas quando ocupados"
-        },
-        "show-workspace-numbers": {
-          "description": "Exibir números do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
-          "label": "Mostrar números do espaço de trabalho"
+        "show-labels-only-when-occupied": {
+          "description": "Mostrar apenas o rótulo da área de trabalho para áreas de trabalho que têm janelas abertas.",
+          "label": "Mostrar rótulo somente quando ocupado."
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Saúde: {percent}%",
     "idle": "Ocioso.",
     "no-battery-detected": "Nenhuma bateria detectada.",
-    "panel": {
-      "balanced": "Balanceado ({percent}%)",
-      "disabled": "Gerenciador de bateria desativado",
-      "full": "Capacidade máxima ({percent}%)",
-      "lifespan": "Vida útil prolongada ({percent}%)",
-      "title": "Limite de carga"
-    },
     "plugged-in": "Conectado.",
     "time-left": "Tempo restante: {time}.",
     "time-until-full": "Tempo até carga completa: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Índice",
+      "index+name": "Índice e Nome",
       "name": "Nome",
       "none": "Nenhum"
     }
@@ -579,6 +569,7 @@
     "search": "Pesquisar...",
     "search-icons": "ex., noctalia, niri, battery, cloud",
     "search-launcher": "Pesquisar entradas... ou use > para comandos",
+    "search-wallhaven": "Pesquisar no Wallhaven...",
     "search-wallpapers": "Digite para filtrar papéis de parede...",
     "select": "Selecionar",
     "test": "Testar"
@@ -1680,6 +1671,11 @@
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
         "label": "Dim área de trabalho"
       },
+      "dimmer-opacity": {
+        "description": "Definir o nível de opacidade para o escurecimento da área de trabalho.",
+        "label": "Opacidade da área de trabalho escurecida",
+        "reset": "Redefinir opacidade da área de trabalho escurecida"
+      },
       "panel-background-opacity": {
         "description": "Definir a opacidade de fundo para todos os painéis (Launcher, Centro de Controle, Configurações, etc.).",
         "label": "Opacidade de fundo do painel"
@@ -1795,6 +1791,11 @@
         },
         "select-folder": "Selecionar pasta de papéis de parede",
         "select-monitor-folder": "Selecionar pasta de papéis de parede do monitor",
+        "selector": {
+          "description": "Escolha o seu papel de parede.",
+          "label": "Seletor de papel de parede",
+          "tooltip": "Abrir o seletor de papel de parede"
+        },
         "selector-position": {
           "description": "Escolha onde o painel do seletor de papel de parede aparece.",
           "label": "Posição"
@@ -1858,19 +1859,6 @@
     "battery": {
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuração inicial necessária",
-      "install-failed": "Falha na instalação",
-      "install-missing": "Arquivos necessários ausentes",
-      "install-success": "Instalado com sucesso",
-      "install-unsupported": "Sistema não suportado",
-      "set-failed": "Falha ao definir o limite da bateria",
-      "set-success-desc": "Limite da bateria definido para {percent}%",
-      "title": "Limite da bateria",
-      "uninstall-failed": "Falha na desinstalação",
-      "uninstall-setup": "Desinstalando, autenticação necessária",
-      "uninstall-success": "Desinstalado com sucesso"
     },
     "bluetooth": {
       "disabled": "Desativado",
@@ -2000,6 +1988,7 @@
     "previous-month": "Mês anterior",
     "refresh": "Atualizar",
     "refresh-devices": "Atualizar dispositivos",
+    "refresh-wallhaven": "Atualizar resultados do Wallhaven",
     "refresh-wallpaper-list": "Atualizar lista de papéis de parede",
     "remove-widget": "Remover widget",
     "screen-recorder-not-installed": "O gravador de tela não está instalado",
@@ -2029,8 +2018,51 @@
         "description": "Aplica o papel de parede selecionado a todos os monitores de uma só vez.",
         "label": "Aplicar a todos os monitores"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Geral",
+        "label": "Categorias",
+        "people": "Pessoas"
+      },
+      "order": {
+        "asc": "Crescente",
+        "desc": "Decrescente",
+        "label": "Ordem"
+      },
+      "purity": {
+        "all": "Tudo",
+        "label": "Filtro de conteúdo",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "resolution": {
+        "atleast": "Pelo menos",
+        "exact": "Exato",
+        "label": "Resolução",
+        "mode": {
+          "label": "Modo"
+        }
+      },
       "search": "Pesquisar:",
-      "title": "Seletor de papel de parede"
+      "sorting": {
+        "date_added": "Data de adição",
+        "favorites": "Favoritos",
+        "label": "Ordenar por",
+        "random": "Aleatório",
+        "relevance": "Relevância",
+        "toplist": "Lista superior",
+        "views": "Visualizações"
+      },
+      "source": {
+        "label": "Fonte",
+        "local": "Local",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "Seletor de papel de parede",
+      "wallhaven-settings": {
+        "apply": "Aplicar",
+        "title": "Configurações do Wallhaven"
+      }
     },
     "transitions": {
       "disc": "Disco",
@@ -2040,7 +2072,13 @@
       "stripes": "Listras",
       "wipe": "Limpar"
     },
-    "try-different-search": "Tente uma busca diferente."
+    "try-different-search": "Tente uma busca diferente.",
+    "unknown": "Desconhecido",
+    "wallhaven": {
+      "loading": "Carregando papéis de parede...",
+      "no-results": "Nenhum papel de parede encontrado. Tente uma busca diferente.",
+      "page": "{current} de {total}"
+    }
   },
   "weather": {
     "clear-sky": "Céu limpo",

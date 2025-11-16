@@ -19,28 +19,34 @@ ColumnLayout {
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : (widgetMetadata ? widgetMetadata.colorizeIcons : false)
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.labelMode = valueLabelMode
-    settings.hideUnoccupied = valueHideUnoccupied
-    settings.showWorkspaceNumbers = valueShowWorkspaceNumbers
-    settings.showNumbersOnlyWhenOccupied = valueShowNumbersOnlyWhenOccupied
-    settings.colorizeIcons = valueColorizeIcons
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.labelMode = valueLabelMode;
+    settings.hideUnoccupied = valueHideUnoccupied;
+    settings.showWorkspaceNumbers = valueShowWorkspaceNumbers;
+    settings.showNumbersOnlyWhenOccupied = valueShowNumbersOnlyWhenOccupied;
+    settings.colorizeIcons = valueColorizeIcons;
+    return settings;
   }
 
   NComboBox {
     id: labelModeCombo
     label: I18n.tr("bar.widget-settings.workspace.label-mode.label")
     description: I18n.tr("bar.widget-settings.workspace.label-mode.description")
-    model: [{
+    model: [
+      {
         "key": "none",
         "name": I18n.tr("options.workspace-labels.none")
-      }, {
+      },
+      {
         "key": "index",
         "name": I18n.tr("options.workspace-labels.index")
-      }, {
+      },
+      {
         "key": "name",
         "name": I18n.tr("options.workspace-labels.name")
+      }, {
+        "key": "index+name",
+        "name": I18n.tr("options.workspace-labels.index+name")
       }]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => valueLabelMode = key
@@ -64,16 +70,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-workspace-numbers.label")
-    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-workspace-numbers.description")
-    checked: root.valueShowWorkspaceNumbers
-    onToggled: checked => root.valueShowWorkspaceNumbers = checked
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-numbers-only-when-occupied.label")
-    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-numbers-only-when-occupied.description")
+    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.label")
+    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.description")
     checked: root.valueShowNumbersOnlyWhenOccupied
     onToggled: checked => root.valueShowNumbersOnlyWhenOccupied = checked
     visible: root.valueShowWorkspaceNumbers

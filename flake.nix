@@ -6,7 +6,7 @@
     systems.url = "github:nix-systems/default";
 
     quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell?rev=c9d3ffb6043c5bf3f3009202bad7e0e5132c4a25";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

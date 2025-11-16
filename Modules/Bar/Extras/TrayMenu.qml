@@ -16,7 +16,6 @@ PopupWindow {
   property real anchorX
   property real anchorY
   property bool isSubMenu: false
-  property bool isHovered: rootMouseArea.containsMouse
   property string widgetSection: ""
   property int widgetIndex: -1
 
@@ -26,20 +25,20 @@ PopupWindow {
   // Compute if current tray item is pinned
   readonly property bool isPinned: {
     if (!trayItem || widgetSection === "" || widgetIndex < 0)
-      return false
-    var widgets = Settings.data.bar.widgets[widgetSection]
+      return false;
+    var widgets = Settings.data.bar.widgets[widgetSection];
     if (!widgets || widgetIndex >= widgets.length)
-      return false
-    var widgetSettings = widgets[widgetIndex]
+      return false;
+    var widgetSettings = widgets[widgetIndex];
     if (!widgetSettings || widgetSettings.id !== "Tray")
-      return false
-    var pinnedList = widgetSettings.pinned || []
-    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+      return false;
+    var pinnedList = widgetSettings.pinned || [];
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";
     for (var i = 0; i < pinnedList.length; i++) {
       if (pinnedList[i] === itemName)
-        return true
+        return true;
     }
-    return false
+    return false;
   }
 
   readonly property int menuWidth: 220
@@ -54,47 +53,47 @@ PopupWindow {
   anchor.rect.x: anchorX
   anchor.rect.y: {
     if (isSubMenu) {
-      const offsetY = Settings.data.bar.position === "bottom" ? -10 : 10
-      return anchorY + offsetY
+      const offsetY = Settings.data.bar.position === "bottom" ? -10 : 10;
+      return anchorY + offsetY;
     }
-    return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight
+    return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight;
   }
 
   function showAt(item, x, y) {
     if (!item) {
-      Logger.warn("TrayMenu", "anchorItem is undefined, won't show menu.")
-      return
+      Logger.w("TrayMenu", "anchorItem is undefined, won't show menu.");
+      return;
     }
 
     if (!opener.children || opener.children.values.length === 0) {
-      //Logger.warn("TrayMenu", "Menu not ready, delaying show")
-      Qt.callLater(() => showAt(item, x, y))
-      return
+      //Logger.w("TrayMenu", "Menu not ready, delaying show")
+      Qt.callLater(() => showAt(item, x, y));
+      return;
     }
 
-    anchorItem = item
-    anchorX = x
-    anchorY = y
+    anchorItem = item;
+    anchorX = x;
+    anchorY = y;
 
-    visible = true
-    forceActiveFocus()
+    visible = true;
+    forceActiveFocus();
 
     // Force update after showing.
     Qt.callLater(() => {
-                   root.anchor.updateAnchor()
-                 })
+                   root.anchor.updateAnchor();
+                 });
   }
 
   function hideMenu() {
-    visible = false
+    visible = false;
 
     // Clean up all submenus recursively
     for (var i = 0; i < columnLayout.children.length; i++) {
-      const child = columnLayout.children[i]
+      const child = columnLayout.children[i];
       if (child?.subMenu) {
-        child.subMenu.hideMenu()
-        child.subMenu.destroy()
-        child.subMenu = null
+        child.subMenu.hideMenu();
+        child.subMenu.destroy();
+        child.subMenu = null;
       }
     }
   }
@@ -167,11 +166,11 @@ PopupWindow {
           Layout.preferredWidth: parent.width
           Layout.preferredHeight: {
             if (modelData?.isSeparator) {
-              return 8
+              return 8;
             } else {
               // Calculate based on text content
-              const textHeight = text.contentHeight || (Style.fontSizeS * 1.2)
-              return Math.max(28, textHeight + (Style.marginS * 2))
+              const textHeight = text.contentHeight || (Style.fontSizeS * 1.2);
+              return Math.max(28, textHeight + (Style.marginS * 2));
             }
           }
 
@@ -238,31 +237,31 @@ PopupWindow {
                                // Click on items with children toggles submenu
                                if (entry.subMenu) {
                                  // Close existing submenu
-                                 entry.subMenu.hideMenu()
-                                 entry.subMenu.destroy()
-                                 entry.subMenu = null
+                                 entry.subMenu.hideMenu();
+                                 entry.subMenu.destroy();
+                                 entry.subMenu = null;
                                } else {
                                  // Close any other open submenus first
                                  for (var i = 0; i < columnLayout.children.length; i++) {
-                                   const sibling = columnLayout.children[i]
+                                   const sibling = columnLayout.children[i];
                                    if (sibling !== entry && sibling.subMenu) {
-                                     sibling.subMenu.hideMenu()
-                                     sibling.subMenu.destroy()
-                                     sibling.subMenu = null
+                                     sibling.subMenu.hideMenu();
+                                     sibling.subMenu.destroy();
+                                     sibling.subMenu = null;
                                    }
                                  }
 
                                  // Determine submenu opening direction
-                                 let openLeft = false
-                                 const barPosition = Settings.data.bar.position
-                                 const globalPos = entry.mapToItem(null, 0, 0)
+                                 let openLeft = false;
+                                 const barPosition = Settings.data.bar.position;
+                                 const globalPos = entry.mapToItem(null, 0, 0);
 
                                  if (barPosition === "right") {
-                                   openLeft = true
+                                   openLeft = true;
                                  } else if (barPosition === "left") {
-                                   openLeft = false
+                                   openLeft = false;
                                  } else {
-                                   openLeft = (root.widgetSection === "right")
+                                   openLeft = (root.widgetSection === "right");
                                  }
 
                                  // Open new submenu
@@ -270,30 +269,30 @@ PopupWindow {
                                                                                                    "menu": modelData,
                                                                                                    "isSubMenu": true,
                                                                                                    "screen": root.screen
-                                                                                                 })
+                                                                                                 });
 
                                  if (entry.subMenu) {
-                                   const overlap = 60
-                                   entry.subMenu.anchorItem = entry
-                                   entry.subMenu.anchorX = openLeft ? -overlap : overlap
-                                   entry.subMenu.anchorY = 0
-                                   entry.subMenu.visible = true
+                                   const overlap = 60;
+                                   entry.subMenu.anchorItem = entry;
+                                   entry.subMenu.anchorX = openLeft ? -overlap : overlap;
+                                   entry.subMenu.anchorY = 0;
+                                   entry.subMenu.visible = true;
                                    // Force anchor update with new position
                                    Qt.callLater(() => {
-                                                  entry.subMenu.anchor.updateAnchor()
-                                                })
+                                                  entry.subMenu.anchor.updateAnchor();
+                                                });
                                  }
                                }
                              } else {
                                // Click on regular items triggers them
-                               modelData.triggered()
-                               root.hideMenu()
+                               modelData.triggered();
+                               root.hideMenu();
 
                                // Close the drawer if it's open
                                if (root.screen) {
-                                 const panel = PanelService.getPanel("trayDrawerPanel", root.screen)
+                                 const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
                                  if (panel && panel.visible) {
-                                   panel.close()
+                                   panel.close();
                                  }
                                }
                              }
@@ -304,8 +303,8 @@ PopupWindow {
 
           Component.onDestruction: {
             if (subMenu) {
-              subMenu.destroy()
-              subMenu = null
+              subMenu.destroy();
+              subMenu = null;
             }
           }
         }
@@ -352,9 +351,9 @@ PopupWindow {
 
           onClicked: {
             if (root.isPinned) {
-              root.removeFromPinned()
+              root.removeFromPinned();
             } else {
-              root.addToPinned()
+              root.addToPinned();
             }
           }
         }
@@ -364,72 +363,72 @@ PopupWindow {
 
   function addToPinned() {
     if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot pin: missing tray item or widget info")
-      return
+      Logger.w("TrayMenu", "Cannot pin: missing tray item or widget info");
+      return;
     }
-    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";
     if (!itemName) {
-      Logger.w("TrayMenu", "Cannot pin: tray item has no name")
-      return
+      Logger.w("TrayMenu", "Cannot pin: tray item has no name");
+      return;
     }
-    var widgets = Settings.data.bar.widgets[widgetSection]
+    var widgets = Settings.data.bar.widgets[widgetSection];
     if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot pin: invalid widget index")
-      return
+      Logger.w("TrayMenu", "Cannot pin: invalid widget index");
+      return;
     }
-    var widgetSettings = widgets[widgetIndex]
+    var widgetSettings = widgets[widgetIndex];
     if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot pin: widget is not a Tray widget")
-      return
+      Logger.w("TrayMenu", "Cannot pin: widget is not a Tray widget");
+      return;
     }
-    var pinnedList = widgetSettings.pinned || []
-    var newPinned = pinnedList.slice()
-    newPinned.push(itemName)
-    var newSettings = Object.assign({}, widgetSettings)
-    newSettings.pinned = newPinned
-    widgets[widgetIndex] = newSettings
-    Settings.data.bar.widgets[widgetSection] = widgets
-    Settings.saveImmediate()
+    var pinnedList = widgetSettings.pinned || [];
+    var newPinned = pinnedList.slice();
+    newPinned.push(itemName);
+    var newSettings = Object.assign({}, widgetSettings);
+    newSettings.pinned = newPinned;
+    widgets[widgetIndex] = newSettings;
+    Settings.data.bar.widgets[widgetSection] = widgets;
+    Settings.saveImmediate();
 
     // Close drawer when pinning (drawer needs to resize)
     if (screen) {
-      const panel = PanelService.getPanel("trayDrawerPanel", screen)
+      const panel = PanelService.getPanel("trayDrawerPanel", screen);
       if (panel)
-        panel.close()
+        panel.close();
     }
   }
 
   function removeFromPinned() {
     if (!trayItem || widgetSection === "" || widgetIndex < 0) {
-      Logger.w("TrayMenu", "Cannot unpin: missing tray item or widget info")
-      return
+      Logger.w("TrayMenu", "Cannot unpin: missing tray item or widget info");
+      return;
     }
-    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || ""
+    const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";
     if (!itemName) {
-      Logger.w("TrayMenu", "Cannot unpin: tray item has no name")
-      return
+      Logger.w("TrayMenu", "Cannot unpin: tray item has no name");
+      return;
     }
-    var widgets = Settings.data.bar.widgets[widgetSection]
+    var widgets = Settings.data.bar.widgets[widgetSection];
     if (!widgets || widgetIndex >= widgets.length) {
-      Logger.w("TrayMenu", "Cannot unpin: invalid widget index")
-      return
+      Logger.w("TrayMenu", "Cannot unpin: invalid widget index");
+      return;
     }
-    var widgetSettings = widgets[widgetIndex]
+    var widgetSettings = widgets[widgetIndex];
     if (!widgetSettings || widgetSettings.id !== "Tray") {
-      Logger.w("TrayMenu", "Cannot unpin: widget is not a Tray widget")
-      return
+      Logger.w("TrayMenu", "Cannot unpin: widget is not a Tray widget");
+      return;
     }
-    var pinnedList = widgetSettings.pinned || []
-    var newPinned = []
+    var pinnedList = widgetSettings.pinned || [];
+    var newPinned = [];
     for (var i = 0; i < pinnedList.length; i++) {
       if (pinnedList[i] !== itemName) {
-        newPinned.push(pinnedList[i])
+        newPinned.push(pinnedList[i]);
       }
     }
-    var newSettings = Object.assign({}, widgetSettings)
-    newSettings.pinned = newPinned
-    widgets[widgetIndex] = newSettings
-    Settings.data.bar.widgets[widgetSection] = widgets
-    Settings.saveImmediate()
+    var newSettings = Object.assign({}, widgetSettings);
+    newSettings.pinned = newPinned;
+    widgets[widgetIndex] = newSettings;
+    Settings.data.bar.widgets[widgetSection] = widgets;
+    Settings.saveImmediate();
   }
 }

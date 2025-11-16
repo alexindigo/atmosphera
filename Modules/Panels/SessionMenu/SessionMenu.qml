@@ -4,31 +4,31 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Widgets
 import Quickshell.Wayland
+import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.MainScreen
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
-import qs.Modules.MainScreen
 
 SmartPanel {
   id: root
 
   preferredWidth: Math.round(400 * Style.uiScaleRatio)
   preferredHeight: {
-    var headerHeight = Settings.data.sessionMenu.showHeader ? Style.baseWidgetSize * 0.6 : 0
+    var headerHeight = Settings.data.sessionMenu.showHeader ? Style.baseWidgetSize * 0.6 : 0;
 
-    var dividerHeight = Settings.data.sessionMenu.showHeader ? Style.marginS : 0
-    var buttonHeight = Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
-    var buttonSpacing = Style.marginS
-    var enabledCount = powerOptions.length
+    var dividerHeight = Settings.data.sessionMenu.showHeader ? Style.marginS : 0;
+    var buttonHeight = Style.baseWidgetSize * 1.3 * Style.uiScaleRatio;
+    var buttonSpacing = Style.marginS;
+    var enabledCount = powerOptions.length;
 
-    var headerSpacing = Settings.data.sessionMenu.showHeader ? (Style.marginL * 2) : 0
-    var baseHeight = (Style.marginL * 4) + headerHeight + dividerHeight + headerSpacing
-    var buttonsHeight = enabledCount > 0 ? (buttonHeight * enabledCount) + (buttonSpacing * (enabledCount - 1)) : 0
+    var headerSpacing = Settings.data.sessionMenu.showHeader ? (Style.marginL * 2) : 0;
+    var baseHeight = (Style.marginL * 4) + headerHeight + dividerHeight + headerSpacing;
+    var buttonsHeight = enabledCount > 0 ? (buttonHeight * enabledCount) + (buttonSpacing * (enabledCount - 1)) : 0;
 
-    return Math.round(baseHeight + buttonsHeight)
+    return Math.round(baseHeight + buttonsHeight);
   }
 
   // Positioning
@@ -88,176 +88,217 @@ SmartPanel {
   }
 
   // Build powerOptions from settings, filtering enabled ones and adding metadata
-  readonly property var powerOptions: (function () {
-    var options = []
-    var settingsOptions = Settings.data.sessionMenu.powerOptions || []
+  property var powerOptions: {
+    var options = [];
+    var settingsOptions = Settings.data.sessionMenu.powerOptions || [];
 
     for (var i = 0; i < settingsOptions.length; i++) {
-      var settingOption = settingsOptions[i]
+      var settingOption = settingsOptions[i];
       if (settingOption.enabled && actionMetadata[settingOption.action]) {
-        var metadata = actionMetadata[settingOption.action]
+        var metadata = actionMetadata[settingOption.action];
         options.push({
                        "action": settingOption.action,
                        "icon": metadata.icon,
                        "title": metadata.title,
-                       "isShutdown": metadata.isShutdown
-                     })
+                       "isShutdown": metadata.isShutdown,
+                       "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true
+                     });
       }
     }
 
-    return options
-  })()
+    return options;
+  }
+
+  // Update powerOptions when settings change
+  Connections {
+    target: Settings.data.sessionMenu
+    function onPowerOptionsChanged() {
+      var options = [];
+      var settingsOptions = Settings.data.sessionMenu.powerOptions || [];
+
+      for (var i = 0; i < settingsOptions.length; i++) {
+        var settingOption = settingsOptions[i];
+        if (settingOption.enabled && actionMetadata[settingOption.action]) {
+          var metadata = actionMetadata[settingOption.action];
+          options.push({
+                         "action": settingOption.action,
+                         "icon": metadata.icon,
+                         "title": metadata.title,
+                         "isShutdown": metadata.isShutdown,
+                         "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true
+                       });
+        }
+      }
+
+      root.powerOptions = options;
+    }
+  }
 
   // Lifecycle handlers
   onOpened: {
-    selectedIndex = 0
+    selectedIndex = 0;
   }
 
   onClosed: {
-    cancelTimer()
-    selectedIndex = 0
+    cancelTimer();
+    selectedIndex = 0;
   }
 
   // Timer management
   function startTimer(action) {
-    // If countdown is disabled, execute immediately
+    // Check if global countdown is disabled
     if (!Settings.data.sessionMenu.enableCountdown) {
-      executeAction(action)
-      return
+      executeAction(action);
+      return;
+    }
+
+    // Check per-item countdown setting
+    var option = null;
+    for (var i = 0; i < powerOptions.length; i++) {
+      if (powerOptions[i].action === action) {
+        option = powerOptions[i];
+        break;
+      }
+    }
+
+    // If this specific action has countdown disabled, execute immediately
+    if (option && option.countdownEnabled === false) {
+      executeAction(action);
+      return;
     }
 
     if (timerActive && pendingAction === action) {
       // Second click - execute immediately
-      executeAction(action)
-      return
+      executeAction(action);
+      return;
     }
 
-    pendingAction = action
-    timeRemaining = timerDuration
-    timerActive = true
-    countdownTimer.start()
+    pendingAction = action;
+    timeRemaining = timerDuration;
+    timerActive = true;
+    countdownTimer.start();
   }
 
   function cancelTimer() {
-    timerActive = false
-    pendingAction = ""
-    timeRemaining = 0
-    countdownTimer.stop()
+    timerActive = false;
+    pendingAction = "";
+    timeRemaining = 0;
+    countdownTimer.stop();
   }
 
   function executeAction(action) {
     // Stop timer but don't reset other properties yet
-    countdownTimer.stop()
+    countdownTimer.stop();
 
     switch (action) {
     case "lock":
       // Access lockScreen via PanelService
       if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true
+        PanelService.lockScreen.active = true;
       }
-      break
+      break;
     case "suspend":
       // Check if we should lock before suspending
       if (Settings.data.general.lockOnSuspend) {
-        CompositorService.lockAndSuspend()
+        CompositorService.lockAndSuspend();
       } else {
-        CompositorService.suspend()
+        CompositorService.suspend();
       }
-      break
+      break;
     case "hibernate":
-      CompositorService.hibernate()
-      break
+      CompositorService.hibernate();
+      break;
     case "reboot":
-      CompositorService.reboot()
-      break
+      CompositorService.reboot();
+      break;
     case "logout":
-      CompositorService.logout()
-      break
+      CompositorService.logout();
+      break;
     case "shutdown":
-      CompositorService.shutdown()
-      break
+      CompositorService.shutdown();
+      break;
     }
 
     // Reset timer state and close panel
-    cancelTimer()
-    root.close()
+    cancelTimer();
+    root.close();
   }
 
   // Navigation functions
   function selectNextWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = (selectedIndex + 1) % powerOptions.length
+      selectedIndex = (selectedIndex + 1) % powerOptions.length;
     }
   }
 
   function selectPreviousWrapped() {
     if (powerOptions.length > 0) {
-      selectedIndex = (((selectedIndex - 1) % powerOptions.length) + powerOptions.length) % powerOptions.length
+      selectedIndex = (((selectedIndex - 1) % powerOptions.length) + powerOptions.length) % powerOptions.length;
     }
   }
 
   function selectFirst() {
-    selectedIndex = 0
+    selectedIndex = 0;
   }
 
   function selectLast() {
     if (powerOptions.length > 0) {
-      selectedIndex = powerOptions.length - 1
+      selectedIndex = powerOptions.length - 1;
     } else {
-      selectedIndex = 0
+      selectedIndex = 0;
     }
   }
 
   function activate() {
     if (powerOptions.length > 0 && powerOptions[selectedIndex]) {
-      const option = powerOptions[selectedIndex]
-      startTimer(option.action)
+      const option = powerOptions[selectedIndex];
+      startTimer(option.action);
     }
   }
 
   // Override keyboard handlers from SmartPanel
   function onEscapePressed() {
     if (timerActive) {
-      cancelTimer()
+      cancelTimer();
     } else {
-      root.close()
+      root.close();
     }
   }
 
   function onTabPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onBackTabPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   function onUpPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   function onDownPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onReturnPressed() {
-    activate()
+    activate();
   }
 
   function onHomePressed() {
-    selectFirst()
+    selectFirst();
   }
 
   function onEndPressed() {
-    selectLast()
+    selectLast();
   }
 
   function onCtrlJPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onCtrlKPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   // Countdown timer
@@ -266,9 +307,9 @@ SmartPanel {
     interval: 100
     repeat: true
     onTriggered: {
-      timeRemaining -= interval
+      timeRemaining -= interval;
       if (timeRemaining <= 0) {
-        executeAction(pendingAction)
+        executeAction(pendingAction);
       }
     }
   }
@@ -279,23 +320,23 @@ SmartPanel {
 
     // Navigation functions
     function selectFirst() {
-      root.selectFirst()
+      root.selectFirst();
     }
 
     function selectLast() {
-      root.selectLast()
+      root.selectLast();
     }
 
     function selectNextWrapped() {
-      root.selectNextWrapped()
+      root.selectNextWrapped();
     }
 
     function selectPreviousWrapped() {
-      root.selectPreviousWrapped()
+      root.selectPreviousWrapped();
     }
 
     function activate() {
-      root.activate()
+      root.activate();
     }
 
     NBox {
@@ -338,10 +379,10 @@ SmartPanel {
             colorFg: timerActive ? Color.mError : Color.mOnSurface
             onClicked: {
               if (timerActive) {
-                cancelTimer()
+                cancelTimer();
               } else {
-                cancelTimer()
-                root.close()
+                cancelTimer();
+                root.close();
               }
             }
           }
@@ -366,8 +407,8 @@ SmartPanel {
               isShutdown: modelData.isShutdown || false
               isSelected: index === selectedIndex
               onClicked: {
-                selectedIndex = index
-                startTimer(modelData.action)
+                selectedIndex = index;
+                startTimer(modelData.action);
               }
               pending: timerActive && pendingAction === modelData.action
             }
@@ -393,12 +434,12 @@ SmartPanel {
     radius: Style.radiusS
     color: {
       if (pending) {
-        return Qt.alpha(Color.mPrimary, 0.08)
+        return Qt.alpha(Color.mPrimary, 0.08);
       }
       if (isSelected || mouseArea.containsMouse) {
-        return Color.mHover
+        return Color.mHover;
       }
-      return Color.transparent
+      return Color.transparent;
     }
 
     border.width: pending ? Math.max(Style.borderM) : 0
@@ -423,12 +464,12 @@ SmartPanel {
         icon: buttonRoot.icon
         color: {
           if (buttonRoot.pending)
-            return Color.mPrimary
+            return Color.mPrimary;
           if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
-            return Color.mError
+            return Color.mError;
           if (buttonRoot.isSelected || mouseArea.containsMouse)
-            return Color.mOnHover
-          return Color.mOnSurface
+            return Color.mOnHover;
+          return Color.mOnSurface;
         }
         pointSize: Style.fontSizeXXL
         width: Style.baseWidgetSize * 0.5
@@ -458,12 +499,12 @@ SmartPanel {
           pointSize: Style.fontSizeM
           color: {
             if (buttonRoot.pending)
-              return Color.mPrimary
+              return Color.mPrimary;
             if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
-              return Color.mError
+              return Color.mError;
             if (buttonRoot.isSelected || mouseArea.containsMouse)
-              return Color.mOnHover
-            return Color.mOnSurface
+              return Color.mOnHover;
+            return Color.mOnSurface;
           }
 
           Behavior on color {

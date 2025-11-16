@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
-          "description": "Mostrar números de espacio de trabajo solo para espacios de trabajo con ventanas abiertas.",
-          "label": "Mostrar números solo cuando estén ocupados"
-        },
-        "show-workspace-numbers": {
-          "description": "Mostrar números de espacio de trabajo en la esquina superior izquierda de los grupos de tareas.",
-          "label": "Mostrar números de espacio de trabajo"
+        "show-labels-only-when-occupied": {
+          "description": "Mostrar solo la etiqueta del espacio de trabajo para los espacios de trabajo que tienen ventanas abiertas.",
+          "label": "Mostrar etiqueta solo cuando esté ocupado."
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Salud: {percent}%",
     "idle": "Inactivo.",
     "no-battery-detected": "No se detectó ninguna batería.",
-    "panel": {
-      "balanced": "Equilibrado ({percent}%)",
-      "disabled": "Administrador de batería deshabilitado",
-      "full": "Capacidad total ({percent}%)",
-      "lifespan": "Vida útil prolongada ({percent}%)",
-      "title": "Umbral de carga"
-    },
     "plugged-in": "Conectado.",
     "time-left": "Tiempo restante: {time}.",
     "time-until-full": "Tiempo hasta carga completa: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Índice",
+      "index+name": "Índice y Nombre",
       "name": "Nombre",
       "none": "Ninguno"
     }
@@ -579,6 +569,7 @@
     "search": "Buscar...",
     "search-icons": "ej., noctalia, niri, battery, cloud",
     "search-launcher": "Buscar entradas... o usa > para comandos",
+    "search-wallhaven": "Buscar en Wallhaven...",
     "search-wallpapers": "Escribe para filtrar fondos de pantalla...",
     "select": "Seleccionar",
     "test": "Probar"
@@ -1680,6 +1671,11 @@
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",
         "label": "Dim escritorio"
       },
+      "dimmer-opacity": {
+        "description": "Define el nivel de opacidad para el atenuado del escritorio.",
+        "label": "Opacidad del escritorio atenuado",
+        "reset": "Restablecer la opacidad del escritorio atenuado"
+      },
       "panel-background-opacity": {
         "description": "Establecer la opacidad de fondo para todos los paneles (Launcher, Centro de control, Configuración, etc.).",
         "label": "Opacidad de fondo del panel"
@@ -1795,6 +1791,11 @@
         },
         "select-folder": "Seleccionar carpeta de fondos de pantalla",
         "select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
+        "selector": {
+          "description": "Elige tu fondo de pantalla.",
+          "label": "Selector de fondo de pantalla",
+          "tooltip": "Abrir el selector de fondo de pantalla"
+        },
         "selector-position": {
           "description": "Elige dónde aparece el panel selector de fondo de pantalla.",
           "label": "Posición"
@@ -1858,19 +1859,6 @@
     "battery": {
       "low": "Batería baja",
       "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuración inicial requerida",
-      "install-failed": "Error en la instalación",
-      "install-missing": "Faltan archivos requeridos",
-      "install-success": "Instalado correctamente",
-      "install-unsupported": "El sistema no es compatible",
-      "set-failed": "No se pudo establecer el umbral de batería",
-      "set-success-desc": "Umbral de batería establecido en {percent}%",
-      "title": "Umbral de batería",
-      "uninstall-failed": "Error en la desinstalación",
-      "uninstall-setup": "Desinstalando, se requiere autenticación",
-      "uninstall-success": "Desinstalado correctamente"
     },
     "bluetooth": {
       "disabled": "Desactivado",
@@ -2000,6 +1988,7 @@
     "previous-month": "Mes anterior",
     "refresh": "Actualizar",
     "refresh-devices": "Actualizar dispositivos",
+    "refresh-wallhaven": "Actualizar resultados de Wallhaven",
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "remove-widget": "Eliminar widget",
     "screen-recorder-not-installed": "La grabadora de pantalla no está instalada",
@@ -2029,8 +2018,51 @@
         "description": "Aplica el fondo de pantalla seleccionado a todos los monitores a la vez.",
         "label": "Aplicar a todos los monitores"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "General",
+        "label": "Categorías",
+        "people": "Personas"
+      },
+      "order": {
+        "asc": "Ascendente",
+        "desc": "Descendente",
+        "label": "Orden"
+      },
+      "purity": {
+        "all": "Todo",
+        "label": "Filtro de contenido",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "resolution": {
+        "atleast": "Al menos",
+        "exact": "Exacto",
+        "label": "Resolución",
+        "mode": {
+          "label": "Modo"
+        }
+      },
       "search": "Buscar:",
-      "title": "Selector de fondo de pantalla"
+      "sorting": {
+        "date_added": "Fecha de adición",
+        "favorites": "Favoritos",
+        "label": "Ordenar por",
+        "random": "Aleatorio",
+        "relevance": "Relevancia",
+        "toplist": "Lista superior",
+        "views": "Visualizaciones"
+      },
+      "source": {
+        "label": "Fuente",
+        "local": "Local",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "Selector de fondo de pantalla",
+      "wallhaven-settings": {
+        "apply": "Aplicar",
+        "title": "Configuración de Wallhaven"
+      }
     },
     "transitions": {
       "disc": "Disco",
@@ -2040,7 +2072,13 @@
       "stripes": "Rayas",
       "wipe": "Barrido"
     },
-    "try-different-search": "Intenta con una búsqueda diferente."
+    "try-different-search": "Intenta con una búsqueda diferente.",
+    "unknown": "Desconocido",
+    "wallhaven": {
+      "loading": "Cargando fondos de pantalla...",
+      "no-results": "No se encontraron fondos de pantalla. Intenta con una búsqueda diferente.",
+      "page": "{current} de {total}"
+    }
   },
   "weather": {
     "clear-sky": "Cielo despejado",

@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Widgets
@@ -115,23 +115,28 @@ ColumnLayout {
           spacing: Style.marginS
 
           Repeater {
-            model: [{
+            model: [
+              {
                 "key": "top",
                 "name": I18n.tr("options.bar.position.top"),
                 "icon": "arrow-up"
-              }, {
+              },
+              {
                 "key": "bottom",
                 "name": I18n.tr("options.bar.position.bottom"),
                 "icon": "arrow-down"
-              }, {
+              },
+              {
                 "key": "left",
                 "name": I18n.tr("options.bar.position.left"),
                 "icon": "arrow-left"
-              }, {
+              },
+              {
                 "key": "right",
                 "name": I18n.tr("options.bar.position.right"),
                 "icon": "arrow-right"
-              }]
+              }
+            ]
             delegate: Rectangle {
               Layout.fillWidth: true
               Layout.preferredHeight: 40
@@ -159,8 +164,8 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  selectedBarPosition = modelData.key
-                  barPositionChanged(modelData.key)
+                  selectedBarPosition = modelData.key;
+                  barPositionChanged(modelData.key);
                 }
               }
 
@@ -233,19 +238,24 @@ ColumnLayout {
         RowLayout {
           spacing: Style.marginS
           Repeater {
-            model: [{
+            model: [
+              {
                 "key": "mini",
                 "name": I18n.tr("options.bar.density.mini")
-              }, {
+              },
+              {
                 "key": "compact",
                 "name": I18n.tr("options.bar.density.compact")
-              }, {
+              },
+              {
                 "key": "default",
                 "name": I18n.tr("options.bar.density.default")
-              }, {
+              },
+              {
                 "key": "comfortable",
                 "name": I18n.tr("options.bar.density.comfortable")
-              }]
+              }
+            ]
             delegate: Rectangle {
               radius: 16
               border.width: 1
@@ -274,7 +284,7 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  Settings.data.bar.density = modelData.key
+                  Settings.data.bar.density = modelData.key;
                 }
               }
 
@@ -352,8 +362,8 @@ ColumnLayout {
           stepSize: 0.05
           value: selectedScaleRatio
           onMoved: function (value) {
-            selectedScaleRatio = value
-            scaleRatioChanged(value)
+            selectedScaleRatio = value;
+            scaleRatioChanged(value);
           }
           text: Math.floor(selectedScaleRatio * 100) + "%"
         }
@@ -405,7 +415,7 @@ ColumnLayout {
         NToggle {
           checked: Settings.data.bar.floating
           onToggled: function (checked) {
-            Settings.data.bar.floating = checked
+            Settings.data.bar.floating = checked;
           }
         }
       }
@@ -435,7 +445,7 @@ ColumnLayout {
           stepSize: 0.01
           value: Settings.data.bar.backgroundOpacity
           onMoved: function (value) {
-            Settings.data.bar.backgroundOpacity = value
+            Settings.data.bar.backgroundOpacity = value;
           }
           text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
         }
@@ -451,7 +461,7 @@ ColumnLayout {
         Layout.bottomMargin: Style.marginS
       }
 
-      // Dim Desktop toggle
+      // Dim Desktop opacity
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginM
@@ -471,23 +481,27 @@ ColumnLayout {
           Layout.fillWidth: true
           spacing: 2
           NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.label")
+            text: I18n.tr("settings.user-interface.dimmer-opacity.label")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
           }
           NText {
-            text: I18n.tr("settings.user-interface.dim-desktop.description")
+            text: I18n.tr("settings.user-interface.dimmer-opacity.description")
             pointSize: Style.fontSizeS
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
           }
-        }
-        NToggle {
-          checked: Settings.data.general.dimDesktop
-          onToggled: function (checked) {
-            Settings.data.general.dimDesktop = checked
+          NValueSlider {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.marginXS
+            from: 0
+            to: 1
+            stepSize: 0.01
+            value: Settings.data.general.dimmerOpacity
+            onMoved: value => Settings.data.general.dimmerOpacity = value
+            text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
           }
         }
       }
@@ -538,7 +552,7 @@ ColumnLayout {
         NToggle {
           checked: Settings.data.general.enableShadows
           onToggled: function (checked) {
-            Settings.data.general.enableShadows = checked
+            Settings.data.general.enableShadows = checked;
           }
         }
       }

@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
@@ -206,14 +206,14 @@ SmartPanel {
             Repeater {
               model: {
                 if (!Settings.data.network.wifiEnabled)
-                  return []
+                  return [];
 
-                const nets = Object.values(NetworkService.networks)
+                const nets = Object.values(NetworkService.networks);
                 return nets.sort((a, b) => {
                                    if (a.connected !== b.connected)
-                                   return b.connected - a.connected
-                                   return b.signal - a.signal
-                                 })
+                                   return b.connected - a.connected;
+                                   return b.signal - a.signal;
+                                 });
               }
 
               Rectangle {
@@ -385,21 +385,21 @@ SmartPanel {
                         visible: !modelData.connected && NetworkService.connectingTo !== modelData.ssid && passwordSsid !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                         text: {
                           if (modelData.existing || modelData.cached)
-                            return I18n.tr("wifi.panel.connect")
+                            return I18n.tr("wifi.panel.connect");
                           if (!NetworkService.isSecured(modelData.security))
-                            return I18n.tr("wifi.panel.connect")
-                          return I18n.tr("wifi.panel.password")
+                            return I18n.tr("wifi.panel.connect");
+                          return I18n.tr("wifi.panel.password");
                         }
                         outlined: !hovered
                         fontSize: Style.fontSizeXS
                         enabled: !NetworkService.connecting
                         onClicked: {
                           if (modelData.existing || modelData.cached || !NetworkService.isSecured(modelData.security)) {
-                            NetworkService.connect(modelData.ssid)
+                            NetworkService.connect(modelData.ssid);
                           } else {
-                            passwordSsid = modelData.ssid
-                            passwordInput = ""
-                            expandedSsid = ""
+                            passwordSsid = modelData.ssid;
+                            passwordInput = "";
+                            expandedSsid = "";
                           }
                         }
                       }
@@ -458,9 +458,9 @@ SmartPanel {
                                               forceActiveFocus()
                           onAccepted: {
                             if (text && !NetworkService.connecting) {
-                              NetworkService.connect(passwordSsid, text)
-                              passwordSsid = ""
-                              passwordInput = ""
+                              NetworkService.connect(passwordSsid, text);
+                              passwordSsid = "";
+                              passwordInput = "";
                             }
                           }
 
@@ -480,9 +480,9 @@ SmartPanel {
                         enabled: passwordInput.length > 0 && !NetworkService.connecting
                         outlined: true
                         onClicked: {
-                          NetworkService.connect(passwordSsid, passwordInput)
-                          passwordSsid = ""
-                          passwordInput = ""
+                          NetworkService.connect(passwordSsid, passwordInput);
+                          passwordSsid = "";
+                          passwordInput = "";
                         }
                       }
 
@@ -490,8 +490,8 @@ SmartPanel {
                         icon: "close"
                         baseSize: Style.baseWidgetSize * 0.8
                         onClicked: {
-                          passwordSsid = ""
-                          passwordInput = ""
+                          passwordSsid = "";
+                          passwordInput = "";
                         }
                       }
                     }
@@ -535,8 +535,8 @@ SmartPanel {
                         backgroundColor: Color.mError
                         outlined: forgetButton.hovered ? false : true
                         onClicked: {
-                          NetworkService.forget(modelData.ssid)
-                          expandedSsid = ""
+                          NetworkService.forget(modelData.ssid);
+                          expandedSsid = "";
                         }
                       }
 

@@ -12,8 +12,7 @@ Singleton {
   property var widgets: ({
                            "ActiveWindow": activeWindowComponent,
                            "AudioVisualizer": audioVisualizerComponent,
-                           "Battery"// HEAVY
-                           : batteryComponent,
+                           "Battery": batteryComponent,
                            "Bluetooth": bluetoothComponent,
                            "Brightness": brightnessComponent,
                            "Clock": clockComponent,
@@ -28,22 +27,44 @@ Singleton {
                            "NightLight": nightLightComponent,
                            "NoctaliaPerformance": noctaliaPerformanceComponent,
                            "NotificationHistory": notificationHistoryComponent,
-                           "PowerProfile"// HEAVY
-                           : powerProfileComponent,
+                           "PowerProfile": powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
                            "SessionMenu": sessionMenuComponent,
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
-                           "Taskbar"// HEAVY
-                           : taskbarComponent,
+                           "Taskbar": taskbarComponent,
                            "TaskbarGrouped": taskbarGroupedComponent,
                            "Tray": trayComponent,
-                           "Volume"// A BIT HEAVY ?
-                           : volumeComponent,
+                           "Volume": volumeComponent,
                            "WiFi": wiFiComponent,
                            "WallpaperSelector": wallpaperSelectorComponent,
-                           "Workspace": workspaceComponent // HEAVY
+                           "Workspace": workspaceComponent
                          })
+
+  property var widgetSettingsMap: ({
+                                     "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
+                                     "AudioVisualizer": "WidgetSettings/AudioVisualizerSettings.qml",
+                                     "Battery": "WidgetSettings/BatterySettings.qml",
+                                     "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
+                                     "Brightness": "WidgetSettings/BrightnessSettings.qml",
+                                     "Clock": "WidgetSettings/ClockSettings.qml",
+                                     "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
+                                     "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
+                                     "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
+                                     "LockKeys": "WidgetSettings/LockKeysSettings.qml",
+                                     "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
+                                     "Microphone": "WidgetSettings/MicrophoneSettings.qml",
+                                     "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
+                                     "SessionMenu": "WidgetSettings/SessionMenuSettings.qml",
+                                     "Spacer": "WidgetSettings/SpacerSettings.qml",
+                                     "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
+                                     "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
+                                     "Volume": "WidgetSettings/VolumeSettings.qml",
+                                     "WiFi": "WidgetSettings/WiFiSettings.qml",
+                                     "Workspace": "WidgetSettings/WorkspaceSettings.qml",
+                                     "Taskbar": "WidgetSettings/TaskbarSettings.qml",
+                                     "Tray": "WidgetSettings/TraySettings.qml"
+                                   })
 
   property var widgetMetadata: ({
                                   "ActiveWindow": {
@@ -137,6 +158,10 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showUnreadBadge": true,
                                     "hideWhenZero": true
+                                  },
+                                  "SessionMenu": {
+                                    "allowUserSettings": true,
+                                    "colorName": "error"
                                   },
                                   "Spacer": {
                                     "allowUserSettings": true,
@@ -281,27 +306,27 @@ Singleton {
   }
 
   function init() {
-    Logger.i("BarWidgetRegistry", "Service started")
+    Logger.i("BarWidgetRegistry", "Service started");
   }
 
   // ------------------------------
   // Helper function to get widget component by name
   function getWidget(id) {
-    return widgets[id] || null
+    return widgets[id] || null;
   }
 
   // Helper function to check if widget exists
   function hasWidget(id) {
-    return id in widgets
+    return id in widgets;
   }
 
   // Get list of available widget id
   function getAvailableWidgets() {
-    return Object.keys(widgets)
+    return Object.keys(widgets);
   }
 
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
-    return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
+    return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true);
   }
 }

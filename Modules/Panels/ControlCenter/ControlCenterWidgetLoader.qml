@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import qs.Services.UI
 import qs.Commons
+import qs.Services.UI
 
 Item {
   id: root
@@ -18,7 +18,7 @@ Item {
   implicitHeight: getImplicitSize(loader.item, "implicitHeight")
 
   function getImplicitSize(item, prop) {
-    return (item && item.visible) ? item[prop] : 0
+    return (item && item.visible) ? item[prop] : 0;
   }
 
   Loader {
@@ -29,36 +29,36 @@ Item {
 
     onLoaded: {
       if (!item)
-        return
+        return;
 
       // Apply properties to loaded widget
       for (var prop in widgetProps) {
         if (item.hasOwnProperty(prop)) {
-          item[prop] = widgetProps[prop]
+          item[prop] = widgetProps[prop];
         }
       }
 
       // Set screen property
       if (item.hasOwnProperty("screen")) {
-        item.screen = widgetScreen
+        item.screen = widgetScreen;
       }
 
       // Call custom onLoaded if it exists
       if (item.hasOwnProperty("onLoaded")) {
-        item.onLoaded()
+        item.onLoaded();
       }
     }
 
     Component.onDestruction: {
       // Explicitly clear references
-      widgetProps = null
+      widgetProps = null;
     }
   }
 
   // Error handling
   Component.onCompleted: {
     if (!ControlCenterWidgetRegistry.hasWidget(widgetId)) {
-      Logger.w("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId)
+      Logger.w("ControlCenterWidgetLoader", "Widget not found in registry:", widgetId);
     }
   }
 }

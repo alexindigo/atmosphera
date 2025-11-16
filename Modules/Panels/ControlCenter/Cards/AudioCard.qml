@@ -16,10 +16,10 @@ NBox {
   property bool localInputVolumeChanging: false
 
   Component.onCompleted: {
-    var vol = AudioService.volume
-    localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
-    var inputVol = AudioService.inputVolume
-    localInputVolume = (inputVol !== undefined && !isNaN(inputVol)) ? inputVol : 0
+    var vol = AudioService.volume;
+    localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
+    var inputVol = AudioService.inputVolume;
+    localInputVolume = (inputVol !== undefined && !isNaN(inputVol)) ? inputVol : 0;
   }
 
   // Timer to debounce volume changes
@@ -29,10 +29,10 @@ NBox {
     repeat: true
     onTriggered: {
       if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
-        AudioService.setVolume(localOutputVolume)
+        AudioService.setVolume(localOutputVolume);
       }
       if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
-        AudioService.setInputVolume(localInputVolume)
+        AudioService.setInputVolume(localInputVolume);
       }
     }
   }
@@ -42,8 +42,8 @@ NBox {
     target: AudioService
     function onVolumeChanged() {
       if (!localOutputVolumeChanging) {
-        var vol = AudioService.volume
-        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+        var vol = AudioService.volume;
+        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
     }
   }
@@ -52,8 +52,8 @@ NBox {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
       if (!localOutputVolumeChanging) {
-        var vol = AudioService.volume
-        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+        var vol = AudioService.volume;
+        localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
     }
   }
@@ -62,8 +62,8 @@ NBox {
     target: AudioService
     function onInputVolumeChanged() {
       if (!localInputVolumeChanging) {
-        var vol = AudioService.inputVolume
-        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+        var vol = AudioService.inputVolume;
+        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
     }
   }
@@ -72,8 +72,8 @@ NBox {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
       if (!localInputVolumeChanging) {
-        var vol = AudioService.inputVolume
-        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0
+        var vol = AudioService.inputVolume;
+        localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
     }
   }
@@ -105,7 +105,7 @@ NBox {
           colorFgHover: Color.mOnHover
           onClicked: {
             if (AudioService.sink && AudioService.sink.audio) {
-              AudioService.sink.audio.muted = !AudioService.muted
+              AudioService.sink.audio.muted = !AudioService.muted;
             }
           }
         }

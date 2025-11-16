@@ -48,17 +48,17 @@ Variants {
       Component.onCompleted: setWallpaperInitial()
 
       Component.onDestruction: {
-        transitionAnimation.stop()
-        debounceTimer.stop()
-        shaderLoader.active = false
-        currentWallpaper.source = ""
-        nextWallpaper.source = ""
+        transitionAnimation.stop();
+        debounceTimer.stop();
+        shaderLoader.active = false;
+        currentWallpaper.source = "";
+        nextWallpaper.source = "";
       }
 
       Connections {
         target: Settings.data.wallpaper
         function onFillModeChanged() {
-          fillMode = WallpaperService.getFillModeUniform()
+          fillMode = WallpaperService.getFillModeUniform();
         }
       }
 
@@ -69,8 +69,8 @@ Variants {
           if (screenName === modelData.name) {
             // Update wallpaper display
             // Set wallpaper immediately on startup
-            futureWallpaper = path
-            debounceTimer.restart()
+            futureWallpaper = path;
+            debounceTimer.restart();
           }
         }
       }
@@ -80,9 +80,9 @@ Variants {
         function onDisplayScalesChanged() {
           // Recalculate image sizes without interrupting startup transition
           if (isStartupTransition) {
-            return
+            return;
           }
-          recalculateImageSizes()
+          recalculateImageSizes();
         }
       }
 
@@ -105,7 +105,7 @@ Variants {
         running: false
         repeat: false
         onTriggered: {
-          changeWallpaper()
+          changeWallpaper();
         }
       }
 
@@ -123,18 +123,18 @@ Variants {
         sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
-            Logger.w("Current wallpaper failed to load:", source)
+            Logger.w("Current wallpaper failed to load:", source);
           } else if (status === Image.Ready && !dimensionsCalculated) {
-            dimensionsCalculated = true
-            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
+            dimensionsCalculated = true;
+            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
             if (optimalSize !== false) {
-              sourceSize = optimalSize
+              sourceSize = optimalSize;
             }
           }
         }
         onSourceChanged: {
-          dimensionsCalculated = false
-          sourceSize = undefined
+          dimensionsCalculated = false;
+          sourceSize = undefined;
         }
       }
 
@@ -152,18 +152,18 @@ Variants {
         sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
-            Logger.w("Next wallpaper failed to load:", source)
+            Logger.w("Next wallpaper failed to load:", source);
           } else if (status === Image.Ready && !dimensionsCalculated) {
-            dimensionsCalculated = true
-            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight)
+            dimensionsCalculated = true;
+            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
             if (optimalSize !== false) {
-              sourceSize = optimalSize
+              sourceSize = optimalSize;
             }
           }
         }
         onSourceChanged: {
-          dimensionsCalculated = false
-          sourceSize = undefined
+          dimensionsCalculated = false;
+          sourceSize = undefined;
         }
       }
 
@@ -176,15 +176,15 @@ Variants {
         sourceComponent: {
           switch (transitionType) {
           case "wipe":
-            return wipeShaderComponent
+            return wipeShaderComponent;
           case "disc":
-            return discShaderComponent
+            return discShaderComponent;
           case "stripes":
-            return stripesShaderComponent
+            return stripesShaderComponent;
           case "fade":
           case "none":
           default:
-            return fadeShaderComponent
+            return fadeShaderComponent;
           }
         }
       }
@@ -307,64 +307,64 @@ Variants {
         easing.type: Easing.InOutCubic
         onFinished: {
           // Assign new image to current BEFORE clearing to prevent flicker
-          const tempSource = nextWallpaper.source
-          currentWallpaper.source = tempSource
-          transitionProgress = 0.0
+          const tempSource = nextWallpaper.source;
+          currentWallpaper.source = tempSource;
+          transitionProgress = 0.0;
 
           // Now clear nextWallpaper after currentWallpaper has the new source
           // Force complete cleanup to free texture memory (~18-25MB per monitor)
           Qt.callLater(() => {
-                         nextWallpaper.source = ""
-                         nextWallpaper.sourceSize = undefined
+                         nextWallpaper.source = "";
+                         nextWallpaper.sourceSize = undefined;
                          Qt.callLater(() => {
-                                        currentWallpaper.asynchronous = true
-                                      })
-                       })
+                                        currentWallpaper.asynchronous = true;
+                                      });
+                       });
         }
       }
 
       // ------------------------------------------------------
       function calculateOptimalWallpaperSize(wpWidth, wpHeight) {
-        const compositorScale = CompositorService.getDisplayScale(modelData.name)
-        const screenWidth = modelData.width * compositorScale
-        const screenHeight = modelData.height * compositorScale
+        const compositorScale = CompositorService.getDisplayScale(modelData.name);
+        const screenWidth = modelData.width * compositorScale;
+        const screenHeight = modelData.height * compositorScale;
         if (wpWidth <= screenWidth || wpHeight <= screenHeight || wpWidth <= 0 || wpHeight <= 0) {
           // Do not resize if wallpaper is smaller than one of the screen dimension
-          return
+          return;
         }
 
-        const imageAspectRatio = wpWidth / wpHeight
-        var dim = Qt.size(0, 0)
+        const imageAspectRatio = wpWidth / wpHeight;
+        var dim = Qt.size(0, 0);
         if (screenWidth >= screenHeight) {
-          const w = Math.min(screenWidth, wpWidth)
-          dim = Qt.size(Math.round(w), Math.round(w / imageAspectRatio))
+          const w = Math.min(screenWidth, wpWidth);
+          dim = Qt.size(Math.round(w), Math.round(w / imageAspectRatio));
         } else {
-          const h = Math.min(screenHeight, wpHeight)
-          dim = Qt.size(Math.round(h * imageAspectRatio), Math.round(h))
+          const h = Math.min(screenHeight, wpHeight);
+          dim = Qt.size(Math.round(h * imageAspectRatio), Math.round(h));
         }
 
-        Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height)
-        return dim
+        Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height);
+        return dim;
       }
 
       // ------------------------------------------------------
       function recalculateImageSizes() {
         // Re-evaluate and apply optimal sourceSize for both images when ready
         if (currentWallpaper.status === Image.Ready) {
-          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight)
+          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight);
           if (optimal !== undefined && optimal !== false) {
-            currentWallpaper.sourceSize = optimal
+            currentWallpaper.sourceSize = optimal;
           } else {
-            currentWallpaper.sourceSize = undefined
+            currentWallpaper.sourceSize = undefined;
           }
         }
 
         if (nextWallpaper.status === Image.Ready) {
-          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight)
+          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight);
           if (optimal2 !== undefined && optimal2 !== false) {
-            nextWallpaper.sourceSize = optimal2
+            nextWallpaper.sourceSize = optimal2;
           } else {
-            nextWallpaper.sourceSize = undefined
+            nextWallpaper.sourceSize = undefined;
           }
         }
       }
@@ -373,104 +373,104 @@ Variants {
       function setWallpaperInitial() {
         // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
         if (!WallpaperService || !WallpaperService.isInitialized) {
-          Qt.callLater(setWallpaperInitial)
-          return
+          Qt.callLater(setWallpaperInitial);
+          return;
         }
 
-        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
 
-        futureWallpaper = wallpaperPath
-        performStartupTransition()
+        futureWallpaper = wallpaperPath;
+        performStartupTransition();
       }
 
       // ------------------------------------------------------
       function setWallpaperImmediate(source) {
-        transitionAnimation.stop()
-        transitionProgress = 0.0
+        transitionAnimation.stop();
+        transitionProgress = 0.0;
 
         // Clear nextWallpaper completely to free texture memory
-        nextWallpaper.source = ""
-        nextWallpaper.sourceSize = undefined
+        nextWallpaper.source = "";
+        nextWallpaper.sourceSize = undefined;
 
-        currentWallpaper.source = ""
+        currentWallpaper.source = "";
 
         Qt.callLater(() => {
-                       currentWallpaper.source = source
-                     })
+                       currentWallpaper.source = source;
+                     });
       }
 
       // ------------------------------------------------------
       function setWallpaperWithTransition(source) {
         if (source === currentWallpaper.source) {
-          return
+          return;
         }
 
         if (transitioning) {
           // We are interrupting a transition - handle cleanup properly
-          transitionAnimation.stop()
-          transitionProgress = 0
+          transitionAnimation.stop();
+          transitionProgress = 0;
 
           // Assign nextWallpaper to currentWallpaper BEFORE clearing to prevent flicker
-          const newCurrentSource = nextWallpaper.source
-          currentWallpaper.source = newCurrentSource
+          const newCurrentSource = nextWallpaper.source;
+          currentWallpaper.source = newCurrentSource;
 
           // Now clear nextWallpaper after current has the new source
           Qt.callLater(() => {
-                         nextWallpaper.source = ""
+                         nextWallpaper.source = "";
 
                          // Now set the next wallpaper after a brief delay
                          Qt.callLater(() => {
-                                        nextWallpaper.source = source
-                                        currentWallpaper.asynchronous = false
-                                        transitionAnimation.start()
-                                      })
-                       })
-          return
+                                        nextWallpaper.source = source;
+                                        currentWallpaper.asynchronous = false;
+                                        transitionAnimation.start();
+                                      });
+                       });
+          return;
         }
 
-        nextWallpaper.source = source
-        currentWallpaper.asynchronous = false
-        transitionAnimation.start()
+        nextWallpaper.source = source;
+        currentWallpaper.asynchronous = false;
+        transitionAnimation.start();
       }
 
       // ------------------------------------------------------
       // Main method that actually trigger the wallpaper change
       function changeWallpaper() {
         // Get the transitionType from the settings
-        transitionType = Settings.data.wallpaper.transitionType
+        transitionType = Settings.data.wallpaper.transitionType;
 
         if (transitionType == "random") {
-          var index = Math.floor(Math.random() * allTransitions.length)
-          transitionType = allTransitions[index]
+          var index = Math.floor(Math.random() * allTransitions.length);
+          transitionType = allTransitions[index];
         }
 
         // Ensure the transition type really exists
         if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
-          transitionType = "fade"
+          transitionType = "fade";
         }
 
         //Logger.i("Background", "New wallpaper: ", futureWallpaper, "On:", modelData.name, "Transition:", transitionType)
         switch (transitionType) {
         case "none":
-          setWallpaperImmediate(futureWallpaper)
-          break
+          setWallpaperImmediate(futureWallpaper);
+          break;
         case "wipe":
-          wipeDirection = Math.random() * 4
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          wipeDirection = Math.random() * 4;
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         case "disc":
-          discCenterX = Math.random()
-          discCenterY = Math.random()
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          discCenterX = Math.random();
+          discCenterY = Math.random();
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         case "stripes":
-          stripesCount = Math.round(Math.random() * 20 + 4)
-          stripesAngle = Math.random() * 360
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          stripesCount = Math.round(Math.random() * 20 + 4);
+          stripesAngle = Math.random() * 360;
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         default:
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         }
       }
 
@@ -478,46 +478,46 @@ Variants {
       // Dedicated function for startup animation
       function performStartupTransition() {
         // Get the transitionType from the settings
-        transitionType = Settings.data.wallpaper.transitionType
+        transitionType = Settings.data.wallpaper.transitionType;
 
         if (transitionType == "random") {
-          var index = Math.floor(Math.random() * allTransitions.length)
-          transitionType = allTransitions[index]
+          var index = Math.floor(Math.random() * allTransitions.length);
+          transitionType = allTransitions[index];
         }
 
         // Ensure the transition type really exists
         if (transitionType !== "none" && !allTransitions.includes(transitionType)) {
-          transitionType = "fade"
+          transitionType = "fade";
         }
 
         // Apply transitionType so the shader loader picks the correct shader
-        this.transitionType = transitionType
+        this.transitionType = transitionType;
 
         switch (transitionType) {
         case "none":
-          setWallpaperImmediate(futureWallpaper)
-          break
+          setWallpaperImmediate(futureWallpaper);
+          break;
         case "wipe":
-          wipeDirection = Math.random() * 4
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          wipeDirection = Math.random() * 4;
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         case "disc":
           // Force center origin for elegant startup animation
-          discCenterX = 0.5
-          discCenterY = 0.5
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          discCenterX = 0.5;
+          discCenterY = 0.5;
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         case "stripes":
-          stripesCount = Math.round(Math.random() * 20 + 4)
-          stripesAngle = Math.random() * 360
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          stripesCount = Math.round(Math.random() * 20 + 4);
+          stripesAngle = Math.random() * 360;
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         default:
-          setWallpaperWithTransition(futureWallpaper)
-          break
+          setWallpaperWithTransition(futureWallpaper);
+          break;
         }
         // Mark startup transition complete
-        isStartupTransition = false
+        isStartupTransition = false;
       }
     }
   }

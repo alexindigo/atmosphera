@@ -12,12 +12,12 @@ Singleton {
   readonly property var nodes: Pipewire.nodes.values.reduce((acc, node) => {
                                                               if (!node.isStream) {
                                                                 if (node.isSink) {
-                                                                  acc.sinks.push(node)
+                                                                  acc.sinks.push(node);
                                                                 } else if (node.audio) {
-                                                                  acc.sources.push(node)
+                                                                  acc.sources.push(node);
                                                                 }
                                                               }
-                                                              return acc
+                                                              return acc;
                                                             }, {
                                                               "sources": [],
                                                               "sinks": []
@@ -50,21 +50,21 @@ Singleton {
 
   function updateInputVolume() {
     if (source && source.audio) {
-      var vol = source.audio.volume
+      var vol = source.audio.volume;
       if (vol !== undefined && !isNaN(vol)) {
-        root._inputVolume = vol
+        root._inputVolume = vol;
       }
       // Don't reset to 0 if volume is undefined/NaN - preserve last known value
-      root._inputMuted = !!source.audio.muted
+      root._inputMuted = !!source.audio.muted;
     } else {
       // Only reset muted state
-      root._inputMuted = true
+      root._inputMuted = true;
     }
   }
 
   // Update input volume when source property changes
   onSourceChanged: {
-    updateInputVolume()
+    updateInputVolume();
   }
 
   PwObjectTracker {
@@ -75,22 +75,22 @@ Singleton {
     target: sink?.audio ? sink?.audio : null
 
     function onVolumeChanged() {
-      var vol = (sink?.audio.volume ?? 0)
+      var vol = (sink?.audio.volume ?? 0);
       if (isNaN(vol)) {
-        return
+        return;
       }
       // Only update if the value actually changed to prevent spurious signals
       if (Math.abs(root._volume - vol) > 0.001) {
-        root._volume = vol
+        root._volume = vol;
       }
     }
 
     function onMutedChanged() {
-      var newMuted = (sink?.audio.muted ?? true)
+      var newMuted = (sink?.audio.muted ?? true);
       // Only update if the value actually changed
       if (root._muted !== newMuted) {
-        root._muted = newMuted
-        Logger.i("AudioService", "OnMuteChanged:", root._muted)
+        root._muted = newMuted;
+        Logger.i("AudioService", "OnMuteChanged:", root._muted);
       }
     }
   }
@@ -99,112 +99,113 @@ Singleton {
     target: source?.audio ? source?.audio : null
 
     function onVolumeChanged() {
-      var vol = source?.audio?.volume
+      var vol = source?.audio?.volume;
       if (vol === undefined || isNaN(vol)) {
         // Don't reset to 0 if volume is undefined/NaN - preserve last known value
-        return
+        return;
       }
       // Only update if the value actually changed to prevent spurious signals
       if (Math.abs(root._inputVolume - vol) > 0.001) {
-        root._inputVolume = vol
+        root._inputVolume = vol;
       }
     }
 
     function onMutedChanged() {
-      var newMuted = (source?.audio.muted ?? true)
+      var newMuted = (source?.audio.muted ?? true);
       // Only update if the value actually changed
       if (root._inputMuted !== newMuted) {
-        root._inputMuted = newMuted
+        root._inputMuted = newMuted;
       }
     }
   }
   Connections {
     target: Pipewire
 
-    function onDefaultAudioSinkChanged() {}
+    function onDefaultAudioSinkChanged() {
+    }
 
     function onDefaultAudioSourceChanged() {
-      updateInputVolume()
+      updateInputVolume();
     }
   }
 
   function increaseVolume() {
-    setVolume(volume + stepVolume)
+    setVolume(volume + stepVolume);
   }
 
   function decreaseVolume() {
-    setVolume(volume - stepVolume)
+    setVolume(volume - stepVolume);
   }
 
   function setVolume(newVolume: real) {
     if (sink?.ready && sink?.audio) {
       // Clamp it accordingly
-      sink.audio.muted = false
-      sink.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
+      sink.audio.muted = false;
+      sink.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume));
       //Logger.i("AudioService", "SetVolume", sink.audio.volume);
     } else {
-      Logger.w("AudioService", "No sink available")
+      Logger.w("AudioService", "No sink available");
     }
   }
 
   function setOutputMuted(muted: bool) {
     if (sink?.ready && sink?.audio) {
-      sink.audio.muted = muted
+      sink.audio.muted = muted;
     } else {
-      Logger.w("AudioService", "No sink available")
+      Logger.w("AudioService", "No sink available");
     }
   }
 
   function increaseInputVolume() {
-    setInputVolume(inputVolume + stepVolume)
+    setInputVolume(inputVolume + stepVolume);
   }
 
   function decreaseInputVolume() {
-    setInputVolume(inputVolume - stepVolume)
+    setInputVolume(inputVolume - stepVolume);
   }
 
   function setInputVolume(newVolume: real) {
     if (source?.ready && source?.audio) {
       // Clamp it accordingly
-      source.audio.muted = false
-      source.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume))
+      source.audio.muted = false;
+      source.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume));
     } else {
-      Logger.w("AudioService", "No source available")
+      Logger.w("AudioService", "No source available");
     }
   }
 
   function setInputMuted(muted: bool) {
     if (source?.ready && source?.audio) {
-      source.audio.muted = muted
+      source.audio.muted = muted;
     } else {
-      Logger.w("AudioService", "No source available")
+      Logger.w("AudioService", "No source available");
     }
   }
 
   function setAudioSink(newSink: PwNode): void {
-    Pipewire.preferredDefaultAudioSink = newSink
+    Pipewire.preferredDefaultAudioSink = newSink;
     // Volume is changed by the sink change
-    root._volume = newSink?.audio?.volume ?? 0
-    root._muted = !!newSink?.audio?.muted
+    root._volume = newSink?.audio?.volume ?? 0;
+    root._muted = !!newSink?.audio?.muted;
   }
 
   function setAudioSource(newSource: PwNode): void {
-    Pipewire.preferredDefaultAudioSource = newSource
+    Pipewire.preferredDefaultAudioSource = newSource;
     // The source property will update automatically, which triggers onSourceChanged
     // which calls updateInputVolume()
   }
 
   function getOutputIcon() {
     if (muted) {
-      return "volume-mute"
+      return "volume-mute";
     }
-    return (volume <= Number.EPSILON) ? "volume-zero" : (volume <= 0.5) ? "volume-low" : "volume-high"
+    return (volume <= Number.EPSILON) ? "volume-zero" : (volume <= 0.5) ? "volume-low" : "volume-high";
   }
 
   function getInputIcon() {
     if (inputMuted) {
-      return "microphone-mute"
+      return "microphone-mute";
     }
-    return (inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone"
+    return (inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone";
   }
 }

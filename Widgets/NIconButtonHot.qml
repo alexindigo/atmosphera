@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Layouts
 import qs.Commons
 import qs.Services.UI
 
@@ -50,15 +50,15 @@ Rectangle {
   opacity: root.enabled ? Style.opacityFull : Style.opacityMedium
   color: {
     if (pressed) {
-      return colorBgHover
+      return colorBgHover;
     }
     if (hot) {
-      return colorBgHot
+      return colorBgHot;
     }
     if (root.enabled && root.hovering) {
-      return colorBgHover
+      return colorBgHover;
     }
-    return colorBg
+    return colorBg;
   }
   radius: width * 0.5
   border.color: root.enabled && root.hovering ? colorBorderHover : colorBorder
@@ -85,15 +85,15 @@ Rectangle {
     applyUiScale: root.applyUiScale
     color: {
       if (pressed) {
-        return colorFgHover
+        return colorFgHover;
       }
       if (hot) {
-        return colorFgHot
+        return colorFgHot;
       }
       if (root.enabled && root.hovering) {
-        return colorFgHover
+        return colorFgHover;
       }
-      return colorFg
+      return colorFg;
     }
     // Center horizontally
     x: (root.width - width) / 2
@@ -117,57 +117,57 @@ Rectangle {
     hoverEnabled: true
 
     onEntered: {
-      hovering = root.enabled ? true : false
+      hovering = root.enabled ? true : false;
       if (tooltipText) {
-        TooltipService.show(Screen, parent, tooltipText, tooltipDirection)
+        TooltipService.show(Screen, parent, tooltipText, tooltipDirection);
       }
-      root.entered()
+      root.entered();
     }
 
     onExited: {
-      hovering = false
+      hovering = false;
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
-      root.exited()
+      root.exited();
     }
 
     onPressed: function (mouse) {
       if (root.enabled) {
-        root.pressed = true
-        root.scale = 0.92
+        root.pressed = true;
+        root.scale = 0.92;
       }
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
     }
 
     onReleased: function (mouse) {
-      root.scale = 1.0
-      root.pressed = false
+      root.scale = 1.0;
+      root.pressed = false;
 
       if (!root.enabled && !allowClickWhenDisabled) {
-        return
+        return;
       }
 
       // Only trigger actions if released while hovering
       if (root.hovering) {
         if (mouse.button === Qt.LeftButton) {
-          root.clicked()
+          root.clicked();
         } else if (mouse.button === Qt.RightButton) {
-          root.rightClicked()
+          root.rightClicked();
         } else if (mouse.button === Qt.MiddleButton) {
-          root.middleClicked()
+          root.middleClicked();
         }
       }
     }
 
     onCanceled: {
-      root.hovering = false
-      root.pressed = false
-      root.scale = 1.0
+      root.hovering = false;
+      root.pressed = false;
+      root.scale = 1.0;
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
     }
   }

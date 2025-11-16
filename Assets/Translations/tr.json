@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
-          "description": "Çalışma alanı numaralarını yalnızca açık pencereleri olan çalışma alanları için göster.",
-          "label": "Yalnızca dolu olduğunda numaraları göster"
-        },
-        "show-workspace-numbers": {
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı numaralarını göster.",
-          "label": "Çalışma alanı numaralarını göster"
+        "show-labels-only-when-occupied": {
+          "description": "Sadece açık pencereleri olan çalışma alanları için çalışma alanı etiketini göster.",
+          "label": "Sadece dolu olduğunda etiketi göster."
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Sağlık: {percent}%",
     "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
-    "panel": {
-      "balanced": "Dengeli ({percent}%)",
-      "disabled": "Pil yöneticisi devre dışı",
-      "full": "Tam kapasite ({percent}%)",
-      "lifespan": "Uzatılmış ömür ({percent}%)",
-      "title": "Şarj eşiği"
-    },
     "plugged-in": "Prize takılı.",
     "time-left": "Kalan süre: {time}.",
     "time-until-full": "Dolma süresi: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "İndeks",
+      "index+name": "Dizin ve Ad",
       "name": "İsim",
       "none": "Hiçbiri"
     }
@@ -579,6 +569,7 @@
     "search": "Ara...",
     "search-icons": "örn., noctalia, niri, battery, cloud",
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",
+    "search-wallhaven": "Wallhaven'da ara...",
     "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
     "select": "Seç",
     "test": "Test"
@@ -1680,6 +1671,11 @@
         "description": "Paneller veya menüler açıkken masaüstünü karart.",
         "label": "Masaüstünü karart"
       },
+      "dimmer-opacity": {
+        "description": "Masaüstü karartması için opaklık seviyesini ayarlayın.",
+        "label": "Karartılmış masaüstü opaklığı",
+        "reset": "Karartılmış masaüstü opaklığını sıfırla"
+      },
       "panel-background-opacity": {
         "description": "Tüm paneller için arka plan opaklığını ayarlayın (Launcher, Control Center, Ayarlar vb.).",
         "label": "Panel arka plan opaklığı"
@@ -1795,6 +1791,11 @@
         },
         "select-folder": "Duvar kağıdı klasörünü seç",
         "select-monitor-folder": "Ekran duvar kağıdı klasörünü seç",
+        "selector": {
+          "description": "Duvar kâğıdınızı seçin.",
+          "label": "Duvar kâğıdı seçici",
+          "tooltip": "Duvar kâğıdı seçiciyi aç"
+        },
         "selector-position": {
           "description": "Duvar kağıdı seçici panelinin nerede görüneceğini seçin.",
           "label": "Pozisyon"
@@ -1858,19 +1859,6 @@
     "battery": {
       "low": "Düşük batarya",
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
-    },
-    "battery-manager": {
-      "initial-setup": "Başlangıç kurulumu gerekli",
-      "install-failed": "Kurulum başarısız oldu",
-      "install-missing": "Gerekli dosyalar eksik",
-      "install-success": "Başarıyla kuruldu",
-      "install-unsupported": "Sistem desteklenmiyor",
-      "set-failed": "Batarya eşiği ayarlanamadı",
-      "set-success-desc": "Batarya eşiği % {percent} olarak ayarlandı",
-      "title": "Batarya eşiği",
-      "uninstall-failed": "Kaldırma başarısız oldu",
-      "uninstall-setup": "Kaldırılıyor, kimlik doğrulama gerekli",
-      "uninstall-success": "Başarıyla kaldırıldı"
     },
     "bluetooth": {
       "disabled": "Devre dışı",
@@ -2000,6 +1988,7 @@
     "previous-month": "Önceki ay",
     "refresh": "Yenile",
     "refresh-devices": "Cihazları yenile",
+    "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
     "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
@@ -2029,8 +2018,51 @@
         "description": "Seçilen duvar kağıdını tüm monitörlere aynı anda uygulayın.",
         "label": "Tüm monitörler için uygula"
       },
+      "categories": {
+        "anime": "Anime",
+        "general": "Genel",
+        "label": "Kategoriler",
+        "people": "İnsanlar"
+      },
+      "order": {
+        "asc": "Artan",
+        "desc": "Azalan",
+        "label": "Sıra"
+      },
+      "purity": {
+        "all": "Tümü",
+        "label": "İçerik filtresi",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "resolution": {
+        "atleast": "En az",
+        "exact": "Tam",
+        "label": "Çözünürlük",
+        "mode": {
+          "label": "Mod"
+        }
+      },
       "search": "Ara:",
-      "title": "Duvar kağıdı seçici"
+      "sorting": {
+        "date_added": "Eklenme tarihi",
+        "favorites": "Favoriler",
+        "label": "Sırala",
+        "random": "Rastgele",
+        "relevance": "Alaka",
+        "toplist": "En iyi liste",
+        "views": "Görüntülemeler"
+      },
+      "source": {
+        "label": "Kaynak",
+        "local": "Yerel",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "Duvar kağıdı seçici",
+      "wallhaven-settings": {
+        "apply": "Uygula",
+        "title": "Wallhaven Ayarları"
+      }
     },
     "transitions": {
       "disc": "Disk",
@@ -2040,7 +2072,13 @@
       "stripes": "Çizgiler",
       "wipe": "Silme"
     },
-    "try-different-search": "Farklı bir arama sorgusu deneyin."
+    "try-different-search": "Farklı bir arama sorgusu deneyin.",
+    "unknown": "Bilinmiyor",
+    "wallhaven": {
+      "loading": "Duvar kağıtları yükleniyor...",
+      "no-results": "Duvar kağıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
+      "page": "{current} / {total}"
+    }
   },
   "weather": {
     "clear-sky": "Açık hava",

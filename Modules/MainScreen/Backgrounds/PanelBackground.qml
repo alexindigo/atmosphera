@@ -3,22 +3,21 @@ import QtQuick.Shapes
 import qs.Commons
 import qs.Modules.MainScreen.Backgrounds
 
-
 /**
- * PanelBackground - ShapePath component for rendering a single background
- *
- * Unified shadow system. This component is a ShapePath that will
- * be a child of the unified AllBackgrounds Shape container.
- *
- * Reads positioning and geometry from PanelPlaceholder (via panel.panelItem).
- * The actual panel content lives in a separate SmartPanelWindow.
- *
- * Uses 4-state per-corner system for flexible corner rendering:
- * - State -1: No radius (flat/square corner)
- * - State 0: Normal (inner curve)
- * - State 1: Horizontal inversion (outer curve on X-axis)
- * - State 2: Vertical inversion (outer curve on Y-axis)
- */
+* PanelBackground - ShapePath component for rendering a single background
+*
+* Unified shadow system. This component is a ShapePath that will
+* be a child of the unified AllBackgrounds Shape container.
+*
+* Reads positioning and geometry from PanelPlaceholder (via panel.panelItem).
+* The actual panel content lives in a separate SmartPanelWindow.
+*
+* Uses 4-state per-corner system for flexible corner rendering:
+* - State -1: No radius (flat/square corner)
+* - State 0: Normal (inner curve)
+* - State 1: Horizontal inversion (outer curve on X-axis)
+* - State 2: Vertical inversion (outer curve on Y-axis)
+*/
 ShapePath {
   id: root
 
@@ -51,9 +50,9 @@ ShapePath {
   function getCornerRadius(cornerState) {
     // State -1 = no radius (flat corner)
     if (cornerState === -1)
-      return 0
+      return 0;
     // All other states use effectiveRadius
-    return effectiveRadius
+    return effectiveRadius;
   }
 
   // Per-corner multipliers and radii based on panelBg's corner states

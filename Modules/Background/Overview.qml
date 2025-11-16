@@ -1,6 +1,6 @@
 import QtQuick
-import Quickshell
 import QtQuick.Effects
+import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
@@ -20,16 +20,16 @@ Loader {
 
       Component.onCompleted: {
         if (modelData) {
-          Logger.d("Overview", "Loading overview for Niri on", modelData.name)
+          Logger.d("Overview", "Loading overview for Niri on", modelData.name);
         }
-        setWallpaperInitial()
+        setWallpaperInitial();
       }
 
       Component.onDestruction: {
         // Clean up resources to prevent memory leak when overviewEnabled is toggled off
-        timerDisableFx.stop()
-        bgImage.layer.enabled = false
-        bgImage.source = ""
+        timerDisableFx.stop();
+        bgImage.layer.enabled = false;
+        bgImage.source = "";
       }
 
       // External state management
@@ -37,19 +37,19 @@ Loader {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
-            wallpaper = path
+            wallpaper = path;
           }
         }
       }
 
       function setWallpaperInitial() {
         if (!WallpaperService || !WallpaperService.isInitialized) {
-          Qt.callLater(setWallpaperInitial)
-          return
+          Qt.callLater(setWallpaperInitial);
+          return;
         }
-        const wallpaperPath = WallpaperService.getWallpaper(modelData.name)
+        const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
         if (wallpaperPath && wallpaperPath !== wallpaper) {
-          wallpaper = wallpaperPath
+          wallpaper = wallpaperPath;
         }
       }
 

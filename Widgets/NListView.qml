@@ -16,8 +16,8 @@ Item {
   property int horizontalPolicy: ScrollBar.AlwaysOff
   readonly property bool verticalScrollBarActive: {
     if (listView.ScrollBar.vertical.policy === ScrollBar.AlwaysOff)
-      return false
-    return listView.contentHeight > listView.height
+      return false;
+    return listView.contentHeight > listView.height;
   }
   readonly property real scrollBarWidth: verticalScrollBarActive ? handleWidth : 0
 
@@ -62,47 +62,47 @@ Item {
 
   // Forward ListView methods
   function positionViewAtIndex(index, mode) {
-    listView.positionViewAtIndex(index, mode)
+    listView.positionViewAtIndex(index, mode);
   }
 
   function positionViewAtBeginning() {
-    listView.positionViewAtBeginning()
+    listView.positionViewAtBeginning();
   }
 
   function positionViewAtEnd() {
-    listView.positionViewAtEnd()
+    listView.positionViewAtEnd();
   }
 
   function forceLayout() {
-    listView.forceLayout()
+    listView.forceLayout();
   }
 
   function cancelFlick() {
-    listView.cancelFlick()
+    listView.cancelFlick();
   }
 
   function flick(xVelocity, yVelocity) {
-    listView.flick(xVelocity, yVelocity)
+    listView.flick(xVelocity, yVelocity);
   }
 
   function incrementCurrentIndex() {
-    listView.incrementCurrentIndex()
+    listView.incrementCurrentIndex();
   }
 
   function decrementCurrentIndex() {
-    listView.decrementCurrentIndex()
+    listView.decrementCurrentIndex();
   }
 
   function indexAt(x, y) {
-    return listView.indexAt(x, y)
+    return listView.indexAt(x, y);
   }
 
   function itemAt(x, y) {
-    return listView.itemAt(x, y)
+    return listView.itemAt(x, y);
   }
 
   function itemAtIndex(index) {
-    return listView.itemAtIndex(index)
+    return listView.itemAtIndex(index);
   }
 
   // Set reasonable implicit sizes for Layout usage
@@ -131,7 +131,7 @@ Item {
         implicitHeight: 100
         radius: root.handleRadius
         color: parent.pressed ? root.handlePressedColor : parent.hovered ? root.handleHoverColor : root.handleColor
-        opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+        opacity: parent.policy === ScrollBar.AlwaysOn ? 1.0 : root.verticalScrollBarActive ? (parent.active ? 1.0 : 0.0) : 0.0
 
         Behavior on opacity {
           NumberAnimation {
@@ -150,7 +150,7 @@ Item {
         implicitWidth: root.handleWidth
         implicitHeight: 100
         color: root.trackColor
-        opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+        opacity: parent.policy === ScrollBar.AlwaysOn ? 0.3 : root.verticalScrollBarActive ? (parent.active ? 0.3 : 0.0) : 0.0
         radius: root.handleRadius / 2
 
         Behavior on opacity {

@@ -16,19 +16,19 @@ NIconButtonHot {
 
   onClicked: {
     if (!Settings.data.nightLight.enabled) {
-      Settings.data.nightLight.enabled = true
-      Settings.data.nightLight.forced = false
+      Settings.data.nightLight.enabled = true;
+      Settings.data.nightLight.forced = false;
     } else if (Settings.data.nightLight.enabled && !Settings.data.nightLight.forced) {
-      Settings.data.nightLight.forced = true
+      Settings.data.nightLight.forced = true;
     } else {
-      Settings.data.nightLight.enabled = false
-      Settings.data.nightLight.forced = false
+      Settings.data.nightLight.enabled = false;
+      Settings.data.nightLight.forced = false;
     }
   }
 
   onRightClicked: {
-    var settingsPanel = PanelService.getPanel("settingsPanel", screen)
-    settingsPanel.requestedTab = SettingsPanel.Tab.Display
-    settingsPanel.open()
+    var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+    settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+    settingsPanel.open();
   }
 }

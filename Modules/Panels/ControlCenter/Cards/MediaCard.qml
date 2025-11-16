@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Media
@@ -22,7 +22,7 @@ NBox {
     target: WallpaperService
     function onWallpaperChanged(screenName, path) {
       if (screenName === screen.name) {
-        wallpaper = path
+        wallpaper = path;
       }
     }
   }
@@ -48,8 +48,8 @@ NBox {
 
     // Background image that covers everything
     Image {
-      readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       id: bgImage
+      readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       anchors.fill: parent
       source: MediaService.trackArtUrl || wallpaper
       sourceSize: Qt.size(dim, dim)
@@ -81,13 +81,13 @@ NBox {
       sourceComponent: {
         switch (Settings.data.audio.visualizerType) {
         case "linear":
-          return linearComponent
+          return linearComponent;
         case "mirrored":
-          return mirroredComponent
+          return mirroredComponent;
         case "wave":
-          return waveComponent
+          return waveComponent;
         default:
-          return null
+          return null;
         }
       }
 
@@ -164,8 +164,8 @@ NBox {
       cursorShape: Qt.PointingHandCursor
 
       onClicked: {
-        var menuItems = []
-        var players = MediaService.getAvailablePlayers()
+        var menuItems = [];
+        var players = MediaService.getAvailablePlayers();
         for (var i = 0; i < players.length; i++) {
           menuItems.push({
                            "label": players[i].identity,
@@ -173,10 +173,10 @@ NBox {
                            "icon": "disc",
                            "enabled": true,
                            "visible": true
-                         })
+                         });
         }
-        playerContextMenu.model = menuItems
-        playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height)
+        playerContextMenu.model = menuItems;
+        playerContextMenu.openAtItem(playerSelectorButton, playerSelectorButton.width - playerContextMenu.width, playerSelectorButton.height);
       }
     }
 
@@ -187,9 +187,9 @@ NBox {
       verticalPolicy: ScrollBar.AlwaysOff
 
       onTriggered: function (action) {
-        var index = parseInt(action)
+        var index = parseInt(action);
         if (!isNaN(index)) {
-          MediaService.switchToPlayer(index)
+          MediaService.switchToPlayer(index);
         }
       }
     }
@@ -276,11 +276,11 @@ NBox {
           property real seekEpsilon: 0.01
           property real progressRatio: {
             if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
-              return 0
-            const r = MediaService.currentPosition / MediaService.trackLength
+              return 0;
+            const r = MediaService.currentPosition / MediaService.trackLength;
             if (isNaN(r) || !isFinite(r))
-              return 0
-            return Math.max(0, Math.min(1, r))
+              return 0;
+            return Math.max(0, Math.min(1, r));
           }
           property real effectiveRatio: (MediaService.isSeeking && localSeekRatio >= 0) ? Math.max(0, Math.min(1, localSeekRatio)) : progressRatio
 
@@ -290,10 +290,10 @@ NBox {
             repeat: false
             onTriggered: {
               if (MediaService.isSeeking && progressWrapper.localSeekRatio >= 0) {
-                const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio))
+                const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio));
                 if (progressWrapper.lastSentSeekRatio < 0 || Math.abs(next - progressWrapper.lastSentSeekRatio) >= progressWrapper.seekEpsilon) {
-                  MediaService.seekByRatio(next)
-                  progressWrapper.lastSentSeekRatio = next
+                  MediaService.seekByRatio(next);
+                  progressWrapper.lastSentSeekRatio = next;
                 }
               }
             }
@@ -310,21 +310,21 @@ NBox {
             heightRatio: 0.6
 
             onMoved: {
-              progressWrapper.localSeekRatio = value
-              seekDebounce.restart()
+              progressWrapper.localSeekRatio = value;
+              seekDebounce.restart();
             }
             onPressedChanged: {
               if (pressed) {
-                MediaService.isSeeking = true
-                progressWrapper.localSeekRatio = value
-                MediaService.seekByRatio(value)
-                progressWrapper.lastSentSeekRatio = value
+                MediaService.isSeeking = true;
+                progressWrapper.localSeekRatio = value;
+                MediaService.seekByRatio(value);
+                progressWrapper.lastSentSeekRatio = value;
               } else {
-                seekDebounce.stop()
-                MediaService.seekByRatio(value)
-                MediaService.isSeeking = false
-                progressWrapper.localSeekRatio = -1
-                progressWrapper.lastSentSeekRatio = -1
+                seekDebounce.stop();
+                MediaService.seekByRatio(value);
+                MediaService.isSeeking = false;
+                progressWrapper.localSeekRatio = -1;
+                progressWrapper.lastSentSeekRatio = -1;
               }
             }
           }

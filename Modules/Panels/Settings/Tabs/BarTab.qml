@@ -13,15 +13,15 @@ ColumnLayout {
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
-    const arr = (list || []).slice()
+    const arr = (list || []).slice();
     if (!arr.includes(name))
-      arr.push(name)
-    return arr
+      arr.push(name);
+    return arr;
   }
   function removeMonitor(list, name) {
     return (list || []).filter(function (n) {
-      return n !== name
-    })
+      return n !== name;
+    });
   }
 
   NHeader {
@@ -33,19 +33,24 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.position.label")
     description: I18n.tr("settings.bar.appearance.position.description")
-    model: [{
+    model: [
+      {
         "key": "top",
         "name": I18n.tr("options.bar.position.top")
-      }, {
+      },
+      {
         "key": "bottom",
         "name": I18n.tr("options.bar.position.bottom")
-      }, {
+      },
+      {
         "key": "left",
         "name": I18n.tr("options.bar.position.left")
-      }, {
+      },
+      {
         "key": "right",
         "name": I18n.tr("options.bar.position.right")
-      }]
+      }
+    ]
     currentKey: Settings.data.bar.position
     onSelected: key => Settings.data.bar.position = key
   }
@@ -54,19 +59,24 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.density.label")
     description: I18n.tr("settings.bar.appearance.density.description")
-    model: [{
+    model: [
+      {
         "key": "mini",
         "name": I18n.tr("options.bar.density.mini")
-      }, {
+      },
+      {
         "key": "compact",
         "name": I18n.tr("options.bar.density.compact")
-      }, {
+      },
+      {
         "key": "default",
         "name": I18n.tr("options.bar.density.default")
-      }, {
+      },
+      {
         "key": "comfortable",
         "name": I18n.tr("options.bar.density.comfortable")
-      }]
+      }
+    ]
     currentKey: Settings.data.bar.density
     onSelected: key => Settings.data.bar.density = key
   }
@@ -85,13 +95,13 @@ ColumnLayout {
     description: I18n.tr("settings.bar.appearance.floating.description")
     checked: Settings.data.bar.floating
     onToggled: checked => {
-                 Settings.data.bar.floating = checked
+                 Settings.data.bar.floating = checked;
                  if (checked) {
                    // Disable outer corners when floating is enabled
-                   Settings.data.bar.outerCorners = false
+                   Settings.data.bar.outerCorners = false;
                  } else {
                    // Enable outer corners when floating is disabled
-                   Settings.data.bar.outerCorners = true
+                   Settings.data.bar.outerCorners = true;
                  }
                }
   }
@@ -274,20 +284,20 @@ ColumnLayout {
         Layout.fillWidth: true
         label: modelData.name || "Unknown"
         description: {
-          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          const compositorScale = CompositorService.getDisplayScale(modelData.name);
           I18n.tr("system.monitor-description", {
                     "model": modelData.model,
                     "width": modelData.width * compositorScale,
                     "height": modelData.height * compositorScale,
                     "scale": compositorScale
-                  })
+                  });
         }
         checked: (Settings.data.bar.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
-                       Settings.data.bar.monitors = addMonitor(Settings.data.bar.monitors, modelData.name)
+                       Settings.data.bar.monitors = addMonitor(Settings.data.bar.monitors, modelData.name);
                      } else {
-                       Settings.data.bar.monitors = removeMonitor(Settings.data.bar.monitors, modelData.name)
+                       Settings.data.bar.monitors = removeMonitor(Settings.data.bar.monitors, modelData.name);
                      }
                    }
       }
@@ -304,29 +314,29 @@ ColumnLayout {
   function _addWidgetToSection(widgetId, section) {
     var newWidget = {
       "id": widgetId
-    }
+    };
     if (BarWidgetRegistry.widgetHasUserSettings(widgetId)) {
-      var metadata = BarWidgetRegistry.widgetMetadata[widgetId]
+      var metadata = BarWidgetRegistry.widgetMetadata[widgetId];
       if (metadata) {
         Object.keys(metadata).forEach(function (key) {
           if (key !== "allowUserSettings") {
-            newWidget[key] = metadata[key]
+            newWidget[key] = metadata[key];
           }
-        })
+        });
       }
     }
-    Settings.data.bar.widgets[section].push(newWidget)
+    Settings.data.bar.widgets[section].push(newWidget);
   }
 
   function _removeWidgetFromSection(section, index) {
     if (index >= 0 && index < Settings.data.bar.widgets[section].length) {
-      var newArray = Settings.data.bar.widgets[section].slice()
-      var removedWidgets = newArray.splice(index, 1)
-      Settings.data.bar.widgets[section] = newArray
+      var newArray = Settings.data.bar.widgets[section].slice();
+      var removedWidgets = newArray.splice(index, 1);
+      Settings.data.bar.widgets[section] = newArray;
 
       // Check that we still have a control center
       if (removedWidgets[0].id === "ControlCenter" && BarService.lookupWidget("ControlCenter") === undefined) {
-        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 12000)
+        ToastService.showWarning(I18n.tr("toast.missing-control-center.label"), I18n.tr("toast.missing-control-center.description"), 12000);
       }
     }
   }
@@ -335,36 +345,36 @@ ColumnLayout {
     if (fromIndex >= 0 && fromIndex < Settings.data.bar.widgets[section].length && toIndex >= 0 && toIndex < Settings.data.bar.widgets[section].length) {
 
       // Create a new array to avoid modifying the original
-      var newArray = Settings.data.bar.widgets[section].slice()
-      var item = newArray[fromIndex]
-      newArray.splice(fromIndex, 1)
-      newArray.splice(toIndex, 0, item)
+      var newArray = Settings.data.bar.widgets[section].slice();
+      var item = newArray[fromIndex];
+      newArray.splice(fromIndex, 1);
+      newArray.splice(toIndex, 0, item);
 
-      Settings.data.bar.widgets[section] = newArray
+      Settings.data.bar.widgets[section] = newArray;
       //Logger.i("BarTab", "Widget reordered. New array:", JSON.stringify(newArray))
     }
   }
 
   function _updateWidgetSettingsInSection(section, index, settings) {
     // Update the widget settings in the Settings data
-    Settings.data.bar.widgets[section][index] = settings
+    Settings.data.bar.widgets[section][index] = settings;
     //Logger.i("BarTab", `Updated widget settings for ${settings.id} in ${section} section`)
   }
 
   function _moveWidgetBetweenSections(fromSection, index, toSection) {
     // Get the widget from the source section
     if (index >= 0 && index < Settings.data.bar.widgets[fromSection].length) {
-      var widget = Settings.data.bar.widgets[fromSection][index]
+      var widget = Settings.data.bar.widgets[fromSection][index];
 
       // Remove from source section
-      var sourceArray = Settings.data.bar.widgets[fromSection].slice()
-      sourceArray.splice(index, 1)
-      Settings.data.bar.widgets[fromSection] = sourceArray
+      var sourceArray = Settings.data.bar.widgets[fromSection].slice();
+      sourceArray.splice(index, 1);
+      Settings.data.bar.widgets[fromSection] = sourceArray;
 
       // Add to target section
-      var targetArray = Settings.data.bar.widgets[toSection].slice()
-      targetArray.push(widget)
-      Settings.data.bar.widgets[toSection] = targetArray
+      var targetArray = Settings.data.bar.widgets[toSection].slice();
+      targetArray.push(widget);
+      Settings.data.bar.widgets[toSection] = targetArray;
 
       //Logger.i("BarTab", `Moved widget ${widget.id} from ${fromSection} to ${toSection}`)
     }
@@ -373,33 +383,33 @@ ColumnLayout {
   // Data model functions
   function getWidgetLocations(widgetId) {
     if (!BarService)
-      return []
-    const instances = BarService.getAllRegisteredWidgets()
-    const locations = {}
+      return [];
+    const instances = BarService.getAllRegisteredWidgets();
+    const locations = {};
     for (var i = 0; i < instances.length; i++) {
       if (instances[i].widgetId === widgetId) {
-        const section = instances[i].section
+        const section = instances[i].section;
         if (section === "left")
-          locations["L"] = true
+          locations["L"] = true;
         else if (section === "center")
-          locations["C"] = true
+          locations["C"] = true;
         else if (section === "right")
-          locations["R"] = true
+          locations["R"] = true;
       }
     }
-    return Object.keys(locations).join('')
+    return Object.keys(locations).join('');
   }
 
   function updateAvailableWidgetsModel() {
-    availableWidgets.clear()
-    const widgets = BarWidgetRegistry.getAvailableWidgets()
+    availableWidgets.clear();
+    const widgets = BarWidgetRegistry.getAvailableWidgets();
     widgets.forEach(entry => {
                       availableWidgets.append({
                                                 "key": entry,
                                                 "name": entry,
                                                 "badgeLocations": getWidgetLocations(entry)
-                                              })
-                    })
+                                              });
+                    });
   }
 
   // Base list model for all combo boxes
@@ -408,13 +418,13 @@ ColumnLayout {
   }
 
   Component.onCompleted: {
-    updateAvailableWidgetsModel()
+    updateAvailableWidgetsModel();
   }
 
   Connections {
     target: BarService
     function onActiveWidgetsChanged() {
-      updateAvailableWidgetsModel()
+      updateAvailableWidgetsModel();
     }
   }
 }

@@ -2,8 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services.UI
 import qs.Modules.Bar.Extras
+import qs.Services.UI
 
 // Separate window for TrayMenu context menus
 // This is a top-level PanelWindow (sibling to MainScreen, not nested inside it)
@@ -30,18 +30,18 @@ PanelWindow {
 
   // Register with PanelService so panels can find this window
   Component.onCompleted: {
-    objectName = "trayMenuWindow-" + (screen?.name || "unknown")
-    PanelService.registerTrayMenuWindow(screen, root)
+    objectName = "trayMenuWindow-" + (screen?.name || "unknown");
+    PanelService.registerTrayMenuWindow(screen, root);
   }
 
   function open() {
-    visible = true
+    visible = true;
   }
 
   function close() {
-    visible = false
+    visible = false;
     if (trayMenu.item) {
-      trayMenu.item.hideMenu()
+      trayMenu.item.hideMenu();
     }
   }
 
@@ -53,10 +53,10 @@ PanelWindow {
 
   Loader {
     id: trayMenu
-    source: "../Bar/Extras/TrayMenu.qml"
+    source: Quickshell.shellDir + "/Modules/Bar/Extras/TrayMenu.qml"
     onLoaded: {
       if (item) {
-        item.screen = root.screen
+        item.screen = root.screen;
       }
     }
   }

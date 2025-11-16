@@ -74,30 +74,30 @@ ColumnLayout {
         propagateComposedEvents: false
 
         onPressed: mouse => {
-                     mouse.accepted = true
+                     mouse.accepted = true;
                      // Focus the input and position cursor
-                     input.forceActiveFocus()
-                     var inputPos = mapToItem(inputContainer, mouse.x, mouse.y)
+                     input.forceActiveFocus();
+                     var inputPos = mapToItem(inputContainer, mouse.x, mouse.y);
                      if (inputPos.x >= 0 && inputPos.x <= inputContainer.width) {
-                       var textPos = inputPos.x - Style.marginM
+                       var textPos = inputPos.x - Style.marginM;
                        if (textPos >= 0 && textPos <= input.width) {
-                         input.cursorPosition = input.positionAt(textPos, input.height / 2)
+                         input.cursorPosition = input.positionAt(textPos, input.height / 2);
                        }
                      }
                    }
 
         onReleased: mouse => {
-                      mouse.accepted = true
+                      mouse.accepted = true;
                     }
         onDoubleClicked: mouse => {
-                           mouse.accepted = true
-                           input.selectAll()
+                           mouse.accepted = true;
+                           input.selectAll();
                          }
         onPositionChanged: mouse => {
-                             mouse.accepted = true
+                             mouse.accepted = true;
                            }
         onWheel: wheel => {
-                   wheel.accepted = true
+                   wheel.accepted = true;
                  }
       }
 
@@ -166,31 +166,31 @@ ColumnLayout {
               property int selectionStart: 0
 
               onPressed: mouse => {
-                           mouse.accepted = true
-                           input.forceActiveFocus()
-                           var pos = input.positionAt(mouse.x, mouse.y)
-                           input.cursorPosition = pos
-                           selectionStart = pos
+                           mouse.accepted = true;
+                           input.forceActiveFocus();
+                           var pos = input.positionAt(mouse.x, mouse.y);
+                           input.cursorPosition = pos;
+                           selectionStart = pos;
                          }
 
               onPositionChanged: mouse => {
                                    if (mouse.buttons & Qt.LeftButton) {
-                                     mouse.accepted = true
-                                     var pos = input.positionAt(mouse.x, mouse.y)
-                                     input.select(selectionStart, pos)
+                                     mouse.accepted = true;
+                                     var pos = input.positionAt(mouse.x, mouse.y);
+                                     input.select(selectionStart, pos);
                                    }
                                  }
 
               onDoubleClicked: mouse => {
-                                 mouse.accepted = true
-                                 input.selectAll()
+                                 mouse.accepted = true;
+                                 input.selectAll();
                                }
 
               onReleased: mouse => {
-                            mouse.accepted = true
+                            mouse.accepted = true;
                           }
               onWheel: wheel => {
-                         wheel.accepted = true
+                         wheel.accepted = true;
                        }
             }
           }
@@ -212,8 +212,8 @@ ColumnLayout {
             enabled: input.text.length > 0 && !root.readOnly
 
             onClicked: {
-              input.clear()
-              input.forceActiveFocus()
+              input.clear();
+              input.forceActiveFocus();
             }
           }
         }

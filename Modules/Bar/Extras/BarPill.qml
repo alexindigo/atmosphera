@@ -92,19 +92,19 @@ Item {
 
   function show() {
     if (pillLoader.item && pillLoader.item.show) {
-      pillLoader.item.show()
+      pillLoader.item.show();
     }
   }
 
   function hide() {
     if (pillLoader.item && pillLoader.item.hide) {
-      pillLoader.item.hide()
+      pillLoader.item.hide();
     }
   }
 
   function showDelayed() {
     if (pillLoader.item && pillLoader.item.showDelayed) {
-      pillLoader.item.showDelayed()
+      pillLoader.item.showDelayed();
     }
   }
 }

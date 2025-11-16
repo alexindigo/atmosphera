@@ -53,9 +53,9 @@ Rectangle {
     pointSize: {
       switch (root.density) {
       case "compact":
-        return Math.max(1, root.width * 0.65)
+        return Math.max(1, root.width * 0.65);
       default:
-        return Math.max(1, root.width * 0.48)
+        return Math.max(1, root.width * 0.48);
       }
     }
     applyUiScale: root.applyUiScale
@@ -81,32 +81,32 @@ Rectangle {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     hoverEnabled: true
     onEntered: {
-      hovering = root.enabled ? true : false
+      hovering = root.enabled ? true : false;
       if (tooltipText) {
-        TooltipService.show(Screen, parent, tooltipText, tooltipDirection)
+        TooltipService.show(Screen, parent, tooltipText, tooltipDirection);
       }
-      root.entered()
+      root.entered();
     }
     onExited: {
-      hovering = false
+      hovering = false;
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
-      root.exited()
+      root.exited();
     }
     onClicked: function (mouse) {
       if (tooltipText) {
-        TooltipService.hide()
+        TooltipService.hide();
       }
       if (!root.enabled && !allowClickWhenDisabled) {
-        return
+        return;
       }
       if (mouse.button === Qt.LeftButton) {
-        root.clicked()
+        root.clicked();
       } else if (mouse.button === Qt.RightButton) {
-        root.rightClicked()
+        root.rightClicked();
       } else if (mouse.button === Qt.MiddleButton) {
-        root.middleClicked()
+        root.middleClicked();
       }
     }
     onWheel: wheel => root.wheel(wheel.angleDelta.y)

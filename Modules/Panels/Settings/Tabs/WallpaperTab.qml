@@ -61,6 +61,20 @@ ColumnLayout {
       onButtonClicked: mainFolderPicker.open()
     }
 
+    RowLayout {
+      NLabel {
+        label: I18n.tr("settings.wallpaper.settings.selector.label")
+        description: I18n.tr("settings.wallpaper.settings.selector.description")
+        Layout.alignment: Qt.AlignTop
+      }
+
+      NIconButton {
+        icon: "wallpaper-selector"
+        tooltipText: I18n.tr("settings.wallpaper.settings.selector.tooltip")
+        onClicked: PanelService.getPanel("wallpaperPanel", screen)?.toggle()
+      }
+    }
+
     // Recursive search
     NToggle {
       label: I18n.tr("settings.wallpaper.settings.recursive-search.label")
@@ -120,8 +134,8 @@ ColumnLayout {
               Layout.fillWidth: true
               onInputEditingFinished: WallpaperService.setMonitorDirectory(modelData.name, text)
               onButtonClicked: {
-                specificFolderMonitorName = modelData.name
-                monitorFolderPicker.open()
+                specificFolderMonitorName = modelData.name;
+                monitorFolderPicker.open();
               }
             }
           }
@@ -133,34 +147,43 @@ ColumnLayout {
       label: I18n.tr("settings.wallpaper.settings.selector-position.label")
       description: I18n.tr("settings.wallpaper.settings.selector-position.description")
       Layout.fillWidth: true
-      model: [{
+      model: [
+        {
           "key": "follow_bar",
           "name": I18n.tr("options.launcher.position.follow_bar")
-        }, {
+        },
+        {
           "key": "center",
           "name": I18n.tr("options.launcher.position.center")
-        }, {
+        },
+        {
           "key": "top_center",
           "name": I18n.tr("options.launcher.position.top_center")
-        }, {
+        },
+        {
           "key": "top_left",
           "name": I18n.tr("options.launcher.position.top_left")
-        }, {
+        },
+        {
           "key": "top_right",
           "name": I18n.tr("options.launcher.position.top_right")
-        }, {
+        },
+        {
           "key": "bottom_left",
           "name": I18n.tr("options.launcher.position.bottom_left")
-        }, {
+        },
+        {
           "key": "bottom_right",
           "name": I18n.tr("options.launcher.position.bottom_right")
-        }, {
+        },
+        {
           "key": "bottom_center",
           "name": I18n.tr("options.launcher.position.bottom_center")
-        }]
+        }
+      ]
       currentKey: Settings.data.wallpaper.panelPosition
       onSelected: function (key) {
-        Settings.data.wallpaper.panelPosition = key
+        Settings.data.wallpaper.panelPosition = key;
       }
     }
   }
@@ -299,21 +322,21 @@ ColumnLayout {
 
         // Whether current interval equals one of the presets
         property bool isCurrentPreset: {
-          return intervalPresets.some(seconds => seconds === Settings.data.wallpaper.randomIntervalSec)
+          return intervalPresets.some(seconds => seconds === Settings.data.wallpaper.randomIntervalSec);
         }
         // Allow user to force open the custom input; otherwise it's auto-open when not a preset
         property bool customForcedVisible: false
 
         function setIntervalSeconds(sec) {
-          Settings.data.wallpaper.randomIntervalSec = sec
-          WallpaperService.restartRandomWallpaperTimer()
+          Settings.data.wallpaper.randomIntervalSec = sec;
+          WallpaperService.restartRandomWallpaperTimer();
           // Hide custom when selecting a preset
-          customForcedVisible = false
+          customForcedVisible = false;
         }
 
         // Helper to color selected chip
         function isSelected(sec) {
-          return Settings.data.wallpaper.randomIntervalSec === sec
+          return Settings.data.wallpaper.randomIntervalSec === sec;
         }
 
         // Repeater for preset chips
@@ -346,24 +369,24 @@ ColumnLayout {
           label: I18n.tr("settings.wallpaper.automation.custom-interval.label")
           description: I18n.tr("settings.wallpaper.automation.custom-interval.description")
           text: {
-            const s = Settings.data.wallpaper.randomIntervalSec
-            const h = Math.floor(s / 3600)
-            const m = Math.floor((s % 3600) / 60)
-            return h + ":" + (m < 10 ? ("0" + m) : m)
+            const s = Settings.data.wallpaper.randomIntervalSec;
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            return h + ":" + (m < 10 ? ("0" + m) : m);
           }
           onEditingFinished: {
-            const m = text.trim().match(/^(\d{1,2}):(\d{2})$/)
+            const m = text.trim().match(/^(\d{1,2}):(\d{2})$/);
             if (m) {
-              let h = parseInt(m[1])
-              let min = parseInt(m[2])
+              let h = parseInt(m[1]);
+              let min = parseInt(m[2]);
               if (isNaN(h) || isNaN(min))
-                return
-              h = Math.max(0, Math.min(24, h))
-              min = Math.max(0, Math.min(59, min))
-              Settings.data.wallpaper.randomIntervalSec = (h * 3600) + (min * 60)
-              WallpaperService.restartRandomWallpaperTimer()
+                return;
+              h = Math.max(0, Math.min(24, h));
+              min = Math.max(0, Math.min(59, min));
+              Settings.data.wallpaper.randomIntervalSec = (h * 3600) + (min * 60);
+              WallpaperService.restartRandomWallpaperTimer();
               // Keep custom visible after manual entry
-              presetRow.customForcedVisible = true
+              presetRow.customForcedVisible = true;
             }
           }
         }
@@ -413,7 +436,7 @@ ColumnLayout {
     initialPath: Settings.data.wallpaper.directory || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
                   if (paths.length > 0) {
-                    Settings.data.wallpaper.directory = paths[0]
+                    Settings.data.wallpaper.directory = paths[0];
                   }
                 }
   }
@@ -425,7 +448,7 @@ ColumnLayout {
     initialPath: WallpaperService.getMonitorDirectory(specificFolderMonitorName) || Quickshell.env("HOME") + "/Pictures"
     onAccepted: paths => {
                   if (paths.length > 0) {
-                    WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0])
+                    WallpaperService.setMonitorDirectory(specificFolderMonitorName, paths[0]);
                   }
                 }
   }

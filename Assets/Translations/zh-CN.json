@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
-          "description": "只为有打开窗口的工作区显示编号",
-          "label": "仅在有窗口时显示编号"
-        },
-        "show-workspace-numbers": {
-          "description": "在任务组左上角显示工作区编号",
-          "label": "显示工作区编号"
+        "show-labels-only-when-occupied": {
+          "description": "只显示有打开窗口的工作区标签。",
+          "label": "仅在被占用时显示标签"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "健康状况：{percent}%",
     "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
-    "panel": {
-      "balanced": "平衡 ({percent}%)",
-      "disabled": "电池管理器已禁用",
-      "full": "完全容量 ({percent}%)",
-      "lifespan": "延长寿命 ({percent}%)",
-      "title": "充电阈值"
-    },
     "plugged-in": "已接通电源。",
     "time-left": "剩余时间：{time}。",
     "time-until-full": "充满所需时间：{time}。"
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "索引",
+      "index+name": "索引和名称",
       "name": "名称",
       "none": "无"
     }
@@ -579,6 +569,7 @@
     "search": "搜索...",
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",
+    "search-wallhaven": "搜索 Wallhaven...",
     "search-wallpapers": "输入以筛选壁纸...",
     "select": "选择",
     "test": "测试"
@@ -1680,6 +1671,11 @@
         "description": "当面板或菜单打开时，桌面变暗。",
         "label": "昏暗的桌面"
       },
+      "dimmer-opacity": {
+        "description": "设置桌面变暗时的不透明度。",
+        "label": "变暗桌面不透明度",
+        "reset": "重置变暗桌面不透明度"
+      },
       "panel-background-opacity": {
         "description": "设置所有面板的背景不透明度（启动器、控制中心、设置等）。",
         "label": "面板背景不透明度"
@@ -1795,6 +1791,11 @@
         },
         "select-folder": "选择壁纸文件夹",
         "select-monitor-folder": "选择显示器壁纸文件夹",
+        "selector": {
+          "description": "选择你的壁纸。",
+          "label": "壁纸选择器",
+          "tooltip": "打开壁纸选择器"
+        },
         "selector-position": {
           "description": "选择壁纸选择面板的显示位置。",
           "label": "选择器位置"
@@ -1858,19 +1859,6 @@
     "battery": {
       "low": "电量低",
       "low-desc": "电量为 {percent}%。请连接充电器。"
-    },
-    "battery-manager": {
-      "initial-setup": "需要初始设置",
-      "install-failed": "安装失败",
-      "install-missing": "缺少必要文件",
-      "install-success": "安装成功",
-      "install-unsupported": "系统不受支持",
-      "set-failed": "设置电池阈值失败",
-      "set-success-desc": "电池阈值已设置为 {percent}%",
-      "title": "电池阈值",
-      "uninstall-failed": "卸载失败",
-      "uninstall-setup": "正在卸载，需要身份验证",
-      "uninstall-success": "卸载成功"
     },
     "bluetooth": {
       "disabled": "已禁用",
@@ -2000,6 +1988,7 @@
     "previous-month": "上个月",
     "refresh": "刷新",
     "refresh-devices": "刷新设备",
+    "refresh-wallhaven": "刷新 Wallhaven 结果",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
     "screen-recorder-not-installed": "屏幕录制器未安装",
@@ -2029,8 +2018,51 @@
         "description": "一次性将选定的壁纸应用到所有显示器。",
         "label": "应用到所有显示器"
       },
+      "categories": {
+        "anime": "动漫",
+        "general": "通用",
+        "label": "分类",
+        "people": "人物"
+      },
+      "order": {
+        "asc": "升序",
+        "desc": "降序",
+        "label": "顺序"
+      },
+      "purity": {
+        "all": "全部",
+        "label": "内容过滤器",
+        "sfw": "SFW",
+        "sketchy": "Sketchy"
+      },
+      "resolution": {
+        "atleast": "至少",
+        "exact": "精确",
+        "label": "分辨率",
+        "mode": {
+          "label": "模式"
+        }
+      },
       "search": "搜索：",
-      "title": "壁纸选择器"
+      "sorting": {
+        "date_added": "添加日期",
+        "favorites": "收藏",
+        "label": "排序方式",
+        "random": "随机",
+        "relevance": "相关性",
+        "toplist": "排行榜",
+        "views": "浏览量"
+      },
+      "source": {
+        "label": "来源",
+        "local": "本地",
+        "wallhaven": "Wallhaven"
+      },
+      "title": "壁纸选择器",
+      "wallhaven-settings": {
+        "apply": "应用",
+        "title": "Wallhaven 设置"
+      }
     },
     "transitions": {
       "disc": "圆盘",
@@ -2040,7 +2072,13 @@
       "stripes": "条纹",
       "wipe": "擦除"
     },
-    "try-different-search": "尝试不同的搜索查询。"
+    "try-different-search": "尝试不同的搜索查询。",
+    "unknown": "未知",
+    "wallhaven": {
+      "loading": "正在加载壁纸...",
+      "no-results": "未找到壁纸。请尝试不同的搜索查询。",
+      "page": "{current} / {total}"
+    }
   },
   "weather": {
     "clear-sky": "晴朗",

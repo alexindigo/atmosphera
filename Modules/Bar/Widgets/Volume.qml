@@ -5,8 +5,8 @@ import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
-import qs.Services.UI
 import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -23,12 +23,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -48,12 +48,12 @@ Item {
       // Logger.i("Bar:Volume", "onVolumeChanged")
       if (!firstVolumeReceived) {
         // Ignore the first volume change
-        firstVolumeReceived = true
+        firstVolumeReceived = true;
       } else {
         // Hide any tooltip while the pill is visible / being updated
-        TooltipService.hide()
-        pill.show()
-        externalHideTimer.restart()
+        TooltipService.hide();
+        pill.show();
+        externalHideTimer.restart();
       }
     }
   }
@@ -63,7 +63,7 @@ Item {
     running: false
     interval: 1500
     onTriggered: {
-      pill.hide()
+      pill.hide();
     }
   }
 
@@ -84,25 +84,25 @@ Item {
 
     onWheel: function (delta) {
       // Hide tooltip as soon as the user starts scrolling to adjust volume
-      TooltipService.hide()
+      TooltipService.hide();
 
-      wheelAccumulator += delta
+      wheelAccumulator += delta;
       if (wheelAccumulator >= 120) {
-        wheelAccumulator = 0
-        AudioService.increaseVolume()
+        wheelAccumulator = 0;
+        AudioService.increaseVolume();
       } else if (wheelAccumulator <= -120) {
-        wheelAccumulator = 0
-        AudioService.decreaseVolume()
+        wheelAccumulator = 0;
+        AudioService.decreaseVolume();
       }
     }
     onClicked: {
-      PanelService.getPanel("audioPanel", screen)?.toggle(this)
+      PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      AudioService.setOutputMuted(!AudioService.muted)
+      AudioService.setOutputMuted(!AudioService.muted);
     }
     onMiddleClicked: {
-      Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"])
+      Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
     }
   }
 }

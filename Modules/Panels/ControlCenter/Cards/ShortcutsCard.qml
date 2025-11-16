@@ -3,9 +3,9 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
-import qs.Widgets
 import qs.Modules.Panels.ControlCenter
 import qs.Modules.Panels.ControlCenter.Cards
+import qs.Widgets
 
 RowLayout {
   Layout.fillWidth: true

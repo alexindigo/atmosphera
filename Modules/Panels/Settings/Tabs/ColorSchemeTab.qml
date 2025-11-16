@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.Theming
 import qs.Services.System
+import qs.Services.Theming
 import qs.Services.UI
 import qs.Widgets
 
@@ -23,13 +23,13 @@ ColumnLayout {
   Component.onCompleted: {
     for (var h = 0; h < 24; h++) {
       for (var m = 0; m < 60; m += 30) {
-        var hh = ("0" + h).slice(-2)
-        var mm = ("0" + m).slice(-2)
-        var key = hh + ":" + mm
+        var hh = ("0" + h).slice(-2);
+        var mm = ("0" + m).slice(-2);
+        var key = hh + ":" + mm;
         timeOptions.append({
                              "key": key,
                              "name": key
-                           })
+                           });
       }
     }
   }
@@ -38,68 +38,68 @@ ColumnLayout {
 
   // Helper function to extract scheme name from path
   function extractSchemeName(schemePath) {
-    var pathParts = schemePath.split("/")
-    var filename = pathParts[pathParts.length - 1]
-    var schemeName = filename.replace(".json", "")
+    var pathParts = schemePath.split("/");
+    var filename = pathParts[pathParts.length - 1];
+    var schemeName = filename.replace(".json", "");
 
     if (schemeName === "Noctalia-default") {
-      schemeName = "Noctalia (default)"
+      schemeName = "Noctalia (default)";
     } else if (schemeName === "Noctalia-legacy") {
-      schemeName = "Noctalia (legacy)"
+      schemeName = "Noctalia (legacy)";
     } else if (schemeName === "Tokyo-Night") {
-      schemeName = "Tokyo Night"
+      schemeName = "Tokyo Night";
     }
 
-    return schemeName
+    return schemeName;
   }
 
   // Helper function to get color from scheme file (supports dark/light variants)
   function getSchemeColor(schemeName, colorKey) {
     // Access cache version to create dependency
-    var _ = cacheVersion
+    var _ = cacheVersion;
 
     if (schemeColorsCache[schemeName]) {
-      var entry = schemeColorsCache[schemeName]
-      var variant = entry
+      var entry = schemeColorsCache[schemeName];
+      var variant = entry;
 
       // Check if scheme has dark/light variants
       if (entry.dark || entry.light) {
-        variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark)
+        variant = Settings.data.colorSchemes.darkMode ? (entry.dark || entry.light) : (entry.light || entry.dark);
       }
 
       if (variant && variant[colorKey]) {
-        return variant[colorKey]
+        return variant[colorKey];
       }
     }
 
     // Return visible defaults while loading
     if (colorKey === "mSurface")
-      return Color.mSurfaceVariant
+      return Color.mSurfaceVariant;
     if (colorKey === "mPrimary")
-      return Color.mPrimary
+      return Color.mPrimary;
     if (colorKey === "mSecondary")
-      return Color.mSecondary
+      return Color.mSecondary;
     if (colorKey === "mTertiary")
-      return Color.mTertiary
+      return Color.mTertiary;
     if (colorKey === "mError")
-      return Color.mError
-    return Color.mOnSurfaceVariant
+      return Color.mError;
+    return Color.mOnSurfaceVariant;
   }
 
   // This function is called by the FileView Repeater when a scheme file is loaded
   function schemeLoaded(schemeName, jsonData) {
-    var value = jsonData || {}
-    schemeColorsCache[schemeName] = value
+    var value = jsonData || {};
+    schemeColorsCache[schemeName] = value;
     // Force UI update by incrementing cache version
-    cacheVersion++
+    cacheVersion++;
   }
 
   // When the list of available schemes changes, clear the cache
   Connections {
     target: ColorSchemeService
     function onSchemesChanged() {
-      schemeColorsCache = {}
-      cacheVersion++
+      schemeColorsCache = {};
+      cacheVersion++;
     }
   }
 
@@ -111,11 +111,11 @@ ColumnLayout {
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        Settings.data.colorSchemes.useWallpaperColors = true
-        AppThemeService.generate()
-        ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"), "settings-color-scheme")
+        Settings.data.colorSchemes.useWallpaperColors = true;
+        AppThemeService.generate();
+        ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"), "settings-color-scheme");
       } else {
-        ToastService.showWarning(I18n.tr("oast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"))
+        ToastService.showWarning(I18n.tr("oast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
       }
     }
 
@@ -125,8 +125,8 @@ ColumnLayout {
 
   // A non-visual Item to host the Repeater that loads the color scheme files
   Item {
-    visible: false
     id: fileLoaders
+    visible: false
 
     Repeater {
       model: ColorSchemeService.schemes
@@ -135,14 +135,14 @@ ColumnLayout {
           path: modelData
           blockLoading: false
           onLoaded: {
-            var schemeName = root.extractSchemeName(path)
+            var schemeName = root.extractSchemeName(path);
 
             try {
-              var jsonData = JSON.parse(text())
-              root.schemeLoaded(schemeName, jsonData)
+              var jsonData = JSON.parse(text());
+              root.schemeLoaded(schemeName, jsonData);
             } catch (e) {
-              Logger.w("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e)
-              root.schemeLoaded(schemeName, null)
+              Logger.w("ColorSchemeTab", "Failed to parse JSON for scheme:", schemeName, e);
+              root.schemeLoaded(schemeName, null);
             }
           }
         }
@@ -162,8 +162,8 @@ ColumnLayout {
     description: I18n.tr("settings.color-scheme.dark-mode.switch.description")
     checked: Settings.data.colorSchemes.darkMode
     onToggled: checked => {
-                 Settings.data.colorSchemes.darkMode = checked
-                 root.cacheVersion++ // Force UI update for dark/light variants
+                 Settings.data.colorSchemes.darkMode = checked;
+                 root.cacheVersion++; // Force UI update for dark/light variants
                }
   }
 
@@ -171,22 +171,26 @@ ColumnLayout {
     label: I18n.tr("settings.color-scheme.dark-mode.mode.label")
     description: I18n.tr("settings.color-scheme.dark-mode.mode.description")
 
-    model: [{
+    model: [
+      {
         "name": I18n.tr("settings.color-scheme.dark-mode.mode.off"),
         "key": "off"
-      }, {
+      },
+      {
         "name": I18n.tr("settings.color-scheme.dark-mode.mode.manual"),
         "key": "manual"
-      }, {
+      },
+      {
         "name": I18n.tr("settings.color-scheme.dark-mode.mode.location"),
         "key": "location"
-      }]
+      }
+    ]
 
     currentKey: Settings.data.colorSchemes.schedulingMode
 
     onSelected: key => {
-                  Settings.data.colorSchemes.schedulingMode = key
-                  AppThemeService.generate()
+                  Settings.data.colorSchemes.schedulingMode = key;
+                  AppThemeService.generate();
                 }
   }
 
@@ -246,13 +250,13 @@ ColumnLayout {
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  if (checked) {
-                   matugenCheck.running = true
+                   matugenCheck.running = true;
                  } else {
-                   Settings.data.colorSchemes.useWallpaperColors = false
-                   ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"), "settings-color-scheme")
+                   Settings.data.colorSchemes.useWallpaperColors = false;
+                   ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"), "settings-color-scheme");
 
                    if (Settings.data.colorSchemes.predefinedScheme) {
-                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
                    }
                  }
                }
@@ -266,37 +270,46 @@ ColumnLayout {
     opacity: Settings.data.colorSchemes.useWallpaperColors ? 1.0 : 0.6
     visible: Settings.data.colorSchemes.useWallpaperColors
 
-    model: [{
+    model: [
+      {
         "key": "scheme-content",
         "name": "Content"
-      }, {
+      },
+      {
         "key": "scheme-expressive",
         "name": "Expressive"
-      }, {
+      },
+      {
         "key": "scheme-fidelity",
         "name": "Fidelity"
-      }, {
+      },
+      {
         "key": "scheme-fruit-salad",
         "name": "Fruit Salad"
-      }, {
+      },
+      {
         "key": "scheme-monochrome",
         "name": "Monochrome"
-      }, {
+      },
+      {
         "key": "scheme-neutral",
         "name": "Neutral"
-      }, {
+      },
+      {
         "key": "scheme-rainbow",
         "name": "Rainbow"
-      }, {
+      },
+      {
         "key": "scheme-tonal-spot",
         "name": "Tonal Spot"
-      }]
+      }
+    ]
 
     currentKey: Settings.data.colorSchemes.matugenSchemeType
 
     onSelected: key => {
-                  Settings.data.colorSchemes.matugenSchemeType = key
-                  AppThemeService.generate()
+                  Settings.data.colorSchemes.matugenSchemeType = key;
+                  AppThemeService.generate();
                 }
   }
 
@@ -342,12 +355,12 @@ ColumnLayout {
           border.width: Style.borderL
           border.color: {
             if (Settings.data.colorSchemes.predefinedScheme === schemeName) {
-              return Color.mSecondary
+              return Color.mSecondary;
             }
             if (itemMouseArea.containsMouse) {
-              return Color.mHover
+              return Color.mHover;
             }
-            return Color.mOutline
+            return Color.mOutline;
           }
 
           RowLayout {
@@ -404,11 +417,11 @@ ColumnLayout {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-              Settings.data.colorSchemes.useWallpaperColors = false
-              Logger.i("ColorSchemeTab", "Disabled wallpaper colors")
+              Settings.data.colorSchemes.useWallpaperColors = false;
+              Logger.i("ColorSchemeTab", "Disabled wallpaper colors");
 
-              Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName
-              ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+              Settings.data.colorSchemes.predefinedScheme = schemeItem.schemeName;
+              ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
             }
           }
 
@@ -450,9 +463,9 @@ ColumnLayout {
       description: I18n.tr("settings.color-scheme.predefined.generate-templates.description")
       checked: Settings.data.colorSchemes.generateTemplatesForPredefined
       onToggled: checked => {
-                   Settings.data.colorSchemes.generateTemplatesForPredefined = checked
+                   Settings.data.colorSchemes.generateTemplatesForPredefined = checked;
                    if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
-                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme)
+                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
                    }
                  }
       Layout.topMargin: Style.marginL
@@ -490,8 +503,8 @@ ColumnLayout {
                              })
         checked: Settings.data.templates.gtk
         onToggled: checked => {
-                     Settings.data.templates.gtk = checked
-                     AppThemeService.generate()
+                     Settings.data.templates.gtk = checked;
+                     AppThemeService.generate();
                    }
       }
 
@@ -502,8 +515,8 @@ ColumnLayout {
                              })
         checked: Settings.data.templates.qt
         onToggled: checked => {
-                     Settings.data.templates.qt = checked
-                     AppThemeService.generate()
+                     Settings.data.templates.qt = checked;
+                     AppThemeService.generate();
                    }
       }
 
@@ -514,8 +527,8 @@ ColumnLayout {
                              })
         checked: Settings.data.templates.kcolorscheme
         onToggled: checked => {
-                     Settings.data.templates.kcolorscheme = checked
-                     AppThemeService.generate()
+                     Settings.data.templates.kcolorscheme = checked;
+                     AppThemeService.generate();
                    }
       }
     }
@@ -539,8 +552,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.alacrittyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.alacrittyAvailable) {
-                       Settings.data.templates.alacritty = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.alacritty = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -557,8 +570,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.kittyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.kittyAvailable) {
-                       Settings.data.templates.kitty = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.kitty = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -575,8 +588,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.ghosttyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.ghosttyAvailable) {
-                       Settings.data.templates.ghostty = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.ghostty = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -593,8 +606,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.footAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.footAvailable) {
-                       Settings.data.templates.foot = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.foot = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -611,8 +624,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.weztermAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.weztermAvailable) {
-                       Settings.data.templates.wezterm = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.wezterm = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -637,8 +650,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.fuzzelAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.fuzzelAvailable) {
-                       Settings.data.templates.fuzzel = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.fuzzel = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -649,43 +662,27 @@ ColumnLayout {
         label: "Discord"
         description: {
           if (ProgramCheckerService.availableDiscordClients.length === 0) {
-            return I18n.tr("settings.color-scheme.templates.programs.discord.description-missing")
+            return I18n.tr("settings.color-scheme.templates.programs.discord.description-missing");
           } else {
             // Show detected clients
-            var clientInfo = []
+            var clientInfo = [];
             for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
-              var client = ProgramCheckerService.availableDiscordClients[i]
-              clientInfo.push(client.name.charAt(0).toUpperCase() + client.name.slice(1))
+              var client = ProgramCheckerService.availableDiscordClients[i];
+              clientInfo.push(client.name.charAt(0).toUpperCase() + client.name.slice(1));
             }
-            return "Detected: " + clientInfo.join(", ")
+            return "Detected: " + clientInfo.join(", ");
           }
         }
         Layout.fillWidth: true
         Layout.preferredWidth: -1
-        checked: {
-          // Check if any Discord client template is enabled
-          var anyEnabled = false
-          for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
-            var client = ProgramCheckerService.availableDiscordClients[i]
-            if (Settings.data.templates["discord_" + client.name]) {
-              anyEnabled = true
-              break
-            }
-          }
-          return anyEnabled
-        }
+        checked: Settings.data.templates.discord
         enabled: ProgramCheckerService.availableDiscordClients.length > 0
         opacity: ProgramCheckerService.availableDiscordClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
                      // Set unified discord property
-                     Settings.data.templates.discord = checked
-                     // Enable/disable all detected Discord clients
-                     for (var i = 0; i < ProgramCheckerService.availableDiscordClients.length; i++) {
-                       var client = ProgramCheckerService.availableDiscordClients[i]
-                       Settings.data.templates["discord_" + client.name] = checked
-                     }
+                     Settings.data.templates.discord = checked;
                      if (ProgramCheckerService.availableDiscordClients.length > 0) {
-                       AppThemeService.generate()
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -702,8 +699,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.pywalfoxAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.pywalfoxAvailable) {
-                       Settings.data.templates.pywalfox = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.pywalfox = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -719,8 +716,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.vicinaeAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.vicinaeAvailable) {
-                       Settings.data.templates.vicinae = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.vicinae = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -736,8 +733,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.walkerAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.walkerAvailable) {
-                       Settings.data.templates.walker = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.walker = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -748,45 +745,29 @@ ColumnLayout {
         label: "Code"
         description: {
           if (ProgramCheckerService.availableCodeClients.length === 0) {
-            return I18n.tr("settings.color-scheme.templates.programs.code.description-missing")
+            return I18n.tr("settings.color-scheme.templates.programs.code.description-missing");
           } else {
             // Show detected clients
-            var clientInfo = []
+            var clientInfo = [];
             for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
-              var client = ProgramCheckerService.availableCodeClients[i]
+              var client = ProgramCheckerService.availableCodeClients[i];
               // Capitalize first letter and format nicely
-              var clientName = client.name === "code" ? "VSCode" : "VSCodium"
-              clientInfo.push(clientName)
+              var clientName = client.name === "code" ? "VSCode" : "VSCodium";
+              clientInfo.push(clientName);
             }
-            return "Detected: " + clientInfo.join(", ")
+            return "Detected: " + clientInfo.join(", ");
           }
         }
         Layout.fillWidth: true
         Layout.preferredWidth: -1
-        checked: {
-          // Check if any Code client template is enabled
-          var anyEnabled = false
-          for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
-            var client = ProgramCheckerService.availableCodeClients[i]
-            if (Settings.data.templates["code_" + client.name]) {
-              anyEnabled = true
-              break
-            }
-          }
-          return anyEnabled
-        }
+        checked: Settings.data.templates.code
         enabled: ProgramCheckerService.availableCodeClients.length > 0
         opacity: ProgramCheckerService.availableCodeClients.length > 0 ? 1.0 : 0.6
         onToggled: checked => {
                      // Set unified code property
-                     Settings.data.templates.code = checked
-                     // Enable/disable all detected Code clients
-                     for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
-                       var client = ProgramCheckerService.availableCodeClients[i]
-                       Settings.data.templates["code_" + client.name] = checked
-                     }
+                     Settings.data.templates.code = checked;
                      if (ProgramCheckerService.availableCodeClients.length > 0) {
-                       AppThemeService.generate()
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -803,8 +784,8 @@ ColumnLayout {
         opacity: ProgramCheckerService.spicetifyAvailable ? 1.0 : 0.6
         onToggled: checked => {
                      if (ProgramCheckerService.spicetifyAvailable) {
-                       Settings.data.templates.spicetify = checked
-                       AppThemeService.generate()
+                       Settings.data.templates.spicetify = checked;
+                       AppThemeService.generate();
                      }
                    }
       }
@@ -821,11 +802,11 @@ ColumnLayout {
         description: I18n.tr("settings.color-scheme.templates.misc.user-templates.description")
         checked: Settings.data.templates.enableUserTemplates
         onToggled: checked => {
-                     Settings.data.templates.enableUserTemplates = checked
+                     Settings.data.templates.enableUserTemplates = checked;
                      if (checked) {
-                       TemplateRegistry.writeUserTemplatesToml()
+                       TemplateRegistry.writeUserTemplatesToml();
                      }
-                     AppThemeService.generate()
+                     AppThemeService.generate();
                    }
       }
     }

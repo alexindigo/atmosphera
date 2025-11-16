@@ -58,27 +58,27 @@ ColumnLayout {
     NButton {
       visible: {
         if (root.latestVersion === "Unknown")
-          return false
+          return false;
 
-        const latest = root.latestVersion.replace("v", "").split(".")
-        const current = root.currentVersion.replace("v", "").split(".")
+        const latest = root.latestVersion.replace("v", "").split(".");
+        const current = root.currentVersion.replace("v", "").split(".");
         for (var i = 0; i < Math.max(latest.length, current.length); i++) {
-          const l = parseInt(latest[i] || "0")
-          const c = parseInt(current[i] || "0")
+          const l = parseInt(latest[i] || "0");
+          const c = parseInt(current[i] || "0");
           if (l > c)
-            return true
+            return true;
 
           if (l < c)
-            return false
+            return false;
         }
-        return false
+        return false;
       }
       icon: "download"
       text: I18n.tr("settings.about.noctalia.download-latest")
       outlined: !hovered
       fontSize: Style.fontSizeXS
       onClicked: {
-        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"])
+        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"]);
       }
     }
   }
@@ -126,8 +126,8 @@ ColumnLayout {
       hoverEnabled: true
       cursorShape: Qt.PointingHandCursor
       onClicked: {
-        Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"])
-        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"))
+        Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"]);
+        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"));
       }
     }
   }
@@ -157,10 +157,10 @@ ColumnLayout {
     Layout.preferredWidth: cellWidth * columnsCount
     Layout.preferredHeight: {
       if (root.contributors.length === 0)
-        return 0
+        return 0;
 
-      const rows = Math.ceil(root.contributors.length / columnsCount)
-      return rows * cellHeight
+      const rows = Math.ceil(root.contributors.length / columnsCount);
+      return rows * cellHeight;
     }
     cellWidth: Math.round(Style.baseWidgetSize * 7)
     cellHeight: Math.round(Style.baseWidgetSize * 2.5)
@@ -233,7 +233,7 @@ ColumnLayout {
         cursorShape: Qt.PointingHandCursor
         onClicked: {
           if (modelData.html_url)
-            Quickshell.execDetached(["xdg-open", modelData.html_url])
+            Quickshell.execDetached(["xdg-open", modelData.html_url]);
         }
       }
     }

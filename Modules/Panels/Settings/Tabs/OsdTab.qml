@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
@@ -11,15 +11,15 @@ ColumnLayout {
 
   // Helper functions to update arrays immutably
   function addMonitor(list, name) {
-    const arr = (list || []).slice()
+    const arr = (list || []).slice();
     if (!arr.includes(name))
-      arr.push(name)
-    return arr
+      arr.push(name);
+    return arr;
   }
   function removeMonitor(list, name) {
     return (list || []).filter(function (n) {
-      return n !== name
-    })
+      return n !== name;
+    });
   }
 
   // Display
@@ -30,31 +30,40 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.osd.location.label")
       description: I18n.tr("settings.osd.location.description")
-      model: [{
+      model: [
+        {
           "key": "top",
           "name": I18n.tr("options.osd.position.top_center")
-        }, {
+        },
+        {
           "key": "top_left",
           "name": I18n.tr("options.osd.position.top_left")
-        }, {
+        },
+        {
           "key": "top_right",
           "name": I18n.tr("options.osd.position.top_right")
-        }, {
+        },
+        {
           "key": "bottom",
           "name": I18n.tr("options.osd.position.bottom_center")
-        }, {
+        },
+        {
           "key": "bottom_left",
           "name": I18n.tr("options.osd.position.bottom_left")
-        }, {
+        },
+        {
           "key": "bottom_right",
           "name": I18n.tr("options.osd.position.bottom_right")
-        }, {
+        },
+        {
           "key": "left",
           "name": I18n.tr("options.osd.position.center_left")
-        }, {
+        },
+        {
           "key": "right",
           "name": I18n.tr("options.osd.position.center_right")
-        }]
+        }
+      ]
       currentKey: Settings.data.osd.location || "top_right"
       onSelected: key => Settings.data.osd.location = key
     }
@@ -143,20 +152,20 @@ ColumnLayout {
         Layout.fillWidth: true
         label: modelData.name || I18n.tr("system.unknown")
         description: {
-          const compositorScale = CompositorService.getDisplayScale(modelData.name)
+          const compositorScale = CompositorService.getDisplayScale(modelData.name);
           I18n.tr("system.monitor-description", {
                     "model": modelData.model,
                     "width": modelData.width * compositorScale,
                     "height": modelData.height * compositorScale,
                     "scale": compositorScale
-                  })
+                  });
         }
         checked: (Settings.data.osd.monitors || []).indexOf(modelData.name) !== -1
         onToggled: checked => {
                      if (checked) {
-                       Settings.data.osd.monitors = addMonitor(Settings.data.osd.monitors, modelData.name)
+                       Settings.data.osd.monitors = addMonitor(Settings.data.osd.monitors, modelData.name);
                      } else {
-                       Settings.data.osd.monitors = removeMonitor(Settings.data.osd.monitors, modelData.name)
+                       Settings.data.osd.monitors = removeMonitor(Settings.data.osd.monitors, modelData.name);
                      }
                    }
       }

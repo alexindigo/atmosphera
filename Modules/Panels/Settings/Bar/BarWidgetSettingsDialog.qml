@@ -3,8 +3,8 @@ import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import qs.Commons
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 // Widget Settings Dialog Component
 Popup {
@@ -27,7 +27,7 @@ Popup {
   onOpened: {
     // Load settings when popup opens with data
     if (widgetData && widgetId) {
-      loadWidgetSettings()
+      loadWidgetSettings();
     }
   }
 
@@ -102,9 +102,9 @@ Popup {
         icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
-            var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings)
-            root.close()
+            var newSettings = settingsLoader.item.saveSettings();
+            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+            root.close();
           }
         }
       }
@@ -112,37 +112,13 @@ Popup {
   }
 
   function loadWidgetSettings() {
-    const widgetSettingsMap = {
-      "ActiveWindow": "WidgetSettings/ActiveWindowSettings.qml",
-      "AudioVisualizer": "WidgetSettings/AudioVisualizerSettings.qml",
-      "Battery": "WidgetSettings/BatterySettings.qml",
-      "Bluetooth": "WidgetSettings/BluetoothSettings.qml",
-      "Brightness": "WidgetSettings/BrightnessSettings.qml",
-      "Clock": "WidgetSettings/ClockSettings.qml",
-      "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
-      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
-      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
-      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
-      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
-      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
-      "NotificationHistory": "WidgetSettings/NotificationHistorySettings.qml",
-      "Spacer": "WidgetSettings/SpacerSettings.qml",
-      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-      "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
-      "Volume": "WidgetSettings/VolumeSettings.qml",
-      "WiFi": "WidgetSettings/WiFiSettings.qml",
-      "Workspace": "WidgetSettings/WorkspaceSettings.qml",
-      "Taskbar": "WidgetSettings/TaskbarSettings.qml",
-      "Tray": "WidgetSettings/TraySettings.qml"
-    }
-
-    const source = widgetSettingsMap[widgetId]
+    const source = BarWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
       // Use setSource to pass properties at creation time
       settingsLoader.setSource(source, {
                                  "widgetData": widgetData,
                                  "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
-                               })
+                               });
     }
   }
 }

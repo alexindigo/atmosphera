@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 // Widget Settings Dialog Component
 Popup {
@@ -24,7 +24,7 @@ Popup {
 
   onOpened: {
     if (widgetData && widgetId) {
-      loadWidgetSettings()
+      loadWidgetSettings();
     }
   }
 
@@ -94,9 +94,9 @@ Popup {
         icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
-            var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings)
-            root.close()
+            var newSettings = settingsLoader.item.saveSettings();
+            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+            root.close();
           }
         }
       }
@@ -106,14 +106,14 @@ Popup {
   function loadWidgetSettings() {
     const widgetSettingsMap = {
       "CustomButton": "WidgetSettings/CustomButtonSettings.qml"
-    }
+    };
 
-    const source = widgetSettingsMap[widgetId]
+    const source = widgetSettingsMap[widgetId];
     if (source) {
       settingsLoader.setSource(source, {
                                  "widgetData": widgetData,
                                  "widgetMetadata": ControlCenterWidgetRegistry.widgetMetadata[widgetId]
-                               })
+                               });
     }
   }
 }

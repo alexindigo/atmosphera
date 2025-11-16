@@ -8,23 +8,23 @@ Singleton {
   id: root
 
   // Public properties
-  property string baseVersion: "3.0.11"
+  property string baseVersion: "3.1.1"
   property bool isDevelopment: true
 
   property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
 
   // Internal helpers
   function getVersion() {
-    return root.currentVersion
+    return root.currentVersion;
   }
 
   function checkForUpdates() {
     // TODO: Implement update checking logic
-    Logger.i("UpdateService", "Checking for updates...")
+    Logger.i("UpdateService", "Checking for updates...");
   }
 
   function init() {
     // Ensure the singleton is created
-    Logger.i("UpdateService", "Version:", root.currentVersion)
+    Logger.i("UpdateService", "Version:", root.currentVersion);
   }
 }

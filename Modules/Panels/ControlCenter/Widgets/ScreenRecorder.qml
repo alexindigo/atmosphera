@@ -14,9 +14,9 @@ NIconButtonHot {
   hot: ScreenRecorderService.isRecording
   tooltipText: I18n.tr("quickSettings.screenRecorder.tooltip.action")
   onClicked: {
-    ScreenRecorderService.toggleRecording()
+    ScreenRecorderService.toggleRecording();
     if (!ScreenRecorderService.isRecording) {
-      PanelService.getPanel("controlCenterPanel", screen)?.close
+      PanelService.getPanel("controlCenterPanel", screen)?.close;
     }
   }
 }
