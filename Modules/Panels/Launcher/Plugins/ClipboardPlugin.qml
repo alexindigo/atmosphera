@@ -218,7 +218,8 @@ Item {
       "imageWidth": meta ? meta.w : 0,
       "imageHeight": meta ? meta.h : 0,
       "clipboardId": item.id,
-      "mime": item.mime
+      "mime": item.mime,
+      "preview": item.preview
     };
   }
 
@@ -250,7 +251,9 @@ Item {
       "name": title,
       "description": description,
       "icon": "text-x-generic",
-      "isImage": false
+      "isImage": false,
+      "clipboardId": item.id,
+      "preview": preview
     };
   }
 
