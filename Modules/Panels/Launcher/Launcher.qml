@@ -3,12 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+
+import "Plugins"
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Keyboard
 import qs.Widgets
-
-import "Plugins"
 
 SmartPanel {
   id: root
@@ -23,12 +23,12 @@ SmartPanel {
   readonly property string panelPosition: {
     if (Settings.data.appLauncher.position === "follow_bar") {
       if (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") {
-        return `center_${Settings.data.bar.position}`
+        return `center_${Settings.data.bar.position}`;
       } else {
-        return `${Settings.data.bar.position}_center`
+        return `${Settings.data.bar.position}_center`;
       }
     } else {
-      return Settings.data.appLauncher.position
+      return Settings.data.appLauncher.position;
     }
   }
   panelAnchorHorizontalCenter: panelPosition === "center" || panelPosition.endsWith("_center")
@@ -55,83 +55,83 @@ SmartPanel {
   // They are not coming from SmartPanelWindow as they are consumed by the search field before reaching the panel.
   // They are instead being forwared from the search field NTextInput below.
   function onTabPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onBackTabPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   function onUpPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   function onDownPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onReturnPressed() {
-    activate()
+    activate();
   }
 
   function onHomePressed() {
-    selectFirst()
+    selectFirst();
   }
 
   function onEndPressed() {
-    selectLast()
+    selectLast();
   }
 
   function onPageUpPressed() {
-    selectPreviousPage()
+    selectPreviousPage();
   }
 
   function onPageDownPressed() {
-    selectNextPage()
+    selectNextPage();
   }
 
   function onCtrlJPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onCtrlKPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   function onCtrlNPressed() {
-    selectNextWrapped()
+    selectNextWrapped();
   }
 
   function onCtrlPPressed() {
-    selectPreviousWrapped()
+    selectPreviousWrapped();
   }
 
   // Public API for plugins
   function setSearchText(text) {
-    searchText = text
+    searchText = text;
   }
 
   // Plugin registration
   function registerPlugin(plugin) {
-    plugins.push(plugin)
-    plugin.launcher = root
+    plugins.push(plugin);
+    plugin.launcher = root;
     if (plugin.init)
-      plugin.init()
+      plugin.init();
   }
 
   // Search handling
   function updateResults() {
-    results = []
-    activePlugin = null
+    results = [];
+    activePlugin = null;
 
     // Check for command mode
     if (searchText.startsWith(">")) {
       // Find plugin that handles this command
       for (let plugin of plugins) {
         if (plugin.handleCommand && plugin.handleCommand(searchText)) {
-          activePlugin = plugin
-          results = plugin.getResults(searchText)
-          break
+          activePlugin = plugin;
+          results = plugin.getResults(searchText);
+          break;
         }
       }
 
@@ -139,7 +139,7 @@ SmartPanel {
       if (searchText === ">" && !activePlugin) {
         for (let plugin of plugins) {
           if (plugin.commands) {
-            results = results.concat(plugin.commands())
+            results = results.concat(plugin.commands());
           }
         }
       }
@@ -147,43 +147,43 @@ SmartPanel {
       // Regular search - let plugins contribute results
       for (let plugin of plugins) {
         if (plugin.handleSearch) {
-          const pluginResults = plugin.getResults(searchText)
-          results = results.concat(pluginResults)
+          const pluginResults = plugin.getResults(searchText);
+          results = results.concat(pluginResults);
         }
       }
     }
 
-    selectedIndex = 0
+    selectedIndex = 0;
   }
 
   onSearchTextChanged: updateResults()
 
   // Lifecycle
   onOpened: {
-    resultsReady = false
-    ignoreMouseHover = true
+    resultsReady = false;
+    ignoreMouseHover = true;
 
     // Notify plugins and update results
     // Use Qt.callLater to ensure plugins are registered (Component.onCompleted runs first)
     Qt.callLater(() => {
                    for (let plugin of plugins) {
                      if (plugin.onOpened)
-                     plugin.onOpened()
+                     plugin.onOpened();
                    }
-                   updateResults()
-                   resultsReady = true
-                 })
+                   updateResults();
+                   resultsReady = true;
+                 });
   }
 
   onClosed: {
     // Reset search text
-    searchText = ""
-    ignoreMouseHover = true
+    searchText = "";
+    ignoreMouseHover = true;
 
     // Notify plugins
     for (let plugin of plugins) {
       if (plugin.onClosed)
-        plugin.onClosed()
+        plugin.onClosed();
     }
   }
 
@@ -191,16 +191,16 @@ SmartPanel {
   ApplicationsPlugin {
     id: appsPlugin
     Component.onCompleted: {
-      registerPlugin(this)
-      Logger.d("Launcher", "Registered: ApplicationsPlugin")
+      registerPlugin(this);
+      Logger.d("Launcher", "Registered: ApplicationsPlugin");
     }
   }
 
   CalculatorPlugin {
     id: calcPlugin
     Component.onCompleted: {
-      registerPlugin(this)
-      Logger.d("Launcher", "Registered: CalculatorPlugin")
+      registerPlugin(this);
+      Logger.d("Launcher", "Registered: CalculatorPlugin");
     }
   }
 
@@ -208,8 +208,8 @@ SmartPanel {
     id: clipPlugin
     Component.onCompleted: {
       if (Settings.data.appLauncher.enableClipboardHistory) {
-        registerPlugin(this)
-        Logger.d("Launcher", "Registered: ClipboardPlugin")
+        registerPlugin(this);
+        Logger.d("Launcher", "Registered: ClipboardPlugin");
       }
     }
   }
@@ -217,47 +217,47 @@ SmartPanel {
   // Navigation functions
   function selectNextWrapped() {
     if (results.length > 0) {
-      selectedIndex = (selectedIndex + 1) % results.length
+      selectedIndex = (selectedIndex + 1) % results.length;
     }
   }
 
   function selectPreviousWrapped() {
     if (results.length > 0) {
-      selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length
+      selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length;
     }
   }
 
   function selectFirst() {
-    selectedIndex = 0
+    selectedIndex = 0;
   }
 
   function selectLast() {
     if (results.length > 0) {
-      selectedIndex = results.length - 1
+      selectedIndex = results.length - 1;
     } else {
-      selectedIndex = 0
+      selectedIndex = 0;
     }
   }
 
   function selectNextPage() {
     if (results.length > 0) {
-      const page = Math.max(1, Math.floor(600 / entryHeight)) // Use approximate height
-      selectedIndex = Math.min(selectedIndex + page, results.length - 1)
+      const page = Math.max(1, Math.floor(600 / entryHeight)); // Use approximate height
+      selectedIndex = Math.min(selectedIndex + page, results.length - 1);
     }
   }
 
   function selectPreviousPage() {
     if (results.length > 0) {
-      const page = Math.max(1, Math.floor(600 / entryHeight)) // Use approximate height
-      selectedIndex = Math.max(selectedIndex - page, 0)
+      const page = Math.max(1, Math.floor(600 / entryHeight)); // Use approximate height
+      selectedIndex = Math.max(selectedIndex - page, 0);
     }
   }
 
   function activate() {
     if (results.length > 0 && results[selectedIndex]) {
-      const item = results[selectedIndex]
+      const item = results[selectedIndex];
       if (item.onActivate) {
-        item.onActivate()
+        item.onActivate();
       }
     }
   }
@@ -284,19 +284,19 @@ SmartPanel {
       onPositionChanged: mouse => {
                            // Store initial position
                            if (!initialized) {
-                             lastX = mouse.x
-                             lastY = mouse.y
-                             initialized = true
-                             return
+                             lastX = mouse.x;
+                             lastY = mouse.y;
+                             initialized = true;
+                             return;
                            }
 
                            // Check if mouse actually moved
-                           const deltaX = Math.abs(mouse.x - lastX)
-                           const deltaY = Math.abs(mouse.y - lastY)
+                           const deltaX = Math.abs(mouse.x - lastX);
+                           const deltaY = Math.abs(mouse.y - lastY);
                            if (deltaX > 1 || deltaY > 1) {
-                             root.ignoreMouseHover = false
-                             lastX = mouse.x
-                             lastY = mouse.y
+                             root.ignoreMouseHover = false;
+                             lastX = mouse.x;
+                             lastY = mouse.y;
                            }
                          }
 
@@ -304,7 +304,7 @@ SmartPanel {
       Connections {
         target: root
         function onOpened() {
-          mouseMovementDetector.initialized = false
+          mouseMovementDetector.initialized = false;
         }
       }
     }
@@ -316,9 +316,9 @@ SmartPanel {
         // Delay focus to ensure window has keyboard focus
         Qt.callLater(() => {
                        if (searchInput.inputItem) {
-                         searchInput.inputItem.forceActiveFocus()
+                         searchInput.inputItem.forceActiveFocus();
                        }
-                     })
+                     });
       }
     }
 
@@ -348,17 +348,17 @@ SmartPanel {
 
         Component.onCompleted: {
           if (searchInput.inputItem) {
-            searchInput.inputItem.forceActiveFocus()
+            searchInput.inputItem.forceActiveFocus();
             // Intercept Tab keys before TextField handles them
             searchInput.inputItem.Keys.onPressed.connect(function (event) {
               if (event.key === Qt.Key_Tab) {
-                root.onTabPressed()
-                event.accepted = true
+                root.onTabPressed();
+                event.accepted = true;
               } else if (event.key === Qt.Key_Backtab) {
-                root.onBackTabPressed()
-                event.accepted = true
+                root.onBackTabPressed();
+                event.accepted = true;
               }
-            })
+            });
           }
         }
       }
@@ -377,14 +377,12 @@ SmartPanel {
         currentIndex: selectedIndex
         cacheBuffer: resultsList.height * 2
         onCurrentIndexChanged: {
-          cancelFlick()
+          cancelFlick();
           if (currentIndex >= 0) {
-            positionViewAtIndex(currentIndex, ListView.Contain)
+            positionViewAtIndex(currentIndex, ListView.Contain);
           }
         }
-        onModelChanged: {
-
-        }
+        onModelChanged: {}
 
         delegate: Rectangle {
           id: entry
@@ -396,19 +394,19 @@ SmartPanel {
           // Pin helpers
           function togglePin(appId) {
             if (!appId)
-              return
-            let arr = (Settings.data.dock.pinnedApps || []).slice()
-            const idx = arr.indexOf(appId)
+              return;
+            let arr = (Settings.data.dock.pinnedApps || []).slice();
+            const idx = arr.indexOf(appId);
             if (idx >= 0)
-              arr.splice(idx, 1)
+              arr.splice(idx, 1);
             else
-              arr.push(appId)
-            Settings.data.dock.pinnedApps = arr
+              arr.push(appId);
+            Settings.data.dock.pinnedApps = arr;
           }
 
           function isPinned(appId) {
-            const arr = Settings.data.dock.pinnedApps || []
-            return appId && arr.indexOf(appId) >= 0
+            const arr = Settings.data.dock.pinnedApps || [];
+            return appId && arr.indexOf(appId) >= 0;
           }
 
           // Property to reliably track the current item's ID.
@@ -419,7 +417,7 @@ SmartPanel {
           onCurrentClipboardIdChanged: {
             // Check if it's a valid ID and if the data isn't already cached.
             if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
-              ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null)
+              ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
             }
           }
 
@@ -466,8 +464,8 @@ SmartPanel {
                   // Fetches from the service's cache.
                   // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
                   imagePath: {
-                    _rev
-                    return ClipboardService.getImageData(modelData.clipboardId) || ""
+                    _rev;
+                    return ClipboardService.getImageData(modelData.clipboardId) || "";
                   }
 
                   // Loading indicator
@@ -487,8 +485,8 @@ SmartPanel {
                   // Error fallback
                   onStatusChanged: status => {
                                      if (status === Image.Error) {
-                                       iconLoader.visible = true
-                                       imagePreview.visible = false
+                                       iconLoader.visible = true;
+                                       imagePreview.visible = false;
                                      }
                                    }
                 }
@@ -538,10 +536,10 @@ SmartPanel {
                     anchors.centerIn: parent
                     text: {
                       if (!modelData.isImage)
-                        return ""
-                      const desc = modelData.description || ""
-                      const parts = desc.split(" • ")
-                      return parts[0] || "IMG"
+                        return "";
+                      const desc = modelData.description || "";
+                      const parts = desc.split(" • ");
+                      return parts[0] || "IMG";
                     }
                     pointSize: Style.fontSizeXXS
                     color: Color.mPrimary
@@ -592,14 +590,14 @@ SmartPanel {
             cursorShape: Qt.PointingHandCursor
             onEntered: {
               if (!root.ignoreMouseHover) {
-                selectedIndex = index
+                selectedIndex = index;
               }
             }
             onClicked: mouse => {
                          if (mouse.button === Qt.LeftButton) {
-                           selectedIndex = index
-                           root.activate()
-                           mouse.accepted = true
+                           selectedIndex = index;
+                           root.activate();
+                           mouse.accepted = true;
                          }
                        }
             acceptedButtons: Qt.LeftButton
@@ -616,9 +614,9 @@ SmartPanel {
         Layout.fillWidth: true
         text: {
           if (results.length === 0)
-            return searchText ? "No results" : ""
-          const prefix = activePlugin?.name ? `${activePlugin.name}: ` : ""
-          return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`
+            return searchText ? "No results" : "";
+          const prefix = activePlugin?.name ? `${activePlugin.name}: ` : "";
+          return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`;
         }
         pointSize: Style.fontSizeXS
         color: Color.mOnSurfaceVariant

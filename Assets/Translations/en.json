@@ -318,13 +318,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Only show workspace label for workspaces that have open windows.",
           "label": "Show label only when occupied"
-        },
-        "show-workspace-numbers": {
-          "description": "Display workspace label in the top-left corner of task groups.",
-          "label": "Show workspace label"
         }
       },
       "tray": {
@@ -367,13 +363,6 @@
     "health": "Health: {percent}%",
     "idle": "Idle.",
     "no-battery-detected": "No battery detected.",
-    "panel": {
-      "balanced": "Balanced ({percent}%)",
-      "disabled": "Battery manager disabled",
-      "full": "Full capacity ({percent}%)",
-      "lifespan": "Extended lifespan ({percent}%)",
-      "title": "Charge threshold"
-    },
     "plugged-in": "Plugged in.",
     "time-left": "Time left: {time}.",
     "time-until-full": "Time until full: {time}."
@@ -568,6 +557,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index and Name",
       "name": "Name",
       "none": "None"
     }
@@ -1667,6 +1657,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "When enabled, panels can open on any screen. When disabled, panels will only open on screens that have a bar, which can reduce memory usage.",
+        "label": "Allow panels on screens without a bar"
+      },
       "animation-disable": {
         "description": "Disable all animations for a faster, more responsive experience.",
         "label": "Disable UI Animations"
@@ -1873,19 +1867,6 @@
     "battery": {
       "low": "Low battery",
       "low-desc": "Battery is at {percent}%. Please connect the charger."
-    },
-    "battery-manager": {
-      "initial-setup": "Initial setup required",
-      "install-failed": "Installation failed",
-      "install-missing": "Required files are missing",
-      "install-success": "Installed successfully",
-      "install-unsupported": "System is not supported",
-      "set-failed": "Failed to set battery threshold",
-      "set-success-desc": "Battery threshold set to {percent}%",
-      "title": "Battery threshold",
-      "uninstall-failed": "Uninstallation failed",
-      "uninstall-setup": "Uninstalling, authentication required",
-      "uninstall-success": "Uninstalled successfully"
     },
     "bluetooth": {
       "disabled": "Disabled",

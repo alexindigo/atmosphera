@@ -29,43 +29,43 @@ Singleton {
     interval: 100
     repeat: false
     onTriggered: {
-      hasAudioVisualizer = false
+      hasAudioVisualizer = false;
       if (getAllWidgetInstances("AudioVisualizer").length > 0) {
-        hasAudioVisualizer = true
-        return
+        hasAudioVisualizer = true;
+        return;
       }
-      const widgets = getAllWidgetInstances("MediaMini")
+      const widgets = getAllWidgetInstances("MediaMini");
       for (var i = 0; i < widgets.length; i++) {
-        const widget = widgets[i]
+        const widget = widgets[i];
         if (widget.showVisualizer) {
-          hasAudioVisualizer = true
-          return
+          hasAudioVisualizer = true;
+          return;
         }
       }
     }
   }
 
   Component.onCompleted: {
-    Logger.i("BarService", "Service started")
+    Logger.i("BarService", "Service started");
   }
 
   // Function for the Bar to call when it's ready
   function registerBar(screenName) {
     if (!readyBars[screenName]) {
-      readyBars[screenName] = true
-      Logger.d("BarService", "Bar is ready on screen:", screenName)
-      barReadyChanged(screenName)
+      readyBars[screenName] = true;
+      Logger.d("BarService", "Bar is ready on screen:", screenName);
+      barReadyChanged(screenName);
     }
   }
 
   // Function for the Dock to check if the bar is ready
   function isBarReady(screenName) {
-    return readyBars[screenName] || false
+    return readyBars[screenName] || false;
   }
 
   // Register a widget instance
   function registerWidget(screenName, section, widgetId, index, instance) {
-    const key = [screenName, section, widgetId, index].join("|")
+    const key = [screenName, section, widgetId, index].join("|");
     widgetInstances[key] = {
       "key": key,
       "screenName": screenName,
@@ -73,20 +73,20 @@ Singleton {
       "widgetId": widgetId,
       "index": index,
       "instance": instance
-    }
+    };
 
-    timerCheckVisualizer.restart()
+    timerCheckVisualizer.restart();
 
-    Logger.d("BarService", "Registered widget:", key)
-    root.activeWidgetsChanged()
+    Logger.d("BarService", "Registered widget:", key);
+    root.activeWidgetsChanged();
   }
 
   // Unregister a widget instance
   function unregisterWidget(screenName, section, widgetId, index) {
-    const key = [screenName, section, widgetId, index].join("|")
-    delete widgetInstances[key]
-    Logger.d("BarService", "Unregistered widget:", key)
-    root.activeWidgetsChanged()
+    const key = [screenName, section, widgetId, index].join("|");
+    delete widgetInstances[key];
+    Logger.d("BarService", "Unregistered widget:", key);
+    root.activeWidgetsChanged();
   }
 
   // Lookup a specific widget instance (returns the actual QML instance)
@@ -94,12 +94,12 @@ Singleton {
     // If looking for a specific instance
     if (screenName && section !== null) {
       for (var key in widgetInstances) {
-        var widget = widgetInstances[key]
+        var widget = widgetInstances[key];
         if (widget.widgetId === widgetId && widget.screenName === screenName && widget.section === section) {
           if (index === null) {
-            return widget.instance
+            return widget.instance;
           } else if (widget.index == index) {
-            return widget.instance
+            return widget.instance;
           }
         }
       }
@@ -107,83 +107,83 @@ Singleton {
 
     // Return first match if no specific screen/section specified
     for (var key in widgetInstances) {
-      var widget = widgetInstances[key]
+      var widget = widgetInstances[key];
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
-            return widget.instance
+            return widget.instance;
           }
         }
       }
     }
 
-    return undefined
+    return undefined;
   }
 
   // Get all instances of a widget type
   function getAllWidgetInstances(widgetId = null, screenName = null, section = null) {
-    var instances = []
+    var instances = [];
 
     for (var key in widgetInstances) {
-      var widget = widgetInstances[key]
+      var widget = widgetInstances[key];
 
-      var matches = true
+      var matches = true;
       if (widgetId && widget.widgetId !== widgetId)
-        matches = false
+        matches = false;
       if (screenName && widget.screenName !== screenName)
-        matches = false
+        matches = false;
       if (section !== null && widget.section !== section)
-        matches = false
+        matches = false;
 
       if (matches) {
-        instances.push(widget.instance)
+        instances.push(widget.instance);
       }
     }
 
-    return instances
+    return instances;
   }
 
   // Get widget with full metadata
   function getWidgetWithMetadata(widgetId, screenName = null, section = null) {
     for (var key in widgetInstances) {
-      var widget = widgetInstances[key]
+      var widget = widgetInstances[key];
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
-            return widget
+            return widget;
           }
         }
       }
     }
-    return undefined
+    return undefined;
   }
 
   // Get all widgets in a specific section
   function getWidgetsBySection(section, screenName = null) {
-    var widgets = []
+    var widgets = [];
 
     for (var key in widgetInstances) {
-      var widget = widgetInstances[key]
+      var widget = widgetInstances[key];
       if (widget.section === section) {
         if (!screenName || widget.screenName === screenName) {
-          widgets.push(widget.instance)
+          widgets.push(widget.instance);
         }
       }
     }
 
     // Sort by index to maintain order
     widgets.sort(function (a, b) {
-      var aWidget = getWidgetWithMetadata(a.widgetId, a.screen?.name, a.section)
-      var bWidget = getWidgetWithMetadata(b.widgetId, b.screen?.name, b.section)
-      return (aWidget?.index || 0) - (bWidget?.index || 0)
-    })
+      var aWidget = getWidgetWithMetadata(a.widgetId, a.screen?.name, a.section);
+      var bWidget = getWidgetWithMetadata(b.widgetId, b.screen?.name, b.section);
+      return (aWidget?.index || 0) - (bWidget?.index || 0);
+    });
 
-    return widgets
+    return widgets;
   }
 
   // Get all registered widgets (for debugging)
   function getAllRegisteredWidgets() {
-    var result = []
+    var result = [];
     for (var key in widgetInstances) {
       result.push({
                     "key": key,
@@ -191,57 +191,57 @@ Singleton {
                     "section": widgetInstances[key].section,
                     "screenName": widgetInstances[key].screenName,
                     "index": widgetInstances[key].index
-                  })
+                  });
     }
-    return result
+    return result;
   }
 
   // Check if a widget type exists in a section
   function hasWidget(widgetId, section = null, screenName = null) {
     for (var key in widgetInstances) {
-      var widget = widgetInstances[key]
+      var widget = widgetInstances[key];
       if (widget.widgetId === widgetId) {
         if (section === null || widget.section === section) {
           if (!screenName || widget.screenName === screenName) {
-            return true
+            return true;
           }
         }
       }
     }
-    return false
+    return false;
   }
 
   // Get pill direction for a widget instance
   function getPillDirection(widgetInstance) {
     try {
       if (widgetInstance.section === "left") {
-        return true
+        return true;
       } else if (widgetInstance.section === "right") {
-        return false
+        return false;
       } else {
         // middle section
         if (widgetInstance.sectionWidgetIndex < widgetInstance.sectionWidgetsCount / 2) {
-          return false
+          return false;
         } else {
-          return true
+          return true;
         }
       }
     } catch (e) {
-      Logger.e(e)
+      Logger.e(e);
     }
-    return false
+    return false;
   }
 
   function getTooltipDirection() {
     switch (Settings.data.bar.position) {
     case "right":
-      return "left"
+      return "left";
     case "left":
-      return "right"
+      return "right";
     case "bottom":
-      return "top"
+      return "top";
     default:
-      return "bottom"
+      return "bottom";
     }
   }
 }

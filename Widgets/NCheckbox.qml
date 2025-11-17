@@ -68,12 +68,12 @@ RowLayout {
       cursorShape: Qt.PointingHandCursor
       hoverEnabled: true
       onEntered: {
-        hovering = true
-        root.entered()
+        hovering = true;
+        root.entered();
       }
       onExited: {
-        hovering = false
-        root.exited()
+        hovering = false;
+        root.exited();
       }
       onClicked: root.toggled(!root.checked)
     }

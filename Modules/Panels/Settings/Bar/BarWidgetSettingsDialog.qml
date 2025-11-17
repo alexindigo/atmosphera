@@ -3,8 +3,8 @@ import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import qs.Commons
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 // Widget Settings Dialog Component
 Popup {
@@ -27,7 +27,7 @@ Popup {
   onOpened: {
     // Load settings when popup opens with data
     if (widgetData && widgetId) {
-      loadWidgetSettings()
+      loadWidgetSettings();
     }
   }
 
@@ -102,9 +102,9 @@ Popup {
         icon: "check"
         onClicked: {
           if (settingsLoader.item && settingsLoader.item.saveSettings) {
-            var newSettings = settingsLoader.item.saveSettings()
-            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings)
-            root.close()
+            var newSettings = settingsLoader.item.saveSettings();
+            root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
+            root.close();
           }
         }
       }
@@ -112,13 +112,13 @@ Popup {
   }
 
   function loadWidgetSettings() {
-    const source = BarWidgetRegistry.widgetSettingsMap[widgetId]
+    const source = BarWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
       // Use setSource to pass properties at creation time
       settingsLoader.setSource(source, {
                                  "widgetData": widgetData,
                                  "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
-                               })
+                               });
     }
   }
 }

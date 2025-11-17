@@ -26,15 +26,15 @@ Singleton {
   signal fontReloaded
 
   Component.onCompleted: {
-    Logger.i("Icons", "Service started")
-    loadFontWithCacheBusting()
+    Logger.i("Icons", "Service started");
+    loadFontWithCacheBusting();
   }
 
   Connections {
     target: Quickshell
     function onReloadCompleted() {
-      Logger.d("Icons", "Quickshell reload completed - forcing font reload")
-      reloadFont()
+      Logger.d("Icons", "Quickshell reload completed - forcing font reload");
+      reloadFont();
     }
   }
 
@@ -42,20 +42,20 @@ Singleton {
   function get(iconName) {
     // Check in aliases first
     if (aliases[iconName] !== undefined) {
-      iconName = aliases[iconName]
+      iconName = aliases[iconName];
     }
 
     // Find the appropriate codepoint
-    return icons[iconName]
+    return icons[iconName];
   }
 
   function loadFontWithCacheBusting() {
-    Logger.d("Icons", "Loading font with cache busting")
+    Logger.d("Icons", "Loading font with cache busting");
 
     // Destroy old loader first
     if (currentFontLoader) {
-      currentFontLoader.destroy()
-      currentFontLoader = null
+      currentFontLoader.destroy();
+      currentFontLoader = null;
     }
 
     // Create new loader with cache-busting URL
@@ -64,22 +64,22 @@ Singleton {
                                            FontLoader {
                                            source: "${cacheBustingPath}"
                                            }
-                                           `, root, "dynamicFontLoader_" + fontVersion)
+                                           `, root, "dynamicFontLoader_" + fontVersion);
 
     // Connect to the new loader's status changes
     currentFontLoader.statusChanged.connect(function () {
       if (currentFontLoader.status === FontLoader.Ready) {
-        Logger.d("Icons", "Font loaded successfully:", currentFontLoader.name, "(version " + fontVersion + ")")
-        fontReloaded()
+        Logger.d("Icons", "Font loaded successfully:", currentFontLoader.name, "(version " + fontVersion + ")");
+        fontReloaded();
       } else if (currentFontLoader.status === FontLoader.Error) {
-        Logger.e("Icons", "Font failed to load (version " + fontVersion + ")")
+        Logger.e("Icons", "Font failed to load (version " + fontVersion + ")");
       }
-    })
+    });
   }
 
   function reloadFont() {
-    Logger.d("Icons", "Forcing font reload...")
-    fontVersion++
-    loadFontWithCacheBusting()
+    Logger.d("Icons", "Forcing font reload...");
+    fontVersion++;
+    loadFontWithCacheBusting();
   }
 }

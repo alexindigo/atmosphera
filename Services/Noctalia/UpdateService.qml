@@ -15,16 +15,16 @@ Singleton {
 
   // Internal helpers
   function getVersion() {
-    return root.currentVersion
+    return root.currentVersion;
   }
 
   function checkForUpdates() {
     // TODO: Implement update checking logic
-    Logger.i("UpdateService", "Checking for updates...")
+    Logger.i("UpdateService", "Checking for updates...");
   }
 
   function init() {
     // Ensure the singleton is created
-    Logger.i("UpdateService", "Version:", root.currentVersion)
+    Logger.i("UpdateService", "Version:", root.currentVersion);
   }
 }

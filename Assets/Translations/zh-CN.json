@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "只显示有打开窗口的工作区标签。",
           "label": "仅在被占用时显示标签"
-        },
-        "show-workspace-numbers": {
-          "description": "在任务组左上角显示工作区标签。",
-          "label": "显示工作区标签"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "健康状况：{percent}%",
     "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
-    "panel": {
-      "balanced": "平衡 ({percent}%)",
-      "disabled": "电池管理器已禁用",
-      "full": "完全容量 ({percent}%)",
-      "lifespan": "延长寿命 ({percent}%)",
-      "title": "充电阈值"
-    },
     "plugged-in": "已接通电源。",
     "time-left": "剩余时间：{time}。",
     "time-until-full": "充满所需时间：{time}。"
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "索引",
+      "index+name": "索引和名称",
       "name": "名称",
       "none": "无"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "启用后，面板可以在任何屏幕上打开。禁用后，面板将仅在有栏的屏幕上打开，这可以减少内存使用。",
+        "label": "允许在没有栏的屏幕上显示面板"
+      },
       "animation-disable": {
         "description": "禁用所有动画以获得更快、更流畅的体验。",
         "label": "禁用 UI 动画"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "电量低",
       "low-desc": "电量为 {percent}%。请连接充电器。"
-    },
-    "battery-manager": {
-      "initial-setup": "需要初始设置",
-      "install-failed": "安装失败",
-      "install-missing": "缺少必要文件",
-      "install-success": "安装成功",
-      "install-unsupported": "系统不受支持",
-      "set-failed": "设置电池阈值失败",
-      "set-success-desc": "电池阈值已设置为 {percent}%",
-      "title": "电池阈值",
-      "uninstall-failed": "卸载失败",
-      "uninstall-setup": "正在卸载，需要身份验证",
-      "uninstall-success": "卸载成功"
     },
     "bluetooth": {
       "disabled": "已禁用",

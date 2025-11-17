@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Zeige nur die Workspace-Bezeichnung für Workspaces an, die offene Fenster haben.",
           "label": "Zeige Label nur bei Belegung"
-        },
-        "show-workspace-numbers": {
-          "description": "Arbeitsbereichsbezeichnung in der oberen linken Ecke von Aufgabengruppen anzeigen.",
-          "label": "Arbeitsbereichsbezeichnung anzeigen"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Zustand: {percent}%",
     "idle": "Leerlauf.",
     "no-battery-detected": "Keine Batterie erkannt.",
-    "panel": {
-      "balanced": "Ausgeglichen ({percent}%)",
-      "disabled": "Batteriemanager deaktiviert",
-      "full": "Volle Kapazität ({percent}%)",
-      "lifespan": "Verlängerte Lebensdauer ({percent}%)",
-      "title": "Ladeschwelle"
-    },
     "plugged-in": "Angeschlossen.",
     "time-left": "Verbleibende Zeit: {time}.",
     "time-until-full": "Zeit bis vollständig geladen: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index und Name",
       "name": "Name",
       "none": "Keine"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Wenn aktiviert, können sich Panels auf jedem Bildschirm öffnen. Wenn deaktiviert, öffnen sich Panels nur auf Bildschirmen mit einer Leiste, was den Speicherverbrauch reduzieren kann.",
+        "label": "Paneele auf Bildschirmen ohne Leiste zulassen"
+      },
       "animation-disable": {
         "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",
         "label": "UI-Animationen deaktivieren"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "Niedriger Batteriestand",
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
-    },
-    "battery-manager": {
-      "initial-setup": "Ersteinrichtung erforderlich",
-      "install-failed": "Installation fehlgeschlagen",
-      "install-missing": "Erforderliche Dateien fehlen",
-      "install-success": "Erfolgreich installiert",
-      "install-unsupported": "System wird nicht unterstützt",
-      "set-failed": "Fehler beim Setzen der Batterieschwelle",
-      "set-success-desc": "Batterieschwelle auf {percent}% gesetzt",
-      "title": "Batterieschwelle",
-      "uninstall-failed": "Deinstallation fehlgeschlagen",
-      "uninstall-setup": "Deinstallation, Authentifizierung erforderlich",
-      "uninstall-success": "Erfolgreich deinstalliert"
     },
     "bluetooth": {
       "disabled": "Deaktiviert",

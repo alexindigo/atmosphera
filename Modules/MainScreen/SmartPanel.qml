@@ -3,15 +3,14 @@ import Quickshell
 import qs.Commons
 import qs.Services.UI
 
-
 /**
- * SmartPanel - Wrapper that creates placeholder + content window
- *
- * This component is a thin wrapper that maintains backward compatibility
- * while splitting panel rendering into:
- * 1. PanelPlaceholder (in MainScreen, for background rendering)
- * 2. SmartPanelWindow (separate window, for content)
- */
+* SmartPanel - Wrapper that creates placeholder + content window
+*
+* This component is a thin wrapper that maintains backward compatibility
+* while splitting panel rendering into:
+* 1. PanelPlaceholder (in MainScreen, for background rendering)
+* 2. SmartPanelWindow (separate window, for content)
+*/
 Item {
   id: root
 
@@ -59,60 +58,74 @@ Item {
 
   // Keyboard event handlers - these can be overridden by panel implementations
   // Note: SmartPanelWindow directly calls these functions via panelWrapper reference
-  function onEscapePressed() {}
-  function onTabPressed() {}
-  function onBackTabPressed() {}
-  function onUpPressed() {}
-  function onDownPressed() {}
-  function onLeftPressed() {}
-  function onRightPressed() {}
-  function onReturnPressed() {}
-  function onHomePressed() {}
-  function onEndPressed() {}
-  function onPageUpPressed() {}
-  function onPageDownPressed() {}
-  function onCtrlJPressed() {}
-  function onCtrlKPressed() {}
+  function onEscapePressed() {
+  }
+  function onTabPressed() {
+  }
+  function onBackTabPressed() {
+  }
+  function onUpPressed() {
+  }
+  function onDownPressed() {
+  }
+  function onLeftPressed() {
+  }
+  function onRightPressed() {
+  }
+  function onReturnPressed() {
+  }
+  function onHomePressed() {
+  }
+  function onEndPressed() {
+  }
+  function onPageUpPressed() {
+  }
+  function onPageDownPressed() {
+  }
+  function onCtrlJPressed() {
+  }
+  function onCtrlKPressed() {
+  }
 
   // Public control functions
   function toggle(buttonItem, buttonName) {
     // Ensure window is created before toggling
     if (!root.windowActive) {
-      root.windowActive = true
+      root.windowActive = true;
       Qt.callLater(function () {
         if (windowLoader.item) {
-          windowLoader.item.toggle(buttonItem, buttonName)
+          windowLoader.item.toggle(buttonItem, buttonName);
         }
-      })
+      });
     } else if (windowLoader.item) {
-      windowLoader.item.toggle(buttonItem, buttonName)
+      windowLoader.item.toggle(buttonItem, buttonName);
     }
   }
 
   function open(buttonItem, buttonName) {
     // Ensure window is created before opening
     if (!root.windowActive) {
-      root.windowActive = true
+      root.windowActive = true;
       Qt.callLater(function () {
         if (windowLoader.item) {
-          windowLoader.item.open(buttonItem, buttonName)
+          windowLoader.item.open(buttonItem, buttonName);
         }
-      })
+      });
     } else if (windowLoader.item) {
-      windowLoader.item.open(buttonItem, buttonName)
+      windowLoader.item.open(buttonItem, buttonName);
     }
   }
 
   function close() {
     if (windowLoader.item) {
-      windowLoader.item.close()
+      windowLoader.item.close();
     }
   }
 
   // Expose setPosition for panels that need to recalculate on settings changes
   function setPosition() {
     if (panelPlaceholder) {
-      panelPlaceholder.setPosition()
+      panelPlaceholder.setPosition();
     }
   }
 
@@ -157,24 +170,17 @@ Item {
       // Forward signals
       onPanelOpened: root.opened()
       onPanelClosed: {
-        root.closed()
+        root.closed();
         // Destroy the window after close animation completes
         Qt.callLater(function () {
-          root.windowActive = false
-        })
+          root.windowActive = false;
+        });
       }
     }
   }
 
-  // Register with PanelService (backward compatibility)
-  // Note: Registration happens in MainScreen after objectName is set
+  // Register with PanelService
   Component.onCompleted: {
-    // Use Qt.callLater to ensure objectName is set by parent before registering
-    Qt.callLater(function () {
-      if (!objectName) {
-        Logger.w("SmartPanel", "Panel created without objectName - PanelService registration may fail")
-      }
-      PanelService.registerPanel(root)
-    })
+    PanelService.registerPanel(root);
   }
 }

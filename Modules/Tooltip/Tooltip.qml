@@ -42,7 +42,7 @@ PopupWindow {
     interval: root.delay
     repeat: false
     onTriggered: {
-      root.positionAndShow()
+      root.positionAndShow();
     }
   }
 
@@ -52,7 +52,7 @@ PopupWindow {
     interval: root.hideDelay
     repeat: false
     onTriggered: {
-      root.startHideAnimation()
+      root.startHideAnimation();
     }
   }
 
@@ -103,109 +103,113 @@ PopupWindow {
     }
 
     onFinished: {
-      root.completeHide()
+      root.completeHide();
     }
   }
 
   // Function to show tooltip
   function show(screen, target, tipText, customDirection, showDelay, fontFamily) {
     if (!screen || !target || !tipText || tipText === "")
-      return
+      return;
+    root.screenWidth = screen.width;
+    root.screenHeight = screen.height;
 
-    root.screenWidth = screen.width
-    root.screenHeight = screen.height
-
-    root.delay = showDelay
+    root.delay = showDelay;
 
     // Stop any running timers and animations
-    hideTimer.stop()
-    showTimer.stop()
-    hideAnimation.stop()
-    animatingOut = false
+    hideTimer.stop();
+    showTimer.stop();
+    hideAnimation.stop();
+    animatingOut = false;
 
     // If we're already showing for a different target, hide immediately
     if (visible && targetItem !== target) {
-      hideImmediately()
+      hideImmediately();
     }
 
     // Set properties
-    targetItem = target
-    text = tipText
-    pendingShow = true
+    targetItem = target;
+    text = tipText;
+    pendingShow = true;
 
     if (customDirection !== undefined) {
-      direction = customDirection
+      direction = customDirection;
     } else {
-      direction = "auto"
+      direction = "auto";
     }
 
-    tooltipText.family = fontFamily ? fontFamily : Settings.data.ui.fontDefault
+    tooltipText.family = fontFamily ? fontFamily : Settings.data.ui.fontDefault;
 
     // Start show timer
-    showTimer.start()
+    showTimer.start();
   }
 
   // Function to position and display the tooltip
   function positionAndShow() {
     if (!targetItem || !targetItem.parent || !pendingShow) {
-      return
+      return;
     }
 
     // Calculate tooltip dimensions
-    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth)
-    root.implicitWidth = tipWidth
+    const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth);
+    root.implicitWidth = tipWidth;
 
-    const tipHeight = tooltipText.implicitHeight + (padding * 2)
-    root.implicitHeight = tipHeight
+    const tipHeight = tooltipText.implicitHeight + (padding * 2);
+    root.implicitHeight = tipHeight;
 
     // Get target's global position
-    var targetGlobal = targetItem.mapToItem(null, 0, 0)
-    const targetWidth = targetItem.width
-    const targetHeight = targetItem.height
+    var targetGlobal = targetItem.mapToItem(null, 0, 0);
+    const targetWidth = targetItem.width;
+    const targetHeight = targetItem.height;
 
-    var newAnchorX = 0
-    var newAnchorY = 0
+    var newAnchorX = 0;
+    var newAnchorY = 0;
 
     if (direction === "auto") {
       // Calculate available space in each direction
-      const spaceLeft = targetGlobal.x
-      const spaceRight = screenWidth - (targetGlobal.x + targetWidth)
-      const spaceTop = targetGlobal.y
-      const spaceBottom = screenHeight - (targetGlobal.y + targetHeight)
+      const spaceLeft = targetGlobal.x;
+      const spaceRight = screenWidth - (targetGlobal.x + targetWidth);
+      const spaceTop = targetGlobal.y;
+      const spaceBottom = screenHeight - (targetGlobal.y + targetHeight);
 
       // Try positions in order of available space
-      const positions = [{
-                           "dir": "bottom",
-                           "space": spaceBottom,
-                           "x": (targetWidth - tipWidth) / 2,
-                           "y": targetHeight + margin,
-                           "fits": spaceBottom >= tipHeight + margin
-                         }, {
-                           "dir": "top",
-                           "space": spaceTop,
-                           "x": (targetWidth - tipWidth) / 2,
-                           "y": -tipHeight - margin,
-                           "fits": spaceTop >= tipHeight + margin
-                         }, {
-                           "dir": "right",
-                           "space": spaceRight,
-                           "x": targetWidth + margin,
-                           "y": (targetHeight - tipHeight) / 2,
-                           "fits": spaceRight >= tipWidth + margin
-                         }, {
-                           "dir": "left",
-                           "space": spaceLeft,
-                           "x": -tipWidth - margin,
-                           "y": (targetHeight - tipHeight) / 2,
-                           "fits": spaceLeft >= tipWidth + margin
-                         }]
+      const positions = [
+              {
+                "dir": "bottom",
+                "space": spaceBottom,
+                "x": (targetWidth - tipWidth) / 2,
+                "y": targetHeight + margin,
+                "fits": spaceBottom >= tipHeight + margin
+              },
+              {
+                "dir": "top",
+                "space": spaceTop,
+                "x": (targetWidth - tipWidth) / 2,
+                "y": -tipHeight - margin,
+                "fits": spaceTop >= tipHeight + margin
+              },
+              {
+                "dir": "right",
+                "space": spaceRight,
+                "x": targetWidth + margin,
+                "y": (targetHeight - tipHeight) / 2,
+                "fits": spaceRight >= tipWidth + margin
+              },
+              {
+                "dir": "left",
+                "space": spaceLeft,
+                "x": -tipWidth - margin,
+                "y": (targetHeight - tipHeight) / 2,
+                "fits": spaceLeft >= tipWidth + margin
+              }
+            ];
 
       // Find first position that fits
-      var selectedPosition = null
+      var selectedPosition = null;
       for (var i = 0; i < positions.length; i++) {
         if (positions[i].fits) {
-          selectedPosition = positions[i]
-          break
+          selectedPosition = positions[i];
+          break;
         }
       }
 
@@ -213,171 +217,170 @@ PopupWindow {
       if (!selectedPosition) {
         // Sort by available space and use position with most space
         positions.sort(function (a, b) {
-          return b.space - a.space
-        })
-        selectedPosition = positions[0]
+          return b.space - a.space;
+        });
+        selectedPosition = positions[0];
       }
 
-      newAnchorX = selectedPosition.x
-      newAnchorY = selectedPosition.y
+      newAnchorX = selectedPosition.x;
+      newAnchorY = selectedPosition.y;
 
       // Adjust horizontal position to keep tooltip on screen
       if (direction === "auto") {
-        const globalX = targetGlobal.x + newAnchorX
+        const globalX = targetGlobal.x + newAnchorX;
         if (globalX < 0) {
-          newAnchorX = -targetGlobal.x + margin
+          newAnchorX = -targetGlobal.x + margin;
         } else if (globalX + tipWidth > screenWidth) {
-          newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin
+          newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin;
         }
       }
     } else {
       // Manual direction positioning
       switch (direction) {
       case "left":
-        newAnchorX = -tipWidth - margin
-        newAnchorY = (targetHeight - tipHeight) / 2
-        break
+        newAnchorX = -tipWidth - margin;
+        newAnchorY = (targetHeight - tipHeight) / 2;
+        break;
       case "right":
-        newAnchorX = targetWidth + margin
-        newAnchorY = (targetHeight - tipHeight) / 2
-        break
+        newAnchorX = targetWidth + margin;
+        newAnchorY = (targetHeight - tipHeight) / 2;
+        break;
       case "top":
-        newAnchorX = (targetWidth - tipWidth) / 2
-        newAnchorY = -tipHeight - margin
-        break
+        newAnchorX = (targetWidth - tipWidth) / 2;
+        newAnchorY = -tipHeight - margin;
+        break;
       case "bottom":
-        newAnchorX = (targetWidth - tipWidth) / 2
-        newAnchorY = targetHeight + margin
-        break
+        newAnchorX = (targetWidth - tipWidth) / 2;
+        newAnchorY = targetHeight + margin;
+        break;
       }
     }
 
     // Apply position
-    anchorX = newAnchorX
-    anchorY = newAnchorY
-    isPositioned = true
-    pendingShow = false
+    anchorX = newAnchorX;
+    anchorY = newAnchorY;
+    isPositioned = true;
+    pendingShow = false;
 
     // Show tooltip and start animation
-    visible = true
+    visible = true;
 
     // Initialize animation state
-    tooltipContainer.opacity = 0.0
-    tooltipContainer.scale = animationScale
+    tooltipContainer.opacity = 0.0;
+    tooltipContainer.scale = animationScale;
 
     // Start show animation
-    showAnimation.start()
+    showAnimation.start();
 
     // Force anchor update after showing
     Qt.callLater(() => {
                    if (root.anchor && root.visible) {
-                     root.anchor.updateAnchor()
+                     root.anchor.updateAnchor();
                    }
-                 })
+                 });
   }
 
   // Function to hide tooltip
   function hide() {
     // Stop show timer if it's running
-    showTimer.stop()
-    pendingShow = false
+    showTimer.stop();
+    pendingShow = false;
 
     // Stop hide timer if it's running
-    hideTimer.stop()
+    hideTimer.stop();
 
     if (hideDelay > 0 && visible && !animatingOut) {
-      hideTimer.start()
+      hideTimer.start();
     } else {
-      startHideAnimation()
+      startHideAnimation();
     }
   }
 
   function startHideAnimation() {
     if (!visible || animatingOut)
-      return
-
-    animatingOut = true
-    showAnimation.stop() // Stop show animation if running
-    hideAnimation.start()
+      return;
+    animatingOut = true;
+    showAnimation.stop(); // Stop show animation if running
+    hideAnimation.start();
   }
 
   function completeHide() {
-    visible = false
-    animatingOut = false
-    pendingShow = false
-    text = ""
-    isPositioned = false
-    tooltipContainer.opacity = 1.0
-    tooltipContainer.scale = 1.0
+    visible = false;
+    animatingOut = false;
+    pendingShow = false;
+    text = "";
+    isPositioned = false;
+    tooltipContainer.opacity = 1.0;
+    tooltipContainer.scale = 1.0;
   }
 
   // Quick hide without delay or animation
   function hideImmediately() {
-    showTimer.stop()
-    hideTimer.stop()
-    showAnimation.stop()
-    hideAnimation.stop()
-    pendingShow = false
-    animatingOut = false
-    completeHide()
+    showTimer.stop();
+    hideTimer.stop();
+    showAnimation.stop();
+    hideAnimation.stop();
+    pendingShow = false;
+    animatingOut = false;
+    completeHide();
   }
 
   // Update text function
   function updateText(newText) {
     if (visible && targetItem) {
-      text = newText
+      text = newText;
 
       // Recalculate dimensions
-      const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth)
-      root.implicitWidth = tipWidth
+      const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth);
+      root.implicitWidth = tipWidth;
 
-      const tipHeight = tooltipText.implicitHeight + (padding * 2)
-      root.implicitHeight = tipHeight
+      const tipHeight = tooltipText.implicitHeight + (padding * 2);
+      root.implicitHeight = tipHeight;
 
       // Reposition if necessary
-      var targetGlobal = targetItem.mapToItem(null, 0, 0)
-      const targetWidth = targetItem.width
+      var targetGlobal = targetItem.mapToItem(null, 0, 0);
+      const targetWidth = targetItem.width;
 
       // Adjust horizontal position to keep tooltip on screen if needed
-      const globalX = targetGlobal.x + anchorX
+      const globalX = targetGlobal.x + anchorX;
       if (globalX < 0) {
-        anchorX = -targetGlobal.x + margin
+        anchorX = -targetGlobal.x + margin;
       } else if (globalX + tipWidth > screenWidth) {
-        anchorX = screenWidth - targetGlobal.x - tipWidth - margin
+        anchorX = screenWidth - targetGlobal.x - tipWidth - margin;
       }
 
       // Force anchor update
       Qt.callLater(() => {
                      if (root.anchor && root.visible) {
-                       root.anchor.updateAnchor()
+                       root.anchor.updateAnchor();
                      }
-                   })
+                   });
     }
   }
 
   // Reset function to clean up state
   function reset() {
     // Stop all timers and animations
-    showTimer.stop()
-    hideTimer.stop()
-    showAnimation.stop()
-    hideAnimation.stop()
+    showTimer.stop();
+    hideTimer.stop();
+    showAnimation.stop();
+    hideAnimation.stop();
 
     // Clear all state
-    visible = false
-    pendingShow = false
-    animatingOut = false
-    text = ""
-    isPositioned = false
+    visible = false;
+    pendingShow = false;
+    animatingOut = false;
+    text = "";
+    isPositioned = false;
 
     // Reset to defaults
-    direction = "auto"
-    delay = 0
-    hideDelay = 0
+    direction = "auto";
+    delay = 0;
+    hideDelay = 0;
 
     // Reset container state
-    tooltipContainer.opacity = 1.0
-    tooltipContainer.scale = 1.0
+    tooltipContainer.opacity = 1.0;
+    tooltipContainer.scale = 1.0;
   }
 
   // Tooltip content container for animations
@@ -417,10 +420,10 @@ PopupWindow {
   }
 
   Component.onCompleted: {
-    reset()
+    reset();
   }
 
   Component.onDestruction: {
-    reset()
+    reset();
   }
 }

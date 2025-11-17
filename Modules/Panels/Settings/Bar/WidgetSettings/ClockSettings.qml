@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
-import qs.Widgets
 import qs.Services.System
+import qs.Widgets
 
 ColumnLayout {
   id: root
@@ -28,13 +28,13 @@ ColumnLayout {
   readonly property var now: Time.now
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.usePrimaryColor = valueUsePrimaryColor
-    settings.useCustomFont = valueUseCustomFont
-    settings.customFont = valueCustomFont
-    settings.formatHorizontal = valueFormatHorizontal.trim()
-    settings.formatVertical = valueFormatVertical.trim()
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.useCustomFont = valueUseCustomFont;
+    settings.customFont = valueCustomFont;
+    settings.formatHorizontal = valueFormatHorizontal.trim();
+    settings.formatVertical = valueFormatVertical.trim();
+    return settings;
   }
 
   // Function to insert token at cursor position in the focused input
@@ -42,25 +42,25 @@ ColumnLayout {
     if (!focusedInput || !focusedInput.inputItem) {
       // If no input is focused, default to horiz
       if (inputHoriz.inputItem) {
-        inputHoriz.inputItem.focus = true
-        focusedInput = inputHoriz
+        inputHoriz.inputItem.focus = true;
+        focusedInput = inputHoriz;
       }
     }
 
     if (focusedInput && focusedInput.inputItem) {
-      var input = focusedInput.inputItem
-      var cursorPos = input.cursorPosition
-      var currentText = input.text
+      var input = focusedInput.inputItem;
+      var cursorPos = input.cursorPosition;
+      var currentText = input.text;
 
       // Insert token at cursor position
-      var newText = currentText.substring(0, cursorPos) + token + currentText.substring(cursorPos)
-      input.text = newText + " "
+      var newText = currentText.substring(0, cursorPos) + token + currentText.substring(cursorPos);
+      input.text = newText + " ";
 
       // Move cursor after the inserted token
-      input.cursorPosition = cursorPos + token.length + 1
+      input.cursorPosition = cursorPos + token.length + 1;
 
       // Ensure the input keeps focus
-      input.focus = true
+      input.focus = true;
     }
   }
 
@@ -92,7 +92,7 @@ ColumnLayout {
     popupHeight: 420
     minimumWidth: 300
     onSelected: function (key) {
-      valueCustomFont = key
+      valueCustomFont = key;
     }
   }
 
@@ -131,9 +131,9 @@ ColumnLayout {
           if (inputItem) {
             inputItem.onActiveFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
-                root.focusedInput = inputHoriz
+                root.focusedInput = inputHoriz;
               }
-            })
+            });
           }
         }
       }
@@ -155,9 +155,9 @@ ColumnLayout {
           if (inputItem) {
             inputItem.onActiveFocusChanged.connect(function () {
               if (inputItem.activeFocus) {
-                root.focusedInput = inputVert
+                root.focusedInput = inputVert;
               }
-            })
+            });
           }
         }
       }

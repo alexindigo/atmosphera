@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Afficher uniquement l'étiquette de l'espace de travail pour les espaces de travail qui ont des fenêtres ouvertes.",
           "label": "Afficher l'étiquette uniquement lorsque c'est occupé."
-        },
-        "show-workspace-numbers": {
-          "description": "Afficher l'étiquette de l'espace de travail dans le coin supérieur gauche des groupes de tâches.",
-          "label": "Afficher l'étiquette de l'espace de travail"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "État : {percent}%",
     "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
-    "panel": {
-      "balanced": "Équilibré ({percent}%)",
-      "disabled": "Gestionnaire de batterie désactivé",
-      "full": "Capacité totale ({percent}%)",
-      "lifespan": "Durée de vie prolongée ({percent}%)",
-      "title": "Seuil de charge"
-    },
     "plugged-in": "Branché.",
     "time-left": "Temps restant : {time}.",
     "time-until-full": "Temps jusqu'à charge complète : {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index et Nom",
       "name": "Nom",
       "none": "Aucun"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Quand cette option est activée, les panneaux peuvent s'ouvrir sur n'importe quel écran. Quand elle est désactivée, les panneaux s'ouvriront uniquement sur les écrans qui ont une barre, ce qui peut réduire l'utilisation de la mémoire.",
+        "label": "Autoriser les panneaux sur les écrans sans barre."
+      },
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
         "label": "Désactiver les animations de l'interface utilisateur"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "Batterie faible",
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuration initiale requise",
-      "install-failed": "Échec de l'installation",
-      "install-missing": "Fichiers requis manquants",
-      "install-success": "Installation réussie",
-      "install-unsupported": "Système non pris en charge",
-      "set-failed": "Échec de la définition du seuil de batterie",
-      "set-success-desc": "Seuil de batterie défini à {percent}%",
-      "title": "Seuil de batterie",
-      "uninstall-failed": "Échec de la désinstallation",
-      "uninstall-setup": "Désinstallation, authentification requise",
-      "uninstall-success": "Désinstallation réussie"
     },
     "bluetooth": {
       "disabled": "Désactivé",

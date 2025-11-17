@@ -35,11 +35,11 @@ Item {
     border.color: {
       switch (root.type) {
       case "warning":
-        return Color.mPrimary
+        return Color.mPrimary;
       case "error":
-        return Color.mError
+        return Color.mError;
       default:
-        return Color.mOutline
+        return Color.mOutline;
       }
     }
   }
@@ -74,15 +74,15 @@ Item {
     id: hideAnimation
     interval: Style.animationFast
     onTriggered: {
-      root.visible = false
-      root.hidden()
+      root.visible = false;
+      root.hidden();
     }
   }
 
   // Cleanup on destruction
   Component.onDestruction: {
-    hideTimer.stop()
-    hideAnimation.stop()
+    hideTimer.stop();
+    hideAnimation.stop();
   }
 
   RowLayout {
@@ -97,22 +97,22 @@ Item {
     // Icon
     NIcon {
       icon: if (root.icon !== "") {
-              return root.icon
+              return root.icon;
             } else if (type === "warning") {
-              return "toast-warning"
+              return "toast-warning";
             } else if (type === "error") {
-              return "toast-error"
+              return "toast-error";
             } else {
-              return "toast-notice"
+              return "toast-notice";
             }
       color: {
         switch (type) {
         case "warning":
-          return Color.mPrimary
+          return Color.mPrimary;
         case "error":
-          return Color.mError
+          return Color.mError;
         default:
-          return Color.mOnSurface
+          return Color.mOnSurface;
         }
       }
       pointSize: Style.fontSizeXXL * 1.5
@@ -156,35 +156,35 @@ Item {
 
   function show(msg, desc, msgIcon, msgType, msgDuration) {
     // Stop all timers first
-    hideTimer.stop()
-    hideAnimation.stop()
+    hideTimer.stop();
+    hideAnimation.stop();
 
-    message = msg
-    description = desc || ""
-    icon = msgIcon || ""
-    type = msgType || "notice"
-    duration = msgDuration || 3000
+    message = msg;
+    description = desc || "";
+    icon = msgIcon || "";
+    type = msgType || "notice";
+    duration = msgDuration || 3000;
 
-    visible = true
-    opacity = 1
-    scale = 1.0
+    visible = true;
+    opacity = 1;
+    scale = 1.0;
 
-    hideTimer.restart()
+    hideTimer.restart();
   }
 
   function hide() {
-    hideTimer.stop()
-    opacity = 0
-    scale = initialScale
-    hideAnimation.restart()
+    hideTimer.stop();
+    opacity = 0;
+    scale = initialScale;
+    hideAnimation.restart();
   }
 
   function hideImmediately() {
-    hideTimer.stop()
-    hideAnimation.stop()
-    opacity = 0
-    scale = initialScale
-    root.visible = false
-    root.hidden()
+    hideTimer.stop();
+    hideAnimation.stop();
+    opacity = 0;
+    scale = initialScale;
+    root.visible = false;
+    root.hidden();
   }
 }

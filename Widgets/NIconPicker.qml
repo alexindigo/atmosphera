@@ -23,18 +23,18 @@ Popup {
   property var allIcons: Object.keys(Icons.icons)
   property var filteredIcons: {
     if (query === "")
-      return allIcons
-    var q = query.toLowerCase()
-    return allIcons.filter(name => name.toLowerCase().includes(q))
+      return allIcons;
+    var q = query.toLowerCase();
+    return allIcons.filter(name => name.toLowerCase().includes(q));
   }
   readonly property int columns: 6
   readonly property int cellW: Math.floor(grid.width / columns)
   readonly property int cellH: Math.round(cellW * 0.7 + 36)
 
   onOpened: {
-    selectedIcon = initialIcon
-    query = initialIcon
-    searchInput.forceActiveFocus()
+    selectedIcon = initialIcon;
+    query = initialIcon;
+    searchInput.forceActiveFocus();
   }
 
   background: Rectangle {
@@ -105,9 +105,9 @@ Popup {
           anchors.fill: parent
           onClicked: root.selectedIcon = modelData
           onDoubleClicked: {
-            root.selectedIcon = modelData
-            root.iconSelected(root.selectedIcon)
-            root.close()
+            root.selectedIcon = modelData;
+            root.iconSelected(root.selectedIcon);
+            root.close();
           }
         }
 
@@ -159,8 +159,8 @@ Popup {
         icon: "check"
         enabled: root.selectedIcon !== ""
         onClicked: {
-          root.iconSelected(root.selectedIcon)
-          root.close()
+          root.iconSelected(root.selectedIcon);
+          root.close();
         }
       }
     }

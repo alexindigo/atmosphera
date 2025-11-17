@@ -19,12 +19,12 @@ NIconButton {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property string colorName: widgetSettings.colorName !== undefined ? widgetSettings.colorName : widgetMetadata.colorName
@@ -32,16 +32,16 @@ NIconButton {
   readonly property color iconColor: {
     switch (colorName) {
     case "primary":
-      return Color.mPrimary
+      return Color.mPrimary;
     case "secondary":
-      return Color.mSecondary
+      return Color.mSecondary;
     case "tertiary":
-      return Color.mTertiary
+      return Color.mTertiary;
     case "error":
-      return Color.mError
+      return Color.mError;
     case "onSurface":
     default:
-      return Color.mOnSurface
+      return Color.mOnSurface;
     }
   }
 

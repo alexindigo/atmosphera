@@ -20,35 +20,39 @@ ColumnLayout {
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
-      valueHideMode = widgetData.hideMode
+      valueHideMode = widgetData.hideMode;
     } else if (widgetMetadata && widgetMetadata.hideMode !== undefined) {
-      valueHideMode = widgetMetadata.hideMode
+      valueHideMode = widgetMetadata.hideMode;
     }
   }
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.hideMode = valueHideMode
-    settings.onlySameOutput = valueOnlySameOutput
-    settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces
-    settings.colorizeIcons = valueColorizeIcons
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.hideMode = valueHideMode;
+    settings.onlySameOutput = valueOnlySameOutput;
+    settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces;
+    settings.colorizeIcons = valueColorizeIcons;
+    return settings;
   }
 
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.taskbar.hide-mode.label")
     description: I18n.tr("bar.widget-settings.taskbar.hide-mode.description")
-    model: [{
+    model: [
+      {
         "key": "visible",
         "name": I18n.tr("options.hide-modes.visible")
-      }, {
+      },
+      {
         "key": "hidden",
         "name": I18n.tr("options.hide-modes.hidden")
-      }, {
+      },
+      {
         "key": "transparent",
         "name": I18n.tr("options.hide-modes.transparent")
-      }]
+      }
+    ]
     currentKey: root.valueHideMode
     onSelected: key => root.valueHideMode = key
   }

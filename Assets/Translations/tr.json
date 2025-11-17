@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Sadece açık pencereleri olan çalışma alanları için çalışma alanı etiketini göster.",
           "label": "Sadece dolu olduğunda etiketi göster."
-        },
-        "show-workspace-numbers": {
-          "description": "Görev gruplarının sol üst köşesinde çalışma alanı etiketini görüntüle.",
-          "label": "Çalışma alanı etiketini göster"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Sağlık: {percent}%",
     "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
-    "panel": {
-      "balanced": "Dengeli ({percent}%)",
-      "disabled": "Pil yöneticisi devre dışı",
-      "full": "Tam kapasite ({percent}%)",
-      "lifespan": "Uzatılmış ömür ({percent}%)",
-      "title": "Şarj eşiği"
-    },
     "plugged-in": "Prize takılı.",
     "time-left": "Kalan süre: {time}.",
     "time-until-full": "Dolma süresi: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "İndeks",
+      "index+name": "Dizin ve Ad",
       "name": "İsim",
       "none": "Hiçbiri"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Etkinleştirildiğinde, paneller herhangi bir ekranda açılabilir. Devre dışı bırakıldığında, paneller yalnızca bir çubuğu olan ekranlarda açılır, bu da bellek kullanımını azaltabilir.",
+        "label": "Çubuksuz ekranlardaki panellere izin ver."
+      },
       "animation-disable": {
         "description": "Daha hızlı ve daha duyarlı bir deneyim için tüm animasyonları devre dışı bırakın.",
         "label": "UI Animasyonlarını Devre Dışı Bırak"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "Düşük batarya",
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
-    },
-    "battery-manager": {
-      "initial-setup": "Başlangıç kurulumu gerekli",
-      "install-failed": "Kurulum başarısız oldu",
-      "install-missing": "Gerekli dosyalar eksik",
-      "install-success": "Başarıyla kuruldu",
-      "install-unsupported": "Sistem desteklenmiyor",
-      "set-failed": "Batarya eşiği ayarlanamadı",
-      "set-success-desc": "Batarya eşiği % {percent} olarak ayarlandı",
-      "title": "Batarya eşiği",
-      "uninstall-failed": "Kaldırma başarısız oldu",
-      "uninstall-setup": "Kaldırılıyor, kimlik doğrulama gerekli",
-      "uninstall-success": "Başarıyla kaldırıldı"
     },
     "bluetooth": {
       "disabled": "Devre dışı",

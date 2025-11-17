@@ -41,11 +41,11 @@ ColumnLayout {
       placeholderText: I18n.tr("settings.hooks.wallpaper-changed.placeholder")
       text: Settings.data.hooks.wallpaperChange
       onEditingFinished: {
-        Settings.data.hooks.wallpaperChange = wallpaperHookInput.text
+        Settings.data.hooks.wallpaperChange = wallpaperHookInput.text;
       }
       onActionClicked: {
         if (wallpaperHookInput.text) {
-          HooksService.executeWallpaperHook("test", "test-screen")
+          HooksService.executeWallpaperHook("test", "test-screen");
         }
       }
       Layout.fillWidth: true
@@ -63,11 +63,11 @@ ColumnLayout {
       placeholderText: I18n.tr("settings.hooks.theme-changed.placeholder")
       text: Settings.data.hooks.darkModeChange
       onEditingFinished: {
-        Settings.data.hooks.darkModeChange = darkModeHookInput.text
+        Settings.data.hooks.darkModeChange = darkModeHookInput.text;
       }
       onActionClicked: {
         if (darkModeHookInput.text) {
-          HooksService.executeDarkModeHook(Settings.data.colorSchemes.darkMode)
+          HooksService.executeDarkModeHook(Settings.data.colorSchemes.darkMode);
         }
       }
       Layout.fillWidth: true

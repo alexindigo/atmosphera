@@ -1,9 +1,9 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Networking
 import qs.Services.UI
-import qs.Modules.Bar.Extras
 
 Item {
   id: root
@@ -19,12 +19,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -41,37 +41,37 @@ Item {
     icon: {
       try {
         if (NetworkService.ethernetConnected) {
-          return NetworkService.internetConnectivity ? "ethernet" : "ethernet-off"
+          return NetworkService.internetConnectivity ? "ethernet" : "ethernet-off";
         }
-        let connected = false
-        let signalStrength = 0
+        let connected = false;
+        let signalStrength = 0;
         for (const net in NetworkService.networks) {
           if (NetworkService.networks[net].connected) {
-            connected = true
-            signalStrength = NetworkService.networks[net].signal
-            break
+            connected = true;
+            signalStrength = NetworkService.networks[net].signal;
+            break;
           }
         }
-        return connected ? NetworkService.signalIcon(signalStrength, true) : "wifi-off"
+        return connected ? NetworkService.signalIcon(signalStrength, true) : "wifi-off";
       } catch (error) {
-        Logger.e("Wi-Fi", "Error getting icon:", error)
-        return "wifi-off"
+        Logger.e("Wi-Fi", "Error getting icon:", error);
+        return "wifi-off";
       }
     }
     text: {
       try {
         if (NetworkService.ethernetConnected) {
-          return ""
+          return "";
         }
         for (const net in NetworkService.networks) {
           if (NetworkService.networks[net].connected) {
-            return net
+            return net;
           }
         }
-        return ""
+        return "";
       } catch (error) {
-        Logger.e("Wi-Fi", "Error getting ssid:", error)
-        return "error"
+        Logger.e("Wi-Fi", "Error getting ssid:", error);
+        return "error";
       }
     }
     autoHide: false
@@ -81,9 +81,9 @@ Item {
     onRightClicked: NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
     tooltipText: {
       if (pill.text !== "") {
-        return pill.text
+        return pill.text;
       }
-      return I18n.tr("tooltips.manage-wifi")
+      return I18n.tr("tooltips.manage-wifi");
     }
   }
 }

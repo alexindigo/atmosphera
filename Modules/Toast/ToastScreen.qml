@@ -28,47 +28,47 @@ Item {
                           "type": type,
                           "duration": duration,
                           "timestamp": Date.now()
-                        })
+                        });
     }
   }
 
   // Clear queue on component destruction to prevent orphaned toasts
   Component.onDestruction: {
-    messageQueue = []
-    isShowingToast = false
-    hideTimer.stop()
-    quickSwitchTimer.stop()
+    messageQueue = [];
+    isShowingToast = false;
+    hideTimer.stop();
+    quickSwitchTimer.stop();
   }
 
   function enqueueToast(toastData) {
     // Safe logging - fix the substring bug
-    var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ")
-    Logger.d("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview)
+    var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ");
+    Logger.d("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview);
 
     // Bounded queue to prevent unbounded memory growth
     if (messageQueue.length >= maxQueueSize) {
-      Logger.d("ToastScreen", "Queue full, dropping oldest toast")
-      messageQueue.shift()
+      Logger.d("ToastScreen", "Queue full, dropping oldest toast");
+      messageQueue.shift();
     }
 
     if (replaceOnNew && isShowingToast) {
       // Cancel current toast and clear queue for latest toast
-      messageQueue = [] // Clear existing queue
-      messageQueue.push(toastData)
+      messageQueue = []; // Clear existing queue
+      messageQueue.push(toastData);
 
       // Hide current toast immediately
       if (windowLoader.item) {
-        hideTimer.stop()
-        windowLoader.item.hideToast()
+        hideTimer.stop();
+        windowLoader.item.hideToast();
       }
 
       // Process new toast after a brief delay
-      isShowingToast = false
-      quickSwitchTimer.restart()
+      isShowingToast = false;
+      quickSwitchTimer.restart();
     } else {
       // Queue the toast
-      messageQueue.push(toastData)
-      processQueue()
+      messageQueue.push(toastData);
+      processQueue();
     }
   }
 
@@ -80,27 +80,27 @@ Item {
 
   function processQueue() {
     if (messageQueue.length === 0 || isShowingToast) {
-      return
+      return;
     }
 
-    var data = messageQueue.shift()
-    isShowingToast = true
+    var data = messageQueue.shift();
+    isShowingToast = true;
 
     // Store the toast data for when loader is ready
-    windowLoader.pendingToast = data
+    windowLoader.pendingToast = data;
 
     // Activate the loader - onStatusChanged will handle showing the toast
-    windowLoader.active = true
+    windowLoader.active = true;
   }
 
   function onToastHidden() {
-    isShowingToast = false
+    isShowingToast = false;
 
     // Deactivate the loader to completely remove the window and free memory
-    windowLoader.active = false
+    windowLoader.active = false;
 
     // Small delay before processing next toast
-    hideTimer.restart()
+    hideTimer.restart();
   }
 
   Timer {
@@ -121,8 +121,8 @@ Item {
     onStatusChanged: {
       // When loader becomes ready, show the pending toast
       if (status === Loader.Ready && pendingToast !== null) {
-        item.showToast(pendingToast.message, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration)
-        pendingToast = null
+        item.showToast(pendingToast.message, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration);
+        pendingToast = null;
       }
     }
 
@@ -147,30 +147,30 @@ Item {
       // Calculate bar offsets for each edge separately
       readonly property int barOffsetTop: {
         if (barPos !== "top")
-          return 0
-        const floatMarginV = isFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-        return Style.barHeight + floatMarginV
+          return 0;
+        const floatMarginV = isFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0;
+        return Style.barHeight + floatMarginV;
       }
 
       readonly property int barOffsetBottom: {
         if (barPos !== "bottom")
-          return 0
-        const floatMarginV = isFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
-        return Style.barHeight + floatMarginV
+          return 0;
+        const floatMarginV = isFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0;
+        return Style.barHeight + floatMarginV;
       }
 
       readonly property int barOffsetLeft: {
         if (barPos !== "left")
-          return 0
-        const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-        return floatMarginH
+          return 0;
+        const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
+        return floatMarginH;
       }
 
       readonly property int barOffsetRight: {
         if (barPos !== "right")
-          return 0
-        const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
-        return floatMarginH
+          return 0;
+        const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
+        return floatMarginH;
       }
 
       // Anchoring
@@ -196,11 +196,11 @@ Item {
 
       //mask: Region {}
       function showToast(message, description, icon, type, duration) {
-        toastItem.show(message, description, icon, type, duration)
+        toastItem.show(message, description, icon, type, duration);
       }
 
       function hideToast() {
-        toastItem.hideImmediately()
+        toastItem.hideImmediately();
       }
 
       SimpleToast {

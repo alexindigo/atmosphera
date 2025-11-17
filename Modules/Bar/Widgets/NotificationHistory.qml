@@ -1,11 +1,11 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
-import qs.Services.UI
 import qs.Services.System
+import qs.Services.UI
 import qs.Widgets
 
 NIconButton {
@@ -22,27 +22,27 @@ NIconButton {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
   readonly property bool showUnreadBadge: (widgetSettings.showUnreadBadge !== undefined) ? widgetSettings.showUnreadBadge : widgetMetadata.showUnreadBadge
   readonly property bool hideWhenZero: (widgetSettings.hideWhenZero !== undefined) ? widgetSettings.hideWhenZero : widgetMetadata.hideWhenZero
 
   function computeUnreadCount() {
-    var since = NotificationService.lastSeenTs
-    var count = 0
-    var model = NotificationService.historyList
+    var since = NotificationService.lastSeenTs;
+    var count = 0;
+    var model = NotificationService.historyList;
     for (var i = 0; i < model.count; i++) {
-      var item = model.get(i)
-      var ts = item.timestamp instanceof Date ? item.timestamp.getTime() : item.timestamp
+      var item = model.get(i);
+      var ts = item.timestamp instanceof Date ? item.timestamp.getTime() : item.timestamp;
       if (ts > since)
-        count++
+        count++;
     }
-    return count
+    return count;
   }
 
   baseSize: Style.capsuleHeight
@@ -57,8 +57,8 @@ NIconButton {
   colorBorderHover: Color.transparent
 
   onClicked: {
-    var panel = PanelService.getPanel("notificationHistoryPanel", screen)
-    panel?.toggle(this)
+    var panel = PanelService.getPanel("notificationHistoryPanel", screen);
+    panel?.toggle(this);
   }
 
   onRightClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb

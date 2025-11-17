@@ -1,8 +1,8 @@
 import Quickshell
 import qs.Commons
-import qs.Services.UI
 import qs.Services.Media
 import qs.Services.System
+import qs.Services.UI
 import qs.Widgets
 
 // Screen Recording Indicator
@@ -24,10 +24,10 @@ NIconButton {
 
   function handleClick() {
     if (!ScreenRecorderService.isAvailable) {
-      ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"))
-      return
+      ToastService.showError(I18n.tr("toast.recording.not-installed"), I18n.tr("toast.recording.not-installed-desc"));
+      return;
     }
-    ScreenRecorderService.toggleRecording()
+    ScreenRecorderService.toggleRecording();
   }
 
   onClicked: handleClick()

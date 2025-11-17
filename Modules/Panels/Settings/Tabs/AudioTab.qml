@@ -20,7 +20,7 @@ ColumnLayout {
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
-      localVolume = AudioService.volume
+      localVolume = AudioService.volume;
     }
   }
 
@@ -43,7 +43,7 @@ ColumnLayout {
       repeat: true
       onTriggered: {
         if (Math.abs(localVolume - AudioService.volume) >= 0.01) {
-          AudioService.setVolume(localVolume)
+          AudioService.setVolume(localVolume);
         }
       }
     }
@@ -70,7 +70,7 @@ ColumnLayout {
       checked: AudioService.muted
       onToggled: checked => {
                    if (AudioService.sink && AudioService.sink.audio) {
-                     AudioService.sink.audio.muted = checked
+                     AudioService.sink.audio.muted = checked;
                    }
                  }
     }
@@ -181,8 +181,8 @@ ColumnLayout {
           text: modelData.description
           checked: AudioService.sink?.id === modelData.id
           onClicked: {
-            AudioService.setAudioSink(modelData)
-            localVolume = AudioService.volume
+            AudioService.setAudioSink(modelData);
+            localVolume = AudioService.volume;
           }
           Layout.fillWidth: true
         }
@@ -242,8 +242,8 @@ ColumnLayout {
       placeholderText: I18n.tr("settings.audio.media.primary-player.placeholder")
       text: Settings.data.audio.preferredPlayer
       onTextChanged: {
-        Settings.data.audio.preferredPlayer = text
-        MediaService.updateCurrentPlayer()
+        Settings.data.audio.preferredPlayer = text;
+        MediaService.updateCurrentPlayer();
       }
     }
 
@@ -260,13 +260,13 @@ ColumnLayout {
         buttonIcon: "add"
         Layout.fillWidth: true
         onButtonClicked: {
-          const val = (blacklistInput.text || "").trim()
+          const val = (blacklistInput.text || "").trim();
           if (val !== "") {
-            const arr = (Settings.data.audio.mprisBlacklist || [])
+            const arr = (Settings.data.audio.mprisBlacklist || []);
             if (!arr.find(x => String(x).toLowerCase() === val.toLowerCase())) {
-              Settings.data.audio.mprisBlacklist = [...arr, val]
-              blacklistInput.text = ""
-              MediaService.updateCurrentPlayer()
+              Settings.data.audio.mprisBlacklist = [...arr, val];
+              blacklistInput.text = "";
+              MediaService.updateCurrentPlayer();
             }
           }
         }
@@ -310,12 +310,12 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.rightMargin: Style.marginXS
                 onClicked: {
-                  const arr = (Settings.data.audio.mprisBlacklist || [])
-                  const idx = arr.findIndex(x => String(x) === modelData)
+                  const arr = (Settings.data.audio.mprisBlacklist || []);
+                  const idx = arr.findIndex(x => String(x) === modelData);
                   if (idx >= 0) {
-                    arr.splice(idx, 1)
-                    Settings.data.audio.mprisBlacklist = arr
-                    MediaService.updateCurrentPlayer()
+                    arr.splice(idx, 1);
+                    Settings.data.audio.mprisBlacklist = arr;
+                    MediaService.updateCurrentPlayer();
                   }
                 }
               }
@@ -333,19 +333,24 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.audio.media.visualizer-type.label")
       description: I18n.tr("settings.audio.media.visualizer-type.description")
-      model: [{
+      model: [
+        {
           "key": "none",
           "name": I18n.tr("options.visualizer-types.none")
-        }, {
+        },
+        {
           "key": "linear",
           "name": I18n.tr("options.visualizer-types.linear")
-        }, {
+        },
+        {
           "key": "mirrored",
           "name": I18n.tr("options.visualizer-types.mirrored")
-        }, {
+        },
+        {
           "key": "wave",
           "name": I18n.tr("options.visualizer-types.wave")
-        }]
+        }
+      ]
       currentKey: Settings.data.audio.visualizerType
       onSelected: key => Settings.data.audio.visualizerType = key
     }
@@ -353,13 +358,16 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.audio.media.visualizer-quality.label")
       description: I18n.tr("settings.audio.media.visualizer-quality.description")
-      model: [{
+      model: [
+        {
           "key": "low",
           "name": I18n.tr("options.visualizer-quality.low")
-        }, {
+        },
+        {
           "key": "high",
           "name": I18n.tr("options.visualizer-quality.high")
-        }]
+        }
+      ]
       currentKey: Settings.data.audio.visualizerQuality
       onSelected: key => Settings.data.audio.visualizerQuality = key
     }
@@ -367,42 +375,50 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.audio.media.frame-rate.label")
       description: I18n.tr("settings.audio.media.frame-rate.description")
-      model: [{
+      model: [
+        {
           "key": "30",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "30"
                           })
-        }, {
+        },
+        {
           "key": "60",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "60"
                           })
-        }, {
+        },
+        {
           "key": "100",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "100"
                           })
-        }, {
+        },
+        {
           "key": "120",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "120"
                           })
-        }, {
+        },
+        {
           "key": "144",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "144"
                           })
-        }, {
+        },
+        {
           "key": "165",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "165"
                           })
-        }, {
+        },
+        {
           "key": "240",
           "name": I18n.tr("options.frame-rates.fps", {
                             "fps": "240"
                           })
-        }]
+        }
+      ]
       currentKey: Settings.data.audio.cavaFrameRate
       onSelected: key => Settings.data.audio.cavaFrameRate = key
     }

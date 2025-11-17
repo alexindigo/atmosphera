@@ -19,12 +19,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
@@ -41,16 +41,16 @@ Item {
     icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
     text: {
       if (BluetoothService.connectedDevices && BluetoothService.connectedDevices.length > 0) {
-        const firstDevice = BluetoothService.connectedDevices[0]
-        return firstDevice.name || firstDevice.deviceName
+        const firstDevice = BluetoothService.connectedDevices[0];
+        return firstDevice.name || firstDevice.deviceName;
       }
-      return ""
+      return "";
     }
     suffix: {
       if (BluetoothService.connectedDevices && BluetoothService.connectedDevices.length > 1) {
-        return ` + ${BluetoothService.connectedDevices.length - 1}`
+        return ` + ${BluetoothService.connectedDevices.length - 1}`;
       }
-      return ""
+      return "";
     }
     autoHide: false
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
@@ -59,9 +59,9 @@ Item {
     onRightClicked: BluetoothService.setBluetoothEnabled(!BluetoothService.enabled)
     tooltipText: {
       if (pill.text !== "") {
-        return pill.text
+        return pill.text;
       }
-      return I18n.tr("tooltips.bluetooth-devices")
+      return I18n.tr("tooltips.bluetooth-devices");
     }
   }
 }

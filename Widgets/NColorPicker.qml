@@ -27,14 +27,14 @@ Rectangle {
       var dialog = Qt.createComponent("NColorPickerDialog.qml").createObject(root, {
                                                                                "selectedColor": selectedColor,
                                                                                "parent": Overlay.overlay
-                                                                             })
+                                                                             });
       // Connect the dialog's signal to the picker's signal
       dialog.colorSelected.connect(function (color) {
-        root.selectedColor = color
-        root.colorSelected(color)
-      })
+        root.selectedColor = color;
+        root.colorSelected(color);
+      });
 
-      dialog.open()
+      dialog.open();
     }
 
     RowLayout {

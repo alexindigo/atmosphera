@@ -17,27 +17,35 @@ ColumnLayout {
   property int valueCharacterCount: widgetData.characterCount !== undefined ? widgetData.characterCount : widgetMetadata.characterCount
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.labelMode = valueLabelMode
-    settings.hideUnoccupied = valueHideUnoccupied
-    settings.characterCount = valueCharacterCount
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.labelMode = valueLabelMode;
+    settings.hideUnoccupied = valueHideUnoccupied;
+    settings.characterCount = valueCharacterCount;
+    return settings;
   }
 
   NComboBox {
     id: labelModeCombo
     label: I18n.tr("bar.widget-settings.workspace.label-mode.label")
     description: I18n.tr("bar.widget-settings.workspace.label-mode.description")
-    model: [{
+    model: [
+      {
         "key": "none",
         "name": I18n.tr("options.workspace-labels.none")
-      }, {
+      },
+      {
         "key": "index",
         "name": I18n.tr("options.workspace-labels.index")
-      }, {
+      },
+      {
         "key": "name",
         "name": I18n.tr("options.workspace-labels.name")
-      }]
+      },
+      {
+        "key": "index+name",
+        "name": I18n.tr("options.workspace-labels.index+name")
+      }
+    ]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => valueLabelMode = key
     minimumWidth: 200

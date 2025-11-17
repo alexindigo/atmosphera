@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Toon alleen de werkomgevinglabels voor werkomgevingen met open vensters.",
           "label": "Label alleen tonen wanneer bezet"
-        },
-        "show-workspace-numbers": {
-          "description": "Toon het label van de werkruimte in de linkerbovenhoek van taakgroepen.",
-          "label": "Werkruimtelabel weergeven"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Gezondheid: {percent}%",
     "idle": "In rust.",
     "no-battery-detected": "Geen batterij gedetecteerd.",
-    "panel": {
-      "balanced": "Gebalanceerd ({percent}%)",
-      "disabled": "Batterijbeheer uitgeschakeld",
-      "full": "Volledige capaciteit ({percent}%)",
-      "lifespan": "Verlengde levensduur ({percent}%)",
-      "title": "Batterijdrempel"
-    },
     "plugged-in": "Op netstroom.",
     "time-left": "Resterende tijd: {time}.",
     "time-until-full": "Tijd tot vol: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Index",
+      "index+name": "Index en Naam",
       "name": "Naam",
       "none": "Geen"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Indien ingeschakeld, kunnen panelen op elk scherm worden geopend. Indien uitgeschakeld, worden panelen alleen geopend op schermen met een balk, wat het geheugengebruik kan verminderen.",
+        "label": "Sta panelen toe op schermen zonder balk."
+      },
       "animation-disable": {
         "description": "Schakel alle animaties uit voor een snellere, responsievere ervaring.",
         "label": "UI-animaties uitschakelen"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "Batterij bijna leeg",
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
-    },
-    "battery-manager": {
-      "initial-setup": "Initiële configuratie vereist",
-      "install-failed": "Installatie mislukt",
-      "install-missing": "Vereiste bestanden ontbreken",
-      "install-success": "Succesvol geïnstalleerd",
-      "install-unsupported": "Systeem wordt niet ondersteund",
-      "set-failed": "Instellen van batterijdrempel mislukt",
-      "set-success-desc": "Batterijdrempel ingesteld op {percent}%",
-      "title": "Batterijdrempel",
-      "uninstall-failed": "Deïnstallatie mislukt",
-      "uninstall-setup": "Verwijderen, authenticatie vereist",
-      "uninstall-success": "Succesvol verwijderd"
     },
     "bluetooth": {
       "disabled": "Uitgeschakeld",

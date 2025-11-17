@@ -64,27 +64,27 @@ Singleton {
   }
 
   function init() {
-    Logger.i("ControlCenterWidgetRegistry", "Service started")
+    Logger.i("ControlCenterWidgetRegistry", "Service started");
   }
 
   // ------------------------------
   // Helper function to get widget component by name
   function getWidget(id) {
-    return widgets[id] || null
+    return widgets[id] || null;
   }
 
   // Helper function to check if widget exists
   function hasWidget(id) {
-    return id in widgets
+    return id in widgets;
   }
 
   // Get list of available widget id
   function getAvailableWidgets() {
-    return Object.keys(widgets)
+    return Object.keys(widgets);
   }
 
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
-    return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true)
+    return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true);
   }
 }

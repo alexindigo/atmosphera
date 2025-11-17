@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../Helpers/FuzzySort.js" as Fuzzysort
 import qs.Commons
 import qs.Widgets
-import "../Helpers/FuzzySort.js" as Fuzzysort
 
 RowLayout {
   id: root
@@ -13,9 +13,7 @@ RowLayout {
 
   property string label: ""
   property string description: ""
-  property ListModel model: {
-
-  }
+  property ListModel model: {}
   property string currentKey: ""
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
@@ -35,39 +33,39 @@ RowLayout {
   function findIndexByKey(key) {
     for (var i = 0; i < root.model.count; i++) {
       if (root.model.get(i).key === key) {
-        return i
+        return i;
       }
     }
-    return -1
+    return -1;
   }
 
   function findIndexByKeyInFiltered(key) {
     for (var i = 0; i < root.filteredModel.count; i++) {
       if (root.filteredModel.get(i).key === key) {
-        return i
+        return i;
       }
     }
-    return -1
+    return -1;
   }
 
   function filterModel() {
-    filteredModel.clear()
+    filteredModel.clear();
 
     // Check if model exists and has items
     if (!root.model || root.model.count === undefined || root.model.count === 0) {
-      return
+      return;
     }
 
     if (searchText.trim() === "") {
       // If no search text, show all items
       for (var i = 0; i < root.model.count; i++) {
-        filteredModel.append(root.model.get(i))
+        filteredModel.append(root.model.get(i));
       }
     } else {
       // Convert ListModel to array for fuzzy search
-      var items = []
+      var items = [];
       for (var i = 0; i < root.model.count; i++) {
-        items.push(root.model.get(i))
+        items.push(root.model.get(i));
       }
 
       // Use fuzzy search if available, fallback to simple search
@@ -76,19 +74,19 @@ RowLayout {
                                           "key": "name",
                                           "threshold": -1000,
                                           "limit": 50
-                                        })
+                                        });
 
         // Add results in order of relevance
         for (var j = 0; j < fuzzyResults.length; j++) {
-          filteredModel.append(fuzzyResults[j].obj)
+          filteredModel.append(fuzzyResults[j].obj);
         }
       } else {
         // Fallback to simple search
-        var searchLower = searchText.toLowerCase()
+        var searchLower = searchText.toLowerCase();
         for (var i = 0; i < items.length; i++) {
-          var item = items[i]
+          var item = items[i];
           if (item.name.toLowerCase().includes(searchLower)) {
-            filteredModel.append(item)
+            filteredModel.append(item);
           }
         }
       }
@@ -116,7 +114,7 @@ RowLayout {
     currentIndex: findIndexByKeyInFiltered(currentKey)
     onActivated: {
       if (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) {
-        root.selected(filteredModel.get(combo.currentIndex).key)
+        root.selected(filteredModel.get(combo.currentIndex).key);
       }
     }
 
@@ -192,14 +190,14 @@ RowLayout {
 
               onHoveredChanged: {
                 if (hovered) {
-                  ListView.view.currentIndex = index
+                  ListView.view.currentIndex = index;
                 }
               }
 
               onClicked: {
-                root.selected(filteredModel.get(index).key)
-                combo.currentIndex = root.findIndexByKeyInFiltered(filteredModel.get(index).key)
-                combo.popup.close()
+                root.selected(filteredModel.get(index).key);
+                combo.currentIndex = root.findIndexByKeyInFiltered(filteredModel.get(index).key);
+                combo.popup.close();
               }
 
               contentItem: RowLayout {
@@ -269,7 +267,7 @@ RowLayout {
     Connections {
       target: root
       function onCurrentKeyChanged() {
-        combo.currentIndex = root.findIndexByKeyInFiltered(currentKey)
+        combo.currentIndex = root.findIndexByKeyInFiltered(currentKey);
       }
     }
 
@@ -279,13 +277,13 @@ RowLayout {
       function onVisibleChanged() {
         if (combo.popup.visible) {
           // Ensure the model is filtered when popup opens
-          filterModel()
+          filterModel();
           // Small delay to ensure the popup is fully rendered
           Qt.callLater(() => {
                          if (searchInput && searchInput.inputItem) {
-                           searchInput.inputItem.forceActiveFocus()
+                           searchInput.inputItem.forceActiveFocus();
                          }
-                       })
+                       });
         }
       }
     }

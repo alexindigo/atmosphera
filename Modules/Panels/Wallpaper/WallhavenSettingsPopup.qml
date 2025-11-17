@@ -22,72 +22,72 @@ Popup {
 
   x: {
     if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0)
-      return itemPos.x - width + anchorItem.width
+      var itemPos = anchorItem.mapToItem(parent, 0, 0);
+      return itemPos.x - width + anchorItem.width;
     }
-    return 0
+    return 0;
   }
 
   y: {
     if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0)
-      return itemPos.y + anchorItem.height + Style.marginS
+      var itemPos = anchorItem.mapToItem(parent, 0, 0);
+      return itemPos.y + anchorItem.height + Style.marginS;
     }
-    return 0
+    return 0;
   }
 
   function showAt(item) {
     if (!item) {
-      return
+      return;
     }
-    anchorItem = item
-    open()
+    anchorItem = item;
+    open();
     Qt.callLater(() => {
                    // Try to focus the first input if available
                    if (resolutionWidthInput.inputItem) {
-                     resolutionWidthInput.inputItem.forceActiveFocus()
+                     resolutionWidthInput.inputItem.forceActiveFocus();
                    }
-                 })
+                 });
   }
 
   onOpened: {
     Qt.callLater(() => {
                    if (resolutionWidthInput.inputItem) {
-                     resolutionWidthInput.inputItem.forceActiveFocus()
+                     resolutionWidthInput.inputItem.forceActiveFocus();
                    }
-                 })
+                 });
   }
 
   function hide() {
-    close()
+    close();
   }
 
   function updateResolution(triggerSearch) {
     if (typeof WallhavenService === "undefined") {
-      return
+      return;
     }
 
-    var width = Settings.data.wallpaper.wallhavenResolutionWidth || ""
-    var height = Settings.data.wallpaper.wallhavenResolutionHeight || ""
-    var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+    var width = Settings.data.wallpaper.wallhavenResolutionWidth || "";
+    var height = Settings.data.wallpaper.wallhavenResolutionHeight || "";
+    var mode = Settings.data.wallpaper.wallhavenResolutionMode || "atleast";
 
     if (width && height) {
-      var resolution = width + "x" + height
+      var resolution = width + "x" + height;
       if (mode === "atleast") {
-        WallhavenService.minResolution = resolution
-        WallhavenService.resolutions = ""
+        WallhavenService.minResolution = resolution;
+        WallhavenService.resolutions = "";
       } else {
-        WallhavenService.minResolution = ""
-        WallhavenService.resolutions = resolution
+        WallhavenService.minResolution = "";
+        WallhavenService.resolutions = resolution;
       }
     } else {
-      WallhavenService.minResolution = ""
-      WallhavenService.resolutions = ""
+      WallhavenService.minResolution = "";
+      WallhavenService.resolutions = "";
     }
 
     // Trigger new search with updated resolution only if requested
     if (triggerSearch && Settings.data.wallpaper.useWallhaven) {
-      WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+      WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
     }
   }
 
@@ -154,31 +154,38 @@ Popup {
         id: sortingComboBox
         Layout.fillWidth: true
         Layout.minimumWidth: 200
-        model: [{
+        model: [
+          {
             "key": "date_added",
             "name": I18n.tr("wallpaper.panel.sorting.date_added")
-          }, {
+          },
+          {
             "key": "relevance",
             "name": I18n.tr("wallpaper.panel.sorting.relevance")
-          }, {
+          },
+          {
             "key": "random",
             "name": I18n.tr("wallpaper.panel.sorting.random")
-          }, {
+          },
+          {
             "key": "views",
             "name": I18n.tr("wallpaper.panel.sorting.views")
-          }, {
+          },
+          {
             "key": "favorites",
             "name": I18n.tr("wallpaper.panel.sorting.favorites")
-          }, {
+          },
+          {
             "key": "toplist",
             "name": I18n.tr("wallpaper.panel.sorting.toplist")
-          }]
+          }
+        ]
         currentKey: Settings.data.wallpaper.wallhavenSorting || "relevance"
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenSorting = key
+                      Settings.data.wallpaper.wallhavenSorting = key;
                       if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.sorting = key
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+                        WallhavenService.sorting = key;
+                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
                       }
                     }
       }
@@ -201,19 +208,22 @@ Popup {
         id: orderComboBox
         Layout.fillWidth: true
         Layout.minimumWidth: 200
-        model: [{
+        model: [
+          {
             "key": "desc",
             "name": I18n.tr("wallpaper.panel.order.desc")
-          }, {
+          },
+          {
             "key": "asc",
             "name": I18n.tr("wallpaper.panel.order.asc")
-          }]
+          }
+        ]
         currentKey: Settings.data.wallpaper.wallhavenOrder || "desc"
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenOrder = key
+                      Settings.data.wallpaper.wallhavenOrder = key;
                       if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.order = key
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+                        WallhavenService.order = key;
+                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
                       }
                     }
       }
@@ -235,22 +245,26 @@ Popup {
         id: purityComboBox
         Layout.fillWidth: true
         Layout.minimumWidth: 200
-        model: [{
+        model: [
+          {
             "key": "111",
             "name": I18n.tr("wallpaper.panel.purity.all")
-          }, {
+          },
+          {
             "key": "100",
             "name": I18n.tr("wallpaper.panel.purity.sfw")
-          }, {
+          },
+          {
             "key": "010",
             "name": I18n.tr("wallpaper.panel.purity.sketchy")
-          }]
+          }
+        ]
         currentKey: Settings.data.wallpaper.wallhavenPurity
         onSelected: key => {
-                      Settings.data.wallpaper.wallhavenPurity = key
+                      Settings.data.wallpaper.wallhavenPurity = key;
                       if (typeof WallhavenService !== "undefined") {
-                        WallhavenService.purity = key
-                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+                        WallhavenService.purity = key;
+                        WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
                       }
                     }
       }
@@ -277,36 +291,36 @@ Popup {
         spacing: Style.marginL
 
         function getCategoryValue(index) {
-          var cats = Settings.data.wallpaper.wallhavenCategories || "111"
-          return cats.length > index && cats.charAt(index) === "1"
+          var cats = Settings.data.wallpaper.wallhavenCategories || "111";
+          return cats.length > index && cats.charAt(index) === "1";
         }
 
         function updateCategories(general, anime, people) {
-          var categories = (general ? "1" : "0") + (anime ? "1" : "0") + (people ? "1" : "0")
-          Settings.data.wallpaper.wallhavenCategories = categories
+          var categories = (general ? "1" : "0") + (anime ? "1" : "0") + (people ? "1" : "0");
+          Settings.data.wallpaper.wallhavenCategories = categories;
           // Update checkboxes immediately
-          generalToggle.checked = general
-          animeToggle.checked = anime
-          peopleToggle.checked = people
+          generalToggle.checked = general;
+          animeToggle.checked = anime;
+          peopleToggle.checked = people;
           if (typeof WallhavenService !== "undefined") {
-            WallhavenService.categories = categories
-            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1)
+            WallhavenService.categories = categories;
+            WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1);
           }
         }
 
         Connections {
           target: Settings.data.wallpaper
           function onWallhavenCategoriesChanged() {
-            generalToggle.checked = categoriesRow.getCategoryValue(0)
-            animeToggle.checked = categoriesRow.getCategoryValue(1)
-            peopleToggle.checked = categoriesRow.getCategoryValue(2)
+            generalToggle.checked = categoriesRow.getCategoryValue(0);
+            animeToggle.checked = categoriesRow.getCategoryValue(1);
+            peopleToggle.checked = categoriesRow.getCategoryValue(2);
           }
         }
 
         Component.onCompleted: {
-          generalToggle.checked = categoriesRow.getCategoryValue(0)
-          animeToggle.checked = categoriesRow.getCategoryValue(1)
-          peopleToggle.checked = categoriesRow.getCategoryValue(2)
+          generalToggle.checked = categoriesRow.getCategoryValue(0);
+          animeToggle.checked = categoriesRow.getCategoryValue(1);
+          peopleToggle.checked = categoriesRow.getCategoryValue(2);
         }
 
         // General checkbox
@@ -462,7 +476,7 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2))
+                       categoriesRow.updateCategories(checked, categoriesRow.getCategoryValue(1), categoriesRow.getCategoryValue(2));
                      }
         }
 
@@ -471,7 +485,7 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2))
+                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), checked, categoriesRow.getCategoryValue(2));
                      }
         }
 
@@ -480,7 +494,7 @@ Popup {
           property bool checked: false
           signal toggled(bool checked)
           onToggled: checked => {
-                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked)
+                       categoriesRow.updateCategories(categoriesRow.getCategoryValue(0), categoriesRow.getCategoryValue(1), checked);
                      }
         }
       }
@@ -512,27 +526,30 @@ Popup {
           id: resolutionModeComboBox
           Layout.fillWidth: true
           Layout.minimumWidth: 200
-          model: [{
+          model: [
+            {
               "key": "atleast",
               "name": I18n.tr("wallpaper.panel.resolution.atleast")
-            }, {
+            },
+            {
               "key": "exact",
               "name": I18n.tr("wallpaper.panel.resolution.exact")
-            }]
+            }
+          ]
           currentKey: Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
 
           Connections {
             target: Settings.data.wallpaper
             function onWallhavenResolutionModeChanged() {
               if (resolutionModeComboBox.currentKey !== Settings.data.wallpaper.wallhavenResolutionMode) {
-                resolutionModeComboBox.currentKey = Settings.data.wallpaper.wallhavenResolutionMode || "atleast"
+                resolutionModeComboBox.currentKey = Settings.data.wallpaper.wallhavenResolutionMode || "atleast";
               }
             }
           }
 
           onSelected: key => {
-                        Settings.data.wallpaper.wallhavenResolutionMode = key
-                        updateResolution(false)
+                        Settings.data.wallpaper.wallhavenResolutionMode = key;
+                        updateResolution(false);
                       }
         }
       }
@@ -550,16 +567,16 @@ Popup {
 
           Component.onCompleted: {
             if (resolutionWidthInput.inputItem) {
-              resolutionWidthInput.inputItem.focusPolicy = Qt.StrongFocus
+              resolutionWidthInput.inputItem.focusPolicy = Qt.StrongFocus;
               // Ensure the TextField can receive keyboard input
-              resolutionWidthInput.inputItem.activeFocusOnPress = true
+              resolutionWidthInput.inputItem.activeFocusOnPress = true;
             }
           }
 
           // Ensure focus when clicked
           onActiveFocusChanged: {
             if (activeFocus && resolutionWidthInput.inputItem) {
-              resolutionWidthInput.inputItem.forceActiveFocus()
+              resolutionWidthInput.inputItem.forceActiveFocus();
             }
           }
 
@@ -567,14 +584,14 @@ Popup {
             target: Settings.data.wallpaper
             function onWallhavenResolutionWidthChanged() {
               if (resolutionWidthInput.text !== Settings.data.wallpaper.wallhavenResolutionWidth) {
-                resolutionWidthInput.text = Settings.data.wallpaper.wallhavenResolutionWidth || ""
+                resolutionWidthInput.text = Settings.data.wallpaper.wallhavenResolutionWidth || "";
               }
             }
           }
 
           onEditingFinished: {
-            Settings.data.wallpaper.wallhavenResolutionWidth = text
-            updateResolution(false)
+            Settings.data.wallpaper.wallhavenResolutionWidth = text;
+            updateResolution(false);
           }
         }
 
@@ -594,15 +611,15 @@ Popup {
 
           Component.onCompleted: {
             if (resolutionHeightInput.inputItem) {
-              resolutionHeightInput.inputItem.focusPolicy = Qt.StrongFocus
-              resolutionHeightInput.inputItem.activeFocusOnPress = true
+              resolutionHeightInput.inputItem.focusPolicy = Qt.StrongFocus;
+              resolutionHeightInput.inputItem.activeFocusOnPress = true;
             }
           }
 
           // Ensure focus when clicked
           onActiveFocusChanged: {
             if (activeFocus && resolutionHeightInput.inputItem) {
-              resolutionHeightInput.inputItem.forceActiveFocus()
+              resolutionHeightInput.inputItem.forceActiveFocus();
             }
           }
 
@@ -610,14 +627,14 @@ Popup {
             target: Settings.data.wallpaper
             function onWallhavenResolutionHeightChanged() {
               if (resolutionHeightInput.text !== Settings.data.wallpaper.wallhavenResolutionHeight) {
-                resolutionHeightInput.text = Settings.data.wallpaper.wallhavenResolutionHeight || ""
+                resolutionHeightInput.text = Settings.data.wallpaper.wallhavenResolutionHeight || "";
               }
             }
           }
 
           onEditingFinished: {
-            Settings.data.wallpaper.wallhavenResolutionHeight = text
-            updateResolution(false)
+            Settings.data.wallpaper.wallhavenResolutionHeight = text;
+            updateResolution(false);
           }
         }
       }
@@ -636,21 +653,21 @@ Popup {
         // Ensure all settings are synced to the service
         if (typeof WallhavenService !== "undefined" && Settings.data.wallpaper.useWallhaven) {
           // Sync all settings to the service
-          WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories
-          WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity
-          WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting
-          WallhavenService.order = Settings.data.wallpaper.wallhavenOrder
+          WallhavenService.categories = Settings.data.wallpaper.wallhavenCategories;
+          WallhavenService.purity = Settings.data.wallpaper.wallhavenPurity;
+          WallhavenService.sorting = Settings.data.wallpaper.wallhavenSorting;
+          WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
 
           // Update resolution settings (without triggering search)
-          updateResolution(false)
+          updateResolution(false);
 
           // Refresh the wallpaper search with current settings
-          WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1)
+          WallhavenService.search(Settings.data.wallpaper.wallhavenQuery || "", 1);
 
           // Close the popup after applying (delay to prevent click propagation)
           Qt.callLater(() => {
-                         root.hide()
-                       })
+                         root.hide();
+                       });
         }
       }
     }

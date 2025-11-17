@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import qs.Commons
-import qs.Services.UI
-import qs.Services.Networking
-import qs.Widgets
 import qs.Modules.MainScreen
+import qs.Services.Networking
+import qs.Services.UI
+import qs.Widgets
 
 SmartPanel {
   id: root
@@ -65,7 +65,7 @@ SmartPanel {
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               if (BluetoothService.adapter) {
-                BluetoothService.adapter.discovering = !BluetoothService.adapter.discovering
+                BluetoothService.adapter.discovering = !BluetoothService.adapter.discovering;
               }
             }
           }
@@ -75,7 +75,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
-              root.close()
+              root.close();
             }
           }
         }
@@ -143,9 +143,9 @@ SmartPanel {
             label: I18n.tr("bluetooth.panel.connected-devices")
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
-                return []
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected)
-              return BluetoothService.sortDevices(filtered)
+                return [];
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected);
+              return BluetoothService.sortDevices(filtered);
             }
             model: items
             visible: items.length > 0
@@ -158,9 +158,9 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.connect-disconnect-devices")
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
-                return []
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted))
-              return BluetoothService.sortDevices(filtered)
+                return [];
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted));
+              return BluetoothService.sortDevices(filtered);
             }
             model: items
             visible: items.length > 0
@@ -172,9 +172,9 @@ SmartPanel {
             label: I18n.tr("bluetooth.panel.available-devices")
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
-                return []
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted)
-              return BluetoothService.sortDevices(filtered)
+                return [];
+              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
+              return BluetoothService.sortDevices(filtered);
             }
             model: items
             visible: items.length > 0
@@ -187,13 +187,13 @@ SmartPanel {
             Layout.preferredHeight: columnScanning.implicitHeight + Style.marginM * 2
             visible: {
               if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
-                return false
+                return false;
               }
 
               var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                     return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0)
-                                                                   }).length
-              return (availableCount === 0)
+                                                                     return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
+                                                                   }).length;
+              return (availableCount === 0);
             }
 
             ColumnLayout {

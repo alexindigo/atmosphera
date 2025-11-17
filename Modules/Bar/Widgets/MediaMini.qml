@@ -2,11 +2,11 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Widgets.AudioSpectrum
 import qs.Commons
 import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
+import qs.Widgets.AudioSpectrum
 
 Item {
   id: root
@@ -23,12 +23,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
@@ -50,18 +50,18 @@ Item {
   readonly property string placeholderText: I18n.tr("bar.widget-settings.media-mini.no-active-player")
 
   readonly property string tooltipText: {
-    var title = getTitle()
-    var controls = ""
+    var title = getTitle();
+    var controls = "";
     if (MediaService.canGoNext) {
-      controls += "Right click for next.\n"
+      controls += "Right click for next.\n";
     }
     if (MediaService.canGoPrevious) {
-      controls += "Middle click for previous."
+      controls += "Middle click for previous.";
     }
     if (controls !== "") {
-      return title + "\n\n" + controls
+      return title + "\n\n" + controls;
     }
-    return title
+    return title;
   }
 
   // Hide conditions
@@ -103,53 +103,53 @@ Item {
   }
 
   function calculatedVerticalDimension() {
-    return Math.round((Style.baseWidgetSize - 5) * scaling)
+    return Math.round((Style.baseWidgetSize - 5) * scaling);
   }
 
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
-    var contentWidth = 0
-    var margins = Style.marginS * scaling * 2 // Left and right margins
+    var contentWidth = 0;
+    var margins = Style.marginS * scaling * 2; // Left and right margins
 
     // Icon or album art width
     if (!hasActivePlayer || !showAlbumArt) {
       // Icon width
-      contentWidth += Math.round(18 * scaling)
+      contentWidth += Math.round(18 * scaling);
     } else if (showAlbumArt && hasActivePlayer) {
       // Album art width
-      contentWidth += 21 * scaling
+      contentWidth += 21 * scaling;
     }
 
     // Spacing between icon/art and text; only if there is text
     if (fullTitleMetrics.contentWidth > 0) {
-      contentWidth += Style.marginS * scaling
+      contentWidth += Style.marginS * scaling;
 
       // Text width (use the measured width)
-      contentWidth += fullTitleMetrics.contentWidth
+      contentWidth += fullTitleMetrics.contentWidth;
 
       // Additional small margin for text
-      contentWidth += Style.marginXXS * 2
+      contentWidth += Style.marginXXS * 2;
     }
 
     // Add container margins
-    contentWidth += margins
+    contentWidth += margins;
 
-    return Math.ceil(contentWidth)
+    return Math.ceil(contentWidth);
   }
 
   // Dynamic width: adapt to content but respect maximum width setting
   readonly property real dynamicWidth: {
     // If using fixed width mode, always use maxWidth
     if (useFixedWidth) {
-      return maxWidth
+      return maxWidth;
     }
     // Otherwise, adapt to content
     if (!hasActivePlayer) {
       // Keep compact when no active player
-      return calculateContentWidth()
+      return calculateContentWidth();
     }
     // Use content width but don't exceed user-set maximum width
-    return Math.min(calculateContentWidth(), maxWidth)
+    return Math.min(calculateContentWidth(), maxWidth);
   }
 
   //  A hidden text element to safely measure the full title width
@@ -284,11 +284,11 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
-            var iconWidth = (windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0)
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (21 * scaling + Style.marginS * scaling) : 0)
-            var totalMargins = Style.marginXXS * 2
-            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins
-            return Math.max(20, availableWidth)
+            var iconWidth = (windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0);
+            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (21 * scaling + Style.marginS * scaling) : 0);
+            var totalMargins = Style.marginXXS * 2;
+            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins;
+            return Math.max(20, availableWidth);
           }
           Layout.maximumWidth: Layout.preferredWidth
           Layout.alignment: Qt.AlignVCenter
@@ -309,8 +309,8 @@ Item {
             repeat: false
             onTriggered: {
               if (scrollingMode === "always" && titleContainer.needsScrolling) {
-                titleContainer.isScrolling = true
-                titleContainer.isResetting = false
+                titleContainer.isScrolling = true;
+                titleContainer.isResetting = false;
               }
             }
           }
@@ -318,48 +318,48 @@ Item {
           // Update scrolling state based on mode
           property var updateScrollingState: function () {
             if (scrollingMode === "never") {
-              isScrolling = false
-              isResetting = false
+              isScrolling = false;
+              isResetting = false;
             } else if (scrollingMode === "always") {
               if (needsScrolling) {
                 if (mouseArea.containsMouse) {
-                  isScrolling = false
-                  isResetting = true
+                  isScrolling = false;
+                  isResetting = true;
                 } else {
-                  scrollStartTimer.restart()
+                  scrollStartTimer.restart();
                 }
               } else {
-                scrollStartTimer.stop()
-                isScrolling = false
-                isResetting = false
+                scrollStartTimer.stop();
+                isScrolling = false;
+                isResetting = false;
               }
             } else if (scrollingMode === "hover") {
               if (mouseArea.containsMouse && needsScrolling) {
-                isScrolling = true
-                isResetting = false
+                isScrolling = true;
+                isResetting = false;
               } else {
-                isScrolling = false
+                isScrolling = false;
                 if (needsScrolling) {
-                  isResetting = true
+                  isResetting = true;
                 }
               }
             }
           }
 
           onWidthChanged: {
-            containerWidth = width
-            updateScrollingState()
+            containerWidth = width;
+            updateScrollingState();
           }
 
           Component.onCompleted: {
-            containerWidth = width
-            updateScrollingState()
+            containerWidth = width;
+            updateScrollingState();
           }
 
           Connections {
             target: mouseArea
             function onContainsMouseChanged() {
-              titleContainer.updateScrollingState()
+              titleContainer.updateScrollingState();
             }
           }
 
@@ -385,11 +385,11 @@ Item {
                 horizontalAlignment: hasActivePlayer ? Text.AlignLeft : Text.AlignHCenter
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
                 onTextChanged: {
-                  titleContainer.isScrolling = false
-                  titleContainer.isResetting = false
-                  scrollContainer.scrollX = 0
+                  titleContainer.isScrolling = false;
+                  titleContainer.isResetting = false;
+                  scrollContainer.scrollX = 0;
                   if (titleContainer.needsScrolling) {
-                    scrollStartTimer.restart()
+                    scrollStartTimer.restart();
                   }
                 }
               }
@@ -413,7 +413,7 @@ Item {
               duration: 300
               easing.type: Easing.OutQuad
               onFinished: {
-                titleContainer.isResetting = false
+                titleContainer.isResetting = false;
               }
             }
 
@@ -467,28 +467,28 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => {
                      if (!hasActivePlayer || !MediaService.currentPlayer || !MediaService.canPlay) {
-                       return
+                       return;
                      }
 
                      if (mouse.button === Qt.LeftButton) {
-                       MediaService.playPause()
+                       MediaService.playPause();
                      } else if (mouse.button == Qt.RightButton) {
-                       MediaService.next()
-                       TooltipService.hide()
+                       MediaService.next();
+                       TooltipService.hide();
                      } else if (mouse.button == Qt.MiddleButton) {
-                       MediaService.previous()
-                       TooltipService.hide()
+                       MediaService.previous();
+                       TooltipService.hide();
                      }
                    }
 
         onEntered: {
-          var textToShow = hasActivePlayer ? tooltipText : placeholderText
+          var textToShow = hasActivePlayer ? tooltipText : placeholderText;
           if ((textToShow !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(Screen, root, textToShow, BarService.getTooltipDirection())
+            TooltipService.show(Screen, root, textToShow, BarService.getTooltipDirection());
           }
         }
         onExited: {
-          TooltipService.hide()
+          TooltipService.hide();
         }
       }
     }

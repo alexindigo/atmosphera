@@ -20,12 +20,12 @@ ColumnLayout {
   property bool valueColorizeDistroLogo: widgetData.colorizeDistroLogo !== undefined ? widgetData.colorizeDistroLogo : (widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false)
 
   function saveSettings() {
-    var settings = Object.assign({}, widgetData || {})
-    settings.icon = valueIcon
-    settings.useDistroLogo = valueUseDistroLogo
-    settings.customIconPath = valueCustomIconPath
-    settings.colorizeDistroLogo = valueColorizeDistroLogo
-    return settings
+    var settings = Object.assign({}, widgetData || {});
+    settings.icon = valueIcon;
+    settings.useDistroLogo = valueUseDistroLogo;
+    settings.customIconPath = valueCustomIconPath;
+    settings.colorizeDistroLogo = valueColorizeDistroLogo;
+    return settings;
   }
 
   NToggle {
@@ -33,10 +33,10 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.control-center.use-distro-logo.description")
     checked: valueUseDistroLogo
     onToggled: function (checked) {
-      valueUseDistroLogo = checked
+      valueUseDistroLogo = checked;
       if (checked) {
-        valueCustomIconPath = ""
-        valueIcon = ""
+        valueCustomIconPath = "";
+        valueIcon = "";
       }
     }
   }
@@ -47,7 +47,7 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.control-center.colorize-distro-logo.description")
     checked: valueColorizeDistroLogo
     onToggled: function (checked) {
-      valueColorizeDistroLogo = checked
+      valueColorizeDistroLogo = checked;
     }
   }
 
@@ -94,8 +94,8 @@ ColumnLayout {
     id: iconPicker
     initialIcon: valueIcon
     onIconSelected: iconName => {
-                      valueIcon = iconName
-                      valueCustomIconPath = ""
+                      valueIcon = iconName;
+                      valueCustomIconPath = "";
                     }
   }
 
@@ -107,7 +107,7 @@ ColumnLayout {
     initialPath: Quickshell.env("HOME")
     onAccepted: paths => {
                   if (paths.length > 0) {
-                    valueCustomIconPath = paths[0] // Use first selected file
+                    valueCustomIconPath = paths[0]; // Use first selected file
                   }
                 }
   }

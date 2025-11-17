@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.Modules.Panels.Settings.Tabs
 import qs.Commons
 import qs.Modules.MainScreen
+import qs.Modules.Panels.Settings.Tabs
 import qs.Services.System
 import qs.Widgets
 
@@ -30,31 +30,31 @@ SmartPanel {
 
   onAttachToBarChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition)
+      Qt.callLater(root.setPosition);
     }
   }
 
   onBarPositionChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition)
+      Qt.callLater(root.setPosition);
     }
   }
 
   onBarFloatingChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition)
+      Qt.callLater(root.setPosition);
     }
   }
 
   onBarMarginHChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition)
+      Qt.callLater(root.setPosition);
     }
   }
 
   onBarMarginVChanged: {
     if (isPanelOpen) {
-      Qt.callLater(root.setPosition)
+      Qt.callLater(root.setPosition);
     }
   }
 
@@ -88,7 +88,7 @@ SmartPanel {
   property var activeScrollView: null
 
   Component.onCompleted: {
-    updateTabsModel()
+    updateTabsModel();
   }
 
   Component {
@@ -174,208 +174,229 @@ SmartPanel {
 
   // Order *DOES* matter
   function updateTabsModel() {
-    let newTabs = [{
-                     "id": SettingsPanel.Tab.General,
-                     "label": "settings.general.title",
-                     "icon": "settings-general",
-                     "source": generalTab
-                   }, {
-                     "id": SettingsPanel.Tab.UserInterface,
-                     "label": "settings.user-interface.title",
-                     "icon": "settings-user-interface",
-                     "source": userInterfaceTab
-                   }, {
-                     "id": SettingsPanel.Tab.ColorScheme,
-                     "label": "settings.color-scheme.title",
-                     "icon": "settings-color-scheme",
-                     "source": colorSchemeTab
-                   }, {
-                     "id": SettingsPanel.Tab.Wallpaper,
-                     "label": "settings.wallpaper.title",
-                     "icon": "settings-wallpaper",
-                     "source": wallpaperTab
-                   }, {
-                     "id": SettingsPanel.Tab.Bar,
-                     "label": "settings.bar.title",
-                     "icon": "settings-bar",
-                     "source": barTab
-                   }, {
-                     "id": SettingsPanel.Tab.Dock,
-                     "label": "settings.dock.title",
-                     "icon": "settings-dock",
-                     "source": dockTab
-                   }, {
-                     "id": SettingsPanel.Tab.ControlCenter,
-                     "label": "settings.control-center.title",
-                     "icon": "settings-control-center",
-                     "source": controlCenterTab
-                   }, {
-                     "id": SettingsPanel.Tab.Launcher,
-                     "label": "settings.launcher.title",
-                     "icon": "settings-launcher",
-                     "source": launcherTab
-                   }, {
-                     "id": SettingsPanel.Tab.Notifications,
-                     "label": "settings.notifications.title",
-                     "icon": "settings-notifications",
-                     "source": notificationsTab
-                   }, {
-                     "id": SettingsPanel.Tab.OSD,
-                     "label": "settings.osd.title",
-                     "icon": "settings-osd",
-                     "source": osdTab
-                   }, {
-                     "id": SettingsPanel.Tab.LockScreen,
-                     "label": "settings.lock-screen.title",
-                     "icon": "settings-lock-screen",
-                     "source": lockScreenTab
-                   }, {
-                     "id": SettingsPanel.Tab.SessionMenu,
-                     "label": "settings.session-menu.title",
-                     "icon": "settings-session-menu",
-                     "source": sessionMenuTab
-                   }, {
-                     "id": SettingsPanel.Tab.Audio,
-                     "label": "settings.audio.title",
-                     "icon": "settings-audio",
-                     "source": audioTab
-                   }, {
-                     "id": SettingsPanel.Tab.Display,
-                     "label": "settings.display.title",
-                     "icon": "settings-display",
-                     "source": displayTab
-                   }, {
-                     "id": SettingsPanel.Tab.Network,
-                     "label": "settings.network.title",
-                     "icon": "settings-network",
-                     "source": networkTab
-                   }, {
-                     "id": SettingsPanel.Tab.Location,
-                     "label": "settings.location.title",
-                     "icon": "settings-location",
-                     "source": locationTab
-                   }, {
-                     "id": SettingsPanel.Tab.ScreenRecorder,
-                     "label": "settings.screen-recorder.title",
-                     "icon": "settings-screen-recorder",
-                     "source": screenRecorderTab
-                   }, {
-                     "id": SettingsPanel.Tab.SystemMonitor,
-                     "label": "settings.system-monitor.title",
-                     "icon": "settings-system-monitor",
-                     "source": systemMonitorTab
-                   }, {
-                     "id": SettingsPanel.Tab.Hooks,
-                     "label": "settings.hooks.title",
-                     "icon": "settings-hooks",
-                     "source": hooksTab
-                   }, {
-                     "id": SettingsPanel.Tab.About,
-                     "label": "settings.about.title",
-                     "icon": "settings-about",
-                     "source": aboutTab
-                   }]
+    let newTabs = [
+          {
+            "id": SettingsPanel.Tab.General,
+            "label": "settings.general.title",
+            "icon": "settings-general",
+            "source": generalTab
+          },
+          {
+            "id": SettingsPanel.Tab.UserInterface,
+            "label": "settings.user-interface.title",
+            "icon": "settings-user-interface",
+            "source": userInterfaceTab
+          },
+          {
+            "id": SettingsPanel.Tab.ColorScheme,
+            "label": "settings.color-scheme.title",
+            "icon": "settings-color-scheme",
+            "source": colorSchemeTab
+          },
+          {
+            "id": SettingsPanel.Tab.Wallpaper,
+            "label": "settings.wallpaper.title",
+            "icon": "settings-wallpaper",
+            "source": wallpaperTab
+          },
+          {
+            "id": SettingsPanel.Tab.Bar,
+            "label": "settings.bar.title",
+            "icon": "settings-bar",
+            "source": barTab
+          },
+          {
+            "id": SettingsPanel.Tab.Dock,
+            "label": "settings.dock.title",
+            "icon": "settings-dock",
+            "source": dockTab
+          },
+          {
+            "id": SettingsPanel.Tab.ControlCenter,
+            "label": "settings.control-center.title",
+            "icon": "settings-control-center",
+            "source": controlCenterTab
+          },
+          {
+            "id": SettingsPanel.Tab.Launcher,
+            "label": "settings.launcher.title",
+            "icon": "settings-launcher",
+            "source": launcherTab
+          },
+          {
+            "id": SettingsPanel.Tab.Notifications,
+            "label": "settings.notifications.title",
+            "icon": "settings-notifications",
+            "source": notificationsTab
+          },
+          {
+            "id": SettingsPanel.Tab.OSD,
+            "label": "settings.osd.title",
+            "icon": "settings-osd",
+            "source": osdTab
+          },
+          {
+            "id": SettingsPanel.Tab.LockScreen,
+            "label": "settings.lock-screen.title",
+            "icon": "settings-lock-screen",
+            "source": lockScreenTab
+          },
+          {
+            "id": SettingsPanel.Tab.SessionMenu,
+            "label": "settings.session-menu.title",
+            "icon": "settings-session-menu",
+            "source": sessionMenuTab
+          },
+          {
+            "id": SettingsPanel.Tab.Audio,
+            "label": "settings.audio.title",
+            "icon": "settings-audio",
+            "source": audioTab
+          },
+          {
+            "id": SettingsPanel.Tab.Display,
+            "label": "settings.display.title",
+            "icon": "settings-display",
+            "source": displayTab
+          },
+          {
+            "id": SettingsPanel.Tab.Network,
+            "label": "settings.network.title",
+            "icon": "settings-network",
+            "source": networkTab
+          },
+          {
+            "id": SettingsPanel.Tab.Location,
+            "label": "settings.location.title",
+            "icon": "settings-location",
+            "source": locationTab
+          },
+          {
+            "id": SettingsPanel.Tab.ScreenRecorder,
+            "label": "settings.screen-recorder.title",
+            "icon": "settings-screen-recorder",
+            "source": screenRecorderTab
+          },
+          {
+            "id": SettingsPanel.Tab.SystemMonitor,
+            "label": "settings.system-monitor.title",
+            "icon": "settings-system-monitor",
+            "source": systemMonitorTab
+          },
+          {
+            "id": SettingsPanel.Tab.Hooks,
+            "label": "settings.hooks.title",
+            "icon": "settings-hooks",
+            "source": hooksTab
+          },
+          {
+            "id": SettingsPanel.Tab.About,
+            "label": "settings.about.title",
+            "icon": "settings-about",
+            "source": aboutTab
+          }
+        ];
 
-    root.tabsModel = newTabs // Assign the generated list to the model
+    root.tabsModel = newTabs; // Assign the generated list to the model
   }
 
   // When the panel opens, choose the appropriate tab
   onOpened: {
     // Run program availability checks every time settings opens
-    ProgramCheckerService.checkAllPrograms()
-    updateTabsModel()
+    ProgramCheckerService.checkAllPrograms();
+    updateTabsModel();
 
-    var initialIndex = SettingsPanel.Tab.General
+    var initialIndex = SettingsPanel.Tab.General;
     if (root.requestedTab !== null) {
       for (var i = 0; i < root.tabsModel.length; i++) {
         if (root.tabsModel[i].id === root.requestedTab) {
-          initialIndex = i
-          break
+          initialIndex = i;
+          break;
         }
       }
     }
 
     // Now that the UI is settled, set the current tab index.
-    root.currentTabIndex = initialIndex
+    root.currentTabIndex = initialIndex;
   }
 
   // Add scroll functions
   function scrollDown() {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
-      const scrollBar = activeScrollView.ScrollBar.vertical
-      const stepSize = activeScrollView.height * 0.1 // Scroll 10% of viewport
-      scrollBar.position = Math.min(scrollBar.position + stepSize / activeScrollView.contentHeight, 1.0 - scrollBar.size)
+      const scrollBar = activeScrollView.ScrollBar.vertical;
+      const stepSize = activeScrollView.height * 0.1; // Scroll 10% of viewport
+      scrollBar.position = Math.min(scrollBar.position + stepSize / activeScrollView.contentHeight, 1.0 - scrollBar.size);
     }
   }
 
   function scrollUp() {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
-      const scrollBar = activeScrollView.ScrollBar.vertical
-      const stepSize = activeScrollView.height * 0.1 // Scroll 10% of viewport
-      scrollBar.position = Math.max(scrollBar.position - stepSize / activeScrollView.contentHeight, 0)
+      const scrollBar = activeScrollView.ScrollBar.vertical;
+      const stepSize = activeScrollView.height * 0.1; // Scroll 10% of viewport
+      scrollBar.position = Math.max(scrollBar.position - stepSize / activeScrollView.contentHeight, 0);
     }
   }
 
   function scrollPageDown() {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
-      const scrollBar = activeScrollView.ScrollBar.vertical
-      const pageSize = activeScrollView.height * 0.9 // Scroll 90% of viewport
-      scrollBar.position = Math.min(scrollBar.position + pageSize / activeScrollView.contentHeight, 1.0 - scrollBar.size)
+      const scrollBar = activeScrollView.ScrollBar.vertical;
+      const pageSize = activeScrollView.height * 0.9; // Scroll 90% of viewport
+      scrollBar.position = Math.min(scrollBar.position + pageSize / activeScrollView.contentHeight, 1.0 - scrollBar.size);
     }
   }
 
   function scrollPageUp() {
     if (activeScrollView && activeScrollView.ScrollBar.vertical) {
-      const scrollBar = activeScrollView.ScrollBar.vertical
-      const pageSize = activeScrollView.height * 0.9 // Scroll 90% of viewport
-      scrollBar.position = Math.max(scrollBar.position - pageSize / activeScrollView.contentHeight, 0)
+      const scrollBar = activeScrollView.ScrollBar.vertical;
+      const pageSize = activeScrollView.height * 0.9; // Scroll 90% of viewport
+      scrollBar.position = Math.max(scrollBar.position - pageSize / activeScrollView.contentHeight, 0);
     }
   }
 
   // Add navigation functions
   function selectNextTab() {
     if (tabsModel.length > 0) {
-      currentTabIndex = (currentTabIndex + 1) % tabsModel.length
+      currentTabIndex = (currentTabIndex + 1) % tabsModel.length;
     }
   }
 
   function selectPreviousTab() {
     if (tabsModel.length > 0) {
-      currentTabIndex = (currentTabIndex - 1 + tabsModel.length) % tabsModel.length
+      currentTabIndex = (currentTabIndex - 1 + tabsModel.length) % tabsModel.length;
     }
   }
 
   // Override keyboard handlers from SmartPanel
   function onTabPressed() {
-    selectNextTab()
+    selectNextTab();
   }
 
   function onBackTabPressed() {
-    selectPreviousTab()
+    selectPreviousTab();
   }
 
   function onUpPressed() {
-    scrollUp()
+    scrollUp();
   }
 
   function onDownPressed() {
-    scrollDown()
+    scrollDown();
   }
 
   function onPageUpPressed() {
-    scrollPageUp()
+    scrollPageUp();
   }
 
   function onPageDownPressed() {
-    scrollPageDown()
+    scrollPageDown();
   }
 
   function onCtrlJPressed() {
-    scrollDown()
+    scrollDown();
   }
 
   function onCtrlKPressed() {
-    scrollUp()
+    scrollUp();
   }
 
   panelContent: Rectangle {
@@ -481,7 +502,7 @@ SmartPanel {
 
             onCurrentIndexChanged: {
               if (currentIndex !== root.currentTabIndex) {
-                root.currentTabIndex = currentIndex
+                root.currentTabIndex = currentIndex;
               }
             }
 
@@ -489,8 +510,8 @@ SmartPanel {
               target: root
               function onCurrentTabIndexChanged() {
                 if (sidebarList.currentIndex !== root.currentTabIndex) {
-                  sidebarList.currentIndex = root.currentTabIndex
-                  sidebarList.positionViewAtIndex(root.currentTabIndex, ListView.Contain)
+                  sidebarList.currentIndex = root.currentTabIndex;
+                  sidebarList.positionViewAtIndex(root.currentTabIndex, ListView.Contain);
                 }
               }
             }
@@ -566,9 +587,9 @@ SmartPanel {
                   onStatusChanged: {
                     if (status === Loader.Ready && item) {
                       // Find and store reference to the ScrollView
-                      const scrollView = item.children[0]
+                      const scrollView = item.children[0];
                       if (scrollView && scrollView.toString().includes("ScrollView")) {
-                        root.activeScrollView = scrollView
+                        root.activeScrollView = scrollView;
                       }
                     }
                   }
@@ -587,7 +608,7 @@ SmartPanel {
                       verticalPolicy: ScrollBar.AsNeeded
                       padding: Style.marginL
                       Component.onCompleted: {
-                        root.activeScrollView = scrollView
+                        root.activeScrollView = scrollView;
                       }
 
                       Loader {

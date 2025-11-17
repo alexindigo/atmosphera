@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell
 import qs.Commons
-import qs.Services.UI
 import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
 
@@ -22,12 +22,12 @@ Item {
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
-      var widgets = Settings.data.bar.widgets[section]
+      var widgets = Settings.data.bar.widgets[section];
       if (widgets && sectionWidgetIndex < widgets.length) {
-        return widgets[sectionWidgetIndex]
+        return widgets[sectionWidgetIndex];
       }
     }
-    return {}
+    return {};
   }
 
   // Resolve settings: try user settings or defaults from BarWidgetRegistry
@@ -38,16 +38,16 @@ Item {
   readonly property color fillColor: {
     switch (colorName) {
     case "primary":
-      return Color.mPrimary
+      return Color.mPrimary;
     case "secondary":
-      return Color.mSecondary
+      return Color.mSecondary;
     case "tertiary":
-      return Color.mTertiary
+      return Color.mTertiary;
     case "error":
-      return Color.mError
+      return Color.mError;
     case "onSurface":
     default:
-      return Color.mOnSurface
+      return Color.mOnSurface;
     }
   }
 
@@ -92,13 +92,13 @@ Item {
     sourceComponent: {
       switch (currentVisualizerType) {
       case "linear":
-        return linearComponent
+        return linearComponent;
       case "mirrored":
-        return mirroredComponent
+        return mirroredComponent;
       case "wave":
-        return waveComponent
+        return waveComponent;
       default:
-        return null
+        return null;
       }
     }
   }
@@ -112,13 +112,13 @@ Item {
     acceptedButtons: Qt.LeftButton
 
     onClicked: mouse => {
-                 const types = ["linear", "mirrored", "wave"]
-                 const currentIndex = types.indexOf(currentVisualizerType)
-                 const nextIndex = (currentIndex + 1) % types.length
-                 const newType = types[nextIndex]
+                 const types = ["linear", "mirrored", "wave"];
+                 const currentIndex = types.indexOf(currentVisualizerType);
+                 const nextIndex = (currentIndex + 1) % types.length;
+                 const newType = types[nextIndex];
 
                  // Update settings directly, maybe this should be a widget setting...
-                 Settings.data.audio.visualizerType = newType
+                 Settings.data.audio.visualizerType = newType;
                }
   }
 

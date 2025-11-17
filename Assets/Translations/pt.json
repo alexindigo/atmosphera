@@ -314,13 +314,9 @@
         }
       },
       "taskbar-grouped": {
-        "show-numbers-only-when-occupied": {
+        "show-labels-only-when-occupied": {
           "description": "Mostrar apenas o rótulo da área de trabalho para áreas de trabalho que têm janelas abertas.",
           "label": "Mostrar rótulo somente quando ocupado."
-        },
-        "show-workspace-numbers": {
-          "description": "Exibir o rótulo do espaço de trabalho no canto superior esquerdo dos grupos de tarefas.",
-          "label": "Mostrar rótulo do espaço de trabalho"
         }
       },
       "tray": {
@@ -363,13 +359,6 @@
     "health": "Saúde: {percent}%",
     "idle": "Ocioso.",
     "no-battery-detected": "Nenhuma bateria detectada.",
-    "panel": {
-      "balanced": "Balanceado ({percent}%)",
-      "disabled": "Gerenciador de bateria desativado",
-      "full": "Capacidade máxima ({percent}%)",
-      "lifespan": "Vida útil prolongada ({percent}%)",
-      "title": "Limite de carga"
-    },
     "plugged-in": "Conectado.",
     "time-left": "Tempo restante: {time}.",
     "time-until-full": "Tempo até carga completa: {time}."
@@ -564,6 +553,7 @@
     },
     "workspace-labels": {
       "index": "Índice",
+      "index+name": "Índice e Nome",
       "name": "Nome",
       "none": "Nenhum"
     }
@@ -1663,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Quando ativado, os painéis podem abrir em qualquer tela. Quando desativado, os painéis só abrirão em telas que tenham uma barra, o que pode reduzir o uso de memória.",
+        "label": "Permitir painéis em telas sem uma barra."
+      },
       "animation-disable": {
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",
         "label": "Desativar animações da interface do usuário"
@@ -1869,19 +1863,6 @@
     "battery": {
       "low": "Bateria Fraca",
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
-    },
-    "battery-manager": {
-      "initial-setup": "Configuração inicial necessária",
-      "install-failed": "Falha na instalação",
-      "install-missing": "Arquivos necessários ausentes",
-      "install-success": "Instalado com sucesso",
-      "install-unsupported": "Sistema não suportado",
-      "set-failed": "Falha ao definir o limite da bateria",
-      "set-success-desc": "Limite da bateria definido para {percent}%",
-      "title": "Limite da bateria",
-      "uninstall-failed": "Falha na desinstalação",
-      "uninstall-setup": "Desinstalando, autenticação necessária",
-      "uninstall-success": "Desinstalado com sucesso"
     },
     "bluetooth": {
       "disabled": "Desativado",

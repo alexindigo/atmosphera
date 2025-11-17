@@ -2,16 +2,14 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
+import "Backgrounds" as Backgrounds
 
 import qs.Commons
-import qs.Services.UI
-import "Backgrounds" as Backgrounds
 
 // All panels
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
-import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
 import qs.Modules.Panels.Calendar
 import qs.Modules.Panels.ControlCenter
@@ -23,17 +21,16 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
 import qs.Modules.Panels.WiFi
-
+import qs.Services.UI
 
 /**
- * MainScreen - Single PanelWindow per screen that manages all panels and the bar
- */
+* MainScreen - Single PanelWindow per screen that manages all panels and the bar
+*/
 PanelWindow {
   id: root
 
   // Expose panels as readonly property aliases
   readonly property alias audioPanel: audioPanel
-  readonly property alias batteryPanel: batteryPanel
   readonly property alias bluetoothPanel: bluetoothPanel
   readonly property alias calendarPanel: calendarPanel
   readonly property alias controlCenterPanel: controlCenterPanel
@@ -48,7 +45,6 @@ PanelWindow {
 
   // Expose panel placeholders for AllBackgrounds
   readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
-  readonly property var batteryPanelPlaceholder: batteryPanel.panelPlaceholder
   readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
   readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
   readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelPlaceholder
@@ -62,7 +58,7 @@ PanelWindow {
   readonly property var wifiPanelPlaceholder: wifiPanel.panelPlaceholder
 
   Component.onCompleted: {
-    Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y)
+    Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
   }
 
   // Wayland
@@ -85,9 +81,9 @@ PanelWindow {
 
   color: {
     if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
-      return Qt.alpha(Color.mShadow, dimmerOpacity)
+      return Qt.alpha(Color.mShadow, dimmerOpacity);
     }
-    return Color.transparent
+    return Color.transparent;
   }
 
   Behavior on color {
@@ -101,15 +97,15 @@ PanelWindow {
   readonly property bool barShouldShow: {
     // Check global bar visibility
     if (!BarService.isVisible)
-      return false
+      return false;
 
     // Check screen-specific configuration
-    var monitors = Settings.data.bar.monitors || []
-    var screenName = screen?.name || ""
+    var monitors = Settings.data.bar.monitors || [];
+    var screenName = screen?.name || "";
 
     // If no monitors specified, show on all screens
     // If monitors specified, only show if this screen is in the list
-    return monitors.length === 0 || monitors.includes(screenName)
+    return monitors.length === 0 || monitors.includes(screenName);
   }
 
   // Make everything click-through except bar
@@ -162,145 +158,74 @@ PanelWindow {
     // ---------------------------------------
     AudioPanel {
       id: audioPanel
+      objectName: "audioPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "audioPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(audioPanel)
-      }
-    }
-
-    BatteryPanel {
-      id: batteryPanel
-      screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "batteryPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(batteryPanel)
-      }
     }
 
     BluetoothPanel {
       id: bluetoothPanel
+      objectName: "bluetoothPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "bluetoothPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(bluetoothPanel)
-      }
     }
 
     ControlCenterPanel {
       id: controlCenterPanel
+      objectName: "controlCenterPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "controlCenterPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(controlCenterPanel)
-      }
     }
 
     CalendarPanel {
       id: calendarPanel
+      objectName: "calendarPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "calendarPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(calendarPanel)
-      }
     }
 
     Launcher {
       id: launcherPanel
+      objectName: "launcherPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "launcherPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(launcherPanel)
-      }
     }
 
     NotificationHistoryPanel {
       id: notificationHistoryPanel
+      objectName: "notificationHistoryPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "notificationHistoryPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(notificationHistoryPanel)
-      }
     }
 
     SessionMenu {
       id: sessionMenuPanel
+      objectName: "sessionMenuPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "sessionMenuPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(sessionMenuPanel)
-      }
     }
 
     SettingsPanel {
       id: settingsPanel
+      objectName: "settingsPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "settingsPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(settingsPanel)
-      }
     }
 
     SetupWizard {
       id: setupWizardPanel
+      objectName: "setupWizardPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "setupWizardPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(setupWizardPanel)
-      }
     }
 
     TrayDrawerPanel {
       id: trayDrawerPanel
+      objectName: "trayDrawerPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "trayDrawerPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(trayDrawerPanel)
-      }
     }
 
     WallpaperPanel {
       id: wallpaperPanel
+      objectName: "wallpaperPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "wallpaperPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(wallpaperPanel)
-      }
     }
 
     WiFiPanel {
       id: wifiPanel
+      objectName: "wifiPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "wifiPanel-" + (screen?.name || "unknown")
-        PanelService.registerPanel(wifiPanel)
-      }
     }
 
     // ----------------------------------------------
@@ -326,94 +251,84 @@ PanelWindow {
       // Use screen dimensions directly
       x: {
         if (barPosition === "right")
-          return screen.width - Style.barHeight - barMarginH - attachmentOverlap // Extend left towards panels
-        return barMarginH
+          return screen.width - Style.barHeight - barMarginH - attachmentOverlap; // Extend left towards panels
+        return barMarginH;
       }
       y: {
         if (barPosition === "bottom")
-          return screen.height - Style.barHeight - barMarginV - attachmentOverlap
-        return barMarginV
+          return screen.height - Style.barHeight - barMarginV - attachmentOverlap;
+        return barMarginV;
       }
       width: {
         if (barIsVertical) {
-          return Style.barHeight + attachmentOverlap
+          return Style.barHeight + attachmentOverlap;
         }
-        return screen.width - barMarginH * 2
+        return screen.width - barMarginH * 2;
       }
       height: {
         if (barIsVertical) {
-          return screen.height - barMarginV * 2
+          return screen.height - barMarginV * 2;
         }
-        return Style.barHeight + attachmentOverlap
+        return Style.barHeight + attachmentOverlap;
       }
 
       // Corner states (same as Bar.qml)
       readonly property int topLeftCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "top")
-          return -1
+          return -1;
         if (barPosition === "left")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "right")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int topRightCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "top")
-          return -1
+          return -1;
         if (barPosition === "right")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "bottom" || barPosition === "left")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int bottomLeftCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "bottom")
-          return -1
+          return -1;
         if (barPosition === "left")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "right")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
+        return -1;
       }
 
       readonly property int bottomRightCornerState: {
         if (barFloating)
-          return 0
+          return 0;
         if (barPosition === "bottom")
-          return -1
+          return -1;
         if (barPosition === "right")
-          return -1
+          return -1;
         if (Settings.data.bar.outerCorners && (barPosition === "top" || barPosition === "left")) {
-          return barIsVertical ? 1 : 2
+          return barIsVertical ? 1 : 2;
         }
-        return -1
-      }
-
-      Component.onCompleted: {
-        Logger.d("MainScreen", "===== Bar placeholder loaded =====")
-        Logger.d("MainScreen", "  Screen:", screen?.name, "Size:", screen?.width, "x", screen?.height)
-        Logger.d("MainScreen", "  Bar position:", barPosition, "| isVertical:", barIsVertical)
-        Logger.d("MainScreen", "  Bar dimensions: x=" + x, "y=" + y, "width=" + width, "height=" + height)
-        Logger.d("MainScreen", "  Style.barHeight =", Style.barHeight)
-        Logger.d("MainScreen", "  Margins: H=" + barMarginH, "V=" + barMarginV, "| Floating:", barFloating)
+        return -1;
       }
     }
 
-
     /**
-     *  Screen Corners
-     */
+    *  Screen Corners
+    */
     ScreenCorners {}
   }
 }
