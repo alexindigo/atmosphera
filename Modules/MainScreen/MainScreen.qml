@@ -158,134 +158,74 @@ PanelWindow {
     // ---------------------------------------
     AudioPanel {
       id: audioPanel
+      objectName: "audioPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "audioPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(audioPanel);
-      }
     }
 
     BluetoothPanel {
       id: bluetoothPanel
+      objectName: "bluetoothPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "bluetoothPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(bluetoothPanel);
-      }
     }
 
     ControlCenterPanel {
       id: controlCenterPanel
+      objectName: "controlCenterPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "controlCenterPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(controlCenterPanel);
-      }
     }
 
     CalendarPanel {
       id: calendarPanel
+      objectName: "calendarPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "calendarPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(calendarPanel);
-      }
     }
 
     Launcher {
       id: launcherPanel
+      objectName: "launcherPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "launcherPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(launcherPanel);
-      }
     }
 
     NotificationHistoryPanel {
       id: notificationHistoryPanel
+      objectName: "notificationHistoryPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "notificationHistoryPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(notificationHistoryPanel);
-      }
     }
 
     SessionMenu {
       id: sessionMenuPanel
+      objectName: "sessionMenuPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "sessionMenuPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(sessionMenuPanel);
-      }
     }
 
     SettingsPanel {
       id: settingsPanel
+      objectName: "settingsPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "settingsPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(settingsPanel);
-      }
     }
 
     SetupWizard {
       id: setupWizardPanel
+      objectName: "setupWizardPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "setupWizardPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(setupWizardPanel);
-      }
     }
 
     TrayDrawerPanel {
       id: trayDrawerPanel
+      objectName: "trayDrawerPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "trayDrawerPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(trayDrawerPanel);
-      }
     }
 
     WallpaperPanel {
       id: wallpaperPanel
+      objectName: "wallpaperPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "wallpaperPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(wallpaperPanel);
-      }
     }
 
     WiFiPanel {
       id: wifiPanel
+      objectName: "wifiPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
-      z: 50
-
-      Component.onCompleted: {
-        objectName = "wifiPanel-" + (screen?.name || "unknown");
-        PanelService.registerPanel(wifiPanel);
-      }
     }
 
     // ----------------------------------------------
@@ -383,15 +323,6 @@ PanelWindow {
           return barIsVertical ? 1 : 2;
         }
         return -1;
-      }
-
-      Component.onCompleted: {
-        Logger.d("MainScreen", "===== Bar placeholder loaded =====");
-        Logger.d("MainScreen", "  Screen:", screen?.name, "Size:", screen?.width, "x", screen?.height);
-        Logger.d("MainScreen", "  Bar position:", barPosition, "| isVertical:", barIsVertical);
-        Logger.d("MainScreen", "  Bar dimensions: x=" + x, "y=" + y, "width=" + width, "height=" + height);
-        Logger.d("MainScreen", "  Style.barHeight =", Style.barHeight);
-        Logger.d("MainScreen", "  Margins: H=" + barMarginH, "V=" + barMarginV, "| Floating:", barFloating);
       }
     }
 

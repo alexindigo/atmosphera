@@ -179,15 +179,8 @@ Item {
     }
   }
 
-  // Register with PanelService (backward compatibility)
-  // Note: Registration happens in MainScreen after objectName is set
+  // Register with PanelService
   Component.onCompleted: {
-    // Use Qt.callLater to ensure objectName is set by parent before registering
-    Qt.callLater(function () {
-      if (!objectName) {
-        Logger.w("SmartPanel", "Panel created without objectName - PanelService registration may fail");
-      }
-      PanelService.registerPanel(root);
-    });
+    PanelService.registerPanel(root);
   }
 }

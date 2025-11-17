@@ -46,8 +46,6 @@ Item {
 
       Component.onCompleted: {
         Logger.d("AllBackgrounds", "AllBackgrounds initialized");
-        Logger.d("AllBackgrounds", "  bar:", root.bar);
-        Logger.d("AllBackgrounds", "  windowRoot:", root.windowRoot);
       }
 
       /**
