@@ -87,6 +87,7 @@ Item {
   BarPill {
     id: pill
 
+    screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
     icon: AudioService.getInputIcon()
     density: Settings.data.bar.density

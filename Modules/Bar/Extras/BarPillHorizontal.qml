@@ -8,7 +8,7 @@ import qs.Widgets
 Item {
   id: root
 
-  property ShellScreen screen
+  required property ShellScreen screen
 
   property string icon: ""
   property string text: ""
@@ -255,7 +255,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
+      TooltipService.show(screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }

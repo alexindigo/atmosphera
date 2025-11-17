@@ -55,6 +55,7 @@ Item {
   BarPill {
     id: pill
 
+    screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
     icon: _dynamicIcon !== "" ? _dynamicIcon : customIcon
     text: shouldShowText ? _dynamicText : ""

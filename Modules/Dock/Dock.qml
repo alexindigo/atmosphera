@@ -500,7 +500,7 @@ Loader {
                           const appName = appButton.appTitle || appButton.appId || "Unknown";
                           const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName;
                           if (!contextMenu.visible) {
-                            TooltipService.show(Screen, appButton, tooltipText, "top");
+                            TooltipService.show(screen, appButton, tooltipText, "top");
                           }
                           if (autoHide) {
                             showTimer.stop();

@@ -484,7 +484,7 @@ Item {
         onEntered: {
           var textToShow = hasActivePlayer ? tooltipText : placeholderText;
           if ((textToShow !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(Screen, root, textToShow, BarService.getTooltipDirection());
+            TooltipService.show(screen, root, textToShow, BarService.getTooltipDirection());
           }
         }
         onExited: {

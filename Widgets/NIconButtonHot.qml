@@ -119,7 +119,7 @@ Rectangle {
     onEntered: {
       hovering = root.enabled ? true : false;
       if (tooltipText) {
-        TooltipService.show(Screen, parent, tooltipText, tooltipDirection);
+        TooltipService.show(screen, parent, tooltipText, tooltipDirection);
       }
       root.entered();
     }

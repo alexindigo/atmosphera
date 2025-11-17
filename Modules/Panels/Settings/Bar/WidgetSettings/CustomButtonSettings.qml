@@ -82,7 +82,7 @@ ColumnLayout {
       enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
-      onEntered: TooltipService.show(Screen, leftClickUpdateText, I18n.tr("bar.widget-settings.custom-button.left-click.update-text"), "auto")
+      onEntered: TooltipService.show(screen, leftClickUpdateText, I18n.tr("bar.widget-settings.custom-button.left-click.update-text"), "auto")
       onExited: TooltipService.hide()
       checked: widgetData?.leftClickUpdateText ?? widgetMetadata.leftClickUpdateText
       onToggled: isChecked => checked = isChecked
@@ -106,7 +106,7 @@ ColumnLayout {
       enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
-      onEntered: TooltipService.show(Screen, rightClickUpdateText, I18n.tr("bar.widget-settings.custom-button.right-click.update-text"), "auto")
+      onEntered: TooltipService.show(screen, rightClickUpdateText, I18n.tr("bar.widget-settings.custom-button.right-click.update-text"), "auto")
       onExited: TooltipService.hide()
       checked: widgetData?.rightClickUpdateText ?? widgetMetadata.rightClickUpdateText
       onToggled: isChecked => checked = isChecked
@@ -130,7 +130,7 @@ ColumnLayout {
       enabled: !valueTextStream
       Layout.alignment: Qt.AlignRight | Qt.AlignBottom
       Layout.bottomMargin: Style.marginS
-      onEntered: TooltipService.show(Screen, middleClickUpdateText, I18n.tr("bar.widget-settings.custom-button.middle-click.update-text"), "auto")
+      onEntered: TooltipService.show(screen, middleClickUpdateText, I18n.tr("bar.widget-settings.custom-button.middle-click.update-text"), "auto")
       onExited: TooltipService.hide()
       checked: widgetData?.middleClickUpdateText ?? widgetMetadata.middleClickUpdateText
       onToggled: isChecked => checked = isChecked

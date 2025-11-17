@@ -144,7 +144,7 @@ Rectangle {
       root.hovered = true;
       root.entered();
       if (tooltipText) {
-        TooltipService.show(Screen, root, root.tooltipText);
+        TooltipService.show(screen, root, root.tooltipText);
       }
     }
     onExited: {

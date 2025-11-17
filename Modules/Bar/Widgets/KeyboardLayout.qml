@@ -41,8 +41,9 @@ Item {
 
   BarPill {
     id: pill
-
     anchors.verticalCenter: parent.verticalCenter
+
+    screen: root.screen
     density: Settings.data.bar.density
     oppositeDirection: BarService.getPillDirection(root)
     icon: "keyboard"

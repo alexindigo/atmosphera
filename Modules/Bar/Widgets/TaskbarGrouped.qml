@@ -306,7 +306,7 @@ Item {
               }
               onEntered: {
                 taskbarItem.itemHovered = true;
-                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
+                TooltipService.show(screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
               }
               onExited: {
                 taskbarItem.itemHovered = false;
