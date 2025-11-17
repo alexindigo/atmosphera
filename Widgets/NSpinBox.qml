@@ -38,7 +38,7 @@ RowLayout {
   Rectangle {
     id: spinBoxContainer
     implicitWidth: 120
-    implicitHeight: (root.baseSize - 4)
+    implicitHeight: Math.round((root.baseSize - 4)/2)*2
     radius: height * 0.5
     color: Color.mSurfaceVariant
     border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mHover : Color.mOutline
@@ -83,6 +83,7 @@ RowLayout {
       anchors.bottom: parent.bottom
       anchors.left: parent.left
       opacity: root.enabled && root.value > root.from ? 1.0 : 0.3
+      clip: true
 
       Item {
         id: leftSemicircle
@@ -93,7 +94,7 @@ RowLayout {
         Rectangle {
           width: Math.round(parent.height)
           height: parent.height
-          radius: width / 2
+          radius: Math.round(width / 2)
           anchors.left: parent.left
           color: decreaseArea.containsMouse ? Color.mHover : Color.transparent
           Behavior on color {
@@ -178,6 +179,7 @@ RowLayout {
       anchors.bottom: parent.bottom
       anchors.right: parent.right
       opacity: root.enabled && root.value < root.to ? 1.0 : 0.3
+      clip: true
 
       Item {
         id: rightSemicircle
@@ -188,7 +190,7 @@ RowLayout {
         Rectangle {
           width: Math.round(parent.height)
           height: parent.height
-          radius: width / 2
+          radius: Math.round(width / 2)
           anchors.right: parent.right
           color: increaseArea.containsMouse ? Color.mHover : Color.transparent
           Behavior on color {
