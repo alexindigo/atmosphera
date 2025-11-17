@@ -11,6 +11,7 @@ Rectangle {
   property color borderColor: Color.transparent
   property real borderWidth: 0
   property real imageRadius: width * 0.5
+  property int imageFillMode: Image.PreserveAspectCrop
   property string fallbackIcon: ""
   property real fallbackIconSize: Style.fontSizeXXL
 
@@ -35,7 +36,7 @@ Rectangle {
       smooth: true
       asynchronous: true
       antialiasing: true
-      fillMode: Image.PreserveAspectFit
+      fillMode: root.imageFillMode
       horizontalAlignment: Image.AlignHCenter
       verticalAlignment: Image.AlignVCenter
 

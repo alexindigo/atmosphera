@@ -15,11 +15,13 @@ SmartPanel {
 
   readonly property bool previewActive: activePlugin && activePlugin.name === I18n.tr("plugins.clipboard") && results.length > 0
 
-  // Panel configuration - use proportional widths
-  readonly property real clipListRatio: 0.6  // 60% for the list
-  readonly property real clipPreviewRatio: 0.4  // 40% for the preview
-  readonly property int totalBaseWidth: Math.round(600 * Style.uiScaleRatio)  // Base width when no preview
-  readonly property int totalExpandedWidth: Math.round(900 * Style.uiScaleRatio)  // Width when preview active
+  // Panel configuration
+  readonly property int listPanelWidth: Math.round(600 * Style.uiScaleRatio)
+  readonly property int previewPanelWidth: Math.round(300 * Style.uiScaleRatio)
+  readonly property int dividerWidth: Style.borderS
+
+  readonly property int totalBaseWidth: listPanelWidth + (Style.marginL * 2)
+  readonly property int totalExpandedWidth: listPanelWidth + dividerWidth + previewPanelWidth + (Style.marginL * 2) + (Style.marginM * 2)
 
   preferredWidth: previewActive ? totalExpandedWidth : totalBaseWidth
   preferredHeight: Math.round(600 * Style.uiScaleRatio)
@@ -345,16 +347,14 @@ SmartPanel {
 
     RowLayout {
       anchors.fill: parent
-      spacing: 0
+      anchors.margins: Style.marginL // Apply overall margins here
+      spacing: Style.marginM // Apply spacing between elements here
 
       // --- Left Pane ---
       ColumnLayout {
         id: leftPane
         Layout.fillHeight: true
-        Layout.preferredWidth: root.previewActive ?
-          Math.round(root.clipListRatio * (root.preferredWidth - (Style.marginL * 2))) :
-          (root.preferredWidth - (Style.marginL * 2))  // Use full width when preview not active
-        anchors.margins: Style.marginL
+        Layout.preferredWidth: root.listPanelWidth
         spacing: Style.marginM
 
         NTextInput {
@@ -404,7 +404,6 @@ SmartPanel {
             if (currentIndex >= 0) {
               positionViewAtIndex(currentIndex, ListView.Contain);
             }
-            // Pass data to preview loader
             if (clipboardPreviewLoader.item) {
               clipboardPreviewLoader.item.currentItem = results[currentIndex] || null;
             }
@@ -656,13 +655,13 @@ SmartPanel {
         Layout.fillHeight: true
         vertical: true
         visible: root.previewActive
+        Layout.preferredWidth: root.dividerWidth
       }
 
       // --- Right Pane (Preview) ---
       Item {
         Layout.fillHeight: true
-        Layout.preferredWidth: root.previewActive ?
-          Math.round(root.clipPreviewRatio * (root.preferredWidth - (Style.marginL * 2))) : 0
+        Layout.preferredWidth: root.previewActive ? root.previewPanelWidth : 0
         visible: root.previewActive
 
         Behavior on Layout.preferredWidth {
@@ -676,12 +675,8 @@ SmartPanel {
         Loader {
           id: clipboardPreviewLoader
           anchors.fill: parent
-          anchors.leftMargin: Style.marginM
-          anchors.rightMargin: Style.marginL
-          anchors.topMargin: Style.marginL
-          anchors.bottomMargin: Style.marginL
           active: root.previewActive
-          source: active ? "../../../Widgets/ClipboardPreview.qml" : ""
+          source: active ? "./ClipboardPreview.qml" : ""
 
           // Access the loaded component to set the current item
           onLoaded: {

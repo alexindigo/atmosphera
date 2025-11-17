@@ -114,6 +114,7 @@ Item {
             imagePath: imageDataUrl
             visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
             imageRadius: Style.radiusS
+            imageFillMode: Image.PreserveAspectFit
           }
 
           ScrollView {
