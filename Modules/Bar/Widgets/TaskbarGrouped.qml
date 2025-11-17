@@ -329,7 +329,8 @@ Item {
           topMargin: -Style.fontSizeXS * 0.5
         }
 
-        width: Math.max(workspaceNumber.implicitWidth + Style.marginXS, Style.fontSizeXXS * 2)
+        // Doube width margin necessary here for Name or Name+Index, but double height not needed.
+        width: Math.max(workspaceNumber.implicitWidth + (Style.marginXS * 2), Style.fontSizeXXS * 2)
         height: Math.max(workspaceNumber.implicitHeight + Style.marginXS, Style.fontSizeXXS * 2)
 
         Rectangle {
@@ -392,7 +393,7 @@ Item {
                 return workspaceModel.name.substring(0, root.characterCount)
               }
               if (root.labelMode === "index+name") {
-                return (workspaceModel.idx.toString() + " " + workspaceModel.name.substring(0, root.characterCount))
+                return (workspaceModel.idx.toString() + workspaceModel.name.substring(0, 1))
               }
             }
             return workspaceModel.idx.toString()

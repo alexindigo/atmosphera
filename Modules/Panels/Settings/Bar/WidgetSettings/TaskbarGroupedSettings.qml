@@ -44,7 +44,8 @@ ColumnLayout {
       {
         "key": "name",
         "name": I18n.tr("options.workspace-labels.name")
-      }, {
+      },
+      {
         "key": "index+name",
         "name": I18n.tr("options.workspace-labels.index+name")
       }]
