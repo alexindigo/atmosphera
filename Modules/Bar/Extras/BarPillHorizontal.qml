@@ -72,6 +72,25 @@ Item {
     }
   }
 
+  // Unified background for the entire pill area to avoid overlapping opacity
+  Rectangle {
+    id: pillBackground
+    width: root.width
+    height: pillHeight
+    radius: halfPillHeight
+    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+    anchors.verticalCenter: parent.verticalCenter
+
+    readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutQuad
+      }
+    }
+  }
+
   Rectangle {
     id: pill
 
@@ -82,7 +101,7 @@ Item {
                            (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+    color: Color.transparent // Make pill background transparent to avoid double opacity
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
 
@@ -135,17 +154,10 @@ Item {
     width: pillHeight
     height: pillHeight
     radius: width * 0.5
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+    color: Color.transparent // Make icon background transparent to avoid double opacity
     anchors.verticalCenter: parent.verticalCenter
 
     x: oppositeDirection ? 0 : (parent.width - width)
-
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationNormal
-        easing.type: Easing.InOutQuad
-      }
-    }
 
     NIcon {
       icon: root.icon
