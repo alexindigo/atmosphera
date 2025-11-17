@@ -71,15 +71,24 @@ Item {
     const d = Style.capsuleHeight * root.baseDimensionRatio;
     const factor = ws.isActive ? 2.2 : 1;
 
-    // For name mode, calculate width based on actual text content
-    if (labelMode === "name" && ws.name && ws.name.length > 0) {
-      const displayText = ws.name.substring(0, characterCount);
-      const textWidth = displayText.length * (d * 0.4); // Approximate width per character
-      const padding = d * 0.6; // Padding on both sides
-      return Math.max(d * factor, textWidth + padding);
+    // Don't calculate text width if labels are off
+    if (labelMode === "none") {
+      return d * factor;
     }
 
-    return d * factor;
+    var displayText = ws.idx.toString();
+
+    if (ws.name && ws.name.length > 0) {
+      if (root.labelMode === "name") {
+        displayText = ws.name.substring(0, characterCount);
+      } else if (root.labelMode === "index+name") {
+        displayText = ws.idx.toString() + " " + ws.name.substring(0, characterCount);
+      }
+    }
+
+    const textWidth = displayText.length * (d * 0.4); // Approximate width per character
+    const padding = d * 0.6;
+    return Math.max(d * factor, textWidth + padding);
   }
 
   function getWorkspaceHeight(ws) {
@@ -289,11 +298,15 @@ Item {
                 x: (pill.width - width) / 2
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount);
-                  } else {
-                    return model.idx.toString();
+                  if (model.name && model.name.length > 0) {
+                    if (root.labelMode === "name") {
+                      return model.name.substring(0, characterCount);
+                    }
+                    if (root.labelMode === "index+name") {
+                      return (model.idx.toString() + " " + model.name.substring(0, characterCount))
+                    }
                   }
+                  return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
@@ -434,11 +447,15 @@ Item {
                 x: (pillVertical.width - width) / 2
                 y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount);
-                  } else {
-                    return model.idx.toString();
+                  if (model.name && model.name.length > 0) {
+                    if (root.labelMode === "name") {
+                      return model.name.substring(0, characterCount);
+                    }
+                    if (root.labelMode === "index+name") {
+                      return (model.idx.toString() + " " + model.name.substring(0, characterCount))
+                    }
                   }
+                  return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42

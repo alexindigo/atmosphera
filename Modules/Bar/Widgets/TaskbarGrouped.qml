@@ -329,7 +329,8 @@ Item {
           topMargin: -Style.fontSizeXS * 0.5
         }
 
-        width: Math.max(workspaceNumber.implicitWidth + Style.marginXS, Style.fontSizeXXS * 2)
+        // Doube width margin necessary here for Name or Name+Index, but double height not needed.
+        width: Math.max(workspaceNumber.implicitWidth + (Style.marginXS * 2), Style.fontSizeXXS * 2)
         height: Math.max(workspaceNumber.implicitHeight + Style.marginXS, Style.fontSizeXXS * 2)
 
         Rectangle {
