@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "Storage Space (Critical)"
         },
+        "disk-path": {
+          "description": "Wählen Sie den Festplatten-Mountpunkt aus, der überwacht werden soll.",
+          "label": "Festplattenpfad"
+        },
         "disk-warning-threshold": {
           "label": "Storage Space (Warning)"
         },
@@ -789,6 +793,10 @@
           "description": "Hintergrund-Transparenz der Statusleiste anpassen.",
           "label": "Hintergrund-Transparenz"
         },
+        "capsule-opacity": {
+          "description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
+          "label": "Kapsel-Deckkraft"
+        },
         "density": {
           "description": "Innenabstand der Statusleiste für kompaktes oder geräumiges Aussehen anpassen.",
           "label": "Statusleistendichte"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "Widget-Hintergründe anzeigen.",
           "label": "Kapsel anzeigen"
-        },
-        "capsule-opacity": {
-          "description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
-          "label": "Kapsel-Deckkraft"
         }
       },
       "monitors": {

@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "Storage Space (Critical)"
         },
+        "disk-path": {
+          "description": "Selecione qual ponto de montagem de disco monitorar.",
+          "label": "Caminho do disco"
+        },
         "disk-warning-threshold": {
           "label": "Storage Space (Warning)"
         },
@@ -789,6 +793,10 @@
           "description": "Ajuste a opacidade do fundo da barra.",
           "label": "Opacidade do fundo"
         },
+        "capsule-opacity": {
+          "description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
+          "label": "Opacidade da cápsula"
+        },
         "density": {
           "description": "Ajuste o preenchimento da barra para um visual compacto ou espaçoso.",
           "label": "Densidade da barra"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "Mostra o fundo dos widgets.",
           "label": "Mostrar cápsula"
-        },
-        "capsule-opacity": {
-          "description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
-          "label": "Opacidade da cápsula"
         }
       },
       "monitors": {

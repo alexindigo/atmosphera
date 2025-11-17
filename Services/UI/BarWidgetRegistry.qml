@@ -176,7 +176,8 @@ Singleton {
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,
-                                    "showDiskUsage": false
+                                    "showDiskUsage": false,
+                                    "diskPath": "/"
                                   },
                                   "Taskbar": {
                                     "allowUserSettings": true,

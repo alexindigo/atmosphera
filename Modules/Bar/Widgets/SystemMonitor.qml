@@ -40,6 +40,7 @@ Rectangle {
   readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
+  readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
 
   readonly property real iconSize: textSize * 1.4
   readonly property real textSize: {
@@ -77,8 +78,8 @@ Rectangle {
   readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > tempCriticalThreshold
   readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > memWarningThreshold
   readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
-  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents["/"] > diskWarningThreshold
-  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents["/"] > diskCriticalThreshold
+  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskWarningThreshold
+  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskCriticalThreshold
 
   TextMetrics {
     id: percentMetrics
@@ -501,7 +502,7 @@ Rectangle {
         }
 
         NText {
-          text: `${SystemStatService.diskPercents["/"]}%`
+          text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: Settings.data.ui.fontFixed
           pointSize: textSize
           applyUiScale: false

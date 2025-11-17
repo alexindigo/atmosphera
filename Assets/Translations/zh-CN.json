@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "存储空间（严重）"
         },
+        "disk-path": {
+          "description": "选择要监控的磁盘挂载点。",
+          "label": "磁盘路径"
+        },
         "disk-warning-threshold": {
           "label": "存储空间（警告）"
         },
@@ -789,6 +793,10 @@
           "description": "调整状态栏的背景不透明度。",
           "label": "背景不透明度"
         },
+        "capsule-opacity": {
+          "description": "设置显示胶囊时小部件背景的不透明度。",
+          "label": "胶囊不透明度"
+        },
         "density": {
           "description": "调整状态栏的内边距以获得紧凑或宽松的外观。",
           "label": "状态栏密度"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "为每个小部件添加背景。",
           "label": "显示组件背景"
-        },
-        "capsule-opacity": {
-          "description": "设置显示胶囊时小部件背景的不透明度。",
-          "label": "胶囊不透明度"
         }
       },
       "monitors": {

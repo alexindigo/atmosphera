@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "Storage Space (Critical)"
         },
+        "disk-path": {
+          "description": "Select which disk mount point to monitor.",
+          "label": "Disk path"
+        },
         "disk-warning-threshold": {
           "label": "Storage Space (Warning)"
         },
@@ -789,6 +793,10 @@
           "description": "Adjust the background opacity of the bar.",
           "label": "Background opacity"
         },
+        "capsule-opacity": {
+          "description": "Set the opacity level for widget backgrounds when capsule is shown.",
+          "label": "Capsule opacity"
+        },
         "density": {
           "description": "Adjust the bar's padding for a compact or spacious look.",
           "label": "Bar density"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "Show widget backgrounds.",
           "label": "Show capsule"
-        },
-        "capsule-opacity": {
-          "description": "Set the opacity level for widget backgrounds when capsule is shown.",
-          "label": "Capsule opacity"
         }
       },
       "monitors": {

@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "Opslagruimte (Kritiek)"
         },
+        "disk-path": {
+          "description": "Selecteer welk schijfkoppelpunt u wilt monitoren.",
+          "label": "Schijfpad"
+        },
         "disk-warning-threshold": {
           "label": "Opslagruimte (Waarschuwing)"
         },
@@ -789,6 +793,10 @@
           "description": "Pas de achtergronddekking van de balk aan.",
           "label": "Achtergronddekking"
         },
+        "capsule-opacity": {
+          "description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
+          "label": "Capsule-doorzichtigheid"
+        },
         "density": {
           "description": "Pas de opvulling van de balk aan voor een compacte of ruime uitstraling.",
           "label": "Balkdichtheid"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "Widget-achtergronden tonen.",
           "label": "Capsules tonen"
-        },
-        "capsule-opacity": {
-          "description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
-          "label": "Capsule-doorzichtigheid"
         }
       },
       "monitors": {

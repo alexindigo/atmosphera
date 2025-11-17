@@ -263,6 +263,10 @@
         "disk-critical-threshold": {
           "label": "Depolama Alanı (Kritik)"
         },
+        "disk-path": {
+          "description": "İzlenecek disk bağlama noktasını seçin.",
+          "label": "Disk yolu"
+        },
         "disk-warning-threshold": {
           "label": "Depolama Alanı (Uyarı)"
         },
@@ -789,6 +793,10 @@
           "description": "Barın arka plan opaklığını ayarlayın.",
           "label": "Arka plan opaklığı"
         },
+        "capsule-opacity": {
+          "description": "Kapsül gösterildiğinde widget arka planlarının saydamlık seviyesini ayarla.",
+          "label": "Kapsül saydamlığı"
+        },
         "density": {
           "description": "Sıkı veya geniş bir görünüm için barın dolgusunu ayarlayın.",
           "label": "Bar yoğunluğu"
@@ -818,10 +826,6 @@
         "show-capsule": {
           "description": "Widget arka planlarını göster.",
           "label": "Kapsülü göster"
-        },
-        "capsule-opacity": {
-          "description": "Kapsül gösterildiğinde widget arka planlarının saydamlık seviyesini ayarla.",
-          "label": "Kapsül saydamlığı"
         }
       },
       "monitors": {
