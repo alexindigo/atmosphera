@@ -6,7 +6,7 @@ set -euo pipefail
 # Find qmlformat binary
 if [ ! -x "/usr/lib/qt6/bin/qmlformat" ]; then
     echo "No 'qmlformat' found in /usr/lib/qt6/bin." >&2
-    echo "Install it via 'qt6-declarative-tools' to proceed." >&2
+    echo "Install it via 'qt6-tools' or 'qt6-declarative-tools' to proceed." >&2
     exit 1
 fi
 
