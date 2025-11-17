@@ -219,7 +219,6 @@ Singleton {
       property int shadowOffsetX: 2
       property int shadowOffsetY: 3
       property string language: ""
-      property bool allowPanelsOnScreenWithoutBar: true
     }
 
     // ui
@@ -381,19 +380,19 @@ Singleton {
     // dock
     property JsonObject dock: JsonObject {
       property bool enabled: true
-        property string displayMode: "always_visible" // "always_visible", "auto_hide", "exclusive"
-        property real backgroundOpacity: 1.0
-        property real floatingRatio: 1.0
-        property real size: 1
-        property bool onlySameOutput: true
-        property list<string> monitors: []
-        // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
-        property list<string> pinnedApps: []
-        property bool colorizeIcons: false
+      property string displayMode: "always_visible" // "always_visible", "auto_hide", "exclusive"
+      property real backgroundOpacity: 1.0
+      property real floatingRatio: 1.0
+      property real size: 1
+      property bool onlySameOutput: true
+      property list<string> monitors: []
+      // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
+      property list<string> pinnedApps: []
+      property bool colorizeIcons: false
 
-        property bool pinnedStatic: false
-        property bool inactiveIndicators: false
-        property double deadOpacity: 0.6
+      property bool pinnedStatic: false
+      property bool inactiveIndicators: false
+      property double deadOpacity: 0.6
     }
 
     // network
