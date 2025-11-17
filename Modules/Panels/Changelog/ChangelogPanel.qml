@@ -16,10 +16,10 @@ SmartPanel {
   panelAnchorHorizontalCenter: true
   panelAnchorVerticalCenter: true
 
-  readonly property string currentVersion: ChangelogService.currentVersion || UpdateService.currentVersion
-  readonly property string previousVersion: ChangelogService.previousVersion
+  readonly property string currentVersion: UpdateService.changelogCurrentVersion || UpdateService.currentVersion
+  readonly property string previousVersion: UpdateService.previousVersion
   readonly property bool hasPreviousVersion: previousVersion && previousVersion.length > 0
-  readonly property var releaseHighlights: ChangelogService.releaseHighlights || []
+  readonly property var releaseHighlights: UpdateService.releaseHighlights || []
   readonly property string subtitleText: hasPreviousVersion ? I18n.tr("changelog.panel.subtitle.updated", {
                                                                      "previousVersion": previousVersion
                                                                    }) : I18n.tr("changelog.panel.subtitle.fresh")
@@ -135,8 +135,8 @@ SmartPanel {
           }
 
           NText {
-            visible: ChangelogService.fetchError !== ""
-            text: ChangelogService.fetchError
+            visible: UpdateService.fetchError !== ""
+            text: UpdateService.fetchError
             color: Color.mError
             wrapMode: Text.WordWrap
           }
@@ -243,16 +243,16 @@ SmartPanel {
           Layout.fillWidth: true
           icon: "brand-discord"
           text: I18n.tr("changelog.panel.buttons.discord")
-          onClicked: ChangelogService.openDiscord()
+          onClicked: UpdateService.openDiscord()
         }
 
         NButton {
           Layout.fillWidth: true
-          visible: ChangelogService.feedbackUrl !== ""
+          visible: UpdateService.feedbackUrl !== ""
           icon: "forms"
           text: I18n.tr("changelog.panel.buttons.feedback")
           outlined: true
-          onClicked: ChangelogService.openFeedbackForm()
+          onClicked: UpdateService.openFeedbackForm()
         }
 
         NButton {

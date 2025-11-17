@@ -80,7 +80,7 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         FontService.init();
-        ChangelogService.init();
+        UpdateService.init();
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
