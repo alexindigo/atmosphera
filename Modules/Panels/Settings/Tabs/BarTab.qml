@@ -94,18 +94,9 @@ ColumnLayout {
     spacing: Style.marginXXS
     visible: Settings.data.bar.showCapsule
 
-    NText {
-      text: I18n.tr("settings.bar.appearance.capsule-opacity.label")
-      pointSize: Style.fontSizeS
-      font.weight: Style.fontWeightMedium
-      color: Color.mOnSurface
-    }
-
-    NText {
-      text: I18n.tr("settings.bar.appearance.capsule-opacity.description")
-      pointSize: Style.fontSizeXS
-      color: Color.mOnSurfaceVariant
-      wrapMode: Text.WordWrap
+    NLabel {
+      label: I18n.tr("settings.bar.appearance.capsule-opacity.label")
+      description: I18n.tr("settings.bar.appearance.capsule-opacity.description")
     }
 
     NValueSlider {
