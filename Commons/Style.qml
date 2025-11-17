@@ -104,7 +104,5 @@ Singleton {
       return Math.round(barHeight * 0.82);
     }
   }
-  readonly property color capsuleColor: Settings.data.bar.showCapsule ?
-    Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) :
-    Color.transparent
+  readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
 }
