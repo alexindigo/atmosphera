@@ -1,49 +1,17 @@
-/**
- * Convert hex color to HSL
- */
+// Convert hex color to HSL
 function hexToHSL(hex) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!result) return null;
-
-  let r = parseInt(result[1], 16) / 255;
-  let g = parseInt(result[2], 16) / 255;
-  let b = parseInt(result[3], 16) / 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0;
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-        break;
-      case g:
-        h = ((b - r) / d + 2) / 6;
-        break;
-      case b:
-        h = ((r - g) / d + 4) / 6;
-        break;
-    }
-  }
-
-  return { h: h * 360, s: s * 100, l: l * 100 };
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  return rgbToHsl(rgb.r, rgb.g, rgb.b);
 }
 
-/**
- * Convert HSL to hex color
- */
+// Convert HSL to hex color
 function hslToHex(h, s, l) {
   const rgb = hslToRgb(h, s, l);
   return rgbToHex(rgb.r, rgb.g, rgb.b);
 }
 
+// Convert hex color to RGB
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
@@ -53,6 +21,7 @@ function hexToRgb(hex) {
   } : { r: 0, g: 0, b: 0 };
 }
 
+// Convert RGB to hex color
 function rgbToHex(r, g, b) {
   return "#" + [r, g, b].map(x => {
     const hex = Math.round(Math.max(0, Math.min(255, x))).toString(16);
@@ -60,6 +29,7 @@ function rgbToHex(r, g, b) {
   }).join("");
 }
 
+// Convert RGB to HSL
 function rgbToHsl(r, g, b) {
   r /= 255;
   g /= 255;
@@ -85,6 +55,7 @@ function rgbToHsl(r, g, b) {
   return { h: h * 360, s: s * 100, l: l * 100 };
 }
 
+// Convert HSL to RGB
 function hslToRgb(h, s, l) {
   h /= 360;
   s /= 100;
@@ -112,7 +83,84 @@ function hslToRgb(h, s, l) {
     b = hue2rgb(p, q, h - 1/3);
   }
   
-  return { r: r * 255, g: g * 255, b: b * 255 };
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+}
+
+// Convert RGB to HSV
+function rgbToHsv(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h, s, v = max;
+  var d = max - min;
+  s = max === 0 ? 0 : d / max;
+  if (max === min) {
+    h = 0;
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+  return { h: h * 360, s: s * 100, v: v * 100 };
+}
+
+// Convert HSV to RGB
+function hsvToRgb(h, s, v) {
+  h /= 360;
+  s /= 100;
+  v /= 100;
+
+  var r, g, b;
+  var i = Math.floor(h * 6);
+  var f = h * 6 - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+
+  switch (i % 6) {
+    case 0:
+      r = v;
+      g = t;
+      b = p;
+      break;
+    case 1:
+      r = q;
+      g = v;
+      b = p;
+      break;
+    case 2:
+      r = p;
+      g = v;
+      b = t;
+      break;
+    case 3:
+      r = p;
+      g = q;
+      b = v;
+      break;
+    case 4:
+      r = t;
+      g = p;
+      b = v;
+      break;
+    case 5:
+      r = v;
+      g = p;
+      b = q;
+      break;
+  }
+
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
 }
 
 // Calculate relative luminance (WCAG standard)
