@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Etkinleştirildiğinde, paneller herhangi bir ekranda açılabilir. Devre dışı bırakıldığında, paneller yalnızca bir çubuğu olan ekranlarda açılır, bu da bellek kullanımını azaltabilir.",
+        "label": "Çubuksuz ekranlardaki panellere izin ver."
+      },
       "animation-disable": {
         "description": "Daha hızlı ve daha duyarlı bir deneyim için tüm animasyonları devre dışı bırakın.",
         "label": "UI Animasyonlarını Devre Dışı Bırak"

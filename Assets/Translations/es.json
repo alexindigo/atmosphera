@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Cuando está activado, los paneles se pueden abrir en cualquier pantalla. Cuando está desactivado, los paneles solo se abrirán en las pantallas que tengan una barra, lo que puede reducir el uso de memoria.",
+        "label": "Permitir paneles en pantallas sin barra."
+      },
       "animation-disable": {
         "description": "Desactiva todas las animaciones para una experiencia más rápida y con mayor capacidad de respuesta.",
         "label": "Desactivar animaciones de la interfaz de usuario"

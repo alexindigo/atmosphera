@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "When enabled, panels can open on any screen. When disabled, panels will only open on screens that have a bar, which can reduce memory usage.",
+        "label": "Allow panels on screens without a bar"
+      },
       "animation-disable": {
         "description": "Disable all animations for a faster, more responsive experience.",
         "label": "Disable UI Animations"

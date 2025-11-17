@@ -55,6 +55,7 @@ PanelWindow {
   color: Color.transparent
   mask: null // No mask - content window is rectangular
   visible: isPanelOpen
+  screen: placeholder.screen // Explicitly set screen to match placeholder
 
   // Wayland layer shell configuration - fullscreen window
   WlrLayershell.layer: WlrLayer.Top

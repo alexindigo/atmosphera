@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Indien ingeschakeld, kunnen panelen op elk scherm worden geopend. Indien uitgeschakeld, worden panelen alleen geopend op schermen met een balk, wat het geheugengebruik kan verminderen.",
+        "label": "Sta panelen toe op schermen zonder balk."
+      },
       "animation-disable": {
         "description": "Schakel alle animaties uit voor een snellere, responsievere ervaring.",
         "label": "UI-animaties uitschakelen"

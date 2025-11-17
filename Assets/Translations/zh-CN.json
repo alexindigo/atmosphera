@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "启用后，面板可以在任何屏幕上打开。禁用后，面板将仅在有栏的屏幕上打开，这可以减少内存使用。",
+        "label": "允许在没有栏的屏幕上显示面板"
+      },
       "animation-disable": {
         "description": "禁用所有动画以获得更快、更流畅的体验。",
         "label": "禁用 UI 动画"

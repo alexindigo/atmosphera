@@ -219,6 +219,7 @@ Singleton {
       property int shadowOffsetX: 2
       property int shadowOffsetY: 3
       property string language: ""
+      property bool allowPanelsOnScreenWithoutBar: true
     }
 
     // ui

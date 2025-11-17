@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Quand cette option est activée, les panneaux peuvent s'ouvrir sur n'importe quel écran. Quand elle est désactivée, les panneaux s'ouvriront uniquement sur les écrans qui ont une barre, ce qui peut réduire l'utilisation de la mémoire.",
+        "label": "Autoriser les panneaux sur les écrans sans barre."
+      },
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
         "label": "Désactiver les animations de l'interface utilisateur"

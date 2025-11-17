@@ -1653,6 +1653,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Quando ativado, os painéis podem abrir em qualquer tela. Quando desativado, os painéis só abrirão em telas que tenham uma barra, o que pode reduzir o uso de memória.",
+        "label": "Permitir painéis em telas sem uma barra."
+      },
       "animation-disable": {
         "description": "Desative todas as animações para uma experiência mais rápida e responsiva.",
         "label": "Desativar animações da interface do usuário"

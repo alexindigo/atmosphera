@@ -393,6 +393,16 @@ Item {
 
       // Execute pending callback if any
       if (pendingCallback) {
+        if (!Settings.data.general.allowPanelsOnScreenWithoutBar) {
+          // If we explicitely disabled panels on screen without bar, check if bar is configured
+          // for this screen, and fallback to primary screen if necessary
+          var monitors = Settings.data.bar.monitors || [];
+          const hasBar = monitors.length === 0 || monitors.includes(detectedScreen?.name);
+          if (!hasBar) {
+            detectedScreen = Quickshell.screens[0];
+          }
+        }
+
         Logger.d("IPC", "Executing pending IPC callback on screen:", detectedScreen.name);
         pendingCallback(detectedScreen);
         pendingCallback = null;
