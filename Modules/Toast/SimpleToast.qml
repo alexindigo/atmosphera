@@ -31,7 +31,7 @@ Item {
     anchors.fill: parent
     anchors.margins: Style.marginM
     radius: Style.radiusL
-    color: Qt.alpha(Color.mSurface, Settings.data.osd.backgroundOpacity || 1.0)
+    color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
 
     // Colored border based on type
     border.width: Math.max(2, Style.borderM)
@@ -48,7 +48,7 @@ Item {
         baseColor = Color.mOutline;
         break;
       }
-      return Qt.alpha(baseColor, Settings.data.osd.backgroundOpacity || 1.0)
+      return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0)
     }
   }
 
