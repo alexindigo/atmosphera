@@ -8,8 +8,11 @@ if command -v qmlformat &>/dev/null; then
     QMLFORMAT="qmlformat"
 elif [ -x "/usr/lib/qt6/bin/qmlformat" ]; then
     QMLFORMAT="/usr/lib/qt6/bin/qmlformat"
+elif [ -x "/usr/lib/qt5/bin/qmlformat" ]; then
+    QMLFORMAT="/usr/lib/qt5/bin/qmlformat"
 else
     echo "No 'qmlformat' found in PATH or /usr/lib/qt6/bin." >&2
+    echo "Install it via 'qt6-declarative-tools' or 'qt5-declarative' (depending on your distro) to proceed." >&2
     exit 1
 fi
 
