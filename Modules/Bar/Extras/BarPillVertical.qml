@@ -137,7 +137,7 @@ Item {
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: forceOpen ? Color.mOnSurface : Color.mPrimary
+      color: forceOpen ? Color.mOnSurface : (hovered ? Color.mOnHover : Color.mPrimary)
       visible: revealed
 
       function getVerticalCenterOffset() {

@@ -129,7 +129,7 @@ Item {
       pointSize: textSize
       applyUiScale: false
       font.weight: Style.fontWeightBold
-      color: forceOpen ? Color.mOnSurface : Color.mPrimary
+      color: forceOpen ? Color.mOnSurface : (hovered ? Color.mOnHover : Color.mPrimary)
       visible: revealed
     }
 
