@@ -202,6 +202,10 @@
           "description": "Exibir a arte do álbum da faixa atualmente sendo reproduzida.",
           "label": "Mostrar arte do álbum"
         },
+        "show-artist-first": {
+          "description": "Exibir artista - título em vez de título - artista.",
+          "label": "Mostrar o artista primeiro"
+        },
         "show-visualizer": {
           "description": "Exibir um visualizador de áudio quando música está sendo reproduzida.",
           "label": "Mostrar visualizador"

@@ -202,6 +202,10 @@
           "description": "Şu anda çalan parçanın albüm kapak sanatını göster.",
           "label": "Albüm kapağını göster"
         },
+        "show-artist-first": {
+          "description": "Sanatçı - başlık yerine başlık - sanatçı olarak göster.",
+          "label": "Önce sanatçıyı göster"
+        },
         "show-visualizer": {
           "description": "Müzik çalarken bir ses görselleştirici göster.",
           "label": "Görselleştiriciyi göster"

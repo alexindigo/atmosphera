@@ -202,6 +202,10 @@
           "description": "Albumcover des aktuell abgespielten Tracks anzeigen.",
           "label": "Albumcover anzeigen"
         },
+        "show-artist-first": {
+          "description": "Künstler - Titel anstatt Titel - Künstler anzeigen.",
+          "label": "Künstler zuerst anzeigen"
+        },
         "show-visualizer": {
           "description": "Audio-Visualizer anzeigen, wenn Musik abgespielt wird.",
           "label": "Visualizer anzeigen"

@@ -202,6 +202,10 @@
           "description": "Afficher la pochette d'album de la piste en cours de lecture.",
           "label": "Afficher la pochette d'album"
         },
+        "show-artist-first": {
+          "description": "Afficher artiste - titre au lieu de titre - artiste.",
+          "label": "Afficher l'artiste en premier"
+        },
         "show-visualizer": {
           "description": "Afficher un visualiseur audio quand la musique est en cours de lecture.",
           "label": "Afficher le visualiseur"

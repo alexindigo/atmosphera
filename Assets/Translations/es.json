@@ -202,6 +202,10 @@
           "description": "Mostrar la portada del álbum de la pista que se está reproduciendo actualmente.",
           "label": "Mostrar arte del álbum"
         },
+        "show-artist-first": {
+          "description": "Mostrar artista - título en lugar de título - artista.",
+          "label": "Mostrar primero al artista"
+        },
         "show-visualizer": {
           "description": "Mostrar un visualizador de audio cuando se reproduce música.",
           "label": "Mostrar visualizador"

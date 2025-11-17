@@ -202,6 +202,10 @@
           "description": "显示当前播放曲目的专辑封面。",
           "label": "显示专辑封面"
         },
+        "show-artist-first": {
+          "description": "显示艺术家 - 标题，而不是标题 - 艺术家。",
+          "label": "先显示艺术家"
+        },
         "show-visualizer": {
           "description": "播放音乐时显示音频可视化器。",
           "label": "显示可视化器"

@@ -202,6 +202,10 @@
           "description": "Toon de albumhoes van het huidige nummer.",
           "label": "Albumhoes tonen"
         },
+        "show-artist-first": {
+          "description": "Toon artiest - titel in plaats van titel - artiest.",
+          "label": "Toon eerst de artiest"
+        },
         "show-visualizer": {
           "description": "Toon een audiovisualizer wanneer muziek wordt afgespeeld.",
           "label": "Visualizer tonen"
