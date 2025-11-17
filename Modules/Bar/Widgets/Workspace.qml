@@ -303,7 +303,7 @@ Item {
                       return model.name.substring(0, characterCount);
                     }
                     if (root.labelMode === "index+name") {
-                      return (model.idx.toString() + " " + model.name.substring(0, characterCount))
+                      return (model.idx.toString() + " " + model.name.substring(0, characterCount));
                     }
                   }
                   return model.idx.toString();
@@ -452,7 +452,7 @@ Item {
                       return model.name.substring(0, characterCount);
                     }
                     if (root.labelMode === "index+name") {
-                      return (model.idx.toString() + model.name.substring(0, 1))
+                      return (model.idx.toString() + model.name.substring(0, 1));
                     }
                   }
                   return model.idx.toString();

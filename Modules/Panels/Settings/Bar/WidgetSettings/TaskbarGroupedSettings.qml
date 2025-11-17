@@ -48,7 +48,8 @@ ColumnLayout {
       {
         "key": "index+name",
         "name": I18n.tr("options.workspace-labels.index+name")
-      }]
+      }
+    ]
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => valueLabelMode = key
     minimumWidth: 200

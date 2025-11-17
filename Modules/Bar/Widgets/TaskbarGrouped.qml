@@ -390,13 +390,13 @@ Item {
           text: {
             if (workspaceModel.name && workspaceModel.name.length > 0) {
               if (root.labelMode === "name") {
-                return workspaceModel.name.substring(0, root.characterCount)
+                return workspaceModel.name.substring(0, root.characterCount);
               }
               if (root.labelMode === "index+name") {
-                return (workspaceModel.idx.toString() + workspaceModel.name.substring(0, 1))
+                return (workspaceModel.idx.toString() + workspaceModel.name.substring(0, 1));
               }
             }
-            return workspaceModel.idx.toString()
+            return workspaceModel.idx.toString();
           }
 
           family: Settings.data.ui.fontFixed

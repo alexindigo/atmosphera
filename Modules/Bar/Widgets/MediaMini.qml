@@ -96,9 +96,9 @@ Item {
 
   function getTitle() {
     if (showArtistFirst) {
-      return (MediaService.trackArtist !== "" ? `${MediaService.trackArtist} - ` : "") + MediaService.trackTitle
+      return (MediaService.trackArtist !== "" ? `${MediaService.trackArtist} - ` : "") + MediaService.trackTitle;
     } else {
-      return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "")
+      return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "");
     }
   }
 

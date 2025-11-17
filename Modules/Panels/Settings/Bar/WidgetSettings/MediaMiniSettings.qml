@@ -34,14 +34,14 @@ ColumnLayout {
     var settings = Object.assign({}, widgetData || {});
     settings.hideMode = valueHideMode;
     // No longer store hideWhenIdle separately; kept for backward compatibility only
-    settings.showAlbumArt = valueShowAlbumArt
-    settings.showArtistFirst = valueShowArtistFirst
-    settings.showVisualizer = valueShowVisualizer
-    settings.visualizerType = valueVisualizerType
-    settings.scrollingMode = valueScrollingMode
-    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth
-    settings.useFixedWidth = valueUseFixedWidth
-    return settings
+    settings.showAlbumArt = valueShowAlbumArt;
+    settings.showArtistFirst = valueShowArtistFirst;
+    settings.showVisualizer = valueShowVisualizer;
+    settings.visualizerType = valueVisualizerType;
+    settings.scrollingMode = valueScrollingMode;
+    settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
+    settings.useFixedWidth = valueUseFixedWidth;
+    return settings;
   }
 
   NComboBox {
