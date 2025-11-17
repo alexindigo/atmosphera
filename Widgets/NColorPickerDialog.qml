@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../Helpers/ColorsConvert.js" as ColorsConvert
 import qs.Commons
 import qs.Widgets
-import "../Helpers/ColorsConvert.js" as ColorsConvert
 
 Popup {
   id: root
