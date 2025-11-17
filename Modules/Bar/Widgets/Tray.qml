@@ -241,7 +241,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Settings.data.colorSchemes.darkMode ? Style.capsuleColor : Color.mPrimary
+      colorBg: Color.transparent
       colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent
@@ -396,7 +396,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Style.capsuleColor
+      colorBg: Color.transparent
       colorFg: Color.mOnSurface
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent
