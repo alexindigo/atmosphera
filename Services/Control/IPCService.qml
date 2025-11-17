@@ -223,6 +223,13 @@ Item {
     }
   }
 
+  IpcHandler {
+    target: "dock"
+    function toggle() {
+      Settings.data.dock.enabled = !Settings.data.dock.enabled;
+    }
+  }
+
   // Wallpaper IPC: trigger a new random wallpaper
   IpcHandler {
     target: "wallpaper"
