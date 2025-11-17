@@ -105,37 +105,46 @@ Loader {
                 const processedAppIds = new Set();
 
                 //push an app onto combined with the given appType
-                function pushApp(topLevel, appType) {
-                    if (topLevel && !processedAppIds.contains(topLevel.appId) && toplevel.appId && !(Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
+                function pushApp(appType, toplevel, appId, title) {
+                    if (!processedAppIds.has(appId) && !(toplevel && Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
                         combined.push({
                             "type": appType,
                             "toplevel": toplevel,
-                            "appId": toplevel.appId,
-                            "title": toplevel.title
+                            "appId": appId,
+                            "title": title
                         });
-                        processedAppIds.add(toplevel.appId);
+                        processedAppIds.add(appId);
                     }
                 }
 
-                function pushRunning() {
-                    runningApps.forEach(topLevel => {
-                        pushApp(topLevel, "running");
+                function pushRunning(first) {
+                    runningApps.forEach(toplevel => {
+                        if (toplevel) {
+                            pushApp((first && pinnedApps.includes(toplevel.appId)) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
+                        }
                     });
                 }
 
                 function pushPinned() {
-                    pinnedApps.forEach(topLevel => {
-                        pushApp(topLevel, runningApps.include(topLevel.appId) ? "pinned-running" : "pinned");
+                    pinnedApps.forEach(pinnedAppId => {
+                        var toplevel = null;
+                        for (var app of runningApps) {
+                            if (app.appId === pinnedAppId) {
+                                toplevel = app;
+                            }
+                        }
+                        pushApp(toplevel ? "pinned-running" : "pinned", toplevel, pinnedAppId, toplevel ? toplevel.title : pinnedAppId);
                     });
                 }
 
                 //if pinnedStatic then push all pinned and then all remaining running apps
                 if (Settings.data.dock.pinnedStatic) {
                     pushPinned();
-                    pushRunning();
+                    pushRunning(false);
+
                     //else add all running apps and then remaining pinned apps
                 } else {
-                    pushRunning();
+                    pushRunning(true);
                     pushPinned();
                 }
 
@@ -396,7 +405,7 @@ Loader {
                                                 cache: true
 
                                                 // Dim pinned apps that aren't running
-                                                opacity: appButton.isRunning ? 1.0 : 0.6
+                                                opacity: appButton.isRunning ? 1.0 : Settings.data.dock.deadOpacity
 
                                                 scale: appButton.hovered ? 1.15 : 1.0
 
@@ -564,7 +573,7 @@ Loader {
 
                                             // Active indicator
                                             Rectangle {
-                                                visible: isActive
+                                                visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
                                                 width: iconSize * 0.2
                                                 height: iconSize * 0.1
                                                 color: Color.mPrimary

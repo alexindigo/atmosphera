@@ -391,8 +391,8 @@ Singleton {
             property bool colorizeIcons: false
 
             property bool pinnedStatic: false
-            property bool inactiveDots: false
-            property double inactiveAlpha: 0.5
+            property bool inactiveIndicators: false
+            property double deadOpacity: 0.6
         }
 
         // network
