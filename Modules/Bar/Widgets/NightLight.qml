@@ -17,7 +17,7 @@ NIconButton {
   density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  colorBg: Settings.data.nightLight.forced ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorBg: Settings.data.nightLight.forced ? Color.mPrimary : Style.capsuleColor
   colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent

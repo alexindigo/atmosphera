@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "Show widget backgrounds.",
           "label": "Show capsule"
+        },
+        "capsule-opacity": {
+          "description": "Set the opacity level for widget backgrounds when capsule is shown.",
+          "label": "Capsule opacity"
         }
       },
       "monitors": {

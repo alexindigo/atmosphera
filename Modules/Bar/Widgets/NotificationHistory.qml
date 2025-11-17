@@ -51,7 +51,7 @@ NIconButton {
   icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
   tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
   tooltipDirection: BarService.getTooltipDirection()
-  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent

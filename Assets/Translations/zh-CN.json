@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "为每个小部件添加背景。",
           "label": "显示组件背景"
+        },
+        "capsule-opacity": {
+          "description": "设置显示胶囊时小部件背景的不透明度。",
+          "label": "胶囊不透明度"
         }
       },
       "monitors": {

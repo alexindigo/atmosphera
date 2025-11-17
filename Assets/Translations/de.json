@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "Widget-Hintergründe anzeigen.",
           "label": "Kapsel anzeigen"
+        },
+        "capsule-opacity": {
+          "description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
+          "label": "Kapsel-Deckkraft"
         }
       },
       "monitors": {

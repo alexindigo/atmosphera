@@ -45,7 +45,7 @@ NIconButton {
   baseSize: Style.capsuleHeight
   applyUiScale: false
   density: Settings.data.bar.density
-  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
   colorBorder: Color.transparent

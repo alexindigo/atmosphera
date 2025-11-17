@@ -83,6 +83,24 @@ Item {
     }
   }
 
+  // Unified background for the entire pill area to avoid overlapping opacity
+  Rectangle {
+    id: pillBackground
+    width: buttonSize
+    height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
+    radius: halfButtonSize
+    color: hovered ? Color.mHover : Style.capsuleColor
+
+    readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationNormal
+        easing.type: Easing.InOutQuad
+      }
+    }
+  }
+
   Rectangle {
     id: pill
 
@@ -94,7 +112,7 @@ Item {
     y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Color.transparent // Make pill background transparent to avoid double opacity
 
     readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
 
@@ -158,19 +176,12 @@ Item {
     width: buttonSize
     height: buttonSize
     radius: width * 0.5
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Color.transparent // Make icon background transparent to avoid double opacity
 
     // Icon positioning based on direction
     x: 0
     y: openUpward ? (parent.height - height) : 0
     anchors.horizontalCenter: parent.horizontalCenter
-
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationNormal
-        easing.type: Easing.InOutQuad
-      }
-    }
 
     NIcon {
       icon: root.icon

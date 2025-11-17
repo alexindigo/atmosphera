@@ -225,7 +225,7 @@ Item {
     width: isVertical ? Style.capsuleHeight : parent.width
     height: isVertical ? parent.height : Style.capsuleHeight
     radius: Style.radiusM
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Style.capsuleColor
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter

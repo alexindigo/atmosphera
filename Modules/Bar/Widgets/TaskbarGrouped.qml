@@ -211,7 +211,7 @@ Item {
       border.width: 1
       width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginXS : Style.marginL)
       height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginL : Style.marginXS)
-      color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+      color: Style.capsuleColor
 
       MouseArea {
         anchors.fill: parent

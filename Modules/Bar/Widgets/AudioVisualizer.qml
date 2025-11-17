@@ -74,7 +74,7 @@ Item {
     id: background
     anchors.fill: parent
     radius: Style.radiusS
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Style.capsuleColor
   }
 
   // Store visualizer type to force re-evaluation

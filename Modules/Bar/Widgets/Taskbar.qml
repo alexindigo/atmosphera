@@ -90,7 +90,7 @@ Rectangle {
   implicitWidth: visible ? (isVerticalBar ? Style.barHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
   implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.barHeight) : 0
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Style.capsuleColor
 
   GridLayout {
     id: taskbarLayout

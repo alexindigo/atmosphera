@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "Widget arka planlarını göster.",
           "label": "Kapsülü göster"
+        },
+        "capsule-opacity": {
+          "description": "Kapsül gösterildiğinde widget arka planlarının saydamlık seviyesini ayarla.",
+          "label": "Kapsül saydamlığı"
         }
       },
       "monitors": {
