@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "Widget-achtergronden tonen.",
           "label": "Capsules tonen"
+        },
+        "capsule-opacity": {
+          "description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
+          "label": "Capsule-doorzichtigheid"
         }
       },
       "monitors": {
