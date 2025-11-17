@@ -818,6 +818,10 @@
         "show-capsule": {
           "description": "Mostrar fondos de los widgets.",
           "label": "Mostrar cápsula"
+        },
+        "capsule-opacity": {
+          "description": "Establecer el nivel de opacidad para los fondos de los widgets cuando se muestra la cápsula.",
+          "label": "Opacidad de la cápsula"
         }
       },
       "monitors": {
