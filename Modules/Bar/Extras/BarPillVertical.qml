@@ -89,7 +89,7 @@ Item {
     width: buttonSize
     height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
     radius: halfButtonSize
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+    color: hovered ? Color.mHover : Style.capsuleColor
 
     readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
 

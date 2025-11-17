@@ -14,7 +14,7 @@ NIconButton {
   density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent) : Color.mPrimary
+  colorBg: Settings.data.colorSchemes.darkMode ? Style.capsuleColor : Color.mPrimary
   colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent

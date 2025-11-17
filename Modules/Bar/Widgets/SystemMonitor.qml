@@ -108,7 +108,7 @@ Rectangle {
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
   implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+  color: Style.capsuleColor
 
   // Status indicator component definition
   Component {

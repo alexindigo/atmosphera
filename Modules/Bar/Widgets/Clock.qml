@@ -46,7 +46,7 @@ Rectangle {
   implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : Style.capsuleHeight
 
   radius: Style.radiusS
-  color: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+  color: Style.capsuleColor
 
   Item {
     id: clockContainer

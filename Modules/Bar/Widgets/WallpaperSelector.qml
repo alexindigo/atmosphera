@@ -16,7 +16,7 @@ NIconButton {
   icon: "wallpaper-selector"
   tooltipText: I18n.tr("tooltips.open-wallpaper-selector")
   tooltipDirection: BarService.getTooltipDirection()
-  colorBg: (Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent)
+  colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent

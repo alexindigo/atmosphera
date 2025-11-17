@@ -78,7 +78,7 @@ Item {
     width: root.width
     height: pillHeight
     radius: halfPillHeight
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+    color: hovered ? Color.mHover : Style.capsuleColor
     anchors.verticalCenter: parent.verticalCenter
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)

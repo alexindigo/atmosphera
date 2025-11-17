@@ -225,7 +225,7 @@ Rectangle {
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+  color: Style.capsuleColor
 
   Flow {
     id: trayFlow
@@ -241,7 +241,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent) : Color.mPrimary
+      colorBg: Settings.data.colorSchemes.darkMode ? Style.capsuleColor : Color.mPrimary
       colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent
@@ -396,7 +396,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+      colorBg: Style.capsuleColor
       colorFg: Color.mOnSurface
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent
