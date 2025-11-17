@@ -17,9 +17,6 @@ Singleton {
   property bool directoriesCreated: false
   property int settingsVersion: 23
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
-  property bool changelogPending: false
-  property string changelogFromVersion: ""
-  property string changelogToVersion: ""
 
   // Define our app directories
   // Default config directory: ~/.config/noctalia
@@ -40,7 +37,6 @@ Singleton {
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
   signal settingsSaved
-  signal changelogTriggered(string previousVersion, string currentVersion)
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -553,11 +549,11 @@ Singleton {
     const versionChanged = storedVersion !== currentVersion;
     const shouldTrigger = forceShow || (hasSeenBefore && versionChanged);
 
-    if (shouldTrigger) {
-      changelogFromVersion = storedVersion;
-      changelogToVersion = currentVersion;
-      changelogPending = true;
-      root.changelogTriggered(storedVersion, currentVersion);
+    if (shouldTrigger && UpdateService) {
+      UpdateService.changelogFromVersion = storedVersion;
+      UpdateService.changelogToVersion = currentVersion;
+      UpdateService.changelogPending = true;
+      UpdateService.handleChangelogRequest();
     }
 
     adapter.changelog.lastSeenVersion = currentVersion;
@@ -566,12 +562,6 @@ Singleton {
     if (shouldTrigger || !hasSeenBefore) {
       Qt.callLater(saveImmediate);
     }
-  }
-
-  function clearChangelogRequest() {
-    changelogPending = false;
-    changelogFromVersion = "";
-    changelogToVersion = "";
   }
 
   // -----------------------------------------------------

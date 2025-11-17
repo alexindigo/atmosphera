@@ -16,6 +16,9 @@ Singleton {
 
   // Changelog properties
   property bool initialized: false
+  property bool changelogPending: false
+  property string changelogFromVersion: ""
+  property string changelogToVersion: ""
   property string previousVersion: ""
   property string changelogCurrentVersion: ""
   property var releaseHighlights: []
@@ -45,15 +48,8 @@ Singleton {
     initialized = true;
     Logger.i("UpdateService", "Version:", root.currentVersion);
 
-    if (Settings.changelogPending) {
-      handleChangelogRequest(Settings.changelogFromVersion, Settings.changelogToVersion);
-    }
-  }
-
-  Connections {
-    target: Settings ? Settings : null
-    function onChangelogTriggered(fromVersion, toVersion) {
-      handleChangelogRequest(fromVersion, toVersion);
+    if (changelogPending) {
+      handleChangelogRequest(changelogFromVersion, changelogToVersion);
     }
   }
 
@@ -70,7 +66,10 @@ Singleton {
     }
   }
 
-  function handleChangelogRequest(fromVersion, toVersion) {
+  function handleChangelogRequest() {
+    const fromVersion = changelogFromVersion || "";
+    const toVersion = changelogToVersion || "";
+    
     if (!toVersion)
       return;
 
@@ -80,7 +79,7 @@ Singleton {
     if (!popupScheduled && lastShownVersion === toVersion)
       return;
 
-    previousVersion = fromVersion || "";
+    previousVersion = fromVersion;
     changelogCurrentVersion = toVersion;
     fetchError = GitHubService ? GitHubService.releaseFetchError : "";
     releaseHighlights = buildReleaseHighlights(previousVersion, changelogCurrentVersion);
@@ -89,7 +88,7 @@ Singleton {
     popupScheduled = true;
     root.popupQueued(previousVersion, changelogCurrentVersion);
 
-    Settings.clearChangelogRequest();
+    clearChangelogRequest();
     openWhenReady();
   }
 
@@ -305,6 +304,15 @@ Singleton {
   function showLatestChangelog() {
     if (!currentVersion)
       return;
-    handleChangelogRequest(Settings.data.changelog.lastSeenVersion, currentVersion);
+    changelogFromVersion = Settings.data.changelog.lastSeenVersion || "";
+    changelogToVersion = currentVersion;
+    changelogPending = true;
+    handleChangelogRequest();
+  }
+
+  function clearChangelogRequest() {
+    changelogPending = false;
+    changelogFromVersion = "";
+    changelogToVersion = "";
   }
 }
