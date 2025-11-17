@@ -99,57 +99,57 @@ Loader {
 
       // Function to update the combined dock apps model
       function updateDockApps() {
-      const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : [];
-      const pinnedApps = Settings.data.dock.pinnedApps || [];
-      const combined = [];
-      const processedAppIds = new Set();
+        const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : [];
+        const pinnedApps = Settings.data.dock.pinnedApps || [];
+        const combined = [];
+        const processedAppIds = new Set();
 
-      //push an app onto combined with the given appType
-      function pushApp(appType, toplevel, appId, title) {
-        if (!processedAppIds.has(appId) && !(toplevel && Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
-          combined.push({
-            "type": appType,
-            "toplevel": toplevel,
-            "appId": appId,
-            "title": title
-          });
-          processedAppIds.add(appId);
-        }
-      }
-
-      function pushRunning(first) {
-        runningApps.forEach(toplevel => {
-          if (toplevel) {
-            pushApp((first && pinnedApps.includes(toplevel.appId)) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
-          }
-        });
-      }
-
-      function pushPinned() {
-        pinnedApps.forEach(pinnedAppId => {
-          var toplevel = null;
-          for (var app of runningApps) {
-            if (app.appId === pinnedAppId) {
-              toplevel = app;
+        //push an app onto combined with the given appType
+        function pushApp(appType, toplevel, appId, title) {
+            if (!processedAppIds.has(appId) && !(toplevel && Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
+                combined.push({
+                    "type": appType,
+                    "toplevel": toplevel,
+                    "appId": appId,
+                    "title": title
+                });
+                processedAppIds.add(appId);
             }
-          }
-          pushApp(toplevel ? "pinned-running" : "pinned", toplevel, pinnedAppId, toplevel ? toplevel.title : pinnedAppId);
-        });
+        }
+
+        function pushRunning(first) {
+            runningApps.forEach(toplevel => {
+                if (toplevel) {
+                    pushApp((first && pinnedApps.includes(toplevel.appId)) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
+                }
+            });
+        }
+
+        function pushPinned() {
+            pinnedApps.forEach(pinnedAppId => {
+                var toplevel = null;
+                for (var app of runningApps) {
+                    if (app.appId === pinnedAppId) {
+                        toplevel = app;
+                    }
+                }
+                pushApp(toplevel ? "pinned-running" : "pinned", toplevel, pinnedAppId, toplevel ? toplevel.title : pinnedAppId);
+            });
+        }
+
+        //if pinnedStatic then push all pinned and then all remaining running apps
+        if (Settings.data.dock.pinnedStatic) {
+            pushPinned();
+            pushRunning(false);
+
+            //else add all running apps and then remaining pinned apps
+        } else {
+            pushRunning(true);
+            pushPinned();
+        }
+
+        dockApps = combined;
       }
-
-      //if pinnedStatic then push all pinned and then all remaining running apps
-      if (Settings.data.dock.pinnedStatic) {
-        pushPinned();
-        pushRunning(false);
-
-          //else add all running apps and then remaining pinned apps
-      } else {
-        pushRunning(true);
-        pushPinned();
-      }
-
-      dockApps = combined;
-    }
 
       // Timer to unload dock after hide animation completes
       Timer {
