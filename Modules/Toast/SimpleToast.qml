@@ -28,19 +28,24 @@ Item {
     anchors.fill: parent
     anchors.margins: Style.marginM * 1.5
     radius: Style.radiusL
-    color: Color.mSurface
+    color: Qt.alpha(Color.mSurface, Settings.data.osd.backgroundOpacity || 1.0)
 
     // Colored border based on type
     border.width: Math.max(2, Style.borderM)
     border.color: {
+      var baseColor;
       switch (root.type) {
       case "warning":
-        return Color.mPrimary;
+        baseColor = Color.mPrimary;
+        break;
       case "error":
-        return Color.mError;
+        baseColor = Color.mError;
+        break;
       default:
-        return Color.mOutline;
+        baseColor = Color.mOutline;
+        break;
       }
+      return Qt.alpha(baseColor, Settings.data.osd.backgroundOpacity || 1.0)
     }
   }
 
