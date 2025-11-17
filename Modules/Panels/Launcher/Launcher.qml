@@ -13,12 +13,15 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  readonly property real clipListRatio: 0.6  // 60% for the list
-  readonly property real clipPreviewRatio: 0.4  // 40% for the preview
   readonly property bool previewActive: activePlugin && activePlugin.name === I18n.tr("plugins.clipboard") && results.length > 0
 
-  // Panel configuration
-  preferredWidth: Math.round(700 * Style.uiScaleRatio)  // Base width when both are shown, scaled appropriately
+  // Panel configuration - use proportional widths
+  readonly property real clipListRatio: 0.6  // 60% for the list
+  readonly property real clipPreviewRatio: 0.4  // 40% for the preview
+  readonly property int totalBaseWidth: Math.round(600 * Style.uiScaleRatio)  // Base width when no preview
+  readonly property int totalExpandedWidth: Math.round(900 * Style.uiScaleRatio)  // Width when preview active
+
+  preferredWidth: previewActive ? totalExpandedWidth : totalBaseWidth
   preferredHeight: Math.round(600 * Style.uiScaleRatio)
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
@@ -348,10 +351,9 @@ SmartPanel {
       ColumnLayout {
         id: leftPane
         Layout.fillHeight: true
-        Layout.fillWidth: root.previewActive  // Fill width proportionally when preview is active
         Layout.preferredWidth: root.previewActive ?
           Math.round(root.clipListRatio * (root.preferredWidth - (Style.marginL * 2))) :
-          (root.preferredWidth - (Style.marginL * 2))
+          (root.preferredWidth - (Style.marginL * 2))  // Use full width when preview not active
         anchors.margins: Style.marginL
         spacing: Style.marginM
 
@@ -659,7 +661,6 @@ SmartPanel {
       // --- Right Pane (Preview) ---
       Item {
         Layout.fillHeight: true
-        Layout.fillWidth: root.previewActive  // Fill width proportionally when preview is active
         Layout.preferredWidth: root.previewActive ?
           Math.round(root.clipPreviewRatio * (root.preferredWidth - (Style.marginL * 2))) : 0
         visible: root.previewActive

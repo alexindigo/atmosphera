@@ -30,12 +30,14 @@ Rectangle {
       id: img
       anchors.fill: parent
       source: imagePath
-      visible: false // Hide since we're using it as shader source
+      visible: false
       mipmap: true
       smooth: true
       asynchronous: true
       antialiasing: true
-      fillMode: Image.PreserveAspectCrop
+      fillMode: Image.PreserveAspectFit
+      horizontalAlignment: Image.AlignHCenter
+      verticalAlignment: Image.AlignVCenter
 
       onStatusChanged: root.statusChanged(status)
     }
@@ -51,17 +53,14 @@ Rectangle {
         format: ShaderEffectSource.RGBA
       }
 
-      // Use custom property names to avoid conflicts with final properties
       property real itemWidth: root.width
       property real itemHeight: root.height
       property real cornerRadius: root.radius
       property real imageOpacity: root.opacity
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
 
-      // Qt6 specific properties - ensure proper blending
       supportsAtlasTextures: false
       blending: true
-      // Make sure the background is transparent
       Rectangle {
         id: background
         anchors.fill: parent
@@ -70,7 +69,6 @@ Rectangle {
       }
     }
 
-    // Fallback icon
     Loader {
       active: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
       anchors.centerIn: parent
@@ -83,7 +81,6 @@ Rectangle {
     }
   }
 
-  // Border
   Rectangle {
     anchors.fill: parent
     radius: parent.radius

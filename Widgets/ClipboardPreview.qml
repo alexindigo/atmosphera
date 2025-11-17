@@ -3,29 +3,63 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import qs.Commons
 import qs.Widgets
-import qs.Services.Keyboard // Import ClipboardService
+import qs.Services.Keyboard
 
 Item {
   id: previewPanel
 
   property var currentItem: null
   property string fullContent: ""
+  property string imageDataUrl: ""
   property bool loadingFullContent: false
+  property bool isImageContent: false
 
   implicitHeight: contentColumn.implicitHeight + Style.marginL * 2
 
   Connections {
     target: previewPanel
     function onCurrentItemChanged() {
-      fullContent = ""; // Clear previous content
+      fullContent = "";
+      imageDataUrl = "";
       loadingFullContent = false;
+      isImageContent = currentItem && currentItem.isImage;
 
       if (currentItem && currentItem.clipboardId) {
-        loadingFullContent = true;
-        ClipboardService.decode(currentItem.clipboardId, function(content) {
-          fullContent = content;
-          loadingFullContent = false;
-        });
+        if (isImageContent) {
+          imageDataUrl = ClipboardService.getImageData(currentItem.clipboardId) || "";
+          loadingFullContent = !imageDataUrl;
+
+          if (!imageDataUrl && currentItem.mime) {
+            ClipboardService.decodeToDataUrl(currentItem.clipboardId, currentItem.mime, null);
+          }
+        } else {
+          loadingFullContent = true;
+          ClipboardService.decode(currentItem.clipboardId, function(content) {
+            fullContent = content;
+            loadingFullContent = false;
+          });
+        }
+      }
+    }
+  }
+
+  readonly property int _rev: ClipboardService.revision
+
+  Timer {
+    id: imageUpdateTimer
+    interval: 200
+    running: currentItem && currentItem.isImage && imageDataUrl === ""
+    repeat: currentItem && currentItem.isImage && imageDataUrl === ""
+
+    onTriggered: {
+      if (currentItem && currentItem.clipboardId) {
+        const newData = ClipboardService.getImageData(currentItem.clipboardId) || "";
+        if (newData !== imageDataUrl) {
+          imageDataUrl = newData;
+          if (newData) {
+            loadingFullContent = false;
+          }
+        }
       }
     }
   }
@@ -55,7 +89,7 @@ Item {
         Layout.fillWidth: true
       }
 
-      Rectangle { // Frame around the content
+      Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
         color: Color.mSurfaceVariant || "#e0e0e0"
@@ -63,7 +97,6 @@ Item {
         border.width: 1
         radius: Style.radiusS
 
-        // Loading indicator
         BusyIndicator {
           anchors.centerIn: parent
           running: loadingFullContent
@@ -72,18 +105,27 @@ Item {
           height: width
         }
 
-        ScrollView {
-          Layout.fillHeight: true // Explicitly fill height
+        Item {
           anchors.fill: parent
           anchors.margins: Style.marginS
-          clip: true
-          visible: !loadingFullContent // Hide scrollview while loading
 
-          TextArea {
-            Layout.fillHeight: true // Explicitly fill height
-            text: fullContent // Bind to fullContent
-            readOnly: true
-            wrapMode: Text.Wrap
+          NImageRounded {
+            anchors.fill: parent
+            imagePath: imageDataUrl
+            visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
+            imageRadius: Style.radiusS
+          }
+
+          ScrollView {
+            anchors.fill: parent
+            clip: true
+            visible: !isImageContent && !loadingFullContent
+
+            TextArea {
+              text: fullContent
+              readOnly: true
+              wrapMode: Text.Wrap
+            }
           }
         }
       }

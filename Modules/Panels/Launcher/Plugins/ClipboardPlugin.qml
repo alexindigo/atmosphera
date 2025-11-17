@@ -204,12 +204,9 @@ Item {
     return results;
   }
 
-  // Helper: Format image clipboard entry
   function formatImageEntry(item) {
     const meta = parseImageMeta(item.preview);
 
-    // The launcher's delegate will now be responsible for fetching the image data.
-    // This function's role is to provide the necessary metadata for that request.
     return {
       "name": meta ? `Image ${meta.w}×${meta.h}` : "Image",
       "description": meta ? `${meta.fmt} • ${meta.size}` : item.mime || "Image data",
@@ -223,18 +220,15 @@ Item {
     };
   }
 
-  // Helper: Format text clipboard entry with preview
   function formatTextEntry(item) {
     const preview = (item.preview || "").trim();
     const lines = preview.split('\n').filter(l => l.trim());
 
-    // Use first line as title, limit length
     let title = lines[0] || "Empty text";
     if (title.length > 60) {
       title = title.substring(0, 57) + "...";
     }
 
-    // Use second line or character count as description
     let description = "";
     if (lines.length > 1) {
       description = lines[1];
@@ -257,7 +251,6 @@ Item {
     };
   }
 
-  // Helper: Parse image metadata from preview string
   function parseImageMeta(preview) {
     const re = /\[\[\s*binary data\s+([\d\.]+\s*(?:KiB|MiB|GiB|B))\s+(\w+)\s+(\d+)x(\d+)\s*\]\]/i;
     const match = (preview || "").match(re);
@@ -274,8 +267,6 @@ Item {
     };
   }
 
-  // Public method to get image data for a clipboard item
-  // This can be called by the launcher when rendering
   function getImageForItem(clipboardId) {
     return ClipboardService.getImageData ? ClipboardService.getImageData(clipboardId) : null;
   }
