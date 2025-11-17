@@ -13,7 +13,6 @@ Item {
   property bool loadingFullContent: false
 
   implicitHeight: contentColumn.implicitHeight + Style.marginL * 2
-  implicitWidth: 350 // A default width
 
   Connections {
     target: previewPanel
