@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Services.UI
 
 Singleton {
@@ -16,6 +17,9 @@ Singleton {
   property bool directoriesCreated: false
   property int settingsVersion: 23
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
+  property bool changelogPending: false
+  property string changelogFromVersion: ""
+  property string changelogToVersion: ""
 
   // Define our app directories
   // Default config directory: ~/.config/noctalia
@@ -36,6 +40,7 @@ Singleton {
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
   signal settingsSaved
+  signal changelogTriggered(string previousVersion, string currentVersion)
 
   // -----------------------------------------------------
   // -----------------------------------------------------
@@ -99,6 +104,7 @@ Singleton {
 
         upgradeSettingsData();
         validateMonitorConfigurations();
+        evaluateChangelogState();
         isLoaded = true;
 
         // Emit the signal
@@ -523,10 +529,49 @@ Singleton {
       property string darkModeChange: ""
     }
 
+    property JsonObject changelog: JsonObject {
+      property string lastSeenVersion: ""
+      property bool forceShowNextStart: false
+    }
+
     // battery
     property JsonObject battery: JsonObject {
       property int chargingMode: 0
     }
+  }
+
+  // -----------------------------------------------------
+  function evaluateChangelogState() {
+    const currentVersion = UpdateService ? (UpdateService.currentVersion || "") : "";
+    if (!currentVersion) {
+      return;
+    }
+
+    const storedVersion = adapter.changelog?.lastSeenVersion || "";
+    const forceShow = adapter.changelog?.forceShowNextStart || false;
+    const hasSeenBefore = storedVersion !== "";
+    const versionChanged = storedVersion !== currentVersion;
+    const shouldTrigger = forceShow || (hasSeenBefore && versionChanged);
+
+    if (shouldTrigger) {
+      changelogFromVersion = storedVersion;
+      changelogToVersion = currentVersion;
+      changelogPending = true;
+      root.changelogTriggered(storedVersion, currentVersion);
+    }
+
+    adapter.changelog.lastSeenVersion = currentVersion;
+    adapter.changelog.forceShowNextStart = false;
+
+    if (shouldTrigger || !hasSeenBefore) {
+      Qt.callLater(saveImmediate);
+    }
+  }
+
+  function clearChangelogRequest() {
+    changelogPending = false;
+    changelogFromVersion = "";
+    changelogToVersion = "";
   }
 
   // -----------------------------------------------------

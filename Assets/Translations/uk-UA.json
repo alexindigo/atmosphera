@@ -391,6 +391,32 @@
       "loading": "Завантаження погоди…"
     }
   },
+  "changelog": {
+    "panel": {
+      "title": "Що нового у {version}",
+      "subtitle": {
+        "fresh": "Дякуємо, що встановили Noctalia! Ось що містить цей білд.",
+        "updated": "Оновлено з {previousVersion}"
+      },
+      "version": {
+        "new-user": "Нове встановлення"
+      },
+      "highlight-title": "Основні зміни",
+      "empty": "Примітки до релізу ще недоступні.",
+      "section": {
+        "version": "Версія {version}",
+        "released": "Випущено {date}"
+      },
+      "buttons": {
+        "discord": "Приєднатися до нашого Discord",
+        "feedback": "Надіслати відгук",
+        "dismiss": "Зрозуміло"
+      }
+    },
+    "error": {
+      "rate-limit": "Перевищено ліміт GitHub. Спробуйте ще раз за кілька хвилин."
+    }
+  },
   "clock": {
     "tooltip": "Відкрити календар"
   },

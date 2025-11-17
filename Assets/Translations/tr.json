@@ -391,6 +391,32 @@
       "loading": "Hava durumu yükleniyor..."
     }
   },
+  "changelog": {
+    "panel": {
+      "title": "{version} sürümünde neler yeni",
+      "subtitle": {
+        "fresh": "Noctalia’yı kurduğun için teşekkürler! Bu sürümde gelenler bunlar.",
+        "updated": "{previousVersion} sürümünden güncellendi"
+      },
+      "version": {
+        "new-user": "Yeni kurulum"
+      },
+      "highlight-title": "Öne çıkanlar",
+      "empty": "Sürüm notları henüz hazır değil.",
+      "section": {
+        "version": "Sürüm {version}",
+        "released": "{date} tarihinde yayımlandı"
+      },
+      "buttons": {
+        "discord": "Discord sunucumuza katıl",
+        "feedback": "Geri bildirim gönder",
+        "dismiss": "Anladım"
+      }
+    },
+    "error": {
+      "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene."
+    }
+  },
   "clock": {
     "tooltip": "Takvimi aç"
   },

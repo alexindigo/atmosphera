@@ -391,6 +391,32 @@
       "loading": "Cargando el clima…"
     }
   },
+  "changelog": {
+    "panel": {
+      "title": "Novedades en {version}",
+      "subtitle": {
+        "fresh": "Gracias por instalar Noctalia. Esto es lo que incluye esta compilación.",
+        "updated": "Actualizado desde {previousVersion}"
+      },
+      "version": {
+        "new-user": "Instalación nueva"
+      },
+      "highlight-title": "Cambios destacados",
+      "empty": "Las notas de la versión aún no están disponibles.",
+      "section": {
+        "version": "Versión {version}",
+        "released": "Publicado el {date}"
+      },
+      "buttons": {
+        "discord": "Únete a nuestro Discord",
+        "feedback": "Enviar comentarios",
+        "dismiss": "Entendido"
+      }
+    },
+    "error": {
+      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos."
+    }
+  },
   "clock": {
     "tooltip": "Abrir calendario"
   },

@@ -391,6 +391,32 @@
       "loading": "正在加载天气…"
     }
   },
+  "changelog": {
+    "panel": {
+      "title": "{version} 有哪些更新",
+      "subtitle": {
+        "fresh": "感谢安装 Noctalia！以下是本次构建包含的内容。",
+        "updated": "已从 {previousVersion} 更新"
+      },
+      "version": {
+        "new-user": "全新安装"
+      },
+      "highlight-title": "重点更新",
+      "empty": "暂时没有可用的发行说明。",
+      "section": {
+        "version": "版本 {version}",
+        "released": "{date} 发布"
+      },
+      "buttons": {
+        "discord": "加入我们的 Discord",
+        "feedback": "发送反馈",
+        "dismiss": "知道了"
+      }
+    },
+    "error": {
+      "rate-limit": "已达到 GitHub 速率限制，请稍后再试。"
+    }
+  },
   "clock": {
     "tooltip": "打开日历"
   },
