@@ -89,6 +89,36 @@ ColumnLayout {
     onToggled: checked => Settings.data.bar.showCapsule = checked
   }
 
+  ColumnLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginXXS
+    visible: Settings.data.bar.showCapsule
+
+    NText {
+      text: I18n.tr("settings.bar.appearance.capsule-opacity.label")
+      pointSize: Style.fontSizeS
+      font.weight: Style.fontWeightMedium
+      color: Color.mOnSurface
+    }
+
+    NText {
+      text: I18n.tr("settings.bar.appearance.capsule-opacity.description")
+      pointSize: Style.fontSizeXS
+      color: Color.mOnSurfaceVariant
+      wrapMode: Text.WordWrap
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.bar.capsuleOpacity
+      onMoved: value => Settings.data.bar.capsuleOpacity = value
+      text: Math.floor(Settings.data.bar.capsuleOpacity * 100) + "%"
+    }
+  }
+
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.floating.label")

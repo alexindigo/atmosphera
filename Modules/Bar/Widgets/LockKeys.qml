@@ -45,7 +45,7 @@ Rectangle {
   Layout.alignment: Qt.AlignVCenter
 
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
 
   Item {
     id: layout

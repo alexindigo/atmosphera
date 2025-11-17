@@ -7,6 +7,7 @@
     "monitors": [],
     "density": "default",
     "showCapsule": true,
+    "capsuleOpacity": 1.0,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
