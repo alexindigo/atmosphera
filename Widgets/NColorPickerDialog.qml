@@ -175,8 +175,8 @@ Popup {
               onMoved: value => {
                          root.selectedColor = Qt.rgba(value / 255, root.selectedColor.g, root.selectedColor.b, 1);
                          var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
+                         root.currentHue = hsv.h;
+                         root.currentSaturation = hsv.s;
                        }
               text: Math.round(value)
             }
@@ -202,8 +202,8 @@ Popup {
                          root.selectedColor = Qt.rgba(root.selectedColor.r, value / 255, root.selectedColor.b, 1);
                          // Update stored hue and saturation when RGB changes
                          var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
+                         root.currentHue = hsv.h;
+                         root.currentSaturation = hsv.s;
                        }
               text: Math.round(value)
             }
@@ -229,8 +229,8 @@ Popup {
                          root.selectedColor = Qt.rgba(root.selectedColor.r, root.selectedColor.g, value / 255, 1);
                          // Update stored hue and saturation when RGB changes
                          var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
+                         root.currentHue = hsv.h;
+                         root.currentSaturation = hsv.s;
                        }
               text: Math.round(value)
             }
@@ -253,7 +253,7 @@ Popup {
               to: 100
               value: {
                 var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                return hsv[2];
+                return hsv.v;
               }
               onMoved: value => {
                          var hue = root.currentHue;
@@ -261,14 +261,14 @@ Popup {
 
                          if (hue === 0 && saturation === 0) {
                            var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                           hue = hsv[0];
-                           saturation = hsv[1];
+                           hue = hsv.h;
+                           saturation = hsv.s;
                            root.currentHue = hue;
                            root.currentSaturation = saturation;
                          }
 
                          var rgb = ColorsConvert.hsvToRgb(hue, saturation, value);
-                         root.selectedColor = Qt.rgba(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1);
+                         root.selectedColor = Qt.rgba(rgb.r / 255, rgb.g / 255, rgb.b / 255, 1);
                        }
               text: Math.round(brightnessSlider.value) + "%"
             }
@@ -314,8 +314,8 @@ Popup {
                   onClicked: {
                     root.selectedColor = modelData;
                     var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                    root.currentHue = hsv[0];
-                    root.currentSaturation = hsv[1];
+                    root.currentHue = hsv.h;
+                    root.currentSaturation = hsv.s;
                   }
                 }
               }
@@ -364,8 +364,8 @@ Popup {
                   onClicked: {
                     root.selectedColor = modelData;
                     var hsv = ColorsConvert.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                    root.currentHue = hsv[0];
-                    root.currentSaturation = hsv[1];
+                    root.currentHue = hsv.h;
+                    root.currentSaturation = hsv.s;
                   }
                 }
               }

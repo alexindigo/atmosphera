@@ -1,37 +1,8 @@
 // Convert hex color to HSL
 function hexToHSL(hex) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!result) return null;
-
-  let r = parseInt(result[1], 16) / 255;
-  let g = parseInt(result[2], 16) / 255;
-  let b = parseInt(result[3], 16) / 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0;
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-        break;
-      case g:
-        h = ((b - r) / d + 2) / 6;
-        break;
-      case b:
-        h = ((r - g) / d + 4) / 6;
-        break;
-    }
-  }
-
-  return { h: h * 360, s: s * 100, l: l * 100 };
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  return rgbToHsl(rgb.r, rgb.g, rgb.b);
 }
 
 // Convert HSL to hex color
@@ -112,7 +83,7 @@ function hslToRgb(h, s, l) {
     b = hue2rgb(p, q, h - 1/3);
   }
   
-  return { r: r * 255, g: g * 255, b: b * 255 };
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
 }
 
 // Convert RGB to HSV
@@ -140,7 +111,7 @@ function rgbToHsv(r, g, b) {
     }
     h /= 6;
   }
-  return [h * 360, s * 100, v * 100];
+  return { h: h * 360, s: s * 100, v: v * 100 };
 }
 
 // Convert HSV to RGB
@@ -189,7 +160,7 @@ function hsvToRgb(h, s, v) {
       break;
   }
 
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
 }
 
 // Calculate relative luminance (WCAG standard)
