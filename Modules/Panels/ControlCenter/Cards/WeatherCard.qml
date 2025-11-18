@@ -29,7 +29,7 @@ NBox {
       Layout.fillWidth: true
       spacing: Style.marginS
       Item {
-        Layout.preferredWidth: 0
+        Layout.preferredWidth: Style.marginS
       }
       NIcon {
         Layout.alignment: Qt.AlignVCenter
