@@ -158,7 +158,7 @@ Item {
         const parsed = JSON.parse(lineToParse);
         const text = parsed.text || "";
         const icon = parsed.icon || "";
-        const tooltip = parsed.tooltip || "";
+        let tooltip = parsed.tooltip || "";
 
         if (checkCollapse(text)) {
           _dynamicText = "";
@@ -169,7 +169,8 @@ Item {
 
         _dynamicText = text;
         _dynamicIcon = icon;
-        _dynamicTooltip = tooltip;
+
+        _dynamicTooltip = toHtml(tooltip);
         return;
       } catch (e) {
         Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`);
@@ -185,7 +186,7 @@ Item {
 
     _dynamicText = contentStr;
     _dynamicIcon = "";
-    _dynamicTooltip = "";
+    _dynamicTooltip = toHtml(contentStr);
   }
 
   function checkCollapse(text) {
@@ -242,6 +243,25 @@ Item {
     if (!textStream && middleClickUpdateText) {
       runTextCommand();
     }
+  }
+
+  function toHtml(str) {
+    const htmlRegex = /<\/?[a-zA-Z][\s\S]*>/;
+
+    if (htmlRegex.test(str)) {
+        return str;
+    }
+
+    const escaped = str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const withBreaks = escaped.replace(/\r\n|\r|\n/g, "<br/>");
+
+    return withBreaks;
   }
 
   function runTextCommand() {
