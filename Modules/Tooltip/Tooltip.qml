@@ -165,8 +165,6 @@ PopupWindow {
       return;
     }
 
-    console.log(screenWidth, screenHeight);
-
     // Calculate tooltip dimensions
     const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth);
     root.implicitWidth = tipWidth;
@@ -345,8 +343,8 @@ PopupWindow {
       const globalX = targetGlobal.x + anchorX;
       if (globalX < 0) {
         anchorX = -targetGlobal.x + margin;
-      } else if (globalX + tipWidth > root.screen.width) {
-        anchorX = root.screen.width - targetGlobal.x - tipWidth - margin;
+      } else if (globalX + tipWidth > screenWidth) {
+        anchorX = screenWidth - targetGlobal.x - tipWidth - margin;
       }
 
       // Force anchor update
