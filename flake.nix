@@ -28,10 +28,9 @@
       in {
         default = pkgs.callPackage ./nix/package.nix {
           version = self.rev or self.dirtyRev or "dirty";
-          quickshell = quickshell.packages.${system}.default.override {
-            withX11 = false;
-            withI3 = true;
-          };
+        };
+        quickshell = quickshell.packages.${system}.default.override {
+          withX11 = false;
         };
       }
     );
