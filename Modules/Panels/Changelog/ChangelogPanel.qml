@@ -209,32 +209,6 @@ SmartPanel {
         }
       }
 
-      Rectangle {
-        Layout.fillWidth: true
-        color: Qt.alpha(Color.mOnSurfaceVariant, 0.08)
-        radius: Style.radiusS
-        border.color: Color.mOutline
-        border.width: Style.borderS
-
-        RowLayout {
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          spacing: Style.marginS
-
-          NIcon {
-            icon: "palette"
-            color: Color.mOnSurface
-          }
-
-          NText {
-            text: I18n.tr("changelog.panel.notes.color-schemes")
-            color: Color.mOnSurface
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-        }
-      }
-
       RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginS
@@ -243,6 +217,7 @@ SmartPanel {
           Layout.fillWidth: true
           icon: "brand-discord"
           text: I18n.tr("changelog.panel.buttons.discord")
+          outlined: true
           onClicked: UpdateService.openDiscord()
         }
 
@@ -259,8 +234,6 @@ SmartPanel {
           Layout.fillWidth: true
           icon: "check"
           text: I18n.tr("changelog.panel.buttons.dismiss")
-          backgroundColor: Color.mSurface
-          textColor: Color.mOnSurface
           onClicked: root.close()
         }
       }

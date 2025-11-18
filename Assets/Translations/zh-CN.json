@@ -410,7 +410,7 @@
       "buttons": {
         "discord": "加入我们的 Discord",
         "feedback": "发送反馈",
-        "dismiss": "知道了"
+        "dismiss": "确定"
       }
     },
     "error": {

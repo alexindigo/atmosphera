@@ -410,7 +410,7 @@
       "buttons": {
         "discord": "Rejoindre notre Discord",
         "feedback": "Envoyer un retour",
-        "dismiss": "Compris"
+        "dismiss": "Ok"
       }
     },
     "error": {

@@ -47,10 +47,6 @@ Singleton {
 
     initialized = true;
     Logger.i("UpdateService", "Version:", root.currentVersion);
-
-    if (changelogPending) {
-      handleChangelogRequest(changelogFromVersion, changelogToVersion);
-    }
   }
 
   Connections {
