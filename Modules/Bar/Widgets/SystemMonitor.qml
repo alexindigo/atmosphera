@@ -518,16 +518,16 @@ Rectangle {
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
+      }
 
-        MouseArea {
-          anchors.fill: parent
-          hoverEnabled: true
-          onEntered: {
-            TooltipService.show(screen, diskContent, diskPath, BarService.getTooltipDirection());
-          }
-          onExited: {
-            TooltipService.hide();
-          }
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: {
+          TooltipService.show(screen, diskContent, diskPath, BarService.getTooltipDirection());
+        }
+        onExited: {
+          TooltipService.hide();
         }
       }
     }
