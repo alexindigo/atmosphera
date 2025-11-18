@@ -650,6 +650,7 @@ SmartPanel {
       Loader {
         id: weatherLoader
         active: Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather
+        visible: active
         Layout.fillWidth: true
 
         sourceComponent: WeatherCard {

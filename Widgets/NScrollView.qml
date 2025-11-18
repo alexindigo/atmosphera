@@ -17,6 +17,8 @@ T.ScrollView {
   property bool preventHorizontalScroll: horizontalPolicy === ScrollBar.AlwaysOff
   property int boundsBehavior: Flickable.StopAtBounds
   property int flickableDirection: Flickable.VerticalFlick
+  readonly property bool verticalScrollable: contentItem.contentHeight > contentItem.height
+  readonly property bool horizontalScrollable: contentItem.contentWidth > contentItem.width
 
   implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, contentWidth + leftPadding + rightPadding)
   implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, contentHeight + topPadding + bottomPadding)
@@ -65,7 +67,7 @@ T.ScrollView {
       implicitHeight: 100
       radius: root.handleRadius
       color: parent.pressed ? root.handlePressedColor : parent.hovered ? root.handleHoverColor : root.handleColor
-      opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+      opacity: parent.policy === ScrollBar.AlwaysOn ? 1.0 : root.verticalScrollable ? (parent.active ? 1.0 : 0.0) : 0.0
 
       Behavior on opacity {
         NumberAnimation {
@@ -84,7 +86,7 @@ T.ScrollView {
       implicitWidth: root.handleWidth
       implicitHeight: 100
       color: root.trackColor
-      opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+      opacity: parent.policy === ScrollBar.AlwaysOn ? 0.3 : root.verticalScrollable ? (parent.active ? 0.3 : 0.0) : 0.0
       radius: root.handleRadius / 2
 
       Behavior on opacity {
@@ -108,7 +110,7 @@ T.ScrollView {
       implicitHeight: root.handleWidth
       radius: root.handleRadius
       color: parent.pressed ? root.handlePressedColor : parent.hovered ? root.handleHoverColor : root.handleColor
-      opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 1.0 : 0.0
+      opacity: parent.policy === ScrollBar.AlwaysOn ? 1.0 : root.horizontalScrollable ? (parent.active ? 1.0 : 0.0) : 0.0
 
       Behavior on opacity {
         NumberAnimation {
@@ -127,7 +129,7 @@ T.ScrollView {
       implicitWidth: 100
       implicitHeight: root.handleWidth
       color: root.trackColor
-      opacity: parent.policy === ScrollBar.AlwaysOn || parent.active ? 0.3 : 0.0
+      opacity: parent.policy === ScrollBar.AlwaysOn ? 0.3 : root.horizontalScrollable ? (parent.active ? 0.3 : 0.0) : 0.0
       radius: root.handleRadius / 2
 
       Behavior on opacity {
