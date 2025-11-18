@@ -74,20 +74,10 @@ Item {
     ColumnLayout {
       id: contentColumn
       anchors.fill: parent
-      anchors.margins: Style.marginM
-      spacing: Style.marginM
+      anchors.margins: Style.marginS
+      spacing: Style.marginS
 
-      NText {
-        text: currentItem ? (currentItem.name || "Preview") : "Preview"
-        font.weight: Style.fontWeightBold
-        Layout.fillWidth: true
-        pointSize: Style.fontSizeM
-        color: Color.mOnSurface
-      }
 
-      NDivider {
-        Layout.fillWidth: true
-      }
 
       Rectangle {
         Layout.fillWidth: true
