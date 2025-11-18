@@ -84,7 +84,7 @@ RowLayout {
   Rectangle {
     id: spinBoxContainer
     implicitWidth: 120
-    implicitHeight: Math.round((root.baseSize - 4)/2)*2
+    implicitHeight: Math.round((root.baseSize - 4) / 2) * 2
     radius: height * 0.5
     color: Color.mSurfaceVariant
     border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mHover : Color.mOutline
@@ -215,7 +215,7 @@ RowLayout {
           repeatTimer.start();
         }
         onReleased: stopRepeat()
-        onExited:   stopRepeat()
+        onExited: stopRepeat()
       }
     }
 
@@ -314,7 +314,7 @@ RowLayout {
           repeatTimer.start();
         }
         onReleased: stopRepeat()
-        onExited:   stopRepeat()
+        onExited: stopRepeat()
       }
     }
 

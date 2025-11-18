@@ -48,7 +48,7 @@ Item {
         baseColor = Color.mOutline;
         break;
       }
-      return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0)
+      return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
     }
   }
 
