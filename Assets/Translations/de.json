@@ -1341,6 +1341,10 @@
           "description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
           "label": "Zwischenablageverlauf aktivieren"
         },
+        "clip-preview": {
+          "description": "Zeigt eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
+          "label": "Clip-Vorschau aktivieren"
+        },
         "custom-launch-prefix": {
           "description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",
           "label": "Benutzerdefiniertes Start-Präfix"
