@@ -13,7 +13,7 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  readonly property bool previewActive: searchText.startsWith(">clip")
+  readonly property bool previewActive: searchText.startsWith(">clip") && Settings.data.appLauncher.enableClipPreview
 
   // Panel configuration
   readonly property int listPanelWidth: Math.round(600 * Style.uiScaleRatio)

@@ -295,6 +295,7 @@ Singleton {
     // applauncher
     property JsonObject appLauncher: JsonObject {
       property bool enableClipboardHistory: false
+      property bool enableClipPreview: true
       // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "center"
       property list<string> pinnedExecs: []

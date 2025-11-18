@@ -66,6 +66,13 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("settings.launcher.settings.clip-preview.label")
+    description: I18n.tr("settings.launcher.settings.clip-preview.description")
+    checked: Settings.data.appLauncher.enableClipPreview
+    onToggled: checked => Settings.data.appLauncher.enableClipPreview = checked
+  }
+
+  NToggle {
     label: I18n.tr("settings.launcher.settings.sort-by-usage.label")
     description: I18n.tr("settings.launcher.settings.sort-by-usage.description")
     checked: Settings.data.appLauncher.sortByMostUsed
