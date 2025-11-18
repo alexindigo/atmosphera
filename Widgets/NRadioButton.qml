@@ -8,6 +8,8 @@ RadioButton {
 
   property real pointSize: Style.fontSizeM
 
+  implicitWidth: outerCircle.implicitWidth + Style.marginS + contentItem.implicitWidth
+
   indicator: Rectangle {
     id: outerCircle
 
@@ -43,6 +45,7 @@ RadioButton {
   contentItem: NText {
     text: root.text
     pointSize: root.pointSize
+    //implicitWidth: content.contentWidth
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: outerCircle.right
     anchors.right: parent.right
