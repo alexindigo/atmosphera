@@ -335,17 +335,42 @@ PopupWindow {
       const tipHeight = tooltipText.implicitHeight + (padding * 2);
       root.implicitHeight = tipHeight;
 
-      // Reposition if necessary
+      // Reposition based on current direction
       var targetGlobal = targetItem.mapToItem(null, 0, 0);
       const targetWidth = targetItem.width;
+      const targetHeight = targetItem.height;
+
+      // Recalculate base anchor position (center on target for top/bottom, etc.)
+      var newAnchorX = anchorX;
+      var newAnchorY = anchorY;
+
+      // Determine which direction the tooltip is currently positioned
+      // and recalculate the centering for that direction
+      if (anchorY > targetHeight / 2) {
+        // Tooltip is below target
+        newAnchorX = (targetWidth - tipWidth) / 2;
+      } else if (anchorY < -tipHeight / 2) {
+        // Tooltip is above target
+        newAnchorX = (targetWidth - tipWidth) / 2;
+      } else if (anchorX > targetWidth / 2) {
+        // Tooltip is to the right
+        newAnchorY = (targetHeight - tipHeight) / 2;
+      } else if (anchorX < -tipWidth / 2) {
+        // Tooltip is to the left
+        newAnchorY = (targetHeight - tipHeight) / 2;
+      }
 
       // Adjust horizontal position to keep tooltip on screen if needed
-      const globalX = targetGlobal.x + anchorX;
+      const globalX = targetGlobal.x + newAnchorX;
       if (globalX < 0) {
-        anchorX = -targetGlobal.x + margin;
+        newAnchorX = -targetGlobal.x + margin;
       } else if (globalX + tipWidth > screenWidth) {
-        anchorX = screenWidth - targetGlobal.x - tipWidth - margin;
+        newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin;
       }
+
+      // Apply the new anchor positions
+      anchorX = newAnchorX;
+      anchorY = newAnchorY;
 
       // Force anchor update
       Qt.callLater(() => {
