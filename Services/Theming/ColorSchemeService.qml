@@ -18,7 +18,7 @@ Singleton {
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.i("ColorScheme", "Detected dark mode change");
+      Logger.d("ColorScheme", "Detected dark mode change");
       if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
         // Re-apply current scheme to pick the right variant
         applyScheme(Settings.data.colorSchemes.predefinedScheme);

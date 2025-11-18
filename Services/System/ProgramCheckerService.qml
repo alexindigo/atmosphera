@@ -91,7 +91,7 @@ Singleton {
             }
           }
 
-          Logger.i("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "));
+          Logger.d("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "));
         }
       }
 
@@ -151,7 +151,7 @@ Singleton {
             }
           }
 
-          Logger.i("ProgramChecker", "Detected Code clients:", detectedClients.join(", "));
+          Logger.d("ProgramChecker", "Detected Code clients:", detectedClients.join(", "));
         }
       }
 
