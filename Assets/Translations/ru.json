@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Загрузить ещё",
+        "title": "Загрузить цветовые схемы",
+        "fetching": "Получение доступных цветовых схем...",
+        "empty": "Нет доступных цветовых схем",
+        "refresh": "Обновить",
+        "download": "Загрузить",
+        "downloading": "Загрузка...",
+        "delete": "Удалить",
+        "installed": "Установлено",
+        "success": {
+          "title": "Цветовая схема загружена",
+          "description": "{scheme} успешно загружена"
+        },
+        "error": {
+          "title": "Ошибка загрузки",
+          "description": "Не удалось загрузить {scheme}",
+          "invalid-response": "Неверный формат ответа API",
+          "parse-failed": "Ошибка парсинга ответа API: {error}",
+          "rate-limit": "Превышен лимит запросов GitHub API",
+          "api-error": "Ошибка API: {status}",
+          "no-files": "Файлы для схемы не найдены",
+          "download-failed": "Ошибка загрузки с кодом выхода: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Цветовая схема удалена",
+          "description": "{scheme} успешно удалена"
+        },
+        "error": {
+          "title": "Ошибка удаления",
+          "description": "Не удалось удалить {scheme}"
+        }
+      },
       "title": "Цветовая схема"
     },
     "control-center": {

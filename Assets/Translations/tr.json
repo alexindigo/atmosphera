@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Daha fazla indir",
+        "title": "Renk şemalarını indir",
+        "fetching": "Mevcut renk şemaları alınıyor...",
+        "empty": "Mevcut renk şeması yok",
+        "refresh": "Yenile",
+        "download": "İndir",
+        "downloading": "İndiriliyor...",
+        "delete": "Sil",
+        "installed": "Yüklü",
+        "success": {
+          "title": "Renk şeması indirildi",
+          "description": "{scheme} başarıyla indirildi"
+        },
+        "error": {
+          "title": "İndirme başarısız",
+          "description": "{scheme} indirilemedi",
+          "invalid-response": "Geçersiz API yanıt formatı",
+          "parse-failed": "API yanıtı ayrıştırılamadı: {error}",
+          "rate-limit": "GitHub API hız sınırı aşıldı",
+          "api-error": "API hatası: {status}",
+          "no-files": "Şema için dosya bulunamadı",
+          "download-failed": "İndirme başarısız, çıkış kodu: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Renk şeması silindi",
+          "description": "{scheme} başarıyla silindi"
+        },
+        "error": {
+          "title": "Silme başarısız",
+          "description": "{scheme} silinemedi"
+        }
+      },
       "title": "Renk şeması"
     },
     "control-center": {

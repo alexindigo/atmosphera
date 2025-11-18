@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import "."
 import qs.Commons
 import qs.Services.System
 import qs.Services.Theming
@@ -92,6 +93,11 @@ ColumnLayout {
     schemeColorsCache[schemeName] = value;
     // Force UI update by incrementing cache version
     cacheVersion++;
+  }
+
+  // Function to open download popup
+  function openDownloadPopup() {
+    downloadPopupLoader.open();
   }
 
   // When the list of available schemes changes, clear the cache
@@ -326,9 +332,49 @@ ColumnLayout {
     Layout.fillWidth: true
     visible: !Settings.data.colorSchemes.useWallpaperColors
 
-    NHeader {
-      label: I18n.tr("settings.color-scheme.predefined.section.label")
-      description: I18n.tr("settings.color-scheme.predefined.section.description")
+    RowLayout {
+      Layout.fillWidth: true
+
+      NHeader {
+        label: I18n.tr("settings.color-scheme.predefined.section.label")
+        description: I18n.tr("settings.color-scheme.predefined.section.description")
+        Layout.fillWidth: true
+      }
+
+      NButton {
+        text: I18n.tr("settings.color-scheme.download.button")
+        icon: "download"
+        onClicked: {
+          root.openDownloadPopup();
+        }
+      }
+    }
+
+    // Download popup
+    Loader {
+      id: downloadPopupLoader
+      active: false
+      sourceComponent: SchemeDownloader {
+        parent: Overlay.overlay
+      }
+
+      property bool pendingOpen: false
+
+      function open() {
+        pendingOpen = true;
+        active = true;
+        if (item) {
+          item.open();
+          pendingOpen = false;
+        }
+      }
+
+      onItemChanged: {
+        if (item && pendingOpen) {
+          item.open();
+          pendingOpen = false;
+        }
+      }
     }
 
     // Color Schemes Grid

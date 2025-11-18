@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.Settings.Tabs
+import qs.Modules.Panels.Settings.Tabs.ColorScheme
 import qs.Services.System
 import qs.Widgets
 

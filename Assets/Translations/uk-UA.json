@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Завантажити ще",
+        "title": "Завантажити кольорові схеми",
+        "fetching": "Отримання доступних кольорових схем...",
+        "empty": "Немає доступних кольорових схем",
+        "refresh": "Оновити",
+        "download": "Завантажити",
+        "downloading": "Завантаження...",
+        "delete": "Видалити",
+        "installed": "Встановлено",
+        "success": {
+          "title": "Кольорову схему завантажено",
+          "description": "{scheme} успішно завантажено"
+        },
+        "error": {
+          "title": "Помилка завантаження",
+          "description": "Не вдалося завантажити {scheme}",
+          "invalid-response": "Невірний формат відповіді API",
+          "parse-failed": "Помилка парсингу відповіді API: {error}",
+          "rate-limit": "Перевищено ліміт запитів GitHub API",
+          "api-error": "Помилка API: {status}",
+          "no-files": "Файли для схеми не знайдено",
+          "download-failed": "Помилка завантаження з кодом виходу: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Кольорову схему видалено",
+          "description": "{scheme} успішно видалено"
+        },
+        "error": {
+          "title": "Помилка видалення",
+          "description": "Не вдалося видалити {scheme}"
+        }
+      },
       "title": "Колірна схема"
     },
     "control-center": {

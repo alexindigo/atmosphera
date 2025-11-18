@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Descargar más",
+        "title": "Descargar esquemas de colores",
+        "fetching": "Obteniendo esquemas de colores disponibles...",
+        "empty": "No hay esquemas de colores disponibles",
+        "refresh": "Actualizar",
+        "download": "Descargar",
+        "downloading": "Descargando...",
+        "delete": "Eliminar",
+        "installed": "Instalado",
+        "success": {
+          "title": "Esquema de colores descargado",
+          "description": "{scheme} descargado correctamente"
+        },
+        "error": {
+          "title": "Error al descargar",
+          "description": "Error al descargar {scheme}",
+          "invalid-response": "Formato de respuesta de API inválido",
+          "parse-failed": "Error al analizar la respuesta de la API: {error}",
+          "rate-limit": "Límite de velocidad de la API de GitHub excedido",
+          "api-error": "Error de API: {status}",
+          "no-files": "No se encontraron archivos para el esquema",
+          "download-failed": "Error al descargar con código de salida: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Esquema de colores eliminado",
+          "description": "{scheme} eliminado correctamente"
+        },
+        "error": {
+          "title": "Error al eliminar",
+          "description": "Error al eliminar {scheme}"
+        }
+      },
       "title": "Esquema de colores"
     },
     "control-center": {

@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Meer downloaden",
+        "title": "Kleurenschema's downloaden",
+        "fetching": "Beschikbare kleurenschema's ophalen...",
+        "empty": "Geen kleurenschema's beschikbaar",
+        "refresh": "Vernieuwen",
+        "download": "Downloaden",
+        "downloading": "Downloaden...",
+        "delete": "Verwijderen",
+        "installed": "Geïnstalleerd",
+        "success": {
+          "title": "Kleurenschema gedownload",
+          "description": "{scheme} succesvol gedownload"
+        },
+        "error": {
+          "title": "Download mislukt",
+          "description": "Download van {scheme} mislukt",
+          "invalid-response": "Ongeldig API-antwoordformaat",
+          "parse-failed": "Fout bij parseren van API-antwoord: {error}",
+          "rate-limit": "GitHub API-snelheidslimiet overschreden",
+          "api-error": "API-fout: {status}",
+          "no-files": "Geen bestanden gevonden voor schema",
+          "download-failed": "Download mislukt met afsluitcode: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Kleurenschema verwijderd",
+          "description": "{scheme} succesvol verwijderd"
+        },
+        "error": {
+          "title": "Verwijderen mislukt",
+          "description": "Verwijderen van {scheme} mislukt"
+        }
+      },
       "title": "Kleurschema"
     },
     "control-center": {

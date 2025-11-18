@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Baixar mais",
+        "title": "Baixar esquemas de cores",
+        "fetching": "Buscando esquemas de cores disponíveis...",
+        "empty": "Nenhum esquema de cores disponível",
+        "refresh": "Atualizar",
+        "download": "Baixar",
+        "downloading": "Baixando...",
+        "delete": "Excluir",
+        "installed": "Instalado",
+        "success": {
+          "title": "Esquema de cores baixado",
+          "description": "{scheme} baixado com sucesso"
+        },
+        "error": {
+          "title": "Falha no download",
+          "description": "Falha ao baixar {scheme}",
+          "invalid-response": "Formato de resposta da API inválido",
+          "parse-failed": "Falha ao analisar a resposta da API: {error}",
+          "rate-limit": "Limite de taxa da API do GitHub excedido",
+          "api-error": "Erro da API: {status}",
+          "no-files": "Nenhum arquivo encontrado para o esquema",
+          "download-failed": "Falha no download com código de saída: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Esquema de cores excluído",
+          "description": "{scheme} excluído com sucesso"
+        },
+        "error": {
+          "title": "Falha ao excluir",
+          "description": "Falha ao excluir {scheme}"
+        }
+      },
       "title": "Esquema de cores"
     },
     "control-center": {

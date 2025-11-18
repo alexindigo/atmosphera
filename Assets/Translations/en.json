@@ -923,6 +923,41 @@
           "label": "Predefined color schemes"
         }
       },
+      "download": {
+        "button": "Download more",
+        "title": "Download Color Schemes",
+        "fetching": "Fetching available color schemes...",
+        "empty": "No color schemes available",
+        "refresh": "Refresh",
+        "download": "Download",
+        "downloading": "Downloading...",
+        "delete": "Delete",
+        "installed": "Installed",
+        "success": {
+          "title": "Color Scheme Downloaded",
+          "description": "Successfully downloaded {scheme}"
+        },
+        "error": {
+          "title": "Download Failed",
+          "description": "Failed to download {scheme}",
+          "invalid-response": "Invalid API response format",
+          "parse-failed": "Failed to parse API response: {error}",
+          "rate-limit": "GitHub API rate limit exceeded",
+          "api-error": "API error: {status}",
+          "no-files": "No files found for scheme",
+          "download-failed": "Download failed with exit code: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Color Scheme Deleted",
+          "description": "Successfully deleted {scheme}"
+        },
+        "error": {
+          "title": "Delete Failed",
+          "description": "Failed to delete {scheme}"
+        }
+      },
       "templates": {
         "misc": {
           "description": "Additional configuration options.",

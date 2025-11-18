@@ -1003,6 +1003,41 @@
           }
         }
       },
+      "download": {
+        "button": "Mehr herunterladen",
+        "title": "Farbschemata herunterladen",
+        "fetching": "Verfügbare Farbschemata werden abgerufen...",
+        "empty": "Keine Farbschemata verfügbar",
+        "refresh": "Aktualisieren",
+        "download": "Herunterladen",
+        "downloading": "Wird heruntergeladen...",
+        "delete": "Löschen",
+        "installed": "Installiert",
+        "success": {
+          "title": "Farbschema heruntergeladen",
+          "description": "{scheme} wurde erfolgreich heruntergeladen"
+        },
+        "error": {
+          "title": "Download fehlgeschlagen",
+          "description": "Fehler beim Herunterladen von {scheme}",
+          "invalid-response": "Ungültiges API-Antwortformat",
+          "parse-failed": "Fehler beim Parsen der API-Antwort: {error}",
+          "rate-limit": "GitHub API-Ratenlimit überschritten",
+          "api-error": "API-Fehler: {status}",
+          "no-files": "Keine Dateien für Schema gefunden",
+          "download-failed": "Download fehlgeschlagen mit Exit-Code: {code}"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Farbschema gelöscht",
+          "description": "{scheme} wurde erfolgreich gelöscht"
+        },
+        "error": {
+          "title": "Löschen fehlgeschlagen",
+          "description": "Fehler beim Löschen von {scheme}"
+        }
+      },
       "title": "Farbschema"
     },
     "control-center": {
