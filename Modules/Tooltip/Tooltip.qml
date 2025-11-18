@@ -1,14 +1,10 @@
 import QtQuick
-// import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Widgets
 
 PopupWindow {
   id: root
-
-  property int screenWidth: 0
-  property int screenHeight: 0
 
   property string text: ""
   property string direction: "auto" // "auto", "left", "right", "top", "bottom"
@@ -26,8 +22,9 @@ PopupWindow {
   property real anchorX: 0
   property real anchorY: 0
   property bool isPositioned: false
-  property bool pendingShow: false
   property bool animatingOut: true
+  property int screenWidth: 1920
+  property int screenHeight: 1080
 
   visible: false
   color: Color.transparent
@@ -108,11 +105,9 @@ PopupWindow {
   }
 
   // Function to show tooltip
-  function show(screen, target, tipText, customDirection, showDelay, fontFamily) {
-    if (!screen || !target || !tipText || tipText === "")
+  function show(target, tipText, customDirection, showDelay, fontFamily) {
+    if (!target || !tipText || tipText === "")
       return;
-    root.screenWidth = screen.width;
-    root.screenHeight = screen.height;
 
     root.delay = showDelay;
 
@@ -128,9 +123,32 @@ PopupWindow {
     }
 
     // Set properties
-    targetItem = target;
     text = tipText;
-    pendingShow = true;
+    targetItem = target;
+
+    // Find the correct screen dimensions based on target's global position
+    // Respect all screens positionning
+    const targetGlobal = target.mapToGlobal(target.width / 2, target.height / 2);
+    let foundScreen = false;
+    for (let i = 0; i < Quickshell.screens.length; i++) {
+      const s = Quickshell.screens[i];
+      if (targetGlobal.x >= s.x && targetGlobal.x < s.x + s.width && targetGlobal.y >= s.y && targetGlobal.y < s.y + s.height) {
+        screenWidth = s.width;
+        screenHeight = s.height;
+        foundScreen = true;
+        break;
+      }
+    }
+    if (!foundScreen) {
+      Logger.w("Tooltip", "No screen found for target position!");
+    }
+
+    // Initialize animation state (hidden)
+    tooltipContainer.opacity = 0.0;
+    tooltipContainer.scale = root.animationScale;
+
+    // Start show timer (will position and then make visible)
+    showTimer.start();
 
     if (customDirection !== undefined) {
       direction = customDirection;
@@ -139,16 +157,15 @@ PopupWindow {
     }
 
     tooltipText.family = fontFamily ? fontFamily : Settings.data.ui.fontDefault;
-
-    // Start show timer
-    showTimer.start();
   }
 
   // Function to position and display the tooltip
   function positionAndShow() {
-    if (!targetItem || !targetItem.parent || !pendingShow) {
+    if (!targetItem || !targetItem.parent) {
       return;
     }
+
+    console.log(screenWidth, screenHeight);
 
     // Calculate tooltip dimensions
     const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth);
@@ -256,35 +273,20 @@ PopupWindow {
       }
     }
 
-    // Apply position
+    // Apply position first (before making visible)
     anchorX = newAnchorX;
     anchorY = newAnchorY;
     isPositioned = true;
-    pendingShow = false;
 
-    // Show tooltip and start animation
-    visible = true;
-
-    // Initialize animation state
-    tooltipContainer.opacity = 0.0;
-    tooltipContainer.scale = animationScale;
-
-    // Start show animation
+    // Now make visible and start animation
+    root.visible = true;
     showAnimation.start();
-
-    // Force anchor update after showing
-    Qt.callLater(() => {
-                   if (root.anchor && root.visible) {
-                     root.anchor.updateAnchor();
-                   }
-                 });
   }
 
   // Function to hide tooltip
   function hide() {
     // Stop show timer if it's running
     showTimer.stop();
-    pendingShow = false;
 
     // Stop hide timer if it's running
     hideTimer.stop();
@@ -307,7 +309,6 @@ PopupWindow {
   function completeHide() {
     visible = false;
     animatingOut = false;
-    pendingShow = false;
     text = "";
     isPositioned = false;
     tooltipContainer.opacity = 1.0;
@@ -320,7 +321,6 @@ PopupWindow {
     hideTimer.stop();
     showAnimation.stop();
     hideAnimation.stop();
-    pendingShow = false;
     animatingOut = false;
     completeHide();
   }
@@ -345,8 +345,8 @@ PopupWindow {
       const globalX = targetGlobal.x + anchorX;
       if (globalX < 0) {
         anchorX = -targetGlobal.x + margin;
-      } else if (globalX + tipWidth > screenWidth) {
-        anchorX = screenWidth - targetGlobal.x - tipWidth - margin;
+      } else if (globalX + tipWidth > root.screen.width) {
+        anchorX = root.screen.width - targetGlobal.x - tipWidth - margin;
       }
 
       // Force anchor update
@@ -368,7 +368,6 @@ PopupWindow {
 
     // Clear all state
     visible = false;
-    pendingShow = false;
     animatingOut = false;
     text = "";
     isPositioned = false;

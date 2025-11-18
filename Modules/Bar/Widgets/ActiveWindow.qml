@@ -412,7 +412,7 @@ Item {
         acceptedButtons: Qt.LeftButton
         onEntered: {
           if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(screen, root, windowTitle, BarService.getTooltipDirection());
+            TooltipService.show(root, windowTitle, BarService.getTooltipDirection());
           }
         }
         onExited: {

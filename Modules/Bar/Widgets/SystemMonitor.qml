@@ -524,7 +524,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-          TooltipService.show(screen, diskContent, diskPath, BarService.getTooltipDirection());
+          TooltipService.show(diskContent, diskPath, BarService.getTooltipDirection());
         }
         onExited: {
           TooltipService.hide();

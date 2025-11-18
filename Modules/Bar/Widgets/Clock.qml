@@ -122,7 +122,7 @@ Rectangle {
     hoverEnabled: true
     onEntered: {
       if (!PanelService.getPanel("calendarPanel", screen)?.active) {
-        TooltipService.show(screen, root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection());
+        TooltipService.show(root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection());
       }
     }
     onExited: {

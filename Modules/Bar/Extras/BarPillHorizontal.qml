@@ -255,7 +255,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
+      TooltipService.show(pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }
