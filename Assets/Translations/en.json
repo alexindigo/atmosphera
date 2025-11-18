@@ -387,6 +387,11 @@
       "title": "Bluetooth"
     }
   },
+  "context-menu": {
+    "open-mixer": "Audio mixer",
+    "toggle-mute": "Toggle mute",
+    "widget-settings": "Widget settings"
+  },
   "calendar": {
     "panel": {
       "week": "Week"

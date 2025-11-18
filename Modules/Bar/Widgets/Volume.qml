@@ -58,6 +58,10 @@ Item {
     }
   }
 
+  function openExternalMixer() {
+    Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
+  }
+
   Timer {
     id: externalHideTimer
     running: false
@@ -65,6 +69,45 @@ Item {
     onTriggered: {
       pill.hide();
     }
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.toggle-mute"),
+        "action": "toggle_mute",
+        "icon": AudioService.muted ? "volume-off" : "volume"
+      },
+      {
+        "label": I18n.tr("context-menu.open-mixer"),
+        "action": "open_mixer",
+        "icon": "adjustments"
+      }
+      // ,
+      // {
+      //   "label": I18n.tr("context-menu.widget-settings"),
+      //   "action": "widget_settings",
+      //   "icon": "settings"
+      // },
+    ]
+
+    onTriggered: action => {
+                   if (action === "toggle_mute") {
+                     AudioService.setOutputMuted(!AudioService.muted);
+                   } else if (action === "open_mixer") {
+                     root.openExternalMixer();
+                   } else if (action === "widget_settings")
+                   // TODO: Open widget settings
+                   {}
+
+                   // Close the popup menu window after handling the action
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+                 }
   }
 
   BarPill {
@@ -100,10 +143,17 @@ Item {
       PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      AudioService.setOutputMuted(!AudioService.muted);
+      // Get the shared popup menu window for this screen
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        // Calculate position using centralized helper (with center-based positioning)
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+
+        // Show the context menu inside the popup window
+        contextMenu.openAtItem(pill, pos.x, pos.y);
+        popupMenuWindow.showContextMenu(contextMenu);
+      }
     }
-    onMiddleClicked: {
-      Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
-    }
+    onMiddleClicked: root.openExternalMixer()
   }
 }

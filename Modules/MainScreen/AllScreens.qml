@@ -95,7 +95,7 @@ Variants {
       }
     }
 
-    // TrayMenuWindow - separate window for tray context menus
+    // PopupMenuWindow - reusable popup window for both tray menus and context menus
     // Disabled when bar is hidden or not configured for this screen
     Loader {
       active: {
@@ -108,12 +108,12 @@ Variants {
       }
       asynchronous: false
 
-      sourceComponent: TrayMenuWindow {
+      sourceComponent: PopupMenuWindow {
         screen: modelData
       }
 
       onLoaded: {
-        Logger.d("AllScreens", "TrayMenuWindow created for", modelData?.name);
+        Logger.d("AllScreens", "PopupMenuWindow created for", modelData?.name);
       }
     }
   }

@@ -100,22 +100,22 @@ SmartPanel {
   }
 
   // Trigger re-evaluation when window is registered
-  property int trayMenuUpdateTrigger: 0
+  property int popupMenuUpdateTrigger: 0
 
   // Get the trayMenu window and loader from PanelService (reactive to trigger changes)
-  readonly property var trayMenuWindow: {
+  readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger;
-    return PanelService.getTrayMenuWindow(screen);
+    var _ = popupMenuUpdateTrigger;
+    return PanelService.getPopupMenuWindow(screen);
   }
 
-  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+  readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
 
   Connections {
     target: PanelService
-    function onTrayMenuWindowRegistered(registeredScreen) {
+    function onPopupMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++;
+        root.popupMenuUpdateTrigger++;
       }
     }
   }
@@ -192,13 +192,13 @@ SmartPanel {
                              TooltipService.hideImmediately();
 
                              // Close menu if already visible
-                             if (trayMenuWindow && trayMenuWindow.visible) {
-                               trayMenuWindow.close();
+                             if (popupMenuWindow && popupMenuWindow.visible) {
+                               popupMenuWindow.close();
                                return;
                              }
 
-                             if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                               trayMenuWindow.open();
+                             if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
+                               popupMenuWindow.open();
 
                                // Position menu at the tray icon
                                const barPosition = Settings.data.bar.position;
@@ -232,8 +232,8 @@ SmartPanel {
                        }
 
               onEntered: {
-                if (trayMenuWindow) {
-                  trayMenuWindow.close();
+                if (popupMenuWindow) {
+                  popupMenuWindow.close();
                 }
                 TooltipService.show(screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
               }

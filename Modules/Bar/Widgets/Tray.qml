@@ -16,22 +16,22 @@ Rectangle {
   property ShellScreen screen
 
   // Trigger re-evaluation when window is registered
-  property int trayMenuUpdateTrigger: 0
+  property int popupMenuUpdateTrigger: 0
 
-  // Get shared tray menu window from PanelService (reactive to trigger changes)
-  readonly property var trayMenuWindow: {
+  // Get shared popup menu window from PanelService (reactive to trigger changes)
+  readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger;
-    return PanelService.getTrayMenuWindow(screen);
+    var _ = popupMenuUpdateTrigger;
+    return PanelService.getPopupMenuWindow(screen);
   }
 
-  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+  readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
 
   Connections {
     target: PanelService
-    function onTrayMenuWindowRegistered(registeredScreen) {
+    function onPopupMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++;
+        root.popupMenuUpdateTrigger++;
       }
     }
   }
@@ -183,9 +183,9 @@ Rectangle {
   function toggleDrawer(button) {
     TooltipService.hideImmediately();
 
-    // Close the tray menu if it's open
-    if (trayMenuWindow && trayMenuWindow.visible) {
-      trayMenuWindow.close();
+    // Close the popup menu if it's open
+    if (popupMenuWindow && popupMenuWindow.visible) {
+      popupMenuWindow.close();
     }
 
     const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
@@ -320,8 +320,8 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           if (trayMenuWindow) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow) {
+                             popupMenuWindow.close();
                            }
 
                            if (!modelData.onlyMenu) {
@@ -329,8 +329,8 @@ Rectangle {
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
                            // Close the menu if it was visible
-                           if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow && popupMenuWindow.visible) {
+                             popupMenuWindow.close();
                              return;
                            }
                            modelData.secondaryActivate && modelData.secondaryActivate();
@@ -338,8 +338,8 @@ Rectangle {
                            TooltipService.hideImmediately();
 
                            // Close the menu if it was visible
-                           if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow && popupMenuWindow.visible) {
+                             popupMenuWindow.close();
                              return;
                            }
 
@@ -348,8 +348,8 @@ Rectangle {
                              PanelService.openedPanel.close();
                            }
 
-                           if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                             trayMenuWindow.open();
+                           if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
+                             popupMenuWindow.open();
 
                              // Position menu based on bar position
                              let menuX, menuY;
@@ -376,8 +376,8 @@ Rectangle {
                          }
                        }
             onEntered: {
-              if (trayMenuWindow) {
-                trayMenuWindow.close();
+              if (popupMenuWindow) {
+                popupMenuWindow.close();
               }
               TooltipService.show(screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
             }
