@@ -13,27 +13,17 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  readonly property bool previewActive: activePlugin && activePlugin.name === I18n.tr("plugins.clipboard") && results.length > 0
+  readonly property bool previewActive: searchText.startsWith(">clip")
 
   // Panel configuration
   readonly property int listPanelWidth: Math.round(600 * Style.uiScaleRatio)
   readonly property int previewPanelWidth: Math.round(300 * Style.uiScaleRatio)
-  readonly property int dividerWidth: Style.borderS
-
   readonly property int totalBaseWidth: listPanelWidth + (Style.marginL * 2)
-  readonly property int totalExpandedWidth: listPanelWidth + dividerWidth + previewPanelWidth + (Style.marginL * 2) + (Style.marginM * 2)
 
-  preferredWidth: previewActive ? totalExpandedWidth : totalBaseWidth
+  preferredWidth: totalBaseWidth
   preferredHeight: Math.round(600 * Style.uiScaleRatio)
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
-
-  Behavior on preferredWidth {
-    NumberAnimation {
-      duration: Style.animationFast
-      easing.type: Easing.OutCirc
-    }
-  }
 
   // Positioning
   readonly property string panelPosition: {
@@ -278,13 +268,48 @@ SmartPanel {
     }
   }
 
-  // UI
   panelContent: Rectangle {
     id: ui
     color: Color.transparent
     opacity: resultsReady ? 1.0 : 0.0
 
-    // Global MouseArea to detect mouse movement
+    // Preview Panel (external)
+    NBox {
+      id: previewBox
+      visible: root.previewActive
+      width: root.previewPanelWidth
+      height: ui.height
+      x: ui.width + Style.marginM
+      y: 0
+      z: -1 // Draw behind main panel content if it ever overlaps
+
+      opacity: visible ? 1.0 : 0.0
+      Behavior on opacity {
+        NumberAnimation {
+          duration: Style.animationFast
+        }
+      }
+
+      Loader {
+        id: clipboardPreviewLoader
+        anchors.fill: parent
+        active: root.previewActive
+        source: active ? "./ClipboardPreview.qml" : ""
+
+        onLoaded: {
+          if (selectedIndex >= 0 && results[selectedIndex] && item) {
+            item.currentItem = results[selectedIndex];
+          }
+        }
+
+        onItemChanged: {
+          if (item && selectedIndex >= 0 && results[selectedIndex]) {
+            item.currentItem = results[selectedIndex];
+          }
+        }
+      }
+    }
+
     MouseArea {
       id: mouseMovementDetector
       anchors.fill: parent
@@ -298,7 +323,6 @@ SmartPanel {
       property bool initialized: false
 
       onPositionChanged: mouse => {
-                           // Store initial position
                            if (!initialized) {
                              lastX = mouse.x;
                              lastY = mouse.y;
@@ -306,7 +330,6 @@ SmartPanel {
                              return;
                            }
 
-                           // Check if mouse actually moved
                            const deltaX = Math.abs(mouse.x - lastX);
                            const deltaY = Math.abs(mouse.y - lastY);
                            if (deltaX > 1 || deltaY > 1) {
@@ -316,7 +339,6 @@ SmartPanel {
                            }
                          }
 
-      // Reset when launcher opens
       Connections {
         target: root
         function onOpened() {
@@ -350,7 +372,7 @@ SmartPanel {
       anchors.margins: Style.marginL // Apply overall margins here
       spacing: Style.marginM // Apply spacing between elements here
 
-      // --- Left Pane ---
+      // Left Pane
       ColumnLayout {
         id: leftPane
         Layout.fillHeight: true
@@ -386,7 +408,6 @@ SmartPanel {
           }
         }
 
-        // Results list
         NListView {
           id: resultsList
 
@@ -414,7 +435,6 @@ SmartPanel {
             id: entry
 
             property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
-            // Accessor for app id
             property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
             // Pin helpers
@@ -494,7 +514,6 @@ SmartPanel {
                       return ClipboardService.getImageData(modelData.clipboardId) || "";
                     }
 
-                    // Loading indicator
                     Rectangle {
                       anchors.fill: parent
                       visible: parent.status === Image.Loading
@@ -508,7 +527,6 @@ SmartPanel {
                       }
                     }
 
-                    // Error fallback
                     onStatusChanged: status => {
                                        if (status === Image.Error) {
                                          iconLoader.visible = true;
@@ -517,7 +535,6 @@ SmartPanel {
                                      }
                   }
 
-                  // Icon fallback
                   Loader {
                     id: iconLoader
                     anchors.fill: parent
@@ -536,7 +553,6 @@ SmartPanel {
                     }
                   }
 
-                  // Fallback text if no icon and no image
                   NText {
                     anchors.centerIn: parent
                     visible: !imagePreview.visible && !iconLoader.visible
@@ -635,7 +651,6 @@ SmartPanel {
           Layout.fillWidth: true
         }
 
-        // Status
         NText {
           Layout.fillWidth: true
           text: {
@@ -647,50 +662,6 @@ SmartPanel {
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
           horizontalAlignment: Text.AlignCenter
-        }
-      }
-
-      // --- Vertical Divider ---
-      NDivider {
-        Layout.fillHeight: true
-        vertical: true
-        visible: root.previewActive
-        Layout.preferredWidth: root.dividerWidth
-      }
-
-      // --- Right Pane (Preview) ---
-      Item {
-        Layout.fillHeight: true
-        Layout.preferredWidth: root.previewActive ? root.previewPanelWidth : 0
-        visible: root.previewActive
-
-        Behavior on Layout.preferredWidth {
-          NumberAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.OutCirc
-          }
-        }
-
-        // --- Preview Loader ---
-        Loader {
-          id: clipboardPreviewLoader
-          anchors.fill: parent
-          active: root.previewActive
-          source: active ? "./ClipboardPreview.qml" : ""
-
-          // Access the loaded component to set the current item
-          onLoaded: {
-            if (selectedIndex >= 0 && results[selectedIndex] && item) {
-              item.currentItem = results[selectedIndex];
-            }
-          }
-
-          // When the item is loaded, ensure it gets the current selection
-          onItemChanged: {
-            if (item && selectedIndex >= 0 && results[selectedIndex]) {
-              item.currentItem = results[selectedIndex];
-            }
-          }
         }
       }
     }
