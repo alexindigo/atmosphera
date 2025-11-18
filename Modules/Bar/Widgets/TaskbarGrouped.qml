@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -46,6 +47,10 @@ Item {
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
+
+  // Context menu state
+  property var selectedWindow: null
+  property string selectedAppName: ""
 
   function refreshWorkspaces() {
     localWorkspaces.clear();
@@ -154,6 +159,53 @@ Item {
       property: "masterProgress"
       value: 0.0
     }
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: {
+      var items = [];
+      if (selectedWindow) {
+        items.push({
+                     "label": I18n.tr("context-menu.activate-app", {
+                                        "app": selectedAppName
+                                      }),
+                     "action": "activate",
+                     "icon": "focus"
+                   });
+        items.push({
+                     "label": I18n.tr("context-menu.close-app", {
+                                        "app": selectedAppName
+                                      }),
+                     "action": "close",
+                     "icon": "x"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "activate" && selectedWindow) {
+                     CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "close" && selectedWindow) {
+                     CompositorService.closeWindow(selectedWindow);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                   selectedWindow = null;
+                   selectedAppName = "";
+                 }
   }
 
   // Debounce timer for wheel interactions
@@ -301,7 +353,15 @@ Item {
                 if (mouse.button === Qt.LeftButton) {
                   CompositorService.focusWindow(model);
                 } else if (mouse.button === Qt.RightButton) {
-                  CompositorService.closeWindow(model);
+                  TooltipService.hide();
+                  root.selectedWindow = model;
+                  root.selectedAppName = CompositorService.getCleanAppName(model.appId, model.title);
+                  var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                  if (popupMenuWindow) {
+                    const pos = BarService.getContextMenuPosition(taskbarItem, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                    contextMenu.openAtItem(taskbarItem, pos.x, pos.y);
+                    popupMenuWindow.showContextMenu(contextMenu);
+                  }
                 }
               }
               onEntered: {

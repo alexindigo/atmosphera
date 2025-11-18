@@ -399,7 +399,9 @@
     "tooltip": "Open calendar"
   },
   "context-menu": {
+    "activate-app": "Activate {app}",
     "clear-history": "Clear history",
+    "close-app": "Close {app}",
     "cycle-visualizer": "Cycle visualizer",
     "disable-bluetooth": "Disable Bluetooth",
     "disable-dnd": "Disable Do Not Disturb",

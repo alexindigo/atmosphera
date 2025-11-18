@@ -278,6 +278,14 @@ Singleton {
     return "";
   }
 
+  // Get clean app name from appId
+  // Extracts the last segment from reverse domain notation (e.g., "org.kde.dolphin" -> "Dolphin")
+  // Falls back to title if appId is empty
+  function getCleanAppName(appId, fallbackTitle) {
+    var name = (appId || "").split(".").pop() || fallbackTitle || "Unknown";
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+
   function getWindowsForWorkspace(workspaceId) {
     var windowsInWs = [];
     for (var i = 0; i < windows.count; i++) {
