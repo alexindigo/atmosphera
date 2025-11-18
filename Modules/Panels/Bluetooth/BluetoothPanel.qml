@@ -238,10 +238,6 @@ SmartPanel {
               }
             }
           }
-
-          Item {
-            Layout.fillHeight: true
-          }
         }
       }
     }
