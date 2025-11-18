@@ -294,4 +294,67 @@ Singleton {
       "y": menuY
     };
   }
+
+  // Open widget settings dialog for a bar widget
+  // Parameters:
+  //   screen: The screen to show the dialog on
+  //   section: Section id ("left", "center", "right")
+  //   index: Widget index in section
+  //   widgetId: Widget type id (e.g., "Volume")
+  //   widgetData: Current widget settings object
+  function openWidgetSettings(screen, section, index, widgetId, widgetData) {
+    // Get the popup menu window to use as parent (avoids clipping issues with bar height)
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (!popupMenuWindow) {
+      Logger.e("BarService", "No popup menu window found for screen");
+      return;
+    }
+
+    var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml");
+
+    function instantiateAndOpen() {
+      // Use dialogParent (Item) instead of window directly for proper Popup anchoring
+      var dialog = component.createObject(popupMenuWindow.dialogParent, {
+                                            "widgetIndex": index,
+                                            "widgetData": widgetData,
+                                            "widgetId": widgetId,
+                                            "sectionId": section
+                                          });
+
+      if (dialog) {
+        dialog.updateWidgetSettings.connect((sec, idx, settings) => {
+                                              var widgets = Settings.data.bar.widgets[sec];
+                                              if (widgets && idx < widgets.length) {
+                                                widgets[idx] = Object.assign({}, widgets[idx], settings);
+                                                Settings.data.bar.widgets[sec] = widgets;
+                                                Settings.saveImmediate();
+                                              }
+                                            });
+        // Close the popup menu window when dialog closes
+        dialog.closed.connect(() => {
+                                popupMenuWindow.close();
+                                dialog.destroy();
+                              });
+        // Show the popup menu window and open the dialog
+        popupMenuWindow.open();
+        dialog.open();
+      } else {
+        Logger.e("BarService", "Failed to create widget settings dialog");
+      }
+    }
+
+    if (component.status === Component.Ready) {
+      instantiateAndOpen();
+    } else if (component.status === Component.Error) {
+      Logger.e("BarService", "Error loading widget settings dialog:", component.errorString());
+    } else {
+      component.statusChanged.connect(function () {
+        if (component.status === Component.Ready) {
+          instantiateAndOpen();
+        } else if (component.status === Component.Error) {
+          Logger.e("BarService", "Error loading widget settings dialog:", component.errorString());
+        }
+      });
+    }
+  }
 }

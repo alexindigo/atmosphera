@@ -87,6 +87,12 @@ PanelWindow {
     onClicked: root.close()
   }
 
-  // Content will be parented here by the popup
-  // (e.g., TrayMenu, NPopupContextMenu)
+  // Container for dialogs that need a full-screen Item parent (e.g., Qt Popup)
+  Item {
+    id: dialogContainer
+    anchors.fill: parent
+  }
+
+  // Expose the dialog container for external use
+  readonly property alias dialogParent: dialogContainer
 }
