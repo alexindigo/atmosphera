@@ -4,6 +4,7 @@ import QtQuick.Controls
 import qs.Commons
 import qs.Widgets
 import qs.Services.Keyboard
+import "../../../Helpers/TextFormatter.js" as TextFormatter
 
 Item {
   id: previewPanel
@@ -35,7 +36,7 @@ Item {
         } else {
           loadingFullContent = true;
           ClipboardService.decode(currentItem.clipboardId, function(content) {
-            fullContent = content;
+            fullContent = TextFormatter.wrapTextForDisplay(content);
             loadingFullContent = false;
           });
         }
@@ -116,6 +117,9 @@ Item {
               text: fullContent
               readOnly: true
               wrapMode: Text.Wrap
+              textFormat: TextArea.RichText // Enable HTML rendering
+              font.pointSize: Style.fontSizeM // Adjust font size for readability
+              color: Color.mOnSurface // Consistent text color
             }
           }
         }
