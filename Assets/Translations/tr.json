@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "Takvimi aç"
   },
+  "context-menu": {
+    "clear-history": "Geçmişi temizle",
+    "cycle-visualizer": "Döngü görselleştirici",
+    "disable-bluetooth": "Bluetooth'u kapat",
+    "disable-dnd": "Rahatsız Etmeyin'i Kapat",
+    "disable-wifi": "Wi-Fi'ı kapat",
+    "enable-bluetooth": "Bluetooth'u etkinleştir",
+    "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
+    "enable-wifi": "Wi-Fi'ı etkinleştir",
+    "next": "Sonraki",
+    "open-calendar": "Takvimi aç",
+    "open-display-settings": "Ekran ayarları",
+    "open-launcher": "Başlatıcıyı aç",
+    "open-mixer": "Ses mikseri",
+    "open-settings": "Ayarları aç",
+    "pause": "Duraklat",
+    "play": "Oyna",
+    "previous": "Önceki",
+    "toggle-mute": "Sesi kapat/aç",
+    "widget-settings": "Araç ayarları"
+  },
   "dock": {
     "menu": {
       "close": "Kapat",

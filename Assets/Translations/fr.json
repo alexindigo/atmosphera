@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "Ouvrir le calendrier"
   },
+  "context-menu": {
+    "clear-history": "Effacer l'historique",
+    "cycle-visualizer": "Visualiseur de cycle",
+    "disable-bluetooth": "Désactiver le Bluetooth",
+    "disable-dnd": "Désactiver le mode Ne pas déranger",
+    "disable-wifi": "Désactiver le Wi-Fi",
+    "enable-bluetooth": "Activer le Bluetooth",
+    "enable-dnd": "Activer le mode Ne pas déranger",
+    "enable-wifi": "Activer le Wi-Fi",
+    "next": "Suivant",
+    "open-calendar": "Ouvrir le calendrier",
+    "open-display-settings": "Paramètres d'affichage",
+    "open-launcher": "Ouvrir le lanceur",
+    "open-mixer": "Table de mixage audio",
+    "open-settings": "Ouvrir les paramètres",
+    "pause": "Pause",
+    "play": "Jouer",
+    "previous": "Précédent",
+    "toggle-mute": "Activer/désactiver le mode muet",
+    "widget-settings": "Paramètres du widget"
+  },
   "dock": {
     "menu": {
       "close": "Fermer",

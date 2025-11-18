@@ -360,16 +360,16 @@
     }
   },
   "battery": {
-    "charging": "Charging.",
-    "charging-rate": "Charging rate: {rate} W.",
-    "discharging": "Discharging.",
-    "discharging-rate": "Discharging rate: {rate} W.",
+    "charging": "Charging",
+    "charging-rate": "Charging rate: {rate} W",
+    "discharging": "Discharging",
+    "discharging-rate": "Discharging rate: {rate} W",
     "health": "Health: {percent}%",
-    "idle": "Idle.",
-    "no-battery-detected": "No battery detected.",
-    "plugged-in": "Plugged in.",
-    "time-left": "Time left: {time}.",
-    "time-until-full": "Time until full: {time}."
+    "idle": "Idle",
+    "no-battery-detected": "No battery detected",
+    "plugged-in": "Plugged in",
+    "time-left": "Time left: {time}",
+    "time-until-full": "Time until full: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -387,11 +387,6 @@
       "title": "Bluetooth"
     }
   },
-  "context-menu": {
-    "open-mixer": "Audio mixer",
-    "toggle-mute": "Toggle mute",
-    "widget-settings": "Widget settings"
-  },
   "calendar": {
     "panel": {
       "week": "Week"
@@ -402,6 +397,28 @@
   },
   "clock": {
     "tooltip": "Open calendar"
+  },
+  "context-menu": {
+    "clear-history": "Clear history",
+    "cycle-visualizer": "Cycle visualizer",
+    "disable-bluetooth": "Disable Bluetooth",
+    "disable-dnd": "Disable Do Not Disturb",
+    "disable-wifi": "Disable Wi-Fi",
+    "enable-bluetooth": "Enable Bluetooth",
+    "enable-dnd": "Enable Do Not Disturb",
+    "enable-wifi": "Enable Wi-Fi",
+    "next": "Next",
+    "open-calendar": "Open calendar",
+    "open-display-settings": "Display settings",
+    "open-launcher": "Open launcher",
+    "open-mixer": "Audio mixer",
+    "open-settings": "Open settings",
+    "pause": "Pause",
+    "play": "Play",
+    "previous": "Previous",
+    "random-wallpaper": "Random wallpaper",
+    "toggle-mute": "Toggle mute",
+    "widget-settings": "Widget settings"
   },
   "dock": {
     "menu": {
@@ -1965,39 +1982,39 @@
   "tooltips": {
     "add-widget": "Add widget",
     "bluetooth-devices": "Bluetooth devices",
-    "brightness-at": "Brightness: {brightness}%\nRight click for settings.\nScroll to modify brightness.",
+    "brightness-at": "Brightness: {brightness}%\nScroll to modify brightness",
     "cancel-timer": "Cancel timer",
     "clear-history": "Clear history",
     "click-to-start-recording": "Click to start recording",
     "click-to-stop-recording": "Click to stop recording",
     "close": "Close",
-    "connect-disconnect-devices": "Left click to connect. Right click to forget.",
+    "connect-disconnect-devices": "Left click to connect\nRight click to forget",
     "delete-notification": "Delete notification",
-    "disable-keep-awake": "Click to disable keep awake.\nScroll to adjust timeout.",
+    "disable-keep-awake": "Click to disable keep awake.\nScroll to adjust timeout",
     "do-not-disturb-disabled": "'Do not disturb' disabled",
     "do-not-disturb-enabled": "'Do not disturb' enabled",
-    "enable-keep-awake": "Click to enable keep awake.\nScroll to adjust timeout.",
+    "enable-keep-awake": "Click to enable keep awake.\nScroll to adjust timeout",
     "forget-network": "Forget network",
     "home": "Home",
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep awake",
     "keyboard-layout": "{layout} keyboard layout",
     "manage-wifi": "Manage Wi-Fi",
-    "microphone-volume-at": "Microphone volume at {volume}%\nLeft click for settings. Right click to toggle mute.\nScroll to modify volume.",
+    "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
     "move-to-center-section": "Move to center section",
     "move-to-left-section": "Move to left section",
     "move-to-right-section": "Move to right section",
     "next-media": "Next media",
     "next-month": "Next month",
-    "night-light-disabled": "Night light is disabled.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
-    "noctalia-performance-disabled": "Noctalia performance mode is disabled.\nLeft click to enable.",
-    "noctalia-performance-enabled": "Noctalia performance mode is enabled.\nLeft click to disable.",
+    "night-light-disabled": "Night light is disabled.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-forced": "Night light is forced.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-not-installed": "Night light is not available\nwlsunset is not installed",
+    "noctalia-performance-disabled": "Noctalia performance mode is disabled\nLeft click to enable",
+    "noctalia-performance-enabled": "Noctalia performance mode is enabled\nLeft click to disable",
     "open-control-center": "Open control center",
-    "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\".",
-    "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",
+    "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\"",
+    "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\"",
     "open-settings": "Open settings",
     "open-tray-dropdown": "Open tray dropdown",
     "open-wallpaper-selector": "Open wallpaper selector",
@@ -2020,8 +2037,8 @@
     "switch-to-dark-mode": "Switch to dark mode",
     "switch-to-light-mode": "Switch to light mode",
     "up": "Up",
-    "volume-at": "Output volume at {volume}%\nLeft click for settings. Right click to toggle mute.\nScroll to modify volume.",
-    "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper.",
+    "volume-at": "Output volume at {volume}%\nScroll to modify volume",
+    "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper",
     "widget-settings": "Widget settings"
   },
   "wallpaper": {

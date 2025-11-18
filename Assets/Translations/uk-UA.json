@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "Відкрити календар"
   },
+  "context-menu": {
+    "clear-history": "Очистити історію",
+    "cycle-visualizer": "Візуалізатор циклів",
+    "disable-bluetooth": "Вимкнути Bluetooth",
+    "disable-dnd": "Вимкнути режим \"Не турбувати\"",
+    "disable-wifi": "Вимкнути Wi-Fi",
+    "enable-bluetooth": "Увімкнути Bluetooth",
+    "enable-dnd": "Увімкнути режим \"Не турбувати\"",
+    "enable-wifi": "Увімкнути Wi-Fi",
+    "next": "Наступний",
+    "open-calendar": "Відкрити календар",
+    "open-display-settings": "Параметри дисплея",
+    "open-launcher": "Відкрити панель запуску",
+    "open-mixer": "Аудіомікшер",
+    "open-settings": "Відкрити налаштування",
+    "pause": "Пауза",
+    "play": "Грати",
+    "previous": "Попередній",
+    "toggle-mute": "Увімкнути/вимкнути звук",
+    "widget-settings": "Налаштування віджета"
+  },
   "dock": {
     "menu": {
       "close": "Закрити",

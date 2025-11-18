@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "Kalender openen"
   },
+  "context-menu": {
+    "clear-history": "Geschiedenis wissen",
+    "cycle-visualizer": "Cyclusvisualisatie",
+    "disable-bluetooth": "Bluetooth uitschakelen",
+    "disable-dnd": "Niet Storen uitschakelen",
+    "disable-wifi": "Wi-Fi uitschakelen",
+    "enable-bluetooth": "Bluetooth inschakelen",
+    "enable-dnd": "Niet Storen inschakelen",
+    "enable-wifi": "Wi-Fi inschakelen",
+    "next": "Volgende",
+    "open-calendar": "Open agenda",
+    "open-display-settings": "Beeldscherminstellingen",
+    "open-launcher": "Launcher openen",
+    "open-mixer": "Audiomixer",
+    "open-settings": "Instellingen openen",
+    "pause": "Pauze",
+    "play": "Spelen",
+    "previous": "Vorige",
+    "toggle-mute": "Dempen aan/uit",
+    "widget-settings": "Widgetinstellingen"
+  },
   "dock": {
     "menu": {
       "close": "Sluiten",

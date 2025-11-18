@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
@@ -84,6 +85,47 @@ Item {
     }
   }
 
+  function openExternalMixer() {
+    Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.toggle-mute"),
+        "action": "toggle-mute",
+        "icon": AudioService.inputMuted ? "microphone-off" : "microphone"
+      },
+      {
+        "label": I18n.tr("context-menu.open-mixer"),
+        "action": "open-mixer",
+        "icon": "adjustments"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "toggle-mute") {
+                     AudioService.setInputMuted(!AudioService.inputMuted);
+                   } else if (action === "open-mixer") {
+                     root.openExternalMixer();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   BarPill {
     id: pill
 
@@ -117,10 +159,13 @@ Item {
       PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      AudioService.setInputMuted(!AudioService.inputMuted);
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+        contextMenu.openAtItem(pill, pos.x, pos.y);
+        popupMenuWindow.showContextMenu(contextMenu);
+      }
     }
-    onMiddleClicked: {
-      Quickshell.execDetached(["pwvucontrol"]);
-    }
+    onMiddleClicked: root.openExternalMixer()
   }
 }

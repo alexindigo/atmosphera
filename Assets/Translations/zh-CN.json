@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "打开日历"
   },
+  "context-menu": {
+    "clear-history": "清除历史记录",
+    "cycle-visualizer": "周期可视化工具",
+    "disable-bluetooth": "禁用蓝牙",
+    "disable-dnd": "关闭勿扰模式",
+    "disable-wifi": "禁用Wi-Fi",
+    "enable-bluetooth": "启用蓝牙",
+    "enable-dnd": "启用勿扰模式",
+    "enable-wifi": "启用 Wi-Fi",
+    "next": "下一个",
+    "open-calendar": "打开日历",
+    "open-display-settings": "显示设置",
+    "open-launcher": "打开启动器",
+    "open-mixer": "音频调音台",
+    "open-settings": "打开设置",
+    "pause": "暂停",
+    "play": "玩",
+    "previous": "上一个",
+    "toggle-mute": "切换静音",
+    "widget-settings": "小部件设置"
+  },
   "dock": {
     "menu": {
       "close": "关闭",

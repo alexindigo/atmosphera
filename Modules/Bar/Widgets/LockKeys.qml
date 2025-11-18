@@ -1,16 +1,19 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
 import qs.Services.Keyboard
 import qs.Services.UI
 import qs.Widgets
 
-//import qs.Modules.Bar.Extras
 Rectangle {
   id: root
+
+  property ShellScreen screen
 
   property string widgetId: ""
   property string section: ""
@@ -46,6 +49,44 @@ Rectangle {
 
   radius: Style.radiusM
   color: Style.capsuleColor
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    onClicked: mouse => {
+                 if (mouse.button === Qt.RightButton) {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                     contextMenu.openAtItem(root, pos.x, pos.y);
+                     popupMenuWindow.showContextMenu(contextMenu);
+                   }
+                 }
+               }
+  }
 
   Item {
     id: layout

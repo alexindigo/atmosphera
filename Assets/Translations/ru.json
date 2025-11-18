@@ -398,6 +398,27 @@
   "clock": {
     "tooltip": "Открыть календарь"
   },
+  "context-menu": {
+    "clear-history": "Очистить историю",
+    "cycle-visualizer": "Визуализатор циклов",
+    "disable-bluetooth": "Отключить Bluetooth",
+    "disable-dnd": "Отключить режим \"Не беспокоить\"",
+    "disable-wifi": "Отключить Wi-Fi",
+    "enable-bluetooth": "Включить Bluetooth",
+    "enable-dnd": "Не беспокоить",
+    "enable-wifi": "Включить Wi-Fi",
+    "next": "Следующий",
+    "open-calendar": "Открыть календарь",
+    "open-display-settings": "Настройки экрана",
+    "open-launcher": "Открыть лаунчер",
+    "open-mixer": "Аудиомикшер",
+    "open-settings": "Открыть настройки",
+    "pause": "Пауза",
+    "play": "Играть",
+    "previous": "Предыдущий",
+    "toggle-mute": "Включить/выключить звук",
+    "widget-settings": "Настройки виджета"
+  },
   "dock": {
     "menu": {
       "close": "Закрыть",

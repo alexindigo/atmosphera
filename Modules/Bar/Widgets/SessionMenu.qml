@@ -1,7 +1,9 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.UI
 import qs.Widgets
 
@@ -55,5 +57,37 @@ NIconButton {
   colorFg: root.iconColor
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   onClicked: PanelService.getPanel("sessionMenuPanel", screen)?.toggle()
+  onRightClicked: {
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+      contextMenu.openAtItem(root, pos.x, pos.y);
+      popupMenuWindow.showContextMenu(contextMenu);
+    }
+  }
 }

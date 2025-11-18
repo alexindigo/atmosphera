@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
@@ -160,6 +161,58 @@ Item {
     font: titleText.font
     applyUiScale: false
     pointSize: Style.fontSizeS * scaling
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: {
+      var items = [];
+      if (hasActivePlayer && MediaService.canPlay) {
+        items.push({
+                     "label": MediaService.isPlaying ? I18n.tr("context-menu.pause") : I18n.tr("context-menu.play"),
+                     "action": "play-pause",
+                     "icon": MediaService.isPlaying ? "media-pause" : "media-play"
+                   });
+      }
+      if (hasActivePlayer && MediaService.canGoPrevious) {
+        items.push({
+                     "label": I18n.tr("context-menu.previous"),
+                     "action": "previous",
+                     "icon": "media-prev"
+                   });
+      }
+      if (hasActivePlayer && MediaService.canGoNext) {
+        items.push({
+                     "label": I18n.tr("context-menu.next"),
+                     "action": "next",
+                     "icon": "media-next"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "play-pause") {
+                     MediaService.playPause();
+                   } else if (action === "previous") {
+                     MediaService.previous();
+                   } else if (action === "next") {
+                     MediaService.next();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
   }
 
   Rectangle {
@@ -466,18 +519,24 @@ Item {
         cursorShape: hasActivePlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => {
-                     if (!hasActivePlayer || !MediaService.currentPlayer || !MediaService.canPlay) {
-                       return;
-                     }
-
                      if (mouse.button === Qt.LeftButton) {
+                       if (!hasActivePlayer || !MediaService.currentPlayer || !MediaService.canPlay) {
+                         return;
+                       }
                        MediaService.playPause();
-                     } else if (mouse.button == Qt.RightButton) {
-                       MediaService.next();
+                     } else if (mouse.button === Qt.RightButton) {
                        TooltipService.hide();
-                     } else if (mouse.button == Qt.MiddleButton) {
-                       MediaService.previous();
-                       TooltipService.hide();
+                       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                       if (popupMenuWindow) {
+                         const pos = BarService.getContextMenuPosition(mediaMini, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                         contextMenu.openAtItem(mediaMini, pos.x, pos.y);
+                         popupMenuWindow.showContextMenu(contextMenu);
+                       }
+                     } else if (mouse.button === Qt.MiddleButton) {
+                       if (hasActivePlayer && MediaService.canGoPrevious) {
+                         MediaService.previous();
+                         TooltipService.hide();
+                       }
                      }
                    }
 
