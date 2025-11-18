@@ -414,7 +414,8 @@ PopupWindow {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
-        width: root.maxWidth - (root.padding * 2)
+        width: Math.min(implicitWidth, root.maxWidth - (root.padding * 2))
+        richTextEnabled: true
       }
     }
   }

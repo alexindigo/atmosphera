@@ -17,6 +17,8 @@ Text {
     return fontScale;
   }
 
+  property bool richTextEnabled: false
+
   font.family: root.family
   font.weight: Style.fontWeightMedium
   font.pointSize: root.pointSize * fontScale
@@ -24,4 +26,6 @@ Text {
   elide: Text.ElideRight
   wrapMode: Text.NoWrap
   verticalAlignment: Text.AlignVCenter
+
+  textFormat: richTextEnabled ? Text.RichText : Text.PlainText
 }
