@@ -280,13 +280,9 @@ SmartPanel {
       width: root.previewPanelWidth
       height: Math.round(400 * Style.uiScaleRatio)
       x: ui.width + Style.marginM
-      y: Math.max(
-           Style.marginL, // Minimum y is the top margin of the content area
-           Math.min(
-             resultsList.mapToItem(ui, 0, (root.selectedIndex * (root.entryHeight + resultsList.spacing)) - resultsList.contentY).y,
-             ui.height - previewBox.height - Style.marginL // Maximum y, considering bottom margin
-           )
-         )
+      y: Math.max(Style.marginL // Minimum y is the top margin of the content area
+                  , Math.min(resultsList.mapToItem(ui, 0, (root.selectedIndex * (root.entryHeight + resultsList.spacing)) - resultsList.contentY).y, ui.height - previewBox.height - Style.marginL // Maximum y, considering bottom margin
+                             ))
       z: -1 // Draw behind main panel content if it ever overlaps
 
       opacity: visible ? 1.0 : 0.0

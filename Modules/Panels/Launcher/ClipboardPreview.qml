@@ -1,10 +1,10 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
-import qs.Commons
-import qs.Widgets
-import qs.Services.Keyboard
+import QtQuick.Layouts
 import "../../../Helpers/TextFormatter.js" as TextFormatter
+import qs.Commons
+import qs.Services.Keyboard
+import qs.Widgets
 
 Item {
   id: previewPanel
@@ -35,7 +35,7 @@ Item {
           }
         } else {
           loadingFullContent = true;
-          ClipboardService.decode(currentItem.clipboardId, function(content) {
+          ClipboardService.decode(currentItem.clipboardId, function (content) {
             fullContent = TextFormatter.wrapTextForDisplay(content);
             loadingFullContent = false;
           });
@@ -77,8 +77,6 @@ Item {
       anchors.fill: parent
       anchors.margins: Style.marginS
       spacing: Style.marginS
-
-
 
       Rectangle {
         Layout.fillWidth: true
