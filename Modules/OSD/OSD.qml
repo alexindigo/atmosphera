@@ -29,10 +29,13 @@ Variants {
     property real lastKnownVolume: -1
     property bool volumeInitialized: false
     property bool muteInitialized: false
+    property var lastKnownMuteState: null
 
     // Audio Input State
     property real lastKnownInputVolume: -1
     property bool inputInitialized: false
+    property bool inputMuteInitialized: false
+    property var lastKnownInputMuteState: null
 
     // Brightness State
     property real lastUpdatedBrightness: 0
@@ -110,9 +113,13 @@ Variants {
       if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
         const vol = AudioService.volume;
         if (vol !== undefined && !isNaN(vol)) {
-          volumeInitialized = true;  // Set flag FIRST
-          muteInitialized = true;    // Set flag FIRST
-          lastKnownVolume = vol;     // Then store value
+          volumeInitialized = true;
+          lastKnownVolume = vol;
+          const muted = AudioService.muted;
+          if (muted !== undefined) {
+            muteInitialized = true;
+            lastKnownMuteState = muted;
+          }
         }
       }
 
@@ -120,8 +127,13 @@ Variants {
       if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
         const inputVol = AudioService.inputVolume;
         if (inputVol !== undefined && !isNaN(inputVol)) {
-          inputInitialized = true;      // Set flag FIRST
-          lastKnownInputVolume = inputVol;  // Then store value
+          inputInitialized = true;
+          lastKnownInputVolume = inputVol;
+          const inputMuted = AudioService.inputMuted;
+          if (inputMuted !== undefined) {
+            inputMuteInitialized = true;
+            lastKnownInputMuteState = inputMuted;
+          }
         }
       }
     }
@@ -129,6 +141,7 @@ Variants {
     function resetOutputInit() {
       lastKnownVolume = -1;
       volumeInitialized = false;
+      lastKnownMuteState = null;
       muteInitialized = false;
       Qt.callLater(initializeAudioValues);
     }
@@ -136,6 +149,8 @@ Variants {
     function resetInputInit() {
       lastKnownInputVolume = -1;
       inputInitialized = false;
+      lastKnownInputMuteState = null;
+      inputMuteInitialized = false;
       Qt.callLater(initializeAudioValues);
     }
 
@@ -247,8 +262,14 @@ Variants {
           if (lastKnownVolume < 0)
             return;
         }
-        if (!muteInitialized)
+        if (!muteInitialized) {
+          lastKnownMuteState = AudioService.muted;
+          muteInitialized = true;
           return;
+        }
+        if (AudioService.muted === lastKnownMuteState)
+          return;
+        lastKnownMuteState = AudioService.muted;
         showOSD("volume");
       }
 
@@ -278,6 +299,14 @@ Variants {
         }
         if (!inputInitialized)
           return;
+        if (!inputMuteInitialized) {
+          lastKnownInputMuteState = AudioService.inputMuted;
+          inputMuteInitialized = true;
+          return;
+        }
+        if (AudioService.inputMuted === lastKnownInputMuteState)
+          return;
+        lastKnownInputMuteState = AudioService.inputMuted;
         showOSD("inputVolume");
       }
     }
@@ -298,7 +327,6 @@ Variants {
       onTriggered: {
         if (Pipewire.ready)
           initializeAudioValues();
-        muteInitialized = true;
         connectBrightnessMonitors();
       }
     }
