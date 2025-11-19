@@ -34,7 +34,7 @@ NBox {
     layer.smooth: true
     layer.effect: MultiEffect {
       maskEnabled: true
-      maskThresholdMin: 0.5
+      maskThresholdMin: 0.95
       maskSpreadAtMin: 0.0
       maskSource: ShaderEffectSource {
         sourceItem: Rectangle {
@@ -54,13 +54,20 @@ NBox {
       source: MediaService.trackArtUrl || wallpaper
       sourceSize: Qt.size(dim, dim)
       fillMode: Image.PreserveAspectCrop
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        blurEnabled: true
+        blurMax: 8
+        blur: 0.33
+      }
     }
 
     // Dark overlay for readability
     Rectangle {
       anchors.fill: parent
       color: Color.mSurface
-      opacity: 0.6
+      opacity: 0.65
       radius: Style.radiusM
     }
 
@@ -97,7 +104,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.75
+          opacity: 0.8
         }
       }
 
@@ -107,7 +114,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.75
+          opacity: 0.8
         }
       }
 
@@ -117,7 +124,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.75
+          opacity: 0.8
         }
       }
     }
@@ -223,15 +230,15 @@ NBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        // Exceptionaly we put shadow on text to ease readability
-        // Dividing offset by 2 to make it a bit more subtle.
+        // Exceptionaly we put shadow on text and controls to ease readability
         NDropShadow {
           anchors.fill: main
           source: main
           autoPaddingEnabled: true
-          shadowBlur: 0.5
-          shadowHorizontalOffset: Settings.data.general.shadowOffsetX * 0.5
-          shadowVerticalOffset: Settings.data.general.shadowOffsetY * 0.5
+          shadowBlur: 1.0
+          shadowOpacity: 0.9
+          shadowHorizontalOffset: 0
+          shadowVerticalOffset: 0
         }
 
         ColumnLayout {
@@ -265,7 +272,7 @@ NBox {
             NText {
               visible: MediaService.trackArtist !== ""
               text: MediaService.trackArtist
-              color: Color.mPrimary
+              color: Color.mSecondary
               pointSize: Style.fontSizeS
               elide: Text.ElideRight
               Layout.fillWidth: true
