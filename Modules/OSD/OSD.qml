@@ -110,9 +110,9 @@ Variants {
       if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
         const vol = AudioService.volume;
         if (vol !== undefined && !isNaN(vol)) {
-          lastKnownVolume = vol;
-          volumeInitialized = true;
-          muteInitialized = true;
+          volumeInitialized = true;  // Set flag FIRST
+          muteInitialized = true;    // Set flag FIRST
+          lastKnownVolume = vol;     // Then store value
         }
       }
 
@@ -120,8 +120,8 @@ Variants {
       if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
         const inputVol = AudioService.inputVolume;
         if (inputVol !== undefined && !isNaN(inputVol)) {
-          lastKnownInputVolume = inputVol;
-          inputInitialized = true;
+          inputInitialized = true;      // Set flag FIRST
+          lastKnownInputVolume = inputVol;  // Then store value
         }
       }
     }
