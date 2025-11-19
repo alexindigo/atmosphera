@@ -117,12 +117,20 @@ Item {
     oppositeDirection: BarService.getPillDirection(root)
     icon: AudioService.getOutputIcon()
     autoHide: false // Important to be false so we can hover as long as we want
-    text: Math.round(AudioService.volume * 100)
+    text: {
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const displayVolume = Math.min(maxVolume, AudioService.volume);
+      return Math.round(displayVolume * 100);
+    }
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     tooltipText: I18n.tr("tooltips.volume-at", {
-                           "volume": Math.round(AudioService.volume * 100)
+                           "volume": (() => {
+                             const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                             const displayVolume = Math.min(maxVolume, AudioService.volume);
+                             return Math.round(displayVolume * 100);
+                           })()
                          })
 
     onWheel: function (delta) {

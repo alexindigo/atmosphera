@@ -134,12 +134,20 @@ Item {
     icon: AudioService.getInputIcon()
     density: Settings.data.bar.density
     autoHide: false // Important to be false so we can hover as long as we want
-    text: Math.round(AudioService.inputVolume * 100)
+    text: {
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
+      return Math.round(displayVolume * 100);
+    }
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     tooltipText: I18n.tr("tooltips.microphone-volume-at", {
-                           "volume": Math.round(AudioService.inputVolume * 100)
+                           "volume": (() => {
+                             const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                             const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
+                             return Math.round(displayVolume * 100);
+                           })()
                          })
 
     onWheel: function (delta) {

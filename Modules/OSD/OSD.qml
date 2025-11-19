@@ -73,13 +73,27 @@ Variants {
     function getDisplayPercentage() {
       const value = getCurrentValue();
       const max = getMaxValue();
+      if ((currentOSDType === "volume" || currentOSDType === "inputVolume") && Settings.data.audio.volumeOverdrive) {
+        const pct = Math.round(value * 100);
+        return pct + "%";
+      }
       const pct = Math.round(Math.min(max, value) * 100);
       return pct + "%";
     }
 
     function getProgressColor() {
       const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      return isMutedState ? Color.mError : Color.mPrimary;
+      if (isMutedState) {
+        return Color.mError;
+      }
+      // When volumeOverdrive is enabled, show error color if volume is above 100%
+      if ((currentOSDType === "volume" || currentOSDType === "inputVolume") && Settings.data.audio.volumeOverdrive) {
+        const value = getCurrentValue();
+        if (value > 1.0) {
+          return Color.mError;
+        }
+      }
+      return Color.mPrimary;
     }
 
     function getIconColor() {
