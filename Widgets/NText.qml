@@ -6,6 +6,7 @@ import qs.Widgets
 Text {
   id: root
 
+  property bool richTextEnabled: false
   property string family: Settings.data.ui.fontDefault
   property real pointSize: Style.fontSizeM
   property bool applyUiScale: true
@@ -17,8 +18,6 @@ Text {
     return fontScale;
   }
 
-  property bool richTextEnabled: false
-
   font.family: root.family
   font.weight: Style.fontWeightMedium
   font.pointSize: root.pointSize * fontScale
@@ -27,5 +26,5 @@ Text {
   wrapMode: Text.NoWrap
   verticalAlignment: Text.AlignVCenter
 
-  textFormat: richTextEnabled ? Text.RichText : Text.PlainText
+  textFormat: richTextEnabled ? Text.RichText : Text.StyledText
 }
