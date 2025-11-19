@@ -810,15 +810,27 @@ Popup {
           model: availableSchemes
 
           Rectangle {
+            id: schemeItem
             Layout.fillWidth: true
             Layout.preferredHeight: 50 * Style.uiScaleRatio
             radius: Style.radiusS
             property string schemeName: modelData.name
-            color: root.getSchemeColor(schemeName, "mSurfaceVariant")
-            border.width: Style.borderS
-            border.color: Color.mOutline
+            color: root.getSchemeColor(schemeName, "mSurface")
+            border.width: Style.borderL
+            border.color: hoverHandler.hovered ? root.getSchemeColor(schemeName, "mPrimary") : Color.mOutline
+
+            HoverHandler {
+              id: hoverHandler
+            }
 
             Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.InOutCubic
+              }
+            }
+
+            Behavior on border.color {
               ColorAnimation {
                 duration: Style.animationFast
                 easing.type: Easing.InOutCubic
@@ -847,17 +859,10 @@ Popup {
               NText {
                 text: schemeRow.schemeName
                 pointSize: Style.fontSizeS
-                color: root.getSchemeColor(schemeRow.schemeName, "mOnSurface")
+                color: Color.mOnSurface
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 Layout.alignment: Qt.AlignVCenter
-
-                Behavior on color {
-                  ColorAnimation {
-                    duration: Style.animationFast
-                    easing.type: Easing.InOutCubic
-                  }
-                }
               }
 
               // Color swatches
