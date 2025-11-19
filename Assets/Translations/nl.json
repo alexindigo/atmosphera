@@ -1425,6 +1425,10 @@
           "description": "Kies je voorkeurseenheid voor temperatuur.",
           "label": "Weer"
         },
+        "show-effects": {
+          "description": "Toont extra visuele effecten (zoals regen, sneeuw of bliksem) op de weerkaart.",
+          "label": "Weerseffecten weergeven"
+        },
         "show-in-calendar": {
           "description": "Toon de dagelijkse weersverwachting direct in je kalenderview.",
           "label": "Weer in kalender weergeven"

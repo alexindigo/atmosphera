@@ -1425,6 +1425,10 @@
           "description": "选择您喜欢的温度单位。",
           "label": "天气"
         },
+        "show-effects": {
+          "description": "在天气卡片上显示额外的视觉效果（如雨、雪或闪电）。",
+          "label": "显示天气效果"
+        },
         "show-in-calendar": {
           "description": "直接在您的日历视图中显示每日天气预报。",
           "label": "在日历中显示天气"

@@ -1425,6 +1425,10 @@
           "description": "Tercih ettiğiniz sıcaklık birimini seçin.",
           "label": "Hava durumu"
         },
+        "show-effects": {
+          "description": "Hava durumu kartında ek görsel efektler (yağmur, kar veya şimşek gibi) gösterir.",
+          "label": "Hava efektlerini göster"
+        },
         "show-in-calendar": {
           "description": "Günlük hava durumu tahminini doğrudan takvim görünümünüzde gösterin.",
           "label": "Takvimde hava durumunu göster"
