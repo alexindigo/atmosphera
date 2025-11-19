@@ -7,7 +7,7 @@
     "monitors": [],
     "density": "default",
     "showCapsule": true,
-    "capsuleOpacity": 1.0,
+    "capsuleOpacity": 1,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
@@ -60,7 +60,7 @@
   },
   "general": {
     "avatarImage": "",
-    "dimmerOpacity": 0.8,
+    "dimmerOpacity": 0.6,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -336,8 +336,5 @@
     "enabled": false,
     "wallpaperChange": "",
     "darkModeChange": ""
-  },
-  "battery": {
-    "chargingMode": 0
   }
 }

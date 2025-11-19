@@ -230,7 +230,6 @@ NBox {
           source: main
           autoPaddingEnabled: true
           shadowBlur: 0.5
-          // shadowColor: "#00ff00"
           shadowHorizontalOffset: Settings.data.general.shadowOffsetX * 0.5
           shadowVerticalOffset: Settings.data.general.shadowOffsetY * 0.5
         }
