@@ -743,6 +743,11 @@
           "label": "Dispositivos de audio"
         }
       },
+      "external-mixer": {
+        "description": "Ingrese el comando o la ruta de la aplicación para ejecutar al activar la función de mezclador de audio externo.",
+        "label": "Comando de mezclador de audio externo",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Agrega palabras clave para los reproductores que deseas que el sistema ignore. Cada palabra clave debe estar en una línea nueva.",

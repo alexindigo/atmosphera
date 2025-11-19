@@ -86,7 +86,7 @@ Item {
   }
 
   function openExternalMixer() {
-    Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
+    Quickshell.execDetached(["sh", "-c", Settings.data.audio.externalMixer]);
   }
 
   NPopupContextMenu {

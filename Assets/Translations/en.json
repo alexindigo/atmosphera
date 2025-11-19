@@ -743,6 +743,11 @@
           "label": "Audio devices"
         }
       },
+      "external-mixer": {
+        "description": "Enter the command or application path to launch when activating the external audio mixer feature.",
+        "label": "External Audio Mixer Command",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Add keywords for players you want the system to ignore. Each keyword should be on a new line.",

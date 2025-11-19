@@ -743,6 +743,11 @@
           "label": "Périphériques audio"
         }
       },
+      "external-mixer": {
+        "description": "Entrez la commande ou le chemin d'accès de l'application à lancer lors de l'activation de la fonctionnalité de mixeur audio externe.",
+        "label": "Commande de mixeur audio externe",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Ajoutez des mots-clés pour les lecteurs que le système doit ignorer. Chaque mot-clé doit être sur une nouvelle ligne.",

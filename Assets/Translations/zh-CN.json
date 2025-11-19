@@ -743,6 +743,11 @@
           "label": "音频设备"
         }
       },
+      "external-mixer": {
+        "description": "输入激活外部音频混音器功能时要启动的命令或应用程序路径。",
+        "label": "外部音频混音器命令",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "添加您希望系统忽略的播放器关键词。每个关键词应单独占一行。",

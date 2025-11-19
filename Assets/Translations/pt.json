@@ -743,6 +743,11 @@
           "label": "Dispositivos de áudio"
         }
       },
+      "external-mixer": {
+        "description": "Insira o comando ou o caminho do aplicativo para iniciar ao ativar o recurso de mixer de áudio externo.",
+        "label": "Comando de Mixer de Áudio Externo",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Adicione palavras-chave para os reprodutores que você deseja que o sistema ignore. Cada palavra-chave deve estar em uma nova linha.",

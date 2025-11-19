@@ -743,6 +743,11 @@
           "label": "Ses cihazları"
         }
       },
+      "external-mixer": {
+        "description": "Harici ses mikseri özelliği etkinleştirilirken başlatılacak komutu veya uygulama yolunu girin.",
+        "label": "Harici Ses Mikseri Komutu",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Sistemin yoksaymasını istediğiniz oynatıcılar için anahtar kelimeler ekleyin. Her anahtar kelime ayrı bir satırda olmalıdır.",

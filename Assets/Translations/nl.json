@@ -743,6 +743,11 @@
           "label": "Audio-apparaten"
         }
       },
+      "external-mixer": {
+        "description": "Voer het commando of het applicatiepad in om te starten bij het activeren van de externe audiomixerfunctie.",
+        "label": "Extern audio mixer commando",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Voeg trefwoorden toe voor spelers die het systeem moet negeren. Elk trefwoord moet op een nieuwe regel staan.",

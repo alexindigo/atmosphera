@@ -10,11 +10,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  NHeader {
-    label: I18n.tr("settings.audio.volumes.section.label")
-    description: I18n.tr("settings.audio.volumes.section.description")
-  }
-
   property real localVolume: AudioService.volume
 
   Connections {
@@ -22,6 +17,11 @@ ColumnLayout {
     function onVolumeChanged() {
       localVolume = AudioService.volume;
     }
+  }
+
+  NHeader {
+    label: I18n.tr("settings.audio.volumes.section.label")
+    description: I18n.tr("settings.audio.volumes.section.description")
   }
 
   // Master Volume
@@ -139,6 +139,15 @@ ColumnLayout {
       checked: Settings.data.audio.volumeOverdrive
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
+  }
+
+  // External mixer command
+  NTextInput {
+    label: I18n.tr("settings.audio.external-mixer.label")
+    description: I18n.tr("settings.audio.external-mixer.description")
+    placeholderText: I18n.tr("settings.audio.external-mixer.placeholder")
+    text: Settings.data.audio.externalMixer
+    onTextChanged: Settings.data.audio.externalMixer = text
   }
 
   NDivider {
