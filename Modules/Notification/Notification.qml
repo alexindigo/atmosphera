@@ -248,7 +248,7 @@ Variants {
               }
             }
 
-            NDropShadows {
+            NDropShadow {
               anchors.fill: cardBackground
               source: cardBackground
               autoPaddingEnabled: true

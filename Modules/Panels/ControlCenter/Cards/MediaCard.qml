@@ -59,8 +59,8 @@ NBox {
     // Dark overlay for readability
     Rectangle {
       anchors.fill: parent
-      color: Color.mSurfaceVariant
-      opacity: 0.85
+      color: Color.mSurface
+      opacity: 0.6
       radius: Style.radiusM
     }
 
@@ -69,7 +69,7 @@ NBox {
       anchors.fill: parent
       color: Color.transparent
       border.color: Color.mOutline
-      border.width: 1
+      border.width: Style.borderS
       radius: Style.radiusM
     }
 
@@ -97,7 +97,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.5
+          opacity: 0.75
         }
       }
 
@@ -107,7 +107,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.5
+          opacity: 0.75
         }
       }
 
@@ -117,7 +117,7 @@ NBox {
           anchors.fill: parent
           values: CavaService.values
           fillColor: Color.mPrimary
-          opacity: 0.5
+          opacity: 0.75
         }
       }
     }
@@ -219,151 +219,170 @@ NBox {
       anchors.fill: parent
       active: root.hasActivePlayer
 
-      sourceComponent: ColumnLayout {
-        id: main
-        spacing: Style.marginS
+      sourceComponent: Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-        // Spacer to push content down
-        Item {
-          Layout.preferredHeight: Style.marginM
+        // Exceptionaly we put shadow on text to ease readability
+        // Dividing offset by 2 to make it a bit more subtle.
+        NDropShadow {
+          anchors.fill: main
+          source: main
+          autoPaddingEnabled: true
+          shadowBlur: 0.5
+          // shadowColor: "#00ff00"
+          shadowHorizontalOffset: Settings.data.general.shadowOffsetX * 0.5
+          shadowVerticalOffset: Settings.data.general.shadowOffsetY * 0.5
         }
 
-        // Metadata at the bottom left
         ColumnLayout {
-          Layout.fillWidth: true
-          Layout.alignment: Qt.AlignLeft
-          spacing: Style.marginXS
+          id: main
+          anchors.fill: parent
+          spacing: Style.marginS
 
-          NText {
-            visible: MediaService.trackTitle !== ""
-            text: MediaService.trackTitle
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            elide: Text.ElideRight
-            wrapMode: Text.Wrap
-            maximumLineCount: 2
+          // Spacer to push content down
+          Item {
+            Layout.preferredHeight: Style.marginM
+          }
+
+          // Metadata
+          ColumnLayout {
+            id: metadata
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            spacing: Style.marginXS
+
+            NText {
+              visible: MediaService.trackTitle !== ""
+              text: MediaService.trackTitle
+              pointSize: Style.fontSizeL
+              font.weight: Style.fontWeightBold
+              elide: Text.ElideRight
+              wrapMode: Text.Wrap
+              maximumLineCount: 2
+              Layout.fillWidth: true
+            }
+
+            NText {
+              visible: MediaService.trackArtist !== ""
+              text: MediaService.trackArtist
+              color: Color.mPrimary
+              pointSize: Style.fontSizeS
+              elide: Text.ElideRight
+              Layout.fillWidth: true
+            }
+
+            NText {
+              visible: MediaService.trackAlbum !== ""
+              text: MediaService.trackAlbum
+              color: Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeM
+              elide: Text.ElideRight
+              Layout.fillWidth: true
+            }
           }
 
-          NText {
-            visible: MediaService.trackArtist !== ""
-            text: MediaService.trackArtist
-            color: Color.mPrimary
-            pointSize: Style.fontSizeS
-            elide: Text.ElideRight
+          // Progress slider
+          Item {
+            id: progressWrapper
+            visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
             Layout.fillWidth: true
-          }
+            height: Style.baseWidgetSize * 0.5
 
-          NText {
-            visible: MediaService.trackAlbum !== ""
-            text: MediaService.trackAlbum
-            color: Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeM
-            elide: Text.ElideRight
-            Layout.fillWidth: true
-          }
-        }
+            property real localSeekRatio: -1
+            property real lastSentSeekRatio: -1
+            property real seekEpsilon: 0.01
+            property real progressRatio: {
+              if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+                return 0;
+              const r = MediaService.currentPosition / MediaService.trackLength;
+              if (isNaN(r) || !isFinite(r))
+                return 0;
+              return Math.max(0, Math.min(1, r));
+            }
+            property real effectiveRatio: (MediaService.isSeeking && localSeekRatio >= 0) ? Math.max(0, Math.min(1, localSeekRatio)) : progressRatio
 
-        // Progress slider
-        Item {
-          id: progressWrapper
-          visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
-          Layout.fillWidth: true
-          height: Style.baseWidgetSize * 0.5
-
-          property real localSeekRatio: -1
-          property real lastSentSeekRatio: -1
-          property real seekEpsilon: 0.01
-          property real progressRatio: {
-            if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
-              return 0;
-            const r = MediaService.currentPosition / MediaService.trackLength;
-            if (isNaN(r) || !isFinite(r))
-              return 0;
-            return Math.max(0, Math.min(1, r));
-          }
-          property real effectiveRatio: (MediaService.isSeeking && localSeekRatio >= 0) ? Math.max(0, Math.min(1, localSeekRatio)) : progressRatio
-
-          Timer {
-            id: seekDebounce
-            interval: 75
-            repeat: false
-            onTriggered: {
-              if (MediaService.isSeeking && progressWrapper.localSeekRatio >= 0) {
-                const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio));
-                if (progressWrapper.lastSentSeekRatio < 0 || Math.abs(next - progressWrapper.lastSentSeekRatio) >= progressWrapper.seekEpsilon) {
-                  MediaService.seekByRatio(next);
-                  progressWrapper.lastSentSeekRatio = next;
+            Timer {
+              id: seekDebounce
+              interval: 75
+              repeat: false
+              onTriggered: {
+                if (MediaService.isSeeking && progressWrapper.localSeekRatio >= 0) {
+                  const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio));
+                  if (progressWrapper.lastSentSeekRatio < 0 || Math.abs(next - progressWrapper.lastSentSeekRatio) >= progressWrapper.seekEpsilon) {
+                    MediaService.seekByRatio(next);
+                    progressWrapper.lastSentSeekRatio = next;
+                  }
                 }
               }
             }
-          }
 
-          NSlider {
-            id: progressSlider
-            anchors.fill: parent
-            from: 0
-            to: 1
-            stepSize: 0
-            snapAlways: false
-            enabled: MediaService.trackLength > 0 && MediaService.canSeek
-            heightRatio: 0.6
+            NSlider {
+              id: progressSlider
+              anchors.fill: parent
+              from: 0
+              to: 1
+              stepSize: 0
+              snapAlways: false
+              enabled: MediaService.trackLength > 0 && MediaService.canSeek
+              heightRatio: 0.6
 
-            onMoved: {
-              progressWrapper.localSeekRatio = value;
-              seekDebounce.restart();
-            }
-            onPressedChanged: {
-              if (pressed) {
-                MediaService.isSeeking = true;
+              onMoved: {
                 progressWrapper.localSeekRatio = value;
-                MediaService.seekByRatio(value);
-                progressWrapper.lastSentSeekRatio = value;
-              } else {
-                seekDebounce.stop();
-                MediaService.seekByRatio(value);
-                MediaService.isSeeking = false;
-                progressWrapper.localSeekRatio = -1;
-                progressWrapper.lastSentSeekRatio = -1;
+                seekDebounce.restart();
+              }
+              onPressedChanged: {
+                if (pressed) {
+                  MediaService.isSeeking = true;
+                  progressWrapper.localSeekRatio = value;
+                  MediaService.seekByRatio(value);
+                  progressWrapper.lastSentSeekRatio = value;
+                } else {
+                  seekDebounce.stop();
+                  MediaService.seekByRatio(value);
+                  MediaService.isSeeking = false;
+                  progressWrapper.localSeekRatio = -1;
+                  progressWrapper.lastSentSeekRatio = -1;
+                }
               }
             }
+
+            Binding {
+              target: progressSlider
+              property: "value"
+              value: progressWrapper.progressRatio
+              when: !MediaService.isSeeking
+            }
           }
 
-          Binding {
-            target: progressSlider
-            property: "value"
-            value: progressWrapper.progressRatio
-            when: !MediaService.isSeeking
-          }
-        }
-
-        // Spacer to push media controls down
-        Item {
-          Layout.preferredHeight: Style.marginL
-        }
-
-        // Media controls
-        RowLayout {
-          spacing: Style.marginS
-          Layout.fillWidth: true
-          Layout.alignment: Qt.AlignHCenter
-
-          NIconButton {
-            icon: "media-prev"
-            visible: MediaService.canGoPrevious
-            onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
+          // Spacer to push media controls down
+          Item {
+            Layout.preferredHeight: Style.marginL
           }
 
-          NIconButton {
-            icon: MediaService.isPlaying ? "media-pause" : "media-play"
-            visible: (MediaService.canPlay || MediaService.canPause)
-            onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
-          }
+          // Media controls
+          RowLayout {
+            spacing: Style.marginS
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
 
-          NIconButton {
-            icon: "media-next"
-            visible: MediaService.canGoNext
-            onClicked: MediaService.canGoNext ? MediaService.next() : {}
+            NIconButton {
+              icon: "media-prev"
+              visible: MediaService.canGoPrevious
+              onClicked: MediaService.canGoPrevious ? MediaService.previous() : {}
+            }
+
+            NIconButton {
+              icon: MediaService.isPlaying ? "media-pause" : "media-play"
+              visible: (MediaService.canPlay || MediaService.canPause)
+              onClicked: (MediaService.canPlay || MediaService.canPause) ? MediaService.playPause() : {}
+            }
+
+            NIconButton {
+              icon: "media-next"
+              visible: MediaService.canGoNext
+              onClicked: MediaService.canGoNext ? MediaService.next() : {}
+            }
           }
         }
       }

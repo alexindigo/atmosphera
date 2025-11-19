@@ -52,7 +52,7 @@ Item {
     }
   }
 
-  NDropShadows {
+  NDropShadow {
     anchors.fill: background
     source: background
     autoPaddingEnabled: true

@@ -148,7 +148,7 @@ Item {
     }
 
     // Apply shadow to the cached layer
-    NDropShadows {
+    NDropShadow {
       anchors.fill: parent
       source: backgroundsShape
     }

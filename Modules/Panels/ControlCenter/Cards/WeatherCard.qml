@@ -28,54 +28,61 @@ NBox {
     RowLayout {
       Layout.fillWidth: true
       spacing: Style.marginS
+
       Item {
-        Layout.preferredWidth: Style.marginS
-      }
-      NIcon {
-        Layout.alignment: Qt.AlignVCenter
-        icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
-        pointSize: Style.fontSizeXXXL * 1.75
-        color: Color.mPrimary
+        Layout.preferredWidth: Style.marginXXS
       }
 
-      ColumnLayout {
-        spacing: Style.marginXXS
-        NText {
-          text: {
-            // Ensure the name is not too long if one had to specify the country
-            const chunks = Settings.data.location.name.split(",");
-            return chunks[0];
-          }
-          pointSize: Style.fontSizeL
-          font.weight: Style.fontWeightBold
-          visible: showLocation
+      RowLayout {
+        spacing: Style.marginL
+        Layout.fillWidth: true
+
+        NIcon {
+          Layout.alignment: Qt.AlignVCenter
+          icon: weatherReady ? LocationService.weatherSymbolFromCode(LocationService.data.weather.current_weather.weathercode) : ""
+          pointSize: Style.fontSizeXXXL * 1.75
+          color: Color.mPrimary
         }
 
-        RowLayout {
+        ColumnLayout {
+          spacing: Style.marginXXS
           NText {
-            visible: weatherReady
             text: {
-              if (!weatherReady) {
-                return "";
-              }
-              var temp = LocationService.data.weather.current_weather.temperature;
-              var suffix = "C";
-              if (Settings.data.location.useFahrenheit) {
-                temp = LocationService.celsiusToFahrenheit(temp);
-                var suffix = "F";
-              }
-              temp = Math.round(temp);
-              return `${temp}°${suffix}`;
+              // Ensure the name is not too long if one had to specify the country
+              const chunks = Settings.data.location.name.split(",");
+              return chunks[0];
             }
-            pointSize: showLocation ? Style.fontSizeXL : Style.fontSizeXL * 1.6
+            pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
+            visible: showLocation
           }
 
-          NText {
-            text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
-            pointSize: Style.fontSizeXS
-            color: Color.mOnSurfaceVariant
-            visible: LocationService.data.weather && showLocation
+          RowLayout {
+            NText {
+              visible: weatherReady
+              text: {
+                if (!weatherReady) {
+                  return "";
+                }
+                var temp = LocationService.data.weather.current_weather.temperature;
+                var suffix = "C";
+                if (Settings.data.location.useFahrenheit) {
+                  temp = LocationService.celsiusToFahrenheit(temp);
+                  var suffix = "F";
+                }
+                temp = Math.round(temp);
+                return `${temp}°${suffix}`;
+              }
+              pointSize: showLocation ? Style.fontSizeXL : Style.fontSizeXL * 1.6
+              font.weight: Style.fontWeightBold
+            }
+
+            NText {
+              text: weatherReady ? `(${LocationService.data.weather.timezone_abbreviation})` : ""
+              pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+              visible: LocationService.data.weather && showLocation
+            }
           }
         }
       }
