@@ -1341,6 +1341,10 @@
           "description": "Acesse itens copiados anteriormente a partir do lançador.",
           "label": "Ativar histórico da área de transferência"
         },
+        "clip-preview": {
+          "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
+          "label": "Ativar pré-visualização da área de transferência"
+        },
         "custom-launch-prefix": {
           "description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd).",
           "label": "Prefixo de inicialização personalizado"
