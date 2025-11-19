@@ -1425,6 +1425,10 @@
           "description": "Choisissez votre unité de température préférée.",
           "label": "Météo"
         },
+        "show-effects": {
+          "description": "Affiche des effets visuels supplémentaires (comme la pluie, la neige ou la foudre) sur la carte météo.",
+          "label": "Afficher les effets météorologiques"
+        },
         "show-in-calendar": {
           "description": "Afficher les prévisions météo quotidiennes directement dans votre vue calendrier.",
           "label": "Afficher la météo dans le calendrier"

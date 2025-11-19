@@ -239,6 +239,7 @@ Singleton {
     property JsonObject location: JsonObject {
       property string name: defaultLocation
       property bool weatherEnabled: true
+      property bool weatherShowEffects: true
       property bool useFahrenheit: false
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false

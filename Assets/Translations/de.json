@@ -1425,6 +1425,10 @@
           "description": "Bevorzugte Temperatureinheit wählen.",
           "label": "Wetter"
         },
+        "show-effects": {
+          "description": "Zeigt zusätzliche visuelle Effekte (wie Regen, Schnee oder Blitze) auf der Wetterkarte an.",
+          "label": "Wettereffekte anzeigen"
+        },
         "show-in-calendar": {
           "description": "Zeige die tägliche Wettervorhersage direkt in deiner Kalenderansicht an.",
           "label": "Wetter im Kalender anzeigen"

@@ -1425,6 +1425,10 @@
           "description": "Choose your preferred temperature unit.",
           "label": "Weather"
         },
+        "show-effects": {
+          "description": "Shows additional visual effects (like rain, snow, or lightning) on the weather card.",
+          "label": "Display weather effects"
+        },
         "show-in-calendar": {
           "description": "Show the daily weather forecast directly in your calendar view.",
           "label": "Display weather in calendar"

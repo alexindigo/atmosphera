@@ -1425,6 +1425,10 @@
           "description": "Elige tu unidad de temperatura preferida.",
           "label": "Clima"
         },
+        "show-effects": {
+          "description": "Muestra efectos visuales adicionales (como lluvia, nieve o relámpagos) en la tarjeta del clima.",
+          "label": "Mostrar efectos climáticos"
+        },
         "show-in-calendar": {
           "description": "Muestra el pronóstico del tiempo diario directamente en la vista de tu calendario.",
           "label": "Mostrar el clima en el calendario"
