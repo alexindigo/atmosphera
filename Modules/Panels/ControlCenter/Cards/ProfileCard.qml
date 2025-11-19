@@ -40,7 +40,6 @@ NBox {
       NText {
         text: HostService.displayName
         font.weight: Style.fontWeightBold
-        font.capitalization: Font.Capitalize
       }
       NText {
         text: I18n.tr("system.uptime", {
