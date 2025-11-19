@@ -399,7 +399,9 @@
     "tooltip": "Abrir calendário"
   },
   "context-menu": {
+    "activate-app": "Ativar {app}",
     "clear-history": "Limpar histórico",
+    "close-app": "Fechar {app}",
     "cycle-visualizer": "Visualizador de ciclo",
     "disable-bluetooth": "Desativar Bluetooth",
     "disable-dnd": "Desativar o Não Perturbe",
@@ -416,6 +418,7 @@
     "pause": "Pausa",
     "play": "Jogar",
     "previous": "Anterior",
+    "random-wallpaper": "Papel de parede aleatório",
     "toggle-mute": "Alternar mudo",
     "widget-settings": "Configurações do widget"
   },
@@ -910,6 +913,41 @@
           "label": "Modo escuro"
         }
       },
+      "delete": {
+        "error": {
+          "description": "Falha ao excluir {scheme}",
+          "title": "Falha ao excluir"
+        },
+        "success": {
+          "description": "{scheme} excluído com sucesso",
+          "title": "Esquema de cores excluído"
+        }
+      },
+      "download": {
+        "button": "Baixar mais",
+        "delete": "Excluir",
+        "download": "Baixar",
+        "downloading": "Baixando...",
+        "empty": "Nenhum esquema de cores disponível",
+        "error": {
+          "api-error": "Erro da API: {status}",
+          "description": "Falha ao baixar {scheme}",
+          "download-failed": "Falha no download com código de saída: {code}",
+          "invalid-response": "Formato de resposta da API inválido",
+          "no-files": "Nenhum arquivo encontrado para o esquema",
+          "parse-failed": "Falha ao analisar a resposta da API: {error}",
+          "rate-limit": "Limite de taxa da API do GitHub excedido",
+          "title": "Falha no download"
+        },
+        "fetching": "Buscando esquemas de cores disponíveis...",
+        "installed": "Instalado",
+        "refresh": "Atualizar",
+        "success": {
+          "description": "{scheme} baixado com sucesso",
+          "title": "Esquema de cores baixado"
+        },
+        "title": "Baixar esquemas de cores"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Gera modelos Matugen (GTK, temas de terminal, etc.) ao usar esquemas de cores predefinidos.",
@@ -1001,41 +1039,6 @@
           "qt": {
             "description": "Escrever {filepath}"
           }
-        }
-      },
-      "download": {
-        "button": "Baixar mais",
-        "title": "Baixar esquemas de cores",
-        "fetching": "Buscando esquemas de cores disponíveis...",
-        "empty": "Nenhum esquema de cores disponível",
-        "refresh": "Atualizar",
-        "download": "Baixar",
-        "downloading": "Baixando...",
-        "delete": "Excluir",
-        "installed": "Instalado",
-        "success": {
-          "title": "Esquema de cores baixado",
-          "description": "{scheme} baixado com sucesso"
-        },
-        "error": {
-          "title": "Falha no download",
-          "description": "Falha ao baixar {scheme}",
-          "invalid-response": "Formato de resposta da API inválido",
-          "parse-failed": "Falha ao analisar a resposta da API: {error}",
-          "rate-limit": "Limite de taxa da API do GitHub excedido",
-          "api-error": "Erro da API: {status}",
-          "no-files": "Nenhum arquivo encontrado para o esquema",
-          "download-failed": "Falha no download com código de saída: {code}"
-        }
-      },
-      "delete": {
-        "success": {
-          "title": "Esquema de cores excluído",
-          "description": "{scheme} excluído com sucesso"
-        },
-        "error": {
-          "title": "Falha ao excluir",
-          "description": "Falha ao excluir {scheme}"
         }
       },
       "title": "Esquema de cores"

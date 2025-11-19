@@ -399,7 +399,9 @@
     "tooltip": "Kalender öffnen"
   },
   "context-menu": {
+    "activate-app": "{app} aktivieren",
     "clear-history": "Verlauf löschen",
+    "close-app": "{app} schließen",
     "cycle-visualizer": "Zyklus-Visualisierer",
     "disable-bluetooth": "Bluetooth deaktivieren",
     "disable-dnd": "Bitte nicht stören deaktivieren",
@@ -416,6 +418,7 @@
     "pause": "Pause",
     "play": "Spielen",
     "previous": "Vorherige",
+    "random-wallpaper": "Zufälliges Hintergrundbild",
     "toggle-mute": "Stummschaltung umschalten",
     "widget-settings": "Widget-Einstellungen"
   },
@@ -910,6 +913,41 @@
           "label": "Dunkler Modus"
         }
       },
+      "delete": {
+        "error": {
+          "description": "Fehler beim Löschen von {scheme}",
+          "title": "Löschen fehlgeschlagen"
+        },
+        "success": {
+          "description": "{scheme} wurde erfolgreich gelöscht",
+          "title": "Farbschema gelöscht"
+        }
+      },
+      "download": {
+        "button": "Mehr herunterladen",
+        "delete": "Löschen",
+        "download": "Herunterladen",
+        "downloading": "Wird heruntergeladen...",
+        "empty": "Keine Farbschemata verfügbar",
+        "error": {
+          "api-error": "API-Fehler: {status}",
+          "description": "Fehler beim Herunterladen von {scheme}",
+          "download-failed": "Download fehlgeschlagen mit Exit-Code: {code}",
+          "invalid-response": "Ungültiges API-Antwortformat",
+          "no-files": "Keine Dateien für Schema gefunden",
+          "parse-failed": "Fehler beim Parsen der API-Antwort: {error}",
+          "rate-limit": "GitHub API-Ratenlimit überschritten",
+          "title": "Download fehlgeschlagen"
+        },
+        "fetching": "Verfügbare Farbschemata werden abgerufen...",
+        "installed": "Installiert",
+        "refresh": "Aktualisieren",
+        "success": {
+          "description": "{scheme} wurde erfolgreich heruntergeladen",
+          "title": "Farbschema heruntergeladen"
+        },
+        "title": "Farbschemata herunterladen"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Generiert Matugen-Templates (GTK, Terminal-Themes, etc.) bei der Verwendung vordefinierter Farbschemata.",
@@ -1001,41 +1039,6 @@
           "qt": {
             "description": "Schreibt {filepath}"
           }
-        }
-      },
-      "download": {
-        "button": "Mehr herunterladen",
-        "title": "Farbschemata herunterladen",
-        "fetching": "Verfügbare Farbschemata werden abgerufen...",
-        "empty": "Keine Farbschemata verfügbar",
-        "refresh": "Aktualisieren",
-        "download": "Herunterladen",
-        "downloading": "Wird heruntergeladen...",
-        "delete": "Löschen",
-        "installed": "Installiert",
-        "success": {
-          "title": "Farbschema heruntergeladen",
-          "description": "{scheme} wurde erfolgreich heruntergeladen"
-        },
-        "error": {
-          "title": "Download fehlgeschlagen",
-          "description": "Fehler beim Herunterladen von {scheme}",
-          "invalid-response": "Ungültiges API-Antwortformat",
-          "parse-failed": "Fehler beim Parsen der API-Antwort: {error}",
-          "rate-limit": "GitHub API-Ratenlimit überschritten",
-          "api-error": "API-Fehler: {status}",
-          "no-files": "Keine Dateien für Schema gefunden",
-          "download-failed": "Download fehlgeschlagen mit Exit-Code: {code}"
-        }
-      },
-      "delete": {
-        "success": {
-          "title": "Farbschema gelöscht",
-          "description": "{scheme} wurde erfolgreich gelöscht"
-        },
-        "error": {
-          "title": "Löschen fehlgeschlagen",
-          "description": "Fehler beim Löschen von {scheme}"
         }
       },
       "title": "Farbschema"

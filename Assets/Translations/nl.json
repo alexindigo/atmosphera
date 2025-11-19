@@ -399,7 +399,9 @@
     "tooltip": "Kalender openen"
   },
   "context-menu": {
+    "activate-app": "Activeer {app}",
     "clear-history": "Geschiedenis wissen",
+    "close-app": "Sluit {app}",
     "cycle-visualizer": "Cyclusvisualisatie",
     "disable-bluetooth": "Bluetooth uitschakelen",
     "disable-dnd": "Niet Storen uitschakelen",
@@ -416,6 +418,7 @@
     "pause": "Pauze",
     "play": "Spelen",
     "previous": "Vorige",
+    "random-wallpaper": "Willekeurige achtergrond",
     "toggle-mute": "Dempen aan/uit",
     "widget-settings": "Widgetinstellingen"
   },
@@ -910,6 +913,41 @@
           "label": "Donkere modus"
         }
       },
+      "delete": {
+        "error": {
+          "description": "Verwijderen van {scheme} mislukt",
+          "title": "Verwijderen mislukt"
+        },
+        "success": {
+          "description": "{scheme} succesvol verwijderd",
+          "title": "Kleurenschema verwijderd"
+        }
+      },
+      "download": {
+        "button": "Meer downloaden",
+        "delete": "Verwijderen",
+        "download": "Downloaden",
+        "downloading": "Downloaden...",
+        "empty": "Geen kleurenschema's beschikbaar",
+        "error": {
+          "api-error": "API-fout: {status}",
+          "description": "Download van {scheme} mislukt",
+          "download-failed": "Download mislukt met afsluitcode: {code}",
+          "invalid-response": "Ongeldig API-antwoordformaat",
+          "no-files": "Geen bestanden gevonden voor schema",
+          "parse-failed": "Fout bij parseren van API-antwoord: {error}",
+          "rate-limit": "GitHub API-snelheidslimiet overschreden",
+          "title": "Download mislukt"
+        },
+        "fetching": "Beschikbare kleurenschema's ophalen...",
+        "installed": "Geïnstalleerd",
+        "refresh": "Vernieuwen",
+        "success": {
+          "description": "{scheme} succesvol gedownload",
+          "title": "Kleurenschema gedownload"
+        },
+        "title": "Kleurenschema's downloaden"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Genereer Matugen-sjablonen (GTK, terminalthema's, enz.) bij gebruik van vooraf gedefinieerde kleurenschema's.",
@@ -1001,41 +1039,6 @@
           "qt": {
             "description": "Schrijf {filepath}"
           }
-        }
-      },
-      "download": {
-        "button": "Meer downloaden",
-        "title": "Kleurenschema's downloaden",
-        "fetching": "Beschikbare kleurenschema's ophalen...",
-        "empty": "Geen kleurenschema's beschikbaar",
-        "refresh": "Vernieuwen",
-        "download": "Downloaden",
-        "downloading": "Downloaden...",
-        "delete": "Verwijderen",
-        "installed": "Geïnstalleerd",
-        "success": {
-          "title": "Kleurenschema gedownload",
-          "description": "{scheme} succesvol gedownload"
-        },
-        "error": {
-          "title": "Download mislukt",
-          "description": "Download van {scheme} mislukt",
-          "invalid-response": "Ongeldig API-antwoordformaat",
-          "parse-failed": "Fout bij parseren van API-antwoord: {error}",
-          "rate-limit": "GitHub API-snelheidslimiet overschreden",
-          "api-error": "API-fout: {status}",
-          "no-files": "Geen bestanden gevonden voor schema",
-          "download-failed": "Download mislukt met afsluitcode: {code}"
-        }
-      },
-      "delete": {
-        "success": {
-          "title": "Kleurenschema verwijderd",
-          "description": "{scheme} succesvol verwijderd"
-        },
-        "error": {
-          "title": "Verwijderen mislukt",
-          "description": "Verwijderen van {scheme} mislukt"
         }
       },
       "title": "Kleurschema"

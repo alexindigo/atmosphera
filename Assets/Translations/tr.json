@@ -399,7 +399,9 @@
     "tooltip": "Takvimi aç"
   },
   "context-menu": {
+    "activate-app": "{app}'i etkinleştir",
     "clear-history": "Geçmişi temizle",
+    "close-app": "{app}'i kapat",
     "cycle-visualizer": "Döngü görselleştirici",
     "disable-bluetooth": "Bluetooth'u kapat",
     "disable-dnd": "Rahatsız Etmeyin'i Kapat",
@@ -416,6 +418,7 @@
     "pause": "Duraklat",
     "play": "Oyna",
     "previous": "Önceki",
+    "random-wallpaper": "Rastgele duvar kağıdı",
     "toggle-mute": "Sesi kapat/aç",
     "widget-settings": "Araç ayarları"
   },
@@ -910,6 +913,41 @@
           "label": "Koyu mod"
         }
       },
+      "delete": {
+        "error": {
+          "description": "{scheme} silinemedi",
+          "title": "Silme başarısız"
+        },
+        "success": {
+          "description": "{scheme} başarıyla silindi",
+          "title": "Renk şeması silindi"
+        }
+      },
+      "download": {
+        "button": "Daha fazla indir",
+        "delete": "Sil",
+        "download": "İndir",
+        "downloading": "İndiriliyor...",
+        "empty": "Mevcut renk şeması yok",
+        "error": {
+          "api-error": "API hatası: {status}",
+          "description": "{scheme} indirilemedi",
+          "download-failed": "İndirme başarısız, çıkış kodu: {code}",
+          "invalid-response": "Geçersiz API yanıt formatı",
+          "no-files": "Şema için dosya bulunamadı",
+          "parse-failed": "API yanıtı ayrıştırılamadı: {error}",
+          "rate-limit": "GitHub API hız sınırı aşıldı",
+          "title": "İndirme başarısız"
+        },
+        "fetching": "Mevcut renk şemaları alınıyor...",
+        "installed": "Yüklü",
+        "refresh": "Yenile",
+        "success": {
+          "description": "{scheme} başarıyla indirildi",
+          "title": "Renk şeması indirildi"
+        },
+        "title": "Renk şemalarını indir"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Önceden tanımlanmış renk şemaları kullanırken Matugen şablonları (GTK, terminal temaları vb.) oluşturun.",
@@ -1001,41 +1039,6 @@
           "qt": {
             "description": "{filepath} dosyasına yaz"
           }
-        }
-      },
-      "download": {
-        "button": "Daha fazla indir",
-        "title": "Renk şemalarını indir",
-        "fetching": "Mevcut renk şemaları alınıyor...",
-        "empty": "Mevcut renk şeması yok",
-        "refresh": "Yenile",
-        "download": "İndir",
-        "downloading": "İndiriliyor...",
-        "delete": "Sil",
-        "installed": "Yüklü",
-        "success": {
-          "title": "Renk şeması indirildi",
-          "description": "{scheme} başarıyla indirildi"
-        },
-        "error": {
-          "title": "İndirme başarısız",
-          "description": "{scheme} indirilemedi",
-          "invalid-response": "Geçersiz API yanıt formatı",
-          "parse-failed": "API yanıtı ayrıştırılamadı: {error}",
-          "rate-limit": "GitHub API hız sınırı aşıldı",
-          "api-error": "API hatası: {status}",
-          "no-files": "Şema için dosya bulunamadı",
-          "download-failed": "İndirme başarısız, çıkış kodu: {code}"
-        }
-      },
-      "delete": {
-        "success": {
-          "title": "Renk şeması silindi",
-          "description": "{scheme} başarıyla silindi"
-        },
-        "error": {
-          "title": "Silme başarısız",
-          "description": "{scheme} silinemedi"
         }
       },
       "title": "Renk şeması"

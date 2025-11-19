@@ -913,6 +913,41 @@
           "label": "Dark mode"
         }
       },
+      "delete": {
+        "error": {
+          "description": "Failed to delete {scheme}",
+          "title": "Delete Failed"
+        },
+        "success": {
+          "description": "Successfully deleted {scheme}",
+          "title": "Color Scheme Deleted"
+        }
+      },
+      "download": {
+        "button": "Download more",
+        "delete": "Delete",
+        "download": "Download",
+        "downloading": "Downloading...",
+        "empty": "No color schemes available",
+        "error": {
+          "api-error": "API error: {status}",
+          "description": "Failed to download {scheme}",
+          "download-failed": "Download failed with exit code: {code}",
+          "invalid-response": "Invalid API response format",
+          "no-files": "No files found for scheme",
+          "parse-failed": "Failed to parse API response: {error}",
+          "rate-limit": "GitHub API rate limit exceeded",
+          "title": "Download Failed"
+        },
+        "fetching": "Fetching available color schemes...",
+        "installed": "Installed",
+        "refresh": "Refresh",
+        "success": {
+          "description": "Successfully downloaded {scheme}",
+          "title": "Color Scheme Downloaded"
+        },
+        "title": "Download Color Schemes"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Generate Matugen templates (GTK, terminal themes, etc.) when using predefined color schemes.",
@@ -921,41 +956,6 @@
         "section": {
           "description": "Choose from a collection of predefined color schemes.",
           "label": "Predefined color schemes"
-        }
-      },
-      "download": {
-        "button": "Download more",
-        "title": "Download Color Schemes",
-        "fetching": "Fetching available color schemes...",
-        "empty": "No color schemes available",
-        "refresh": "Refresh",
-        "download": "Download",
-        "downloading": "Downloading...",
-        "delete": "Delete",
-        "installed": "Installed",
-        "success": {
-          "title": "Color Scheme Downloaded",
-          "description": "Successfully downloaded {scheme}"
-        },
-        "error": {
-          "title": "Download Failed",
-          "description": "Failed to download {scheme}",
-          "invalid-response": "Invalid API response format",
-          "parse-failed": "Failed to parse API response: {error}",
-          "rate-limit": "GitHub API rate limit exceeded",
-          "api-error": "API error: {status}",
-          "no-files": "No files found for scheme",
-          "download-failed": "Download failed with exit code: {code}"
-        }
-      },
-      "delete": {
-        "success": {
-          "title": "Color Scheme Deleted",
-          "description": "Successfully deleted {scheme}"
-        },
-        "error": {
-          "title": "Delete Failed",
-          "description": "Failed to delete {scheme}"
         }
       },
       "templates": {
