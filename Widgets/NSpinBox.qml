@@ -88,7 +88,7 @@ RowLayout {
     radius: height * 0.5
     color: Color.mSurfaceVariant
     border.color: (root.hovering || decreaseArea.containsMouse || increaseArea.containsMouse) ? Color.mHover : Color.mOutline
-    border.width: 1
+    border.width: Style.borderS
 
     Behavior on border.color {
       ColorAnimation {

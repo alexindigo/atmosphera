@@ -229,7 +229,7 @@ Singleton {
     displayScales = scales;
     saveDisplayScalesToCache();
     displayScalesChanged();
-    Logger.i("CompositorService", "Display scales updated");
+    Logger.d("CompositorService", "Display scales updated");
   }
 
   // Save display scales to cache

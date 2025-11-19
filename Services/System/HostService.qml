@@ -105,7 +105,7 @@ Singleton {
           return l ? l.split("=")[1].replace(/"/g, "") : "";
         };
         root.osPretty = val("PRETTY_NAME") || val("NAME");
-        Logger.i("HostService", root.osPretty);
+        Logger.i("HostService", "Detected", root.osPretty);
 
         const osId = (val("ID") || "").toLowerCase();
         root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos");
@@ -126,10 +126,10 @@ Singleton {
       const p = String(stdout.text || "").trim();
       if (code === 0 && p) {
         root.osLogo = `file://${p}`;
-        Logger.i("HostService", "found", root.osLogo);
+        Logger.d("HostService", "Found", root.osLogo);
       } else {
         root.osLogo = "";
-        Logger.w("HostService", "none found");
+        Logger.w("HostService", "None logo found");
       }
     }
     stdout: StdioCollector {}

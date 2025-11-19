@@ -250,15 +250,10 @@ Item {
     const htmlRegex = /<\/?[a-zA-Z][\s\S]*>/;
 
     if (htmlRegex.test(str)) {
-        return str;
+      return str;
     }
 
-    const escaped = str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    const escaped = str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
     const withBreaks = escaped.replace(/\r\n|\r|\n/g, "<br/>");
 

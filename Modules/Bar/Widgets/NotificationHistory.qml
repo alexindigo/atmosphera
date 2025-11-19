@@ -123,7 +123,7 @@ NIconButton {
       radius: height / 2
       color: Color.mError
       border.color: Color.mSurface
-      border.width: 1
+      border.width: Style.borderS
       visible: count > 0 || !hideWhenZero
     }
   }
