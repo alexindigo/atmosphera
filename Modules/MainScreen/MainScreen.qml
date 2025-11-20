@@ -12,6 +12,7 @@ import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Bluetooth
 import qs.Modules.Panels.Calendar
+import qs.Modules.Panels.Changelog
 import qs.Modules.Panels.ControlCenter
 import qs.Modules.Panels.Launcher
 import qs.Modules.Panels.NotificationHistory
@@ -33,6 +34,7 @@ PanelWindow {
   readonly property alias audioPanel: audioPanel
   readonly property alias bluetoothPanel: bluetoothPanel
   readonly property alias calendarPanel: calendarPanel
+  readonly property alias changelogPanel: changelogPanel
   readonly property alias controlCenterPanel: controlCenterPanel
   readonly property alias launcherPanel: launcherPanel
   readonly property alias notificationHistoryPanel: notificationHistoryPanel
@@ -47,6 +49,7 @@ PanelWindow {
   readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
   readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
   readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
+  readonly property var changelogPanelPlaceholder: changelogPanel.panelPlaceholder
   readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelPlaceholder
   readonly property var launcherPanelPlaceholder: launcherPanel.panelPlaceholder
   readonly property var notificationHistoryPanelPlaceholder: notificationHistoryPanel.panelPlaceholder
@@ -171,6 +174,12 @@ PanelWindow {
     ControlCenterPanel {
       id: controlCenterPanel
       objectName: "controlCenterPanel-" + (root.screen?.name || "unknown")
+      screen: root.screen
+    }
+
+    ChangelogPanel {
+      id: changelogPanel
+      objectName: "changelogPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
     }
 

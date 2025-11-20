@@ -12,11 +12,15 @@ Singleton {
   property string githubDataFile: Quickshell.env("NOCTALIA_GITHUB_FILE") || (Settings.cacheDir + "github.json")
   property int githubUpdateFrequency: 60 * 60 // 1 hour expressed in seconds
   property bool isFetchingData: false
+  property bool isReleasesFetching: false
   readonly property alias data: adapter // Used to access via GitHubService.data.xxx.yyy
 
   // Public properties for easy access
   property string latestVersion: I18n.tr("system.unknown-version")
   property var contributors: []
+  property string releaseNotes: ""
+  property var releases: []
+  property string releaseFetchError: ""
 
   FileView {
     id: githubDataFileView
@@ -44,6 +48,8 @@ Singleton {
 
       property string version: I18n.tr("system.unknown-version")
       property var contributors: []
+      property string releaseNotes: ""
+      property var releases: []
       property real timestamp: 0
     }
   }
@@ -51,18 +57,32 @@ Singleton {
   // --------------------------------
   function loadFromCache() {
     const now = Time.timestamp;
+    var needsRefetch = false;
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
-      Logger.d("GitHub", "Cache expired or missing, fetching new data");
-      fetchFromGitHub();
-      return;
+      needsRefetch = true;
+      Logger.d("GitHub", "Cache expired or missing, scheduling fetch");
+    } else {
+      Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
     }
-    Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
 
     if (data.version) {
       root.latestVersion = data.version;
     }
     if (data.contributors) {
       root.contributors = data.contributors;
+    }
+    if (data.releaseNotes) {
+      root.releaseNotes = data.releaseNotes;
+    }
+    if (data.releases && data.releases.length > 0) {
+      root.releases = data.releases;
+    } else {
+      Logger.d("GitHub", "Cached releases missing, scheduling fetch");
+      needsRefetch = true;
+    }
+
+    if (needsRefetch) {
+      fetchFromGitHub();
     }
   }
 
@@ -76,13 +96,14 @@ Singleton {
     isFetchingData = true;
     versionProcess.running = true;
     contributorsProcess.running = true;
+    fetchAllReleases();
   }
 
   // --------------------------------
   function saveData() {
     data.timestamp = Time.timestamp;
     Logger.d("GitHub", "Saving data to cache file:", githubDataFile);
-    Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length);
+    Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length, "notes length:", data.releaseNotes ? data.releaseNotes.length : 0, "release count:", data.releases ? data.releases.length : 0);
 
     // Ensure cache directory exists
     Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
@@ -98,10 +119,19 @@ Singleton {
   function resetCache() {
     data.version = I18n.tr("system.unknown-version");
     data.contributors = [];
+    data.releaseNotes = "";
+    data.releases = [];
     data.timestamp = 0;
 
     // Try to fetch immediately
     fetchFromGitHub();
+  }
+
+  function clearReleaseCache() {
+    Logger.d("GitHub", "Clearing cached release data");
+    data.releases = [];
+    root.releases = [];
+    githubDataFileView.writeAdapter();
   }
 
   Process {
@@ -120,8 +150,16 @@ Singleton {
               root.data.version = version;
               root.latestVersion = version;
               Logger.d("GitHub", "Latest version fetched from GitHub:", version);
+            } else if (data.message) {
+              Logger.w("GitHub", "Latest release fetch warning:", data.message);
+              handleRateLimitError(data.message);
             } else {
               Logger.w("GitHub", "No tag_name in GitHub response");
+            }
+
+            if (data.body) {
+              root.data.releaseNotes = data.body;
+              root.releaseNotes = root.data.releaseNotes;
             }
           } else {
             Logger.w("GitHub", "Empty response from GitHub API");
@@ -170,11 +208,92 @@ Singleton {
   }
 
   // --------------------------------
+  function fetchAllReleases(page, accumulator) {
+    if (isReleasesFetching && page === undefined) {
+      return;
+    }
+
+    const perPage = 100;
+    var currentPage = page || 1;
+    var releasesAccumulator = accumulator || [];
+    isReleasesFetching = true;
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status >= 200 && request.status < 300) {
+          try {
+            const responseText = request.responseText || "";
+            const parsed = responseText ? JSON.parse(responseText) : [];
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const mapped = parsed.map(rel => ({
+                                      "version": rel.tag_name || "",
+                                      "createdAt": rel.published_at || rel.created_at || "",
+                                      "body": rel.body || ""
+                                    })).filter(rel => rel.version !== "");
+              releasesAccumulator = releasesAccumulator.concat(mapped);
+
+              if (parsed.length === perPage) {
+                fetchAllReleases(currentPage + 1, releasesAccumulator);
+                return;
+              }
+            }
+            finalizeReleaseFetch(releasesAccumulator);
+          } catch (error) {
+            Logger.e("GitHub", "Failed to parse releases:", error);
+            finalizeReleaseFetch([]);
+          }
+        } else {
+          if (request.status === 403) {
+            handleRateLimitError();
+          }
+          Logger.e("GitHub", "Failed to fetch releases, status:", request.status);
+          finalizeReleaseFetch([]);
+        }
+      }
+    };
+
+    const url = `https://api.github.com/repos/noctalia-dev/noctalia-shell/releases?per_page=${perPage}&page=${currentPage}`;
+    request.open("GET", url);
+    request.send();
+  }
+
+  function finalizeReleaseFetch(releasesList) {
+    isReleasesFetching = false;
+
+    if (releasesList && releasesList.length > 0) {
+      releasesList.sort(function (a, b) {
+        const dateA = a.createdAt ? Date.parse(a.createdAt) : 0;
+        const dateB = b.createdAt ? Date.parse(b.createdAt) : 0;
+        return dateB - dateA;
+      });
+      root.data.releases = releasesList;
+      root.releases = releasesList;
+      releaseFetchError = "";
+      Logger.d("GitHub", "Fetched releases:", releasesList.length);
+    } else {
+      root.data.releases = [];
+      root.releases = [];
+      if (!releaseFetchError) {
+        Logger.w("GitHub", "No releases fetched");
+      }
+    }
+
+    checkAndSaveData();
+  }
+
+  // --------------------------------
   function checkAndSaveData() {
-    // Only save when both processes are finished
-    if (!versionProcess.running && !contributorsProcess.running) {
+    // Only save when all processes are finished
+    if (!versionProcess.running && !contributorsProcess.running && !isReleasesFetching) {
       root.isFetchingData = false;
       root.saveData();
     }
+  }
+
+  function handleRateLimitError(message) {
+    const limitMessage = message && message.length > 0 ? message : "API rate limit exceeded";
+    Logger.w("GitHub", "Rate limit warning:", limitMessage);
+    releaseFetchError = I18n.tr("changelog.error.rate-limit");
   }
 }

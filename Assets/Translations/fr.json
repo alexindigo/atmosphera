@@ -395,6 +395,32 @@
       "loading": "Chargement de la météo…"
     }
   },
+  "changelog": {
+    "panel": {
+      "title": "Quoi de neuf dans {version}",
+      "subtitle": {
+        "fresh": "Merci d’avoir installé Noctalia ! Voici ce que contient cette version.",
+        "updated": "Mise à jour depuis {previousVersion}"
+      },
+      "version": {
+        "new-user": "Nouvelle installation"
+      },
+      "highlight-title": "Points importants",
+      "empty": "Les notes de version ne sont pas encore disponibles.",
+      "section": {
+        "version": "Version {version}",
+        "released": "Publié le {date}"
+      },
+      "buttons": {
+        "discord": "Rejoindre notre Discord",
+        "feedback": "Envoyer un retour",
+        "dismiss": "Ok"
+      }
+    },
+    "error": {
+      "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes."
+    }
+  },
   "clock": {
     "tooltip": "Ouvrir le calendrier"
   },

@@ -30,6 +30,7 @@ import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
 import qs.Services.UI
+import qs.Services.Noctalia
 
 ShellRoot {
   id: shellRoot
@@ -80,6 +81,8 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         FontService.init();
+        UpdateService.init();
+        UpdateService.showLatestChangelog();
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
