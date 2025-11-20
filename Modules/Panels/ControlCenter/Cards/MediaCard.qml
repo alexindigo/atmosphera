@@ -213,7 +213,7 @@ NBox {
     // No media player detected - centered disc icon
     NIcon {
       anchors.centerIn: parent
-      visible: !root.hasActivePlayer
+      visible: !root.hasActivePlayer && CavaService.isIdle
       icon: "disc"
       pointSize: Style.fontSizeXXXL * 3
       color: Color.mOnSurfaceVariant
