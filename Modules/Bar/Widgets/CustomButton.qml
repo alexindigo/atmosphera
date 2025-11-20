@@ -102,6 +102,19 @@ Item {
   property string _dynamicIcon: ""
   property string _dynamicTooltip: ""
 
+  // Maximum length for text display before scrolling
+  readonly property int maxTextLength: 8
+  readonly property int _staticDuration: 6  // How many cycles to stay static at start/end
+
+  // Encapsulated state for scrolling text implementation
+  property var _scrollState: {
+    "originalText": "",
+    "needsScrolling": false,
+    "offset": 0,
+    "phase": 0, // 0=static start, 1=scrolling, 2=static end
+    "phaseCounter": 0
+  }
+
   // Periodically run the text command (if set)
   Timer {
     id: refreshTimer
@@ -118,6 +131,54 @@ Item {
     interval: 1000
     running: shouldShowText && textStream && !textProc.running
     onTriggered: root.runTextCommand()
+  }
+
+  // Timer for scrolling text display
+  Timer {
+    id: scrollTimer
+    interval: 300
+    repeat: true
+    running: false
+    onTriggered: {
+      if (_scrollState.needsScrolling && _scrollState.originalText.length > maxTextLength) {
+        // Traditional marquee with pause at beginning and end
+        if (_scrollState.phase === 0) {  // Static at beginning
+          _dynamicText = _scrollState.originalText.substring(0, Math.min(maxTextLength, _scrollState.originalText.length));
+          _scrollState.phaseCounter++;
+          if (_scrollState.phaseCounter >= _staticDuration) {
+            _scrollState.phaseCounter = 0;
+            _scrollState.phase = 1;  // Move to scrolling
+          }
+        } else if (_scrollState.phase === 1) {  // Scrolling
+          _scrollState.offset++;
+          var start = _scrollState.offset;
+          var end = start + maxTextLength;
+
+          if (start >= _scrollState.originalText.length - maxTextLength) {
+            // Reached or passed the end, ensure we show the last part
+            var textEnd = _scrollState.originalText.length;
+            var textStart = Math.max(0, textEnd - maxTextLength);
+            _dynamicText = _scrollState.originalText.substring(textStart, textEnd);
+            _scrollState.phase = 2;  // Move to static end phase
+            _scrollState.phaseCounter = 0;
+          } else {
+            _dynamicText = _scrollState.originalText.substring(start, end);
+          }
+        } else if (_scrollState.phase === 2) {  // Static at end
+          // Ensure end text is displayed correctly
+          var textEnd = _scrollState.originalText.length;
+          var textStart = Math.max(0, textEnd - maxTextLength);
+          _dynamicText = _scrollState.originalText.substring(textStart, textEnd);
+          _scrollState.phaseCounter++;
+          if (_scrollState.phaseCounter >= _staticDuration) {
+            // Do NOT loop back to start, just stop scrolling
+            scrollTimer.stop();
+          }
+        }
+      } else {
+        scrollTimer.stop();
+      }
+    }
   }
 
   SplitParser {
@@ -162,16 +223,33 @@ Item {
         let tooltip = parsed.tooltip || "";
 
         if (checkCollapse(text)) {
+          _scrollState.originalText = "";
           _dynamicText = "";
           _dynamicIcon = "";
           _dynamicTooltip = "";
+          _scrollState.needsScrolling = false;
+          _scrollState.phase = 0;
+          _scrollState.phaseCounter = 0;
           return;
         }
 
-        _dynamicText = text;
+        _scrollState.originalText = text;
+        _scrollState.needsScrolling = text.length > maxTextLength;
+        if (_scrollState.needsScrolling) {
+          // Start with the beginning of the text
+          _dynamicText = text.substring(0, maxTextLength);
+          _scrollState.phase = 0;  // Start at phase 0 (static beginning)
+          _scrollState.phaseCounter = 0;
+          _scrollState.offset = 0;
+          scrollTimer.start();  // Start the scrolling timer
+        } else {
+          _dynamicText = text;
+          scrollTimer.stop();
+        }
         _dynamicIcon = icon;
 
         _dynamicTooltip = toHtml(tooltip);
+        _scrollState.offset = 0;
         return;
       } catch (e) {
         Logger.w("CustomButton", `Failed to parse JSON. Content: "${lineToParse}"`);
@@ -179,15 +257,32 @@ Item {
     }
 
     if (checkCollapse(contentStr)) {
+      _scrollState.originalText = "";
       _dynamicText = "";
       _dynamicIcon = "";
       _dynamicTooltip = "";
+      _scrollState.needsScrolling = false;
+      _scrollState.phase = 0;
+      _scrollState.phaseCounter = 0;
       return;
     }
 
-    _dynamicText = contentStr;
+    _scrollState.originalText = contentStr;
+    _scrollState.needsScrolling = contentStr.length > maxTextLength;
+    if (_scrollState.needsScrolling) {
+      // Start with the beginning of the text
+      _dynamicText = contentStr.substring(0, maxTextLength);
+      _scrollState.phase = 0;  // Start at phase 0 (static beginning)
+      _scrollState.phaseCounter = 0;
+      _scrollState.offset = 0;
+      scrollTimer.start();  // Start the scrolling timer
+    } else {
+      _dynamicText = contentStr;
+      scrollTimer.stop();
+    }
     _dynamicIcon = "";
     _dynamicTooltip = toHtml(contentStr);
+    _scrollState.offset = 0;
   }
 
   function checkCollapse(text) {
