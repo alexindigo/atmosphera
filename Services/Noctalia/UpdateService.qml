@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Services.Noctalia
 import qs.Services.UI
@@ -13,6 +14,7 @@ Singleton {
   property string baseVersion: "3.1.1"
   property bool isDevelopment: true
   property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
+  property string changelogStateFile: Quickshell.env("NOCTALIA_CHANGELOG_STATE_FILE") || (Settings.cacheDir + "changelog-state.json")
 
   // Changelog properties
   property bool initialized: false
@@ -28,6 +30,14 @@ Singleton {
   property bool popupScheduled: false
   property string feedbackUrl: Quickshell.env("NOCTALIA_CHANGELOG_FEEDBACK_URL") || ""
   property string fetchError: ""
+  property string changelogLastSeenVersion: ""
+  property bool changelogStateLoaded: false
+  property bool pendingShowRequest: false
+  
+  // Fix for FileView race condition
+  property bool saveInProgress: false
+  property bool pendingSave: false
+  property int saveDebounceTimer: 0
 
   signal popupQueued(string fromVersion, string toVersion)
 
@@ -60,6 +70,39 @@ Singleton {
     function onReleaseFetchErrorChanged() {
       fetchError = GitHubService ? GitHubService.releaseFetchError : "";
     }
+  }
+
+  FileView {
+    id: changelogStateFileView
+    path: root.changelogStateFile
+    printErrors: false
+    onLoaded: loadChangelogState()
+    onLoadFailed: error => {
+      if (error === 2) {
+        // File doesn't exist, create it
+        debouncedSaveChangelogState();
+      } else {
+        Logger.e("UpdateService", "Failed to load changelog state file:", error);
+      }
+      changelogStateLoaded = true;
+      if (pendingShowRequest) {
+        pendingShowRequest = false;
+        Qt.callLater(root.showLatestChangelog);
+      }
+    }
+
+    JsonAdapter {
+      id: changelogStateAdapter
+      property string lastSeenVersion: ""
+    }
+  }
+
+  // Debounce timer to prevent rapid successive saves
+  Timer {
+    id: saveDebouncer
+    interval: 300
+    repeat: false
+    onTriggered: executeSave()
   }
 
   function handleChangelogRequest() {
@@ -301,7 +344,12 @@ Singleton {
     if (!currentVersion)
       return;
 
-    const lastSeen = Settings.data.changelog.lastSeenVersion || "";
+    if (!changelogStateLoaded) {
+      pendingShowRequest = true;
+      return;
+    }
+
+    const lastSeen = changelogLastSeenVersion || "";
     if (lastSeen === currentVersion)
       return;
 
@@ -315,5 +363,82 @@ Singleton {
     changelogPending = false;
     changelogFromVersion = "";
     changelogToVersion = "";
+  }
+
+  function markChangelogSeen(version) {
+    if (!version)
+      return;
+    changelogLastSeenVersion = version;
+    debouncedSaveChangelogState();
+  }
+
+  function loadChangelogState() {
+    try {
+      changelogLastSeenVersion = changelogStateAdapter.lastSeenVersion || "";
+      if (!changelogLastSeenVersion && Settings.data && Settings.data.changelog && Settings.data.changelog.lastSeenVersion) {
+        changelogLastSeenVersion = Settings.data.changelog.lastSeenVersion;
+        debouncedSaveChangelogState();
+        Logger.i("UpdateService", "Migrated changelog lastSeenVersion from settings to cache");
+      }
+    } catch (error) {
+      Logger.e("UpdateService", "Failed to load changelog state:", error);
+    }
+    changelogStateLoaded = true;
+    if (pendingShowRequest) {
+      pendingShowRequest = false;
+      Qt.callLater(root.showLatestChangelog);
+    }
+  }
+
+  function debouncedSaveChangelogState() {
+    // Queue a save and restart the debounce timer
+    pendingSave = true;
+    saveDebouncer.restart();
+  }
+
+  function executeSave() {
+    if (!pendingSave)
+      return;
+
+    // Prevent concurrent saves
+    if (saveInProgress) {
+      // Retry after a short delay
+      saveDebouncer.start();
+      return;
+    }
+
+    pendingSave = false;
+    saveInProgress = true;
+
+    try {
+      changelogStateAdapter.lastSeenVersion = changelogLastSeenVersion || "";
+      
+      // Ensure cache directory exists
+      Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
+      
+      // Small delay to ensure directory creation completes
+      Qt.callLater(() => {
+        try {
+          changelogStateFileView.writeAdapter();
+          saveInProgress = false;
+          
+          // Check if another save was queued while we were saving
+          if (pendingSave) {
+            Qt.callLater(executeSave);
+          }
+        } catch (writeError) {
+          Logger.e("UpdateService", "Failed to write changelog state:", writeError);
+          saveInProgress = false;
+        }
+      });
+    } catch (error) {
+      Logger.e("UpdateService", "Failed to save changelog state:", error);
+      saveInProgress = false;
+    }
+  }
+
+  function saveChangelogState() {
+    // Immediate save (backward compatibility)
+    debouncedSaveChangelogState();
   }
 }

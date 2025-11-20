@@ -245,7 +245,7 @@ SmartPanel {
       GitHubService.clearReleaseCache();
     }
     if (UpdateService && UpdateService.changelogCurrentVersion) {
-      Settings.data.changelog.lastSeenVersion = UpdateService.changelogCurrentVersion;
+      UpdateService.markChangelogSeen(UpdateService.changelogCurrentVersion);
     }
   }
 
