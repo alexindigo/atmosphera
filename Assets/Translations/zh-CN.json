@@ -436,6 +436,8 @@
     "enable-dnd": "启用勿扰模式",
     "enable-wifi": "启用 Wi-Fi",
     "next": "下一首",
+    "disconnect-vpn": "断开 {name}",
+    "connect-vpn": "连接 {name}",
     "open-calendar": "打开日历",
     "open-display-settings": "显示设置",
     "open-launcher": "打开启动器",
@@ -2053,6 +2055,10 @@
       "disabled": "已禁用",
       "disconnected": "已断开与 '{ssid}' 的连接",
       "enabled": "已启用"
+    },
+    "vpn": {
+      "connected": "已连接到“{name}”",
+      "disconnected": "已断开与“{name}”的连接"
     }
   },
   "tooltips": {
@@ -2076,6 +2082,7 @@
     "keep-awake": "保持唤醒",
     "keyboard-layout": "{layout} 键盘布局",
     "manage-wifi": "管理 Wi-Fi",
+    "manage-vpn": "管理 VPN 连接",
     "microphone-volume-at": "麦克风音量 {volume}%\n左键点击进入设置。右键点击切换静音。\n滚动滚轮调节音量。",
     "move-to-center-section": "移动到中央部分",
     "move-to-left-section": "移动到左侧部分",

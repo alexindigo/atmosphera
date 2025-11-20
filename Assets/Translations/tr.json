@@ -435,6 +435,8 @@
     "enable-bluetooth": "Bluetooth'u etkinleştir",
     "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
     "enable-wifi": "Wi-Fi'ı etkinleştir",
+    "connect-vpn": "{name} bağlantısına bağlan",
+    "disconnect-vpn": "{name} bağlantısını kes",
     "next": "Sonraki",
     "open-calendar": "Takvimi aç",
     "open-display-settings": "Ekran ayarları",
@@ -2053,6 +2055,10 @@
       "disabled": "Devre dışı",
       "disconnected": "'{ssid}' bağlantısı kesildi",
       "enabled": "Etkin"
+    },
+    "vpn": {
+      "connected": "'{name}' ile bağlantı kuruldu",
+      "disconnected": "'{name}' bağlantısı kesildi"
     }
   },
   "tooltips": {
@@ -2076,6 +2082,7 @@
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
     "manage-wifi": "Wi-Fi yönet",
+    "manage-vpn": "VPN bağlantılarını yönet",
     "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
     "move-to-center-section": "Orta bölüme taşı",
     "move-to-left-section": "Sol bölüme taşı",

@@ -435,6 +435,8 @@
     "enable-bluetooth": "Включить Bluetooth",
     "enable-dnd": "Не беспокоить",
     "enable-wifi": "Включить Wi-Fi",
+    "connect-vpn": "Подключиться к {name}",
+    "disconnect-vpn": "Отключить {name}",
     "next": "Следующий",
     "open-calendar": "Открыть календарь",
     "open-display-settings": "Настройки экрана",
@@ -2053,6 +2055,10 @@
       "disabled": "Отключен",
       "disconnected": "Отключено от '{ssid}'",
       "enabled": "Включен"
+    },
+    "vpn": {
+      "connected": "Подключено к '{name}'",
+      "disconnected": "Отключено от '{name}'"
     }
   },
   "tooltips": {
@@ -2076,6 +2082,7 @@
     "keep-awake": "Не засыпать",
     "keyboard-layout": "Раскладка клавиатуры {layout}",
     "manage-wifi": "Управление Wi-Fi",
+    "manage-vpn": "Управлять VPN-подключениями",
     "microphone-volume-at": "Громкость микрофона {volume}%\nЛевый клик для настроек. Правый клик для переключения заглушения.\nПрокрутка для изменения громкости.",
     "move-to-center-section": "Переместить в центральную секцию",
     "move-to-left-section": "Переместить в левую секцию",
