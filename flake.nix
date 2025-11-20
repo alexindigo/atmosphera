@@ -3,24 +3,21 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
     self,
     nixpkgs,
-    systems,
     ...
   }: let
-    eachSystem = nixpkgs.lib.genAttrs (import systems);
+    eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+    pkgsFor = eachSystem (system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default]);
   in {
-    formatter = eachSystem (system: nixpkgs.legacyPackages.${system}.alejandra);
+    formatter = eachSystem (system: pkgsFor.${system}.alejandra);
 
     packages = eachSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default];
-      in {
-        default = pkgs.noctalia-shell;
+      system: {
+        default = pkgsFor.${system}.noctalia-shell;
       }
     );
 
@@ -42,10 +39,8 @@
     };
 
     devShells = eachSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        default = pkgs.callPackage ./nix/shell.nix {};
+      system: {
+        default = pkgsFor.${system}.callPackage ./nix/shell.nix {};
       }
     );
 
@@ -58,9 +53,6 @@
       programs.noctalia-shell.package =
         lib.mkDefault
         self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      programs.noctalia-shell.app2unit.package =
-        lib.mkDefault
-        nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.app2unit;
     };
 
     nixosModules.default = {
