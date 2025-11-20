@@ -89,6 +89,7 @@ in {
 
     app2unit.package = lib.mkOption {
       type = lib.types.package;
+      default = pkgs.app2unit;
       description = ''
         The app2unit package to use when appLauncher.useApp2Unit is enabled.
       '';
@@ -96,9 +97,7 @@ in {
   };
 
   config = let
-    restart = ''
-      ${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true
-    '';
+    restart = "${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true";
     useApp2Unit = cfg.settings.appLauncher.useApp2Unit or false;
   in
     lib.mkIf cfg.enable {

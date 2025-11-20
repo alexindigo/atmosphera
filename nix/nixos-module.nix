@@ -24,7 +24,7 @@ in {
   config = lib.mkIf cfg.enable {
     systemd.user.services.noctalia-shell = {
       description = "Noctalia Shell - Wayland desktop shell";
-      documentation = ["https://github.com/noctalia-dev/noctalia-shell"];
+      documentation = ["https://docs.noctalia.dev/docs"];
       after = [cfg.target];
       partOf = [cfg.target];
       wantedBy = [cfg.target];
@@ -34,17 +34,9 @@ in {
         PATH = lib.mkForce null;
       };
 
-      unitConfig = {
-        StartLimitIntervalSec = 60;
-        StartLimitBurst = 3;
-      };
-
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/noctalia-shell";
+        ExecStart = lib.getExe cfg.package;
         Restart = "on-failure";
-        RestartSec = 3;
-        TimeoutStartSec = 10;
-        TimeoutStopSec = 5;
         Environment = [
           "NOCTALIA_SETTINGS_FALLBACK=%h/.config/noctalia/gui-settings.json"
         ];
