@@ -49,10 +49,9 @@ Item {
   // Sizing logic for vertical bars
   readonly property int buttonSize: Style.capsuleHeight
   readonly property int pillHeight: buttonSize
-  readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
-  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + pillPaddingVertical * 2)) : buttonSize
-  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + pillPaddingVertical * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
+  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginM * 2)) : buttonSize
+  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + Style.marginM * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + Style.marginM * 2))
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -130,7 +129,7 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: rotateText ? Math.round(iconCircle.height / 4) : getVerticalCenterOffset()
+      anchors.verticalCenterOffset: openDownward ? Style.marginXXS : -Style.marginXXS
       rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
@@ -143,11 +142,8 @@ Item {
       visible: revealed
 
       function getVerticalCenterOffset() {
-        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75);
-        if (forceOpen) {
-          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS;
-        }
-        return offset;
+        // A small, symmetrical offset to push the text slightly away from the icon's edge.
+        return openDownward ? Style.marginXS : -Style.marginXS;
       }
     }
     Behavior on width {
