@@ -377,6 +377,8 @@ Loader {
                   backgroundColor: Color.mSurface
                   clockColor: Color.mOnSurface
                   secondHandColor: Color.mPrimary
+                  hoursFontSize: Style.fontSizeL
+                  minutesFontSize: Style.fontSizeL
                 }
               }
             }
