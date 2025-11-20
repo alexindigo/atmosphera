@@ -552,13 +552,73 @@ Loader {
 
             // Bottom container with weather, password input and controls
             Rectangle {
-              width: 750
+              id: bottomContainer
               height: Settings.data.general.compactLockScreen ? 120 : 220
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
               anchors.bottomMargin: 100
               radius: Style.radiusL
               color: Color.mSurface
+
+              // Measure text widths to determine minimum button width (for container width calculation)
+              Item {
+                id: buttonRowTextMeasurer
+                visible: false
+                property real iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
+                property real fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
+                property real spacing: 6
+                property real padding: 18 // Approximate horizontal padding per button
+
+                // Measure all button text widths
+                Text {
+                  id: logoutText
+                  text: I18n.tr("session-menu.logout")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                  font.weight: Font.Medium
+                }
+                Text {
+                  id: suspendText
+                  text: I18n.tr("session-menu.suspend")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                  font.weight: Font.Medium
+                }
+                Text {
+                  id: hibernateText
+                  text: I18n.tr("session-menu.hibernate")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                  font.weight: Font.Medium
+                }
+                Text {
+                  id: rebootText
+                  text: I18n.tr("session-menu.reboot")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                  font.weight: Font.Medium
+                }
+                Text {
+                  id: shutdownText
+                  text: I18n.tr("session-menu.shutdown")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                  font.weight: Font.Medium
+                }
+
+                // Calculate maximum width needed
+                property real maxTextWidth: Math.max(
+                  logoutText.implicitWidth,
+                  Math.max(suspendText.implicitWidth,
+                  Math.max(hibernateText.implicitWidth,
+                  Math.max(rebootText.implicitWidth,
+                  shutdownText.implicitWidth))))
+                property real minButtonWidth: maxTextWidth + iconSize + spacing + padding
+              }
+
+              // Calculate minimum width based on button requirements
+              // Button row needs: margins + 5 buttons + 4 spacings + margins
+              // Plus ColumnLayout margins (14 on each side = 28 total)
+              // Add extra buffer to ensure password input has proper padding
+              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 
+                ? (5 * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM)
+                : 750
+              width: Math.max(750, minButtonRowWidth)
 
               ColumnLayout {
                 anchors.fill: parent
@@ -1093,6 +1153,7 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     radius: Settings.data.general.compactLockScreen ? 18 : 24
                     color: logoutButtonArea.containsMouse ? Color.mHover : "transparent"
@@ -1141,6 +1202,7 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     radius: Settings.data.general.compactLockScreen ? 18 : 24
                     color: suspendButtonArea.containsMouse ? Color.mHover : "transparent"
@@ -1189,6 +1251,7 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     radius: Settings.data.general.compactLockScreen ? 18 : 24
                     color: hibernateButtonArea.containsMouse ? Color.mHover : "transparent"
@@ -1237,6 +1300,7 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     radius: Settings.data.general.compactLockScreen ? 18 : 24
                     color: rebootButtonArea.containsMouse ? Color.mHover : "transparent"
@@ -1285,6 +1349,7 @@ Loader {
 
                   Rectangle {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     radius: Settings.data.general.compactLockScreen ? 18 : 24
                     color: shutdownButtonArea.containsMouse ? Color.mError : "transparent"
