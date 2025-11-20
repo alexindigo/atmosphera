@@ -254,3 +254,7 @@ div[class*="linkCalloutContainer"]:hover > span[data-text-variant*="semibold"] {
     color: var(--accent-1) !important;
     opacity: 1 !important;
 }
+
+div[aria-label="Inbox"].clickable_c99c29 {
+    top: 20px !important;
+}
