@@ -145,17 +145,17 @@ ColumnLayout {
         },
         {
           "key": "6",
-          "name": I18n.locale.dayName(6, Locale.LongFormat)
+          "name": I18n.locale.dayName(6, Locale.LongFormat).trim()
         } // Saturday
         ,
         {
           "key": "0",
-          "name": I18n.locale.dayName(0, Locale.LongFormat)
+          "name": I18n.locale.dayName(0, Locale.LongFormat).trim()
         } // Sunday
         ,
         {
           "key": "1",
-          "name": I18n.locale.dayName(1, Locale.LongFormat)
+          "name": I18n.locale.dayName(1, Locale.LongFormat).trim()
         } // Monday
       ]
       onSelected: key => Settings.data.location.firstDayOfWeek = parseInt(key)
