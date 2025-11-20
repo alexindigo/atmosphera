@@ -247,17 +247,25 @@ Item {
   }
 
   function toHtml(str) {
-    const htmlRegex = /<\/?[a-zA-Z][\s\S]*>/;
+    const htmlTagRegex = /<\/?[a-zA-Z][^>]*>/g;
+    const placeholders = [];
+    let i = 0;
+    const protectedStr = str.replace(htmlTagRegex, tag => {
+      placeholders.push(tag);
+      return `___HTML_TAG_${i++}___`;
+    });
 
-    if (htmlRegex.test(str)) {
-      return str;
-    }
+    let escaped = protectedStr
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/\r\n|\r|\n/g, "<br/>");
 
-    const escaped = str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    escaped = escaped.replace(/___HTML_TAG_(\d+)___/g, (_, index) => placeholders[Number(index)]);
 
-    const withBreaks = escaped.replace(/\r\n|\r|\n/g, "<br/>");
-
-    return withBreaks;
+    return escaped;
   }
 
   function runTextCommand() {
