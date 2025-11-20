@@ -520,7 +520,6 @@ Singleton {
 
     property JsonObject changelog: JsonObject {
       property string lastSeenVersion: ""
-      property bool forceShowNextStart: false
     }
 
     // hooks

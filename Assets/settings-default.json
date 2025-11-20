@@ -87,6 +87,9 @@
     "panelsAttachedToBar": true,
     "settingsPanelAttachToBar": false
   },
+  "changelog": {
+    "lastSeenVersion": ""
+  },
   "location": {
     "name": "Tokyo",
     "weatherEnabled": true,
