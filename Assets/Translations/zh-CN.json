@@ -228,10 +228,10 @@
       "notification-history": {
         "hide-badge-when-zero": {
           "description": "当没有未读通知时隐藏通知徽章。",
-          "label": "零时隐藏徽章"
+          "label": "空时隐藏徽章"
         },
         "show-unread-badge": {
-          "description": "显示显示未读通知数量的徽章。",
+          "description": "显示一个用于展示未读通知数量的徽章。",
           "label": "显示未读徽章"
         }
       },
@@ -428,22 +428,22 @@
     "activate-app": "激活 {app}",
     "clear-history": "清除历史记录",
     "close-app": "关闭 {app}",
-    "cycle-visualizer": "周期可视化工具",
+    "cycle-visualizer": "切换可视化器样式",
     "disable-bluetooth": "禁用蓝牙",
     "disable-dnd": "关闭勿扰模式",
     "disable-wifi": "禁用Wi-Fi",
     "enable-bluetooth": "启用蓝牙",
     "enable-dnd": "启用勿扰模式",
     "enable-wifi": "启用 Wi-Fi",
-    "next": "下一个",
+    "next": "下一首",
     "open-calendar": "打开日历",
     "open-display-settings": "显示设置",
     "open-launcher": "打开启动器",
-    "open-mixer": "音频调音台",
+    "open-mixer": "音频混音器",
     "open-settings": "打开设置",
     "pause": "暂停",
-    "play": "玩",
-    "previous": "上一个",
+    "play": "播放",
+    "previous": "上一首",
     "random-wallpaper": "随机壁纸",
     "toggle-mute": "切换静音",
     "widget-settings": "小部件设置"
