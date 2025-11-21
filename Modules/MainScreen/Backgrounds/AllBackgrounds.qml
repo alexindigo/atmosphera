@@ -76,6 +76,13 @@ Item {
         backgroundColor: panelBackgroundColor
       }
 
+      // Brightness
+      PanelBackground {
+        panel: root.windowRoot.brightnessPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
+
       // Calendar
       PanelBackground {
         panel: root.windowRoot.calendarPanelPlaceholder

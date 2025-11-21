@@ -143,9 +143,13 @@ Item {
     }
 
     onClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-      settingsPanel.open();
+      if ((Quickshell.screens || []).length > 0) {
+        PanelService.getPanel("brightnessPanel", screen)?.toggle(this);
+      } else {
+        var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+        settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+        settingsPanel.open();
+      }
     }
 
     onRightClicked: {
