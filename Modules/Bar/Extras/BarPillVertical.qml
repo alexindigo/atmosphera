@@ -21,6 +21,8 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
+  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
+  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
 
   // Bar position detection for pill direction
   readonly property string barPosition: Settings.data.bar.position
@@ -91,7 +93,7 @@ Item {
     width: buttonSize
     height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
     radius: halfButtonSize
-    color: hovered ? Color.mHover : Style.capsuleColor
+    color: hovered ? (customBackgroundColor.a > 0 ? Qt.lighter(customBackgroundColor, 1.1) : Color.mHover) : (customBackgroundColor.a > 0 ? customBackgroundColor : Style.capsuleColor)
 
     readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
 
@@ -139,7 +141,7 @@ Item {
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: hovered ? Color.mOnHover : (forceOpen ? Color.mOnSurface : Color.mPrimary)
+      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary))
       visible: revealed
 
       function getVerticalCenterOffset() {
@@ -189,7 +191,7 @@ Item {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? Color.mOnHover : Color.mOnSurface
+      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnSurface)
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics

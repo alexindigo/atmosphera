@@ -20,6 +20,8 @@ Item {
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
+  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
+  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
@@ -78,7 +80,7 @@ Item {
     width: root.width
     height: pillHeight
     radius: halfPillHeight
-    color: hovered ? Color.mHover : Style.capsuleColor
+    color: hovered ? (customBackgroundColor.a > 0 ? Qt.lighter(customBackgroundColor, 1.1) : Color.mHover) : (customBackgroundColor.a > 0 ? customBackgroundColor : Style.capsuleColor)
     anchors.verticalCenter: parent.verticalCenter
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
@@ -129,7 +131,7 @@ Item {
       pointSize: textSize
       applyUiScale: false
       font.weight: Style.fontWeightBold
-      color: hovered ? Color.mOnHover : (forceOpen ? Color.mOnSurface : Color.mPrimary)
+      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary))
       visible: revealed
     }
 
@@ -163,7 +165,7 @@ Item {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? Color.mOnHover : Color.mOnSurface
+      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnSurface)
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics

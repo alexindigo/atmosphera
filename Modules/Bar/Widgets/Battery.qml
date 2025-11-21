@@ -34,10 +34,11 @@ Item {
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
+  readonly property bool isLowBattery: !charging && percent <= warningThreshold
 
   // Test mode
   readonly property bool testMode: false
-  readonly property int testPercent: 100
+  readonly property int testPercent: 15
   readonly property bool testCharging: false
 
   // Main properties
@@ -120,6 +121,8 @@ Item {
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady || (!testMode && !battery.isLaptopBattery)
+    customBackgroundColor: isLowBattery ? Color.mError : Qt.rgba(0, 0, 0, 0)
+    customTextIconColor: isLowBattery ? Color.mOnError : Qt.rgba(0, 0, 0, 0)
     tooltipText: {
       let lines = [];
       if (testMode) {
