@@ -163,6 +163,7 @@ ColumnLayout {
 
   ColumnLayout {
     Layout.fillWidth: true
+    Layout.preferredWidth: parent.width
 
     RowLayout {
       id: unifiedWheelLayout
@@ -191,9 +192,9 @@ ColumnLayout {
     }
 
     ColumnLayout {
-      id: separateWheelLayout
+      id: separatedWheelLayout
+      Layout.fillWidth: true
       visible: separateWheelToggle.checked
-      spacing: Style.marginS
 
       RowLayout {
         spacing: Style.marginM
