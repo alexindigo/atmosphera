@@ -26,7 +26,6 @@
         /.github
         /.gitignore
         /Assets/Screenshots
-        /Assets/Wallpaper
         /Bin/dev
         /nix
         /LICENSE

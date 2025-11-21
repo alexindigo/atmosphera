@@ -146,6 +146,7 @@ ColumnLayout {
                                                           }) : I18n.tr("settings.about.contributors.section.description_plural", {
                                                                          "count": root.contributors.length
                                                                        })
+    enableDescriptionRichText: true
   }
 
   GridView {

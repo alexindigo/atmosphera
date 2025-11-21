@@ -1,8 +1,10 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -50,16 +52,61 @@ NIconButton {
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
   colorBorder: Color.transparent
   colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.open-launcher"),
+        "action": "open-launcher",
+        "icon": "search"
+      },
+      {
+        "label": I18n.tr("context-menu.open-settings"),
+        "action": "open-settings",
+        "icon": "adjustments"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "open-launcher") {
+                     PanelService.getPanel("launcherPanel", screen)?.toggle();
+                   } else if (action === "open-settings") {
+                     PanelService.getPanel("settingsPanel", screen)?.toggle();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   onClicked: {
     var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
     if (Settings.data.controlCenter.position === "close_to_bar_button") {
-      // Willopen the panel next to the bar button.
+      // Will open the panel next to the bar button.
       controlCenterPanel?.toggle(this);
     } else {
       controlCenterPanel?.toggle();
     }
   }
-  onRightClicked: PanelService.getPanel("settingsPanel", screen)?.toggle()
+  onRightClicked: {
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+      contextMenu.openAtItem(root, pos.x, pos.y);
+      popupMenuWindow.showContextMenu(contextMenu);
+    }
+  }
   onMiddleClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
 
   IconImage {

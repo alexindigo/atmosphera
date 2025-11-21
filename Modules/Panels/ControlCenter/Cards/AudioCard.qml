@@ -117,6 +117,7 @@ NBox {
           font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           Layout.fillWidth: true
+          Layout.preferredWidth: 0
         }
       }
 
@@ -165,6 +166,7 @@ NBox {
           font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           Layout.fillWidth: true
+          Layout.preferredWidth: 0
         }
       }
 

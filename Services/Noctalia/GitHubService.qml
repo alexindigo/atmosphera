@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 
-// GitHub API logic and caching
+// GitHub API logic for contributors
 Singleton {
   id: root
 
@@ -51,18 +51,23 @@ Singleton {
   // --------------------------------
   function loadFromCache() {
     const now = Time.timestamp;
+    var needsRefetch = false;
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
-      Logger.d("GitHub", "Cache expired or missing, fetching new data");
-      fetchFromGitHub();
-      return;
+      needsRefetch = true;
+      Logger.d("GitHub", "Cache expired or missing, scheduling fetch");
+    } else {
+      Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
     }
-    Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
 
     if (data.version) {
       root.latestVersion = data.version;
     }
     if (data.contributors) {
       root.contributors = data.contributors;
+    }
+
+    if (needsRefetch) {
+      fetchFromGitHub();
     }
   }
 
@@ -95,6 +100,15 @@ Singleton {
   }
 
   // --------------------------------
+  function checkAndSaveData() {
+    // Only save when all processes are finished
+    if (!versionProcess.running && !contributorsProcess.running) {
+      root.isFetchingData = false;
+      root.saveData();
+    }
+  }
+
+  // --------------------------------
   function resetCache() {
     data.version = I18n.tr("system.unknown-version");
     data.contributors = [];
@@ -120,6 +134,8 @@ Singleton {
               root.data.version = version;
               root.latestVersion = version;
               Logger.d("GitHub", "Latest version fetched from GitHub:", version);
+            } else if (data.message) {
+              Logger.w("GitHub", "Latest release fetch warning:", data.message);
             } else {
               Logger.w("GitHub", "No tag_name in GitHub response");
             }
@@ -166,15 +182,6 @@ Singleton {
         // Check if both processes are done
         checkAndSaveData();
       }
-    }
-  }
-
-  // --------------------------------
-  function checkAndSaveData() {
-    // Only save when both processes are finished
-    if (!versionProcess.running && !contributorsProcess.running) {
-      root.isFetchingData = false;
-      root.saveData();
     }
   }
 }

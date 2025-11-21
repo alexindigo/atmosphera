@@ -395,8 +395,58 @@
       "loading": "Weer laden…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "GitHub-limiet bereikt. Probeer het over enkele minuten opnieuw.",
+      "fetch-failed": "Kan changeloggegevens niet laden. Probeer het later opnieuw."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Word lid van onze Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
+      "highlight-title": "Hoogtepunten",
+      "section": {
+        "released": "Uitgebracht op {date}",
+        "version": "Versie {version}"
+      },
+      "subtitle": {
+        "fresh": "Bedankt voor het installeren van Noctalia! Dit zit er in deze build.",
+        "updated": "Bijgewerkt vanaf {previousVersion}"
+      },
+      "title": "Wat is er nieuw in {version}",
+      "version": {
+        "new-user": "Nieuwe installatie"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Kalender openen"
+  },
+  "context-menu": {
+    "activate-app": "Activeer {app}",
+    "clear-history": "Geschiedenis wissen",
+    "close-app": "Sluit {app}",
+    "cycle-visualizer": "Cyclusvisualisatie",
+    "disable-bluetooth": "Bluetooth uitschakelen",
+    "disable-dnd": "Niet Storen uitschakelen",
+    "disable-wifi": "Wi-Fi uitschakelen",
+    "enable-bluetooth": "Bluetooth inschakelen",
+    "enable-dnd": "Niet Storen inschakelen",
+    "enable-wifi": "Wi-Fi inschakelen",
+    "next": "Volgende",
+    "open-calendar": "Open agenda",
+    "open-display-settings": "Beeldscherminstellingen",
+    "open-launcher": "Launcher openen",
+    "open-mixer": "Audiomixer",
+    "open-settings": "Instellingen openen",
+    "pause": "Pauze",
+    "play": "Spelen",
+    "previous": "Vorige",
+    "random-wallpaper": "Willekeurige achtergrond",
+    "toggle-mute": "Dempen aan/uit",
+    "widget-settings": "Widgetinstellingen"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "Audio-apparaten"
         }
       },
+      "external-mixer": {
+        "description": "Voer het commando of het applicatiepad in om te starten bij het activeren van de externe audiomixerfunctie.",
+        "label": "Extern audio mixer commando",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Voeg trefwoorden toe voor spelers die het systeem moet negeren. Elk trefwoord moet op een nieuwe regel staan.",
@@ -888,6 +943,41 @@
           "description": "Schakelt over naar een donkerder thema voor comfortabeler kijken 's nachts.",
           "label": "Donkere modus"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Verwijderen van {scheme} mislukt",
+          "title": "Verwijderen mislukt"
+        },
+        "success": {
+          "description": "{scheme} succesvol verwijderd",
+          "title": "Kleurenschema verwijderd"
+        }
+      },
+      "download": {
+        "button": "Meer downloaden",
+        "delete": "Verwijderen",
+        "download": "Downloaden",
+        "downloading": "Downloaden...",
+        "empty": "Geen kleurenschema's beschikbaar",
+        "error": {
+          "api-error": "API-fout: {status}",
+          "description": "Download van {scheme} mislukt",
+          "download-failed": "Download mislukt met afsluitcode: {code}",
+          "invalid-response": "Ongeldig API-antwoordformaat",
+          "no-files": "Geen bestanden gevonden voor schema",
+          "parse-failed": "Fout bij parseren van API-antwoord: {error}",
+          "rate-limit": "GitHub API-snelheidslimiet overschreden",
+          "title": "Download mislukt"
+        },
+        "fetching": "Beschikbare kleurenschema's ophalen...",
+        "installed": "Geïnstalleerd",
+        "refresh": "Vernieuwen",
+        "success": {
+          "description": "{scheme} succesvol gedownload",
+          "title": "Kleurenschema gedownload"
+        },
+        "title": "Kleurenschema's downloaden"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "Toegang tot eerder gekopieerde items vanuit de launcher.",
           "label": "Klembordgeschiedenis inschakelen"
         },
+        "clip-preview": {
+          "description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
+          "label": "Klembordvoorbeeld inschakelen"
+        },
         "custom-launch-prefix": {
           "description": "Voorzie commando's van een aangepaste launcher-prefix (bijv. 'runapp' voor systemd-integratie).",
           "label": "Aangepaste startprefix"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "Kies je voorkeurseenheid voor temperatuur.",
           "label": "Weer"
+        },
+        "show-effects": {
+          "description": "Toont extra visuele effecten (zoals regen, sneeuw of bliksem) op de weerkaart.",
+          "label": "Weerseffecten weergeven"
         },
         "show-in-calendar": {
           "description": "Toon de dagelijkse weersverwachting direct in je kalenderview.",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Beschikbare netwerken",
       "connect": "Verbinden",
       "connected": "Verbonden",
       "disabled": "Wi-Fi is uitgeschakeld",
@@ -2213,6 +2312,7 @@
       "forget": "Vergeten",
       "forget-network": "Dit netwerk vergeten?",
       "forgetting": "Vergeten...",
+      "known-networks": "Bekende netwerken",
       "no-networks": "Geen netwerken gevonden",
       "password": "Wachtwoord",
       "saved": "Opgeslagen",

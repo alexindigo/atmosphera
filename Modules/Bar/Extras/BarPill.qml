@@ -20,6 +20,8 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
+  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
+  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -57,6 +59,8 @@ Item {
         hovered: root.hovered
         density: root.density
         rotateText: root.rotateText
+        customBackgroundColor: root.customBackgroundColor
+        customTextIconColor: root.customTextIconColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()
@@ -82,6 +86,8 @@ Item {
         oppositeDirection: root.oppositeDirection
         hovered: root.hovered
         density: root.density
+        customBackgroundColor: root.customBackgroundColor
+        customTextIconColor: root.customTextIconColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

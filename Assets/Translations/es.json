@@ -395,8 +395,58 @@
       "loading": "Cargando el clima…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos.",
+      "fetch-failed": "No se pudieron cargar los datos del registro de cambios. Inténtalo de nuevo más tarde."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Únete a nuestro Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Las notas de la versión aún no están disponibles.",
+      "highlight-title": "Cambios destacados",
+      "section": {
+        "released": "Publicado el {date}",
+        "version": "Versión {version}"
+      },
+      "subtitle": {
+        "fresh": "Gracias por instalar Noctalia. Esto es lo que incluye esta compilación.",
+        "updated": "Actualizado desde {previousVersion}"
+      },
+      "title": "Novedades en {version}",
+      "version": {
+        "new-user": "Instalación nueva"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Abrir calendario"
+  },
+  "context-menu": {
+    "activate-app": "Activar {app}",
+    "clear-history": "Borrar historial",
+    "close-app": "Cerrar {app}",
+    "cycle-visualizer": "Visualizador de ciclos",
+    "disable-bluetooth": "Desactivar Bluetooth",
+    "disable-dnd": "Desactivar No molestar",
+    "disable-wifi": "Desactivar Wi-Fi",
+    "enable-bluetooth": "Activar Bluetooth",
+    "enable-dnd": "Activar No molestar",
+    "enable-wifi": "Activar Wi-Fi",
+    "next": "Siguiente",
+    "open-calendar": "Abrir calendario",
+    "open-display-settings": "Configuración de pantalla",
+    "open-launcher": "Abrir lanzador",
+    "open-mixer": "Mezclador de audio",
+    "open-settings": "Abrir ajustes",
+    "pause": "Pausa",
+    "play": "Jugar",
+    "previous": "Anterior",
+    "random-wallpaper": "Fondo de pantalla aleatorio",
+    "toggle-mute": "Activar/desactivar silencio",
+    "widget-settings": "Configuración del widget"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "Dispositivos de audio"
         }
       },
+      "external-mixer": {
+        "description": "Ingrese el comando o la ruta de la aplicación para ejecutar al activar la función de mezclador de audio externo.",
+        "label": "Comando de mezclador de audio externo",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Agrega palabras clave para los reproductores que deseas que el sistema ignore. Cada palabra clave debe estar en una línea nueva.",
@@ -888,6 +943,41 @@
           "description": "Cambia a un tema más oscuro para una visualización más fácil por la noche.",
           "label": "Modo oscuro"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Error al eliminar {scheme}",
+          "title": "Error al eliminar"
+        },
+        "success": {
+          "description": "{scheme} eliminado correctamente",
+          "title": "Esquema de colores eliminado"
+        }
+      },
+      "download": {
+        "button": "Descargar más",
+        "delete": "Eliminar",
+        "download": "Descargar",
+        "downloading": "Descargando...",
+        "empty": "No hay esquemas de colores disponibles",
+        "error": {
+          "api-error": "Error de API: {status}",
+          "description": "Error al descargar {scheme}",
+          "download-failed": "Error al descargar con código de salida: {code}",
+          "invalid-response": "Formato de respuesta de API inválido",
+          "no-files": "No se encontraron archivos para el esquema",
+          "parse-failed": "Error al analizar la respuesta de la API: {error}",
+          "rate-limit": "Límite de velocidad de la API de GitHub excedido",
+          "title": "Error al descargar"
+        },
+        "fetching": "Obteniendo esquemas de colores disponibles...",
+        "installed": "Instalado",
+        "refresh": "Actualizar",
+        "success": {
+          "description": "{scheme} descargado correctamente",
+          "title": "Esquema de colores descargado"
+        },
+        "title": "Descargar esquemas de colores"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "Accede a los elementos copiados anteriormente desde el lanzador.",
           "label": "Activar historial del portapapeles"
         },
+        "clip-preview": {
+          "description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
+          "label": "Activar vista previa del portapapeles"
+        },
         "custom-launch-prefix": {
           "description": "Prefijar comandos con un lanzador personalizado (ej. 'runapp' para integración con systemd).",
           "label": "Prefijo de lanzamiento personalizado"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "Elige tu unidad de temperatura preferida.",
           "label": "Clima"
+        },
+        "show-effects": {
+          "description": "Muestra efectos visuales adicionales (como lluvia, nieve o relámpagos) en la tarjeta del clima.",
+          "label": "Mostrar efectos climáticos"
         },
         "show-in-calendar": {
           "description": "Muestra el pronóstico del tiempo diario directamente en la vista de tu calendario.",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Redes disponibles",
       "connect": "Conectar",
       "connected": "Conectado",
       "disabled": "Wi-Fi está desactivado",
@@ -2213,6 +2312,7 @@
       "forget": "Olvidar",
       "forget-network": "¿Olvidar esta red?",
       "forgetting": "Olvidando...",
+      "known-networks": "Redes conocidas",
       "no-networks": "No se encontraron redes",
       "password": "Contraseña",
       "saved": "Guardado",

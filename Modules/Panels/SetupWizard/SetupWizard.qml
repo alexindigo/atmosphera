@@ -95,7 +95,7 @@ SmartPanel {
                       color: Color.mSurfaceVariant
                       radius: width / 2
                       border.color: Color.mOutline
-                      border.width: 2
+                      border.width: Style.borderM
                       visible: parent.status === Image.Error
 
                       NIcon {

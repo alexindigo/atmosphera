@@ -29,9 +29,12 @@ PanelWindow {
 
   // Use Top layer (same as MainScreen) for proper event handling
   WlrLayershell.layer: WlrLayer.Top
-  WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+  WlrLayershell.keyboardFocus: hasDialog ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
   WlrLayershell.namespace: "noctalia-" + windowType + "-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
+
+  // Track if a dialog is currently open (needed for keyboard focus)
+  property bool hasDialog: false
 
   // Register with PanelService so widgets can find this window
   Component.onCompleted: {
@@ -87,6 +90,12 @@ PanelWindow {
     onClicked: root.close()
   }
 
-  // Content will be parented here by the popup
-  // (e.g., TrayMenu, NPopupContextMenu)
+  // Container for dialogs that need a full-screen Item parent (e.g., Qt Popup)
+  Item {
+    id: dialogContainer
+    anchors.fill: parent
+  }
+
+  // Expose the dialog container for external use
+  readonly property alias dialogParent: dialogContainer
 }

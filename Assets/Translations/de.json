@@ -395,8 +395,58 @@
       "loading": "Wetter wird geladen…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut.",
+      "fetch-failed": "Changelog-Daten konnten nicht geladen werden. Bitte versuche es später erneut."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Unserem Discord beitreten",
+        "dismiss": "Ok"
+      },
+      "empty": "Es sind noch keine Versionshinweise verfügbar.",
+      "highlight-title": "Highlights",
+      "section": {
+        "released": "Veröffentlicht am {date}",
+        "version": "Version {version}"
+      },
+      "subtitle": {
+        "fresh": "Danke, dass du Noctalia installiert hast! Das ist in diesem Build enthalten.",
+        "updated": "Aktualisiert von {previousVersion}"
+      },
+      "title": "Was ist neu in {version}",
+      "version": {
+        "new-user": "Neuinstallation"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Kalender öffnen"
+  },
+  "context-menu": {
+    "activate-app": "{app} aktivieren",
+    "clear-history": "Verlauf löschen",
+    "close-app": "{app} schließen",
+    "cycle-visualizer": "Zyklus-Visualisierer",
+    "disable-bluetooth": "Bluetooth deaktivieren",
+    "disable-dnd": "Bitte nicht stören deaktivieren",
+    "disable-wifi": "WLAN deaktivieren",
+    "enable-bluetooth": "Bluetooth aktivieren",
+    "enable-dnd": "Nicht stören aktivieren",
+    "enable-wifi": "WLAN aktivieren",
+    "next": "Nächste/r/s",
+    "open-calendar": "Kalender öffnen",
+    "open-display-settings": "Anzeigeeinstellungen",
+    "open-launcher": "Launcher öffnen",
+    "open-mixer": "Audiomischer",
+    "open-settings": "Einstellungen öffnen",
+    "pause": "Pause",
+    "play": "Spielen",
+    "previous": "Vorherige",
+    "random-wallpaper": "Zufälliges Hintergrundbild",
+    "toggle-mute": "Stummschaltung umschalten",
+    "widget-settings": "Widget-Einstellungen"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "Audio-Geräte"
         }
       },
+      "external-mixer": {
+        "description": "Geben Sie den Befehl oder den Anwendungspfad ein, der beim Aktivieren der externen Audiomixer-Funktion gestartet werden soll.",
+        "label": "Externer Audio-Mixer-Befehl",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Stichwörter für Player hinzufügen, die das System ignorieren soll. Jedes Stichwort sollte in einer neuen Zeile stehen.",
@@ -888,6 +943,41 @@
           "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht.",
           "label": "Dunkler Modus"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Fehler beim Löschen von {scheme}",
+          "title": "Löschen fehlgeschlagen"
+        },
+        "success": {
+          "description": "{scheme} wurde erfolgreich gelöscht",
+          "title": "Farbschema gelöscht"
+        }
+      },
+      "download": {
+        "button": "Mehr herunterladen",
+        "delete": "Löschen",
+        "download": "Herunterladen",
+        "downloading": "Wird heruntergeladen...",
+        "empty": "Keine Farbschemata verfügbar",
+        "error": {
+          "api-error": "API-Fehler: {status}",
+          "description": "Fehler beim Herunterladen von {scheme}",
+          "download-failed": "Download fehlgeschlagen mit Exit-Code: {code}",
+          "invalid-response": "Ungültiges API-Antwortformat",
+          "no-files": "Keine Dateien für Schema gefunden",
+          "parse-failed": "Fehler beim Parsen der API-Antwort: {error}",
+          "rate-limit": "GitHub API-Ratenlimit überschritten",
+          "title": "Download fehlgeschlagen"
+        },
+        "fetching": "Verfügbare Farbschemata werden abgerufen...",
+        "installed": "Installiert",
+        "refresh": "Aktualisieren",
+        "success": {
+          "description": "{scheme} wurde erfolgreich heruntergeladen",
+          "title": "Farbschema heruntergeladen"
+        },
+        "title": "Farbschemata herunterladen"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
           "label": "Zwischenablageverlauf aktivieren"
         },
+        "clip-preview": {
+          "description": "Zeigt eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
+          "label": "Clip-Vorschau aktivieren"
+        },
         "custom-launch-prefix": {
           "description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",
           "label": "Benutzerdefiniertes Start-Präfix"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "Bevorzugte Temperatureinheit wählen.",
           "label": "Wetter"
+        },
+        "show-effects": {
+          "description": "Zeigt zusätzliche visuelle Effekte (wie Regen, Schnee oder Blitze) auf der Wetterkarte an.",
+          "label": "Wettereffekte anzeigen"
         },
         "show-in-calendar": {
           "description": "Zeige die tägliche Wettervorhersage direkt in deiner Kalenderansicht an.",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Verfügbare Netzwerke",
       "connect": "Verbinden",
       "connected": "Verbunden",
       "disabled": "WLAN ist deaktiviert",
@@ -2213,6 +2312,7 @@
       "forget": "Vergessen",
       "forget-network": "Dieses Netzwerk vergessen?",
       "forgetting": "Wird vergessen...",
+      "known-networks": "Bekannte Netzwerke",
       "no-networks": "Keine Netzwerke gefunden",
       "password": "Passwort",
       "saved": "Gespeichert",

@@ -7,7 +7,7 @@
     "monitors": [],
     "density": "default",
     "showCapsule": true,
-    "capsuleOpacity": 1.0,
+    "capsuleOpacity": 1,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
@@ -60,7 +60,7 @@
   },
   "general": {
     "avatarImage": "",
-    "dimmerOpacity": 0.8,
+    "dimmerOpacity": 0.6,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
@@ -87,9 +87,13 @@
     "panelsAttachedToBar": true,
     "settingsPanelAttachToBar": false
   },
+  "changelog": {
+    "lastSeenVersion": ""
+  },
   "location": {
     "name": "Tokyo",
     "weatherEnabled": true,
+    "weatherShowEffects": true,
     "useFahrenheit": false,
     "use12hourFormat": false,
     "showWeekNumberInCalendar": false,
@@ -139,6 +143,7 @@
   },
   "appLauncher": {
     "enableClipboardHistory": false,
+    "enableClipPreview": true,
     "position": "center",
     "pinnedExecs": [],
     "useApp2Unit": false,
@@ -336,8 +341,5 @@
     "enabled": false,
     "wallpaperChange": "",
     "darkModeChange": ""
-  },
-  "battery": {
-    "chargingMode": 0
   }
 }

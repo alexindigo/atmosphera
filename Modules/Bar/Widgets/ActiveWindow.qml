@@ -1,9 +1,11 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -164,6 +166,29 @@ Item {
     pointSize: Style.fontSizeS * scaling
     applyUiScale: false
     font.weight: Style.fontWeightMedium
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
   }
 
   Rectangle {
@@ -409,15 +434,25 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: {
           if ((windowTitle !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(screen, root, windowTitle, BarService.getTooltipDirection());
+            TooltipService.show(root, windowTitle, BarService.getTooltipDirection());
           }
         }
         onExited: {
           TooltipService.hide();
         }
+        onClicked: mouse => {
+                     if (mouse.button === Qt.RightButton) {
+                       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                       if (popupMenuWindow) {
+                         const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                         contextMenu.openAtItem(root, pos.x, pos.y);
+                         popupMenuWindow.showContextMenu(contextMenu);
+                       }
+                     }
+                   }
       }
     }
   }

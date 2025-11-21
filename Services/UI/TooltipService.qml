@@ -15,13 +15,13 @@ Singleton {
     Tooltip {}
   }
 
-  function show(screen, target, text, direction, delay, fontFamily) {
+  function show(target, text, direction, delay, fontFamily) {
     if (!Settings.data.ui.tooltipsEnabled) {
       return;
     }
 
     // Don't create if no text
-    if (!screen || !target || !text) {
+    if (!target || !text) {
       Logger.i("Tooltip", "No target or text");
       return;
     }
@@ -78,7 +78,7 @@ Singleton {
                                         });
 
       // Show the tooltip
-      newTooltip.show(screen, target, text, direction || "auto", delay || Style.tooltipDelay, fontFamily);
+      newTooltip.show(target, text, direction || "auto", delay || Style.tooltipDelay, fontFamily);
 
       return newTooltip;
     } else {

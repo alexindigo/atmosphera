@@ -141,7 +141,7 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.preferredHeight: 40
               radius: Style.radiusM
-              border.width: 1
+              border.width: Style.borderS
 
               property bool isActive: selectedBarPosition === modelData.key
 
@@ -258,7 +258,7 @@ ColumnLayout {
             ]
             delegate: Rectangle {
               radius: 16
-              border.width: 1
+              border.width: Style.borderS
               Layout.preferredHeight: 32
               Layout.preferredWidth: Math.max(90, densityText.implicitWidth + Style.marginXL * 2)
 

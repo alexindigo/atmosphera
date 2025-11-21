@@ -1,6 +1,8 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
@@ -103,22 +105,61 @@ Item {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.cycle-visualizer"),
+        "action": "cycle-visualizer",
+        "icon": "chart-column"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "cycle-visualizer") {
+                     const types = ["linear", "mirrored", "wave"];
+                     const currentIndex = types.indexOf(currentVisualizerType);
+                     const nextIndex = (currentIndex + 1) % types.length;
+                     Settings.data.audio.visualizerType = types[nextIndex];
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   // Click to cycle through visualizer types
   MouseArea {
     id: mouseArea
     anchors.fill: parent
     cursorShape: Qt.PointingHandCursor
     hoverEnabled: true
-    acceptedButtons: Qt.LeftButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
     onClicked: mouse => {
-                 const types = ["linear", "mirrored", "wave"];
-                 const currentIndex = types.indexOf(currentVisualizerType);
-                 const nextIndex = (currentIndex + 1) % types.length;
-                 const newType = types[nextIndex];
-
-                 // Update settings directly, maybe this should be a widget setting...
-                 Settings.data.audio.visualizerType = newType;
+                 if (mouse.button === Qt.RightButton) {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                     contextMenu.openAtItem(root, pos.x, pos.y);
+                     popupMenuWindow.showContextMenu(contextMenu);
+                   }
+                 } else {
+                   const types = ["linear", "mirrored", "wave"];
+                   const currentIndex = types.indexOf(currentVisualizerType);
+                   const nextIndex = (currentIndex + 1) % types.length;
+                   Settings.data.audio.visualizerType = types[nextIndex];
+                 }
                }
   }
 

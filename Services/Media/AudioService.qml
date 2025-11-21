@@ -59,6 +59,8 @@ Singleton {
   property bool mutedValue: true
   property real inputVolumeValue: 0
   property bool inputMutedValue: true
+  property bool isClampingOutput: false
+  property bool isClampingInput: false
 
   // Initialization
 
@@ -86,6 +88,21 @@ Singleton {
       if (isNaN(vol))
         return;
 
+      // Clamp volume if it exceeds max when volumeOverdrive is disabled
+      if (!root.isClampingOutput) {
+        const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+        if (vol > maxVolume) {
+          root.isClampingOutput = true;
+          Qt.callLater(() => {
+                         if (root.sink?.audio) {
+                           root.sink.audio.volume = maxVolume;
+                         }
+                         root.isClampingOutput = false;
+                       });
+          return;
+        }
+      }
+
       if (Math.abs(root.volumeValue - vol) > 0.001) {
         root.volumeValue = vol;
       }
@@ -107,6 +124,21 @@ Singleton {
       const vol = source?.audio?.volume;
       if (vol === undefined || isNaN(vol))
         return;
+
+      // Clamp volume if it exceeds max when volumeOverdrive is disabled
+      if (!root.isClampingInput) {
+        const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+        if (vol > maxVolume) {
+          root.isClampingInput = true;
+          Qt.callLater(() => {
+                         if (root.source?.audio) {
+                           root.source.audio.volume = maxVolume;
+                         }
+                         root.isClampingInput = false;
+                       });
+          return;
+        }
+      }
 
       if (Math.abs(root.inputVolumeValue - vol) > 0.001) {
         root.inputVolumeValue = vol;
@@ -133,6 +165,10 @@ Singleton {
   // Output Control
 
   function increaseVolume() {
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    if (volume >= maxVolume) {
+      return;
+    }
     setVolume(volume + stepVolume);
   }
 
@@ -173,6 +209,10 @@ Singleton {
   // Input Control
 
   function increaseInputVolume() {
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    if (inputVolume >= maxVolume) {
+      return;
+    }
     setInputVolume(inputVolume + stepVolume);
   }
 

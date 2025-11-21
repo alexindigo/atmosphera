@@ -90,6 +90,13 @@ Item {
         backgroundColor: panelBackgroundColor
       }
 
+      // Changelog
+      PanelBackground {
+        panel: root.windowRoot.changelogPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
+
       // Launcher
       PanelBackground {
         panel: root.windowRoot.launcherPanelPlaceholder
@@ -148,7 +155,7 @@ Item {
     }
 
     // Apply shadow to the cached layer
-    NDropShadows {
+    NDropShadow {
       anchors.fill: parent
       source: backgroundsShape
     }

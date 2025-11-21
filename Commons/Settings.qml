@@ -205,7 +205,7 @@ Singleton {
     // general
     property JsonObject general: JsonObject {
       property string avatarImage: ""
-      property real dimmerOpacity: 0.8
+      property real dimmerOpacity: 0.6
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
       property real scaleRatio: 1.0
@@ -239,6 +239,7 @@ Singleton {
     property JsonObject location: JsonObject {
       property string name: defaultLocation
       property bool weatherEnabled: true
+      property bool weatherShowEffects: true
       property bool useFahrenheit: false
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false
@@ -295,6 +296,7 @@ Singleton {
     // applauncher
     property JsonObject appLauncher: JsonObject {
       property bool enableClipboardHistory: false
+      property bool enableClipPreview: true
       // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "center"
       property list<string> pinnedExecs: []
@@ -465,6 +467,7 @@ Singleton {
       property string visualizerQuality: "high"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
+      property string externalMixer: "pwvucontrol || pavucontrol"
     }
 
     // brightness
@@ -514,6 +517,10 @@ Singleton {
       property string dayTemp: "6500"
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
+    }
+
+    property JsonObject changelog: JsonObject {
+      property string lastSeenVersion: ""
     }
 
     // hooks

@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -33,11 +34,13 @@ Item {
     }
     return {};
   }
-  readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
-  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+
   readonly property int characterCount: 2
-  readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : true
+  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
+  readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
+
   property ListModel localWorkspaces: ListModel {}
   property real masterProgress: 0.0
   property bool effectsActive: false
@@ -46,6 +49,10 @@ Item {
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
+
+  // Context menu state
+  property var selectedWindow: null
+  property string selectedAppName: ""
 
   function refreshWorkspaces() {
     localWorkspaces.clear();
@@ -156,6 +163,53 @@ Item {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: {
+      var items = [];
+      if (selectedWindow) {
+        items.push({
+                     "label": I18n.tr("context-menu.activate-app", {
+                                        "app": selectedAppName
+                                      }),
+                     "action": "activate",
+                     "icon": "focus"
+                   });
+        items.push({
+                     "label": I18n.tr("context-menu.close-app", {
+                                        "app": selectedAppName
+                                      }),
+                     "action": "close",
+                     "icon": "x"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "activate" && selectedWindow) {
+                     CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "close" && selectedWindow) {
+                     CompositorService.closeWindow(selectedWindow);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                   selectedWindow = null;
+                   selectedAppName = "";
+                 }
+  }
+
   // Debounce timer for wheel interactions
   Timer {
     id: wheelDebounce
@@ -208,7 +262,7 @@ Item {
 
       radius: Style.radiusS
       border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
-      border.width: 1
+      border.width: Style.borderS
       width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginXS : Style.marginL)
       height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginL : Style.marginXS)
       color: Style.capsuleColor
@@ -218,9 +272,22 @@ Item {
         hoverEnabled: true
         enabled: !hasWindows
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: {
-          CompositorService.switchToWorkspace(workspaceModel);
-        }
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed: mouse => {
+                     if (mouse.button === Qt.LeftButton) {
+                       CompositorService.switchToWorkspace(workspaceModel);
+                     } else if (mouse.button === Qt.RightButton) {
+                       TooltipService.hide();
+                       root.selectedWindow = "";
+                       root.selectedAppName = "";
+                       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                       if (popupMenuWindow) {
+                         const pos = BarService.getContextMenuPosition(container, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                         contextMenu.openAtItem(container, pos.x, pos.y);
+                         popupMenuWindow.showContextMenu(contextMenu);
+                       }
+                     }
+                   }
       }
 
       Flow {
@@ -293,20 +360,28 @@ Item {
               cursorShape: Qt.PointingHandCursor
               acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-              onPressed: function (mouse) {
-                if (!model) {
-                  return;
-                }
+              onPressed: mouse => {
+                           if (!model) {
+                             return;
+                           }
 
-                if (mouse.button === Qt.LeftButton) {
-                  CompositorService.focusWindow(model);
-                } else if (mouse.button === Qt.RightButton) {
-                  CompositorService.closeWindow(model);
-                }
-              }
+                           if (mouse.button === Qt.LeftButton) {
+                             CompositorService.focusWindow(model);
+                           } else if (mouse.button === Qt.RightButton) {
+                             TooltipService.hide();
+                             root.selectedWindow = model;
+                             root.selectedAppName = CompositorService.getCleanAppName(model.appId, model.title);
+                             var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                             if (popupMenuWindow) {
+                               const pos = BarService.getContextMenuPosition(taskbarItem, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                               contextMenu.openAtItem(taskbarItem, pos.x, pos.y);
+                               popupMenuWindow.showContextMenu(contextMenu);
+                             }
+                           }
+                         }
               onEntered: {
                 taskbarItem.itemHovered = true;
-                TooltipService.show(screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
+                TooltipService.show(taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
               }
               onExited: {
                 taskbarItem.itemHovered = false;
@@ -347,7 +422,11 @@ Item {
             if (hasWindows)
               return Color.mSecondary;
 
-            return Qt.alpha(Color.mOutline, 0.3);
+            if (Settings.data.colorSchemes.darkMode) {
+              return Qt.darker(Color.mSecondary, 1.5);
+            } else {
+              return Qt.lighter(Color.mSecondary, 1.5);
+            }
           }
 
           scale: workspaceModel.isActive ? 1.0 : 0.9
@@ -412,21 +491,10 @@ Item {
               return Color.mOnPrimary;
             if (workspaceModel.isUrgent)
               return Color.mOnError;
-            if (hasWindows)
-              return Color.mOnSecondary;
+            // if (hasWindows)
+            //   return Color.mOnSecondary;
 
-            return Color.mOnSurface;
-          }
-
-          opacity: {
-            if (workspaceModel.isFocused)
-              return 1.0;
-            if (workspaceModel.isUrgent)
-              return 0.9;
-            if (hasWindows)
-              return 0.8;
-
-            return 0.6;
+            return Color.mOnSecondary;
           }
 
           Behavior on opacity {

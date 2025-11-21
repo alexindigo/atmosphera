@@ -3,46 +3,44 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    systems.url = "github:nix-systems/default";
-
-    quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell?rev=c9d3ffb6043c5bf3f3009202bad7e0e5132c4a25";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
     self,
     nixpkgs,
-    systems,
-    quickshell,
     ...
   }: let
-    eachSystem = nixpkgs.lib.genAttrs (import systems);
+    eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+    pkgsFor = eachSystem (system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default]);
   in {
-    formatter = eachSystem (system: nixpkgs.legacyPackages.${system}.alejandra);
+    formatter = eachSystem (system: pkgsFor.${system}.alejandra);
 
     packages = eachSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        default = pkgs.callPackage ./nix/package.nix {
-          version = self.rev or self.dirtyRev or "dirty";
-          quickshell = quickshell.packages.${system}.default.override {
-            withX11 = false;
-            withI3 = true;
-          };
-        };
+      system: {
+        default = pkgsFor.${system}.noctalia-shell;
       }
     );
 
-    defaultPackage = eachSystem (system: self.packages.${system}.default);
+    overlays = {
+      default = final: prev: {
+        noctalia-shell = final.callPackage ./nix/package.nix {
+          version = let
+            mkDate = longDate: final.lib.concatStringsSep "-" [
+              (builtins.substring 0 4 longDate)
+              (builtins.substring 4 2 longDate)
+              (builtins.substring 6 2 longDate)
+            ];
+          in
+            mkDate (self.lastModifiedDate or "19700101")
+            + "_"
+            + (self.shortRev or "dirty");
+        };
+      };
+    };
 
     devShells = eachSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        default = pkgs.callPackage ./nix/shell.nix {};
+      system: {
+        default = pkgsFor.${system}.callPackage ./nix/shell.nix {};
       }
     );
 
@@ -55,9 +53,6 @@
       programs.noctalia-shell.package =
         lib.mkDefault
         self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      programs.noctalia-shell.app2unit.package =
-        lib.mkDefault
-        nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.app2unit;
     };
 
     nixosModules.default = {

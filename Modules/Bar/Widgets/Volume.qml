@@ -59,7 +59,7 @@ Item {
   }
 
   function openExternalMixer() {
-    Quickshell.execDetached(["sh", "-c", "pwvucontrol || pavucontrol"]);
+    Quickshell.execDetached(["sh", "-c", Settings.data.audio.externalMixer]);
   }
 
   Timer {
@@ -77,35 +77,34 @@ Item {
     model: [
       {
         "label": I18n.tr("context-menu.toggle-mute"),
-        "action": "toggle_mute",
+        "action": "toggle-mute",
         "icon": AudioService.muted ? "volume-off" : "volume"
       },
       {
         "label": I18n.tr("context-menu.open-mixer"),
-        "action": "open_mixer",
+        "action": "open-mixer",
         "icon": "adjustments"
-      }
-      // ,
-      // {
-      //   "label": I18n.tr("context-menu.widget-settings"),
-      //   "action": "widget_settings",
-      //   "icon": "settings"
-      // },
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
     ]
 
     onTriggered: action => {
-                   if (action === "toggle_mute") {
-                     AudioService.setOutputMuted(!AudioService.muted);
-                   } else if (action === "open_mixer") {
-                     root.openExternalMixer();
-                   } else if (action === "widget_settings")
-                   // TODO: Open widget settings
-                   {}
-
-                   // Close the popup menu window after handling the action
+                   // Close the popup menu window before handling the action
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.close();
+                   }
+
+                   if (action === "toggle-mute") {
+                     AudioService.setOutputMuted(!AudioService.muted);
+                   } else if (action === "open-mixer") {
+                     root.openExternalMixer();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }
   }
@@ -118,12 +117,20 @@ Item {
     oppositeDirection: BarService.getPillDirection(root)
     icon: AudioService.getOutputIcon()
     autoHide: false // Important to be false so we can hover as long as we want
-    text: Math.round(AudioService.volume * 100)
+    text: {
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const displayVolume = Math.min(maxVolume, AudioService.volume);
+      return Math.round(displayVolume * 100);
+    }
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     tooltipText: I18n.tr("tooltips.volume-at", {
-                           "volume": Math.round(AudioService.volume * 100)
+                           "volume": (() => {
+                                        const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                        const displayVolume = Math.min(maxVolume, AudioService.volume);
+                                        return Math.round(displayVolume * 100);
+                                      })()
                          })
 
     onWheel: function (delta) {

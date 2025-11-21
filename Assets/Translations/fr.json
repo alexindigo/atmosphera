@@ -395,8 +395,58 @@
       "loading": "Chargement de la météo…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes.",
+      "fetch-failed": "Impossible de charger les données du journal des modifications. Veuillez réessayer plus tard."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Rejoindre notre Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Les notes de version ne sont pas encore disponibles.",
+      "highlight-title": "Points importants",
+      "section": {
+        "released": "Publié le {date}",
+        "version": "Version {version}"
+      },
+      "subtitle": {
+        "fresh": "Merci d’avoir installé Noctalia ! Voici ce que contient cette version.",
+        "updated": "Mise à jour depuis {previousVersion}"
+      },
+      "title": "Quoi de neuf dans {version}",
+      "version": {
+        "new-user": "Nouvelle installation"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Ouvrir le calendrier"
+  },
+  "context-menu": {
+    "activate-app": "Activer {app}",
+    "clear-history": "Effacer l'historique",
+    "close-app": "Fermer {app}",
+    "cycle-visualizer": "Visualiseur de cycle",
+    "disable-bluetooth": "Désactiver le Bluetooth",
+    "disable-dnd": "Désactiver le mode Ne pas déranger",
+    "disable-wifi": "Désactiver le Wi-Fi",
+    "enable-bluetooth": "Activer le Bluetooth",
+    "enable-dnd": "Activer le mode Ne pas déranger",
+    "enable-wifi": "Activer le Wi-Fi",
+    "next": "Suivant",
+    "open-calendar": "Ouvrir le calendrier",
+    "open-display-settings": "Paramètres d'affichage",
+    "open-launcher": "Ouvrir le lanceur",
+    "open-mixer": "Table de mixage audio",
+    "open-settings": "Ouvrir les paramètres",
+    "pause": "Pause",
+    "play": "Jouer",
+    "previous": "Précédent",
+    "random-wallpaper": "Fond d'écran aléatoire",
+    "toggle-mute": "Activer/désactiver le mode muet",
+    "widget-settings": "Paramètres du widget"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "Périphériques audio"
         }
       },
+      "external-mixer": {
+        "description": "Entrez la commande ou le chemin d'accès de l'application à lancer lors de l'activation de la fonctionnalité de mixeur audio externe.",
+        "label": "Commande de mixeur audio externe",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Ajoutez des mots-clés pour les lecteurs que le système doit ignorer. Chaque mot-clé doit être sur une nouvelle ligne.",
@@ -888,6 +943,41 @@
           "description": "Passe à un thème plus sombre pour une visualisation plus facile la nuit.",
           "label": "Mode sombre"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Échec de la suppression de {scheme}",
+          "title": "Échec de la suppression"
+        },
+        "success": {
+          "description": "{scheme} supprimé avec succès",
+          "title": "Jeu de couleurs supprimé"
+        }
+      },
+      "download": {
+        "button": "Télécharger plus",
+        "delete": "Supprimer",
+        "download": "Télécharger",
+        "downloading": "Téléchargement...",
+        "empty": "Aucun jeu de couleurs disponible",
+        "error": {
+          "api-error": "Erreur API: {status}",
+          "description": "Échec du téléchargement de {scheme}",
+          "download-failed": "Échec du téléchargement avec le code de sortie: {code}",
+          "invalid-response": "Format de réponse API invalide",
+          "no-files": "Aucun fichier trouvé pour le jeu de couleurs",
+          "parse-failed": "Échec de l'analyse de la réponse API: {error}",
+          "rate-limit": "Limite de débit de l'API GitHub dépassée",
+          "title": "Échec du téléchargement"
+        },
+        "fetching": "Récupération des jeux de couleurs disponibles...",
+        "installed": "Installé",
+        "refresh": "Actualiser",
+        "success": {
+          "description": "{scheme} téléchargé avec succès",
+          "title": "Jeu de couleurs téléchargé"
+        },
+        "title": "Télécharger des jeux de couleurs"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
           "label": "Activer l'historique du presse-papiers"
         },
+        "clip-preview": {
+          "description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
+          "label": "Activer l'aperçu du presse-papiers"
+        },
         "custom-launch-prefix": {
           "description": "Préfixer les commandes avec un lanceur personnalisé (ex. 'runapp' pour l'intégration systemd).",
           "label": "Préfixe de lancement personnalisé"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "Choisissez votre unité de température préférée.",
           "label": "Météo"
+        },
+        "show-effects": {
+          "description": "Affiche des effets visuels supplémentaires (comme la pluie, la neige ou la foudre) sur la carte météo.",
+          "label": "Afficher les effets météorologiques"
         },
         "show-in-calendar": {
           "description": "Afficher les prévisions météo quotidiennes directement dans votre vue calendrier.",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Réseaux disponibles",
       "connect": "Connecter",
       "connected": "Connecté",
       "disabled": "Le Wi-Fi est désactivé",
@@ -2213,6 +2312,7 @@
       "forget": "Oublier",
       "forget-network": "Oublier ce réseau ?",
       "forgetting": "Oubli en cours...",
+      "known-networks": "Réseaux connus",
       "no-networks": "Aucun réseau trouvé",
       "password": "Mot de passe",
       "saved": "Enregistré",

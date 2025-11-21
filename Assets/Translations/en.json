@@ -360,16 +360,16 @@
     }
   },
   "battery": {
-    "charging": "Charging.",
-    "charging-rate": "Charging rate: {rate} W.",
-    "discharging": "Discharging.",
-    "discharging-rate": "Discharging rate: {rate} W.",
+    "charging": "Charging",
+    "charging-rate": "Charging rate: {rate} W",
+    "discharging": "Discharging",
+    "discharging-rate": "Discharging rate: {rate} W",
     "health": "Health: {percent}%",
-    "idle": "Idle.",
-    "no-battery-detected": "No battery detected.",
-    "plugged-in": "Plugged in.",
-    "time-left": "Time left: {time}.",
-    "time-until-full": "Time until full: {time}."
+    "idle": "Idle",
+    "no-battery-detected": "No battery detected",
+    "plugged-in": "Plugged in",
+    "time-left": "Time left: {time}",
+    "time-until-full": "Time until full: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -387,11 +387,6 @@
       "title": "Bluetooth"
     }
   },
-  "context-menu": {
-    "open-mixer": "Audio mixer",
-    "toggle-mute": "Toggle mute",
-    "widget-settings": "Widget settings"
-  },
   "calendar": {
     "panel": {
       "week": "Week"
@@ -400,8 +395,58 @@
       "loading": "Loading weather…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "GitHub rate limit exceeded. Please try again in a few minutes.",
+      "fetch-failed": "Unable to load changelog data. Please try again later."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Join our Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Release notes are not available yet.",
+      "highlight-title": "Highlights",
+      "section": {
+        "released": "Released on {date}",
+        "version": "Version {version}"
+      },
+      "subtitle": {
+        "fresh": "Thanks for installing Noctalia! Here is what’s included in this build.",
+        "updated": "Updated from {previousVersion}"
+      },
+      "title": "What's new in {version}",
+      "version": {
+        "new-user": "Fresh install"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Open calendar"
+  },
+  "context-menu": {
+    "activate-app": "Activate {app}",
+    "clear-history": "Clear history",
+    "close-app": "Close {app}",
+    "cycle-visualizer": "Cycle visualizer",
+    "disable-bluetooth": "Disable Bluetooth",
+    "disable-dnd": "Disable Do Not Disturb",
+    "disable-wifi": "Disable Wi-Fi",
+    "enable-bluetooth": "Enable Bluetooth",
+    "enable-dnd": "Enable Do Not Disturb",
+    "enable-wifi": "Enable Wi-Fi",
+    "next": "Next",
+    "open-calendar": "Open calendar",
+    "open-display-settings": "Display settings",
+    "open-launcher": "Open launcher",
+    "open-mixer": "Audio mixer",
+    "open-settings": "Open settings",
+    "pause": "Pause",
+    "play": "Play",
+    "previous": "Previous",
+    "random-wallpaper": "Random wallpaper",
+    "toggle-mute": "Toggle mute",
+    "widget-settings": "Widget settings"
   },
   "dock": {
     "menu": {
@@ -724,6 +769,11 @@
           "label": "Audio devices"
         }
       },
+      "external-mixer": {
+        "description": "Enter the command or application path to launch when activating the external audio mixer feature.",
+        "label": "External Audio Mixer Command",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Add keywords for players you want the system to ignore. Each keyword should be on a new line.",
@@ -893,6 +943,41 @@
           "description": "Switches to a darker theme for easier viewing at night.",
           "label": "Dark mode"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Failed to delete {scheme}",
+          "title": "Delete Failed"
+        },
+        "success": {
+          "description": "Successfully deleted {scheme}",
+          "title": "Color Scheme Deleted"
+        }
+      },
+      "download": {
+        "button": "Download more",
+        "delete": "Delete",
+        "download": "Download",
+        "downloading": "Downloading...",
+        "empty": "No color schemes available",
+        "error": {
+          "api-error": "API error: {status}",
+          "description": "Failed to download {scheme}",
+          "download-failed": "Download failed with exit code: {code}",
+          "invalid-response": "Invalid API response format",
+          "no-files": "No files found for scheme",
+          "parse-failed": "Failed to parse API response: {error}",
+          "rate-limit": "GitHub API rate limit exceeded",
+          "title": "Download Failed"
+        },
+        "fetching": "Fetching available color schemes...",
+        "installed": "Installed",
+        "refresh": "Refresh",
+        "success": {
+          "description": "Successfully downloaded {scheme}",
+          "title": "Color Scheme Downloaded"
+        },
+        "title": "Download Color Schemes"
       },
       "predefined": {
         "generate-templates": {
@@ -1287,6 +1372,10 @@
           "description": "Access previously copied items from the launcher.",
           "label": "Enable clipboard history"
         },
+        "clip-preview": {
+          "description": "Show a preview of the clipboard content when using the >clip command.",
+          "label": "Enable clip preview"
+        },
         "custom-launch-prefix": {
           "description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",
           "label": "Custom launch prefix"
@@ -1370,6 +1459,10 @@
         "section": {
           "description": "Choose your preferred temperature unit.",
           "label": "Weather"
+        },
+        "show-effects": {
+          "description": "Shows additional visual effects (like rain, snow, or lightning) on the weather card.",
+          "label": "Display weather effects"
         },
         "show-in-calendar": {
           "description": "Show the daily weather forecast directly in your calendar view.",
@@ -1965,39 +2058,39 @@
   "tooltips": {
     "add-widget": "Add widget",
     "bluetooth-devices": "Bluetooth devices",
-    "brightness-at": "Brightness: {brightness}%\nRight click for settings.\nScroll to modify brightness.",
+    "brightness-at": "Brightness: {brightness}%\nScroll to modify brightness",
     "cancel-timer": "Cancel timer",
     "clear-history": "Clear history",
     "click-to-start-recording": "Click to start recording",
     "click-to-stop-recording": "Click to stop recording",
     "close": "Close",
-    "connect-disconnect-devices": "Left click to connect. Right click to forget.",
+    "connect-disconnect-devices": "Left click to connect\nRight click to forget",
     "delete-notification": "Delete notification",
-    "disable-keep-awake": "Click to disable keep awake.\nScroll to adjust timeout.",
+    "disable-keep-awake": "Click to disable keep awake.\nScroll to adjust timeout",
     "do-not-disturb-disabled": "'Do not disturb' disabled",
     "do-not-disturb-enabled": "'Do not disturb' enabled",
-    "enable-keep-awake": "Click to enable keep awake.\nScroll to adjust timeout.",
+    "enable-keep-awake": "Click to enable keep awake.\nScroll to adjust timeout",
     "forget-network": "Forget network",
     "home": "Home",
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep awake",
     "keyboard-layout": "{layout} keyboard layout",
     "manage-wifi": "Manage Wi-Fi",
-    "microphone-volume-at": "Microphone volume at {volume}%\nLeft click for settings. Right click to toggle mute.\nScroll to modify volume.",
+    "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
     "move-to-center-section": "Move to center section",
     "move-to-left-section": "Move to left section",
     "move-to-right-section": "Move to right section",
     "next-media": "Next media",
     "next-month": "Next month",
-    "night-light-disabled": "Night light is disabled.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-forced": "Night light is forced.\nLeft click to cycle mode.\nRight click to access settings.",
-    "night-light-not-installed": "Night light is not available.\nwlsunset is not installed.",
-    "noctalia-performance-disabled": "Noctalia performance mode is disabled.\nLeft click to enable.",
-    "noctalia-performance-enabled": "Noctalia performance mode is enabled.\nLeft click to disable.",
+    "night-light-disabled": "Night light is disabled.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-enabled": "Night light is enabled.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-forced": "Night light is forced.\nLeft click to cycle mode\nRight click to access settings",
+    "night-light-not-installed": "Night light is not available\nwlsunset is not installed",
+    "noctalia-performance-disabled": "Noctalia performance mode is disabled\nLeft click to enable",
+    "noctalia-performance-enabled": "Noctalia performance mode is enabled\nLeft click to disable",
     "open-control-center": "Open control center",
-    "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\".",
-    "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\".",
+    "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\"",
+    "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\"",
     "open-settings": "Open settings",
     "open-tray-dropdown": "Open tray dropdown",
     "open-wallpaper-selector": "Open wallpaper selector",
@@ -2020,8 +2113,8 @@
     "switch-to-dark-mode": "Switch to dark mode",
     "switch-to-light-mode": "Switch to light mode",
     "up": "Up",
-    "volume-at": "Output volume at {volume}%\nLeft click for settings. Right click to toggle mute.\nScroll to modify volume.",
-    "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper.",
+    "volume-at": "Output volume at {volume}%\nScroll to modify volume",
+    "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper",
     "widget-settings": "Widget settings"
   },
   "wallpaper": {
@@ -2208,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Available Networks",
       "connect": "Connect",
       "connected": "Connected",
       "disabled": "Wi-Fi is disabled",
@@ -2218,6 +2312,7 @@
       "forget": "Forget",
       "forget-network": "Forget this network?",
       "forgetting": "Forgetting...",
+      "known-networks": "Known Networks",
       "no-networks": "No networks found",
       "password": "Password",
       "saved": "Saved",

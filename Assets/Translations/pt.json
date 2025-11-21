@@ -395,8 +395,58 @@
       "loading": "Carregando o clima…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "Limite do GitHub atingido. Tente novamente em alguns minutos.",
+      "fetch-failed": "Não foi possível carregar os dados do changelog. Tente novamente mais tarde."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Entre no nosso Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "As notas da versão ainda não estão disponíveis.",
+      "highlight-title": "Destaques",
+      "section": {
+        "released": "Lançado em {date}",
+        "version": "Versão {version}"
+      },
+      "subtitle": {
+        "fresh": "Obrigado por instalar o Noctalia! Veja o que está incluído nesta compilação.",
+        "updated": "Atualizado a partir da {previousVersion}"
+      },
+      "title": "Novidades na {version}",
+      "version": {
+        "new-user": "Nova instalação"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Abrir calendário"
+  },
+  "context-menu": {
+    "activate-app": "Ativar {app}",
+    "clear-history": "Limpar histórico",
+    "close-app": "Fechar {app}",
+    "cycle-visualizer": "Visualizador de ciclo",
+    "disable-bluetooth": "Desativar Bluetooth",
+    "disable-dnd": "Desativar o Não Perturbe",
+    "disable-wifi": "Desativar Wi-Fi",
+    "enable-bluetooth": "Ativar Bluetooth",
+    "enable-dnd": "Ativar Não Perturbe",
+    "enable-wifi": "Ativar Wi-Fi",
+    "next": "Próximo(a)",
+    "open-calendar": "Abrir calendário",
+    "open-display-settings": "Configurações de exibição",
+    "open-launcher": "Abrir iniciador",
+    "open-mixer": "Mesa de som",
+    "open-settings": "Abrir configurações",
+    "pause": "Pausa",
+    "play": "Jogar",
+    "previous": "Anterior",
+    "random-wallpaper": "Papel de parede aleatório",
+    "toggle-mute": "Alternar mudo",
+    "widget-settings": "Configurações do widget"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "Dispositivos de áudio"
         }
       },
+      "external-mixer": {
+        "description": "Insira o comando ou o caminho do aplicativo para iniciar ao ativar o recurso de mixer de áudio externo.",
+        "label": "Comando de Mixer de Áudio Externo",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "Adicione palavras-chave para os reprodutores que você deseja que o sistema ignore. Cada palavra-chave deve estar em uma nova linha.",
@@ -888,6 +943,41 @@
           "description": "Muda para um tema mais escuro para facilitar a visualização à noite.",
           "label": "Modo escuro"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "Falha ao excluir {scheme}",
+          "title": "Falha ao excluir"
+        },
+        "success": {
+          "description": "{scheme} excluído com sucesso",
+          "title": "Esquema de cores excluído"
+        }
+      },
+      "download": {
+        "button": "Baixar mais",
+        "delete": "Excluir",
+        "download": "Baixar",
+        "downloading": "Baixando...",
+        "empty": "Nenhum esquema de cores disponível",
+        "error": {
+          "api-error": "Erro da API: {status}",
+          "description": "Falha ao baixar {scheme}",
+          "download-failed": "Falha no download com código de saída: {code}",
+          "invalid-response": "Formato de resposta da API inválido",
+          "no-files": "Nenhum arquivo encontrado para o esquema",
+          "parse-failed": "Falha ao analisar a resposta da API: {error}",
+          "rate-limit": "Limite de taxa da API do GitHub excedido",
+          "title": "Falha no download"
+        },
+        "fetching": "Buscando esquemas de cores disponíveis...",
+        "installed": "Instalado",
+        "refresh": "Atualizar",
+        "success": {
+          "description": "{scheme} baixado com sucesso",
+          "title": "Esquema de cores baixado"
+        },
+        "title": "Baixar esquemas de cores"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "Acesse itens copiados anteriormente a partir do lançador.",
           "label": "Ativar histórico da área de transferência"
         },
+        "clip-preview": {
+          "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
+          "label": "Ativar pré-visualização da área de transferência"
+        },
         "custom-launch-prefix": {
           "description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd).",
           "label": "Prefixo de inicialização personalizado"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "Escolha sua unidade de temperatura preferida.",
           "label": "Clima"
+        },
+        "show-effects": {
+          "description": "Mostra efeitos visuais adicionais (como chuva, neve ou relâmpagos) no cartão de clima.",
+          "label": "Exibir efeitos climáticos"
         },
         "show-in-calendar": {
           "description": "Mostre a previsão do tempo diária diretamente na sua visualização de calendário.",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Redes Disponíveis",
       "connect": "Conectar",
       "connected": "Conectado",
       "disabled": "O Wi-Fi está desativado",
@@ -2213,6 +2312,7 @@
       "forget": "Esquecer",
       "forget-network": "Esquecer esta rede?",
       "forgetting": "Esquecendo...",
+      "known-networks": "Redes Conhecidas",
       "no-networks": "Nenhuma rede encontrada",
       "password": "Senha",
       "saved": "Salva",

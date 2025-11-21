@@ -617,7 +617,7 @@ SmartPanel {
                                                            return `${startFormatted}-${endFormatted} ${event.summary}`;
                                                          }
                                                        }).join('\n');
-                          TooltipService.show(screen, parent, summaries, "auto", Style.tooltipDelay, Settings.data.ui.fontFixed);
+                          TooltipService.show(parent, summaries, "auto", Style.tooltipDelay, Settings.data.ui.fontFixed);
                         }
                       }
 
@@ -650,6 +650,7 @@ SmartPanel {
       Loader {
         id: weatherLoader
         active: Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather
+        visible: active
         Layout.fillWidth: true
 
         sourceComponent: WeatherCard {

@@ -6,6 +6,7 @@ import QtQuick.Window
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -220,6 +221,29 @@ Item {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Rectangle {
     id: workspaceBackground
     width: isVertical ? Style.capsuleHeight : parent.width
@@ -229,6 +253,21 @@ Item {
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.RightButton
+      onClicked: mouse => {
+                   if (mouse.button === Qt.RightButton) {
+                     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                     if (popupMenuWindow) {
+                       const pos = BarService.getContextMenuPosition(workspaceBackground, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                       contextMenu.openAtItem(workspaceBackground, pos.x, pos.y);
+                       popupMenuWindow.showContextMenu(contextMenu);
+                     }
+                   }
+                 }
+    }
   }
 
   // Debounce timer for wheel interactions

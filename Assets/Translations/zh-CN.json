@@ -228,10 +228,10 @@
       "notification-history": {
         "hide-badge-when-zero": {
           "description": "当没有未读通知时隐藏通知徽章。",
-          "label": "零时隐藏徽章"
+          "label": "空时隐藏徽章"
         },
         "show-unread-badge": {
-          "description": "显示显示未读通知数量的徽章。",
+          "description": "显示一个用于展示未读通知数量的徽章。",
           "label": "显示未读徽章"
         }
       },
@@ -395,8 +395,58 @@
       "loading": "正在加载天气…"
     }
   },
+  "changelog": {
+    "error": {
+      "rate-limit": "已达到 GitHub 速率限制，请稍后再试。",
+      "fetch-failed": "无法加载更新日志数据，请稍后再试。"
+    },
+    "panel": {
+      "buttons": {
+        "discord": "加入我们的 Discord",
+        "dismiss": "确定"
+      },
+      "empty": "暂时没有可用的发行说明。",
+      "highlight-title": "重点更新",
+      "section": {
+        "released": "{date} 发布",
+        "version": "版本 {version}"
+      },
+      "subtitle": {
+        "fresh": "感谢安装 Noctalia！以下是本次构建包含的内容。",
+        "updated": "已从 {previousVersion} 更新"
+      },
+      "title": "{version} 有哪些更新",
+      "version": {
+        "new-user": "全新安装"
+      }
+    }
+  },
   "clock": {
     "tooltip": "打开日历"
+  },
+  "context-menu": {
+    "activate-app": "激活 {app}",
+    "clear-history": "清除历史记录",
+    "close-app": "关闭 {app}",
+    "cycle-visualizer": "切换可视化器样式",
+    "disable-bluetooth": "禁用蓝牙",
+    "disable-dnd": "关闭勿扰模式",
+    "disable-wifi": "禁用Wi-Fi",
+    "enable-bluetooth": "启用蓝牙",
+    "enable-dnd": "启用勿扰模式",
+    "enable-wifi": "启用 Wi-Fi",
+    "next": "下一首",
+    "open-calendar": "打开日历",
+    "open-display-settings": "显示设置",
+    "open-launcher": "打开启动器",
+    "open-mixer": "音频混音器",
+    "open-settings": "打开设置",
+    "pause": "暂停",
+    "play": "播放",
+    "previous": "上一首",
+    "random-wallpaper": "随机壁纸",
+    "toggle-mute": "切换静音",
+    "widget-settings": "小部件设置"
   },
   "dock": {
     "menu": {
@@ -719,6 +769,11 @@
           "label": "音频设备"
         }
       },
+      "external-mixer": {
+        "description": "输入激活外部音频混音器功能时要启动的命令或应用程序路径。",
+        "label": "外部音频混音器命令",
+        "placeholder": "pwvucontrol || pavucontrol"
+      },
       "media": {
         "excluded-player": {
           "description": "添加您希望系统忽略的播放器关键词。每个关键词应单独占一行。",
@@ -888,6 +943,41 @@
           "description": "切换到更暗的主题，便于夜间观看。",
           "label": "深色模式"
         }
+      },
+      "delete": {
+        "error": {
+          "description": "删除 {scheme} 失败",
+          "title": "删除失败"
+        },
+        "success": {
+          "description": "成功删除 {scheme}",
+          "title": "配色方案已删除"
+        }
+      },
+      "download": {
+        "button": "下载更多",
+        "delete": "删除",
+        "download": "下载",
+        "downloading": "正在下载...",
+        "empty": "没有可用的配色方案",
+        "error": {
+          "api-error": "API 错误: {status}",
+          "description": "下载 {scheme} 失败",
+          "download-failed": "下载失败，退出代码: {code}",
+          "invalid-response": "无效的 API 响应格式",
+          "no-files": "未找到方案的文件",
+          "parse-failed": "解析 API 响应失败: {error}",
+          "rate-limit": "GitHub API 速率限制已超出",
+          "title": "下载失败"
+        },
+        "fetching": "正在获取可用的配色方案...",
+        "installed": "已安装",
+        "refresh": "刷新",
+        "success": {
+          "description": "成功下载 {scheme}",
+          "title": "配色方案已下载"
+        },
+        "title": "下载配色方案"
       },
       "predefined": {
         "generate-templates": {
@@ -1282,6 +1372,10 @@
           "description": "从启动器访问之前复制的项目。",
           "label": "启用剪贴板历史记录"
         },
+        "clip-preview": {
+          "description": "在使用 >clip 命令时显示剪贴板内容的预览。",
+          "label": "启用剪贴板预览"
+        },
         "custom-launch-prefix": {
           "description": "使用自定义启动器前缀命令（例如，'runapp'用于systemd集成）。",
           "label": "自定义启动前缀"
@@ -1365,6 +1459,10 @@
         "section": {
           "description": "选择您喜欢的温度单位。",
           "label": "天气"
+        },
+        "show-effects": {
+          "description": "在天气卡片上显示额外的视觉效果（如雨、雪或闪电）。",
+          "label": "显示天气效果"
         },
         "show-in-calendar": {
           "description": "直接在您的日历视图中显示每日天气预报。",
@@ -2203,6 +2301,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "可用网络",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
@@ -2213,6 +2312,7 @@
       "forget": "忘记",
       "forget-network": "忘记此网络？",
       "forgetting": "正在忘记...",
+      "known-networks": "已知网络",
       "no-networks": "未找到网络",
       "password": "密码",
       "saved": "已保存",

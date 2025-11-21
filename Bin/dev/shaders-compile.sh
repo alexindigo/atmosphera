@@ -64,7 +64,7 @@ for shader in "${SHADERS_TO_COMPILE[@]}"; do
     output_path="$DEST_DIR$shader_name.frag.qsb"
 
     # Construct and run the qsb command.
-    qsb --qt6 -o "$output_path" "$shader"
+    /usr/lib/qt6/bin/qsb --qt6 -o "$output_path" "$shader"
 
     # Print a message to confirm compilation.
     echo "Compiled $(basename "$shader") to $output_path"

@@ -93,6 +93,14 @@ ColumnLayout {
       onToggled: checked => Settings.data.location.showCalendarWeather = checked
       enabled: Settings.data.location.weatherEnabled
     }
+
+    NToggle {
+      label: I18n.tr("settings.location.weather.show-effects.label")
+      description: I18n.tr("settings.location.weather.show-effects.description")
+      checked: Settings.data.location.weatherShowEffects
+      onToggled: checked => Settings.data.location.weatherShowEffects = checked
+      enabled: Settings.data.location.weatherEnabled
+    }
   }
 
   NDivider {
@@ -137,17 +145,17 @@ ColumnLayout {
         },
         {
           "key": "6",
-          "name": I18n.locale.dayName(6, Locale.LongFormat)
+          "name": I18n.locale.dayName(6, Locale.LongFormat).trim()
         } // Saturday
         ,
         {
           "key": "0",
-          "name": I18n.locale.dayName(0, Locale.LongFormat)
+          "name": I18n.locale.dayName(0, Locale.LongFormat).trim()
         } // Sunday
         ,
         {
           "key": "1",
-          "name": I18n.locale.dayName(1, Locale.LongFormat)
+          "name": I18n.locale.dayName(1, Locale.LongFormat).trim()
         } // Monday
       ]
       onSelected: key => Settings.data.location.firstDayOfWeek = parseInt(key)

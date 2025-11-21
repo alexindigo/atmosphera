@@ -1,14 +1,11 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Pipewire
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Hardware
 import qs.Services.Media
-import qs.Services.System
 import qs.Widgets
 
 // Unified OSD component that displays volume, input volume, and brightness changes
@@ -24,26 +21,14 @@ Variants {
 
     // OSD State
     property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
-
-    // Audio Output State
-    property real lastKnownVolume: -1
-    property bool volumeInitialized: false
-    property bool muteInitialized: false
-
-    // Audio Input State
-    property real lastKnownInputVolume: -1
-    property bool inputInitialized: false
-
-    // Brightness State
-    property real lastUpdatedBrightness: 0
-    property bool brightnessInitialized: false
+    property bool startupComplete: false
+    property real currentBrightness: 0
 
     // Current values (computed properties)
     readonly property real currentVolume: AudioService.volume
     readonly property bool isMuted: AudioService.muted
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
-    readonly property real currentBrightness: lastUpdatedBrightness
 
     // ============================================================================
     // Helper Functions
@@ -88,55 +73,32 @@ Variants {
     function getDisplayPercentage() {
       const value = getCurrentValue();
       const max = getMaxValue();
+      if ((currentOSDType === "volume" || currentOSDType === "inputVolume") && Settings.data.audio.volumeOverdrive) {
+        const pct = Math.round(value * 100);
+        return pct + "%";
+      }
       const pct = Math.round(Math.min(max, value) * 100);
       return pct + "%";
     }
 
     function getProgressColor() {
       const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      return isMutedState ? Color.mError : Color.mPrimary;
+      if (isMutedState) {
+        return Color.mError;
+      }
+      // When volumeOverdrive is enabled, show error color if volume is above 100%
+      if ((currentOSDType === "volume" || currentOSDType === "inputVolume") && Settings.data.audio.volumeOverdrive) {
+        const value = getCurrentValue();
+        if (value > 1.0) {
+          return Color.mError;
+        }
+      }
+      return Color.mPrimary;
     }
 
     function getIconColor() {
       const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
       return isMutedState ? Color.mError : Color.mOnSurface;
-    }
-
-    // ============================================================================
-    // Audio Initialization
-    // ============================================================================
-    function initializeAudioValues() {
-      // Initialize output volume
-      if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
-        const vol = AudioService.volume;
-        if (vol !== undefined && !isNaN(vol)) {
-          lastKnownVolume = vol;
-          volumeInitialized = true;
-          muteInitialized = true;
-        }
-      }
-
-      // Initialize input volume
-      if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
-        const inputVol = AudioService.inputVolume;
-        if (inputVol !== undefined && !isNaN(inputVol)) {
-          lastKnownInputVolume = inputVol;
-          inputInitialized = true;
-        }
-      }
-    }
-
-    function resetOutputInit() {
-      lastKnownVolume = -1;
-      volumeInitialized = false;
-      muteInitialized = false;
-      Qt.callLater(initializeAudioValues);
-    }
-
-    function resetInputInit() {
-      lastKnownInputVolume = -1;
-      inputInitialized = false;
-      Qt.callLater(initializeAudioValues);
     }
 
     // ============================================================================
@@ -151,13 +113,7 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
-      lastUpdatedBrightness = newBrightness;
-
-      if (!brightnessInitialized) {
-        brightnessInitialized = true;
-        return;
-      }
-
+      currentBrightness = newBrightness;
       showOSD("brightness");
     }
 
@@ -165,6 +121,10 @@ Variants {
     // OSD Display Control
     // ============================================================================
     function showOSD(type) {
+      // Ignore all OSD requests during startup period
+      if (!startupComplete)
+        return;
+
       currentOSDType = type;
 
       if (!root.active) {
@@ -193,92 +153,26 @@ Variants {
     // Signal Connections
     // ============================================================================
 
-    // Pipewire state monitoring
-    Connections {
-      target: Pipewire
-
-      function onReadyChanged() {
-        if (Pipewire.ready)
-          Qt.callLater(initializeAudioValues);
-      }
-
-      function onDefaultAudioSinkChanged() {
-        resetOutputInit();
-      }
-
-      function onDefaultAudioSourceChanged() {
-        resetInputInit();
-      }
-    }
-
     // AudioService monitoring
     Connections {
       target: AudioService
 
-      function onSinkChanged() {
-        if (AudioService.sink?.ready && AudioService.sink?.audio) {
-          resetOutputInit();
-        }
-      }
-
-      function onSourceChanged() {
-        if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio) {
-          resetInputInit();
-        }
-      }
-
       function onVolumeChanged() {
-        if (lastKnownVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownVolume < 0)
-            return;
-        }
-        if (!volumeInitialized)
-          return;
-        if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
-          lastKnownVolume = AudioService.volume;
-          showOSD("volume");
-        }
+        showOSD("volume");
       }
 
       function onMutedChanged() {
-        if (lastKnownVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownVolume < 0)
-            return;
-        }
-        if (!muteInitialized)
-          return;
         showOSD("volume");
       }
 
       function onInputVolumeChanged() {
-        if (!AudioService.hasInput)
-          return;
-        if (lastKnownInputVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownInputVolume < 0)
-            return;
-        }
-        if (!inputInitialized)
-          return;
-        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
-          lastKnownInputVolume = AudioService.inputVolume;
+        if (AudioService.hasInput)
           showOSD("inputVolume");
-        }
       }
 
       function onInputMutedChanged() {
-        if (!AudioService.hasInput)
-          return;
-        if (lastKnownInputVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownInputVolume < 0)
-            return;
-        }
-        if (!inputInitialized)
-          return;
-        showOSD("inputVolume");
+        if (AudioService.hasInput)
+          showOSD("inputVolume");
       }
     }
 
@@ -290,42 +184,14 @@ Variants {
       }
     }
 
-    // Initialization timers
+    // Startup timer - connect brightness monitors and enable OSD after 2 seconds
     Timer {
-      id: initTimer
-      interval: 500
+      id: startupTimer
+      interval: 2000
       running: true
       onTriggered: {
-        if (Pipewire.ready)
-          initializeAudioValues();
-        muteInitialized = true;
         connectBrightnessMonitors();
-      }
-    }
-
-    Timer {
-      id: reinitTimer
-      interval: 1000
-      running: true
-      repeat: true
-      onTriggered: {
-        if (!Pipewire.ready)
-          return;
-        const needsOutputInit = lastKnownVolume < 0;
-        const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0;
-
-        if (needsOutputInit || needsInputInit) {
-          initializeAudioValues();
-
-          // Stop timer if both are initialized
-          const outputDone = lastKnownVolume >= 0;
-          const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0;
-          if (outputDone && inputDone) {
-            running = false;
-          }
-        } else {
-          running = false;
-        }
+        root.startupComplete = true;
       }
     }
 
@@ -436,7 +302,7 @@ Variants {
           }
         }
 
-        NDropShadows {
+        NDropShadow {
           anchors.fill: background
           source: background
           autoPaddingEnabled: true

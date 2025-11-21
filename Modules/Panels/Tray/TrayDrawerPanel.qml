@@ -235,7 +235,7 @@ SmartPanel {
                 if (popupMenuWindow) {
                   popupMenuWindow.close();
                 }
-                TooltipService.show(screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+                TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
               }
               onExited: TooltipService.hide()
             }

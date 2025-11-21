@@ -24,7 +24,7 @@ Singleton {
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.i("AppThemeService", "Detected dark mode change");
+      Logger.d("AppThemeService", "Detected dark mode change");
       generate();
     }
   }

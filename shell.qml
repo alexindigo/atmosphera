@@ -26,6 +26,7 @@ import qs.Services.Control
 import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Networking
+import qs.Services.Noctalia
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
@@ -80,6 +81,8 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         FontService.init();
+        UpdateService.init();
+        UpdateService.showLatestChangelog();
 
         // Only open the setup wizard for new users
         if (!Settings.data.setupCompleted) {
