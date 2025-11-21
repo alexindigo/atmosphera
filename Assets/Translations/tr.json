@@ -123,9 +123,13 @@
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Dinamik metin",
-        "hide-vertical": {
-          "description": "Etkinleştirilirse, komut çıktısındaki metin, çubuk dikey düzende (sol veya sağ) olduğunda gösterilmeyecektir.",
-          "label": "Dikey çubukta metni gizle"
+        "max-text-length-horizontal": {
+          "description": "Yatay çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
+          "label": "Maks. metin uzunluğu (yatay)"
+        },
+        "max-text-length-vertical": {
+          "description": "Dikey çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
+          "label": "Maks. metin uzunluğu (dikey)"
         },
         "icon": {
           "description": "Kütüphaneden bir ikon seçin.",
@@ -140,6 +144,23 @@
           "description": "Butona orta tıklandığında yürütülecek komut.",
           "label": "Orta tıklama",
           "update-text": "Orta tıklamayla görüntülenen metni güncelle"
+        },
+        "wheel": {
+          "description": "Kaydırma tekerleği kullanıldığında yürütülecek komut.\nKomutta kaydırma tekerleği deltası için $delta kullanın",
+          "label": "Kaydırma tekerleği",
+          "update-text": "Kaydırmada gösterilen metni güncelle"
+        },
+        "wheel-mode-separate": {
+          "label": "Ayrı kaydırma tekerleği komutları",
+          "description": "Kaydırma tekerleği yukarı ve aşağı için ayrı komutları etkinleştir"
+        },
+        "wheel-up": {
+          "description": "Kaydırma tekerleği yukarı kaydırıldığında yürütülecek komut.",
+          "label": "Kaydırma tekerleği yukarı komutu"
+        },
+        "wheel-down": {
+          "description": "Kaydırma tekerleği aşağı kaydırıldığında yürütülecek komut.",
+          "label": "Kaydırma tekerleği aşağı komutu"
         },
         "parse-json": {
           "description": "Komut çıktısını metin ve ikon dinamik olarak ayarlamak için bir JSON nesnesi olarak ayrıştırın.",

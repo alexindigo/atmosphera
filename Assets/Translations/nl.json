@@ -123,9 +123,13 @@
           "stream-description": "Voer een commando in dat continu wordt uitgevoerd."
         },
         "dynamic-text": "Dynamische tekst",
-        "hide-vertical": {
-          "description": "Indien ingeschakeld wordt de tekst uit de commando-uitvoer niet getoond wanneer de balk verticaal is (links of rechts).",
-          "label": "Tekst verbergen in verticale balk"
+        "max-text-length-horizontal": {
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in horizontale balk (0 om tekst te verbergen)",
+          "label": "Max. tekstlengte (horizontaal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in verticale balk (0 om tekst te verbergen)",
+          "label": "Max. tekstlengte (verticaal)"
         },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek.",
@@ -140,6 +144,23 @@
           "description": "Commando dat wordt uitgevoerd wanneer met de middelste muisknop op de knop wordt geklikt.",
           "label": "Middelste muisklik",
           "update-text": "Tekst bijwerken bij middelste muisklik"
+        },
+        "wheel": {
+          "description": "Commando om uit te voeren wanneer het scrollwiel wordt gebruikt.\nGebruik $delta voor de scrollwiel-delta in het commando",
+          "label": "Scrollwiel",
+          "update-text": "Weergegeven tekst bij scrollen bijwerken"
+        },
+        "wheel-mode-separate": {
+          "label": "Afzonderlijke scrollwielcommando's",
+          "description": "Afzonderlijke commando's inschakelen voor scrollwiel omhoog en omlaag"
+        },
+        "wheel-up": {
+          "description": "Commando om uit te voeren wanneer het scrollwiel omhoog wordt bewogen.",
+          "label": "Scrollwiel omhoog commando"
+        },
+        "wheel-down": {
+          "description": "Commando om uit te voeren wanneer het scrollwiel omlaag wordt bewogen.",
+          "label": "Scrollwiel omlaag commando"
         },
         "parse-json": {
           "description": "Interpreteer de commando-uitvoer als JSON-object om tekst en pictogram dynamisch in te stellen.",

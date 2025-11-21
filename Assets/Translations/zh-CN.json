@@ -123,9 +123,13 @@
           "stream-description": "输入一个要持续运行的命令。"
         },
         "dynamic-text": "动态文本",
-        "hide-vertical": {
-          "description": "如果启用，当栏处于垂直布局（左或右）时，将不显示命令输出的文本。",
-          "label": "在垂直栏中隐藏文本"
+        "max-text-length-horizontal": {
+          "description": "在水平栏中显示的最大字符数（0 为隐藏文本）",
+          "label": "最大文本长度（水平）"
+        },
+        "max-text-length-vertical": {
+          "description": "在垂直栏中显示的最大字符数（0 为隐藏文本）",
+          "label": "最大文本长度（垂直）"
         },
         "icon": {
           "description": "从库中选择图标。",
@@ -140,6 +144,23 @@
           "description": "中键点击按钮时执行的命令。",
           "label": "中键点击",
           "update-text": "鼠标中键点击时更新显示的文本"
+        },
+        "wheel": {
+          "description": "使用滚轮时执行的命令。\n在命令中使用 $delta 表示滚轮增量",
+          "label": "滚轮",
+          "update-text": "滚轮滚动时更新显示的文本"
+        },
+        "wheel-mode-separate": {
+          "label": "分开滚轮命令",
+          "description": "为滚轮向上和向下启用单独的命令"
+        },
+        "wheel-up": {
+          "description": "滚轮向上滚动时执行的命令。",
+          "label": "滚轮向上命令"
+        },
+        "wheel-down": {
+          "description": "滚轮向下滚动时执行的命令。",
+          "label": "滚轮向下命令"
         },
         "parse-json": {
           "description": "将命令输出解析为 JSON 对象，以动态设置文本和图标。",
