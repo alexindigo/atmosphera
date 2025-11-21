@@ -11,10 +11,16 @@ Singleton {
   id: root
 
   // Version properties
-  property string baseVersion: "3.2.0"
-  property bool isDevelopment: true
-  property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
-  property string changelogStateFile: Quickshell.env("NOCTALIA_CHANGELOG_STATE_FILE") || (Settings.cacheDir + "changelog-state.json")
+  readonly property string baseVersion: "3.2.0"
+  readonly property bool isDevelopment: true
+  readonly property string developmentSuffix: "-git"
+  readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
+  readonly property string changelogStateFile: Quickshell.env("NOCTALIA_CHANGELOG_STATE_FILE") || (Settings.cacheDir + "changelog-state.json")
+
+  // URLs
+  readonly property string discordUrl: "https://discord.noctalia.dev"
+  readonly property string feedbackUrl: Quickshell.env("NOCTALIA_CHANGELOG_FEEDBACK_URL") || ""
+  readonly property string upgradeLogBaseUrl: Quickshell.env("NOCTALIA_UPGRADELOG_URL") || "https://noctalia.dev:7777/upgradelog"
 
   // Changelog properties
   property bool initialized: false
@@ -24,19 +30,12 @@ Singleton {
   property string previousVersion: ""
   property string changelogCurrentVersion: ""
   property var releaseHighlights: []
-  property string releaseNotesUrl: ""
-  property string discordUrl: "https://discord.noctalia.dev"
   property string lastShownVersion: ""
   property bool popupScheduled: false
-  property string feedbackUrl: Quickshell.env("NOCTALIA_CHANGELOG_FEEDBACK_URL") || ""
   property string fetchError: ""
   property string changelogLastSeenVersion: ""
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
-
-  // Changelog fetching
-  property string changelogBaseUrl: Quickshell.env("NOCTALIA_CHANGELOG_URL") || "https://noctalia.dev:7777/changelogs"
-  property string upgradeLogBaseUrl: Quickshell.env("NOCTALIA_UPGRADELOG_URL") || "https://noctalia.dev:7777/upgradelog"
 
   // Fix for FileView race condition
   property bool saveInProgress: false
@@ -44,16 +43,6 @@ Singleton {
   property int saveDebounceTimer: 0
 
   signal popupQueued(string fromVersion, string toVersion)
-
-  // Internal helpers
-  function getVersion() {
-    return root.currentVersion;
-  }
-
-  function checkForUpdates() {
-    // TODO: Implement update checking logic
-    Logger.i("UpdateService", "Checking for updates...");
-  }
 
   function init() {
     if (initialized)
@@ -111,7 +100,6 @@ Singleton {
 
     previousVersion = fromVersion;
     changelogCurrentVersion = toVersion;
-    releaseNotesUrl = buildReleaseNotesUrl(toVersion);
 
     // Fetch the upgrade log from the server
     fetchUpgradeLog(fromVersion, toVersion);
@@ -127,19 +115,13 @@ Singleton {
     let from = fromVersion || changelogLastSeenVersion || "v3.0.0";
     let to = toVersion;
 
-    // Strip -dev suffix from versions
-    from = from.replace(/-dev$/, "");
-    to = to.replace(/-dev$/, "");
+    // Strip suffix from versions
+    from = from.replace(root.developmentSuffix, "");
+    to = to.replace(root.developmentSuffix, "");
+
+    Logger.d("UpdateService", "Fetching upgrade log", "from:", from, "to:", to);
 
     const url = `${upgradeLogBaseUrl}/${from}/${to}`;
-
-    Logger.w("UpdateService", "=== Fetching upgrade log ===");
-    Logger.w("UpdateService", "From version:", from);
-    Logger.w("UpdateService", "To version:", to);
-    Logger.w("UpdateService", "URL:", url);
-    Logger.w("UpdateService", "upgradeLogBaseUrl:", upgradeLogBaseUrl);
-    Logger.w("UpdateService", "changelogLastSeenVersion:", changelogLastSeenVersion);
-
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -203,13 +185,6 @@ Singleton {
         return -1;
     }
     return 0;
-  }
-
-  function buildReleaseNotesUrl(version) {
-    if (!version)
-      return "";
-    const tag = version.startsWith("v") ? version : `v${version}`;
-    return `${changelogBaseUrl}/CHANGELOG-${tag}.txt`;
   }
 
   function parseReleaseNotes(body) {
@@ -292,12 +267,6 @@ Singleton {
     panel.open();
     popupScheduled = false;
     lastShownVersion = changelogCurrentVersion;
-  }
-
-  function openReleaseNotes() {
-    if (!releaseNotesUrl)
-      return;
-    Quickshell.execDetached(["xdg-open", releaseNotesUrl]);
   }
 
   function openDiscord() {
@@ -413,6 +382,4 @@ Singleton {
     // Immediate save (backward compatibility)
     debouncedSaveChangelogState();
   }
-
-  // Changelog fetching functions (removed cache - only fetch on version change via fetchUpgradeLog)
 }
