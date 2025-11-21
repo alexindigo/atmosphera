@@ -352,6 +352,10 @@
           "description": "不显示没有窗口的工作区。",
           "label": "隐藏未占用"
         },
+        "show-focused-screen": {
+          "description": "显示来自焦点屏幕的工作区，而不是与任务栏相同的屏幕。",
+          "label": "显示焦点屏幕"
+        },
         "label-mode": {
           "description": "选择工作区标签的显示方式。",
           "label": "标签模式"

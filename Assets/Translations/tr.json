@@ -352,6 +352,10 @@
           "description": "Penceresi olmayan çalışma alanlarını gösterme.",
           "label": "Dolu olmayanları gizle"
         },
+        "show-focused-screen": {
+          "description": "Çubuğun bulunduğu ekran yerine odaklanmış ekrandaki çalışma alanlarını göster.",
+          "label": "Odaklanmış ekranı göster"
+        },
         "label-mode": {
           "description": "Çalışma alanı etiketlerinin nasıl gösterileceğini seçin.",
           "label": "Etiket Modu"

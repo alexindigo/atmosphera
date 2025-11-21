@@ -352,6 +352,10 @@
           "description": "Não exibir áreas de trabalho sem janelas.",
           "label": "Ocultar desocupados"
         },
+        "show-focused-screen": {
+          "description": "Mostrar áreas de trabalho da tela em foco em vez da mesma tela que a barra.",
+          "label": "Mostrar tela em foco"
+        },
         "label-mode": {
           "description": "Escolher como os rótulos de espaço de trabalho são exibidos.",
           "label": "Modo de rótulo"

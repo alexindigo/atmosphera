@@ -352,6 +352,10 @@
           "description": "No mostrar espacios de trabajo sin ventanas.",
           "label": "Ocultar desocupados"
         },
+        "show-focused-screen": {
+          "description": "Mostrar espacios de trabajo de la pantalla enfocada en lugar de la misma pantalla que la barra.",
+          "label": "Mostrar pantalla enfocada"
+        },
         "label-mode": {
           "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo.",
           "label": "Modo de etiqueta"

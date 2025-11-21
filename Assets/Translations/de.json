@@ -352,6 +352,10 @@
           "description": "Arbeitsbereiche ohne Fenster nicht anzeigen.",
           "label": "Unbesetzte ausblenden"
         },
+        "show-focused-screen": {
+          "description": "Arbeitsbereiche vom fokussierten Bildschirm anzeigen, anstatt vom gleichen Bildschirm wie die Leiste.",
+          "label": "Fokussierten Bildschirm anzeigen"
+        },
         "label-mode": {
           "description": "Wählen Sie, wie Arbeitsbereichs-Beschriftungen angezeigt werden.",
           "label": "Beschriftungsmodus"
