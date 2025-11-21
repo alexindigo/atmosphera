@@ -352,6 +352,10 @@
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"
         },
+        "show-focused-screen": {
+          "description": "Show workspaces from the focused screen instead of from the same screen as the bar.",
+          "label": "Show focused screen"
+        },
         "label-mode": {
           "description": "Choose how workspace labels are displayed.",
           "label": "Label Mode"
