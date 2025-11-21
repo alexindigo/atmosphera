@@ -123,9 +123,13 @@
           "stream-description": "Insira um comando para executar continuamente."
         },
         "dynamic-text": "Texto dinâmico",
-        "hide-vertical": {
-          "description": "Se ativado, o texto da saída do comando não será exibido quando a barra estiver em um layout vertical (esquerda ou direita).",
-          "label": "Ocultar texto na barra vertical"
+        "max-text-length-horizontal": {
+          "description": "Número máximo de caracteres a serem exibidos na barra horizontal (0 para ocultar o texto)",
+          "label": "Comprimento máximo do texto (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Número máximo de caracteres a serem exibidos na barra vertical (0 para ocultar o texto)",
+          "label": "Comprimento máximo do texto (vertical)"
         },
         "icon": {
           "description": "Selecione um ícone da biblioteca.",

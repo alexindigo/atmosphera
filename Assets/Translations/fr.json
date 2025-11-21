@@ -123,9 +123,13 @@
           "stream-description": "Entrez une commande à exécuter en continu."
         },
         "dynamic-text": "Texte dynamique",
-        "hide-vertical": {
-          "description": "Si activé, le texte de la sortie de la commande ne sera pas affiché lorsque la barre est en disposition verticale (gauche ou droite).",
-          "label": "Masquer le texte dans la barre verticale"
+        "max-text-length-horizontal": {
+          "description": "Nombre maximal de caractères à afficher dans la barre horizontale (0 pour masquer le texte)",
+          "label": "Longueur max du texte (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte)",
+          "label": "Longueur max du texte (vertical)"
         },
         "icon": {
           "description": "Sélectionnez une icône dans la bibliothèque.",

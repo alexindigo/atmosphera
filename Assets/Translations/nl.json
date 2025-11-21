@@ -123,9 +123,13 @@
           "stream-description": "Voer een commando in dat continu wordt uitgevoerd."
         },
         "dynamic-text": "Dynamische tekst",
-        "hide-vertical": {
-          "description": "Indien ingeschakeld wordt de tekst uit de commando-uitvoer niet getoond wanneer de balk verticaal is (links of rechts).",
-          "label": "Tekst verbergen in verticale balk"
+        "max-text-length-horizontal": {
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in horizontale balk (0 om tekst te verbergen)",
+          "label": "Max. tekstlengte (horizontaal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in verticale balk (0 om tekst te verbergen)",
+          "label": "Max. tekstlengte (verticaal)"
         },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek.",
