@@ -11,7 +11,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  property string latestVersion: UpdateService.latestVersion
+  property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
 
