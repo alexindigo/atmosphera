@@ -13,6 +13,7 @@ Singleton {
   property var schemes: []
   property bool scanning: false
   property string schemesDirectory: Quickshell.shellDir + "/Assets/ColorScheme"
+  property string downloadedSchemesDirectory: Settings.configDir + "colorschemes"
   property string colorsJsonFilePath: Settings.configDir + "colors.json"
 
   Connections {
@@ -43,8 +44,11 @@ Singleton {
     Logger.d("ColorScheme", "Load colorScheme");
     scanning = true;
     schemes = [];
-    // Use find command to locate all scheme.json files
-    findProcess.command = ["find", schemesDirectory, "-name", "*.json", "-type", "f"];
+    // Use find command to locate all scheme.json files in both directories
+    // First ensure the downloaded schemes directory exists
+    Quickshell.execDetached(["mkdir", "-p", downloadedSchemesDirectory]);
+    // Find in both preinstalled and downloaded directories
+    findProcess.command = ["find", schemesDirectory, downloadedSchemesDirectory, "-name", "*.json", "-type", "f"];
     findProcess.running = true;
   }
 
@@ -81,7 +85,17 @@ Singleton {
     } else if (schemeName === "Tokyo Night") {
       schemeName = "Tokyo-Night";
     }
-    return schemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    // Check preinstalled directory first, then downloaded directory
+    var preinstalledPath = schemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    var downloadedPath = downloadedSchemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    // Try to find the scheme in the loaded schemes list to determine which directory it's in
+    for (var i = 0; i < schemes.length; i++) {
+      if (schemes[i].indexOf("/" + schemeName + "/") !== -1 || schemes[i].indexOf("/" + schemeName + ".json") !== -1) {
+        return schemes[i];
+      }
+    }
+    // Fallback: prefer preinstalled, then downloaded
+    return preinstalledPath;
   }
 
   function applyScheme(nameOrPath) {

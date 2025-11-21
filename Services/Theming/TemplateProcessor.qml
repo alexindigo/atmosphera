@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.System
+import qs.Services.Theming
 import qs.Services.UI
 
 Singleton {
@@ -329,7 +330,26 @@ Singleton {
       extension = ".toml";
     }
 
-    return `${Quickshell.shellDir}/Assets/ColorScheme/${colorScheme}/terminal/${terminal}/${colorScheme}-${mode}${extension}`;
+    const fileName = `${colorScheme}-${mode}${extension}`;
+    const relativePath = `terminal/${terminal}/${fileName}`;
+
+    // Try to find the scheme in the loaded schemes list to determine which directory it's in
+    for (let i = 0; i < ColorSchemeService.schemes.length; i++) {
+      const schemeJsonPath = ColorSchemeService.schemes[i];
+      // Check if this is the scheme we're looking for
+      if (schemeJsonPath.indexOf(`/${colorScheme}/`) !== -1 || schemeJsonPath.indexOf(`/${colorScheme}.json`) !== -1) {
+        // Extract the scheme directory from the JSON path
+        // JSON path is like: /path/to/scheme/SchemeName/SchemeName.json
+        // We need: /path/to/scheme/SchemeName/terminal/...
+        const schemeDir = schemeJsonPath.substring(0, schemeJsonPath.lastIndexOf('/'));
+        return `${schemeDir}/${relativePath}`;
+      }
+    }
+
+    // Fallback: try downloaded first, then preinstalled
+    const downloadedPath = `${ColorSchemeService.downloadedSchemesDirectory}/${colorScheme}/${relativePath}`;
+    const preinstalledPath = `${ColorSchemeService.schemesDirectory}/${colorScheme}/${relativePath}`;
+    return preinstalledPath;
   }
 
   // ================================================================================
