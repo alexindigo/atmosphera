@@ -1216,6 +1216,10 @@
           "description": "Adjust the dock's background opacity.",
           "label": "Background opacity"
         },
+        "border-radius": {
+          "description": "Adjust the dock's border radius.",
+          "label": "Border radius"
+        },
         "colorize-icons": {
           "description": "Apply theme colors to dock app icons (non-focused apps only).",
           "label": "Colorize Icons"
