@@ -40,4 +40,3 @@ ColumnLayout {
     onSelected: key => root.valueDisplayMode = key
   }
 }
-

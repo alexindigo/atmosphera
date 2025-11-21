@@ -123,14 +123,6 @@
           "stream-description": "Enter a command to run continuously."
         },
         "dynamic-text": "Dynamic text",
-        "max-text-length-horizontal": {
-          "description": "Maximum number of characters to show in horizontal bar (0 to hide text)",
-          "label": "Max text length (horizontal)"
-        },
-        "max-text-length-vertical": {
-          "description": "Maximum number of characters to show in vertical bar (0 to hide text)",
-          "label": "Max text length (vertical)"
-        },
         "icon": {
           "description": "Select an icon from the library.",
           "label": "Icon"
@@ -140,27 +132,18 @@
           "label": "Left click",
           "update-text": "Update displayed text on left-click"
         },
+        "max-text-length-horizontal": {
+          "description": "Maximum number of characters to show in horizontal bar (0 to hide text)",
+          "label": "Max text length (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Maximum number of characters to show in vertical bar (0 to hide text)",
+          "label": "Max text length (vertical)"
+        },
         "middle-click": {
           "description": "Command to execute when the button is middle-clicked.",
           "label": "Middle click",
           "update-text": "Update displayed text on middle-click"
-        },
-        "wheel": {
-          "description": "Command to execute when the scroll wheel is used.\nUse $delta for the scroll wheel delta in the command",
-          "label": "Scroll wheel",
-          "update-text": "Update displayed text on scroll"
-        },
-        "wheel-mode-separate": {
-          "label": "Separate wheel commands",
-          "description": "Enable separate commands for wheel up and down"
-        },
-        "wheel-up": {
-          "description": "Command to execute when the scroll wheel is scrolled up.",
-          "label": "Wheel up command"
-        },
-        "wheel-down": {
-          "description": "Command to execute when the scroll wheel is scrolled down.",
-          "label": "Wheel down command"
         },
         "parse-json": {
           "description": "Parse the command output as a JSON object to dynamically set text and icon.",
@@ -178,6 +161,23 @@
         "text-stream": {
           "description": "Streamed lines from the command will be displayed as text on the button.",
           "label": "Stream"
+        },
+        "wheel": {
+          "description": "Command to execute when the scroll wheel is used.\nUse $delta for the scroll wheel delta in the command",
+          "label": "Scroll wheel",
+          "update-text": "Update displayed text on scroll"
+        },
+        "wheel-down": {
+          "description": "Command to execute when the scroll wheel is scrolled down.",
+          "label": "Wheel down command"
+        },
+        "wheel-mode-separate": {
+          "description": "Enable separate commands for wheel up and down",
+          "label": "Separate wheel commands"
+        },
+        "wheel-up": {
+          "description": "Command to execute when the scroll wheel is scrolled up.",
+          "label": "Wheel up command"
         }
       },
       "dialog": {
@@ -418,8 +418,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "GitHub rate limit exceeded. Please try again in a few minutes.",
-      "fetch-failed": "Unable to load changelog data. Please try again later."
+      "fetch-failed": "Unable to load changelog data. Please try again later.",
+      "rate-limit": "GitHub rate limit exceeded. Please try again in a few minutes."
     },
     "panel": {
       "buttons": {
@@ -449,15 +449,15 @@
     "activate-app": "Activate {app}",
     "clear-history": "Clear history",
     "close-app": "Close {app}",
+    "connect-vpn": "Connect to {name}",
     "cycle-visualizer": "Cycle visualizer",
     "disable-bluetooth": "Disable Bluetooth",
     "disable-dnd": "Disable Do Not Disturb",
     "disable-wifi": "Disable Wi-Fi",
+    "disconnect-vpn": "Disconnect {name}",
     "enable-bluetooth": "Enable Bluetooth",
     "enable-dnd": "Enable Do Not Disturb",
     "enable-wifi": "Enable Wi-Fi",
-    "connect-vpn": "Connect to {name}",
-    "disconnect-vpn": "Disconnect {name}",
     "next": "Next",
     "open-calendar": "Open calendar",
     "open-display-settings": "Display settings",
@@ -1395,13 +1395,13 @@
           "description": "Adjust the background opacity of the launcher.",
           "label": "Background opacity"
         },
-        "clipboard-history": {
-          "description": "Access previously copied items from the launcher.",
-          "label": "Enable clipboard history"
-        },
         "clip-preview": {
           "description": "Show a preview of the clipboard content when using the >clip command.",
           "label": "Enable clip preview"
+        },
+        "clipboard-history": {
+          "description": "Access previously copied items from the launcher.",
+          "label": "Enable clipboard history"
         },
         "custom-launch-prefix": {
           "description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",
@@ -2069,6 +2069,10 @@
       "title-matugen": "Matugen templating processing failed",
       "title-predefined": "Predefined color cheme processing failed"
     },
+    "vpn": {
+      "connected": "Connected to '{name}'",
+      "disconnected": "Disconnected from '{name}'"
+    },
     "wallpaper-colors": {
       "disabled": "Wallpaper colors disabled",
       "enabled": "Wallpaper colors enabled",
@@ -2080,10 +2084,6 @@
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
       "enabled": "Enabled"
-    },
-    "vpn": {
-      "connected": "Connected to '{name}'",
-      "disconnected": "Disconnected from '{name}'"
     }
   },
   "tooltips": {
@@ -2106,8 +2106,8 @@
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep awake",
     "keyboard-layout": "{layout} keyboard layout",
-    "manage-wifi": "Manage Wi-Fi",
     "manage-vpn": "Manage VPN connections",
+    "manage-wifi": "Manage Wi-Fi",
     "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
     "move-to-center-section": "Move to center section",
     "move-to-left-section": "Move to left section",

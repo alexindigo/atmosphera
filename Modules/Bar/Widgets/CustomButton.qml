@@ -51,9 +51,7 @@ Item {
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
-  readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec ||
-                                  (wheelMode === "unified" && wheelExec) ||
-                                  (wheelMode === "separate" && (wheelUpExec || wheelDownExec)))
+  readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec || (wheelMode === "unified" && wheelExec) || (wheelMode === "separate" && (wheelUpExec || wheelDownExec)))
 
   implicitWidth: pill.width
   implicitHeight: pill.height
@@ -121,16 +119,8 @@ Item {
 
   // Maximum length for text display before scrolling (different values for horizontal and vertical)
   readonly property var maxTextLength: {
-    "horizontal": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.horizontal !== undefined) ?
-                   widgetSettings.maxTextLength.horizontal :
-                   ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.horizontal !== undefined) ?
-                   widgetMetadata.maxTextLength.horizontal :
-                   10)),
-    "vertical": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.vertical !== undefined) ?
-                 widgetSettings.maxTextLength.vertical :
-                 ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.vertical !== undefined) ?
-                 widgetMetadata.maxTextLength.vertical :
-                 10))
+    "horizontal": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.horizontal !== undefined) ? widgetSettings.maxTextLength.horizontal : ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.horizontal !== undefined) ? widgetMetadata.maxTextLength.horizontal : 10)),
+    "vertical": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.vertical !== undefined) ? widgetSettings.maxTextLength.vertical : ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.vertical !== undefined) ? widgetMetadata.maxTextLength.vertical : 10))
   }
   readonly property int _staticDuration: 6  // How many cycles to stay static at start/end
 
@@ -139,7 +129,8 @@ Item {
     "originalText": "",
     "needsScrolling": false,
     "offset": 0,
-    "phase": 0, // 0=static start, 1=scrolling, 2=static end
+    "phase": 0 // 0=static start, 1=scrolling, 2=static end
+        ,
     "phaseCounter": 0
   }
 
@@ -173,14 +164,16 @@ Item {
     onTriggered: {
       if (_scrollState.needsScrolling && _scrollState.originalText.length > currentMaxTextLength) {
         // Traditional marquee with pause at beginning and end
-        if (_scrollState.phase === 0) {  // Static at beginning
+        if (_scrollState.phase === 0) {
+          // Static at beginning
           _dynamicText = _scrollState.originalText.substring(0, Math.min(currentMaxTextLength, _scrollState.originalText.length));
           _scrollState.phaseCounter++;
           if (_scrollState.phaseCounter >= _staticDuration) {
             _scrollState.phaseCounter = 0;
             _scrollState.phase = 1;  // Move to scrolling
           }
-        } else if (_scrollState.phase === 1) {  // Scrolling
+        } else if (_scrollState.phase === 1) {
+          // Scrolling
           _scrollState.offset++;
           var start = _scrollState.offset;
           var end = start + currentMaxTextLength;
@@ -195,7 +188,8 @@ Item {
           } else {
             _dynamicText = _scrollState.originalText.substring(start, end);
           }
-        } else if (_scrollState.phase === 2) {  // Static at end
+        } else if (_scrollState.phase === 2) {
+          // Static at end
           // Ensure end text is displayed correctly
           var textEnd = _scrollState.originalText.length;
           var textStart = Math.max(0, textEnd - currentMaxTextLength);
@@ -377,17 +371,11 @@ Item {
     const placeholders = [];
     let i = 0;
     const protectedStr = str.replace(htmlTagRegex, tag => {
-      placeholders.push(tag);
-      return `___HTML_TAG_${i++}___`;
-    });
+                                       placeholders.push(tag);
+                                       return `___HTML_TAG_${i++}___`;
+                                     });
 
-    let escaped = protectedStr
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;")
-      .replace(/\r\n|\r|\n/g, "<br/>");
+    let escaped = protectedStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/\r\n|\r|\n/g, "<br/>");
 
     escaped = escaped.replace(/___HTML_TAG_(\d+)___/g, (_, index) => placeholders[Number(index)]);
 
@@ -407,19 +395,28 @@ Item {
     if (wheelMode === "unified" && wheelExec) {
       let normalizedDelta = delta > 0 ? 1 : -1;
 
-      let command = wheelExec.replace(/\$delta([+\-*/]\d+)?/g, function(match, operation) {
+      let command = wheelExec.replace(/\$delta([+\-*/]\d+)?/g, function (match, operation) {
         if (operation) {
           try {
             let operator = operation.charAt(0);
             let operand = parseInt(operation.substring(1));
 
             let result;
-            switch(operator) {
-              case '+': result = normalizedDelta + operand; break;
-              case '-': result = normalizedDelta - operand; break;
-              case '*': result = normalizedDelta * operand; break;
-              case '/': result = Math.floor(normalizedDelta / operand); break;
-              default: result = normalizedDelta;
+            switch (operator) {
+            case '+':
+              result = normalizedDelta + operand;
+              break;
+            case '-':
+              result = normalizedDelta - operand;
+              break;
+            case '*':
+              result = normalizedDelta * operand;
+              break;
+            case '/':
+              result = Math.floor(normalizedDelta / operand);
+              break;
+            default:
+              result = normalizedDelta;
             }
 
             return result.toString();
@@ -432,26 +429,35 @@ Item {
         }
       });
 
-      Quickshell.execDetached(["sh", "-c", command])
-      Logger.i("CustomButton", `Executing command: ${command}`)
+      Quickshell.execDetached(["sh", "-c", command]);
+      Logger.i("CustomButton", `Executing command: ${command}`);
     } else if (wheelMode === "separate") {
       if ((delta > 0 && wheelUpExec) || (delta < 0 && wheelDownExec)) {
         let commandExec = delta > 0 ? wheelUpExec : wheelDownExec;
         let normalizedDelta = delta > 0 ? 1 : -1;
 
-        let command = commandExec.replace(/\$delta([+\-*/]\d+)?/g, function(match, operation) {
+        let command = commandExec.replace(/\$delta([+\-*/]\d+)?/g, function (match, operation) {
           if (operation) {
             try {
               let operator = operation.charAt(0);
               let operand = parseInt(operation.substring(1));
 
               let result;
-              switch(operator) {
-                case '+': result = normalizedDelta + operand; break;
-                case '-': result = normalizedDelta - operand; break;
-                case '*': result = normalizedDelta * operand; break;
-                case '/': result = Math.floor(normalizedDelta / operand); break;
-                default: result = normalizedDelta;
+              switch (operator) {
+              case '+':
+                result = normalizedDelta + operand;
+                break;
+              case '-':
+                result = normalizedDelta - operand;
+                break;
+              case '*':
+                result = normalizedDelta * operand;
+                break;
+              case '/':
+                result = Math.floor(normalizedDelta / operand);
+                break;
+              default:
+                result = normalizedDelta;
               }
 
               return result.toString();
@@ -464,17 +470,17 @@ Item {
           }
         });
 
-        Quickshell.execDetached(["sh", "-c", command])
-        Logger.i("CustomButton", `Executing command: ${command}`)
+        Quickshell.execDetached(["sh", "-c", command]);
+        Logger.i("CustomButton", `Executing command: ${command}`);
       }
     }
 
     if (!textStream) {
       if (wheelMode === "unified" && wheelUpdateText) {
-        runTextCommand()
+        runTextCommand();
       } else if (wheelMode === "separate") {
         if ((delta > 0 && wheelUpUpdateText) || (delta < 0 && wheelDownUpdateText)) {
-          runTextCommand()
+          runTextCommand();
         }
       }
     }

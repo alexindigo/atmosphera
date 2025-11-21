@@ -207,7 +207,7 @@ Singleton {
             root.coordinatesReady = true;
 
             isFetchingWeather = false;
-            Logger.i("Location", "Cached weather to disk - stable coordinates updated");
+            Logger.d("Location", "Cached weather to disk - stable coordinates updated");
           } catch (e) {
             errorCallback("Location", "Failed to parse weather data");
           }

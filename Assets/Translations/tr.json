@@ -123,14 +123,6 @@
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Dinamik metin",
-        "max-text-length-horizontal": {
-          "description": "Yatay çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
-          "label": "Maks. metin uzunluğu (yatay)"
-        },
-        "max-text-length-vertical": {
-          "description": "Dikey çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
-          "label": "Maks. metin uzunluğu (dikey)"
-        },
         "icon": {
           "description": "Kütüphaneden bir ikon seçin.",
           "label": "İkon"
@@ -140,27 +132,18 @@
           "label": "Sol tıklama",
           "update-text": "Sol tıklamayla görüntülenen metni güncelle"
         },
+        "max-text-length-horizontal": {
+          "description": "Yatay çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
+          "label": "Maks. metin uzunluğu (yatay)"
+        },
+        "max-text-length-vertical": {
+          "description": "Dikey çubukta gösterilecek maksimum karakter sayısı (metni gizlemek için 0)",
+          "label": "Maks. metin uzunluğu (dikey)"
+        },
         "middle-click": {
           "description": "Butona orta tıklandığında yürütülecek komut.",
           "label": "Orta tıklama",
           "update-text": "Orta tıklamayla görüntülenen metni güncelle"
-        },
-        "wheel": {
-          "description": "Kaydırma tekerleği kullanıldığında yürütülecek komut.\nKomutta kaydırma tekerleği deltası için $delta kullanın",
-          "label": "Kaydırma tekerleği",
-          "update-text": "Kaydırmada gösterilen metni güncelle"
-        },
-        "wheel-mode-separate": {
-          "label": "Ayrı kaydırma tekerleği komutları",
-          "description": "Kaydırma tekerleği yukarı ve aşağı için ayrı komutları etkinleştir"
-        },
-        "wheel-up": {
-          "description": "Kaydırma tekerleği yukarı kaydırıldığında yürütülecek komut.",
-          "label": "Kaydırma tekerleği yukarı komutu"
-        },
-        "wheel-down": {
-          "description": "Kaydırma tekerleği aşağı kaydırıldığında yürütülecek komut.",
-          "label": "Kaydırma tekerleği aşağı komutu"
         },
         "parse-json": {
           "description": "Komut çıktısını metin ve ikon dinamik olarak ayarlamak için bir JSON nesnesi olarak ayrıştırın.",
@@ -178,6 +161,23 @@
         "text-stream": {
           "description": "Komuttan gelen akış satırları butonda metin olarak gösterilecektir.",
           "label": "Akış"
+        },
+        "wheel": {
+          "description": "Kaydırma tekerleği kullanıldığında yürütülecek komut.\nKomutta kaydırma tekerleği deltası için $delta kullanın",
+          "label": "Kaydırma tekerleği",
+          "update-text": "Kaydırmada gösterilen metni güncelle"
+        },
+        "wheel-down": {
+          "description": "Kaydırma tekerleği aşağı kaydırıldığında yürütülecek komut.",
+          "label": "Kaydırma tekerleği aşağı komutu"
+        },
+        "wheel-mode-separate": {
+          "description": "Kaydırma tekerleği yukarı ve aşağı için ayrı komutları etkinleştir",
+          "label": "Ayrı kaydırma tekerleği komutları"
+        },
+        "wheel-up": {
+          "description": "Kaydırma tekerleği yukarı kaydırıldığında yürütülecek komut.",
+          "label": "Kaydırma tekerleği yukarı komutu"
         }
       },
       "dialog": {
@@ -418,8 +418,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene.",
-      "fetch-failed": "Değişiklik günlüğü verileri yüklenemedi. Lütfen daha sonra tekrar dene."
+      "fetch-failed": "Değişiklik günlüğü verileri yüklenemedi. Lütfen daha sonra tekrar dene.",
+      "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene."
     },
     "panel": {
       "buttons": {
@@ -449,15 +449,15 @@
     "activate-app": "{app}'i etkinleştir",
     "clear-history": "Geçmişi temizle",
     "close-app": "{app}'i kapat",
+    "connect-vpn": "{name} bağlantısına bağlan",
     "cycle-visualizer": "Döngü görselleştirici",
     "disable-bluetooth": "Bluetooth'u kapat",
     "disable-dnd": "Rahatsız Etmeyin'i Kapat",
     "disable-wifi": "Wi-Fi'ı kapat",
+    "disconnect-vpn": "{name} bağlantısını kes",
     "enable-bluetooth": "Bluetooth'u etkinleştir",
     "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
     "enable-wifi": "Wi-Fi'ı etkinleştir",
-    "connect-vpn": "{name} bağlantısına bağlan",
-    "disconnect-vpn": "{name} bağlantısını kes",
     "next": "Sonraki",
     "open-calendar": "Takvimi aç",
     "open-display-settings": "Ekran ayarları",
@@ -1240,6 +1240,10 @@
           "description": "Dock'un arka plan opaklığını ayarlayın.",
           "label": "Arka plan opaklığı"
         },
+        "border-radius": {
+          "description": "Dock'un kenar yarıçapını ayarla.",
+          "label": "Kenar yarıçapı"
+        },
         "colorize-icons": {
           "description": "Dock uygulama simgelerine tema renklerini uygulayın (sadece odaklanılmamış uygulamalar).",
           "label": "Simgeleri Renklendir"
@@ -1391,13 +1395,13 @@
           "description": "Başlatıcının arka plan opaklığını ayarlayın.",
           "label": "Arka plan opaklığı"
         },
-        "clipboard-history": {
-          "description": "Başlatıcıdan daha önce kopyalanan öğelere erişin.",
-          "label": "Pano geçmişini etkinleştir"
-        },
         "clip-preview": {
           "description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
           "label": "Panoyu önizlemeyi etkinleştir"
+        },
+        "clipboard-history": {
+          "description": "Başlatıcıdan daha önce kopyalanan öğelere erişin.",
+          "label": "Pano geçmişini etkinleştir"
         },
         "custom-launch-prefix": {
           "description": "Komutlara özel bir başlatıcı ile ön ek ekleyin (örn., systemd entegrasyonu için 'runapp').",
@@ -2065,6 +2069,10 @@
       "title-matugen": "Matugen şablon işleme başarısız oldu.",
       "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu."
     },
+    "vpn": {
+      "connected": "'{name}' ile bağlantı kuruldu",
+      "disconnected": "'{name}' bağlantısı kesildi"
+    },
     "wallpaper-colors": {
       "disabled": "Duvar kağıdı renkleri devre dışı",
       "enabled": "Duvar kağıdı renkleri etkin",
@@ -2076,10 +2084,6 @@
       "disabled": "Devre dışı",
       "disconnected": "'{ssid}' bağlantısı kesildi",
       "enabled": "Etkin"
-    },
-    "vpn": {
-      "connected": "'{name}' ile bağlantı kuruldu",
-      "disconnected": "'{name}' bağlantısı kesildi"
     }
   },
   "tooltips": {
@@ -2102,8 +2106,8 @@
     "input-muted": "Giriş sessizliğini değiştir",
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
-    "manage-wifi": "Wi-Fi yönet",
     "manage-vpn": "VPN bağlantılarını yönet",
+    "manage-wifi": "Wi-Fi yönet",
     "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
     "move-to-center-section": "Orta bölüme taşı",
     "move-to-left-section": "Sol bölüme taşı",

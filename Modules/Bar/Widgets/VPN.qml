@@ -44,8 +44,8 @@ Item {
         const conn = active[i];
         items.push({
                      "label": I18n.tr("context-menu.disconnect-vpn", {
-                                         "name": conn.name
-                                       }),
+                                        "name": conn.name
+                                      }),
                      "action": "disconnect:" + conn.uuid,
                      "icon": "shield-off"
                    });
@@ -55,8 +55,8 @@ Item {
         const conn = inactive[i];
         items.push({
                      "label": I18n.tr("context-menu.connect-vpn", {
-                                         "name": conn.name
-                                       }),
+                                        "name": conn.name
+                                      }),
                      "action": "connect:" + conn.uuid,
                      "icon": "shield-lock"
                    });
@@ -138,6 +138,3 @@ Item {
     }
   }
 }
-
-
-

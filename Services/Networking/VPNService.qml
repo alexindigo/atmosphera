@@ -227,8 +227,8 @@ Singleton {
         lastError = "";
         Logger.i("VPN", "Connected to " + connectProcess.name);
         ToastService.showNotice(connectProcess.name, I18n.tr("toast.vpn.connected", {
-                                                    "name": connectProcess.name
-                                                  }), "shield-lock");
+                                                               "name": connectProcess.name
+                                                             }), "shield-lock");
         scheduleRefresh(1000);
       }
     }
@@ -265,8 +265,8 @@ Singleton {
         disconnectingUuid = "";
         lastError = "";
         ToastService.showNotice(disconnectProcess.name, I18n.tr("toast.vpn.disconnected", {
-                                                        "name": disconnectProcess.name
-                                                      }), "shield-off");
+                                                                  "name": disconnectProcess.name
+                                                                }), "shield-off");
         scheduleRefresh(1000);
       }
     }
@@ -285,6 +285,3 @@ Singleton {
     }
   }
 }
-
-
-

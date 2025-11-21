@@ -123,14 +123,6 @@
           "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
         "dynamic-text": "Dynamischer Text",
-        "max-text-length-horizontal": {
-          "description": "Maximale Anzahl an Zeichen, die in horizontaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
-          "label": "Max. Textlänge (horizontal)"
-        },
-        "max-text-length-vertical": {
-          "description": "Maximale Anzahl an Zeichen, die in vertikaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
-          "label": "Max. Textlänge (vertikal)"
-        },
         "icon": {
           "description": "Symbol aus der Bibliothek auswählen.",
           "label": "Symbol"
@@ -140,27 +132,18 @@
           "label": "Linksklick",
           "update-text": "Text auf Linksklick aktualisieren"
         },
+        "max-text-length-horizontal": {
+          "description": "Maximale Anzahl an Zeichen, die in horizontaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
+          "label": "Max. Textlänge (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Maximale Anzahl an Zeichen, die in vertikaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
+          "label": "Max. Textlänge (vertikal)"
+        },
         "middle-click": {
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche mit der mittleren Maustaste angeklickt wird.",
           "label": "Mittelklick",
           "update-text": "Text auf Mittelklick aktualisieren"
-        },
-        "wheel": {
-          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl",
-          "label": "Scrollrad",
-          "update-text": "Anzeigetext beim Scrollen aktualisieren"
-        },
-        "wheel-mode-separate": {
-          "label": "Separate Scrollrad-Befehle",
-          "description": "Separate Befehle für Scrollrad hoch und runter aktivieren"
-        },
-        "wheel-up": {
-          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad hochgescrollt wird.",
-          "label": "Scrollrad hoch Befehl"
-        },
-        "wheel-down": {
-          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad heruntergescrollt wird.",
-          "label": "Scrollrad runter Befehl"
         },
         "parse-json": {
           "description": "Die Befehlsausgabe als JSON-Objekt parsen, um Text und Symbol dynamisch festzulegen.",
@@ -178,6 +161,23 @@
         "text-stream": {
           "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
           "label": "Stream"
+        },
+        "wheel": {
+          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl",
+          "label": "Scrollrad",
+          "update-text": "Anzeigetext beim Scrollen aktualisieren"
+        },
+        "wheel-down": {
+          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad heruntergescrollt wird.",
+          "label": "Scrollrad runter Befehl"
+        },
+        "wheel-mode-separate": {
+          "description": "Separate Befehle für Scrollrad hoch und runter aktivieren",
+          "label": "Separate Scrollrad-Befehle"
+        },
+        "wheel-up": {
+          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad hochgescrollt wird.",
+          "label": "Scrollrad hoch Befehl"
         }
       },
       "dialog": {
@@ -418,8 +418,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut.",
-      "fetch-failed": "Changelog-Daten konnten nicht geladen werden. Bitte versuche es später erneut."
+      "fetch-failed": "Changelog-Daten konnten nicht geladen werden. Bitte versuche es später erneut.",
+      "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut."
     },
     "panel": {
       "buttons": {
@@ -449,15 +449,15 @@
     "activate-app": "{app} aktivieren",
     "clear-history": "Verlauf löschen",
     "close-app": "{app} schließen",
+    "connect-vpn": "Mit {name} verbinden",
     "cycle-visualizer": "Zyklus-Visualisierer",
     "disable-bluetooth": "Bluetooth deaktivieren",
     "disable-dnd": "Bitte nicht stören deaktivieren",
     "disable-wifi": "WLAN deaktivieren",
+    "disconnect-vpn": "Verbindung zu {name} trennen",
     "enable-bluetooth": "Bluetooth aktivieren",
     "enable-dnd": "Nicht stören aktivieren",
     "enable-wifi": "WLAN aktivieren",
-    "connect-vpn": "Mit {name} verbinden",
-    "disconnect-vpn": "Verbindung zu {name} trennen",
     "next": "Nächste/r/s",
     "open-calendar": "Kalender öffnen",
     "open-display-settings": "Anzeigeeinstellungen",
@@ -1240,6 +1240,10 @@
           "description": "Hintergrund-Transparenz des Docks anpassen.",
           "label": "Hintergrund-Transparenz"
         },
+        "border-radius": {
+          "description": "Den Radius der Dock-Umrandung anpassen.",
+          "label": "Eckenradius"
+        },
         "colorize-icons": {
           "description": "Theme-Farben auf Dock-App-Symbole anwenden (nur nicht fokussierte Apps).",
           "label": "Symbole einfärben"
@@ -1391,13 +1395,13 @@
           "description": "Hintergrund-Transparenz des Starters anpassen.",
           "label": "Hintergrund-Transparenz"
         },
-        "clipboard-history": {
-          "description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
-          "label": "Zwischenablageverlauf aktivieren"
-        },
         "clip-preview": {
           "description": "Zeigt eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"
+        },
+        "clipboard-history": {
+          "description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
+          "label": "Zwischenablageverlauf aktivieren"
         },
         "custom-launch-prefix": {
           "description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",
@@ -2065,6 +2069,10 @@
       "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
       "title-predefined": "Die Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen."
     },
+    "vpn": {
+      "connected": "Verbunden mit '{name}'",
+      "disconnected": "Verbindung zu '{name}' getrennt"
+    },
     "wallpaper-colors": {
       "disabled": "Hintergrundbild-Farben deaktiviert",
       "enabled": "Hintergrundbild-Farben aktiviert",
@@ -2076,10 +2084,6 @@
       "disabled": "Deaktiviert",
       "disconnected": "Getrennt von '{ssid}'",
       "enabled": "Aktiviert"
-    },
-    "vpn": {
-      "connected": "Verbunden mit '{name}'",
-      "disconnected": "Verbindung zu '{name}' getrennt"
     }
   },
   "tooltips": {
@@ -2102,8 +2106,8 @@
     "input-muted": "Audio-Eingabe stummschalten",
     "keep-awake": "Wach halten",
     "keyboard-layout": "{layout} Tastaturlayout",
-    "manage-wifi": "WLAN verwalten",
     "manage-vpn": "VPN-Verbindungen verwalten",
+    "manage-wifi": "WLAN verwalten",
     "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
     "move-to-center-section": "Zur mittleren Sektion verschieben",
     "move-to-left-section": "Zur linken Sektion verschieben",

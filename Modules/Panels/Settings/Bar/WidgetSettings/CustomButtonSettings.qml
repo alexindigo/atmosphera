@@ -157,8 +157,8 @@ ColumnLayout {
     property bool internalChecked: (widgetData?.wheelMode || widgetMetadata?.wheelMode || "unified") === "separate"
     checked: internalChecked
     onToggled: checked => {
-      internalChecked = checked
-    }
+                 internalChecked = checked;
+               }
   }
 
   ColumnLayout {
