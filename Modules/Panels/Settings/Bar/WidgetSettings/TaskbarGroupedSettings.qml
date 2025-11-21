@@ -12,20 +12,26 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  property string valueLabelMode: widgetData.labelMode !== undefined ? widgetData.labelMode : (widgetMetadata ? widgetMetadata.labelMode : "index")
-  property bool valueHideUnoccupied: widgetData.hideUnoccupied !== undefined ? widgetData.hideUnoccupied : (widgetMetadata ? widgetMetadata.hideUnoccupied : false)
-  property bool valueShowWorkspaceNumbers: widgetData.showWorkspaceNumbers !== undefined ? widgetData.showWorkspaceNumbers : (widgetMetadata ? widgetMetadata.showWorkspaceNumbers : true)
-  property bool valueShowNumbersOnlyWhenOccupied: widgetData.showNumbersOnlyWhenOccupied !== undefined ? widgetData.showNumbersOnlyWhenOccupied : (widgetMetadata ? widgetMetadata.showNumbersOnlyWhenOccupied : true)
-  property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : (widgetMetadata ? widgetMetadata.colorizeIcons : false)
+  property bool valueHideUnoccupied: widgetData.hideUnoccupied !== undefined ? widgetData.hideUnoccupied : widgetMetadata.hideUnoccupied
+  property string valueLabelMode: widgetData.labelMode !== undefined ? widgetData.labelMode : widgetMetadata.labelMode
+  property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
+  property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
-    settings.labelMode = valueLabelMode;
+
     settings.hideUnoccupied = valueHideUnoccupied;
-    settings.showWorkspaceNumbers = valueShowWorkspaceNumbers;
-    settings.showNumbersOnlyWhenOccupied = valueShowNumbersOnlyWhenOccupied;
+    settings.labelMode = valueLabelMode;
+    settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
     settings.colorizeIcons = valueColorizeIcons;
     return settings;
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.label")
+    description: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.description")
+    checked: valueHideUnoccupied
+    onToggled: checked => valueHideUnoccupied = checked
   }
 
   NComboBox {
@@ -50,16 +56,18 @@ ColumnLayout {
         "name": I18n.tr("options.workspace-labels.index+name")
       }
     ]
-    currentKey: widgetData.labelMode || widgetMetadata.labelMode
+    currentKey: widgetData.labelMode
     onSelected: key => valueLabelMode = key
     minimumWidth: 200
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.label")
-    description: I18n.tr("bar.widget-settings.workspace.hide-unoccupied.description")
-    checked: valueHideUnoccupied
-    onToggled: checked => valueHideUnoccupied = checked
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.label")
+    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.description")
+    checked: root.valueShowLabelsOnlyWhenOccupied
+    onToggled: checked => root.valueShowLabelsOnlyWhenOccupied = checked
+    visible: !root.valueHideUnoccupied
   }
 
   NToggle {
@@ -68,14 +76,5 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.active-window.colorize-icons.description")
     checked: root.valueColorizeIcons
     onToggled: checked => root.valueColorizeIcons = checked
-  }
-
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.label")
-    description: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.description")
-    checked: root.valueShowNumbersOnlyWhenOccupied
-    onToggled: checked => root.valueShowNumbersOnlyWhenOccupied = checked
-    visible: root.valueShowWorkspaceNumbers
   }
 }
