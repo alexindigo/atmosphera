@@ -36,6 +36,7 @@ Singleton {
 
   // Changelog fetching
   property string changelogBaseUrl: Quickshell.env("NOCTALIA_CHANGELOG_URL") || "https://noctalia.dev:7777/changelogs"
+  property string upgradeLogBaseUrl: Quickshell.env("NOCTALIA_UPGRADELOG_URL") || "https://noctalia.dev:7777/upgradelog"
   property int changelogFetchLimit: 25
   property int changelogUpdateFrequency: 60 * 60 // 1 hour in seconds
   property bool isFetchingChangelogs: false
@@ -66,15 +67,6 @@ Singleton {
 
     initialized = true;
     Logger.i("UpdateService", "Version:", root.currentVersion);
-  }
-
-  // Watch for changes to trigger highlight rebuilds
-  onReleasesChanged: {
-    rebuildHighlights();
-  }
-
-  onReleaseNotesChanged: {
-    rebuildHighlights();
   }
 
   // Changelog data cache
@@ -155,68 +147,68 @@ Singleton {
 
     previousVersion = fromVersion;
     changelogCurrentVersion = toVersion;
-    releaseHighlights = buildReleaseHighlights(previousVersion, changelogCurrentVersion);
     releaseNotesUrl = buildReleaseNotesUrl(toVersion);
+
+    // Fetch the upgrade log from the server
+    fetchUpgradeLog(fromVersion, toVersion);
 
     popupScheduled = true;
     root.popupQueued(previousVersion, changelogCurrentVersion);
 
     clearChangelogRequest();
-    openWhenReady();
   }
 
-  function rebuildHighlights() {
-    if (!changelogCurrentVersion)
-      return;
-    releaseHighlights = buildReleaseHighlights(previousVersion, changelogCurrentVersion);
-  }
+  function fetchUpgradeLog(fromVersion, toVersion) {
+    // Use the last seen version, or default to v3.0.0 if this is a fresh install
+    let from = fromVersion || changelogLastSeenVersion || "v3.0.0";
+    let to = toVersion;
 
-  function buildReleaseHighlights(fromVersion, toVersion) {
-    const selected = [];
-    const fromNorm = normalizeVersion(fromVersion);
-    const toNorm = normalizeVersion(toVersion);
+    // Strip -dev suffix from versions
+    from = from.replace(/-dev$/, "");
+    to = to.replace(/-dev$/, "");
 
-    if (releases.length > 0) {
-      for (var i = 0; i < releases.length; i++) {
-        const rel = releases[i];
-        const tag = rel.version || "";
-        const tagNorm = normalizeVersion(tag);
-        if (!tagNorm)
-          continue;
+    const url = `${upgradeLogBaseUrl}/${from}/${to}`;
 
-        if (toNorm && compareVersions(tagNorm, toNorm) > 0) {
-          continue;
+    Logger.w("UpdateService", "=== Fetching upgrade log ===");
+    Logger.w("UpdateService", "From version:", from);
+    Logger.w("UpdateService", "To version:", to);
+    Logger.w("UpdateService", "URL:", url);
+    Logger.w("UpdateService", "upgradeLogBaseUrl:", upgradeLogBaseUrl);
+    Logger.w("UpdateService", "changelogLastSeenVersion:", changelogLastSeenVersion);
+
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        Logger.d("UpdateService", "Request completed with status:", request.status);
+        Logger.d("UpdateService", "Response text length:", request.responseText ? request.responseText.length : 0);
+
+        if (request.status >= 200 && request.status < 300) {
+          const content = request.responseText || "";
+          Logger.d("UpdateService", "Successfully fetched upgrade log, parsing...");
+          const entries = parseReleaseNotes(content);
+          Logger.d("UpdateService", "Parsed entries count:", entries.length);
+          releaseHighlights = [
+                {
+                  "version": toVersion,
+                  "date": "",
+                  "entries": entries
+                }
+              ];
+          fetchError = "";
+          openWhenReady();
+        } else {
+          Logger.e("UpdateService", "Failed to fetch upgrade log");
+          Logger.e("UpdateService", "Status:", request.status);
+          Logger.e("UpdateService", "Status text:", request.statusText);
+          Logger.e("UpdateService", "Response:", request.responseText);
+          fetchError = I18n.tr("changelog.error.fetch-failed");
+          releaseHighlights = [];
+          openWhenReady();
         }
-
-        if (fromNorm && compareVersions(tagNorm, fromNorm) <= 0) {
-          break;
-        }
-
-        const entries = parseReleaseNotes(rel.body);
-        if (entries.length === 0)
-          continue;
-
-        selected.push({
-                        "version": tag,
-                        "date": rel.createdAt || "",
-                        "entries": entries
-                      });
       }
-    }
-
-    if (selected.length === 0 && toVersion) {
-      const fallback = parseReleaseNotes(releaseNotes);
-      if (fallback.length > 0) {
-        selected.push({
-                        "version": toVersion,
-                        "date": "",
-                        "entries": fallback
-                      });
-        fetchError = "";
-      }
-    }
-
-    return selected;
+    };
+    request.open("GET", url);
+    request.send();
   }
 
   function normalizeVersion(version) {
@@ -265,26 +257,6 @@ Singleton {
 
     for (var i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const trimmed = line.trim();
-
-      if (trimmed.match(/^Release\s+v[0-9]/i)) {
-        continue;
-      }
-
-      if (trimmed.match(/^##\s*Changes since/i)) {
-        break;
-      }
-
-      // If this line is just an emoji and the next line has text, merge them
-      if (trimmed.match(/^[\u{1F000}-\u{1F9FF}]$/u) && i + 1 < lines.length) {
-        const nextLine = lines[i + 1].trim();
-        if (nextLine.length > 0) {
-          entries.push(trimmed + " " + nextLine);
-          i++; // Skip the next line since we merged it
-          continue;
-        }
-      }
-
       entries.push(line);
     }
 

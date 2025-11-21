@@ -135,53 +135,36 @@ SmartPanel {
             wrapMode: Text.WordWrap
           }
 
-          Repeater {
-            model: releaseHighlights
-            delegate: ColumnLayout {
-              width: parent.width
-              spacing: Style.marginS
+          ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
 
-              NText {
-                text: I18n.tr("changelog.panel.section.version", {
-                                "version": modelData.version || I18n.tr("system.unknown-version")
-                              })
-                font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
-                pointSize: Style.fontSizeL
-              }
-
-              NText {
-                visible: modelData.date && modelData.date.length > 0
-                text: I18n.tr("changelog.panel.section.released", {
-                                "date": root.formatReleaseDate(modelData.date)
-                              })
-                color: Color.mOnSurfaceVariant
-                pointSize: Style.fontSizeXS
-              }
-
-              ColumnLayout {
-                Layout.fillWidth: true
+            Repeater {
+              model: releaseHighlights
+              delegate: ColumnLayout {
+                width: parent.width
                 spacing: Style.marginXS
 
                 Repeater {
                   model: modelData.entries
                   delegate: NText {
-                    readonly property bool isHeading: root.isEmojiHeading(modelData)
-                    text: modelData.length === 0 ? "\u00A0" : modelData
+                    readonly property int headingLevel: root.headingLevel(modelData)
+                    text: {
+                      if (modelData.length === 0)
+                        return "\u00A0";
+                      if (headingLevel > 0)
+                        return modelData.replace(/^#+\s+/, "");
+                      return modelData;
+                    }
                     wrapMode: Text.WordWrap
                     elide: Text.ElideNone
                     textFormat: Text.PlainText
-                    color: isHeading ? Color.mPrimary : Color.mOnSurface
-                    font.weight: isHeading ? Style.fontWeightBold : Style.fontWeightMedium
-                    pointSize: isHeading ? Style.fontSizeXL : Style.fontSizeM
+                    color: headingLevel > 0 ? Color.mPrimary : Color.mOnSurface
+                    font.weight: headingLevel > 0 ? Style.fontWeightBold : Style.fontWeightMedium
+                    pointSize: headingLevel === 1 ? Style.fontSizeXXL : headingLevel === 2 ? Style.fontSizeXL : Style.fontSizeM
                     Layout.fillWidth: true
                   }
                 }
-              }
-
-              NDivider {
-                Layout.fillWidth: true
-                visible: index < releaseHighlights.length - 1
               }
             }
           }
@@ -226,16 +209,16 @@ SmartPanel {
     }
   }
 
-  function isEmojiHeading(text) {
+  function headingLevel(text) {
     if (!text)
-      return false;
+      return 0;
     const trimmed = text.trim();
     if (trimmed.length === 0)
-      return false;
-    if (/^##\s*/i.test(trimmed))
-      return false;
-    const emojiHeading = /^[\u2600-\u27BF\u{1F300}-\u{1FAFF}]\s+/u;
-    return emojiHeading.test(trimmed);
+      return 0;
+    const match = trimmed.match(/^(#+)\s+/);
+    if (!match)
+      return 0;
+    return Math.min(match[1].length, 2);
   }
 
   onClosed: {
