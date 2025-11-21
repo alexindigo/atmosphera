@@ -341,8 +341,8 @@ Item {
     if (leftClickExec) {
       Quickshell.execDetached(["sh", "-c", leftClickExec]);
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
-    } else if (!hasExec && !leftClickUpdateText) {
-      // No script was defined, open settings
+    } else if (!leftClickUpdateText) {
+      // No left click script was defined, open settings
       var settingsPanel = PanelService.getPanel("settingsPanel", screen);
       settingsPanel.requestedTab = SettingsPanel.Tab.Bar;
       settingsPanel.open();
