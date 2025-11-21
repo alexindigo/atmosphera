@@ -16,7 +16,8 @@ ColumnLayout {
   property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
   property bool valueTextStream: widgetData.textStream !== undefined ? widgetData.textStream : widgetMetadata.textStream
   property bool valueParseJson: widgetData.parseJson !== undefined ? widgetData.parseJson : widgetMetadata.parseJson
-  property bool valueHideTextInVerticalBar: widgetData.hideTextInVerticalBar !== undefined ? widgetData.hideTextInVerticalBar : widgetMetadata.hideTextInVerticalBar
+  property int valueMaxTextLengthHorizontal: widgetData?.maxTextLength?.horizontal ?? widgetMetadata?.maxTextLength?.horizontal
+  property int valueMaxTextLengthVertical: widgetData?.maxTextLength?.vertical ?? widgetMetadata?.maxTextLength?.vertical
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -31,7 +32,10 @@ ColumnLayout {
     settings.textCollapse = textCollapseInput.text;
     settings.textStream = valueTextStream;
     settings.parseJson = valueParseJson;
-    settings.hideTextInVerticalBar = valueHideTextInVerticalBar;
+    settings.maxTextLength = {
+      "horizontal": valueMaxTextLengthHorizontal,
+      "vertical": valueMaxTextLengthVertical
+    };
     settings.textIntervalMs = parseInt(textIntervalInput.text || textIntervalInput.placeholderText, 10);
     return settings;
   }
@@ -145,11 +149,22 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.custom-button.dynamic-text")
   }
 
-  NToggle {
-    label: I18n.tr("bar.widget-settings.custom-button.hide-vertical.label", "Hide text in vertical bar")
-    description: I18n.tr("bar.widget-settings.custom-button.hide-vertical.description", "If enabled, the text from the command output will not be shown when the bar is in a vertical layout (left or right).")
-    checked: valueHideTextInVerticalBar
-    onToggled: checked => valueHideTextInVerticalBar = checked
+  NSpinBox {
+    label: I18n.tr("bar.widget-settings.custom-button.max-text-length-horizontal.label", "Max text length (horizontal)")
+    description: I18n.tr("bar.widget-settings.custom-button.max-text-length-horizontal.description", "Maximum number of characters to show in horizontal bar (0 to hide text)")
+    from: 0
+    to: 100
+    value: valueMaxTextLengthHorizontal
+    onValueChanged: valueMaxTextLengthHorizontal = value
+  }
+
+  NSpinBox {
+    label: I18n.tr("bar.widget-settings.custom-button.max-text-length-vertical.label", "Max text length (vertical)")
+    description: I18n.tr("bar.widget-settings.custom-button.max-text-length-vertical.description", "Maximum number of characters to show in vertical bar (0 to hide text)")
+    from: 0
+    to: 100
+    value: valueMaxTextLengthVertical
+    onValueChanged: valueMaxTextLengthVertical = value
   }
 
   NToggle {

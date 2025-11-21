@@ -124,7 +124,10 @@ Singleton {
                                     "textIntervalMs": 3000,
                                     "textCollapse": "",
                                     "parseJson": false,
-                                    "hideTextInVerticalBar": false
+                                    "maxTextLength": {
+                                      "horizontal": 10,
+                                      "vertical": 10
+                                    }
                                   },
                                   "KeyboardLayout": {
                                     "allowUserSettings": true,

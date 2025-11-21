@@ -123,9 +123,13 @@
           "stream-description": "Enter a command to run continuously."
         },
         "dynamic-text": "Dynamic text",
-        "hide-vertical": {
-          "description": "If enabled, the text from the command output will not be shown when the bar is in a vertical layout (left or right).",
-          "label": "Hide text in vertical bar"
+        "max-text-length-horizontal": {
+          "description": "Maximum number of characters to show in horizontal bar (0 to hide text)",
+          "label": "Max text length (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Maximum number of characters to show in vertical bar (0 to hide text)",
+          "label": "Max text length (vertical)"
         },
         "icon": {
           "description": "Select an icon from the library.",

@@ -44,10 +44,7 @@ Item {
   readonly property int textIntervalMs: widgetSettings.textIntervalMs !== undefined ? widgetSettings.textIntervalMs : (widgetMetadata.textIntervalMs || 3000)
   readonly property string textCollapse: widgetSettings.textCollapse !== undefined ? widgetSettings.textCollapse : (widgetMetadata.textCollapse || "")
   readonly property bool parseJson: widgetSettings.parseJson !== undefined ? widgetSettings.parseJson : (widgetMetadata.parseJson || false)
-  readonly property bool hideTextInVerticalBar: widgetSettings.hideTextInVerticalBar !== undefined ? widgetSettings.hideTextInVerticalBar : (widgetMetadata.hideTextInVerticalBar || false)
   readonly property bool hasExec: (leftClickExec || rightClickExec || middleClickExec)
-
-  readonly property bool shouldShowText: !isVerticalBar || !hideTextInVerticalBar
 
   implicitWidth: pill.width
   implicitHeight: pill.height
@@ -58,9 +55,9 @@ Item {
     screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
     icon: _dynamicIcon !== "" ? _dynamicIcon : customIcon
-    text: shouldShowText ? _dynamicText : ""
+    text: (!isVerticalBar || currentMaxTextLength > 0) ? _dynamicText : ""
     density: Settings.data.bar.density
-    rotateText: isVerticalBar && !hideTextInVerticalBar
+    rotateText: isVerticalBar && currentMaxTextLength > 0
     autoHide: false
     forceOpen: _dynamicText !== ""
     tooltipText: {
@@ -102,8 +99,19 @@ Item {
   property string _dynamicIcon: ""
   property string _dynamicTooltip: ""
 
-  // Maximum length for text display before scrolling
-  readonly property int maxTextLength: 8
+  // Maximum length for text display before scrolling (different values for horizontal and vertical)
+  readonly property var maxTextLength: {
+    "horizontal": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.horizontal !== undefined) ?
+                   widgetSettings.maxTextLength.horizontal :
+                   ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.horizontal !== undefined) ?
+                   widgetMetadata.maxTextLength.horizontal :
+                   10)),
+    "vertical": ((widgetSettings && widgetSettings.maxTextLength && widgetSettings.maxTextLength.vertical !== undefined) ?
+                 widgetSettings.maxTextLength.vertical :
+                 ((widgetMetadata && widgetMetadata.maxTextLength && widgetMetadata.maxTextLength.vertical !== undefined) ?
+                 widgetMetadata.maxTextLength.vertical :
+                 10))
+  }
   readonly property int _staticDuration: 6  // How many cycles to stay static at start/end
 
   // Encapsulated state for scrolling text implementation
@@ -115,12 +123,15 @@ Item {
     "phaseCounter": 0
   }
 
+  // Current max text length based on bar orientation
+  readonly property int currentMaxTextLength: isVerticalBar ? maxTextLength.vertical : maxTextLength.horizontal
+
   // Periodically run the text command (if set)
   Timer {
     id: refreshTimer
     interval: Math.max(250, textIntervalMs)
     repeat: true
-    running: shouldShowText && !textStream && textCommand && textCommand.length > 0
+    running: (!isVerticalBar || currentMaxTextLength > 0) && !textStream && textCommand && textCommand.length > 0
     triggeredOnStart: true
     onTriggered: root.runTextCommand()
   }
@@ -129,7 +140,7 @@ Item {
   Timer {
     id: restartTimer
     interval: 1000
-    running: shouldShowText && textStream && !textProc.running
+    running: (!isVerticalBar || currentMaxTextLength > 0) && textStream && !textProc.running
     onTriggered: root.runTextCommand()
   }
 
@@ -140,10 +151,10 @@ Item {
     repeat: true
     running: false
     onTriggered: {
-      if (_scrollState.needsScrolling && _scrollState.originalText.length > maxTextLength) {
+      if (_scrollState.needsScrolling && _scrollState.originalText.length > currentMaxTextLength) {
         // Traditional marquee with pause at beginning and end
         if (_scrollState.phase === 0) {  // Static at beginning
-          _dynamicText = _scrollState.originalText.substring(0, Math.min(maxTextLength, _scrollState.originalText.length));
+          _dynamicText = _scrollState.originalText.substring(0, Math.min(currentMaxTextLength, _scrollState.originalText.length));
           _scrollState.phaseCounter++;
           if (_scrollState.phaseCounter >= _staticDuration) {
             _scrollState.phaseCounter = 0;
@@ -152,12 +163,12 @@ Item {
         } else if (_scrollState.phase === 1) {  // Scrolling
           _scrollState.offset++;
           var start = _scrollState.offset;
-          var end = start + maxTextLength;
+          var end = start + currentMaxTextLength;
 
-          if (start >= _scrollState.originalText.length - maxTextLength) {
+          if (start >= _scrollState.originalText.length - currentMaxTextLength) {
             // Reached or passed the end, ensure we show the last part
             var textEnd = _scrollState.originalText.length;
-            var textStart = Math.max(0, textEnd - maxTextLength);
+            var textStart = Math.max(0, textEnd - currentMaxTextLength);
             _dynamicText = _scrollState.originalText.substring(textStart, textEnd);
             _scrollState.phase = 2;  // Move to static end phase
             _scrollState.phaseCounter = 0;
@@ -167,7 +178,7 @@ Item {
         } else if (_scrollState.phase === 2) {  // Static at end
           // Ensure end text is displayed correctly
           var textEnd = _scrollState.originalText.length;
-          var textStart = Math.max(0, textEnd - maxTextLength);
+          var textStart = Math.max(0, textEnd - currentMaxTextLength);
           _dynamicText = _scrollState.originalText.substring(textStart, textEnd);
           _scrollState.phaseCounter++;
           if (_scrollState.phaseCounter >= _staticDuration) {
@@ -234,10 +245,10 @@ Item {
         }
 
         _scrollState.originalText = text;
-        _scrollState.needsScrolling = text.length > maxTextLength;
+        _scrollState.needsScrolling = text.length > currentMaxTextLength && currentMaxTextLength > 0;
         if (_scrollState.needsScrolling) {
           // Start with the beginning of the text
-          _dynamicText = text.substring(0, maxTextLength);
+          _dynamicText = text.substring(0, currentMaxTextLength);
           _scrollState.phase = 0;  // Start at phase 0 (static beginning)
           _scrollState.phaseCounter = 0;
           _scrollState.offset = 0;
@@ -268,10 +279,10 @@ Item {
     }
 
     _scrollState.originalText = contentStr;
-    _scrollState.needsScrolling = contentStr.length > maxTextLength;
+    _scrollState.needsScrolling = contentStr.length > currentMaxTextLength && currentMaxTextLength > 0;
     if (_scrollState.needsScrolling) {
       // Start with the beginning of the text
-      _dynamicText = contentStr.substring(0, maxTextLength);
+      _dynamicText = contentStr.substring(0, currentMaxTextLength);
       _scrollState.phase = 0;  // Start at phase 0 (static beginning)
       _scrollState.phaseCounter = 0;
       _scrollState.offset = 0;
