@@ -256,7 +256,7 @@ Singleton {
     return `${changelogBaseUrl}/CHANGELOG-${tag}.txt`;
   }
 
-function parseReleaseNotes(body) {
+  function parseReleaseNotes(body) {
     if (!body)
       return [];
 
@@ -563,11 +563,11 @@ function parseReleaseNotes(body) {
         }
 
         entries.push({
-                      "version": version,
-                      "fileName": fileName,
-                      "url": `${changelogBaseUrl}/${fileName}`,
-                      "createdAt": modified
-                    });
+                       "version": version,
+                       "fileName": fileName,
+                       "url": `${changelogBaseUrl}/${fileName}`,
+                       "createdAt": modified
+                     });
       }
     }
 
@@ -599,10 +599,10 @@ function parseReleaseNotes(body) {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status >= 200 && request.status < 300) {
           accumulator.push({
-                            "version": entry.version,
-                            "createdAt": entry.createdAt || "",
-                            "body": request.responseText || ""
-                          });
+                             "version": entry.version,
+                             "createdAt": entry.createdAt || "",
+                             "body": request.responseText || ""
+                           });
         } else {
           Logger.e("UpdateService", "Failed to fetch changelog file:", entry.url, "status:", request.status);
           if (!fetchError) {
