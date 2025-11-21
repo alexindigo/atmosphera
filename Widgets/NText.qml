@@ -26,5 +26,5 @@ Text {
   wrapMode: Text.NoWrap
   verticalAlignment: Text.AlignVCenter
 
-  textFormat: richTextEnabled ? Text.RichText : Text.StyledText
+  textFormat: richTextEnabled ? Text.RichText : Text.PlainText
 }
