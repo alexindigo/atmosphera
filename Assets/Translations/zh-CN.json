@@ -397,7 +397,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "已达到 GitHub 速率限制，请稍后再试。"
+      "rate-limit": "已达到 GitHub 速率限制，请稍后再试。",
+      "fetch-failed": "无法加载更新日志数据，请稍后再试。"
     },
     "panel": {
       "buttons": {

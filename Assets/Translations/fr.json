@@ -397,7 +397,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes."
+      "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes.",
+      "fetch-failed": "Impossible de charger les données du journal des modifications. Veuillez réessayer plus tard."
     },
     "panel": {
       "buttons": {

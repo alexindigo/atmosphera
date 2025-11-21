@@ -397,7 +397,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut."
+      "rate-limit": "GitHub-Limit erreicht. Bitte versuche es in ein paar Minuten erneut.",
+      "fetch-failed": "Changelog-Daten konnten nicht geladen werden. Bitte versuche es später erneut."
     },
     "panel": {
       "buttons": {

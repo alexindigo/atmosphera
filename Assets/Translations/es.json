@@ -397,7 +397,8 @@
   },
   "changelog": {
     "error": {
-      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos."
+      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos.",
+      "fetch-failed": "No se pudieron cargar los datos del registro de cambios. Inténtalo de nuevo más tarde."
     },
     "panel": {
       "buttons": {

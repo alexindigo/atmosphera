@@ -34,6 +34,15 @@ Singleton {
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
 
+  // Changelog fetching
+  property string changelogBaseUrl: Quickshell.env("NOCTALIA_CHANGELOG_URL") || "https://noctalia.dev:7777/changelogs"
+  property int changelogFetchLimit: 25
+  property int changelogUpdateFrequency: 60 * 60 // 1 hour in seconds
+  property bool isFetchingChangelogs: false
+  property string releaseNotes: ""
+  property var releases: []
+  property string changelogDataFile: Quickshell.env("NOCTALIA_CHANGELOG_FILE") || (Settings.cacheDir + "changelogs.json")
+
   // Fix for FileView race condition
   property bool saveInProgress: false
   property bool pendingSave: false
@@ -59,16 +68,42 @@ Singleton {
     Logger.i("UpdateService", "Version:", root.currentVersion);
   }
 
-  Connections {
-    target: GitHubService ? GitHubService : null
-    function onReleaseNotesChanged() {
-      rebuildHighlights();
+  // Watch for changes to trigger highlight rebuilds
+  onReleasesChanged: {
+    rebuildHighlights();
+  }
+
+  onReleaseNotesChanged: {
+    rebuildHighlights();
+  }
+
+  // Changelog data cache
+  FileView {
+    id: changelogDataFileView
+    path: root.changelogDataFile
+    watchChanges: true
+    onFileChanged: reload()
+    onAdapterUpdated: writeAdapter()
+    Component.onCompleted: {
+      reload();
     }
-    function onReleasesChanged() {
-      rebuildHighlights();
+    onLoaded: {
+      loadChangelogCache();
     }
-    function onReleaseFetchErrorChanged() {
-      fetchError = GitHubService ? GitHubService.releaseFetchError : "";
+    onLoadFailed: function (error) {
+      if (error.toString().includes("No such file") || error === 2) {
+        Qt.callLater(() => {
+                       fetchChangelogs();
+                     });
+      }
+    }
+
+    JsonAdapter {
+      id: changelogAdapter
+
+      property string releaseNotes: ""
+      property var releases: []
+      property real timestamp: 0
     }
   }
 
@@ -120,7 +155,6 @@ Singleton {
 
     previousVersion = fromVersion;
     changelogCurrentVersion = toVersion;
-    fetchError = GitHubService ? GitHubService.releaseFetchError : "";
     releaseHighlights = buildReleaseHighlights(previousVersion, changelogCurrentVersion);
     releaseNotesUrl = buildReleaseNotesUrl(toVersion);
 
@@ -134,12 +168,10 @@ Singleton {
   function rebuildHighlights() {
     if (!changelogCurrentVersion)
       return;
-    fetchError = GitHubService ? GitHubService.releaseFetchError : "";
     releaseHighlights = buildReleaseHighlights(previousVersion, changelogCurrentVersion);
   }
 
   function buildReleaseHighlights(fromVersion, toVersion) {
-    const releases = GitHubService && GitHubService.releases ? GitHubService.releases : [];
     const selected = [];
     const fromNorm = normalizeVersion(fromVersion);
     const toNorm = normalizeVersion(toVersion);
@@ -173,7 +205,7 @@ Singleton {
     }
 
     if (selected.length === 0 && toVersion) {
-      const fallback = parseReleaseNotes(GitHubService ? GitHubService.releaseNotes : "");
+      const fallback = parseReleaseNotes(releaseNotes);
       if (fallback.length > 0) {
         selected.push({
                         "version": toVersion,
@@ -221,10 +253,10 @@ Singleton {
     if (!version)
       return "";
     const tag = version.startsWith("v") ? version : `v${version}`;
-    return `https://github.com/noctalia-dev/noctalia-shell/releases/tag/${tag}`;
+    return `${changelogBaseUrl}/CHANGELOG-${tag}.txt`;
   }
 
-  function parseReleaseNotes(body) {
+function parseReleaseNotes(body) {
     if (!body)
       return [];
 
@@ -232,32 +264,36 @@ Singleton {
     var entries = [];
 
     for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-      if (!line)
-        continue;
+      const line = lines[i];
+      const trimmed = line.trim();
 
-      if (line.startsWith("- ") || line.startsWith("* ")) {
-        const text = cleanEntry(line.substring(2).trim());
-        if (text.length > 0 && !isVersionLine(text) && !isIgnoredEntry(text)) {
-          entries.push(text);
+      if (trimmed.match(/^Release\s+v[0-9]/i)) {
+        continue;
+      }
+
+      if (trimmed.match(/^##\s*Changes since/i)) {
+        break;
+      }
+
+      // If this line is just an emoji and the next line has text, merge them
+      if (trimmed.match(/^[\u{1F000}-\u{1F9FF}]$/u) && i + 1 < lines.length) {
+        const nextLine = lines[i + 1].trim();
+        if (nextLine.length > 0) {
+          entries.push(trimmed + " " + nextLine);
+          i++; // Skip the next line since we merged it
+          continue;
         }
       }
 
-      if (entries.length >= 6)
-        break;
+      entries.push(line);
     }
 
-    var uniqueEntries = [];
-    var seen = {};
-    for (var j = 0; j < entries.length; j++) {
-      const key = entries[j].toLowerCase();
-      if (seen[key])
-        continue;
-      seen[key] = true;
-      uniqueEntries.push(entries[j]);
+    // Remove trailing blank lines
+    while (entries.length > 0 && entries[entries.length - 1].trim().length === 0) {
+      entries.pop();
     }
 
-    return uniqueEntries;
+    return entries;
   }
 
   function isVersionLine(text) {
@@ -440,5 +476,203 @@ Singleton {
   function saveChangelogState() {
     // Immediate save (backward compatibility)
     debouncedSaveChangelogState();
+  }
+
+  // Changelog fetching functions
+
+  function loadChangelogCache() {
+    const now = Time.timestamp;
+    var needsRefetch = false;
+    if (!changelogAdapter.timestamp || (now >= changelogAdapter.timestamp + changelogUpdateFrequency)) {
+      needsRefetch = true;
+      Logger.d("UpdateService", "Changelog cache expired or missing, scheduling fetch");
+    } else {
+      Logger.d("UpdateService", "Loading cached changelog data (age:", Math.round((now - changelogAdapter.timestamp) / 60), "minutes)");
+    }
+
+    if (changelogAdapter.releaseNotes) {
+      root.releaseNotes = changelogAdapter.releaseNotes;
+    }
+    if (changelogAdapter.releases && changelogAdapter.releases.length > 0) {
+      root.releases = changelogAdapter.releases;
+    } else {
+      Logger.d("UpdateService", "Cached releases missing, scheduling fetch");
+      needsRefetch = true;
+    }
+
+    if (needsRefetch) {
+      fetchChangelogs();
+    }
+  }
+
+  function fetchChangelogs() {
+    if (isFetchingChangelogs) {
+      Logger.w("UpdateService", "Changelog data is still fetching");
+      return;
+    }
+
+    isFetchingChangelogs = true;
+    fetchError = "";
+    fetchChangelogIndex();
+  }
+
+  function fetchChangelogIndex() {
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status >= 200 && request.status < 300) {
+          const entries = parseChangelogIndex(request.responseText || "");
+          if (entries.length === 0) {
+            Logger.w("UpdateService", "No changelog entries found at", changelogBaseUrl);
+            fetchError = I18n.tr("changelog.error.fetch-failed");
+            finalizeChangelogFetch([]);
+          } else {
+            fetchChangelogFiles(entries, 0, []);
+          }
+        } else {
+          Logger.e("UpdateService", "Failed to fetch changelog index:", request.status, request.responseText);
+          fetchError = I18n.tr("changelog.error.fetch-failed");
+          finalizeChangelogFetch([]);
+        }
+      }
+    };
+    request.open("GET", changelogBaseUrl);
+    request.send();
+  }
+
+  function parseChangelogIndex(content) {
+    if (!content)
+      return [];
+
+    const lines = content.split(/\r?\n/);
+    var entries = [];
+    for (var i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      const match = trimmed.match(/CHANGELOG-(v[0-9A-Za-z.\-]+)\.txt/);
+      if (match && match.length >= 2) {
+        const version = match[1];
+        const fileName = match[0];
+        var modified = "";
+        for (var j = i + 1; j < Math.min(lines.length, i + 4); j++) {
+          const modLine = lines[j].trim();
+          const modMatch = modLine.match(/^Last modified:\s*(.+)$/i);
+          if (modMatch && modMatch.length >= 2) {
+            modified = modMatch[1].trim();
+            break;
+          }
+        }
+
+        entries.push({
+                      "version": version,
+                      "fileName": fileName,
+                      "url": `${changelogBaseUrl}/${fileName}`,
+                      "createdAt": modified
+                    });
+      }
+    }
+
+    entries.sort(function (a, b) {
+      return compareVersions(b.version, a.version);
+    });
+
+    if (entries.length > changelogFetchLimit) {
+      entries = entries.slice(0, changelogFetchLimit);
+    }
+
+    return entries;
+  }
+
+  function fetchChangelogFiles(entries, index, accumulator) {
+    if (!entries || entries.length === 0) {
+      finalizeChangelogFetch([]);
+      return;
+    }
+
+    if (index >= entries.length) {
+      finalizeChangelogFetch(accumulator);
+      return;
+    }
+
+    const entry = entries[index];
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status >= 200 && request.status < 300) {
+          accumulator.push({
+                            "version": entry.version,
+                            "createdAt": entry.createdAt || "",
+                            "body": request.responseText || ""
+                          });
+        } else {
+          Logger.e("UpdateService", "Failed to fetch changelog file:", entry.url, "status:", request.status);
+          if (!fetchError) {
+            fetchError = I18n.tr("changelog.error.fetch-failed");
+          }
+        }
+        fetchChangelogFiles(entries, index + 1, accumulator);
+      }
+    };
+    request.open("GET", entry.url);
+    request.send();
+  }
+
+  function finalizeChangelogFetch(releasesList) {
+    isFetchingChangelogs = false;
+
+    if (releasesList && releasesList.length > 0) {
+      releasesList.sort(function (a, b) {
+        return compareVersions(b.version, a.version);
+      });
+
+      changelogAdapter.releases = releasesList;
+      root.releases = releasesList;
+      const latest = releasesList[0];
+      if (latest) {
+        changelogAdapter.releaseNotes = latest.body || "";
+        root.releaseNotes = changelogAdapter.releaseNotes;
+      }
+
+      if (!fetchError) {
+        Logger.d("UpdateService", "Fetched changelog entries:", releasesList.length);
+      }
+    } else {
+      changelogAdapter.releases = [];
+      root.releases = [];
+      if (!fetchError) {
+        Logger.w("UpdateService", "No changelog entries fetched");
+        fetchError = I18n.tr("changelog.error.fetch-failed");
+      }
+    }
+
+    saveChangelogData();
+  }
+
+  function saveChangelogData() {
+    changelogAdapter.timestamp = Time.timestamp;
+    Logger.d("UpdateService", "Saving changelog data to cache file:", changelogDataFile);
+
+    // Ensure cache directory exists
+    Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
+
+    Qt.callLater(() => {
+                   changelogDataFileView.writeAdapter();
+                   Logger.d("UpdateService", "Changelog cache file written successfully");
+                 });
+  }
+
+  function resetChangelogCache() {
+    changelogAdapter.version = I18n.tr("system.unknown-version");
+    changelogAdapter.releaseNotes = "";
+    changelogAdapter.releases = [];
+    changelogAdapter.timestamp = 0;
+
+    fetchChangelogs();
+  }
+
+  function clearReleaseCache() {
+    Logger.d("UpdateService", "Clearing cached release data");
+    changelogAdapter.releases = [];
+    root.releases = [];
+    changelogDataFileView.writeAdapter();
   }
 }
