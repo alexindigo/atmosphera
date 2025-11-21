@@ -4,10 +4,12 @@ import Quickshell.Widgets
 import qs.Commons
 
 Rectangle {
-  width: parent.width
-  height: Style.borderS
+  property bool vertical: false
+
+  width: vertical ? Style.borderS : parent.width
+  height: vertical ? parent.height : Style.borderS
   gradient: Gradient {
-    orientation: Gradient.Horizontal
+    orientation: vertical ? Gradient.Vertical : Gradient.Horizontal
     GradientStop {
       position: 0.0
       color: Color.transparent

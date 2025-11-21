@@ -143,6 +143,7 @@
   },
   "appLauncher": {
     "enableClipboardHistory": false,
+    "enableClipPreview": true,
     "position": "center",
     "pinnedExecs": [],
     "useApp2Unit": false,
