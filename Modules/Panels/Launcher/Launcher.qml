@@ -13,8 +13,14 @@ import qs.Widgets
 SmartPanel {
   id: root
 
+  readonly property bool previewActive: searchText.startsWith(">clip") && Settings.data.appLauncher.enableClipPreview
+
   // Panel configuration
-  preferredWidth: Math.round(500 * Style.uiScaleRatio)
+  readonly property int listPanelWidth: Math.round(600 * Style.uiScaleRatio)
+  readonly property int previewPanelWidth: Math.round(400 * Style.uiScaleRatio)
+  readonly property int totalBaseWidth: listPanelWidth + (Style.marginL * 2)
+
+  preferredWidth: totalBaseWidth
   preferredHeight: Math.round(600 * Style.uiScaleRatio)
   preferredWidthRatio: 0.3
   preferredHeightRatio: 0.5
@@ -262,13 +268,50 @@ SmartPanel {
     }
   }
 
-  // UI
   panelContent: Rectangle {
     id: ui
     color: Color.transparent
     opacity: resultsReady ? 1.0 : 0.0
 
-    // Global MouseArea to detect mouse movement
+    // Preview Panel (external)
+    NBox {
+      id: previewBox
+      visible: root.previewActive
+      width: root.previewPanelWidth
+      height: Math.round(400 * Style.uiScaleRatio)
+      x: ui.width + Style.marginM
+      y: Math.max(Style.marginL // Minimum y is the top margin of the content area
+                  , Math.min(resultsList.mapToItem(ui, 0, (root.selectedIndex * (root.entryHeight + resultsList.spacing)) - resultsList.contentY).y, ui.height - previewBox.height - Style.marginL // Maximum y, considering bottom margin
+                             ))
+      z: -1 // Draw behind main panel content if it ever overlaps
+
+      opacity: visible ? 1.0 : 0.0
+      Behavior on opacity {
+        NumberAnimation {
+          duration: Style.animationFast
+        }
+      }
+
+      Loader {
+        id: clipboardPreviewLoader
+        anchors.fill: parent
+        active: root.previewActive
+        source: active ? "./ClipboardPreview.qml" : ""
+
+        onLoaded: {
+          if (selectedIndex >= 0 && results[selectedIndex] && item) {
+            item.currentItem = results[selectedIndex];
+          }
+        }
+
+        onItemChanged: {
+          if (item && selectedIndex >= 0 && results[selectedIndex]) {
+            item.currentItem = results[selectedIndex];
+          }
+        }
+      }
+    }
+
     MouseArea {
       id: mouseMovementDetector
       anchors.fill: parent
@@ -282,7 +325,6 @@ SmartPanel {
       property bool initialized: false
 
       onPositionChanged: mouse => {
-                           // Store initial position
                            if (!initialized) {
                              lastX = mouse.x;
                              lastY = mouse.y;
@@ -290,7 +332,6 @@ SmartPanel {
                              return;
                            }
 
-                           // Check if mouse actually moved
                            const deltaX = Math.abs(mouse.x - lastX);
                            const deltaY = Math.abs(mouse.y - lastY);
                            if (deltaX > 1 || deltaY > 1) {
@@ -300,7 +341,6 @@ SmartPanel {
                            }
                          }
 
-      // Reset when launcher opens
       Connections {
         target: root
         function onOpened() {
@@ -329,298 +369,302 @@ SmartPanel {
       }
     }
 
-    ColumnLayout {
+    RowLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL
-      spacing: Style.marginM
+      anchors.margins: Style.marginL // Apply overall margins here
+      spacing: Style.marginM // Apply spacing between elements here
 
-      NTextInput {
-        id: searchInput
-        Layout.fillWidth: true
-
-        fontSize: Style.fontSizeL
-        fontWeight: Style.fontWeightSemiBold
-
-        text: searchText
-        placeholderText: I18n.tr("placeholders.search-launcher")
-
-        onTextChanged: searchText = text
-
-        Component.onCompleted: {
-          if (searchInput.inputItem) {
-            searchInput.inputItem.forceActiveFocus();
-            // Intercept Tab keys before TextField handles them
-            searchInput.inputItem.Keys.onPressed.connect(function (event) {
-              if (event.key === Qt.Key_Tab) {
-                root.onTabPressed();
-                event.accepted = true;
-              } else if (event.key === Qt.Key_Backtab) {
-                root.onBackTabPressed();
-                event.accepted = true;
-              }
-            });
-          }
-        }
-      }
-
-      // Results list
-      NListView {
-        id: resultsList
-
-        horizontalPolicy: ScrollBar.AlwaysOff
-        verticalPolicy: ScrollBar.AsNeeded
-
-        Layout.fillWidth: true
+      // Left Pane
+      ColumnLayout {
+        id: leftPane
         Layout.fillHeight: true
-        spacing: Style.marginXXS
-        model: results
-        currentIndex: selectedIndex
-        cacheBuffer: resultsList.height * 2
-        onCurrentIndexChanged: {
-          cancelFlick();
-          if (currentIndex >= 0) {
-            positionViewAtIndex(currentIndex, ListView.Contain);
+        Layout.preferredWidth: root.listPanelWidth
+        spacing: Style.marginM
+
+        NTextInput {
+          id: searchInput
+          Layout.fillWidth: true
+
+          fontSize: Style.fontSizeL
+          fontWeight: Style.fontWeightSemiBold
+
+          text: searchText
+          placeholderText: I18n.tr("placeholders.search-launcher")
+
+          onTextChanged: searchText = text
+
+          Component.onCompleted: {
+            if (searchInput.inputItem) {
+              searchInput.inputItem.forceActiveFocus();
+              // Intercept Tab keys before TextField handles them
+              searchInput.inputItem.Keys.onPressed.connect(function (event) {
+                if (event.key === Qt.Key_Tab) {
+                  root.onTabPressed();
+                  event.accepted = true;
+                } else if (event.key === Qt.Key_Backtab) {
+                  root.onBackTabPressed();
+                  event.accepted = true;
+                }
+              });
+            }
           }
         }
-        onModelChanged: {}
 
-        delegate: Rectangle {
-          id: entry
+        NListView {
+          id: resultsList
 
-          property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
-          // Accessor for app id
-          property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
 
-          // Pin helpers
-          function togglePin(appId) {
-            if (!appId)
-              return;
-            let arr = (Settings.data.dock.pinnedApps || []).slice();
-            const idx = arr.indexOf(appId);
-            if (idx >= 0)
-              arr.splice(idx, 1);
-            else
-              arr.push(appId);
-            Settings.data.dock.pinnedApps = arr;
-          }
-
-          function isPinned(appId) {
-            const arr = Settings.data.dock.pinnedApps || [];
-            return appId && arr.indexOf(appId) >= 0;
-          }
-
-          // Property to reliably track the current item's ID.
-          // This changes whenever the delegate is recycled for a new item.
-          property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
-
-          // When this delegate is assigned a new image item, trigger the decode.
-          onCurrentClipboardIdChanged: {
-            // Check if it's a valid ID and if the data isn't already cached.
-            if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
-              ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          spacing: Style.marginXXS
+          model: results
+          currentIndex: selectedIndex
+          cacheBuffer: resultsList.height * 2
+          onCurrentIndexChanged: {
+            cancelFlick();
+            if (currentIndex >= 0) {
+              positionViewAtIndex(currentIndex, ListView.Contain);
+            }
+            if (clipboardPreviewLoader.item) {
+              clipboardPreviewLoader.item.currentItem = results[currentIndex] || null;
             }
           }
+          onModelChanged: {}
 
-          width: resultsList.width - Style.marginS
-          implicitHeight: entryHeight
-          radius: Style.radiusM
-          color: entry.isSelected ? Color.mHover : Color.mSurface
+          delegate: Rectangle {
+            id: entry
 
-          Behavior on color {
-            ColorAnimation {
-              duration: Style.animationFast
-              easing.type: Easing.OutCirc
+            property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
+            property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+
+            // Pin helpers
+            function togglePin(appId) {
+              if (!appId)
+                return;
+              let arr = (Settings.data.dock.pinnedApps || []).slice();
+              const idx = arr.indexOf(appId);
+              if (idx >= 0)
+                arr.splice(idx, 1);
+              else
+                arr.push(appId);
+              Settings.data.dock.pinnedApps = arr;
             }
-          }
 
-          ColumnLayout {
-            id: contentLayout
-            anchors.fill: parent
-            anchors.margins: Style.marginM
-            spacing: Style.marginM
+            function isPinned(appId) {
+              const arr = Settings.data.dock.pinnedApps || [];
+              return appId && arr.indexOf(appId) >= 0;
+            }
 
-            // Top row - Main entry content with pin button
-            RowLayout {
-              Layout.fillWidth: true
+            // Property to reliably track the current item's ID.
+            // This changes whenever the delegate is recycled for a new item.
+            property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
+
+            // When this delegate is assigned a new image item, trigger the decode.
+            onCurrentClipboardIdChanged: {
+              // Check if it's a valid ID and if the data isn't already cached.
+              if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
+                ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
+              }
+            }
+
+            width: resultsList.width - Style.marginS
+            implicitHeight: entryHeight
+            radius: Style.radiusM
+            color: entry.isSelected ? Color.mHover : Color.mSurface
+
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
+                easing.type: Easing.OutCirc
+              }
+            }
+
+            ColumnLayout {
+              id: contentLayout
+              anchors.fill: parent
+              anchors.margins: Style.marginM
               spacing: Style.marginM
 
-              // Icon badge or Image preview
-              Rectangle {
-                Layout.preferredWidth: badgeSize
-                Layout.preferredHeight: badgeSize
-                radius: Style.radiusM
-                color: Color.mSurfaceVariant
+              // Top row - Main entry content with pin button
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
 
-                // Image preview for clipboard images
-                NImageRounded {
-                  id: imagePreview
-                  anchors.fill: parent
-                  visible: modelData.isImage
-                  imageRadius: Style.radiusM
-
-                  // This property creates a dependency on the service's revision counter
-                  readonly property int _rev: ClipboardService.revision
-
-                  // Fetches from the service's cache.
-                  // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
-                  imagePath: {
-                    _rev;
-                    return ClipboardService.getImageData(modelData.clipboardId) || "";
-                  }
-
-                  // Loading indicator
-                  Rectangle {
-                    anchors.fill: parent
-                    visible: parent.status === Image.Loading
-                    color: Color.mSurfaceVariant
-
-                    BusyIndicator {
-                      anchors.centerIn: parent
-                      running: true
-                      width: Style.baseWidgetSize * 0.5
-                      height: width
-                    }
-                  }
-
-                  // Error fallback
-                  onStatusChanged: status => {
-                                     if (status === Image.Error) {
-                                       iconLoader.visible = true;
-                                       imagePreview.visible = false;
-                                     }
-                                   }
-                }
-
-                // Icon fallback
-                Loader {
-                  id: iconLoader
-                  anchors.fill: parent
-                  anchors.margins: Style.marginXS
-
-                  visible: !modelData.isImage || imagePreview.status === Image.Error
-                  active: visible
-
-                  sourceComponent: Component {
-                    IconImage {
-                      anchors.fill: parent
-                      source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                      visible: modelData.icon && source !== ""
-                      asynchronous: true
-                    }
-                  }
-                }
-
-                // Fallback text if no icon and no image
-                NText {
-                  anchors.centerIn: parent
-                  visible: !imagePreview.visible && !iconLoader.visible
-                  text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
-                  pointSize: Style.fontSizeXXL
-                  font.weight: Style.fontWeightBold
-                  color: Color.mOnPrimary
-                }
-
-                // Image type indicator overlay
+                // Icon badge or Image preview
                 Rectangle {
-                  visible: modelData.isImage && imagePreview.visible
-                  anchors.bottom: parent.bottom
-                  anchors.right: parent.right
-                  anchors.margins: 2
-                  width: formatLabel.width + 6
-                  height: formatLabel.height + 2
+                  Layout.preferredWidth: badgeSize
+                  Layout.preferredHeight: badgeSize
                   radius: Style.radiusM
                   color: Color.mSurfaceVariant
 
-                  NText {
-                    id: formatLabel
-                    anchors.centerIn: parent
-                    text: {
-                      if (!modelData.isImage)
-                        return "";
-                      const desc = modelData.description || "";
-                      const parts = desc.split(" • ");
-                      return parts[0] || "IMG";
+                  // Image preview for clipboard images
+                  NImageRounded {
+                    id: imagePreview
+                    anchors.fill: parent
+                    visible: modelData.isImage
+                    imageRadius: Style.radiusM
+
+                    // This property creates a dependency on the service's revision counter
+                    readonly property int _rev: ClipboardService.revision
+
+                    // Fetches from the service's cache.
+                    // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
+                    imagePath: {
+                      _rev;
+                      return ClipboardService.getImageData(modelData.clipboardId) || "";
                     }
-                    pointSize: Style.fontSizeXXS
-                    color: Color.mPrimary
+
+                    Rectangle {
+                      anchors.fill: parent
+                      visible: parent.status === Image.Loading
+                      color: Color.mSurfaceVariant
+
+                      BusyIndicator {
+                        anchors.centerIn: parent
+                        running: true
+                        width: Style.baseWidgetSize * 0.5
+                        height: width
+                      }
+                    }
+
+                    onStatusChanged: status => {
+                                       if (status === Image.Error) {
+                                         iconLoader.visible = true;
+                                         imagePreview.visible = false;
+                                       }
+                                     }
+                  }
+
+                  Loader {
+                    id: iconLoader
+                    anchors.fill: parent
+                    anchors.margins: Style.marginXS
+
+                    visible: !modelData.isImage || imagePreview.status === Image.Error
+                    active: visible
+
+                    sourceComponent: Component {
+                      IconImage {
+                        anchors.fill: parent
+                        source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                        visible: modelData.icon && source !== ""
+                        asynchronous: true
+                      }
+                    }
+                  }
+
+                  NText {
+                    anchors.centerIn: parent
+                    visible: !imagePreview.visible && !iconLoader.visible
+                    text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
+                    pointSize: Style.fontSizeXXL
+                    font.weight: Style.fontWeightBold
+                    color: Color.mOnPrimary
+                  }
+
+                  // Image type indicator overlay
+                  Rectangle {
+                    visible: modelData.isImage && imagePreview.visible
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    anchors.margins: 2
+                    width: formatLabel.width + 6
+                    height: formatLabel.height + 2
+                    radius: Style.radiusM
+                    color: Color.mSurfaceVariant
+
+                    NText {
+                      id: formatLabel
+                      anchors.centerIn: parent
+                      text: {
+                        if (!modelData.isImage)
+                          return "";
+                        const desc = modelData.description || "";
+                        const parts = desc.split(" • ");
+                        return parts[0] || "IMG";
+                      }
+                      pointSize: Style.fontSizeXXS
+                      color: Color.mPrimary
+                    }
                   }
                 }
-              }
 
-              // Text content
-              ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 0
-
-                NText {
-                  text: modelData.name || "Unknown"
-                  pointSize: Style.fontSizeL
-                  font.weight: Style.fontWeightBold
-                  color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
-                  elide: Text.ElideRight
+                // Text content
+                ColumnLayout {
                   Layout.fillWidth: true
+                  spacing: 0
+
+                  NText {
+                    text: modelData.name || "Unknown"
+                    pointSize: Style.fontSizeL
+                    font.weight: Style.fontWeightBold
+                    color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                  }
+
+                  NText {
+                    text: modelData.description || ""
+                    pointSize: Style.fontSizeS
+                    color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                    visible: text !== ""
+                  }
                 }
 
-                NText {
-                  text: modelData.description || ""
-                  pointSize: Style.fontSizeS
-                  color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
-                  elide: Text.ElideRight
-                  Layout.fillWidth: true
-                  visible: text !== ""
+                // Pin/Unpin action icon button
+                NIconButton {
+                  visible: !!entry.appId && !modelData.isImage && entry.isSelected && (Settings.data.dock.monitors && Settings.data.dock.monitors.length > 0)
+                  Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                  icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
+                  tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                  onClicked: entry.togglePin(entry.appId)
                 }
               }
-
-              // Pin/Unpin action icon button
-              NIconButton {
-                visible: !!entry.appId && !modelData.isImage && entry.isSelected && (Settings.data.dock.monitors && Settings.data.dock.monitors.length > 0)
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
-                tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                onClicked: entry.togglePin(entry.appId)
-              }
             }
-          }
 
-          MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            z: -1
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onEntered: {
-              if (!root.ignoreMouseHover) {
-                selectedIndex = index;
+            MouseArea {
+              id: mouseArea
+              anchors.fill: parent
+              z: -1
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onEntered: {
+                if (!root.ignoreMouseHover) {
+                  selectedIndex = index;
+                }
               }
-            }
-            onClicked: mouse => {
-                         if (mouse.button === Qt.LeftButton) {
-                           selectedIndex = index;
-                           root.activate();
-                           mouse.accepted = true;
+              onClicked: mouse => {
+                           if (mouse.button === Qt.LeftButton) {
+                             selectedIndex = index;
+                             root.activate();
+                             mouse.accepted = true;
+                           }
                          }
-                       }
-            acceptedButtons: Qt.LeftButton
+              acceptedButtons: Qt.LeftButton
+            }
           }
         }
-      }
 
-      NDivider {
-        Layout.fillWidth: true
-      }
-
-      // Status
-      NText {
-        Layout.fillWidth: true
-        text: {
-          if (results.length === 0)
-            return searchText ? "No results" : "";
-          const prefix = activePlugin?.name ? `${activePlugin.name}: ` : "";
-          return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`;
+        NDivider {
+          Layout.fillWidth: true
         }
-        pointSize: Style.fontSizeXS
-        color: Color.mOnSurfaceVariant
-        horizontalAlignment: Text.AlignCenter
+
+        NText {
+          Layout.fillWidth: true
+          text: {
+            if (results.length === 0)
+              return searchText ? "No results" : "";
+            const prefix = activePlugin?.name ? `${activePlugin.name}: ` : "";
+            return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`;
+          }
+          pointSize: Style.fontSizeXS
+          color: Color.mOnSurfaceVariant
+          horizontalAlignment: Text.AlignCenter
+        }
       }
     }
   }

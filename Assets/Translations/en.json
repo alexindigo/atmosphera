@@ -1372,6 +1372,10 @@
           "description": "Access previously copied items from the launcher.",
           "label": "Enable clipboard history"
         },
+        "clip-preview": {
+          "description": "Show a preview of the clipboard content when using the >clip command.",
+          "label": "Enable clip preview"
+        },
         "custom-launch-prefix": {
           "description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",
           "label": "Custom launch prefix"
