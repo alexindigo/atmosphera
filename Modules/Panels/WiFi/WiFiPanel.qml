@@ -10,8 +10,8 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(400 * Style.uiScaleRatio)
-  preferredHeight: Math.round(500 * Style.uiScaleRatio)
+  preferredWidth: Math.round(410 * Style.uiScaleRatio)
+  preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
   property string passwordSsid: ""
   property string passwordInput: ""
@@ -22,7 +22,7 @@ SmartPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2))
+    property real contentPreferredHeight: Math.min(root.preferredHeight, Math.max(280 * Style.uiScaleRatio, networksList.implicitHeight + Style.marginL * 2))
 
     ColumnLayout {
       id: mainColumn
@@ -199,6 +199,7 @@ SmartPanel {
           clip: true
 
           ColumnLayout {
+            id: networksList
             width: parent.width
             spacing: Style.marginM
 
@@ -209,341 +210,407 @@ SmartPanel {
                   return [];
 
                 const nets = Object.values(NetworkService.networks);
-                return nets.sort((a, b) => {
-                                   if (a.connected !== b.connected)
-                                   return b.connected - a.connected;
-                                   return b.signal - a.signal;
-                                 });
+
+                // Separate networks into two groups
+                const known = nets.filter(n => n.connected || n.existing || n.cached);
+                const available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+
+                // Sort known networks: connected first, then by signal strength
+                known.sort((a, b) => {
+                             if (a.connected !== b.connected)
+                             return b.connected - a.connected;
+                             return b.signal - a.signal;
+                           });
+
+                // Sort available networks by signal strength
+                available.sort((a, b) => b.signal - a.signal);
+
+                // Add section headers and combine
+                const result = [];
+
+                // Add known networks section
+                if (known.length > 0) {
+                  result.push({
+                                isHeader: true,
+                                title: I18n.tr("wifi.panel.known-networks")
+                              });
+                  result.push(...known);
+                }
+
+                // Add available networks section
+                if (available.length > 0) {
+                  result.push({
+                                isHeader: true,
+                                title: I18n.tr("wifi.panel.available-networks")
+                              });
+                  result.push(...available);
+                }
+
+                return result;
               }
 
-              Rectangle {
+              Loader {
                 Layout.fillWidth: true
-                implicitHeight: netColumn.implicitHeight + (Style.marginM * 2)
-                radius: Style.radiusM
+                Layout.leftMargin: Style.marginXS
+                Layout.rightMargin: Style.marginXS
+                sourceComponent: modelData.isHeader ? headerComponent : networkComponent
 
-                // Add opacity for operations in progress
-                opacity: (NetworkService.disconnectingFrom === modelData.ssid || NetworkService.forgettingNetwork === modelData.ssid) ? 0.6 : 1.0
+                // Pass modelData to loaded component
+                property var network: modelData
 
-                color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
-                border.width: Style.borderS
-                border.color: modelData.connected ? Color.mPrimary : Color.mOutline
+                Component {
+                  id: headerComponent
 
-                // Smooth opacity animation
-                Behavior on opacity {
-                  NumberAnimation {
-                    duration: Style.animationNormal
+                  Item {
+                    width: parent ? parent.width : 0
+                    implicitHeight: headerText.implicitHeight + Style.marginM * 2
+
+                    NText {
+                      id: headerText
+                      anchors.left: parent.left
+                      anchors.right: parent.right
+                      anchors.verticalCenter: parent.verticalCenter
+                      anchors.leftMargin: Style.marginS
+                      text: network.title
+                      pointSize: Style.fontSizeS
+                      font.weight: Style.fontWeightBold
+                      color: Color.mSecondary
+                    }
                   }
                 }
 
-                ColumnLayout {
-                  id: netColumn
-                  width: parent.width - (Style.marginM * 2)
-                  x: Style.marginM
-                  y: Style.marginM
-                  spacing: Style.marginS
+                Component {
+                  id: networkComponent
 
-                  // Main row
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginS
+                  Rectangle {
+                    implicitHeight: netColumn.implicitHeight + (Style.marginM * 2)
+                    radius: Style.radiusM
+                    border.width: Style.borderS
+                    border.color: network.connected ? Color.mPrimary : Color.mOutline
 
-                    NIcon {
-                      icon: NetworkService.signalIcon(modelData.signal, modelData.connected)
-                      pointSize: Style.fontSizeXXL
-                      color: modelData.connected ? Color.mPrimary : Color.mOnSurface
+                    // Add opacity for operations in progress
+                    opacity: (NetworkService.disconnectingFrom === network.ssid || NetworkService.forgettingNetwork === network.ssid) ? 0.6 : 1.0
+
+                    color: network.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
+
+                    // Smooth opacity animation
+                    Behavior on opacity {
+                      NumberAnimation {
+                        duration: Style.animationNormal
+                      }
                     }
 
                     ColumnLayout {
-                      Layout.fillWidth: true
-                      spacing: 2
-
-                      NText {
-                        text: modelData.ssid
-                        pointSize: Style.fontSizeM
-                        font.weight: modelData.connected ? Style.fontWeightBold : Style.fontWeightMedium
-                        color: Color.mOnSurface
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
-                      }
-
-                      RowLayout {
-                        spacing: Style.marginXS
-
-                        NText {
-                          text: I18n.tr("system.signal-strength", {
-                                          "signal": modelData.signal
-                                        })
-                          pointSize: Style.fontSizeXXS
-                          color: Color.mOnSurfaceVariant
-                        }
-
-                        NText {
-                          text: "•"
-                          pointSize: Style.fontSizeXXS
-                          color: Color.mOnSurfaceVariant
-                        }
-
-                        NText {
-                          text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
-                          pointSize: Style.fontSizeXXS
-                          color: Color.mOnSurfaceVariant
-                        }
-
-                        Item {
-                          Layout.preferredWidth: Style.marginXXS
-                        }
-
-                        // Update the status badges area (around line 237)
-                        Rectangle {
-                          visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-                          color: Color.mPrimary
-                          radius: height * 0.5
-                          width: connectedText.implicitWidth + (Style.marginS * 2)
-                          height: connectedText.implicitHeight + (Style.marginXXS * 2)
-
-                          NText {
-                            id: connectedText
-                            anchors.centerIn: parent
-                            text: I18n.tr("wifi.panel.connected")
-                            pointSize: Style.fontSizeXXS
-                            color: Color.mOnPrimary
-                          }
-                        }
-
-                        Rectangle {
-                          visible: NetworkService.disconnectingFrom === modelData.ssid
-                          color: Color.mError
-                          radius: height * 0.5
-                          width: disconnectingText.implicitWidth + (Style.marginS * 2)
-                          height: disconnectingText.implicitHeight + (Style.marginXXS * 2)
-
-                          NText {
-                            id: disconnectingText
-                            anchors.centerIn: parent
-                            text: I18n.tr("wifi.panel.disconnecting")
-                            pointSize: Style.fontSizeXXS
-                            color: Color.mOnPrimary
-                          }
-                        }
-
-                        Rectangle {
-                          visible: NetworkService.forgettingNetwork === modelData.ssid
-                          color: Color.mError
-                          radius: height * 0.5
-                          width: forgettingText.implicitWidth + (Style.marginS * 2)
-                          height: forgettingText.implicitHeight + (Style.marginXXS * 2)
-
-                          NText {
-                            id: forgettingText
-                            anchors.centerIn: parent
-                            text: I18n.tr("wifi.panel.forgetting")
-                            pointSize: Style.fontSizeXXS
-                            color: Color.mOnPrimary
-                          }
-                        }
-
-                        Rectangle {
-                          visible: modelData.cached && !modelData.connected && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
-                          color: Color.transparent
-                          border.color: Color.mOutline
-                          border.width: Style.borderS
-                          radius: height * 0.5
-                          width: savedText.implicitWidth + (Style.marginS * 2)
-                          height: savedText.implicitHeight + (Style.marginXXS * 2)
-
-                          NText {
-                            id: savedText
-                            anchors.centerIn: parent
-                            text: I18n.tr("wifi.panel.saved")
-                            pointSize: Style.fontSizeXXS
-                            color: Color.mOnSurfaceVariant
-                          }
-                        }
-                      }
-                    }
-
-                    // Action area
-                    RowLayout {
+                      id: netColumn
+                      width: parent.width - (Style.marginM * 2)
+                      x: Style.marginM
+                      y: Style.marginM
                       spacing: Style.marginS
 
-                      NBusyIndicator {
-                        visible: NetworkService.connectingTo === modelData.ssid || NetworkService.disconnectingFrom === modelData.ssid || NetworkService.forgettingNetwork === modelData.ssid
-                        running: visible
-                        color: Color.mPrimary
-                        size: Style.baseWidgetSize * 0.5
-                      }
+                      // Main row
+                      RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Style.marginS
 
-                      NIconButton {
-                        visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
-                        icon: "trash"
-                        tooltipText: I18n.tr("tooltips.forget-network")
-                        baseSize: Style.baseWidgetSize * 0.8
-                        onClicked: expandedSsid = expandedSsid === modelData.ssid ? "" : modelData.ssid
-                      }
-
-                      NButton {
-                        visible: !modelData.connected && NetworkService.connectingTo !== modelData.ssid && passwordSsid !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
-                        text: {
-                          if (modelData.existing || modelData.cached)
-                            return I18n.tr("wifi.panel.connect");
-                          if (!NetworkService.isSecured(modelData.security))
-                            return I18n.tr("wifi.panel.connect");
-                          return I18n.tr("wifi.panel.password");
+                        NIcon {
+                          icon: NetworkService.signalIcon(network.signal, network.connected)
+                          pointSize: Style.fontSizeXXL
+                          color: network.connected ? Color.mPrimary : Color.mOnSurface
                         }
-                        outlined: !hovered
-                        fontSize: Style.fontSizeXS
-                        enabled: !NetworkService.connecting
-                        onClicked: {
-                          if (modelData.existing || modelData.cached || !NetworkService.isSecured(modelData.security)) {
-                            NetworkService.connect(modelData.ssid);
-                          } else {
-                            passwordSsid = modelData.ssid;
-                            passwordInput = "";
-                            expandedSsid = "";
+
+                        ColumnLayout {
+                          Layout.fillWidth: true
+                          spacing: 2
+
+                          NText {
+                            text: network.ssid
+                            pointSize: Style.fontSizeM
+                            font.weight: network.connected ? Style.fontWeightBold : Style.fontWeightMedium
+                            color: Color.mOnSurface
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                          }
+
+                          RowLayout {
+                            spacing: Style.marginXS
+
+                            NText {
+                              text: I18n.tr("system.signal-strength", {
+                                              "signal": network.signal
+                                            })
+                              pointSize: Style.fontSizeXXS
+                              color: Color.mOnSurfaceVariant
+                            }
+
+                            NText {
+                              text: "•"
+                              pointSize: Style.fontSizeXXS
+                              color: Color.mOnSurfaceVariant
+                            }
+
+                            NText {
+                              text: NetworkService.isSecured(network.security) ? network.security : "Open"
+                              pointSize: Style.fontSizeXXS
+                              color: Color.mOnSurfaceVariant
+                            }
+
+                            Item {
+                              Layout.preferredWidth: Style.marginXXS
+                            }
+
+                            // Status badges
+                            Rectangle {
+                              visible: network.connected && NetworkService.disconnectingFrom !== network.ssid
+                              color: Color.mPrimary
+                              radius: height * 0.5
+                              width: connectedText.implicitWidth + (Style.marginS * 2)
+                              height: connectedText.implicitHeight + (Style.marginXXS * 2)
+
+                              NText {
+                                id: connectedText
+                                anchors.centerIn: parent
+                                text: I18n.tr("wifi.panel.connected")
+                                pointSize: Style.fontSizeXXS
+                                color: Color.mOnPrimary
+                              }
+                            }
+
+                            Rectangle {
+                              visible: NetworkService.disconnectingFrom === network.ssid
+                              color: Color.mError
+                              radius: height * 0.5
+                              width: disconnectingText.implicitWidth + (Style.marginS * 2)
+                              height: disconnectingText.implicitHeight + (Style.marginXXS * 2)
+
+                              NText {
+                                id: disconnectingText
+                                anchors.centerIn: parent
+                                text: I18n.tr("wifi.panel.disconnecting")
+                                pointSize: Style.fontSizeXXS
+                                color: Color.mOnPrimary
+                              }
+                            }
+
+                            Rectangle {
+                              visible: NetworkService.forgettingNetwork === network.ssid
+                              color: Color.mError
+                              radius: height * 0.5
+                              width: forgettingText.implicitWidth + (Style.marginS * 2)
+                              height: forgettingText.implicitHeight + (Style.marginXXS * 2)
+
+                              NText {
+                                id: forgettingText
+                                anchors.centerIn: parent
+                                text: I18n.tr("wifi.panel.forgetting")
+                                pointSize: Style.fontSizeXXS
+                                color: Color.mOnPrimary
+                              }
+                            }
+
+                            Rectangle {
+                              visible: network.cached && !network.connected && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
+                              color: Color.transparent
+                              border.color: Color.mOutline
+                              border.width: Style.borderS
+                              radius: height * 0.5
+                              width: savedText.implicitWidth + (Style.marginS * 2)
+                              height: savedText.implicitHeight + (Style.marginXXS * 2)
+
+                              NText {
+                                id: savedText
+                                anchors.centerIn: parent
+                                text: I18n.tr("wifi.panel.saved")
+                                pointSize: Style.fontSizeXXS
+                                color: Color.mOnSurfaceVariant
+                              }
+                            }
+                          }
+                        }
+
+                        // Action area
+                        RowLayout {
+                          spacing: Style.marginS
+
+                          NBusyIndicator {
+                            visible: NetworkService.connectingTo === network.ssid || NetworkService.disconnectingFrom === network.ssid || NetworkService.forgettingNetwork === network.ssid
+                            running: visible
+                            color: Color.mPrimary
+                            size: Style.baseWidgetSize * 0.5
+                          }
+
+                          NIconButton {
+                            visible: (network.existing || network.cached) && !network.connected && NetworkService.connectingTo !== network.ssid && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
+                            icon: "trash"
+                            tooltipText: I18n.tr("tooltips.forget-network")
+                            baseSize: Style.baseWidgetSize * 0.8
+                            onClicked: expandedSsid = expandedSsid === network.ssid ? "" : network.ssid
+                          }
+
+                          NButton {
+                            visible: !network.connected && NetworkService.connectingTo !== network.ssid && passwordSsid !== network.ssid && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
+                            text: {
+                              if (network.existing || network.cached)
+                                return I18n.tr("wifi.panel.connect");
+                              if (!NetworkService.isSecured(network.security))
+                                return I18n.tr("wifi.panel.connect");
+                              return I18n.tr("wifi.panel.password");
+                            }
+                            outlined: !hovered
+                            fontSize: Style.fontSizeXS
+                            enabled: !NetworkService.connecting
+                            onClicked: {
+                              if (network.existing || network.cached || !NetworkService.isSecured(network.security)) {
+                                NetworkService.connect(network.ssid);
+                              } else {
+                                passwordSsid = network.ssid;
+                                passwordInput = "";
+                                expandedSsid = "";
+                              }
+                            }
+                          }
+
+                          NButton {
+                            visible: network.connected && NetworkService.disconnectingFrom !== network.ssid
+                            text: I18n.tr("wifi.panel.disconnect")
+                            outlined: !hovered
+                            fontSize: Style.fontSizeXS
+                            backgroundColor: Color.mError
+                            onClicked: NetworkService.disconnect(network.ssid)
                           }
                         }
                       }
 
-                      NButton {
-                        visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-                        text: I18n.tr("wifi.panel.disconnect")
-                        outlined: !hovered
-                        fontSize: Style.fontSizeXS
-                        backgroundColor: Color.mError
-                        onClicked: NetworkService.disconnect(modelData.ssid)
-                      }
-                    }
-                  }
-
-                  // Password input
-                  Rectangle {
-                    visible: passwordSsid === modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid
-                    Layout.fillWidth: true
-                    height: passwordRow.implicitHeight + Style.marginS * 2
-                    color: Color.mSurfaceVariant
-                    border.color: Color.mOutline
-                    border.width: Style.borderS
-                    radius: Style.radiusS
-
-                    RowLayout {
-                      id: passwordRow
-                      anchors.fill: parent
-                      anchors.margins: Style.marginS
-                      spacing: Style.marginM
-
+                      // Password input
                       Rectangle {
+                        visible: passwordSsid === network.ssid && NetworkService.disconnectingFrom !== network.ssid && NetworkService.forgettingNetwork !== network.ssid
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        radius: Style.radiusXS
-                        color: Color.mSurface
-                        border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
+                        height: passwordRow.implicitHeight + Style.marginS * 2
+                        color: Color.mSurfaceVariant
+                        border.color: Color.mOutline
                         border.width: Style.borderS
+                        radius: Style.radiusS
 
-                        TextInput {
-                          id: pwdInput
-                          anchors.left: parent.left
-                          anchors.right: parent.right
-                          anchors.verticalCenter: parent.verticalCenter
+                        RowLayout {
+                          id: passwordRow
+                          anchors.fill: parent
                           anchors.margins: Style.marginS
-                          text: passwordInput
-                          font.family: Settings.data.ui.fontFixed
-                          font.pointSize: Style.fontSizeS
-                          color: Color.mOnSurface
-                          echoMode: TextInput.Password
-                          selectByMouse: true
-                          focus: visible
-                          passwordCharacter: "●"
-                          onTextChanged: passwordInput = text
-                          onVisibleChanged: if (visible)
-                                              forceActiveFocus()
-                          onAccepted: {
-                            if (text && !NetworkService.connecting) {
-                              NetworkService.connect(passwordSsid, text);
+                          spacing: Style.marginM
+
+                          Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: Style.radiusXS
+                            color: Color.mSurface
+                            border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
+                            border.width: Style.borderS
+
+                            TextInput {
+                              id: pwdInput
+                              anchors.left: parent.left
+                              anchors.right: parent.right
+                              anchors.verticalCenter: parent.verticalCenter
+                              anchors.margins: Style.marginS
+                              text: passwordInput
+                              font.family: Settings.data.ui.fontFixed
+                              font.pointSize: Style.fontSizeS
+                              color: Color.mOnSurface
+                              echoMode: TextInput.Password
+                              selectByMouse: true
+                              focus: visible
+                              passwordCharacter: "●"
+                              onTextChanged: passwordInput = text
+                              onVisibleChanged: if (visible)
+                                                  forceActiveFocus()
+                              onAccepted: {
+                                if (text && !NetworkService.connecting) {
+                                  NetworkService.connect(passwordSsid, text);
+                                  passwordSsid = "";
+                                  passwordInput = "";
+                                }
+                              }
+
+                              NText {
+                                visible: parent.text.length === 0
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: I18n.tr("wifi.panel.enter-password")
+                                color: Color.mOnSurfaceVariant
+                                pointSize: Style.fontSizeS
+                              }
+                            }
+                          }
+
+                          NButton {
+                            text: I18n.tr("wifi.panel.connect")
+                            fontSize: Style.fontSizeXXS
+                            enabled: passwordInput.length > 0 && !NetworkService.connecting
+                            outlined: true
+                            onClicked: {
+                              NetworkService.connect(passwordSsid, passwordInput);
                               passwordSsid = "";
                               passwordInput = "";
                             }
                           }
 
-                          NText {
-                            visible: parent.text.length === 0
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: I18n.tr("wifi.panel.enter-password")
-                            color: Color.mOnSurfaceVariant
-                            pointSize: Style.fontSizeS
+                          NIconButton {
+                            icon: "close"
+                            baseSize: Style.baseWidgetSize * 0.8
+                            onClicked: {
+                              passwordSsid = "";
+                              passwordInput = "";
+                            }
                           }
                         }
                       }
 
-                      NButton {
-                        text: I18n.tr("wifi.panel.connect")
-                        fontSize: Style.fontSizeXXS
-                        enabled: passwordInput.length > 0 && !NetworkService.connecting
-                        outlined: true
-                        onClicked: {
-                          NetworkService.connect(passwordSsid, passwordInput);
-                          passwordSsid = "";
-                          passwordInput = "";
+                      // Forget network
+                      Rectangle {
+                        visible: expandedSsid === network.ssid && NetworkService.disconnectingFrom !== network.ssid && NetworkService.forgettingNetwork !== network.ssid
+                        Layout.fillWidth: true
+                        height: forgetRow.implicitHeight + Style.marginS * 2
+                        color: Color.mSurfaceVariant
+                        radius: Style.radiusS
+                        border.width: Style.borderS
+                        border.color: Color.mOutline
+
+                        RowLayout {
+                          id: forgetRow
+                          anchors.fill: parent
+                          anchors.margins: Style.marginS
+                          spacing: Style.marginM
+
+                          RowLayout {
+                            NIcon {
+                              icon: "trash"
+                              pointSize: Style.fontSizeL
+                              color: Color.mError
+                            }
+
+                            NText {
+                              text: I18n.tr("wifi.panel.forget-network")
+                              pointSize: Style.fontSizeS
+                              color: Color.mError
+                              Layout.fillWidth: true
+                            }
+                          }
+
+                          NButton {
+                            id: forgetButton
+                            text: I18n.tr("wifi.panel.forget")
+                            fontSize: Style.fontSizeXXS
+                            backgroundColor: Color.mError
+                            outlined: forgetButton.hovered ? false : true
+                            onClicked: {
+                              NetworkService.forget(network.ssid);
+                              expandedSsid = "";
+                            }
+                          }
+
+                          NIconButton {
+                            icon: "close"
+                            baseSize: Style.baseWidgetSize * 0.8
+                            onClicked: expandedSsid = ""
+                          }
                         }
-                      }
-
-                      NIconButton {
-                        icon: "close"
-                        baseSize: Style.baseWidgetSize * 0.8
-                        onClicked: {
-                          passwordSsid = "";
-                          passwordInput = "";
-                        }
-                      }
-                    }
-                  }
-
-                  // Forget network
-                  Rectangle {
-                    visible: expandedSsid === modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid
-                    Layout.fillWidth: true
-                    height: forgetRow.implicitHeight + Style.marginS * 2
-                    color: Color.mSurfaceVariant
-                    radius: Style.radiusS
-                    border.width: Style.borderS
-                    border.color: Color.mOutline
-
-                    RowLayout {
-                      id: forgetRow
-                      anchors.fill: parent
-                      anchors.margins: Style.marginS
-                      spacing: Style.marginM
-
-                      RowLayout {
-                        NIcon {
-                          icon: "trash"
-                          pointSize: Style.fontSizeL
-                          color: Color.mError
-                        }
-
-                        NText {
-                          text: I18n.tr("wifi.panel.forget-network")
-                          pointSize: Style.fontSizeS
-                          color: Color.mError
-                          Layout.fillWidth: true
-                        }
-                      }
-
-                      NButton {
-                        id: forgetButton
-                        text: I18n.tr("wifi.panel.forget")
-                        fontSize: Style.fontSizeXXS
-                        backgroundColor: Color.mError
-                        outlined: forgetButton.hovered ? false : true
-                        onClicked: {
-                          NetworkService.forget(modelData.ssid);
-                          expandedSsid = "";
-                        }
-                      }
-
-                      NIconButton {
-                        icon: "close"
-                        baseSize: Style.baseWidgetSize * 0.8
-                        onClicked: expandedSsid = ""
                       }
                     }
                   }

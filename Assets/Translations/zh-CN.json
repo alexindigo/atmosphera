@@ -2296,6 +2296,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "可用网络",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
@@ -2306,6 +2307,7 @@
       "forget": "忘记",
       "forget-network": "忘记此网络？",
       "forgetting": "正在忘记...",
+      "known-networks": "已知网络",
       "no-networks": "未找到网络",
       "password": "密码",
       "saved": "已保存",

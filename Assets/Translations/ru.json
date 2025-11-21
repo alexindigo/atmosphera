@@ -2296,6 +2296,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Доступные сети",
       "connect": "Подключить",
       "connected": "Подключено",
       "disabled": "Wi-Fi отключен",
@@ -2306,6 +2307,7 @@
       "forget": "Забыть",
       "forget-network": "Забыть эту сеть?",
       "forgetting": "Забывание...",
+      "known-networks": "Известные сети",
       "no-networks": "Сети не найдены",
       "password": "Пароль",
       "saved": "Сохранено",

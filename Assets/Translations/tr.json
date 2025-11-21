@@ -2296,6 +2296,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Kullanılabilir Ağlar",
       "connect": "Bağlan",
       "connected": "Bağlı",
       "disabled": "Wi-Fi devre dışı",
@@ -2306,6 +2307,7 @@
       "forget": "Unut",
       "forget-network": "Bu ağı unut?",
       "forgetting": "Unutuluyor...",
+      "known-networks": "Bilinen Ağlar",
       "no-networks": "Ağ bulunamadı",
       "password": "Şifre",
       "saved": "Kaydedildi",
