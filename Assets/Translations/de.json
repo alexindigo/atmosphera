@@ -456,6 +456,8 @@
     "enable-bluetooth": "Bluetooth aktivieren",
     "enable-dnd": "Nicht stören aktivieren",
     "enable-wifi": "WLAN aktivieren",
+    "connect-vpn": "Mit {name} verbinden",
+    "disconnect-vpn": "Verbindung zu {name} trennen",
     "next": "Nächste/r/s",
     "open-calendar": "Kalender öffnen",
     "open-display-settings": "Anzeigeeinstellungen",
@@ -2074,6 +2076,10 @@
       "disabled": "Deaktiviert",
       "disconnected": "Getrennt von '{ssid}'",
       "enabled": "Aktiviert"
+    },
+    "vpn": {
+      "connected": "Verbunden mit '{name}'",
+      "disconnected": "Verbindung zu '{name}' getrennt"
     }
   },
   "tooltips": {
@@ -2097,6 +2103,7 @@
     "keep-awake": "Wach halten",
     "keyboard-layout": "{layout} Tastaturlayout",
     "manage-wifi": "WLAN verwalten",
+    "manage-vpn": "VPN-Verbindungen verwalten",
     "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
     "move-to-center-section": "Zur mittleren Sektion verschieben",
     "move-to-left-section": "Zur linken Sektion verschieben",

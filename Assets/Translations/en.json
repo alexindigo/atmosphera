@@ -456,6 +456,8 @@
     "enable-bluetooth": "Enable Bluetooth",
     "enable-dnd": "Enable Do Not Disturb",
     "enable-wifi": "Enable Wi-Fi",
+    "connect-vpn": "Connect to {name}",
+    "disconnect-vpn": "Disconnect {name}",
     "next": "Next",
     "open-calendar": "Open calendar",
     "open-display-settings": "Display settings",
@@ -2078,6 +2080,10 @@
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
       "enabled": "Enabled"
+    },
+    "vpn": {
+      "connected": "Connected to '{name}'",
+      "disconnected": "Disconnected from '{name}'"
     }
   },
   "tooltips": {
@@ -2101,6 +2107,7 @@
     "keep-awake": "Keep awake",
     "keyboard-layout": "{layout} keyboard layout",
     "manage-wifi": "Manage Wi-Fi",
+    "manage-vpn": "Manage VPN connections",
     "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
     "move-to-center-section": "Move to center section",
     "move-to-left-section": "Move to left section",

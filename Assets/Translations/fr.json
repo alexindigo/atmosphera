@@ -456,6 +456,8 @@
     "enable-bluetooth": "Activer le Bluetooth",
     "enable-dnd": "Activer le mode Ne pas déranger",
     "enable-wifi": "Activer le Wi-Fi",
+    "connect-vpn": "Se connecter à {name}",
+    "disconnect-vpn": "Se déconnecter de {name}",
     "next": "Suivant",
     "open-calendar": "Ouvrir le calendrier",
     "open-display-settings": "Paramètres d'affichage",
@@ -2074,6 +2076,10 @@
       "disabled": "Désactivé",
       "disconnected": "Déconnecté de '{ssid}'",
       "enabled": "Activé"
+    },
+    "vpn": {
+      "connected": "Connecté à '{name}'",
+      "disconnected": "Déconnecté de '{name}'"
     }
   },
   "tooltips": {
@@ -2097,6 +2103,7 @@
     "keep-awake": "Rester éveillé",
     "keyboard-layout": "Disposition du clavier {layout}",
     "manage-wifi": "Gérer le Wi-Fi",
+    "manage-vpn": "Gérer les connexions VPN",
     "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
     "move-to-center-section": "Déplacer vers la section centrale",
     "move-to-left-section": "Déplacer vers la section de gauche",

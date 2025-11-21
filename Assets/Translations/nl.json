@@ -456,6 +456,8 @@
     "enable-bluetooth": "Bluetooth inschakelen",
     "enable-dnd": "Niet Storen inschakelen",
     "enable-wifi": "Wi-Fi inschakelen",
+    "connect-vpn": "Verbinding maken met {name}",
+    "disconnect-vpn": "Verbinding met {name} verbreken",
     "next": "Volgende",
     "open-calendar": "Open agenda",
     "open-display-settings": "Beeldscherminstellingen",
@@ -2074,6 +2076,10 @@
       "disabled": "Wi-Fi uitgeschakeld",
       "disconnected": "Verbinding met '{ssid}' verbroken",
       "enabled": "Wi-Fi ingeschakeld"
+    },
+    "vpn": {
+      "connected": "Verbonden met '{name}'",
+      "disconnected": "Verbinding met '{name}' verbroken"
     }
   },
   "tooltips": {
@@ -2097,6 +2103,7 @@
     "keep-awake": "Wakker houden",
     "keyboard-layout": "{layout}-toetsenbordindeling",
     "manage-wifi": "Wi-Fi beheren",
+    "manage-vpn": "VPN-verbindingen beheren",
     "microphone-volume-at": "Microfoonvolume {volume}%\nLinks klikken voor instellingen. Rechts klikken om te dempen.\nScroll om het volume aan te passen.",
     "move-to-center-section": "Verplaatsen naar middelste sectie",
     "move-to-left-section": "Verplaatsen naar linker sectie",
