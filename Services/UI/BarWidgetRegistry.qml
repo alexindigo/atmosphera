@@ -124,6 +124,13 @@ Singleton {
                                     "textIntervalMs": 3000,
                                     "textCollapse": "",
                                     "parseJson": false,
+                                    "wheelExec": "",
+                                    "wheelUpExec": "",
+                                    "wheelDownExec": "",
+                                    "wheelMode": "unified",
+                                    "wheelUpdateText": false,
+                                    "wheelUpUpdateText": false,
+                                    "wheelDownUpdateText": false,
                                     "maxTextLength": {
                                       "horizontal": 10,
                                       "vertical": 10

@@ -145,6 +145,23 @@
           "label": "Middle click",
           "update-text": "Update displayed text on middle-click"
         },
+        "wheel": {
+          "description": "Command to execute when the scroll wheel is used.\nUse $delta for the scroll wheel delta in the command",
+          "label": "Scroll wheel",
+          "update-text": "Update displayed text on scroll"
+        },
+        "wheel-mode-separate": {
+          "label": "Separate wheel commands",
+          "description": "Enable separate commands for wheel up and down"
+        },
+        "wheel-up": {
+          "description": "Command to execute when the scroll wheel is scrolled up.",
+          "label": "Wheel up command"
+        },
+        "wheel-down": {
+          "description": "Command to execute when the scroll wheel is scrolled down.",
+          "label": "Wheel down command"
+        },
         "parse-json": {
           "description": "Parse the command output as a JSON object to dynamically set text and icon.",
           "label": "Parse output as JSON"
