@@ -222,9 +222,6 @@ SmartPanel {
   }
 
   onClosed: {
-    if (UpdateService && UpdateService.clearReleaseCache) {
-      UpdateService.clearReleaseCache();
-    }
     if (UpdateService && UpdateService.changelogCurrentVersion) {
       UpdateService.markChangelogSeen(UpdateService.changelogCurrentVersion);
     }
