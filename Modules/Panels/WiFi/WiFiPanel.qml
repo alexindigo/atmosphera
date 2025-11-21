@@ -10,19 +10,75 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(410 * Style.uiScaleRatio)
-  preferredHeight: Math.round(460 * Style.uiScaleRatio)
+  preferredWidth: Math.round(400 * Style.uiScaleRatio)
+  preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   property string passwordSsid: ""
-  property string passwordInput: ""
   property string expandedSsid: ""
+  property bool hasHadNetworks: false
 
-  onOpened: NetworkService.scan()
+  // Computed network lists
+  readonly property var knownNetworks: {
+    if (!Settings.data.network.wifiEnabled)
+      return [];
+
+    const nets = Object.values(NetworkService.networks);
+    const known = nets.filter(n => n.connected || n.existing || n.cached);
+
+    // Sort: connected first, then by signal strength
+    known.sort((a, b) => {
+                 if (a.connected !== b.connected)
+                 return b.connected - a.connected;
+                 return b.signal - a.signal;
+               });
+
+    return known;
+  }
+
+  readonly property var availableNetworks: {
+    if (!Settings.data.network.wifiEnabled)
+      return [];
+
+    const nets = Object.values(NetworkService.networks);
+    const available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+
+    // Sort by signal strength
+    available.sort((a, b) => b.signal - a.signal);
+
+    return available;
+  }
+
+  onOpened: {
+    hasHadNetworks = false;
+    NetworkService.scan();
+  }
+
+  onKnownNetworksChanged: {
+    if (knownNetworks.length > 0)
+      hasHadNetworks = true;
+  }
+
+  onAvailableNetworksChanged: {
+    if (availableNetworks.length > 0)
+      hasHadNetworks = true;
+  }
+
+  Connections {
+    target: Settings.data.network
+    function onWifiEnabledChanged() {
+      if (!Settings.data.network.wifiEnabled)
+        root.hasHadNetworks = false;
+    }
+  }
 
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: Math.min(root.preferredHeight, Math.max(280 * Style.uiScaleRatio, networksList.implicitHeight + Style.marginL * 2))
+    // Calculate content height based on header + networks list (or minimum for empty states)
+    property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
+    property real networksHeight: networksList.implicitHeight
+    property real calculatedHeight: headerHeight + networksHeight + Style.marginL * 2 + Style.marginM
+    property real contentPreferredHeight: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0 ? Math.min(root.preferredHeight, Math.max(280 * Style.uiScaleRatio, calculatedHeight)) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
 
     ColumnLayout {
       id: mainColumn
@@ -116,14 +172,13 @@ SmartPanel {
         }
       }
 
-      // Main content area
+      // WiFi disabled state
       NBox {
+        visible: !Settings.data.network.wifiEnabled
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        // WiFi disabled state
         ColumnLayout {
-          visible: !Settings.data.network.wifiEnabled
           anchors.fill: parent
           anchors.margins: Style.marginM
 
@@ -158,10 +213,15 @@ SmartPanel {
             Layout.fillHeight: true
           }
         }
+      }
 
-        // Scanning state
+      // Scanning state (show when no networks and we haven't had any yet)
+      NBox {
+        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && !root.hasHadNetworks
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
         ColumnLayout {
-          visible: Settings.data.network.wifiEnabled && NetworkService.scanning && Object.keys(NetworkService.networks).length === 0
           anchors.fill: parent
           anchors.margins: Style.marginM
           spacing: Style.marginL
@@ -188,441 +248,15 @@ SmartPanel {
             Layout.fillHeight: true
           }
         }
+      }
 
-        // Networks list container
-        NScrollView {
-          visible: Settings.data.network.wifiEnabled && (!NetworkService.scanning || Object.keys(NetworkService.networks).length > 0)
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          horizontalPolicy: ScrollBar.AlwaysOff
-          verticalPolicy: ScrollBar.AsNeeded
-          clip: true
+      // Empty state when no networks (only show after we've had networks before, meaning a real empty result)
+      NBox {
+        visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && root.hasHadNetworks
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-          ColumnLayout {
-            id: networksList
-            width: parent.width
-            spacing: Style.marginM
-
-            // Network list
-            Repeater {
-              model: {
-                if (!Settings.data.network.wifiEnabled)
-                  return [];
-
-                const nets = Object.values(NetworkService.networks);
-
-                // Separate networks into two groups
-                const known = nets.filter(n => n.connected || n.existing || n.cached);
-                const available = nets.filter(n => !n.connected && !n.existing && !n.cached);
-
-                // Sort known networks: connected first, then by signal strength
-                known.sort((a, b) => {
-                             if (a.connected !== b.connected)
-                             return b.connected - a.connected;
-                             return b.signal - a.signal;
-                           });
-
-                // Sort available networks by signal strength
-                available.sort((a, b) => b.signal - a.signal);
-
-                // Add section headers and combine
-                const result = [];
-
-                // Add known networks section
-                if (known.length > 0) {
-                  result.push({
-                                isHeader: true,
-                                title: I18n.tr("wifi.panel.known-networks")
-                              });
-                  result.push(...known);
-                }
-
-                // Add available networks section
-                if (available.length > 0) {
-                  result.push({
-                                isHeader: true,
-                                title: I18n.tr("wifi.panel.available-networks")
-                              });
-                  result.push(...available);
-                }
-
-                return result;
-              }
-
-              Loader {
-                Layout.fillWidth: true
-                Layout.leftMargin: Style.marginXS
-                Layout.rightMargin: Style.marginXS
-                sourceComponent: modelData.isHeader ? headerComponent : networkComponent
-
-                // Pass modelData to loaded component
-                property var network: modelData
-
-                Component {
-                  id: headerComponent
-
-                  Item {
-                    width: parent ? parent.width : 0
-                    implicitHeight: headerText.implicitHeight + Style.marginM * 2
-
-                    NText {
-                      id: headerText
-                      anchors.left: parent.left
-                      anchors.right: parent.right
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.leftMargin: Style.marginS
-                      text: network.title
-                      pointSize: Style.fontSizeS
-                      font.weight: Style.fontWeightBold
-                      color: Color.mSecondary
-                    }
-                  }
-                }
-
-                Component {
-                  id: networkComponent
-
-                  Rectangle {
-                    implicitHeight: netColumn.implicitHeight + (Style.marginM * 2)
-                    radius: Style.radiusM
-                    border.width: Style.borderS
-                    border.color: network.connected ? Color.mPrimary : Color.mOutline
-
-                    // Add opacity for operations in progress
-                    opacity: (NetworkService.disconnectingFrom === network.ssid || NetworkService.forgettingNetwork === network.ssid) ? 0.6 : 1.0
-
-                    color: network.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
-
-                    // Smooth opacity animation
-                    Behavior on opacity {
-                      NumberAnimation {
-                        duration: Style.animationNormal
-                      }
-                    }
-
-                    ColumnLayout {
-                      id: netColumn
-                      width: parent.width - (Style.marginM * 2)
-                      x: Style.marginM
-                      y: Style.marginM
-                      spacing: Style.marginS
-
-                      // Main row
-                      RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Style.marginS
-
-                        NIcon {
-                          icon: NetworkService.signalIcon(network.signal, network.connected)
-                          pointSize: Style.fontSizeXXL
-                          color: network.connected ? Color.mPrimary : Color.mOnSurface
-                        }
-
-                        ColumnLayout {
-                          Layout.fillWidth: true
-                          spacing: 2
-
-                          NText {
-                            text: network.ssid
-                            pointSize: Style.fontSizeM
-                            font.weight: network.connected ? Style.fontWeightBold : Style.fontWeightMedium
-                            color: Color.mOnSurface
-                            elide: Text.ElideRight
-                            Layout.fillWidth: true
-                          }
-
-                          RowLayout {
-                            spacing: Style.marginXS
-
-                            NText {
-                              text: I18n.tr("system.signal-strength", {
-                                              "signal": network.signal
-                                            })
-                              pointSize: Style.fontSizeXXS
-                              color: Color.mOnSurfaceVariant
-                            }
-
-                            NText {
-                              text: "•"
-                              pointSize: Style.fontSizeXXS
-                              color: Color.mOnSurfaceVariant
-                            }
-
-                            NText {
-                              text: NetworkService.isSecured(network.security) ? network.security : "Open"
-                              pointSize: Style.fontSizeXXS
-                              color: Color.mOnSurfaceVariant
-                            }
-
-                            Item {
-                              Layout.preferredWidth: Style.marginXXS
-                            }
-
-                            // Status badges
-                            Rectangle {
-                              visible: network.connected && NetworkService.disconnectingFrom !== network.ssid
-                              color: Color.mPrimary
-                              radius: height * 0.5
-                              width: connectedText.implicitWidth + (Style.marginS * 2)
-                              height: connectedText.implicitHeight + (Style.marginXXS * 2)
-
-                              NText {
-                                id: connectedText
-                                anchors.centerIn: parent
-                                text: I18n.tr("wifi.panel.connected")
-                                pointSize: Style.fontSizeXXS
-                                color: Color.mOnPrimary
-                              }
-                            }
-
-                            Rectangle {
-                              visible: NetworkService.disconnectingFrom === network.ssid
-                              color: Color.mError
-                              radius: height * 0.5
-                              width: disconnectingText.implicitWidth + (Style.marginS * 2)
-                              height: disconnectingText.implicitHeight + (Style.marginXXS * 2)
-
-                              NText {
-                                id: disconnectingText
-                                anchors.centerIn: parent
-                                text: I18n.tr("wifi.panel.disconnecting")
-                                pointSize: Style.fontSizeXXS
-                                color: Color.mOnPrimary
-                              }
-                            }
-
-                            Rectangle {
-                              visible: NetworkService.forgettingNetwork === network.ssid
-                              color: Color.mError
-                              radius: height * 0.5
-                              width: forgettingText.implicitWidth + (Style.marginS * 2)
-                              height: forgettingText.implicitHeight + (Style.marginXXS * 2)
-
-                              NText {
-                                id: forgettingText
-                                anchors.centerIn: parent
-                                text: I18n.tr("wifi.panel.forgetting")
-                                pointSize: Style.fontSizeXXS
-                                color: Color.mOnPrimary
-                              }
-                            }
-
-                            Rectangle {
-                              visible: network.cached && !network.connected && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
-                              color: Color.transparent
-                              border.color: Color.mOutline
-                              border.width: Style.borderS
-                              radius: height * 0.5
-                              width: savedText.implicitWidth + (Style.marginS * 2)
-                              height: savedText.implicitHeight + (Style.marginXXS * 2)
-
-                              NText {
-                                id: savedText
-                                anchors.centerIn: parent
-                                text: I18n.tr("wifi.panel.saved")
-                                pointSize: Style.fontSizeXXS
-                                color: Color.mOnSurfaceVariant
-                              }
-                            }
-                          }
-                        }
-
-                        // Action area
-                        RowLayout {
-                          spacing: Style.marginS
-
-                          NBusyIndicator {
-                            visible: NetworkService.connectingTo === network.ssid || NetworkService.disconnectingFrom === network.ssid || NetworkService.forgettingNetwork === network.ssid
-                            running: visible
-                            color: Color.mPrimary
-                            size: Style.baseWidgetSize * 0.5
-                          }
-
-                          NIconButton {
-                            visible: (network.existing || network.cached) && !network.connected && NetworkService.connectingTo !== network.ssid && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
-                            icon: "trash"
-                            tooltipText: I18n.tr("tooltips.forget-network")
-                            baseSize: Style.baseWidgetSize * 0.8
-                            onClicked: expandedSsid = expandedSsid === network.ssid ? "" : network.ssid
-                          }
-
-                          NButton {
-                            visible: !network.connected && NetworkService.connectingTo !== network.ssid && passwordSsid !== network.ssid && NetworkService.forgettingNetwork !== network.ssid && NetworkService.disconnectingFrom !== network.ssid
-                            text: {
-                              if (network.existing || network.cached)
-                                return I18n.tr("wifi.panel.connect");
-                              if (!NetworkService.isSecured(network.security))
-                                return I18n.tr("wifi.panel.connect");
-                              return I18n.tr("wifi.panel.password");
-                            }
-                            outlined: !hovered
-                            fontSize: Style.fontSizeXS
-                            enabled: !NetworkService.connecting
-                            onClicked: {
-                              if (network.existing || network.cached || !NetworkService.isSecured(network.security)) {
-                                NetworkService.connect(network.ssid);
-                              } else {
-                                passwordSsid = network.ssid;
-                                passwordInput = "";
-                                expandedSsid = "";
-                              }
-                            }
-                          }
-
-                          NButton {
-                            visible: network.connected && NetworkService.disconnectingFrom !== network.ssid
-                            text: I18n.tr("wifi.panel.disconnect")
-                            outlined: !hovered
-                            fontSize: Style.fontSizeXS
-                            backgroundColor: Color.mError
-                            onClicked: NetworkService.disconnect(network.ssid)
-                          }
-                        }
-                      }
-
-                      // Password input
-                      Rectangle {
-                        visible: passwordSsid === network.ssid && NetworkService.disconnectingFrom !== network.ssid && NetworkService.forgettingNetwork !== network.ssid
-                        Layout.fillWidth: true
-                        height: passwordRow.implicitHeight + Style.marginS * 2
-                        color: Color.mSurfaceVariant
-                        border.color: Color.mOutline
-                        border.width: Style.borderS
-                        radius: Style.radiusS
-
-                        RowLayout {
-                          id: passwordRow
-                          anchors.fill: parent
-                          anchors.margins: Style.marginS
-                          spacing: Style.marginM
-
-                          Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            radius: Style.radiusXS
-                            color: Color.mSurface
-                            border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
-                            border.width: Style.borderS
-
-                            TextInput {
-                              id: pwdInput
-                              anchors.left: parent.left
-                              anchors.right: parent.right
-                              anchors.verticalCenter: parent.verticalCenter
-                              anchors.margins: Style.marginS
-                              text: passwordInput
-                              font.family: Settings.data.ui.fontFixed
-                              font.pointSize: Style.fontSizeS
-                              color: Color.mOnSurface
-                              echoMode: TextInput.Password
-                              selectByMouse: true
-                              focus: visible
-                              passwordCharacter: "●"
-                              onTextChanged: passwordInput = text
-                              onVisibleChanged: if (visible)
-                                                  forceActiveFocus()
-                              onAccepted: {
-                                if (text && !NetworkService.connecting) {
-                                  NetworkService.connect(passwordSsid, text);
-                                  passwordSsid = "";
-                                  passwordInput = "";
-                                }
-                              }
-
-                              NText {
-                                visible: parent.text.length === 0
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: I18n.tr("wifi.panel.enter-password")
-                                color: Color.mOnSurfaceVariant
-                                pointSize: Style.fontSizeS
-                              }
-                            }
-                          }
-
-                          NButton {
-                            text: I18n.tr("wifi.panel.connect")
-                            fontSize: Style.fontSizeXXS
-                            enabled: passwordInput.length > 0 && !NetworkService.connecting
-                            outlined: true
-                            onClicked: {
-                              NetworkService.connect(passwordSsid, passwordInput);
-                              passwordSsid = "";
-                              passwordInput = "";
-                            }
-                          }
-
-                          NIconButton {
-                            icon: "close"
-                            baseSize: Style.baseWidgetSize * 0.8
-                            onClicked: {
-                              passwordSsid = "";
-                              passwordInput = "";
-                            }
-                          }
-                        }
-                      }
-
-                      // Forget network
-                      Rectangle {
-                        visible: expandedSsid === network.ssid && NetworkService.disconnectingFrom !== network.ssid && NetworkService.forgettingNetwork !== network.ssid
-                        Layout.fillWidth: true
-                        height: forgetRow.implicitHeight + Style.marginS * 2
-                        color: Color.mSurfaceVariant
-                        radius: Style.radiusS
-                        border.width: Style.borderS
-                        border.color: Color.mOutline
-
-                        RowLayout {
-                          id: forgetRow
-                          anchors.fill: parent
-                          anchors.margins: Style.marginS
-                          spacing: Style.marginM
-
-                          RowLayout {
-                            NIcon {
-                              icon: "trash"
-                              pointSize: Style.fontSizeL
-                              color: Color.mError
-                            }
-
-                            NText {
-                              text: I18n.tr("wifi.panel.forget-network")
-                              pointSize: Style.fontSizeS
-                              color: Color.mError
-                              Layout.fillWidth: true
-                            }
-                          }
-
-                          NButton {
-                            id: forgetButton
-                            text: I18n.tr("wifi.panel.forget")
-                            fontSize: Style.fontSizeXXS
-                            backgroundColor: Color.mError
-                            outlined: forgetButton.hovered ? false : true
-                            onClicked: {
-                              NetworkService.forget(network.ssid);
-                              expandedSsid = "";
-                            }
-                          }
-
-                          NIconButton {
-                            icon: "close"
-                            baseSize: Style.baseWidgetSize * 0.8
-                            onClicked: expandedSsid = ""
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        // Empty state when no networks
         ColumnLayout {
-          visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0
           anchors.fill: parent
           spacing: Style.marginL
 
@@ -653,6 +287,66 @@ SmartPanel {
 
           Item {
             Layout.fillHeight: true
+          }
+        }
+      }
+
+      // Networks list container (no NBox wrapper)
+      NScrollView {
+        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        horizontalPolicy: ScrollBar.AlwaysOff
+        verticalPolicy: ScrollBar.AsNeeded
+        clip: true
+
+        ColumnLayout {
+          id: networksList
+          width: parent.width
+          spacing: Style.marginM
+
+          WiFiNetworksList {
+            label: I18n.tr("wifi.panel.known-networks")
+            model: root.knownNetworks
+            passwordSsid: root.passwordSsid
+            expandedSsid: root.expandedSsid
+            onPasswordRequested: ssid => {
+                                   root.passwordSsid = ssid;
+                                   root.expandedSsid = "";
+                                 }
+            onPasswordSubmitted: (ssid, password) => {
+                                   NetworkService.connect(ssid, password);
+                                   root.passwordSsid = "";
+                                 }
+            onPasswordCancelled: root.passwordSsid = ""
+            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+            onForgetConfirmed: ssid => {
+                                 NetworkService.forget(ssid);
+                                 root.expandedSsid = "";
+                               }
+            onForgetCancelled: root.expandedSsid = ""
+          }
+
+          WiFiNetworksList {
+            label: I18n.tr("wifi.panel.available-networks")
+            model: root.availableNetworks
+            passwordSsid: root.passwordSsid
+            expandedSsid: root.expandedSsid
+            onPasswordRequested: ssid => {
+                                   root.passwordSsid = ssid;
+                                   root.expandedSsid = "";
+                                 }
+            onPasswordSubmitted: (ssid, password) => {
+                                   NetworkService.connect(ssid, password);
+                                   root.passwordSsid = "";
+                                 }
+            onPasswordCancelled: root.passwordSsid = ""
+            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+            onForgetConfirmed: ssid => {
+                                 NetworkService.forget(ssid);
+                                 root.expandedSsid = "";
+                               }
+            onForgetCancelled: root.expandedSsid = ""
           }
         }
       }
