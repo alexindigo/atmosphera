@@ -13,7 +13,7 @@ Singleton {
   // Version properties
   property string baseVersion: "3.2.0"
   property bool isDevelopment: true
-  property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-dev"}`
+  property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + "-git"}`
   property string changelogStateFile: Quickshell.env("NOCTALIA_CHANGELOG_STATE_FILE") || (Settings.cacheDir + "changelog-state.json")
 
   // Changelog properties
