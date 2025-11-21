@@ -115,6 +115,11 @@ Singleton {
     let from = fromVersion || changelogLastSeenVersion || "v3.0.0";
     let to = toVersion;
 
+    // Remove potential legacy -dev stuff
+    // TODO: remove in 2026!
+    from = from.replace("-dev", "");
+    to = to.replace("-dev", "");
+
     // Strip suffix from versions
     from = from.replace(root.developmentSuffix, "");
     to = to.replace(root.developmentSuffix, "");
