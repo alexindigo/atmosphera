@@ -6,8 +6,7 @@ import qs.Commons
 Singleton {
   id: root
 
-  // A ref. to the lockScreen, so it's accessible from anywhere
-  // This is not a panel...
+  // A ref. to the lockScreen, so it's accessible from anywhere.
   property var lockScreen: null
 
   // Panels

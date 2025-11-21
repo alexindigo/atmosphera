@@ -92,25 +92,16 @@ ShellRoot {
 
       Overview {}
       Background {}
+      AllScreens {}
       Dock {}
+      Notification {}
       ToastOverlay {}
       OSD {}
-      Notification {}
 
-      LockScreen {
-        id: lockScreen
-        Component.onCompleted: {
-          // Save a ref. to our lockScreen so we can access it  easily
-          PanelService.lockScreen = lockScreen;
-        }
-      }
+      LockScreen {}
 
-      // IPCService is treated as a service but it's actually an
-      // Item that needs to exists in the shell.
+      // IPCService is treated as a service but it's actually an Item that needs to exists in the shell.
       IPCService {}
-
-      // MainScreen for each screen
-      AllScreens {}
     }
   }
 

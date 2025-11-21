@@ -21,8 +21,8 @@ Variants {
 
     property ListModel notificationModel: NotificationService.activeList
 
-    // Loader is active when there are notifications
-    active: notificationModel.count > 0 || delayTimer.running
+    // Always create window (but with 0x0 dimensions when no notifications)
+    active: true
 
     // Keep loader active briefly after last notification to allow animations to complete
     Timer {
@@ -104,8 +104,8 @@ Variants {
       margins.left: isLeft ? barOffsetLeft : 0
       margins.right: isRight ? barOffsetRight : 0
 
-      implicitWidth: notifWidth
-      implicitHeight: notificationStack.implicitHeight + Style.marginL
+      implicitWidth: (notificationModel.count > 0 || delayTimer.running) ? notifWidth : 0
+      implicitHeight: (notificationModel.count > 0 || delayTimer.running) ? (notificationStack.implicitHeight + Style.marginL) : 0
 
       property var animateConnection: null
 
