@@ -87,9 +87,6 @@
     "panelsAttachedToBar": true,
     "settingsPanelAttachToBar": false
   },
-  "changelog": {
-    "lastSeenVersion": ""
-  },
   "location": {
     "name": "Tokyo",
     "weatherEnabled": true,
@@ -224,6 +221,7 @@
     "enabled": true,
     "displayMode": "always_visible",
     "backgroundOpacity": 1,
+    "radiusRatio": 0.1,
     "floatingRatio": 1,
     "size": 1,
     "onlySameOutput": true,
@@ -293,7 +291,8 @@
     "visualizerType": "linear",
     "visualizerQuality": "high",
     "mprisBlacklist": [],
-    "preferredPlayer": ""
+    "preferredPlayer": "",
+    "externalMixer": "pwvucontrol || pavucontrol"
   },
   "brightness": {
     "brightnessStep": 5,
@@ -336,6 +335,9 @@
     "dayTemp": "6500",
     "manualSunrise": "06:30",
     "manualSunset": "18:30"
+  },
+  "changelog": {
+    "lastSeenVersion": ""
   },
   "hooks": {
     "enabled": false,
