@@ -122,8 +122,11 @@ PopupWindow {
       hideImmediately();
     }
 
+    // Convert \n to <br> for RichText format
+    const processedText = tipText.replace(/\n/g, '<br>');
+
     // Set properties
-    text = tipText;
+    text = processedText;
     targetItem = target;
 
     // Find the correct screen dimensions based on target's global position
@@ -326,7 +329,9 @@ PopupWindow {
   // Update text function
   function updateText(newText) {
     if (visible && targetItem) {
-      text = newText;
+      // Convert \n to <br> for RichText format
+      const processedText = newText.replace(/\n/g, '<br>');
+      text = processedText;
 
       // Recalculate dimensions
       const tipWidth = Math.min(tooltipText.implicitWidth + (padding * 2), maxWidth);
