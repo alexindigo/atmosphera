@@ -552,6 +552,7 @@ Popup {
     var downloadProcess = Qt.createQmlObject(`
                                              import QtQuick
                                              import Quickshell.Io
+                                             import qs.Commons
                                              Process {
                                              id: downloadProcess
                                              command: ["sh", "-c", ` + JSON.stringify(downloadScript) + `]
