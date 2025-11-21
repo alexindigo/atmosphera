@@ -145,6 +145,23 @@
           "label": "Clique do meio",
           "update-text": "Atualizar texto exibido com clique do meio"
         },
+        "wheel": {
+          "description": "Comando a executar quando a roda de rolagem é usada.\nUse $delta para o delta da roda de rolagem no comando",
+          "label": "Roda de rolagem",
+          "update-text": "Atualizar texto exibido ao rolar"
+        },
+        "wheel-mode-separate": {
+          "label": "Comandos de roda separados",
+          "description": "Ativar comandos separados para roda para cima e para baixo"
+        },
+        "wheel-up": {
+          "description": "Comando a executar quando a roda de rolagem é rolada para cima.",
+          "label": "Comando de roda para cima"
+        },
+        "wheel-down": {
+          "description": "Comando a executar quando a roda de rolagem é rolada para baixo.",
+          "label": "Comando de roda para baixo"
+        },
         "parse-json": {
           "description": "Analisa a saída do comando como um objeto JSON para definir dinamicamente o texto e o ícone.",
           "label": "Analisar saída como JSON"

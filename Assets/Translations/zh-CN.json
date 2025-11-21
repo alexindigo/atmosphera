@@ -145,6 +145,23 @@
           "label": "中键点击",
           "update-text": "鼠标中键点击时更新显示的文本"
         },
+        "wheel": {
+          "description": "使用滚轮时执行的命令。\n在命令中使用 $delta 表示滚轮增量",
+          "label": "滚轮",
+          "update-text": "滚轮滚动时更新显示的文本"
+        },
+        "wheel-mode-separate": {
+          "label": "分开滚轮命令",
+          "description": "为滚轮向上和向下启用单独的命令"
+        },
+        "wheel-up": {
+          "description": "滚轮向上滚动时执行的命令。",
+          "label": "滚轮向上命令"
+        },
+        "wheel-down": {
+          "description": "滚轮向下滚动时执行的命令。",
+          "label": "滚轮向下命令"
+        },
         "parse-json": {
           "description": "将命令输出解析为 JSON 对象，以动态设置文本和图标。",
           "label": "将输出解析为 JSON"

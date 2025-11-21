@@ -145,6 +145,23 @@
           "label": "Clic medio",
           "update-text": "Actualizar el texto mostrado al hacer clic con el botón central"
         },
+        "wheel": {
+          "description": "Comando a ejecutar cuando se usa la rueda de desplazamiento.\nUsa $delta para el delta de la rueda de desplazamiento en el comando",
+          "label": "Rueda de desplazamiento",
+          "update-text": "Actualizar texto mostrado al desplazarse"
+        },
+        "wheel-mode-separate": {
+          "label": "Comandos de rueda separados",
+          "description": "Habilitar comandos separados para rueda arriba y abajo"
+        },
+        "wheel-up": {
+          "description": "Comando a ejecutar cuando la rueda de desplazamiento se desplaza hacia arriba.",
+          "label": "Comando de rueda hacia arriba"
+        },
+        "wheel-down": {
+          "description": "Comando a ejecutar cuando la rueda de desplazamiento se desplaza hacia abajo.",
+          "label": "Comando de rueda hacia abajo"
+        },
         "parse-json": {
           "description": "Analizar la salida del comando como un objeto JSON para establecer dinámicamente el texto y el ícono.",
           "label": "Analizar salida como JSON"

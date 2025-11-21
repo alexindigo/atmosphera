@@ -145,6 +145,23 @@
           "label": "Clic milieu",
           "update-text": "Mettre à jour le texte affiché lors d'un clic molette."
         },
+        "wheel": {
+          "description": "Commande à exécuter lorsque la molette est utilisée.\nUtilisez $delta pour le delta de la molette dans la commande",
+          "label": "Molette",
+          "update-text": "Mettre à jour le texte affiché au défilement"
+        },
+        "wheel-mode-separate": {
+          "label": "Commandes de molette séparées",
+          "description": "Activer des commandes séparées pour la molette haut et bas"
+        },
+        "wheel-up": {
+          "description": "Commande à exécuter lorsque la molette est défilée vers le haut.",
+          "label": "Commande molette haut"
+        },
+        "wheel-down": {
+          "description": "Commande à exécuter lorsque la molette est défilée vers le bas.",
+          "label": "Commande molette bas"
+        },
         "parse-json": {
           "description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône.",
           "label": "Analyser la sortie en JSON"

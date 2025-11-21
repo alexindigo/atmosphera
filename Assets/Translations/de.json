@@ -145,6 +145,23 @@
           "label": "Mittelklick",
           "update-text": "Text auf Mittelklick aktualisieren"
         },
+        "wheel": {
+          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl",
+          "label": "Scrollrad",
+          "update-text": "Anzeigetext beim Scrollen aktualisieren"
+        },
+        "wheel-mode-separate": {
+          "label": "Separate Scrollrad-Befehle",
+          "description": "Separate Befehle für Scrollrad hoch und runter aktivieren"
+        },
+        "wheel-up": {
+          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad hochgescrollt wird.",
+          "label": "Scrollrad hoch Befehl"
+        },
+        "wheel-down": {
+          "description": "Befehl, der ausgeführt wird, wenn das Scrollrad heruntergescrollt wird.",
+          "label": "Scrollrad runter Befehl"
+        },
         "parse-json": {
           "description": "Die Befehlsausgabe als JSON-Objekt parsen, um Text und Symbol dynamisch festzulegen.",
           "label": "Ausgabe als JSON parsen"
