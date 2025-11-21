@@ -14,6 +14,7 @@ ColumnLayout {
 
   property string valueLabelMode: widgetData.labelMode !== undefined ? widgetData.labelMode : widgetMetadata.labelMode
   property bool valueHideUnoccupied: widgetData.hideUnoccupied !== undefined ? widgetData.hideUnoccupied : widgetMetadata.hideUnoccupied
+  property bool valueShowFocusedScreen: widgetData.showFocusedScreen !== undefined ? widgetData.showFocusedScreen : widgetMetadata.showFocusedScreen
   property int valueCharacterCount: widgetData.characterCount !== undefined ? widgetData.characterCount : widgetMetadata.characterCount
 
   function saveSettings() {
@@ -21,6 +22,7 @@ ColumnLayout {
     settings.labelMode = valueLabelMode;
     settings.hideUnoccupied = valueHideUnoccupied;
     settings.characterCount = valueCharacterCount;
+    settings.showFocusedScreen = valueShowFocusedScreen;
     return settings;
   }
 
@@ -49,6 +51,13 @@ ColumnLayout {
     currentKey: widgetData.labelMode || widgetMetadata.labelMode
     onSelected: key => valueLabelMode = key
     minimumWidth: 200
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.show-focused-screen.label")
+    description: I18n.tr("bar.widget-settings.workspace.show-focused-screen.description")
+    checked: valueShowFocusedScreen
+    onToggled: checked => valueShowFocusedScreen = checked
   }
 
   NToggle {
