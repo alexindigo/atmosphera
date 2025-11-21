@@ -330,8 +330,11 @@ Singleton {
                                                 Settings.saveImmediate();
                                               }
                                             });
+        // Enable keyboard focus for the popup menu window when dialog is open
+        popupMenuWindow.hasDialog = true;
         // Close the popup menu window when dialog closes
         dialog.closed.connect(() => {
+                                popupMenuWindow.hasDialog = false;
                                 popupMenuWindow.close();
                                 dialog.destroy();
                               });
