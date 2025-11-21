@@ -33,7 +33,7 @@ Singleton {
   property string changelogLastSeenVersion: ""
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
-  
+
   // Fix for FileView race condition
   property bool saveInProgress: false
   property bool pendingSave: false
@@ -108,7 +108,7 @@ Singleton {
   function handleChangelogRequest() {
     const fromVersion = changelogFromVersion || "";
     const toVersion = changelogToVersion || "";
-    
+
     if (!toVersion)
       return;
 
@@ -165,10 +165,10 @@ Singleton {
           continue;
 
         selected.push({
-          "version": tag,
-          "date": rel.createdAt || "",
-          "entries": entries
-        });
+                        "version": tag,
+                        "date": rel.createdAt || "",
+                        "entries": entries
+                      });
       }
     }
 
@@ -176,10 +176,10 @@ Singleton {
       const fallback = parseReleaseNotes(GitHubService ? GitHubService.releaseNotes : "");
       if (fallback.length > 0) {
         selected.push({
-          "version": toVersion,
-          "date": "",
-          "entries": fallback
-        });
+                        "version": toVersion,
+                        "date": "",
+                        "entries": fallback
+                      });
         fetchError = "";
       }
     }
@@ -412,25 +412,25 @@ Singleton {
 
     try {
       changelogStateAdapter.lastSeenVersion = changelogLastSeenVersion || "";
-      
+
       // Ensure cache directory exists
       Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
-      
+
       // Small delay to ensure directory creation completes
       Qt.callLater(() => {
-        try {
-          changelogStateFileView.writeAdapter();
-          saveInProgress = false;
-          
-          // Check if another save was queued while we were saving
-          if (pendingSave) {
-            Qt.callLater(executeSave);
-          }
-        } catch (writeError) {
-          Logger.e("UpdateService", "Failed to write changelog state:", writeError);
-          saveInProgress = false;
-        }
-      });
+                     try {
+                       changelogStateFileView.writeAdapter();
+                       saveInProgress = false;
+
+                       // Check if another save was queued while we were saving
+                       if (pendingSave) {
+                         Qt.callLater(executeSave);
+                       }
+                     } catch (writeError) {
+                       Logger.e("UpdateService", "Failed to write changelog state:", writeError);
+                       saveInProgress = false;
+                     }
+                   });
     } catch (error) {
       Logger.e("UpdateService", "Failed to save changelog state:", error);
       saveInProgress = false;

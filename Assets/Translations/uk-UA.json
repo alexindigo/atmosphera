@@ -396,29 +396,28 @@
     }
   },
   "changelog": {
+    "error": {
+      "rate-limit": "Перевищено ліміт GitHub. Спробуйте ще раз за кілька хвилин."
+    },
     "panel": {
-      "title": "Що нового у {version}",
+      "buttons": {
+        "discord": "Приєднатися до нашого Discord",
+        "dismiss": "Ок"
+      },
+      "empty": "Примітки до релізу ще недоступні.",
+      "highlight-title": "Основні зміни",
+      "section": {
+        "released": "Випущено {date}",
+        "version": "Версія {version}"
+      },
       "subtitle": {
         "fresh": "Дякуємо, що встановили Noctalia! Ось що містить цей білд.",
         "updated": "Оновлено з {previousVersion}"
       },
+      "title": "Що нового у {version}",
       "version": {
         "new-user": "Нове встановлення"
-      },
-      "highlight-title": "Основні зміни",
-      "empty": "Примітки до релізу ще недоступні.",
-      "section": {
-        "version": "Версія {version}",
-        "released": "Випущено {date}"
-      },
-      "buttons": {
-        "discord": "Приєднатися до нашого Discord",
-        "feedback": "Надіслати відгук",
-        "dismiss": "Ок"
       }
-    },
-    "error": {
-      "rate-limit": "Перевищено ліміт GitHub. Спробуйте ще раз за кілька хвилин."
     }
   },
   "clock": {

@@ -602,12 +602,7 @@ Loader {
                 }
 
                 // Calculate maximum width needed
-                property real maxTextWidth: Math.max(
-                  logoutText.implicitWidth,
-                  Math.max(suspendText.implicitWidth,
-                  Math.max(hibernateText.implicitWidth,
-                  Math.max(rebootText.implicitWidth,
-                  shutdownText.implicitWidth))))
+                property real maxTextWidth: Math.max(logoutText.implicitWidth, Math.max(suspendText.implicitWidth, Math.max(hibernateText.implicitWidth, Math.max(rebootText.implicitWidth, shutdownText.implicitWidth))))
                 property real minButtonWidth: maxTextWidth + iconSize + spacing + padding
               }
 
@@ -615,9 +610,7 @@ Loader {
               // Button row needs: margins + 5 buttons + 4 spacings + margins
               // Plus ColumnLayout margins (14 on each side = 28 total)
               // Add extra buffer to ensure password input has proper padding
-              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 
-                ? (5 * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM)
-                : 750
+              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? (5 * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
               width: Math.max(750, minButtonRowWidth)
 
               ColumnLayout {

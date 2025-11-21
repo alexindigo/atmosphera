@@ -396,29 +396,28 @@
     }
   },
   "changelog": {
+    "error": {
+      "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene."
+    },
     "panel": {
-      "title": "{version} sürümünde neler yeni",
+      "buttons": {
+        "discord": "Discord sunucumuza katıl",
+        "dismiss": "Tamam"
+      },
+      "empty": "Sürüm notları henüz hazır değil.",
+      "highlight-title": "Öne çıkanlar",
+      "section": {
+        "released": "{date} tarihinde yayımlandı",
+        "version": "Sürüm {version}"
+      },
       "subtitle": {
         "fresh": "Noctalia’yı kurduğun için teşekkürler! Bu sürümde gelenler bunlar.",
         "updated": "{previousVersion} sürümünden güncellendi"
       },
+      "title": "{version} sürümünde neler yeni",
       "version": {
         "new-user": "Yeni kurulum"
-      },
-      "highlight-title": "Öne çıkanlar",
-      "empty": "Sürüm notları henüz hazır değil.",
-      "section": {
-        "version": "Sürüm {version}",
-        "released": "{date} tarihinde yayımlandı"
-      },
-      "buttons": {
-        "discord": "Discord sunucumuza katıl",
-        "feedback": "Geri bildirim gönder",
-        "dismiss": "Tamam"
       }
-    },
-    "error": {
-      "rate-limit": "GitHub sınırına ulaşıldı. Lütfen birkaç dakika sonra tekrar dene."
     }
   },
   "clock": {

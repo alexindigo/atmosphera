@@ -396,29 +396,28 @@
     }
   },
   "changelog": {
+    "error": {
+      "rate-limit": "GitHub-limiet bereikt. Probeer het over enkele minuten opnieuw."
+    },
     "panel": {
-      "title": "Wat is er nieuw in {version}",
+      "buttons": {
+        "discord": "Word lid van onze Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
+      "highlight-title": "Hoogtepunten",
+      "section": {
+        "released": "Uitgebracht op {date}",
+        "version": "Versie {version}"
+      },
       "subtitle": {
         "fresh": "Bedankt voor het installeren van Noctalia! Dit zit er in deze build.",
         "updated": "Bijgewerkt vanaf {previousVersion}"
       },
+      "title": "Wat is er nieuw in {version}",
       "version": {
         "new-user": "Nieuwe installatie"
-      },
-      "highlight-title": "Hoogtepunten",
-      "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
-      "section": {
-        "version": "Versie {version}",
-        "released": "Uitgebracht op {date}"
-      },
-      "buttons": {
-        "discord": "Word lid van onze Discord",
-        "feedback": "Feedback verzenden",
-        "dismiss": "Ok"
       }
-    },
-    "error": {
-      "rate-limit": "GitHub-limiet bereikt. Probeer het over enkele minuten opnieuw."
     }
   },
   "clock": {

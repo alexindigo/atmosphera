@@ -94,11 +94,11 @@ Singleton {
         if (vol > maxVolume) {
           root.isClampingOutput = true;
           Qt.callLater(() => {
-            if (root.sink?.audio) {
-              root.sink.audio.volume = maxVolume;
-            }
-            root.isClampingOutput = false;
-          });
+                         if (root.sink?.audio) {
+                           root.sink.audio.volume = maxVolume;
+                         }
+                         root.isClampingOutput = false;
+                       });
           return;
         }
       }
@@ -131,11 +131,11 @@ Singleton {
         if (vol > maxVolume) {
           root.isClampingInput = true;
           Qt.callLater(() => {
-            if (root.source?.audio) {
-              root.source.audio.volume = maxVolume;
-            }
-            root.isClampingInput = false;
-          });
+                         if (root.source?.audio) {
+                           root.source.audio.volume = maxVolume;
+                         }
+                         root.isClampingInput = false;
+                       });
           return;
         }
       }

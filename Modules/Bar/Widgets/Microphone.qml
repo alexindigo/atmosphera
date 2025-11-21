@@ -144,10 +144,10 @@ Item {
     forceClose: displayMode === "alwaysHide"
     tooltipText: I18n.tr("tooltips.microphone-volume-at", {
                            "volume": (() => {
-                             const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-                             const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
-                             return Math.round(displayVolume * 100);
-                           })()
+                                        const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                        const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
+                                        return Math.round(displayVolume * 100);
+                                      })()
                          })
 
     onWheel: function (delta) {

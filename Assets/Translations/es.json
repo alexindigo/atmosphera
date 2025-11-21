@@ -396,29 +396,28 @@
     }
   },
   "changelog": {
+    "error": {
+      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos."
+    },
     "panel": {
-      "title": "Novedades en {version}",
+      "buttons": {
+        "discord": "Únete a nuestro Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Las notas de la versión aún no están disponibles.",
+      "highlight-title": "Cambios destacados",
+      "section": {
+        "released": "Publicado el {date}",
+        "version": "Versión {version}"
+      },
       "subtitle": {
         "fresh": "Gracias por instalar Noctalia. Esto es lo que incluye esta compilación.",
         "updated": "Actualizado desde {previousVersion}"
       },
+      "title": "Novedades en {version}",
       "version": {
         "new-user": "Instalación nueva"
-      },
-      "highlight-title": "Cambios destacados",
-      "empty": "Las notas de la versión aún no están disponibles.",
-      "section": {
-        "version": "Versión {version}",
-        "released": "Publicado el {date}"
-      },
-      "buttons": {
-        "discord": "Únete a nuestro Discord",
-        "feedback": "Enviar comentarios",
-        "dismiss": "Ok"
       }
-    },
-    "error": {
-      "rate-limit": "Se alcanzó el límite de GitHub. Inténtalo de nuevo en unos minutos."
     }
   },
   "clock": {

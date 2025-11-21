@@ -227,10 +227,10 @@ Singleton {
             const parsed = responseText ? JSON.parse(responseText) : [];
             if (Array.isArray(parsed) && parsed.length > 0) {
               const mapped = parsed.map(rel => ({
-                                      "version": rel.tag_name || "",
-                                      "createdAt": rel.published_at || rel.created_at || "",
-                                      "body": rel.body || ""
-                                    })).filter(rel => rel.version !== "");
+                                                  "version": rel.tag_name || "",
+                                                  "createdAt": rel.published_at || rel.created_at || "",
+                                                  "body": rel.body || ""
+                                                })).filter(rel => rel.version !== "");
               releasesAccumulator = releasesAccumulator.concat(mapped);
 
               if (parsed.length === perPage) {

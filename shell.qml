@@ -26,11 +26,11 @@ import qs.Services.Control
 import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Networking
+import qs.Services.Noctalia
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
 import qs.Services.UI
-import qs.Services.Noctalia
 
 ShellRoot {
   id: shellRoot

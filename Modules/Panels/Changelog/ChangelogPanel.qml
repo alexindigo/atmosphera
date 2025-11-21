@@ -21,8 +21,8 @@ SmartPanel {
   readonly property bool hasPreviousVersion: previousVersion && previousVersion.length > 0
   readonly property var releaseHighlights: UpdateService.releaseHighlights || []
   readonly property string subtitleText: hasPreviousVersion ? I18n.tr("changelog.panel.subtitle.updated", {
-                                                                     "previousVersion": previousVersion
-                                                                   }) : I18n.tr("changelog.panel.subtitle.fresh")
+                                                                        "previousVersion": previousVersion
+                                                                      }) : I18n.tr("changelog.panel.subtitle.fresh")
 
   panelContent: Rectangle {
     color: Color.mSurfaceVariant
@@ -51,8 +51,8 @@ SmartPanel {
 
           NText {
             text: I18n.tr("changelog.panel.title", {
-                           "version": currentVersion || UpdateService.currentVersion
-                         })
+                            "version": currentVersion || UpdateService.currentVersion
+                          })
             pointSize: Style.fontSizeXL
             font.weight: Style.fontWeightBold
             color: Color.mPrimary
@@ -149,8 +149,8 @@ SmartPanel {
 
               NText {
                 text: I18n.tr("changelog.panel.section.version", {
-                               "version": modelData.version || I18n.tr("system.unknown-version")
-                             })
+                                "version": modelData.version || I18n.tr("system.unknown-version")
+                              })
                 font.weight: Style.fontWeightBold
                 color: Color.mOnSurface
               }
@@ -158,8 +158,8 @@ SmartPanel {
               NText {
                 visible: modelData.date && modelData.date.length > 0
                 text: I18n.tr("changelog.panel.section.released", {
-                               "date": root.formatReleaseDate(modelData.date)
-                             })
+                                "date": root.formatReleaseDate(modelData.date)
+                              })
                 color: Color.mOnSurfaceVariant
                 pointSize: Style.fontSizeXS
               }
@@ -262,4 +262,3 @@ SmartPanel {
     }
   }
 }
-
