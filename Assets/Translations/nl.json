@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "Helderheid",
+    "charge-level": "Laadniveau",
     "charging": "Opladen.",
     "charging-rate": "Laadsnelheid: {rate} W.",
     "discharging": "Ontladen.",
     "discharging-rate": "Ontlaadsnelheid: {rate} W.",
     "health": "Gezondheid: {percent}%",
+    "inhibit-idle-description": "Houdt het systeem wakker.",
+    "inhibit-idle-label": "Slaapstand voorkomen",
     "idle": "In rust.",
     "no-battery-detected": "Geen batterij gedetecteerd.",
+    "panel-title": "Batterij",
     "plugged-in": "Op netstroom.",
+    "power-profile": "Energieprofiel",
     "time-left": "Resterende tijd: {time}.",
     "time-until-full": "Tijd tot vol: {time}."
   },

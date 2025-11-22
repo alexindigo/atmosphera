@@ -168,6 +168,7 @@ Item {
       }
       return lines.join("\n");
     }
+    onClicked: PanelService.getPanel("batteryPanel", screen)?.toggle(this)
     onRightClicked: {
       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
       if (popupMenuWindow) {

@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "Яскравість",
+    "charge-level": "Рівень заряду",
     "charging": "Зарядка.",
     "charging-rate": "Швидкість зарядки: {rate} Вт.",
     "discharging": "Розрядка.",
     "discharging-rate": "Швидкість розрядки: {rate} Вт.",
     "health": "Здоров'я: {percent}%",
+    "inhibit-idle-description": "Підтримує систему активною.",
+    "inhibit-idle-label": "Запобігати сну",
     "idle": "Бездіяльність.",
     "no-battery-detected": "Батарею не виявлено.",
+    "panel-title": "Батарея",
     "plugged-in": "Підключено.",
+    "power-profile": "Профіль живлення",
     "time-left": "Залишилось часу: {time}.",
     "time-until-full": "Час до повного заряду: {time}."
   },

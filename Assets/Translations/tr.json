@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "Parlaklık",
+    "charge-level": "Şarj seviyesi",
     "charging": "Şarj oluyor.",
     "charging-rate": "Şarj oranı: {rate} W.",
     "discharging": "Deşarj oluyor.",
     "discharging-rate": "Deşarj oranı: {rate} W.",
     "health": "Sağlık: {percent}%",
+    "inhibit-idle-description": "Sistemi uyanık tutar.",
+    "inhibit-idle-label": "Uykuya engelle",
     "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
+    "panel-title": "Pil",
     "plugged-in": "Prize takılı.",
+    "power-profile": "Güç profili",
     "time-left": "Kalan süre: {time}.",
     "time-until-full": "Dolma süresi: {time}."
   },
