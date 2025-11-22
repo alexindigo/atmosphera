@@ -70,6 +70,7 @@
     "animationDisabled": false,
     "compactLockScreen": false,
     "lockOnSuspend": true,
+    "showHibernateOnLockScreen": false,
     "enableShadows": true,
     "shadowDirection": "bottom_right",
     "shadowOffsetX": 2,
@@ -325,6 +326,7 @@
     "walker": false,
     "code": false,
     "spicetify": false,
+    "telegram": false,
     "enableUserTemplates": false
   },
   "nightLight": {
