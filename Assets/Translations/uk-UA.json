@@ -1044,6 +1044,10 @@
             "description": "Записати {filepath}. Тему Comfy потрібно встановити та активувати вручну.",
             "description-missing": "Потрібна установка {app}"
           },
+          "telegram": {
+            "description": "Записати {filepath}.",
+            "description-missing": "Потрібна установка {app}"
+          },
           "vicinae": {
             "description": "Записати {filepath} та перезавантажити",
             "description-missing": "Потрібна установка {app}"

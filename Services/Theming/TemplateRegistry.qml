@@ -208,6 +208,17 @@ Singleton {
         }
       ],
       "postProcess": () => `spicetify -q apply --no-restart`
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "category": "applications",
+      "input": "telegram.tdesktop-theme",
+      "outputs": [
+        {
+          "path": "~/.config/telegram-desktop/themes/noctalia.tdesktop-theme"
+        }
+      ]
     }
   ]
 

@@ -1044,6 +1044,10 @@
             "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           },
+          "telegram": {
+            "description": "Écrire {filepath}.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "vicinae": {
             "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le lanceur {app} soit installé"
