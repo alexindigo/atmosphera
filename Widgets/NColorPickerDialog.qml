@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQml
 import qs.Commons
 import qs.Widgets
 import qs.Services.UI
@@ -10,7 +11,16 @@ Popup {
   id: root
 
   property color selectedColor: Color.black
-  property string editMode: "r" // Options: "r", "g", "b", "h", "s", "v"
+
+  enum EditMode {
+    R,
+    G,
+    B,
+    H,
+    S,
+    V
+  }
+  property int editMode: NColorPickerDialog.EditMode.R
 
   // Code to deal with Hue when color is achromatic
   property real stableHue: 0
@@ -160,7 +170,7 @@ Popup {
                   text: "R"
                   font.weight: Font.Bold
                   checked: true
-                  onClicked: root.editMode = "r"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.R
                   Layout.fillWidth: false
                 }
 
@@ -191,7 +201,7 @@ Popup {
                   ButtonGroup.group: colorValues
                   text: "G"
                   font.weight: Font.Bold
-                  onClicked: root.editMode = "g"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.G
                   Layout.fillWidth: false
                 }
 
@@ -222,7 +232,7 @@ Popup {
                   ButtonGroup.group: colorValues
                   text: "B"
                   font.weight: Font.Bold
-                  onClicked: root.editMode = "b"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.B
                   Layout.fillWidth: false
                 }
 
@@ -260,7 +270,7 @@ Popup {
                   text: "H"
                   font.weight: Font.Bold
                   checked: true
-                  onClicked: root.editMode = "h"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.H
                   Layout.fillWidth: false
                 }
 
@@ -294,7 +304,7 @@ Popup {
                   ButtonGroup.group: colorValues
                   text: "S"
                   font.weight: Font.Bold
-                  onClicked: root.editMode = "s"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.S
                   Layout.fillWidth: false
                 }
 
@@ -324,7 +334,7 @@ Popup {
                   ButtonGroup.group: colorValues
                   text: "V"
                   font.weight: Font.Bold
-                  onClicked: root.editMode = "v"
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.V
                   Layout.fillWidth: false
                 }
 
@@ -359,8 +369,7 @@ Popup {
                 spacing: Style.marginM
 
                 NLabel {
-                  label: "Hex:" // I18n.tr("widgets.color-picker.hex.label")
-                  // description: I18n.tr("widgets.color-picker.hex.description")
+                  label: I18n.tr("widgets.color-picker.hex")
                   Layout.alignment: Qt.AlignVCenter
                 }
 
@@ -396,11 +405,11 @@ Popup {
                   if (rainbowMode)
                     return "transparent";
                   switch (root.editMode) {
-                  case "r":
+                  case NColorPickerDialog.EditMode.R:
                     return "#FF0000";
-                  case "g":
+                  case NColorPickerDialog.EditMode.G:
                     return "#00FF00";
-                  case "b":
+                  case NColorPickerDialog.EditMode.B:
                     return "#0000FF";
                   default:
                     return "#FFFFFF";
@@ -413,17 +422,17 @@ Popup {
                   when: !selectedSlider.pressed // Only update from model when NOT dragging
                   value: {
                     switch (root.editMode) {
-                    case "r":
+                    case NColorPickerDialog.EditMode.R:
                       return root.selectedColor.r;
-                    case "g":
+                    case NColorPickerDialog.EditMode.G:
                       return root.selectedColor.g;
-                    case "b":
+                    case NColorPickerDialog.EditMode.B:
                       return root.selectedColor.b;
-                    case "h":
+                    case NColorPickerDialog.EditMode.H:
                       return root.displayHue;
-                    case "s":
+                    case NColorPickerDialog.EditMode.S:
                       return root.selectedColor.hsvSaturation;
-                    case "v":
+                    case NColorPickerDialog.EditMode.V:
                       return root.selectedColor.hsvValue;
                     default:
                       return 0;
@@ -434,23 +443,23 @@ Popup {
                 onMoved: {
                   var v = value;
                   switch (root.editMode) {
-                  case "r":
+                  case NColorPickerDialog.EditMode.R:
                     root.selectedColor = Qt.rgba(v, root.selectedColor.g, root.selectedColor.b, 1);
                     break;
-                  case "g":
+                  case NColorPickerDialog.EditMode.G:
                     root.selectedColor = Qt.rgba(root.selectedColor.r, v, root.selectedColor.b, 1);
                     break;
-                  case "b":
+                  case NColorPickerDialog.EditMode.B:
                     root.selectedColor = Qt.rgba(root.selectedColor.r, root.selectedColor.g, v, 1);
                     break;
-                  case "h":
+                  case NColorPickerDialog.EditMode.H:
                     root.selectedColor = Qt.hsva(v, root.selectedColor.hsvSaturation, root.selectedColor.hsvValue, 1);
                     root.stableHue = v;
                     break;
-                  case "s":
+                  case NColorPickerDialog.EditMode.S:
                     root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, v, root.selectedColor.hsvValue, 1);
                     break;
-                  case "v":
+                  case NColorPickerDialog.EditMode.V:
                     root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, root.selectedColor.hsvSaturation, v, 1);
                     break;
                   }
@@ -476,40 +485,20 @@ Popup {
 
                   fragmentShader: "../Shaders/qsb/color_picker.frag.qsb"
 
-                  // Map strings to integers
-                  readonly property int modeInt: {
-                    switch (root.editMode) {
-                    case "r":
-                      return 0;
-                    case "g":
-                      return 1;
-                    case "b":
-                      return 2;
-                    case "h":
-                      return 3;
-                    case "s":
-                      return 4;
-                    case "v":
-                      return 5;
-                    default:
-                      return 0;
-                    }
-                  }
-
                   // Pass which radio is selected
                   readonly property real fixedVal: {
                     switch (root.editMode) {
-                    case "r":
+                    case NColorPickerDialog.EditMode.R:
                       return root.selectedColor.r;
-                    case "g":
+                    case NColorPickerDialog.EditMode.G:
                       return root.selectedColor.g;
-                    case "b":
+                    case NColorPickerDialog.EditMode.B:
                       return root.selectedColor.b;
-                    case "h":
+                    case NColorPickerDialog.EditMode.H:
                       return root.displayHue;
-                    case "s":
+                    case NColorPickerDialog.EditMode.S:
                       return root.selectedColor.hsvSaturation;
-                    case "v":
+                    case NColorPickerDialog.EditMode.V:
                       return root.selectedColor.hsvValue;
                     default:
                       return 0;
@@ -517,7 +506,7 @@ Popup {
                   }
 
                   // Send as one vector because GPUs are so damn picky
-                  property vector4d params: Qt.vector4d(1.0, fixedVal, modeInt, 0)
+                  property vector4d params: Qt.vector4d(1.0, fixedVal, root.editMode, 0)
                 }
 
                 MouseArea {
@@ -535,31 +524,31 @@ Popup {
                     var fixed = 0.0;
 
                     switch (root.editMode) {
-                    case "r":
+                    case NColorPickerDialog.EditMode.R:
                       fixed = root.selectedColor.r;
                       root.selectedColor = Qt.rgba(fixed, xVal, yVal, 1);
                       break;
-                    case "g":
+                    case NColorPickerDialog.EditMode.G:
                       fixed = root.selectedColor.g;
                       root.selectedColor = Qt.rgba(xVal, fixed, yVal, 1);
                       break;
-                    case "b":
+                    case NColorPickerDialog.EditMode.B:
                       fixed = root.selectedColor.b;
                       root.selectedColor = Qt.rgba(xVal, yVal, fixed, 1);
                       break;
-                    case "h":
+                    case NColorPickerDialog.EditMode.H:
                       // Use stableHue to prevent flipping to -1
                       fixed = root.displayHue;
                       root.selectedColor = Qt.hsva(fixed, xVal, yVal, 1);
                       root.stableHue = fixed;
                       break;
-                    case "s":
+                    case NColorPickerDialog.EditMode.S:
                       fixed = root.selectedColor.hsvSaturation;
                       root.selectedColor = Qt.hsva(xVal, fixed, yVal, 1);
                       // If we dragged Hue (xVal), update stableHue
                       root.stableHue = yVal;
                       break;
-                    case "v":
+                    case NColorPickerDialog.EditMode.V:
                       fixed = root.selectedColor.hsvValue;
                       root.selectedColor = Qt.hsva(xVal, yVal, fixed, 1);
                       // If we dragged Hue (xVal), update stableHue
@@ -583,17 +572,17 @@ Popup {
                   // Find position based on the current color
                   readonly property point selectedPos: {
                     switch (root.editMode) {
-                    case "r":
+                    case NColorPickerDialog.EditMode.R:
                       return Qt.point(root.selectedColor.g, root.selectedColor.b);
-                    case "g":
+                    case NColorPickerDialog.EditMode.G:
                       return Qt.point(root.selectedColor.r, root.selectedColor.b);
-                    case "b":
+                    case NColorPickerDialog.EditMode.B:
                       return Qt.point(root.selectedColor.r, root.selectedColor.g);
-                    case "h":
+                    case NColorPickerDialog.EditMode.H:
                       return Qt.point(root.selectedColor.hsvSaturation, root.selectedColor.hsvValue);
-                    case "s":
+                    case NColorPickerDialog.EditMode.S:
                       return Qt.point(root.displayHue, root.selectedColor.hsvValue);
-                    case "v":
+                    case NColorPickerDialog.EditMode.V:
                       return Qt.point(root.displayHue, root.selectedColor.hsvSaturation);
                     default:
                       return Qt.point(0, 0);
@@ -648,7 +637,7 @@ Popup {
                     hoverEnabled: true
 
                     onEntered: {
-                      TooltipService.show(screen, parent, modelData.name + "\n" + parent.color.toString().toUpperCase(), "auto");
+                      TooltipService.show(parent, modelData.name + "\n" + parent.color.toString().toUpperCase(), "auto");
                     }
                     onExited: {
                       TooltipService.hide();
@@ -671,7 +660,7 @@ Popup {
               NLabel {
                 Layout.columnSpan: 15
                 Layout.fillWidth: true
-                description: I18n.tr("widgets.color-picker.theme-colors.description")
+                description: I18n.tr("widgets.color-picker.palette.theme-colors")
               }
 
               Repeater {
