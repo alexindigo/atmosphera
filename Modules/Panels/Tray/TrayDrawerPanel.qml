@@ -184,9 +184,15 @@ SmartPanel {
                              if (!modelData.onlyMenu) {
                                modelData.activate();
                              }
+                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                               PanelService.openedPanel.close();
+                             }
                            } else if (mouse.button === Qt.MiddleButton) {
                              // Middle click: activate with middle button
                              modelData.secondaryActivate && modelData.secondaryActivate();
+                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                               PanelService.openedPanel.close();
+                             }
                            } else if (mouse.button === Qt.RightButton) {
                              // Right click: open context menu
                              TooltipService.hideImmediately();
