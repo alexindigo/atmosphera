@@ -124,6 +124,12 @@ Singleton {
     from = from.replace(root.developmentSuffix, "");
     to = to.replace(root.developmentSuffix, "");
 
+    // 'from' always need to be before 'to'
+    // handle edge case that will show up as we changed -dev to -git
+    if (from === to) {
+      from = "v3.0.0";
+    }
+
     Logger.d("UpdateService", "Fetching upgrade log", "from:", from, "to:", to);
 
     const url = `${upgradeLogBaseUrl}/${from}/${to}`;
