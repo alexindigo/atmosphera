@@ -603,11 +603,7 @@ Item {
 
     Behavior on width {
       NumberAnimation {
-        duration: {
-          if (!panelBackground.shouldAnimateWidth)
-            return 0;
-          return root.isClosing ? Style.animationFast : Style.animationNormal;
-        }
+        duration: root.isClosing ? Style.animationFast : Style.animationNormal
         easing.type: Easing.BezierSpline
         easing.bezierCurve: panelBackground.bezierCurve
       }
