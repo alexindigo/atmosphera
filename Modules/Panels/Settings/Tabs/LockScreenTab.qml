@@ -21,7 +21,7 @@ ColumnLayout {
     checked: Settings.data.general.compactLockScreen
     onToggled: checked => Settings.data.general.compactLockScreen = checked
   }
-  
+
   NToggle {
     label: I18n.tr("settings.lock-screen.show-hibernate.label")
     description: I18n.tr("settings.lock-screen.show-hibernate.description")

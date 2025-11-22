@@ -835,14 +835,14 @@ ColumnLayout {
                      }
                    }
       }
-    
+
       NCheckbox {
         label: "Telegram"
         description: ProgramCheckerService.telegramAvailable ? I18n.tr("settings.color-scheme.templates.programs.telegram.description", {
-                                                                          "filepath": "~/.config/telegram-desktop/themes/noctalia.tdesktop-theme"
-                                                                        }) : I18n.tr("settings.color-scheme.templates.programs.telegram.description-missing", {
-                                                                                       "app": "telegram"
-                                                                                     })
+                                                                         "filepath": "~/.config/telegram-desktop/themes/noctalia.tdesktop-theme"
+                                                                       }) : I18n.tr("settings.color-scheme.templates.programs.telegram.description-missing", {
+                                                                                      "app": "telegram"
+                                                                                    })
         checked: Settings.data.templates.telegram
         enabled: ProgramCheckerService.telegramAvailable
         opacity: ProgramCheckerService.telegramAvailable ? 1.0 : 0.6

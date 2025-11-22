@@ -35,16 +35,16 @@ Item {
   // Return available commands when user types ">"
   function commands() {
     return [
-      {
-        "name": ">emoji",
-        "description": I18n.tr("plugins.emoji-search-description"),
-        "icon": "emote",
-        "isImage": false,
-        "onActivate": function () {
-          launcher.setSearchText(">emoji ");
-        }
-      }
-    ];
+          {
+            "name": ">emoji",
+            "description": I18n.tr("plugins.emoji-search-description"),
+            "icon": "emote",
+            "isImage": false,
+            "onActivate": function () {
+              launcher.setSearchText(">emoji ");
+            }
+          }
+        ];
   }
 
   // Get search results
@@ -55,14 +55,14 @@ Item {
 
     if (!EmojiService.loaded) {
       return [
-        {
-          "name": I18n.tr("plugins.emoji-loading"),
-          "description": I18n.tr("plugins.emoji-loading-description"),
-          "icon": "view-refresh",
-          "isImage": false,
-          "onActivate": function () {}
-        }
-      ];
+            {
+              "name": I18n.tr("plugins.emoji-loading"),
+              "description": I18n.tr("plugins.emoji-loading-description"),
+              "icon": "view-refresh",
+              "isImage": false,
+              "onActivate": function () {}
+            }
+          ];
     }
 
     const query = searchText.slice(6).trim();

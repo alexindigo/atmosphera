@@ -31,18 +31,18 @@ Singleton {
 
     const terms = query.toLowerCase().split(" ").filter(t => t);
     const results = emojis.filter(emoji => {
-      for (let term of terms) {
-        const emojiMatch = emoji.emoji.toLowerCase().includes(term);
-        const nameMatch = (emoji.name || "").toLowerCase().includes(term);
-        const keywordMatch = (emoji.keywords || []).some(kw => kw.toLowerCase().includes(term));
-        const categoryMatch = (emoji.category || "").toLowerCase().includes(term);
+                                    for (let term of terms) {
+                                      const emojiMatch = emoji.emoji.toLowerCase().includes(term);
+                                      const nameMatch = (emoji.name || "").toLowerCase().includes(term);
+                                      const keywordMatch = (emoji.keywords || []).some(kw => kw.toLowerCase().includes(term));
+                                      const categoryMatch = (emoji.category || "").toLowerCase().includes(term);
 
-        if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
-          return false;
-        }
-      }
-      return true;
-    });
+                                      if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
+                                        return false;
+                                      }
+                                    }
+                                    return true;
+                                  });
 
     return results;
   }
@@ -51,19 +51,19 @@ Singleton {
   function _getPopularEmojis(limit) {
     // Create array of emojis with their usage counts
     const emojisWithUsage = emojis.map(emoji => {
-      return {
-        emoji: emoji,
-        usageCount: usageCounts[emoji.emoji] || 0
-      };
-    });
+                                         return {
+                                           emoji: emoji,
+                                           usageCount: usageCounts[emoji.emoji] || 0
+                                         };
+                                       });
 
     // Sort by usage count (descending), then by name
     emojisWithUsage.sort((a, b) => {
-      if (b.usageCount !== a.usageCount) {
-        return b.usageCount - a.usageCount;
-      }
-      return (a.emoji.name || "").localeCompare(b.emoji.name || "");
-    });
+                           if (b.usageCount !== a.usageCount) {
+                             return b.usageCount - a.usageCount;
+                           }
+                           return (a.emoji.name || "").localeCompare(b.emoji.name || "");
+                         });
 
     // Return the emoji objects limited by the specified count
     return emojisWithUsage.slice(0, limit).map(item => item.emoji);
@@ -120,7 +120,7 @@ Singleton {
       _onLoadComplete();
     }
 
-    onLoadFailed: function(error) {
+    onLoadFailed: function (error) {
       _userEmojiData = [];
       _onLoadComplete();
     }
@@ -147,7 +147,7 @@ Singleton {
       _onLoadComplete();
     }
 
-    onLoadFailed: function(error) {
+    onLoadFailed: function (error) {
       _builtinEmojiData = [];
       _onLoadComplete();
     }
@@ -215,7 +215,7 @@ Singleton {
       }
     }
 
-    onLoadFailed: function(error) {
+    onLoadFailed: function (error) {
       root.usageCounts = {};
       Qt.callLater(_ensureUsageFileExists);
     }
