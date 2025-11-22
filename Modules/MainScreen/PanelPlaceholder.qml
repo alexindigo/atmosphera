@@ -563,6 +563,12 @@ Item {
     readonly property bool shouldAnimateWidth: !shouldAnimateHeight && (animateFromLeft || animateFromRight)
     readonly property bool shouldAnimateHeight: animateFromTop || animateFromBottom
 
+    // Track whether we're opening (becoming visible but not yet at full size)
+    readonly property bool isOpening: root.isPanelVisible && !root.isClosing && (width < targetWidth || height < targetHeight)
+
+    // Track whether we're in an initial open/close state transition vs normal content resizing
+    readonly property bool isStateTransition: isOpening || root.isClosing
+
     // Current animated width/height
     readonly property real currentWidth: {
       if (isClosing && opacityFadeComplete && shouldAnimateWidth)
@@ -603,7 +609,10 @@ Item {
 
     Behavior on width {
       NumberAnimation {
-        duration: root.isClosing ? Style.animationFast : Style.animationNormal
+        // During opening: use 0ms if not animating width, otherwise use normal duration
+        // During closing: use 0ms if not animating width, otherwise use fast duration
+        // During normal content resizing: always use normal duration
+        duration: (panelBackground.isOpening && !panelBackground.shouldAnimateWidth) ? 0 : panelBackground.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateWidth) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
         easing.type: Easing.BezierSpline
         easing.bezierCurve: panelBackground.bezierCurve
       }
@@ -611,7 +620,10 @@ Item {
 
     Behavior on height {
       NumberAnimation {
-        duration: root.isClosing ? Style.animationFast : Style.animationNormal
+        // During opening: use 0ms if not animating height, otherwise use normal duration
+        // During closing: use 0ms if not animating height, otherwise use fast duration
+        // During normal content resizing: always use normal duration
+        duration: (panelBackground.isOpening && !panelBackground.shouldAnimateHeight) ? 0 : panelBackground.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateHeight) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
         easing.type: Easing.BezierSpline
         easing.bezierCurve: panelBackground.bezierCurve
       }
