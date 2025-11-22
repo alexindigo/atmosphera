@@ -85,7 +85,7 @@ Singleton {
 
     // Load wallpapers from ShellState first (faster), then fall back to Settings
     currentWallpapers = ({});
-    
+
     if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
       var cachedWallpapers = ShellState.getWallpapers();
       if (cachedWallpapers && Object.keys(cachedWallpapers).length > 0) {
@@ -113,7 +113,7 @@ Singleton {
       }
     }
     Logger.d("Wallpaper", "Loaded wallpapers from Settings");
-    
+
     // Migrate to ShellState if we loaded from Settings
     if (typeof ShellState !== 'undefined' && ShellState.isLoaded && Object.keys(currentWallpapers).length > 0) {
       ShellState.setWallpapers(currentWallpapers);

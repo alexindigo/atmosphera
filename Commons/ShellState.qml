@@ -180,4 +180,3 @@ Singleton {
     return adapter.wallpapers || {};
   }
 }
-

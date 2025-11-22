@@ -98,7 +98,6 @@ Popup {
     xhr.send();
   }
 
-
   background: Rectangle {
     color: Color.mSurface
     radius: Style.radiusL

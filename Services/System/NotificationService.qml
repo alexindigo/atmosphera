@@ -486,7 +486,6 @@ Singleton {
     }
   }
 
-
   Timer {
     id: saveTimer
     interval: 200
