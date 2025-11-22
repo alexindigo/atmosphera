@@ -353,8 +353,8 @@
           "label": "Ocultar desocupados"
         },
         "show-focused-screen": {
-          "description": "Mostrar espacios de trabajo de la pantalla enfocada en lugar de la misma pantalla que la barra.",
-          "label": "Mostrar pantalla enfocada"
+          "description": "Mostrar espacios de trabajo de la pantalla actualmente enfocada, en lugar de la pantalla donde se encuentra la barra.",
+          "label": "Seguir Pantalla Enfocada"
         },
         "label-mode": {
           "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo.",

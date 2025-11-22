@@ -353,8 +353,8 @@
           "label": "Hide unoccupied"
         },
         "show-focused-screen": {
-          "description": "Show workspaces from the focused screen instead of from the same screen as the bar.",
-          "label": "Show focused screen"
+          "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
+          "label": "Follow Focused Screen"
         },
         "label-mode": {
           "description": "Choose how workspace labels are displayed.",

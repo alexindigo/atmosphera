@@ -353,8 +353,8 @@
           "label": "Ongebruikte verbergen"
         },
         "show-focused-screen": {
-          "description": "Werkruimten van het gefocuste scherm weergeven in plaats van hetzelfde scherm als de balk.",
-          "label": "Gefocust scherm weergeven"
+          "description": "Werkruimten weergeven van het momenteel gefocuste scherm, in plaats van het scherm waar de balk zich bevindt.",
+          "label": "Gefocust Scherm Volgen"
         },
         "label-mode": {
           "description": "Kies hoe labels van werkruimten worden weergegeven.",

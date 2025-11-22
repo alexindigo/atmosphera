@@ -353,8 +353,8 @@
           "label": "Unbesetzte ausblenden"
         },
         "show-focused-screen": {
-          "description": "Arbeitsbereiche vom fokussierten Bildschirm anzeigen, anstatt vom gleichen Bildschirm wie die Leiste.",
-          "label": "Fokussierten Bildschirm anzeigen"
+          "description": "Zeigt Arbeitsbereiche vom aktuell fokussierten Bildschirm an, statt vom Bildschirm, auf dem sich die Leiste befindet.",
+          "label": "Fokussiertem Bildschirm folgen"
         },
         "label-mode": {
           "description": "Wählen Sie, wie Arbeitsbereichs-Beschriftungen angezeigt werden.",

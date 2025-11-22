@@ -353,8 +353,8 @@
           "label": "隐藏未占用"
         },
         "show-focused-screen": {
-          "description": "显示来自焦点屏幕的工作区，而不是与任务栏相同的屏幕。",
-          "label": "显示焦点屏幕"
+          "description": "显示当前焦点屏幕的工作区，而不是任务栏所在屏幕的工作区。",
+          "label": "跟随焦点屏幕"
         },
         "label-mode": {
           "description": "选择工作区标签的显示方式。",

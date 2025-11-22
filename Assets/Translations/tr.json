@@ -353,8 +353,8 @@
           "label": "Dolu olmayanları gizle"
         },
         "show-focused-screen": {
-          "description": "Çubuğun bulunduğu ekran yerine odaklanmış ekrandaki çalışma alanlarını göster.",
-          "label": "Odaklanmış ekranı göster"
+          "description": "Çubuğun bulunduğu ekran yerine, şu anda odaklanmış ekrandaki çalışma alanlarını göster.",
+          "label": "Odaklanmış Ekranı Takip Et"
         },
         "label-mode": {
           "description": "Çalışma alanı etiketlerinin nasıl gösterileceğini seçin.",
