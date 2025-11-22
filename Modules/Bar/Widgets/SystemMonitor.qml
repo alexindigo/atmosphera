@@ -240,6 +240,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -314,6 +315,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -381,6 +383,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -429,13 +432,20 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "download-speed"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "download-speed"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+          }
         }
 
         NText {
@@ -472,13 +482,20 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "upload-speed"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "upload-speed"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+          }
         }
 
         NText {
@@ -530,15 +547,22 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "storage"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
-          // Invert color when disk indicator active (vertical uses highlight colors)
-          color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "storage"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color when disk indicator active (vertical uses highlight colors)
+            color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+          }
         }
 
         NText {
