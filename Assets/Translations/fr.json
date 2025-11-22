@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Activez l'historique du presse-papiers dans les paramètres ou installez cliphist",
     "clipboard-loading": "Chargement de l'historique du presse-papiers...",
     "clipboard-loading-description": "Veuillez patienter",
-    "clipboard-search-description": "Rechercher dans l'historique du presse-papiers"
+    "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
+    "emoji": "Sélecteur d'émojis",
+    "emoji-search-description": "Rechercher et copier des émojis",
+    "emoji-loading": "Chargement des émojis...",
+    "emoji-loading-description": "Veuillez patienter"
   },
   "quickSettings": {
     "bluetooth": {

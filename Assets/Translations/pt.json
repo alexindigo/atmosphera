@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Ative o histórico da área de transferência nas configurações ou instale o cliphist",
     "clipboard-loading": "Carregando histórico da área de transferência...",
     "clipboard-loading-description": "Por favor, aguarde",
-    "clipboard-search-description": "Pesquisar no histórico da área de transferência"
+    "clipboard-search-description": "Pesquisar no histórico da área de transferência",
+    "emoji": "Seletor de emojis",
+    "emoji-search-description": "Buscar e copiar emojis",
+    "emoji-loading": "Carregando emojis...",
+    "emoji-loading-description": "Por favor, aguarde"
   },
   "quickSettings": {
     "bluetooth": {

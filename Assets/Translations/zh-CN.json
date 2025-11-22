@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "在设置中启用剪贴板历史记录或安装 cliphist",
     "clipboard-loading": "正在加载剪贴板历史记录...",
     "clipboard-loading-description": "请稍候",
-    "clipboard-search-description": "搜索剪贴板历史记录"
+    "clipboard-search-description": "搜索剪贴板历史记录",
+    "emoji": "表情符号选择器",
+    "emoji-search-description": "搜索和复制表情符号",
+    "emoji-loading": "正在加载表情符号...",
+    "emoji-loading-description": "请稍候"
   },
   "quickSettings": {
     "bluetooth": {

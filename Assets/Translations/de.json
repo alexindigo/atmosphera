@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Zwischenablageverlauf in den Einstellungen aktivieren oder cliphist installieren",
     "clipboard-loading": "Lade Zwischenablageverlauf...",
     "clipboard-loading-description": "Bitte warten",
-    "clipboard-search-description": "Zwischenablageverlauf durchsuchen"
+    "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
+    "emoji": "Emoji-Auswahl",
+    "emoji-search-description": "Emojis suchen und kopieren",
+    "emoji-loading": "Lade Emojis...",
+    "emoji-loading-description": "Bitte warten"
   },
   "quickSettings": {
     "bluetooth": {

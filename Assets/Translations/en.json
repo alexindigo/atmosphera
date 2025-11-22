@@ -674,8 +674,7 @@
     "emoji": "Emoji picker",
     "emoji-search-description": "Search and copy emojis",
     "emoji-loading": "Loading emojis...",
-    "emoji-loading-description": "Please wait",
-    "emoji-no-results": "No emojis found"
+    "emoji-loading-description": "Please wait"
   },
   "quickSettings": {
     "bluetooth": {

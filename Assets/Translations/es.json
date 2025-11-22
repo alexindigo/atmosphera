@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Activa el historial del portapapeles en la configuración o instala cliphist",
     "clipboard-loading": "Cargando historial del portapapeles...",
     "clipboard-loading-description": "Por favor espera",
-    "clipboard-search-description": "Buscar en el historial del portapapeles"
+    "clipboard-search-description": "Buscar en el historial del portapapeles",
+    "emoji": "Selector de emojis",
+    "emoji-search-description": "Buscar y copiar emojis",
+    "emoji-loading": "Cargando emojis...",
+    "emoji-loading-description": "Por favor espera"
   },
   "quickSettings": {
     "bluetooth": {
