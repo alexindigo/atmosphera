@@ -1510,6 +1510,10 @@
         "description": "Bloquear a tela automaticamente ao suspender o sistema.",
         "label": "Bloquear ao suspender"
       },
+      "show-hibernate": {
+        "description": "Mostrar a opção 'hibernar' nas ações de energia.",
+        "label": "Mostrar hibernar"
+      },
       "title": "Tela de bloqueio"
     },
     "network": {

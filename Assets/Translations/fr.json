@@ -1510,6 +1510,10 @@
         "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
         "label": "Verrouiller à la suspension"
       },
+      "show-hibernate": {
+        "description": "Afficher l’option 'hiberner' dans les actions d’énergie.",
+        "label": "Afficher l’hibernation"
+      },
       "title": "Écran de verrouillage"
     },
     "network": {

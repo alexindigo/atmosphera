@@ -1510,6 +1510,10 @@
         "description": "Sistemi askıya alırken otomatik olarak ekranı kilitler.",
         "label": "Askıya alırken kilitle"
       },
+      "show-hibernate": {
+        "description": "Güç işlemlerinde 'hazırda beklet' seçeneğini göster.",
+        "label": "Hazırda beklet seçeneğini göster"
+      },
       "title": "Ekran Kilit"
     },
     "network": {

@@ -1510,6 +1510,10 @@
         "description": "Automatically lock the screen when suspending the system.",
         "label": "Lock on suspend"
       },
+      "show-hibernate": {
+        "description": "Show the option 'hibernate' in the energy actions.",
+        "label": "Show hibernate"
+      },
       "title": "Lock screen"
     },
     "network": {

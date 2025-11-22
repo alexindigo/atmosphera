@@ -1510,6 +1510,10 @@
         "description": "Den Bildschirm beim Suspendieren des Systems automatisch sperren.",
         "label": "Sperren beim Ruhezustand"
       },
+      "show-hibernate": {
+        "description": "Die Option 'Ruhezustand' in den Energieaktionen anzeigen.",
+        "label": "Ruhezustand anzeigen"
+      },
       "title": "Sperrbildschirm"
     },
     "network": {

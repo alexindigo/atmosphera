@@ -215,6 +215,7 @@ Singleton {
       property bool animationDisabled: false
       property bool compactLockScreen: false
       property bool lockOnSuspend: true
+      property bool showHibernateOnLockScreen: true
       property bool enableShadows: true
       property string shadowDirection: "bottom_right"
       property int shadowOffsetX: 2
