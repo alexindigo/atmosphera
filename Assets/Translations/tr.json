@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Panoya geçmişini ayarlarda etkinleştir veya cliphist kur",
     "clipboard-loading": "Panoya geçmişi yükleniyor...",
     "clipboard-loading-description": "Lütfen bekleyin",
-    "clipboard-search-description": "Panoya geçmişini ara"
+    "clipboard-search-description": "Panoya geçmişini ara",
+    "emoji": "Emoji seçici",
+    "emoji-search-description": "Emoji arama ve kopyalama",
+    "emoji-loading": "Emojiler yükleniyor...",
+    "emoji-loading-description": "Lütfen bekleyin"
   },
   "quickSettings": {
     "bluetooth": {

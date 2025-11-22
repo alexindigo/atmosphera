@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Enable clipboard history in settings or install cliphist",
     "clipboard-loading": "Loading clipboard history...",
     "clipboard-loading-description": "Please wait",
-    "clipboard-search-description": "Search clipboard history"
+    "clipboard-search-description": "Search clipboard history",
+    "emoji": "Emoji picker",
+    "emoji-search-description": "Search and copy emojis",
+    "emoji-loading": "Loading emojis...",
+    "emoji-loading-description": "Please wait"
   },
   "quickSettings": {
     "bluetooth": {

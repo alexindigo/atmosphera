@@ -220,6 +220,14 @@ SmartPanel {
     }
   }
 
+  EmojiPlugin {
+    id: emojiPlugin
+    Component.onCompleted: {
+      registerPlugin(this);
+      Logger.d("Launcher", "Registered: EmojiPlugin");
+    }
+  }
+
   // Navigation functions
   function selectNextWrapped() {
     if (results.length > 0) {
@@ -492,7 +500,7 @@ SmartPanel {
                 Layout.fillWidth: true
                 spacing: Style.marginM
 
-                // Icon badge or Image preview
+                // Icon badge or Image preview or Emoji
                 Rectangle {
                   Layout.preferredWidth: badgeSize
                   Layout.preferredHeight: badgeSize
@@ -503,7 +511,7 @@ SmartPanel {
                   NImageRounded {
                     id: imagePreview
                     anchors.fill: parent
-                    visible: modelData.isImage
+                    visible: modelData.isImage && !modelData.emojiChar
                     imageRadius: Style.radiusM
 
                     // This property creates a dependency on the service's revision counter
@@ -542,26 +550,28 @@ SmartPanel {
                     anchors.fill: parent
                     anchors.margins: Style.marginXS
 
-                    visible: !modelData.isImage || imagePreview.status === Image.Error
+                    visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && imagePreview.status === Image.Error)
                     active: visible
 
                     sourceComponent: Component {
                       IconImage {
                         anchors.fill: parent
                         source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                        visible: modelData.icon && source !== ""
+                        visible: modelData.icon && source !== "" && !modelData.emojiChar
                         asynchronous: true
                       }
                     }
                   }
 
+                  // Emoji display - takes precedence when emojiChar is present
                   NText {
+                    id: emojiDisplay
                     anchors.centerIn: parent
-                    visible: !imagePreview.visible && !iconLoader.visible
-                    text: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
-                    pointSize: Style.fontSizeXXL
+                    visible: modelData.emojiChar ? true : (!imagePreview.visible && !iconLoader.visible)
+                    text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                    pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
                     font.weight: Style.fontWeightBold
-                    color: Color.mOnPrimary
+                    color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
                   }
 
                   // Image type indicator overlay

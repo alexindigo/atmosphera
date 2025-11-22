@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Schakel klembordgeschiedenis in de instellingen in of installeer cliphist",
     "clipboard-loading": "Klembordgeschiedenis laden...",
     "clipboard-loading-description": "Even geduld",
-    "clipboard-search-description": "Zoek in klembordgeschiedenis"
+    "clipboard-search-description": "Zoek in klembordgeschiedenis",
+    "emoji": "Emoji-kiezer",
+    "emoji-search-description": "Zoek en kopieer emoji's",
+    "emoji-loading": "Emoji's laden...",
+    "emoji-loading-description": "Even geduld"
   },
   "quickSettings": {
     "bluetooth": {

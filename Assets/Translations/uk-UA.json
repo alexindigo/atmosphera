@@ -670,7 +670,11 @@
     "clipboard-history-disabled-description": "Увімкніть історію буфера обміну в налаштуваннях або встановіть cliphist",
     "clipboard-loading": "Завантаження історії буфера обміну...",
     "clipboard-loading-description": "Зачекайте, будь ласка",
-    "clipboard-search-description": "Пошук в історії буфера обміну"
+    "clipboard-search-description": "Пошук в історії буфера обміну",
+    "emoji": "Обрати емодзі",
+    "emoji-search-description": "Пошук і копіювання емодзі",
+    "emoji-loading": "Завантаження емодзі...",
+    "emoji-loading-description": "Зачекайте, будь ласка"
   },
   "quickSettings": {
     "bluetooth": {
