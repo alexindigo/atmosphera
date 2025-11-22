@@ -73,7 +73,7 @@ Scope {
                      root.unlocked();
                    } else {
                      Logger.i("LockContext", "Authentication failed");
-                     errorMessage = "Authentication failed";
+                     errorMessage = I18n.tr("lock-screen.authentication-failed");
                      showFailure = true;
                      root.failed();
                    }

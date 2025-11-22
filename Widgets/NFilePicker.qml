@@ -784,7 +784,7 @@ Popup {
         }
 
         NButton {
-          text: root.selectionMode === "folders" ? "Select Folder" : "Select File"
+          text: root.selectionMode === "folders" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file")
           icon: "filepicker-check"
           enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()
