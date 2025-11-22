@@ -373,6 +373,10 @@
           "description": "Ne pas afficher les espaces de travail sans fenêtres.",
           "label": "Masquer les inoccupés"
         },
+        "follow-focused-screen": {
+          "description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
+          "label": "Suivre l'Écran Ciblé"
+        },
         "label-mode": {
           "description": "Choisir comment les étiquettes d'espace de travail sont affichées.",
           "label": "Mode d'étiquette"
@@ -388,9 +392,9 @@
     "discharging": "En décharge.",
     "discharging-rate": "Taux de décharge : {rate} W.",
     "health": "État : {percent}%",
+    "idle": "Inactif.",
     "inhibit-idle-description": "Maintient le système éveillé.",
     "inhibit-idle-label": "Garder éveillé",
-    "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
     "panel-title": "Batterie",
     "plugged-in": "Branché.",
@@ -678,9 +682,9 @@
     "clipboard-loading-description": "Veuillez patienter",
     "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
     "emoji": "Sélecteur d'émojis",
-    "emoji-search-description": "Rechercher et copier des émojis",
     "emoji-loading": "Chargement des émojis...",
-    "emoji-loading-description": "Veuillez patienter"
+    "emoji-loading-description": "Veuillez patienter",
+    "emoji-search-description": "Rechercher et copier des émojis"
   },
   "quickSettings": {
     "bluetooth": {
@@ -2259,23 +2263,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Appliquer",
-      "brightness": "Luminosité",
       "cancel": "Annuler",
-      "hex": {
-        "description": "Entrez un code couleur hexadécimal.",
-        "label": "Couleur hexadécimale"
-      },
       "palette": {
         "description": "Choisissez parmi une large gamme de couleurs prédéfinies.",
-        "label": "Palette"
-      },
-      "rgb": {
-        "description": "Ajustez les valeurs de rouge, vert, bleu et de luminosité.",
-        "label": "Valeurs RVB"
-      },
-      "theme-colors": {
-        "description": "Accès rapide à la palette de couleurs de votre thème.",
-        "label": "Couleurs du thème"
+        "label": "Palette",
+        "theme-colors": "Accès rapide à la palette de couleurs de votre thème."
       },
       "title": "Sélecteur de couleurs"
     },

@@ -223,6 +223,7 @@ Singleton {
                                   "Workspace": {
                                     "allowUserSettings": true,
                                     "labelMode": "index",
+                                    "followFocusedScreen": false,
                                     "hideUnoccupied": false,
                                     "characterCount": 2
                                   },

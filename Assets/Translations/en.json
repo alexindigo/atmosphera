@@ -373,6 +373,10 @@
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"
         },
+        "follow-focused-screen": {
+          "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
+          "label": "Follow Focused Screen"
+        },
         "label-mode": {
           "description": "Choose how workspace labels are displayed.",
           "label": "Label Mode"
@@ -388,9 +392,9 @@
     "discharging": "Discharging",
     "discharging-rate": "Discharging rate: {rate} W",
     "health": "Health: {percent}%",
+    "idle": "Idle",
     "inhibit-idle-description": "Keeps the system awake.",
     "inhibit-idle-label": "Keep awake",
-    "idle": "Idle",
     "no-battery-detected": "No battery detected",
     "panel-title": "Battery",
     "plugged-in": "Plugged in",
@@ -678,9 +682,9 @@
     "clipboard-loading-description": "Please wait",
     "clipboard-search-description": "Search clipboard history",
     "emoji": "Emoji picker",
-    "emoji-search-description": "Search and copy emojis",
     "emoji-loading": "Loading emojis...",
-    "emoji-loading-description": "Please wait"
+    "emoji-loading-description": "Please wait",
+    "emoji-search-description": "Search and copy emojis"
   },
   "quickSettings": {
     "bluetooth": {
@@ -2259,23 +2263,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Apply",
-      "brightness": "Brightness",
       "cancel": "Cancel",
-      "hex": {
-        "description": "Enter a hexadecimal color code.",
-        "label": "Hex color"
-      },
       "palette": {
         "description": "Choose from a wide range of predefined colors.",
-        "label": "Palette"
-      },
-      "rgb": {
-        "description": "Adjust red, green, blue, and brightness values.",
-        "label": "RGB values"
-      },
-      "theme-colors": {
-        "description": "Quick access to your theme's color palette.",
-        "label": "Theme colors"
+        "label": "Palette",
+        "theme-colors": "Quick access to your theme's color palette."
       },
       "title": "Color picker"
     },

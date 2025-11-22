@@ -373,6 +373,10 @@
           "description": "不显示没有窗口的工作区。",
           "label": "隐藏未占用"
         },
+        "follow-focused-screen": {
+          "description": "显示当前焦点屏幕的工作区，而不是任务栏所在屏幕的工作区。",
+          "label": "跟随焦点屏幕"
+        },
         "label-mode": {
           "description": "选择工作区标签的显示方式。",
           "label": "标签模式"
@@ -388,9 +392,9 @@
     "discharging": "正在放电。",
     "discharging-rate": "放电速率：{rate} W。",
     "health": "健康状况：{percent}%",
+    "idle": "空闲。",
     "inhibit-idle-description": "保持系统唤醒。",
     "inhibit-idle-label": "保持唤醒",
-    "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
     "panel-title": "电池",
     "plugged-in": "已接通电源。",
@@ -678,9 +682,9 @@
     "clipboard-loading-description": "请稍候",
     "clipboard-search-description": "搜索剪贴板历史记录",
     "emoji": "表情符号选择器",
-    "emoji-search-description": "搜索和复制表情符号",
     "emoji-loading": "正在加载表情符号...",
-    "emoji-loading-description": "请稍候"
+    "emoji-loading-description": "请稍候",
+    "emoji-search-description": "搜索和复制表情符号"
   },
   "quickSettings": {
     "bluetooth": {
@@ -2259,23 +2263,11 @@
   "widgets": {
     "color-picker": {
       "apply": "应用",
-      "brightness": "亮度",
       "cancel": "取消",
-      "hex": {
-        "description": "输入十六进制颜色代码。",
-        "label": "十六进制颜色"
-      },
       "palette": {
         "description": "从各种预定义颜色中选择。",
-        "label": "调色板"
-      },
-      "rgb": {
-        "description": "调整红、绿、蓝和亮度值。",
-        "label": "RGB 值"
-      },
-      "theme-colors": {
-        "description": "快速访问您的主题调色板。",
-        "label": "主题颜色"
+        "label": "调色板",
+        "theme-colors": "快速访问您主题的调色板。"
       },
       "title": "颜色选择器"
     },

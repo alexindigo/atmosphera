@@ -373,6 +373,10 @@
           "description": "No mostrar espacios de trabajo sin ventanas.",
           "label": "Ocultar desocupados"
         },
+        "follow-focused-screen": {
+          "description": "Mostrar espacios de trabajo de la pantalla actualmente enfocada, en lugar de la pantalla donde se encuentra la barra.",
+          "label": "Seguir Pantalla Enfocada"
+        },
         "label-mode": {
           "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo.",
           "label": "Modo de etiqueta"
@@ -388,9 +392,9 @@
     "discharging": "Descargando.",
     "discharging-rate": "Tasa de descarga: {rate} W.",
     "health": "Salud: {percent}%",
+    "idle": "Inactivo.",
     "inhibit-idle-description": "Mantiene el sistema despierto.",
     "inhibit-idle-label": "Mantener despierto",
-    "idle": "Inactivo.",
     "no-battery-detected": "No se detectó ninguna batería.",
     "panel-title": "Batería",
     "plugged-in": "Conectado.",
@@ -678,9 +682,9 @@
     "clipboard-loading-description": "Por favor espera",
     "clipboard-search-description": "Buscar en el historial del portapapeles",
     "emoji": "Selector de emojis",
-    "emoji-search-description": "Buscar y copiar emojis",
     "emoji-loading": "Cargando emojis...",
-    "emoji-loading-description": "Por favor espera"
+    "emoji-loading-description": "Por favor espera",
+    "emoji-search-description": "Buscar y copiar emojis"
   },
   "quickSettings": {
     "bluetooth": {
@@ -2259,23 +2263,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Aplicar",
-      "brightness": "Brillo",
       "cancel": "Cancelar",
-      "hex": {
-        "description": "Ingresa un código de color hexadecimal.",
-        "label": "Color hexadecimal"
-      },
       "palette": {
         "description": "Elige entre una amplia gama de colores predefinidos.",
-        "label": "Paleta"
-      },
-      "rgb": {
-        "description": "Ajusta los valores de rojo, verde, azul y brillo.",
-        "label": "Valores RGB"
-      },
-      "theme-colors": {
-        "description": "Acceso rápido a la paleta de colores de tu tema.",
-        "label": "Colores del tema"
+        "label": "Paleta",
+        "theme-colors": "Acceso rápido a la paleta de colores de tu tema."
       },
       "title": "Selector de colores"
     },

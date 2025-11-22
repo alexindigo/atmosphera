@@ -28,13 +28,13 @@ SmartPanel {
       return I18n.tr("battery.no-battery-detected");
     if (charging && battery.timeToFull > 0) {
       return I18n.tr("battery.time-until-full", {
-        "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
-      });
+                       "time": Time.formatVagueHumanReadableDuration(battery.timeToFull)
+                     });
     }
     if (!charging && battery.timeToEmpty > 0) {
       return I18n.tr("battery.time-left", {
-        "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
-      });
+                       "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
+                     });
     }
     return I18n.tr("battery.idle");
   }
@@ -154,7 +154,9 @@ SmartPanel {
             visible: healthAvailable
 
             NText {
-              text: I18n.tr("battery.health", {"percent": healthPercent})
+              text: I18n.tr("battery.health", {
+                              "percent": healthPercent
+                            })
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
               font.weight: Style.fontWeightMedium
@@ -179,7 +181,9 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginS
             NIcon {
-              icon: PowerProfileService.getIcon(); pointSize: Style.fontSizeM; color: Color.mPrimary
+              icon: PowerProfileService.getIcon()
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
             }
             NText {
               text: I18n.tr("battery.power-profile")
@@ -188,7 +192,7 @@ SmartPanel {
               Layout.fillWidth: true
             }
             NText {
-              text: PowerProfileService.getName()
+              text: PowerProfileService.getName(profileIndex)
               color: Color.mOnSurfaceVariant
             }
           }
@@ -273,7 +277,7 @@ SmartPanel {
     interval: 1000
     repeat: true
     running: true
-    onTriggered: manualInhibitActive = manualInhibitorEnabled();
+    onTriggered: manualInhibitActive = manualInhibitorEnabled()
   }
 
   Connections {

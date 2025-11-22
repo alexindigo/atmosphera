@@ -373,6 +373,10 @@
           "description": "Не відображати робочі простори без вікон.",
           "label": "Приховати незайняті"
         },
+        "follow-focused-screen": {
+          "description": "Відображати робочі простори з поточного активного екрана, а не з екрана, на якому розташована панель.",
+          "label": "Слідувати за Активним Екраном"
+        },
         "label-mode": {
           "description": "Виберіть, як відображаються мітки робочих просторів.",
           "label": "Режим міток"
@@ -388,9 +392,9 @@
     "discharging": "Розрядка.",
     "discharging-rate": "Швидкість розрядки: {rate} Вт.",
     "health": "Здоров'я: {percent}%",
+    "idle": "Бездіяльність.",
     "inhibit-idle-description": "Підтримує систему активною.",
     "inhibit-idle-label": "Не давати заснути",
-    "idle": "Бездіяльність.",
     "no-battery-detected": "Батарею не виявлено.",
     "panel-title": "Батарея",
     "plugged-in": "Підключено.",
@@ -678,9 +682,9 @@
     "clipboard-loading-description": "Зачекайте, будь ласка",
     "clipboard-search-description": "Пошук в історії буфера обміну",
     "emoji": "Обрати емодзі",
-    "emoji-search-description": "Пошук і копіювання емодзі",
     "emoji-loading": "Завантаження емодзі...",
-    "emoji-loading-description": "Зачекайте, будь ласка"
+    "emoji-loading-description": "Зачекайте, будь ласка",
+    "emoji-search-description": "Пошук і копіювання емодзі"
   },
   "quickSettings": {
     "bluetooth": {
@@ -2259,23 +2263,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Застосувати",
-      "brightness": "Яскравість",
       "cancel": "Скасувати",
-      "hex": {
-        "description": "Введіть шістнадцятковий код кольору.",
-        "label": "Hex-колір"
-      },
       "palette": {
         "description": "Виберіть із широкого діапазону попередньо визначених кольорів.",
-        "label": "Палітра"
-      },
-      "rgb": {
-        "description": "Налаштуйте значення червоного, зеленого, синього та яскравості.",
-        "label": "Значення RGB"
-      },
-      "theme-colors": {
-        "description": "Швидкий доступ до колірної палітри вашої теми.",
-        "label": "Кольори теми"
+        "label": "Палітра",
+        "theme-colors": "Швидкий доступ до колірної палітри вашої теми."
       },
       "title": "Вибір кольору"
     },
