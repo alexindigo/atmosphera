@@ -1,83 +1,38 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Services.Keyboard
 
 Item {
   id: root
 
-  // Plugin metadata and configuration
+  // Plugin metadata
   property string name: I18n.tr("plugins.emoji")
   property var launcher: null
   property bool handleSearch: false
 
-  // Emoji data storage
-  property var allEmojis: []
-  property var userEmojiData: []
-  property var builtInEmojis: []
-  property bool emojisLoaded: false
-  property bool userEmojisLoaded: false
-  property bool builtInEmojisLoaded: false
-
-  property string userEmojiFilePath: Settings.configDir + "emoji.json"
-
-  // Plugin initialization
-  Component.onCompleted: {
-    userEmojiFile.reload();
-    loadBuiltInEmojis();
-  }
-
-  // User emoji file loader
-  FileView {
-    id: userEmojiFile
-    path: userEmojiFilePath
-    printErrors: false
-    watchChanges: true
-
-    onLoaded: {
-      try {
-        const content = text();
-        if (content) {
-          const parsed = JSON.parse(content);
-          if (parsed && Array.isArray(parsed)) {
-            root.userEmojiData = parsed;
-          } else {
-            root.userEmojiData = [];
-          }
-        } else {
-          root.userEmojiData = [];
-        }
-      } catch (e) {
-        root.userEmojiData = [];
+  // Force update results when emoji service loads
+  Connections {
+    target: EmojiService
+    function onLoadedChanged() {
+      if (EmojiService.loaded && root.launcher) {
+        // Update launcher results to refresh the UI
+        root.launcher?.updateResults();
       }
-      root.userEmojisLoaded = true;
-      checkAllEmojisLoaded();
-    }
-
-    onLoadFailed: function (error) {
-      root.userEmojiData = [];
-      root.userEmojisLoaded = true;
-      checkAllEmojisLoaded();
     }
   }
 
-  // Plugin initialization method
+  // Initialize plugin
   function init() {
     Logger.i("EmojiPlugin", "Initialized");
   }
 
-  // Handler when launcher opens
-  function onOpened() {
-    if (!emojisLoaded) {
-      userEmojiFile.reload();
-    }
-  }
-
+  // Check if this plugin handles the command
   function handleCommand(searchText) {
     return searchText.startsWith(">emoji");
   }
 
+  // Return available commands when user types ">"
   function commands() {
     return [
       {
@@ -98,9 +53,8 @@ Item {
       return [];
     }
 
-    const query = searchText.slice(6).trim();
-
-    if (!emojisLoaded) {
+    if (!EmojiService.loaded) {
+      Logger.d("EmojiPlugin", "Service not loaded yet, showing loading state");
       return [
         {
           "name": I18n.tr("plugins.emoji-loading"),
@@ -112,46 +66,14 @@ Item {
       ];
     }
 
-    let results = [];
-
-    if (!query || query === "") {
-      results = allEmojis.slice(0, 20).map(emoji => formatEmojiEntry(emoji));
-    } else {
-      const terms = query.toLowerCase().split(" ");
-
-      results = allEmojis.filter(emoji => {
-        for (let term of terms) {
-          if (term === "") continue;
-
-          const emojiMatch = emoji.emoji.toLowerCase().includes(term);
-          const nameMatch = (emoji.name || "").toLowerCase().includes(term);
-          const keywordMatch = (emoji.keywords || []).some(kw => kw.toLowerCase().includes(term));
-          const categoryMatch = (emoji.category || "").toLowerCase().includes(term);
-
-          if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
-            return false;
-          }
-        }
-        return true;
-      }).map(emoji => formatEmojiEntry(emoji));
-    }
-
-    if (results.length === 0 && query !== "") {
-      return [
-        {
-          "name": I18n.tr("plugins.emoji-no-results"),
-          "description": I18n.tr(`No emojis found for "${query}"`),
-          "icon": "emote-rye",
-          "isImage": false,
-          "onActivate": function () {}
-        }
-      ];
-    }
-
-    return results;
+    Logger.d("EmojiPlugin", "Service loaded, processing query");
+    const query = searchText.slice(6).trim();
+    const emojis = EmojiService.search(query);
+    Logger.d("EmojiPlugin", `Found ${emojis.length} emojis for query: "${query}"`);
+    return emojis.map(formatEmojiEntry);
   }
 
-  // Format emoji entry
+  // Format an emoji entry for the results list
   function formatEmojiEntry(emoji) {
     let title = emoji.name;
     let description = (emoji.keywords || []).join(", ");
@@ -169,75 +91,9 @@ Item {
       "isImage": false,
       "emojiChar": emojiChar,
       "onActivate": function () {
-        Quickshell.execDetached(["sh", "-c", `echo -n "${emojiChar}" | wl-copy`]);
+        EmojiService.copy(emojiChar);
         launcher.close();
       }
     };
-  }
-
-  // Check if all emojis are loaded
-  function checkAllEmojisLoaded() {
-    if (userEmojisLoaded && builtInEmojisLoaded) {
-      finalizeEmojiLoad();
-    }
-  }
-
-  // Final emoji load completion
-  function finalizeEmojiLoad() {
-    const emojiMap = new Map();
-
-    for (const emoji of userEmojiData) {
-      emojiMap.set(emoji.emoji, emoji);
-    }
-
-    for (const emoji of builtInEmojis) {
-      if (!emojiMap.has(emoji.emoji)) {
-        emojiMap.set(emoji.emoji, emoji);
-      }
-    }
-
-    // Convert map back to array
-    allEmojis = Array.from(emojiMap.values());
-    emojisLoaded = true;
-    Logger.i("EmojiPlugin", `Loaded ${allEmojis.length} total emojis`);
-  }
-
-  // Built-in emoji file loader
-  FileView {
-    id: builtinEmojiFile
-    path: `${Quickshell.shellDir}/Assets/Launcher/emoji.json`
-    watchChanges: false
-    printErrors: false
-
-    onLoaded: {
-      try {
-        const content = text();
-        if (content) {
-          const parsed = JSON.parse(content);
-          if (parsed && Array.isArray(parsed)) {
-            root.builtInEmojis = parsed;
-          } else {
-            root.builtInEmojis = [];
-          }
-        } else {
-          root.builtInEmojis = [];
-        }
-      } catch (e) {
-        root.builtInEmojis = [];
-      }
-      root.builtInEmojisLoaded = true;
-      checkAllEmojisLoaded();
-    }
-
-    onLoadFailed: function(error) {
-      root.builtInEmojis = [];
-      root.builtInEmojisLoaded = true;
-      checkAllEmojisLoaded();
-    }
-  }
-
-  // Load built-in emojis
-  function loadBuiltInEmojis() {
-    builtinEmojiFile.reload();
   }
 }
