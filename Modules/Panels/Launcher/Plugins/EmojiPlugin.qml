@@ -20,12 +20,12 @@ Item {
   property bool userEmojisLoaded: false
   property bool builtInEmojisLoaded: false
 
-  // User custom emoji file path
-  property string userEmojiFilePath: Settings.dataDir + "emoji.json"
+  property string userEmojiFilePath: Settings.configDir + "emoji.json"
 
   // Plugin initialization
   Component.onCompleted: {
     userEmojiFile.reload();
+    loadBuiltInEmojis();
   }
 
   // User emoji file loader
@@ -54,7 +54,7 @@ Item {
       root.userEmojisLoaded = true;
       checkAllEmojisLoaded();
     }
-    
+
     onLoadFailed: function (error) {
       root.userEmojiData = [];
       root.userEmojisLoaded = true;
@@ -74,12 +74,10 @@ Item {
     }
   }
 
-  // Check if handles command
   function handleCommand(searchText) {
     return searchText.startsWith(">emoji");
   }
 
-  // Register commands
   function commands() {
     return [
       {
@@ -186,7 +184,20 @@ Item {
 
   // Final emoji load completion
   function finalizeEmojiLoad() {
-    allEmojis = userEmojiData.concat(builtInEmojis);
+    const emojiMap = new Map();
+
+    for (const emoji of userEmojiData) {
+      emojiMap.set(emoji.emoji, emoji);
+    }
+
+    for (const emoji of builtInEmojis) {
+      if (!emojiMap.has(emoji.emoji)) {
+        emojiMap.set(emoji.emoji, emoji);
+      }
+    }
+
+    // Convert map back to array
+    allEmojis = Array.from(emojiMap.values());
     emojisLoaded = true;
     Logger.i("EmojiPlugin", `Loaded ${allEmojis.length} total emojis`);
   }
@@ -194,7 +205,7 @@ Item {
   // Built-in emoji file loader
   FileView {
     id: builtinEmojiFile
-    path: `${Quickshell.shellDir}/Assets/emoji.json`
+    path: `${Quickshell.shellDir}/Assets/Launcher/emoji.json`
     watchChanges: false
     printErrors: false
 
