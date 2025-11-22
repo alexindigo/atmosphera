@@ -369,7 +369,7 @@ Popup {
                 spacing: Style.marginM
 
                 NLabel {
-                  label: I18n.tr("widgets.color-picker.hex")
+                  label: "Hex:"
                   Layout.alignment: Qt.AlignVCenter
                 }
 
