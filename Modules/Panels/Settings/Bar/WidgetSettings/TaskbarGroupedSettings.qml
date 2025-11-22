@@ -67,7 +67,6 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.taskbar-grouped.show-labels-only-when-occupied.description")
     checked: root.valueShowLabelsOnlyWhenOccupied
     onToggled: checked => root.valueShowLabelsOnlyWhenOccupied = checked
-    visible: !root.valueHideUnoccupied
   }
 
   NToggle {
