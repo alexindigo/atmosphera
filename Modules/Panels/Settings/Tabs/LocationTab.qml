@@ -37,7 +37,6 @@ ColumnLayout {
           LocationService.resetWeather();
         }
       }
-      Layout.maximumWidth: 420
     }
 
     NText {
