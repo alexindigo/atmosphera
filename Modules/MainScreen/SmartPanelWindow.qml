@@ -99,6 +99,9 @@ PanelWindow {
   onOpacityFadeCompleteChanged: {
     placeholder.opacityFadeComplete = opacityFadeComplete;
   }
+  onSizeAnimationCompleteChanged: {
+    placeholder.sizeAnimationComplete = sizeAnimationComplete;
+  }
 
   // Panel control functions
   function toggle(buttonItem, buttonName) {
