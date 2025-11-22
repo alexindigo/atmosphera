@@ -1506,6 +1506,10 @@
         "description": "Bloquear la pantalla automáticamente al suspender el sistema.",
         "label": "Bloquear al suspender"
       },
+      "show-hibernate": {
+        "description": "Mostrar la opción 'hibernar' en las acciones de energía.",
+        "label": "Mostrar hibernar"
+      },
       "title": "Pantalla de bloqueo"
     },
     "network": {

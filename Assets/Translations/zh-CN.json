@@ -1506,6 +1506,10 @@
         "description": "系统挂起时自动锁定屏幕。",
         "label": "挂起时锁定"
       },
+      "show-hibernate": {
+        "description": "在电源操作中显示'休眠'选项。",
+        "label": "显示休眠"
+      },
       "title": "锁屏"
     },
     "network": {

@@ -1506,6 +1506,10 @@
         "description": "Vergrendel het scherm automatisch wanneer het systeem wordt onderbroken.",
         "label": "Vergrendelen bij onderbreken"
       },
+      "show-hibernate": {
+        "description": "De optie 'sluimerstand' tonen in de energieacties.",
+        "label": "Sluimerstand tonen"
+      },
       "title": "Vergrendelscherm"
     },
     "network": {
