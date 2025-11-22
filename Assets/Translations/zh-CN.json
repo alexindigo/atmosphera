@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "亮度",
+    "charge-level": "电量",
     "charging": "正在充电。",
     "charging-rate": "充电速率：{rate} W。",
     "discharging": "正在放电。",
     "discharging-rate": "放电速率：{rate} W。",
     "health": "健康状况：{percent}%",
+    "inhibit-idle-description": "保持系统唤醒。",
+    "inhibit-idle-label": "保持唤醒",
     "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
+    "panel-title": "电池",
     "plugged-in": "已接通电源。",
+    "power-profile": "电源模式",
     "time-left": "剩余时间：{time}。",
     "time-until-full": "充满所需时间：{time}。"
   },
