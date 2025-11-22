@@ -9,12 +9,14 @@ import qs.Commons
 Singleton {
   id: root
 
-  // --- Public API ---
-
-  // List of all loaded emojis after deduplication
   property var emojis: []
-  // True when emojis are fully loaded
   property bool loaded: false
+
+  // Usage tracking for popular emojis
+  property var usageCounts: ({})
+
+  // File path for persisting usage data
+  readonly property string usageFilePath: Settings.cacheDir + "emoji_usage.json"
 
   // Searches emojis based on query
   function search(query) {
@@ -23,11 +25,12 @@ Singleton {
     }
 
     if (!query || query.trim() === "") {
-      return emojis.slice(0, 20);
+      // Return popular/recently used emojis, fallback to all emojis sorted by usage
+      return _getPopularEmojis(50);
     }
 
     const terms = query.toLowerCase().split(" ").filter(t => t);
-    return emojis.filter(emoji => {
+    const results = emojis.filter(emoji => {
       for (let term of terms) {
         const emojiMatch = emoji.emoji.toLowerCase().includes(term);
         const nameMatch = (emoji.name || "").toLowerCase().includes(term);
@@ -40,16 +43,45 @@ Singleton {
       }
       return true;
     });
+
+    return results;
   }
 
-  // Copies emoji to clipboard
-  function copy(emojiChar) {
+  // Get popular emojis sorted by usage count
+  function _getPopularEmojis(limit) {
+    // Create array of emojis with their usage counts
+    const emojisWithUsage = emojis.map(emoji => {
+      return {
+        emoji: emoji,
+        usageCount: usageCounts[emoji.emoji] || 0
+      };
+    });
+
+    // Sort by usage count (descending), then by name
+    emojisWithUsage.sort((a, b) => {
+      if (b.usageCount !== a.usageCount) {
+        return b.usageCount - a.usageCount;
+      }
+      return (a.emoji.name || "").localeCompare(b.emoji.name || "");
+    });
+
+    // Return the emoji objects limited by the specified count
+    return emojisWithUsage.slice(0, limit).map(item => item.emoji);
+  }
+
+  // Record emoji usage
+  function recordUsage(emojiChar) {
     if (emojiChar) {
-      Quickshell.execDetached(["sh", "-c", `echo -n "${emojiChar}" | wl-copy`]);
+      const currentCount = usageCounts[emojiChar] || 0;
+      usageCounts[emojiChar] = currentCount + 1;
+      _saveUsageData();
     }
   }
 
-  // --- Service Implementation ---
+  // Ensure usage file exists with default content
+  function _ensureUsageFileExists() {
+    Quickshell.execDetached(["sh", "-c", `mkdir -p "$(dirname "${root.usageFilePath}")" && echo '{}' > "${root.usageFilePath}"`]);
+  }
 
   // File paths
   readonly property string userEmojiPath: Settings.configDir + "emoji.json"
@@ -62,7 +94,7 @@ Singleton {
 
   // Initialize on component completion
   Component.onCompleted: {
-    Logger.d("EmojiService", "Starting initialization...");
+    _loadUsageData();
     _loadEmojis();
   }
 
@@ -74,26 +106,21 @@ Singleton {
     watchChanges: false
 
     onLoaded: {
-      Logger.d("EmojiService", "User emoji file loaded");
       try {
         const content = text();
         if (content) {
           const parsed = JSON.parse(content);
           _userEmojiData = Array.isArray(parsed) ? parsed : [];
-          Logger.d("EmojiService", `Parsed ${_userEmojiData.length} user emojis`);
         } else {
           _userEmojiData = [];
-          Logger.d("EmojiService", "No user emoji content");
         }
       } catch (e) {
         _userEmojiData = [];
-        Logger.w("EmojiService", "Failed to parse user emojis: " + e.message);
       }
       _onLoadComplete();
     }
 
     onLoadFailed: function(error) {
-      Logger.d("EmojiService", "User emoji file load failed: " + error);
       _userEmojiData = [];
       _onLoadComplete();
     }
@@ -113,18 +140,15 @@ Singleton {
           _builtinEmojiData = Array.isArray(parsed) ? parsed : [];
         } else {
           _builtinEmojiData = [];
-          Logger.e("EmojiService", "Built-in emoji file is empty");
         }
       } catch (e) {
         _builtinEmojiData = [];
-        Logger.e("EmojiService", "Failed to parse built-in emojis: " + e.message);
       }
       _onLoadComplete();
     }
 
     onLoadFailed: function(error) {
       _builtinEmojiData = [];
-      Logger.e("EmojiService", "Failed to load built-in emojis: " + error);
       _onLoadComplete();
     }
   }
@@ -164,7 +188,72 @@ Singleton {
 
     emojis = Array.from(emojiMap.values());
     loaded = true;
+  }
 
-    Logger.i("EmojiService", `Loaded ${emojis.length} unique emojis after deduplication (${_userEmojiData.length} user, ${_builtinEmojiData.length} built-in)`);
+  // FileView for usage data
+  FileView {
+    id: usageFile
+    path: root.usageFilePath
+    printErrors: false
+    watchChanges: false
+
+    onLoaded: {
+      try {
+        const content = text();
+        if (content && content.trim() !== "") {
+          const parsed = JSON.parse(content);
+          if (parsed && typeof parsed === 'object') {
+            root.usageCounts = parsed;
+          } else {
+            root.usageCounts = {};
+          }
+        } else {
+          root.usageCounts = {};
+        }
+      } catch (e) {
+        root.usageCounts = {};
+      }
+    }
+
+    onLoadFailed: function(error) {
+      root.usageCounts = {};
+      Qt.callLater(_ensureUsageFileExists);
+    }
   }
+
+  // Timer for debouncing usage data saves
+  Timer {
+    id: saveTimer
+    interval: 1000
+    repeat: false
+    onTriggered: _doSaveUsageData()
   }
+
+  // Load usage data
+  function _loadUsageData() {
+    usageFile.reload();
+  }
+
+  // Save usage data with debounce
+  function _saveUsageData() {
+    saveTimer.restart();
+  }
+
+  // Actually save usage data to file
+  function _doSaveUsageData() {
+    try {
+      const content = JSON.stringify(root.usageCounts);
+      Quickshell.execDetached(["sh", "-c", `mkdir -p "$(dirname "${root.usageFilePath}")" && echo '${content}' > "${root.usageFilePath}"`]);
+    } catch (e) {
+      Logger.e("EmojiService", "Failed to save usage data: " + e.message);
+    }
+  }
+
+  // Copies emoji to clipboard
+  function copy(emojiChar) {
+    if (emojiChar) {
+      recordUsage(emojiChar);  // Record usage before copying
+      Quickshell.execDetached(["sh", "-c", `echo -n "${emojiChar}" | wl-copy`]);
+    }
+  }
+}

@@ -54,7 +54,6 @@ Item {
     }
 
     if (!EmojiService.loaded) {
-      Logger.d("EmojiPlugin", "Service not loaded yet, showing loading state");
       return [
         {
           "name": I18n.tr("plugins.emoji-loading"),
@@ -66,10 +65,8 @@ Item {
       ];
     }
 
-    Logger.d("EmojiPlugin", "Service loaded, processing query");
     const query = searchText.slice(6).trim();
     const emojis = EmojiService.search(query);
-    Logger.d("EmojiPlugin", `Found ${emojis.length} emojis for query: "${query}"`);
     return emojis.map(formatEmojiEntry);
   }
 
