@@ -32,19 +32,24 @@ Singleton {
   // Backend service loader
   property var backend: null
 
-  // Cache file path
-  property string displayCachePath: ""
-
   Component.onCompleted: {
-    // Setup cache path (needs Settings to be available)
+    // Load display scales from ShellState
     Qt.callLater(() => {
-                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
-                     displayCachePath = Settings.cacheDir + "display.json";
-                     displayCacheFileView.path = displayCachePath;
+                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                     loadDisplayScalesFromState();
                    }
                  });
 
     detectCompositor();
+  }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        loadDisplayScalesFromState();
+      }
+    }
   }
 
   function detectCompositor() {
@@ -99,28 +104,21 @@ Singleton {
     }
   }
 
-  // Cache FileView for display scales
-  FileView {
-    id: displayCacheFileView
-    printErrors: false
-    watchChanges: false
-
-    adapter: JsonAdapter {
-      id: displayCacheAdapter
-      property var displays: ({})
-    }
-
-    onLoaded: {
-      // Load cached display scales
-      displayScales = displayCacheAdapter.displays || {};
+  // Load display scales from ShellState
+  function loadDisplayScalesFromState() {
+    try {
+      const cached = ShellState.getDisplay();
+      if (cached && Object.keys(cached).length > 0) {
+        displayScales = cached;
+        displayScalesLoaded = true;
+        Logger.d("CompositorService", "Loaded display scales from ShellState");
+      } else {
+        // Migration is now handled in Settings.qml
+        displayScalesLoaded = true;
+      }
+    } catch (error) {
+      Logger.e("CompositorService", "Failed to load display scales:", error);
       displayScalesLoaded = true;
-      // Logger.i("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
-    }
-
-    onLoadFailed: {
-      // Cache doesn't exist yet, will be created on first update
-      displayScalesLoaded = true;
-      // Logger.i("CompositorService", "No display cache found, will create on first update")
     }
   }
 
@@ -234,12 +232,12 @@ Singleton {
 
   // Save display scales to cache
   function saveDisplayScalesToCache() {
-    if (!displayCachePath) {
-      return;
+    try {
+      ShellState.setDisplay(displayScales);
+      Logger.d("CompositorService", "Saved display scales to ShellState");
+    } catch (error) {
+      Logger.e("CompositorService", "Failed to save display scales:", error);
     }
-
-    displayCacheAdapter.displays = displayScales;
-    displayCacheFileView.writeAdapter();
   }
 
   // Public function to get scale for a specific display

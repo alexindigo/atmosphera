@@ -37,6 +37,7 @@ ShellRoot {
 
   property bool i18nLoaded: false
   property bool settingsLoaded: false
+  property bool shellStateLoaded: false
 
   Component.onCompleted: {
     Logger.i("Shell", "---------------------------");
@@ -63,8 +64,18 @@ ShellRoot {
       settingsLoaded = true;
     }
   }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        shellStateLoaded = true;
+      }
+    }
+  }
+
   Loader {
-    active: i18nLoaded && settingsLoaded
+    active: i18nLoaded && settingsLoaded && shellStateLoaded
 
     sourceComponent: Item {
       Component.onCompleted: {

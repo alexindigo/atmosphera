@@ -213,6 +213,7 @@ Singleton {
   FileView {
     id: colorsWriter
     path: colorsJsonFilePath
+    printErrors: false
     onSaved:
 
     // Logger.i("ColorScheme", "Colors saved")

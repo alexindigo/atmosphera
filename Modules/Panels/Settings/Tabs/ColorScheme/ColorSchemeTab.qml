@@ -853,6 +853,7 @@ ColumnLayout {
                      }
                    }
       }
+
     }
     // Miscellaneous
     NCollapsible {
