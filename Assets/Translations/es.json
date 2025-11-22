@@ -2259,23 +2259,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Aplicar",
-      "brightness": "Brillo",
       "cancel": "Cancelar",
-      "hex": {
-        "description": "Ingresa un código de color hexadecimal.",
-        "label": "Color hexadecimal"
-      },
       "palette": {
         "description": "Elige entre una amplia gama de colores predefinidos.",
-        "label": "Paleta"
-      },
-      "rgb": {
-        "description": "Ajusta los valores de rojo, verde, azul y brillo.",
-        "label": "Valores RGB"
-      },
-      "theme-colors": {
-        "description": "Acceso rápido a la paleta de colores de tu tema.",
-        "label": "Colores del tema"
+        "label": "Paleta",
+        "theme-colors": "Acceso rápido a la paleta de colores de tu tema."
       },
       "title": "Selector de colores"
     },

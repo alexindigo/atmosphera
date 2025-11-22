@@ -2259,23 +2259,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Uygula",
-      "brightness": "Parlaklık",
       "cancel": "İptal",
-      "hex": {
-        "description": "Onaltılık renk kodu girin.",
-        "label": "Hex renk"
-      },
       "palette": {
         "description": "Önceden tanımlı renkler geniş yelpazesinden seçin.",
-        "label": "Palet"
-      },
-      "rgb": {
-        "description": "Kırmızı, yeşil, mavi ve parlaklık değerlerini ayarlayın.",
-        "label": "RGB değerleri"
-      },
-      "theme-colors": {
-        "description": "Temanızın renk paletine hızlı erişim.",
-        "label": "Tema renkleri"
+        "label": "Palet",
+        "theme-colors": "Temanızın renk paletine hızlı erişim."
       },
       "title": "Renk seçici"
     },
