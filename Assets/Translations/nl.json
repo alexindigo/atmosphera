@@ -2241,23 +2241,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Toepassen",
-      "brightness": "Helderheid",
       "cancel": "Annuleren",
-      "hex": {
-        "description": "Voer een hexadecimale kleurcode in.",
-        "label": "Hex-kleur"
-      },
       "palette": {
         "description": "Kies uit een breed scala aan vooraf gedefinieerde kleuren.",
-        "label": "Palet"
-      },
-      "rgb": {
-        "description": "Pas de waarden voor rood, groen, blauw en helderheid aan.",
-        "label": "RGB-waarden"
-      },
-      "theme-colors": {
-        "description": "Snelle toegang tot het kleurenpalet van je thema.",
-        "label": "Themakleuren"
+        "label": "Palet",
+        "theme-colors": "Snelle toegang tot het kleurenpalet van je thema."
       },
       "title": "Kleurkiezer"
     },

@@ -2241,23 +2241,11 @@
   "widgets": {
     "color-picker": {
       "apply": "应用",
-      "brightness": "亮度",
       "cancel": "取消",
-      "hex": {
-        "description": "输入十六进制颜色代码。",
-        "label": "十六进制颜色"
-      },
       "palette": {
         "description": "从各种预定义颜色中选择。",
-        "label": "调色板"
-      },
-      "rgb": {
-        "description": "调整红、绿、蓝和亮度值。",
-        "label": "RGB 值"
-      },
-      "theme-colors": {
-        "description": "快速访问您的主题调色板。",
-        "label": "主题颜色"
+        "label": "调色板",
+        "theme-colors": "快速访问您主题的调色板。"
       },
       "title": "颜色选择器"
     },

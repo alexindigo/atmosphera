@@ -2241,23 +2241,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Anwenden",
-      "brightness": "Helligkeit",
       "cancel": "Abbrechen",
-      "hex": {
-        "description": "Geben Sie einen hexadezimalen Farbcode ein.",
-        "label": "Hex-Farbe"
-      },
       "palette": {
         "description": "Wählen Sie aus einer großen Auswahl vordefinierter Farben.",
-        "label": "Palette"
-      },
-      "rgb": {
-        "description": "Passen Sie Rot-, Grün-, Blau- und Helligkeitswerte an.",
-        "label": "RGB-Werte"
-      },
-      "theme-colors": {
-        "description": "Schnellzugriff auf die Farbpalette Ihres Themes.",
-        "label": "Theme-Farben"
+        "label": "Palette",
+        "theme-colors": "Schneller Zugriff auf die Farbpalette Ihres Themes."
       },
       "title": "Farbauswahl"
     },
