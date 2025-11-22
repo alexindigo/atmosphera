@@ -15,7 +15,6 @@ Singleton {
   readonly property bool isDevelopment: true
   readonly property string developmentSuffix: "-git"
   readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
-  readonly property string changelogStateFile: Quickshell.env("NOCTALIA_CHANGELOG_STATE_FILE") || (Settings.cacheDir + "changelog-state.json")
 
   // URLs
   readonly property string discordUrl: "https://discord.noctalia.dev"
@@ -50,30 +49,21 @@ Singleton {
 
     initialized = true;
     Logger.i("UpdateService", "Version:", root.currentVersion);
+
+    // Load changelog state from ShellState
+    Qt.callLater(() => {
+                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                     loadChangelogState();
+                   }
+                 });
   }
 
-  FileView {
-    id: changelogStateFileView
-    path: root.changelogStateFile
-    printErrors: false
-    onLoaded: loadChangelogState()
-    onLoadFailed: error => {
-      if (error === 2) {
-        // File doesn't exist, create it
-        debouncedSaveChangelogState();
-      } else {
-        Logger.e("UpdateService", "Failed to load changelog state file:", error);
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        loadChangelogState();
       }
-      changelogStateLoaded = true;
-      if (pendingShowRequest) {
-        pendingShowRequest = false;
-        Qt.callLater(root.showLatestChangelog);
-      }
-    }
-
-    JsonAdapter {
-      id: changelogStateAdapter
-      property string lastSeenVersion: ""
     }
   }
 
@@ -326,12 +316,11 @@ Singleton {
 
   function loadChangelogState() {
     try {
-      changelogLastSeenVersion = changelogStateAdapter.lastSeenVersion || "";
-      if (!changelogLastSeenVersion && Settings.data && Settings.data.changelog && Settings.data.changelog.lastSeenVersion) {
-        changelogLastSeenVersion = Settings.data.changelog.lastSeenVersion;
-        debouncedSaveChangelogState();
-        Logger.i("UpdateService", "Migrated changelog lastSeenVersion from settings to cache");
-      }
+      const changelog = ShellState.getChangelogState();
+      changelogLastSeenVersion = changelog.lastSeenVersion || "";
+
+      // Migration is now handled in Settings.qml
+      Logger.d("UpdateService", "Loaded changelog state from ShellState");
     } catch (error) {
       Logger.e("UpdateService", "Failed to load changelog state:", error);
     }
@@ -363,26 +352,16 @@ Singleton {
     saveInProgress = true;
 
     try {
-      changelogStateAdapter.lastSeenVersion = changelogLastSeenVersion || "";
+      ShellState.setChangelogState({
+                                     lastSeenVersion: changelogLastSeenVersion || ""
+                                   });
+      Logger.d("UpdateService", "Saved changelog state to ShellState");
+      saveInProgress = false;
 
-      // Ensure cache directory exists
-      Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
-
-      // Small delay to ensure directory creation completes
-      Qt.callLater(() => {
-                     try {
-                       changelogStateFileView.writeAdapter();
-                       saveInProgress = false;
-
-                       // Check if another save was queued while we were saving
-                       if (pendingSave) {
-                         Qt.callLater(executeSave);
-                       }
-                     } catch (writeError) {
-                       Logger.e("UpdateService", "Failed to write changelog state:", writeError);
-                       saveInProgress = false;
-                     }
-                   });
+      // Check if another save was queued while we were saving
+      if (pendingSave) {
+        Qt.callLater(executeSave);
+      }
     } catch (error) {
       Logger.e("UpdateService", "Failed to save changelog state:", error);
       saveInProgress = false;

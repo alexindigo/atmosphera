@@ -26,8 +26,7 @@ Popup {
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
 
-  // Cache for available schemes list
-  property string schemesCacheFile: Settings.cacheDir + "color-schemes-list.json"
+  // Cache for available schemes list (uses ShellState singleton)
   property int schemesCacheUpdateFrequency: 2 * 60 * 60 // 2 hours in seconds
 
   // Cache for repo branch info (to reduce API calls during downloads)
@@ -99,34 +98,6 @@ Popup {
     xhr.send();
   }
 
-  // Cache file for schemes list
-  FileView {
-    id: schemesCacheFileView
-    path: schemesCacheFile
-    printErrors: false
-
-    JsonAdapter {
-      id: schemesCacheAdapter
-      property var schemes: []
-      property real timestamp: 0
-    }
-
-    onLoaded: {
-      loadSchemesFromCache();
-    }
-
-    onLoadFailed: function (error) {
-      if (error.toString().includes("No such file") || error === 2) {
-        // Cache doesn't exist, fetch from API (only if popup is open)
-        if (root.visible) {
-          Qt.callLater(() => {
-                         fetchAvailableSchemesFromAPI();
-                       });
-        }
-      }
-    }
-  }
-
   background: Rectangle {
     color: Color.mSurface
     radius: Style.radiusL
@@ -135,58 +106,67 @@ Popup {
   }
 
   function loadSchemesFromCache() {
-    const now = Time.timestamp;
+    try {
+      const now = Time.timestamp;
+      const cacheData = ShellState.getColorSchemesList();
+      const cachedSchemes = cacheData.schemes || [];
+      const cachedTimestamp = cacheData.timestamp || 0;
 
-    // Check if cache is expired or missing
-    if (!schemesCacheAdapter.timestamp || (now >= schemesCacheAdapter.timestamp + schemesCacheUpdateFrequency)) {
-      // Only fetch from API if we haven't fetched recently (prevent rapid repeated calls)
-      const timeSinceLastFetch = now - lastApiFetchTime;
-      if (timeSinceLastFetch >= minApiFetchInterval) {
-        Logger.d("ColorSchemeDownload", "Cache expired or missing, fetching new schemes");
-        fetchAvailableSchemesFromAPI();
-        return;
-      } else {
-        // Use cached data even if expired, to avoid rate limits
-        Logger.d("ColorSchemeDownload", "Cache expired but recent API call detected, using cached data");
-        if (schemesCacheAdapter.schemes && schemesCacheAdapter.schemes.length > 0) {
-          availableSchemes = schemesCacheAdapter.schemes;
-          hasInitialData = true;
-          fetching = false;
+      // Check if cache is expired or missing
+      if (!cachedTimestamp || (now >= cachedTimestamp + schemesCacheUpdateFrequency)) {
+        // Migration is now handled in Settings.qml
+
+        // Only fetch from API if we haven't fetched recently (prevent rapid repeated calls)
+        const timeSinceLastFetch = now - lastApiFetchTime;
+        if (timeSinceLastFetch >= minApiFetchInterval) {
+          Logger.d("ColorSchemeDownload", "Cache expired or missing, fetching new schemes");
+          fetchAvailableSchemesFromAPI();
           return;
+        } else {
+          // Use cached data even if expired, to avoid rate limits
+          Logger.d("ColorSchemeDownload", "Cache expired but recent API call detected, using cached data");
+          if (cachedSchemes.length > 0) {
+            availableSchemes = cachedSchemes;
+            hasInitialData = true;
+            fetching = false;
+            return;
+          }
         }
       }
-    }
 
-    const ageMinutes = Math.round((now - schemesCacheAdapter.timestamp) / 60);
-    Logger.d("ColorSchemeDownload", "Loading cached schemes (age:", ageMinutes, "minutes)");
+      const ageMinutes = Math.round((now - cachedTimestamp) / 60);
+      Logger.d("ColorSchemeDownload", "Loading cached schemes from ShellState (age:", ageMinutes, "minutes)");
 
-    if (schemesCacheAdapter.schemes && schemesCacheAdapter.schemes.length > 0) {
-      availableSchemes = schemesCacheAdapter.schemes;
-      hasInitialData = true;
-      fetching = false;
-    } else {
-      // Cache is empty, only fetch if we haven't fetched recently
-      const timeSinceLastFetch = now - lastApiFetchTime;
-      if (timeSinceLastFetch >= minApiFetchInterval) {
-        fetchAvailableSchemesFromAPI();
-      } else {
-        Logger.d("ColorSchemeDownload", "Cache empty but recent API call detected, skipping fetch");
+      if (cachedSchemes.length > 0) {
+        availableSchemes = cachedSchemes;
+        hasInitialData = true;
         fetching = false;
+      } else {
+        // Cache is empty, only fetch if we haven't fetched recently
+        const timeSinceLastFetch = now - lastApiFetchTime;
+        if (timeSinceLastFetch >= minApiFetchInterval) {
+          fetchAvailableSchemesFromAPI();
+        } else {
+          Logger.d("ColorSchemeDownload", "Cache empty but recent API call detected, skipping fetch");
+          fetching = false;
+        }
       }
+    } catch (error) {
+      Logger.e("ColorSchemeDownload", "Failed to load schemes from cache:", error);
+      fetching = false;
     }
   }
 
   function saveSchemesToCache() {
-    schemesCacheAdapter.schemes = availableSchemes;
-    schemesCacheAdapter.timestamp = Time.timestamp;
-
-    // Ensure cache directory exists
-    Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
-
-    Qt.callLater(() => {
-                   schemesCacheFileView.writeAdapter();
-                   Logger.d("ColorSchemeDownload", "Schemes list saved to cache");
-                 });
+    try {
+      ShellState.setColorSchemesList({
+                                       schemes: availableSchemes,
+                                       timestamp: Time.timestamp
+                                     });
+      Logger.d("ColorSchemeDownload", "Schemes list saved to ShellState");
+    } catch (error) {
+      Logger.e("ColorSchemeDownload", "Failed to save schemes to cache:", error);
+    }
   }
 
   function fetchAvailableSchemes() {
@@ -194,19 +174,11 @@ Popup {
       return;
     }
 
-    // Path is set when popup becomes visible, so FileView will start loading
-    // Try to load from cache first
-    if (schemesCacheFileView.loaded) {
+    // Try to load from ShellState cache first
+    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
       loadSchemesFromCache();
-    } else if (schemesCacheFileView.path) {
-      // Cache file path is set but not loaded yet, wait for it to load
-      // The FileView will trigger loadSchemesFromCache() when loaded
-      // But if it fails, we should fetch from API
-      if (!schemesCacheFileView.loading) {
-        schemesCacheFileView.reload();
-      }
     } else {
-      // No cache file path, fetch directly from API
+      // ShellState not ready, fetch directly from API
       fetchAvailableSchemesFromAPI();
     }
   }
@@ -725,7 +697,25 @@ Popup {
   }
 
   onAvailableSchemesChanged: preFetchSchemeColors()
-  onVisibleChanged: preFetchSchemeColors()
+  onVisibleChanged: {
+    preFetchSchemeColors();
+
+    // Load schemes from ShellState when popup becomes visible
+    if (visible) {
+      if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+        loadSchemesFromCache();
+      }
+    }
+  }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (root.visible && ShellState.isLoaded) {
+        loadSchemesFromCache();
+      }
+    }
+  }
 
   contentItem: ColumnLayout {
     id: contentColumn

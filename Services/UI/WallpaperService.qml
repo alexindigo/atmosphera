@@ -83,18 +83,38 @@ Singleton {
 
     translateModels();
 
-    // Rebuild cache from settings
+    // Load wallpapers from ShellState first (faster), then fall back to Settings
     currentWallpapers = ({});
+
+    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+      var cachedWallpapers = ShellState.getWallpapers();
+      if (cachedWallpapers && Object.keys(cachedWallpapers).length > 0) {
+        currentWallpapers = cachedWallpapers;
+        Logger.d("Wallpaper", "Loaded wallpapers from ShellState");
+      } else {
+        // Fall back to Settings if ShellState is empty
+        loadFromSettings();
+      }
+    } else {
+      // ShellState not ready yet, load from Settings
+      loadFromSettings();
+    }
+
+    isInitialized = true;
+    Logger.d("Wallpaper", "Triggering initial wallpaper scan");
+    Qt.callLater(refreshWallpapersList);
+  }
+
+  function loadFromSettings() {
     var monitors = Settings.data.wallpaper.monitors || [];
     for (var i = 0; i < monitors.length; i++) {
       if (monitors[i].name && monitors[i].wallpaper) {
         currentWallpapers[monitors[i].name] = monitors[i].wallpaper;
       }
     }
+    Logger.d("Wallpaper", "Loaded wallpapers from Settings");
 
-    isInitialized = true;
-    Logger.d("Wallpaper", "Triggering initial wallpaper scan");
-    Qt.callLater(refreshWallpapersList);
+    // Migration is now handled in Settings.qml
   }
 
   // -------------------------------------------------
@@ -270,32 +290,10 @@ Singleton {
     // Update cache directly
     currentWallpapers[screenName] = path;
 
-    // Update Settings - still need immutable update for Settings persistence
-    // The slice() ensures Settings detects the change and saves properly
-    var monitors = Settings.data.wallpaper.monitors || [];
-    var found = false;
-
-    var newMonitors = monitors.map(function (monitor) {
-      if (monitor.name === screenName) {
-        found = true;
-        return {
-          "name": screenName,
-          "directory": Settings.preprocessPath(monitor.directory) || getMonitorDirectory(screenName),
-          "wallpaper": path
-        };
-      }
-      return monitor;
-    });
-
-    if (!found) {
-      newMonitors.push({
-                         "name": screenName,
-                         "directory": getMonitorDirectory(screenName),
-                         "wallpaper": path
-                       });
+    // Save to ShellState (wallpaper paths now only stored here, not in Settings)
+    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+      ShellState.setWallpapers(currentWallpapers);
     }
-
-    Settings.data.wallpaper.monitors = newMonitors.slice();
 
     // Emit signal for this specific wallpaper change
     root.wallpaperChanged(screenName, path);
