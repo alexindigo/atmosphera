@@ -113,41 +113,13 @@ Singleton {
         displayScalesLoaded = true;
         Logger.d("CompositorService", "Loaded display scales from ShellState");
       } else {
-        // Try to migrate from old display.json if it exists
-        migrateFromOldDisplayFile();
+        // Migration is now handled in Settings.qml
+        displayScalesLoaded = true;
       }
     } catch (error) {
       Logger.e("CompositorService", "Failed to load display scales:", error);
       displayScalesLoaded = true;
     }
-  }
-
-  // Migration from old display.json file
-  function migrateFromOldDisplayFile() {
-    const oldDisplayPath = Settings.cacheDir + "display.json";
-    const migrationFileView = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      FileView {
-        id: migrationView
-        path: "${oldDisplayPath}"
-        printErrors: false
-        adapter: JsonAdapter {
-          property var displays: ({})
-        }
-        onLoaded: {
-          parent.displayScales = adapter.displays || {};
-          parent.displayScalesLoaded = true;
-          parent.saveDisplayScalesToCache();
-          Logger.i("CompositorService", "Migrated display.json to ShellState");
-          migrationView.destroy();
-        }
-        onLoadFailed: {
-          parent.displayScalesLoaded = true;
-          migrationView.destroy();
-        }
-      }
-    `, root, "migrationFileView");
   }
 
   // Hyprland backend component

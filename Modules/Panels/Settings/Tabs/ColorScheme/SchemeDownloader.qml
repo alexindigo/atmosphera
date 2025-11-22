@@ -114,10 +114,7 @@ Popup {
 
       // Check if cache is expired or missing
       if (!cachedTimestamp || (now >= cachedTimestamp + schemesCacheUpdateFrequency)) {
-        // Try migration first if cache is empty
-        if (cachedSchemes.length === 0) {
-          migrateFromOldSchemesList();
-        }
+        // Migration is now handled in Settings.qml
 
         // Only fetch from API if we haven't fetched recently (prevent rapid repeated calls)
         const timeSinceLastFetch = now - lastApiFetchTime;
@@ -158,32 +155,6 @@ Popup {
       Logger.e("ColorSchemeDownload", "Failed to load schemes from cache:", error);
       fetching = false;
     }
-  }
-
-  function migrateFromOldSchemesList() {
-    const oldSchemesPath = Settings.cacheDir + "color-schemes-list.json";
-    const migrationFileView = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      FileView {
-        id: migrationView
-        path: "${oldSchemesPath}"
-        printErrors: false
-        adapter: JsonAdapter {
-          property var schemes: []
-          property real timestamp: 0
-        }
-        onLoaded: {
-          root.availableSchemes = adapter.schemes || [];
-          root.saveSchemesToCache();
-          Logger.i("ColorSchemeDownload", "Migrated color-schemes-list.json to ShellState");
-          migrationView.destroy();
-        }
-        onLoadFailed: {
-          migrationView.destroy();
-        }
-      }
-    `, root, "schemesMigrationView");
   }
 
   function saveSchemesToCache() {

@@ -794,6 +794,220 @@ Singleton {
         Logger.w("Settings", "Failed to read raw JSON for dimDesktop migration:", error);
       }
     }
+
+    // -----------------
+    // 8th. Migrate ShellState-related files from old cache files to ShellState
+    // This consolidates migrations that were previously in individual service files
+    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+      migrateShellStateFiles();
+    } else {
+      // Wait for ShellState to be ready
+      Qt.callLater(() => {
+                     if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                       migrateShellStateFiles();
+                     }
+                   });
+    }
+  }
+
+  // -----------------------------------------------------
+  // Migrate old cache files to ShellState
+  function migrateShellStateFiles() {
+    // Migrate display.json → ShellState (CompositorService)
+    migrateDisplayFile();
+
+    // Migrate notifications-state.json → ShellState (NotificationService)
+    migrateNotificationsStateFile();
+
+    // Migrate changelog-state.json → ShellState (UpdateService)
+    migrateChangelogStateFile();
+
+    // Migrate color-schemes-list.json → ShellState (SchemeDownloader)
+    migrateColorSchemesListFile();
+
+    // Migrate wallpaper paths from Settings → ShellState (WallpaperService)
+    migrateWallpaperPaths();
+  }
+
+  function migrateDisplayFile() {
+    // Check if ShellState already has display data
+    const cached = ShellState.getDisplay();
+    if (cached && Object.keys(cached).length > 0) {
+      return; // Already migrated
+    }
+
+    const oldDisplayPath = cacheDir + "display.json";
+    const migrationFileView = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      import qs.Commons
+      FileView {
+        id: migrationView
+        path: "${oldDisplayPath}"
+        printErrors: false
+        adapter: JsonAdapter {
+          property var displays: ({})
+        }
+        onLoaded: {
+          if (adapter.displays && Object.keys(adapter.displays).length > 0) {
+            ShellState.setDisplay(adapter.displays);
+            Logger.i("Settings", "Migrated display.json to ShellState");
+          }
+          migrationView.destroy();
+        }
+        onLoadFailed: {
+          migrationView.destroy();
+        }
+      }
+    `, root, "displayMigrationView");
+  }
+
+  function migrateNotificationsStateFile() {
+    // Check if ShellState already has notifications state
+    const cached = ShellState.getNotificationsState();
+    if (cached && cached.lastSeenTs && cached.lastSeenTs > 0) {
+      return; // Already migrated
+    }
+
+    // Also check Settings for lastSeenTs
+    if (adapter.notifications && adapter.notifications.lastSeenTs) {
+      ShellState.setNotificationsState({
+                                         lastSeenTs: adapter.notifications.lastSeenTs
+                                       });
+      Logger.i("Settings", "Migrated notifications lastSeenTs from Settings to ShellState");
+      return;
+    }
+
+    const oldStatePath = cacheDir + "notifications-state.json";
+    const migrationFileView = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      import qs.Commons
+      FileView {
+        id: migrationView
+        path: "${oldStatePath}"
+        printErrors: false
+        adapter: JsonAdapter {
+          property real lastSeenTs: 0
+        }
+        onLoaded: {
+          if (adapter.lastSeenTs && adapter.lastSeenTs > 0) {
+            ShellState.setNotificationsState({
+              lastSeenTs: adapter.lastSeenTs
+            });
+            Logger.i("Settings", "Migrated notifications-state.json to ShellState");
+          }
+          migrationView.destroy();
+        }
+        onLoadFailed: {
+          migrationView.destroy();
+        }
+      }
+    `, root, "notificationsMigrationView");
+  }
+
+  function migrateChangelogStateFile() {
+    // Check if ShellState already has changelog state
+    const cached = ShellState.getChangelogState();
+    if (cached && cached.lastSeenVersion && cached.lastSeenVersion !== "") {
+      return; // Already migrated
+    }
+
+    // Also check Settings for lastSeenVersion
+    if (adapter.changelog && adapter.changelog.lastSeenVersion) {
+      ShellState.setChangelogState({
+                                     lastSeenVersion: adapter.changelog.lastSeenVersion
+                                   });
+      Logger.i("Settings", "Migrated changelog lastSeenVersion from Settings to ShellState");
+      return;
+    }
+
+    const oldChangelogPath = cacheDir + "changelog-state.json";
+    const migrationFileView = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      import qs.Commons
+      FileView {
+        id: migrationView
+        path: "${oldChangelogPath}"
+        printErrors: false
+        adapter: JsonAdapter {
+          property string lastSeenVersion: ""
+        }
+        onLoaded: {
+          if (adapter.lastSeenVersion && adapter.lastSeenVersion !== "") {
+            ShellState.setChangelogState({
+              lastSeenVersion: adapter.lastSeenVersion
+            });
+            Logger.i("Settings", "Migrated changelog-state.json to ShellState");
+          }
+          migrationView.destroy();
+        }
+        onLoadFailed: {
+          migrationView.destroy();
+        }
+      }
+    `, root, "changelogMigrationView");
+  }
+
+  function migrateColorSchemesListFile() {
+    // Check if ShellState already has color schemes list
+    const cached = ShellState.getColorSchemesList();
+    if (cached && cached.schemes && cached.schemes.length > 0) {
+      return; // Already migrated
+    }
+
+    const oldSchemesPath = cacheDir + "color-schemes-list.json";
+    const migrationFileView = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      import qs.Commons
+      FileView {
+        id: migrationView
+        path: "${oldSchemesPath}"
+        printErrors: false
+        adapter: JsonAdapter {
+          property var schemes: []
+          property real timestamp: 0
+        }
+        onLoaded: {
+          if (adapter.schemes && adapter.schemes.length > 0) {
+            ShellState.setColorSchemesList({
+              schemes: adapter.schemes,
+              timestamp: adapter.timestamp || 0
+            });
+            Logger.i("Settings", "Migrated color-schemes-list.json to ShellState");
+          }
+          migrationView.destroy();
+        }
+        onLoadFailed: {
+          migrationView.destroy();
+        }
+      }
+    `, root, "schemesMigrationView");
+  }
+
+  function migrateWallpaperPaths() {
+    // Check if ShellState already has wallpaper paths
+    const cached = ShellState.getWallpapers();
+    if (cached && Object.keys(cached).length > 0) {
+      return; // Already migrated
+    }
+
+    // Migrate from Settings wallpaper.monitors
+    var monitors = adapter.wallpaper.monitors || [];
+    if (monitors.length > 0) {
+      var wallpapers = {};
+      for (var i = 0; i < monitors.length; i++) {
+        if (monitors[i].name && monitors[i].wallpaper) {
+          wallpapers[monitors[i].name] = monitors[i].wallpaper;
+        }
+      }
+      if (Object.keys(wallpapers).length > 0) {
+        ShellState.setWallpapers(wallpapers);
+        Logger.i("Settings", "Migrated wallpaper paths from Settings to ShellState");
+      }
+    }
   }
 
   // -----------------------------------------------------

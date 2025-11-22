@@ -547,46 +547,11 @@ Singleton {
       const notifState = ShellState.getNotificationsState();
       root.lastSeenTs = notifState.lastSeenTs || 0;
 
-      if (root.lastSeenTs === 0) {
-        // Try to migrate from old notifications-state.json
-        migrateFromOldStateFile();
-        // Also try settings migration
-        if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
-          root.lastSeenTs = Settings.data.notifications.lastSeenTs;
-          saveState();
-          Logger.i("Notifications", "Migrated lastSeenTs from settings to ShellState");
-        }
-      }
-
+      // Migration is now handled in Settings.qml
       Logger.d("Notifications", "Loaded state from ShellState");
     } catch (e) {
       Logger.e("Notifications", "Load state failed:", e);
     }
-  }
-
-  function migrateFromOldStateFile() {
-    const oldStatePath = Settings.cacheDir + "notifications-state.json";
-    const migrationFileView = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      FileView {
-        id: migrationView
-        path: "${oldStatePath}"
-        printErrors: false
-        adapter: JsonAdapter {
-          property real lastSeenTs: 0
-        }
-        onLoaded: {
-          parent.lastSeenTs = adapter.lastSeenTs || 0;
-          parent.saveState();
-          Logger.i("Notifications", "Migrated notifications-state.json to ShellState");
-          migrationView.destroy();
-        }
-        onLoadFailed: {
-          migrationView.destroy();
-        }
-      }
-    `, root, "notificationMigrationView");
   }
 
   function saveState() {

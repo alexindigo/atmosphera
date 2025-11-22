@@ -319,17 +319,7 @@ Singleton {
       const changelog = ShellState.getChangelogState();
       changelogLastSeenVersion = changelog.lastSeenVersion || "";
 
-      if (!changelogLastSeenVersion) {
-        // Try to migrate from old changelog-state.json
-        migrateFromOldChangelogFile();
-        // Also try settings migration
-        if (!changelogLastSeenVersion && Settings.data && Settings.data.changelog && Settings.data.changelog.lastSeenVersion) {
-          changelogLastSeenVersion = Settings.data.changelog.lastSeenVersion;
-          debouncedSaveChangelogState();
-          Logger.i("UpdateService", "Migrated changelog lastSeenVersion from settings to ShellState");
-        }
-      }
-
+      // Migration is now handled in Settings.qml
       Logger.d("UpdateService", "Loaded changelog state from ShellState");
     } catch (error) {
       Logger.e("UpdateService", "Failed to load changelog state:", error);
@@ -339,31 +329,6 @@ Singleton {
       pendingShowRequest = false;
       Qt.callLater(root.showLatestChangelog);
     }
-  }
-
-  function migrateFromOldChangelogFile() {
-    const oldChangelogPath = Settings.cacheDir + "changelog-state.json";
-    const migrationFileView = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      FileView {
-        id: migrationView
-        path: "${oldChangelogPath}"
-        printErrors: false
-        adapter: JsonAdapter {
-          property string lastSeenVersion: ""
-        }
-        onLoaded: {
-          parent.changelogLastSeenVersion = adapter.lastSeenVersion || "";
-          parent.debouncedSaveChangelogState();
-          Logger.i("UpdateService", "Migrated changelog-state.json to ShellState");
-          migrationView.destroy();
-        }
-        onLoadFailed: {
-          migrationView.destroy();
-        }
-      }
-    `, root, "changelogMigrationView");
   }
 
   function debouncedSaveChangelogState() {

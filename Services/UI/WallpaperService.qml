@@ -114,11 +114,7 @@ Singleton {
     }
     Logger.d("Wallpaper", "Loaded wallpapers from Settings");
 
-    // Migrate to ShellState if we loaded from Settings
-    if (typeof ShellState !== 'undefined' && ShellState.isLoaded && Object.keys(currentWallpapers).length > 0) {
-      ShellState.setWallpapers(currentWallpapers);
-      Logger.i("Wallpaper", "Migrated wallpaper paths from Settings to ShellState");
-    }
+    // Migration is now handled in Settings.qml
   }
 
   // -------------------------------------------------
