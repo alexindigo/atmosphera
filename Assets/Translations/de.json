@@ -389,7 +389,7 @@
     "discharging-rate": "Entladerate: {rate} W.",
     "health": "Zustand: {percent}%",
     "inhibit-idle-description": "Hält das System wach.",
-    "inhibit-idle-label": "Ruhezustand verhindern",
+    "inhibit-idle-label": "Wach halten",
     "idle": "Leerlauf.",
     "no-battery-detected": "Keine Batterie erkannt.",
     "panel-title": "Akku",

@@ -22,6 +22,7 @@ SmartPanel {
   readonly property bool healthSupported: isReady && battery.healthSupported
   readonly property bool healthAvailable: healthSupported
   readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
+  readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
   readonly property string timeText: {
     if (!isReady)
       return I18n.tr("battery.no-battery-detected");
@@ -202,26 +203,38 @@ SmartPanel {
             enabled: profilesAvailable
             onPressedChanged: function (pressed, v) {
               if (!pressed) {
-                setProfileByIndex(Math.round(v));
+                setProfileByIndex(v);
               }
             }
             onMoved: function (v) {
-              profileIndex = Math.round(v);
+              profileIndex = v;
             }
           }
 
-          NToggle {
+          RowLayout {
             Layout.fillWidth: true
-            checked: manualInhibitActive
-            label: I18n.tr("battery.inhibit-idle-label")
-            description: I18n.tr("battery.inhibit-idle-description")
-            onToggled: function (checked) {
-              if (checked) {
-                IdleInhibitorService.addManualInhibitor(null);
-              } else {
-                IdleInhibitorService.removeManualInhibitor();
+            spacing: Style.marginS
+
+            NIcon {
+              icon: manualInhibitActive ? "keep-awake-on" : "keep-awake-off"
+              pointSize: Style.fontSizeL
+              color: manualInhibitActive ? Color.mPrimary : Color.mOnSurfaceVariant
+              Layout.alignment: Qt.AlignVCenter
+            }
+
+            NToggle {
+              Layout.fillWidth: true
+              checked: manualInhibitActive
+              label: I18n.tr("battery.inhibit-idle-label")
+              description: I18n.tr("battery.inhibit-idle-description")
+              onToggled: function (checked) {
+                if (checked) {
+                  IdleInhibitorService.addManualInhibitor(null);
+                } else {
+                  IdleInhibitorService.removeManualInhibitor();
+                }
+                manualInhibitActive = checked;
               }
-              manualInhibitActive = checked;
             }
           }
         }
@@ -230,27 +243,11 @@ SmartPanel {
   }
 
   function profileToIndex(p) {
-    switch (p) {
-      case PowerProfile.PowerSaver:
-        return 0;
-      case PowerProfile.Balanced:
-        return 1;
-      case PowerProfile.Performance:
-        return 2;
-      default:
-        return 1;
-    }
+    return powerProfiles.indexOf(p) ?? 1;
   }
 
   function indexToProfile(idx) {
-    switch (idx) {
-      case 0:
-        return PowerProfile.PowerSaver;
-      case 2:
-        return PowerProfile.Performance;
-      default:
-        return PowerProfile.Balanced;
-    }
+    return powerProfiles[idx] ?? PowerProfile.Balanced;
   }
 
   function setProfileByIndex(idx) {

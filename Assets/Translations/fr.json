@@ -389,7 +389,7 @@
     "discharging-rate": "Taux de décharge : {rate} W.",
     "health": "État : {percent}%",
     "inhibit-idle-description": "Maintient le système éveillé.",
-    "inhibit-idle-label": "Empêcher la veille",
+    "inhibit-idle-label": "Garder éveillé",
     "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
     "panel-title": "Batterie",

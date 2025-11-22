@@ -389,7 +389,7 @@
     "discharging-rate": "Deşarj oranı: {rate} W.",
     "health": "Sağlık: {percent}%",
     "inhibit-idle-description": "Sistemi uyanık tutar.",
-    "inhibit-idle-label": "Uykuya engelle",
+    "inhibit-idle-label": "Uyanık tut",
     "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
     "panel-title": "Pil",

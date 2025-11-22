@@ -389,7 +389,7 @@
     "discharging-rate": "Taxa de descarregamento: {rate} W.",
     "health": "Saúde: {percent}%",
     "inhibit-idle-description": "Mantém o sistema acordado.",
-    "inhibit-idle-label": "Impedir suspensão",
+    "inhibit-idle-label": "Manter acordado",
     "idle": "Ocioso.",
     "no-battery-detected": "Nenhuma bateria detectada.",
     "panel-title": "Bateria",

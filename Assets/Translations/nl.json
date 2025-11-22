@@ -389,7 +389,7 @@
     "discharging-rate": "Ontlaadsnelheid: {rate} W.",
     "health": "Gezondheid: {percent}%",
     "inhibit-idle-description": "Houdt het systeem wakker.",
-    "inhibit-idle-label": "Slaapstand voorkomen",
+    "inhibit-idle-label": "Wakker houden",
     "idle": "In rust.",
     "no-battery-detected": "Geen batterij gedetecteerd.",
     "panel-title": "Batterij",

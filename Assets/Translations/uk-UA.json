@@ -389,7 +389,7 @@
     "discharging-rate": "Швидкість розрядки: {rate} Вт.",
     "health": "Здоров'я: {percent}%",
     "inhibit-idle-description": "Підтримує систему активною.",
-    "inhibit-idle-label": "Запобігати сну",
+    "inhibit-idle-label": "Не давати заснути",
     "idle": "Бездіяльність.",
     "no-battery-detected": "Батарею не виявлено.",
     "panel-title": "Батарея",

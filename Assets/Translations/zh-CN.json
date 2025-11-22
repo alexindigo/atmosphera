@@ -389,7 +389,7 @@
     "discharging-rate": "放电速率：{rate} W。",
     "health": "健康状况：{percent}%",
     "inhibit-idle-description": "保持系统唤醒。",
-    "inhibit-idle-label": "防止睡眠",
+    "inhibit-idle-label": "保持唤醒",
     "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
     "panel-title": "电池",
