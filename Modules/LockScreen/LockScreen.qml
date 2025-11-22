@@ -343,15 +343,15 @@ Loader {
                     text: {
                       var lang = I18n.locale.name.split("_")[0];
                       var formats = {
-                        "en": "dddd, MMMM d",
                         "de": "dddd, d. MMMM",
-                        "fr": "dddd d MMMM",
                         "es": "dddd, d 'de' MMMM",
+                        "fr": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
                         "zh": "yyyy年M月d日 dddd",
-                        "nl": "dddd d MMMM"
+                        "uk": "dddd, d MMMM",
+                        "tr": "dddd, d MMMM"
                       };
-                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, d MMMM");
+                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, MMMM d");
                     }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium
@@ -524,7 +524,7 @@ Loader {
                 }
                 Text {
                   id: hibernateText
-                  text: Settings.data.general.showHibernateOnLockScreen ? I18n.tr("session-menu.hibernate") : ""
+                  text: I18n.tr("session-menu.hibernate")
                   font.pointSize: buttonRowTextMeasurer.fontSize
                   font.weight: Font.Medium
                 }
@@ -550,7 +550,7 @@ Loader {
               // Button row needs: margins + 5 buttons + 4 spacings + margins
               // Plus ColumnLayout margins (14 on each side = 28 total)
               // Add extra buffer to ensure password input has proper padding
-              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? ((Settings.data.general.showHibernateOnLockScreen ? 5 : 4) * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
+              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? (5 * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
               width: Math.max(750, minButtonRowWidth)
 
               ColumnLayout {
@@ -749,7 +749,7 @@ Loader {
                     }
                   }
 
-                  // Forecast
+                  // 3-day forecast
                   RowLayout {
                     visible: Settings.data.location.weatherEnabled && LocationService.data.weather !== null
                     Layout.preferredWidth: 260
@@ -757,7 +757,7 @@ Loader {
                     spacing: 4
 
                     Repeater {
-                      model: MediaService.currentPlayer && MediaService.canPlay ? 3 : 4
+                      model: 3
                       delegate: ColumnLayout {
                         Layout.fillWidth: true
                         spacing: 3
@@ -804,6 +804,8 @@ Loader {
 
                   Item {
                     Layout.fillWidth: true
+                    visible: !(Settings.data.location.weatherEnabled && LocationService.data.weather !== null)
+                    Layout.preferredWidth: visible ? 1 : 0
                   }
 
                   // Battery and Keyboard Layout (full mode only)
@@ -1181,7 +1183,6 @@ Loader {
                   }
 
                   Rectangle {
-                    visible: Settings.data.general.showHibernateOnLockScreen
                     Layout.fillWidth: true
                     Layout.minimumWidth: buttonRowTextMeasurer.minButtonWidth
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48

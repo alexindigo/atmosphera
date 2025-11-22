@@ -17,7 +17,6 @@ Singleton {
   property int maxVisible: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
-  property string stateFile: Settings.cacheDir + "notifications-state.json"
 
   // State
   property real lastSeenTs: 0
@@ -137,6 +136,22 @@ Singleton {
   Component.onCompleted: {
     if (Settings.isLoaded) {
       updateNotificationServer();
+    }
+
+    // Load state from ShellState
+    Qt.callLater(() => {
+                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                     loadState();
+                   }
+                 });
+  }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        loadState();
+      }
     }
   }
 
@@ -471,22 +486,6 @@ Singleton {
     }
   }
 
-  // Persistence - State
-  FileView {
-    id: stateFileView
-    path: stateFile
-    printErrors: false
-    onLoaded: loadState()
-    onLoadFailed: error => {
-      if (error === 2)
-      writeAdapter();
-    }
-
-    JsonAdapter {
-      id: stateAdapter
-      property real lastSeenTs: 0
-    }
-  }
 
   Timer {
     id: saveTimer
@@ -546,22 +545,57 @@ Singleton {
 
   function loadState() {
     try {
-      root.lastSeenTs = stateAdapter.lastSeenTs || 0;
+      const notifState = ShellState.getNotificationsState();
+      root.lastSeenTs = notifState.lastSeenTs || 0;
 
-      if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
-        root.lastSeenTs = Settings.data.notifications.lastSeenTs;
-        saveState();
-        Logger.i("Notifications", "Migrated lastSeenTs from settings to state file");
+      if (root.lastSeenTs === 0) {
+        // Try to migrate from old notifications-state.json
+        migrateFromOldStateFile();
+        // Also try settings migration
+        if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
+          root.lastSeenTs = Settings.data.notifications.lastSeenTs;
+          saveState();
+          Logger.i("Notifications", "Migrated lastSeenTs from settings to ShellState");
+        }
       }
+
+      Logger.d("Notifications", "Loaded state from ShellState");
     } catch (e) {
       Logger.e("Notifications", "Load state failed:", e);
     }
   }
 
+  function migrateFromOldStateFile() {
+    const oldStatePath = Settings.cacheDir + "notifications-state.json";
+    const migrationFileView = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      FileView {
+        id: migrationView
+        path: "${oldStatePath}"
+        printErrors: false
+        adapter: JsonAdapter {
+          property real lastSeenTs: 0
+        }
+        onLoaded: {
+          parent.lastSeenTs = adapter.lastSeenTs || 0;
+          parent.saveState();
+          Logger.i("Notifications", "Migrated notifications-state.json to ShellState");
+          migrationView.destroy();
+        }
+        onLoadFailed: {
+          migrationView.destroy();
+        }
+      }
+    `, root, "notificationMigrationView");
+  }
+
   function saveState() {
     try {
-      stateAdapter.lastSeenTs = root.lastSeenTs;
-      stateFileView.writeAdapter();
+      ShellState.setNotificationsState({
+                                         lastSeenTs: root.lastSeenTs
+                                       });
+      Logger.d("Notifications", "Saved state to ShellState");
     } catch (e) {
       Logger.e("Notifications", "Save state failed:", e);
     }
