@@ -383,12 +383,12 @@ Loader {
 
             // Error notification
             Rectangle {
-              width: 450
-              height: 60
+              width: errorRowLayout.implicitWidth + Style.marginXL * 1.5
+              height: 50
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 240 : 320) * Style.uiScaleRatio
-              radius: 30
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 280 : 360) * Style.uiScaleRatio
+              radius: Style.radiusL
               color: Color.mError
               border.color: Color.mError
               border.width: 1
@@ -396,6 +396,7 @@ Loader {
               opacity: visible ? 1.0 : 0.0
 
               RowLayout {
+                id: errorRowLayout
                 anchors.centerIn: parent
                 spacing: 10
 
