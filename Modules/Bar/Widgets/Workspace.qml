@@ -168,15 +168,15 @@ Item {
     if (followFocusedScreen) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
         const ws = CompositorService.workspaces.get(i);
-        if (ws.isFocused) focusedOutput = ws.output.toLowerCase();
+        if (ws.isFocused)
+          focusedOutput = ws.output.toLowerCase();
       }
     }
 
     if (screen !== null) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
         const ws = CompositorService.workspaces.get(i);
-        if ((followFocusedScreen && ws.output.toLowerCase() == focusedOutput) ||
-          (!followFocusedScreen && ws.output.toLowerCase() == screen.name.toLowerCase())) {
+        if ((followFocusedScreen && ws.output.toLowerCase() == focusedOutput) || (!followFocusedScreen && ws.output.toLowerCase() == screen.name.toLowerCase())) {
           if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
             continue;
           }

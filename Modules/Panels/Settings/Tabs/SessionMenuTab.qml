@@ -368,7 +368,9 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  root.updateEntry(index, { "enabled": !modelData.enabled });
+                  root.updateEntry(index, {
+                                     "enabled": !modelData.enabled
+                                   });
                 }
               }
             }
@@ -397,7 +399,9 @@ ColumnLayout {
               NToggle {
                 checked: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
                 onToggled: function (checked) {
-                  root.updateEntry(delegateItem.index, { "countdownEnabled": checked });
+                  root.updateEntry(delegateItem.index, {
+                                     "countdownEnabled": checked
+                                   });
                 }
               }
             }
