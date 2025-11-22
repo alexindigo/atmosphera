@@ -373,6 +373,10 @@
           "description": "Ne pas afficher les espaces de travail sans fenêtres.",
           "label": "Masquer les inoccupés"
         },
+        "follow-focused-screen": {
+          "description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
+          "label": "Suivre l'Écran Ciblé"
+        },
         "label-mode": {
           "description": "Choisir comment les étiquettes d'espace de travail sont affichées.",
           "label": "Mode d'étiquette"

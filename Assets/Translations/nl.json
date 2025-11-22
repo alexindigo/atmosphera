@@ -373,6 +373,10 @@
           "description": "Werkruimten zonder vensters niet weergeven.",
           "label": "Ongebruikte verbergen"
         },
+        "follow-focused-screen": {
+          "description": "Werkruimten weergeven van het momenteel gefocuste scherm, in plaats van het scherm waar de balk zich bevindt.",
+          "label": "Gefocust Scherm Volgen"
+        },
         "label-mode": {
           "description": "Kies hoe labels van werkruimten worden weergegeven.",
           "label": "Labelmodus"
