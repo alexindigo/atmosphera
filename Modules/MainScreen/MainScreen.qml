@@ -10,6 +10,7 @@ import qs.Commons
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Audio
+import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
 import qs.Modules.Panels.Brightness
 import qs.Modules.Panels.Calendar
@@ -33,6 +34,7 @@ PanelWindow {
 
   // Expose panels as readonly property aliases
   readonly property alias audioPanel: audioPanel
+  readonly property alias batteryPanel: batteryPanel
   readonly property alias bluetoothPanel: bluetoothPanel
   readonly property alias brightnessPanel: brightnessPanel
   readonly property alias calendarPanel: calendarPanel
@@ -49,6 +51,7 @@ PanelWindow {
 
   // Expose panel placeholders for AllBackgrounds
   readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
+  readonly property var batteryPanelPlaceholder: batteryPanel.panelPlaceholder
   readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
   readonly property var brightnessPanelPlaceholder: brightnessPanel.panelPlaceholder
   readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
@@ -165,6 +168,12 @@ PanelWindow {
     AudioPanel {
       id: audioPanel
       objectName: "audioPanel-" + (root.screen?.name || "unknown")
+      screen: root.screen
+    }
+
+    BatteryPanel {
+      id: batteryPanel
+      objectName: "batteryPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
     }
 

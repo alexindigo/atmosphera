@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "Luminosité",
+    "charge-level": "Niveau de charge",
     "charging": "En charge.",
     "charging-rate": "Taux de charge : {rate} W.",
     "discharging": "En décharge.",
     "discharging-rate": "Taux de décharge : {rate} W.",
     "health": "État : {percent}%",
+    "inhibit-idle-description": "Maintient le système éveillé.",
+    "inhibit-idle-label": "Garder éveillé",
     "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
+    "panel-title": "Batterie",
     "plugged-in": "Branché.",
+    "power-profile": "Profil d’alimentation",
     "time-left": "Temps restant : {time}.",
     "time-until-full": "Temps jusqu'à charge complète : {time}."
   },

@@ -381,14 +381,20 @@
     }
   },
   "battery": {
+    "brightness": "Brillo",
+    "charge-level": "Nivel de carga",
     "charging": "Cargando.",
     "charging-rate": "Tasa de carga: {rate} W.",
     "discharging": "Descargando.",
     "discharging-rate": "Tasa de descarga: {rate} W.",
     "health": "Salud: {percent}%",
+    "inhibit-idle-description": "Mantiene el sistema despierto.",
+    "inhibit-idle-label": "Mantener despierto",
     "idle": "Inactivo.",
     "no-battery-detected": "No se detectó ninguna batería.",
+    "panel-title": "Batería",
     "plugged-in": "Conectado.",
+    "power-profile": "Perfil de energía",
     "time-left": "Tiempo restante: {time}.",
     "time-until-full": "Tiempo hasta carga completa: {time}."
   },
