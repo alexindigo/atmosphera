@@ -134,6 +134,7 @@ ShellRoot {
       setupWizardTimer.start();
     } else {
       Settings.data.setupCompleted = true;
+      Settings.saveImmediate();
     }
   }
 
