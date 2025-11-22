@@ -18,7 +18,11 @@ SmartPanel {
   panelContent: Rectangle {
     color: Color.transparent
 
-    property real contentPreferredHeight: !(BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(preferredHeight, Math.max(280 * Style.uiScaleRatio, mainColumn.implicitHeight + Style.marginL * 2)) : (mainColumn.implicitHeight + Style.marginL * 2)
+    // Calculate content height based on header + devices list (or minimum for empty states)
+    property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
+    property real devicesHeight: devicesList.implicitHeight
+    property real calculatedHeight: headerHeight + devicesHeight + Style.marginL * 2 + Style.marginM
+    property real contentPreferredHeight: (BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(root.preferredHeight, Math.max(280 * Style.uiScaleRatio, calculatedHeight)) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
 
     ColumnLayout {
       id: mainColumn
@@ -83,6 +87,7 @@ SmartPanel {
 
       // Adapter not available of disabled
       NBox {
+        id: disabledBox
         visible: !(BluetoothService.adapter && BluetoothService.adapter.enabled)
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -135,6 +140,7 @@ SmartPanel {
         contentWidth: availableWidth
 
         ColumnLayout {
+          id: devicesList
           width: parent.width
           spacing: Style.marginM
 

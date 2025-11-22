@@ -615,11 +615,7 @@ Item {
 
     Behavior on height {
       NumberAnimation {
-        duration: {
-          if (!panelBackground.shouldAnimateHeight)
-            return 0;
-          return root.isClosing ? Style.animationFast : Style.animationNormal;
-        }
+        duration: root.isClosing ? Style.animationFast : Style.animationNormal
         easing.type: Easing.BezierSpline
         easing.bezierCurve: panelBackground.bezierCurve
       }
