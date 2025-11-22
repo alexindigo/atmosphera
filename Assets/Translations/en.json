@@ -352,7 +352,7 @@
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"
         },
-        "show-focused-screen": {
+        "follow-focused-screen": {
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow Focused Screen"
         },

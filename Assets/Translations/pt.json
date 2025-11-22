@@ -352,7 +352,7 @@
           "description": "Não exibir áreas de trabalho sem janelas.",
           "label": "Ocultar desocupados"
         },
-        "show-focused-screen": {
+        "follow-focused-screen": {
           "description": "Exibir áreas de trabalho da tela atualmente em foco, em vez da tela onde a barra está localizada.",
           "label": "Seguir Tela em Foco"
         },

@@ -352,7 +352,7 @@
           "description": "Arbeitsbereiche ohne Fenster nicht anzeigen.",
           "label": "Unbesetzte ausblenden"
         },
-        "show-focused-screen": {
+        "follow-focused-screen": {
           "description": "Zeigt Arbeitsbereiche vom aktuell fokussierten Bildschirm an, statt vom Bildschirm, auf dem sich die Leiste befindet.",
           "label": "Fokussiertem Bildschirm folgen"
         },

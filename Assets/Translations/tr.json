@@ -352,7 +352,7 @@
           "description": "Penceresi olmayan çalışma alanlarını gösterme.",
           "label": "Dolu olmayanları gizle"
         },
-        "show-focused-screen": {
+        "follow-focused-screen": {
           "description": "Çubuğun bulunduğu ekran yerine, şu anda odaklanmış ekrandaki çalışma alanlarını göster.",
           "label": "Odaklanmış Ekranı Takip Et"
         },

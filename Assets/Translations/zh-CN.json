@@ -352,7 +352,7 @@
           "description": "不显示没有窗口的工作区。",
           "label": "隐藏未占用"
         },
-        "show-focused-screen": {
+        "follow-focused-screen": {
           "description": "显示当前焦点屏幕的工作区，而不是任务栏所在屏幕的工作区。",
           "label": "跟随焦点屏幕"
         },

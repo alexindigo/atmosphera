@@ -46,7 +46,7 @@ Item {
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
-  readonly property bool showFocusedScreen: (widgetSettings.showFocusedScreen !== undefined) ? widgetSettings.showFocusedScreen : widgetMetadata.showFocusedScreen
+  readonly property bool followFocusedScreen: (widgetSettings.followFocusedScreen !== undefined) ? widgetSettings.followFocusedScreen : widgetMetadata.followFocusedScreen
   readonly property int characterCount: isVertical ? 2 : ((widgetSettings.characterCount !== undefined) ? widgetSettings.characterCount : widgetMetadata.characterCount)
 
   property bool isDestroying: false
@@ -165,7 +165,7 @@ Item {
     localWorkspaces.clear();
 
     var focusedOutput = null;
-    if (showFocusedScreen) {
+    if (followFocusedScreen) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
         const ws = CompositorService.workspaces.get(i);
         if (ws.isFocused) focusedOutput = ws.output.toLowerCase();
@@ -175,8 +175,8 @@ Item {
     if (screen !== null) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
         const ws = CompositorService.workspaces.get(i);
-        if ((showFocusedScreen && ws.output.toLowerCase() == focusedOutput) ||
-          (!showFocusedScreen && ws.output.toLowerCase() == screen.name.toLowerCase())) {
+        if ((followFocusedScreen && ws.output.toLowerCase() == focusedOutput) ||
+          (!followFocusedScreen && ws.output.toLowerCase() == screen.name.toLowerCase())) {
           if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
             continue;
           }
