@@ -388,9 +388,9 @@
     "discharging": "Wird entladen.",
     "discharging-rate": "Entladerate: {rate} W.",
     "health": "Zustand: {percent}%",
+    "idle": "Leerlauf.",
     "inhibit-idle-description": "Hält das System wach.",
     "inhibit-idle-label": "Wach halten",
-    "idle": "Leerlauf.",
     "no-battery-detected": "Keine Batterie erkannt.",
     "panel-title": "Akku",
     "plugged-in": "Angeschlossen.",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "Bitte warten",
     "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
     "emoji": "Emoji-Auswahl",
-    "emoji-search-description": "Emojis suchen und kopieren",
     "emoji-loading": "Lade Emojis...",
-    "emoji-loading-description": "Bitte warten"
+    "emoji-loading-description": "Bitte warten",
+    "emoji-search-description": "Emojis suchen und kopieren"
   },
   "quickSettings": {
     "bluetooth": {

@@ -388,9 +388,9 @@
     "discharging": "Descarregando.",
     "discharging-rate": "Taxa de descarregamento: {rate} W.",
     "health": "Saúde: {percent}%",
+    "idle": "Ocioso.",
     "inhibit-idle-description": "Mantém o sistema acordado.",
     "inhibit-idle-label": "Manter acordado",
-    "idle": "Ocioso.",
     "no-battery-detected": "Nenhuma bateria detectada.",
     "panel-title": "Bateria",
     "plugged-in": "Conectado.",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "Por favor, aguarde",
     "clipboard-search-description": "Pesquisar no histórico da área de transferência",
     "emoji": "Seletor de emojis",
-    "emoji-search-description": "Buscar e copiar emojis",
     "emoji-loading": "Carregando emojis...",
-    "emoji-loading-description": "Por favor, aguarde"
+    "emoji-loading-description": "Por favor, aguarde",
+    "emoji-search-description": "Buscar e copiar emojis"
   },
   "quickSettings": {
     "bluetooth": {

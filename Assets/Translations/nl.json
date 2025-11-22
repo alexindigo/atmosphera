@@ -388,9 +388,9 @@
     "discharging": "Ontladen.",
     "discharging-rate": "Ontlaadsnelheid: {rate} W.",
     "health": "Gezondheid: {percent}%",
+    "idle": "In rust.",
     "inhibit-idle-description": "Houdt het systeem wakker.",
     "inhibit-idle-label": "Wakker houden",
-    "idle": "In rust.",
     "no-battery-detected": "Geen batterij gedetecteerd.",
     "panel-title": "Batterij",
     "plugged-in": "Op netstroom.",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "Even geduld",
     "clipboard-search-description": "Zoek in klembordgeschiedenis",
     "emoji": "Emoji-kiezer",
-    "emoji-search-description": "Zoek en kopieer emoji's",
     "emoji-loading": "Emoji's laden...",
-    "emoji-loading-description": "Even geduld"
+    "emoji-loading-description": "Even geduld",
+    "emoji-search-description": "Zoek en kopieer emoji's"
   },
   "quickSettings": {
     "bluetooth": {

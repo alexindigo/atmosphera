@@ -388,9 +388,9 @@
     "discharging": "正在放电。",
     "discharging-rate": "放电速率：{rate} W。",
     "health": "健康状况：{percent}%",
+    "idle": "空闲。",
     "inhibit-idle-description": "保持系统唤醒。",
     "inhibit-idle-label": "保持唤醒",
-    "idle": "空闲。",
     "no-battery-detected": "未检测到电池。",
     "panel-title": "电池",
     "plugged-in": "已接通电源。",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "请稍候",
     "clipboard-search-description": "搜索剪贴板历史记录",
     "emoji": "表情符号选择器",
-    "emoji-search-description": "搜索和复制表情符号",
     "emoji-loading": "正在加载表情符号...",
-    "emoji-loading-description": "请稍候"
+    "emoji-loading-description": "请稍候",
+    "emoji-search-description": "搜索和复制表情符号"
   },
   "quickSettings": {
     "bluetooth": {

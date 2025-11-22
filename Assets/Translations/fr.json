@@ -388,9 +388,9 @@
     "discharging": "En décharge.",
     "discharging-rate": "Taux de décharge : {rate} W.",
     "health": "État : {percent}%",
+    "idle": "Inactif.",
     "inhibit-idle-description": "Maintient le système éveillé.",
     "inhibit-idle-label": "Garder éveillé",
-    "idle": "Inactif.",
     "no-battery-detected": "Aucune batterie détectée.",
     "panel-title": "Batterie",
     "plugged-in": "Branché.",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "Veuillez patienter",
     "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
     "emoji": "Sélecteur d'émojis",
-    "emoji-search-description": "Rechercher et copier des émojis",
     "emoji-loading": "Chargement des émojis...",
-    "emoji-loading-description": "Veuillez patienter"
+    "emoji-loading-description": "Veuillez patienter",
+    "emoji-search-description": "Rechercher et copier des émojis"
   },
   "quickSettings": {
     "bluetooth": {

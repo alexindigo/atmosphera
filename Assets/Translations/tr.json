@@ -388,9 +388,9 @@
     "discharging": "Deşarj oluyor.",
     "discharging-rate": "Deşarj oranı: {rate} W.",
     "health": "Sağlık: {percent}%",
+    "idle": "Boşta.",
     "inhibit-idle-description": "Sistemi uyanık tutar.",
     "inhibit-idle-label": "Uyanık tut",
-    "idle": "Boşta.",
     "no-battery-detected": "Pil tespit edilmedi.",
     "panel-title": "Pil",
     "plugged-in": "Prize takılı.",
@@ -678,9 +678,9 @@
     "clipboard-loading-description": "Lütfen bekleyin",
     "clipboard-search-description": "Panoya geçmişini ara",
     "emoji": "Emoji seçici",
-    "emoji-search-description": "Emoji arama ve kopyalama",
     "emoji-loading": "Emojiler yükleniyor...",
-    "emoji-loading-description": "Lütfen bekleyin"
+    "emoji-loading-description": "Lütfen bekleyin",
+    "emoji-search-description": "Emoji arama ve kopyalama"
   },
   "quickSettings": {
     "bluetooth": {
