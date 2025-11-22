@@ -506,6 +506,7 @@ Singleton {
       property bool walker: false
       property bool code: false
       property bool spicetify: false
+      property bool telegram: false
       property bool enableUserTemplates: false
     }
 
