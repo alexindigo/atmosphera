@@ -388,13 +388,15 @@ SmartPanel {
       Logger.i("SetupWizard", "Completing setup with selected options");
       isCompleting = true;
 
-      if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-        Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-        WallpaperService.refreshWallpapersList();
-      }
+      if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
+        if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
+          Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+          WallpaperService.refreshWallpapersList();
+        }
 
-      if (selectedWallpaper !== "") {
-        WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+        if (selectedWallpaper !== "") {
+          WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+        }
       }
 
       Settings.data.general.scaleRatio = selectedScaleRatio;
@@ -426,13 +428,15 @@ SmartPanel {
   }
 
   function applyWallpaperSettings() {
-    if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-      Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-      WallpaperService.refreshWallpapersList();
-    }
+    if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
+      if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
+        Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+        WallpaperService.refreshWallpapersList();
+      }
 
-    if (selectedWallpaper !== "") {
-      WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+      if (selectedWallpaper !== "") {
+        WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+      }
     }
   }
 
