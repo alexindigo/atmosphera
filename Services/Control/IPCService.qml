@@ -112,6 +112,13 @@ Item {
                               launcherPanel?.toggle();
                             });
     }
+    function emoji() {
+      root.withTargetScreen(screen => {
+                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              launcherPanel?.setSearchText(">emoji ");
+                              launcherPanel?.toggle();
+                            });
+    }
   }
 
   IpcHandler {

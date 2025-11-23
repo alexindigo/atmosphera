@@ -56,8 +56,8 @@ SmartPanel {
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
   readonly property bool isGridView: {
-    // Always use list view for clipboard to better display text content and previews
-    if (searchText.startsWith(">clip")) {
+    // Always use list view for clipboard and calculator to better display content
+    if (searchText.startsWith(">clip") || searchText.startsWith(">calc")) {
       return false;
     }
     return Settings.data.appLauncher.viewMode === "grid";
@@ -876,13 +876,20 @@ SmartPanel {
             // Handle scrolling to show selected item when it changes
             Connections {
               target: root
+              enabled: root.isGridView
               function onSelectedIndexChanged() {
-                if (root.selectedIndex >= 0) {
-                  Qt.callLater(() => {
+                // Only process if we're still in grid view and component exists
+                if (!root.isGridView || root.selectedIndex < 0 || !resultsGrid) {
+                  return;
+                }
+
+                Qt.callLater(() => {
+                               // Double-check we're still in grid view mode
+                               if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
                                  resultsGrid.cancelFlick();
                                  resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
-                               });
-                }
+                               }
+                             });
 
                 // Update preview
                 if (clipboardPreviewLoader.item && root.selectedIndex >= 0) {
