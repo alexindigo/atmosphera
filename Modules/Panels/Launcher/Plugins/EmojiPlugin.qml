@@ -38,7 +38,7 @@ Item {
           {
             "name": ">emoji",
             "description": I18n.tr("plugins.emoji-search-description"),
-            "icon": "emote",
+            "icon": "face-smile",
             "isImage": false,
             "onActivate": function () {
               launcher.setSearchText(">emoji ");
