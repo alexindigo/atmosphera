@@ -203,13 +203,13 @@ pywalfox)
 cava)
     echo "🎨 Applying 'noctalia' theme to cava..."
     CONFIG_FILE="$HOME/.config/cava/config"
+    THEME_MODIFIED=false
 
     # Check if the config file exists.
     if [ -f "$CONFIG_FILE" ]; then
         # Check if [color] section exists
         if grep -q '^\[color\]' "$CONFIG_FILE"; then
             echo "[color] section found, checking theme setting..."
-
             # Check if theme is already set to noctalia under [color]
             if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = "noctalia"'; then
                 echo "Theme already set to noctalia under [color], skipping modification."
@@ -218,9 +218,11 @@ cava)
                 if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = '; then
                     # Replace existing theme line under [color]
                     sed -i '/^\[color\]/,/^\[/{s/^theme = .*/theme = "noctalia"/}' "$CONFIG_FILE"
+                    THEME_MODIFIED=true
                 else
                     # Add theme line after [color]
                     sed -i '/^\[color\]/a theme = "noctalia"' "$CONFIG_FILE"
+                    THEME_MODIFIED=true
                 fi
             fi
         else
@@ -229,6 +231,20 @@ cava)
             echo "" >>"$CONFIG_FILE"
             echo "[color]" >>"$CONFIG_FILE"
             echo 'theme = "noctalia"' >>"$CONFIG_FILE"
+            THEME_MODIFIED=true
+        fi
+
+        # Reload cava if it's running
+        if pgrep -f cava >/dev/null; then
+            echo "Reloading cava configuration..."
+            pkill -USR1 cava
+            echo "✅ Cava reloaded successfully"
+        else
+            if [ "$THEME_MODIFIED" = true ]; then
+                echo "✅ Configuration updated. Start cava to see the changes."
+            else
+                echo "✅ Configuration already correct."
+            fi
         fi
     else
         echo "Error: cava config file not found at $CONFIG_FILE" >&2
