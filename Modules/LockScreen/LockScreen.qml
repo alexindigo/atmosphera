@@ -343,13 +343,13 @@ Loader {
                     text: {
                       var lang = I18n.locale.name.split("_")[0];
                       var formats = {
-                        "en": "dddd, MMMM d",
                         "de": "dddd, d. MMMM",
-                        "fr": "dddd d MMMM",
+                        "en": "dddd, MMMM d",
                         "es": "dddd, d 'de' MMMM",
+                        "fr": "dddd d MMMM",
+                        "nl": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
-                        "nl": "dddd d MMMM"
-                        "zh": "yyyy年M月d日 dddd",
+                        "zh": "yyyy年M月d日 dddd"
                       };
                       return I18n.locale.toString(Time.now, formats[lang] || "dddd, d MMMM");
                     }
