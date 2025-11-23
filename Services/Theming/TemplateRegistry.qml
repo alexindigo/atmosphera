@@ -219,7 +219,7 @@ Singleton {
           "path": "~/.config/cava/themes/noctalia"
         }
       ],
-      "postProcess": () => `pkill -USR1 cava`
+      "postProcess": () => `${colorsApplyScript} cava`
     }
   ]
 
