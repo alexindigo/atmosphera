@@ -105,18 +105,18 @@ Singleton {
       return I18n.tr("notifications.time.diffM");
     if (diff < 3600000)
       return I18n.tr("notifications.time.diffMM", {
-                      "diff": Math.floor(diff / 60000)
-                    });
+                       "diff": Math.floor(diff / 60000)
+                     });
     if (diff < 7200000)
       return I18n.tr("notifications.time.diffH");
     if (diff < 86400000)
       return I18n.tr("notifications.time.diffHH", {
-                      "diff": Math.floor(diff / 3600000)
-                    });
-    if (diff < 172800000)        
+                       "diff": Math.floor(diff / 3600000)
+                     });
+    if (diff < 172800000)
       return I18n.tr("notifications.time.diffD");
     return I18n.tr("notifications.time.diffDD", {
-                      "diff": Math.floor(diff / 86400000)
-                  });
+                     "diff": Math.floor(diff / 86400000)
+                   });
   }
 }
