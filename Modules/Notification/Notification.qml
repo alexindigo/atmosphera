@@ -440,7 +440,7 @@ Variants {
                       text: " " + Time.formatRelativeTime(model.timestamp)
                       pointSize: Style.fontSizeXXS
                       color: Color.mOnSurfaceVariant
-                      anchors.bottom: parent.bottom
+                      Layout.alignment: Qt.AlignBottom
                     }
 
                     Item {
