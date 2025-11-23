@@ -310,32 +310,25 @@ Item {
           pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
           Layout.alignment: Qt.AlignVCenter
-          visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
+          visible: !hasActivePlayer || (!showAlbumArt && !showProgressRing)
         }
 
         ColumnLayout {
           Layout.alignment: Qt.AlignVCenter
-          visible: showAlbumArt && hasActivePlayer
           spacing: 0
 
+          // Progress circle (independent of album art)
           Item {
             Layout.preferredWidth: Math.round(21 * scaling)
             Layout.preferredHeight: Math.round(21 * scaling)
 
-            // Background for progress circle
-            Rectangle {
-              anchors.fill: parent
-              radius: width / 2
-              color: Color.transparent
-            }
-
-            // Progress circle
+            // Progress circle - always available when showProgressRing is true
             Canvas {
               id: progressCanvas
               anchors.fill: parent
               anchors.margins: 0 // Align exactly with parent to avoid clipping
-              visible: showProgressRing // Control visibility with setting
-              z: 0 // Behind the album art
+              visible: showProgressRing && hasActivePlayer // Control visibility with settings and active player
+              z: 0 // Behind the album art or icon
 
               // Calculate progress ratio: 0 to 1
               property real progressRatio: {
@@ -385,16 +378,34 @@ Item {
               }
             }
 
-            NImageCircled {
-              id: trackArt
+            // Album art or icon - only show album art when enabled and player is active
+            Item {
               anchors.fill: parent
-              anchors.margins: showProgressRing ? (2.5 * scaling) : 0.5 // Make album art smaller only when progress ring is visible, scaled with widget
-              imagePath: MediaService.trackArtUrl
-              fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
-              fallbackIconSize: 10
-              borderWidth: 0
-              border.color: Color.transparent
-              z: 1 // In front of the progress circle
+              anchors.margins: showProgressRing ? (2.5 * scaling) : 0.5 // Make content smaller only when progress ring is visible, scaled with widget
+
+              NImageCircled {
+                id: trackArt
+                anchors.fill: parent
+                visible: showAlbumArt && hasActivePlayer
+                imagePath: MediaService.trackArtUrl
+                fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
+                fallbackIconSize: 10
+                borderWidth: 0
+                border.color: Color.transparent
+                z: 1 // In front of the progress circle
+              }
+
+              // Fallback icon when no album art or album art not shown
+              NIcon {
+                anchors.centerIn: parent
+                icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+                color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+                pointSize: showAlbumArt ? 10 * scaling : 14 * scaling  // Smaller when inside album art circle, larger when alone
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                visible: !showAlbumArt || !hasActivePlayer
+                z: 1 // In front of the progress circle
+              }
             }
           }
         }
