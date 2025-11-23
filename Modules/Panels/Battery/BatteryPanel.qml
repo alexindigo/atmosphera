@@ -22,6 +22,7 @@ SmartPanel {
   readonly property bool healthSupported: isReady && battery.healthSupported
   readonly property bool healthAvailable: healthSupported
   readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
+  readonly property bool powerProfileAvailable: PowerProfileService.available
   readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
   readonly property string timeText: {
     if (!isReady)
@@ -65,7 +66,7 @@ SmartPanel {
 
           NIcon {
             pointSize: Style.fontSizeXXL
-            color: Color.mPrimary
+            color: root.charging ? Color.mPrimary : Color.mOnSurface
             icon: iconName
           }
 
@@ -102,49 +103,49 @@ SmartPanel {
       // Charge level + health/time
       NBox {
         Layout.fillWidth: true
-        implicitHeight: chargeLayout.implicitHeight + Style.marginM * 2
+        height: chargeLayout.implicitHeight + Style.marginL * 2
 
         ColumnLayout {
           id: chargeLayout
           anchors.fill: parent
-          anchors.margins: Style.marginM
+          anchors.margins: Style.marginL
           spacing: Style.marginS
 
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
 
-            NText {
-              text: I18n.tr("battery.charge-level")
-              color: Color.mOnSurfaceVariant
-              pointSize: Style.fontSizeS
+            ColumnLayout {
+              NText {
+                text: I18n.tr("battery.charge-level")
+                color: Color.mOnSurface
+                pointSize: Style.fontSizeS
+              }
+
+              Rectangle {
+                Layout.fillWidth: true
+                height: Math.round(8 * Style.uiScaleRatio)
+                radius: height / 2
+                color: Color.mSurfaceVariant
+
+                Rectangle {
+                  anchors.verticalCenter: parent.verticalCenter
+                  height: parent.height
+                  radius: parent.radius
+                  width: {
+                    var ratio = Math.max(0, Math.min(1, percent / 100));
+                    return parent.width * ratio;
+                  }
+                  color: Color.mPrimary
+                }
+              }
             }
-            Item {
-              Layout.fillWidth: true
-            }
+
             NText {
               text: percent >= 0 ? `${percent}%` : "--"
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold
-            }
-          }
-
-          Rectangle {
-            Layout.fillWidth: true
-            height: Math.round(8 * Style.uiScaleRatio)
-            radius: height / 2
-            color: Color.mSurfaceVariant
-
-            Rectangle {
-              anchors.verticalCenter: parent.verticalCenter
-              height: parent.height
-              radius: parent.radius
-              width: {
-                var ratio = Math.max(0, Math.min(1, percent / 100));
-                return parent.width * ratio;
-              }
-              color: Color.mPrimary
             }
           }
 
@@ -169,7 +170,7 @@ SmartPanel {
       // Power profile and idle inhibit controls
       NBox {
         Layout.fillWidth: true
-        implicitHeight: controlsLayout.implicitHeight + Style.marginM * 2
+        height: controlsLayout.implicitHeight + Style.marginM * 2
 
         ColumnLayout {
           id: controlsLayout
@@ -177,41 +178,46 @@ SmartPanel {
           anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginS
-            NIcon {
-              icon: PowerProfileService.getIcon()
-              pointSize: Style.fontSizeM
-              color: Color.mPrimary
-            }
-            NText {
-              text: I18n.tr("battery.power-profile")
-              font.weight: Style.fontWeightBold
-              color: Color.mOnSurface
-              Layout.fillWidth: true
-            }
-            NText {
-              text: PowerProfileService.getName(profileIndex)
-              color: Color.mOnSurfaceVariant
-            }
-          }
+          ColumnLayout {
+            id: ppd
+            visible: root.powerProfileAvailable
 
-          NValueSlider {
-            Layout.fillWidth: true
-            from: 0
-            to: 2
-            stepSize: 1
-            snapAlways: true
-            value: profileIndex
-            enabled: profilesAvailable
-            onPressedChanged: function (pressed, v) {
-              if (!pressed) {
-                setProfileByIndex(v);
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
+              NIcon {
+                icon: PowerProfileService.getIcon()
+                pointSize: Style.fontSizeM
+                color: Color.mPrimary
+              }
+              NText {
+                text: I18n.tr("battery.power-profile")
+                font.weight: Style.fontWeightBold
+                color: Color.mOnSurface
+                Layout.fillWidth: true
+              }
+              NText {
+                text: PowerProfileService.getName(profileIndex)
+                color: Color.mOnSurfaceVariant
               }
             }
-            onMoved: function (v) {
-              profileIndex = v;
+
+            NValueSlider {
+              Layout.fillWidth: true
+              from: 0
+              to: 2
+              stepSize: 1
+              snapAlways: true
+              value: profileIndex
+              enabled: profilesAvailable
+              onPressedChanged: (pressed, v) => {
+                                  if (!pressed) {
+                                    setProfileByIndex(v);
+                                  }
+                                }
+              onMoved: v => {
+                         profileIndex = v;
+                       }
             }
           }
 

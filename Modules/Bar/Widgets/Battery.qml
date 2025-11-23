@@ -122,7 +122,8 @@ Item {
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady || (!testMode && !battery.isLaptopBattery)
     customBackgroundColor: isLowBattery ? Color.mError : Qt.rgba(0, 0, 0, 0)
-    customTextIconColor: isLowBattery ? Color.mOnError : Qt.rgba(0, 0, 0, 0)
+    customTextIconColor: isLowBattery ? Color.mOnError : charging ? Color.mPrimary : Qt.rgba(0, 0, 0, 0)
+
     tooltipText: {
       let lines = [];
       if (testMode) {
