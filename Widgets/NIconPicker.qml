@@ -98,7 +98,7 @@ Popup {
         radius: Style.radiusS
 
         color: (root.selectedIcon === modelData) ? Qt.alpha(Color.mPrimary, 0.15) : Color.transparent
-        border.color: (root.selectedIcon === modelData) ? Color.mPrimary : Qt.rgba(0, 0, 0, 0)
+        border.color: (root.selectedIcon === modelData) ? Color.mPrimary : Color.transparent
         border.width: (root.selectedIcon === modelData) ? Style.borderS : 0
 
         MouseArea {

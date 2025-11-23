@@ -20,8 +20,8 @@ Item {
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
-  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
-  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
@@ -43,6 +43,10 @@ Item {
   readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2)
   readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5)
   readonly property int pillMaxWidth: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap))
+
+  // Always prioritize hover color, then the custom one and finally the fallback color
+  readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
+  readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary)
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -80,14 +84,14 @@ Item {
     width: root.width
     height: pillHeight
     radius: halfPillHeight
-    color: hovered ? (customBackgroundColor.a > 0 ? Qt.lighter(customBackgroundColor, 1.1) : Color.mHover) : (customBackgroundColor.a > 0 ? customBackgroundColor : Style.capsuleColor)
+    color: root.bgColor
     anchors.verticalCenter: parent.verticalCenter
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
 
     Behavior on color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.InOutQuad
       }
     }
@@ -131,7 +135,7 @@ Item {
       pointSize: textSize
       applyUiScale: false
       font.weight: Style.fontWeightBold
-      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary))
+      color: root.fgColor
       visible: revealed
     }
 
@@ -145,7 +149,7 @@ Item {
     Behavior on opacity {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.OutCubic
       }
     }
@@ -165,7 +169,7 @@ Item {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnSurface)
+      color: root.fgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -189,7 +193,7 @@ Item {
       property: "opacity"
       from: 0
       to: 1
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.OutCubic
     }
     onStarted: {
@@ -230,7 +234,7 @@ Item {
       property: "opacity"
       from: 1
       to: 0
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.InCubic
     }
     onStopped: {

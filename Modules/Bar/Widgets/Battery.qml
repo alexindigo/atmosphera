@@ -38,8 +38,8 @@ Item {
 
   // Test mode
   readonly property bool testMode: false
-  readonly property int testPercent: 15
-  readonly property bool testCharging: false
+  readonly property int testPercent: 25
+  readonly property bool testCharging: true
 
   // Main properties
   readonly property var battery: UPower.displayDevice
@@ -121,8 +121,10 @@ Item {
     autoHide: false
     forceOpen: isReady && (testMode || battery.isLaptopBattery) && displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide" || !isReady || (!testMode && !battery.isLaptopBattery)
-    customBackgroundColor: isLowBattery ? Color.mError : Qt.rgba(0, 0, 0, 0)
-    customTextIconColor: isLowBattery ? Color.mOnError : charging ? Color.mPrimary : Qt.rgba(0, 0, 0, 0)
+
+    // Charging is the most important, then low battery
+    customBackgroundColor: charging ? Color.mOnPrimary : (isLowBattery ? Color.mError : Color.transparent)
+    customTextIconColor: charging ? Color.mPrimary : (isLowBattery ? Color.mOnError : Color.transparent)
 
     tooltipText: {
       let lines = [];

@@ -20,8 +20,8 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
-  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
-  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"

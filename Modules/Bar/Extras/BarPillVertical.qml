@@ -21,19 +21,8 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
-  property color customBackgroundColor: Qt.rgba(0, 0, 0, 0)
-  property color customTextIconColor: Qt.rgba(0, 0, 0, 0)
-
-  // Bar position detection for pill direction
-  readonly property string barPosition: Settings.data.bar.position
-  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
-
-  // Determine pill direction based on section position
-  readonly property bool openDownward: oppositeDirection
-  readonly property bool openUpward: !oppositeDirection
-
-  // Effective shown state (true if animated open or forced, but not if force closed)
-  readonly property bool revealed: !forceClose && (forceOpen || showPill)
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
 
   signal shown
   signal hidden
@@ -50,10 +39,22 @@ Item {
 
   // Sizing logic for vertical bars
   readonly property int buttonSize: Style.capsuleHeight
+  readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
   readonly property int pillHeight: buttonSize
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
   readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginM * 2)) : buttonSize
   readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + Style.marginM * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + Style.marginM * 2))
+
+  // Determine pill direction based on section position
+  readonly property bool openDownward: oppositeDirection
+  readonly property bool openUpward: !oppositeDirection
+
+  // Effective shown state (true if animated open or forced, but not if force closed)
+  readonly property bool revealed: !forceClose && (forceOpen || showPill)
+
+  // Always prioritize hover color, then the custom one and finally the fallback color
+  readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
+  readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary)
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -92,13 +93,11 @@ Item {
     width: buttonSize
     height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
     radius: halfButtonSize
-    color: hovered ? (customBackgroundColor.a > 0 ? Qt.lighter(customBackgroundColor, 1.1) : Color.mHover) : (customBackgroundColor.a > 0 ? customBackgroundColor : Style.capsuleColor)
-
-    readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
+    color: root.bgColor
 
     Behavior on color {
       ColorAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.InOutQuad
       }
     }
@@ -116,8 +115,6 @@ Item {
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Color.transparent // Make pill background transparent to avoid double opacity
-
-    readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
     topLeftRadius: openUpward ? halfButtonSize : 0
@@ -140,7 +137,7 @@ Item {
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : (forceOpen ? Color.mOnSurface : Color.mPrimary))
+      color: root.fgColor
       visible: revealed
 
       function getVerticalCenterOffset() {
@@ -165,7 +162,7 @@ Item {
     Behavior on opacity {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.OutCubic
       }
     }
@@ -187,7 +184,7 @@ Item {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnHover) : (customTextIconColor.a > 0 ? customTextIconColor : Color.mOnSurface)
+      color: root.fgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -219,7 +216,7 @@ Item {
       property: "opacity"
       from: 0
       to: 1
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.OutCubic
     }
     onStarted: {
@@ -268,7 +265,7 @@ Item {
       property: "opacity"
       from: 1
       to: 0
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.InCubic
     }
     onStopped: {
