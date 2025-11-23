@@ -728,8 +728,8 @@ Popup {
 
       RowLayout {
         Layout.fillWidth: true
-        Layout.topMargin: 20
-        Layout.bottomMargin: 20
+        //Layout.topMargin: 20
+        //Layout.bottomMargin: 20
         spacing: 10
 
         Item {
