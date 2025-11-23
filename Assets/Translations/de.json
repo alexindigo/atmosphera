@@ -231,6 +231,10 @@
           "description": "Audio-Visualizer anzeigen, wenn Musik abgespielt wird.",
           "label": "Visualizer anzeigen"
         },
+        "show-progress-ring": {
+          "description": "Runden Fortschrittsindikator anzeigen, der den Titelfortschritt anzeigt.",
+          "label": "Fortschrittsring anzeigen"
+        },
         "use-fixed-width": {
           "description": "Wenn aktiviert, verwendet das Widget immer die maximale Breite, anstatt sich dynamisch an den Inhalt anzupassen.",
           "label": "Feste Breite verwenden"

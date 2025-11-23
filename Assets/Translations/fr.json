@@ -231,6 +231,10 @@
           "description": "Afficher un visualiseur audio quand la musique est en cours de lecture.",
           "label": "Afficher le visualiseur"
         },
+        "show-progress-ring": {
+          "description": "Afficher un indicateur de progression circulaire montrant la progression de la piste.",
+          "label": "Afficher l'anneau de progression"
+        },
         "use-fixed-width": {
           "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu.",
           "label": "Utiliser une Largeur Fixe"

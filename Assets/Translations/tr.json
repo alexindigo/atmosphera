@@ -231,6 +231,10 @@
           "description": "Müzik çalarken bir ses görselleştirici göster.",
           "label": "Görselleştiriciyi göster"
         },
+        "show-progress-ring": {
+          "description": "Parça ilerlemesini gösteren dairesel bir ilerleme göstergesi gösterin.",
+          "label": "İlerleme halkası göster"
+        },
         "use-fixed-width": {
           "description": "Etkinleştirildiğinde, widget dinamik olarak içerik göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
           "label": "Sabit Genişlik Kullan"

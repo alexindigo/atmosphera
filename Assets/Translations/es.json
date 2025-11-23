@@ -231,6 +231,10 @@
           "description": "Mostrar un visualizador de audio cuando se reproduce música.",
           "label": "Mostrar visualizador"
         },
+        "show-progress-ring": {
+          "description": "Mostrar un indicador de progreso circular que muestre el progreso de la pista.",
+          "label": "Mostrar anillo de progreso"
+        },
         "use-fixed-width": {
           "description": "Cuando está activado, el widget siempre usará el ancho máximo en lugar de ajustarse dinámicamente al contenido.",
           "label": "Usar Ancho Fijo"
