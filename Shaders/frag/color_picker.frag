@@ -9,6 +9,11 @@ layout(std140, binding = 0) uniform buf
     vec4 params; // x=opacity, y=fixedVal, z=mode, w=padding
 };
 
+// Compatibility function for GLSL ES to avoid % operator issues
+int mod_compat(float a, float b) {
+    return int(a - floor(a / b) * b);
+}
+
 vec3 hsv2rgb(vec3 c)
 {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -31,7 +36,7 @@ void main()
 
     // Determine Mode Logic
     // 0: (Red/Hue) 1: (Green/Sat) 2: (Blue/Val)
-    int perm = int(mode) % 3;
+    int perm = mod_compat(mode, 3.0);
 
     float isHSV = step(3.0, mode);
 
