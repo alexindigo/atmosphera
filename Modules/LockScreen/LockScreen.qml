@@ -548,10 +548,12 @@ Loader {
               }
 
               // Calculate minimum width based on button requirements
-              // Button row needs: margins + 5 buttons + 4 spacings + margins
+              // Button row needs: margins + buttons (4 or 5 depending on hibernate visibility) + spacings + margins
               // Plus ColumnLayout margins (14 on each side = 28 total)
               // Add extra buffer to ensure password input has proper padding
-              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? (5 * buttonRowTextMeasurer.minButtonWidth) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
+              property int buttonCount: Settings.data.general.showHibernateOnLockScreen ? 5 : 4
+              property int spacingCount: buttonCount - 1
+              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? (buttonCount * buttonRowTextMeasurer.minButtonWidth) + (spacingCount * 10) + 40 + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
               width: Math.max(750, minButtonRowWidth)
 
               ColumnLayout {
@@ -1195,6 +1197,7 @@ Loader {
                     color: hibernateButtonArea.containsMouse ? Color.mHover : "transparent"
                     border.color: Color.mOutline
                     border.width: 1
+                    visible: Settings.data.general.showHibernateOnLockScreen
 
                     RowLayout {
                       anchors.centerIn: parent
