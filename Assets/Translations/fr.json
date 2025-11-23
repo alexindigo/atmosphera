@@ -1071,6 +1071,10 @@
             "description": "Écrire {filepath}.",
             "description-missing": "Nécessite l'installation de {app}"
           },
+          "cava": {
+            "description": "Écrire {filepath}.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "vicinae": {
             "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le lanceur {app} soit installé"

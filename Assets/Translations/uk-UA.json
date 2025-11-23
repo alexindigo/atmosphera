@@ -1071,6 +1071,10 @@
             "description": "Записати {filepath}.",
             "description-missing": "Потрібна установка {app}"
           },
+          "cava": {
+            "description": "Записати {filepath}.",
+            "description-missing": "Потрібна установка {app}"
+          },
           "vicinae": {
             "description": "Записати {filepath} та перезавантажити",
             "description-missing": "Потрібна установка {app}"

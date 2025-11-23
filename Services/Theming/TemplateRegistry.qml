@@ -208,6 +208,18 @@ Singleton {
         }
       ],
       "postProcess": () => `spicetify -q apply --no-restart`
+    },
+    {
+      "id": "cava",
+      "name": "Cava",
+      "category": "applications",
+      "input": "cava.ini",
+      "outputs": [
+        {
+          "path": "~/.config/cava/themes/noctalia"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} cava`
     }
   ]
 

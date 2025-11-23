@@ -28,6 +28,7 @@ Singleton {
   property bool gnomeCalendarAvailable: false
   property bool spicetifyAvailable: false
   property bool telegramAvailable: false
+  property bool cavaAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -183,7 +184,8 @@ Singleton {
                                             "codeAvailable": ["which", "code"],
                                             "gnomeCalendarAvailable": ["which", "gnome-calendar"],
                                             "spicetifyAvailable": ["which", "spicetify"],
-                                            "telegramAvailable": ["which", "telegram-desktop"]
+                                            "telegramAvailable": ["which", "telegram-desktop"],
+                                            "cavaAvailable": ["which","cava"]
                                           })
 
   // Internal tracking

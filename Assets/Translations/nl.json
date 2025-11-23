@@ -1071,6 +1071,10 @@
             "description": "Schrijf {filepath}.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           },
+          "cava": {
+            "description": "Schrijf {filepath}.",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
           "vicinae": {
             "description": "Schrijf {filepath} en herlaad.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."

@@ -1071,6 +1071,10 @@
             "description": "Write {filepath}.",
             "description-missing": "Requires {app} to be installed"
           },
+          "cava": {
+            "description": "Write {filepath}.",
+            "description-missing": "Requires {app} to be installed"
+          },
           "vicinae": {
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"

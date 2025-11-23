@@ -4,7 +4,7 @@
 if [ "$#" -ne 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox}" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava}" >&2
     exit 1
 fi
 
@@ -198,6 +198,42 @@ vicinae)
 pywalfox)
     echo "🎨 Updating pywalfox themes..."
     pywalfox update
+    ;;
+
+cava)
+    echo "🎨 Applying 'noctalia' theme to cava..."
+    CONFIG_FILE="$HOME/.config/cava/config"
+
+    # Check if the config file exists.
+    if [ -f "$CONFIG_FILE" ]; then
+        # Check if [color] section exists
+        if grep -q '^\[color\]' "$CONFIG_FILE"; then
+            echo "[color] section found, checking theme setting..."
+
+            # Check if theme is already set to noctalia under [color]
+            if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = "noctalia"'; then
+                echo "Theme already set to noctalia under [color], skipping modification."
+            else
+                # Check if theme line exists under [color] section
+                if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = '; then
+                    # Replace existing theme line under [color]
+                    sed -i '/^\[color\]/,/^\[/{s/^theme = .*/theme = "noctalia"/}' "$CONFIG_FILE"
+                else
+                    # Add theme line after [color]
+                    sed -i '/^\[color\]/a theme = "noctalia"' "$CONFIG_FILE"
+                fi
+            fi
+        else
+            echo "[color] section not found, adding it with theme..."
+            # Add [color] section with theme at the end of file
+            echo "" >>"$CONFIG_FILE"
+            echo "[color]" >>"$CONFIG_FILE"
+            echo 'theme = "noctalia"' >>"$CONFIG_FILE"
+        fi
+    else
+        echo "Error: cava config file not found at $CONFIG_FILE" >&2
+        exit 1
+    fi
     ;;
 
 *)
