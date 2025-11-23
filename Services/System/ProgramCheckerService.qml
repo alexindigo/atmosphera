@@ -185,7 +185,7 @@ Singleton {
                                             "gnomeCalendarAvailable": ["which", "gnome-calendar"],
                                             "spicetifyAvailable": ["which", "spicetify"],
                                             "telegramAvailable": ["which", "telegram-desktop"],
-                                            "cavaAvailable": ["which","cava"]
+                                            "cavaAvailable": ["which", "cava"]
                                           })
 
   // Internal tracking
