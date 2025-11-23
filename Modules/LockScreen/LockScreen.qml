@@ -343,15 +343,15 @@ Loader {
                     text: {
                       var lang = I18n.locale.name.split("_")[0];
                       var formats = {
+                        "en": "dddd, MMMM d",
                         "de": "dddd, d. MMMM",
-                        "es": "dddd, d 'de' MMMM",
                         "fr": "dddd d MMMM",
+                        "es": "dddd, d 'de' MMMM",
                         "pt": "dddd, d 'de' MMMM",
+                        "nl": "dddd d MMMM"
                         "zh": "yyyy年M月d日 dddd",
-                        "uk": "dddd, d MMMM",
-                        "tr": "dddd, d MMMM"
                       };
-                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, MMMM d");
+                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, d MMMM");
                     }
                     pointSize: Style.fontSizeXL
                     font.weight: Font.Medium
@@ -525,7 +525,7 @@ Loader {
                 }
                 Text {
                   id: hibernateText
-                  text: I18n.tr("session-menu.hibernate")
+                  text: Settings.data.general.showHibernateOnLockScreen ? I18n.tr("session-menu.hibernate") : ""
                   font.pointSize: buttonRowTextMeasurer.fontSize
                   font.weight: Font.Medium
                 }
@@ -752,7 +752,7 @@ Loader {
                     }
                   }
 
-                  // 3-day forecast
+                  // Forecast
                   RowLayout {
                     visible: Settings.data.location.weatherEnabled && LocationService.data.weather !== null
                     Layout.preferredWidth: 260
@@ -760,7 +760,7 @@ Loader {
                     spacing: 4
 
                     Repeater {
-                      model: 3
+                      model: MediaService.currentPlayer && MediaService.canPlay ? 3 : 4
                       delegate: ColumnLayout {
                         Layout.fillWidth: true
                         spacing: 3
@@ -807,8 +807,6 @@ Loader {
 
                   Item {
                     Layout.fillWidth: true
-                    visible: !(Settings.data.location.weatherEnabled && LocationService.data.weather !== null)
-                    Layout.preferredWidth: visible ? 1 : 0
                   }
 
                   // Battery and Keyboard Layout (full mode only)
