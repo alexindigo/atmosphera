@@ -159,7 +159,7 @@ Singleton {
             continue;
           }
           const type = remaining.substring(secondLastColonIdx + 1);
-          if (type !== "vpn") {
+          if (type !== "vpn" && type !== "wireguard") {
             continue;
           }
           const remaining2 = remaining.substring(0, secondLastColonIdx);
