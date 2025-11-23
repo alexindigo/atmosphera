@@ -10,9 +10,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // ============================================================================
   // Properties
-  // ============================================================================
 
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
   readonly property int state: adapter?.state ?? 0
@@ -32,9 +30,7 @@ Singleton {
   property var devicesBeingPaired: ({})
   property var connectionAttempts: ({})
 
-  // ============================================================================
-  // Initialization
-  // ============================================================================
+  // Init
 
   function init() {
     Logger.i("Bluetooth", "Service started");
@@ -43,9 +39,7 @@ Singleton {
 
   onAdapterChanged: _configureAdapter()
 
-  // ============================================================================
-  // Public API - Device Actions
-  // ============================================================================
+  // Device Actions
 
   function connectDeviceWithTrust(device) {
     if (!device)
@@ -116,9 +110,7 @@ Singleton {
     adapter.enabled = state;
   }
 
-  // ============================================================================
-  // Public API - Device Info Helpers
-  // ============================================================================
+  // Device Info Helpers
 
   function sortDevices(devices) {
     return devices.sort((a, b) => {
@@ -213,9 +205,7 @@ Singleton {
     return `Battery: ${Math.round(device.battery * 100)}%`;
   }
 
-  // ============================================================================
   // Device Monitoring
-  // ============================================================================
 
   Repeater {
     model: root.devices
@@ -249,9 +239,7 @@ Singleton {
     }
   }
 
-  // ============================================================================
   // Adapter State Monitoring
-  // ============================================================================
 
   Connections {
     target: adapter
@@ -276,9 +264,7 @@ Singleton {
     }
   }
 
-  // ============================================================================
-  // Private Helper Functions
-  // ============================================================================
+  // Private
 
   function _filterDevices(filterFn) {
     if (!adapter?.devices)
@@ -374,9 +360,7 @@ Singleton {
     delete connectionAttempts[address];
   }
 
-  // ============================================================================
-  // Internal Components
-  // ============================================================================
+  // Internal
 
   Timer {
     id: discoveryTimer
