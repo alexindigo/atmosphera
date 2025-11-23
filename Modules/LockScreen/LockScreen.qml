@@ -1022,6 +1022,7 @@ Loader {
                         id: eyeButtonArea
                         anchors.fill: parent
                         hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: parent.parent.passwordVisible = !parent.parent.passwordVisible
                       }
 
@@ -1058,6 +1059,7 @@ Loader {
                         id: submitButtonArea
                         anchors.fill: parent
                         hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
                         onClicked: lockContext.tryUnlock()
                       }
                     }
@@ -1116,6 +1118,7 @@ Loader {
                       id: logoutButtonArea
                       anchors.fill: parent
                       hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
                       onClicked: CompositorService.logout()
                     }
 
@@ -1165,6 +1168,7 @@ Loader {
                       id: suspendButtonArea
                       anchors.fill: parent
                       hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
                       onClicked: CompositorService.suspend()
                     }
 
@@ -1214,6 +1218,7 @@ Loader {
                       id: hibernateButtonArea
                       anchors.fill: parent
                       hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
                       onClicked: CompositorService.hibernate()
                     }
 
@@ -1263,6 +1268,7 @@ Loader {
                       id: rebootButtonArea
                       anchors.fill: parent
                       hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
                       onClicked: CompositorService.reboot()
                     }
 
@@ -1312,6 +1318,7 @@ Loader {
                       id: shutdownButtonArea
                       anchors.fill: parent
                       hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
                       onClicked: CompositorService.shutdown()
                     }
 
