@@ -7,6 +7,12 @@
 </p>
 
 <p align="center">
+  <a href="https://docs.noctalia.dev/getting-started/installation">
+    <img src="https://img.shields.io/badge/⚡_QUICK_INSTALL-Get_Started_Now-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Quick Install" style="height: 50px" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/noctalia-dev/noctalia-shell/commits">
     <img src="https://img.shields.io/github/last-commit/noctalia-dev/noctalia-shell?style=for-the-badge&labelColor=0C0D11&color=A8AEFF&logo=git&logoColor=FFFFFF&label=commit" alt="Last commit" />
   </a>
@@ -23,7 +29,18 @@
 
 ---
 
+## What is Noctalia?
+
 A beautiful, minimal desktop shell for Wayland that actually gets out of your way. Built on Quickshell with a warm lavender aesthetic that you can easily customize to match your vibe.
+
+**✨ Key Features:**
+- 🪟 Native support for Niri, Hyprland, Sway and MangoWC
+- ⚡ Built on Quickshell for performance
+- 🎯 Minimalist design philosophy
+- 🔧 Easily customizable to match your style
+- 🎨 Many color schemes available
+- 
+---
 
 ## Preview
 
@@ -44,23 +61,34 @@ https://github.com/user-attachments/assets/72c6d6dc-48b0-48a0-bd8b-c7e70990edc4
 
 ---
 
-## ⚠️ BREAKING CHANGE ⚠️
+## 📋 Requirements
 
-With the release of `v3.0.0` we introduced a small breaking change. This is solely for niri users, we reworked how we handle the wallpaper & overview. Please read [the docs](https://docs.noctalia.dev/getting-started/compositor-settings/#niri-wallpaper-and-overview-setup) to adapt your niri config.
+- Wayland compositor (Niri, Hyprland, Sway or MangoWC recommended)
+- Quickshell
+- Additional dependencies are listed in our [documentation](https://docs.noctalia.dev)
 
 ---
 
 ## 🚀 Getting Started
 
 **New to Noctalia?**  
-Check out our documentation & installation guide to get started!
+Check out our comprehensive documentation and installation guide to get up and running!
 
-<a href="https://docs.noctalia.dev/getting-started/installation">
-  <img src="https://img.shields.io/badge/⚡%20Quick%20Install-Get%20Started-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Quick Install" />
-</a>
-  
-  
-**Need help?** Join our [Discord community](https://discord.noctalia.dev) or browse the [FAQ](https://docs.noctalia.dev/getting-started/faq/).
+<p align="center">
+  <a href="https://docs.noctalia.dev/getting-started/installation">
+    <img src="https://img.shields.io/badge/📖_Installation_Guide-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="Installation Guide" />
+  </a>
+  <a href="https://docs.noctalia.dev/getting-started/faq/">
+    <img src="https://img.shields.io/badge/❓_FAQ-A8AEFF?style=for-the-badge&logoColor=FFFFFF&labelColor=0C0D11" alt="FAQ" />
+  </a>
+  <a href="https://discord.noctalia.dev">
+    <img src="https://img.shields.io/badge/💬_Get_Help-A8AEFF?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0C0D11" alt="Discord" />
+  </a>
+</p>
+
+### ⚠️ Important: Breaking Change in v3.0.0
+
+If you're upgrading to `v3.0.0` and using **Niri**, we've reworked how we handle wallpapers & overview. Please read [the docs](https://docs.noctalia.dev/getting-started/compositor-settings/#niri-wallpaper-and-overview-setup) to adapt your niri config.
 
 ---
 
@@ -79,9 +107,9 @@ We welcome contributions of any size - bug fixes, new features, documentation im
 - **Want to code?** Check out our [development guidelines](https://docs.noctalia.dev/development/guideline)
 - **Need help?** Join our [Discord](https://discord.noctalia.dev)
 
-### ✨ Nix DevShell (new)
+### ✨ Nix DevShell
 
-Nix users can use the flake's devShell to access a development environment. Run nix develop the repo root to enter the dev shell. It includes packages, utilities and environment variables needed to develop Noctalia.
+Nix users can use the flake's devShell to access a development environment. Run `nix develop` in the repo root to enter the dev shell. It includes packages, utilities and environment variables needed to develop Noctalia.
 
 ---
 
