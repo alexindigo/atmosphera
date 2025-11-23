@@ -1450,6 +1450,10 @@
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
           "label": "Konum"
         },
+        "grid-view": {
+          "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
+          "label": "Izgara görünümü"
+        },
         "section": {
           "description": "Başlatıcının davranışını ve görünümünü özelleştirin.",
           "label": "Görünüm"

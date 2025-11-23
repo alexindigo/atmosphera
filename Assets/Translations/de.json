@@ -1450,6 +1450,10 @@
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
           "label": "Position"
         },
+        "grid-view": {
+          "description": "Elemente in einem Raster statt in einer Liste anzeigen.",
+          "label": "Rasteransicht"
+        },
         "section": {
           "description": "Verhalten und Erscheinungsbild des Starters anpassen.",
           "label": "Erscheinungsbild"

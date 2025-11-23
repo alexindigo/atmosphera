@@ -148,7 +148,8 @@
     "sortByMostUsed": true,
     "terminalCommand": "xterm -e",
     "customLaunchPrefixEnabled": false,
-    "customLaunchPrefix": ""
+    "customLaunchPrefix": "",
+    "viewMode": "list"
   },
   "controlCenter": {
     "position": "close_to_bar_button",

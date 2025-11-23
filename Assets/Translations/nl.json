@@ -1450,6 +1450,10 @@
           "description": "Kies waar het launcher-paneel verschijnt.",
           "label": "Positie"
         },
+        "grid-view": {
+          "description": "Items in een raster weergeven in plaats van een lijst.",
+          "label": "Rasterweergave"
+        },
         "section": {
           "description": "Pas het gedrag en uiterlijk van de launcher aan.",
           "label": "Uiterlijk"

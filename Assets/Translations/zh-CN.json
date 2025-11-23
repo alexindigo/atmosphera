@@ -1450,6 +1450,10 @@
           "description": "选择启动器面板出现的位置。",
           "label": "位置"
         },
+        "grid-view": {
+          "description": "以网格布局而非列表显示项目。",
+          "label": "网格视图"
+        },
         "section": {
           "description": "自定义启动器的行为和外观。",
           "label": "外观"

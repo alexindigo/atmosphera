@@ -1450,6 +1450,10 @@
           "description": "Choose where the launcher panel appears.",
           "label": "Position"
         },
+        "grid-view": {
+          "description": "Display items in a grid layout instead of a list.",
+          "label": "Grid view"
+        },
         "section": {
           "description": "Customize the launcher's behavior and appearance.",
           "label": "Appearance"

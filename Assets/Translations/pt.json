@@ -1450,6 +1450,10 @@
           "description": "Escolha onde o painel do lançador aparece.",
           "label": "Posição"
         },
+        "grid-view": {
+          "description": "Exibir itens em uma grade em vez de uma lista.",
+          "label": "Visualização em grade"
+        },
         "section": {
           "description": "Personalize o comportamento e a aparência do lançador.",
           "label": "Aparência"

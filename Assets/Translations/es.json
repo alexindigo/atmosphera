@@ -1450,6 +1450,10 @@
           "description": "Elige dónde aparece el panel del lanzador.",
           "label": "Posición"
         },
+        "grid-view": {
+          "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
+          "label": "Vista de cuadrícula"
+        },
         "section": {
           "description": "Personaliza el comportamiento y la apariencia del lanzador.",
           "label": "Apariencia"

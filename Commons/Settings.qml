@@ -306,6 +306,8 @@ Singleton {
       property string terminalCommand: "xterm -e"
       property bool customLaunchPrefixEnabled: false
       property string customLaunchPrefix: ""
+      // View mode: "list" or "grid"
+      property string viewMode: "list"
     }
 
     // control center

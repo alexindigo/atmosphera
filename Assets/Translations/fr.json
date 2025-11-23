@@ -1450,6 +1450,10 @@
           "description": "Choisissez où le panneau du lanceur apparaît.",
           "label": "Position"
         },
+        "grid-view": {
+          "description": "Afficher les éléments dans une grille au lieu d'une liste.",
+          "label": "Vue grille"
+        },
         "section": {
           "description": "Personnalisez le comportement et l'apparence du lanceur.",
           "label": "Apparence"
