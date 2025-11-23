@@ -231,6 +231,10 @@
           "description": "播放音乐时显示音频可视化器。",
           "label": "显示可视化器"
         },
+        "show-progress-ring": {
+          "description": "显示显示曲目进度的圆形进度指示器。",
+          "label": "显示进度环"
+        },
         "use-fixed-width": {
           "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。",
           "label": "使用固定宽度"

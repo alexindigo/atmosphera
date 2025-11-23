@@ -231,6 +231,10 @@
           "description": "Exibir um visualizador de áudio quando música está sendo reproduzida.",
           "label": "Mostrar visualizador"
         },
+        "show-progress-ring": {
+          "description": "Exibir um indicador de progresso circular mostrando o progresso da faixa.",
+          "label": "Mostrar anel de progresso"
+        },
         "use-fixed-width": {
           "description": "Quando ativado, o widget sempre usará a largura máxima em vez de ajustar dinamicamente ao conteúdo.",
           "label": "Usar Largura Fixa"

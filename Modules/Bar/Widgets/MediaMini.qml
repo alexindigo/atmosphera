@@ -42,6 +42,7 @@ Item {
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
 
   // Maximum widget width with user settings support
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
@@ -321,14 +322,79 @@ Item {
             Layout.preferredWidth: Math.round(21 * scaling)
             Layout.preferredHeight: Math.round(21 * scaling)
 
+            // Background for progress circle
+            Rectangle {
+              anchors.fill: parent
+              radius: width / 2
+              color: Color.transparent
+            }
+
+            // Progress circle
+            Canvas {
+              id: progressCanvas
+              anchors.fill: parent
+              anchors.margins: 0 // Align exactly with parent to avoid clipping
+              visible: showProgressRing // Control visibility with setting
+              z: 0 // Behind the album art
+
+              // Calculate progress ratio: 0 to 1
+              property real progressRatio: {
+                if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+                  return 0;
+                const r = MediaService.currentPosition / MediaService.trackLength;
+                if (isNaN(r) || !isFinite(r))
+                  return 0;
+                return Math.max(0, Math.min(1, r));
+              }
+
+              onProgressRatioChanged: requestPaint()
+
+              onPaint: {
+                var ctx = getContext("2d");
+                var centerX = width / 2;
+                var centerY = height / 2;
+                var radius = Math.min(width, height) / 2 - (1.25 * scaling); // Larger radius, accounting for line width to approach edge
+
+                ctx.reset();
+
+                // Background circle (full track, not played yet)
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.lineWidth = 3 * scaling; // Thicker line width based on scaling property
+                ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
+                ctx.stroke();
+
+                // Progress arc (played portion)
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
+                ctx.lineWidth = 3 * scaling; // Thicker line width based on scaling property
+                ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
+                ctx.lineCap = "round";
+                ctx.stroke();
+              }
+            }
+
+            // Connection to update progress when media position changes
+            Connections {
+              target: MediaService
+              function onCurrentPositionChanged() {
+                progressCanvas.requestPaint();
+              }
+              function onTrackLengthChanged() {
+                progressCanvas.requestPaint();
+              }
+            }
+
             NImageCircled {
               id: trackArt
               anchors.fill: parent
+              anchors.margins: showProgressRing ? (2.5 * scaling) : 0.5 // Make album art smaller only when progress ring is visible, scaled with widget
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
               fallbackIconSize: 10
               borderWidth: 0
               border.color: Color.transparent
+              z: 1 // In front of the progress circle
             }
           }
         }
@@ -484,6 +550,52 @@ Item {
         }
       }
 
+      // Progress circle for vertical layout - follows background radius
+      Canvas {
+        id: progressCanvasVertical
+        anchors.fill: parent
+        anchors.margins: 0 // Align with parent container (mainContainer which matches mediaMini)
+        visible: isVerticalBar && showProgressRing // Control visibility with setting
+        z: 0 // Behind other content
+
+        // Calculate progress ratio: 0 to 1
+        property real progressRatio: {
+          if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+            return 0;
+          const r = MediaService.currentPosition / MediaService.trackLength;
+          if (isNaN(r) || !isFinite(r))
+            return 0;
+          return Math.max(0, Math.min(1, r));
+        }
+
+        onProgressRatioChanged: requestPaint()
+
+        onPaint: {
+          var ctx = getContext("2d");
+          var centerX = width / 2;
+          var centerY = height / 2;
+          // Align with mediaMini radius which is circular in vertical mode
+          var radius = Math.min(width, height) / 2 - 4; // Position ring near the outer edge of background
+
+          ctx.reset();
+
+          // Background circle (full track, not played yet)
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+          ctx.lineWidth = 1.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
+          ctx.stroke();
+
+          // Progress arc (played portion)
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
+          ctx.lineWidth = 1.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
+          ctx.lineCap = "round";
+          ctx.stroke();
+        }
+      }
+
       // Vertical layout for left/right bars - icon only
       Item {
         id: verticalLayout
@@ -507,7 +619,19 @@ Item {
             pointSize: Style.fontSizeL * scaling
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
+            z: 1 // In front of the progress circle
           }
+        }
+      }
+
+      // Connection to update vertical progress when media position changes
+      Connections {
+        target: MediaService
+        function onCurrentPositionChanged() {
+          progressCanvasVertical.requestPaint();
+        }
+        function onTrackLengthChanged() {
+          progressCanvasVertical.requestPaint();
         }
       }
 

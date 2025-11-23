@@ -161,6 +161,7 @@ Singleton {
                                     "showAlbumArt": false,
                                     "showArtistFirst": true,
                                     "showVisualizer": false,
+                                    "showProgressRing": true,
                                     "visualizerType": "linear"
                                   },
                                   "Microphone": {

@@ -231,6 +231,10 @@
           "description": "Toon een audiovisualizer wanneer muziek wordt afgespeeld.",
           "label": "Visualizer tonen"
         },
+        "show-progress-ring": {
+          "description": "Toon een circulaire voortgangsindicator die het bestandsspoor voortgang toont.",
+          "label": "Voortgangscirkel tonen"
+        },
         "use-fixed-width": {
           "description": "Indien ingeschakeld gebruikt de widget altijd de maximale breedte in plaats van zich aan te passen aan de inhoud.",
           "label": "Vaste breedte gebruiken"

@@ -231,6 +231,10 @@
           "description": "Display an audio visualizer when music is playing.",
           "label": "Show visualizer"
         },
+        "show-progress-ring": {
+          "description": "Display a circular progress indicator showing track progress.",
+          "label": "Show progress ring"
+        },
         "use-fixed-width": {
           "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content.",
           "label": "Use Fixed Width"
