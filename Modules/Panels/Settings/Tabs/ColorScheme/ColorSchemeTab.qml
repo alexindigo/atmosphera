@@ -853,6 +853,24 @@ ColumnLayout {
                      }
                    }
       }
+      
+      NCheckbox {
+        label: "Cava"
+        description: ProgramCheckerService.cavaAvailable ? I18n.tr("settings.color-scheme.templates.programs.cava.description", {
+                                                                         "filepath": "~/.config/cava/themes/noctalia"
+                                                                       }) : I18n.tr("settings.color-scheme.templates.programs.cava.description-missing", {
+                                                                                      "app": "cava"
+                                                                                    })
+        checked: Settings.data.templates.cava
+        enabled: ProgramCheckerService.cavaAvailable
+        opacity: ProgramCheckerService.cavaAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.cavaAvailable) {
+                       Settings.data.templates.cava = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
     }
     // Miscellaneous
     NCollapsible {

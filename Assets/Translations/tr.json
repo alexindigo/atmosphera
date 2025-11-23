@@ -1062,6 +1062,10 @@
             "description": "{filepath} dosyasına yaz.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
+          "cava": {
+            "description": "{filepath} dosyasına yaz.",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
           "vicinae": {
             "description": "{filepath} dosyasına yaz ve yeniden yükle",
             "description-missing": "Kurulum için {app} gereklidir"
