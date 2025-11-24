@@ -734,7 +734,7 @@
         "enabled": "通知"
       },
       "tooltip": {
-        "action": "左键：打开通知历史\n右键：切换勿扰模式"
+        "action": "左键：打开通知历史\n右键：打开右键菜单"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Noctalia 性能模式已禁用。\n左键点击以启用。",
     "noctalia-performance-enabled": "Noctalia 性能模式已启用。\n左键点击以禁用。",
     "open-control-center": "打开控制中心",
-    "open-notification-history-disable-dnd": "打开通知历史记录\n右键点击禁用\"勿扰模式\"。",
-    "open-notification-history-enable-dnd": "打开通知历史记录\n右键点击启用\"勿扰模式\"。",
+    "open-notification-history-disable-dnd": "打开通知历史记录\n右键：打开右键菜单",
+    "open-notification-history-enable-dnd": "打开通知历史记录\n右键：打开右键菜单",
     "open-settings": "打开设置",
     "open-tray-dropdown": "打开系统托盘下拉菜单",
     "open-wallpaper-selector": "打开壁纸选择器",

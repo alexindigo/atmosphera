@@ -734,7 +734,7 @@
         "enabled": "Notifications"
       },
       "tooltip": {
-        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Ouvrir le menu contextuel"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Le mode performance Noctalia est désactivé.\nClic gauche pour activer.",
     "noctalia-performance-enabled": "Le mode performance Noctalia est activé.\nClic gauche pour désactiver.",
     "open-control-center": "Ouvrir le centre de contrôle",
-    "open-notification-history-disable-dnd": "Ouvrir l'historique des notifications\nClic droit pour désactiver \"Ne pas déranger\".",
-    "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit pour activer \"Ne pas déranger\".",
+    "open-notification-history-disable-dnd": "Ouvrir l'historique des notifications\nClic droit : Ouvrir le menu contextuel",
+    "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit : Ouvrir le menu contextuel",
     "open-settings": "Ouvrir les paramètres",
     "open-tray-dropdown": "Ouvrir le menu déroulant de la barre d'état",
     "open-wallpaper-selector": "Ouvrir le sélecteur de fond d'écran",

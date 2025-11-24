@@ -734,7 +734,7 @@
         "enabled": "Benachrichtigungen"
       },
       "tooltip": {
-        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: 'Nicht stören' umschalten"
+        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Noctalia-Leistungsmodus ist deaktiviert.\nLinksklick zum Aktivieren.",
     "noctalia-performance-enabled": "Noctalia-Leistungsmodus ist aktiviert.\nLinksklick zum Deaktivieren.",
     "open-control-center": "Kontrollzentrum öffnen",
-    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu deaktivieren.",
-    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick um 'Nicht stören' zu aktivieren.",
+    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen",
+    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen",
     "open-settings": "Einstellungen öffnen",
     "open-tray-dropdown": "Tray-Dropdown öffnen",
     "open-wallpaper-selector": "Hintergrundbild-Auswahl öffnen",

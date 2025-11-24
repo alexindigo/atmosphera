@@ -734,7 +734,7 @@
         "enabled": "Meldingen"
       },
       "tooltip": {
-        "action": "Linker muisknop: meldingsgeschiedenis openen\nRechter muisknop: 'Niet storen' schakelen"
+        "action": "Linker muisknop: meldingsgeschiedenis openen\nRechter muisknop: contextmenu openen"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Noctalia-prestatiemodus is uitgeschakeld.\nLinks klikken om in te schakelen.",
     "noctalia-performance-enabled": "Noctalia-prestatiemodus is ingeschakeld.\nLinks klikken om uit te schakelen.",
     "open-control-center": "Bedieningscentrum openen",
-    "open-notification-history-disable-dnd": "Meldingsgeschiedenis openen\nKlik met rechts om \"Niet storen\" uit te schakelen.",
-    "open-notification-history-enable-dnd": "Meldingsgeschiedenis openen\nKlik met rechts om \"Niet storen\" in te schakelen.",
+    "open-notification-history-disable-dnd": "Meldingsgeschiedenis openen\nRechter muisknop: contextmenu openen",
+    "open-notification-history-enable-dnd": "Meldingsgeschiedenis openen\nRechter muisknop: contextmenu openen",
     "open-settings": "Instellingen openen",
     "open-tray-dropdown": "Systeemvakmenu openen",
     "open-wallpaper-selector": "Achtergrondkiezer openen",

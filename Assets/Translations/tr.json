@@ -734,7 +734,7 @@
         "enabled": "Bildirimler"
       },
       "tooltip": {
-        "action": "Sol tık: Bildirim geçmişini aç\nSağ tık: Rahatsız etmeyi aç/kapat"
+        "action": "Sol tık: Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Noctalia performans modu devre dışı.\nEtkinleştirmek için sol tıklayın.",
     "noctalia-performance-enabled": "Noctalia performans modu etkin.\nDevre dışı bırakmak için sol tıklayın.",
     "open-control-center": "Kontrol merkezini aç",
-    "open-notification-history-disable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" devre dışı bırakmak için sağ tık.",
-    "open-notification-history-enable-dnd": "Bildirim geçmişini aç\n\"Rahatsız etmeyi\" etkinleştirmek için sağ tık.",
+    "open-notification-history-disable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
+    "open-notification-history-enable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
     "open-settings": "Ayarları aç",
     "open-tray-dropdown": "Tepsi açılır menüsünü aç",
     "open-wallpaper-selector": "Duvar kağıdı seçiciyi aç",

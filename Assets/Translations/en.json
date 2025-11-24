@@ -734,7 +734,7 @@
         "enabled": "Notifications"
       },
       "tooltip": {
-        "action": "Left click: Open notification history\nRight click: Toggle Do Not Disturb"
+        "action": "Left click: Open notification history\nRight click: Open context menu"
       }
     },
     "powerProfile": {
@@ -2164,8 +2164,8 @@
     "noctalia-performance-disabled": "Noctalia performance mode is disabled\nLeft click to enable",
     "noctalia-performance-enabled": "Noctalia performance mode is enabled\nLeft click to disable",
     "open-control-center": "Open control center",
-    "open-notification-history-disable-dnd": "Open notification history\nRight-click to disable \"Do not disturb\"",
-    "open-notification-history-enable-dnd": "Open notification history\nRight-click to enable \"Do not disturb\"",
+    "open-notification-history-disable-dnd": "Open notification history\nRight click: Open context menu",
+    "open-notification-history-enable-dnd": "Open notification history\nRight click: Open context menu",
     "open-settings": "Open settings",
     "open-tray-dropdown": "Open tray dropdown",
     "open-wallpaper-selector": "Open wallpaper selector",
