@@ -18,26 +18,77 @@ PopupWindow {
   property var anchorItem: null
   property real anchorX: 0
   property real anchorY: 0
+  property real calculatedWidth: 180
 
   signal triggered(string action)
 
-  implicitWidth: 180
+  implicitWidth: calculatedWidth
   implicitHeight: Math.min(600, flickable.contentHeight + (Style.marginS * 2))
   visible: false
   color: Color.transparent
+
+  NText {
+    id: textMeasure
+    visible: false
+    pointSize: Style.fontSizeS
+    wrapMode: Text.NoWrap
+    elide: Text.ElideNone
+    width: undefined
+  }
+
+  NIcon {
+    id: iconMeasure
+    visible: false
+    icon: "bell"
+    pointSize: Style.fontSizeS
+    applyUiScale: false
+  }
+
+  onModelChanged: {
+    Qt.callLater(calculateWidth);
+  }
+
+  function calculateWidth() {
+    let maxWidth = 0;
+    if (model && model.length) {
+      for (let i = 0; i < model.length; i++) {
+        const item = model[i];
+        if (item && item.visible !== false) {
+          const label = item.label || item.text || "";
+          textMeasure.text = label;
+          textMeasure.forceLayout();
+
+          let itemWidth = textMeasure.contentWidth + 8;
+
+          if (item.icon !== undefined) {
+            itemWidth += iconMeasure.width + Style.marginS;
+          }
+
+          itemWidth += Style.marginM * 2;
+
+          if (itemWidth > maxWidth) {
+            maxWidth = itemWidth;
+          }
+        }
+      }
+    }
+    calculatedWidth = Math.max(maxWidth + (Style.marginS * 2), 120);
+  }
 
   anchor.item: anchorItem
   anchor.rect.x: anchorX
   anchor.rect.y: anchorY
 
-  // Handle Escape key to close menu
+  Component.onCompleted: {
+    Qt.callLater(calculateWidth);
+  }
+
   Item {
     anchors.fill: parent
     focus: true
     Keys.onEscapePressed: root.close()
   }
 
-  // Background
   Rectangle {
     id: menuBackground
     anchors.fill: parent
@@ -45,8 +96,6 @@ PopupWindow {
     border.color: Color.mOutline
     border.width: Style.borderS
     radius: Style.radiusM
-
-    // Fade-in animation
     opacity: root.visible ? 1.0 : 0.0
 
     Behavior on opacity {
@@ -57,15 +106,12 @@ PopupWindow {
     }
   }
 
-  // Content - Use Flickable + ColumnLayout like TrayMenu for consistency
   Flickable {
     id: flickable
     anchors.fill: parent
     anchors.margins: Style.marginS
     contentHeight: columnLayout.implicitHeight
     interactive: true
-
-    // Fade-in animation
     opacity: root.visible ? 1.0 : 0.0
 
     Behavior on opacity {
@@ -112,7 +158,6 @@ PopupWindow {
               anchors.rightMargin: Style.marginM
               spacing: Style.marginS
 
-              // Optional icon
               NIcon {
                 visible: modelData.icon !== undefined
                 icon: modelData.icon || ""
@@ -170,13 +215,13 @@ PopupWindow {
       return;
     }
 
+    calculateWidth();
+
     anchorItem = item;
     anchorX = x;
     anchorY = y;
-
     visible = true;
 
-    // Force update after showing
     Qt.callLater(() => {
                    if (root.anchor) {
                      root.anchor.updateAnchor();
@@ -184,17 +229,14 @@ PopupWindow {
                  });
   }
 
-  // Helper function to open at item (compatible with NContextMenu API)
   function openAtItem(item, mouseX, mouseY) {
     openAt(mouseX || 0, mouseY || 0, item);
   }
 
-  // Helper function to close menu (compatible with PopupMenuWindow)
   function close() {
     visible = false;
   }
 
-  // Alias for backward compatibility
   function closeMenu() {
     close();
   }
