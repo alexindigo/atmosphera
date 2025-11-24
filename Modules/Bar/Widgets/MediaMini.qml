@@ -44,6 +44,10 @@ Item {
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
   readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
 
+  // Private constants for element sizes
+  readonly property int _iconOnlySize: Math.round(18 * scaling)
+  readonly property int _artAndProgressSize: Math.round(21 * scaling)
+
   // Maximum widget width with user settings support
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
   readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
@@ -68,7 +72,7 @@ Item {
 
   // Hide conditions
   readonly property bool shouldHideIdle: ((hideMode === "idle") || hideWhenIdle) && !MediaService.isPlaying
-  readonly property bool isEmptyForHideMode: (!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")
+  readonly property bool isEmptyForHideMode: (!hasActivePlayer) && (hideMode === "hidden")
 
   implicitHeight: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
   implicitWidth: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)) : 0
@@ -111,18 +115,17 @@ Item {
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0;
-    var margins = Style.marginS * scaling * 2; // Left and right margins
 
     // Icon, progress ring, or album art width
     if (!hasActivePlayer || (!showAlbumArt && !showProgressRing)) {
       // Icon width only
-      contentWidth += Math.round(18 * scaling);
+      contentWidth += _iconOnlySize;
     } else if (showProgressRing && hasActivePlayer) {
       // Progress ring width (same as album art width to maintain consistent sizing)
-      contentWidth += Math.round(21 * scaling);
+      contentWidth += _artAndProgressSize;
     } else if (showAlbumArt && hasActivePlayer) {
       // Album art width
-      contentWidth += 21 * scaling;
+      contentWidth += _artAndProgressSize;
     }
 
     // Spacing between icon/art and text; only if there is text
@@ -136,25 +139,26 @@ Item {
       contentWidth += Style.marginXXS * 2;
     }
 
-    // Add container margins
-    contentWidth += margins;
-
     return Math.ceil(contentWidth);
   }
 
   // Dynamic width: adapt to content but respect maximum width setting
   readonly property real dynamicWidth: {
+    var contentWidth = calculateContentWidth();
+    // For vertical bars, there are no horizontal margins to add
+    var margins = isVerticalBar ? 0 : (Style.marginS * scaling * 2);
+    var totalWidth = contentWidth + margins;
+
     // If using fixed width mode, always use maxWidth
     if (useFixedWidth) {
       return maxWidth;
     }
-    // Otherwise, adapt to content
+    // If there's no active player, the widget should be compact
     if (!hasActivePlayer) {
-      // Keep compact when no active player
-      return calculateContentWidth();
+      return totalWidth;
     }
-    // Use content width but don't exceed user-set maximum width
-    return Math.min(calculateContentWidth(), maxWidth);
+    // Adapt to content but don't exceed user-set maximum width
+    return Math.min(totalWidth, maxWidth);
   }
 
   //  A hidden text element to safely measure the full title width
@@ -322,12 +326,12 @@ Item {
 
           // Progress circle (independent of album art)
           Item {
-            Layout.preferredWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
-            Layout.preferredHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
-            Layout.minimumWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : 0
-            Layout.minimumHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : 0
-            Layout.maximumWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
-            Layout.maximumHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
+            Layout.preferredWidth: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.preferredHeight: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.minimumWidth: (hasActivePlayer && showProgressRing) ? _artAndProgressSize : 0
+            Layout.minimumHeight: (hasActivePlayer && showProgressRing) ? _artAndProgressSize : 0
+            Layout.maximumWidth: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.maximumHeight: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
             Layout.fillWidth: false
             Layout.fillHeight: false
             visible: hasActivePlayer && (showProgressRing || showAlbumArt)  // Show container when there's active player and either feature is enabled
@@ -430,10 +434,10 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
-            var iconWidth = (windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0);
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (21 * scaling + Style.marginS * scaling) : 0);
+            var iconWidth = (windowIcon.visible ? (_iconOnlySize + Style.marginS * scaling) : 0);
+            var artWidth = (hasActivePlayer && (showAlbumArt || showProgressRing) ? (_artAndProgressSize + Style.marginS * scaling) : 0);
             var totalMargins = Style.marginXXS * 2;
-            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins;
+            var availableWidth = mainContainer.width - iconWidth - artWidth - totalMargins;
             return Math.max(20, availableWidth);
           }
           Layout.maximumWidth: Layout.preferredWidth
@@ -628,31 +632,35 @@ Item {
         }
       }
 
-      // Vertical layout for left/right bars - icon only
+      // Vertical layout for left/right bars - icon or album art
       Item {
         id: verticalLayout
         anchors.centerIn: parent
-        width: parent.width - Style.marginM * 2
-        height: parent.height - Style.marginM * 2
+        width: showProgressRing ? (Style.baseWidgetSize * 0.5 * scaling) : (calculatedVerticalDimension() - 4 * scaling)
+        height: width
         visible: isVerticalBar
-        z: 1 // Above the visualizer
+        z: 1 // Above the visualizer and progress ring
 
-        // Media icon
-        Item {
-          width: Style.baseWidgetSize * 0.5
-          height: width
-          anchors.centerIn: parent
+        // Album Art
+        NImageCircled {
+          anchors.fill: parent
+          visible: showAlbumArt && hasActivePlayer
+          imagePath: MediaService.trackArtUrl
+          fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
+          fallbackIconSize: 12
+          borderWidth: 0
+        }
 
-          NIcon {
-            id: mediaIconVertical
-            anchors.fill: parent
-            icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
-            color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeL * scaling
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            z: 1 // In front of the progress circle
-          }
+        // Media icon (fallback)
+        NIcon {
+          id: mediaIconVertical
+          anchors.fill: parent
+          visible: !showAlbumArt || !hasActivePlayer
+          icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+          color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+          pointSize: Style.fontSizeL * scaling
+          verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
         }
       }
 
