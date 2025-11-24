@@ -20,7 +20,8 @@ Rectangle {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property string density: Settings.data.bar.density
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
@@ -164,7 +165,7 @@ Rectangle {
         required property var modelData
         property ShellScreen screen: root.screen
 
-        visible: (!onlySameOutput || modelData.output == screen.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function (ws) {
+        visible: (!onlySameOutput || modelData.output === screen?.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function (ws) {
           return ws.id;
         }).includes(modelData.workspaceId))
 
@@ -287,23 +288,21 @@ Rectangle {
       if (popupMenuWindow) {
         popupMenuWindow.open();
 
-        // Calculate menu position relative to the clicked item with consistent spacing
-        const barPosition = Settings.data.bar.position;
-        const spacing = Style.barHeight * 0.5;
+        // Calculate menu position
         let menuX, menuY;
-
-        if (barPosition === "top") {
+        if (root.barPosition === "top") {
           menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
-          menuY = globalY + itemHeight + spacing;
-        } else if (barPosition === "bottom") {
+          menuY = Style.barHeight + Style.marginS;
+        } else if (root.barPosition === "bottom") {
+          const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
           menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
-          menuY = globalY - contextMenu.implicitHeight - (Style.barHeight * 2);
-        } else if (barPosition === "left") {
-          menuX = globalX + itemWidth + spacing;
+          menuY = -menuHeight - Style.marginS;
+        } else if (root.barPosition === "left") {
+          menuX = Style.barHeight + Style.marginS;
           menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
         } else {
           // right
-          menuX = globalX - contextMenu.implicitWidth - spacing;
+          menuX = -contextMenu.implicitWidth - Style.marginS;
           menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
         }
 
