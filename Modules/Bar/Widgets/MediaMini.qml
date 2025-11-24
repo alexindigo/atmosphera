@@ -319,8 +319,8 @@ Item {
 
           // Progress circle (independent of album art)
           Item {
-            Layout.preferredWidth: Math.round(21 * scaling)
-            Layout.preferredHeight: Math.round(21 * scaling)
+            Layout.preferredWidth: (showProgressRing || (showAlbumArt && hasActivePlayer)) ? Math.round(21 * scaling) : 0
+            Layout.preferredHeight: (showProgressRing || (showAlbumArt && hasActivePlayer)) ? Math.round(21 * scaling) : 0
 
             // Progress circle - always available when showProgressRing is true
             Canvas {
@@ -386,10 +386,11 @@ Item {
               NImageCircled {
                 id: trackArt
                 anchors.fill: parent
+                anchors.margins: showProgressRing ? 0 : -1 * scaling // Add negative margin to make album art larger when no progress ring
                 visible: showAlbumArt && hasActivePlayer
                 imagePath: MediaService.trackArtUrl
                 fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
-                fallbackIconSize: 10
+                fallbackIconSize: showProgressRing ? 10 : 12 // Larger fallback icon when no progress ring
                 borderWidth: 0
                 border.color: Color.transparent
                 z: 1 // In front of the progress circle
@@ -403,7 +404,7 @@ Item {
                 pointSize: showAlbumArt ? 10 * scaling : 14 * scaling  // Smaller when inside album art circle, larger when alone
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                visible: !showAlbumArt || !hasActivePlayer
+                visible: (!showAlbumArt || !hasActivePlayer) && showProgressRing
                 z: 1 // In front of the progress circle
               }
             }
@@ -583,10 +584,15 @@ Item {
 
         onPaint: {
           var ctx = getContext("2d");
+          // Check if width/height are valid before calculating radius
+          if (width <= 0 || height <= 0) {
+            return; // Skip drawing if dimensions are invalid
+          }
+
           var centerX = width / 2;
           var centerY = height / 2;
           // Align with mediaMini radius which is circular in vertical mode
-          var radius = Math.min(width, height) / 2 - 4; // Position ring near the outer edge of background
+          var radius = Math.max(0, Math.min(width, height) / 2 - 4); // Position ring near the outer edge of background
 
           ctx.reset();
 
