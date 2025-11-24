@@ -59,7 +59,10 @@ Item {
 
         // State
         property var activeTags: ({}) 
-        // Map<ToplevelObject, WorkspaceID> - Uses object reference as key
+        property var multiTagState: ({}) 
+        property bool hasValidTagData: false
+        
+        // Map<ToplevelObject, WorkspaceID>
         property var windowStateMap: new Map()
         
         property string mmsgFocusedTitle: ""
@@ -81,12 +84,13 @@ Item {
             const newWsCache = {};
             const processedTags = {}; 
             let metadataChanged = false;
+            let receivedClientCounts = false; // Track if we got real numbers
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
 
-                // 1. Tag Details
+                // 1. Tag Details (High Quality Data: Contains Client Counts)
                 const tagMatch = line.match(config.reTagDetail);
                 if (tagMatch) {
                     const outputName = tagMatch[1];
@@ -97,26 +101,24 @@ Item {
                     const isActive = (state & 1) !== 0;
                     
                     if (isActive) internal.activeTags[outputName] = tagId;
-
                     const wsData = {
                         "id": tagId, "idx": tagId, "name": tagId.toString(),
                         "output": outputName,
                         "isActive": isActive,
-                        // Check specifically if this monitor is selected for focus highlight
                         "isFocused": isActive && (focused === 1 || outputName === root.selectedMonitor),
                         "isUrgent": (state & 2) !== 0,
                         "isOccupied": clients > 0,
-                        "clients": clients
+                        "clients": clients // We have the real number!
                     };
-                    
                     const key = `${outputName}-${tagId}`;
                     newWsCache[key] = wsData;
                     newWsList.push(wsData);
                     processedTags[key] = true;
+                    receivedClientCounts = true;
                     continue;
                 }
                 
-                // 2. Binary Tags (Fill gaps)
+                // 2. Binary Tags (Low Quality Data: No Client Counts)
                 const tagsMatch = line.match(config.reTagBinary);
                 if (tagsMatch) {
                     const outputName = tagsMatch[1];
@@ -125,24 +127,29 @@ Item {
                     const urg = tagsMatch[4];
                     const len = occ.length;
 
+                    // Overview Detection
+                    let activeCount = 0;
+                    for (let c = 0; c < seltags.length; c++) if (seltags[c] === '1') activeCount++;
+                    internal.multiTagState[outputName] = (activeCount > 1);
+
                     for (let j = 0; j < len; j++) {
                         const tagId = j + 1;
                         const charIdx = len - 1 - j; 
                         const key = `${outputName}-${tagId}`;
                         
                         if (processedTags[key]) continue;
-
                         const isActive = seltags[charIdx] === '1';
-                        if (isActive) internal.activeTags[outputName] = tagId;
+                        const isOccupied = occ[charIdx] === '1';
 
+                        if (isActive) internal.activeTags[outputName] = tagId;
                         newWsList.push({
                             "id": tagId, "idx": tagId, "name": tagId.toString(),
                             "output": outputName,
                             "isActive": isActive,
                             "isFocused": false,
                             "isUrgent": urg[charIdx] === '1',
-                            "isOccupied": occ[charIdx] === '1',
-                            "clients": 0
+                            "isOccupied": isOccupied,
+                            "clients": isOccupied ? -1 : 0 // -1 indicates "Unknown, but at least 1"
                         });
                     }
                     continue;
@@ -162,9 +169,7 @@ Item {
                 // 4. Layout
                 const layoutMatch = line.match(config.reLayout);
                 if (layoutMatch) {
-                    if (layoutMatch[2] !== root.currentLayoutSymbol) {
-                        root.currentLayoutSymbol = layoutMatch[2];
-                    }
+                    if (layoutMatch[2] !== root.currentLayoutSymbol) root.currentLayoutSymbol = layoutMatch[2];
                 }
 
                 // 5. Keyboard
@@ -185,10 +190,11 @@ Item {
                     if (a.id !== b.id) return a.id - b.id;
                     return a.output.localeCompare(b.output);
                 });
-
                 root.workspaces.clear();
                 for (let k = 0; k < newWsList.length; k++) root.workspaces.append(newWsList[k]);
                 root.workspaceChanged();
+
+                if (receivedClientCounts) internal.hasValidTagData = true;
             }
             
             if (metadataChanged || newWsList.length > 0) {
@@ -196,25 +202,37 @@ Item {
             }
         }
 
-// --- WINDOW LIST MERGE ---
+        // --- WINDOW LIST MERGE ---
         function updateWindowList() {
             if (!ToplevelManager.toplevels) return;
+
+            // FIX: SAFETY CHECK
+            // If we haven't received "Detailed" data yet (only binary), 
+            // we don't know where the windows are. Abort to prevent map poisoning.
+            if (!internal.hasValidTagData) return;
+
             const rawList = ToplevelManager.toplevels.values;
             const finalList = [];
             let newFocusedIdx = -1;
-            // Garbage Collection Set
+            
             const currentObjects = new Set();
-
-            // 1. PRE-CALCULATE CAPACITIES
-            // Map of "output-tagId" -> remaining client count
-            const tagCapacities = {}; 
-            for (const key in internal.workspaceCache) {
-                tagCapacities[key] = internal.workspaceCache[key].clients || 0;
+            const tagCapacities = new Map();
+            
+            // Build Capacities
+            let totalCapacity = 0;
+            for (let key in internal.workspaceCache) {
+                const ws = internal.workspaceCache[key];
+                const cap = ws.clients > 0 ? ws.clients : 0;
+                tagCapacities.set(key, cap);
+            totalCapacity += cap;
             }
+            
 
-            const unassignedList = [];
+            if (totalCapacity === 0 && rawList.length > 0 && !internal.hasValidTagData) return;
 
-            // 2. PASS 1: IDENTIFY KNOWN WINDOWS
+            const unassignedWindows = [];
+
+            // Pass 1: Known & Focused
             for (let i = 0; i < rawList.length; i++) {
                 const toplevel = rawList[i];
                 if (!toplevel || toplevel.outliers) continue;
@@ -230,94 +248,75 @@ Item {
                 }
 
                 const currentActiveTag = internal.activeTags[outputName] || config.defaultWorkspaceId;
-                let wsId = -1;
+                const isMultiTag = internal.multiTagState[outputName] === true; 
+                let wsId = -1; 
 
                 const isFocused = toplevel.activated;
                 const isMmsgFocus = (title === internal.mmsgFocusedTitle) && 
                                     (appId === internal.mmsgFocusedAppId);
-
-                // Priority 1: Focused Window (Snap to Active Tag)
-                if (isFocused && isMmsgFocus) {
+                
+                if (isFocused && isMmsgFocus && !isMultiTag) {
                     wsId = currentActiveTag;
                     internal.windowStateMap.set(toplevel, wsId);
                 } 
-                // Priority 2: Existing Memory
                 else if (internal.windowStateMap.has(toplevel)) {
                     wsId = internal.windowStateMap.get(toplevel);
-                } 
-                
-                const winObj = {
-                    "id": `${outputName}-${appId}-${i}`,
-                    "title": title,
-                    "appId": appId,
-                    "class": appId,
-                    "workspaceId": wsId, // Might be -1
-                    "isFocused": isFocused,
-                    "output": outputName,
-                    "handle": toplevel,
-                    "fullscreen": toplevel.fullscreen,
-                    "floating": toplevel.maximized === false && toplevel.fullscreen === false,
-                    "sortIdx": i
-                };
+                }
 
                 if (wsId !== -1) {
-                    // This window is accounted for; decrement the tag's capacity
                     const key = `${outputName}-${wsId}`;
-                    if (tagCapacities[key] && tagCapacities[key] > 0) {
-                        tagCapacities[key]--;
-                    }
-                    finalList.push(winObj);
+                    const cap = tagCapacities.get(key) || 0;
+                    if (cap > 0) tagCapacities.set(key, cap - 1);
+                    
+                    finalList.push(createWindowObject(toplevel, outputName, appId, title, wsId, isFocused, i));
                 } else {
-                    unassignedList.push(winObj);
+                    unassignedWindows.push({ toplevel, outputName, appId, title, isFocused, index: i });
                 }
             }
 
-            // 3. PASS 2: DISTRIBUTE UNASSIGNED WINDOWS
-            // Assign remaining windows to tags that still have 'capacity' (client count > 0)
-            for (let i = 0; i < unassignedList.length; i++) {
-                const win = unassignedList[i];
-                const out = win.output;
-                let assigned = false;
+            // Pass 2: Distribute Unknowns
+            for (const win of unassignedWindows) {
+                let assignedId = -1;
 
-                // Find a tag on this output that needs clients
-                for (const key in tagCapacities) {
-                    const wsData = internal.workspaceCache[key];
-                    // Match Output and verify capacity
-                    if (wsData && wsData.output === out && tagCapacities[key] > 0) {
-                        win.workspaceId = wsData.id;
-                        internal.windowStateMap.set(win.handle, wsData.id);
-                        tagCapacities[key]--;
-                        assigned = true;
+                for (let key in internal.workspaceCache) {
+                    const ws = internal.workspaceCache[key];
+                    // Robust output check: match name OR if both are undefined/generic
+                    if (ws.output !== win.outputName && win.outputName !== "") continue;
+
+                    const cap = tagCapacities.get(key) || 0;
+                    if (cap > 0) {
+                        assignedId = ws.id;
+                        tagCapacities.set(key, cap - 1); 
                         break;
                     }
                 }
 
-                // 4. Fallback: Only now do we default to Active Tag if no space matches
-                if (!assigned) {
-                    const fallback = internal.activeTags[out] || config.defaultWorkspaceId;
-                    win.workspaceId = fallback;
-                    internal.windowStateMap.set(win.handle, fallback);
+                if (assignedId === -1) {
+                    assignedId = internal.activeTags[win.outputName] || config.defaultWorkspaceId;
                 }
-                
-                finalList.push(win);
+
+                internal.windowStateMap.set(win.toplevel, assignedId);
+                finalList.push(createWindowObject(
+                    win.toplevel, win.outputName, win.appId, win.title, assignedId, win.isFocused, win.index
+                ));
             }
 
-            // Restore original order (important for taskbar consistency)
-            finalList.sort((a, b) => a.sortIdx - b.sortIdx);
-            
-            // Find new focused index
+            finalList.sort((a, b) => {
+                const idxA = parseInt(a.id.split('-').pop());
+                const idxB = parseInt(b.id.split('-').pop());
+                return idxA - idxB;
+            });
+
             for(let i=0; i<finalList.length; i++) {
                 if (finalList[i].isFocused) newFocusedIdx = i;
             }
 
-            // GC: Remove closed windows from memory
             if (internal.windowStateMap.size > rawList.length + 10) {
                 for (const key of internal.windowStateMap.keys()) {
                     if (!currentObjects.has(key)) internal.windowStateMap.delete(key);
                 }
             }
 
-            // Diff Signature
             const sig = JSON.stringify(finalList.map(w => w.id + w.workspaceId + w.isFocused));
             if (sig !== internal.lastWindowSig) {
                 internal.lastWindowSig = sig;
@@ -331,6 +330,20 @@ Item {
             }
         }
 
+        function createWindowObject(toplevel, outputName, appId, title, wsId, isFocused, index) {
+             return {
+                "id": `${outputName}-${appId}-${index}`,
+                "title": title,
+                "appId": appId,
+                "class": appId,
+                "workspaceId": wsId,
+                "isFocused": isFocused,
+                "output": outputName,
+                "handle": toplevel,
+                "fullscreen": toplevel.fullscreen,
+                "floating": toplevel.maximized === false && toplevel.fullscreen === false
+            };
+        }
 
         // --- SCALES ---
         function updateScales() {
@@ -339,7 +352,7 @@ Item {
                 scalesMap[name] = {
                     "name": name,
                     "scale": data.scale || 1.0,
-                    "width": 0, "height": 0, "x": 0, "y": 0 // mmsg lacks geometry
+                    "width": 0, "height": 0, "x": 0, "y": 0 
                 };
             }
             if (CompositorService && CompositorService.onDisplayScalesUpdated) {
@@ -357,16 +370,12 @@ Item {
         command: config.query.eventStream
         stdout: SplitParser {
             onRead: (line) => {
-                // Fast Path: Monitor Switch
                 if (line.includes("selmon") && line.includes(" 1")) {
                     const parts = line.split(' ');
                     if (parts.length >= 3) root.selectedMonitor = parts[0];
                     return;
                 }
-
                 internal.streamBuffer += line + "\n";
-                
-                // Frame End Detection
                 if (line.match(config.reTagBinary)) {
                     internal.processFrame(internal.streamBuffer);
                     internal.streamBuffer = ""; 
@@ -424,8 +433,6 @@ Item {
         procOutputs.running = true;
         procInitial.running = true;
         eventStream.running = true;
-        
-        // One-shot monitor check
         Quickshell.execDetached(["mmsg", "-g", "-o"]); 
         
         initialized = true;
