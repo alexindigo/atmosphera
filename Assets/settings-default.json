@@ -328,6 +328,7 @@
     "code": false,
     "spicetify": false,
     "telegram": false,
+    "cava": false,
     "enableUserTemplates": false
   },
   "nightLight": {
