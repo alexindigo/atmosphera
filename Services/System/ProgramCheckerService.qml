@@ -184,7 +184,7 @@ Singleton {
                                             "codeAvailable": ["which", "code"],
                                             "gnomeCalendarAvailable": ["which", "gnome-calendar"],
                                             "spicetifyAvailable": ["which", "spicetify"],
-                                            "telegramAvailable": ["which", "telegram-desktop"],
+                                            "telegramAvailable": ["sh", "-c", "which telegram-desktop || which Telegram"],
                                             "cavaAvailable": ["which", "cava"]
                                           })
 
