@@ -1,6 +1,6 @@
 /**
-* @name midnight (matugen - noctalia)
-* @description a dark, customizable discord theme with matugen!
+* @name midnight-noctalia
+* @description a discord theme for noctalia-shell
 * @author refact0r
 * @version 2.1.1
 * @invite nz87hXyvcy
@@ -150,4 +150,12 @@ body {
 --purple-3: {{colors.on_secondary.default.hex}};
 --purple-4: {{colors.on_secondary_container.default.hex}};
 --purple-5: {{colors.secondary.default.hex}};
+}
+
+.divider__908e2:not(.isUnread__908e2) {
+  border-color: var(--bg-2);
+}
+
+.bannerButton_de8008, .bannerColor_fb7f94 {
+  color: var(--text-1);
 }
