@@ -113,10 +113,13 @@ Item {
     var contentWidth = 0;
     var margins = Style.marginS * scaling * 2; // Left and right margins
 
-    // Icon or album art width
-    if (!hasActivePlayer || !showAlbumArt) {
-      // Icon width
+    // Icon, progress ring, or album art width
+    if (!hasActivePlayer || (!showAlbumArt && !showProgressRing)) {
+      // Icon width only
       contentWidth += Math.round(18 * scaling);
+    } else if (showProgressRing && hasActivePlayer) {
+      // Progress ring width (same as album art width to maintain consistent sizing)
+      contentWidth += Math.round(21 * scaling);
     } else if (showAlbumArt && hasActivePlayer) {
       // Album art width
       contentWidth += 21 * scaling;
@@ -319,15 +322,22 @@ Item {
 
           // Progress circle (independent of album art)
           Item {
-            Layout.preferredWidth: (showProgressRing || (showAlbumArt && hasActivePlayer)) ? Math.round(21 * scaling) : 0
-            Layout.preferredHeight: (showProgressRing || (showAlbumArt && hasActivePlayer)) ? Math.round(21 * scaling) : 0
+            Layout.preferredWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
+            Layout.preferredHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
+            Layout.minimumWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : 0
+            Layout.minimumHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : 0
+            Layout.maximumWidth: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
+            Layout.maximumHeight: (hasActivePlayer && showProgressRing) ? Math.round(21 * scaling) : (hasActivePlayer && showAlbumArt ? Math.round(21 * scaling) : 0)
+            Layout.fillWidth: false
+            Layout.fillHeight: false
+            visible: hasActivePlayer && (showProgressRing || showAlbumArt)  // Show container when there's active player and either feature is enabled
 
             // Progress circle - always available when showProgressRing is true
             Canvas {
               id: progressCanvas
               anchors.fill: parent
               anchors.margins: 0 // Align exactly with parent to avoid clipping
-              visible: showProgressRing && hasActivePlayer // Control visibility with settings and active player
+              visible: hasActivePlayer && showProgressRing // Only show when progress ring is enabled
               z: 0 // Behind the album art or icon
 
               // Calculate progress ratio: 0 to 1
@@ -344,9 +354,14 @@ Item {
 
               onPaint: {
                 var ctx = getContext("2d");
+                // Check if width/height are valid before calculating radius
+                if (width <= 0 || height <= 0) {
+                  return; // Skip drawing if dimensions are invalid
+                }
+
                 var centerX = width / 2;
                 var centerY = height / 2;
-                var radius = Math.min(width, height) / 2 - (1.25 * scaling); // Larger radius, accounting for line width to approach edge
+                var radius = Math.max(0, Math.min(width, height) / 2 - (1.25 * scaling)); // Larger radius, accounting for line width to approach edge
 
                 ctx.reset();
 
@@ -404,7 +419,7 @@ Item {
                 pointSize: showAlbumArt ? 10 * scaling : 14 * scaling  // Smaller when inside album art circle, larger when alone
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                visible: (!showAlbumArt || !hasActivePlayer) && showProgressRing
+                visible: (!showAlbumArt && hasActivePlayer) && showProgressRing
                 z: 1 // In front of the progress circle
               }
             }
