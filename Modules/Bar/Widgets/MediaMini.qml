@@ -397,6 +397,13 @@ Item {
               }
             }
 
+            // Property to track mPrimary color changes and trigger repaint
+            Item {
+              id: colorTrackerHorizontal
+              property color currentColor: Color.mPrimary
+              onCurrentColorChanged: progressCanvas.requestPaint()
+            }
+
             // Album art or icon - only show album art when enabled and player is active
             Item {
               anchors.fill: parent
@@ -673,6 +680,13 @@ Item {
         function onTrackLengthChanged() {
           progressCanvasVertical.requestPaint();
         }
+      }
+
+      // Property to track mPrimary color changes and trigger repaint for vertical canvas
+      Item {
+        id: colorTrackerVertical
+        property color currentColor: Color.mPrimary
+        onCurrentColorChanged: progressCanvasVertical.requestPaint()
       }
 
       // Mouse area for hover detection
