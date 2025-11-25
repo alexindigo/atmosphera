@@ -1675,6 +1675,28 @@
           "label": "Загальні"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Показувати OSD, коли змінюється яскравість екрана.",
+          "label": "Яскравість"
+        },
+        "input-volume": {
+          "description": "Показувати OSD, коли змінюється гучність мікрофона.",
+          "label": "Вхідна гучність"
+        },
+        "lockkey": {
+          "description": "Показувати OSD, коли перемикаються Caps Lock, Num Lock або Scroll Lock.",
+          "label": "Клавіші блокування"
+        },
+        "section": {
+          "description": "Виберіть події, які запускають екранну індикацію.",
+          "label": "Типи OSD"
+        },
+        "volume": {
+          "description": "Показувати OSD, коли змінюється гучність аудіовиходу.",
+          "label": "Вихідна гучність"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Показувати сповіщення, коли перемикаються клавіші Caps Lock, Num Lock або Scroll Lock.",
         "label": "Показувати сповіщення про стан клавіш"

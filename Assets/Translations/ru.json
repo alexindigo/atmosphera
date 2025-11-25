@@ -1675,6 +1675,28 @@
           "label": "Общие"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Показывать OSD при изменении яркости экрана.",
+          "label": "Яркость"
+        },
+        "input-volume": {
+          "description": "Показывать OSD при изменении громкости микрофона.",
+          "label": "Входная громкость"
+        },
+        "lockkey": {
+          "description": "Показывать OSD при переключении клавиш Caps Lock, Num Lock или Scroll Lock.",
+          "label": "Клавиши блокировки"
+        },
+        "section": {
+          "description": "Выберите события, которые запускают экранное отображение.",
+          "label": "Типы OSD"
+        },
+        "volume": {
+          "description": "Показывать OSD при изменении громкости аудиовыхода.",
+          "label": "Выходная громкость"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Показывать уведомления при переключении клавиш Caps Lock, Num Lock или Scroll Lock.",
         "label": "Показывать уведомления о состоянии клавиш"

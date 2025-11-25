@@ -1675,6 +1675,28 @@
           "label": "Genel"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Ekran parlaklığı değiştiğinde OSD'yi göster.",
+          "label": "Parlaklık"
+        },
+        "input-volume": {
+          "description": "Mikrofon ses düzeyi değiştiğinde OSD'yi göster.",
+          "label": "Giriş sesi"
+        },
+        "lockkey": {
+          "description": "Caps Lock, Num Lock veya Scroll Lock değiştirildiğinde OSD'yi göster.",
+          "label": "Kilit tuşları"
+        },
+        "section": {
+          "description": "Ekran göstergesini tetikleyen olayları seçin.",
+          "label": "OSD türleri"
+        },
+        "volume": {
+          "description": "Ses çıkış düzeyi değiştiğinde OSD'yi göster.",
+          "label": "Çıkış sesi"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Caps Lock, Num Lock veya Scroll Lock tuşları değiştirildiğinde bildirimleri göster.",
         "label": "Kilit tuşu bildirimlerini göster"

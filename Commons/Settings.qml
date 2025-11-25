@@ -14,7 +14,7 @@ Singleton {
   readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 23
+  property int settingsVersion: 24
   property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
 
   // Define our app directories
@@ -455,12 +455,12 @@ Singleton {
     // on-screen display
     property JsonObject osd: JsonObject {
       property bool enabled: true
+      property var enabledTypes: [0, 1, 2, 3]
       property string location: "top_right"
       property list<string> monitors: []
       property int autoHideMs: 2000
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
-      property bool showLockKeyNotifications: true
     }
 
     // audio
@@ -802,7 +802,100 @@ Singleton {
     }
 
     // -----------------
-    // 8th. Migrate ShellState-related files from old cache files to ShellState
+    // 9th. Normalize OSD enabled types and migrate legacy show* toggles
+    try {
+      var osdRawJson = settingsFileView.text();
+      if (osdRawJson) {
+        var osdParsed = JSON.parse(osdRawJson);
+        if (osdParsed.osd) {
+          var legacyHandled = false;
+
+          if (osdParsed.osd.enabledTypes === undefined) {
+            // Some configurations (<= v23) stored booleans like showVolume/showBrightness/etc.
+            // Convert them into the new enabledTypes array as soon as we detect the legacy shape.
+            var legacyOsd = osdParsed.osd;
+            var typeMappings = [
+                  {
+                    key: "showVolume",
+                    type: 0
+                  },
+                  {
+                    key: "showInputVolume",
+                    type: 1
+                  },
+                  {
+                    key: "showBrightness",
+                    type: 2
+                  },
+                  {
+                    key: "showLockKey",
+                    type: 3
+                  }
+                ];
+
+            var migratedTypes = [];
+            var sawLegacyKey = false;
+
+            for (var i = 0; i < typeMappings.length; i++) {
+              var mapping = typeMappings[i];
+              if (legacyOsd[mapping.key] !== undefined)
+                sawLegacyKey = true;
+
+              var enabled = legacyOsd[mapping.key];
+              if (enabled === undefined)
+                enabled = true; // default behaviour before enabledTypes existed
+
+              if (enabled && migratedTypes.indexOf(mapping.type) === -1)
+                migratedTypes.push(mapping.type);
+            }
+
+            if (legacyOsd.showLockKeyNotifications !== undefined) {
+              sawLegacyKey = true;
+              if (legacyOsd.showLockKeyNotifications) {
+                if (migratedTypes.indexOf(3) === -1)
+                  migratedTypes.push(3);
+              } else {
+                migratedTypes = migratedTypes.filter(function (type) {
+                  return type !== 3;
+                });
+              }
+            }
+
+            if (sawLegacyKey) {
+              if (migratedTypes.length === 0) {
+                migratedTypes = [0, 1, 2, 3];
+              }
+              adapter.osd.enabledTypes = migratedTypes;
+              Logger.i("Settings", "Migrated legacy OSD toggles to enabledTypes = " + JSON.stringify(migratedTypes));
+              legacyHandled = true;
+            }
+          }
+
+          // No matter which format the JSON used, hydrate the runtime value from disk so we don't
+          // accidentally keep the default [0,1,2,3] array after a restart.
+          if (!legacyHandled && osdParsed.osd.enabledTypes !== undefined) {
+            var parsedTypes = osdParsed.osd.enabledTypes;
+            if (Array.isArray(parsedTypes)) {
+              adapter.osd.enabledTypes = parsedTypes.slice();
+            } else if (parsedTypes && typeof parsedTypes === "object" && parsedTypes.length !== undefined) {
+              // QJsonArray can materialise as a list-like object; convert it to a plain array
+              var normalized = [];
+              for (var idx = 0; idx < parsedTypes.length; idx++) {
+                var value = parsedTypes[idx];
+                if (value !== undefined)
+                  normalized.push(value);
+              }
+              adapter.osd.enabledTypes = normalized;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      Logger.w("Settings", "Failed to normalize OSD enabledTypes:", error);
+    }
+
+    // -----------------
+    // Migrate ShellState-related files from old cache files to ShellState
     // This consolidates migrations that were previously in individual service files
     if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
       migrateShellStateFiles();

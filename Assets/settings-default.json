@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 23,
+  "settingsVersion": 24,
   "setupCompleted": false,
   "bar": {
     "position": "top",
@@ -280,12 +280,12 @@
   },
   "osd": {
     "enabled": true,
+    "enabledTypes": [0, 1, 2, 3],
     "location": "top_right",
     "monitors": [],
     "autoHideMs": 2000,
     "overlayLayer": true,
-    "backgroundOpacity": 1,
-    "showLockKeyNotifications": true
+    "backgroundOpacity": 1
   },
   "audio": {
     "volumeStep": 5,

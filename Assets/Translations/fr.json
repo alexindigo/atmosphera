@@ -1675,6 +1675,28 @@
           "label": "Général"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Afficher l'OSD lorsque la luminosité de l'écran change.",
+          "label": "Luminosité"
+        },
+        "input-volume": {
+          "description": "Afficher l'OSD lorsque le volume du microphone change.",
+          "label": "Volume d'entrée"
+        },
+        "lockkey": {
+          "description": "Afficher l'OSD lorsque Verr Maj, Verr Num ou Arrêt défil est activée ou désactivée.",
+          "label": "Touches de verrouillage"
+        },
+        "section": {
+          "description": "Choisissez quels événements déclenchent l'affichage à l'écran.",
+          "label": "Types d'OSD"
+        },
+        "volume": {
+          "description": "Afficher l'OSD lorsque le volume de sortie audio change.",
+          "label": "Volume de sortie"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Afficher les notifications lorsque les touches Verr. Maj., Verr. Num. ou Arrêt défil. sont activées/désactivées.",
         "label": "Afficher les notifications des touches de verrouillage"

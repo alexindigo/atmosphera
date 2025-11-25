@@ -1675,6 +1675,28 @@
           "label": "Geral"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Mostrar o OSD quando o brilho da tela mudar.",
+          "label": "Brilho"
+        },
+        "input-volume": {
+          "description": "Mostrar o OSD quando o volume do microfone mudar.",
+          "label": "Volume de entrada"
+        },
+        "lockkey": {
+          "description": "Mostrar o OSD quando Caps Lock, Num Lock ou Scroll Lock forem alternadas.",
+          "label": "Teclas de bloqueio"
+        },
+        "section": {
+          "description": "Escolha quais eventos disparam a exibição na tela.",
+          "label": "Tipos de OSD"
+        },
+        "volume": {
+          "description": "Mostrar o OSD quando o volume de saída de áudio mudar.",
+          "label": "Volume de saída"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Mostrar notificações quando as teclas Caps Lock, Num Lock ou Scroll Lock forem alternadas.",
         "label": "Mostrar notificações das teclas de bloqueio"

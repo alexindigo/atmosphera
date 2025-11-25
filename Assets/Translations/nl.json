@@ -1675,6 +1675,28 @@
           "label": "Algemeen"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Toon het OSD wanneer de schermhelderheid verandert.",
+          "label": "Helderheid"
+        },
+        "input-volume": {
+          "description": "Toon het OSD wanneer het microfoonvolume verandert.",
+          "label": "Invoervolume"
+        },
+        "lockkey": {
+          "description": "Toon het OSD wanneer Caps Lock, Num Lock of Scroll Lock wordt omgeschakeld.",
+          "label": "Vergrendeltoetsen"
+        },
+        "section": {
+          "description": "Kies welke gebeurtenissen de on-screenweergave activeren.",
+          "label": "OSD-typen"
+        },
+        "volume": {
+          "description": "Toon het OSD wanneer het uitvoervolume verandert.",
+          "label": "Uitvoervolume"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Toon meldingen wanneer Caps Lock, Num Lock of Scroll Lock toetsen worden omgeschakeld.",
         "label": "Vergrendeltoetsmeldingen tonen"

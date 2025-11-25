@@ -1675,6 +1675,28 @@
           "label": "常规"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "当屏幕亮度发生变化时显示 OSD。",
+          "label": "亮度"
+        },
+        "input-volume": {
+          "description": "当麦克风音量发生变化时显示 OSD。",
+          "label": "输入音量"
+        },
+        "lockkey": {
+          "description": "当切换大写锁定、数字锁定或滚动锁定时显示 OSD。",
+          "label": "锁定键"
+        },
+        "section": {
+          "description": "选择哪些事件会触发屏显菜单。",
+          "label": "OSD 类型"
+        },
+        "volume": {
+          "description": "当音频输出音量发生变化时显示 OSD。",
+          "label": "输出音量"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "当大写锁定键、数字锁定键或滚动锁定键被切换时显示通知。",
         "label": "显示锁定键通知"

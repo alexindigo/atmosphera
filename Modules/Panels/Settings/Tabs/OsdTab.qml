@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.OSD
 import qs.Services.Compositor
 import qs.Widgets
 
@@ -19,6 +20,17 @@ ColumnLayout {
   function removeMonitor(list, name) {
     return (list || []).filter(function (n) {
       return n !== name;
+    });
+  }
+  function addType(list, type) {
+    const arr = (list || []).slice();
+    if (!arr.includes(type))
+      arr.push(type);
+    return arr;
+  }
+  function removeType(list, type) {
+    return (list || []).filter(function (t) {
+      return t !== type;
     });
   }
 
@@ -99,13 +111,6 @@ ColumnLayout {
       onToggled: checked => Settings.data.osd.overlayLayer = checked
     }
 
-    NToggle {
-      label: I18n.tr("settings.osd.show-lock-key-notifications.label", "Show lock key notifications")
-      description: I18n.tr("settings.osd.show-lock-key-notifications.description", "Show notifications when Caps Lock, Num Lock, or Scroll Lock keys are toggled.")
-      checked: Settings.data.osd.showLockKeyNotifications
-      onToggled: checked => Settings.data.osd.showLockKeyNotifications = checked
-    }
-
     NLabel {
       label: I18n.tr("settings.osd.background-opacity.label", "Background opacity")
       description: I18n.tr("settings.osd.background-opacity.description", "Controls the transparency of the OSD background.")
@@ -134,6 +139,58 @@ ColumnLayout {
       value: Settings.data.osd.autoHideMs
       onMoved: value => Settings.data.osd.autoHideMs = value
       text: Math.round(Settings.data.osd.autoHideMs / 1000 * 10) / 10 + "s"
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
+  }
+
+  // OSD Types Configuration
+  ColumnLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.osd.types.section.label")
+      description: I18n.tr("settings.osd.types.section.description")
+    }
+
+    Repeater {
+      model: [
+        {
+          type: OSD.Type.Volume,
+          key: "volume"
+        },
+        {
+          type: OSD.Type.InputVolume,
+          key: "input-volume"
+        },
+        {
+          type: OSD.Type.Brightness,
+          key: "brightness"
+        },
+        {
+          type: OSD.Type.LockKey,
+          key: "lockkey"
+        }
+      ]
+      delegate: NCheckbox {
+        required property var modelData
+        Layout.fillWidth: true
+        label: I18n.tr("settings.osd.types." + modelData.key + ".label")
+        description: I18n.tr("settings.osd.types." + modelData.key + ".description")
+        checked: (Settings.data.osd.enabledTypes || []).includes(modelData.type)
+        onToggled: checked => {
+                     if (checked) {
+                       Settings.data.osd.enabledTypes = addType(Settings.data.osd.enabledTypes, modelData.type);
+                     } else {
+                       Settings.data.osd.enabledTypes = removeType(Settings.data.osd.enabledTypes, modelData.type);
+                     }
+                   }
+      }
     }
   }
 

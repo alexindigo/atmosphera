@@ -1675,11 +1675,29 @@
           "label": "General"
         }
       },
-      "show-lock-key-notifications": {
-        "description": "Show notifications when Caps Lock, Num Lock, or Scroll Lock keys are toggled.",
-        "label": "Show lock key notifications"
-      },
-      "title": "On-Screen Display"
+      "title": "On-Screen Display",
+      "types": {
+        "brightness": {
+          "description": "Show OSD when screen brightness changes.",
+          "label": "Brightness"
+        },
+        "input-volume": {
+          "description": "Show OSD when microphone volume changes.",
+          "label": "Input Volume"
+        },
+        "lockkey": {
+          "description": "Show OSD when Caps Lock, Num Lock, or Scroll Lock are toggled.",
+          "label": "Lock Keys"
+        },
+        "section": {
+          "description": "Choose which events trigger the on-screen display.",
+          "label": "OSD Types"
+        },
+        "volume": {
+          "description": "Show OSD when audio output volume changes.",
+          "label": "Output Volume"
+        }
+      }
     },
     "screen-recorder": {
       "audio": {

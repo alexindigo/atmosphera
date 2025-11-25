@@ -1675,6 +1675,28 @@
           "label": "General"
         }
       },
+      "types": {
+        "brightness": {
+          "description": "Mostrar el OSD cuando cambie el brillo de la pantalla.",
+          "label": "Brillo"
+        },
+        "input-volume": {
+          "description": "Mostrar el OSD cuando cambie el volumen del micrófono.",
+          "label": "Volumen de entrada"
+        },
+        "lockkey": {
+          "description": "Mostrar el OSD cuando se activen o desactiven Bloq Mayús, Bloq Num o Bloq Despl.",
+          "label": "Teclas de bloqueo"
+        },
+        "section": {
+          "description": "Elige qué eventos activan la visualización en pantalla.",
+          "label": "Tipos de OSD"
+        },
+        "volume": {
+          "description": "Mostrar el OSD cuando cambie el volumen de salida de audio.",
+          "label": "Volumen de salida"
+        }
+      },
       "show-lock-key-notifications": {
         "description": "Mostrar notificaciones cuando se activen o desactiven las teclas Bloq Mayús, Bloq Num o Bloq Despl.",
         "label": "Mostrar notificaciones de teclas de bloqueo"
