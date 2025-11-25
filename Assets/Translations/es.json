@@ -227,13 +227,13 @@
           "description": "Mostrar artista - título en lugar de título - artista.",
           "label": "Mostrar primero al artista"
         },
-        "show-visualizer": {
-          "description": "Mostrar un visualizador de audio cuando se reproduce música.",
-          "label": "Mostrar visualizador"
-        },
         "show-progress-ring": {
           "description": "Mostrar un indicador de progreso circular que muestre el progreso de la pista.",
           "label": "Mostrar anillo de progreso"
+        },
+        "show-visualizer": {
+          "description": "Mostrar un visualizador de audio cuando se reproduce música.",
+          "label": "Mostrar visualizador"
         },
         "use-fixed-width": {
           "description": "Cuando está activado, el widget siempre usará el ancho máximo en lugar de ajustarse dinámicamente al contenido.",
@@ -373,13 +373,13 @@
           "description": "Número de caracteres a mostrar de los nombres de espacios de trabajo (1-10).",
           "label": "Número de caracteres"
         },
-        "hide-unoccupied": {
-          "description": "No mostrar espacios de trabajo sin ventanas.",
-          "label": "Ocultar desocupados"
-        },
         "follow-focused-screen": {
           "description": "Mostrar espacios de trabajo de la pantalla actualmente enfocada, en lugar de la pantalla donde se encuentra la barra.",
           "label": "Seguir Pantalla Enfocada"
+        },
+        "hide-unoccupied": {
+          "description": "No mostrar espacios de trabajo sin ventanas.",
+          "label": "Ocultar desocupados"
         },
         "label-mode": {
           "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo.",
@@ -389,8 +389,8 @@
     }
   },
   "battery": {
+    "battery-level": "Nivel de batería",
     "brightness": "Brillo",
-    "charge-level": "Nivel de carga",
     "charging": "Cargando.",
     "charging-rate": "Tasa de carga: {rate} W.",
     "discharging": "Descargando.",
@@ -519,13 +519,13 @@
       "title": "Notificaciones"
     },
     "time": {
-      "now": "ahora",
-      "diffM": "hace 1 minuto",
-      "diffMM": "hace {diff} minutos",
+      "diffD": "hace 1 día",
+      "diffDD": "hace {diff} días",
       "diffH": "hace 1 hora",
       "diffHH": "hace {diff} horas",
-      "diffD": "hace 1 día",
-      "diffDD": "hace {diff} días"
+      "diffM": "hace 1 minuto",
+      "diffMM": "hace {diff} minutos",
+      "now": "ahora"
     }
   },
   "options": {
@@ -1049,6 +1049,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "Escribe {filepath}.",
+            "description-missing": "Requiere que {app} esté instalado/a."
+          },
           "code": {
             "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
             "description-missing": "No se detectó cliente de Code. Instala VSCode o VSCodium."
@@ -1072,10 +1076,6 @@
             "description-missing": "Requiere que {app} esté instalado/a."
           },
           "telegram": {
-            "description": "Escribe {filepath}.",
-            "description-missing": "Requiere que {app} esté instalado/a."
-          },
-          "cava": {
             "description": "Escribe {filepath}.",
             "description-missing": "Requiere que {app} esté instalado/a."
           },
@@ -1446,13 +1446,13 @@
           "description": "Usar un prefijo personalizado para lanzar aplicaciones en lugar del método predeterminado.",
           "label": "Habilitar prefijo de lanzamiento personalizado"
         },
-        "position": {
-          "description": "Elige dónde aparece el panel del lanzador.",
-          "label": "Posición"
-        },
         "grid-view": {
           "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
           "label": "Vista de cuadrícula"
+        },
+        "position": {
+          "description": "Elige dónde aparece el panel del lanzador.",
+          "label": "Posición"
         },
         "section": {
           "description": "Personaliza el comportamiento y la apariencia del lanzador.",
@@ -1675,6 +1675,7 @@
           "label": "General"
         }
       },
+      "title": "Visualización en pantalla",
       "types": {
         "brightness": {
           "description": "Mostrar el OSD cuando cambie el brillo de la pantalla.",
@@ -1696,12 +1697,7 @@
           "description": "Mostrar el OSD cuando cambie el volumen de salida de audio.",
           "label": "Volumen de salida"
         }
-      },
-      "show-lock-key-notifications": {
-        "description": "Mostrar notificaciones cuando se activen o desactiven las teclas Bloq Mayús, Bloq Num o Bloq Despl.",
-        "label": "Mostrar notificaciones de teclas de bloqueo"
-      },
-      "title": "Visualización en pantalla"
+      }
     },
     "screen-recorder": {
       "audio": {

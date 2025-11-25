@@ -116,7 +116,7 @@ SmartPanel {
 
             ColumnLayout {
               NText {
-                text: I18n.tr("battery.charge-level")
+                text: I18n.tr("battery.battery-level")
                 color: Color.mOnSurface
                 pointSize: Style.fontSizeS
               }

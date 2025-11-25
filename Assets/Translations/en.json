@@ -227,13 +227,13 @@
           "description": "Display artist - title instead of title - artist.",
           "label": "Show artist first"
         },
-        "show-visualizer": {
-          "description": "Display an audio visualizer when music is playing.",
-          "label": "Show visualizer"
-        },
         "show-progress-ring": {
           "description": "Display a circular progress indicator showing track progress.",
           "label": "Show progress ring"
+        },
+        "show-visualizer": {
+          "description": "Display an audio visualizer when music is playing.",
+          "label": "Show visualizer"
         },
         "use-fixed-width": {
           "description": "When enabled, the widget will always use the maximum width instead of dynamically adjusting to content.",
@@ -373,13 +373,13 @@
           "description": "Number of characters to display from workspace names (1-10).",
           "label": "Character count"
         },
-        "hide-unoccupied": {
-          "description": "Don't display workspaces without windows.",
-          "label": "Hide unoccupied"
-        },
         "follow-focused-screen": {
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow Focused Screen"
+        },
+        "hide-unoccupied": {
+          "description": "Don't display workspaces without windows.",
+          "label": "Hide unoccupied"
         },
         "label-mode": {
           "description": "Choose how workspace labels are displayed.",
@@ -389,8 +389,8 @@
     }
   },
   "battery": {
+    "battery-level": "Battery level",
     "brightness": "Brightness",
-    "charge-level": "Charge level",
     "charging": "Charging",
     "charging-rate": "Charging rate: {rate} W",
     "discharging": "Discharging",
@@ -519,13 +519,13 @@
       "title": "Notifications"
     },
     "time": {
-      "now": "now",
-      "diffM": "1 minute ago",
-      "diffMM": "{diff} minutes ago",
+      "diffD": "1 day ago",
+      "diffDD": "{diff} days ago",
       "diffH": "1 hour ago",
       "diffHH": "{diff} hours ago",
-      "diffD": "1 day ago",
-      "diffDD": "{diff} days ago"
+      "diffM": "1 minute ago",
+      "diffMM": "{diff} minutes ago",
+      "now": "now"
     }
   },
   "options": {
@@ -1049,6 +1049,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "Write {filepath}.",
+            "description-missing": "Requires {app} to be installed"
+          },
           "code": {
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually.",
             "description-missing": "No Code client detected. Install VSCode or VSCodium."
@@ -1072,10 +1076,6 @@
             "description-missing": "Requires {app} to be installed"
           },
           "telegram": {
-            "description": "Write {filepath}.",
-            "description-missing": "Requires {app} to be installed"
-          },
-          "cava": {
             "description": "Write {filepath}.",
             "description-missing": "Requires {app} to be installed"
           },
@@ -1446,13 +1446,13 @@
           "description": "Use a custom prefix for launching applications instead of the default method.",
           "label": "Enable custom launch prefix"
         },
-        "position": {
-          "description": "Choose where the launcher panel appears.",
-          "label": "Position"
-        },
         "grid-view": {
           "description": "Display items in a grid layout instead of a list.",
           "label": "Grid view"
+        },
+        "position": {
+          "description": "Choose where the launcher panel appears.",
+          "label": "Position"
         },
         "section": {
           "description": "Customize the launcher's behavior and appearance.",

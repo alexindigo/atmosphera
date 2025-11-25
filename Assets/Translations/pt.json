@@ -227,13 +227,13 @@
           "description": "Exibir artista - título em vez de título - artista.",
           "label": "Mostrar o artista primeiro"
         },
-        "show-visualizer": {
-          "description": "Exibir um visualizador de áudio quando música está sendo reproduzida.",
-          "label": "Mostrar visualizador"
-        },
         "show-progress-ring": {
           "description": "Exibir um indicador de progresso circular mostrando o progresso da faixa.",
           "label": "Mostrar anel de progresso"
+        },
+        "show-visualizer": {
+          "description": "Exibir um visualizador de áudio quando música está sendo reproduzida.",
+          "label": "Mostrar visualizador"
         },
         "use-fixed-width": {
           "description": "Quando ativado, o widget sempre usará a largura máxima em vez de ajustar dinamicamente ao conteúdo.",
@@ -373,13 +373,13 @@
           "description": "Número de caracteres a exibir dos nomes de espaços de trabalho (1-10).",
           "label": "Número de caracteres"
         },
-        "hide-unoccupied": {
-          "description": "Não exibir áreas de trabalho sem janelas.",
-          "label": "Ocultar desocupados"
-        },
         "follow-focused-screen": {
           "description": "Exibir áreas de trabalho da tela atualmente em foco, em vez da tela onde a barra está localizada.",
           "label": "Seguir Tela em Foco"
+        },
+        "hide-unoccupied": {
+          "description": "Não exibir áreas de trabalho sem janelas.",
+          "label": "Ocultar desocupados"
         },
         "label-mode": {
           "description": "Escolher como os rótulos de espaço de trabalho são exibidos.",
@@ -389,8 +389,8 @@
     }
   },
   "battery": {
+    "battery-level": "Nível da bateria",
     "brightness": "Brilho",
-    "charge-level": "Nível de carga",
     "charging": "Carregando.",
     "charging-rate": "Taxa de carregamento: {rate} W.",
     "discharging": "Descarregando.",
@@ -519,13 +519,13 @@
       "title": "Notificações"
     },
     "time": {
-      "now": "agora",
-      "diffM": "há 1 minuto",
-      "diffMM": "há {diff} minutos",
+      "diffD": "há 1 dia",
+      "diffDD": "há {diff} dias",
       "diffH": "há 1 hora",
       "diffHH": "há {diff} horas",
-      "diffD": "há 1 dia",
-      "diffDD": "há {diff} dias"
+      "diffM": "há 1 minuto",
+      "diffMM": "há {diff} minutos",
+      "now": "agora"
     }
   },
   "options": {
@@ -1049,6 +1049,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "Escreva em {filepath}.",
+            "description-missing": "Requer que o {app} esteja instalado."
+          },
           "code": {
             "description": "Escreva em {filepath}. O tema Hyprluna precisa ser instalado e ativado manualmente.",
             "description-missing": "Nenhum cliente Code detectado. Instale VSCode ou VSCodium."
@@ -1072,10 +1076,6 @@
             "description-missing": "Requer que o {app} esteja instalado."
           },
           "telegram": {
-            "description": "Escreva em {filepath}.",
-            "description-missing": "Requer que o {app} esteja instalado."
-          },
-          "cava": {
             "description": "Escreva em {filepath}.",
             "description-missing": "Requer que o {app} esteja instalado."
           },
@@ -1446,13 +1446,13 @@
           "description": "Usar um prefixo personalizado para inicializar aplicativos em vez do método padrão.",
           "label": "Habilitar prefixo de inicialização personalizado"
         },
-        "position": {
-          "description": "Escolha onde o painel do lançador aparece.",
-          "label": "Posição"
-        },
         "grid-view": {
           "description": "Exibir itens em uma grade em vez de uma lista.",
           "label": "Visualização em grade"
+        },
+        "position": {
+          "description": "Escolha onde o painel do lançador aparece.",
+          "label": "Posição"
         },
         "section": {
           "description": "Personalize o comportamento e a aparência do lançador.",
@@ -1675,6 +1675,7 @@
           "label": "Geral"
         }
       },
+      "title": "Exibição na tela",
       "types": {
         "brightness": {
           "description": "Mostrar o OSD quando o brilho da tela mudar.",
@@ -1696,12 +1697,7 @@
           "description": "Mostrar o OSD quando o volume de saída de áudio mudar.",
           "label": "Volume de saída"
         }
-      },
-      "show-lock-key-notifications": {
-        "description": "Mostrar notificações quando as teclas Caps Lock, Num Lock ou Scroll Lock forem alternadas.",
-        "label": "Mostrar notificações das teclas de bloqueio"
-      },
-      "title": "Exibição na tela"
+      }
     },
     "screen-recorder": {
       "audio": {
