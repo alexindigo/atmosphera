@@ -21,8 +21,8 @@ SmartPanel {
     // Calculate content height based on header + devices list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
     property real devicesHeight: devicesList.implicitHeight
-    property real calculatedHeight: headerHeight + devicesHeight + Style.marginL * 2 + Style.marginM
-    property real contentPreferredHeight: (BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(root.preferredHeight, Math.max(280 * Style.uiScaleRatio, calculatedHeight)) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
+    property real calculatedHeight: (devicesHeight !== 0) ? (headerHeight + devicesHeight + Style.marginL * 2 + Style.marginM) : (280 * Style.uiScaleRatio)
+    property real contentPreferredHeight: (BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(root.preferredHeight, calculatedHeight) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
 
     ColumnLayout {
       id: mainColumn

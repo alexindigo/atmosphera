@@ -16,6 +16,9 @@ Singleton {
   signal numLockChanged(bool active)
   signal scrollLockChanged(bool active)
 
+  // Flag to track if this is the initial check to avoid OSD triggers
+  property bool initialCheckDone: false
+
   Process {
     id: stateCheckProcess
 
@@ -38,23 +41,33 @@ scroll=0; cat /sys/class/leds/input*::scrolllock/brightness 2>/dev/null | grep -
             if (key === "caps") {
               if (root.capsLockOn !== newState) {
                 root.capsLockOn = newState;
-                root.capsLockChanged(newState);
+                if (root.initialCheckDone) {
+                  root.capsLockChanged(newState);
+                }
                 Logger.i("LockKeysService", "Caps Lock:", capsLockOn);
               }
             } else if (key === "num") {
               if (root.numLockOn !== newState) {
                 root.numLockOn = newState;
-                root.numLockChanged(newState);
+                if (root.initialCheckDone) {
+                  root.numLockChanged(newState);
+                }
                 Logger.i("LockKeysService", "Num Lock:", numLockOn);
               }
             } else if (key === "scroll") {
               if (root.scrollLockOn !== newState) {
                 root.scrollLockOn = newState;
-                root.scrollLockChanged(newState);
+                if (root.initialCheckDone) {
+                  root.scrollLockChanged(newState);
+                }
                 Logger.i("LockKeysService", "Scroll Lock:", scrollLockOn);
               }
             }
           }
+        }
+        // Set initialCheckDone to true after the first check is complete
+        if (!root.initialCheckDone) {
+          root.initialCheckDone = true;
         }
       }
     }

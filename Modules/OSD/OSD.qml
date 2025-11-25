@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Hardware
+import qs.Services.Keyboard
 import qs.Services.Media
 import qs.Widgets
 
@@ -20,9 +21,12 @@ Variants {
     active: false
 
     // OSD State
-    property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
+    property string currentOSDType: "" // "volume", "inputVolume", "brightness", "lockkey", or ""
     property bool startupComplete: false
     property real currentBrightness: 0
+
+    // Lock Key States
+    property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
 
     // Current values (computed properties)
     readonly property real currentVolume: AudioService.volume
@@ -30,9 +34,7 @@ Variants {
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
 
-    // ============================================================================
     // Helper Functions
-    // ============================================================================
     function getIcon() {
       switch (currentOSDType) {
       case "volume":
@@ -45,6 +47,8 @@ Variants {
         return isInputMuted ? "microphone-off" : "microphone";
       case "brightness":
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
+      case "lockkey":
+        return "keyboard";
       default:
         return "";
       }
@@ -58,6 +62,8 @@ Variants {
         return isInputMuted ? 0 : currentInputVolume;
       case "brightness":
         return currentBrightness;
+      case "lockkey":
+        return 1.0; // Always show 100% when showing lock key status
       default:
         return 0;
       }
@@ -71,6 +77,11 @@ Variants {
     }
 
     function getDisplayPercentage() {
+      if (currentOSDType === "lockkey") {
+        // For lock keys, return the pre-determined status text
+        return lastLockKeyChanged;
+      }
+
       const value = getCurrentValue();
       const max = getMaxValue();
       if ((currentOSDType === "volume" || currentOSDType === "inputVolume") && Settings.data.audio.volumeOverdrive) {
@@ -93,17 +104,27 @@ Variants {
           return Color.mError;
         }
       }
+      // For lock keys, use a different color to indicate the lock state
+      if (currentOSDType === "lockkey") {
+        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn
+          ? Color.mPrimary : Color.mOnSurfaceVariant;
+      }
       return Color.mPrimary;
     }
 
     function getIconColor() {
       const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      return isMutedState ? Color.mError : Color.mOnSurface;
+      if (isMutedState) return Color.mError;
+
+      if (currentOSDType === "lockkey") {
+        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn
+          ? Color.mPrimary : Color.mOnSurfaceVariant;
+      }
+
+      return Color.mOnSurface;
     }
 
-    // ============================================================================
     // Brightness Handling
-    // ============================================================================
     function connectBrightnessMonitors() {
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
         const monitor = BrightnessService.monitors[i];
@@ -117,9 +138,7 @@ Variants {
       showOSD("brightness");
     }
 
-    // ============================================================================
     // OSD Display Control
-    // ============================================================================
     function showOSD(type) {
       // Ignore all OSD requests during startup period
       if (!startupComplete)
@@ -149,9 +168,7 @@ Variants {
       }
     }
 
-    // ============================================================================
     // Signal Connections
-    // ============================================================================
 
     // AudioService monitoring
     Connections {
@@ -184,6 +201,32 @@ Variants {
       }
     }
 
+    // LockKeys monitoring with a cleaner approach
+    Connections {
+      target: LockKeysService
+
+      function onCapsLockChanged(active) {
+        root.currentOSDType = "lockkey";
+        root.lastLockKeyChanged = active ? "CAPS ON" : "CAPS OFF";
+        if (!root.active) root.active = true;
+        if (root.item) root.item.showOSD();
+      }
+
+      function onNumLockChanged(active) {
+        root.currentOSDType = "lockkey";
+        root.lastLockKeyChanged = active ? "NUM ON" : "NUM OFF";
+        if (!root.active) root.active = true;
+        if (root.item) root.item.showOSD();
+      }
+
+      function onScrollLockChanged(active) {
+        root.currentOSDType = "lockkey";
+        root.lastLockKeyChanged = active ? "SCROLL ON" : "SCROLL OFF";
+        if (!root.active) root.active = true;
+        if (root.item) root.item.showOSD();
+      }
+    }
+
     // Startup timer - connect brightness monitors and enable OSD after 2 seconds
     Timer {
       id: startupTimer
@@ -195,9 +238,7 @@ Variants {
       }
     }
 
-    // ============================================================================
     // Visual Component
-    // ============================================================================
     sourceComponent: PanelWindow {
       id: panel
       screen: modelData
@@ -211,10 +252,14 @@ Variants {
       readonly property bool verticalMode: location === "left" || location === "right"
 
       // Dimensions
-      readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
-      readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
-      readonly property int vWidth: Math.round(80 * Style.uiScaleRatio)
-      readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
+      readonly property bool isShortMode: root.currentOSDType === "lockkey"
+      readonly property int longHWidth: Math.round(320 * Style.uiScaleRatio)
+      readonly property int longHHeight: Math.round(72 * Style.uiScaleRatio)
+      readonly property int shortHWidth: Math.round(180 * Style.uiScaleRatio)
+      readonly property int longVWidth: Math.round(80 * Style.uiScaleRatio)
+      readonly property int longVHeight: Math.round(280 * Style.uiScaleRatio)
+      readonly property int shortVHeight: Math.round(180 * Style.uiScaleRatio)
+
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
         return base % 2 === 0 ? base : base + 1;
@@ -243,8 +288,8 @@ Variants {
       margins.left: calculateMargin(anchors.left, "left")
       margins.right: calculateMargin(anchors.right, "right")
 
-      implicitWidth: verticalMode ? vWidth : hWidth
-      implicitHeight: verticalMode ? vHeight : hHeight
+      implicitWidth: verticalMode ? longVWidth : (isShortMode ? shortHWidth : longHWidth)
+      implicitHeight: verticalMode ? (isShortMode ? shortVHeight : longVHeight) : longHHeight
       color: Color.transparent
 
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
@@ -285,6 +330,7 @@ Variants {
           onTriggered: {
             osdItem.visible = false;
             root.currentOSDType = "";
+            root.lastLockKeyChanged = ""; // Reset the lock key change indicator
             root.active = false;
           }
         }
@@ -325,7 +371,7 @@ Variants {
             spacing: Style.marginM
             clip: true
 
-            // TextMetrics to measure the maximum possible percentage width (150%)
+            // TextMetrics to measure the maximum possible percentage width
             TextMetrics {
               id: percentageMetrics
               font.family: Settings.data.ui.fontFixed
@@ -334,6 +380,7 @@ Variants {
               text: "150%" // Maximum possible value with volumeOverdrive
             }
 
+            // Common Icon for all types
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
@@ -348,7 +395,22 @@ Variants {
               }
             }
 
+            // Lock Key Status Text (replaces progress bar)
+            NText {
+              visible: root.currentOSDType === "lockkey"
+              text: root.getDisplayPercentage()
+              color: root.getProgressColor()
+              pointSize: Style.fontSizeM
+              family: Settings.data.ui.fontFixed
+              font.weight: Style.fontWeightMedium
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignHCenter
+              Layout.alignment: Qt.AlignVCenter
+            }
+
+            // Progress Bar for Volume/Brightness
             Rectangle {
+              visible: root.currentOSDType !== "lockkey"
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
@@ -369,7 +431,6 @@ Variants {
                     easing.type: Easing.InOutQuad
                   }
                 }
-
                 Behavior on color {
                   ColorAnimation {
                     duration: Style.animationNormal
@@ -379,7 +440,9 @@ Variants {
               }
             }
 
+            // Percentage Text for Volume/Brightness
             NText {
+              visible: root.currentOSDType !== "lockkey"
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
@@ -401,21 +464,27 @@ Variants {
             anchors.fill: parent
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
-            spacing: Style.marginS
+            spacing: root.currentOSDType === "lockkey" ? Style.marginM : Style.marginS
             clip: true
 
+            // Unified Text display for Percentage or Lock Status
             NText {
               text: root.getDisplayPercentage()
-              color: Color.mOnSurface
-              pointSize: Style.fontSizeS
+              color: root.currentOSDType === "lockkey" ? root.getProgressColor() : Color.mOnSurface
+              pointSize: root.currentOSDType === "lockkey" ? Style.fontSizeM : Style.fontSizeS
               family: Settings.data.ui.fontFixed
+              font.weight: root.currentOSDType === "lockkey" ? Style.fontWeightMedium : Style.fontWeightNormal
               Layout.fillWidth: true
-              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
+              Layout.alignment: Qt.AlignHCenter
               horizontalAlignment: Text.AlignHCenter
               verticalAlignment: Text.AlignVCenter
+              // Only set preferredHeight for the standard case to maintain layout
+              Layout.preferredHeight: root.currentOSDType === "lockkey" ? -1 : Math.round(20 * Style.uiScaleRatio)
             }
 
+            // Progress Bar for Volume/Brightness
             Item {
+              visible: root.currentOSDType !== "lockkey"
               Layout.fillWidth: true
               Layout.fillHeight: true
 
@@ -441,7 +510,6 @@ Variants {
                       easing.type: Easing.InOutQuad
                     }
                   }
-
                   Behavior on color {
                     ColorAnimation {
                       duration: Style.animationNormal
@@ -452,11 +520,12 @@ Variants {
               }
             }
 
+            // Unified Icon display
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              pointSize: Style.fontSizeL
-              Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+              pointSize: root.currentOSDType === "lockkey" ? Style.fontSizeXL : Style.fontSizeL
+              Layout.alignment: root.currentOSDType === "lockkey" ? Qt.AlignHCenter : (Qt.AlignHCenter | Qt.AlignBottom)
 
               Behavior on color {
                 ColorAnimation {
