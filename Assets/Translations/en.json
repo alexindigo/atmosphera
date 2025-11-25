@@ -1675,6 +1675,10 @@
           "label": "General"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Show notifications when Caps Lock, Num Lock, or Scroll Lock keys are toggled.",
+        "label": "Show lock key notifications"
+      },
       "title": "On-Screen Display"
     },
     "screen-recorder": {

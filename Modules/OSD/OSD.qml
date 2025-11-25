@@ -205,6 +205,8 @@ Variants {
       target: LockKeysService
 
       function onCapsLockChanged(active) {
+        if (!Settings.data.osd.showLockKeyNotifications)
+          return;
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "CAPS ON" : "CAPS OFF";
         if (!root.active)
@@ -214,6 +216,8 @@ Variants {
       }
 
       function onNumLockChanged(active) {
+        if (!Settings.data.osd.showLockKeyNotifications)
+          return;
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "NUM ON" : "NUM OFF";
         if (!root.active)
@@ -223,6 +227,8 @@ Variants {
       }
 
       function onScrollLockChanged(active) {
+        if (!Settings.data.osd.showLockKeyNotifications)
+          return;
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "SCROLL ON" : "SCROLL OFF";
         if (!root.active)

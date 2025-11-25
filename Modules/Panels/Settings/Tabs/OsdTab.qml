@@ -99,6 +99,13 @@ ColumnLayout {
       onToggled: checked => Settings.data.osd.overlayLayer = checked
     }
 
+    NToggle {
+      label: I18n.tr("settings.osd.show-lock-key-notifications.label", "Show lock key notifications")
+      description: I18n.tr("settings.osd.show-lock-key-notifications.description", "Show notifications when Caps Lock, Num Lock, or Scroll Lock keys are toggled.")
+      checked: Settings.data.osd.showLockKeyNotifications
+      onToggled: checked => Settings.data.osd.showLockKeyNotifications = checked
+    }
+
     NLabel {
       label: I18n.tr("settings.osd.background-opacity.label", "Background opacity")
       description: I18n.tr("settings.osd.background-opacity.description", "Controls the transparency of the OSD background.")
