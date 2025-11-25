@@ -5,6 +5,8 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
+import qs.Services.Power
+import qs.Services.System
 import qs.Services.UI
 
 Singleton {
@@ -1142,5 +1144,29 @@ Singleton {
     // Compare settings, to detect if something has been upgraded
     const widgetAfter = JSON.stringify(widget);
     return (widgetAfter !== widgetBefore);
+  }
+
+  function buildStateSnapshot() {
+    try {
+      const settingsData = QtObj2JS.qtObjectToPlainObject(adapter);
+      const shellStateData = (typeof ShellState !== "undefined" && ShellState.data) ? QtObj2JS.qtObjectToPlainObject(ShellState.data) || {} : {};
+
+      return {
+        settings: settingsData,
+        state: {
+          doNotDisturb: NotificationService.doNotDisturb,
+          noctaliaPerformanceMode: PowerProfileService.noctaliaPerformanceMode,
+          barVisible: BarService.isVisible,
+          display: shellStateData.display || {},
+          wallpapers: shellStateData.wallpapers || {},
+          notificationsState: shellStateData.notificationsState || {},
+          changelogState: shellStateData.changelogState || {},
+          colorSchemesList: shellStateData.colorSchemesList || {}
+        }
+      };
+    } catch (error) {
+      Logger.e("Settings", "Failed to build state snapshot:", error);
+      return null;
+    }
   }
 }
