@@ -106,19 +106,18 @@ Variants {
       }
       // For lock keys, use a different color to indicate the lock state
       if (currentOSDType === "lockkey") {
-        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn
-          ? Color.mPrimary : Color.mOnSurfaceVariant;
+        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
       }
       return Color.mPrimary;
     }
 
     function getIconColor() {
       const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      if (isMutedState) return Color.mError;
+      if (isMutedState)
+        return Color.mError;
 
       if (currentOSDType === "lockkey") {
-        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn
-          ? Color.mPrimary : Color.mOnSurfaceVariant;
+        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
       }
 
       return Color.mOnSurface;
@@ -208,22 +207,28 @@ Variants {
       function onCapsLockChanged(active) {
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "CAPS ON" : "CAPS OFF";
-        if (!root.active) root.active = true;
-        if (root.item) root.item.showOSD();
+        if (!root.active)
+          root.active = true;
+        if (root.item)
+          root.item.showOSD();
       }
 
       function onNumLockChanged(active) {
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "NUM ON" : "NUM OFF";
-        if (!root.active) root.active = true;
-        if (root.item) root.item.showOSD();
+        if (!root.active)
+          root.active = true;
+        if (root.item)
+          root.item.showOSD();
       }
 
       function onScrollLockChanged(active) {
         root.currentOSDType = "lockkey";
         root.lastLockKeyChanged = active ? "SCROLL ON" : "SCROLL OFF";
-        if (!root.active) root.active = true;
-        if (root.item) root.item.showOSD();
+        if (!root.active)
+          root.active = true;
+        if (root.item)
+          root.item.showOSD();
       }
     }
 
