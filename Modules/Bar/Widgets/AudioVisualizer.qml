@@ -150,9 +150,9 @@ Item {
                  if (mouse.button === Qt.RightButton) {
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
+                     popupMenuWindow.showContextMenu(contextMenu);
                      const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
                      contextMenu.openAtItem(root, pos.x, pos.y);
-                     popupMenuWindow.showContextMenu(contextMenu);
                    }
                  } else {
                    const types = ["linear", "mirrored", "wave"];

@@ -706,9 +706,9 @@ Item {
                        TooltipService.hide();
                        var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                        if (popupMenuWindow) {
+                         popupMenuWindow.showContextMenu(contextMenu);
                          const pos = BarService.getContextMenuPosition(mediaMini, contextMenu.implicitWidth, contextMenu.implicitHeight);
                          contextMenu.openAtItem(mediaMini, pos.x, pos.y);
-                         popupMenuWindow.showContextMenu(contextMenu);
                        }
                      } else if (mouse.button === Qt.MiddleButton) {
                        if (hasActivePlayer && MediaService.canGoPrevious) {

@@ -153,12 +153,9 @@ Item {
       // Get the shared popup menu window for this screen
       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
       if (popupMenuWindow) {
-        // Calculate position using centralized helper (with center-based positioning)
-        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
-
-        // Show the context menu inside the popup window
-        contextMenu.openAtItem(pill, pos.x, pos.y);
         popupMenuWindow.showContextMenu(contextMenu);
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+        contextMenu.openAtItem(pill, pos.x, pos.y);
       }
     }
     onMiddleClicked: root.openExternalMixer()
