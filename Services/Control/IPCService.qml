@@ -95,28 +95,33 @@ Item {
     function toggle() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              launcherPanel?.toggle();
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && !launcherPanel?.activePlugin))
+                                launcherPanel?.toggle();
+                              launcherPanel?.setSearchText("");
                             });
     }
     function clipboard() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">clip")))
+                                launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">clip ");
-                              launcherPanel?.toggle();
                             });
     }
     function calculator() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">calc")))
+                                launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">calc ");
-                              launcherPanel?.toggle();
                             });
     }
     function emoji() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">emoji")))
+                                launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">emoji ");
-                              launcherPanel?.toggle();
                             });
     }
   }
