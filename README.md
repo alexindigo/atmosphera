@@ -44,7 +44,7 @@ A beautiful, minimal desktop shell for Wayland that actually gets out of your wa
 
 ## Preview
 
-https://github.com/user-attachments/assets/44f849ba-764b-4349-8a35-d72c33ab6364
+https://github.com/user-attachments/assets/bf46f233-8d66-439a-a1ae-ab0446270f2d
 
 <details>
 <summary>Screenshots</summary>
