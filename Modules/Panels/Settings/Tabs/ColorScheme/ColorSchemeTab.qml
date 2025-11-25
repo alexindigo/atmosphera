@@ -332,22 +332,17 @@ ColumnLayout {
     Layout.fillWidth: true
     visible: !Settings.data.colorSchemes.useWallpaperColors
 
-    RowLayout {
+    NHeader {
+      label: I18n.tr("settings.color-scheme.predefined.section.label")
+      description: I18n.tr("settings.color-scheme.predefined.section.description")
       Layout.fillWidth: true
+    }
 
-      NHeader {
-        label: I18n.tr("settings.color-scheme.predefined.section.label")
-        description: I18n.tr("settings.color-scheme.predefined.section.description")
-        Layout.fillWidth: true
-      }
-
-      NButton {
-        text: I18n.tr("settings.color-scheme.download.button")
-        icon: "download"
-        onClicked: {
-          root.openDownloadPopup();
-        }
-      }
+    NButton {
+      text: I18n.tr("settings.color-scheme.download.button")
+      icon: "download"
+      onClicked: root.openDownloadPopup()
+      Layout.alignment: Qt.AlignRight
     }
 
     // Download popup
