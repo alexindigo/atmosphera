@@ -1675,6 +1675,10 @@
           "label": "Algemeen"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Toon meldingen wanneer Caps Lock, Num Lock of Scroll Lock toetsen worden omgeschakeld.",
+        "label": "Vergrendeltoetsmeldingen tonen"
+      },
       "title": "On-screenweergave"
     },
     "screen-recorder": {

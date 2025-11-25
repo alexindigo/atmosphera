@@ -1675,6 +1675,10 @@
           "label": "Général"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Afficher les notifications lorsque les touches Verr. Maj., Verr. Num. ou Arrêt défil. sont activées/désactivées.",
+        "label": "Afficher les notifications des touches de verrouillage"
+      },
       "title": "Affichage à l'écran"
     },
     "screen-recorder": {

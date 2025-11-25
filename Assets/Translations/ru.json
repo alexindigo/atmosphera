@@ -1675,6 +1675,10 @@
           "label": "Общие"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Показывать уведомления при переключении клавиш Caps Lock, Num Lock или Scroll Lock.",
+        "label": "Показывать уведомления о состоянии клавиш"
+      },
       "title": "Экранное отображение (OSD)"
     },
     "screen-recorder": {
