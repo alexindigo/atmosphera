@@ -49,6 +49,11 @@ ShellRoot {
     function onReloadCompleted() {
       Quickshell.inhibitReloadPopup();
     }
+    function onReloadFailed() {
+      if (!Settings?.isDebug) {
+        Quickshell.inhibitReloadPopup();
+      }
+    }
   }
 
   Connections {
