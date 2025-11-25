@@ -1675,6 +1675,10 @@
           "label": "常规"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "当大写锁定键、数字锁定键或滚动锁定键被切换时显示通知。",
+        "label": "显示锁定键通知"
+      },
       "title": "屏显菜单"
     },
     "screen-recorder": {

@@ -1675,6 +1675,10 @@
           "label": "Geral"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Mostrar notificações quando as teclas Caps Lock, Num Lock ou Scroll Lock forem alternadas.",
+        "label": "Mostrar notificações das teclas de bloqueio"
+      },
       "title": "Exibição na tela"
     },
     "screen-recorder": {

@@ -1675,6 +1675,10 @@
           "label": "Genel"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Caps Lock, Num Lock veya Scroll Lock tuşları değiştirildiğinde bildirimleri göster.",
+        "label": "Kilit tuşu bildirimlerini göster"
+      },
       "title": "Ekran Görüntüsü"
     },
     "screen-recorder": {

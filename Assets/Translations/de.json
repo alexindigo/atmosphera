@@ -1675,6 +1675,10 @@
           "label": "Allgemein"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Benachrichtigungen anzeigen, wenn sich der Status von Feststelltaste, Num-Taste oder Rollen-Taste ändert.",
+        "label": "Tastensperr-Benachrichtigungen anzeigen"
+      },
       "title": "On-Screen Display"
     },
     "screen-recorder": {

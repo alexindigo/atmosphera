@@ -1675,6 +1675,10 @@
           "label": "General"
         }
       },
+      "show-lock-key-notifications": {
+        "description": "Mostrar notificaciones cuando se activen o desactiven las teclas Bloq Mayús, Bloq Num o Bloq Despl.",
+        "label": "Mostrar notificaciones de teclas de bloqueo"
+      },
       "title": "Visualización en pantalla"
     },
     "screen-recorder": {

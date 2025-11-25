@@ -460,6 +460,7 @@ Singleton {
       property int autoHideMs: 2000
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
+      property bool showLockKeyNotifications: true
     }
 
     // audio
