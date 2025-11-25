@@ -39,7 +39,6 @@ A beautiful, minimal desktop shell for Wayland that actually gets out of your wa
 - 🎯 Minimalist design philosophy
 - 🔧 Easily customizable to match your style
 - 🎨 Many color schemes available
-- 
 ---
 
 ## Preview
