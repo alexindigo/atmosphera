@@ -173,3 +173,17 @@ body {
 .timestampInline_c19a55 time {
   color: var(--text-4) !important;
 }
+
+/* Make chat input text and placeholder use lighter text color */
+.slateTextArea_ec4baf,
+.slateTextArea_ec4baf .emptyText__1464f,
+.markup__75297,
+.editor__1b31f {
+  color: var(--text-4) !important;
+}
+
+/* Make chat messages slightly lighter */
+.messageContent__5126c,
+.messageContent__5126c .markup__75297 {
+  color: var(--text-1) !important;
+}
