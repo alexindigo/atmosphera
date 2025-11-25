@@ -372,14 +372,14 @@ Item {
                 // Background circle (full track, not played yet)
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.lineWidth = 3 * scaling; // Thicker line width based on scaling property
+                ctx.lineWidth = 2.5 * scaling; // Thicker line width based on scaling property
                 ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
                 ctx.stroke();
 
                 // Progress arc (played portion)
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
-                ctx.lineWidth = 3 * scaling; // Thicker line width based on scaling property
+                ctx.lineWidth = 2.5 * scaling; // Thicker line width based on scaling property
                 ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
                 ctx.lineCap = "round";
                 ctx.stroke();
@@ -407,7 +407,7 @@ Item {
             // Album art or icon - only show album art when enabled and player is active
             Item {
               anchors.fill: parent
-              anchors.margins: showProgressRing ? (2.5 * scaling) : 0.5 // Make content smaller only when progress ring is visible, scaled with widget
+              anchors.margins: showProgressRing ? (3 * scaling) : 0.5 // Adjusted to align with progress circle better
 
               NImageCircled {
                 id: trackArt
@@ -427,7 +427,7 @@ Item {
                 anchors.centerIn: parent
                 icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-                pointSize: showAlbumArt ? 10 * scaling : 14 * scaling  // Smaller when inside album art circle, larger when alone
+                pointSize: showAlbumArt ? 8 * scaling : 12 * scaling  // Smaller when inside album art circle, larger when alone
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 visible: (!showAlbumArt && hasActivePlayer) && showProgressRing
@@ -625,14 +625,14 @@ Item {
           // Background circle (full track, not played yet)
           ctx.beginPath();
           ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-          ctx.lineWidth = 1.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.lineWidth = 2.5 * scaling; // Line width based on scaling property, thinner for vertical layout
           ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
           ctx.stroke();
 
           // Progress arc (played portion)
           ctx.beginPath();
           ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
-          ctx.lineWidth = 1.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.lineWidth = 2.5 * scaling; // Line width based on scaling property, thinner for vertical layout
           ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
           ctx.lineCap = "round";
           ctx.stroke();
@@ -661,11 +661,11 @@ Item {
         // Media icon (fallback)
         NIcon {
           id: mediaIconVertical
-          anchors.fill: parent
+          anchors.centerIn: parent
           visible: !showAlbumArt || !hasActivePlayer
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeL * scaling
+          pointSize: Style.fontSizeM * scaling
           verticalAlignment: Text.AlignVCenter
           horizontalAlignment: Text.AlignHCenter
         }
