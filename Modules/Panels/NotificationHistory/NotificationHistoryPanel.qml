@@ -197,10 +197,11 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // Icon
-                  NImageCircled {
+                  NImageRounded {
+                    anchors.verticalCenter: parent.verticalCenter
                     width: Math.round(40 * Style.uiScaleRatio)
                     height: Math.round(40 * Style.uiScaleRatio)
-                    anchors.verticalCenter: parent.verticalCenter
+                    radius: width * 0.5
                     imagePath: model.cachedImage || model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0

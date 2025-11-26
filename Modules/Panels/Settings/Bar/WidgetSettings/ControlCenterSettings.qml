@@ -59,10 +59,11 @@ ColumnLayout {
       description: I18n.tr("bar.widget-settings.control-center.icon.description")
     }
 
-    NImageCircled {
+    NImageRounded {
       Layout.preferredWidth: Style.fontSizeXL * 2
       Layout.preferredHeight: Style.fontSizeXL * 2
       Layout.alignment: Qt.AlignVCenter
+      radius: width * 0.5
       imagePath: valueCustomIconPath
       visible: valueCustomIconPath !== ""
     }

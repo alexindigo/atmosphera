@@ -409,16 +409,17 @@ Item {
               anchors.fill: parent
               anchors.margins: showProgressRing ? (3 * scaling) : 0.5 // Adjusted to align with progress circle better
 
-              NImageCircled {
+              NImageRounded {
                 id: trackArt
                 anchors.fill: parent
                 anchors.margins: showProgressRing ? 0 : -1 * scaling // Add negative margin to make album art larger when no progress ring
+                radius: width * 0.5
                 visible: showAlbumArt && hasActivePlayer
                 imagePath: MediaService.trackArtUrl
                 fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
                 fallbackIconSize: showProgressRing ? 10 : 12 // Larger fallback icon when no progress ring
                 borderWidth: 0
-                border.color: Color.transparent
+                borderColor: Color.transparent
                 z: 1 // In front of the progress circle
               }
 
@@ -649,9 +650,10 @@ Item {
         z: 1 // Above the visualizer and progress ring
 
         // Album Art
-        NImageCircled {
+        NImageRounded {
           anchors.fill: parent
           visible: showAlbumArt && hasActivePlayer
+          radius: width * 0.5
           imagePath: MediaService.trackArtUrl
           fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
           fallbackIconSize: 12
