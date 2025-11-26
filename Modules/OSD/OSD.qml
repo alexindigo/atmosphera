@@ -56,6 +56,9 @@ Variants {
       case OSD.Type.InputVolume:
         return isInputMuted ? "microphone-off" : "microphone";
       case OSD.Type.Brightness:
+        // Show sun-off icon when brightness is effectively 0% (within rounding threshold)
+        if (currentBrightness < 0.005)
+          return "sun-off";
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       case OSD.Type.LockKey:
         return "keyboard";
