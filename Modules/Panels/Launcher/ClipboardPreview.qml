@@ -102,7 +102,7 @@ Item {
             anchors.fill: parent
             imagePath: imageDataUrl
             visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
-            imageRadius: Style.radiusS
+            radius: Style.radiusS
             imageFillMode: Image.PreserveAspectFit
           }
 

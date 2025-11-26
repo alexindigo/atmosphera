@@ -13,6 +13,7 @@ Item {
   property real fallbackIconSize: Style.fontSizeXXL
   property real borderWidth: 0
   property color borderColor: Color.transparent
+  property int imageFillMode: Image.PreserveAspectCrop
 
   readonly property bool showFallback: (fallbackIcon !== undefined && fallbackIcon !== "") && (imagePath === undefined || imagePath === "")
 
@@ -33,7 +34,7 @@ Item {
       smooth: true
       asynchronous: true
       antialiasing: true
-      fillMode: Image.PreserveAspectCrop
+      fillMode: root.imageFillMode
       onStatusChanged: root.statusChanged(status)
     }
 
