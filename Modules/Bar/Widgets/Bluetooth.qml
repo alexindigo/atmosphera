@@ -87,7 +87,7 @@ Item {
     }
     autoHide: false
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
-    forceClose: isBarVertical || root.displayMode === "alwaysHide" || BluetoothService.connectedDevices.length === 0
+    forceClose: isBarVertical || root.displayMode === "alwaysHide"
     onClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
     onRightClicked: {
       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
