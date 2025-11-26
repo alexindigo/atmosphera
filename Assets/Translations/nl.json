@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU-gebruik (Kritiek)"
-        },
         "cpu-temperature": {
           "description": "Toon CPU-temperatuur indien beschikbaar.",
           "label": "CPU-temperatuur"
@@ -282,24 +279,9 @@
           "description": "Toon het huidige CPU-gebruik in procent.",
           "label": "CPU-gebruik"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU-gebruik (Waarschuwing)"
-        },
-        "disk-critical-threshold": {
-          "label": "Opslagruimte (Kritiek)"
-        },
         "disk-path": {
           "description": "Selecteer welk schijfkoppelpunt u wilt monitoren.",
           "label": "Schijfpad"
-        },
-        "disk-warning-threshold": {
-          "label": "Opslagruimte (Waarschuwing)"
-        },
-        "mem-critical-threshold": {
-          "label": "Geheugengebruik (Kritiek)"
-        },
-        "mem-warning-threshold": {
-          "label": "Geheugengebruik (Waarschuwing)"
         },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Toon informatie over schijfruimtegebruik.",
           "label": "Opslaggebruik"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU-temperatuur (kritiek)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU-temperatuur (Waarschuwing)"
-        },
-        "thresholds": {
-          "description": "Drempels instellen voor systeemmetriekwaarschuwingen. Markeert wanneer overschreden.",
-          "header": "Drempelinstellingen"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Geblokkeerd",
       "connect": "Verbinden",
       "connected-devices": "Verbonden apparaten",
+      "connecting": "Verbinden...",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
@@ -2077,6 +2050,11 @@
     "clipboard": {
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
       "unavailable-desc": "De toepassing 'cliphist' is niet geïnstalleerd. Installeer deze om functies voor klembordgeschiedenis te gebruiken."
+    },
+    "dark-mode": {
+      "dark-mode": "Donkere modus",
+      "light-mode": "Lichte modus",
+      "enabled": "Ingeschakeld"
     },
     "do-not-disturb": {
       "disabled": "\"Niet storen\" uitgeschakeld",

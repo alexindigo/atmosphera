@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
-        },
         "cpu-temperature": {
           "description": "Mostrar leituras de temperatura da CPU se disponíveis.",
           "label": "Temperatura da CPU"
@@ -282,24 +279,9 @@
           "description": "Exibir o percentual atual de uso da CPU.",
           "label": "Uso da CPU"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
-        },
         "disk-path": {
           "description": "Selecione qual ponto de montagem de disco monitorar.",
           "label": "Caminho do disco"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Mostrar o uso de memória como percentual em vez de valores absolutos.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Mostrar informações de uso do espaço em disco.",
           "label": "Uso de armazenamento"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
-        },
-        "thresholds": {
-          "description": "Estabelece limites para alertas de métricas do sistema. Destaca quando superados.",
-          "header": "Configuração de Limiares"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Bloqueado",
       "connect": "Conectar",
       "connected-devices": "Dispositivos conectados",
+      "connecting": "Conectando...",
       "disabled": "O Bluetooth está desativado",
       "disconnect": "Desconectar",
       "enable-message": "Ative o Bluetooth para ver os dispositivos disponíveis.",
@@ -2077,6 +2050,11 @@
     "clipboard": {
       "unavailable": "Histórico da área de transferência indisponível",
       "unavailable-desc": "O aplicativo 'cliphist' não está instalado. Por favor, instale-o para usar os recursos do histórico da área de transferência."
+    },
+    "dark-mode": {
+      "dark-mode": "Modo escuro",
+      "light-mode": "Modo claro",
+      "enabled": "Ativado"
     },
     "do-not-disturb": {
       "disabled": "'Não perturbe' desativado",

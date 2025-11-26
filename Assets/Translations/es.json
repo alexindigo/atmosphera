@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
-        },
         "cpu-temperature": {
           "description": "Mostrar lecturas de temperatura de CPU si están disponibles.",
           "label": "Temperatura de la CPU"
@@ -282,24 +279,9 @@
           "description": "Mostrar el porcentaje actual de uso de CPU.",
           "label": "Uso de CPU"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
-        },
         "disk-path": {
           "description": "Seleccione qué punto de montaje de disco desea supervisar.",
           "label": "Ruta del disco"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Mostrar el uso de memoria como porcentaje en lugar de valores absolutos.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Mostrar información del uso del espacio en disco.",
           "label": "Uso de almacenamiento"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
-        },
-        "thresholds": {
-          "description": "Establece umbrales para alertas de métricas del sistema. Resalta cuando se superan.",
-          "header": "Configuración de Umbrales"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Bloqueado",
       "connect": "Conectar",
       "connected-devices": "Dispositivos conectados",
+      "connecting": "Conectando...",
       "disabled": "Bluetooth está desactivado",
       "disconnect": "Desconectar",
       "enable-message": "Activa Bluetooth para ver los dispositivos disponibles.",
@@ -2077,6 +2050,11 @@
     "clipboard": {
       "unavailable": "Historial del portapapeles no disponible",
       "unavailable-desc": "La aplicación 'cliphist' no está instalada. Por favor, instálala para usar las funciones de historial del portapapeles."
+    },
+    "dark-mode": {
+      "dark-mode": "Modo oscuro",
+      "light-mode": "Modo claro",
+      "enabled": "Activado"
     },
     "do-not-disturb": {
       "disabled": "'No molestar' desactivado",

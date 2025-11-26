@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
-        },
         "cpu-temperature": {
           "description": "Afficher les lectures de température du CPU si disponibles.",
           "label": "Température du CPU"
@@ -282,24 +279,9 @@
           "description": "Afficher le pourcentage d'utilisation actuel du CPU.",
           "label": "Utilisation du CPU"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
-        },
         "disk-path": {
           "description": "Sélectionnez le point de montage du disque à surveiller.",
           "label": "Chemin du disque"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Afficher l'utilisation de la mémoire en pourcentage au lieu de valeurs absolues.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Afficher les informations d'utilisation de l'espace disque.",
           "label": "Utilisation du stockage"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
-        },
-        "thresholds": {
-          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites.",
-          "header": "Seuils"
         }
       },
       "taskbar": {
@@ -412,11 +384,12 @@
       "blocked": "Bloqué",
       "connect": "Connecter",
       "connected-devices": "Appareils connectés",
+      "connecting": "Connexion en cours...",
       "disabled": "Le Bluetooth est désactivé",
       "disconnect": "Déconnecter",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
       "known-devices": "Appareils connus",
-      "pairing": "Appairage...",
+      "pairing": "Appairage en cours...",
       "pairing-mode": "Assurez-vous que votre appareil est en mode d'appairage.",
       "scanning": "Recherche d'appareils en cours...",
       "title": "Bluetooth"
@@ -2077,6 +2050,11 @@
     "clipboard": {
       "unavailable": "Historique du presse-papiers indisponible",
       "unavailable-desc": "L'application 'cliphist' n'est pas installée. Veuillez l'installer pour utiliser les fonctionnalités d'historique du presse-papiers."
+    },
+    "dark-mode": {
+      "dark-mode": "Mode sombre",
+      "light-mode": "Mode clair",
+      "enabled": "Activé"
     },
     "do-not-disturb": {
       "disabled": "'Ne pas déranger' désactivé",

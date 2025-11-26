@@ -133,11 +133,11 @@
           "update-text": "Text auf Linksklick aktualisieren"
         },
         "max-text-length-horizontal": {
-          "description": "Maximale Anzahl an Zeichen, die in horizontaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
+          "description": "Maximale Anzahl an Zeichen, die in horizontaler Leiste angezeigt werden (0 zum Ausblenden des Textes).",
           "label": "Max. Textlänge (horizontal)"
         },
         "max-text-length-vertical": {
-          "description": "Maximale Anzahl an Zeichen, die in vertikaler Leiste angezeigt werden (0 zum Ausblenden des Textes)",
+          "description": "Maximale Anzahl an Zeichen, die in vertikaler Leiste angezeigt werden (0 zum Ausblenden des Textes).",
           "label": "Max. Textlänge (vertikal)"
         },
         "middle-click": {
@@ -163,7 +163,7 @@
           "label": "Stream"
         },
         "wheel": {
-          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl",
+          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl.",
           "label": "Scrollrad",
           "update-text": "Anzeigetext beim Scrollen aktualisieren"
         },
@@ -202,7 +202,7 @@
         },
         "show-scroll-lock": {
           "description": "Scroll-Lock-Status anzeigen.",
-          "label": "Rollenfeststelltaste"
+          "label": "Rollen-Taste"
         }
       },
       "media-mini": {
@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
-        },
         "cpu-temperature": {
           "description": "CPU-Temperaturwerte anzeigen, falls verfügbar.",
           "label": "CPU-Temperatur"
@@ -282,24 +279,9 @@
           "description": "Aktuelle CPU-Auslastung in Prozent anzeigen.",
           "label": "CPU-Auslastung"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
-        },
         "disk-path": {
           "description": "Wählen Sie den Festplatten-Mountpunkt aus, der überwacht werden soll.",
           "label": "Festplattenpfad"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
         },
         "memory-percentage": {
           "description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
           "label": "Speichernutzung"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
-        },
-        "thresholds": {
-          "description": "Schwellenwerte für visuelle Indikatoren konfigurieren. Warn-/Kritik-Indikatoren erscheinen in hervorgehobenen Farben bei Überschreitung.",
-          "header": "Schwellenwerte"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Blockiert",
       "connect": "Verbinden",
       "connected-devices": "Verbundene Geräte",
+      "connecting": "Verbinden...",
       "disabled": "Bluetooth ist deaktiviert",
       "disconnect": "Trennen",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
@@ -466,11 +439,11 @@
     "connect-vpn": "Mit {name} verbinden",
     "cycle-visualizer": "Zyklus-Visualisierer",
     "disable-bluetooth": "Bluetooth deaktivieren",
-    "disable-dnd": "Bitte nicht stören deaktivieren",
+    "disable-dnd": "'Nicht stören' deaktivieren",
     "disable-wifi": "WLAN deaktivieren",
     "disconnect-vpn": "Verbindung zu {name} trennen",
     "enable-bluetooth": "Bluetooth aktivieren",
-    "enable-dnd": "Nicht stören aktivieren",
+    "enable-dnd": "'Nicht stören' aktivieren",
     "enable-wifi": "WLAN aktivieren",
     "next": "Nächste/r/s",
     "open-calendar": "Kalender öffnen",
@@ -545,7 +518,7 @@
     },
     "colors": {
       "error": "Fehler",
-      "onSurface": "An der Oberfläche",
+      "onSurface": "Auf der Oberfläche",
       "primary": "Primär",
       "secondary": "Sekundär",
       "tertiary": "Tertiär"
@@ -983,15 +956,15 @@
       },
       "dark-mode": {
         "mode": {
-          "description": "Ermöglicht einen automatischen Wechsel zwischen dem hellen und dunklen Modus.",
-          "label": "Automatischer dunkler Modus",
+          "description": "Ermöglicht einen automatischen Wechsel zwischem hellen und dunklen Modus.",
+          "label": "Automatischer Dunkelmodus",
           "location": "Standort",
           "manual": "Manuell",
           "off": "Aus"
         },
         "switch": {
           "description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht.",
-          "label": "Dunkler Modus"
+          "label": "Dunkelmodus"
         }
       },
       "delete": {
@@ -1051,7 +1024,7 @@
         "programs": {
           "code": {
             "description": "Schreibe {Dateipfad}. Das Hyprluna-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Kein Code-Client erkannt. Installieren Sie VSCode oder VSCodium."
+            "description-missing": "Kein Code-Client erkannt. Installieren Sie VSCode oder VSCodium"
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
@@ -1072,11 +1045,11 @@
             "description-missing": "Benötigt die Installation von {app}"
           },
           "telegram": {
-            "description": "Schreibe {filepath}.",
+            "description": "Schreibe {filepath}",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "cava": {
-            "description": "Schreibe {filepath}.",
+            "description": "Schreibe {filepath}",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "vicinae": {
@@ -1887,7 +1860,7 @@
         "reset": "Deckkraft des gedimmten Desktops zurücksetzen"
       },
       "panel-background-opacity": {
-        "description": "Hintergrunddeckkraft für alle Paneele festlegen (Launcher, Control Center, Einstellungen usw.).",
+        "description": "Hintergrunddeckkraft für alle Paneele festlegen (Launcher, Kontrollzentrum, Einstellungen usw.).",
         "label": "Paneel-Hintergrunddeckkraft"
       },
       "panels-attached-to-bar": {
@@ -2078,6 +2051,11 @@
       "unavailable": "Zwischenablageverlauf nicht verfügbar",
       "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablageverlauf-Features zu nutzen."
     },
+    "dark-mode": {
+      "dark-mode": "Dunkler Modus",
+      "light-mode": "Heller Modus",
+      "enabled": "Aktiviert"
+    },
     "do-not-disturb": {
       "disabled": "'Nicht stören' deaktiviert",
       "disabled-desc": "Alle Benachrichtigungen werden angezeigt.",
@@ -2166,10 +2144,10 @@
     "close": "Schließen",
     "connect-disconnect-devices": "Linksklick zum Verbinden. Rechtsklick zum Vergessen.",
     "delete-notification": "Benachrichtigung löschen",
-    "disable-keep-awake": "Klicken, um Wach halten zu deaktivieren.\nScrollen, um Zeitlimit anzupassen.",
+    "disable-keep-awake": "Klicken, um 'Wach halten' zu deaktivieren.\nScrollen, um Zeitlimit anzupassen.",
     "do-not-disturb-disabled": "'Nicht stören' deaktiviert",
     "do-not-disturb-enabled": "'Nicht stören' aktiviert",
-    "enable-keep-awake": "Klicken, um Wach halten zu aktivieren.\nScrollen, um Zeitlimit anzupassen.",
+    "enable-keep-awake": "Klicken, um 'Wach halten' zu aktivieren.\nScrollen, um Zeitlimit anzupassen.",
     "forget-network": "Netzwerk vergessen",
     "home": "Home",
     "input-muted": "Audio-Eingabe stummschalten",

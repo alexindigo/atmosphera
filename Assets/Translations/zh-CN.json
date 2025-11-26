@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU 使用率（严重）"
-        },
         "cpu-temperature": {
           "description": "如果可用，显示CPU温度读数。",
           "label": "CPU温度"
@@ -282,24 +279,9 @@
           "description": "显示当前CPU使用百分比。",
           "label": "CPU使用率"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU 使用率（警告）"
-        },
-        "disk-critical-threshold": {
-          "label": "存储空间（严重）"
-        },
         "disk-path": {
           "description": "选择要监控的磁盘挂载点。",
           "label": "磁盘路径"
-        },
-        "disk-warning-threshold": {
-          "label": "存储空间（警告）"
-        },
-        "mem-critical-threshold": {
-          "label": "内存使用率（严重）"
-        },
-        "mem-warning-threshold": {
-          "label": "内存使用率（警告）"
         },
         "memory-percentage": {
           "description": "以百分比而不是绝对值显示内存使用情况。",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU 温度（严重）"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU 温度（警告）"
-        },
-        "thresholds": {
-          "description": "配置系统指标提示的阈值，超出阈值时将以高亮色进行提示。",
-          "header": "阈值设置"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "已阻止",
       "connect": "连接",
       "connected-devices": "已连接设备",
+      "connecting": "正在连接…",
       "disabled": "蓝牙已禁用",
       "disconnect": "断开",
       "enable-message": "启用蓝牙以查看可用设备。",
@@ -2077,6 +2050,11 @@
     "clipboard": {
       "unavailable": "剪贴板历史记录不可用",
       "unavailable-desc": "未安装 'cliphist' 应用程序。请安装它以使用剪贴板历史记录功能。"
+    },
+    "dark-mode": {
+      "dark-mode": "深色模式",
+      "light-mode": "浅色模式",
+      "enabled": "已启用"
     },
     "do-not-disturb": {
       "disabled": "'勿扰模式'已禁用",
