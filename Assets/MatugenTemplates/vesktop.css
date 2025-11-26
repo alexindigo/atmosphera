@@ -173,3 +173,21 @@ body {
 .timestampInline_c19a55 time {
   color: var(--text-4) !important;
 }
+
+.postTitleText_faa96b {
+  color: var(--text-3) !important;
+}
+
+.postTitleText_faa96b .highlight {
+  color: var(--text-2) !important;
+}
+
+.messageContent_c19a55,
+.messageContent_faa96b {
+  color: var(--text-3) !important;
+}
+
+.messageContent_c19a55 .highlight,
+.messageContent_faa96b .highlight {
+  color: var(--text-2) !important;
+}
