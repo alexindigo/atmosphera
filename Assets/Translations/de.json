@@ -1690,8 +1690,8 @@
           "label": "Feststelltasten"
         },
         "section": {
-          "description": "Wähle, welche Ereignisse das On-Screen Display auslösen.",
-          "label": "OSD-Typen"
+          "description": "Wählen Sie die Ereignisse aus, die das OSD auslösen. Wenn keine Ereignisse ausgewählt werden, lösen alle verfügbaren Ereignisse das OSD aus.",
+          "label": "OSD-Auslöseereignisse"
         },
         "volume": {
           "description": "OSD anzeigen, wenn sich die Ausgabelautstärke ändert.",

@@ -71,7 +71,7 @@ ShellRoot {
   }
 
   Connections {
-    target: typeof ShellState !== 'undefined' ? ShellState : null
+    target: ShellState ? ShellState : null
     function onIsLoadedChanged() {
       if (ShellState.isLoaded) {
         shellStateLoaded = true;
@@ -100,10 +100,7 @@ ShellRoot {
         UpdateService.init();
         UpdateService.showLatestChangelog();
 
-        // Only open the setup wizard for new users
-        if (!Settings.data.setupCompleted) {
-          checkSetupWizard();
-        }
+        checkSetupWizard();
       }
 
       Overview {}
@@ -134,7 +131,12 @@ ShellRoot {
   }
 
   function checkSetupWizard() {
-    // Wait for distro service
+    // Only open the setup wizard for new users
+    if (!Settings.shouldOpenSetupWizard) {
+      return;
+    }
+
+    // Wait for HostService to be fully ready
     if (!HostService.isReady) {
       Qt.callLater(checkSetupWizard);
       return;
@@ -142,16 +144,10 @@ ShellRoot {
 
     // No setup wizard on NixOS
     if (HostService.isNixOS) {
-      Settings.data.setupCompleted = true;
       return;
     }
 
-    if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardTimer.start();
-    } else {
-      Settings.data.setupCompleted = true;
-      Settings.saveImmediate();
-    }
+    setupWizardTimer.start();
   }
 
   function showSetupWizard() {

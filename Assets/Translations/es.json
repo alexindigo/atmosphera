@@ -1690,8 +1690,8 @@
           "label": "Teclas de bloqueo"
         },
         "section": {
-          "description": "Elige qué eventos activan la visualización en pantalla.",
-          "label": "Tipos de OSD"
+          "description": "Seleccione los eventos que activan el OSD. Si no se selecciona ningún evento, todos los eventos disponibles activarán el OSD.",
+          "label": "Eventos de activación OSD"
         },
         "volume": {
           "description": "Mostrar el OSD cuando cambie el volumen de salida de audio.",

@@ -1,6 +1,5 @@
 {
-  "settingsVersion": 24,
-  "setupCompleted": false,
+  "settingsVersion": 25,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -138,7 +137,6 @@
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
     "setWallpaperOnAllMonitors": true,
-    "defaultWallpaper": "",
     "fillMode": "crop",
     "fillColor": "#000000",
     "randomEnabled": false,
@@ -146,7 +144,6 @@
     "transitionDuration": 1500,
     "transitionType": "random",
     "transitionEdgeSmoothness": 0.05,
-    "monitors": [],
     "panelPosition": "follow_bar",
     "hideWallpaperFilenames": false,
     "useWallhaven": false,
@@ -157,7 +154,9 @@
     "wallhavenPurity": "100",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
-    "wallhavenResolutionHeight": ""
+    "wallhavenResolutionHeight": "",
+    "defaultWallpaper": "",
+    "monitors": []
   },
   "appLauncher": {
     "enableClipboardHistory": false,
@@ -241,7 +240,7 @@
   },
   "dock": {
     "enabled": true,
-    "displayMode": "always_visible",
+    "displayMode": "auto_hide",
     "backgroundOpacity": 1,
     "radiusRatio": 0.1,
     "floatingRatio": 1,
@@ -300,17 +299,12 @@
   },
   "osd": {
     "enabled": true,
-    "enabledTypes": [
-      0,
-      1,
-      2,
-      3
-    ],
     "location": "top_right",
-    "monitors": [],
     "autoHideMs": 2000,
     "overlayLayer": true,
-    "backgroundOpacity": 1
+    "backgroundOpacity": 1,
+    "enabledTypes": [],
+    "monitors": []
   },
   "audio": {
     "volumeStep": 5,

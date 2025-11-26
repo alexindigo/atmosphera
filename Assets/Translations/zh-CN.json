@@ -1690,8 +1690,8 @@
           "label": "锁定键"
         },
         "section": {
-          "description": "选择哪些事件会触发屏显菜单。",
-          "label": "OSD 类型"
+          "description": "选择触发OSD的事件。如果未选择任何事件，则所有可用事件都将触发OSD。",
+          "label": "OSD触发事件"
         },
         "volume": {
           "description": "当音频输出音量发生变化时显示 OSD。",
