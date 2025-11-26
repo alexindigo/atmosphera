@@ -49,8 +49,9 @@ Variants {
       case OSD.Type.Volume:
         if (isMuted)
           return "volume-mute";
-        if (currentVolume <= Number.EPSILON)
-          return "volume-zero";
+        // Show muted icon when volume is effectively 0% (within rounding threshold)
+        if (currentVolume < 0.005)
+          return "volume-mute";
         return currentVolume <= 0.5 ? "volume-low" : "volume-high";
       case OSD.Type.InputVolume:
         return isInputMuted ? "microphone-off" : "microphone";

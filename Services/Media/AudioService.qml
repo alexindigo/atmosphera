@@ -205,10 +205,10 @@ Singleton {
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     const clampedVolume = Math.max(0, Math.min(volume, maxVolume));
-    const displayPercent = Math.round(clampedVolume * 100);
 
-    if (displayPercent === 0)
-      return "volume-zero";
+    // Show muted icon when volume is effectively 0% (within rounding threshold)
+    if (clampedVolume < 0.005)
+      return "volume-mute";
     if (clampedVolume <= 0.5)
       return "volume-low";
     return "volume-high";
