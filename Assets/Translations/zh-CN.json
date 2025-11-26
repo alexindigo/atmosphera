@@ -2405,5 +2405,21 @@
       "searching": "正在搜索附近网络...",
       "title": "Wi-Fi"
     }
+  },
+  "location": {
+    "calendar": {
+      "cards": {
+        "section": {
+          "description": "组织并启用/禁用日历面板中的卡片。",
+          "label": "日历卡片"
+        }
+      },
+      "banner": {
+        "label": "标题"
+      },
+      "calendar": {
+        "label": "日历"
+      }
+    }
   }
 }

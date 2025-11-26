@@ -2405,5 +2405,21 @@
       "searching": "Suche nach nahegelegenen Netzwerken...",
       "title": "WLAN"
     }
+  },
+  "location": {
+    "calendar": {
+      "banner": {
+        "label": "Kopfzeile"
+      },
+      "calendar": {
+        "label": "Kalender"
+      },
+      "cards": {
+        "section": {
+          "description": "Karten im Kalender-Panel organisieren und aktivieren/deaktivieren.",
+          "label": "Kalender-Karten"
+        }
+      }
+    }
   }
 }

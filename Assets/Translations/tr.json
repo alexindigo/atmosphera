@@ -2405,5 +2405,21 @@
       "searching": "Yakındaki ağlar aranıyor...",
       "title": "Wi-Fi"
     }
+  },
+  "location": {
+    "calendar": {
+      "cards": {
+        "section": {
+          "description": "Takvim panelindeki kartları düzenleyin ve etkinleştirin/devre dışı bırakın.",
+          "label": "Takvim kartları"
+        }
+      },
+      "banner": {
+        "label": "Başlık"
+      },
+      "calendar": {
+        "label": "Takvim"
+      }
+    }
   }
 }

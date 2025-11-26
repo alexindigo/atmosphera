@@ -2405,5 +2405,21 @@
       "searching": "Procurando redes próximas...",
       "title": "Wi-Fi"
     }
+  },
+  "location": {
+    "calendar": {
+      "cards": {
+        "section": {
+          "description": "Organize e ative/desative cartões no painel do calendário.",
+          "label": "Cartões do calendário"
+        }
+      },
+      "banner": {
+        "label": "Cabeçalho"
+      },
+      "calendar": {
+        "label": "Calendário"
+      }
+    }
   }
 }

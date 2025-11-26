@@ -2405,5 +2405,21 @@
       "searching": "Buscando redes cercanas...",
       "title": "Wi-Fi"
     }
+  },
+  "location": {
+    "calendar": {
+      "cards": {
+        "section": {
+          "description": "Organizar y activar/desactivar tarjetas en el panel del calendario.",
+          "label": "Tarjetas del calendario"
+        }
+      },
+      "banner": {
+        "label": "Encabezado"
+      },
+      "calendar": {
+        "label": "Calendario"
+      }
+    }
   }
 }

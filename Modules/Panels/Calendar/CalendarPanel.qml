@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import "."
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.ControlCenter.Cards
@@ -13,10 +14,12 @@ import qs.Widgets
 
 SmartPanel {
   id: root
-
   readonly property var now: Time.now
 
-  preferredWidth: Math.round(440 * Style.uiScaleRatio)
+  // Calculate width based on settings
+  preferredWidth: Math.round((Settings.data.location.showWeekNumberInCalendar ? 460 : 440) * Style.uiScaleRatio)
+
+  // Use a reasonable fixed height that accommodates most layouts
   preferredHeight: Math.round(700 * Style.uiScaleRatio)
 
   // Helper function to calculate ISO week number
@@ -39,37 +42,29 @@ SmartPanel {
     return duration === 86400 && isAtMidnight;
   }
 
+  // Shared calendar state (month/year) accessible by all components
+  property int calendarMonth: now.getMonth()
+  property int calendarYear: now.getFullYear()
+
   panelContent: Item {
     anchors.fill: parent
 
-    // Dynamic sizing properties that SmartPanel will bind to
-    property real contentPreferredWidth: (Settings.data.location.showWeekNumberInCalendar ? 400 : 380) * Style.uiScaleRatio
-
-    // Use implicitHeight from content + margins to avoid binding loops
+    // Dynamic height based on actual content height
     property real contentPreferredHeight: content.implicitHeight + Style.marginL * 2
 
-    property real calendarGridHeight: {
-      // Calculate number of weeks in the calendar grid
-      const numWeeks = grid.daysModel ? Math.ceil(grid.daysModel.length / 7) : 5;
-
-      // Calendar grid height (dynamic based on number of weeks)
-      const rowHeight = Style.baseWidgetSize * 0.9 + Style.marginXXS;
-
-      return numWeeks * rowHeight;
-    }
     ColumnLayout {
       id: content
-      anchors.fill: parent
-      anchors.margins: Style.marginL
-      width: parent.contentPreferredWidth - Style.marginL * 2
-      spacing: Style.marginM
+      x: Style.marginL
+      y: Style.marginL
+      width: parent.width - (Style.marginL * 2)
+      spacing: Style.marginL
 
       readonly property int firstDayOfWeek: Settings.data.location.firstDayOfWeek === -1 ? I18n.locale.firstDayOfWeek : Settings.data.location.firstDayOfWeek
       property bool isCurrentMonth: true
       readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
 
       function checkIsCurrentMonth() {
-        return (now.getMonth() === grid.month) && (now.getFullYear() === grid.year);
+        return (now.getMonth() === root.calendarMonth) && (now.getFullYear() === root.calendarYear);
       }
 
       Component.onCompleted: {
@@ -86,48 +81,80 @@ SmartPanel {
       Connections {
         target: I18n
         function onLanguageChanged() {
-          // Force update of day names when language changes
-          grid.month = grid.month;
+          // Force update by toggling month
+          root.calendarMonth = root.calendarMonth;
         }
       }
 
-      // Banner with date/time/clock
+      // All calendar items (Banner, Calendar, Timer, Weather, etc.)
+      Repeater {
+        model: Settings.data.calendar.cards
+        Loader {
+          active: modelData.enabled && (modelData.id !== "weather-card" || Settings.data.location.weatherEnabled)
+          visible: active
+          Layout.fillWidth: true
+          Layout.topMargin: 0
+          Layout.bottomMargin: 0
+          sourceComponent: {
+            switch (modelData.id) {
+            case "banner-card":
+              return bannerCard;
+            case "calendar-card":
+              return calendarCard;
+            case "timer-card":
+              return timerCard;
+            case "weather-card":
+              return weatherCard;
+            default:
+              return null;
+            }
+          }
+        }
+      }
+    }
+
+    Component {
+      id: bannerCard
       Rectangle {
         id: banner
         Layout.fillWidth: true
-        Layout.preferredHeight: capsuleColumn.implicitHeight + Style.marginM * 2
+        Layout.minimumHeight: (60 * Style.uiScaleRatio) + (Style.marginM * 2)
+        Layout.preferredHeight: (60 * Style.uiScaleRatio) + (Style.marginM * 2)
+        implicitHeight: (60 * Style.uiScaleRatio) + (Style.marginM * 2)
         radius: Style.radiusL
         color: Color.mPrimary
+
+        // Access parent properties
+        readonly property var now: root.now
+        readonly property bool isCurrentMonth: content.isCurrentMonth
+        readonly property bool weatherReady: content.weatherReady
 
         ColumnLayout {
           id: capsuleColumn
           anchors.top: parent.top
           anchors.left: parent.left
           anchors.bottom: parent.bottom
-
           anchors.topMargin: Style.marginM
           anchors.bottomMargin: Style.marginM
           anchors.rightMargin: clockLoader.width + (Style.marginXL * 2)
           anchors.leftMargin: Style.marginXL
-
           spacing: 0
 
-          // Combined layout for date, month year, locatio and time-zone
+          // Combined layout for date, month year, location and time-zone
           RowLayout {
             Layout.fillWidth: true
             height: 60 * Style.uiScaleRatio
             clip: true
             spacing: Style.marginS
 
-            // Today day number - with simple, stable animation
+            // Today day number
             NText {
-              opacity: content.isCurrentMonth ? 1.0 : 0.0
-              Layout.preferredWidth: content.isCurrentMonth ? implicitWidth : 0
+              opacity: banner.isCurrentMonth ? 1.0 : 0.0
+              Layout.preferredWidth: banner.isCurrentMonth ? implicitWidth : 0
               elide: Text.ElideNone
               clip: true
-
               Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-              text: now.getDate()
+              text: banner.now.getDate()
               pointSize: Style.fontSizeXXXL * 1.5
               font.weight: Style.fontWeightBold
               color: Color.mOnPrimary
@@ -137,6 +164,7 @@ SmartPanel {
                   duration: Style.animationFast
                 }
               }
+
               Behavior on Layout.preferredWidth {
                 NumberAnimation {
                   duration: Style.animationFast
@@ -157,7 +185,7 @@ SmartPanel {
                 spacing: Style.marginS
 
                 NText {
-                  text: I18n.locale.monthName(grid.month, Locale.LongFormat).toUpperCase()
+                  text: I18n.locale.monthName(root.calendarMonth, Locale.LongFormat).toUpperCase()
                   pointSize: Style.fontSizeXL * 1.1
                   font.weight: Style.fontWeightBold
                   color: Color.mOnPrimary
@@ -166,7 +194,7 @@ SmartPanel {
                 }
 
                 NText {
-                  text: `${grid.year}`
+                  text: `${root.calendarYear}`
                   pointSize: Style.fontSizeM
                   font.weight: Style.fontWeightBold
                   color: Qt.alpha(Color.mOnPrimary, 0.7)
@@ -181,7 +209,7 @@ SmartPanel {
                   text: {
                     if (!Settings.data.location.weatherEnabled)
                       return "";
-                    if (!content.weatherReady)
+                    if (!banner.weatherReady)
                       return I18n.tr("calendar.weather.loading");
                     const chunks = Settings.data.location.name.split(",");
                     return chunks[0];
@@ -194,7 +222,7 @@ SmartPanel {
                 }
 
                 NText {
-                  text: content.weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
+                  text: banner.weatherReady ? ` (${LocationService.data.weather.timezone_abbreviation})` : ""
                   pointSize: Style.fontSizeXS
                   font.weight: Style.fontWeightMedium
                   color: Qt.alpha(Color.mOnPrimary, 0.7)
@@ -202,7 +230,7 @@ SmartPanel {
               }
             }
 
-            // Spacer to push content left
+            // Spacer
             Item {
               Layout.fillWidth: true
             }
@@ -218,34 +246,24 @@ SmartPanel {
           clockStyle: Settings.data.location.analogClockInCalendar ? "analog" : "digital"
           progressColor: Color.mOnPrimary
           Layout.alignment: Qt.AlignVCenter
-          now: root.now
+          now: parent.now
         }
       }
+    }
 
-      // Calendar itself
+    Component {
+      id: calendarCard
       NBox {
-        id: calendar
         Layout.fillWidth: true
-        Layout.preferredHeight: {
-          const navigationHeight = Style.baseWidgetSize; // Navigation buttons row
-          const dayNamesHeight = Style.baseWidgetSize * 0.6; // Day names header row
-          const innerMargins = Style.marginM * 2; // Top and bottom margins inside NBox
-          const innerSpacing = Style.marginS * 2; // Spacing between nav, dayNames, and grid (2 gaps)
-          return navigationHeight + dayNamesHeight + calendarGridHeight + innerMargins + innerSpacing;
-        }
-
-        Behavior on Layout.preferredWidth {
-          NumberAnimation {
-            duration: Style.animationFast
-            easing.type: Easing.InOutQuad
-          }
-        }
+        implicitHeight: calendarContent.implicitHeight + Style.marginM * 2
 
         ColumnLayout {
+          id: calendarContent
           anchors.fill: parent
           anchors.margins: Style.marginM
           spacing: Style.marginS
 
+          // Navigation row
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
@@ -257,17 +275,15 @@ SmartPanel {
             NIconButton {
               icon: "chevron-left"
               onClicked: {
-                let newDate = new Date(grid.year, grid.month - 1, 1);
-                grid.year = newDate.getFullYear();
-                grid.month = newDate.getMonth();
+                let newDate = new Date(root.calendarYear, root.calendarMonth - 1, 1);
+                root.calendarYear = newDate.getFullYear();
+                root.calendarMonth = newDate.getMonth();
                 content.isCurrentMonth = content.checkIsCurrentMonth();
                 const now = new Date();
-                const monthStart = new Date(grid.year, grid.month, 1);
-                const monthEnd = new Date(grid.year, grid.month + 1, 0);
-
+                const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
+                const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
                 const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
                 const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-
                 CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
               }
             }
@@ -275,8 +291,8 @@ SmartPanel {
             NIconButton {
               icon: "calendar"
               onClicked: {
-                grid.month = now.getMonth();
-                grid.year = now.getFullYear();
+                root.calendarMonth = now.getMonth();
+                root.calendarYear = now.getFullYear();
                 content.isCurrentMonth = true;
                 CalendarService.loadEvents();
               }
@@ -285,22 +301,21 @@ SmartPanel {
             NIconButton {
               icon: "chevron-right"
               onClicked: {
-                let newDate = new Date(grid.year, grid.month + 1, 1);
-                grid.year = newDate.getFullYear();
-                grid.month = newDate.getMonth();
+                let newDate = new Date(root.calendarYear, root.calendarMonth + 1, 1);
+                root.calendarYear = newDate.getFullYear();
+                root.calendarMonth = newDate.getMonth();
                 content.isCurrentMonth = content.checkIsCurrentMonth();
                 const now = new Date();
-                const monthStart = new Date(grid.year, grid.month, 1);
-                const monthEnd = new Date(grid.year, grid.month + 1, 0);
-
+                const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
+                const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
                 const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
                 const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-
                 CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
               }
             }
           }
 
+          // Day names header
           RowLayout {
             Layout.fillWidth: true
             spacing: 0
@@ -316,11 +331,13 @@ SmartPanel {
               rows: 1
               columnSpacing: 0
               rowSpacing: 0
+
               Repeater {
                 model: 7
                 Item {
                   Layout.fillWidth: true
                   Layout.preferredHeight: Style.fontSizeS * 2
+
                   NText {
                     anchors.centerIn: parent
                     text: {
@@ -338,108 +355,81 @@ SmartPanel {
             }
           }
 
+          // Calendar grid with week numbers
           RowLayout {
             Layout.fillWidth: true
             spacing: 0
 
-            // Helper function to check if a date has events
+            // Helper functions
             function hasEventsOnDate(year, month, day) {
               if (!CalendarService.available || CalendarService.events.length === 0)
                 return false;
-
               const targetDate = new Date(year, month, day);
               const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000;
-              const targetEnd = targetStart + 86400; // +24 hours
-
+              const targetEnd = targetStart + 86400;
               return CalendarService.events.some(event => {
-                                                   // Check if event starts or overlaps with this day
                                                    return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
                                                  });
             }
 
-            // Helper function to get events for a specific date
             function getEventsForDate(year, month, day) {
               if (!CalendarService.available || CalendarService.events.length === 0)
                 return [];
-
               const targetDate = new Date(year, month, day);
               const targetStart = Math.floor(new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime() / 1000);
-              const targetEnd = targetStart + 86400; // +24 hours
-
+              const targetEnd = targetStart + 86400;
               return CalendarService.events.filter(event => {
                                                      return (event.start >= targetStart && event.start < targetEnd) || (event.end > targetStart && event.end <= targetEnd) || (event.start < targetStart && event.end > targetEnd);
                                                    });
             }
 
-            // Helper function to check if an event is multi-day
             function isMultiDayEvent(event) {
-              if (isAllDayEvent(event)) {
+              if (root.isAllDayEvent(event)) {
                 return false;
               }
-
               const startDate = new Date(event.start * 1000);
               const endDate = new Date(event.end * 1000);
-
               const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
               const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
               return startDateOnly.getTime() !== endDateOnly.getTime();
             }
 
-            // Helper function to get color for a specific event
             function getEventColor(event, isToday) {
               if (isMultiDayEvent(event)) {
                 return isToday ? Color.mOnSecondary : Color.mTertiary;
-              } else if (isAllDayEvent(event)) {
+              } else if (root.isAllDayEvent(event)) {
                 return isToday ? Color.mOnSecondary : Color.mSecondary;
               } else {
                 return isToday ? Color.mOnSecondary : Color.mPrimary;
               }
             }
 
-            // Column of week numbers
+            // Week numbers column
             ColumnLayout {
               visible: Settings.data.location.showWeekNumberInCalendar
               Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.7 : 0
-              Layout.preferredHeight: {
-                const numWeeks = weekNumbers ? weekNumbers.length : 5;
-                const rowHeight = Style.baseWidgetSize * 0.9 + Style.marginXXS;
-                return numWeeks * rowHeight;
-              }
+              Layout.alignment: Qt.AlignTop
               spacing: Style.marginXXS
-
-              Behavior on Layout.preferredHeight {
-                NumberAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.InOutQuad
-                }
-              }
 
               property var weekNumbers: {
                 if (!grid.daysModel || grid.daysModel.length === 0)
                   return [];
-
                 const weeks = [];
                 const numWeeks = Math.ceil(grid.daysModel.length / 7);
-
                 for (var i = 0; i < numWeeks; i++) {
                   const dayIndex = i * 7;
                   if (dayIndex < grid.daysModel.length) {
                     const weekDay = grid.daysModel[dayIndex];
                     const date = new Date(weekDay.year, weekDay.month, weekDay.day);
-
-                    // Get Thursday of this week for ISO week calculation
-                    const firstDayOfWeek = content.firstDayOfWeek;
                     let thursday = new Date(date);
-                    if (firstDayOfWeek === 0) {
+                    if (content.firstDayOfWeek === 0) {
                       thursday.setDate(date.getDate() + 4);
-                    } else if (firstDayOfWeek === 1) {
+                    } else if (content.firstDayOfWeek === 1) {
                       thursday.setDate(date.getDate() + 3);
                     } else {
-                      let daysToThursday = (4 - firstDayOfWeek + 7) % 7;
+                      let daysToThursday = (4 - content.firstDayOfWeek + 7) % 7;
                       thursday.setDate(date.getDate() + daysToThursday);
                     }
-
                     weeks.push(root.getISOWeekNumber(thursday));
                   }
                 }
@@ -451,6 +441,7 @@ SmartPanel {
                 Item {
                   Layout.preferredWidth: Style.baseWidgetSize * 0.7
                   Layout.preferredHeight: Style.baseWidgetSize * 0.9
+
                   NText {
                     anchors.centerIn: parent
                     color: Qt.alpha(Color.mPrimary, 0.7)
@@ -462,46 +453,26 @@ SmartPanel {
               }
             }
 
+            // Calendar grid
             GridLayout {
               id: grid
               Layout.fillWidth: true
-              Layout.preferredHeight: {
-                const numWeeks = daysModel ? Math.ceil(daysModel.length / 7) : 5;
-                const rowHeight = Style.baseWidgetSize * 0.9 + Style.marginXXS;
-                return numWeeks * rowHeight;
-              }
               columns: 7
               columnSpacing: Style.marginXXS
               rowSpacing: Style.marginXXS
 
-              property int month: now.getMonth()
-              property int year: now.getFullYear()
+              property int month: root.calendarMonth
+              property int year: root.calendarYear
 
-              Behavior on Layout.preferredHeight {
-                NumberAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.InOutQuad
-                }
-              }
-
-              // Calculate days to display
               property var daysModel: {
                 const firstOfMonth = new Date(year, month, 1);
                 const lastOfMonth = new Date(year, month + 1, 0);
                 const daysInMonth = lastOfMonth.getDate();
-
-                // Get first day of week (0 = Sunday, 1 = Monday, etc.)
                 const firstDayOfWeek = content.firstDayOfWeek;
                 const firstOfMonthDayOfWeek = firstOfMonth.getDay();
-
-                // Calculate days before first of month
                 let daysBefore = (firstOfMonthDayOfWeek - firstDayOfWeek + 7) % 7;
-
-                // Calculate days after last of month to complete the week
                 const lastOfMonthDayOfWeek = lastOfMonth.getDay();
                 const daysAfter = (firstDayOfWeek - lastOfMonthDayOfWeek - 1 + 7) % 7;
-
-                // Build array of day objects
                 const days = [];
                 const today = new Date();
 
@@ -510,7 +481,6 @@ SmartPanel {
                 const prevMonthDays = prevMonth.getDate();
                 for (var i = daysBefore - 1; i >= 0; i--) {
                   const day = prevMonthDays - i;
-                  const date = new Date(year, month - 1, day);
                   days.push({
                               "day": day,
                               "month": month - 1,
@@ -533,7 +503,7 @@ SmartPanel {
                             });
                 }
 
-                // Next month days (only if needed to complete the week)
+                // Next month days
                 for (var i = 1; i <= daysAfter; i++) {
                   days.push({
                               "day": i,
@@ -605,10 +575,9 @@ SmartPanel {
                         const events = parent.parent.parent.parent.getEventsForDate(modelData.year, modelData.month, modelData.day);
                         if (events.length > 0) {
                           const summaries = events.map(event => {
-                                                         if (isAllDayEvent(event)) {
+                                                         if (root.isAllDayEvent(event)) {
                                                            return event.summary;
                                                          } else {
-                                                           // Always format with '0' padding to ensure proper horizontal alignment
                                                            const timeFormat = Settings.data.location.use12hourFormat ? "hh:mm AP" : "HH:mm";
                                                            const start = new Date(event.start * 1000);
                                                            const startFormatted = I18n.locale.toString(start, timeFormat);
@@ -646,18 +615,21 @@ SmartPanel {
           }
         }
       }
+    }
 
-      Loader {
-        id: weatherLoader
-        active: Settings.data.location.weatherEnabled && Settings.data.location.showCalendarWeather
-        visible: active
+    Component {
+      id: timerCard
+      TimerCard {
         Layout.fillWidth: true
+      }
+    }
 
-        sourceComponent: WeatherCard {
-          Layout.fillWidth: true
-          forecastDays: 5
-          showLocation: false
-        }
+    Component {
+      id: weatherCard
+      WeatherCard {
+        Layout.fillWidth: true
+        forecastDays: 5
+        showLocation: false
       }
     }
   }

@@ -426,6 +426,19 @@
     "panel": {
       "week": "Week"
     },
+    "timer": {
+      "duration": "Duration",
+      "hours": "h",
+      "minutes": "m",
+      "seconds": "s",
+      "pause": "Pause",
+      "start": "Start",
+      "reset": "Reset",
+      "stopwatch": "Stopwatch",
+      "countdown": "Countdown",
+      "timer": "Timer",
+      "title": "Timer"
+    },
     "weather": {
       "loading": "Loading weather…"
     }
@@ -1533,6 +1546,20 @@
         "show-in-calendar": {
           "description": "Show the daily weather forecast directly in your calendar view.",
           "label": "Display weather in calendar"
+        }
+      },
+      "calendar": {
+        "banner": {
+          "label": "Header"
+        },
+        "calendar": {
+          "label": "Calendar"
+        },
+        "cards": {
+          "section": {
+            "description": "Organize and enable/disable cards in the calendar panel.",
+            "label": "Calendar cards"
+          }
         }
       }
     },

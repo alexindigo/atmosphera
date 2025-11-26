@@ -252,6 +252,28 @@ Singleton {
       property int firstDayOfWeek: -1 // -1 = auto (use locale), 0 = Sunday, 1 = Monday, 6 = Saturday
     }
 
+    // calendar
+    property JsonObject calendar: JsonObject {
+      property list<var> cards: [
+        {
+          "id": "banner-card",
+          "enabled": true
+        },
+        {
+          "id": "calendar-card",
+          "enabled": true
+        },
+        {
+          "id": "timer-card",
+          "enabled": true
+        },
+        {
+          "id": "weather-card",
+          "enabled": true
+        }
+      ]
+    }
+
     // screen recorder
     property JsonObject screenRecorder: JsonObject {
       property string directory: ""

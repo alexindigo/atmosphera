@@ -2405,5 +2405,21 @@
       "searching": "Recherche de réseaux à proximité en cours...",
       "title": "Wi-Fi"
     }
+  },
+  "location": {
+    "calendar": {
+      "cards": {
+        "section": {
+          "description": "Organiser et activer/désactiver les cartes dans le panneau du calendrier.",
+          "label": "Cartes du calendrier"
+        }
+      },
+      "banner": {
+        "label": "En-tête"
+      },
+      "calendar": {
+        "label": "Calendrier"
+      }
+    }
   }
 }
