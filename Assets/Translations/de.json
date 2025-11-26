@@ -172,7 +172,7 @@
           "label": "Scrollrad runter Befehl"
         },
         "wheel-mode-separate": {
-          "description": "Separate Befehle für Scrollrad hoch und runter aktivieren",
+          "description": "Separate Befehle für Scrollrad hoch und runter aktivieren.",
           "label": "Separate Scrollrad-Befehle"
         },
         "wheel-up": {
@@ -1023,7 +1023,7 @@
         },
         "programs": {
           "cava": {
-            "description": "Schreibe {filepath}.",
+            "description": "Schreibe {filepath}",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "code": {

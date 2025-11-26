@@ -1023,7 +1023,7 @@
         },
         "programs": {
           "cava": {
-            "description": "Write {filepath}.",
+            "description": "Write {filepath}",
             "description-missing": "Requires {app} to be installed"
           },
           "code": {
@@ -1328,7 +1328,7 @@
         "select": {
           "auto-detect": "Automatic",
           "description": "Select the language used in the application's interface.",
-          "label": "Application Language"
+          "label": "Application language"
         }
       },
       "launch-setup-wizard": "Launch the setup wizard",
