@@ -18,42 +18,30 @@ Item {
 
   signal statusChanged(int status)
 
-  ClippingWrapperRectangle {
+  ClippingRectangle {
     anchors.fill: parent
     color: Color.transparent
     radius: root.radius
     border.color: root.borderColor
     border.width: root.borderWidth
 
-    Item {
+    Image {
       anchors.fill: parent
-      Loader {
-        active: true
-        anchors.fill: parent
-        sourceComponent: showFallback ? fallback : image
-      }
+      visible: !showFallback
+      source: imagePath
+      mipmap: true
+      smooth: true
+      asynchronous: true
+      antialiasing: true
+      fillMode: Image.PreserveAspectCrop
+      onStatusChanged: root.statusChanged(status)
+    }
 
-      Component {
-        id: image
-        Image {
-          source: imagePath
-          mipmap: true
-          smooth: true
-          asynchronous: true
-          antialiasing: true
-          fillMode: Image.PreserveAspectCrop
-          onStatusChanged: root.statusChanged(status)
-        }
-      }
-
-      Component {
-        id: fallback
-        NIcon {
-          anchors.centerIn: parent
-          icon: fallbackIcon
-          pointSize: fallbackIconSize
-        }
-      }
+    NIcon {
+      anchors.centerIn: parent
+      visible: showFallback
+      icon: fallbackIcon
+      pointSize: fallbackIconSize
     }
   }
 }
