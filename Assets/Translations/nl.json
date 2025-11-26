@@ -1690,8 +1690,8 @@
           "label": "Vergrendeltoetsen"
         },
         "section": {
-          "description": "Kies welke gebeurtenissen de on-screenweergave activeren.",
-          "label": "OSD-typen"
+          "description": "Selecteer de gebeurtenissen die de OSD activeren. Als er geen gebeurtenissen zijn geselecteerd, activeren alle beschikbare gebeurtenissen de OSD.",
+          "label": "OSD triggergebeurtenissen"
         },
         "volume": {
           "description": "Toon het OSD wanneer het uitvoervolume verandert.",

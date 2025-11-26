@@ -79,6 +79,12 @@ Singleton {
     const fromVersion = changelogFromVersion || "";
     const toVersion = changelogToVersion || "";
 
+    if (Settings.shouldOpenSetupWizard) {
+      // If you'll see the setup wizard then you don't need to see the changelog
+      markChangelogSeen(toVersion);
+      return;
+    }
+
     if (!toVersion)
       return;
 
@@ -116,7 +122,7 @@ Singleton {
 
     // 'from' always need to be before 'to'
     // handle edge case that will show up as we changed -dev to -git
-    if (from === to) {
+    if (from >= to) {
       from = "v3.0.0";
     }
 

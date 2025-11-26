@@ -1690,8 +1690,8 @@
           "label": "Kilit tuşları"
         },
         "section": {
-          "description": "Ekran göstergesini tetikleyen olayları seçin.",
-          "label": "OSD türleri"
+          "description": "OSD'yi tetikleyecek olayları seçin. Hiçbir olay seçilmezse, mevcut tüm olaylar OSD'yi tetikleyecektir.",
+          "label": "OSD tetikleme olayları"
         },
         "volume": {
           "description": "Ses çıkış düzeyi değiştiğinde OSD'yi göster.",

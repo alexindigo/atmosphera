@@ -401,7 +401,6 @@ SmartPanel {
 
       Settings.data.general.scaleRatio = selectedScaleRatio;
       Settings.data.bar.position = selectedBarPosition;
-      Settings.data.setupCompleted = true;
 
       // Save settings immediately and wait for settingsSaved signal before closing
       Settings.saveImmediate();

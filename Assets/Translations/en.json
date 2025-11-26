@@ -1683,19 +1683,19 @@
         },
         "input-volume": {
           "description": "Show OSD when microphone volume changes.",
-          "label": "Input Volume"
+          "label": "Input volume"
         },
         "lockkey": {
           "description": "Show OSD when Caps Lock, Num Lock, or Scroll Lock are toggled.",
-          "label": "Lock Keys"
+          "label": "Lock keys"
         },
         "section": {
-          "description": "Choose which events trigger the on-screen display.",
-          "label": "OSD Types"
+          "description": "Select the events that trigger the OSD. If no events are selected, all available events will trigger the OSD.",
+          "label": "OSD trigger events"
         },
         "volume": {
           "description": "Show OSD when audio output volume changes.",
-          "label": "Output Volume"
+          "label": "Output volume"
         }
       }
     },

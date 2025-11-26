@@ -1690,8 +1690,8 @@
           "label": "Touches de verrouillage"
         },
         "section": {
-          "description": "Choisissez quels événements déclenchent l'affichage à l'écran.",
-          "label": "Types d'OSD"
+          "description": "Sélectionnez les événements qui déclenchent l'OSD. Si aucun événement n'est sélectionné, tous les événements disponibles déclencheront l'OSD.",
+          "label": "Événements de déclenchement OSD"
         },
         "volume": {
           "description": "Afficher l'OSD lorsque le volume de sortie audio change.",
