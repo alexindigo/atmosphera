@@ -426,6 +426,19 @@
     "panel": {
       "week": "Semana"
     },
+    "timer": {
+      "countdown": "Contagem regressiva",
+      "duration": "Duração",
+      "hours": "h",
+      "minutes": "m",
+      "pause": "Pausar",
+      "reset": "Reiniciar",
+      "seconds": "s",
+      "start": "Começar",
+      "stopwatch": "Cronômetro",
+      "timer": "Temporizador",
+      "title": "Temporizador"
+    },
     "weather": {
       "loading": "Carregando o clima…"
     }
@@ -1474,6 +1487,20 @@
       "title": "Lançador"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "Cabeçalho"
+        },
+        "calendar": {
+          "label": "Calendário"
+        },
+        "cards": {
+          "section": {
+            "description": "Organize e ative/desative cartões no painel do calendário.",
+            "label": "Cartões de calendário"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Exibe a hora no formato de 12 horas na tela de bloqueio e no calendário. O relógio da barra tem suas próprias configurações.",
@@ -2404,22 +2431,6 @@
       "scan-again": "Escanear novamente",
       "searching": "Procurando redes próximas...",
       "title": "Wi-Fi"
-    }
-  },
-  "location": {
-    "calendar": {
-      "cards": {
-        "section": {
-          "description": "Organize e ative/desative cartões no painel do calendário.",
-          "label": "Cartões do calendário"
-        }
-      },
-      "banner": {
-        "label": "Cabeçalho"
-      },
-      "calendar": {
-        "label": "Calendário"
-      }
     }
   }
 }

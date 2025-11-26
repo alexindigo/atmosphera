@@ -426,6 +426,19 @@
     "panel": {
       "week": "Woche"
     },
+    "timer": {
+      "countdown": "Countdown",
+      "duration": "Dauer",
+      "hours": "h",
+      "minutes": "m",
+      "pause": "Pause",
+      "reset": "Zurücksetzen",
+      "seconds": "s",
+      "start": "Start",
+      "stopwatch": "Stoppuhr",
+      "timer": "Timer",
+      "title": "Zeitmesser"
+    },
     "weather": {
       "loading": "Wetter wird geladen…"
     }
@@ -1474,6 +1487,20 @@
       "title": "Starter"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "Überschrift"
+        },
+        "calendar": {
+          "label": "Kalender"
+        },
+        "cards": {
+          "section": {
+            "description": "Karten im Kalenderfeld organisieren und aktivieren/deaktivieren.",
+            "label": "Kalenderkarten"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Zeigt die Uhrzeit im 12-Stunden-Format auf dem Sperrbildschirm und im Kalender an. Die Uhr in der Statusleiste hat eigene Einstellungen.",
@@ -2404,22 +2431,6 @@
       "scan-again": "Erneut scannen",
       "searching": "Suche nach nahegelegenen Netzwerken...",
       "title": "WLAN"
-    }
-  },
-  "location": {
-    "calendar": {
-      "banner": {
-        "label": "Kopfzeile"
-      },
-      "calendar": {
-        "label": "Kalender"
-      },
-      "cards": {
-        "section": {
-          "description": "Karten im Kalender-Panel organisieren und aktivieren/deaktivieren.",
-          "label": "Kalender-Karten"
-        }
-      }
     }
   }
 }

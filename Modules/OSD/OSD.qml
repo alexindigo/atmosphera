@@ -222,8 +222,8 @@ Variants {
         // If volume OSD is currently showing, refresh it to show new device's volume
         if (root.currentOSDType === OSD.Type.Volume) {
           Qt.callLater(() => {
-            showOSD(OSD.Type.Volume);
-          });
+                         showOSD(OSD.Type.Volume);
+                       });
         }
       }
 
@@ -231,8 +231,8 @@ Variants {
         // If input volume OSD is currently showing, refresh it to show new device's volume
         if (root.currentOSDType === OSD.Type.InputVolume) {
           Qt.callLater(() => {
-            showOSD(OSD.Type.InputVolume);
-          });
+                         showOSD(OSD.Type.InputVolume);
+                       });
         }
       }
     }

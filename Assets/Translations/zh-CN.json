@@ -426,6 +426,19 @@
     "panel": {
       "week": "周"
     },
+    "timer": {
+      "countdown": "倒计时",
+      "duration": "时长",
+      "hours": "h",
+      "minutes": "米",
+      "pause": "暂停",
+      "reset": "重置",
+      "seconds": "s",
+      "start": "开始",
+      "stopwatch": "秒表",
+      "timer": "计时器",
+      "title": "计时器"
+    },
     "weather": {
       "loading": "正在加载天气…"
     }
@@ -1474,6 +1487,20 @@
       "title": "启动器"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "标题"
+        },
+        "calendar": {
+          "label": "日历"
+        },
+        "cards": {
+          "section": {
+            "description": "在日历面板中组织和启用/禁用卡片。",
+            "label": "日历卡"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "在锁屏和日历上以 12 小时制格式显示时间。状态栏时钟有其自己的设置。",
@@ -2404,22 +2431,6 @@
       "scan-again": "重新扫描",
       "searching": "正在搜索附近网络...",
       "title": "Wi-Fi"
-    }
-  },
-  "location": {
-    "calendar": {
-      "cards": {
-        "section": {
-          "description": "组织并启用/禁用日历面板中的卡片。",
-          "label": "日历卡片"
-        }
-      },
-      "banner": {
-        "label": "标题"
-      },
-      "calendar": {
-        "label": "日历"
-      }
     }
   }
 }

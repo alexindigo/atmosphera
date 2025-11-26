@@ -427,15 +427,15 @@
       "week": "Week"
     },
     "timer": {
+      "countdown": "Countdown",
       "duration": "Duration",
       "hours": "h",
       "minutes": "m",
-      "seconds": "s",
       "pause": "Pause",
-      "start": "Start",
       "reset": "Reset",
+      "seconds": "s",
+      "start": "Start",
       "stopwatch": "Stopwatch",
-      "countdown": "Countdown",
       "timer": "Timer",
       "title": "Timer"
     },
@@ -1487,6 +1487,20 @@
       "title": "Launcher"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "Header"
+        },
+        "calendar": {
+          "label": "Calendar"
+        },
+        "cards": {
+          "section": {
+            "description": "Organize and enable/disable cards in the calendar panel.",
+            "label": "Calendar cards"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Displays time in 12-hour format on the lock screen and calendar. The bar clock has its own settings.",
@@ -1546,20 +1560,6 @@
         "show-in-calendar": {
           "description": "Show the daily weather forecast directly in your calendar view.",
           "label": "Display weather in calendar"
-        }
-      },
-      "calendar": {
-        "banner": {
-          "label": "Header"
-        },
-        "calendar": {
-          "label": "Calendar"
-        },
-        "cards": {
-          "section": {
-            "description": "Organize and enable/disable cards in the calendar panel.",
-            "label": "Calendar cards"
-          }
         }
       }
     },

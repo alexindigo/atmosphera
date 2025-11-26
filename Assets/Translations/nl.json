@@ -426,6 +426,19 @@
     "panel": {
       "week": "Week"
     },
+    "timer": {
+      "countdown": "Aftellen",
+      "duration": "Duur",
+      "hours": "h",
+      "minutes": "m",
+      "pause": "Pauze",
+      "reset": "Resetten",
+      "seconds": "s",
+      "start": "Begin",
+      "stopwatch": "Stopwatch",
+      "timer": "Timer",
+      "title": "Timer"
+    },
     "weather": {
       "loading": "Weer laden…"
     }
@@ -1474,6 +1487,20 @@
       "title": "Launcher"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "Koptekst"
+        },
+        "calendar": {
+          "label": "Kalender"
+        },
+        "cards": {
+          "section": {
+            "description": "Kaarten organiseren en in-/uitschakelen in het kalenderpaneel.",
+            "label": "Kalenderkaarten"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Toont tijd in 12-uurs formaat op het vergrendelscherm en in de kalender. De klok op de balk heeft zijn eigen instellingen.",
@@ -2404,22 +2431,6 @@
       "scan-again": "Opnieuw scannen",
       "searching": "Zoeken naar netwerken in de buurt...",
       "title": "Wi-Fi"
-    }
-  },
-  "location": {
-    "calendar": {
-      "cards": {
-        "section": {
-          "description": "Organiseer en schakel kaarten in het kalenderpaneel in/uit.",
-          "label": "Kalenderkaarten"
-        }
-      },
-      "banner": {
-        "label": "Koptekst"
-      },
-      "calendar": {
-        "label": "Kalender"
-      }
     }
   }
 }

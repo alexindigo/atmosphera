@@ -426,6 +426,19 @@
     "panel": {
       "week": "Semaine"
     },
+    "timer": {
+      "countdown": "Compte à rebours",
+      "duration": "Durée",
+      "hours": "h",
+      "minutes": "m",
+      "pause": "Pause",
+      "reset": "Réinitialiser",
+      "seconds": "s",
+      "start": "Commencer",
+      "stopwatch": "Chronomètre",
+      "timer": "Minuteur",
+      "title": "Minuteur"
+    },
     "weather": {
       "loading": "Chargement de la météo…"
     }
@@ -1474,6 +1487,20 @@
       "title": "Lanceur"
     },
     "location": {
+      "calendar": {
+        "banner": {
+          "label": "En-tête"
+        },
+        "calendar": {
+          "label": "Calendrier"
+        },
+        "cards": {
+          "section": {
+            "description": "Organiser et activer/désactiver les cartes dans le panneau de calendrier.",
+            "label": "Cartes de calendrier"
+          }
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Affiche l'heure au format 12 heures sur l'écran de verrouillage et dans le calendrier. L'horloge de la barre possède ses propres paramètres.",
@@ -2404,22 +2431,6 @@
       "scan-again": "Analyser à nouveau",
       "searching": "Recherche de réseaux à proximité en cours...",
       "title": "Wi-Fi"
-    }
-  },
-  "location": {
-    "calendar": {
-      "cards": {
-        "section": {
-          "description": "Organiser et activer/désactiver les cartes dans le panneau du calendrier.",
-          "label": "Cartes du calendrier"
-        }
-      },
-      "banner": {
-        "label": "En-tête"
-      },
-      "calendar": {
-        "label": "Calendrier"
-      }
     }
   }
 }

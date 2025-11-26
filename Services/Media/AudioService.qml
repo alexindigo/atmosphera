@@ -19,9 +19,11 @@ Singleton {
 
   // Output Volume - read directly from device (like friend's version)
   readonly property real volume: {
-    if (!sink?.audio) return 0;
+    if (!sink?.audio)
+    return 0;
     const vol = sink.audio.volume;
-    if (vol === undefined || isNaN(vol)) return 0;
+    if (vol === undefined || isNaN(vol))
+    return 0;
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     return Math.max(0, Math.min(maxVolume, vol));
   }
@@ -29,9 +31,11 @@ Singleton {
 
   // Input Volume - read directly from device (like friend's version)
   readonly property real inputVolume: {
-    if (!source?.audio) return 0;
+    if (!source?.audio)
+    return 0;
     const vol = source.audio.volume;
-    if (vol === undefined || isNaN(vol)) return 0;
+    if (vol === undefined || isNaN(vol))
+    return 0;
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     return Math.max(0, Math.min(maxVolume, vol));
   }
@@ -41,28 +45,32 @@ Singleton {
 
   // Filtered device nodes (non-stream sinks and sources)
   readonly property var deviceNodes: Pipewire.ready ? Pipewire.nodes.values.reduce((acc, node) => {
-                                                                    if (!node.isStream) {
-                                                                      if (node.isSink) {
-                                                                        acc.sinks.push(node);
-                                                                      } else if (node.audio) {
-                                                                        acc.sources.push(node);
-                                                                      }
-                                                                    }
-                                                                    return acc;
-                                                                  }, {
-                                                                    "sources": [],
-                                                                    "sinks": []
-                                                                  }) : { "sources": [], "sinks": [] }
+                                                                                     if (!node.isStream) {
+                                                                                       if (node.isSink) {
+                                                                                         acc.sinks.push(node);
+                                                                                       } else if (node.audio) {
+                                                                                         acc.sources.push(node);
+                                                                                       }
+                                                                                     }
+                                                                                     return acc;
+                                                                                   }, {
+                                                                                     "sources": [],
+                                                                                     "sinks": []
+                                                                                   }) : {
+                                                        "sources": [],
+                                                        "sinks": []
+                                                      }
 
   // Validated source (ensures it's a proper audio source, not a sink)
   readonly property PwNode validatedSource: {
-    if (!Pipewire.ready) return null;
+    if (!Pipewire.ready)
+    return null;
     const raw = Pipewire.defaultAudioSource;
     if (!raw || raw.isSink || !raw.audio)
-      return null;
+    return null;
     // Optional: check type if available (type reflects media.class per docs)
     if (raw.type && typeof raw.type === "string" && !raw.type.startsWith("Audio/Source"))
-      return null;
+    return null;
     return raw;
   }
 
@@ -86,7 +94,6 @@ Singleton {
     objects: [...root.sinks, ...root.sources]
   }
 
-
   // Watch output device changes for clamping
   Connections {
     target: sink?.audio ?? null
@@ -107,20 +114,19 @@ Singleton {
       }
 
       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-      
+
       // If volume exceeds max, clamp it (but only if we didn't just set it)
       if (vol > maxVolume) {
         root.isSettingOutputVolume = true;
         Qt.callLater(() => {
-          if (root.sink?.audio && root.sink.audio.volume > maxVolume) {
-            root.sink.audio.volume = maxVolume;
-          }
-          root.isSettingOutputVolume = false;
-        });
+                       if (root.sink?.audio && root.sink.audio.volume > maxVolume) {
+                         root.sink.audio.volume = maxVolume;
+                       }
+                       root.isSettingOutputVolume = false;
+                     });
       }
     }
   }
-
 
   // Watch input device changes for clamping
   Connections {
@@ -142,16 +148,16 @@ Singleton {
       }
 
       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-      
+
       // If volume exceeds max, clamp it (but only if we didn't just set it)
       if (vol > maxVolume) {
         root.isSettingInputVolume = true;
         Qt.callLater(() => {
-          if (root.source?.audio && root.source.audio.volume > maxVolume) {
-            root.source.audio.volume = maxVolume;
-          }
-          root.isSettingInputVolume = false;
-        });
+                       if (root.source?.audio && root.source.audio.volume > maxVolume) {
+                         root.source.audio.volume = maxVolume;
+                       }
+                       root.isSettingInputVolume = false;
+                     });
       }
     }
   }
@@ -187,16 +193,16 @@ Singleton {
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
-    
+
     // Set flag to prevent feedback loop, then set the actual volume
     isSettingOutputVolume = true;
     sink.audio.muted = false;
     sink.audio.volume = clampedVolume;
-    
+
     // Clear flag after a short delay to allow external changes to be detected
     Qt.callLater(() => {
-      isSettingOutputVolume = false;
-    });
+                   isSettingOutputVolume = false;
+                 });
   }
 
   function setOutputMuted(muted: bool) {
@@ -251,16 +257,16 @@ Singleton {
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
-    
+
     // Set flag to prevent feedback loop, then set the actual volume
     isSettingInputVolume = true;
     source.audio.muted = false;
     source.audio.volume = clampedVolume;
-    
+
     // Clear flag after a short delay to allow external changes to be detected
     Qt.callLater(() => {
-      isSettingInputVolume = false;
-    });
+                   isSettingInputVolume = false;
+                 });
   }
 
   function setInputMuted(muted: bool) {
