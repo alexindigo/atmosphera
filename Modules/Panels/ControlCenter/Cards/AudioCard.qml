@@ -11,28 +11,80 @@ NBox {
 
   property real localOutputVolume: 0
   property bool localOutputVolumeChanging: false
+  property int lastSinkId: -1
 
   property real localInputVolume: 0
   property bool localInputVolumeChanging: false
+  property int lastSourceId: -1
 
   Component.onCompleted: {
     var vol = AudioService.volume;
     localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
     var inputVol = AudioService.inputVolume;
     localInputVolume = (inputVol !== undefined && !isNaN(inputVol)) ? inputVol : 0;
+    if (AudioService.sink) {
+      lastSinkId = AudioService.sink.id;
+    }
+    if (AudioService.source) {
+      lastSourceId = AudioService.source.id;
+    }
+  }
+
+  // Reset local volume when device changes - use current device's volume
+  Connections {
+    target: AudioService
+    function onSinkChanged() {
+      if (AudioService.sink) {
+        const newSinkId = AudioService.sink.id;
+        if (newSinkId !== lastSinkId) {
+          lastSinkId = newSinkId;
+          // Immediately set local volume to current device's volume
+          var vol = AudioService.volume;
+          localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
+        }
+      } else {
+        lastSinkId = -1;
+        localOutputVolume = 0;
+      }
+    }
+  }
+
+  Connections {
+    target: AudioService
+    function onSourceChanged() {
+      if (AudioService.source) {
+        const newSourceId = AudioService.source.id;
+        if (newSourceId !== lastSourceId) {
+          lastSourceId = newSourceId;
+          // Immediately set local volume to current device's volume
+          var vol = AudioService.inputVolume;
+          localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
+        }
+      } else {
+        lastSourceId = -1;
+        localInputVolume = 0;
+      }
+    }
   }
 
   // Timer to debounce volume changes
+  // Only sync if the device hasn't changed (check by comparing IDs)
   Timer {
     interval: 100
     running: true
     repeat: true
     onTriggered: {
-      if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
-        AudioService.setVolume(localOutputVolume);
+      // Only sync if sink hasn't changed
+      if (AudioService.sink && AudioService.sink.id === lastSinkId) {
+        if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
+          AudioService.setVolume(localOutputVolume);
+        }
       }
-      if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
-        AudioService.setInputVolume(localInputVolume);
+      // Only sync if source hasn't changed
+      if (AudioService.source && AudioService.source.id === lastSourceId) {
+        if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
+          AudioService.setInputVolume(localInputVolume);
+        }
       }
     }
   }
@@ -41,7 +93,7 @@ NBox {
   Connections {
     target: AudioService
     function onVolumeChanged() {
-      if (!localOutputVolumeChanging) {
+      if (!localOutputVolumeChanging && AudioService.sink && AudioService.sink.id === lastSinkId) {
         var vol = AudioService.volume;
         localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
@@ -51,7 +103,7 @@ NBox {
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
-      if (!localOutputVolumeChanging) {
+      if (!localOutputVolumeChanging && AudioService.sink && AudioService.sink.id === lastSinkId) {
         var vol = AudioService.volume;
         localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
@@ -61,7 +113,7 @@ NBox {
   Connections {
     target: AudioService
     function onInputVolumeChanged() {
-      if (!localInputVolumeChanging) {
+      if (!localInputVolumeChanging && AudioService.source && AudioService.source.id === lastSourceId) {
         var vol = AudioService.inputVolume;
         localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }
@@ -71,7 +123,7 @@ NBox {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
-      if (!localInputVolumeChanging) {
+      if (!localInputVolumeChanging && AudioService.source && AudioService.source.id === lastSourceId) {
         var vol = AudioService.inputVolume;
         localInputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
       }

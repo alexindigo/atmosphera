@@ -18,8 +18,7 @@ Singleton {
   readonly property list<PwNode> sources: deviceNodes.sources
 
   // Output Volume - read directly from device (like friend's version)
-  // Make it a regular property that updates when sink or volume changes
-  property real volume: {
+  readonly property real volume: {
     if (!sink?.audio) return 0;
     const vol = sink.audio.volume;
     if (vol === undefined || isNaN(vol)) return 0;
@@ -29,8 +28,7 @@ Singleton {
   readonly property bool muted: sink?.audio?.muted ?? true
 
   // Input Volume - read directly from device (like friend's version)
-  // Make it a regular property that updates when source or volume changes
-  property real inputVolume: {
+  readonly property real inputVolume: {
     if (!source?.audio) return 0;
     const vol = source.audio.volume;
     if (vol === undefined || isNaN(vol)) return 0;
@@ -71,28 +69,6 @@ Singleton {
   // Internal state for feedback loop prevention
   property bool isSettingOutputVolume: false
   property bool isSettingInputVolume: false
-  
-  // Track device changes to prevent old volume from being applied
-  property int currentSinkId: -1
-  property int currentSourceId: -1
-  property bool blockOutputVolumeChanges: false
-  property bool blockInputVolumeChanges: false
-  
-  Timer {
-    id: unblockOutputTimer
-    interval: 1500
-    onTriggered: {
-      blockOutputVolumeChanges = false;
-    }
-  }
-  
-  Timer {
-    id: unblockInputTimer
-    interval: 1500
-    onTriggered: {
-      blockInputVolumeChanges = false;
-    }
-  }
 
   // Bind default sink and source to ensure their properties are available
   PwObjectTracker {
@@ -110,36 +86,8 @@ Singleton {
     objects: [...root.sinks, ...root.sources]
   }
 
-  // Track sink changes and force volume property to update
-  onSinkChanged: {
-    if (sink) {
-      const newSinkId = sink.id;
-      if (newSinkId !== currentSinkId) {
-        currentSinkId = newSinkId;
-        // Block volume changes for 1.5 seconds after device change
-        blockOutputVolumeChanges = true;
-        unblockOutputTimer.restart();
-        // Force volume property to update by reading new device's volume
-        Qt.callLater(() => {
-          if (root.sink?.audio) {
-            const vol = root.sink.audio.volume;
-            if (vol !== undefined && !isNaN(vol)) {
-              const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-              const clampedVol = Math.max(0, Math.min(maxVolume, vol));
-              root.volume = clampedVol; // This will trigger volumeChanged signal
-            }
-          }
-        });
-      }
-    } else {
-      currentSinkId = -1;
-      blockOutputVolumeChanges = true;
-      unblockOutputTimer.restart();
-      root.volume = 0; // This will trigger volumeChanged signal
-    }
-  }
 
-  // Watch output device changes for clamping and updating volume property
+  // Watch output device changes for clamping
   Connections {
     target: sink?.audio ?? null
 
@@ -159,12 +107,6 @@ Singleton {
       }
 
       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-      const clampedVol = Math.max(0, Math.min(maxVolume, vol));
-      
-      // Update volume property to trigger change signal
-      if (Math.abs(root.volume - clampedVol) > 0.001) {
-        root.volume = clampedVol;
-      }
       
       // If volume exceeds max, clamp it (but only if we didn't just set it)
       if (vol > maxVolume) {
@@ -179,36 +121,8 @@ Singleton {
     }
   }
 
-  // Track source changes and force volume property to update
-  onSourceChanged: {
-    if (source) {
-      const newSourceId = source.id;
-      if (newSourceId !== currentSourceId) {
-        currentSourceId = newSourceId;
-        // Block volume changes for 1.5 seconds after device change
-        blockInputVolumeChanges = true;
-        unblockInputTimer.restart();
-        // Force volume property to update by reading new device's volume
-        Qt.callLater(() => {
-          if (root.source?.audio) {
-            const vol = root.source.audio.volume;
-            if (vol !== undefined && !isNaN(vol)) {
-              const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-              const clampedVol = Math.max(0, Math.min(maxVolume, vol));
-              root.inputVolume = clampedVol; // This will trigger inputVolumeChanged signal
-            }
-          }
-        });
-      }
-    } else {
-      currentSourceId = -1;
-      blockInputVolumeChanges = true;
-      unblockInputTimer.restart();
-      root.inputVolume = 0; // This will trigger inputVolumeChanged signal
-    }
-  }
 
-  // Watch input device changes for clamping and updating volume property
+  // Watch input device changes for clamping
   Connections {
     target: source?.audio ?? null
 
@@ -228,12 +142,6 @@ Singleton {
       }
 
       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
-      const clampedVol = Math.max(0, Math.min(maxVolume, vol));
-      
-      // Update inputVolume property to trigger change signal
-      if (Math.abs(root.inputVolume - clampedVol) > 0.001) {
-        root.inputVolume = clampedVol;
-      }
       
       // If volume exceeds max, clamp it (but only if we didn't just set it)
       if (vol > maxVolume) {
@@ -275,23 +183,6 @@ Singleton {
     if (!Pipewire.ready || !sink?.ready || !sink?.audio) {
       Logger.w("AudioService", "No sink available or not ready");
       return;
-    }
-
-    // Block volume changes for 1.5 seconds after device change to prevent old values
-    if (blockOutputVolumeChanges) {
-      const currentVol = sink.audio.volume;
-      if (currentVol !== undefined && !isNaN(currentVol)) {
-        const diff = Math.abs(newVolume - currentVol);
-        // Only block if difference is significant (>5%) - allow small adjustments
-        if (diff > 0.05) {
-          Logger.w("AudioService", "Ignoring setVolume - device changed recently, volume difference:", diff, "requested:", newVolume, "current:", currentVol);
-          return;
-        }
-      } else {
-        // If we can't read current volume yet, block all changes
-        Logger.w("AudioService", "Ignoring setVolume - device changed recently and volume not ready yet");
-        return;
-      }
     }
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
@@ -356,23 +247,6 @@ Singleton {
     if (!Pipewire.ready || !source?.ready || !source?.audio) {
       Logger.w("AudioService", "No source available or not ready");
       return;
-    }
-
-    // Block volume changes for 1.5 seconds after device change to prevent old values
-    if (blockInputVolumeChanges) {
-      const currentVol = source.audio.volume;
-      if (currentVol !== undefined && !isNaN(currentVol)) {
-        const diff = Math.abs(newVolume - currentVol);
-        // Only block if difference is significant (>5%) - allow small adjustments
-        if (diff > 0.05) {
-          Logger.w("AudioService", "Ignoring setInputVolume - device changed recently, volume difference:", diff, "requested:", newVolume, "current:", currentVol);
-          return;
-        }
-      } else {
-        // If we can't read current volume yet, block all changes
-        Logger.w("AudioService", "Ignoring setInputVolume - device changed recently and volume not ready yet");
-        return;
-      }
     }
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;

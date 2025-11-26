@@ -216,6 +216,25 @@ Variants {
         if (AudioService.hasInput)
           showOSD(OSD.Type.InputVolume);
       }
+
+      // Refresh OSD when device changes to ensure correct volume is displayed
+      function onSinkChanged() {
+        // If volume OSD is currently showing, refresh it to show new device's volume
+        if (root.currentOSDType === OSD.Type.Volume) {
+          Qt.callLater(() => {
+            showOSD(OSD.Type.Volume);
+          });
+        }
+      }
+
+      function onSourceChanged() {
+        // If input volume OSD is currently showing, refresh it to show new device's volume
+        if (root.currentOSDType === OSD.Type.InputVolume) {
+          Qt.callLater(() => {
+            showOSD(OSD.Type.InputVolume);
+          });
+        }
+      }
     }
 
     // Brightness monitoring
