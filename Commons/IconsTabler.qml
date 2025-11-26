@@ -92,6 +92,7 @@ Singleton {
     "microphone": "microphone",
     "microphone-mute": "microphone-off",
     "volume-mute": "volume-off",
+    "volume-x": "volume-3",
     "volume-zero": "volume-3",
     "volume-low": "volume-2",
     "volume-high": "volume",
