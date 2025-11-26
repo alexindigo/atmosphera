@@ -17,12 +17,12 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 - **[brightnessctl](https://github.com/Hummer12007/brightnessctl)** - Screen brightness control
 - **[wlsunset](https://sr.ht/~kennylevinsen/wlsunset/)** - Night light and blue light filter support
 - **[wl-clipboard](https://github.com/bugaevc/wl-clipboard)** - Wayland clipboard utilities
-- **[ddcutil](https://www.ddcutil.com/)** - External display brightness control (optional)
-- **[power-profiles-daemon](https://gitlab.freedesktop.org/upower/power-profiles-daemon)** - Power profile management (optional)
+- **[ddcutil](https://www.ddcutil.com/)** - External display brightness control
+- **[power-profiles-daemon](https://gitlab.freedesktop.org/upower/power-profiles-daemon)** - Power profile management
 
 ### Media & Audio
 - **[gpu-screen-recorder](https://git.dec05eba.com/gpu-screen-recorder/about/)** - Hardware-accelerated screen recording
-- **[Cava](https://github.com/karlstav/cava)** - Audio visualizer component (optional)
+- **[Cava](https://github.com/karlstav/cava)** - Audio visualizer component
 
 ### Theming & Appearance
 - **[Matugen](https://github.com/InioX/matugen)** - Material You color scheme generation from wallpapers
@@ -30,16 +30,12 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 - **[Roboto](https://fonts.google.com/specimen/Roboto)** - Additional UI font family
 
 ### Utilities
-- **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support (optional)
+- **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support
 
 ## Audio Assets
 
 - **[DrNI on Freesound](https://freesound.org/people/DrNI/sounds/34562/)** - Notification sound effect
 
-## Build Dependencies
-
-- **[Qt 6](https://www.qt.io/)** - Cross-platform application framework
-- **Git** - Version control and development
 
 ## Special Thanks
 
