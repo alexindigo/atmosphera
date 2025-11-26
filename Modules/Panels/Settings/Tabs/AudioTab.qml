@@ -13,6 +13,17 @@ ColumnLayout {
   property real localVolume: AudioService.volume
 
   Connections {
+    target: AudioService
+    function onSinkChanged() {
+      // Immediately update local volume when device changes to prevent old value from being applied
+      localVolume = AudioService.volume;
+    }
+    function onVolumeChanged() {
+      localVolume = AudioService.volume;
+    }
+  }
+
+  Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
       localVolume = AudioService.volume;
@@ -42,7 +53,8 @@ ColumnLayout {
       running: true
       repeat: true
       onTriggered: {
-        if (Math.abs(localVolume - AudioService.volume) >= 0.01) {
+        // Don't set volume if device is switching - wait for new device's volume to be read
+        if (!AudioService.isSwitchingSink && Math.abs(localVolume - AudioService.volume) >= 0.01) {
           AudioService.setVolume(localVolume);
         }
       }
