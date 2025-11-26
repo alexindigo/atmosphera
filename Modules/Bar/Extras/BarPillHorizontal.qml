@@ -23,6 +23,8 @@ Item {
   property color customBackgroundColor: Color.transparent
   property color customTextIconColor: Color.transparent
 
+  readonly property bool hiddenByForceClose: forceClose && !forceOpen
+
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
 
@@ -66,8 +68,9 @@ Item {
     }
   }
 
-  width: pillHeight + Math.max(0, pill.width - pillOverlap)
-  height: pillHeight
+  width: hiddenByForceClose ? 0 : pillHeight + Math.max(0, pill.width - pillOverlap)
+  height: hiddenByForceClose ? 0 : pillHeight
+  visible: !hiddenByForceClose
 
   Connections {
     target: root

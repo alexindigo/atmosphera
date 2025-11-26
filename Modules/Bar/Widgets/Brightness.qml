@@ -47,6 +47,8 @@ Item {
   function getIcon() {
     var monitor = getMonitor();
     var brightness = monitor ? monitor.brightness : 0;
+    if (brightness <= 0.001)
+      return "sun-off";
     return brightness <= 0.5 ? "brightness-low" : "brightness-high";
   }
 

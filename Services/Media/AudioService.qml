@@ -202,9 +202,14 @@ Singleton {
   function getOutputIcon() {
     if (muted)
       return "volume-mute";
-    if (volume <= Number.EPSILON)
+
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    const clampedVolume = Math.max(0, Math.min(volume, maxVolume));
+    const displayPercent = Math.round(clampedVolume * 100);
+
+    if (displayPercent === 0)
       return "volume-zero";
-    if (volume <= 0.5)
+    if (clampedVolume <= 0.5)
       return "volume-low";
     return "volume-high";
   }

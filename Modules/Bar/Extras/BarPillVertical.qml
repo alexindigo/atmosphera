@@ -24,6 +24,8 @@ Item {
   property color customBackgroundColor: Color.transparent
   property color customTextIconColor: Color.transparent
 
+  readonly property bool hiddenByForceClose: forceClose && !forceOpen
+
   signal shown
   signal hidden
   signal entered
@@ -75,8 +77,9 @@ Item {
   }
 
   // For vertical bars: width is just icon size, height includes pill space
-  width: buttonSize
-  height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
+  width: hiddenByForceClose ? 0 : buttonSize
+  height: hiddenByForceClose ? 0 : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
+  visible: !hiddenByForceClose
 
   Connections {
     target: root
