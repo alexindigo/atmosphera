@@ -161,10 +161,14 @@ Rectangle {
     }
     //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
-    // Escape all special regex characters in the rule
-    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Convert '*' to '.*' for wildcard matching
-    let pattern = escapedRule.replace(/\\\*/g, '.*');
+    // First, convert '*' to a placeholder to preserve it, then escape other special regex characters
+    // Use a unique placeholder that won't appear in normal strings
+    const placeholder = '\uE000'; // Private use character
+    let processedRule = rule.replace(/\*/g, placeholder);
+    // Escape all special regex characters (but placeholder won't match this)
+    let escapedRule = processedRule.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    // Convert placeholder back to '.*' for wildcard matching
+    let pattern = escapedRule.replace(new RegExp(placeholder, 'g'), '.*');
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$';
 
