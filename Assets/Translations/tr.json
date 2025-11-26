@@ -227,13 +227,13 @@
           "description": "Sanatçı - başlık yerine başlık - sanatçı olarak göster.",
           "label": "Önce sanatçıyı göster"
         },
-        "show-visualizer": {
-          "description": "Müzik çalarken bir ses görselleştirici göster.",
-          "label": "Görselleştiriciyi göster"
-        },
         "show-progress-ring": {
           "description": "Parça ilerlemesini gösteren dairesel bir ilerleme göstergesi gösterin.",
           "label": "İlerleme halkası göster"
+        },
+        "show-visualizer": {
+          "description": "Müzik çalarken bir ses görselleştirici göster.",
+          "label": "Görselleştiriciyi göster"
         },
         "use-fixed-width": {
           "description": "Etkinleştirildiğinde, widget dinamik olarak içerik göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
@@ -345,13 +345,13 @@
           "description": "Çalışma alanı adlarından gösterilecek karakter sayısı (1-10).",
           "label": "Karakter sayısı"
         },
-        "hide-unoccupied": {
-          "description": "Penceresi olmayan çalışma alanlarını gösterme.",
-          "label": "Dolu olmayanları gizle"
-        },
         "follow-focused-screen": {
           "description": "Çubuğun bulunduğu ekran yerine, şu anda odaklanmış ekrandaki çalışma alanlarını göster.",
           "label": "Odaklanmış Ekranı Takip Et"
+        },
+        "hide-unoccupied": {
+          "description": "Penceresi olmayan çalışma alanlarını gösterme.",
+          "label": "Dolu olmayanları gizle"
         },
         "label-mode": {
           "description": "Çalışma alanı etiketlerinin nasıl gösterileceğini seçin.",
@@ -361,8 +361,8 @@
     }
   },
   "battery": {
+    "battery-level": "Pil seviyesi",
     "brightness": "Parlaklık",
-    "charge-level": "Şarj seviyesi",
     "charging": "Şarj oluyor.",
     "charging-rate": "Şarj oranı: {rate} W.",
     "discharging": "Deşarj oluyor.",
@@ -492,13 +492,13 @@
       "title": "Bildirimler"
     },
     "time": {
-      "now": "şimdi",
-      "diffM": "1 dakika önce",
-      "diffMM": "{diff} dakika önce",
+      "diffD": "1 gün önce",
+      "diffDD": "{diff} gün önce",
       "diffH": "1 saat önce",
       "diffHH": "{diff} saat önce",
-      "diffD": "1 gün önce",
-      "diffDD": "{diff} gün önce"
+      "diffM": "1 dakika önce",
+      "diffMM": "{diff} dakika önce",
+      "now": "şimdi"
     }
   },
   "options": {
@@ -1022,6 +1022,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "{filepath} dosyasına yaz.",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
           "code": {
             "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Code istemcisi tespit edilmedi. VSCode veya VSCodium kurun."
@@ -1045,10 +1049,6 @@
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "telegram": {
-            "description": "{filepath} dosyasına yaz.",
-            "description-missing": "Kurulum için {app} gereklidir"
-          },
-          "cava": {
             "description": "{filepath} dosyasına yaz.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
@@ -1419,13 +1419,13 @@
           "description": "Uygulamaları başlatmak için varsayılan yöntem yerine özel bir ön ek kullanın.",
           "label": "Özel başlatma önekini etkinleştir"
         },
-        "position": {
-          "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
-          "label": "Konum"
-        },
         "grid-view": {
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
           "label": "Izgara görünümü"
+        },
+        "position": {
+          "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
+          "label": "Konum"
         },
         "section": {
           "description": "Başlatıcının davranışını ve görünümünü özelleştirin.",
@@ -1648,6 +1648,7 @@
           "label": "Genel"
         }
       },
+      "title": "Ekran Görüntüsü",
       "types": {
         "brightness": {
           "description": "Ekran parlaklığı değiştiğinde OSD'yi göster.",
@@ -1662,19 +1663,14 @@
           "label": "Kilit tuşları"
         },
         "section": {
-          "description": "Ekran göstergesini tetikleyen olayları seçin.",
-          "label": "OSD türleri"
+          "description": "OSD'yi tetikleyecek olayları seçin. Hiçbir olay seçilmezse, mevcut tüm olaylar OSD'yi tetikleyecektir.",
+          "label": "OSD tetikleme olayları"
         },
         "volume": {
           "description": "Ses çıkış düzeyi değiştiğinde OSD'yi göster.",
           "label": "Çıkış sesi"
         }
-      },
-      "show-lock-key-notifications": {
-        "description": "Caps Lock, Num Lock veya Scroll Lock tuşları değiştirildiğinde bildirimleri göster.",
-        "label": "Kilit tuşu bildirimlerini göster"
-      },
-      "title": "Ekran Görüntüsü"
+      }
     },
     "screen-recorder": {
       "audio": {

@@ -227,13 +227,13 @@
           "description": "Afficher artiste - titre au lieu de titre - artiste.",
           "label": "Afficher l'artiste en premier"
         },
-        "show-visualizer": {
-          "description": "Afficher un visualiseur audio quand la musique est en cours de lecture.",
-          "label": "Afficher le visualiseur"
-        },
         "show-progress-ring": {
           "description": "Afficher un indicateur de progression circulaire montrant la progression de la piste.",
           "label": "Afficher l'anneau de progression"
+        },
+        "show-visualizer": {
+          "description": "Afficher un visualiseur audio quand la musique est en cours de lecture.",
+          "label": "Afficher le visualiseur"
         },
         "use-fixed-width": {
           "description": "Lorsque activé, le widget utilisera toujours la largeur maximale au lieu de s'ajuster dynamiquement au contenu.",
@@ -345,13 +345,13 @@
           "description": "Nombre de caractères à afficher des noms d'espaces de travail (1-10).",
           "label": "Nombre de caractères"
         },
-        "hide-unoccupied": {
-          "description": "Ne pas afficher les espaces de travail sans fenêtres.",
-          "label": "Masquer les inoccupés"
-        },
         "follow-focused-screen": {
           "description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
           "label": "Suivre l'Écran Ciblé"
+        },
+        "hide-unoccupied": {
+          "description": "Ne pas afficher les espaces de travail sans fenêtres.",
+          "label": "Masquer les inoccupés"
         },
         "label-mode": {
           "description": "Choisir comment les étiquettes d'espace de travail sont affichées.",
@@ -361,8 +361,8 @@
     }
   },
   "battery": {
+    "battery-level": "Niveau de batterie",
     "brightness": "Luminosité",
-    "charge-level": "Niveau de charge",
     "charging": "En charge.",
     "charging-rate": "Taux de charge : {rate} W.",
     "discharging": "En décharge.",
@@ -492,13 +492,13 @@
       "title": "Notifications"
     },
     "time": {
-      "now": "maintenant",
-      "diffM": "il y a 1 minute",
-      "diffMM": "il y a {diff} minutes",
+      "diffD": "il y a 1 jour",
+      "diffDD": "il y a {diff} jours",
       "diffH": "il y a 1 heure",
       "diffHH": "il y a {diff} heures",
-      "diffD": "il y a 1 jour",
-      "diffDD": "il y a {diff} jours"
+      "diffM": "il y a 1 minute",
+      "diffMM": "il y a {diff} minutes",
+      "now": "maintenant"
     }
   },
   "options": {
@@ -1022,6 +1022,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "Écrire {filepath}.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "code": {
             "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
             "description-missing": "Aucun client Code détecté. Installez VSCode ou VSCodium."
@@ -1045,10 +1049,6 @@
             "description-missing": "Nécessite l'installation de {app}"
           },
           "telegram": {
-            "description": "Écrire {filepath}.",
-            "description-missing": "Nécessite l'installation de {app}"
-          },
-          "cava": {
             "description": "Écrire {filepath}.",
             "description-missing": "Nécessite l'installation de {app}"
           },
@@ -1419,13 +1419,13 @@
           "description": "Utiliser un préfixe personnalisé pour lancer les applications au lieu de la méthode par défaut.",
           "label": "Activer le préfixe de lancement personnalisé"
         },
-        "position": {
-          "description": "Choisissez où le panneau du lanceur apparaît.",
-          "label": "Position"
-        },
         "grid-view": {
           "description": "Afficher les éléments dans une grille au lieu d'une liste.",
           "label": "Vue grille"
+        },
+        "position": {
+          "description": "Choisissez où le panneau du lanceur apparaît.",
+          "label": "Position"
         },
         "section": {
           "description": "Personnalisez le comportement et l'apparence du lanceur.",
@@ -1648,6 +1648,7 @@
           "label": "Général"
         }
       },
+      "title": "Affichage à l'écran",
       "types": {
         "brightness": {
           "description": "Afficher l'OSD lorsque la luminosité de l'écran change.",
@@ -1662,19 +1663,14 @@
           "label": "Touches de verrouillage"
         },
         "section": {
-          "description": "Choisissez quels événements déclenchent l'affichage à l'écran.",
-          "label": "Types d'OSD"
+          "description": "Sélectionnez les événements qui déclenchent l'OSD. Si aucun événement n'est sélectionné, tous les événements disponibles déclencheront l'OSD.",
+          "label": "Événements de déclenchement OSD"
         },
         "volume": {
           "description": "Afficher l'OSD lorsque le volume de sortie audio change.",
           "label": "Volume de sortie"
         }
-      },
-      "show-lock-key-notifications": {
-        "description": "Afficher les notifications lorsque les touches Verr. Maj., Verr. Num. ou Arrêt défil. sont activées/désactivées.",
-        "label": "Afficher les notifications des touches de verrouillage"
-      },
-      "title": "Affichage à l'écran"
+      }
     },
     "screen-recorder": {
       "audio": {

@@ -169,11 +169,14 @@ Singleton {
     if (volume >= maxVolume) {
       return;
     }
-    setVolume(volume + stepVolume);
+    setVolume(Math.min(maxVolume, volume + stepVolume));
   }
 
   function decreaseVolume() {
-    setVolume(volume - stepVolume);
+    if (volume <= 0) {
+      return;
+    }
+    setVolume(Math.max(0, volume - stepVolume));
   }
 
   function setVolume(newVolume: real) {
@@ -199,9 +202,14 @@ Singleton {
   function getOutputIcon() {
     if (muted)
       return "volume-mute";
-    if (volume <= Number.EPSILON)
-      return "volume-zero";
-    if (volume <= 0.5)
+
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    const clampedVolume = Math.max(0, Math.min(volume, maxVolume));
+
+    // Show volume-x icon when volume is effectively 0% (within rounding threshold)
+    if (clampedVolume < 0.005)
+      return "volume-x";
+    if (clampedVolume <= 0.5)
       return "volume-low";
     return "volume-high";
   }

@@ -227,13 +227,13 @@
           "description": "显示艺术家 - 标题，而不是标题 - 艺术家。",
           "label": "先显示艺术家"
         },
-        "show-visualizer": {
-          "description": "播放音乐时显示音频可视化器。",
-          "label": "显示可视化器"
-        },
         "show-progress-ring": {
           "description": "显示显示曲目进度的圆形进度指示器。",
           "label": "显示进度环"
+        },
+        "show-visualizer": {
+          "description": "播放音乐时显示音频可视化器。",
+          "label": "显示可视化器"
         },
         "use-fixed-width": {
           "description": "启用后，小部件将始终使用最大宽度，而不根据内容动态调整。",
@@ -345,13 +345,13 @@
           "description": "显示工作区名称的字符数量（1-10）。",
           "label": "字符数量"
         },
-        "hide-unoccupied": {
-          "description": "不显示没有窗口的工作区。",
-          "label": "隐藏未占用"
-        },
         "follow-focused-screen": {
           "description": "显示当前焦点屏幕的工作区，而不是任务栏所在屏幕的工作区。",
           "label": "跟随焦点屏幕"
+        },
+        "hide-unoccupied": {
+          "description": "不显示没有窗口的工作区。",
+          "label": "隐藏未占用"
         },
         "label-mode": {
           "description": "选择工作区标签的显示方式。",
@@ -361,8 +361,8 @@
     }
   },
   "battery": {
+    "battery-level": "电池电量",
     "brightness": "亮度",
-    "charge-level": "电量",
     "charging": "正在充电。",
     "charging-rate": "充电速率：{rate} W。",
     "discharging": "正在放电。",
@@ -492,13 +492,13 @@
       "title": "通知"
     },
     "time": {
-      "now": "现在",
-      "diffM": "1 分钟前",
-      "diffMM": "{diff} 分钟前",
+      "diffD": "1 天前",
+      "diffDD": "{diff} 天前",
       "diffH": "1 小时前",
       "diffHH": "{diff} 小时前",
-      "diffD": "1 天前",
-      "diffDD": "{diff} 天前"
+      "diffM": "1 分钟前",
+      "diffMM": "{diff} 分钟前",
+      "now": "现在"
     }
   },
   "options": {
@@ -1022,6 +1022,10 @@
           }
         },
         "programs": {
+          "cava": {
+            "description": "写入 {filepath}。",
+            "description-missing": "需要安装 {app}"
+          },
           "code": {
             "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
             "description-missing": "未检测到 Code 客户端。请安装 VSCode 或 VSCodium。"
@@ -1045,10 +1049,6 @@
             "description-missing": "需要安装 {app}"
           },
           "telegram": {
-            "description": "写入 {filepath}。",
-            "description-missing": "需要安装 {app}"
-          },
-          "cava": {
             "description": "写入 {filepath}。",
             "description-missing": "需要安装 {app}"
           },
@@ -1419,13 +1419,13 @@
           "description": "使用自定义前缀启动应用程序，而不是默认方法。",
           "label": "启用自定义启动前缀"
         },
-        "position": {
-          "description": "选择启动器面板出现的位置。",
-          "label": "位置"
-        },
         "grid-view": {
           "description": "以网格布局而非列表显示项目。",
           "label": "网格视图"
+        },
+        "position": {
+          "description": "选择启动器面板出现的位置。",
+          "label": "位置"
         },
         "section": {
           "description": "自定义启动器的行为和外观。",
@@ -1648,6 +1648,7 @@
           "label": "常规"
         }
       },
+      "title": "屏显菜单",
       "types": {
         "brightness": {
           "description": "当屏幕亮度发生变化时显示 OSD。",
@@ -1662,19 +1663,14 @@
           "label": "锁定键"
         },
         "section": {
-          "description": "选择哪些事件会触发屏显菜单。",
-          "label": "OSD 类型"
+          "description": "选择触发OSD的事件。如果未选择任何事件，则所有可用事件都将触发OSD。",
+          "label": "OSD触发事件"
         },
         "volume": {
           "description": "当音频输出音量发生变化时显示 OSD。",
           "label": "输出音量"
         }
-      },
-      "show-lock-key-notifications": {
-        "description": "当大写锁定键、数字锁定键或滚动锁定键被切换时显示通知。",
-        "label": "显示锁定键通知"
-      },
-      "title": "屏显菜单"
+      }
     },
     "screen-recorder": {
       "audio": {

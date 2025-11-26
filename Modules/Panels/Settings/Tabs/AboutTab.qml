@@ -189,10 +189,11 @@ ColumnLayout {
           Layout.preferredWidth: Style.baseWidgetSize * 2 * Style.uiScaleRatio
           Layout.preferredHeight: Style.baseWidgetSize * 2 * Style.uiScaleRatio
 
-          NImageCircled {
-            imagePath: modelData.avatar_url || ""
+          NImageRounded {
             anchors.fill: parent
             anchors.margins: Style.marginXS
+            radius: width * 0.5
+            imagePath: modelData.avatar_url || ""
             fallbackIcon: "person"
             borderColor: contributorArea.containsMouse ? Color.mOnHover : Color.mPrimary
             borderWidth: Style.borderM

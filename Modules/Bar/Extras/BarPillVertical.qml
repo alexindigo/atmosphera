@@ -24,6 +24,8 @@ Item {
   property color customBackgroundColor: Color.transparent
   property color customTextIconColor: Color.transparent
 
+  readonly property bool collapseToIcon: forceClose && !forceOpen
+
   signal shown
   signal hidden
   signal entered
@@ -76,7 +78,7 @@ Item {
 
   // For vertical bars: width is just icon size, height includes pill space
   width: buttonSize
-  height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
+  height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
 
   Connections {
     target: root
@@ -91,7 +93,7 @@ Item {
   Rectangle {
     id: pillBackground
     width: buttonSize
-    height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
+    height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
     radius: halfButtonSize
     color: root.bgColor
 
@@ -321,6 +323,8 @@ Item {
   }
 
   function show() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showAnim.start();
@@ -331,6 +335,8 @@ Item {
   }
 
   function hide() {
+    if (collapseToIcon)
+      return;
     if (forceOpen) {
       return;
     }
@@ -341,6 +347,8 @@ Item {
   }
 
   function showDelayed() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showTimer.start();

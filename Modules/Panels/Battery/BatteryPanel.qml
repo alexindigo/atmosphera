@@ -19,8 +19,7 @@ SmartPanel {
   readonly property bool isReady: battery && battery.ready && battery.isLaptopBattery && battery.isPresent
   readonly property int percent: isReady ? Math.round(battery.percentage * 100) : -1
   readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
-  readonly property bool healthSupported: isReady && battery.healthSupported
-  readonly property bool healthAvailable: healthSupported
+  readonly property bool healthAvailable: isReady && battery.healthSupported
   readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
   readonly property bool powerProfileAvailable: PowerProfileService.available
   readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
@@ -117,7 +116,7 @@ SmartPanel {
 
             ColumnLayout {
               NText {
-                text: I18n.tr("battery.charge-level")
+                text: I18n.tr("battery.battery-level")
                 color: Color.mOnSurface
                 pointSize: Style.fontSizeS
               }

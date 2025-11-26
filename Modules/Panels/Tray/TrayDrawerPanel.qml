@@ -43,8 +43,14 @@ SmartPanel {
   function wildCardMatch(str, rule) {
     if (!str || !rule)
       return false;
-    let escaped = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    let pattern = '^' + escaped.replace(/\\\*/g, '.*') + '$';
+    // First, convert '*' to a placeholder to preserve it, then escape other special regex characters
+    // Use a unique placeholder that won't appear in normal strings
+    const placeholder = '\uE000'; // Private use character
+    let processedRule = rule.replace(/\*/g, placeholder);
+    // Escape all special regex characters (but placeholder won't match this)
+    let escaped = processedRule.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    // Convert placeholder back to '.*' for wildcard matching
+    let pattern = '^' + escaped.replace(new RegExp(placeholder, 'g'), '.*') + '$';
     try {
       return new RegExp(pattern, 'i').test(str);
     } catch (e) {

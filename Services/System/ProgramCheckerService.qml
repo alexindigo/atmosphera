@@ -184,7 +184,7 @@ Singleton {
                                             "codeAvailable": ["which", "code"],
                                             "gnomeCalendarAvailable": ["which", "gnome-calendar"],
                                             "spicetifyAvailable": ["which", "spicetify"],
-                                            "telegramAvailable": ["sh", "-c", "which telegram-desktop || which Telegram"],
+                                            "telegramAvailable": ["sh", "-c", "command -v telegram-desktop >/dev/null 2>&1 || command -v Telegram >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'org.telegram.desktop')"],
                                             "cavaAvailable": ["which", "cava"]
                                           })
 

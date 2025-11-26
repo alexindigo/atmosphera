@@ -96,7 +96,7 @@ Item {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
                               if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && !launcherPanel?.activePlugin))
-                                launcherPanel?.toggle();
+                              launcherPanel?.toggle();
                               launcherPanel?.setSearchText("");
                             });
     }
@@ -104,7 +104,7 @@ Item {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
                               if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">clip")))
-                                launcherPanel?.toggle();
+                              launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">clip ");
                             });
     }
@@ -112,7 +112,7 @@ Item {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
                               if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">calc")))
-                                launcherPanel?.toggle();
+                              launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">calc ");
                             });
     }
@@ -120,7 +120,7 @@ Item {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
                               if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">emoji")))
-                                launcherPanel?.toggle();
+                              launcherPanel?.toggle();
                               launcherPanel?.setSearchText(">emoji ");
                             });
     }
@@ -377,6 +377,26 @@ Item {
       detectedScreen = null;
       pendingCallback = callback;
       screenDetectorLoader.active = true;
+    }
+  }
+
+  IpcHandler {
+    target: "state"
+
+    // Returns all settings and shell state as JSON
+    function all(): string {
+      try {
+        var snapshot = Settings.buildStateSnapshot();
+        if (!snapshot) {
+          throw new Error("State snapshot unavailable");
+        }
+        return JSON.stringify(snapshot, null, 2);
+      } catch (error) {
+        Logger.e("IPC", "Failed to serialize state:", error);
+        return JSON.stringify({
+                                "error": "Failed to serialize state: " + error
+                              }, null, 2);
+      }
     }
   }
 

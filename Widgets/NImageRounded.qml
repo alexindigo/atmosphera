@@ -4,91 +4,44 @@ import Quickshell
 import Quickshell.Widgets
 import qs.Commons
 
-Rectangle {
+Item {
   id: root
 
+  property real radius: 0
   property string imagePath: ""
-  property color borderColor: Color.transparent
-  property real borderWidth: 0
-  property real imageRadius: width * 0.5
-  property int imageFillMode: Image.PreserveAspectCrop
   property string fallbackIcon: ""
   property real fallbackIconSize: Style.fontSizeXXL
+  property real borderWidth: 0
+  property color borderColor: Color.transparent
 
-  property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
+  readonly property bool showFallback: (fallbackIcon !== undefined && fallbackIcon !== "") && (imagePath === undefined || imagePath === "")
 
   signal statusChanged(int status)
 
-  color: Color.transparent
-  radius: scaledRadius
-  anchors.margins: Style.marginXXS
-
-  Rectangle {
-    color: Color.transparent
+  ClippingRectangle {
     anchors.fill: parent
+    color: Color.transparent
+    radius: root.radius
+    border.color: root.borderColor
+    border.width: root.borderWidth
 
     Image {
-      id: img
       anchors.fill: parent
+      visible: !showFallback
       source: imagePath
-      visible: false
       mipmap: true
       smooth: true
       asynchronous: true
       antialiasing: true
-      fillMode: root.imageFillMode
-      horizontalAlignment: Image.AlignHCenter
-      verticalAlignment: Image.AlignVCenter
-
+      fillMode: Image.PreserveAspectCrop
       onStatusChanged: root.statusChanged(status)
     }
 
-    ShaderEffect {
-      anchors.fill: parent
-
-      property var source: ShaderEffectSource {
-        sourceItem: img
-        hideSource: true
-        live: true
-        recursive: false
-        format: ShaderEffectSource.RGBA
-      }
-
-      property real itemWidth: root.width
-      property real itemHeight: root.height
-      property real cornerRadius: root.radius
-      property real imageOpacity: root.opacity
-      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
-
-      supportsAtlasTextures: false
-      blending: true
-      Rectangle {
-        id: background
-        anchors.fill: parent
-        color: Color.transparent
-        z: -1
-      }
-    }
-
-    Loader {
-      active: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
+    NIcon {
       anchors.centerIn: parent
-      sourceComponent: NIcon {
-        anchors.centerIn: parent
-        icon: fallbackIcon
-        pointSize: fallbackIconSize
-        z: 0
-      }
+      visible: showFallback
+      icon: fallbackIcon
+      pointSize: fallbackIconSize
     }
-  }
-
-  Rectangle {
-    anchors.fill: parent
-    radius: parent.radius
-    color: Color.transparent
-    border.color: parent.borderColor
-    border.width: parent.borderWidth
-    antialiasing: true
-    z: 10
   }
 }

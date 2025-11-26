@@ -49,12 +49,16 @@ Variants {
       case OSD.Type.Volume:
         if (isMuted)
           return "volume-mute";
-        if (currentVolume <= Number.EPSILON)
-          return "volume-zero";
+        // Show volume-x icon when volume is effectively 0% (within rounding threshold)
+        if (currentVolume < 0.005)
+          return "volume-x";
         return currentVolume <= 0.5 ? "volume-low" : "volume-high";
       case OSD.Type.InputVolume:
         return isInputMuted ? "microphone-off" : "microphone";
       case OSD.Type.Brightness:
+        // Show sun-off icon when brightness is effectively 0% (within rounding threshold)
+        if (currentBrightness < 0.005)
+          return "sun-off";
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       case OSD.Type.LockKey:
         return "keyboard";
@@ -488,7 +492,7 @@ Variants {
               color: root.currentOSDType === OSD.Type.LockKey ? root.getProgressColor() : Color.mOnSurface
               pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeM : Style.fontSizeS
               family: Settings.data.ui.fontFixed
-              font.weight: root.currentOSDType === OSD.Type.LockKey ? Style.fontWeightMedium : Style.fontWeightNormal
+              font.weight: root.currentOSDType === OSD.Type.LockKey ? Style.fontWeightMedium : Style.fontWeightRegular
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignHCenter
               horizontalAlignment: Text.AlignHCenter

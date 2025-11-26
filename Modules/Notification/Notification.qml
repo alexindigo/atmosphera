@@ -398,17 +398,16 @@ Variants {
                 Layout.topMargin: Style.marginM
                 Layout.bottomMargin: Style.marginM
 
-                ColumnLayout {
-                  NImageCircled {
-                    Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
-                    Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
-                    Layout.alignment: Qt.AlignVCenter
-                    imagePath: model.originalImage || ""
-                    borderColor: Color.transparent
-                    borderWidth: 0
-                    fallbackIcon: "bell"
-                    fallbackIconSize: 24
-                  }
+                NImageRounded {
+                  Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
+                  Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
+                  Layout.alignment: Qt.AlignVCenter
+                  radius: width * 0.5
+                  imagePath: model.originalImage || ""
+                  borderColor: Color.transparent
+                  borderWidth: 0
+                  fallbackIcon: "bell"
+                  fallbackIconSize: 24
                 }
 
                 ColumnLayout {

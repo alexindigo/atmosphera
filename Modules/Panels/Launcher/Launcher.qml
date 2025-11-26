@@ -689,7 +689,7 @@ SmartPanel {
                       id: imagePreview
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.emojiChar
-                      imageRadius: Style.radiusM
+                      radius: Style.radiusM
 
                       // This property creates a dependency on the service's revision counter
                       readonly property int _rev: ClipboardService.revision
@@ -934,7 +934,7 @@ SmartPanel {
                     id: gridImagePreview
                     anchors.fill: parent
                     visible: modelData.isImage && !modelData.emojiChar
-                    imageRadius: Style.radiusM
+                    radius: Style.radiusM
 
                     readonly property int _rev: ClipboardService.revision
 

@@ -23,6 +23,8 @@ Item {
   property color customBackgroundColor: Color.transparent
   property color customTextIconColor: Color.transparent
 
+  readonly property bool collapseToIcon: forceClose && !forceOpen
+
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
 
@@ -66,7 +68,7 @@ Item {
     }
   }
 
-  width: pillHeight + Math.max(0, pill.width - pillOverlap)
+  width: collapseToIcon ? pillHeight : pillHeight + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
 
   Connections {
@@ -81,7 +83,7 @@ Item {
   // Unified background for the entire pill area to avoid overlapping opacity
   Rectangle {
     id: pillBackground
-    width: root.width
+    width: collapseToIcon ? pillHeight : root.width
     height: pillHeight
     radius: halfPillHeight
     color: root.bgColor
@@ -290,6 +292,8 @@ Item {
   }
 
   function show() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showAnim.start();
@@ -300,6 +304,8 @@ Item {
   }
 
   function hide() {
+    if (collapseToIcon)
+      return;
     if (forceOpen) {
       return;
     }
@@ -310,6 +316,8 @@ Item {
   }
 
   function showDelayed() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showTimer.start();

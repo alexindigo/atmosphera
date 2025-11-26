@@ -301,10 +301,11 @@ Loader {
                     }
                   }
 
-                  NImageCircled {
+                  NImageRounded {
                     anchors.centerIn: parent
                     width: 66
                     height: 66
+                    radius: width * 0.5
                     imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
                     fallbackIcon: "person"
 
@@ -631,9 +632,10 @@ Loader {
                         color: Color.transparent
                         clip: true
 
-                        NImageCircled {
+                        NImageRounded {
                           anchors.fill: parent
                           anchors.margins: 2
+                          radius: width * 0.5
                           imagePath: MediaService.trackArtUrl
                           fallbackIcon: "disc"
                           fallbackIconSize: Style.fontSizeM

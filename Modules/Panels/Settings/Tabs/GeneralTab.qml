@@ -21,9 +21,10 @@ ColumnLayout {
     spacing: Style.marginL
 
     // Avatar preview
-    NImageCircled {
+    NImageRounded {
       Layout.preferredWidth: 88 * Style.uiScaleRatio
       Layout.preferredHeight: width
+      radius: width * 0.5
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary
