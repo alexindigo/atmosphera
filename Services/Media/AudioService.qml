@@ -169,11 +169,14 @@ Singleton {
     if (volume >= maxVolume) {
       return;
     }
-    setVolume(volume + stepVolume);
+    setVolume(Math.min(maxVolume, volume + stepVolume));
   }
 
   function decreaseVolume() {
-    setVolume(volume - stepVolume);
+    if (volume <= 0) {
+      return;
+    }
+    setVolume(Math.max(0, volume - stepVolume));
   }
 
   function setVolume(newVolume: real) {
