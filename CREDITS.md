@@ -5,7 +5,7 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 ## Design & Branding
 
 - **MrDowntempo** - Creator of the Noctalia Owl and moon logo
-- **SaberJ2X** - Creator of Talia, the Noctalia mascot
+- **[SaberJ2X](https://www.reddit.com/user/SaberJ64/)** - Creator of Talia, the Noctalia mascot
 
 ## Core Framework
 
