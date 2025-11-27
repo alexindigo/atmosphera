@@ -47,9 +47,6 @@ PanelWindow {
   property bool closeWatchdogActive: false
   property bool openWatchdogActive: false
 
-  // Delay before unloading content (helps with shader cleanup on older Qt versions)
-  property int contentUnloadDelay: 100
-
   // Signals
   signal panelOpened
   signal panelClosed
@@ -179,21 +176,13 @@ PanelWindow {
     closeWatchdogTimer.stop();
 
     root.isPanelVisible = false;
-
-    // Delay unloading content to ensure shaders are properly cleaned up (helps with older Qt versions)
-    contentUnloadDelayTimer.start();
-
-    Logger.d("SmartPanelWindow", "Panel close finalized, delaying content unload", placeholder.panelName);
-  }
-
-  function completeContentUnload() {
     root.isPanelOpen = false;
     root.isClosing = false;
     root.opacityFadeComplete = false;
     PanelService.closedPanel(root);
     panelClosed();
 
-    Logger.d("SmartPanelWindow", "Content unloaded", placeholder.panelName);
+    Logger.d("SmartPanelWindow", "Panel close finalized", placeholder.panelName);
   }
 
   // Fullscreen container for click-to-close and content
@@ -441,16 +430,6 @@ PanelWindow {
         Logger.w("SmartPanelWindow", "Close watchdog timeout - forcing panel close", placeholder.panelName);
         Qt.callLater(root.finalizeClose);
       }
-    }
-  }
-
-  // Timer to delay content unloading after panel closes (helps with shader cleanup on older Qt)
-  Timer {
-    id: contentUnloadDelayTimer
-    interval: root.contentUnloadDelay
-    repeat: false
-    onTriggered: {
-      root.completeContentUnload();
     }
   }
 
