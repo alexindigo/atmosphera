@@ -316,7 +316,10 @@ Item {
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
           pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
           Layout.alignment: Qt.AlignVCenter
+          Layout.preferredWidth: _iconOnlySize
+          Layout.preferredHeight: _iconOnlySize
           visible: !hasActivePlayer || (!showAlbumArt && !showProgressRing)
         }
 
@@ -426,6 +429,8 @@ Item {
               // Fallback icon when no album art or album art not shown
               NIcon {
                 anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
                 icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
                 pointSize: (showAlbumArt || showProgressRing) ? 8 * scaling : 12 * scaling  // Smaller when inside album art circle or progress ring, larger when alone
@@ -664,6 +669,8 @@ Item {
         NIcon {
           id: mediaIconVertical
           anchors.centerIn: parent
+          width: parent.width
+          height: parent.height
           visible: !showAlbumArt || !hasActivePlayer
           icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
