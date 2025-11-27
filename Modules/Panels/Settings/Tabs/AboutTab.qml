@@ -149,15 +149,15 @@ ColumnLayout {
     enableDescriptionRichText: true
   }
 
-  // Contributors flow layout (avoids GridView shader crashes on Qt 6.8)
+  // Top 20 contributors with full cards (avoids GridView shader crashes on Qt 6.8)
   Flow {
-    id: contributorsFlow
+    id: topContributorsFlow
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
     spacing: Style.marginM
 
     Repeater {
-      model: root.contributors
+      model: Math.min(root.contributors.length, 20)
 
       delegate: Rectangle {
         width: Math.round(Style.baseWidgetSize * 6.8)
@@ -197,12 +197,12 @@ ColumnLayout {
               // Simple image
               Image {
                 anchors.fill: parent
-                source: modelData.avatar_url || ""
+                source: root.contributors[index].avatar_url || ""
                 fillMode: Image.PreserveAspectCrop
                 mipmap: true
                 smooth: true
                 asynchronous: true
-                visible: modelData.avatar_url !== undefined && modelData.avatar_url !== ""
+                visible: root.contributors[index].avatar_url !== undefined && root.contributors[index].avatar_url !== ""
                 opacity: status === Image.Ready ? 1.0 : 0.0
 
                 Behavior on opacity {
@@ -215,7 +215,7 @@ ColumnLayout {
               // Fallback icon
               NIcon {
                 anchors.centerIn: parent
-                visible: !modelData.avatar_url || modelData.avatar_url === ""
+                visible: !root.contributors[index].avatar_url || root.contributors[index].avatar_url === ""
                 icon: "person"
                 pointSize: Style.fontSizeL
                 color: Color.mPrimary
@@ -230,7 +230,7 @@ ColumnLayout {
             Layout.fillWidth: true
 
             NText {
-              text: modelData.login || "Unknown"
+              text: root.contributors[index].login || "Unknown"
               font.weight: Style.fontWeightBold
               color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurface
               elide: Text.ElideRight
@@ -249,7 +249,7 @@ ColumnLayout {
               }
 
               NText {
-                text: `${(modelData.contributions || 0).toString()} commits`
+                text: `${(root.contributors[index].contributions || 0).toString()} commits`
                 pointSize: Style.fontSizeXS
                 color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurfaceVariant
               }
@@ -278,8 +278,69 @@ ColumnLayout {
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           onClicked: {
-            if (modelData.html_url)
-              Quickshell.execDetached(["xdg-open", modelData.html_url]);
+            if (root.contributors[index].html_url)
+              Quickshell.execDetached(["xdg-open", root.contributors[index].html_url]);
+          }
+        }
+      }
+    }
+  }
+
+  // Remaining contributors (simple text links)
+  Flow {
+    id: remainingContributorsFlow
+    visible: root.contributors.length > 20
+    Layout.alignment: Qt.AlignHCenter
+    Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
+    Layout.topMargin: Style.marginL
+    spacing: Style.marginS
+
+    Repeater {
+      model: Math.max(0, root.contributors.length - 20)
+
+      delegate: Rectangle {
+        width: nameText.implicitWidth + Style.marginM * 2
+        height: nameText.implicitHeight + Style.marginS * 2
+        radius: Style.radiusS
+        color: nameArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.1) : Color.transparent
+        border.width: 1
+        border.color: nameArea.containsMouse ? Color.mPrimary : Color.mOutline
+
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+          }
+        }
+
+        Behavior on border.color {
+          ColorAnimation {
+            duration: Style.animationFast
+          }
+        }
+
+        NText {
+          id: nameText
+          anchors.centerIn: parent
+          text: root.contributors[index + 20].login || "Unknown"
+          pointSize: Style.fontSizeXS
+          color: nameArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+          font.weight: Style.fontWeightMedium
+
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+        }
+
+        MouseArea {
+          id: nameArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: {
+            if (root.contributors[index + 20].html_url)
+              Quickshell.execDetached(["xdg-open", root.contributors[index + 20].html_url]);
           }
         }
       }
