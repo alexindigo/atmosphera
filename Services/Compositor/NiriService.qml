@@ -27,155 +27,154 @@ Item {
 
   // Initialization
   function initialize() {
-    niriEventStream.running = true;
+    niriEventStream.connected = true;
+    niriCommandSocket.connected = true;
+
+    startEventStream();
     updateWorkspaces();
     updateWindows();
     queryDisplayScales();
     Logger.i("NiriService", "Service started");
   }
 
+  // command from https://yalter.github.io/niri/niri_ipc/enum.Request.html
+  function sendSocketCommand(sock, command) {
+    sock.write(JSON.stringify(command) + "\n");
+    sock.flush();
+  }
+
+  function startEventStream() {
+    sendSocketCommand(niriEventStream, "EventStream");
+  }
+
   // Update workspaces
   function updateWorkspaces() {
-    niriWorkspaceProcess.running = true;
+    sendSocketCommand(niriCommandSocket, "Workspaces");
   }
 
   // Update windows
   function updateWindows() {
-    niriWindowsProcess.running = true;
+    sendSocketCommand(niriCommandSocket, "Windows");
   }
 
   // Query display scales
   function queryDisplayScales() {
-    niriOutputsProcess.running = true;
+    sendSocketCommand(niriCommandSocket, "Outputs");
   }
 
-  // Niri outputs process for display scale detection
-  Process {
-    id: niriOutputsProcess
-    running: false
-    command: ["niri", "msg", "--json", "outputs"]
+  function recollectOutputs(outputsData) {
+    const scales = {};
 
-    stdout: SplitParser {
+    // Niri returns an object with display names as keys
+    for (const outputName in outputsData) {
+      const output = outputsData[outputName];
+      if (output && output.name) {
+        const logical = output.logical || {};
+        const currentModeIdx = output.current_mode || 0;
+        const modes = output.modes || [];
+        const currentMode = modes[currentModeIdx] || {};
+
+        scales[output.name] = {
+          "name": output.name,
+          "scale": logical.scale || 1.0,
+          "width": logical.width || 0,
+          "height": logical.height || 0,
+          "x": logical.x || 0,
+          "y": logical.y || 0,
+          "physical_width": (output.physical_size && output.physical_size[0]) || 0,
+          "physical_height": (output.physical_size && output.physical_size[1]) || 0,
+          "refresh_rate": currentMode.refresh_rate || 0,
+          "vrr_supported": output.vrr_supported || false,
+          "vrr_enabled": output.vrr_enabled || false,
+          "transform": logical.transform || "Normal"
+        };
+      }
+    }
+
+    // Notify CompositorService (it will emit displayScalesChanged)
+    if (CompositorService && CompositorService.onDisplayScalesUpdated) {
+      CompositorService.onDisplayScalesUpdated(scales);
+    }
+  }
+
+  function recollectWorkspaces(workspacesData) {
+    const workspacesList = [];
+
+    for (const ws of workspacesData) {
+      workspacesList.push({
+                            "id": ws.id,
+                            "idx": ws.idx,
+                            "name": ws.name || "",
+                            "output": ws.output || "",
+                            "isFocused": ws.is_focused === true,
+                            "isActive": ws.is_active === true,
+                            "isUrgent": ws.is_urgent === true,
+                            "isOccupied": ws.active_window_id ? true : false
+                          });
+    }
+
+    // Sort workspaces by output, then by index
+    workspacesList.sort((a, b) => {
+                          if (a.output !== b.output) {
+                            return a.output.localeCompare(b.output);
+                          }
+                          return a.idx - b.idx;
+                        });
+
+    // Update the workspaces ListModel
+    workspaces.clear();
+    for (var i = 0; i < workspacesList.length; i++) {
+      workspaces.append(workspacesList[i]);
+    }
+
+    workspaceChanged();
+  }
+
+  // Niri command socket
+  Socket {
+    id: niriCommandSocket
+    path: Quickshell.env("NIRI_SOCKET")
+    connected: false
+
+    parser: SplitParser {
       onRead: function (line) {
         try {
-          const outputsData = JSON.parse(line);
-          const scales = {};
+          const data = JSON.parse(line);
 
-          // Niri returns an object with display names as keys
-          for (const outputName in outputsData) {
-            const output = outputsData[outputName];
-            if (output && output.name) {
-              const logical = output.logical || {};
-              const currentModeIdx = output.current_mode || 0;
-              const modes = output.modes || [];
-              const currentMode = modes[currentModeIdx] || {};
-
-              scales[output.name] = {
-                "name": output.name,
-                "scale": logical.scale || 1.0,
-                "width": logical.width || 0,
-                "height": logical.height || 0,
-                "x": logical.x || 0,
-                "y": logical.y || 0,
-                "physical_width": (output.physical_size && output.physical_size[0]) || 0,
-                "physical_height": (output.physical_size && output.physical_size[1]) || 0,
-                "refresh_rate": currentMode.refresh_rate || 0,
-                "vrr_supported": output.vrr_supported || false,
-                "vrr_enabled": output.vrr_enabled || false,
-                "transform": logical.transform || "Normal"
-              };
+          if (data && data.Ok) {
+            const res = data.Ok;
+            if (res.Windows) {
+              recollectWindows(res.Windows);
+            } else if (res.Outputs) {
+              recollectOutputs(res.Outputs);
+            } else if (res.Workspaces) {
+              recollectWorkspaces(res.Workspaces);
             }
+          } else {
+            Logger.e("NiriService", "Niri returned an error:", data.Err, line);
           }
 
-          // Notify CompositorService (it will emit displayScalesChanged)
-          if (CompositorService && CompositorService.onDisplayScalesUpdated) {
-            CompositorService.onDisplayScalesUpdated(scales);
-          }
         } catch (e) {
-          Logger.e("NiriService", "Failed to parse outputs:", e, line);
+          Logger.e("NiriService", "Failed to parse data from socket:", e, line);
+          return;
         }
       }
     }
   }
 
-  // Niri workspace process
-  Process {
-    id: niriWorkspaceProcess
-    running: false
-    command: ["niri", "msg", "--json", "workspaces"]
-
-    stdout: SplitParser {
-      onRead: function (line) {
-        try {
-          const workspacesData = JSON.parse(line);
-          const workspacesList = [];
-
-          for (const ws of workspacesData) {
-            workspacesList.push({
-                                  "id": ws.id,
-                                  "idx": ws.idx,
-                                  "name": ws.name || "",
-                                  "output": ws.output || "",
-                                  "isFocused": ws.is_focused === true,
-                                  "isActive": ws.is_active === true,
-                                  "isUrgent": ws.is_urgent === true,
-                                  "isOccupied": ws.active_window_id ? true : false
-                                });
-          }
-
-          // Sort workspaces by output, then by index
-          workspacesList.sort((a, b) => {
-                                if (a.output !== b.output) {
-                                  return a.output.localeCompare(b.output);
-                                }
-                                return a.idx - b.idx;
-                              });
-
-          // Update the workspaces ListModel
-          workspaces.clear();
-          for (var i = 0; i < workspacesList.length; i++) {
-            workspaces.append(workspacesList[i]);
-          }
-
-          workspaceChanged();
-        } catch (e) {
-          Logger.e("NiriService", "Failed to parse workspaces:", e, line);
-        }
-      }
-    }
-  }
-
-  // Niri windows process
-  Process {
-    id: niriWindowsProcess
-    running: false
-    command: ["niri", "msg", "--json", "windows"]
-
-    stdout: SplitParser {
-      onRead: function (line) {
-        try {
-          const windowsData = JSON.parse(line);
-          recollectWindows(windowsData);
-        } catch (e) {
-          Logger.e("NiriService", "Failed to parse windows:", e, line);
-        }
-      }
-    }
-  }
-
-  // Niri event stream process
-  Process {
+  // Niri event stream socket
+  Socket {
     id: niriEventStream
-    running: false
-    command: ["niri", "msg", "--json", "event-stream"]
+    path: Quickshell.env("NIRI_SOCKET")
+    connected: false
 
-    stdout: SplitParser {
+    parser: SplitParser {
       onRead: data => {
                 try {
                   const event = JSON.parse(data.trim());
 
                   if (event.WorkspacesChanged) {
-                    updateWorkspaces();
+                    recollectWorkspaces(event.WorkspacesChanged.workspaces);
                   } else if (event.WindowOpenedOrChanged) {
                     handleWindowOpenedOrChanged(event.WindowOpenedOrChanged);
                   } else if (event.WindowClosed) {
