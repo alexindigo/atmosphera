@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "Использование CPU (Критично)"
-        },
         "cpu-temperature": {
           "description": "Показывать показания температуры процессора, если доступны.",
           "label": "Температура CPU"
@@ -282,24 +279,9 @@
           "description": "Отображать текущий процент использования CPU.",
           "label": "Использование CPU"
         },
-        "cpu-warning-threshold": {
-          "label": "Использование CPU (Предупреждение)"
-        },
-        "disk-critical-threshold": {
-          "label": "Место на диске (Критично)"
-        },
         "disk-path": {
           "description": "Выберите точку монтирования диска для мониторинга.",
           "label": "Путь к диску"
-        },
-        "disk-warning-threshold": {
-          "label": "Место на диске (Предупреждение)"
-        },
-        "mem-critical-threshold": {
-          "label": "Использование памяти (Критично)"
-        },
-        "mem-warning-threshold": {
-          "label": "Использование памяти (Предупреждение)"
         },
         "memory-percentage": {
           "description": "Показывать использование памяти в процентах вместо абсолютных значений.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Показывать информацию об использовании дискового пространства.",
           "label": "Использование хранилища"
-        },
-        "temp-critical-threshold": {
-          "label": "Температура CPU: (Критично)"
-        },
-        "temp-warning-threshold": {
-          "label": "Температура CPU (Внимание)"
-        },
-        "thresholds": {
-          "description": "Установите пороги для оповещений системных метрик. Выделяет при превышении.",
-          "header": "Пороговые значения"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Заблокировано",
       "connect": "Подключить",
       "connected-devices": "Подключенные устройства",
+      "connecting": "Подключение…",
       "disabled": "Bluetooth отключен",
       "disconnect": "Отключить",
       "enable-message": "Включите Bluetooth, чтобы увидеть доступные устройства.",
@@ -2100,6 +2073,11 @@
     "clipboard": {
       "unavailable": "История буфера обмена недоступна",
       "unavailable-desc": "Приложение 'cliphist' не установлено. Пожалуйста, установите его, чтобы использовать функции истории буфера обмена."
+    },
+    "dark-mode": {
+      "dark-mode": "Тёмный режим",
+      "light-mode": "Светлый режим",
+      "enabled": "Включен"
     },
     "do-not-disturb": {
       "disabled": "Режим 'Не беспокоить' отключен",

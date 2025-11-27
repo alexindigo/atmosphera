@@ -271,9 +271,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Kullanımı (Kritik)"
-        },
         "cpu-temperature": {
           "description": "Mevcut CPU sıcaklık okumalarını gösterilir.",
           "label": "CPU sıcaklığı"
@@ -282,24 +279,9 @@
           "description": "Mevcut CPU kullanım yüzdesini göster.",
           "label": "CPU kullanımı"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Kullanımı (Uyarı)"
-        },
-        "disk-critical-threshold": {
-          "label": "Depolama Alanı (Kritik)"
-        },
         "disk-path": {
           "description": "İzlenecek disk bağlama noktasını seçin.",
           "label": "Disk yolu"
-        },
-        "disk-warning-threshold": {
-          "label": "Depolama Alanı (Uyarı)"
-        },
-        "mem-critical-threshold": {
-          "label": "Bellek Kullanımı (Kritik)"
-        },
-        "mem-warning-threshold": {
-          "label": "Bellek Kullanımı (Uyarı)"
         },
         "memory-percentage": {
           "description": "Mutlak değerler yerine bellek kullanımını yüzde olarak göster.",
@@ -316,16 +298,6 @@
         "storage-usage": {
           "description": "Disk alanı kullanım bilgilerini göster.",
           "label": "Depolama kullanımı"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Sıcaklığı (Kritik)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Sıcaklığı (Uyarı)"
-        },
-        "thresholds": {
-          "description": "Sistem metrik eşiklerini ayarlayın. Aşıldığında vurgular.",
-          "header": "Eşik Ayarları"
         }
       },
       "taskbar": {
@@ -412,6 +384,7 @@
       "blocked": "Engellendi",
       "connect": "Bağlan",
       "connected-devices": "Bağlı cihazlar",
+      "connecting": "Bağlanılıyor…",
       "disabled": "Bluetooth devre dışı",
       "disconnect": "Bağlantıyı Kes",
       "enable-message": "Mevcut cihazları görmek için Bluetooth'u etkinleştirin.",
@@ -2100,6 +2073,11 @@
     "clipboard": {
       "unavailable": "Panoya geçmişi kullanılamıyor",
       "unavailable-desc": "'cliphist' uygulaması kurulu değil. Lütfen panoya geçmişi özelliklerini kullanmak için kurun."
+    },
+    "dark-mode": {
+      "dark-mode": "Karanlık mod",
+      "light-mode": "Aydınlık mod",
+      "enabled": "Etkin"
     },
     "do-not-disturb": {
       "disabled": "'Rahatsız etme' devre dışı",
