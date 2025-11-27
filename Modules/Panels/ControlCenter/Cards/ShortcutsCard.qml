@@ -14,6 +14,7 @@ RowLayout {
   NBox {
     Layout.fillWidth: true
     Layout.preferredHeight: root.shortcutsHeight
+    visible: Settings.datga.controlCenter.shortcuts.left.length > 0
 
     RowLayout {
       id: leftContent
@@ -53,6 +54,7 @@ RowLayout {
   NBox {
     Layout.fillWidth: true
     Layout.preferredHeight: root.shortcutsHeight
+    visible: Settings.data.controlCenter.shortcuts.right.length > 0
 
     RowLayout {
       id: rightContent
