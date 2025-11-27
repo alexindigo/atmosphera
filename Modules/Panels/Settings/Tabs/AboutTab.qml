@@ -194,11 +194,20 @@ ColumnLayout {
             Item {
               anchors.fill: parent
 
-              // Simple image
+              // Simple circular image (pre-rendered, no shaders)
               Image {
                 anchors.fill: parent
-                source: root.contributors[index].avatar_url || ""
-                fillMode: Image.PreserveAspectCrop
+                source: {
+                  // Try cached circular version first
+                  var username = root.contributors[index].login;
+                  var cached = GitHubService.cachedCircularAvatars[username];
+                  if (cached)
+                    return cached;
+
+                  // Fall back to original avatar URL
+                  return root.contributors[index].avatar_url || "";
+                }
+                fillMode: Image.PreserveAspectFit // Fit since image is already circular with transparency
                 mipmap: true
                 smooth: true
                 asynchronous: true
@@ -245,7 +254,7 @@ ColumnLayout {
               NIcon {
                 icon: "git-commit"
                 pointSize: Style.fontSizeXS
-                color: Color.mOnSurfaceVariant
+                color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurfaceVariant
               }
 
               NText {

@@ -102,20 +102,20 @@
   "calendar": {
     "cards": [
       {
-        "id": "banner-card",
-        "enabled": true
+        "enabled": true,
+        "id": "banner-card"
       },
       {
-        "id": "calendar-card",
-        "enabled": true
+        "enabled": true,
+        "id": "calendar-card"
       },
       {
-        "id": "timer-card",
-        "enabled": true
+        "enabled": true,
+        "id": "timer-card"
       },
       {
-        "id": "weather-card",
-        "enabled": true
+        "enabled": true,
+        "id": "weather-card"
       }
     ]
   },
