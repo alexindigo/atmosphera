@@ -41,6 +41,35 @@ Singleton {
   }
   readonly property bool inputMuted: source?.audio?.muted ?? true
 
+  // Allow callers to skip the next OSD notification when they are already
+  // presenting volume state (e.g. the Audio Panel UI).
+  property int pendingOutputOSDSuppressions: 0
+  property int pendingInputOSDSuppressions: 0
+
+  function suppressOutputOSD() {
+    pendingOutputOSDSuppressions++;
+  }
+
+  function suppressInputOSD() {
+    pendingInputOSDSuppressions++;
+  }
+
+  function consumeOutputOSDSuppression(): bool {
+    if (pendingOutputOSDSuppressions <= 0) {
+      return false;
+    }
+    pendingOutputOSDSuppressions--;
+    return true;
+  }
+
+  function consumeInputOSDSuppression(): bool {
+    if (pendingInputOSDSuppressions <= 0) {
+      return false;
+    }
+    pendingInputOSDSuppressions--;
+    return true;
+  }
+
   readonly property real stepVolume: Settings.data.audio.volumeStep / 100.0
 
   // Filtered device nodes (non-stream sinks and sources)

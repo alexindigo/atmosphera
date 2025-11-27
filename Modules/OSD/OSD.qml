@@ -206,6 +206,8 @@ Variants {
       }
 
       function onMutedChanged() {
+        if (AudioService.consumeOutputOSDSuppression())
+          return;
         showOSD(OSD.Type.Volume);
       }
 
@@ -215,8 +217,11 @@ Variants {
       }
 
       function onInputMutedChanged() {
-        if (AudioService.hasInput)
-          showOSD(OSD.Type.InputVolume);
+        if (!AudioService.hasInput)
+          return;
+        if (AudioService.consumeInputOSDSuppression())
+          return;
+        showOSD(OSD.Type.InputVolume);
       }
 
       // Refresh OSD when device changes to ensure correct volume is displayed

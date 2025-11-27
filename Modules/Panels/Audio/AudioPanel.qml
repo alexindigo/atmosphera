@@ -157,6 +157,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.output-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
+              AudioService.suppressOutputOSD();
               AudioService.setOutputMuted(!AudioService.muted);
             }
           }
@@ -166,6 +167,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.input-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
+              AudioService.suppressInputOSD();
               AudioService.setInputMuted(!AudioService.inputMuted);
             }
           }
