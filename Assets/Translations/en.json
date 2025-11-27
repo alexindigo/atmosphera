@@ -2082,8 +2082,8 @@
     },
     "dark-mode": {
       "dark-mode": "Dark Mode",
-      "light-mode": "Light Mode",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "light-mode": "Light Mode"
     },
     "do-not-disturb": {
       "disabled": "Do Not Disturb disabled",

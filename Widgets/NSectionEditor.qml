@@ -19,7 +19,7 @@ NBox {
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
-  readonly property bool isAtMaxCapacity: maxWidgets > 0 && widgetModel.length >= maxWidgets
+  readonly property bool isAtMaxCapacity: maxWidgets >= 0 && widgetModel.length >= maxWidgets
 
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
@@ -93,8 +93,8 @@ NBox {
 
       // Widget count indicator (when max is set)
       NText {
-        visible: root.maxWidgets > 0
-        text: "(" + widgetModel.length + "/" + root.maxWidgets + ")"
+        visible: root.maxWidgets >= 0
+        text: root.maxWidgets === 0 ? "(LOCKED)" : "(" + widgetModel.length + "/" + root.maxWidgets + ")"
         pointSize: Style.fontSizeS
         color: root.isAtMaxCapacity ? Color.mError : Color.mOnSurfaceVariant
         Layout.alignment: Qt.AlignVCenter

@@ -2076,8 +2076,8 @@
     },
     "dark-mode": {
       "dark-mode": "深色模式",
-      "light-mode": "浅色模式",
-      "enabled": "已启用"
+      "enabled": "已启用",
+      "light-mode": "浅色模式"
     },
     "do-not-disturb": {
       "disabled": "'勿扰模式'已禁用",

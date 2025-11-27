@@ -620,43 +620,6 @@ Popup {
               columnSpacing: 6
               rowSpacing: 6
 
-              Repeater {
-                model: ColorList.colors
-
-                Rectangle {
-                  width: 24
-                  height: 24
-                  radius: Style.radiusXXS
-                  color: modelData.color
-                  border.color: root.selectedColor.toString() === modelData.color.toString() ? Color.mPrimary : Color.mOutline
-                  border.width: Math.max(1, root.selectedColor.toString() === modelData.color.toString() ? Style.borderM : Style.borderS)
-
-                  MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-
-                    onEntered: {
-                      TooltipService.show(parent, modelData.name + "\n" + parent.color.toString().toUpperCase());
-                    }
-                    onExited: {
-                      TooltipService.hide();
-                    }
-                    onClicked: {
-                      root.selectedColor = modelData.color;
-                      TooltipService.hide();
-                    }
-                  }
-                }
-              }
-
-              NDivider {
-                Layout.columnSpan: 15
-                Layout.fillWidth: true
-                Layout.topMargin: Style.marginXS
-                Layout.bottomMargin: 0
-              }
-
               NLabel {
                 Layout.columnSpan: 15
                 Layout.fillWidth: true
@@ -698,6 +661,43 @@ Popup {
                 Rectangle {
                   width: 24
                   height: 24
+                  radius: Style.radiusXXS
+                  color: modelData.color
+                  border.color: root.selectedColor.toString() === modelData.color.toString() ? Color.mPrimary : Color.mOutline
+                  border.width: Math.max(1, root.selectedColor.toString() === modelData.color.toString() ? Style.borderM : Style.borderS)
+
+                  MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+
+                    onEntered: {
+                      TooltipService.show(parent, modelData.name + "\n" + parent.color.toString().toUpperCase());
+                    }
+                    onExited: {
+                      TooltipService.hide();
+                    }
+                    onClicked: {
+                      root.selectedColor = modelData.color;
+                      TooltipService.hide();
+                    }
+                  }
+                }
+              }
+
+              NDivider {
+                Layout.columnSpan: 15
+                Layout.fillWidth: true
+                Layout.topMargin: Style.marginXS
+                Layout.bottomMargin: 0
+              }
+
+              Repeater {
+                model: ColorList.colors
+
+                Rectangle {
+                  width: 24
+                  height: 24
                   radius: 4
                   color: modelData.color
                   border.color: root.selectedColor.toString() === modelData.color.toString() ? Color.mPrimary : Color.mOutline
@@ -728,8 +728,8 @@ Popup {
 
       RowLayout {
         Layout.fillWidth: true
-        //Layout.topMargin: 20
-        //Layout.bottomMargin: 20
+        Layout.topMargin: 1
+        Layout.bottomMargin: 1
         spacing: 10
 
         Item {

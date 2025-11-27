@@ -2076,8 +2076,8 @@
     },
     "dark-mode": {
       "dark-mode": "Темний режим",
-      "light-mode": "Світлий режим",
-      "enabled": "Увімкнено"
+      "enabled": "Увімкнено",
+      "light-mode": "Світлий режим"
     },
     "do-not-disturb": {
       "disabled": "'Не турбувати' вимкнено",
