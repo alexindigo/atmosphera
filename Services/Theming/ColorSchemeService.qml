@@ -26,8 +26,8 @@ Singleton {
       }
       // Toast: dark/light mode switched
       const enabled = !!Settings.data.colorSchemes.darkMode;
-      const label = enabled ? I18n.tr("toast.dark-mode.dark-mode") : 18n.tr("toast.dark-mode.light-mode");
-      const description = 18n.tr("toast.dark-mode.enabled");
+      const label = enabled ? I18n.tr("toast.dark-mode.dark-mode") : I18n.tr("toast.dark-mode.light-mode");
+      const description = I18n.tr("toast.dark-mode.enabled");
       ToastService.showNotice(label, description, "dark-mode");
     }
   }
