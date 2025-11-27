@@ -1832,14 +1832,14 @@
       "memory-section": {
         "label": "Memory usage"
       },
-      "temp-critical-threshold": {
-        "label": "Critical threshold"
+      "network-section": {
+        "label": "Network"
       },
       "polling-interval": {
         "label": "Polling interval"
       },
-      "network-section": {
-        "label": "Network"
+      "temp-critical-threshold": {
+        "label": "Critical threshold"
       },
       "temp-warning-threshold": {
         "label": "Warning threshold"

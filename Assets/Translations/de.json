@@ -1832,6 +1832,9 @@
       "memory-section": {
         "label": "Speicherverbrauch"
       },
+      "polling-interval": {
+        "label": "Abfrageintervall"
+      },
       "temp-critical-threshold": {
         "label": "Kritische Schwelle"
       },

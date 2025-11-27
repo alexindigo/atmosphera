@@ -1832,6 +1832,9 @@
       "memory-section": {
         "label": "Geheugengebruik"
       },
+      "polling-interval": {
+        "label": "Peilingsinterval"
+      },
       "temp-critical-threshold": {
         "label": "Kritieke drempel"
       },

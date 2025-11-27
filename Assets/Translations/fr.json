@@ -1832,6 +1832,9 @@
       "memory-section": {
         "label": "Utilisation mémoire"
       },
+      "polling-interval": {
+        "label": "Intervalle d'interrogation"
+      },
       "temp-critical-threshold": {
         "label": "Seuil critique"
       },

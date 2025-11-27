@@ -1832,6 +1832,9 @@
       "memory-section": {
         "label": "Uso de memoria"
       },
+      "polling-interval": {
+        "label": "Intervalo de sondeo"
+      },
       "temp-critical-threshold": {
         "label": "Umbral crítico"
       },

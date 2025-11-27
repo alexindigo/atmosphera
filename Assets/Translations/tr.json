@@ -1832,6 +1832,9 @@
       "memory-section": {
         "label": "Bellek Kullanımı"
       },
+      "polling-interval": {
+        "label": "Yoklama aralığı"
+      },
       "temp-critical-threshold": {
         "label": "Kritik Eşiği"
       },
