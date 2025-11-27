@@ -9,15 +9,15 @@ Singleton {
   id: root
 
   // Devices
-
   readonly property PwNode sink: Pipewire.ready ? Pipewire.defaultAudioSink : null
   readonly property PwNode source: validatedSource
   readonly property bool hasInput: !!source
-
   readonly property list<PwNode> sinks: deviceNodes.sinks
   readonly property list<PwNode> sources: deviceNodes.sources
 
-  // Output Volume - read directly from device (like friend's version)
+  readonly property real epsilon: 0.005
+
+  // Output Volume - read directly from device
   readonly property real volume: {
     if (!sink?.audio)
     return 0;
@@ -29,7 +29,7 @@ Singleton {
   }
   readonly property bool muted: sink?.audio?.muted ?? true
 
-  // Input Volume - read directly from device (like friend's version)
+  // Input Volume - read directly from device
   readonly property real inputVolume: {
     if (!source?.audio)
     return 0;
@@ -63,14 +63,17 @@ Singleton {
 
   // Validated source (ensures it's a proper audio source, not a sink)
   readonly property PwNode validatedSource: {
-    if (!Pipewire.ready)
-    return null;
+    if (!Pipewire.ready) {
+      return null;
+    }
     const raw = Pipewire.defaultAudioSource;
-    if (!raw || raw.isSink || !raw.audio)
-    return null;
+    if (!raw || raw.isSink || !raw.audio) {
+      return null;
+    }
     // Optional: check type if available (type reflects media.class per docs)
-    if (raw.type && typeof raw.type === "string" && !raw.type.startsWith("Audio/Source"))
-    return null;
+    if (raw.type && typeof raw.type === "string" && !raw.type.startsWith("Audio/Source")) {
+      return null;
+    }
     return raw;
   }
 
@@ -163,7 +166,6 @@ Singleton {
   }
 
   // Output Control
-
   function increaseVolume() {
     if (!Pipewire.ready || !sink?.audio) {
       return;
@@ -193,6 +195,10 @@ Singleton {
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
+    const delta = Math.abs(clampedVolume - sink.audio.volume);
+    if (delta < root.epsilon) {
+      return;
+    }
 
     // Set flag to prevent feedback loop, then set the actual volume
     isSettingOutputVolume = true;
@@ -222,15 +228,16 @@ Singleton {
     const clampedVolume = Math.max(0, Math.min(volume, maxVolume));
 
     // Show volume-x icon when volume is effectively 0% (within rounding threshold)
-    if (clampedVolume < 0.005)
+    if (clampedVolume < root.epsilon) {
       return "volume-x";
-    if (clampedVolume <= 0.5)
+    }
+    if (clampedVolume <= 0.5) {
       return "volume-low";
+    }
     return "volume-high";
   }
 
   // Input Control
-
   function increaseInputVolume() {
     if (!Pipewire.ready || !source?.audio) {
       return;
@@ -257,6 +264,10 @@ Singleton {
 
     const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
     const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
+    const delta = Math.abs(clampedVolume - source.audio.volume);
+    if (delta < root.epsilon) {
+      return;
+    }
 
     // Set flag to prevent feedback loop, then set the actual volume
     isSettingInputVolume = true;
@@ -286,7 +297,6 @@ Singleton {
   }
 
   // Device Selection
-
   function setAudioSink(newSink: PwNode): void {
     if (!Pipewire.ready) {
       Logger.w("AudioService", "Pipewire not ready");

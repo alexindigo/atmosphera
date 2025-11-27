@@ -12,6 +12,7 @@ import qs.Widgets
 // Unified OSD component that displays volume, input volume, and brightness changes
 Variants {
   id: osd
+
   // Do not change the order or it will break settings.
   enum Type {
     Volume,
@@ -42,6 +43,7 @@ Variants {
     readonly property bool isMuted: AudioService.muted
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
+    readonly property real epsilon: 0.005
 
     // Helper Functions
     function getIcon() {
@@ -50,14 +52,14 @@ Variants {
         if (isMuted)
           return "volume-mute";
         // Show volume-x icon when volume is effectively 0% (within rounding threshold)
-        if (currentVolume < 0.005)
+        if (currentVolume < root.epsilon)
           return "volume-x";
         return currentVolume <= 0.5 ? "volume-low" : "volume-high";
       case OSD.Type.InputVolume:
         return isInputMuted ? "microphone-off" : "microphone";
       case OSD.Type.Brightness:
         // Show sun-off icon when brightness is effectively 0% (within rounding threshold)
-        if (currentBrightness < 0.005)
+        if (currentBrightness < root.epsilon)
           return "sun-off";
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       case OSD.Type.LockKey:
