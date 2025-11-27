@@ -186,9 +186,12 @@ ColumnLayout {
 
           // Avatar container with rectangular design (modern, no shader issues)
           Item {
+            id: wrapper
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: Style.baseWidgetSize * 1.8
             Layout.preferredHeight: Style.baseWidgetSize * 1.8
+
+            property bool isRounded: false
 
             // Background and image container
             Item {
@@ -201,8 +204,10 @@ ColumnLayout {
                   // Try cached circular version first
                   var username = root.contributors[index].login;
                   var cached = GitHubService.cachedCircularAvatars[username];
-                  if (cached)
+                  if (cached) {
+                    wrapper.isRounded = true;
                     return cached;
+                  }
 
                   // Fall back to original avatar URL
                   return root.contributors[index].avatar_url || "";
@@ -229,6 +234,15 @@ ColumnLayout {
                 pointSize: Style.fontSizeL
                 color: Color.mPrimary
               }
+            }
+
+            Rectangle {
+              visible: wrapper.isRounded
+              anchors.fill: parent
+              color: Color.transparent
+              radius: width * 0.5
+              border.width: Style.borderM
+              border.color: Color.mPrimary
             }
           }
 
