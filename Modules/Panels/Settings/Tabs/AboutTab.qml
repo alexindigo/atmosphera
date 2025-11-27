@@ -162,10 +162,10 @@ ColumnLayout {
       delegate: Rectangle {
         width: Math.round(Style.baseWidgetSize * 6.8)
         height: Math.round(Style.baseWidgetSize * 2.3)
-        radius: Style.radiusL
+        radius: Style.radiusM
         color: contributorArea.containsMouse ? Color.mHover : Color.transparent
         border.width: 1
-        border.color: contributorArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
+        border.color: contributorArea.containsMouse ? Color.mPrimary : Color.mOutline
 
         Behavior on color {
           ColorAnimation {
@@ -181,23 +181,20 @@ ColumnLayout {
 
         RowLayout {
           anchors.fill: parent
-          anchors.margins: Style.marginS
+          anchors.margins: Style.marginM
           spacing: Style.marginM
 
-          // Avatar container with layered border on top
+          // Avatar container with rectangular design (modern, no shader issues)
           Item {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: Style.baseWidgetSize * 1.8
             Layout.preferredHeight: Style.baseWidgetSize * 1.8
 
             // Background and image container
-            Rectangle {
+            Item {
               anchors.fill: parent
-              radius: Style.radiusM
-              color: Qt.alpha(Color.mPrimary, 0.1)
-              clip: true // Enable clipping to prevent image overflow
 
-              // Simple image without shader effects
+              // Simple image
               Image {
                 anchors.fill: parent
                 source: modelData.avatar_url || ""
@@ -206,8 +203,6 @@ ColumnLayout {
                 smooth: true
                 asynchronous: true
                 visible: modelData.avatar_url !== undefined && modelData.avatar_url !== ""
-
-                // Simple opacity for loading state
                 opacity: status === Image.Ready ? 1.0 : 0.0
 
                 Behavior on opacity {
@@ -226,21 +221,6 @@ ColumnLayout {
                 color: Color.mPrimary
               }
             }
-
-            // Border overlay (on top of image)
-            Rectangle {
-              anchors.fill: parent
-              radius: Style.radiusM
-              color: Color.transparent
-              border.width: 2
-              border.color: contributorArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.5)
-
-              Behavior on border.color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
-            }
           }
 
           // Info column
@@ -252,7 +232,7 @@ ColumnLayout {
             NText {
               text: modelData.login || "Unknown"
               font.weight: Style.fontWeightBold
-              color: contributorArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+              color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurface
               elide: Text.ElideRight
               Layout.fillWidth: true
               pointSize: Style.fontSizeS
@@ -271,8 +251,7 @@ ColumnLayout {
               NText {
                 text: `${(modelData.contributions || 0).toString()} commits`
                 pointSize: Style.fontSizeXS
-                color: Color.mOnSurfaceVariant
-                font.weight: Style.fontWeightMedium
+                color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurfaceVariant
               }
             }
           }
