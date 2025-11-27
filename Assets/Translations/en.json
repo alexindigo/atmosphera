@@ -1814,9 +1814,6 @@
       "disk-warning-threshold": {
         "label": "Warning threshold"
       },
-      "network-section": {
-        "label": "Network"
-      },
       "general": {
         "section": {
           "description": "Configure the system monitor behavior and appearance.",
@@ -1835,11 +1832,14 @@
       "memory-section": {
         "label": "Memory usage"
       },
-      "temp-critical-threshold": {
-        "label": "Critical threshold"
+      "network-section": {
+        "label": "Network"
       },
       "polling-interval": {
         "label": "Polling interval"
+      },
+      "temp-critical-threshold": {
+        "label": "Critical threshold"
       },
       "temp-warning-threshold": {
         "label": "Warning threshold"

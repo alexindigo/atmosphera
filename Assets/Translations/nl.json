@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "Geheugengebruik"
       },
+      "network-section": {
+        "label": "Netwerk"
+      },
+      "polling-interval": {
+        "label": "Peilingsinterval"
+      },
       "temp-critical-threshold": {
         "label": "Kritieke drempel"
       },

@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "内存使用率"
       },
+      "network-section": {
+        "label": "网络"
+      },
+      "polling-interval": {
+        "label": "轮询间隔"
+      },
       "temp-critical-threshold": {
         "label": "严重阈值"
       },

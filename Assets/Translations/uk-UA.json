@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "Використання пам'яті"
       },
+      "network-section": {
+        "label": "Мережа"
+      },
+      "polling-interval": {
+        "label": "Інтервал опитування"
+      },
       "temp-critical-threshold": {
         "label": "Критичний поріг"
       },

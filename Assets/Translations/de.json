@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "Speicherverbrauch"
       },
+      "network-section": {
+        "label": "Netzwerk"
+      },
+      "polling-interval": {
+        "label": "Abfrageintervall"
+      },
       "temp-critical-threshold": {
         "label": "Kritische Schwelle"
       },

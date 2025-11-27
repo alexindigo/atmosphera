@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "Uso de memória"
       },
+      "network-section": {
+        "label": "Rede"
+      },
+      "polling-interval": {
+        "label": "Intervalo de pesquisa"
+      },
       "temp-critical-threshold": {
         "label": "Limite crítico"
       },

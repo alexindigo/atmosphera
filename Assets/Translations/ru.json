@@ -1832,6 +1832,12 @@
       "memory-section": {
         "label": "Использование памяти"
       },
+      "network-section": {
+        "label": "Сеть"
+      },
+      "polling-interval": {
+        "label": "Интервал опроса"
+      },
       "temp-critical-threshold": {
         "label": "Критический порог"
       },
