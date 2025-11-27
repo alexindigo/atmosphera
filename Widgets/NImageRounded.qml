@@ -19,30 +19,74 @@ Item {
 
   signal statusChanged(int status)
 
-  ClippingRectangle {
+  // Use ClippingRectangle when visible, but switch to simple Rectangle when fading out
+  // This prevents Qt 6.8 crashes with shaders in GridView delegates during close animations
+  Loader {
+    id: contentLoader
     anchors.fill: parent
-    color: Color.transparent
-    radius: root.radius
-    border.color: root.borderColor
-    border.width: root.borderWidth
+    sourceComponent: root.opacity > 0.05 ? clippedContent : simpleContent
+  }
 
-    Image {
-      anchors.fill: parent
-      visible: !showFallback
-      source: imagePath
-      mipmap: true
-      smooth: true
-      asynchronous: true
-      antialiasing: true
-      fillMode: root.imageFillMode
-      onStatusChanged: root.statusChanged(status)
+  // Normal rendering with ClippingRectangle (uses shaders)
+  Component {
+    id: clippedContent
+
+    ClippingRectangle {
+      color: Color.transparent
+      radius: root.radius
+      border.color: root.borderColor
+      border.width: root.borderWidth
+
+      Image {
+        anchors.fill: parent
+        visible: !root.showFallback
+        source: root.imagePath
+        mipmap: true
+        smooth: true
+        asynchronous: true
+        antialiasing: true
+        fillMode: root.imageFillMode
+        onStatusChanged: root.statusChanged(status)
+      }
+
+      NIcon {
+        anchors.centerIn: parent
+        visible: root.showFallback
+        icon: root.fallbackIcon
+        pointSize: root.fallbackIconSize
+      }
     }
+  }
 
-    NIcon {
-      anchors.centerIn: parent
-      visible: showFallback
-      icon: fallbackIcon
-      pointSize: fallbackIconSize
+  // Fallback rendering without shaders (when fading out)
+  Component {
+    id: simpleContent
+
+    Rectangle {
+      color: Color.transparent
+      radius: root.radius
+      border.color: root.borderColor
+      border.width: root.borderWidth
+      clip: true
+
+      Image {
+        anchors.fill: parent
+        visible: !root.showFallback
+        source: root.imagePath
+        mipmap: true
+        smooth: true
+        asynchronous: true
+        antialiasing: true
+        fillMode: root.imageFillMode
+        onStatusChanged: root.statusChanged(status)
+      }
+
+      NIcon {
+        anchors.centerIn: parent
+        visible: root.showFallback
+        icon: root.fallbackIcon
+        pointSize: root.fallbackIconSize
+      }
     }
   }
 }
