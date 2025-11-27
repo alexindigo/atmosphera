@@ -117,10 +117,15 @@ Singleton {
   // Timer for network speeds
   Timer {
     id: networkTimer
-    interval: root.defaultIntervalMs
+    interval: root.normalizeInterval(Settings.data.systemMonitor.networkPollingInterval)
     repeat: true
     running: true
     triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
     onTriggered: netDevFile.reload()
   }
 

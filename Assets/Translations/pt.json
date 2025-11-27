@@ -1845,6 +1845,9 @@
         "description": "Ajuste os limites de aviso/crítico e os intervalos de consulta para cada métrica do sistema.",
         "label": "Limiares"
       },
+      "network-section": {
+        "label": "Rede"
+      },
       "title": "Monitor do Sistema",
       "use-custom-highlight-colors": {
         "description": "Quando desativado, são usadas as cores de destaque padrão do tema.",

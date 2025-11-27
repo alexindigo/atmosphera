@@ -414,6 +414,7 @@ Singleton {
       property int tempPollingInterval: 3000
       property int memPollingInterval: 3000
       property int diskPollingInterval: 3000
+      property int networkPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""

@@ -238,6 +238,7 @@
     "tempPollingInterval": 3000,
     "memPollingInterval": 3000,
     "diskPollingInterval": 3000,
+    "networkPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
     "criticalColor": ""

@@ -1845,6 +1845,9 @@
         "description": "Passe die Warn-/Kritisch-Schwellen und die Abfrageintervalle für jede Systemmetrik an.",
         "label": "Schwellenwerte"
       },
+      "network-section": {
+        "label": "Netzwerk"
+      },
       "title": "Systemmonitor",
       "use-custom-highlight-colors": {
         "description": "Wenn deaktiviert, werden die Standard-Hervorhebungsfarben des Themes verwendet.",

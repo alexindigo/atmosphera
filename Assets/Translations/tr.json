@@ -1845,6 +1845,9 @@
         "description": "Her sistem metriği için uyarı/kritik eşiklerini ve yoklama aralıklarını ayarlayın.",
         "label": "Eşikler"
       },
+      "network-section": {
+        "label": "Ağ"
+      },
       "title": "Sistem İzleme",
       "use-custom-highlight-colors": {
         "description": "Devre dışı bırakıldığında, tema varsayılan vurgulama renkleri kullanılır.",

@@ -1845,6 +1845,9 @@
         "description": "Pas de waarschuwing/kritieke drempels en de pollingsintervallen voor elke systeemmetriek aan.",
         "label": "Drempels"
       },
+      "network-section": {
+        "label": "Netwerk"
+      },
       "title": "Systeemmonitor",
       "use-custom-highlight-colors": {
         "description": "Indien uitgeschakeld, worden de standaard markeerkleuren van het thema gebruikt.",

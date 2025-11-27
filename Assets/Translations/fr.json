@@ -1845,6 +1845,9 @@
         "description": "Ajustez les seuils d’avertissement/critiques et les intervalles d’interrogation pour chaque métrique système.",
         "label": "Seuils"
       },
+      "network-section": {
+        "label": "Réseau"
+      },
       "title": "Moniteur système",
       "use-custom-highlight-colors": {
         "description": "Lorsque cette option est désactivée, les couleurs de surbrillance par défaut du thème sont utilisées.",

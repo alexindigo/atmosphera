@@ -1845,6 +1845,9 @@
         "description": "为每个系统指标调整警告/严重阈值和轮询间隔。",
         "label": "阈值"
       },
+      "network-section": {
+        "label": "网络"
+      },
       "title": "系统监视器",
       "use-custom-highlight-colors": {
         "description": "关闭时将使用主题默认高亮颜色。",
