@@ -400,15 +400,15 @@
       "week": "週"
     },
     "timer": {
+      "countdown": "カウントダウン",
       "duration": "時間",
       "hours": "時間",
       "minutes": "分",
-      "seconds": "秒",
       "pause": "一時停止",
-      "start": "開始",
       "reset": "リセット",
+      "seconds": "秒",
+      "start": "開始",
       "stopwatch": "ストップウォッチ",
-      "countdown": "カウントダウン",
       "timer": "タイマー",
       "title": "タイマー"
     },
@@ -2076,8 +2076,8 @@
     },
     "dark-mode": {
       "dark-mode": "ダークモード",
-      "light-mode": "ライトモード",
-      "enabled": "有効"
+      "enabled": "有効",
+      "light-mode": "ライトモード"
     },
     "do-not-disturb": {
       "disabled": "おやすみモードを無効化",

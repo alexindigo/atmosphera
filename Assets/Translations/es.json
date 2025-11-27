@@ -2076,8 +2076,8 @@
     },
     "dark-mode": {
       "dark-mode": "Modo oscuro",
-      "light-mode": "Modo claro",
-      "enabled": "Activado"
+      "enabled": "Activado",
+      "light-mode": "Modo claro"
     },
     "do-not-disturb": {
       "disabled": "'No molestar' desactivado",
