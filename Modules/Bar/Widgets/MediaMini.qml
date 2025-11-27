@@ -428,7 +428,7 @@ Item {
                 anchors.centerIn: parent
                 icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
                 color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-                pointSize: showAlbumArt ? 8 * scaling : 12 * scaling  // Smaller when inside album art circle, larger when alone
+                pointSize: (showAlbumArt || showProgressRing) ? 8 * scaling : 12 * scaling  // Smaller when inside album art circle or progress ring, larger when alone
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 visible: (!showAlbumArt && hasActivePlayer) && showProgressRing
