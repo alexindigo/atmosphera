@@ -1842,7 +1842,7 @@
         "label": "CPU-Temperatur"
       },
       "thresholds-section": {
-        "description": "Setzen Sie Schwellenwerte für Systemmetriken; Werte darüber werden hervorgehoben.",
+        "description": "Passe die Warn-/Kritisch-Schwellen und die Abfrageintervalle für jede Systemmetrik an.",
         "label": "Schwellenwerte"
       },
       "title": "Systemmonitor",

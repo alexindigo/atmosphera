@@ -1842,7 +1842,7 @@
         "label": "Temperatura da CPU"
       },
       "thresholds-section": {
-        "description": "Defina limiares para métricas do sistema; valores acima serão destacados.",
+        "description": "Ajuste os limites de aviso/crítico e os intervalos de consulta para cada métrica do sistema.",
         "label": "Limiares"
       },
       "title": "Monitor do Sistema",

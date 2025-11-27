@@ -1814,6 +1814,9 @@
       "disk-warning-threshold": {
         "label": "Warning threshold"
       },
+      "network-section": {
+        "label": "Network"
+      },
       "general": {
         "section": {
           "description": "Configure the system monitor behavior and appearance.",
@@ -1835,6 +1838,9 @@
       "temp-critical-threshold": {
         "label": "Critical threshold"
       },
+      "polling-interval": {
+        "label": "Polling interval"
+      },
       "temp-warning-threshold": {
         "label": "Warning threshold"
       },
@@ -1842,7 +1848,7 @@
         "label": "CPU temperature"
       },
       "thresholds-section": {
-        "description": "Set thresholds for system metrics, values above these will be highlighted.",
+        "description": "Adjust warning/critical thresholds and polling intervals for each system metric.",
         "label": "Thresholds"
       },
       "title": "System Monitor",

@@ -1842,7 +1842,7 @@
         "label": "CPU 温度"
       },
       "thresholds-section": {
-        "description": "设置各项系统测量指标的阈值，超过该值将以高亮色进行提示。",
+        "description": "为每个系统指标调整警告/严重阈值和轮询间隔。",
         "label": "阈值"
       },
       "title": "系统监视器",

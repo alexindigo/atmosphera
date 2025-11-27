@@ -410,6 +410,10 @@ Singleton {
       property int memCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
+      property int cpuPollingInterval: 3000
+      property int tempPollingInterval: 3000
+      property int memPollingInterval: 3000
+      property int diskPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""

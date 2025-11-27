@@ -1842,7 +1842,7 @@
         "label": "CPU Sıcaklığı"
       },
       "thresholds-section": {
-        "description": "Sistem metrikleri için eşikler ayarlayın; bu değerlerin üzerindekiler vurgulanacaktır.",
+        "description": "Her sistem metriği için uyarı/kritik eşiklerini ve yoklama aralıklarını ayarlayın.",
         "label": "Eşikler"
       },
       "title": "Sistem İzleme",

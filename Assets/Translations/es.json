@@ -1842,7 +1842,7 @@
         "label": "Temperatura de la CPU"
       },
       "thresholds-section": {
-        "description": "Establece umbrales para métricas del sistema; los valores por encima se resaltarán.",
+        "description": "Ajusta los umbrales de advertencia/crítico y los intervalos de sondeo para cada métrica del sistema.",
         "label": "Umbrales"
       },
       "title": "Monitor del sistema",

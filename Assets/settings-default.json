@@ -234,6 +234,10 @@
     "memCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
+    "cpuPollingInterval": 3000,
+    "tempPollingInterval": 3000,
+    "memPollingInterval": 3000,
+    "diskPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
     "criticalColor": ""

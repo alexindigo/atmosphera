@@ -1842,7 +1842,7 @@
         "label": "Température CPU"
       },
       "thresholds-section": {
-        "description": "Définir des seuils pour les métriques système ; les valeurs supérieures à ces seuils seront mises en évidence.",
+        "description": "Ajustez les seuils d’avertissement/critiques et les intervalles d’interrogation pour chaque métrique système.",
         "label": "Seuils"
       },
       "title": "Moniteur système",

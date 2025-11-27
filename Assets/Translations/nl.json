@@ -1842,7 +1842,7 @@
         "label": "CPU-temperatuur"
       },
       "thresholds-section": {
-        "description": "Stel drempelwaarden in voor systeemstatistieken; waarden die hierboven liggen worden gemarkeerd.",
+        "description": "Pas de waarschuwing/kritieke drempels en de pollingsintervallen voor elke systeemmetriek aan.",
         "label": "Drempels"
       },
       "title": "Systeemmonitor",
