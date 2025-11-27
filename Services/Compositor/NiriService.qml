@@ -153,7 +153,6 @@ Item {
           } else {
             Logger.e("NiriService", "Niri returned an error:", data.Err, line);
           }
-
         } catch (e) {
           Logger.e("NiriService", "Failed to parse data from socket:", e, line);
           return;
