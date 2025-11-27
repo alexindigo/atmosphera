@@ -149,93 +149,159 @@ ColumnLayout {
     enableDescriptionRichText: true
   }
 
-  GridView {
-    id: contributorsGrid
-
-    readonly property int columnsCount: 2
-
+  // Contributors flow layout (avoids GridView shader crashes on Qt 6.8)
+  Flow {
+    id: contributorsFlow
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: cellWidth * columnsCount
-    Layout.preferredHeight: {
-      if (root.contributors.length === 0)
-        return 0;
+    Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
+    spacing: Style.marginM
 
-      const rows = Math.ceil(root.contributors.length / columnsCount);
-      return rows * cellHeight;
-    }
-    cellWidth: Math.round(Style.baseWidgetSize * 7)
-    cellHeight: Math.round(Style.baseWidgetSize * 2.5)
-    model: root.contributors
+    Repeater {
+      model: root.contributors
 
-    delegate: Rectangle {
-      width: contributorsGrid.cellWidth - Style.marginM
-      height: contributorsGrid.cellHeight - Style.marginM
-      radius: Style.radiusL
-      color: contributorArea.containsMouse ? Color.mHover : Color.transparent
+      delegate: Rectangle {
+        width: Math.round(Style.baseWidgetSize * 6.8)
+        height: Math.round(Style.baseWidgetSize * 2.3)
+        radius: Style.radiusL
+        color: contributorArea.containsMouse ? Color.mHover : Color.transparent
+        border.width: 1
+        border.color: contributorArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
 
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationFast
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+          }
         }
-      }
 
-      RowLayout {
-        anchors.centerIn: parent
-        width: parent.width - (Style.marginS * 2)
-        spacing: Style.marginM
+        Behavior on border.color {
+          ColorAnimation {
+            duration: Style.animationFast
+          }
+        }
 
-        Item {
-          Layout.alignment: Qt.AlignVCenter
-          Layout.preferredWidth: Style.baseWidgetSize * 2 * Style.uiScaleRatio
-          Layout.preferredHeight: Style.baseWidgetSize * 2 * Style.uiScaleRatio
+        RowLayout {
+          anchors.fill: parent
+          anchors.margins: Style.marginS
+          spacing: Style.marginM
 
-          NImageRounded {
-            anchors.fill: parent
-            anchors.margins: Style.marginXS
-            radius: width * 0.5
-            imagePath: modelData.avatar_url || ""
-            fallbackIcon: "person"
-            borderColor: contributorArea.containsMouse ? Color.mOnHover : Color.mPrimary
-            borderWidth: Style.borderM
+          // Avatar container with layered border on top
+          Item {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredWidth: Style.baseWidgetSize * 1.8
+            Layout.preferredHeight: Style.baseWidgetSize * 1.8
 
-            Behavior on borderColor {
-              ColorAnimation {
+            // Background and image container
+            Rectangle {
+              anchors.fill: parent
+              radius: Style.radiusM
+              color: Qt.alpha(Color.mPrimary, 0.1)
+              clip: true // Enable clipping to prevent image overflow
+
+              // Simple image without shader effects
+              Image {
+                anchors.fill: parent
+                source: modelData.avatar_url || ""
+                fillMode: Image.PreserveAspectCrop
+                mipmap: true
+                smooth: true
+                asynchronous: true
+                visible: modelData.avatar_url !== undefined && modelData.avatar_url !== ""
+
+                // Simple opacity for loading state
+                opacity: status === Image.Ready ? 1.0 : 0.0
+
+                Behavior on opacity {
+                  NumberAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+              }
+
+              // Fallback icon
+              NIcon {
+                anchors.centerIn: parent
+                visible: !modelData.avatar_url || modelData.avatar_url === ""
+                icon: "person"
+                pointSize: Style.fontSizeL
+                color: Color.mPrimary
+              }
+            }
+
+            // Border overlay (on top of image)
+            Rectangle {
+              anchors.fill: parent
+              radius: Style.radiusM
+              color: Color.transparent
+              border.width: 2
+              border.color: contributorArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.5)
+
+              Behavior on border.color {
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
+              }
+            }
+          }
+
+          // Info column
+          ColumnLayout {
+            spacing: 2
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
+
+            NText {
+              text: modelData.login || "Unknown"
+              font.weight: Style.fontWeightBold
+              color: contributorArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+              elide: Text.ElideRight
+              Layout.fillWidth: true
+              pointSize: Style.fontSizeS
+            }
+
+            RowLayout {
+              spacing: Style.marginXS
+              Layout.fillWidth: true
+
+              NIcon {
+                icon: "git-commit"
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+              }
+
+              NText {
+                text: `${(modelData.contributions || 0).toString()} commits`
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+                font.weight: Style.fontWeightMedium
+              }
+            }
+          }
+
+          // Hover indicator
+          NIcon {
+            Layout.alignment: Qt.AlignVCenter
+            icon: "arrow-right"
+            pointSize: Style.fontSizeS
+            color: Color.mPrimary
+            opacity: contributorArea.containsMouse ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
                 duration: Style.animationFast
               }
             }
           }
         }
 
-        ColumnLayout {
-          spacing: Style.marginXS
-          Layout.alignment: Qt.AlignVCenter
-          Layout.fillWidth: true
-
-          NText {
-            text: modelData.login || "Unknown"
-            font.weight: Style.fontWeightBold
-            color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurface
-            elide: Text.ElideRight
-            Layout.fillWidth: true
+        MouseArea {
+          id: contributorArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: {
+            if (modelData.html_url)
+              Quickshell.execDetached(["xdg-open", modelData.html_url]);
           }
-
-          NText {
-            text: (modelData.contributions || 0) + " " + ((modelData.contributions || 0) === 1 ? "commit" : "commits")
-            pointSize: Style.fontSizeXS
-            color: contributorArea.containsMouse ? Color.mOnHover : Color.mOnSurfaceVariant
-          }
-        }
-      }
-
-      MouseArea {
-        id: contributorArea
-
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-          if (modelData.html_url)
-            Quickshell.execDetached(["xdg-open", modelData.html_url]);
         }
       }
     }
