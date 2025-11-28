@@ -504,6 +504,12 @@
       "no-notifications": "通知なし",
       "title": "通知"
     },
+    "range": {
+      "all": "すべて",
+      "earlier": "以前",
+      "today": "今日",
+      "yesterday": "昨日"
+    },
     "time": {
       "diffD": "1日前",
       "diffDD": "{diff}日前",

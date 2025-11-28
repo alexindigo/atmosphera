@@ -504,6 +504,12 @@
       "no-notifications": "No notifications",
       "title": "Notifications"
     },
+    "range": {
+      "all": "All",
+      "earlier": "Earlier",
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
     "time": {
       "diffD": "1 day ago",
       "diffDD": "{diff} days ago",

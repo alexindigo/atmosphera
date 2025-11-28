@@ -13,6 +13,61 @@ import qs.Widgets
 SmartPanel {
   id: root
 
+  // 0 = All, 1 = Today, 2 = Yesterday, 3 = Earlier
+  property int currentRange: 1  // start on Today by default
+  property var rangeCounts: [0, 0, 0, 0]
+
+  function dateOnly(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  function rangeForTimestamp(ts) {
+    var dt = new Date(ts);
+    var today = dateOnly(new Date());
+    var thatDay = dateOnly(dt);
+
+    var diffMs = today - thatDay;
+    var diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0)
+      return 0;
+    if (diffDays === 1)
+      return 1;
+    return 2;
+  }
+
+  function isInCurrentRange(ts) {
+    if (currentRange === 0)
+      return true;
+    return rangeForTimestamp(ts) === (currentRange - 1);
+  }
+
+  function recalcRangeCounts() {
+    var m = NotificationService.historyList;
+    var counts = [0, 0, 0, 0];
+
+    counts[0] = m.count;
+
+    for (var i = 0; i < m.count; ++i) {
+      var item = m.get(i);
+      var r = rangeForTimestamp(item.timestamp);
+      counts[r + 1] = counts[r + 1] + 1;
+    }
+
+    rangeCounts = counts;
+  }
+
+  function countForRange(range) {
+    return rangeCounts[range] || 0;
+  }
+
+  Connections {
+    target: NotificationService.historyList
+    function onCountChanged() { recalcRangeCounts(); }
+  }
+
+  Component.onCompleted: recalcRangeCounts()
+
   preferredWidth: Math.round(420 * Style.uiScaleRatio)
   preferredHeight: Math.round(540 * Style.uiScaleRatio)
 
@@ -78,6 +133,66 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: root.close()
+          }
+        }
+      }
+
+      // Time range tabs ([All] / [Today] / [Yesterday] / [Earlier])
+      NBox {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.marginS
+        implicitHeight: timeTabs.implicitHeight + (Style.marginS * 2)
+        visible: NotificationService.historyList.count > 0 && root.groupByDate
+
+        RowLayout {
+          id: timeTabs
+          spacing: Style.marginXS
+          anchors.fill: parent
+          anchors.margins: Style.marginS
+          visible: NotificationService.historyList.count > 0
+
+          Repeater {
+            model: 4
+
+            delegate: NButton {
+              readonly property int rangeId: index
+              readonly property bool isActive: root.currentRange === rangeId
+
+              text: {
+                if (rangeId === 0)
+                  return I18n.tr("notifications.range.all") +
+                        " (" + root.countForRange(rangeId) + ")";
+                else if (rangeId === 1)
+                  return I18n.tr("notifications.range.today") +
+                        " (" + root.countForRange(rangeId) + ")";
+                else if (rangeId === 2)
+                  return I18n.tr("notifications.range.yesterday") +
+                        " (" + root.countForRange(rangeId) + ")";
+                return I18n.tr("notifications.range.earlier") +
+                      " (" + root.countForRange(rangeId) + ")";
+              }
+
+              Layout.fillWidth: true
+              Layout.preferredWidth: 1
+              implicitHeight: Style.baseWidgetSize * 0.7
+              fontSize: Style.fontSizeXS
+              outlined: false
+
+              backgroundColor: isActive
+                              ? Color.mPrimary
+                              : (hovered ? Color.mHover : Color.transparent)
+              textColor: isActive
+                        ? Color.mOnPrimary
+                        : (hovered ? Color.mOnHover : Color.mOnSurface)
+              hoverColor: backgroundColor
+
+              Behavior on backgroundColor {
+                enabled: !Settings.data.general.animationDisabled
+                ColorAnimation { duration: Style.animationFast }
+              }
+
+              onClicked: root.currentRange = rangeId
+            }
           }
         }
       }
@@ -148,7 +263,12 @@ SmartPanel {
             delegate: Item {
               id: notificationDelegate
               width: parent.width
-              height: contentColumn.height + (Style.marginM * 2)
+              // height: contentColumn.height + (Style.marginM * 2)
+
+              // --- NEW: show only notifications in the active range ---
+              visible: root.isInCurrentRange(model.timestamp)
+              height: visible ? contentColumn.height + (Style.marginM * 2) : 0
+              // --- end NEW ---              
 
               property string notificationId: model.id
               property bool isExpanded: scrollView.expandedId === notificationId

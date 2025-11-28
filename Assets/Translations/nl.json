@@ -504,6 +504,12 @@
       "no-notifications": "Geen meldingen",
       "title": "Meldingen"
     },
+    "range": {
+      "all": "Alle",
+      "earlier": "Eerder",
+      "today": "Vandaag",
+      "yesterday": "Gisteren"
+    },
     "time": {
       "diffD": "1 dag geleden",
       "diffDD": "{diff} dagen geleden",

@@ -504,6 +504,12 @@
       "no-notifications": "Bildirim yok",
       "title": "Bildirimler"
     },
+    "range": {
+      "all": "Tümü",
+      "earlier": "Öncekiler",
+      "today": "Bugün",
+      "yesterday": "Dün"
+    },
     "time": {
       "diffD": "1 gün önce",
       "diffDD": "{diff} gün önce",
