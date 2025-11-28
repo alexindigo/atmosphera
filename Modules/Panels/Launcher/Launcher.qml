@@ -877,8 +877,18 @@ SmartPanel {
 
             width: parent.width
             height: parent.height
-            cellWidth: gridCellSize + Style.marginXXS
-            cellHeight: gridCellSize + Style.marginXXS
+            cellWidth: {
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                return Math.floor(parent.width / 5);
+              }
+              return gridCellSize + Style.marginXXS;
+            }
+            cellHeight: {
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                return Math.floor(parent.width / 5) * 1.2;
+              }
+              return gridCellSize + Style.marginXXS;
+            }
             model: results
             cacheBuffer: resultsGrid.height * 2
             keyNavigationEnabled: false
@@ -934,8 +944,18 @@ SmartPanel {
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
-              width: gridCellSize
-              height: gridCellSize
+              width: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return Math.floor(resultsGrid.width / 5) - 8;
+                }
+                return gridCellSize;
+              }
+              height: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return Math.floor(resultsGrid.width / 5) * 1.2 - 8;
+                }
+                return gridCellSize;
+              }
               radius: Style.radiusM
               color: gridEntry.isSelected ? Color.mHover : Color.mSurface
 
@@ -948,13 +968,28 @@ SmartPanel {
 
               ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: Style.marginM
+                anchors.margins: {
+                  if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                    return 4;
+                  }
+                  return Style.marginM;
+                }
                 spacing: Style.marginS
 
                 // Icon badge or Image preview or Emoji
                 Rectangle {
-                  Layout.preferredWidth: badgeSize * 1.5
-                  Layout.preferredHeight: badgeSize * 1.5
+                  Layout.preferredWidth: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return gridEntry.width - 8;
+                    }
+                    return badgeSize * 1.5;
+                  }
+                  Layout.preferredHeight: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return gridEntry.width - 8;
+                    }
+                    return badgeSize * 1.5;
+                  }
                   Layout.alignment: Qt.AlignHCenter
                   radius: Style.radiusM
                   color: Color.mSurfaceVariant
@@ -1018,7 +1053,15 @@ SmartPanel {
                     anchors.centerIn: parent
                     visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
                     text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
-                    pointSize: modelData.emojiChar ? Style.fontSizeXXL * 2 : Style.fontSizeXL
+                    pointSize: {
+                      if (modelData.emojiChar) {
+                        if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                          return gridEntry.width * 0.4;
+                        }
+                        return Style.fontSizeXXL * 2;
+                      }
+                      return Style.fontSizeXL;
+                    }
                     font.weight: Style.fontWeightBold
                     color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
                   }
@@ -1027,13 +1070,20 @@ SmartPanel {
                 // Text content
                 NText {
                   text: modelData.name || "Unknown"
-                  pointSize: Style.fontSizeS
+                  pointSize: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return Style.fontSizeS;
+                    }
+                    return Style.fontSizeS;
+                  }
                   font.weight: Style.fontWeightSemiBold
                   color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
                   elide: Text.ElideRight
                   Layout.fillWidth: true
-                  Layout.maximumWidth: gridCellSize - Style.marginM * 2
+                  Layout.maximumWidth: gridEntry.width - 8
                   horizontalAlignment: Text.AlignHCenter
+                  wrapMode: Text.NoWrap
+                  maximumLineCount: 1
                 }
               }
 
