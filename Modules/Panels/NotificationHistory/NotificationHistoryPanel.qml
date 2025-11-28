@@ -58,8 +58,8 @@ SmartPanel {
       var item = m.get(i);
       if (!item || typeof item.timestamp === "undefined")
         continue;
-      var r = rangeForTimestamp(item.timestamp); // 0..2
-      counts[r + 1] = counts[r + 1] + 1;        // shift by +1
+      var r = rangeForTimestamp(item.timestamp);
+      counts[r + 1] = counts[r + 1] + 1;
     }
 
     rangeCounts = counts;
@@ -205,7 +205,6 @@ SmartPanel {
         }
       }
 
-
       // Empty state when no notifications
       ColumnLayout {
         Layout.fillWidth: true
@@ -272,12 +271,8 @@ SmartPanel {
             delegate: Item {
               id: notificationDelegate
               width: parent.width
-              // height: contentColumn.height + (Style.marginM * 2)
-
-              // --- NEW: show only notifications in the active range ---
               visible: root.isInCurrentRange(model.timestamp)
               height: visible ? contentColumn.height + (Style.marginM * 2) : 0
-              // --- end NEW ---              
 
               property string notificationId: model.id
               property bool isExpanded: scrollView.expandedId === notificationId
