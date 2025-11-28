@@ -23,10 +23,11 @@ Item {
     "activity": "run",
     "travel": "plane",
     "objects": "home",
-    "symbols": "star"
+    "symbols": "star",
+    "flags": "flag"
   })
 
-  property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols"]
+  property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols", "flags"]
 
   // Force update results when emoji service loads
   Connections {
