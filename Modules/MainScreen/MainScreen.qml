@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
@@ -24,6 +25,7 @@ import qs.Modules.Panels.SetupWizard
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
 import qs.Modules.Panels.WiFi
+import qs.Services.Compositor
 import qs.Services.UI
 
 /**
@@ -49,22 +51,22 @@ PanelWindow {
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
 
-  // Expose panel placeholders for AllBackgrounds
-  readonly property var audioPanelPlaceholder: audioPanel.panelPlaceholder
-  readonly property var batteryPanelPlaceholder: batteryPanel.panelPlaceholder
-  readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelPlaceholder
-  readonly property var brightnessPanelPlaceholder: brightnessPanel.panelPlaceholder
-  readonly property var calendarPanelPlaceholder: calendarPanel.panelPlaceholder
-  readonly property var changelogPanelPlaceholder: changelogPanel.panelPlaceholder
-  readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelPlaceholder
-  readonly property var launcherPanelPlaceholder: launcherPanel.panelPlaceholder
-  readonly property var notificationHistoryPanelPlaceholder: notificationHistoryPanel.panelPlaceholder
-  readonly property var sessionMenuPanelPlaceholder: sessionMenuPanel.panelPlaceholder
-  readonly property var settingsPanelPlaceholder: settingsPanel.panelPlaceholder
-  readonly property var setupWizardPanelPlaceholder: setupWizardPanel.panelPlaceholder
-  readonly property var trayDrawerPanelPlaceholder: trayDrawerPanel.panelPlaceholder
-  readonly property var wallpaperPanelPlaceholder: wallpaperPanel.panelPlaceholder
-  readonly property var wifiPanelPlaceholder: wifiPanel.panelPlaceholder
+  // Expose panel backgrounds for AllBackgrounds
+  readonly property var audioPanelPlaceholder: audioPanel.panelRegion
+  readonly property var batteryPanelPlaceholder: batteryPanel.panelRegion
+  readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelRegion
+  readonly property var brightnessPanelPlaceholder: brightnessPanel.panelRegion
+  readonly property var calendarPanelPlaceholder: calendarPanel.panelRegion
+  readonly property var changelogPanelPlaceholder: changelogPanel.panelRegion
+  readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelRegion
+  readonly property var launcherPanelPlaceholder: launcherPanel.panelRegion
+  readonly property var notificationHistoryPanelPlaceholder: notificationHistoryPanel.panelRegion
+  readonly property var sessionMenuPanelPlaceholder: sessionMenuPanel.panelRegion
+  readonly property var settingsPanelPlaceholder: settingsPanel.panelRegion
+  readonly property var setupWizardPanelPlaceholder: setupWizardPanel.panelRegion
+  readonly property var trayDrawerPanelPlaceholder: trayDrawerPanel.panelRegion
+  readonly property var wallpaperPanelPlaceholder: wallpaperPanel.panelRegion
+  readonly property var wifiPanelPlaceholder: wifiPanel.panelRegion
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
@@ -74,7 +76,17 @@ PanelWindow {
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-background-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
-  WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+  WlrLayershell.keyboardFocus: {
+    if (!root.isPanelOpen) {
+      return WlrKeyboardFocus.None;
+    }
+    if (CompositorService.isHyprland) {
+      // Exclusive focus on hyprland is too restrictive.
+      return WlrKeyboardFocus.OnDemand;
+    } else {
+      return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
+    }
+  }
 
   anchors {
     top: true
@@ -128,7 +140,9 @@ PanelWindow {
     height: root.height
     intersection: Intersection.Xor
 
-    regions: [barMaskRegion]
+    // Only include regions that are actually needed
+    // panelRegions is handled by PanelService, bar is local to this screen
+    regions: [barMaskRegion, backgroundMaskRegion]
 
     // Bar region - subtract bar area from mask (only if bar should be shown on this screen)
     Region {
@@ -140,6 +154,16 @@ PanelWindow {
       // Set width/height to 0 if bar shouldn't show on this screen (makes region empty)
       width: root.barShouldShow ? barPlaceholder.width : 0
       height: root.barShouldShow ? barPlaceholder.height : 0
+      intersection: Intersection.Subtract
+    }
+
+    // Background region for click-to-close - reactive sizing
+    Region {
+      id: backgroundMaskRegion
+      x: 0
+      y: 0
+      width: root.isPanelOpen && !isPanelClosing ? root.width : 0
+      height: root.isPanelOpen && !isPanelClosing ? root.height : 0
       intersection: Intersection.Subtract
     }
   }
@@ -162,6 +186,20 @@ PanelWindow {
       z: 0 // Behind all content
     }
 
+    // Background MouseArea for closing panels when clicking outside
+    // Active whenever a panel is open - the mask ensures it only receives clicks when panel is open
+    MouseArea {
+      anchors.fill: parent
+      enabled: root.isPanelOpen
+      acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+      onClicked: mouse => {
+                   if (PanelService.openedPanel) {
+                     PanelService.openedPanel.close();
+                   }
+                 }
+      z: 0 // Behind panels and bar
+    }
+
     // ---------------------------------------
     // All panels always exist
     // ---------------------------------------
@@ -169,90 +207,105 @@ PanelWindow {
       id: audioPanel
       objectName: "audioPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     BatteryPanel {
       id: batteryPanel
       objectName: "batteryPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     BluetoothPanel {
       id: bluetoothPanel
       objectName: "bluetoothPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     BrightnessPanel {
       id: brightnessPanel
       objectName: "brightnessPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     ControlCenterPanel {
       id: controlCenterPanel
       objectName: "controlCenterPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     ChangelogPanel {
       id: changelogPanel
       objectName: "changelogPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     CalendarPanel {
       id: calendarPanel
       objectName: "calendarPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     Launcher {
       id: launcherPanel
       objectName: "launcherPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     NotificationHistoryPanel {
       id: notificationHistoryPanel
       objectName: "notificationHistoryPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     SessionMenu {
       id: sessionMenuPanel
       objectName: "sessionMenuPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     SettingsPanel {
       id: settingsPanel
       objectName: "settingsPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     SetupWizard {
       id: setupWizardPanel
       objectName: "setupWizardPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     TrayDrawerPanel {
       id: trayDrawerPanel
       objectName: "trayDrawerPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     WallpaperPanel {
       id: wallpaperPanel
       objectName: "wallpaperPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     WiFiPanel {
       id: wifiPanel
       objectName: "wifiPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
+      z: 50
     }
 
     // ----------------------------------------------
@@ -357,5 +410,184 @@ PanelWindow {
     *  Screen Corners
     */
     ScreenCorners {}
+  }
+
+  // ========================================
+  // Centralized Keyboard Shortcuts
+  // ========================================
+  // These shortcuts delegate to the opened panel's handler functions
+  // Panels can implement: onEscapePressed, onTabPressed, onShiftTabPressed,
+  // onUpPressed, onDownPressed, onReturnPressed
+
+  Shortcut {
+    sequence: "Escape"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onEscapePressed) {
+        PanelService.openedPanel.onEscapePressed();
+      } else if (PanelService.openedPanel) {
+        PanelService.openedPanel.close();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Tab"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onTabPressed) {
+        PanelService.openedPanel.onTabPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Shift+Tab"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onShiftTabPressed) {
+        PanelService.openedPanel.onShiftTabPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Up"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onUpPressed) {
+        PanelService.openedPanel.onUpPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Down"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onDownPressed) {
+        PanelService.openedPanel.onDownPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Return"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onReturnPressed) {
+        PanelService.openedPanel.onReturnPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Left"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onLeftPressed) {
+        PanelService.openedPanel.onLeftPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Right"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onRightPressed) {
+        PanelService.openedPanel.onRightPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Home"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onHomePressed) {
+        PanelService.openedPanel.onHomePressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "End"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onEndPressed) {
+        PanelService.openedPanel.onEndPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "PgUp"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onPageUpPressed) {
+        PanelService.openedPanel.onPageUpPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "PgDown"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onPageDownPressed) {
+        PanelService.openedPanel.onPageDownPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Backtab"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onBackTabPressed) {
+        PanelService.openedPanel.onBackTabPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Ctrl+J"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlJPressed) {
+        PanelService.openedPanel.onCtrlJPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Ctrl+K"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlKPressed) {
+        PanelService.openedPanel.onCtrlKPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Ctrl+N"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlNPressed) {
+        PanelService.openedPanel.onCtrlNPressed();
+      }
+    }
+  }
+
+  Shortcut {
+    sequence: "Ctrl+P"
+    enabled: root.isPanelOpen
+    onActivated: {
+      if (PanelService.openedPanel && PanelService.openedPanel.onCtrlPPressed) {
+        PanelService.openedPanel.onCtrlPPressed();
+      }
+    }
   }
 }
