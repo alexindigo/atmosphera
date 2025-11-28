@@ -121,7 +121,14 @@ Variants {
       }
       // For lock keys, use a different color to indicate the lock state
       if (currentOSDType === OSD.Type.LockKey) {
-        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        // Check the specific lock key that was changed
+        if (lastLockKeyChanged.startsWith("CAPS")) {
+          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("NUM")) {
+          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("SCROLL")) {
+          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        }
       }
       return Color.mPrimary;
     }
@@ -132,7 +139,14 @@ Variants {
         return Color.mError;
 
       if (currentOSDType === OSD.Type.LockKey) {
-        return LockKeysService.capsLockOn || LockKeysService.numLockOn || LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        // Check the specific lock key that was changed
+        if (lastLockKeyChanged.startsWith("CAPS")) {
+          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("NUM")) {
+          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("SCROLL")) {
+          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        }
       }
 
       return Color.mOnSurface;
