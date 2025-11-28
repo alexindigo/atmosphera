@@ -586,6 +586,33 @@ SmartPanel {
           }
         }
 
+        // Emoji category tabs (shown when in browsing mode)
+        NTabBar {
+          id: emojiCategoryTabs
+          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
+          Layout.fillWidth: true
+          currentIndex: {
+            if (visible && emojiPlugin.categories) {
+              return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+            }
+            return 0;
+          }
+
+          Repeater {
+            model: emojiPlugin.categories
+            NIconTabButton {
+              required property string modelData
+              required property int index
+              icon: emojiPlugin.categoryIcons[modelData] || "star"
+              tabIndex: index
+              checked: emojiCategoryTabs.currentIndex === index
+              onClicked: {
+                emojiPlugin.selectCategory(modelData);
+              }
+            }
+          }
+        }
+
         Loader {
           id: resultsViewLoader
           Layout.fillWidth: true
