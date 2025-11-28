@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Widgets
 
 import "Plugins"
+import "../../../Helpers/FuzzySort.js" as Fuzzysort
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Keyboard
@@ -188,11 +189,40 @@ SmartPanel {
         }
       }
 
-      // Show available commands if just ">"
-      if (searchText === ">" && !activePlugin) {
+      // Show available commands if just ">" or filter commands if partial match
+      if (!activePlugin) {
+        // Collect all commands from all plugins
+        let allCommands = [];
         for (let plugin of plugins) {
           if (plugin.commands) {
-            results = results.concat(plugin.commands());
+            allCommands = allCommands.concat(plugin.commands());
+          }
+        }
+
+        if (searchText === ">") {
+          // Show all commands when just ">"
+          results = allCommands;
+        } else if (searchText.length > 1) {
+          // Filter commands using fuzzy search when typing partial command
+          const query = searchText.substring(1); // Remove the ">" prefix
+          
+          if (typeof Fuzzysort !== 'undefined') {
+            // Use fuzzy search to filter commands
+            const fuzzyResults = Fuzzysort.go(query, allCommands, {
+              "keys": ["name"],
+              "threshold": -1000,
+              "limit": 50
+            });
+            
+            // Convert fuzzy results back to command objects
+            results = fuzzyResults.map(result => result.obj);
+          } else {
+            // Fallback to simple substring matching
+            const queryLower = query.toLowerCase();
+            results = allCommands.filter(cmd => {
+              const cmdName = (cmd.name || "").toLowerCase();
+              return cmdName.includes(queryLower);
+            });
           }
         }
       }
