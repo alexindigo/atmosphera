@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Padrão (Dispositivo de Exibição)",
+          "description": "Selecione qual dispositivo de bateria exibir.",
+          "label": "Dispositivo de bateria"
+        },
         "display-mode": {
           "description": "Escolha como você gostaria que este valor aparecesse.",
           "label": "Modo de exibição"
@@ -1832,6 +1837,9 @@
       "memory-section": {
         "label": "Uso de memória"
       },
+      "network-section": {
+        "label": "Rede"
+      },
       "polling-interval": {
         "label": "Intervalo de pesquisa"
       },
@@ -1847,9 +1855,6 @@
       "thresholds-section": {
         "description": "Ajuste os limites de aviso/crítico e os intervalos de consulta para cada métrica do sistema.",
         "label": "Limiares"
-      },
-      "network-section": {
-        "label": "Rede"
       },
       "title": "Monitor do Sistema",
       "use-custom-highlight-colors": {

@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "默认（显示设备）",
+          "description": "选择要显示的电池设备。",
+          "label": "电池设备"
+        },
         "display-mode": {
           "description": "选择您希望此值显示的方式。",
           "label": "显示模式"
@@ -1832,6 +1837,9 @@
       "memory-section": {
         "label": "内存使用率"
       },
+      "network-section": {
+        "label": "网络"
+      },
       "polling-interval": {
         "label": "轮询间隔"
       },
@@ -1847,9 +1855,6 @@
       "thresholds-section": {
         "description": "为每个系统指标调整警告/严重阈值和轮询间隔。",
         "label": "阈值"
-      },
-      "network-section": {
-        "label": "网络"
       },
       "title": "系统监视器",
       "use-custom-highlight-colors": {

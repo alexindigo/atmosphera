@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Varsayılan (Görüntü Aygıtı)",
+          "description": "Görüntülenecek pil cihazını seçin.",
+          "label": "Pil cihazı"
+        },
         "display-mode": {
           "description": "Bu değerin nasıl görünmesini istediğinizi seçin.",
           "label": "Görüntüleme modu"
@@ -1832,6 +1837,9 @@
       "memory-section": {
         "label": "Bellek Kullanımı"
       },
+      "network-section": {
+        "label": "Ağ"
+      },
       "polling-interval": {
         "label": "Yoklama aralığı"
       },
@@ -1847,9 +1855,6 @@
       "thresholds-section": {
         "description": "Her sistem metriği için uyarı/kritik eşiklerini ve yoklama aralıklarını ayarlayın.",
         "label": "Eşikler"
-      },
-      "network-section": {
-        "label": "Ağ"
       },
       "title": "Sistem İzleme",
       "use-custom-highlight-colors": {

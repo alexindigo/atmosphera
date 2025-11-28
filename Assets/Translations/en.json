@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Default (Display Device)",
+          "description": "Select which battery device to display.",
+          "label": "Battery device"
+        },
         "display-mode": {
           "description": "Choose how you'd like this value to appear.",
           "label": "Display mode"

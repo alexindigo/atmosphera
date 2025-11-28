@@ -87,7 +87,8 @@ Singleton {
                                   "Battery": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover",
-                                    "warningThreshold": 30
+                                    "warningThreshold": 30,
+                                    "deviceNativePath": ""
                                   },
                                   "Bluetooth": {
                                     "allowUserSettings": true,

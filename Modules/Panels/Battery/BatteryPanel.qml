@@ -6,7 +6,7 @@ import Quickshell.Services.UPower
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Hardware
-import qs.Services.Power
+import qs.Services.Networking
 import qs.Widgets
 
 SmartPanel {
@@ -15,16 +15,133 @@ SmartPanel {
   preferredWidth: Math.round(360 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
-  readonly property var battery: UPower.displayDevice
-  readonly property bool isReady: battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-  readonly property int percent: isReady ? Math.round(battery.percentage * 100) : -1
+  // Get device selection from Battery widget settings (check right section first, then any Battery widget)
+  function getBatteryDevicePath() {
+    // Check right section first (most common location for Battery widget)
+    var rightWidgets = Settings.data.bar.widgets.right || [];
+    for (var i = 0; i < rightWidgets.length; i++) {
+      if (rightWidgets[i].id === "Battery" && rightWidgets[i].deviceNativePath) {
+        return rightWidgets[i].deviceNativePath;
+      }
+    }
+    // Check other sections
+    var sections = ["left", "center"];
+    for (var s = 0; s < sections.length; s++) {
+      var widgets = Settings.data.bar.widgets[sections[s]] || [];
+      for (var j = 0; j < widgets.length; j++) {
+        if (widgets[j].id === "Battery" && widgets[j].deviceNativePath) {
+          return widgets[j].deviceNativePath;
+        }
+      }
+    }
+    return "";
+  }
+
+  // Helper function to find battery device by nativePath
+  function findBatteryDevice(nativePath) {
+    if (!nativePath || nativePath === "") {
+      return UPower.displayDevice;
+    }
+
+    if (!UPower.devices) {
+      return UPower.displayDevice;
+    }
+
+    var deviceArray = UPower.devices.values || [];
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.nativePath === nativePath) {
+        if (device.type === UPowerDeviceType.LinePower) {
+          continue;
+        }
+        if (device.percentage !== undefined) {
+          return device;
+        }
+      }
+    }
+    return UPower.displayDevice;
+  }
+
+  // Helper function to find Bluetooth device by MAC address from nativePath
+  function findBluetoothDevice(nativePath) {
+    if (!nativePath || !BluetoothService.devices) {
+      return null;
+    }
+
+    var macMatch = nativePath.match(/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/);
+    if (!macMatch) {
+      return null;
+    }
+
+    var macAddress = macMatch[1].toUpperCase();
+    var deviceArray = BluetoothService.devices.values || [];
+
+    for (var i = 0; i < deviceArray.length; i++) {
+      var device = deviceArray[i];
+      if (device && device.address && device.address.toUpperCase() === macAddress) {
+        return device;
+      }
+    }
+    return null;
+  }
+
+  readonly property string deviceNativePath: getBatteryDevicePath()
+  readonly property var battery: findBatteryDevice(deviceNativePath)
+  readonly property var bluetoothDevice: deviceNativePath ? findBluetoothDevice(deviceNativePath) : null
+  readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
+  readonly property bool isBluetoothConnected: bluetoothDevice && bluetoothDevice.connected !== undefined ? bluetoothDevice.connected : false
+
+  // Check if device is actually present/connected
+  readonly property bool isDevicePresent: {
+    if (deviceNativePath && deviceNativePath !== "") {
+      if (bluetoothDevice) {
+        return isBluetoothConnected;
+      }
+      if (battery && battery.nativePath === deviceNativePath) {
+        if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
+          return battery.isPresent;
+        }
+        return battery.ready && battery.percentage !== undefined && (battery.percentage > 0 || battery.state === UPowerDeviceState.Charging);
+      }
+      return false;
+    }
+    if (battery) {
+      if (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) {
+        return battery.isPresent;
+      }
+      return battery.ready && battery.percentage !== undefined;
+    }
+    return false;
+  }
+
+  readonly property bool isReady: battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery)
+  readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
   readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
   readonly property bool healthAvailable: isReady && battery.healthSupported
   readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
-  readonly property bool powerProfileAvailable: PowerProfileService.available
-  readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
+
+  function getDeviceName() {
+    if (!isReady) {
+      return "";
+    }
+    // Don't show name for laptop batteries
+    if (battery && battery.isLaptopBattery) {
+      return "";
+    }
+    if (bluetoothDevice && bluetoothDevice.name) {
+      return bluetoothDevice.name;
+    }
+    if (battery && battery.model) {
+      return battery.model;
+    }
+    return "";
+  }
+
+  readonly property string deviceName: getDeviceName()
+  readonly property string panelTitle: deviceName ? `${I18n.tr("battery.panel-title")} - ${deviceName}` : I18n.tr("battery.panel-title")
+
   readonly property string timeText: {
-    if (!isReady)
+    if (!isReady || !isDevicePresent)
       return I18n.tr("battery.no-battery-detected");
     if (charging && battery.timeToFull > 0) {
       return I18n.tr("battery.time-until-full", {
@@ -39,9 +156,6 @@ SmartPanel {
     return I18n.tr("battery.idle");
   }
   readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
-  readonly property bool profilesAvailable: PowerProfileService.available
-  property int profileIndex: profileToIndex(PowerProfileService.profile)
-  property bool manualInhibitActive: manualInhibitorEnabled()
 
   panelContent: Item {
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
@@ -74,11 +188,12 @@ SmartPanel {
             Layout.fillWidth: true
 
             NText {
-              text: I18n.tr("battery.panel-title")
+              text: root.panelTitle
               pointSize: Style.fontSizeL
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
               Layout.fillWidth: true
+              elide: Text.ElideRight
             }
 
             NText {
@@ -103,6 +218,7 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         height: chargeLayout.implicitHeight + Style.marginL * 2
+        visible: isReady
 
         ColumnLayout {
           id: chargeLayout
@@ -165,131 +281,6 @@ SmartPanel {
           }
         }
       }
-
-      // Power profile and idle inhibit controls
-      NBox {
-        Layout.fillWidth: true
-        height: controlsLayout.implicitHeight + Style.marginM * 2
-
-        ColumnLayout {
-          id: controlsLayout
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          spacing: Style.marginM
-
-          ColumnLayout {
-            id: ppd
-            visible: root.powerProfileAvailable
-
-            RowLayout {
-              Layout.fillWidth: true
-              spacing: Style.marginS
-              NIcon {
-                icon: PowerProfileService.getIcon()
-                pointSize: Style.fontSizeM
-                color: Color.mPrimary
-              }
-              NText {
-                text: I18n.tr("battery.power-profile")
-                font.weight: Style.fontWeightBold
-                color: Color.mOnSurface
-                Layout.fillWidth: true
-              }
-              NText {
-                text: PowerProfileService.getName(profileIndex)
-                color: Color.mOnSurfaceVariant
-              }
-            }
-
-            NValueSlider {
-              Layout.fillWidth: true
-              from: 0
-              to: 2
-              stepSize: 1
-              snapAlways: true
-              value: profileIndex
-              enabled: profilesAvailable
-              onPressedChanged: (pressed, v) => {
-                                  if (!pressed) {
-                                    setProfileByIndex(v);
-                                  }
-                                }
-              onMoved: v => {
-                         profileIndex = v;
-                       }
-            }
-          }
-
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginS
-
-            NIcon {
-              icon: manualInhibitActive ? "keep-awake-on" : "keep-awake-off"
-              pointSize: Style.fontSizeL
-              color: manualInhibitActive ? Color.mPrimary : Color.mOnSurfaceVariant
-              Layout.alignment: Qt.AlignVCenter
-            }
-
-            NToggle {
-              Layout.fillWidth: true
-              checked: manualInhibitActive
-              label: I18n.tr("battery.inhibit-idle-label")
-              description: I18n.tr("battery.inhibit-idle-description")
-              onToggled: function (checked) {
-                if (checked) {
-                  IdleInhibitorService.addManualInhibitor(null);
-                } else {
-                  IdleInhibitorService.removeManualInhibitor();
-                }
-                manualInhibitActive = checked;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  function profileToIndex(p) {
-    return powerProfiles.indexOf(p) ?? 1;
-  }
-
-  function indexToProfile(idx) {
-    return powerProfiles[idx] ?? PowerProfile.Balanced;
-  }
-
-  function setProfileByIndex(idx) {
-    var prof = indexToProfile(idx);
-    profileIndex = idx;
-    PowerProfileService.setProfile(prof);
-  }
-
-  function manualInhibitorEnabled() {
-    return IdleInhibitorService.activeInhibitors && IdleInhibitorService.activeInhibitors.indexOf("manual") >= 0;
-  }
-
-  Connections {
-    target: IdleInhibitorService
-
-    function onIsInhibitedChanged() {
-      manualInhibitActive = manualInhibitorEnabled();
-    }
-  }
-
-  Timer {
-    id: inhibitorPoll
-    interval: 1000
-    repeat: true
-    running: true
-    onTriggered: manualInhibitActive = manualInhibitorEnabled()
-  }
-
-  Connections {
-    target: PowerProfileService
-
-    function onProfileChanged() {
-      profileIndex = profileToIndex(PowerProfileService.profile);
     }
   }
 }

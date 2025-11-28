@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Standard (Anzeigegerät)",
+          "description": "Wählen Sie das anzuzeigende Batteriegerät aus.",
+          "label": "Batteriebetriebenes Gerät"
+        },
         "display-mode": {
           "description": "Wählen Sie, wie dieser Wert angezeigt werden soll.",
           "label": "Anzeigemodus"
@@ -1832,6 +1837,9 @@
       "memory-section": {
         "label": "Speicherverbrauch"
       },
+      "network-section": {
+        "label": "Netzwerk"
+      },
       "polling-interval": {
         "label": "Abfrageintervall"
       },
@@ -1847,9 +1855,6 @@
       "thresholds-section": {
         "description": "Passe die Warn-/Kritisch-Schwellen und die Abfrageintervalle für jede Systemmetrik an.",
         "label": "Schwellenwerte"
-      },
-      "network-section": {
-        "label": "Netzwerk"
       },
       "title": "Systemmonitor",
       "use-custom-highlight-colors": {

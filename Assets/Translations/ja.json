@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "標準 (表示デバイス)",
+          "description": "表示するバッテリーデバイスを選択してください。",
+          "label": "電池デバイス"
+        },
         "display-mode": {
           "description": "値の表示方法を選択します。",
           "label": "表示モード"

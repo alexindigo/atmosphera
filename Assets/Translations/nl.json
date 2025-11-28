@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Standaard (weergaveapparaat)",
+          "description": "Selecteer welk batterijapparaat u wilt weergeven.",
+          "label": "Batterijapparaat"
+        },
         "display-mode": {
           "description": "Kies hoe je wilt dat deze waarde wordt weergegeven.",
           "label": "Weergavemodus"
@@ -1832,6 +1837,9 @@
       "memory-section": {
         "label": "Geheugengebruik"
       },
+      "network-section": {
+        "label": "Netwerk"
+      },
       "polling-interval": {
         "label": "Peilingsinterval"
       },
@@ -1847,9 +1855,6 @@
       "thresholds-section": {
         "description": "Pas de waarschuwing/kritieke drempels en de pollingsintervallen voor elke systeemmetriek aan.",
         "label": "Drempels"
-      },
-      "network-section": {
-        "label": "Netwerk"
       },
       "title": "Systeemmonitor",
       "use-custom-highlight-colors": {

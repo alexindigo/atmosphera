@@ -153,9 +153,15 @@ Popup {
   function loadWidgetSettings() {
     const source = BarWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
-      // Use setSource to pass properties at creation time
+      var currentWidgetData = widgetData;
+      if (sectionId && widgetIndex >= 0) {
+        var widgets = Settings.data.bar.widgets[sectionId];
+        if (widgets && widgetIndex < widgets.length) {
+          currentWidgetData = widgets[widgetIndex];
+        }
+      }
       settingsLoader.setSource(source, {
-                                 "widgetData": widgetData,
+                                 "widgetData": currentWidgetData,
                                  "widgetMetadata": BarWidgetRegistry.widgetMetadata[widgetId]
                                });
     }
