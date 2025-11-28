@@ -1018,7 +1018,7 @@ SmartPanel {
                     anchors.centerIn: parent
                     visible: modelData.emojiChar ? true : (!gridImagePreview.visible && !gridIconLoader.visible)
                     text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
-                    pointSize: modelData.emojiChar ? Style.fontSizeXXL : Style.fontSizeXL
+                    pointSize: modelData.emojiChar ? Style.fontSizeXXL * 2 : Style.fontSizeXL
                     font.weight: Style.fontWeightBold
                     color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
                   }
