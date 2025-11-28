@@ -27,7 +27,7 @@
   {"emoji": "💧", "name": "droplet", "keywords": ["water", "drop", "drip", "liquid"], "category": "nature"},
   {"emoji": "🍎", "name": "red apple", "keywords": ["apple", "fruit", "food", "red"], "category": "food"},
   {"emoji": "🍕", "name": "pizza", "keywords": ["pizza", "food", "italian", "cheese"], "category": "food"},
-  {"emoji": " sushi", "name": "sushi", "keywords": ["sushi", "food", "japanese", "rice"], "category": "food"},
+  {"emoji": "🍣", "name": "sushi", "keywords": ["sushi", "food", "japanese", "rice"], "category": "food"},
   {"emoji": "🍔", "name": "hamburger", "keywords": ["hamburger", "food", "burger", "fast food"], "category": "food"},
   {"emoji": "🍦", "name": "soft ice cream", "keywords": ["ice cream", "dessert", "food", "sweet"], "category": "food"},
   {"emoji": "🍩", "name": "doughnut", "keywords": ["donut", "doughnut", "food", "sweet"], "category": "food"},
