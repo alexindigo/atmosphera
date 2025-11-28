@@ -1068,10 +1068,16 @@ SmartPanel {
         NText {
           Layout.fillWidth: true
           text: {
-            if (results.length === 0)
-              return searchText ? "No results" : "";
-            const prefix = activePlugin?.name ? `${activePlugin.name}: ` : "";
-            return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`;
+            if (results.length === 0) {
+              if (searchText) {
+                return "No results";
+              } else if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && emojiPlugin.selectedCategory === "recent") {
+                return "No recently used emoji";
+              }
+              return "";
+            }
+            var prefix = activePlugin && activePlugin.name ? activePlugin.name + ": " : "";
+            return prefix + results.length + " result" + (results.length !== 1 ? 's' : '');
           }
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
