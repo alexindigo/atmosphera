@@ -238,6 +238,8 @@ Singleton {
       return "weather-cloud-haze";
     if (code >= 51 && code <= 67)
       return "weather-cloud-rain";
+    if (code >= 80 && code <= 82)
+      return "weather-cloud-rain";
     if (code >= 71 && code <= 77)
       return "weather-cloud-snow";
     if (code >= 71 && code <= 77)

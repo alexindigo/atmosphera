@@ -20,7 +20,7 @@ NBox {
 
   // Weather condition detection
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
-  readonly property bool isRaining: testEffects === "rain" || (testEffects === "" && currentWeatherCode >= 51 && currentWeatherCode <= 67)
+  readonly property bool isRaining: testEffects === "rain" || (testEffects === "" && ((currentWeatherCode >= 51 && currentWeatherCode <= 67) || (currentWeatherCode >= 80 && currentWeatherCode <= 82)))
   readonly property bool isSnowing: testEffects === "snow" || (testEffects === "" && ((currentWeatherCode >= 71 && currentWeatherCode <= 77) || (currentWeatherCode >= 85 && currentWeatherCode <= 86)))
 
   visible: Settings.data.location.weatherEnabled
