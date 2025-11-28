@@ -774,8 +774,8 @@ SmartPanel {
                     NText {
                       id: emojiDisplay
                       anchors.centerIn: parent
-                      visible: modelData.emojiChar ? true : (!imagePreview.visible && !iconLoader.visible)
-                      text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                      visible: modelData.emojiChar || (!imagePreview.visible && !iconLoader.visible)
+                      text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
                       pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
                       font.weight: Style.fontWeightBold
                       color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
@@ -1016,8 +1016,8 @@ SmartPanel {
                   NText {
                     id: gridEmojiDisplay
                     anchors.centerIn: parent
-                    visible: modelData.emojiChar ? true : (!gridImagePreview.visible && !gridIconLoader.visible)
-                    text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                    visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
+                    text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
                     pointSize: modelData.emojiChar ? Style.fontSizeXXL * 2 : Style.fontSizeXL
                     font.weight: Style.fontWeightBold
                     color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary

@@ -33,9 +33,9 @@ Singleton {
     const results = emojis.filter(emoji => {
                                     for (let term of terms) {
                                       const emojiMatch = emoji.emoji.toLowerCase().includes(term);
-                                      const nameMatch = (emoji.name || "").toLowerCase().includes(term);
-                                      const keywordMatch = (emoji.keywords || []).some(kw => kw.toLowerCase().includes(term));
-                                      const categoryMatch = (emoji.category || "").toLowerCase().includes(term);
+                                      const nameMatch = emoji.name.toLowerCase().includes(term);
+                                      const keywordMatch = emoji.keywords.some(kw => kw.toLowerCase().includes(term));
+                                      const categoryMatch = emoji.category.toLowerCase().includes(term);
 
                                       if (!emojiMatch && !nameMatch && !keywordMatch && !categoryMatch) {
                                         return false;
@@ -62,7 +62,7 @@ Singleton {
       if (b.usageCount !== a.usageCount) {
         return b.usageCount - a.usageCount;
       }
-      return (a.emoji.name || "").localeCompare(b.emoji.name || "");
+      return a.emoji.name.localeCompare(b.emoji.name);
     });
 
     // Return the emoji objects limited by the specified count

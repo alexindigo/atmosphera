@@ -33,8 +33,7 @@ Item {
     target: EmojiService
     function onLoadedChanged() {
       if (EmojiService.loaded && root.launcher) {
-        // Update launcher results to refresh the UI
-        root.launcher?.updateResults();
+        root.launcher.updateResults();
       }
     }
   }
@@ -105,7 +104,7 @@ Item {
   // Format an emoji entry for the results list
   function formatEmojiEntry(emoji) {
     let title = emoji.name;
-    let description = (emoji.keywords || []).join(", ");
+    let description = emoji.keywords.join(", ");
 
     if (emoji.category) {
       description += " • Category: " + emoji.category;
