@@ -60,6 +60,9 @@ SmartPanel {
     if (searchText.startsWith(">clip") || searchText.startsWith(">calc")) {
       return false;
     }
+    if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+      return true;
+    }
     return Settings.data.appLauncher.viewMode === "grid";
   }
 
