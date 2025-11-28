@@ -47,26 +47,70 @@ Singleton {
     return results;
   }
 
-  // Get popular emojis sorted by usage count
   function _getPopularEmojis(limit) {
-    // Create array of emojis with their usage counts
-    const emojisWithUsage = emojis.map(emoji => {
-                                         return {
-                                           emoji: emoji,
-                                           usageCount: usageCounts[emoji.emoji] || 0
-                                         };
-                                       });
+    var emojisWithUsage = emojis.map(function(emoji) {
+      return {
+        emoji: emoji,
+        usageCount: usageCounts[emoji.emoji] || 0
+      };
+    }).filter(function(item) {
+      return item.usageCount > 0;
+    });
 
     // Sort by usage count (descending), then by name
-    emojisWithUsage.sort((a, b) => {
-                           if (b.usageCount !== a.usageCount) {
-                             return b.usageCount - a.usageCount;
-                           }
-                           return (a.emoji.name || "").localeCompare(b.emoji.name || "");
-                         });
+    emojisWithUsage.sort(function(a, b) {
+      if (b.usageCount !== a.usageCount) {
+        return b.usageCount - a.usageCount;
+      }
+      return (a.emoji.name || "").localeCompare(b.emoji.name || "");
+    });
 
     // Return the emoji objects limited by the specified count
-    return emojisWithUsage.slice(0, limit).map(item => item.emoji);
+    return emojisWithUsage.slice(0, limit).map(function(item) {
+      return item.emoji;
+    });
+  }
+
+  function getCategoriesWithCounts() {
+    if (!loaded) {
+      return [];
+    }
+
+    var categoryCounts = {};
+
+    for (var i = 0; i < emojis.length; i++) {
+      var emoji = emojis[i];
+      var category = emoji.category || "other";
+      if (!categoryCounts[category]) {
+        categoryCounts[category] = 0;
+      }
+      categoryCounts[category]++;
+    }
+
+    var categories = [];
+    for (var cat in categoryCounts) {
+      categories.push({
+        name: cat,
+        count: categoryCounts[cat]
+      });
+    }
+
+    return categories;
+  }
+
+  function getEmojisByCategory(category) {
+    if (!loaded) {
+      return [];
+    }
+
+    // Special case: "recent" category shows popular/recently used
+    if (category === "recent") {
+      return _getPopularEmojis(50);
+    }
+
+    return emojis.filter(function(emoji) {
+      return emoji.category === category;
+    });
   }
 
   // Record emoji usage

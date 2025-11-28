@@ -11,6 +11,23 @@ Item {
   property var launcher: null
   property bool handleSearch: false
 
+  property string selectedCategory: "recent"
+  property bool isBrowsingMode: false
+
+  property var categoryIcons: ({
+    "recent": "clock",
+    "people": "user",
+    "animals": "paw",
+    "nature": "leaf",
+    "food": "apple",
+    "activity": "run",
+    "travel": "plane",
+    "objects": "home",
+    "symbols": "star"
+  })
+
+  property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols"]
+
   // Force update results when emoji service loads
   Connections {
     target: EmojiService
@@ -25,6 +42,13 @@ Item {
   // Initialize plugin
   function init() {
     Logger.i("EmojiPlugin", "Initialized");
+  }
+
+  function selectCategory(category) {
+    selectedCategory = category;
+    if (launcher) {
+      launcher.updateResults();
+    }
   }
 
   // Check if this plugin handles the command
@@ -65,9 +89,17 @@ Item {
           ];
     }
 
-    const query = searchText.slice(6).trim();
-    const emojis = EmojiService.search(query);
-    return emojis.map(formatEmojiEntry);
+    var query = searchText.slice(6).trim();
+
+    if (query === "") {
+      isBrowsingMode = true;
+      var emojis = EmojiService.getEmojisByCategory(selectedCategory);
+      return emojis.map(formatEmojiEntry);
+    } else {
+      isBrowsingMode = false;
+      var emojis = EmojiService.search(query);
+      return emojis.map(formatEmojiEntry);
+    }
   }
 
   // Format an emoji entry for the results list
