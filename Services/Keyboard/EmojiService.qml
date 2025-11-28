@@ -103,9 +103,8 @@ Singleton {
       return [];
     }
 
-    // Special case: "recent" category shows popular/recently used
     if (category === "recent") {
-      return _getPopularEmojis(50);
+      return _getPopularEmojis(25);
     }
 
     return emojis.filter(function(emoji) {

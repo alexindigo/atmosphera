@@ -50,6 +50,11 @@ Item {
     }
   }
 
+  function onOpened() {
+    // Always reset to "recent" category when opening
+    selectedCategory = "recent";
+  }
+
   // Check if this plugin handles the command
   function handleCommand(searchText) {
     return searchText.startsWith(">emoji");
