@@ -16,6 +16,7 @@ SmartPanel {
   // 0 = All, 1 = Today, 2 = Yesterday, 3 = Earlier
   property int currentRange: 1  // start on Today by default
   property var rangeCounts: [0, 0, 0, 0]
+  property bool groupByDate: true
 
   function dateOnly(d) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -44,14 +45,21 @@ SmartPanel {
 
   function recalcRangeCounts() {
     var m = NotificationService.historyList;
+    if (!m || typeof m.count === "undefined" || m.count <= 0) {
+      rangeCounts = [0, 0, 0, 0];
+      return;
+    }
+
     var counts = [0, 0, 0, 0];
 
     counts[0] = m.count;
 
     for (var i = 0; i < m.count; ++i) {
       var item = m.get(i);
-      var r = rangeForTimestamp(item.timestamp);
-      counts[r + 1] = counts[r + 1] + 1;
+      if (!item || typeof item.timestamp === "undefined")
+        continue;
+      var r = rangeForTimestamp(item.timestamp); // 0..2
+      counts[r + 1] = counts[r + 1] + 1;        // shift by +1
     }
 
     rangeCounts = counts;
@@ -161,15 +169,15 @@ SmartPanel {
               text: {
                 if (rangeId === 0)
                   return I18n.tr("notifications.range.all") +
-                        " (" + root.countForRange(rangeId) + ")";
+                         " (" + root.countForRange(rangeId) + ")";
                 else if (rangeId === 1)
                   return I18n.tr("notifications.range.today") +
-                        " (" + root.countForRange(rangeId) + ")";
+                         " (" + root.countForRange(rangeId) + ")";
                 else if (rangeId === 2)
                   return I18n.tr("notifications.range.yesterday") +
-                        " (" + root.countForRange(rangeId) + ")";
+                         " (" + root.countForRange(rangeId) + ")";
                 return I18n.tr("notifications.range.earlier") +
-                      " (" + root.countForRange(rangeId) + ")";
+                       " (" + root.countForRange(rangeId) + ")";
               }
 
               Layout.fillWidth: true
@@ -179,11 +187,11 @@ SmartPanel {
               outlined: false
 
               backgroundColor: isActive
-                              ? Color.mPrimary
-                              : (hovered ? Color.mHover : Color.transparent)
+                               ? Color.mPrimary
+                               : (hovered ? Color.mHover : Color.transparent)
               textColor: isActive
-                        ? Color.mOnPrimary
-                        : (hovered ? Color.mOnHover : Color.mOnSurface)
+                         ? Color.mOnPrimary
+                         : (hovered ? Color.mOnHover : Color.mOnSurface)
               hoverColor: backgroundColor
 
               Behavior on backgroundColor {
@@ -196,6 +204,7 @@ SmartPanel {
           }
         }
       }
+
 
       // Empty state when no notifications
       ColumnLayout {
