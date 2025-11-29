@@ -1375,7 +1375,8 @@
           "description": "Edita los detalles de tu usuario y tu avatar.",
           "label": "Perfil"
         },
-        "select-avatar": "Seleccionar imagen de avatar"
+        "select-avatar": "Seleccionar imagen de avatar",
+        "tooltip": "Buscar imagen de avatar"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'No molestar' activado",
     "enable-keep-awake": "Haz clic para activar mantener despierto.\nDesplázate para ajustar el tiempo de espera.",
     "forget-network": "Olvidar red",
+    "grid-view": "Vista de cuadrícula",
+    "hidden-files-hide": "Ocultar archivos ocultos",
+    "hidden-files-show": "Mostrar archivos ocultos",
     "home": "Inicio",
     "input-muted": "Silenciar entrada de audio",
     "keep-awake": "Mantener despierto",
     "keyboard-layout": "Distribución de teclado {layout}",
+    "list-view": "Vista de lista",
     "manage-vpn": "Administrar conexiones VPN",
     "manage-wifi": "Gestionar Wi-Fi",
     "microphone-volume-at": "Volumen del micrófono al {volume}%.\nClic izquierdo para ajustes. Clic derecho para activar/desactivar el silencio.\nDesplázate para modificar el volumen.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "remove-widget": "Eliminar widget",
     "screen-recorder-not-installed": "La grabadora de pantalla no está instalada",
+    "search": "Buscar",
+    "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "set-power-profile": "Establecer perfil de energía \"{profile}\"",
     "start-screen-recording": "Iniciar grabación de pantalla",

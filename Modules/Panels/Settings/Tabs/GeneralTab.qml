@@ -40,7 +40,7 @@ ColumnLayout {
       text: Settings.data.general.avatarImage
       placeholderText: I18n.tr("placeholders.profile-picture-path")
       buttonIcon: "photo"
-      buttonTooltip: "Browse for avatar image"
+      buttonTooltip: I18n.tr("settings.general.profile.tooltip")
       onInputEditingFinished: Settings.data.general.avatarImage = text
       onButtonClicked: {
         avatarPicker.openFilePicker();

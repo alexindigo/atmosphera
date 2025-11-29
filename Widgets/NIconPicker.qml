@@ -60,6 +60,7 @@ Popup {
       }
       NIconButton {
         icon: "close"
+        tooltipText: I18n.tr("tooltips.close")
         onClicked: root.close()
       }
     }

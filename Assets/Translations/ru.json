@@ -1375,7 +1375,8 @@
           "description": "Редактируйте данные пользователя и аватар.",
           "label": "Профиль"
         },
-        "select-avatar": "Выбрать изображение аватара"
+        "select-avatar": "Выбрать изображение аватара",
+        "tooltip": "Выбрать изображение аватара"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "Режим 'Не беспокоить' включен",
     "enable-keep-awake": "Нажмите, чтобы включить режим 'Не засыпать'.\nПрокрутка для настройки таймаута.",
     "forget-network": "Забыть сеть",
+    "grid-view": "Вид сеткой",
+    "hidden-files-hide": "Скрыть скрытые файлы",
+    "hidden-files-show": "Показать скрытые файлы",
     "home": "Домой",
     "input-muted": "Переключить заглушение ввода",
     "keep-awake": "Не засыпать",
     "keyboard-layout": "Раскладка клавиатуры {layout}",
+    "list-view": "Вид списком",
     "manage-vpn": "Управлять VPN-подключениями",
     "manage-wifi": "Управление Wi-Fi",
     "microphone-volume-at": "Громкость микрофона {volume}%\nЛевый клик для настроек. Правый клик для переключения заглушения.\nПрокрутка для изменения громкости.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Обновить список обоев",
     "remove-widget": "Удалить виджет",
     "screen-recorder-not-installed": "Запись экрана не установлена",
+    "search": "Поиск",
+    "search-close": "Закрыть поиск",
     "session-menu": "Меню сеанса",
     "set-power-profile": "Установить профиль питания \"{profile}\"",
     "start-screen-recording": "Начать запись экрана",

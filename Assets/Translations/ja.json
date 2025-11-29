@@ -1375,7 +1375,8 @@
           "description": "ユーザーの詳細とアバターを編集します。",
           "label": "プロフィール"
         },
-        "select-avatar": "アバター画像を選択"
+        "select-avatar": "アバター画像を選択",
+        "tooltip": "アバター画像を参照"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "おやすみモード: 有効",
     "enable-keep-awake": "クリック: スリープ防止モードを有効化\nスクロール: タイムアウトを調整",
     "forget-network": "ネットワーク設定を削除",
+    "grid-view": "グリッド表示",
+    "hidden-files-hide": "隠しファイルを非表示",
+    "hidden-files-show": "隠しファイルを表示",
     "home": "ホーム",
     "input-muted": "入力ミュート切り替え",
     "keep-awake": "スリープを防止",
     "keyboard-layout": "キーボードレイアウト: {layout}",
+    "list-view": "リスト表示",
     "manage-vpn": "VPN 接続を管理",
     "manage-wifi": "Wi-Fi を管理",
     "microphone-volume-at": "マイク音量: {volume}%\nスクロールで音量を調整",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "壁紙リストを更新",
     "remove-widget": "ウィジェットを削除",
     "screen-recorder-not-installed": "スクリーンレコーダーがインストールされていません",
+    "search": "検索",
+    "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
     "set-power-profile": "電源プロファイルを {profile} に設定",
     "start-screen-recording": "画面録画を開始",

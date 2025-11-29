@@ -1375,7 +1375,8 @@
           "description": "Ändern Sie Ihren Avatar.",
           "label": "Profil"
         },
-        "select-avatar": "Avatar auswählen"
+        "select-avatar": "Avatar auswählen",
+        "tooltip": "Nach Avatarbild suchen"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'Nicht stören' aktiviert",
     "enable-keep-awake": "Klicken, um 'Wach halten' zu aktivieren.\nScrollen, um Zeitlimit anzupassen.",
     "forget-network": "Netzwerk vergessen",
+    "grid-view": "Rasteransicht",
+    "hidden-files-hide": "Versteckte Dateien ausblenden",
+    "hidden-files-show": "Versteckte Dateien einblenden",
     "home": "Home",
     "input-muted": "Audio-Eingabe stummschalten",
     "keep-awake": "Wach halten",
     "keyboard-layout": "{layout} Tastaturlayout",
+    "list-view": "Listenansicht",
     "manage-vpn": "VPN-Verbindungen verwalten",
     "manage-wifi": "WLAN verwalten",
     "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "remove-widget": "Widget entfernen",
     "screen-recorder-not-installed": "Bildschirmrekorder ist nicht installiert",
+    "search": "Suchen",
+    "search-close": "Suche schließen",
     "session-menu": "Sitzungsmenü",
     "set-power-profile": "'{profile}' Energieprofil setzen",
     "start-screen-recording": "Bildschirmaufnahme starten",

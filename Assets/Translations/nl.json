@@ -1375,7 +1375,8 @@
           "description": "Bewerk je gebruikersgegevens en avatar.",
           "label": "Profiel"
         },
-        "select-avatar": "Avatarafbeelding selecteren"
+        "select-avatar": "Avatarafbeelding selecteren",
+        "tooltip": "Bladeren naar avatarafbeelding"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "\"Niet storen\" ingeschakeld",
     "enable-keep-awake": "\"Wakker houden\" inschakelen",
     "forget-network": "Netwerk vergeten",
+    "grid-view": "Rasterweergave",
+    "hidden-files-hide": "Verborgen bestanden verbergen",
+    "hidden-files-show": "Verborgen bestanden tonen",
     "home": "Home",
     "input-muted": "Invoermicrofoon dempen in-/uitschakelen",
     "keep-awake": "Wakker houden",
     "keyboard-layout": "{layout}-toetsenbordindeling",
+    "list-view": "Lijstweergave",
     "manage-vpn": "VPN-verbindingen beheren",
     "manage-wifi": "Wi-Fi beheren",
     "microphone-volume-at": "Microfoonvolume {volume}%\nLinks klikken voor instellingen. Rechts klikken om te dempen.\nScroll om het volume aan te passen.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Achtergrondlijst verversen",
     "remove-widget": "Widget verwijderen",
     "screen-recorder-not-installed": "Schermrecorder is niet geïnstalleerd",
+    "search": "Zoeken",
+    "search-close": "Zoeken sluiten",
     "session-menu": "Sessiemenu",
     "set-power-profile": "\"{profile}\"-energieprofiel instellen",
     "start-screen-recording": "Schermopname starten",
