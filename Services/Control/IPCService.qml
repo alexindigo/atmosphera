@@ -78,6 +78,10 @@ Item {
       NotificationService.dismissOldestActive();
     }
 
+    function removeOldestHistory() {
+      NotificationService.removeOldestHistory();
+    }
+
     function dismissAll() {
       NotificationService.dismissAllActive();
     }

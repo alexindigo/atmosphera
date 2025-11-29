@@ -710,6 +710,19 @@ Singleton {
     return false;
   }
 
+  function removeOldestHistory() {
+    if (historyList.count > 0) {
+      const oldest = historyList.get(historyList.count - 1);
+      if (oldest.cachedImage && !oldest.cachedImage.startsWith("image://")) {
+        Quickshell.execDetached(["rm", "-f", oldest.cachedImage]);
+      }
+      historyList.remove(historyList.count - 1);
+      saveHistory();
+      return true;
+    }
+    return false;
+  }
+
   function clearHistory() {
     try {
       Quickshell.execDetached(["sh", "-c", `rm -rf "${Settings.cacheDirImagesNotifications}"*`]);
