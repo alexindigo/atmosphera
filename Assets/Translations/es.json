@@ -1258,10 +1258,12 @@
           "label": "Luz nocturna"
         },
         "temperature": {
-          "day": "Día",
           "description": "Establece la calidez del color para la noche y el día.",
           "label": "Temperatura de color",
-          "night": "Noche"
+          "day": "Día",
+          "day-description": "Controla la temperatura durante el día.",
+          "night": "Noche",
+          "night-description": "Controla la temperatura durante la noche."
         }
       },
       "title": "Pantalla"

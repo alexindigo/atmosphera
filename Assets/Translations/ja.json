@@ -1258,10 +1258,12 @@
           "label": "夜間モード"
         },
         "temperature": {
-          "day": "日中",
           "description": "日中と夜間の色温度（暖かさ）を設定します。",
           "label": "色温度",
-          "night": "夜間"
+          "day": "日中",
+          "day-description": "昼間の色温度を調整します。",
+          "night": "夜間",
+          "night-description": "夜間の色温度を調整します。"
         }
       },
       "title": "ディスプレイ"
