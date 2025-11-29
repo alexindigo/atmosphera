@@ -732,139 +732,116 @@ Item {
       // Determine which edges the panel is closest to for animation direction
       // Use target position (not animated position) to avoid binding loops
       readonly property bool willTouchTopBar: {
-        if (!isPanelVisible)
-          return false;
         if (!panelContent.allowAttachToBar || root.barPosition !== "top" || root.barIsVertical)
           return false;
         var targetTopBarY = root.barMarginV + Style.barHeight;
         return Math.abs(panelBackground.targetY - targetTopBarY) <= 1;
       }
       readonly property bool willTouchBottomBar: {
-        if (!isPanelVisible)
-          return false;
         if (!panelContent.allowAttachToBar || root.barPosition !== "bottom" || root.barIsVertical)
           return false;
         var targetBottomBarY = root.height - root.barMarginV - Style.barHeight - panelBackground.targetHeight;
         return Math.abs(panelBackground.targetY - targetBottomBarY) <= 1;
       }
       readonly property bool willTouchLeftBar: {
-        if (!isPanelVisible)
-          return false;
         if (!panelContent.allowAttachToBar || root.barPosition !== "left" || !root.barIsVertical)
           return false;
         var targetLeftBarX = root.barMarginH + Style.barHeight;
         return Math.abs(panelBackground.targetX - targetLeftBarX) <= 1;
       }
       readonly property bool willTouchRightBar: {
-        if (!isPanelVisible)
-          return false;
         if (!panelContent.allowAttachToBar || root.barPosition !== "right" || !root.barIsVertical)
           return false;
         var targetRightBarX = root.width - root.barMarginH - Style.barHeight - panelBackground.targetWidth;
         return Math.abs(panelBackground.targetX - targetRightBarX) <= 1;
       }
-      readonly property bool willTouchTopEdge: isPanelVisible && panelContent.allowAttach && panelBackground.targetY <= 1
-      readonly property bool willTouchBottomEdge: isPanelVisible && panelContent.allowAttach && (panelBackground.targetY + panelBackground.targetHeight) >= (root.height - 1)
-      readonly property bool willTouchLeftEdge: isPanelVisible && panelContent.allowAttach && panelBackground.targetX <= 1
-      readonly property bool willTouchRightEdge: isPanelVisible && panelContent.allowAttach && (panelBackground.targetX + panelBackground.targetWidth) >= (root.width - 1)
+      readonly property bool willTouchTopEdge: panelContent.allowAttach && panelBackground.targetY <= 1
+      readonly property bool willTouchBottomEdge: panelContent.allowAttach && (panelBackground.targetY + panelBackground.targetHeight) >= (root.height - 1)
+      readonly property bool willTouchLeftEdge: panelContent.allowAttach && panelBackground.targetX <= 1
+      readonly property bool willTouchRightEdge: panelContent.allowAttach && (panelBackground.targetX + panelBackground.targetWidth) >= (root.width - 1)
 
       readonly property bool isActuallyAttachedToAnyEdge: {
-        if (!isPanelVisible)
-          return false;
         return willTouchTopBar || willTouchBottomBar || willTouchLeftBar || willTouchRightBar || willTouchTopEdge || willTouchBottomEdge || willTouchLeftEdge || willTouchRightEdge;
       }
 
       readonly property bool animateFromTop: {
-        // Before panel is visible, check bar position to determine default animation
-        if (!isPanelVisible) {
-          // If bar is at top (horizontal), animate from top
-          // If bar is vertical (left/right), don't animate from top
-          return !root.barIsVertical && root.barPosition === "top";
+        // When panel is opening, use effective anchors (known before position is calculated)
+        if (!root.isPanelVisible) {
+          // Attached to horizontal bar at top
+          if (panelContent.allowAttachToBar && root.effectivePanelAnchorTop && !root.barIsVertical) {
+            return true;
+          }
+          // Attached to vertical bar (left/right) - don't animate from top
+          if (panelContent.allowAttachToBar && root.barIsVertical && (root.effectivePanelAnchorLeft || root.effectivePanelAnchorRight)) {
+            return false;
+          }
+          // Default: animate from top
+          return true;
         }
-        // PRIORITY 1: Bar attachment (always takes precedence)
-        // Attached to bar at top
+        // Panel is visible - use calculated positions
         if (willTouchTopBar) {
           return true;
         }
-        // PRIORITY 2: Screen edge attachment (only if not touching bar)
-        // Attached to screen top edge (not bar)
         if (willTouchTopEdge && !willTouchTopBar && !willTouchBottomBar && !willTouchLeftBar && !willTouchRightBar) {
           return true;
         }
-        // If panel is not attached to any edge, animate from top by default
         if (!isActuallyAttachedToAnyEdge) {
           return true;
         }
         return false;
       }
       readonly property bool animateFromBottom: {
-        if (!isPanelVisible) {
-          // If bar is at bottom (horizontal), animate from bottom
-          return !root.barIsVertical && root.barPosition === "bottom";
+        if (!root.isPanelVisible) {
+          if (panelContent.allowAttachToBar && root.effectivePanelAnchorBottom && !root.barIsVertical) {
+            return true;
+          }
+          return false;
         }
-        // PRIORITY 1: Bar attachment (always takes precedence)
-        // Attached to bar at bottom
         if (willTouchBottomBar) {
           return true;
         }
-        // PRIORITY 2: Screen edge attachment (only if not touching bar)
-        // Attached to screen bottom edge (not bar)
         if (willTouchBottomEdge && !willTouchTopBar && !willTouchBottomBar && !willTouchLeftBar && !willTouchRightBar) {
           return true;
         }
         return false;
       }
       readonly property bool animateFromLeft: {
-        if (!isPanelVisible) {
-          // If bar is at left (vertical), animate from left
-          return root.barIsVertical && root.barPosition === "left";
+        if (!root.isPanelVisible) {
+          if (panelContent.allowAttachToBar && root.effectivePanelAnchorLeft && root.barIsVertical) {
+            return true;
+          }
+          return false;
         }
-        // PRIORITY 1: Bar attachment (always takes precedence)
-        // If touching any horizontal bar, don't animate from left
         if (willTouchTopBar || willTouchBottomBar) {
           return false;
         }
-        // Attached to bar at left
         if (willTouchLeftBar) {
           return true;
         }
-        // PRIORITY 2: Screen edge attachment (only if not touching any bar)
-        // Don't animate from left if also touching top/bottom edge (priority: vertical over horizontal)
-        var touchingTopEdge = isPanelVisible && panelContent.allowAttach && panelBackground.targetY <= 1;
-        var touchingBottomEdge = isPanelVisible && panelContent.allowAttach && (panelBackground.targetY + panelBackground.targetHeight) >= (root.height - 1);
-
-        if (touchingTopEdge || touchingBottomEdge) {
+        if (willTouchTopEdge || willTouchBottomEdge) {
           return false;
         }
-        // Attached to screen left edge (not bar)
         if (willTouchLeftEdge && !willTouchLeftBar && !willTouchTopBar && !willTouchBottomBar && !willTouchRightBar) {
           return true;
         }
         return false;
       }
       readonly property bool animateFromRight: {
-        if (!isPanelVisible) {
-          // If bar is at right (vertical), animate from right
-          return root.barIsVertical && root.barPosition === "right";
+        if (!root.isPanelVisible) {
+          if (panelContent.allowAttachToBar && root.effectivePanelAnchorRight && root.barIsVertical) {
+            return true;
+          }
+          return false;
         }
-        // PRIORITY 1: Bar attachment (always takes precedence)
-        // If touching any horizontal bar, don't animate from right
         if (willTouchTopBar || willTouchBottomBar) {
           return false;
         }
-        // Attached to bar at right
         if (willTouchRightBar) {
           return true;
         }
-        // PRIORITY 2: Screen edge attachment (only if not touching any bar)
-        // Don't animate from right if also touching top/bottom edge (priority: vertical over horizontal)
-        var touchingTopEdge = isPanelVisible && panelContent.allowAttach && panelBackground.targetY <= 1;
-        var touchingBottomEdge = isPanelVisible && panelContent.allowAttach && (panelBackground.targetY + panelBackground.targetHeight) >= (root.height - 1);
-
-        if (touchingTopEdge || touchingBottomEdge) {
+        if (willTouchTopEdge || willTouchBottomEdge) {
           return false;
         }
-        // Attached to screen right edge (not bar)
         if (willTouchRightEdge && !willTouchLeftBar && !willTouchTopBar && !willTouchBottomBar && !willTouchRightBar) {
           return true;
         }
@@ -879,27 +856,21 @@ Item {
 
       // Current animated width/height (referenced by x/y for right/bottom positioning)
       readonly property real currentWidth: {
-        // When closing and opacity fade complete, shrink width if animating horizontally
         if (isClosing && opacityFadeComplete && shouldAnimateWidth)
           return 0;
-        // When visible or closing (before opacity fade), keep full width
         if (isClosing || isPanelVisible)
           return targetWidth;
-        // Initial state before visible:
-        // - If we're NOT animating width, start at target (no animation needed)
-        // - If we ARE animating width, start at 0 (will animate to target)
+        // If not animating width, start at target (no visual change)
+        // If animating width, start at 0 (will animate to target)
         return shouldAnimateWidth ? 0 : targetWidth;
       }
       readonly property real currentHeight: {
-        // When closing and opacity fade complete, shrink height if animating vertically
         if (isClosing && opacityFadeComplete && shouldAnimateHeight)
           return 0;
-        // When visible or closing (before opacity fade), keep full height
         if (isClosing || isPanelVisible)
           return targetHeight;
-        // Initial state before visible:
-        // - If we're NOT animating height, start at target (no animation needed)
-        // - If we ARE animating height, start at 0 (will animate to target)
+        // If not animating height, start at target (no visual change)
+        // If animating height, start at 0 (will animate to target)
         return shouldAnimateHeight ? 0 : targetHeight;
       }
 
