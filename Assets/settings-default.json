@@ -134,6 +134,7 @@
     "enabled": true,
     "overviewEnabled": false,
     "directory": "",
+    "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
     "setWallpaperOnAllMonitors": true,
