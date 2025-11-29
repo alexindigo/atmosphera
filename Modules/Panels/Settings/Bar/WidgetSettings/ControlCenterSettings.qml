@@ -36,10 +36,6 @@ ColumnLayout {
     checked: valueUseDistroLogo
     onToggled: function (checked) {
       valueUseDistroLogo = checked;
-      if (checked) {
-        valueCustomIconPath = "";
-        valueIcon = "";
-      }
     }
   }
 
@@ -84,14 +80,14 @@ ColumnLayout {
       Layout.alignment: Qt.AlignVCenter
       radius: width * 0.5
       imagePath: valueCustomIconPath
-      visible: valueCustomIconPath !== ""
+      visible: valueCustomIconPath !== "" && !valueUseDistroLogo
     }
 
     NIcon {
       Layout.alignment: Qt.AlignVCenter
       icon: valueIcon
       pointSize: Style.fontSizeXXL * 1.5
-      visible: valueIcon !== "" && valueCustomIconPath === ""
+      visible: valueIcon !== "" && valueCustomIconPath === "" && !valueUseDistroLogo
     }
   }
 

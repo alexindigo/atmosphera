@@ -69,7 +69,8 @@ NIconButton {
     }
   }
 
-  // If we have a custom path or distro logo, don't use the theme icon.
+  // If we have a custom path and not using distro logo, use the theme icon.
+  // If using distro logo, don't use theme icon.
   icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
   tooltipText: I18n.tr("tooltips.open-control-center")
   tooltipDirection: BarService.getTooltipDirection()
@@ -145,10 +146,10 @@ NIconButton {
     width: root.width * 0.8
     height: width
     source: {
-      if (customIconPath !== "")
-        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath;
       if (useDistroLogo)
         return HostService.osLogo;
+      if (customIconPath !== "")
+        return customIconPath.startsWith("file://") ? customIconPath : "file://" + customIconPath;
       return "";
     }
     visible: source !== ""
