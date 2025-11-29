@@ -866,6 +866,22 @@ ColumnLayout {
                      }
                    }
       }
+
+      NCheckbox {
+        label: "Emacs"
+        description: ProgramCheckerService.emacsAvailable ? "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nApply manually: (load-theme 'noctalia)" : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
+                                                                                                                                                                                                     "app": "emacs"
+                                                                                                                                                                                                   })
+        checked: Settings.data.templates.emacs
+        enabled: ProgramCheckerService.emacsAvailable
+        opacity: ProgramCheckerService.emacsAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.emacsAvailable) {
+                       Settings.data.templates.emacs = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
     }
     // Miscellaneous
     NCollapsible {

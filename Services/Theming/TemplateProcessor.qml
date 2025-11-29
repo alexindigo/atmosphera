@@ -124,6 +124,18 @@ Singleton {
                                                                       }
                                                                     });
                                               }
+                                            } else if (app.id === "emacs" && app.checkDoomFirst) {
+                                              if (Settings.data.templates.emacs) {
+                                                const doomPath = app.outputs[0].path;
+                                                const standardPath = app.outputs[1].path;
+                                                const doomConfigDir = "~/.config/doom";
+                                                const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
+
+                                                lines.push(`\n[templates.emacs]`);
+                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
+                                                lines.push(`output_path = "${doomPath}"`);
+                                                lines.push(`post_hook = "sh -c 'if [ ! -d \\"${doomConfigDir}\\" ]; then mkdir -p \\"${standardDir}\\" && mv \\"${doomPath}\\" \\"${standardPath}\\" ; fi'"`);
+                                              }
                                             } else {
                                               // Handle regular apps
                                               if (Settings.data.templates[app.id]) {
@@ -257,17 +269,36 @@ Singleton {
     const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, app.strict || false);
     let script = "";
 
-    app.outputs.forEach(output => {
-                          const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
-                          const outputPath = output.path.replace("~", homeDir);
-                          const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
+    if (app.id === "emacs" && app.checkDoomFirst) {
+      const doomPath = app.outputs[0].path.replace("~", homeDir);
+      const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
+      const standardPath = app.outputs[1].path.replace("~", homeDir);
+      const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
+      const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
 
-                          script += `\n`;
-                          script += `mkdir -p ${outputDir}\n`;
-                          script += `cp '${templatePath}' '${outputPath}'\n`;
-                          script += replaceColorsInFile(outputPath, palette);
-                          script += `\n`;
-                        });
+      script += `\n`;
+      script += `if [ -d "${doomDir}" ]; then\n`;
+      script += `  mkdir -p ${doomDir}\n`;
+      script += `  cp '${templatePath}' '${doomPath}'\n`;
+      script += replaceColorsInFile(doomPath, palette);
+      script += `else\n`;
+      script += `  mkdir -p ${standardDir}\n`;
+      script += `  cp '${templatePath}' '${standardPath}'\n`;
+      script += replaceColorsInFile(standardPath, palette);
+      script += `fi\n`;
+    } else {
+      app.outputs.forEach(output => {
+                            const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
+                            const outputPath = output.path.replace("~", homeDir);
+                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
+
+                            script += `\n`;
+                            script += `mkdir -p ${outputDir}\n`;
+                            script += `cp '${templatePath}' '${outputPath}'\n`;
+                            script += replaceColorsInFile(outputPath, palette);
+                            script += `\n`;
+                          });
+    }
 
     if (app.postProcess) {
       script += app.postProcess(mode);
@@ -428,12 +459,7 @@ Singleton {
     }
 
     stderr: StdioCollector {
-      onStreamFinished: {
-        if (this.text) {
-          const description = generateProcess.buildErrorMessage();
-          Logger.e("TemplateProcessor", "Process failed", description);
-        }
-      }
+      onStreamFinished: {}
     }
   }
 

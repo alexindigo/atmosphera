@@ -548,6 +548,7 @@ Singleton {
       property bool spicetify: false
       property bool telegram: false
       property bool cava: false
+      property bool emacs: false
       property bool enableUserTemplates: false
     }
 
