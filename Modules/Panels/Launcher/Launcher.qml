@@ -1078,7 +1078,7 @@ SmartPanel {
                     pointSize: {
                       if (modelData.emojiChar) {
                         if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                          return gridEntry.width * 0.4;
+                          return Math.max(Style.fontSizeL, gridEntry.width * 0.4);
                         }
                         return Style.fontSizeXXL * 2;
                       }
