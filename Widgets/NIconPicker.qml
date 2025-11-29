@@ -92,6 +92,43 @@ Popup {
       model: root.filteredIcons
       clip: true
       reuseItems: true
+
+      ScrollBar.vertical: ScrollBar {
+        parent: grid
+        x: grid.mirrored ? 0 : grid.width - width
+        y: 0
+        height: grid.height
+        active: grid.ScrollBar.horizontal.active
+        policy: ScrollBar.AsNeeded
+
+        contentItem: Rectangle {
+          implicitWidth: 6
+          implicitHeight: 100
+          radius: Style.radiusM
+          color: parent.pressed ? Qt.alpha(Color.mHover, 0.8) : parent.hovered ? Qt.alpha(Color.mHover, 0.8) : Qt.alpha(Color.mHover, 0.8)
+          opacity: grid.contentHeight > grid.height ? (parent.active ? 1.0 : 0.0) : 0.0
+
+          Behavior on opacity {
+            NumberAnimation {
+              duration: Style.animationFast
+            }
+          }
+        }
+
+        background: Rectangle {
+          implicitWidth: 6
+          implicitHeight: 100
+          color: Color.transparent
+          opacity: grid.contentHeight > grid.height ? (parent.active ? 0.3 : 0.0) : 0.0
+          radius: Style.radiusM / 2
+
+          Behavior on opacity {
+            NumberAnimation {
+              duration: Style.animationFast
+            }
+          }
+        }
+      }
       delegate: Rectangle {
         width: grid.cellWidth
         height: grid.cellHeight
