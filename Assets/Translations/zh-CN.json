@@ -1041,7 +1041,7 @@
           "description": "窗口合成器主题",
           "label": "合成器",
           "niri": {
-            "description": "{filepath}\n\n需要 niri v25.11+",
+            "description": "写入 {filepath}。需要 niri v25.11+",
             "description-missing": "需要安装 {app}"
           }
         },

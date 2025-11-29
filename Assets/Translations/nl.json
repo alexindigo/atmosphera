@@ -1041,7 +1041,7 @@
           "description": "Theming van venstersamensteller",
           "label": "Compositors",
           "niri": {
-            "description": "{filepath}\n\nVereist niri v25.11+",
+            "description": "Schrijf {filepath}. Vereist niri v25.11+",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           }
         },

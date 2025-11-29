@@ -1041,7 +1041,7 @@
           "description": "Pencere birleştirici temalandırma",
           "label": "Birleştiriciler",
           "niri": {
-            "description": "{filepath}\n\nniri v25.11+ gerektirir",
+            "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",
             "description-missing": "{app} yüklü olmalıdır"
           }
         },

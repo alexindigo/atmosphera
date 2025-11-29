@@ -1041,7 +1041,7 @@
           "description": "Tematização do compositor de janelas",
           "label": "Compositores",
           "niri": {
-            "description": "{filepath}\n\nRequer Niri v25.11+",
+            "description": "Escrever {filepath}. Requer Niri v25.11+",
             "description-missing": "Requer que o {app} esteja instalado."
           }
         },

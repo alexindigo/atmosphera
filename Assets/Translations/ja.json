@@ -1041,7 +1041,7 @@
           "description": "ウィンドウコンポジタのテーマ",
           "label": "合成者",
           "niri": {
-            "description": "{filepath}\n\nniri v25.11+ ga hitsuyou desu",
+            "description": "{filepath} を書き込みます。niri v25.11+ が必要です",
             "description-missing": "{app} がインストールされている必要があります"
           }
         },

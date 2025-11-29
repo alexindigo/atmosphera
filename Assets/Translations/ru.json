@@ -1041,7 +1041,7 @@
           "description": "Оформление композитора окон",
           "label": "Компоновщики",
           "niri": {
-            "description": "{filepath}\n\nТребуется niri v25.11+",
+            "description": "Записать {filepath}. Требуется niri v25.11+",
             "description-missing": "Требуется установка {app}"
           }
         },

@@ -1041,7 +1041,7 @@
           "description": "Fenster-Compositor-Theming",
           "label": "Compositor/innen",
           "niri": {
-            "description": "{filepath}\n\nBenötigt niri v25.11+",
+            "description": "Schreibe {filepath}. Benötigt niri v25.11+",
             "description-missing": "Benötigt die Installation von {app}"
           }
         },

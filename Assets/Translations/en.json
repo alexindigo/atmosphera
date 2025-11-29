@@ -1041,7 +1041,7 @@
           "description": "Window compositor theming",
           "label": "Compositors",
           "niri": {
-            "description": "{filepath}\n\nRequires niri v25.11+",
+            "description": "Write {filepath}. Requires niri v25.11+",
             "description-missing": "Requires {app} to be installed"
           }
         },
