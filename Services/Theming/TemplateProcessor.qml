@@ -329,6 +329,11 @@ Singleton {
   // ================================================================================
   // TERMINAL THEMES (predefined schemes use pre-rendered files)
   // ================================================================================
+  function escapeShellPath(path) {
+    // Escape single quotes by ending the quoted string, adding an escaped quote, and starting a new quoted string
+    return "'" + path.replace(/'/g, "'\\''") + "'";
+  }
+
   function handleTerminalThemes(mode) {
     const commands = [];
     const homeDir = Quickshell.env("HOME");
@@ -339,8 +344,8 @@ Singleton {
                                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
                                            const templatePath = getTerminalColorsTemplate(terminal, mode);
 
-                                           commands.push(`mkdir -p ${outputDir}`);
-                                           commands.push(`cp -f ${templatePath} ${outputPath}`);
+                                           commands.push(`mkdir -p ${escapeShellPath(outputDir)}`);
+                                           commands.push(`cp -f ${escapeShellPath(templatePath)} ${escapeShellPath(outputPath)}`);
                                            commands.push(`${TemplateRegistry.colorsApplyScript} ${terminal}`);
                                          }
                                        });
