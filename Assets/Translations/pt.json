@@ -1258,10 +1258,12 @@
           "label": "Luz noturna"
         },
         "temperature": {
-          "day": "Dia",
           "description": "Defina o quão quente a cor será durante a noite e o dia.",
           "label": "Temperatura da cor",
-          "night": "Noite"
+          "day": "Dia",
+          "day-description": "Controla a temperatura durante o dia.",
+          "night": "Noite",
+          "night-description": "Controla a temperatura durante a noite."
         }
       },
       "title": "Tela"

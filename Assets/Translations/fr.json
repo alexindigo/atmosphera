@@ -1258,10 +1258,12 @@
           "label": "Éclairage nocturne"
         },
         "temperature": {
-          "day": "Jour",
           "description": "Réglez la chaleur des couleurs pour la nuit et le jour.",
           "label": "Température de couleur",
-          "night": "Nuit"
+          "day": "Jour",
+          "day-description": "Contrôle la température pendant la journée.",
+          "night": "Nuit",
+          "night-description": "Contrôle la température pendant la nuit."
         }
       },
       "title": "Affichage"

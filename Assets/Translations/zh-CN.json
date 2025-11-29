@@ -1258,10 +1258,12 @@
           "label": "夜间模式"
         },
         "temperature": {
-          "day": "白天",
           "description": "设置夜间和白天的颜色温暖度。",
           "label": "色温",
-          "night": "夜间"
+          "day": "白天",
+          "day-description": "控制白天的色温。",
+          "night": "夜间",
+          "night-description": "控制夜间的色温。"
         }
       },
       "title": "显示"

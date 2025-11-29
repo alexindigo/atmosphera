@@ -1258,10 +1258,12 @@
           "label": "Nachtlicht"
         },
         "temperature": {
-          "day": "Dag",
           "description": "Stel de kleurwarmte voor nacht en dag in.",
           "label": "Kleurtemperatuur",
-          "night": "Nacht"
+          "day": "Dag",
+          "day-description": "Regelt de kleurtemperatuur overdag.",
+          "night": "Nacht",
+          "night-description": "Regelt de kleurtemperatuur 's nachts."
         }
       },
       "title": "Beeldscherm"

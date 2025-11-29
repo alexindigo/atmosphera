@@ -1258,10 +1258,12 @@
           "label": "Nachtlicht"
         },
         "temperature": {
-          "day": "Tag",
           "description": "Farbwärme für Nacht- und Tageszeit einstellen.",
           "label": "Farbtemperatur",
-          "night": "Nacht"
+          "day": "Tag",
+          "day-description": "Steuert die Farbtemperatur tagsüber.",
+          "night": "Nacht",
+          "night-description": "Steuert die Farbtemperatur nachts."
         }
       },
       "title": "Anzeige"

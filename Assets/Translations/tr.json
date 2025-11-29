@@ -1258,10 +1258,12 @@
           "label": "Gece ışığı"
         },
         "temperature": {
-          "day": "Gündüz",
           "description": "Gece ve gündüz için renk sıcaklığını ayarlayın.",
           "label": "Renk sıcaklığı",
-          "night": "Gece"
+          "day": "Gündüz",
+          "day-description": "Gündüz saatlerindeki renk sıcaklığını kontrol eder.",
+          "night": "Gece",
+          "night-description": "Gece saatlerindeki renk sıcaklığını kontrol eder."
         }
       },
       "title": "Görüntü"

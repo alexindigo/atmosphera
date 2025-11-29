@@ -1258,10 +1258,12 @@
           "label": "Night Light"
         },
         "temperature": {
-          "day": "Day",
           "description": "Set the color warmth for nighttime and daytime.",
           "label": "Color temperature",
-          "night": "Night"
+          "day": "Day",
+          "day-description": "Controls the temperature during daytime.",
+          "night": "Night",
+          "night-description": "Controls the temperature during nighttime."
         }
       },
       "title": "Display"
