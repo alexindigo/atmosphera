@@ -15,6 +15,8 @@ ColumnLayout {
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
 
+  readonly property int topContributorsCount: 20
+
   spacing: Style.marginL
 
   NHeader {
@@ -157,7 +159,7 @@ ColumnLayout {
     spacing: Style.marginM
 
     Repeater {
-      model: Math.min(root.contributors.length, 20)
+      model: Math.min(root.contributors.length, root.topContributorsCount)
 
       delegate: Rectangle {
         width: Math.round(Style.baseWidgetSize * 6.8)
@@ -312,21 +314,21 @@ ColumnLayout {
   // Remaining contributors (simple text links)
   Flow {
     id: remainingContributorsFlow
-    visible: root.contributors.length > 20
+    visible: root.contributors.length > root.topContributorsCount
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
     Layout.topMargin: Style.marginL
     spacing: Style.marginS
 
     Repeater {
-      model: Math.max(0, root.contributors.length - 20)
+      model: Math.max(0, root.contributors.length - root.topContributorsCount)
 
       delegate: Rectangle {
         width: nameText.implicitWidth + Style.marginM * 2
         height: nameText.implicitHeight + Style.marginS * 2
         radius: Style.radiusS
-        color: nameArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.1) : Color.transparent
-        border.width: 1
+        color: nameArea.containsMouse ? Color.mHover : Color.transparent
+        border.width: Style.borderS
         border.color: nameArea.containsMouse ? Color.mPrimary : Color.mOutline
 
         Behavior on color {
@@ -344,9 +346,9 @@ ColumnLayout {
         NText {
           id: nameText
           anchors.centerIn: parent
-          text: root.contributors[index + 20].login || "Unknown"
+          text: root.contributors[index + root.topContributorsCount].login || "Unknown"
           pointSize: Style.fontSizeXS
-          color: nameArea.containsMouse ? Color.mPrimary : Color.mOnSurface
+          color: nameArea.containsMouse ? Color.mOnHover : Color.mOnSurface
           font.weight: Style.fontWeightMedium
 
           Behavior on color {
@@ -362,8 +364,8 @@ ColumnLayout {
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           onClicked: {
-            if (root.contributors[index + 20].html_url)
-              Quickshell.execDetached(["xdg-open", root.contributors[index + 20].html_url]);
+            if (root.contributors[index + root.topContributorsCount].html_url)
+              Quickshell.execDetached(["xdg-open", root.contributors[index + root.topContributorsCount].html_url]);
           }
         }
       }

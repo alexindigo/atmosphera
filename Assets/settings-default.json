@@ -308,7 +308,11 @@
     "autoHideMs": 2000,
     "overlayLayer": true,
     "backgroundOpacity": 1,
-    "enabledTypes": [],
+    "enabledTypes": [
+      0,
+      1,
+      2
+    ],
     "monitors": []
   },
   "audio": {
@@ -354,6 +358,8 @@
     "spicetify": false,
     "telegram": false,
     "cava": false,
+    "emacs": false,
+    "niri": false,
     "enableUserTemplates": false
   },
   "nightLight": {

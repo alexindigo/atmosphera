@@ -92,7 +92,7 @@ Singleton {
   // --------------------------------
   function fetchFromGitHub() {
     if (isFetchingData) {
-      Logger.w("GitHub", "GitHub data is still fetching");
+      Logger.d("GitHub", "GitHub data is still fetching");
       return;
     }
 
@@ -344,47 +344,49 @@ Singleton {
   }
 
   function renderCircularAvatar(inputPath, outputPath, username, avatarUrl) {
-    var rendererComponent = Qt.createComponent(Quickshell.shellDir + "/Modules/Renderer/CircularAvatarRenderer.qml");
-    if (rendererComponent.status === Component.Ready) {
-      var renderer = rendererComponent.createObject(root, {
-                                                      imagePath: "file://" + inputPath,
-                                                      outputPath: outputPath,
-                                                      username: username
-                                                    });
+    Logger.d("GitHubService", "Rendering circular avatar for", username);
 
-      renderer.renderComplete.connect(function (success) {
-        if (success) {
-          // Update cache metadata
-          cacheMetadata[username] = {
-            avatar_url: avatarUrl,
-            cached_path: outputPath,
-            cached_at: Date.now()
-          };
+    // Use ImageMagick to create a circular avatar with proper alpha transparency
+    var convertProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["magick", "${inputPath}", "-resize", "256x256^", "-gravity", "center", "-extent", "256x256", "-alpha", "set", "(", "+clone", "-channel", "A", "-evaluate", "set", "0", "+channel", "-fill", "white", "-draw", "circle 128,128 128,0", ")", "-compose", "DstIn", "-composite", "${outputPath}"]
+      }
+    `, root, "Convert_" + Date.now());
 
-          cachedCircularAvatars[username] = "file://" + outputPath;
-          cachedCircularAvatarsChanged();
+    convertProcess.exited.connect(function (exitCode) {
+      var success = exitCode === 0;
 
-          saveCacheMetadata();
+      if (success) {
+        // Update cache metadata
+        cacheMetadata[username] = {
+          avatar_url: avatarUrl,
+          cached_path: outputPath,
+          cached_at: Date.now()
+        };
 
-          Logger.d("GitHubService", "Cached circular avatar for", username);
-        } else {
-          Logger.e("GitHubService", "Failed to render circular avatar for", username);
-        }
+        cachedCircularAvatars[username] = "file://" + outputPath;
+        cachedCircularAvatarsChanged();
 
-        renderer.destroy();
+        saveCacheMetadata();
 
-        // Clean up temp file
-        Quickshell.execDetached(["rm", "-f", inputPath]);
+        Logger.d("GitHubService", "Cached circular avatar for", username);
+      } else {
+        Logger.e("GitHubService", "Failed to render circular avatar for", username);
+      }
 
-        // Process next in queue
-        isProcessingAvatars = false;
-        processNextAvatar();
-      });
-    } else {
-      Logger.e("GitHubService", "Failed to create CircularAvatarRenderer");
+      // Clean up temp file
+      Quickshell.execDetached(["rm", "-f", inputPath]);
+
+      // Process next in queue
       isProcessingAvatars = false;
       processNextAvatar();
-    }
+
+      convertProcess.destroy();
+    });
+
+    convertProcess.running = true;
   }
 
   // --------------------------------
