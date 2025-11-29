@@ -381,7 +381,7 @@
     "plugged-in": "Angeschlossen.",
     "power-profile": "Energieprofil",
     "time-left": "Verbleibende Zeit: {time}.",
-    "time-until-full": "Zeit bis vollständig geladen: {time}."
+    "time-until-full": "Verbleibende Ladezeit: {time}."
   },
   "bluetooth": {
     "panel": {
