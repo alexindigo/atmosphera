@@ -11,13 +11,30 @@ Item {
   property var launcher: null
   property bool handleSearch: false
 
+  property string selectedCategory: "recent"
+  property bool isBrowsingMode: false
+
+  property var categoryIcons: ({
+    "recent": "clock",
+    "people": "user",
+    "animals": "paw",
+    "nature": "leaf",
+    "food": "apple",
+    "activity": "run",
+    "travel": "plane",
+    "objects": "home",
+    "symbols": "star",
+    "flags": "flag"
+  })
+
+  property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols", "flags"]
+
   // Force update results when emoji service loads
   Connections {
     target: EmojiService
     function onLoadedChanged() {
       if (EmojiService.loaded && root.launcher) {
-        // Update launcher results to refresh the UI
-        root.launcher?.updateResults();
+        root.launcher.updateResults();
       }
     }
   }
@@ -25,6 +42,18 @@ Item {
   // Initialize plugin
   function init() {
     Logger.i("EmojiPlugin", "Initialized");
+  }
+
+  function selectCategory(category) {
+    selectedCategory = category;
+    if (launcher) {
+      launcher.updateResults();
+    }
+  }
+
+  function onOpened() {
+    // Always reset to "recent" category when opening
+    selectedCategory = "recent";
   }
 
   // Check if this plugin handles the command
@@ -65,15 +94,23 @@ Item {
           ];
     }
 
-    const query = searchText.slice(6).trim();
-    const emojis = EmojiService.search(query);
-    return emojis.map(formatEmojiEntry);
+    var query = searchText.slice(6).trim();
+
+    if (query === "") {
+      isBrowsingMode = true;
+      var emojis = EmojiService.getEmojisByCategory(selectedCategory);
+      return emojis.map(formatEmojiEntry);
+    } else {
+      isBrowsingMode = false;
+      var emojis = EmojiService.search(query);
+      return emojis.map(formatEmojiEntry);
+    }
   }
 
   // Format an emoji entry for the results list
   function formatEmojiEntry(emoji) {
     let title = emoji.name;
-    let description = (emoji.keywords || []).join(", ");
+    let description = emoji.keywords.join(", ");
 
     if (emoji.category) {
       description += " • Category: " + emoji.category;
