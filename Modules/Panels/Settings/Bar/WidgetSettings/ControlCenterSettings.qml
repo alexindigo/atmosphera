@@ -18,6 +18,7 @@ ColumnLayout {
   property bool valueUseDistroLogo: widgetData.useDistroLogo !== undefined ? widgetData.useDistroLogo : widgetMetadata.useDistroLogo
   property string valueCustomIconPath: widgetData.customIconPath !== undefined ? widgetData.customIconPath : ""
   property bool valueColorizeDistroLogo: widgetData.colorizeDistroLogo !== undefined ? widgetData.colorizeDistroLogo : (widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false)
+  property string valueColorizeSystemIcon: widgetData.colorizeSystemIcon !== undefined ? widgetData.colorizeSystemIcon : (widgetMetadata.colorizeSystemIcon !== undefined ? widgetMetadata.colorizeSystemIcon : "none")
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -25,6 +26,7 @@ ColumnLayout {
     settings.useDistroLogo = valueUseDistroLogo;
     settings.customIconPath = valueCustomIconPath;
     settings.colorizeDistroLogo = valueColorizeDistroLogo;
+    settings.colorizeSystemIcon = valueColorizeSystemIcon;
     return settings;
   }
 
@@ -48,6 +50,23 @@ ColumnLayout {
     checked: valueColorizeDistroLogo
     onToggled: function (checked) {
       valueColorizeDistroLogo = checked;
+    }
+  }
+
+  NComboBox {
+    visible: (!valueUseDistroLogo && valueIcon !== "" && valueCustomIconPath === "") || (valueUseDistroLogo && valueColorizeDistroLogo)
+    label: !valueUseDistroLogo ? I18n.tr("bar.widget-settings.control-center.colorize-system-icon.label") : I18n.tr("bar.widget-settings.control-center.color-selection.label")
+    description: I18n.tr("bar.widget-settings.control-center.color-selection.description")
+    model: [
+      { "name": I18n.tr("options.colors.none"), "key": "none" },
+      { "name": I18n.tr("options.colors.primary"), "key": "primary" },
+      { "name": I18n.tr("options.colors.secondary"), "key": "secondary" },
+      { "name": I18n.tr("options.colors.tertiary"), "key": "tertiary" },
+      { "name": I18n.tr("options.colors.error"), "key": "error" }
+    ]
+    currentKey: valueColorizeSystemIcon
+    onSelected: function(key) {
+      valueColorizeSystemIcon = key;
     }
   }
 
