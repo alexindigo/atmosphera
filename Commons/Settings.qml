@@ -34,7 +34,6 @@ Singleton {
   readonly property string defaultAvatar: Quickshell.env("HOME") + "/.face"
   readonly property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
   readonly property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
-  readonly property string defaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
 
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
@@ -77,7 +76,7 @@ Singleton {
   Timer {
     id: saveTimer
     running: false
-    interval: 1000
+    interval: 500
     onTriggered: {
       root.saveImmediate();
     }

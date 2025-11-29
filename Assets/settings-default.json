@@ -154,9 +154,7 @@
     "wallhavenPurity": "100",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
-    "wallhavenResolutionHeight": "",
-    "defaultWallpaper": "",
-    "monitors": []
+    "wallhavenResolutionHeight": ""
   },
   "appLauncher": {
     "enableClipboardHistory": false,

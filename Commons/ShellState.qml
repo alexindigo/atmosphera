@@ -61,9 +61,6 @@ Singleton {
                                         schemes: [],
                                         timestamp: 0
                                       })
-
-      // WallpaperService: current wallpapers per screen
-      property var wallpapers: ({})
     }
 
     onLoaded: {
@@ -86,7 +83,7 @@ Singleton {
   // Debounced save timer
   Timer {
     id: saveTimer
-    interval: 300
+    interval: 500
     onTriggered: performSave()
   }
 
@@ -174,16 +171,6 @@ Singleton {
     };
   }
 
-  // Wallpapers (WallpaperService)
-  function setWallpapers(wallpapersData) {
-    adapter.wallpapers = wallpapersData;
-    save();
-  }
-
-  function getWallpapers() {
-    return adapter.wallpapers || {};
-  }
-
   // -----------------------------------------------------
   function buildStateSnapshot() {
     try {
@@ -196,8 +183,9 @@ Singleton {
           doNotDisturb: NotificationService.doNotDisturb,
           noctaliaPerformanceMode: PowerProfileService.noctaliaPerformanceMode,
           barVisible: BarService.isVisible,
+          wallpapers: WallpaperService.currentWallpapers || {},
+          // -------------
           display: shellStateData.display || {},
-          wallpapers: shellStateData.wallpapers || {},
           notificationsState: shellStateData.notificationsState || {},
           changelogState: shellStateData.changelogState || {},
           colorSchemesList: shellStateData.colorSchemesList || {}
