@@ -1375,7 +1375,8 @@
           "description": "Редагуйте дані користувача та аватар.",
           "label": "Профіль"
         },
-        "select-avatar": "Вибрати зображення аватара"
+        "select-avatar": "Вибрати зображення аватара",
+        "tooltip": "Переглянути зображення аватара"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'Не турбувати' увімкнено",
     "enable-keep-awake": "Клацніть, щоб увімкнути режим неспання.\nПрокрутіть, щоб налаштувати тайм-аут.",
     "forget-network": "Забути мережу",
+    "grid-view": "Мережевий вигляд",
+    "hidden-files-hide": "Приховати приховані файли",
+    "hidden-files-show": "Показати приховані файли",
     "home": "Додому",
     "input-muted": "Перемкнути вимкнення входу",
     "keep-awake": "Заборона сну",
     "keyboard-layout": "Розкладка клавіатури {layout}",
+    "list-view": "Список",
     "manage-vpn": "Керувати підключеннями VPN",
     "manage-wifi": "Керувати Wi-Fi",
     "microphone-volume-at": "Гучність мікрофона {volume}%\nЛівий клік для налаштувань. Правий клік для вимкнення звуку.\nПрокрутка для зміни гучності.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Оновити список шпалер",
     "remove-widget": "Видалити віджет",
     "screen-recorder-not-installed": "Запис екрана не встановлено",
+    "search": "Пошук",
+    "search-close": "Закрити пошук",
     "session-menu": "Меню сеансу",
     "set-power-profile": "Встановити профіль живлення \"{profile}\"",
     "start-screen-recording": "Почати запис екрана",

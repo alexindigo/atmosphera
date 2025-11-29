@@ -1375,7 +1375,8 @@
           "description": "编辑您的用户详细信息和头像。",
           "label": "个人资料"
         },
-        "select-avatar": "选择头像图片"
+        "select-avatar": "选择头像图片",
+        "tooltip": "浏览头像图片"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'勿扰模式'已启用",
     "enable-keep-awake": "单击以启用保持唤醒。\n滚动以调整超时。",
     "forget-network": "忘记网络",
+    "grid-view": "网格视图",
+    "hidden-files-hide": "隐藏隐藏文件",
+    "hidden-files-show": "显示隐藏文件",
     "home": "主目录",
     "input-muted": "静音输入设备",
     "keep-awake": "保持唤醒",
     "keyboard-layout": "{layout} 键盘布局",
+    "list-view": "列表视图",
     "manage-vpn": "管理 VPN 连接",
     "manage-wifi": "管理 Wi-Fi",
     "microphone-volume-at": "麦克风音量 {volume}%\n左键点击进入设置。右键点击切换静音。\n滚动滚轮调节音量。",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
     "screen-recorder-not-installed": "屏幕录制器未安装",
+    "search": "搜索",
+    "search-close": "关闭搜索",
     "session-menu": "会话菜单",
     "set-power-profile": "设置\"{profile}\"电源模式",
     "start-screen-recording": "开始屏幕录制",

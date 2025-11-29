@@ -1375,7 +1375,8 @@
           "description": "Kullanıcı detaylarınızı ve avatarınızı düzenleyin.",
           "label": "Profil"
         },
-        "select-avatar": "Avatar görüntüsü seç"
+        "select-avatar": "Avatar görüntüsü seç",
+        "tooltip": "Avatar resmi ara"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'Rahatsız etme' etkin",
     "enable-keep-awake": "Uyanık kalmayı etkinleştirmek için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
     "forget-network": "Ağı unut",
+    "grid-view": "Izgara görünümü",
+    "hidden-files-hide": "Gizli dosyaları gizle",
+    "hidden-files-show": "Gizli dosyaları göster",
     "home": "Ana Sayfa",
     "input-muted": "Giriş sessizliğini değiştir",
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
+    "list-view": "Liste görünümü",
     "manage-vpn": "VPN bağlantılarını yönet",
     "manage-wifi": "Wi-Fi yönet",
     "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
     "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
+    "search": "Ara",
+    "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
     "set-power-profile": "\"{profile}\" güç profilini ayarla",
     "start-screen-recording": "Ekran kaydını başlat",

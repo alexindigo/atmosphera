@@ -1375,7 +1375,8 @@
           "description": "Modifiez vos informations utilisateur et votre avatar.",
           "label": "Profil"
         },
-        "select-avatar": "Sélectionner une image d'avatar"
+        "select-avatar": "Sélectionner une image d'avatar",
+        "tooltip": "Parcourir pour une image d’avatar"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "'Ne pas déranger' activé",
     "enable-keep-awake": "Cliquez pour activer le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
     "forget-network": "Oublier le réseau",
+    "grid-view": "Vue en grille",
+    "hidden-files-hide": "Masquer les fichiers cachés",
+    "hidden-files-show": "Afficher les fichiers cachés",
     "home": "Accueil",
     "input-muted": "Couper l'entrée audio",
     "keep-awake": "Rester éveillé",
     "keyboard-layout": "Disposition du clavier {layout}",
+    "list-view": "Vue en liste",
     "manage-vpn": "Gérer les connexions VPN",
     "manage-wifi": "Gérer le Wi-Fi",
     "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
     "screen-recorder-not-installed": "L'enregistreur d'écran n'est pas installé",
+    "search": "Rechercher",
+    "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
     "set-power-profile": "Définir le profil d'alimentation \"{profile}\"",
     "start-screen-recording": "Démarrer l'enregistrement d'écran",

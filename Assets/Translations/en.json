@@ -1375,7 +1375,8 @@
           "description": "Edit your user details and avatar.",
           "label": "Profile"
         },
-        "select-avatar": "Select avatar image"
+        "select-avatar": "Select avatar image",
+        "tooltip": "Browse for avatar image"
       },
       "screen-corners": {
         "radius": {
@@ -2199,10 +2200,14 @@
     "do-not-disturb-enabled": "Do Not Disturb enabled",
     "enable-keep-awake": "Click to enable Keep Awake.\nScroll to adjust timeout",
     "forget-network": "Forget network",
+    "grid-view": "Grid view",
+    "hidden-files-hide": "Hide hidden files",
+    "hidden-files-show": "Show hidden files",
     "home": "Home",
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep Awake",
     "keyboard-layout": "{layout} keyboard layout",
+    "list-view": "List view",
     "manage-vpn": "Manage VPN connections",
     "manage-wifi": "Manage Wi-Fi",
     "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
@@ -2235,6 +2240,8 @@
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder is not installed",
+    "search": "Search",
+    "search-close": "Close search",
     "session-menu": "Session menu",
     "set-power-profile": "Set \"{profile}\" power profile",
     "start-screen-recording": "Start screen recording",
