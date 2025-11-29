@@ -461,7 +461,8 @@ Singleton {
 
     while (historyList.count > maxHistory) {
       const old = historyList.get(historyList.count - 1);
-      if (old.cachedImage && !old.cachedImage.startsWith("image://")) {
+      // Only delete cached images that are in our cache directory
+      if (old.cachedImage && old.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
         Quickshell.execDetached(["rm", "-f", old.cachedImage]);
       }
       historyList.remove(historyList.count - 1);
@@ -699,7 +700,8 @@ Singleton {
     for (var i = 0; i < historyList.count; i++) {
       const notif = historyList.get(i);
       if (notif.id === notificationId) {
-        if (notif.cachedImage && !notif.cachedImage.startsWith("image://")) {
+        // Only delete cached images that are in our cache directory
+        if (notif.cachedImage && notif.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
           Quickshell.execDetached(["rm", "-f", notif.cachedImage]);
         }
         historyList.remove(i);
@@ -713,7 +715,8 @@ Singleton {
   function removeOldestHistory() {
     if (historyList.count > 0) {
       const oldest = historyList.get(historyList.count - 1);
-      if (oldest.cachedImage && !oldest.cachedImage.startsWith("image://")) {
+      // Only delete cached images that are in our cache directory
+      if (oldest.cachedImage && oldest.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
         Quickshell.execDetached(["rm", "-f", oldest.cachedImage]);
       }
       historyList.remove(historyList.count - 1);
