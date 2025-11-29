@@ -113,15 +113,6 @@ Singleton {
   }
 
   function finalizeFontLoading() {
-    // Add fallbacks if needed (models are already sorted)
-    if (monospaceFonts.count === 0) {
-      addFallbackFonts(monospaceFonts, ["DejaVu Sans Mono"]);
-    }
-
-    if (displayFonts.count === 0) {
-      addFallbackFonts(displayFonts, ["Inter", "Roboto", "DejaVu Sans"]);
-    }
-
     fontsLoaded = true;
     isLoading = false;
     Logger.d("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display");
@@ -165,12 +156,6 @@ Singleton {
     var lowerFontName = fontName.toLowerCase();
 
     if (lowerFontName.includes("display") || lowerFontName.includes("headline") || lowerFontName.includes("title")) {
-      result = true;
-    }
-
-    // Essential fallback fonts only
-    var essentialFonts = ["Inter", "Roboto", "DejaVu Sans"];
-    if (essentialFonts.indexOf(fontName) !== -1) {
       result = true;
     }
 

@@ -78,8 +78,8 @@
     "allowPanelsOnScreenWithoutBar": true
   },
   "ui": {
-    "fontDefault": "Roboto",
-    "fontFixed": "DejaVu Sans Mono",
+    "fontDefault": "",
+    "fontFixed": "",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
