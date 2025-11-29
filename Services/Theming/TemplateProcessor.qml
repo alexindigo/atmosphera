@@ -16,7 +16,8 @@ Singleton {
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
                                           "Noctalia (legacy)": "Noctalia-legacy",
-                                          "Tokyo Night": "Tokyo-Night"
+                                          "Tokyo Night": "Tokyo-Night",
+                                          "Rose Pine": "Rosepine"
                                         })
 
   readonly property var terminalPaths: ({

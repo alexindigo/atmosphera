@@ -49,6 +49,8 @@ ColumnLayout {
       schemeName = "Noctalia (legacy)";
     } else if (schemeName === "Tokyo-Night") {
       schemeName = "Tokyo Night";
+    } else if (schemeName === "Rosepine") {
+      schemeName = "Rose Pine";
     }
 
     return schemeName;
