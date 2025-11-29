@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Fenster-Compositor-Theming",
+          "label": "Compositor/innen",
+          "niri": {
+            "description": "{filepath}\n\nBenötigt niri v25.11+",
+            "description-missing": "Benötigt die Installation von {app}"
+          }
+        },
         "misc": {
           "description": "Zusätzliche Konfigurationsoptionen.",
           "label": "Verschiedenes",
@@ -1258,10 +1266,10 @@
           "label": "Nachtlicht"
         },
         "temperature": {
-          "description": "Farbwärme für Nacht- und Tageszeit einstellen.",
-          "label": "Farbtemperatur",
           "day": "Tag",
           "day-description": "Steuert die Farbtemperatur tagsüber.",
+          "description": "Farbwärme für Nacht- und Tageszeit einstellen.",
+          "label": "Farbtemperatur",
           "night": "Nacht",
           "night-description": "Steuert die Farbtemperatur nachts."
         }

@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Thèmes du compositeur de fenêtres",
+          "label": "Compositeurs",
+          "niri": {
+            "description": "{filepath}\n\nRequiert niri v25.11+",
+            "description-missing": "Nécessite l'installation de {app}"
+          }
+        },
         "misc": {
           "description": "Options de configuration supplémentaires.",
           "label": "Divers",
@@ -1258,10 +1266,10 @@
           "label": "Éclairage nocturne"
         },
         "temperature": {
-          "description": "Réglez la chaleur des couleurs pour la nuit et le jour.",
-          "label": "Température de couleur",
           "day": "Jour",
           "day-description": "Contrôle la température pendant la journée.",
+          "description": "Réglez la chaleur des couleurs pour la nuit et le jour.",
+          "label": "Température de couleur",
           "night": "Nuit",
           "night-description": "Contrôle la température pendant la nuit."
         }

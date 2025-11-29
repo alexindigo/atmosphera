@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "窗口合成器主题",
+          "label": "合成器",
+          "niri": {
+            "description": "{filepath}\n\n需要 niri v25.11+",
+            "description-missing": "需要安装 {app}"
+          }
+        },
         "misc": {
           "description": "其他配置选项。",
           "label": "杂项",
@@ -1258,10 +1266,10 @@
           "label": "夜间模式"
         },
         "temperature": {
-          "description": "设置夜间和白天的颜色温暖度。",
-          "label": "色温",
           "day": "白天",
           "day-description": "控制白天的色温。",
+          "description": "设置夜间和白天的颜色温暖度。",
+          "label": "色温",
           "night": "夜间",
           "night-description": "控制夜间的色温。"
         }

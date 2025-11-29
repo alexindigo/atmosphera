@@ -574,6 +574,32 @@ ColumnLayout {
       }
     }
 
+    // Compositors
+    NCollapsible {
+      Layout.fillWidth: true
+      label: I18n.tr("settings.color-scheme.templates.compositors.label")
+      description: I18n.tr("settings.color-scheme.templates.compositors.description")
+      defaultExpanded: false
+
+      NCheckbox {
+        label: "Niri"
+        description: ProgramCheckerService.niriAvailable ? I18n.tr("settings.color-scheme.templates.compositors.niri.description", {
+                                                                     "filepath": "~/.config/niri/noctalia.kdl"
+                                                                   }) : I18n.tr("settings.color-scheme.templates.compositors.niri.description-missing", {
+                                                                                  "app": "niri"
+                                                                                })
+        checked: Settings.data.templates.niri
+        enabled: ProgramCheckerService.niriAvailable
+        opacity: ProgramCheckerService.niriAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.niriAvailable) {
+                       Settings.data.templates.niri = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
+    }
+
     // Terminal Emulators
     NCollapsible {
       Layout.fillWidth: true
@@ -883,6 +909,7 @@ ColumnLayout {
                    }
       }
     }
+
     // Miscellaneous
     NCollapsible {
       Layout.fillWidth: true

@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Window compositor theming",
+          "label": "Compositors",
+          "niri": {
+            "description": "{filepath}\n\nRequires niri v25.11+",
+            "description-missing": "Requires {app} to be installed"
+          }
+        },
         "misc": {
           "description": "Additional configuration options.",
           "label": "Misc",
@@ -1258,10 +1266,10 @@
           "label": "Night Light"
         },
         "temperature": {
-          "description": "Set the color warmth for nighttime and daytime.",
-          "label": "Color temperature",
           "day": "Day",
           "day-description": "Controls the temperature during daytime.",
+          "description": "Set the color warmth for nighttime and daytime.",
+          "label": "Color temperature",
           "night": "Night",
           "night-description": "Controls the temperature during nighttime."
         }

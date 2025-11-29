@@ -246,6 +246,18 @@ Singleton {
         }
       ],
       "checkDoomFirst": true
+    },
+    {
+      "id": "niri",
+      "name": "Niri",
+      "category": "compositors",
+      "input": "niri.kdl",
+      "outputs": [
+        {
+          "path": "~/.config/niri/noctalia.kdl"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} niri`
     }
   ]
 

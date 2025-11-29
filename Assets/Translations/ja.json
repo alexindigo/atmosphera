@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "ウィンドウコンポジタのテーマ",
+          "label": "合成者",
+          "niri": {
+            "description": "{filepath}\n\nniri v25.11+ ga hitsuyou desu",
+            "description-missing": "{app} がインストールされている必要があります"
+          }
+        },
         "misc": {
           "description": "その他の設定オプション",
           "label": "その他",
@@ -1258,10 +1266,10 @@
           "label": "夜間モード"
         },
         "temperature": {
-          "description": "日中と夜間の色温度（暖かさ）を設定します。",
-          "label": "色温度",
           "day": "日中",
           "day-description": "昼間の色温度を調整します。",
+          "description": "日中と夜間の色温度（暖かさ）を設定します。",
+          "label": "色温度",
           "night": "夜間",
           "night-description": "夜間の色温度を調整します。"
         }

@@ -1037,6 +1037,14 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Theming van venstersamensteller",
+          "label": "Compositors",
+          "niri": {
+            "description": "{filepath}\n\nVereist niri v25.11+",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          }
+        },
         "misc": {
           "description": "Aanvullende configuratie-opties.",
           "label": "Diversen",
@@ -1258,10 +1266,10 @@
           "label": "Nachtlicht"
         },
         "temperature": {
-          "description": "Stel de kleurwarmte voor nacht en dag in.",
-          "label": "Kleurtemperatuur",
           "day": "Dag",
           "day-description": "Regelt de kleurtemperatuur overdag.",
+          "description": "Stel de kleurwarmte voor nacht en dag in.",
+          "label": "Kleurtemperatuur",
           "night": "Nacht",
           "night-description": "Regelt de kleurtemperatuur 's nachts."
         }
