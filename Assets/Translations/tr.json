@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Pencere birleştirici temalandırma",
+          "description": "Birleştirici temalandırma.",
           "label": "Birleştiriciler",
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",

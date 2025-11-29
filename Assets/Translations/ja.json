@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "ウィンドウコンポジタのテーマ",
+          "description": "コンポジタのテーマ設定。",
           "label": "合成者",
           "niri": {
             "description": "{filepath} を書き込みます。niri v25.11+ が必要です",

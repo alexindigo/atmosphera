@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "窗口合成器主题",
+          "description": "合成器主题。",
           "label": "合成器",
           "niri": {
             "description": "写入 {filepath}。需要 niri v25.11+",

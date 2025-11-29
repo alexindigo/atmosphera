@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Window compositor theming",
+          "description": "Compositor theming.",
           "label": "Compositors",
           "niri": {
             "description": "Write {filepath}. Requires niri v25.11+",

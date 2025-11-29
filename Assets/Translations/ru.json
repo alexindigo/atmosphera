@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Оформление композитора окон",
+          "description": "Оформление композитора.",
           "label": "Компоновщики",
           "niri": {
             "description": "Записать {filepath}. Требуется niri v25.11+",

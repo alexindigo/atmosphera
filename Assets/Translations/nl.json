@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Theming van venstersamensteller",
+          "description": "Theming van compositor.",
           "label": "Compositors",
           "niri": {
             "description": "Schrijf {filepath}. Vereist niri v25.11+",

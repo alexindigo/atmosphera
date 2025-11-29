@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Tematización del compositor de ventanas",
+          "description": "Tematización del compositor.",
           "label": "Compositores",
           "niri": {
             "description": "Escribir {filepath}. Requiere niri v25.11+",

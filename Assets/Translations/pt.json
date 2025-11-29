@@ -1038,7 +1038,7 @@
       },
       "templates": {
         "compositors": {
-          "description": "Tematização do compositor de janelas",
+          "description": "Tematização do compositor.",
           "label": "Compositores",
           "niri": {
             "description": "Escrever {filepath}. Requer Niri v25.11+",
