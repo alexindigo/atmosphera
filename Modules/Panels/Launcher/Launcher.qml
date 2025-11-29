@@ -79,7 +79,14 @@ SmartPanel {
   // They are not coming from SmartPanelWindow as they are consumed by the search field before reaching the panel.
   // They are instead being forwared from the search field NTextInput below.
   function onTabPressed() {
-    selectNextWrapped();
+    // In emoji browsing mode, Tab navigates between categories
+    if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+      var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+      var nextIndex = (currentIndex + 1) % emojiPlugin.categories.length;
+      emojiPlugin.selectCategory(emojiPlugin.categories[nextIndex]);
+    } else {
+      selectNextWrapped();
+    }
   }
 
   function onBackTabPressed() {
@@ -898,9 +905,14 @@ SmartPanel {
             onWidthChanged: {
               // Update gridColumns based on actual GridView width
               // This ensures navigation works correctly regardless of panel size
-              const actualCols = Math.floor(width / cellWidth);
-              if (actualCols > 0 && actualCols !== root.gridColumns) {
-                root.gridColumns = actualCols;
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                // Always 5 columns for emoji browsing mode
+                root.gridColumns = 5;
+              } else {
+                const actualCols = Math.floor(width / cellWidth);
+                if (actualCols > 0 && actualCols !== root.gridColumns) {
+                  root.gridColumns = actualCols;
+                }
               }
             }
 
@@ -912,6 +924,16 @@ SmartPanel {
             // We only need to position the view to show the selected item
 
             onModelChanged: {}
+
+            // Update gridColumns when entering/exiting emoji browsing mode
+            Connections {
+              target: emojiPlugin
+              function onIsBrowsingModeChanged() {
+                if (emojiPlugin.isBrowsingMode) {
+                  root.gridColumns = 5;
+                }
+              }
+            }
 
             // Handle scrolling to show selected item when it changes
             Connections {
