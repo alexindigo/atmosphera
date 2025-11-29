@@ -48,17 +48,17 @@ Singleton {
   }
 
   function _getPopularEmojis(limit) {
-    var emojisWithUsage = emojis.map(function(emoji) {
+    var emojisWithUsage = emojis.map(function (emoji) {
       return {
         emoji: emoji,
         usageCount: usageCounts[emoji.emoji] || 0
       };
-    }).filter(function(item) {
+    }).filter(function (item) {
       return item.usageCount > 0;
     });
 
     // Sort by usage count (descending), then by name
-    emojisWithUsage.sort(function(a, b) {
+    emojisWithUsage.sort(function (a, b) {
       if (b.usageCount !== a.usageCount) {
         return b.usageCount - a.usageCount;
       }
@@ -66,7 +66,7 @@ Singleton {
     });
 
     // Return the emoji objects limited by the specified count
-    return emojisWithUsage.slice(0, limit).map(function(item) {
+    return emojisWithUsage.slice(0, limit).map(function (item) {
       return item.emoji;
     });
   }
@@ -90,9 +90,9 @@ Singleton {
     var categories = [];
     for (var cat in categoryCounts) {
       categories.push({
-        name: cat,
-        count: categoryCounts[cat]
-      });
+                        name: cat,
+                        count: categoryCounts[cat]
+                      });
     }
 
     return categories;
@@ -107,7 +107,7 @@ Singleton {
       return _getPopularEmojis(25);
     }
 
-    return emojis.filter(function(emoji) {
+    return emojis.filter(function (emoji) {
       return emoji.category === category;
     });
   }

@@ -71,7 +71,9 @@ SmartPanel {
 
   Connections {
     target: NotificationService.historyList
-    function onCountChanged() { recalcRangeCounts(); }
+    function onCountChanged() {
+      recalcRangeCounts();
+    }
   }
 
   Component.onCompleted: recalcRangeCounts()
@@ -168,16 +170,12 @@ SmartPanel {
 
               text: {
                 if (rangeId === 0)
-                  return I18n.tr("notifications.range.all") +
-                         " (" + root.countForRange(rangeId) + ")";
+                  return I18n.tr("notifications.range.all") + " (" + root.countForRange(rangeId) + ")";
                 else if (rangeId === 1)
-                  return I18n.tr("notifications.range.today") +
-                         " (" + root.countForRange(rangeId) + ")";
+                  return I18n.tr("notifications.range.today") + " (" + root.countForRange(rangeId) + ")";
                 else if (rangeId === 2)
-                  return I18n.tr("notifications.range.yesterday") +
-                         " (" + root.countForRange(rangeId) + ")";
-                return I18n.tr("notifications.range.earlier") +
-                       " (" + root.countForRange(rangeId) + ")";
+                  return I18n.tr("notifications.range.yesterday") + " (" + root.countForRange(rangeId) + ")";
+                return I18n.tr("notifications.range.earlier") + " (" + root.countForRange(rangeId) + ")";
               }
 
               Layout.fillWidth: true
@@ -186,17 +184,15 @@ SmartPanel {
               fontSize: Style.fontSizeXS
               outlined: false
 
-              backgroundColor: isActive
-                               ? Color.mPrimary
-                               : (hovered ? Color.mHover : Color.transparent)
-              textColor: isActive
-                         ? Color.mOnPrimary
-                         : (hovered ? Color.mOnHover : Color.mOnSurface)
+              backgroundColor: isActive ? Color.mPrimary : (hovered ? Color.mHover : Color.transparent)
+              textColor: isActive ? Color.mOnPrimary : (hovered ? Color.mOnHover : Color.mOnSurface)
               hoverColor: backgroundColor
 
               Behavior on backgroundColor {
                 enabled: !Settings.data.general.animationDisabled
-                ColorAnimation { duration: Style.animationFast }
+                ColorAnimation {
+                  duration: Style.animationFast
+                }
               }
 
               onClicked: root.currentRange = rangeId

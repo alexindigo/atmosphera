@@ -15,17 +15,17 @@ Item {
   property bool isBrowsingMode: false
 
   property var categoryIcons: ({
-    "recent": "clock",
-    "people": "user",
-    "animals": "paw",
-    "nature": "leaf",
-    "food": "apple",
-    "activity": "run",
-    "travel": "plane",
-    "objects": "home",
-    "symbols": "star",
-    "flags": "flag"
-  })
+                                 "recent": "clock",
+                                 "people": "user",
+                                 "animals": "paw",
+                                 "nature": "leaf",
+                                 "food": "apple",
+                                 "activity": "run",
+                                 "travel": "plane",
+                                 "objects": "home",
+                                 "symbols": "star",
+                                 "flags": "flag"
+                               })
 
   property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols", "flags"]
 
