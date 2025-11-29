@@ -886,13 +886,13 @@ SmartPanel {
             height: parent.height
             cellWidth: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return Math.floor(parent.width / 5);
+                return parent.width / 5;
               }
               return gridCellSize + Style.marginXXS;
             }
             cellHeight: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return Math.floor(parent.width / 5) * 1.2;
+                return (parent.width / 5) * 1.2;
               }
               return gridCellSize + Style.marginXXS;
             }
@@ -968,13 +968,13 @@ SmartPanel {
 
               width: {
                 if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return Math.floor(resultsGrid.width / 5) - 8;
+                  return resultsGrid.width / 5;
                 }
                 return gridCellSize;
               }
               height: {
                 if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return Math.floor(resultsGrid.width / 5) * 1.2 - 8;
+                  return (resultsGrid.width / 5) * 1.2;
                 }
                 return gridCellSize;
               }
