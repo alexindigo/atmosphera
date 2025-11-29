@@ -509,6 +509,12 @@
       "no-notifications": "Нет уведомлений",
       "title": "Уведомления"
     },
+    "range": {
+      "all": "Все",
+      "earlier": "Ранее",
+      "today": "Сегодня",
+      "yesterday": "Вчера"
+    },
     "time": {
       "diffD": "1 день назад",
       "diffDD": "{diff} дней назад",

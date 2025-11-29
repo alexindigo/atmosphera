@@ -509,6 +509,12 @@
       "no-notifications": "Keine Benachrichtigungen",
       "title": "Benachrichtigungen"
     },
+    "range": {
+      "all": "Alle",
+      "earlier": "Älter",
+      "today": "Heute",
+      "yesterday": "Gestern"
+    },
     "time": {
       "diffD": "vor 1 Tag",
       "diffDD": "vor {diff} Tagen",
