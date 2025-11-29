@@ -297,6 +297,7 @@ Singleton {
       property bool enabled: true
       property bool overviewEnabled: false
       property string directory: ""
+      property list<var> monitorDirectories: []
       property bool enableMultiMonitorDirectories: false
       property bool recursiveSearch: false
       property bool setWallpaperOnAllMonitors: true

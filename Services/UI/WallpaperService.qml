@@ -171,7 +171,7 @@ Singleton {
   // -------------------------------------------------------------------
   // Get specific monitor wallpaper data
   function getMonitorConfig(screenName) {
-    var monitors = Settings.data.wallpaper.monitors;
+    var monitors = Settings.data.wallpaper.monitorDirectories;
     if (monitors !== undefined) {
       for (var i = 0; i < monitors.length; i++) {
         if (monitors[i].name !== undefined && monitors[i].name === screenName) {
@@ -200,7 +200,7 @@ Singleton {
   // -------------------------------------------------------------------
   // Set specific monitor directory
   function setMonitorDirectory(screenName, directory) {
-    var monitors = Settings.data.wallpaper.monitors || [];
+    var monitors = Settings.data.wallpaper.monitorDirectories || [];
     var found = false;
 
     // Create a new array with updated values
@@ -225,7 +225,7 @@ Singleton {
     }
 
     // Update Settings with new array to ensure proper persistence
-    Settings.data.wallpaper.monitors = newMonitors.slice();
+    Settings.data.wallpaper.monitorDirectories = newMonitors.slice();
     root.wallpaperDirectoryChanged(screenName, Settings.preprocessPath(directory));
   }
 
