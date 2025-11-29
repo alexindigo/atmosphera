@@ -3,6 +3,10 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../Helpers/QtObj2JS.js" as QtObj2JS
+import qs.Services.Power
+import qs.Services.System
+import qs.Services.UI
 
 // Centralized shell state management for small cache files
 Singleton {
@@ -178,5 +182,30 @@ Singleton {
 
   function getWallpapers() {
     return adapter.wallpapers || {};
+  }
+
+  // -----------------------------------------------------
+  function buildStateSnapshot() {
+    try {
+      const settingsData = QtObj2JS.qtObjectToPlainObject(Settings.data);
+      const shellStateData = ShellState?.data ? QtObj2JS.qtObjectToPlainObject(ShellState.data) || {} : {};
+
+      return {
+        settings: settingsData,
+        state: {
+          doNotDisturb: NotificationService.doNotDisturb,
+          noctaliaPerformanceMode: PowerProfileService.noctaliaPerformanceMode,
+          barVisible: BarService.isVisible,
+          display: shellStateData.display || {},
+          wallpapers: shellStateData.wallpapers || {},
+          notificationsState: shellStateData.notificationsState || {},
+          changelogState: shellStateData.changelogState || {},
+          colorSchemesList: shellStateData.colorSchemesList || {}
+        }
+      };
+    } catch (error) {
+      Logger.e("Settings", "Failed to build state snapshot:", error);
+      return null;
+    }
   }
 }

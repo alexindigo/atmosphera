@@ -6,8 +6,6 @@ import Quickshell.Io
 import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Modules.OSD
-import qs.Services.Power
-import qs.Services.System
 import qs.Services.UI
 
 Singleton {
@@ -148,7 +146,7 @@ Singleton {
     property JsonObject bar: JsonObject {
       property string position: "top" // "top", "bottom", "left", or "right"
       property real backgroundOpacity: 1.0
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds bar visibility per monitor
       property string density: "default" // "compact", "default", "comfortable"
       property bool showCapsule: true
       property real capsuleOpacity: 1.0
@@ -322,9 +320,6 @@ Singleton {
       property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
       property string wallhavenResolutionWidth: ""
       property string wallhavenResolutionHeight: ""
-
-      property string defaultWallpaper: "" // TODO REMOVE
-      property list<var> monitors: []  // TODO REMOVE
     }
 
     // applauncher
@@ -431,7 +426,7 @@ Singleton {
       property real floatingRatio: 1.0
       property real size: 1
       property bool onlySameOutput: true
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds dock visibility per monitor
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
       property bool colorizeIcons: false
@@ -479,7 +474,7 @@ Singleton {
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds notifications visibility per monitor
       property string location: "top_right"
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
@@ -498,7 +493,7 @@ Singleton {
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
       property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness]
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds osd visibility per monitor
     }
 
     // audio
@@ -758,31 +753,6 @@ Singleton {
                                            }));
         Logger.w("Settings", "Added a ControlCenter widget to the right section");
       }
-    }
-  }
-
-  // -----------------------------------------------------
-  function buildStateSnapshot() {
-    try {
-      const settingsData = QtObj2JS.qtObjectToPlainObject(adapter);
-      const shellStateData = ShellState?.data ? QtObj2JS.qtObjectToPlainObject(ShellState.data) || {} : {};
-
-      return {
-        settings: settingsData,
-        state: {
-          doNotDisturb: NotificationService.doNotDisturb,
-          noctaliaPerformanceMode: PowerProfileService.noctaliaPerformanceMode,
-          barVisible: BarService.isVisible,
-          display: shellStateData.display || {},
-          wallpapers: shellStateData.wallpapers || {},
-          notificationsState: shellStateData.notificationsState || {},
-          changelogState: shellStateData.changelogState || {},
-          colorSchemesList: shellStateData.colorSchemesList || {}
-        }
-      };
-    } catch (error) {
-      Logger.e("Settings", "Failed to build state snapshot:", error);
-      return null;
     }
   }
 }
