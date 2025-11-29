@@ -17,7 +17,7 @@ ColumnLayout {
   property string valueIcon: widgetData.icon !== undefined ? widgetData.icon : widgetMetadata.icon
   property bool valueUseDistroLogo: widgetData.useDistroLogo !== undefined ? widgetData.useDistroLogo : widgetMetadata.useDistroLogo
   property string valueCustomIconPath: widgetData.customIconPath !== undefined ? widgetData.customIconPath : ""
-  property bool valueColorizeDistroLogo: widgetData.colorizeDistroLogo !== undefined ? widgetData.colorizeDistroLogo : (widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false)
+  property bool valueEnableColorization: widgetData.enableColorization || false
   property string valueColorizeSystemIcon: widgetData.colorizeSystemIcon !== undefined ? widgetData.colorizeSystemIcon : (widgetMetadata.colorizeSystemIcon !== undefined ? widgetMetadata.colorizeSystemIcon : "none")
 
   function saveSettings() {
@@ -25,7 +25,7 @@ ColumnLayout {
     settings.icon = valueIcon;
     settings.useDistroLogo = valueUseDistroLogo;
     settings.customIconPath = valueCustomIconPath;
-    settings.colorizeDistroLogo = valueColorizeDistroLogo;
+    settings.enableColorization = valueEnableColorization;
     settings.colorizeSystemIcon = valueColorizeSystemIcon;
     return settings;
   }
@@ -40,18 +40,17 @@ ColumnLayout {
   }
 
   NToggle {
-    visible: valueUseDistroLogo
-    label: I18n.tr("bar.widget-settings.control-center.colorize-distro-logo.label")
-    description: I18n.tr("bar.widget-settings.control-center.colorize-distro-logo.description")
-    checked: valueColorizeDistroLogo
+    label: I18n.tr("bar.widget-settings.control-center.enable-colorization.label")
+    description: I18n.tr("bar.widget-settings.control-center.enable-colorization.description")
+    checked: valueEnableColorization
     onToggled: function (checked) {
-      valueColorizeDistroLogo = checked;
+      valueEnableColorization = checked;
     }
   }
 
   NComboBox {
-    visible: (!valueUseDistroLogo && valueIcon !== "" && valueCustomIconPath === "") || (valueUseDistroLogo && valueColorizeDistroLogo)
-    label: !valueUseDistroLogo ? I18n.tr("bar.widget-settings.control-center.colorize-system-icon.label") : I18n.tr("bar.widget-settings.control-center.color-selection.label")
+    visible: valueEnableColorization
+    label: I18n.tr("bar.widget-settings.control-center.color-selection.label")
     description: I18n.tr("bar.widget-settings.control-center.color-selection.description")
     model: [
       { "name": I18n.tr("options.colors.none"), "key": "none" },

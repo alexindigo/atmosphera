@@ -34,19 +34,16 @@ NIconButton {
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property bool useDistroLogo: (widgetSettings.useDistroLogo !== undefined) ? widgetSettings.useDistroLogo : widgetMetadata.useDistroLogo
   readonly property string customIconPath: widgetSettings.customIconPath || ""
-  readonly property bool colorizeDistroLogo: {
-    if (widgetSettings.colorizeDistroLogo !== undefined)
-      return widgetSettings.colorizeDistroLogo;
-    return widgetMetadata.colorizeDistroLogo !== undefined ? widgetMetadata.colorizeDistroLogo : false;
-  }
+  readonly property bool enableColorization: widgetSettings.enableColorization || false
+
   readonly property string colorizeSystemIcon: {
     if (widgetSettings.colorizeSystemIcon !== undefined)
       return widgetSettings.colorizeSystemIcon;
     return widgetMetadata.colorizeSystemIcon !== undefined ? widgetMetadata.colorizeSystemIcon : "none";
   }
-  readonly property bool systemIconColorizingEnabled: (customIconPath === "" && !useDistroLogo) && colorizeSystemIcon !== "none"
-  readonly property bool distroLogoColorizingEnabled: useDistroLogo && colorizeDistroLogo && colorizeSystemIcon !== "none"
-  readonly property bool isColorizing: systemIconColorizingEnabled || distroLogoColorizingEnabled
+
+
+  readonly property bool isColorizing: enableColorization && colorizeSystemIcon !== "none"
 
   readonly property color iconColor: {
     if (!isColorizing) return Color.mOnSurface;
@@ -155,9 +152,9 @@ NIconButton {
     visible: source !== ""
     smooth: true
     asynchronous: true
-    layer.enabled: useDistroLogo && colorizeDistroLogo
+    layer.enabled: isColorizing && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
-      property color targetColor: distroLogoColorizingEnabled ? iconColor :
+      property color targetColor: isColorizing ? iconColor :
                     (Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant)
       property real colorizeMode: 2.0
 
