@@ -42,27 +42,38 @@ NIconButton {
     return widgetMetadata.colorizeSystemIcon !== undefined ? widgetMetadata.colorizeSystemIcon : "none";
   }
 
-
   readonly property bool isColorizing: enableColorization && colorizeSystemIcon !== "none"
 
   readonly property color iconColor: {
-    if (!isColorizing) return Color.mOnSurface;
+    if (!isColorizing)
+      return Color.mOnSurface;
     switch (colorizeSystemIcon) {
-      case "primary": return Color.mPrimary;
-      case "secondary": return Color.mSecondary;
-      case "tertiary": return Color.mTertiary;
-      case "error": return Color.mError;
-      default: return Color.mOnSurface;
+    case "primary":
+      return Color.mPrimary;
+    case "secondary":
+      return Color.mSecondary;
+    case "tertiary":
+      return Color.mTertiary;
+    case "error":
+      return Color.mError;
+    default:
+      return Color.mOnSurface;
     }
   }
   readonly property color iconHoverColor: {
-    if (!isColorizing) return Color.mOnHover;
+    if (!isColorizing)
+      return Color.mOnHover;
     switch (colorizeSystemIcon) {
-      case "primary": return Qt.darker(Color.mPrimary, 1.2);
-      case "secondary": return Qt.darker(Color.mSecondary, 1.2);
-      case "tertiary": return Qt.darker(Color.mTertiary, 1.2);
-      case "error": return Qt.darker(Color.mError, 1.2);
-      default: return Color.mOnHover;
+    case "primary":
+      return Qt.darker(Color.mPrimary, 1.2);
+    case "secondary":
+      return Qt.darker(Color.mSecondary, 1.2);
+    case "tertiary":
+      return Qt.darker(Color.mTertiary, 1.2);
+    case "error":
+      return Qt.darker(Color.mError, 1.2);
+    default:
+      return Color.mOnHover;
     }
   }
 
@@ -154,8 +165,7 @@ NIconButton {
     asynchronous: true
     layer.enabled: isColorizing && (useDistroLogo || customIconPath !== "")
     layer.effect: ShaderEffect {
-      property color targetColor: isColorizing ? iconColor :
-                    (Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant)
+      property color targetColor: isColorizing ? iconColor : (Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant)
       property real colorizeMode: 2.0
 
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")

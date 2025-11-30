@@ -53,14 +53,29 @@ ColumnLayout {
     label: I18n.tr("bar.widget-settings.control-center.color-selection.label")
     description: I18n.tr("bar.widget-settings.control-center.color-selection.description")
     model: [
-      { "name": I18n.tr("options.colors.none"), "key": "none" },
-      { "name": I18n.tr("options.colors.primary"), "key": "primary" },
-      { "name": I18n.tr("options.colors.secondary"), "key": "secondary" },
-      { "name": I18n.tr("options.colors.tertiary"), "key": "tertiary" },
-      { "name": I18n.tr("options.colors.error"), "key": "error" }
+      {
+        "name": I18n.tr("options.colors.none"),
+        "key": "none"
+      },
+      {
+        "name": I18n.tr("options.colors.primary"),
+        "key": "primary"
+      },
+      {
+        "name": I18n.tr("options.colors.secondary"),
+        "key": "secondary"
+      },
+      {
+        "name": I18n.tr("options.colors.tertiary"),
+        "key": "tertiary"
+      },
+      {
+        "name": I18n.tr("options.colors.error"),
+        "key": "error"
+      }
     ]
     currentKey: valueColorizeSystemIcon
-    onSelected: function(key) {
+    onSelected: function (key) {
       valueColorizeSystemIcon = key;
     }
   }
