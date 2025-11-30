@@ -3,9 +3,9 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import "../../../Helpers/FuzzySort.js" as Fuzzysort
 
 import "Plugins"
-import "../../../Helpers/FuzzySort.js" as Fuzzysort
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Keyboard
@@ -14,7 +14,7 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  readonly property bool previewActive: searchText.startsWith(">clip") && Settings.data.appLauncher.enableClipPreview && ClipboardService.items.length > 0 && selectedIndex >= 0 && results[selectedIndex] && results[selectedIndex].clipboardId
+  readonly property bool previewActive: !!(searchText && searchText.startsWith(">clip") && Settings.data.appLauncher.enableClipPreview && ClipboardService.items && ClipboardService.items.length > 0 && selectedIndex >= 0 && results && results[selectedIndex] && results[selectedIndex].clipboardId)
 
   // Panel configuration
   readonly property int listPanelWidth: Math.round(600 * Style.uiScaleRatio)
@@ -61,6 +61,9 @@ SmartPanel {
     if (searchText.startsWith(">clip") || searchText.startsWith(">calc")) {
       return false;
     }
+    if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+      return true;
+    }
     return Settings.data.appLauncher.viewMode === "grid";
   }
 
@@ -77,7 +80,14 @@ SmartPanel {
   // They are not coming from SmartPanelWindow as they are consumed by the search field before reaching the panel.
   // They are instead being forwared from the search field NTextInput below.
   function onTabPressed() {
-    selectNextWrapped();
+    // In emoji browsing mode, Tab navigates between categories
+    if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+      var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+      var nextIndex = (currentIndex + 1) % emojiPlugin.categories.length;
+      emojiPlugin.selectCategory(emojiPlugin.categories[nextIndex]);
+    } else {
+      selectNextWrapped();
+    }
   }
 
   function onBackTabPressed() {
@@ -205,24 +215,24 @@ SmartPanel {
         } else if (searchText.length > 1) {
           // Filter commands using fuzzy search when typing partial command
           const query = searchText.substring(1); // Remove the ">" prefix
-          
+
           if (typeof Fuzzysort !== 'undefined') {
             // Use fuzzy search to filter commands
             const fuzzyResults = Fuzzysort.go(query, allCommands, {
-              "keys": ["name"],
-              "threshold": -1000,
-              "limit": 50
-            });
-            
+                                                "keys": ["name"],
+                                                "threshold": -1000,
+                                                "limit": 50
+                                              });
+
             // Convert fuzzy results back to command objects
             results = fuzzyResults.map(result => result.obj);
           } else {
             // Fallback to simple substring matching
             const queryLower = query.toLowerCase();
             results = allCommands.filter(cmd => {
-              const cmdName = (cmd.name || "").toLowerCase();
-              return cmdName.includes(queryLower);
-            });
+                                           const cmdName = (cmd.name || "").toLowerCase();
+                                           return cmdName.includes(queryLower);
+                                         });
           }
         }
       }
@@ -616,6 +626,33 @@ SmartPanel {
           }
         }
 
+        // Emoji category tabs (shown when in browsing mode)
+        NTabBar {
+          id: emojiCategoryTabs
+          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
+          Layout.fillWidth: true
+          currentIndex: {
+            if (visible && emojiPlugin.categories) {
+              return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+            }
+            return 0;
+          }
+
+          Repeater {
+            model: emojiPlugin.categories
+            NIconTabButton {
+              required property string modelData
+              required property int index
+              icon: emojiPlugin.categoryIcons[modelData] || "star"
+              tabIndex: index
+              checked: emojiCategoryTabs.currentIndex === index
+              onClicked: {
+                emojiPlugin.selectCategory(modelData);
+              }
+            }
+          }
+        }
+
         Loader {
           id: resultsViewLoader
           Layout.fillWidth: true
@@ -774,8 +811,8 @@ SmartPanel {
                     NText {
                       id: emojiDisplay
                       anchors.centerIn: parent
-                      visible: modelData.emojiChar ? true : (!imagePreview.visible && !iconLoader.visible)
-                      text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
+                      visible: modelData.emojiChar || (!imagePreview.visible && !iconLoader.visible)
+                      text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
                       pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
                       font.weight: Style.fontWeightBold
                       color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
@@ -834,7 +871,7 @@ SmartPanel {
 
                   // Pin/Unpin action icon button
                   NIconButton {
-                    visible: !!entry.appId && !modelData.isImage && entry.isSelected && (Settings.data.dock.monitors && Settings.data.dock.monitors.length > 0)
+                    visible: !!entry.appId && !modelData.isImage && entry.isSelected && Settings.data.dock.enabled
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
                     tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
@@ -877,8 +914,18 @@ SmartPanel {
 
             width: parent.width
             height: parent.height
-            cellWidth: gridCellSize + Style.marginXXS
-            cellHeight: gridCellSize + Style.marginXXS
+            cellWidth: {
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                return parent.width / 5;
+              }
+              return gridCellSize + Style.marginXXS;
+            }
+            cellHeight: {
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                return (parent.width / 5) * 1.2;
+              }
+              return gridCellSize + Style.marginXXS;
+            }
             model: results
             cacheBuffer: resultsGrid.height * 2
             keyNavigationEnabled: false
@@ -888,9 +935,14 @@ SmartPanel {
             onWidthChanged: {
               // Update gridColumns based on actual GridView width
               // This ensures navigation works correctly regardless of panel size
-              const actualCols = Math.floor(width / cellWidth);
-              if (actualCols > 0 && actualCols !== root.gridColumns) {
-                root.gridColumns = actualCols;
+              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                // Always 5 columns for emoji browsing mode
+                root.gridColumns = 5;
+              } else {
+                const actualCols = Math.floor(width / cellWidth);
+                if (actualCols > 0 && actualCols !== root.gridColumns) {
+                  root.gridColumns = actualCols;
+                }
               }
             }
 
@@ -902,6 +954,16 @@ SmartPanel {
             // We only need to position the view to show the selected item
 
             onModelChanged: {}
+
+            // Update gridColumns when entering/exiting emoji browsing mode
+            Connections {
+              target: emojiPlugin
+              function onIsBrowsingModeChanged() {
+                if (emojiPlugin.isBrowsingMode) {
+                  root.gridColumns = 5;
+                }
+              }
+            }
 
             // Handle scrolling to show selected item when it changes
             Connections {
@@ -934,8 +996,36 @@ SmartPanel {
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
-              width: gridCellSize
-              height: gridCellSize
+              // Pin helpers
+              function togglePin(appId) {
+                if (!appId)
+                  return;
+                let arr = (Settings.data.dock.pinnedApps || []).slice();
+                const idx = arr.indexOf(appId);
+                if (idx >= 0)
+                  arr.splice(idx, 1);
+                else
+                  arr.push(appId);
+                Settings.data.dock.pinnedApps = arr;
+              }
+
+              function isPinned(appId) {
+                const arr = Settings.data.dock.pinnedApps || [];
+                return appId && arr.indexOf(appId) >= 0;
+              }
+
+              width: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return resultsGrid.width / 5;
+                }
+                return gridCellSize;
+              }
+              height: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return (resultsGrid.width / 5) * 1.2;
+                }
+                return gridCellSize;
+              }
               radius: Style.radiusM
               color: gridEntry.isSelected ? Color.mHover : Color.mSurface
 
@@ -948,13 +1038,28 @@ SmartPanel {
 
               ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: Style.marginM
+                anchors.margins: {
+                  if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                    return 4;
+                  }
+                  return Style.marginM;
+                }
                 spacing: Style.marginS
 
                 // Icon badge or Image preview or Emoji
                 Rectangle {
-                  Layout.preferredWidth: badgeSize * 1.5
-                  Layout.preferredHeight: badgeSize * 1.5
+                  Layout.preferredWidth: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return gridEntry.width - 8;
+                    }
+                    return badgeSize * 1.5;
+                  }
+                  Layout.preferredHeight: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return gridEntry.width - 8;
+                    }
+                    return badgeSize * 1.5;
+                  }
                   Layout.alignment: Qt.AlignHCenter
                   radius: Style.radiusM
                   color: Color.mSurfaceVariant
@@ -1016,9 +1121,17 @@ SmartPanel {
                   NText {
                     id: gridEmojiDisplay
                     anchors.centerIn: parent
-                    visible: modelData.emojiChar ? true : (!gridImagePreview.visible && !gridIconLoader.visible)
-                    text: modelData.emojiChar ? modelData.emojiChar : (modelData.name ? modelData.name.charAt(0).toUpperCase() : "?")
-                    pointSize: modelData.emojiChar ? Style.fontSizeXXL : Style.fontSizeXL
+                    visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
+                    text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
+                    pointSize: {
+                      if (modelData.emojiChar) {
+                        if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                          return Math.max(Style.fontSizeL, gridEntry.width * 0.4);
+                        }
+                        return Style.fontSizeXXL * 2;
+                      }
+                      return Style.fontSizeXL;
+                    }
                     font.weight: Style.fontWeightBold
                     color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
                   }
@@ -1027,14 +1140,33 @@ SmartPanel {
                 // Text content
                 NText {
                   text: modelData.name || "Unknown"
-                  pointSize: Style.fontSizeS
+                  pointSize: {
+                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                      return Style.fontSizeS;
+                    }
+                    return Style.fontSizeS;
+                  }
                   font.weight: Style.fontWeightSemiBold
                   color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
                   elide: Text.ElideRight
                   Layout.fillWidth: true
-                  Layout.maximumWidth: gridCellSize - Style.marginM * 2
+                  Layout.maximumWidth: gridEntry.width - 8
                   horizontalAlignment: Text.AlignHCenter
+                  wrapMode: Text.NoWrap
+                  maximumLineCount: 1
                 }
+              }
+
+              // Pin/Unpin action icon button (overlay in top-right corner)
+              NIconButton {
+                visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected && Settings.data.dock.enabled
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: Style.marginXS
+                z: 10
+                icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
+                tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                onClicked: gridEntry.togglePin(gridEntry.appId)
               }
 
               MouseArea {
@@ -1068,10 +1200,16 @@ SmartPanel {
         NText {
           Layout.fillWidth: true
           text: {
-            if (results.length === 0)
-              return searchText ? "No results" : "";
-            const prefix = activePlugin?.name ? `${activePlugin.name}: ` : "";
-            return prefix + `${results.length} result${results.length !== 1 ? 's' : ''}`;
+            if (results.length === 0) {
+              if (searchText) {
+                return "No results";
+              } else if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && emojiPlugin.selectedCategory === "recent") {
+                return "No recently used emoji";
+              }
+              return "";
+            }
+            var prefix = activePlugin && activePlugin.name ? activePlugin.name + ": " : "";
+            return prefix + results.length + " result" + (results.length !== 1 ? 's' : '');
           }
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant

@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Datei durchsuchen",
         "browse-library": "Bibliothek durchsuchen",
-        "colorize-distro-logo": {
-          "description": "Wende die Designfarben auf das Logo deiner Distribution an.",
-          "label": "Distro-Logo einfärben"
+        "color-selection": {
+          "description": "Wendet Themenfarben auf Symbole an.",
+          "label": "Farbauswahl"
+        },
+        "enable-colorization": {
+          "description": "Aktiviert die Färbung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
+          "label": "Färbung aktivieren"
         },
         "icon": {
           "description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen.",
@@ -381,7 +385,7 @@
     "plugged-in": "Angeschlossen.",
     "power-profile": "Energieprofil",
     "time-left": "Verbleibende Zeit: {time}.",
-    "time-until-full": "Zeit bis vollständig geladen: {time}."
+    "time-until-full": "Verbleibende Ladezeit: {time}."
   },
   "bluetooth": {
     "panel": {
@@ -509,6 +513,12 @@
       "no-notifications": "Keine Benachrichtigungen",
       "title": "Benachrichtigungen"
     },
+    "range": {
+      "all": "Alle",
+      "earlier": "Älter",
+      "today": "Heute",
+      "yesterday": "Gestern"
+    },
     "time": {
       "diffD": "vor 1 Tag",
       "diffDD": "vor {diff} Tagen",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "Fehler",
+      "none": "Keine",
       "onSurface": "Auf der Oberfläche",
       "primary": "Primär",
       "secondary": "Sekundär",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "Neueste Version herunterladen",
+        "git-commit": "Git-Commit:",
+        "git-commit-loading": "Lädt...",
         "installed-version": "Installierte Version:",
         "latest-version": "Neueste Version:",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Compositor-Theming.",
+          "label": "Compositor/innen",
+          "niri": {
+            "description": "Schreibe {filepath}. Benötigt niri v25.11+",
+            "description-missing": "Benötigt die Installation von {app}"
+          }
+        },
         "misc": {
-          "description": "Zusätzliche Konfigurationsoptionen.",
-          "label": "Verschiedenes",
+          "description": "Erstellen Sie Ihre eigenen Vorlagen",
+          "label": "Erweitert",
           "user-templates": {
-            "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt",
-            "label": "Benutzer-Vorlagen"
+            "description": "Nur aktivieren, wenn Sie wissen, was Sie tun. Weitere Informationen finden Sie in unserer Online-Dokumentation",
+            "label": "Benutzer-Vorlagen aktivieren"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "Tag",
+          "day-description": "Steuert die Farbtemperatur tagsüber.",
           "description": "Farbwärme für Nacht- und Tageszeit einstellen.",
           "label": "Farbtemperatur",
-          "night": "Nacht"
+          "night": "Nacht",
+          "night-description": "Steuert die Farbtemperatur nachts."
         }
       },
       "title": "Anzeige"
@@ -1359,7 +1382,8 @@
           "description": "Ändern Sie Ihren Avatar.",
           "label": "Profil"
         },
-        "select-avatar": "Avatar auswählen"
+        "select-avatar": "Avatar auswählen",
+        "tooltip": "Nach Avatarbild suchen"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "'Nicht stören' aktiviert",
     "enable-keep-awake": "Klicken, um 'Wach halten' zu aktivieren.\nScrollen, um Zeitlimit anzupassen.",
     "forget-network": "Netzwerk vergessen",
+    "grid-view": "Rasteransicht",
+    "hidden-files-hide": "Versteckte Dateien ausblenden",
+    "hidden-files-show": "Versteckte Dateien einblenden",
     "home": "Home",
     "input-muted": "Audio-Eingabe stummschalten",
     "keep-awake": "Wach halten",
     "keyboard-layout": "{layout} Tastaturlayout",
+    "list-view": "Listenansicht",
     "manage-vpn": "VPN-Verbindungen verwalten",
     "manage-wifi": "WLAN verwalten",
     "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "remove-widget": "Widget entfernen",
     "screen-recorder-not-installed": "Bildschirmrekorder ist nicht installiert",
+    "search": "Suchen",
+    "search-close": "Suche schließen",
     "session-menu": "Sitzungsmenü",
     "set-power-profile": "'{profile}' Energieprofil setzen",
     "start-screen-recording": "Bildschirmaufnahme starten",

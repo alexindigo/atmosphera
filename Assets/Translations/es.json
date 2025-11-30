@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Explorar archivo",
         "browse-library": "Explorar biblioteca",
-        "colorize-distro-logo": {
-          "description": "Aplica los colores del tema a tu logotipo de distribución.",
-          "label": "Colorear logotipo de la distribución"
+        "color-selection": {
+          "description": "Aplica colores del tema a los íconos.",
+          "label": "Seleccionar Color"
+        },
+        "enable-colorization": {
+          "description": "Habilita la coloración para el ícono del centro de control, aplicando colores del tema.",
+          "label": "Habilitar Coloración"
         },
         "icon": {
           "description": "Selecciona un icono de la biblioteca o un archivo personalizado.",
@@ -509,6 +513,12 @@
       "no-notifications": "No hay notificaciones",
       "title": "Notificaciones"
     },
+    "range": {
+      "all": "Todas",
+      "earlier": "Anteriores",
+      "today": "Hoy",
+      "yesterday": "Ayer"
+    },
     "time": {
       "diffD": "hace 1 día",
       "diffDD": "hace {diff} días",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "Error",
+      "none": "Ninguno",
       "onSurface": "En la superficie",
       "primary": "Primario",
       "secondary": "Secundario",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "Descargar la última versión",
+        "git-commit": "Commit de Git:",
+        "git-commit-loading": "Cargando...",
         "installed-version": "Versión instalada:",
         "latest-version": "Última versión:",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Tematización del compositor.",
+          "label": "Compositores",
+          "niri": {
+            "description": "Escribir {filepath}. Requiere niri v25.11+",
+            "description-missing": "Requiere que {app} esté instalada."
+          }
+        },
         "misc": {
-          "description": "Opciones de configuración adicionales.",
-          "label": "Varios",
+          "description": "Crea tus propias plantillas",
+          "label": "Avanzado",
           "user-templates": {
-            "description": "Habilitar configuración de Matugen definida por el usuario. Se creará un archivo de plantilla en ~/.config/noctalia/user-templates.toml al activar por primera vez",
-            "label": "Plantillas de usuario"
+            "description": "Solo habilita si sabes lo que estás haciendo, consulta nuestra documentación en línea",
+            "label": "Habilitar plantillas de usuario"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "Día",
+          "day-description": "Controla la temperatura durante el día.",
           "description": "Establece la calidez del color para la noche y el día.",
           "label": "Temperatura de color",
-          "night": "Noche"
+          "night": "Noche",
+          "night-description": "Controla la temperatura durante la noche."
         }
       },
       "title": "Pantalla"
@@ -1359,7 +1382,8 @@
           "description": "Edita los detalles de tu usuario y tu avatar.",
           "label": "Perfil"
         },
-        "select-avatar": "Seleccionar imagen de avatar"
+        "select-avatar": "Seleccionar imagen de avatar",
+        "tooltip": "Buscar imagen de avatar"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "'No molestar' activado",
     "enable-keep-awake": "Haz clic para activar mantener despierto.\nDesplázate para ajustar el tiempo de espera.",
     "forget-network": "Olvidar red",
+    "grid-view": "Vista de cuadrícula",
+    "hidden-files-hide": "Ocultar archivos ocultos",
+    "hidden-files-show": "Mostrar archivos ocultos",
     "home": "Inicio",
     "input-muted": "Silenciar entrada de audio",
     "keep-awake": "Mantener despierto",
     "keyboard-layout": "Distribución de teclado {layout}",
+    "list-view": "Vista de lista",
     "manage-vpn": "Administrar conexiones VPN",
     "manage-wifi": "Gestionar Wi-Fi",
     "microphone-volume-at": "Volumen del micrófono al {volume}%.\nClic izquierdo para ajustes. Clic derecho para activar/desactivar el silencio.\nDesplázate para modificar el volumen.",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "remove-widget": "Eliminar widget",
     "screen-recorder-not-installed": "La grabadora de pantalla no está instalada",
+    "search": "Buscar",
+    "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "set-power-profile": "Establecer perfil de energía \"{profile}\"",
     "start-screen-recording": "Iniciar grabación de pantalla",

@@ -97,6 +97,7 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         FontService.init();
+        GitHubService.init();
         UpdateService.init();
         UpdateService.showLatestChangelog();
 

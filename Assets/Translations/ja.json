@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "ファイルを参照",
         "browse-library": "ライブラリを参照",
-        "colorize-distro-logo": {
-          "description": "ディストリビューションのロゴにテーマカラーを適用します。",
-          "label": "テーマカラーの適用"
+        "color-selection": {
+          "description": "アイコンにテーマの色を適用します。",
+          "label": "色の選択"
+        },
+        "enable-colorization": {
+          "description": "コントロールセンターのアイコンの色付けを有効にし、テーマの色を適用します。",
+          "label": "色の有効化"
         },
         "icon": {
           "description": "ライブラリまたはカスタムファイルからアイコンを選択します。",
@@ -509,6 +513,12 @@
       "no-notifications": "通知なし",
       "title": "通知"
     },
+    "range": {
+      "all": "すべて",
+      "earlier": "以前",
+      "today": "今日",
+      "yesterday": "昨日"
+    },
     "time": {
       "diffD": "1日前",
       "diffDD": "{diff}日前",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "エラー (Error)",
+      "none": "なし",
       "onSurface": "文字・アイコン (On Surface)",
       "primary": "メインカラー (Primary)",
       "secondary": "サブカラー (Secondary)",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "最新版をダウンロード",
+        "git-commit": "Gitコミット:",
+        "git-commit-loading": "読み込み中...",
         "installed-version": "現在のバージョン:",
         "latest-version": "最新のバージョン:",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "コンポジタのテーマ設定。",
+          "label": "合成者",
+          "niri": {
+            "description": "{filepath} を書き込みます。niri v25.11+ が必要です",
+            "description-missing": "{app} がインストールされている必要があります"
+          }
+        },
         "misc": {
-          "description": "その他の設定オプション",
-          "label": "その他",
+          "description": "独自のテンプレートを作成",
+          "label": "詳細設定",
           "user-templates": {
-            "description": "ユーザー定義の Matugen 設定を有効にします。初回有効化時に ~/.config/noctalia/user-templates.toml にテンプレートファイルが作成されます。",
-            "label": "ユーザーテンプレート"
+            "description": "操作方法を理解している場合のみ有効にしてください。オンラインドキュメントを参照してください",
+            "label": "ユーザーテンプレートを有効化"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "日中",
+          "day-description": "昼間の色温度を調整します。",
           "description": "日中と夜間の色温度（暖かさ）を設定します。",
           "label": "色温度",
-          "night": "夜間"
+          "night": "夜間",
+          "night-description": "夜間の色温度を調整します。"
         }
       },
       "title": "ディスプレイ"
@@ -1359,7 +1382,8 @@
           "description": "ユーザーの詳細とアバターを編集します。",
           "label": "プロフィール"
         },
-        "select-avatar": "アバター画像を選択"
+        "select-avatar": "アバター画像を選択",
+        "tooltip": "アバター画像を参照"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "おやすみモード: 有効",
     "enable-keep-awake": "クリック: スリープ防止モードを有効化\nスクロール: タイムアウトを調整",
     "forget-network": "ネットワーク設定を削除",
+    "grid-view": "グリッド表示",
+    "hidden-files-hide": "隠しファイルを非表示",
+    "hidden-files-show": "隠しファイルを表示",
     "home": "ホーム",
     "input-muted": "入力ミュート切り替え",
     "keep-awake": "スリープを防止",
     "keyboard-layout": "キーボードレイアウト: {layout}",
+    "list-view": "リスト表示",
     "manage-vpn": "VPN 接続を管理",
     "manage-wifi": "Wi-Fi を管理",
     "microphone-volume-at": "マイク音量: {volume}%\nスクロールで音量を調整",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "壁紙リストを更新",
     "remove-widget": "ウィジェットを削除",
     "screen-recorder-not-installed": "スクリーンレコーダーがインストールされていません",
+    "search": "検索",
+    "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
     "set-power-profile": "電源プロファイルを {profile} に設定",
     "start-screen-recording": "画面録画を開始",

@@ -26,8 +26,6 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 
 ### Theming & Appearance
 - **[Matugen](https://github.com/InioX/matugen)** - Material You color scheme generation from wallpapers
-- **[Inter Font](https://rsms.me/inter/)** - UI font family
-- **[Roboto](https://fonts.google.com/specimen/Roboto)** - Additional UI font family
 
 ### Utilities
 - **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support

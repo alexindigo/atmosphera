@@ -78,8 +78,8 @@
     "allowPanelsOnScreenWithoutBar": true
   },
   "ui": {
-    "fontDefault": "Roboto",
-    "fontFixed": "DejaVu Sans Mono",
+    "fontDefault": "",
+    "fontFixed": "",
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
@@ -102,20 +102,20 @@
   "calendar": {
     "cards": [
       {
-        "id": "banner-card",
-        "enabled": true
+        "enabled": true,
+        "id": "banner-card"
       },
       {
-        "id": "calendar-card",
-        "enabled": true
+        "enabled": true,
+        "id": "calendar-card"
       },
       {
-        "id": "timer-card",
-        "enabled": true
+        "enabled": true,
+        "id": "timer-card"
       },
       {
-        "id": "weather-card",
-        "enabled": true
+        "enabled": true,
+        "id": "weather-card"
       }
     ]
   },
@@ -134,6 +134,7 @@
     "enabled": true,
     "overviewEnabled": false,
     "directory": "",
+    "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
     "recursiveSearch": false,
     "setWallpaperOnAllMonitors": true,
@@ -154,9 +155,7 @@
     "wallhavenPurity": "100",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
-    "wallhavenResolutionHeight": "",
-    "defaultWallpaper": "",
-    "monitors": []
+    "wallhavenResolutionHeight": ""
   },
   "appLauncher": {
     "enableClipboardHistory": false,
@@ -308,7 +307,11 @@
     "autoHideMs": 2000,
     "overlayLayer": true,
     "backgroundOpacity": 1,
-    "enabledTypes": [],
+    "enabledTypes": [
+      0,
+      1,
+      2
+    ],
     "monitors": []
   },
   "audio": {
@@ -354,6 +357,8 @@
     "spicetify": false,
     "telegram": false,
     "cava": false,
+    "emacs": false,
+    "niri": false,
     "enableUserTemplates": false
   },
   "nightLight": {

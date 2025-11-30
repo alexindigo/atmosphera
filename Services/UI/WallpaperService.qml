@@ -22,12 +22,16 @@ Singleton {
 
   property var wallpaperLists: ({})
   property int scanningCount: 0
-  readonly property bool scanning: (scanningCount > 0)
 
   // Cache for current wallpapers - can be updated directly since we use signals for notifications
   property var currentWallpapers: ({})
 
   property bool isInitialized: false
+  property string wallpaperCacheFile: ""
+
+  readonly property bool scanning: (scanningCount > 0)
+  readonly property string noctaliaDefaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
+  property string defaultWallpaper: noctaliaDefaultWallpaper
 
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
@@ -83,38 +87,17 @@ Singleton {
 
     translateModels();
 
-    // Load wallpapers from ShellState first (faster), then fall back to Settings
-    currentWallpapers = ({});
+    // Initialize cache file path
+    Qt.callLater(() => {
+                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
+                     wallpaperCacheFile = Settings.cacheDir + "wallpapers.json";
+                     wallpaperCacheView.path = wallpaperCacheFile;
+                   }
+                 });
 
-    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
-      var cachedWallpapers = ShellState.getWallpapers();
-      if (cachedWallpapers && Object.keys(cachedWallpapers).length > 0) {
-        currentWallpapers = cachedWallpapers;
-        Logger.d("Wallpaper", "Loaded wallpapers from ShellState");
-      } else {
-        // Fall back to Settings if ShellState is empty
-        loadFromSettings();
-      }
-    } else {
-      // ShellState not ready yet, load from Settings
-      loadFromSettings();
-    }
-
-    isInitialized = true;
+    // Note: isInitialized will be set to true in wallpaperCacheView.onLoaded
     Logger.d("Wallpaper", "Triggering initial wallpaper scan");
     Qt.callLater(refreshWallpapersList);
-  }
-
-  function loadFromSettings() {
-    var monitors = Settings.data.wallpaper.monitors || [];
-    for (var i = 0; i < monitors.length; i++) {
-      if (monitors[i].name && monitors[i].wallpaper) {
-        currentWallpapers[monitors[i].name] = monitors[i].wallpaper;
-      }
-    }
-    Logger.d("Wallpaper", "Loaded wallpapers from Settings");
-
-    // Migration is now handled in Settings.qml
   }
 
   // -------------------------------------------------
@@ -189,7 +172,7 @@ Singleton {
   // -------------------------------------------------------------------
   // Get specific monitor wallpaper data
   function getMonitorConfig(screenName) {
-    var monitors = Settings.data.wallpaper.monitors;
+    var monitors = Settings.data.wallpaper.monitorDirectories;
     if (monitors !== undefined) {
       for (var i = 0; i < monitors.length; i++) {
         if (monitors[i].name !== undefined && monitors[i].name === screenName) {
@@ -218,7 +201,7 @@ Singleton {
   // -------------------------------------------------------------------
   // Set specific monitor directory
   function setMonitorDirectory(screenName, directory) {
-    var monitors = Settings.data.wallpaper.monitors || [];
+    var monitors = Settings.data.wallpaper.monitorDirectories || [];
     var found = false;
 
     // Create a new array with updated values
@@ -243,14 +226,14 @@ Singleton {
     }
 
     // Update Settings with new array to ensure proper persistence
-    Settings.data.wallpaper.monitors = newMonitors.slice();
+    Settings.data.wallpaper.monitorDirectories = newMonitors.slice();
     root.wallpaperDirectoryChanged(screenName, Settings.preprocessPath(directory));
   }
 
   // -------------------------------------------------------------------
   // Get specific monitor wallpaper - now from cache
   function getWallpaper(screenName) {
-    return currentWallpapers[screenName] || Settings.defaultWallpaper;
+    return currentWallpapers[screenName] || root.defaultWallpaper;
   }
 
   // -------------------------------------------------------------------
@@ -290,10 +273,8 @@ Singleton {
     // Update cache directly
     currentWallpapers[screenName] = path;
 
-    // Save to ShellState (wallpaper paths now only stored here, not in Settings)
-    if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
-      ShellState.setWallpapers(currentWallpapers);
-    }
+    // Save to cache file with debounce
+    saveTimer.restart();
 
     // Emit signal for this specific wallpaper change
     root.wallpaperChanged(screenName, path);
@@ -527,6 +508,57 @@ Singleton {
           root.wallpaperListChanged(screenName, files.length);
         }
       }
+    }
+  }
+
+  // -------------------------------------------------------------------
+  // Cache file persistence
+  // -------------------------------------------------------------------
+  FileView {
+    id: wallpaperCacheView
+    printErrors: false
+    watchChanges: false
+
+    adapter: JsonAdapter {
+      id: wallpaperCacheAdapter
+      property var wallpapers: ({})
+      property string defaultWallpaper: root.noctaliaDefaultWallpaper
+    }
+
+    onLoaded: {
+      // Load wallpapers from cache file
+      root.currentWallpapers = wallpaperCacheAdapter.wallpapers || {};
+
+      // Load default wallpaper from cache if it exists, otherwise use Noctalia default
+      if (wallpaperCacheAdapter.defaultWallpaper && wallpaperCacheAdapter.defaultWallpaper !== "") {
+        root.defaultWallpaper = wallpaperCacheAdapter.defaultWallpaper;
+        Logger.d("Wallpaper", "Loaded default wallpaper from cache:", wallpaperCacheAdapter.defaultWallpaper);
+      } else {
+        root.defaultWallpaper = root.noctaliaDefaultWallpaper;
+        Logger.d("Wallpaper", "Using Noctalia default wallpaper");
+      }
+
+      Logger.d("Wallpaper", "Loaded wallpapers from cache file:", Object.keys(root.currentWallpapers).length, "screens");
+      root.isInitialized = true;
+    }
+
+    onLoadFailed: error => {
+      // File doesn't exist yet or failed to load - initialize with empty state
+      root.currentWallpapers = {};
+      Logger.d("Wallpaper", "Cache file doesn't exist or failed to load, starting with empty wallpapers");
+      root.isInitialized = true;
+    }
+  }
+
+  Timer {
+    id: saveTimer
+    interval: 500
+    repeat: false
+    onTriggered: {
+      wallpaperCacheAdapter.wallpapers = root.currentWallpapers;
+      wallpaperCacheAdapter.defaultWallpaper = root.defaultWallpaper;
+      wallpaperCacheView.writeAdapter();
+      Logger.d("Wallpaper", "Saved wallpapers to cache file");
     }
   }
 }

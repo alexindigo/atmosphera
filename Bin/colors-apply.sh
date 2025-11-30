@@ -4,7 +4,7 @@
 if [ "$#" -ne 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava}" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri}" >&2
     exit 1
 fi
 
@@ -249,6 +249,29 @@ cava)
     else
         echo "Error: cava config file not found at $CONFIG_FILE" >&2
         exit 1
+    fi
+    ;;
+
+niri)
+    echo "🎨 Applying 'noctalia' theme to niri..."
+    CONFIG_FILE="$HOME/.config/niri/config.kdl"
+    INCLUDE_LINE='include "./noctalia.kdl"'
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo "$INCLUDE_LINE" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if include line already exists
+        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo "$INCLUDE_LINE" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
+        fi
     fi
     ;;
 
