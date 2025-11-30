@@ -792,7 +792,6 @@
       "noctalia": {
         "download-latest": "Завантажити останній реліз",
         "git-commit": "Git коміт:",
-        "git-commit-copy": "Скопіювати хеш коміту",
         "git-commit-loading": "Завантаження...",
         "installed-version": "Встановлена версія:",
         "latest-version": "Остання версія:",

@@ -14,10 +14,6 @@ Singleton {
   property bool isFetchingData: false
   readonly property alias data: adapter // Used to access via GitHubService.data.xxx.yyy
 
-  // GitHub API authentication
-  readonly property string githubToken: Quickshell.env("GITHUB_TOKEN") || ""
-  readonly property bool hasAuth: githubToken !== ""
-
   // Public properties for easy access
   property string latestVersion: I18n.tr("system.unknown-version")
   property var contributors: []
@@ -48,11 +44,10 @@ Singleton {
     }
     onLoadFailed: function (error) {
       if (error.toString().includes("No such file") || error === 2) {
-        // File doesn't exist - don't fetch on startup, just initialize empty
-        Logger.d("GitHub", "Cache file doesn't exist, will fetch when needed");
-        data.version = I18n.tr("system.unknown-version");
-        data.contributors = [];
-        data.timestamp = 0;
+        // Fetch data after a short delay to ensure file is created
+        Qt.callLater(() => {
+                       fetchFromGitHub();
+                     });
       }
     }
 
@@ -77,7 +72,7 @@ Singleton {
     var needsRefetch = false;
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
       needsRefetch = true;
-      Logger.d("GitHub", "Cache expired or missing, will fetch when needed");
+      Logger.d("GitHub", "Cache expired or missing, scheduling fetch");
     } else {
       Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
     }
@@ -89,16 +84,7 @@ Singleton {
       root.contributors = data.contributors;
     }
 
-    // Don't fetch on startup - only fetch when explicitly requested (e.g., when About tab opens)
-    // This prevents rate limiting on startup
-  }
-
-  // --------------------------------
-  function ensureDataFresh() {
-    // Check if we need to fetch and do so if needed
-    const now = Time.timestamp;
-    if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
-      Logger.d("GitHub", "Cache expired, fetching fresh data");
+    if (needsRefetch) {
       fetchFromGitHub();
     }
   }
@@ -148,19 +134,6 @@ Singleton {
 
     // Try to fetch immediately
     fetchFromGitHub();
-  }
-
-  // --------------------------------
-  function handleRateLimit() {
-    Logger.w("GitHub", "Rate limit hit - extending cache expiration to avoid further requests");
-    // Extend cache expiration by 1 hour to avoid hitting rate limit again
-    if (data.timestamp) {
-      data.timestamp = Time.timestamp + githubUpdateFrequency;
-    }
-
-    if (!root.hasAuth) {
-      Logger.w("GitHub", "Consider setting GITHUB_TOKEN environment variable to increase rate limit from 60 to 5000 requests/hour");
-    }
   }
 
   // --------------------------------
@@ -446,42 +419,14 @@ Singleton {
   Process {
     id: versionProcess
 
-    command: root.hasAuth ? ["sh", "-c", "curl -s -w '\\n%{http_code}' -H 'Authorization: token " + root.githubToken + "' 'https://api.github.com/repos/noctalia-dev/noctalia-shell/releases/latest'"] : ["sh", "-c", "curl -s -w '\\n%{http_code}' 'https://api.github.com/repos/noctalia-dev/noctalia-shell/releases/latest'"]
+    command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/releases/latest"]
 
     stdout: StdioCollector {
       onStreamFinished: {
         try {
-          var response = text;
-          if (!response || !response.trim()) {
-            Logger.w("GitHub", "Empty response from GitHub API");
-            checkAndSaveData();
-            return;
-          }
-
-          // Extract HTTP status code (last line) and response body
-          var lines = response.trim().split('\n');
-          var statusCode = lines.length > 1 ? parseInt(lines[lines.length - 1]) : 200;
-          var responseBody = lines.length > 1 ? lines.slice(0, -1).join('\n') : response;
-
-          // Check for rate limit status codes
-          if (statusCode === 403 || statusCode === 429) {
-            Logger.w("GitHub", "Rate limit hit (HTTP", statusCode + ")");
-            root.handleRateLimit();
-            checkAndSaveData();
-            return;
-          }
-
-          if (responseBody && responseBody.trim()) {
-            const data = JSON.parse(responseBody);
-
-            // Check for rate limit in response message
-            if (data.message && (data.message.includes("API rate limit") || data.message.includes("rate limit"))) {
-              Logger.w("GitHub", "Rate limit exceeded:", data.message);
-              root.handleRateLimit();
-              checkAndSaveData();
-              return;
-            }
-
+          const response = text;
+          if (response && response.trim()) {
+            const data = JSON.parse(response);
             if (data.tag_name) {
               const version = data.tag_name;
               root.data.version = version;
@@ -492,6 +437,8 @@ Singleton {
             } else {
               Logger.w("GitHub", "No tag_name in GitHub response");
             }
+          } else {
+            Logger.w("GitHub", "Empty response from GitHub API");
           }
         } catch (e) {
           Logger.e("GitHub", "Failed to parse version:", e);
@@ -506,51 +453,21 @@ Singleton {
   Process {
     id: contributorsProcess
 
-    command: root.hasAuth ? ["sh", "-c", "curl -s -w '\\n%{http_code}' -H 'Authorization: token " + root.githubToken + "' 'https://api.github.com/repos/noctalia-dev/noctalia-shell/contributors?per_page=100'"] : ["sh", "-c", "curl -s -w '\\n%{http_code}' 'https://api.github.com/repos/noctalia-dev/noctalia-shell/contributors?per_page=100'"]
+    command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/contributors?per_page=100"]
 
     stdout: StdioCollector {
       onStreamFinished: {
         try {
-          var response = text;
+          const response = text;
           Logger.d("GitHub", "Raw contributors response length:", response ? response.length : 0);
-
-          if (!response || !response.trim()) {
-            Logger.w("GitHub", "Empty response from GitHub API for contributors");
-            root.data.contributors = [];
-            root.contributors = [];
-            checkAndSaveData();
-            return;
-          }
-
-          // Extract HTTP status code (last line) and response body
-          var lines = response.trim().split('\n');
-          var statusCode = lines.length > 1 ? parseInt(lines[lines.length - 1]) : 200;
-          var responseBody = lines.length > 1 ? lines.slice(0, -1).join('\n') : response;
-
-          // Check for rate limit status codes
-          if (statusCode === 403 || statusCode === 429) {
-            Logger.w("GitHub", "Rate limit hit (HTTP", statusCode + ")");
-            root.handleRateLimit();
-            checkAndSaveData();
-            return;
-          }
-
-          if (responseBody && responseBody.trim()) {
-            const data = JSON.parse(responseBody);
-
-            // Check for rate limit in response message
-            if (data.message && (data.message.includes("API rate limit") || data.message.includes("rate limit"))) {
-              Logger.w("GitHub", "Rate limit exceeded:", data.message);
-              root.handleRateLimit();
-              checkAndSaveData();
-              return;
-            }
-
+          if (response && response.trim()) {
+            const data = JSON.parse(response);
             Logger.d("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array");
             root.data.contributors = data || [];
             root.contributors = root.data.contributors;
             Logger.d("GitHub", "Contributors fetched from GitHub:", root.contributors.length);
           } else {
+            Logger.w("GitHub", "Empty response from GitHub API for contributors");
             root.data.contributors = [];
             root.contributors = [];
           }
