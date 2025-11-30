@@ -791,6 +791,9 @@
       },
       "noctalia": {
         "download-latest": "Descargar la última versión",
+        "git-commit": "Commit de Git:",
+        "git-commit-copy": "Copiar hash del commit",
+        "git-commit-loading": "Cargando...",
         "installed-version": "Versión instalada:",
         "latest-version": "Última versión:",
         "section": {

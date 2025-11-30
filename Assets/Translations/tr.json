@@ -791,6 +791,9 @@
       },
       "noctalia": {
         "download-latest": "En son sürümü indir",
+        "git-commit": "Git commit:",
+        "git-commit-copy": "Commit hash'ini kopyala",
+        "git-commit-loading": "Yükleniyor...",
         "installed-version": "Yüklü sürüm:",
         "latest-version": "En son sürüm:",
         "section": {

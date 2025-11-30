@@ -791,6 +791,9 @@
       },
       "noctalia": {
         "download-latest": "下载最新版本",
+        "git-commit": "Git提交:",
+        "git-commit-copy": "复制提交哈希",
+        "git-commit-loading": "加载中...",
         "installed-version": "已安装版本：",
         "latest-version": "最新版本：",
         "section": {

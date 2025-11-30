@@ -14,10 +14,97 @@ ColumnLayout {
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
   property var contributors: GitHubService.contributors
+  property string gitCommitHash: ""
 
   readonly property int topContributorsCount: 20
+  readonly property bool isGitVersion: root.currentVersion.endsWith("-git") || root.hasArchGitVersion()
+
+  property int _gitSearchDepth: 0
+  readonly property int _maxGitSearchDepth: 5
 
   spacing: Style.marginL
+
+  Component.onCompleted: {
+    if (root.isGitVersion) {
+      // First try to extract from Arch package version format (e.g., 3.4.0.r112.g3f00bec8-1)
+      var archHash = root.extractCommitFromArchVersion();
+      if (archHash) {
+        root.gitCommitHash = archHash;
+      } else {
+        // Fall back to git command for git-cloned installations
+        fetchGitCommit();
+      }
+    }
+  }
+
+  function hasArchGitVersion() {
+    // Check if version matches Arch package format: X.Y.Z.rN.gHASH-REV
+    // Pattern: version.r<number>.g<hash>-<rev>
+    return /\.r\d+\.g[0-9a-fA-F]+-/.test(root.currentVersion);
+  }
+
+  function extractCommitFromArchVersion() {
+    // Extract commit hash from Arch package version format
+    // Format: 3.4.0.r112.g3f00bec8-1 or v3.4.0.r112.g3f00bec8-1
+    // We want to extract the hash after ".g" and before "-"
+    var match = root.currentVersion.match(/\.g([0-9a-fA-F]+)-/i);
+    if (match && match[1]) {
+      // Return first 7 characters (short hash)
+      return match[1].substring(0, 7);
+    }
+    return "";
+  }
+
+  function fetchGitCommit() {
+    // Try to find git repository starting from shellDir and going up
+    var searchDir = Quickshell.shellDir || "";
+    if (!searchDir) {
+      Logger.w("AboutTab", "Cannot determine shell directory, skipping git commit fetch");
+      return;
+    }
+
+    // Reset search depth
+    root._gitSearchDepth = 0;
+
+    // Try current directory first, then parent directories
+    gitCommitProcess.workingDirectory = searchDir;
+    gitCommitProcess.running = true;
+  }
+
+  Process {
+    id: gitCommitProcess
+    command: ["git", "rev-parse", "HEAD"]
+    running: false
+
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        var commitHash = stdout.text.trim();
+        if (commitHash) {
+          // Show short hash (first 7 characters)
+          root.gitCommitHash = commitHash.substring(0, 7);
+          Logger.d("AboutTab", "Git commit hash:", root.gitCommitHash);
+        }
+      } else {
+        // If git command fails, try parent directory (up to max depth)
+        if (root._gitSearchDepth < root._maxGitSearchDepth) {
+          var currentDir = gitCommitProcess.workingDirectory || "";
+          var parentDir = currentDir.split("/").slice(0, -1).join("/");
+          if (parentDir && parentDir !== currentDir && parentDir.length > 0) {
+            root._gitSearchDepth++;
+            gitCommitProcess.workingDirectory = parentDir;
+            gitCommitProcess.running = true;
+          } else {
+            Logger.d("AboutTab", "Could not find git repository");
+          }
+        } else {
+          Logger.d("AboutTab", "Could not find git repository (max search depth reached)");
+        }
+      }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+  }
 
   NHeader {
     label: I18n.tr("settings.about.noctalia.section.label")
@@ -53,6 +140,37 @@ ColumnLayout {
         text: root.currentVersion
         color: Color.mOnSurface
         font.weight: Style.fontWeightBold
+      }
+
+      // Git commit hash (only shown for -git versions)
+      NText {
+        visible: root.isGitVersion
+        text: I18n.tr("settings.about.noctalia.git-commit")
+        color: Color.mOnSurface
+      }
+
+      RowLayout {
+        visible: root.isGitVersion
+        spacing: Style.marginXS
+
+        NText {
+          text: root.gitCommitHash || I18n.tr("settings.about.noctalia.git-commit-loading")
+          color: Color.mOnSurface
+          font.weight: Style.fontWeightBold
+          font.family: "monospace"
+        }
+
+        NIconButton {
+          visible: root.gitCommitHash !== ""
+          icon: "clipboard-copy"
+          tooltipText: I18n.tr("settings.about.noctalia.git-commit-copy")
+          baseSize: Style.baseWidgetSize * 0.7
+          onClicked: {
+            if (root.gitCommitHash) {
+              Quickshell.execDetached(["sh", "-c", `echo -n "${root.gitCommitHash}" | wl-copy`]);
+            }
+          }
+        }
       }
     }
 
