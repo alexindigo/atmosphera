@@ -32,7 +32,7 @@ NBox {
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary
-      borderWidth: Style.borderM
+      borderWidth: Style.borderS * 1.5
     }
 
     ColumnLayout {
