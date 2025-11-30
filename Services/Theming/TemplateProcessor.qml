@@ -410,7 +410,10 @@ Singleton {
     const userConfigPath = getUserConfigPath();
     let script = "\n# Execute user config if it exists\n";
     script += `if [ -f '${userConfigPath}' ]; then\n`;
-    script += `  matugen image '${input}' --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+    // If input is a shell variable (starts with $), use double quotes to allow expansion
+    // Otherwise, use single quotes for safety with file paths
+    const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
+    script += `  matugen image ${inputQuoted} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
     script += "fi";
 
     return script;
