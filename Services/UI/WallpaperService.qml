@@ -30,7 +30,8 @@ Singleton {
   property string wallpaperCacheFile: ""
 
   readonly property bool scanning: (scanningCount > 0)
-  readonly property string defaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
+  readonly property string noctaliaDefaultWallpaper: Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png"
+  property string defaultWallpaper: noctaliaDefaultWallpaper
 
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
@@ -521,11 +522,22 @@ Singleton {
     adapter: JsonAdapter {
       id: wallpaperCacheAdapter
       property var wallpapers: ({})
+      property string defaultWallpaper: root.noctaliaDefaultWallpaper
     }
 
     onLoaded: {
       // Load wallpapers from cache file
       root.currentWallpapers = wallpaperCacheAdapter.wallpapers || {};
+
+      // Load default wallpaper from cache if it exists, otherwise use Noctalia default
+      if (wallpaperCacheAdapter.defaultWallpaper && wallpaperCacheAdapter.defaultWallpaper !== "") {
+        root.defaultWallpaper = wallpaperCacheAdapter.defaultWallpaper;
+        Logger.d("Wallpaper", "Loaded default wallpaper from cache:", wallpaperCacheAdapter.defaultWallpaper);
+      } else {
+        root.defaultWallpaper = root.noctaliaDefaultWallpaper;
+        Logger.d("Wallpaper", "Using Noctalia default wallpaper");
+      }
+
       Logger.d("Wallpaper", "Loaded wallpapers from cache file:", Object.keys(root.currentWallpapers).length, "screens");
       root.isInitialized = true;
     }
@@ -544,6 +556,7 @@ Singleton {
     repeat: false
     onTriggered: {
       wallpaperCacheAdapter.wallpapers = root.currentWallpapers;
+      wallpaperCacheAdapter.defaultWallpaper = root.defaultWallpaper;
       wallpaperCacheView.writeAdapter();
       Logger.d("Wallpaper", "Saved wallpapers to cache file");
     }
