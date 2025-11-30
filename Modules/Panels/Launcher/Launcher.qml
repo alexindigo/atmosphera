@@ -996,6 +996,24 @@ SmartPanel {
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
+              // Pin helpers
+              function togglePin(appId) {
+                if (!appId)
+                  return;
+                let arr = (Settings.data.dock.pinnedApps || []).slice();
+                const idx = arr.indexOf(appId);
+                if (idx >= 0)
+                  arr.splice(idx, 1);
+                else
+                  arr.push(appId);
+                Settings.data.dock.pinnedApps = arr;
+              }
+
+              function isPinned(appId) {
+                const arr = Settings.data.dock.pinnedApps || [];
+                return appId && arr.indexOf(appId) >= 0;
+              }
+
               width: {
                 if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
                   return resultsGrid.width / 5;
@@ -1137,6 +1155,18 @@ SmartPanel {
                   wrapMode: Text.NoWrap
                   maximumLineCount: 1
                 }
+              }
+
+              // Pin/Unpin action icon button (overlay in top-right corner)
+              NIconButton {
+                visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected && Settings.data.dock.enabled
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: Style.marginXS
+                z: 10
+                icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
+                tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                onClicked: gridEntry.togglePin(gridEntry.appId)
               }
 
               MouseArea {
