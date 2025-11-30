@@ -85,6 +85,25 @@ ColumnLayout {
     visible: Settings.data.dock.enabled
     spacing: Style.marginXXS
     Layout.fillWidth: true
+    NLabel {
+      label: I18n.tr("settings.dock.appearance.dead-opacity.label")
+      description: I18n.tr("settings.dock.appearance.dead-opacity.description")
+    }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.dock.deadOpacity
+      onMoved: value => Settings.data.dock.deadOpacity = value
+      text: Math.floor(Settings.data.dock.deadOpacity * 100) + "%"
+    }
+  }
+
+  ColumnLayout {
+    visible: Settings.data.dock.enabled
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
 
     NLabel {
       label: I18n.tr("settings.dock.appearance.floating-distance.label")
@@ -119,6 +138,22 @@ ColumnLayout {
       onMoved: value => Settings.data.dock.size = value
       text: Math.floor(Settings.data.dock.size * 100) + "%"
     }
+  }
+
+  NToggle {
+    visible: Settings.data.dock.enabled
+    label: I18n.tr("settings.dock.appearance.inactive-indicators.label")
+    description: I18n.tr("settings.dock.appearance.inactive-indicators.description")
+    checked: Settings.data.dock.inactiveIndicators
+    onToggled: checked => Settings.data.dock.inactiveIndicators = checked
+  }
+
+  NToggle {
+    visible: Settings.data.dock.enabled
+    label: I18n.tr("settings.dock.appearance.pinned-static.label")
+    description: I18n.tr("settings.dock.appearance.pinned-static.description")
+    checked: Settings.data.dock.pinnedStatic
+    onToggled: checked => Settings.data.dock.pinnedStatic = checked
   }
 
   NToggle {
