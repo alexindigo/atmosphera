@@ -80,12 +80,7 @@ PanelWindow {
     if (!root.isPanelOpen) {
       return WlrKeyboardFocus.None;
     }
-    if (CompositorService.isHyprland) {
-      // Exclusive focus on hyprland is too restrictive.
-      return WlrKeyboardFocus.OnDemand;
-    } else {
-      return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
-    }
+    return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
   }
 
   anchors {
