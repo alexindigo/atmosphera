@@ -90,9 +90,9 @@ Item {
         backgroundColor: panelBackgroundColor
       }
 
-      // Calendar
+      // Clock
       PanelBackground {
-        panel: root.windowRoot.calendarPanelPlaceholder
+        panel: root.windowRoot.clockPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: panelBackgroundColor
       }

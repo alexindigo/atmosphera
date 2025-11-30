@@ -112,7 +112,8 @@ Singleton {
                                     "icon": "noctalia",
                                     "customIconPath": "",
                                     "colorizeDistroLogo": false,
-                                    "colorizeSystemIcon": "none"
+                                    "colorizeSystemIcon": "none",
+                                    "enableColorization": false
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
