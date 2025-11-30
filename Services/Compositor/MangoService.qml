@@ -4,523 +4,673 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Keyboard
-import qs.Services.UI
 
 Item {
   id: root
 
-  // 1. FACADE INTERFACE
+  // ===== PUBLIC INTERFACE (CompositorService compatibility) =====
+
   property ListModel workspaces: ListModel {}
   property var windows: []
   property int focusedWindowIndex: -1
+  property bool initialized: false
 
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
 
+  // ===== MANGOSERVICE-SPECIFIC PROPERTIES =====
+
   property string selectedMonitor: ""
   property string currentLayoutSymbol: ""
-  property bool initialized: false
 
-  // 2. CONFIGURATION
-  QtObject {
-    id: config
-    readonly property int defaultWorkspaceId: 1
+  // ===== INTERNAL STATE =====
 
-    // Pre-compiled Regex for Performance
-    readonly property var reTagDetail: /^(\S+)\s+tag\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/
-                                       readonly property var reTagBinary: /^(\S+)\s+tags\s+([01]+)\s+([01]+)\s+([01]+)$/
-                                       readonly property var reLayout: /^(\S+)\s+layout\s+(\S+)$/
-                                       readonly property var reMetadata: /^(\S+)\s+(title|appid)\s+(.*)$/
-                                       readonly property var reKbLayout: /^(\S+)\s+kb_layout\s+(.*)$/
-                                       readonly property var reScale: /^(\S+)\s+scale_factor\s+(\d+(\.\d+)?)$/
-
-                                       readonly property var query: ({
-                                                                       eventStream: ["mmsg", "-w"],
-                                                                       monitors: ["mmsg", "-g", "-o"],
-                                                                       outputs: ["mmsg", "-g", "-A"] // Scales
-                                                                       ,
-                                                                       workspaces: ["mmsg", "-g", "-t"]
-                                                                     })
-
-    readonly property var action: ({
-                                     tag: ["mmsg", "-s", "-t"],
-                                     view: ["mmsg", "-s", "-d", "view"],
-                                     toggleOverview: ["mmsg", "-s", "-d", "toggleoverview"],
-                                     setLayout: ["mmsg", "-s", "-d", "setlayout"],
-                                     killClient: ["mmsg", "-s", "-d", "killclient"],
-                                     quit: ["mmsg", "-s", "-q"]
-                                   })
-  }
-
-  // 3. LOGIC ENGINE
   QtObject {
     id: internal
 
-    // State
+    // Tag states per output: Map<OutputName, Array<TagState>>
+    // TagState: { id, state, clients, focused }
+    property var tagStates: ({})
+
+    // Active tag per output: Map<OutputName, TagID>
     property var activeTags: ({})
-    property var multiTagState: ({})
-    property bool hasValidTagData: false
 
-    // Map<ToplevelObject, WorkspaceID>
-    property var windowStateMap: new Map()
+    // Focused window metadata from mmsg
+    property string focusedTitle: ""
+    property string focusedAppId: ""
+    property string focusedOutput: ""
 
-    property string mmsgFocusedTitle: ""
-    property string mmsgFocusedAppId: ""
+    // Window-to-tag persistence: Map<UniqueID, TagID>
+    property var windowTagMap: ({})
+
+    // Window-to-output persistence: Map<UniqueID, OutputName>
+    property var windowOutputMap: ({})
+
+    // Toplevel-to-ID mapping: Map<ToplevelObject, UniqueID>
+    // This assigns each toplevel a stable ID on first encounter
+    property var toplevelIdMap: new Map()
+    property int windowIdCounter: 0
+
+    // Output name to index mapping for unique workspace IDs
+    property var outputIndices: ({})
+    property int outputCounter: 0
+
+    // Monitor scales: Map<OutputName, scale>
+    property var monitorScales: ({})
+
+    // Keyboard layout
     property string currentKbLayout: ""
 
-    // Caches
-    property var workspaceCache: ({})
-    property var monitorScales: ({})
-    property string lastWindowSig: ""
-
-    // Buffers
+    // Stream buffer for mmsg -w output
     property string streamBuffer: ""
 
-    // --- STREAM PROCESSOR ---
-    function processFrame(output) {
+    // Window signature for change detection
+    property string lastWindowSignature: ""
+
+    // ===== REGEX PATTERNS =====
+
+    readonly property var patterns: QtObject {
+      // Detailed tag format: "OUTPUT tag N STATE CLIENTS FOCUSED"
+      readonly property var tagDetail: /^(\S+)\s+tag\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+
+                                       // Binary tag format: "OUTPUT tags <occ> <sel> <urg>"
+                                       readonly property var tagBinary: /^(\S+)\s+tags\s+([01]+)\s+([01]+)\s+([01]+)$/
+
+                                       // Layout: "OUTPUT layout SYMBOL"
+                                       readonly property var layout: /^(\S+)\s+layout\s+(\S+)$/
+
+                                       // Metadata: "OUTPUT title TEXT" or "OUTPUT appid TEXT"
+                                       readonly property var metadata: /^(\S+)\s+(title|appid)\s+(.*)$/
+
+                                       // Keyboard layout: "OUTPUT kb_layout NAME"
+                                       readonly property var kbLayout: /^(\S+)\s+kb_layout\s+(.*)$/
+
+                                       // Scale: "OUTPUT scale_factor FLOAT"
+                                       readonly property var scale: /^(\S+)\s+scale_factor\s+(\d+(?:\.\d+)?)$/
+
+                                       // Selected monitor: "OUTPUT selmon 1"
+                                       readonly property var selmon: /^(\S+)\s+selmon\s+1$/
+    }
+
+    // ===== PROCESS TAG DATA =====
+
+    function processTagData(output) {
       const lines = output.trim().split('\n');
-      const newWsList = [];
-      const newWsCache = {};
-      const processedTags = {};
-      let metadataChanged = false;
-      let receivedClientCounts = false; // Track if we got real numbers
+      const newTagStates = {};
+      const newActiveTags = {};
+      const detailedOutputTags = {};  // Track which output+tag combinations we've seen in detailed format
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (!line)
-          continue;
-
-        // 1. Tag Details (High Quality Data: Contains Client Counts)
-        const tagMatch = line.match(config.reTagDetail);
-        if (tagMatch) {
-          const outputName = tagMatch[1];
-          const tagId = parseInt(tagMatch[2]);
-          const state = parseInt(tagMatch[3]);
-          const clients = parseInt(tagMatch[4]);
-          const focused = parseInt(tagMatch[5]);
-          const isActive = (state & 1) !== 0;
-
-          if (isActive)
-            internal.activeTags[outputName] = tagId;
-          const wsData = {
-            "id": tagId,
-            "idx": tagId,
-            "name": tagId.toString(),
-            "output": outputName,
-            "isActive": isActive,
-            "isFocused": isActive && (focused === 1 || outputName === root.selectedMonitor),
-            "isUrgent": (state & 2) !== 0,
-            "isOccupied": clients > 0,
-            "clients": clients // We have the real number!
-          };
-          const key = `${outputName}-${tagId}`;
-          newWsCache[key] = wsData;
-          newWsList.push(wsData);
-          processedTags[key] = true;
-          receivedClientCounts = true;
+        if (!line) {
           continue;
         }
 
-        // 2. Binary Tags (Low Quality Data: No Client Counts)
-        const tagsMatch = line.match(config.reTagBinary);
-        if (tagsMatch) {
-          const outputName = tagsMatch[1];
-          const occ = tagsMatch[2];
-          const seltags = tagsMatch[3];
-          const urg = tagsMatch[4];
-          const len = occ.length;
+        // 1. Detailed tag format (preferred - has client counts)
+        const detailMatch = line.match(patterns.tagDetail);
+        if (detailMatch) {
+          const outputName = detailMatch[1];
+          const tagId = parseInt(detailMatch[2]);
+          const state = parseInt(detailMatch[3]);
+          const clients = parseInt(detailMatch[4]);
+          const focused = parseInt(detailMatch[5]);
 
-          // Overview Detection
-          let activeCount = 0;
-          for (let c = 0; c < seltags.length; c++)
-            if (seltags[c] === '1')
-              activeCount++;
-          internal.multiTagState[outputName] = (activeCount > 1);
+          if (!newTagStates[outputName]) {
+            newTagStates[outputName] = [];
+          }
 
-          for (let j = 0; j < len; j++) {
+          // Track that we've seen this specific tag in detailed format
+          const key = `${outputName}-${tagId}`;
+          detailedOutputTags[key] = true;
+
+          const isActive = (state & 1) !== 0;
+          const isUrgent = (state & 2) !== 0;
+
+          if (isActive) {
+            newActiveTags[outputName] = tagId;
+          }
+
+          newTagStates[outputName].push({
+                                          id: tagId,
+                                          state: state,
+                                          clients: clients,
+                                          focused: focused,
+                                          isActive: isActive,
+                                          isUrgent: isUrgent
+                                        });
+          continue;
+        }
+
+        // 2. Binary tag format (fallback - only use for tags we haven't seen in detailed format)
+        const binaryMatch = line.match(patterns.tagBinary);
+        if (binaryMatch) {
+          const outputName = binaryMatch[1];
+
+          const occ = binaryMatch[2];  // occupied tags
+          const sel = binaryMatch[3];  // selected tags
+          const urg = binaryMatch[4];  // urgent tags
+
+          if (!newTagStates[outputName]) {
+            newTagStates[outputName] = [];
+          }
+
+          // Parse binary strings (right-to-left indexing)
+          for (let j = 0; j < occ.length; j++) {
             const tagId = j + 1;
-            const charIdx = len - 1 - j;
+            const charIdx = occ.length - 1 - j;
+
+            // Skip if we already processed this tag in detailed format
             const key = `${outputName}-${tagId}`;
-
-            if (processedTags[key])
+            if (detailedOutputTags[key]) {
               continue;
-            const isActive = seltags[charIdx] === '1';
-            const isOccupied = occ[charIdx] === '1';
+            }
 
-            if (isActive)
-              internal.activeTags[outputName] = tagId;
-            newWsList.push({
-                             "id": tagId,
-                             "idx": tagId,
-                             "name": tagId.toString(),
-                             "output": outputName,
-                             "isActive": isActive,
-                             "isFocused": false,
-                             "isUrgent": urg[charIdx] === '1',
-                             "isOccupied": isOccupied,
-                             "clients": isOccupied ? -1 : 0 // -1 indicates "Unknown, but at least 1"
-                           });
+            const isOccupied = occ[charIdx] === '1';
+            const isActive = sel[charIdx] === '1';
+            const isUrgent = urg[charIdx] === '1';
+
+            if (isActive) {
+              newActiveTags[outputName] = tagId;
+            }
+
+            newTagStates[outputName].push({
+                                            id: tagId,
+                                            state: (isActive ? 1 : 0) | (isUrgent ? 2 : 0),
+                                            clients: isOccupied ? 1 : 0  // Approximate: 1 if occupied, 0 otherwise
+                                                                  ,
+                                            focused: 0,
+                                            isActive: isActive,
+                                            isUrgent: isUrgent
+                                          });
           }
           continue;
         }
 
-        // 3. Metadata
-        const metaMatch = line.match(config.reMetadata);
+        // 3. Metadata (focused window title/appId)
+        const metaMatch = line.match(patterns.metadata);
         if (metaMatch) {
+          const outputName = metaMatch[1];
           const prop = metaMatch[2];
           const val = metaMatch[3];
-          if (prop === "title")
-            internal.mmsgFocusedTitle = val;
-          else if (prop === "appid")
-            internal.mmsgFocusedAppId = val;
-          metadataChanged = true;
+
+          if (prop === "title") {
+            internal.focusedTitle = val;
+            internal.focusedOutput = outputName;
+          } else if (prop === "appid") {
+            internal.focusedAppId = val;
+          }
           continue;
         }
 
         // 4. Layout
-        const layoutMatch = line.match(config.reLayout);
+        const layoutMatch = line.match(patterns.layout);
         if (layoutMatch) {
-          if (layoutMatch[2] !== root.currentLayoutSymbol)
-            root.currentLayoutSymbol = layoutMatch[2];
+          root.currentLayoutSymbol = layoutMatch[2];
+          continue;
         }
 
-        // 5. Keyboard
-        const kbMatch = line.match(config.reKbLayout);
+        // 5. Keyboard layout
+        const kbMatch = line.match(patterns.kbLayout);
         if (kbMatch) {
           const kbName = kbMatch[2];
           if (kbName !== internal.currentKbLayout) {
             internal.currentKbLayout = kbName;
-            if (KeyboardLayoutService)
+            if (KeyboardLayoutService) {
               KeyboardLayoutService.setCurrentLayout(kbName);
+            }
           }
+          continue;
+        }
+
+        // 6. Selected monitor
+        const selmonMatch = line.match(patterns.selmon);
+        if (selmonMatch) {
+          root.selectedMonitor = selmonMatch[1];
+          continue;
         }
       }
 
-      // Apply
-      if (JSON.stringify(newWsCache) !== JSON.stringify(internal.workspaceCache)) {
-        internal.workspaceCache = newWsCache;
-        newWsList.sort((a, b) => {
-                         if (a.id !== b.id)
-                         return a.id - b.id;
-                         return a.output.localeCompare(b.output);
-                       });
-        root.workspaces.clear();
-        for (let k = 0; k < newWsList.length; k++)
-          root.workspaces.append(newWsList[k]);
-        root.workspaceChanged();
-
-        if (receivedClientCounts)
-          internal.hasValidTagData = true;
+      // Update state - MERGE instead of REPLACE to preserve other outputs' data
+      for (const outputName in newTagStates) {
+        internal.tagStates[outputName] = newTagStates[outputName];
+      }
+      for (const outputName in newActiveTags) {
+        internal.activeTags[outputName] = newActiveTags[outputName];
       }
 
-      if (metadataChanged || newWsList.length > 0) {
-        internal.updateWindowList();
-      }
+      // Rebuild workspaces
+      internal.rebuildWorkspaces();
+
+      // Update windows
+      internal.updateWindows();
     }
 
-    // --- WINDOW LIST MERGE ---
-    function updateWindowList() {
-      if (!ToplevelManager.toplevels)
-        return;
+    // ===== REBUILD WORKSPACES =====
 
-      // FIX: SAFETY CHECK
-      // If we haven't received "Detailed" data yet (only binary),
-      // we don't know where the windows are. Abort to prevent map poisoning.
-      if (!internal.hasValidTagData)
-        return;
+    function rebuildWorkspaces() {
+      const workspaceList = [];
 
-      const rawList = ToplevelManager.toplevels.values;
-      const finalList = [];
+      // Assign stable indices to new outputs
+      for (const outputName in internal.tagStates) {
+        if (internal.outputIndices[outputName] === undefined) {
+          internal.outputIndices[outputName] = internal.outputCounter++;
+          // Logger.d("MangoService", "Assigned index", internal.outputIndices[outputName], "to output", outputName);
+        }
+      }
+
+      for (const outputName in internal.tagStates) {
+        const tags = internal.tagStates[outputName];
+        const outputIdx = internal.outputIndices[outputName];
+
+        // Logger.d("MangoService", "Building workspaces for output", outputName, "- index:", outputIdx, "- tags:", tags.length);
+
+        for (let i = 0; i < tags.length; i++) {
+          const tag = tags[i];
+          const isFocused = tag.isActive && (tag.focused === 1 || outputName === root.selectedMonitor);
+
+          // Create unique workspace ID: outputIndex * 100 + tagId
+          // This ensures each output's tags have non-overlapping IDs
+          const uniqueId = outputIdx * 100 + tag.id;
+
+          // Logger.d("MangoService", "  Workspace:", outputName, "tag", tag.id, "→ uniqueId:", uniqueId, "active:", tag.isActive, "occupied:", tag.clients > 0);
+
+          workspaceList.push({
+                               id: uniqueId,
+                               idx: tag.id  // Keep original tag ID for switching
+                                    ,
+                               name: tag.id.toString(),
+                               output: outputName,
+                               isActive: tag.isActive,
+                               isFocused: isFocused,
+                               isUrgent: tag.isUrgent,
+                               isOccupied: tag.clients > 0
+                             });
+        }
+      }
+
+      // Sort by tag ID, then by output name
+      workspaceList.sort((a, b) => {
+                           if (a.id !== b.id) {
+                             return a.id - b.id;
+                           }
+                           return a.output.localeCompare(b.output);
+                         });
+
+      // Update ListModel
+      root.workspaces.clear();
+      for (let k = 0; k < workspaceList.length; k++) {
+        root.workspaces.append(workspaceList[k]);
+      }
+
+      root.workspaceChanged();
+    }
+
+    // ===== UPDATE WINDOWS =====
+
+    function updateWindows() {
+      if (!ToplevelManager.toplevels) {
+        return;
+      }
+
+      const toplevels = ToplevelManager.toplevels.values;
+      const windowList = [];
       let newFocusedIdx = -1;
+      const currentWindows = new Set();
 
-      const currentObjects = new Set();
-      const tagCapacities = new Map();
+      // Logger.d("MangoService", "updateWindows: Processing", toplevels.length, "toplevels");
 
-      // Build Capacities
-      let totalCapacity = 0;
-      for (let key in internal.workspaceCache) {
-        const ws = internal.workspaceCache[key];
-        const cap = ws.clients > 0 ? ws.clients : 0;
-        tagCapacities.set(key, cap);
-        totalCapacity += cap;
-      }
-
-      if (totalCapacity === 0 && rawList.length > 0 && !internal.hasValidTagData)
-        return;
-
-      const unassignedWindows = [];
-
-      // Pass 1: Known & Focused
-      for (let i = 0; i < rawList.length; i++) {
-        const toplevel = rawList[i];
-        if (!toplevel || toplevel.outliers)
+      // Ensure all outputs seen in toplevels have indices assigned
+      // This is needed because updateWindows() can be called before processTagData()
+      for (let i = 0; i < toplevels.length; i++) {
+        const toplevel = toplevels[i];
+        if (!toplevel || toplevel.outliers) {
           continue;
+        }
 
-        currentObjects.add(toplevel);
-
-        const appId = toplevel.appId || toplevel.wayland.appId || "";
-        const title = toplevel.title || toplevel.wayland.title || "";
-
-        let outputName = root.selectedMonitor;
         if (toplevel.outputs && toplevel.outputs.length > 0) {
-          outputName = toplevel.outputs[0].name;
-        }
-
-        const currentActiveTag = internal.activeTags[outputName] || config.defaultWorkspaceId;
-        const isMultiTag = internal.multiTagState[outputName] === true;
-        let wsId = -1;
-
-        const isFocused = toplevel.activated;
-        const isMmsgFocus = (title === internal.mmsgFocusedTitle) && (appId === internal.mmsgFocusedAppId);
-
-        if (isFocused && isMmsgFocus && !isMultiTag) {
-          wsId = currentActiveTag;
-          internal.windowStateMap.set(toplevel, wsId);
-        } else if (internal.windowStateMap.has(toplevel)) {
-          wsId = internal.windowStateMap.get(toplevel);
-        }
-
-        if (wsId !== -1) {
-          const key = `${outputName}-${wsId}`;
-          const cap = tagCapacities.get(key) || 0;
-          if (cap > 0)
-            tagCapacities.set(key, cap - 1);
-
-          finalList.push(createWindowObject(toplevel, outputName, appId, title, wsId, isFocused, i));
-        } else {
-          unassignedWindows.push({
-                                   toplevel,
-                                   outputName,
-                                   appId,
-                                   title,
-                                   isFocused,
-                                   index: i
-                                 });
-        }
-      }
-
-      // Pass 2: Distribute Unknowns
-      for (const win of unassignedWindows) {
-        let assignedId = -1;
-
-        for (let key in internal.workspaceCache) {
-          const ws = internal.workspaceCache[key];
-          // Robust output check: match name OR if both are undefined/generic
-          if (ws.output !== win.outputName && win.outputName !== "")
-            continue;
-
-          const cap = tagCapacities.get(key) || 0;
-          if (cap > 0) {
-            assignedId = ws.id;
-            tagCapacities.set(key, cap - 1);
-            break;
+          const outputName = toplevel.outputs[0].name;
+          if (internal.outputIndices[outputName] === undefined) {
+            internal.outputIndices[outputName] = internal.outputCounter++;
+            // Logger.d("MangoService", "updateWindows: Assigned index", internal.outputIndices[outputName], "to new output", outputName);
           }
         }
+      }
 
-        if (assignedId === -1) {
-          assignedId = internal.activeTags[win.outputName] || config.defaultWorkspaceId;
+      for (let i = 0; i < toplevels.length; i++) {
+        const toplevel = toplevels[i];
+        if (!toplevel || toplevel.outliers) {
+          continue;
         }
 
-        internal.windowStateMap.set(win.toplevel, assignedId);
-        finalList.push(createWindowObject(win.toplevel, win.outputName, win.appId, win.title, assignedId, win.isFocused, win.index));
-      }
+        const appId = toplevel.appId || toplevel.wayland?.appId || "";
+        const title = toplevel.title || toplevel.wayland?.title || "";
+        const isFocused = toplevel.activated;
 
-      finalList.sort((a, b) => {
-                       const idxA = parseInt(a.id.split('-').pop());
-                       const idxB = parseInt(b.id.split('-').pop());
-                       return idxA - idxB;
-                     });
+        // Get or assign a unique ID for this toplevel window
+        // Use a Map to track toplevel objects and assign stable IDs
+        let windowId;
+        if (internal.toplevelIdMap.has(toplevel)) {
+          windowId = internal.toplevelIdMap.get(toplevel);
+        } else {
+          windowId = `win-${internal.windowIdCounter++}`;
+          internal.toplevelIdMap.set(toplevel, windowId);
+        }
 
-      for (let i = 0; i < finalList.length; i++) {
-        if (finalList[i].isFocused)
-          newFocusedIdx = i;
-      }
+        currentWindows.add(windowId);
 
-      if (internal.windowStateMap.size > rawList.length + 10) {
-        for (const key of internal.windowStateMap.keys()) {
-          if (!currentObjects.has(key))
-            internal.windowStateMap.delete(key);
+        // Determine output using priority:
+        // 1. Focused window with mmsg metadata (most reliable)
+        // 2. Remembered output from previous focus
+        // 3. toplevel.outputs (least reliable but still useful)
+        let outputName;
+        let outputSource = "unknown";
+
+        // Priority 1: Currently focused with mmsg metadata
+        if (isFocused && title === internal.focusedTitle && appId === internal.focusedAppId && internal.focusedOutput) {
+          outputName = internal.focusedOutput;
+          outputSource = "mmsg-focused";
+          // Store this for future
+          internal.windowOutputMap[windowId] = internal.focusedOutput;
+          // Logger.d("MangoService", "    Storing output", internal.focusedOutput, "for", appId);
+        } else
+          // Priority 2: Previously remembered output (from past focus)
+          if (internal.windowOutputMap[windowId]) {
+            outputName = internal.windowOutputMap[windowId];
+            outputSource = "remembered";
+          } else
+            // Priority 3: toplevel.outputs
+            if (toplevel.outputs && toplevel.outputs.length > 0) {
+              outputName = toplevel.outputs[0].name;
+              outputSource = "toplevel.outputs";
+            } else
+              // Fallback: selected monitor
+            {
+              outputName = root.selectedMonitor || "DP-1";
+              outputSource = "fallback";
+            }
+
+        // Logger.d("MangoService", "    Output for", appId, "=", outputName, "(source:", outputSource + ")");
+
+        // Determine tag ID (not unique workspace ID yet)
+        let tagId = null;  // null means unknown
+        let tagSource = "unknown";
+
+        if (isFocused && title === internal.focusedTitle && appId === internal.focusedAppId) {
+          // This is the focused window - assign to active tag and remember it
+          tagId = internal.activeTags[outputName] || 1;
+          internal.windowTagMap[windowId] = tagId;
+          tagSource = "focused";
+        } else if (internal.windowTagMap[windowId] !== undefined) {
+          // Window has a known tag - use it
+          tagId = internal.windowTagMap[windowId];
+          tagSource = "remembered";
+        } else {
+          // Unknown window - skip it (don't show in taskbar until we know its tag)
+          continue;
+        }
+
+        // Convert to unique workspace ID using output index
+        // We ensure outputIndices is populated above, so this should never be undefined
+        const outputIdx = internal.outputIndices[outputName];
+        if (outputIdx === undefined) {
+          Logger.e("MangoService", "ERROR: No output index for", outputName, "- this should not happen!");
+          continue;  // Skip this window
+        }
+        const workspaceId = outputIdx * 100 + tagId;
+
+        // Logger.d("MangoService", "  Window:", appId, "on", outputName, "tag", tagId, "→ workspaceId:", workspaceId, "outputIdx:", outputIdx);
+
+        const windowObj = {
+          id: `${outputName}:${appId}:${title}:${i}`  // Unique ID using index
+              ,
+          title: title,
+          appId: appId,
+          class: appId,
+          workspaceId: workspaceId,
+          isFocused: isFocused,
+          output: outputName,
+          handle: toplevel,
+          fullscreen: toplevel.fullscreen || false,
+          floating: toplevel.maximized === false && toplevel.fullscreen === false
+        };
+
+        windowList.push(windowObj);
+
+        if (isFocused) {
+          newFocusedIdx = windowList.length - 1;
         }
       }
 
-      const sig = JSON.stringify(finalList.map(w => w.id + w.workspaceId + w.isFocused));
-      if (sig !== internal.lastWindowSig) {
-        internal.lastWindowSig = sig;
-        root.windows = finalList;
+      // Clean up stale window tracking (keep map size reasonable)
+      if (Object.keys(internal.windowTagMap).length > toplevels.length + 20) {
+        const newTagMap = {};
+        const newOutputMap = {};
+        for (const windowId of currentWindows) {
+          if (internal.windowTagMap[windowId] !== undefined) {
+            newTagMap[windowId] = internal.windowTagMap[windowId];
+          }
+          if (internal.windowOutputMap[windowId] !== undefined) {
+            newOutputMap[windowId] = internal.windowOutputMap[windowId];
+          }
+        }
+        internal.windowTagMap = newTagMap;
+        internal.windowOutputMap = newOutputMap;
+      }
+
+      // Check if window list changed
+      const signature = JSON.stringify(windowList.map(w => w.id + w.workspaceId + w.isFocused));
+      if (signature !== internal.lastWindowSignature) {
+        internal.lastWindowSignature = signature;
+
+        // Logger.d("MangoService", "===== FINAL WINDOW LIST (", windowList.length, "windows) =====");
+        // for (let i = 0; i < windowList.length; i++) {
+        //   const w = windowList[i];
+        //   Logger.d("MangoService", "  [" + i + "]", w.appId, "output:", w.output, "workspaceId:", w.workspaceId);
+        // }
+
+        root.windows = windowList;
         root.windowListChanged();
       }
 
+      // Update focused window index
       if (newFocusedIdx !== root.focusedWindowIndex) {
         root.focusedWindowIndex = newFocusedIdx;
         root.activeWindowChanged();
       }
     }
 
-    function createWindowObject(toplevel, outputName, appId, title, wsId, isFocused, index) {
-      return {
-        "id": `${outputName}-${appId}-${index}`,
-        "title": title,
-        "appId": appId,
-        "class": appId,
-        "workspaceId": wsId,
-        "isFocused": isFocused,
-        "output": outputName,
-        "handle": toplevel,
-        "fullscreen": toplevel.fullscreen,
-        "floating": toplevel.maximized === false && toplevel.fullscreen === false
-      };
-    }
+    // ===== PROCESS SCALES =====
 
-    // --- SCALES ---
-    function updateScales() {
+    function processScales(output) {
+      const lines = output.trim().split('\n');
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        const match = line.match(patterns.scale);
+
+        if (match) {
+          const outputName = match[1];
+          const scale = parseFloat(match[2]);
+          internal.monitorScales[outputName] = scale;
+        }
+      }
+
+      // Notify CompositorService
       const scalesMap = {};
-      for (const [name, data] of Object.entries(internal.monitorScales)) {
+      for (const name in internal.monitorScales) {
         scalesMap[name] = {
-          "name": name,
-          "scale": data.scale || 1.0,
-          "width": 0,
-          "height": 0,
-          "x": 0,
-          "y": 0
+          name: name,
+          scale: internal.monitorScales[name] || 1.0,
+          width: 0,
+          height: 0,
+          x: 0,
+          y: 0
         };
       }
+
       if (CompositorService && CompositorService.onDisplayScalesUpdated) {
         CompositorService.onDisplayScalesUpdated(scalesMap);
       }
+
       root.displayScalesChanged();
     }
   }
 
-  // 4. PROCESSES
+  // ===== PROCESSES =====
 
-  Process {
+  // Event stream (mmsg -w)
+  property QtObject _eventStream: Process {
     id: eventStream
     running: false
-    command: config.query.eventStream
+    command: ["mmsg", "-w"]
+
     stdout: SplitParser {
       onRead: line => {
-                if (line.includes("selmon") && line.includes(" 1")) {
-                  const parts = line.split(' ');
-                  if (parts.length >= 3)
-                  root.selectedMonitor = parts[0];
-                  return;
-                }
                 internal.streamBuffer += line + "\n";
-                if (line.match(config.reTagBinary)) {
-                  internal.processFrame(internal.streamBuffer);
+
+                // Process frame when we get a binary tag line (signals end of frame)
+                if (line.match(internal.patterns.tagBinary)) {
+                  internal.processTagData(internal.streamBuffer);
                   internal.streamBuffer = "";
                 }
               }
     }
+
     onExited: code => {
-                if (code !== 0)
-                restartTimer.start();
+                if (code !== 0) {
+                  restartTimer.start();
+                }
               }
   }
-  Timer {
+
+  property QtObject _restartTimer: Timer {
     id: restartTimer
     interval: 1000
-    onTriggered: if (initialized)
-                   eventStream.running = true
+    onTriggered: {
+      if (root.initialized) {
+        eventStream.running = true;
+      }
+    }
   }
 
-  Process {
-    id: procInitial
-    command: config.query.workspaces
+  // Initial tag query (mmsg -g -t)
+  property QtObject _initialQuery: Process {
+    id: initialQuery
+    command: ["mmsg", "-g", "-t"]
+
     stdout: SplitParser {
-      onRead: line => internal.streamBuffer += line + "\n"
+      onRead: line => {
+                internal.streamBuffer += line + "\n";
+              }
     }
+
     onExited: code => {
                 if (code === 0) {
-                  internal.processFrame(internal.streamBuffer);
+                  internal.processTagData(internal.streamBuffer);
                   internal.streamBuffer = "";
                 }
               }
   }
 
-  Process {
-    id: procOutputs
-    command: config.query.outputs
+  // Scale query (mmsg -g -A)
+  property QtObject _scaleQuery: Process {
+    id: scaleQuery
+    command: ["mmsg", "-g", "-A"]
+
+    property string buffer: ""
+
     stdout: SplitParser {
       onRead: line => {
-                const match = line.match(config.reScale);
-                if (match) {
-                  const out = match[1];
-                  const scale = parseFloat(match[2]);
-                  if (!internal.monitorScales[out])
-                  internal.monitorScales[out] = {};
-                  internal.monitorScales[out].scale = scale;
+                scaleQuery.buffer += line + "\n";
+              }
+    }
+
+    onExited: code => {
+                if (code === 0) {
+                  internal.processScales(scaleQuery.buffer);
+                  scaleQuery.buffer = "";
                 }
               }
-    }
-    onExited: code => {
-                if (code === 0)
-                internal.updateScales();
-              }
   }
 
-  // 5. WAYLAND & INIT
+  // ===== TOPLEVEL MANAGER CONNECTION =====
 
-  Connections {
+  property QtObject _toplevelConnection: Connections {
     target: ToplevelManager.toplevels
+
     function onValuesChanged() {
-      internal.updateWindowList();
+      internal.updateWindows();
     }
   }
-  Timer {
-    interval: 200
-    running: true
+
+  // Periodic update (safety net for missed events)
+  property QtObject _updateTimer: Timer {
+    interval: 500
+    running: root.initialized
     repeat: true
-    onTriggered: internal.updateWindowList()
+    onTriggered: internal.updateWindows()
   }
+
+  // ===== PUBLIC FUNCTIONS =====
 
   function initialize() {
-    if (initialized)
+    if (initialized) {
       return;
-    Logger.i("MangoService", "Service Started");
+    }
 
-    procOutputs.running = true;
-    procInitial.running = true;
+    Logger.i("MangoService", "Initializing MangoWC/DWL compositor integration");
+
+    // Start queries
+    scaleQuery.running = true;
+    initialQuery.running = true;
     eventStream.running = true;
+
+    // Query monitors
     Quickshell.execDetached(["mmsg", "-g", "-o"]);
 
     initialized = true;
   }
 
   function queryDisplayScales() {
-    procOutputs.running = true;
+    scaleQuery.running = true;
   }
 
   function switchToWorkspace(workspace) {
-    const tagId = workspace.idx || workspace.id || config.defaultWorkspaceId;
+    const tagId = workspace.idx || workspace.id || 1;
     const output = workspace.output || root.selectedMonitor || "";
-    const cmd = config.action.tag.slice();
-    if (output && Object.keys(internal.monitorScales).length > 1)
+
+    const cmd = ["mmsg", "-s", "-t", tagId.toString()];
+
+    // Add output if multi-monitor
+    if (output && Object.keys(internal.monitorScales).length > 1) {
       cmd.push("-o", output);
-    cmd.push(tagId.toString());
+    }
+
     Quickshell.execDetached(cmd);
   }
 
   function focusWindow(window) {
-    if (window && window.handle)
+    if (window && window.handle) {
       window.handle.activate();
-    else if (window.workspaceId)
+    } else if (window.workspaceId) {
       switchToWorkspace({
                           id: window.workspaceId,
                           output: window.output
                         });
+    }
   }
 
   function closeWindow(window) {
-    if (window && window.handle)
+    if (window && window.handle) {
       window.handle.close();
-    else
-      Quickshell.execDetached(config.action.killClient);
+    } else {
+      Quickshell.execDetached(["mmsg", "-s", "-d", "killclient"]);
+    }
   }
 
   function logout() {
-    Quickshell.execDetached(config.action.quit);
+    Quickshell.execDetached(["mmsg", "-s", "-q"]);
   }
 }

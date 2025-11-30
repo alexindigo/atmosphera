@@ -76,6 +76,7 @@ Item {
 
       localWorkspaces.append(workspaceData);
     }
+
     updateWorkspaceFocus();
   }
 
