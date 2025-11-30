@@ -39,13 +39,13 @@ ColumnLayout {
 
   Process {
     id: pacmanProcess
-    command: ["pacman", "-Q", "noctalia-shell"]
+    command: ["pacman", "-Q", "noctalia-shell-git"]
     running: false
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
         var output = stdout.text.trim();
-        var match = output.match(/noctalia-shell\s+(.+)/);
+        var match = output.match(/noctalia-shell-git\s+(.+)/);
         if (match && match[1]) {
           // For Arch packages, the version format might be like: 3.4.0.r112.g3f00bec8-1
           // Extract just the commit hash part if it exists
