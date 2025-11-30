@@ -223,6 +223,10 @@ Item {
     root.isPanelOpen = false;
     root.isClosing = false;
     root.opacityFadeComplete = false;
+
+    // Reset dimensionsInitialized for next opening
+    panelBackground.dimensionsInitialized = false;
+
     PanelService.closedPanel(root);
     closed();
 
@@ -721,11 +725,14 @@ Item {
       // Expose self as panelItem for PanelBackground compatibility
       readonly property var panelItem: panelBackground
 
-      // Store target dimensions (set by setPosition())
-      property real targetWidth: root.preferredWidth
-      property real targetHeight: root.preferredHeight
+      // Store target dimensions (Initialize to 0, set by setPosition())
+      property real targetWidth: 0
+      property real targetHeight: 0
       property real targetX: root.x
       property real targetY: root.y
+
+      // Track whether dimensions have been initialized (to prevent initial changes from animating)
+      property bool dimensionsInitialized: false
 
       property var bezierCurve: [0.05, 0, 0.133, 0.06, 0.166, 0.4, 0.208, 0.82, 0.25, 1, 1, 1]
 
@@ -903,10 +910,11 @@ Item {
       Behavior on width {
         NumberAnimation {
           id: widthAnimation
+          // Use 0ms if dimensions not initialized to prevent initial changes from animating
           // During opening: use 0ms if not animating width, otherwise use normal duration
           // During closing: use 0ms if not animating width, otherwise use fast duration
           // During normal content resizing: always use normal duration
-          duration: (root.isOpening && !panelBackground.shouldAnimateWidth) ? 0 : root.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateWidth) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
+          duration: !panelBackground.dimensionsInitialized ? 0 : (root.isOpening && !panelBackground.shouldAnimateWidth) ? 0 : root.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateWidth) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 
@@ -931,10 +939,11 @@ Item {
       Behavior on height {
         NumberAnimation {
           id: heightAnimation
+          // Use 0ms if dimensions not initialized to prevent initial changes from animating
           // During opening: use 0ms if not animating height, otherwise use normal duration
           // During closing: use 0ms if not animating height, otherwise use fast duration
           // During normal content resizing: always use normal duration
-          duration: (root.isOpening && !panelBackground.shouldAnimateHeight) ? 0 : root.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateHeight) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
+          duration: !panelBackground.dimensionsInitialized ? 0 : (root.isOpening && !panelBackground.shouldAnimateHeight) ? 0 : root.isOpening ? Style.animationNormal : (root.isClosing && !panelBackground.shouldAnimateHeight) ? 0 : root.isClosing ? Style.animationFast : Style.animationNormal
           easing.type: Easing.BezierSpline
           easing.bezierCurve: panelBackground.bezierCurve
 
@@ -1065,15 +1074,16 @@ Item {
       height: panelBackground.height
       sourceComponent: root.panelContent
 
-      // When content finishes loading, calculate position then make visible
       onLoaded: {
-        // Calculate position FIRST so targetX/targetY are set before animation starts
-        // This prevents the panel from animating from (0,0) on first open
-        setPosition();
-
-        // THEN make panel visible on the next frame to ensure all bindings have updated
-        // Qt.callLater defers execution until all current bindings are evaluated
+        // Wait for contentPreferredWidth/Height to be available before making visible
         Qt.callLater(function () {
+          // Calculate position with stable contentPreferredWidth/Height values
+          setPosition();
+
+          // Mark dimensions as initialized to enable animations
+          panelBackground.dimensionsInitialized = true;
+
+          // Make panel visible, now only the intended dimension will animate
           root.isPanelVisible = true;
           opacityTrigger.start();
 
