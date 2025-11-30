@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "その他の設定オプション",
-          "label": "その他",
+          "description": "独自のテンプレートを作成",
+          "label": "詳細設定",
           "user-templates": {
-            "description": "ユーザー定義の Matugen 設定を有効にします。初回有効化時に ~/.config/noctalia/user-templates.toml にテンプレートファイルが作成されます。",
-            "label": "ユーザーテンプレート"
+            "description": "操作方法を理解している場合のみ有効にしてください。オンラインドキュメントを参照してください",
+            "label": "ユーザーテンプレートを有効化"
           }
         },
         "programs": {

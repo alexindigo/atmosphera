@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "其他配置选项。",
-          "label": "杂项",
+          "description": "创建您自己的模板",
+          "label": "高级",
           "user-templates": {
-            "description": "启用用户定义的 Matugen 配置。首次启用时将在 ~/.config/noctalia/user-templates.toml 创建模板文件",
-            "label": "用户模板"
+            "description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档",
+            "label": "启用用户模板"
           }
         },
         "programs": {

@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "Zusätzliche Konfigurationsoptionen.",
-          "label": "Verschiedenes",
+          "description": "Erstellen Sie Ihre eigenen Vorlagen",
+          "label": "Erweitert",
           "user-templates": {
-            "description": "Benutzerdefinierte Matugen-Konfiguration aktivieren. Eine Vorlagendatei wird beim ersten Aktivieren unter ~/.config/noctalia/user-templates.toml erstellt",
-            "label": "Benutzer-Vorlagen"
+            "description": "Nur aktivieren, wenn Sie wissen, was Sie tun. Weitere Informationen finden Sie in unserer Online-Dokumentation",
+            "label": "Benutzer-Vorlagen aktivieren"
           }
         },
         "programs": {

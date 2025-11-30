@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "Aanvullende configuratie-opties.",
-          "label": "Diversen",
+          "description": "Maak uw eigen sjablonen",
+          "label": "Geavanceerd",
           "user-templates": {
-            "description": "Schakel door de gebruiker gedefinieerde Matugen-configuratie in. Er wordt een sjabloonbestand aangemaakt op ~/.config/noctalia/user-templates.toml bij de eerste keer inschakelen.",
-            "label": "Gebruikerssjablonen"
+            "description": "Alleen inschakelen als u weet wat u doet, raadpleeg onze online documentatie",
+            "label": "Gebruikerssjablonen inschakelen"
           }
         },
         "programs": {

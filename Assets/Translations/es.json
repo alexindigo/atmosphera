@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "Opciones de configuración adicionales.",
-          "label": "Varios",
+          "description": "Crea tus propias plantillas",
+          "label": "Avanzado",
           "user-templates": {
-            "description": "Habilitar configuración de Matugen definida por el usuario. Se creará un archivo de plantilla en ~/.config/noctalia/user-templates.toml al activar por primera vez",
-            "label": "Plantillas de usuario"
+            "description": "Solo habilita si sabes lo que estás haciendo, consulta nuestra documentación en línea",
+            "label": "Habilitar plantillas de usuario"
           }
         },
         "programs": {

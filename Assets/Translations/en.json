@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "Additional configuration options.",
-          "label": "Misc",
+          "description": "Create your own Templates",
+          "label": "Advanced",
           "user-templates": {
-            "description": "Enable user-defined Matugen config. A template file will be created at ~/.config/noctalia/user-templates.toml on first enable",
-            "label": "User templates"
+            "description": "Only enable if you know what you are doing, refer to our online documentation",
+            "label": "Enable user templates"
           }
         },
         "programs": {

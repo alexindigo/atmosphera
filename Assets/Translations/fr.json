@@ -1048,11 +1048,11 @@
           }
         },
         "misc": {
-          "description": "Options de configuration supplémentaires.",
-          "label": "Divers",
+          "description": "Créez vos propres modèles",
+          "label": "Avancé",
           "user-templates": {
-            "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation",
-            "label": "Modèles utilisateur"
+            "description": "N'activez que si vous savez ce que vous faites, consultez notre documentation en ligne",
+            "label": "Activer les modèles utilisateur"
           }
         },
         "programs": {
