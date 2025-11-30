@@ -437,7 +437,7 @@ Singleton {
                                "colors": palette
                              }, null, 2) + "\n";
     script += "EOF\n";
-    script += `  matugen json '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
+    script += `  matugen json '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
     script += "fi";
 
     return script;
