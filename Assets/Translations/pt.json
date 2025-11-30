@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "Navegar por Arquivo",
         "browse-library": "Navegar na Biblioteca",
-        "enable-colorization": {
-          "description": "Ativa a colorização para o ícone do centro de controlo, aplicando as cores do tema.",
-          "label": "Ativar colorização"
-        },
         "color-selection": {
           "description": "Aplica as cores do tema aos ícones.",
           "label": "Selecionar cor"
+        },
+        "enable-colorization": {
+          "description": "Ativa a colorização para o ícone do centro de controlo, aplicando as cores do tema.",
+          "label": "Ativar colorização"
         },
         "icon": {
           "description": "Selecione um ícone da biblioteca ou um arquivo personalizado.",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "Erro",
+      "none": "Nenhum",
       "onSurface": "Na Superfície",
       "primary": "Primário",
       "secondary": "Secundário",

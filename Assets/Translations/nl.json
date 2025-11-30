@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "Bestand kiezen",
         "browse-library": "Bibliotheek doorbladeren",
-        "enable-colorization": {
-          "description": "Schakel kleuring in voor het pictogram van het controlecentrum, waarbij themakleuren worden toegepast.",
-          "label": "Kleuren inschakelen"
-        },
         "color-selection": {
           "description": "Themakleuren toepassen op pictogrammen.",
           "label": "Kleur selecteren"
+        },
+        "enable-colorization": {
+          "description": "Schakel kleuring in voor het pictogram van het controlecentrum, waarbij themakleuren worden toegepast.",
+          "label": "Kleuren inschakelen"
         },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek of een aangepast bestand.",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "Fout",
+      "none": "Geen",
       "onSurface": "Op oppervlak",
       "primary": "Primair",
       "secondary": "Secundair",

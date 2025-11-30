@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "Datei durchsuchen",
         "browse-library": "Bibliothek durchsuchen",
-        "enable-colorization": {
-          "description": "Aktiviert die Färbung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
-          "label": "Färbung aktivieren"
-        },
         "color-selection": {
           "description": "Wendet Themenfarben auf Symbole an.",
           "label": "Farbauswahl"
+        },
+        "enable-colorization": {
+          "description": "Aktiviert die Färbung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
+          "label": "Färbung aktivieren"
         },
         "icon": {
           "description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen.",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "Fehler",
+      "none": "Keine",
       "onSurface": "Auf der Oberfläche",
       "primary": "Primär",
       "secondary": "Sekundär",

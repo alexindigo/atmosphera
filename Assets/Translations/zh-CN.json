@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "浏览文件",
         "browse-library": "浏览库",
-        "enable-colorization": {
-          "description": "为控制中心图标启用着色，应用主题颜色。",
-          "label": "启用着色"
-        },
         "color-selection": {
           "description": "将主题颜色应用于图标。",
           "label": "选择颜色"
+        },
+        "enable-colorization": {
+          "description": "为控制中心图标启用着色，应用主题颜色。",
+          "label": "启用着色"
         },
         "icon": {
           "description": "从库中选择图标或自定义文件。",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "错误色",
+      "none": "无",
       "onSurface": "表层对应色",
       "primary": "主要色",
       "secondary": "次要色",

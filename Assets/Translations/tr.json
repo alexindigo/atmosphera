@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "Dosyaya Göz At",
         "browse-library": "Kütüphaneye Göz At",
-        "enable-colorization": {
-          "description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
-          "label": "Renklendirmeyi Etkinleştir"
-        },
         "color-selection": {
           "description": "Simgeye tema renklerini uygular.",
           "label": "Renk Seç"
+        },
+        "enable-colorization": {
+          "description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
+          "label": "Renklendirmeyi Etkinleştir"
         },
         "icon": {
           "description": "Kütüphaneden veya özel bir dosyadan bir ikon seçin.",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "Hata",
+      "none": "Hiçbiri",
       "onSurface": "Üstünde",
       "primary": "Birincil",
       "secondary": "İkincil",

@@ -102,17 +102,17 @@
       "control-center": {
         "browse-file": "Browse File",
         "browse-library": "Browse Library",
-        "icon": {
-          "description": "Select an icon from the library or a custom file.",
-          "label": "Icon"
+        "color-selection": {
+          "description": "Apply theme colors to icons.",
+          "label": "Select Color"
         },
         "enable-colorization": {
           "description": "Enable colorization for the control center icon, applying theme colors.",
           "label": "Enable Colorization"
         },
-        "color-selection": {
-          "description": "Apply theme colors to icons.",
-          "label": "Select Color"
+        "icon": {
+          "description": "Select an icon from the library or a custom file.",
+          "label": "Icon"
         },
         "select-custom-icon": "Select a custom icon",
         "use-distro-logo": {

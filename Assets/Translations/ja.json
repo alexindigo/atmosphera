@@ -102,13 +102,13 @@
       "control-center": {
         "browse-file": "ファイルを参照",
         "browse-library": "ライブラリを参照",
-        "enable-colorization": {
-          "description": "コントロールセンターのアイコンの色付けを有効にし、テーマの色を適用します。",
-          "label": "色の有効化"
-        },
         "color-selection": {
           "description": "アイコンにテーマの色を適用します。",
           "label": "色の選択"
+        },
+        "enable-colorization": {
+          "description": "コントロールセンターのアイコンの色付けを有効にし、テーマの色を適用します。",
+          "label": "色の有効化"
         },
         "icon": {
           "description": "ライブラリまたはカスタムファイルからアイコンを選択します。",
@@ -546,6 +546,7 @@
     },
     "colors": {
       "error": "エラー (Error)",
+      "none": "なし",
       "onSurface": "文字・アイコン (On Surface)",
       "primary": "メインカラー (Primary)",
       "secondary": "サブカラー (Secondary)",
