@@ -13,11 +13,12 @@ ColumnLayout {
 
   property string latestVersion: GitHubService.latestVersion
   property string currentVersion: UpdateService.currentVersion
+  property string displayVersion: "" // The version to display (pacman or UpdateService)
   property var contributors: GitHubService.contributors
   property string gitCommitHash: ""
 
   readonly property int topContributorsCount: 20
-  readonly property bool isGitVersion: root.currentVersion.endsWith("-git") || root.hasArchGitVersion()
+  readonly property bool isGitVersion: root.displayVersion.endsWith("-git") || root.hasArchGitVersion()
 
   property int _gitSearchDepth: 0
   readonly property int _maxGitSearchDepth: 5
@@ -27,13 +28,56 @@ ColumnLayout {
   Component.onCompleted: {
     GitHubService.ensureDataFresh();
 
-    if (root.isGitVersion) {
-      var archHash = root.extractCommitFromArchVersion();
-      if (archHash) {
-        root.gitCommitHash = archHash;
+    // Try to get version from pacman first (for Arch)
+    pacmanVersionProcess.running = true;
+  }
+
+  Process {
+    id: pacmanVersionProcess
+    command: ["pacman", "-Q", "noctalia"] // Replace "noctalia" with your actual package name
+    running: false
+
+    onExited: function (exitCode) {
+      if (exitCode === 0) {
+        // Output format: "noctalia 3.4.0.r113.g6aca04cd-1"
+        var output = stdout.text.trim();
+        var parts = output.split(" ");
+        if (parts.length >= 2) {
+          var version = parts[1];
+          root.displayVersion = version;
+          Logger.d("AboutTab", "Pacman version:", version);
+
+          // Now check if it's a git version and extract hash
+          if (root.isGitVersion) {
+            var archHash = root.extractCommitFromArchVersion();
+            if (archHash) {
+              root.gitCommitHash = archHash;
+              Logger.d("AboutTab", "Extracted hash from pacman version:", archHash);
+            } else {
+              // If we couldn't extract from version string, try git command
+              fetchGitCommit();
+            }
+          }
+        } else {
+          Logger.w("AboutTab", "Unexpected pacman output format:", output);
+          fallbackToUpdateService();
+        }
       } else {
-        fetchGitCommit();
+        Logger.d("AboutTab", "Pacman not available or package not found, using UpdateService version");
+        fallbackToUpdateService();
       }
+    }
+
+    stdout: StdioCollector {}
+    stderr: StdioCollector {}
+  }
+
+  function fallbackToUpdateService() {
+    // Fall back to UpdateService version
+    root.displayVersion = root.currentVersion;
+
+    if (root.isGitVersion) {
+      fetchGitCommit();
     }
   }
 
@@ -41,7 +85,7 @@ ColumnLayout {
     // Check if version matches Arch package format: X.Y.Z.rN.gHASH-REV
     // Pattern: version.r<number>.g<hash>-<rev>
     // Handle both with and without "v" prefix: v3.4.0.r112.g3f00bec8-1 or 3.4.0.r112.g3f00bec8-1
-    var version = root.currentVersion.replace(/^v/, ""); // Remove "v" prefix if present
+    var version = root.displayVersion.replace(/^v/, ""); // Remove "v" prefix if present
     return /\.r\d+\.g[0-9a-fA-F]+-/.test(version);
   }
 
@@ -49,11 +93,16 @@ ColumnLayout {
     // Extract commit hash from Arch package version format
     // Format: 3.4.0.r112.g3f00bec8-1 or v3.4.0.r112.g3f00bec8-1
     // We want to extract the hash after ".g" and before "-"
-    var version = root.currentVersion.replace(/^v/, ""); // Remove "v" prefix if present
+    var version = root.displayVersion.replace(/^v/, ""); // Remove "v" prefix if present
+    Logger.d("AboutTab", "Extracting from version:", version);
     var match = version.match(/\.g([0-9a-fA-F]+)-/i);
-    if (match && match[1] && match[1].length >= 7) {
-      // Return first 7 characters (short hash)
-      return match[1].substring(0, 7);
+    Logger.d("AboutTab", "Match result:", match ? match[1] : "no match");
+    if (match && match[1]) {
+      // Return up to 7 characters (or less if hash is shorter)
+      var hashLength = Math.min(7, match[1].length);
+      var hash = match[1].substring(0, hashLength);
+      Logger.d("AboutTab", "Extracted hash:", hash);
+      return hash;
     }
     return "";
   }
@@ -140,7 +189,7 @@ ColumnLayout {
       }
 
       NText {
-        text: root.currentVersion
+        text: root.displayVersion || root.currentVersion
         color: Color.mOnSurface
         font.weight: Style.fontWeightBold
       }
@@ -174,34 +223,6 @@ ColumnLayout {
             }
           }
         }
-      }
-    }
-
-    // Update button
-    NButton {
-      visible: {
-        if (root.latestVersion === "Unknown")
-          return false;
-
-        const latest = root.latestVersion.replace("v", "").split(".");
-        const current = root.currentVersion.replace("v", "").split(".");
-        for (var i = 0; i < Math.max(latest.length, current.length); i++) {
-          const l = parseInt(latest[i] || "0");
-          const c = parseInt(current[i] || "0");
-          if (l > c)
-            return true;
-
-          if (l < c)
-            return false;
-        }
-        return false;
-      }
-      icon: "download"
-      text: I18n.tr("settings.about.noctalia.download-latest")
-      outlined: !hovered
-      fontSize: Style.fontSizeXS
-      onClicked: {
-        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"]);
       }
     }
   }
