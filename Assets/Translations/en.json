@@ -452,7 +452,7 @@
     }
   },
   "clock": {
-    "tooltip": "Open calendar"
+    "tooltip": "Clock"
   },
   "context-menu": {
     "activate-app": "Activate {app}",
@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Click to manage Bluetooth devices"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "Keep Awake"
       },
       "tooltip": {
-        "action": "Click to toggle Keep Awake mode"
+        "action": "Keep Awake"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "Night Light"
       },
       "tooltip": {
-        "action": "Click to cycle Night Light mode\nRight click: Open settings"
+        "action": "Night Light"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "Notifications"
       },
       "tooltip": {
-        "action": "Left click: Open notification history\nRight click: Open context menu"
+        "action": "Notifications"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "Power Profile"
       },
       "tooltip": {
-        "action": "Click to cycle power profile",
+        "action": "Power profile",
         "disabled": "Install power-profiles-daemon to use power profiles"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "Record"
       },
       "tooltip": {
-        "action": "Click to start/stop screen recording"
+        "action": "Screen recorder"
       }
     },
     "wallpaperSelector": {
       "label": "Wallpaper",
       "tooltip": {
-        "action": "Left click: Open wallpaper selector\nRight click: Set random wallpaper"
+        "action": "Wallpaper selector"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Click to manage Wi-Fi connections"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -1383,7 +1383,7 @@
           "label": "Profile"
         },
         "select-avatar": "Select avatar image",
-        "tooltip": "Browse for avatar image"
+        "tooltip": "Profile picture"
       },
       "screen-corners": {
         "radius": {
@@ -1747,7 +1747,7 @@
         "output-folder": {
           "description": "Folder where screen recordings will be saved.",
           "label": "Output folder",
-          "tooltip": "Browse for output folder"
+          "tooltip": "Output folder"
         },
         "section": {
           "description": "Manage screen recording output and content.",
@@ -2011,7 +2011,7 @@
         "folder": {
           "description": "Path to your main wallpaper folder.",
           "label": "Wallpaper folder",
-          "tooltip": "Browse for wallpaper folder"
+          "tooltip": "Wallpaper folder"
         },
         "hide-wallpaper-filenames": {
           "description": "Hide wallpaper filenames in the selector.",
@@ -2020,7 +2020,7 @@
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",
           "label": "Monitor-specific directories",
-          "tooltip": "Browse for wallpaper folder"
+          "tooltip": "Monitor wallpaper folder"
         },
         "recursive-search": {
           "description": "Also search for wallpapers in subfolders of the wallpaper directory.",
@@ -2035,7 +2035,7 @@
         "selector": {
           "description": "Choose your wallpaper.",
           "label": "Wallpaper selector",
-          "tooltip": "Open wallpaper selector"
+          "tooltip": "Wallpaper selector"
         },
         "selector-position": {
           "description": "Choose where the wallpaper selector panel appears.",
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "Add widget",
     "bluetooth-devices": "Bluetooth devices",
-    "brightness-at": "Brightness: {brightness}%\nScroll to modify brightness",
-    "cancel-timer": "Cancel timer",
+    "brightness-at": "Brightness: {brightness}%",
+    "cancel-timer": "Timer",
     "clear-history": "Clear history",
-    "click-to-start-recording": "Click to start recording",
-    "click-to-stop-recording": "Click to stop recording",
-    "close": "Close",
-    "connect-disconnect-devices": "Left click to connect\nRight click to forget",
+    "click-to-start-recording": "Screen recorder (start recording)",
+    "click-to-stop-recording": "Screen recorder (stop recording)",
+    "close": "Close button",
+    "connect-disconnect-devices": "Bluetooth device",
     "delete-notification": "Delete notification",
-    "disable-keep-awake": "Click to disable Keep Awake.\nScroll to adjust timeout",
-    "do-not-disturb-disabled": "Do Not Disturb disabled",
-    "do-not-disturb-enabled": "Do Not Disturb enabled",
-    "enable-keep-awake": "Click to enable Keep Awake.\nScroll to adjust timeout",
+    "disable-keep-awake": "Keep Awake",
+    "do-not-disturb-disabled": "Do Not Disturb",
+    "do-not-disturb-enabled": "Do Not Disturb",
+    "enable-keep-awake": "Keep Awake",
     "forget-network": "Forget network",
     "grid-view": "Grid view",
-    "hidden-files-hide": "Hide hidden files",
-    "hidden-files-show": "Show hidden files",
-    "home": "Home",
-    "input-muted": "Toggle input mute",
+    "hidden-files-hide": "Hidden files",
+    "hidden-files-show": "Hidden files",
+    "home": "Home directory",
+    "input-muted": "Microphone",
     "keep-awake": "Keep Awake",
     "keyboard-layout": "{layout} keyboard layout",
     "list-view": "List view",
-    "manage-vpn": "Manage VPN connections",
-    "manage-wifi": "Manage Wi-Fi",
-    "microphone-volume-at": "Microphone volume at {volume}%\nScroll to modify volume",
-    "move-to-center-section": "Move to center section",
-    "move-to-left-section": "Move to left section",
-    "move-to-right-section": "Move to right section",
-    "next-media": "Next media",
+    "manage-vpn": "VPN connections",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Microphone volume: {volume}%",
+    "move-to-center-section": "Center section",
+    "move-to-left-section": "Left section",
+    "move-to-right-section": "Right section",
+    "next-media": "Next track",
     "next-month": "Next month",
-    "night-light-disabled": "Night Light is disabled.\nLeft click to cycle mode\nRight click to access settings",
-    "night-light-enabled": "Night Light is enabled.\nLeft click to cycle mode\nRight click to access settings",
-    "night-light-forced": "Night Light is forced.\nLeft click to cycle mode\nRight click to access settings",
-    "night-light-not-installed": "Night Light is not available\nwlsunset is not installed",
-    "noctalia-performance-disabled": "Noctalia performance mode is disabled\nLeft click to enable",
-    "noctalia-performance-enabled": "Noctalia performance mode is enabled\nLeft click to disable",
-    "open-control-center": "Open control center",
-    "open-notification-history-disable-dnd": "Open notification history\nRight click: Open context menu",
-    "open-notification-history-enable-dnd": "Open notification history\nRight click: Open context menu",
-    "open-settings": "Open settings",
-    "open-tray-dropdown": "Open tray dropdown",
-    "open-wallpaper-selector": "Open wallpaper selector",
-    "output-muted": "Toggle output mute",
-    "pause": "Pause",
-    "play": "Play",
-    "power-profile": "'{profile}' power profile",
-    "previous-media": "Previous media",
+    "night-light-disabled": "Night Light",
+    "night-light-enabled": "Night Light",
+    "night-light-forced": "Night Light",
+    "night-light-not-installed": "Night Light (not available)",
+    "noctalia-performance-disabled": "Noctalia performance mode",
+    "noctalia-performance-enabled": "Noctalia performance mode",
+    "open-control-center": "Control center",
+    "open-notification-history-disable-dnd": "Notification history",
+    "open-notification-history-enable-dnd": "Notification history",
+    "open-settings": "Settings",
+    "open-tray-dropdown": "System tray",
+    "open-wallpaper-selector": "Wallpaper selector",
+    "output-muted": "Audio output",
+    "pause": "Pause button",
+    "play": "Play button",
+    "power-profile": "{profile} power profile",
+    "previous-media": "Previous track",
     "previous-month": "Previous month",
     "refresh": "Refresh",
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "remove-widget": "Remove widget",
-    "screen-recorder-not-installed": "Screen recorder is not installed",
+    "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",
     "search-close": "Close search",
     "session-menu": "Session menu",
-    "set-power-profile": "Set \"{profile}\" power profile",
-    "start-screen-recording": "Start screen recording",
-    "stop-screen-recording": "Stop screen recording",
-    "switch-to-dark-mode": "Switch to Dark Mode",
-    "switch-to-light-mode": "Switch to Light Mode",
-    "up": "Up",
-    "volume-at": "Output volume at {volume}%\nScroll to modify volume",
-    "wallpaper-selector": "Left click: Open wallpaper selector.\nRight click: Set random wallpaper",
+    "set-power-profile": "{profile} power profile",
+    "start-screen-recording": "Screen recorder",
+    "stop-screen-recording": "Screen recorder",
+    "switch-to-dark-mode": "Dark Mode",
+    "switch-to-light-mode": "Light Mode",
+    "up": "Parent directory",
+    "volume-at": "Output volume: {volume}%",
+    "wallpaper-selector": "Wallpaper selector",
     "widget-settings": "Widget settings"
   },
   "wallpaper": {

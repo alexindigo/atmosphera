@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Klicken zum Verwalten der Bluetooth-Geräte"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "Wach halten"
       },
       "tooltip": {
-        "action": "Klicken zum Umschalten des Wachmodus"
+        "action": "Wach halten"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "Nachtlicht"
       },
       "tooltip": {
-        "action": "Klicken zum Wechseln des Nachtlicht-Modus\nRechtsklick: Einstellungen öffnen"
+        "action": "Nachtlicht"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "Benachrichtigungen"
       },
       "tooltip": {
-        "action": "Linksklick: Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen"
+        "action": "Benachrichtigungen"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "Energieprofil"
       },
       "tooltip": {
-        "action": "Klicken zum Wechseln des Energieprofils",
+        "action": "Energieprofil",
         "disabled": "Installiere power-profiles-daemon, um Energieprofile zu verwenden"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "Aufnehmen"
       },
       "tooltip": {
-        "action": "Klicken zum Starten/Stoppen einer Bildschirmaufnahme"
+        "action": "Bildschirmrekorder"
       }
     },
     "wallpaperSelector": {
       "label": "Hintergrundbild",
       "tooltip": {
-        "action": "Linksklick: Hintergrundbild-Auswahl öffnen\nRechtsklick: Zufälliges Hintergrundbild setzen"
+        "action": "Hintergrundbild-Auswahl"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "WLAN"
       },
       "tooltip": {
-        "action": "Klicken zum Verwalten der WLAN-Verbindungen"
+        "action": "WLAN"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "Widget hinzufügen",
     "bluetooth-devices": "Bluetooth-Geräte",
-    "brightness-at": "Helligkeit: {brightness}%\nRechtsklick für Einstellungen.\nScrollen zum Ändern der Helligkeit.",
-    "cancel-timer": "Timer abbrechen",
+    "brightness-at": "Helligkeit: {brightness}%",
+    "cancel-timer": "Timer",
     "clear-history": "Verlauf löschen",
-    "click-to-start-recording": "Klicken zum Starten einer Bildschirmaufnahme",
-    "click-to-stop-recording": "Klicken zum Stoppen einer Bildschirmaufnahme",
-    "close": "Schließen",
-    "connect-disconnect-devices": "Linksklick zum Verbinden. Rechtsklick zum Vergessen.",
+    "click-to-start-recording": "Bildschirmrekorder (Aufnahme starten)",
+    "click-to-stop-recording": "Bildschirmrekorder (Aufnahme stoppen)",
+    "close": "Schließen-Button",
+    "connect-disconnect-devices": "Bluetooth-Gerät",
     "delete-notification": "Benachrichtigung löschen",
-    "disable-keep-awake": "Klicken, um 'Wach halten' zu deaktivieren.\nScrollen, um Zeitlimit anzupassen.",
-    "do-not-disturb-disabled": "'Nicht stören' deaktiviert",
-    "do-not-disturb-enabled": "'Nicht stören' aktiviert",
-    "enable-keep-awake": "Klicken, um 'Wach halten' zu aktivieren.\nScrollen, um Zeitlimit anzupassen.",
+    "disable-keep-awake": "Wach halten",
+    "do-not-disturb-disabled": "Nicht stören",
+    "do-not-disturb-enabled": "Nicht stören",
+    "enable-keep-awake": "Wach halten",
     "forget-network": "Netzwerk vergessen",
     "grid-view": "Rasteransicht",
-    "hidden-files-hide": "Versteckte Dateien ausblenden",
-    "hidden-files-show": "Versteckte Dateien einblenden",
-    "home": "Home",
-    "input-muted": "Audio-Eingabe stummschalten",
+    "hidden-files-hide": "Versteckte Dateien",
+    "hidden-files-show": "Versteckte Dateien",
+    "home": "Home-Verzeichnis",
+    "input-muted": "Mikrofon",
     "keep-awake": "Wach halten",
     "keyboard-layout": "{layout} Tastaturlayout",
     "list-view": "Listenansicht",
-    "manage-vpn": "VPN-Verbindungen verwalten",
-    "manage-wifi": "WLAN verwalten",
-    "microphone-volume-at": "Mikrofonlautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
-    "move-to-center-section": "Zur mittleren Sektion verschieben",
-    "move-to-left-section": "Zur linken Sektion verschieben",
-    "move-to-right-section": "Zur rechten Sektion verschieben",
-    "next-media": "Nächstes Medium",
+    "manage-vpn": "VPN-Verbindungen",
+    "manage-wifi": "WLAN",
+    "microphone-volume-at": "Mikrofonlautstärke: {volume}%",
+    "move-to-center-section": "Mittlere Sektion",
+    "move-to-left-section": "Linke Sektion",
+    "move-to-right-section": "Rechte Sektion",
+    "next-media": "Nächster Titel",
     "next-month": "Nächster Monat",
-    "night-light-disabled": "Nachtlicht ist deaktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
-    "night-light-enabled": "Nachtlicht ist aktiviert.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
-    "night-light-forced": "Nachtlicht ist erzwungen.\nLinksklick zum Wechseln des Modus.\nRechtsklick für Einstellungen.",
-    "night-light-not-installed": "Nachtlicht ist nicht verfügbar.\nwlsunset ist nicht installiert.",
-    "noctalia-performance-disabled": "Noctalia-Leistungsmodus ist deaktiviert.\nLinksklick zum Aktivieren.",
-    "noctalia-performance-enabled": "Noctalia-Leistungsmodus ist aktiviert.\nLinksklick zum Deaktivieren.",
-    "open-control-center": "Kontrollzentrum öffnen",
-    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen",
-    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf öffnen\nRechtsklick: Kontextmenü öffnen",
-    "open-settings": "Einstellungen öffnen",
-    "open-tray-dropdown": "Tray-Dropdown öffnen",
-    "open-wallpaper-selector": "Hintergrundbild-Auswahl öffnen",
-    "output-muted": "Audio-Ausgabe stummschalten",
-    "pause": "Pausieren",
-    "play": "Wiedergeben",
-    "power-profile": "'{profile}' Energieprofil",
-    "previous-media": "Vorheriges Medium",
+    "night-light-disabled": "Nachtlicht",
+    "night-light-enabled": "Nachtlicht",
+    "night-light-forced": "Nachtlicht",
+    "night-light-not-installed": "Nachtlicht (nicht verfügbar)",
+    "noctalia-performance-disabled": "Noctalia-Leistungsmodus",
+    "noctalia-performance-enabled": "Noctalia-Leistungsmodus",
+    "open-control-center": "Kontrollzentrum",
+    "open-notification-history-disable-dnd": "Benachrichtigungsverlauf",
+    "open-notification-history-enable-dnd": "Benachrichtigungsverlauf",
+    "open-settings": "Einstellungen",
+    "open-tray-dropdown": "System-Tray",
+    "open-wallpaper-selector": "Hintergrundbild-Auswahl",
+    "output-muted": "Audio-Ausgabe",
+    "pause": "Pause-Button",
+    "play": "Wiedergabe-Button",
+    "power-profile": "{profile} Energieprofil",
+    "previous-media": "Vorheriger Titel",
     "previous-month": "Vorheriger Monat",
     "refresh": "Aktualisieren",
     "refresh-devices": "Geräte aktualisieren",
     "refresh-wallhaven": "Wallhaven-Ergebnisse aktualisieren",
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "remove-widget": "Widget entfernen",
-    "screen-recorder-not-installed": "Bildschirmrekorder ist nicht installiert",
+    "screen-recorder-not-installed": "Bildschirmrekorder (nicht installiert)",
     "search": "Suchen",
     "search-close": "Suche schließen",
     "session-menu": "Sitzungsmenü",
-    "set-power-profile": "'{profile}' Energieprofil setzen",
-    "start-screen-recording": "Bildschirmaufnahme starten",
-    "stop-screen-recording": "Bildschirmaufnahme stoppen",
-    "switch-to-dark-mode": "Zum dunklen Modus wechseln",
-    "switch-to-light-mode": "Zum hellen Modus wechseln",
-    "up": "Nach oben",
-    "volume-at": "Lautstärke bei {volume}%.\nLinksklick für Einstellungen. Rechtsklick zum Stummschalten.\nScrollen zum Ändern der Lautstärke.",
-    "wallpaper-selector": "Linksklick: Hintergrundbild-Auswahl öffnen.\nRechtsklick: Zufälliges Hintergrundbild setzen.",
+    "set-power-profile": "{profile} Energieprofil",
+    "start-screen-recording": "Bildschirmrekorder",
+    "stop-screen-recording": "Bildschirmrekorder",
+    "switch-to-dark-mode": "Dunkler Modus",
+    "switch-to-light-mode": "Heller Modus",
+    "up": "Übergeordnetes Verzeichnis",
+    "volume-at": "Lautstärke: {volume}%",
+    "wallpaper-selector": "Hintergrundbild-Auswahl",
     "widget-settings": "Widget-Einstellungen"
   },
   "wallpaper": {

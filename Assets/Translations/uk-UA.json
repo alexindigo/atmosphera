@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Клацніть для керування пристроями Bluetooth"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "Не давати заснути"
       },
       "tooltip": {
-        "action": "Клацніть для перемикання режиму неспання"
+        "action": "Заборона сну"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "Нічне світло"
       },
       "tooltip": {
-        "action": "Клацніть для циклічної зміни режиму нічного світла\nПравий клік: Відкрити налаштування"
+        "action": "Нічне світло"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "Сповіщення"
       },
       "tooltip": {
-        "action": "Лівий клік: Відкрити історію сповіщень\nПравий клік: Відкрити контекстне меню"
+        "action": "Сповіщення"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "Профіль живлення"
       },
       "tooltip": {
-        "action": "Клацніть для циклічної зміни профілю живлення",
+        "action": "Профіль живлення",
         "disabled": "Встановіть power-profiles-daemon для використання профілів живлення"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "Запис"
       },
       "tooltip": {
-        "action": "Клацніть для початку/зупинки запису екрана"
+        "action": "Запис екрана"
       }
     },
     "wallpaperSelector": {
       "label": "Шпалери",
       "tooltip": {
-        "action": "Лівий клік: Відкрити вибір шпалер\nПравий клік: Встановити випадкові шпалери"
+        "action": "Вибір шпалер"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Клацніть для керування підключеннями Wi-Fi"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "Додати віджет",
     "bluetooth-devices": "Пристрої Bluetooth",
-    "brightness-at": "Яскравість: {brightness}%\nПравий клік для налаштувань.\nПрокрутка для зміни яскравості.",
-    "cancel-timer": "Скасувати таймер",
+    "brightness-at": "Яскравість: {brightness}%",
+    "cancel-timer": "Таймер",
     "clear-history": "Очистити історію",
-    "click-to-start-recording": "Клацніть для початку запису",
-    "click-to-stop-recording": "Клацніть для зупинки запису",
-    "close": "Закрити",
-    "connect-disconnect-devices": "Лівий клік для підключення. Правий клік для забування.",
+    "click-to-start-recording": "Запис екрана (почати запис)",
+    "click-to-stop-recording": "Запис екрана (зупинити запис)",
+    "close": "Кнопка закрити",
+    "connect-disconnect-devices": "Пристрій Bluetooth",
     "delete-notification": "Видалити сповіщення",
-    "disable-keep-awake": "Клацніть, щоб вимкнути режим неспання.\nПрокрутіть, щоб налаштувати тайм-аут.",
-    "do-not-disturb-disabled": "'Не турбувати' вимкнено",
-    "do-not-disturb-enabled": "'Не турбувати' увімкнено",
-    "enable-keep-awake": "Клацніть, щоб увімкнути режим неспання.\nПрокрутіть, щоб налаштувати тайм-аут.",
+    "disable-keep-awake": "Заборона сну",
+    "do-not-disturb-disabled": "Не турбувати",
+    "do-not-disturb-enabled": "Не турбувати",
+    "enable-keep-awake": "Заборона сну",
     "forget-network": "Забути мережу",
     "grid-view": "Мережевий вигляд",
-    "hidden-files-hide": "Приховати приховані файли",
-    "hidden-files-show": "Показати приховані файли",
-    "home": "Додому",
-    "input-muted": "Перемкнути вимкнення входу",
+    "hidden-files-hide": "Приховані файли",
+    "hidden-files-show": "Приховані файли",
+    "home": "Домашній каталог",
+    "input-muted": "Мікрофон",
     "keep-awake": "Заборона сну",
     "keyboard-layout": "Розкладка клавіатури {layout}",
     "list-view": "Список",
-    "manage-vpn": "Керувати підключеннями VPN",
-    "manage-wifi": "Керувати Wi-Fi",
-    "microphone-volume-at": "Гучність мікрофона {volume}%\nЛівий клік для налаштувань. Правий клік для вимкнення звуку.\nПрокрутка для зміни гучності.",
-    "move-to-center-section": "Перемістити в центральну секцію",
-    "move-to-left-section": "Перемістити в ліву секцію",
-    "move-to-right-section": "Перемістити в праву секцію",
-    "next-media": "Наступне медіа",
+    "manage-vpn": "Підключення VPN",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Гучність мікрофона: {volume}%",
+    "move-to-center-section": "Центральна секція",
+    "move-to-left-section": "Ліва секція",
+    "move-to-right-section": "Права секція",
+    "next-media": "Наступний трек",
     "next-month": "Наступний місяць",
-    "night-light-disabled": "Нічне світло вимкнено.\nЛівий клік для циклічного режиму.\nПравий клік для доступу до налаштувань.",
-    "night-light-enabled": "Нічне світло увімкнено.\nЛівий клік для циклічного режиму.\nПравий клік для доступу до налаштувань.",
-    "night-light-forced": "Нічне світло (примусово).\nЛівий клік для циклічного режиму.\nПравий клік для доступу до налаштувань.",
-    "night-light-not-installed": "Нічне світло недоступне.\nwlsunset не встановлено.",
-    "noctalia-performance-disabled": "Режим продуктивності Noctalia вимкнено.\nЛівий клік для увімкнення.",
-    "noctalia-performance-enabled": "Режим продуктивності Noctalia увімкнено.\nЛівий клік для вимкнення.",
-    "open-control-center": "Відкрити центр керування",
-    "open-notification-history-disable-dnd": "Відкрити історію сповіщень\nПравий клік: Відкрити контекстне меню",
-    "open-notification-history-enable-dnd": "Відкрити історію сповіщень\nПравий клік: Відкрити контекстне меню",
-    "open-settings": "Відкрити налаштування",
-    "open-tray-dropdown": "Відкрити спадне меню трею",
-    "open-wallpaper-selector": "Відкрити вибір шпалер",
-    "output-muted": "Перемкнути вимкнення виходу",
-    "pause": "Пауза",
-    "play": "Відтворити",
-    "power-profile": "Профіль живлення '{profile}'",
-    "previous-media": "Попереднє медіа",
+    "night-light-disabled": "Нічне світло",
+    "night-light-enabled": "Нічне світло",
+    "night-light-forced": "Нічне світло",
+    "night-light-not-installed": "Нічне світло (недоступне)",
+    "noctalia-performance-disabled": "Режим продуктивності Noctalia",
+    "noctalia-performance-enabled": "Режим продуктивності Noctalia",
+    "open-control-center": "Центр керування",
+    "open-notification-history-disable-dnd": "Історія сповіщень",
+    "open-notification-history-enable-dnd": "Історія сповіщень",
+    "open-settings": "Налаштування",
+    "open-tray-dropdown": "Системний трей",
+    "open-wallpaper-selector": "Вибір шпалер",
+    "output-muted": "Аудіовихід",
+    "pause": "Кнопка пауза",
+    "play": "Кнопка відтворити",
+    "power-profile": "{profile} профіль живлення",
+    "previous-media": "Попередній трек",
     "previous-month": "Попередній місяць",
     "refresh": "Оновити",
     "refresh-devices": "Оновити пристрої",
     "refresh-wallhaven": "Оновити результати Wallhaven",
     "refresh-wallpaper-list": "Оновити список шпалер",
     "remove-widget": "Видалити віджет",
-    "screen-recorder-not-installed": "Запис екрана не встановлено",
+    "screen-recorder-not-installed": "Запис екрана (не встановлено)",
     "search": "Пошук",
     "search-close": "Закрити пошук",
     "session-menu": "Меню сеансу",
-    "set-power-profile": "Встановити профіль живлення \"{profile}\"",
-    "start-screen-recording": "Почати запис екрана",
-    "stop-screen-recording": "Зупинити запис екрана",
-    "switch-to-dark-mode": "Перемкнутися на темний режим",
-    "switch-to-light-mode": "Перемкнутися на світлий режим",
-    "up": "Вгору",
-    "volume-at": "Вихідна гучність {volume}%\nЛівий клік для налаштувань. Правий клік для вимкнення звуку.\nПрокрутка для зміни гучності.",
-    "wallpaper-selector": "Лівий клік: Відкрити вибір шпалер.\nПравий клік: Встановити випадкові шпалери.",
+    "set-power-profile": "{profile} профіль живлення",
+    "start-screen-recording": "Запис екрана",
+    "stop-screen-recording": "Запис екрана",
+    "switch-to-dark-mode": "Темний режим",
+    "switch-to-light-mode": "Світлий режим",
+    "up": "Батьківський каталог",
+    "volume-at": "Вихідна гучність: {volume}%",
+    "wallpaper-selector": "Вибір шпалер",
     "widget-settings": "Налаштування віджета"
   },
   "wallpaper": {

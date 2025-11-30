@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы управлять устройствами Bluetooth"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "Не засыпать"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы переключить режим 'Не засыпать'"
+        "action": "Не засыпать"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "Ночной свет"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы переключить режим Ночного света\nПравая кнопка мыши: Открыть настройки"
+        "action": "Ночной свет"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "Уведомления"
       },
       "tooltip": {
-        "action": "Левая кнопка мыши: открыть историю уведомлений\nПравая кнопка мыши: открыть контекстное меню"
+        "action": "Уведомления"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "Профиль питания"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы переключить профиль питания",
+        "action": "Профиль питания",
         "disabled": "Установите power-profiles-daemon, чтобы использовать профили питания"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "Записать"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы начать/остановить запись экрана"
+        "action": "Запись экрана"
       }
     },
     "wallpaperSelector": {
       "label": "Обои",
       "tooltip": {
-        "action": "Левая кнопка мыши: Открыть выбор обоев\nПравая кнопка мыши: Установить случайные обои"
+        "action": "Выбор обоев"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Нажмите, чтобы управлять Wi-Fi подключениями"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "Добавить виджет",
     "bluetooth-devices": "Устройства Bluetooth",
-    "brightness-at": "Яркость: {brightness}%\nПравый клик для настроек.\nПрокрутка для изменения яркости.",
-    "cancel-timer": "Отменить таймер",
+    "brightness-at": "Яркость: {brightness}%",
+    "cancel-timer": "Таймер",
     "clear-history": "Очистить историю",
-    "click-to-start-recording": "Нажмите, чтобы начать запись",
-    "click-to-stop-recording": "Нажмите, чтобы остановить запись",
-    "close": "Закрыть",
-    "connect-disconnect-devices": "Левый клик для подключения. Правый клик, чтобы забыть.",
+    "click-to-start-recording": "Запись экрана (начать запись)",
+    "click-to-stop-recording": "Запись экрана (остановить запись)",
+    "close": "Кнопка закрыть",
+    "connect-disconnect-devices": "Устройство Bluetooth",
     "delete-notification": "Удалить уведомление",
-    "disable-keep-awake": "Нажмите, чтобы отключить режим 'Не засыпать'.\nПрокрутка для настройки таймаута.",
-    "do-not-disturb-disabled": "Режим 'Не беспокоить' отключен",
-    "do-not-disturb-enabled": "Режим 'Не беспокоить' включен",
-    "enable-keep-awake": "Нажмите, чтобы включить режим 'Не засыпать'.\nПрокрутка для настройки таймаута.",
+    "disable-keep-awake": "Не засыпать",
+    "do-not-disturb-disabled": "Не беспокоить",
+    "do-not-disturb-enabled": "Не беспокоить",
+    "enable-keep-awake": "Не засыпать",
     "forget-network": "Забыть сеть",
     "grid-view": "Вид сеткой",
-    "hidden-files-hide": "Скрыть скрытые файлы",
-    "hidden-files-show": "Показать скрытые файлы",
-    "home": "Домой",
-    "input-muted": "Переключить заглушение ввода",
+    "hidden-files-hide": "Скрытые файлы",
+    "hidden-files-show": "Скрытые файлы",
+    "home": "Домашний каталог",
+    "input-muted": "Микрофон",
     "keep-awake": "Не засыпать",
     "keyboard-layout": "Раскладка клавиатуры {layout}",
     "list-view": "Вид списком",
-    "manage-vpn": "Управлять VPN-подключениями",
-    "manage-wifi": "Управление Wi-Fi",
-    "microphone-volume-at": "Громкость микрофона {volume}%\nЛевый клик для настроек. Правый клик для переключения заглушения.\nПрокрутка для изменения громкости.",
-    "move-to-center-section": "Переместить в центральную секцию",
-    "move-to-left-section": "Переместить в левую секцию",
-    "move-to-right-section": "Переместить в правую секцию",
-    "next-media": "Следующее медиа",
+    "manage-vpn": "VPN-подключения",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Громкость микрофона: {volume}%",
+    "move-to-center-section": "Центральная секция",
+    "move-to-left-section": "Левая секция",
+    "move-to-right-section": "Правая секция",
+    "next-media": "Следующий трек",
     "next-month": "Следующий месяц",
-    "night-light-disabled": "Ночной свет отключен.\nЛевый клик для переключения режима.\nПравый клик для доступа к настройкам.",
-    "night-light-enabled": "Ночной свет включен.\nЛевый клик для переключения режима.\nПравый клик для доступа к настройкам.",
-    "night-light-forced": "Ночной свет принудительно включен.\nЛевый клик для переключения режима.\nПравый клик для доступа к настройкам.",
-    "night-light-not-installed": "Ночной свет недоступен.\nwlsunset не установлен.",
-    "noctalia-performance-disabled": "Режим производительности Noctalia отключен.\nЛевый клик для включения.",
-    "noctalia-performance-enabled": "Режим производительности Noctalia включен.\nЛевый клик для отключения.",
-    "open-control-center": "Открыть центр управления",
-    "open-notification-history-disable-dnd": "Открыть историю уведомлений\nПравая кнопка мыши: открыть контекстное меню",
-    "open-notification-history-enable-dnd": "Открыть историю уведомлений\nПравая кнопка мыши: открыть контекстное меню",
-    "open-settings": "Открыть настройки",
-    "open-tray-dropdown": "Открыть выпадающий список трея",
-    "open-wallpaper-selector": "Открыть выбор обоев",
-    "output-muted": "Переключить заглушение вывода",
-    "pause": "Пауза",
-    "play": "Воспроизвести",
-    "power-profile": "Профиль питания '{profile}'",
-    "previous-media": "Предыдущее медиа",
+    "night-light-disabled": "Ночной свет",
+    "night-light-enabled": "Ночной свет",
+    "night-light-forced": "Ночной свет",
+    "night-light-not-installed": "Ночной свет (недоступен)",
+    "noctalia-performance-disabled": "Режим производительности Noctalia",
+    "noctalia-performance-enabled": "Режим производительности Noctalia",
+    "open-control-center": "Центр управления",
+    "open-notification-history-disable-dnd": "История уведомлений",
+    "open-notification-history-enable-dnd": "История уведомлений",
+    "open-settings": "Настройки",
+    "open-tray-dropdown": "Системный трей",
+    "open-wallpaper-selector": "Выбор обоев",
+    "output-muted": "Аудиовыход",
+    "pause": "Кнопка пауза",
+    "play": "Кнопка воспроизвести",
+    "power-profile": "{profile} профиль питания",
+    "previous-media": "Предыдущий трек",
     "previous-month": "Предыдущий месяц",
     "refresh": "Обновить",
     "refresh-devices": "Обновить устройства",
     "refresh-wallhaven": "Обновить результаты Wallhaven",
     "refresh-wallpaper-list": "Обновить список обоев",
     "remove-widget": "Удалить виджет",
-    "screen-recorder-not-installed": "Запись экрана не установлена",
+    "screen-recorder-not-installed": "Запись экрана (не установлена)",
     "search": "Поиск",
     "search-close": "Закрыть поиск",
     "session-menu": "Меню сеанса",
-    "set-power-profile": "Установить профиль питания \"{profile}\"",
-    "start-screen-recording": "Начать запись экрана",
-    "stop-screen-recording": "Остановить запись экрана",
-    "switch-to-dark-mode": "Переключить на темный режим",
-    "switch-to-light-mode": "Переключить на светлый режим",
-    "up": "Вверх",
-    "volume-at": "Громкость вывода {volume}%\nЛевый клик для настроек. Правый клик для переключения заглушения.\nПрокрутка для изменения громкости.",
-    "wallpaper-selector": "Левый клик: Открыть выбор обоев.\nПравый клик: Установить случайные обои.",
+    "set-power-profile": "{profile} профиль питания",
+    "start-screen-recording": "Запись экрана",
+    "stop-screen-recording": "Запись экрана",
+    "switch-to-dark-mode": "Темный режим",
+    "switch-to-light-mode": "Светлый режим",
+    "up": "Родительский каталог",
+    "volume-at": "Громкость вывода: {volume}%",
+    "wallpaper-selector": "Выбор обоев",
     "widget-settings": "Настройки виджета"
   },
   "wallpaper": {

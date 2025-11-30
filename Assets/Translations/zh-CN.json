@@ -708,7 +708,7 @@
         "enabled": "蓝牙"
       },
       "tooltip": {
-        "action": "点击管理蓝牙设备"
+        "action": "蓝牙"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "保持唤醒"
       },
       "tooltip": {
-        "action": "点击切换保持唤醒模式"
+        "action": "保持唤醒"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "夜间模式"
       },
       "tooltip": {
-        "action": "点击切换夜间模式\n右键：打开设置"
+        "action": "夜间模式"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "通知"
       },
       "tooltip": {
-        "action": "左键：打开通知历史\n右键：打开右键菜单"
+        "action": "通知"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "电源模式"
       },
       "tooltip": {
-        "action": "点击切换电源模式",
+        "action": "电源模式",
         "disabled": "安装 power-profiles-daemon 以使用电源模式"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "录制"
       },
       "tooltip": {
-        "action": "点击开始/停止屏幕录制"
+        "action": "屏幕录制器"
       }
     },
     "wallpaperSelector": {
       "label": "壁纸",
       "tooltip": {
-        "action": "左键：打开壁纸选择器\n右键：设置随机壁纸"
+        "action": "壁纸选择器"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "点击管理 Wi-Fi 连接"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "添加小部件",
     "bluetooth-devices": "蓝牙设备",
-    "brightness-at": "亮度：{brightness}%\n右键点击进入设置。\n滚动调整亮度。",
-    "cancel-timer": "取消计时器",
+    "brightness-at": "亮度：{brightness}%",
+    "cancel-timer": "计时器",
     "clear-history": "清除历史记录",
-    "click-to-start-recording": "点击开始录制",
-    "click-to-stop-recording": "点击停止录制",
-    "close": "关闭",
-    "connect-disconnect-devices": "左键点击连接。右键点击忘记。",
+    "click-to-start-recording": "屏幕录制器（开始录制）",
+    "click-to-stop-recording": "屏幕录制器（停止录制）",
+    "close": "关闭按钮",
+    "connect-disconnect-devices": "蓝牙设备",
     "delete-notification": "删除通知",
-    "disable-keep-awake": "单击以禁用保持唤醒。\n滚动以调整超时。",
-    "do-not-disturb-disabled": "'勿扰模式'已禁用",
-    "do-not-disturb-enabled": "'勿扰模式'已启用",
-    "enable-keep-awake": "单击以启用保持唤醒。\n滚动以调整超时。",
+    "disable-keep-awake": "保持唤醒",
+    "do-not-disturb-disabled": "勿扰模式",
+    "do-not-disturb-enabled": "勿扰模式",
+    "enable-keep-awake": "保持唤醒",
     "forget-network": "忘记网络",
     "grid-view": "网格视图",
-    "hidden-files-hide": "隐藏隐藏文件",
-    "hidden-files-show": "显示隐藏文件",
+    "hidden-files-hide": "隐藏文件",
+    "hidden-files-show": "隐藏文件",
     "home": "主目录",
-    "input-muted": "静音输入设备",
+    "input-muted": "麦克风",
     "keep-awake": "保持唤醒",
     "keyboard-layout": "{layout} 键盘布局",
     "list-view": "列表视图",
-    "manage-vpn": "管理 VPN 连接",
-    "manage-wifi": "管理 Wi-Fi",
-    "microphone-volume-at": "麦克风音量 {volume}%\n左键点击进入设置。右键点击切换静音。\n滚动滚轮调节音量。",
-    "move-to-center-section": "移动到中央部分",
-    "move-to-left-section": "移动到左侧部分",
-    "move-to-right-section": "移动到右侧部分",
-    "next-media": "下一媒体",
+    "manage-vpn": "VPN 连接",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "麦克风音量：{volume}%",
+    "move-to-center-section": "中央部分",
+    "move-to-left-section": "左侧部分",
+    "move-to-right-section": "右侧部分",
+    "next-media": "下一首",
     "next-month": "下个月",
-    "night-light-disabled": "夜间模式已禁用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-enabled": "夜间模式已启用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-forced": "夜间模式已强制启用。\n左键点击循环模式。\n右键点击访问设置。",
-    "night-light-not-installed": "夜间模式不可用。\nwlsunset 未安装。",
-    "noctalia-performance-disabled": "Noctalia 性能模式已禁用。\n左键点击以启用。",
-    "noctalia-performance-enabled": "Noctalia 性能模式已启用。\n左键点击以禁用。",
-    "open-control-center": "打开控制中心",
-    "open-notification-history-disable-dnd": "打开通知历史记录\n右键：打开右键菜单",
-    "open-notification-history-enable-dnd": "打开通知历史记录\n右键：打开右键菜单",
-    "open-settings": "打开设置",
-    "open-tray-dropdown": "打开系统托盘下拉菜单",
-    "open-wallpaper-selector": "打开壁纸选择器",
-    "output-muted": "静音输出设备",
-    "pause": "暂停",
-    "play": "播放",
-    "power-profile": "'{profile}' 电源模式",
-    "previous-media": "上一媒体",
+    "night-light-disabled": "夜间模式",
+    "night-light-enabled": "夜间模式",
+    "night-light-forced": "夜间模式",
+    "night-light-not-installed": "夜间模式（不可用）",
+    "noctalia-performance-disabled": "Noctalia 性能模式",
+    "noctalia-performance-enabled": "Noctalia 性能模式",
+    "open-control-center": "控制中心",
+    "open-notification-history-disable-dnd": "通知历史记录",
+    "open-notification-history-enable-dnd": "通知历史记录",
+    "open-settings": "设置",
+    "open-tray-dropdown": "系统托盘",
+    "open-wallpaper-selector": "壁纸选择器",
+    "output-muted": "音频输出",
+    "pause": "暂停按钮",
+    "play": "播放按钮",
+    "power-profile": "{profile} 电源模式",
+    "previous-media": "上一首",
     "previous-month": "上个月",
     "refresh": "刷新",
     "refresh-devices": "刷新设备",
     "refresh-wallhaven": "刷新 Wallhaven 结果",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
-    "screen-recorder-not-installed": "屏幕录制器未安装",
+    "screen-recorder-not-installed": "屏幕录制器（未安装）",
     "search": "搜索",
     "search-close": "关闭搜索",
     "session-menu": "会话菜单",
-    "set-power-profile": "设置\"{profile}\"电源模式",
-    "start-screen-recording": "开始屏幕录制",
-    "stop-screen-recording": "停止屏幕录制",
-    "switch-to-dark-mode": "切换到深色模式",
-    "switch-to-light-mode": "切换到浅色模式",
-    "up": "向上",
-    "volume-at": "输出音量 {volume}%\n左键点击进入设置。右键点击切换静音。\n滚动滚轮调节音量。",
-    "wallpaper-selector": "左键点击：打开壁纸选择器。\n右键点击：设置随机壁纸。",
+    "set-power-profile": "{profile} 电源模式",
+    "start-screen-recording": "屏幕录制器",
+    "stop-screen-recording": "屏幕录制器",
+    "switch-to-dark-mode": "深色模式",
+    "switch-to-light-mode": "浅色模式",
+    "up": "上级目录",
+    "volume-at": "输出音量：{volume}%",
+    "wallpaper-selector": "壁纸选择器",
     "widget-settings": "小部件设置"
   },
   "wallpaper": {

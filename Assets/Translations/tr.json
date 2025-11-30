@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Tıklayarak Bluetooth cihazlarını yönet"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "Uyanık Tut"
       },
       "tooltip": {
-        "action": "Tıklayarak uyanık kalma modunu aç/kapat"
+        "action": "Uyanık Tut"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "Gece Işığı"
       },
       "tooltip": {
-        "action": "Tıklayarak gece ışığı modunu değiştir\nSağ tık: Ayarları aç"
+        "action": "Gece ışığı"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "Bildirimler"
       },
       "tooltip": {
-        "action": "Sol tık: Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç"
+        "action": "Bildirimler"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "Güç Profili"
       },
       "tooltip": {
-        "action": "Tıklayarak güç profilini değiştir",
+        "action": "Güç profili",
         "disabled": "Güç profillerini kullanmak için power-profiles-daemon kur"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "Kaydet"
       },
       "tooltip": {
-        "action": "Tıklayarak ekran kaydını başlat/durdur"
+        "action": "Ekran kaydedici"
       }
     },
     "wallpaperSelector": {
       "label": "Duvar Kağıdı",
       "tooltip": {
-        "action": "Sol tık: Duvar kağıdı seçiciyi aç\nSağ tık: Rastgele duvar kağıdı ayarla"
+        "action": "Duvar kağıdı seçici"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Tıklayarak Wi-Fi bağlantılarını yönet"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "Widget ekle",
     "bluetooth-devices": "Bluetooth cihazları",
-    "brightness-at": "Parlaklık: %{brightness}\nAyarlar için sağ tık.\nParlaklığı değiştirmek için kaydırın.",
-    "cancel-timer": "Zamanlayıcıyı iptal et",
+    "brightness-at": "Parlaklık: %{brightness}",
+    "cancel-timer": "Zamanlayıcı",
     "clear-history": "Geçmişi temizle",
-    "click-to-start-recording": "Kaydı başlatmak için tıklayın",
-    "click-to-stop-recording": "Kaydı durdurmak için tıklayın",
-    "close": "Kapat",
-    "connect-disconnect-devices": "Bağlanmak için sol tık. Unutmak için sağ tık.",
+    "click-to-start-recording": "Ekran kaydedici (kaydı başlat)",
+    "click-to-stop-recording": "Ekran kaydedici (kaydı durdur)",
+    "close": "Kapat düğmesi",
+    "connect-disconnect-devices": "Bluetooth cihazı",
     "delete-notification": "Bildiriyi sil",
-    "disable-keep-awake": "Uyanık kalmayı devre dışı bırakmak için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
-    "do-not-disturb-disabled": "'Rahatsız etme' devre dışı",
-    "do-not-disturb-enabled": "'Rahatsız etme' etkin",
-    "enable-keep-awake": "Uyanık kalmayı etkinleştirmek için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
+    "disable-keep-awake": "Uyanık kal",
+    "do-not-disturb-disabled": "Rahatsız etme",
+    "do-not-disturb-enabled": "Rahatsız etme",
+    "enable-keep-awake": "Uyanık kal",
     "forget-network": "Ağı unut",
     "grid-view": "Izgara görünümü",
-    "hidden-files-hide": "Gizli dosyaları gizle",
-    "hidden-files-show": "Gizli dosyaları göster",
-    "home": "Ana Sayfa",
-    "input-muted": "Giriş sessizliğini değiştir",
+    "hidden-files-hide": "Gizli dosyalar",
+    "hidden-files-show": "Gizli dosyalar",
+    "home": "Ana dizin",
+    "input-muted": "Mikrofon",
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
     "list-view": "Liste görünümü",
-    "manage-vpn": "VPN bağlantılarını yönet",
-    "manage-wifi": "Wi-Fi yönet",
-    "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
-    "move-to-center-section": "Orta bölüme taşı",
-    "move-to-left-section": "Sol bölüme taşı",
-    "move-to-right-section": "Sağ bölüme taşı",
-    "next-media": "Sonraki medya",
+    "manage-vpn": "VPN bağlantıları",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Mikrofon sesi: %{volume}",
+    "move-to-center-section": "Orta bölüm",
+    "move-to-left-section": "Sol bölüm",
+    "move-to-right-section": "Sağ bölüm",
+    "next-media": "Sonraki parça",
     "next-month": "Sonraki ay",
-    "night-light-disabled": "Gece ışığı devre dışı.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-enabled": "Gece ışığı etkin.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
-    "noctalia-performance-disabled": "Noctalia performans modu devre dışı.\nEtkinleştirmek için sol tıklayın.",
-    "noctalia-performance-enabled": "Noctalia performans modu etkin.\nDevre dışı bırakmak için sol tıklayın.",
-    "open-control-center": "Kontrol merkezini aç",
-    "open-notification-history-disable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
-    "open-notification-history-enable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
-    "open-settings": "Ayarları aç",
-    "open-tray-dropdown": "Tepsi açılır menüsünü aç",
-    "open-wallpaper-selector": "Duvar kağıdı seçiciyi aç",
-    "output-muted": "Çıkış sessizliğini değiştir",
-    "pause": "Duraklat",
-    "play": "Oynat",
-    "power-profile": "'{profile}' güç profili",
-    "previous-media": "Önceki medya",
+    "night-light-disabled": "Gece ışığı",
+    "night-light-enabled": "Gece ışığı",
+    "night-light-forced": "Gece ışığı",
+    "night-light-not-installed": "Gece ışığı (mevcut değil)",
+    "noctalia-performance-disabled": "Noctalia performans modu",
+    "noctalia-performance-enabled": "Noctalia performans modu",
+    "open-control-center": "Kontrol merkezi",
+    "open-notification-history-disable-dnd": "Bildirim geçmişi",
+    "open-notification-history-enable-dnd": "Bildirim geçmişi",
+    "open-settings": "Ayarlar",
+    "open-tray-dropdown": "Sistem tepsisı",
+    "open-wallpaper-selector": "Duvar kağıdı seçici",
+    "output-muted": "Ses çıkışı",
+    "pause": "Duraklat düğmesi",
+    "play": "Oynat düğmesi",
+    "power-profile": "{profile} güç profili",
+    "previous-media": "Önceki parça",
     "previous-month": "Önceki ay",
     "refresh": "Yenile",
     "refresh-devices": "Cihazları yenile",
     "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
-    "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
+    "screen-recorder-not-installed": "Ekran kaydedici (yüklü değil)",
     "search": "Ara",
     "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
-    "set-power-profile": "\"{profile}\" güç profilini ayarla",
-    "start-screen-recording": "Ekran kaydını başlat",
-    "stop-screen-recording": "Ekran kaydını durdur",
-    "switch-to-dark-mode": "Koyu moda geç",
-    "switch-to-light-mode": "Açık moda geç",
-    "up": "Yukarı",
-    "volume-at": "Çıkış sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
-    "wallpaper-selector": "Sol tık: Duvar kağıdı seçiciyi aç.\nSağ tık: Rastgele duvar kağıdı ayarla.",
+    "set-power-profile": "{profile} güç profili",
+    "start-screen-recording": "Ekran kaydedici",
+    "stop-screen-recording": "Ekran kaydedici",
+    "switch-to-dark-mode": "Koyu mod",
+    "switch-to-light-mode": "Açık mod",
+    "up": "Üst dizin",
+    "volume-at": "Çıkış sesi: %{volume}",
+    "wallpaper-selector": "Duvar kağıdı seçici",
     "widget-settings": "Widget ayarları"
   },
   "wallpaper": {

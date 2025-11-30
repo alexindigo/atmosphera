@@ -708,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "クリックして Bluetooth デバイスを管理する"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +717,7 @@
         "enabled": "スリープを防止"
       },
       "tooltip": {
-        "action": "クリックしてスリープ防止モードを切り替え"
+        "action": "スリープ防止"
       }
     },
     "nightLight": {
@@ -727,7 +727,7 @@
         "forced": "夜間モード"
       },
       "tooltip": {
-        "action": "左クリック: 夜間モードを切り替え\n右クリック: 設定を開く"
+        "action": "夜間モード"
       }
     },
     "notifications": {
@@ -736,7 +736,7 @@
         "enabled": "通知"
       },
       "tooltip": {
-        "action": "左クリック: 通知履歴を開く\n右クリック: コンテキストメニューを開く"
+        "action": "通知"
       }
     },
     "powerProfile": {
@@ -744,7 +744,7 @@
         "unavailable": "電源プロファイル"
       },
       "tooltip": {
-        "action": "クリックして電源プロファイルを切り替え",
+        "action": "電源プロファイル",
         "disabled": "電源プロファイルを使用するには power-profiles-daemon をインストールしてください"
       }
     },
@@ -754,13 +754,13 @@
         "stopped": "録画"
       },
       "tooltip": {
-        "action": "クリックして画面録画を開始/停止"
+        "action": "画面録画"
       }
     },
     "wallpaperSelector": {
       "label": "壁紙",
       "tooltip": {
-        "action": "左クリック: 壁紙選択パネルを開く\n右クリック: ランダムに壁紙を設定"
+        "action": "壁紙選択パネル"
       }
     },
     "wifi": {
@@ -770,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "クリックして Wi-Fi 接続を管理する"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -2194,70 +2194,70 @@
   "tooltips": {
     "add-widget": "ウィジェットを追加",
     "bluetooth-devices": "Bluetooth デバイス",
-    "brightness-at": "画面の明るさ: {brightness}%\nスクロールして明るさを調整",
-    "cancel-timer": "タイマーをキャンセル",
+    "brightness-at": "画面の明るさ: {brightness}%",
+    "cancel-timer": "タイマー",
     "clear-history": "履歴を消去",
-    "click-to-start-recording": "クリックして録画を開始",
-    "click-to-stop-recording": "クリックして録画を停止",
-    "close": "閉じる",
-    "connect-disconnect-devices": "左クリック: 接続\n右クリック: 登録解除",
+    "click-to-start-recording": "画面録画 (録画開始)",
+    "click-to-stop-recording": "画面録画 (録画停止)",
+    "close": "閉じるボタン",
+    "connect-disconnect-devices": "Bluetooth デバイス",
     "delete-notification": "通知を削除",
-    "disable-keep-awake": "クリック: スリープ防止モードを無効化\nスクロール: タイムアウトを調整",
-    "do-not-disturb-disabled": "おやすみモード: 無効",
-    "do-not-disturb-enabled": "おやすみモード: 有効",
-    "enable-keep-awake": "クリック: スリープ防止モードを有効化\nスクロール: タイムアウトを調整",
+    "disable-keep-awake": "スリープ防止",
+    "do-not-disturb-disabled": "おやすみモード",
+    "do-not-disturb-enabled": "おやすみモード",
+    "enable-keep-awake": "スリープ防止",
     "forget-network": "ネットワーク設定を削除",
     "grid-view": "グリッド表示",
-    "hidden-files-hide": "隠しファイルを非表示",
-    "hidden-files-show": "隠しファイルを表示",
-    "home": "ホーム",
-    "input-muted": "入力ミュート切り替え",
-    "keep-awake": "スリープを防止",
+    "hidden-files-hide": "隠しファイル",
+    "hidden-files-show": "隠しファイル",
+    "home": "ホームディレクトリ",
+    "input-muted": "マイク",
+    "keep-awake": "スリープ防止",
     "keyboard-layout": "キーボードレイアウト: {layout}",
     "list-view": "リスト表示",
-    "manage-vpn": "VPN 接続を管理",
-    "manage-wifi": "Wi-Fi を管理",
-    "microphone-volume-at": "マイク音量: {volume}%\nスクロールで音量を調整",
-    "move-to-center-section": "中央セクションへ移動",
-    "move-to-left-section": "左セクションへ移動",
-    "move-to-right-section": "右セクションへ移動",
-    "next-media": "次のメディア",
+    "manage-vpn": "VPN 接続",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "マイク音量: {volume}%",
+    "move-to-center-section": "中央セクション",
+    "move-to-left-section": "左セクション",
+    "move-to-right-section": "右セクション",
+    "next-media": "次のトラック",
     "next-month": "翌月",
-    "night-light-disabled": "夜間モード: 無効\n左クリック: モード切り替え\n右クリック: 設定を開く",
-    "night-light-enabled": "夜間モード: 有効\n左クリック: モード切り替え\n右クリック: 設定を開く",
-    "night-light-forced": "夜間モード: 強制有効\n左クリック: モード切り替え\n右クリック: 設定を開く",
-    "night-light-not-installed": "夜間モードを利用できません\nwlsunset がインストールされていません",
-    "noctalia-performance-disabled": "Noctalia パフォーマンスモード: 無効\n左クリックで有効化",
-    "noctalia-performance-enabled": "Noctalia パフォーマンスモード: 有効\n左クリックで無効化",
-    "open-control-center": "コントロールセンターを開く",
-    "open-notification-history-disable-dnd": "通知履歴を開く\n右クリック: コンテキストメニューを開く",
-    "open-notification-history-enable-dnd": "通知履歴を開く\n右クリック: コンテキストメニューを開く",
-    "open-settings": "設定を開く",
-    "open-tray-dropdown": "トレイのドロップダウンを開く",
-    "open-wallpaper-selector": "壁紙選択パネルを開く",
-    "output-muted": "出力ミュート切り替え",
-    "pause": "一時停止",
-    "play": "再生",
+    "night-light-disabled": "夜間モード",
+    "night-light-enabled": "夜間モード",
+    "night-light-forced": "夜間モード",
+    "night-light-not-installed": "夜間モード (利用不可)",
+    "noctalia-performance-disabled": "Noctalia パフォーマンスモード",
+    "noctalia-performance-enabled": "Noctalia パフォーマンスモード",
+    "open-control-center": "コントロールセンター",
+    "open-notification-history-disable-dnd": "通知履歴",
+    "open-notification-history-enable-dnd": "通知履歴",
+    "open-settings": "設定",
+    "open-tray-dropdown": "システムトレイ",
+    "open-wallpaper-selector": "壁紙選択パネル",
+    "output-muted": "音声出力",
+    "pause": "一時停止ボタン",
+    "play": "再生ボタン",
     "power-profile": "電源プロファイル: {profile}",
-    "previous-media": "前のメディア",
+    "previous-media": "前のトラック",
     "previous-month": "前月",
     "refresh": "更新",
     "refresh-devices": "デバイスを更新",
     "refresh-wallhaven": "Wallhaven の検索結果を更新",
     "refresh-wallpaper-list": "壁紙リストを更新",
     "remove-widget": "ウィジェットを削除",
-    "screen-recorder-not-installed": "スクリーンレコーダーがインストールされていません",
+    "screen-recorder-not-installed": "スクリーンレコーダー (未インストール)",
     "search": "検索",
     "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
-    "set-power-profile": "電源プロファイルを {profile} に設定",
-    "start-screen-recording": "画面録画を開始",
-    "stop-screen-recording": "画面録画を停止",
-    "switch-to-dark-mode": "ダークモードに切り替え",
-    "switch-to-light-mode": "ライトモードに切り替え",
-    "up": "上へ",
-    "volume-at": "出力音量: {volume}%\nスクロールで音量を調整",
-    "wallpaper-selector": "左クリック: 壁紙選択パネルを開く\n右クリック: ランダムに壁紙を設定",
+    "set-power-profile": "電源プロファイル: {profile}",
+    "start-screen-recording": "画面録画",
+    "stop-screen-recording": "画面録画",
+    "switch-to-dark-mode": "ダークモード",
+    "switch-to-light-mode": "ライトモード",
+    "up": "親ディレクトリ",
+    "volume-at": "出力音量: {volume}%",
+    "wallpaper-selector": "壁紙選択パネル",
     "widget-settings": "ウィジェットの設定"
   },
   "wallpaper": {
