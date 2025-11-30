@@ -60,6 +60,7 @@ in
 
     buildInputs = [
       qt6.qtbase
+      qt6.qtmultimedia
     ];
 
     installPhase = ''
