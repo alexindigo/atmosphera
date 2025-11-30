@@ -84,6 +84,7 @@ Loader {
             cache: true
             smooth: true
             mipmap: false
+            antialiasing: true
           }
 
           Rectangle {
