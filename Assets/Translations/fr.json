@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Parcourir les fichiers",
         "browse-library": "Parcourir la bibliothèque",
-        "colorize-distro-logo": {
-          "description": "Appliquez les couleurs du thème au logo de votre distribution.",
-          "label": "Coloriser le logo de la distribution"
+        "color-selection": {
+          "description": "Applique les couleurs du thème aux icônes.",
+          "label": "Sélectionner la Couleur"
+        },
+        "enable-colorization": {
+          "description": "Active la coloration pour l'icône du centre de contrôle, en appliquant les couleurs du thème.",
+          "label": "Activer la Coloration"
         },
         "icon": {
           "description": "Sélectionnez une icône de la bibliothèque ou un fichier personnalisé.",
@@ -509,6 +513,12 @@
       "no-notifications": "Aucune notification",
       "title": "Notifications"
     },
+    "range": {
+      "all": "Tout",
+      "earlier": "Plus anciennes",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier"
+    },
     "time": {
       "diffD": "il y a 1 jour",
       "diffDD": "il y a {diff} jours",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "Erreur",
+      "none": "Aucun",
       "onSurface": "En surface",
       "primary": "Primaire",
       "secondary": "Secondaire",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "Télécharger la dernière version",
+        "git-commit": "Commit Git :",
+        "git-commit-loading": "Chargement...",
         "installed-version": "Version installée :",
         "latest-version": "Dernière version :",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Thématisation du compositeur.",
+          "label": "Compositeurs",
+          "niri": {
+            "description": "Écrire {filepath}. Requiert niri v25.11+",
+            "description-missing": "Nécessite l'installation de {app}"
+          }
+        },
         "misc": {
-          "description": "Options de configuration supplémentaires.",
-          "label": "Divers",
+          "description": "Créez vos propres modèles",
+          "label": "Avancé",
           "user-templates": {
-            "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation",
-            "label": "Modèles utilisateur"
+            "description": "N'activez que si vous savez ce que vous faites, consultez notre documentation en ligne",
+            "label": "Activer les modèles utilisateur"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "Jour",
+          "day-description": "Contrôle la température pendant la journée.",
           "description": "Réglez la chaleur des couleurs pour la nuit et le jour.",
           "label": "Température de couleur",
-          "night": "Nuit"
+          "night": "Nuit",
+          "night-description": "Contrôle la température pendant la nuit."
         }
       },
       "title": "Affichage"
@@ -1359,7 +1382,8 @@
           "description": "Modifiez vos informations utilisateur et votre avatar.",
           "label": "Profil"
         },
-        "select-avatar": "Sélectionner une image d'avatar"
+        "select-avatar": "Sélectionner une image d'avatar",
+        "tooltip": "Parcourir pour une image d’avatar"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "'Ne pas déranger' activé",
     "enable-keep-awake": "Cliquez pour activer le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
     "forget-network": "Oublier le réseau",
+    "grid-view": "Vue en grille",
+    "hidden-files-hide": "Masquer les fichiers cachés",
+    "hidden-files-show": "Afficher les fichiers cachés",
     "home": "Accueil",
     "input-muted": "Couper l'entrée audio",
     "keep-awake": "Rester éveillé",
     "keyboard-layout": "Disposition du clavier {layout}",
+    "list-view": "Vue en liste",
     "manage-vpn": "Gérer les connexions VPN",
     "manage-wifi": "Gérer le Wi-Fi",
     "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
     "screen-recorder-not-installed": "L'enregistreur d'écran n'est pas installé",
+    "search": "Rechercher",
+    "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
     "set-power-profile": "Définir le profil d'alimentation \"{profile}\"",
     "start-screen-recording": "Démarrer l'enregistrement d'écran",

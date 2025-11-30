@@ -15,7 +15,7 @@ NIconButton {
   baseSize: Style.capsuleHeight
   applyUiScale: false
   colorBg: Style.capsuleColor
-  colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
+  colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
   onClicked: Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode

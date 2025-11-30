@@ -231,6 +231,33 @@ Singleton {
         }
       ],
       "postProcess": () => `${colorsApplyScript} cava`
+    },
+    {
+      "id": "emacs",
+      "name": "Emacs",
+      "category": "applications",
+      "input": "emacs.el",
+      "outputs": [
+        {
+          "path": "~/.config/doom/themes/noctalia-theme.el"
+        },
+        {
+          "path": "~/.emacs.d/themes/noctalia-theme.el"
+        }
+      ],
+      "checkDoomFirst": true
+    },
+    {
+      "id": "niri",
+      "name": "Niri",
+      "category": "compositors",
+      "input": "niri.kdl",
+      "outputs": [
+        {
+          "path": "~/.config/niri/noctalia.kdl"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} niri`
     }
   ]
 

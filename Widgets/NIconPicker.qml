@@ -60,6 +60,7 @@ Popup {
       }
       NIconButton {
         icon: "close"
+        tooltipText: I18n.tr("tooltips.close")
         onClicked: root.close()
       }
     }
@@ -82,7 +83,7 @@ Popup {
     }
 
     // Icon grid
-    GridView {
+    NGridView {
       id: grid
       Layout.fillWidth: true
       Layout.fillHeight: true
@@ -90,8 +91,6 @@ Popup {
       cellWidth: root.cellW
       cellHeight: root.cellH
       model: root.filteredIcons
-      clip: true
-      reuseItems: true
       delegate: Rectangle {
         width: grid.cellWidth
         height: grid.cellHeight

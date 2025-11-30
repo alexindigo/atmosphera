@@ -13,11 +13,8 @@
   matugen,
   wlsunset,
   wl-clipboard,
+  imagemagick,
   gpu-screen-recorder, # optional
-  # fonts
-  makeFontsConf,
-  roboto,
-  inter-nerdfont,
 }: let
   src = lib.cleanSourceWith {
     src = ../.;
@@ -47,17 +44,11 @@
       matugen
       wlsunset
       wl-clipboard
+      imagemagick
     ]
     ++ lib.optionals (stdenvNoCC.hostPlatform.system == "x86_64-linux") [
       gpu-screen-recorder
     ];
-
-  fontsConf = makeFontsConf {
-    fontDirectories = [
-      roboto
-      inter-nerdfont
-    ];
-  };
 in
   stdenvNoCC.mkDerivation {
     pname = "noctalia-shell";
@@ -69,6 +60,7 @@ in
 
     buildInputs = [
       qt6.qtbase
+      qt6.qtmultimedia
     ];
 
     installPhase = ''
@@ -80,7 +72,6 @@ in
     preFixup = ''
       qtWrapperArgs+=(
         --prefix PATH : ${lib.makeBinPath runtimeDeps}
-        --set FONTCONFIG_FILE ${fontsConf}
         --add-flags "-p $out/share/noctalia-shell"
       )
     '';

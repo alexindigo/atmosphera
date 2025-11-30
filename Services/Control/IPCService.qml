@@ -78,6 +78,10 @@ Item {
       NotificationService.dismissOldestActive();
     }
 
+    function removeOldestHistory() {
+      NotificationService.removeOldestHistory();
+    }
+
     function dismissAll() {
       NotificationService.dismissAllActive();
     }
@@ -362,7 +366,29 @@ Item {
     }
   }
 
+  IpcHandler {
+    target: "state"
+
+    // Returns all settings and shell state as JSON
+    function all(): string {
+      try {
+        var snapshot = ShellState.buildStateSnapshot();
+        if (!snapshot) {
+          throw new Error("State snapshot unavailable");
+        }
+        return JSON.stringify(snapshot, null, 2);
+      } catch (error) {
+        Logger.e("IPC", "Failed to serialize state:", error);
+        return JSON.stringify({
+                                "error": "Failed to serialize state: " + error
+                              }, null, 2);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------
   // Queue an IPC panel operation - will execute when screen is detected
+  // -------------------------------------------------------------------
   function withTargetScreen(callback) {
     if (pendingCallback) {
       Logger.w("IPC", "Another IPC call is pending, ignoring new call");
@@ -379,27 +405,6 @@ Item {
       screenDetectorLoader.active = true;
     }
   }
-
-  IpcHandler {
-    target: "state"
-
-    // Returns all settings and shell state as JSON
-    function all(): string {
-      try {
-        var snapshot = Settings.buildStateSnapshot();
-        if (!snapshot) {
-          throw new Error("State snapshot unavailable");
-        }
-        return JSON.stringify(snapshot, null, 2);
-      } catch (error) {
-        Logger.e("IPC", "Failed to serialize state:", error);
-        return JSON.stringify({
-                                "error": "Failed to serialize state: " + error
-                              }, null, 2);
-      }
-    }
-  }
-
   /**
   * For IPC calls on multi-monitors setup that will open panels on screen,
   * we need to open a QS PanelWindow and wait for it's "screen" property to stabilize.
@@ -454,4 +459,6 @@ Item {
       }
     }
   }
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
 }

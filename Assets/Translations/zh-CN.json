@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "浏览文件",
         "browse-library": "浏览库",
-        "colorize-distro-logo": {
-          "description": "将主题颜色应用到您的发行版徽标。",
-          "label": "为发行版徽标着色"
+        "color-selection": {
+          "description": "将主题颜色应用于图标。",
+          "label": "选择颜色"
+        },
+        "enable-colorization": {
+          "description": "为控制中心图标启用着色，应用主题颜色。",
+          "label": "启用着色"
         },
         "icon": {
           "description": "从库中选择图标或自定义文件。",
@@ -509,6 +513,12 @@
       "no-notifications": "无通知",
       "title": "通知"
     },
+    "range": {
+      "all": "全部",
+      "earlier": "更早",
+      "today": "今天",
+      "yesterday": "昨天"
+    },
     "time": {
       "diffD": "1 天前",
       "diffDD": "{diff} 天前",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "错误色",
+      "none": "无",
       "onSurface": "表层对应色",
       "primary": "主要色",
       "secondary": "次要色",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "下载最新版本",
+        "git-commit": "Git提交:",
+        "git-commit-loading": "加载中...",
         "installed-version": "已安装版本：",
         "latest-version": "最新版本：",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "合成器主题。",
+          "label": "合成器",
+          "niri": {
+            "description": "写入 {filepath}。需要 niri v25.11+",
+            "description-missing": "需要安装 {app}"
+          }
+        },
         "misc": {
-          "description": "其他配置选项。",
-          "label": "杂项",
+          "description": "创建您自己的模板",
+          "label": "高级",
           "user-templates": {
-            "description": "启用用户定义的 Matugen 配置。首次启用时将在 ~/.config/noctalia/user-templates.toml 创建模板文件",
-            "label": "用户模板"
+            "description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档",
+            "label": "启用用户模板"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "白天",
+          "day-description": "控制白天的色温。",
           "description": "设置夜间和白天的颜色温暖度。",
           "label": "色温",
-          "night": "夜间"
+          "night": "夜间",
+          "night-description": "控制夜间的色温。"
         }
       },
       "title": "显示"
@@ -1359,7 +1382,8 @@
           "description": "编辑您的用户详细信息和头像。",
           "label": "个人资料"
         },
-        "select-avatar": "选择头像图片"
+        "select-avatar": "选择头像图片",
+        "tooltip": "浏览头像图片"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "'勿扰模式'已启用",
     "enable-keep-awake": "单击以启用保持唤醒。\n滚动以调整超时。",
     "forget-network": "忘记网络",
+    "grid-view": "网格视图",
+    "hidden-files-hide": "隐藏隐藏文件",
+    "hidden-files-show": "显示隐藏文件",
     "home": "主目录",
     "input-muted": "静音输入设备",
     "keep-awake": "保持唤醒",
     "keyboard-layout": "{layout} 键盘布局",
+    "list-view": "列表视图",
     "manage-vpn": "管理 VPN 连接",
     "manage-wifi": "管理 Wi-Fi",
     "microphone-volume-at": "麦克风音量 {volume}%\n左键点击进入设置。右键点击切换静音。\n滚动滚轮调节音量。",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
     "screen-recorder-not-installed": "屏幕录制器未安装",
+    "search": "搜索",
+    "search-close": "关闭搜索",
     "session-menu": "会话菜单",
     "set-power-profile": "设置\"{profile}\"电源模式",
     "start-screen-recording": "开始屏幕录制",

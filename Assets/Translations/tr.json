@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Dosyaya Göz At",
         "browse-library": "Kütüphaneye Göz At",
-        "colorize-distro-logo": {
-          "description": "Dağıtım logonuza tema renklerini uygula.",
-          "label": "Dağıtım logosunu renklendir"
+        "color-selection": {
+          "description": "Simgeye tema renklerini uygular.",
+          "label": "Renk Seç"
+        },
+        "enable-colorization": {
+          "description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
+          "label": "Renklendirmeyi Etkinleştir"
         },
         "icon": {
           "description": "Kütüphaneden veya özel bir dosyadan bir ikon seçin.",
@@ -509,6 +513,12 @@
       "no-notifications": "Bildirim yok",
       "title": "Bildirimler"
     },
+    "range": {
+      "all": "Tümü",
+      "earlier": "Öncekiler",
+      "today": "Bugün",
+      "yesterday": "Dün"
+    },
     "time": {
       "diffD": "1 gün önce",
       "diffDD": "{diff} gün önce",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "Hata",
+      "none": "Hiçbiri",
       "onSurface": "Üstünde",
       "primary": "Birincil",
       "secondary": "İkincil",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "En son sürümü indir",
+        "git-commit": "Git commit:",
+        "git-commit-loading": "Yükleniyor...",
         "installed-version": "Yüklü sürüm:",
         "latest-version": "En son sürüm:",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Birleştirici temalandırma.",
+          "label": "Birleştiriciler",
+          "niri": {
+            "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",
+            "description-missing": "{app} yüklü olmalıdır"
+          }
+        },
         "misc": {
-          "description": "Ek yapılandırma seçenekleri.",
-          "label": "Çeşitli",
+          "description": "Kendi şablonlarınızı oluşturun",
+          "label": "Gelişmiş",
           "user-templates": {
-            "description": "Kullanıcı tanımlı Matugen yapılandırmasını etkinleştir. İlk etkinleştirmede ~/.config/noctalia/user-templates.toml dosyası oluşturulacaktır",
-            "label": "Kullanıcı şablonları"
+            "description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin, çevrimiçi belgelerimize bakın",
+            "label": "Kullanıcı şablonlarını etkinleştir"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "Gündüz",
+          "day-description": "Gündüz saatlerindeki renk sıcaklığını kontrol eder.",
           "description": "Gece ve gündüz için renk sıcaklığını ayarlayın.",
           "label": "Renk sıcaklığı",
-          "night": "Gece"
+          "night": "Gece",
+          "night-description": "Gece saatlerindeki renk sıcaklığını kontrol eder."
         }
       },
       "title": "Görüntü"
@@ -1359,7 +1382,8 @@
           "description": "Kullanıcı detaylarınızı ve avatarınızı düzenleyin.",
           "label": "Profil"
         },
-        "select-avatar": "Avatar görüntüsü seç"
+        "select-avatar": "Avatar görüntüsü seç",
+        "tooltip": "Avatar resmi ara"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "'Rahatsız etme' etkin",
     "enable-keep-awake": "Uyanık kalmayı etkinleştirmek için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
     "forget-network": "Ağı unut",
+    "grid-view": "Izgara görünümü",
+    "hidden-files-hide": "Gizli dosyaları gizle",
+    "hidden-files-show": "Gizli dosyaları göster",
     "home": "Ana Sayfa",
     "input-muted": "Giriş sessizliğini değiştir",
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
+    "list-view": "Liste görünümü",
     "manage-vpn": "VPN bağlantılarını yönet",
     "manage-wifi": "Wi-Fi yönet",
     "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
     "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
+    "search": "Ara",
+    "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
     "set-power-profile": "\"{profile}\" güç profilini ayarla",
     "start-screen-recording": "Ekran kaydını başlat",

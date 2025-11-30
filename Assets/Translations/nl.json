@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Bestand kiezen",
         "browse-library": "Bibliotheek doorbladeren",
-        "colorize-distro-logo": {
-          "description": "Pas themakleuren toe op je distributielogo.",
-          "label": "Distributielogo inkleuren"
+        "color-selection": {
+          "description": "Themakleuren toepassen op pictogrammen.",
+          "label": "Kleur selecteren"
+        },
+        "enable-colorization": {
+          "description": "Schakel kleuring in voor het pictogram van het controlecentrum, waarbij themakleuren worden toegepast.",
+          "label": "Kleuren inschakelen"
         },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek of een aangepast bestand.",
@@ -509,6 +513,12 @@
       "no-notifications": "Geen meldingen",
       "title": "Meldingen"
     },
+    "range": {
+      "all": "Alle",
+      "earlier": "Eerder",
+      "today": "Vandaag",
+      "yesterday": "Gisteren"
+    },
     "time": {
       "diffD": "1 dag geleden",
       "diffDD": "{diff} dagen geleden",
@@ -536,6 +546,7 @@
     },
     "colors": {
       "error": "Fout",
+      "none": "Geen",
       "onSurface": "Op oppervlak",
       "primary": "Primair",
       "secondary": "Secundair",
@@ -785,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "Nieuwste release downloaden",
+        "git-commit": "Git commit:",
+        "git-commit-loading": "Laden...",
         "installed-version": "Geïnstalleerde versie:",
         "latest-version": "Nieuwste versie:",
         "section": {
@@ -1031,12 +1044,20 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Theming van compositor.",
+          "label": "Compositors",
+          "niri": {
+            "description": "Schrijf {filepath}. Vereist niri v25.11+",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          }
+        },
         "misc": {
-          "description": "Aanvullende configuratie-opties.",
-          "label": "Diversen",
+          "description": "Maak uw eigen sjablonen",
+          "label": "Geavanceerd",
           "user-templates": {
-            "description": "Schakel door de gebruiker gedefinieerde Matugen-configuratie in. Er wordt een sjabloonbestand aangemaakt op ~/.config/noctalia/user-templates.toml bij de eerste keer inschakelen.",
-            "label": "Gebruikerssjablonen"
+            "description": "Alleen inschakelen als u weet wat u doet, raadpleeg onze online documentatie",
+            "label": "Gebruikerssjablonen inschakelen"
           }
         },
         "programs": {
@@ -1253,9 +1274,11 @@
         },
         "temperature": {
           "day": "Dag",
+          "day-description": "Regelt de kleurtemperatuur overdag.",
           "description": "Stel de kleurwarmte voor nacht en dag in.",
           "label": "Kleurtemperatuur",
-          "night": "Nacht"
+          "night": "Nacht",
+          "night-description": "Regelt de kleurtemperatuur 's nachts."
         }
       },
       "title": "Beeldscherm"
@@ -1359,7 +1382,8 @@
           "description": "Bewerk je gebruikersgegevens en avatar.",
           "label": "Profiel"
         },
-        "select-avatar": "Avatarafbeelding selecteren"
+        "select-avatar": "Avatarafbeelding selecteren",
+        "tooltip": "Bladeren naar avatarafbeelding"
       },
       "screen-corners": {
         "radius": {
@@ -2183,10 +2207,14 @@
     "do-not-disturb-enabled": "\"Niet storen\" ingeschakeld",
     "enable-keep-awake": "\"Wakker houden\" inschakelen",
     "forget-network": "Netwerk vergeten",
+    "grid-view": "Rasterweergave",
+    "hidden-files-hide": "Verborgen bestanden verbergen",
+    "hidden-files-show": "Verborgen bestanden tonen",
     "home": "Home",
     "input-muted": "Invoermicrofoon dempen in-/uitschakelen",
     "keep-awake": "Wakker houden",
     "keyboard-layout": "{layout}-toetsenbordindeling",
+    "list-view": "Lijstweergave",
     "manage-vpn": "VPN-verbindingen beheren",
     "manage-wifi": "Wi-Fi beheren",
     "microphone-volume-at": "Microfoonvolume {volume}%\nLinks klikken voor instellingen. Rechts klikken om te dempen.\nScroll om het volume aan te passen.",
@@ -2219,6 +2247,8 @@
     "refresh-wallpaper-list": "Achtergrondlijst verversen",
     "remove-widget": "Widget verwijderen",
     "screen-recorder-not-installed": "Schermrecorder is niet geïnstalleerd",
+    "search": "Zoeken",
+    "search-close": "Zoeken sluiten",
     "session-menu": "Sessiemenu",
     "set-power-profile": "\"{profile}\"-energieprofiel instellen",
     "start-screen-recording": "Schermopname starten",
