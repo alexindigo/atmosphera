@@ -25,13 +25,13 @@ ColumnLayout {
   spacing: Style.marginL
 
   Component.onCompleted: {
+    GitHubService.ensureDataFresh();
+
     if (root.isGitVersion) {
-      // First try to extract from Arch package version format (e.g., 3.4.0.r112.g3f00bec8-1)
       var archHash = root.extractCommitFromArchVersion();
       if (archHash) {
         root.gitCommitHash = archHash;
       } else {
-        // Fall back to git command for git-cloned installations
         fetchGitCommit();
       }
     }
@@ -40,15 +40,18 @@ ColumnLayout {
   function hasArchGitVersion() {
     // Check if version matches Arch package format: X.Y.Z.rN.gHASH-REV
     // Pattern: version.r<number>.g<hash>-<rev>
-    return /\.r\d+\.g[0-9a-fA-F]+-/.test(root.currentVersion);
+    // Handle both with and without "v" prefix: v3.4.0.r112.g3f00bec8-1 or 3.4.0.r112.g3f00bec8-1
+    var version = root.currentVersion.replace(/^v/, ""); // Remove "v" prefix if present
+    return /\.r\d+\.g[0-9a-fA-F]+-/.test(version);
   }
 
   function extractCommitFromArchVersion() {
     // Extract commit hash from Arch package version format
     // Format: 3.4.0.r112.g3f00bec8-1 or v3.4.0.r112.g3f00bec8-1
     // We want to extract the hash after ".g" and before "-"
-    var match = root.currentVersion.match(/\.g([0-9a-fA-F]+)-/i);
-    if (match && match[1]) {
+    var version = root.currentVersion.replace(/^v/, ""); // Remove "v" prefix if present
+    var match = version.match(/\.g([0-9a-fA-F]+)-/i);
+    if (match && match[1] && match[1].length >= 7) {
       // Return first 7 characters (short hash)
       return match[1].substring(0, 7);
     }
