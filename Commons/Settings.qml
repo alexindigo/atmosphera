@@ -166,7 +166,13 @@ Singleton {
       widgets: JsonObject {
         property list<var> left: [
           {
-            "id": "ControlCenter"
+            "icon": "rocket",
+            "id": "CustomButton",
+            "leftClickExec": "qs -c noctalia-shell ipc call launcher toggle"
+          },
+          {
+            "id": "Clock",
+            "usePrimaryColor": false
           },
           {
             "id": "SystemMonitor"
@@ -203,7 +209,7 @@ Singleton {
             "id": "Brightness"
           },
           {
-            "id": "Clock"
+            "id": "ControlCenter"
           }
         ]
       }
