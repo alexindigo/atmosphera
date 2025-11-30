@@ -102,9 +102,13 @@
       "control-center": {
         "browse-file": "Dosyaya Göz At",
         "browse-library": "Kütüphaneye Göz At",
-        "colorize-distro-logo": {
-          "description": "Dağıtım logonuza tema renklerini uygula.",
-          "label": "Dağıtım logosunu renklendir"
+        "enable-colorization": {
+          "description": "Kontrol merkezi simgesi için renklendirmeyi etkinleştirir, tema renklerini uygular.",
+          "label": "Renklendirmeyi Etkinleştir"
+        },
+        "color-selection": {
+          "description": "Simgeye tema renklerini uygular.",
+          "label": "Renk Seç"
         },
         "icon": {
           "description": "Kütüphaneden veya özel bir dosyadan bir ikon seçin.",
@@ -1048,11 +1052,11 @@
           }
         },
         "misc": {
-          "description": "Ek yapılandırma seçenekleri.",
-          "label": "Çeşitli",
+          "description": "Kendi şablonlarınızı oluşturun",
+          "label": "Gelişmiş",
           "user-templates": {
-            "description": "Kullanıcı tanımlı Matugen yapılandırmasını etkinleştir. İlk etkinleştirmede ~/.config/noctalia/user-templates.toml dosyası oluşturulacaktır",
-            "label": "Kullanıcı şablonları"
+            "description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin, çevrimiçi belgelerimize bakın",
+            "label": "Kullanıcı şablonlarını etkinleştir"
           }
         },
         "programs": {
