@@ -22,18 +22,14 @@ ColumnLayout {
   spacing: Style.marginL
 
   Component.onCompleted: {
-    Logger.i("AboutTab", "Component.onCompleted - Current version:", root.currentVersion);
-    Logger.i("AboutTab", "Component.onCompleted - Is git version:", root.isGitVersion);
-    Logger.i("AboutTab", "Component.onCompleted - commitInfo:", root.commitInfo);
+    Logger.d("AboutTab", "Component.onCompleted - Current version:", root.currentVersion);
+    Logger.d("AboutTab", "Component.onCompleted - Is git version:", root.isGitVersion);
     // Only fetch commit info for -git versions
     if (root.isGitVersion) {
       // Try to get Arch package version first (which includes commit hash)
-      Logger.i("AboutTab", "Component.onCompleted - Starting pacman process");
       pacmanProcess.running = true;
       // Start fallback timer in case pacman fails to start
       gitFallbackTimer.start();
-    } else {
-      Logger.i("AboutTab", "Component.onCompleted - Not a git version, skipping commit info fetch");
     }
   }
 
@@ -42,12 +38,8 @@ ColumnLayout {
     interval: 500
     running: false
     onTriggered: {
-      Logger.i("AboutTab", "gitFallbackTimer - Timer triggered, commitInfo:", root.commitInfo);
       if (!root.commitInfo) {
-        Logger.i("AboutTab", "gitFallbackTimer - commitInfo still empty, trying git");
         fetchGitCommit();
-      } else {
-        Logger.i("AboutTab", "gitFallbackTimer - commitInfo already set, not trying git");
       }
     }
   }
@@ -58,43 +50,39 @@ ColumnLayout {
     running: false
 
     onStarted: {
-      Logger.i("AboutTab", "pacmanProcess - Process started");
       gitFallbackTimer.stop();
     }
 
     onExited: function (exitCode) {
-      Logger.i("AboutTab", "pacmanProcess - Process exited with code:", exitCode);
       gitFallbackTimer.stop();
+      Logger.d("AboutTab", "pacmanProcess - Process exited with code:", exitCode);
       if (exitCode === 0) {
         var output = stdout.text.trim();
-        Logger.i("AboutTab", "pacmanProcess - Output:", output);
+        Logger.d("AboutTab", "pacmanProcess - Output:", output);
         var match = output.match(/noctalia-shell-git\s+(.+)/);
         if (match && match[1]) {
           // For Arch packages, the version format might be like: 3.4.0.r112.g3f00bec8-1
           // Extract just the commit hash part if it exists
           var version = match[1];
-          Logger.i("AboutTab", "pacmanProcess - Extracted version:", version);
           var commitMatch = version.match(/\.g([0-9a-f]{7,})/i);
           if (commitMatch && commitMatch[1]) {
             // Show short hash (first 7 characters)
             root.commitInfo = commitMatch[1].substring(0, 7);
-            Logger.i("AboutTab", "pacmanProcess - Set commitInfo from Arch package:", root.commitInfo);
+            Logger.d("AboutTab", "pacmanProcess - Set commitInfo from Arch package:", root.commitInfo);
             return; // Successfully got commit hash from Arch package
           } else {
             // If no commit hash in version format, still try git repo
-            Logger.i("AboutTab", "pacmanProcess - No commit hash in version, trying git");
+            Logger.d("AboutTab", "pacmanProcess - No commit hash in version, trying git");
             fetchGitCommit();
           }
         } else {
           // Unexpected output format, try git
-          Logger.i("AboutTab", "pacmanProcess - Unexpected output format, trying git");
+          Logger.d("AboutTab", "pacmanProcess - Unexpected output format, trying git");
           fetchGitCommit();
         }
       } else {
         // If not on Arch, try to get git commit from repository
-        var errorOutput = stderr.text.trim();
-        Logger.i("AboutTab", "pacmanProcess - Package not found or error. Exit code:", exitCode, "stderr:", errorOutput);
-        Logger.i("AboutTab", "pacmanProcess - Trying git");
+        Logger.d("AboutTab", "pacmanProcess - Package not found, trying git");
         fetchGitCommit();
       }
     }
@@ -104,16 +92,13 @@ ColumnLayout {
   }
 
   function fetchGitCommit() {
-    Logger.i("AboutTab", "fetchGitCommit - Function called");
     var shellDir = Quickshell.shellDir || "";
-    Logger.i("AboutTab", "fetchGitCommit - shellDir:", shellDir);
+    Logger.d("AboutTab", "fetchGitCommit - shellDir:", shellDir);
     if (!shellDir) {
-      Logger.i("AboutTab", "fetchGitCommit - Cannot determine shell directory, skipping git commit fetch");
+      Logger.d("AboutTab", "fetchGitCommit - Cannot determine shell directory, skipping git commit fetch");
       return;
     }
 
-    Logger.i("AboutTab", "fetchGitCommit - Setting workingDirectory to:", shellDir);
-    Logger.i("AboutTab", "fetchGitCommit - Starting git process");
     gitProcess.workingDirectory = shellDir;
     gitProcess.running = true;
   }
@@ -123,28 +108,17 @@ ColumnLayout {
     command: ["git", "rev-parse", "--short", "HEAD"]
     running: false
 
-    onStarted: {
-      Logger.i("AboutTab", "gitProcess - Process started, workingDirectory:", gitProcess.workingDirectory);
-    }
-
     onExited: function (exitCode) {
-      Logger.i("AboutTab", "gitProcess - Process exited with code:", exitCode);
-      Logger.i("AboutTab", "gitProcess - workingDirectory was:", gitProcess.workingDirectory);
+      Logger.d("AboutTab", "gitProcess - Process exited with code:", exitCode);
       if (exitCode === 0) {
         var gitOutput = stdout.text.trim();
-        Logger.i("AboutTab", "gitProcess - stdout.text:", stdout.text);
-        Logger.i("AboutTab", "gitProcess - gitOutput (trimmed):", gitOutput);
+        Logger.d("AboutTab", "gitProcess - gitOutput:", gitOutput);
         if (gitOutput) {
           root.commitInfo = gitOutput;
-          Logger.i("AboutTab", "gitProcess - Set commitInfo to:", root.commitInfo);
-        } else {
-          Logger.i("AboutTab", "gitProcess - Git command succeeded but output is empty");
+          Logger.d("AboutTab", "gitProcess - Set commitInfo to:", root.commitInfo);
         }
       } else {
-        var errorOutput = stderr.text.trim();
-        Logger.i("AboutTab", "gitProcess - Git command failed. Exit code:", exitCode);
-        Logger.i("AboutTab", "gitProcess - stderr.text:", stderr.text);
-        Logger.i("AboutTab", "gitProcess - errorOutput (trimmed):", errorOutput);
+        Logger.d("AboutTab", "gitProcess - Git command failed. Exit code:", exitCode);
       }
     }
 
