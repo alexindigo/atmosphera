@@ -871,7 +871,7 @@ SmartPanel {
 
                   // Pin/Unpin action icon button
                   NIconButton {
-                    visible: !!entry.appId && !modelData.isImage && entry.isSelected && (Settings.data.dock.monitors && Settings.data.dock.monitors.length > 0)
+                    visible: !!entry.appId && !modelData.isImage && entry.isSelected && Settings.data.dock.enabled
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
                     tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
