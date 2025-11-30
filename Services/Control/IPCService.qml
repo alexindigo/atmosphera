@@ -46,8 +46,8 @@ Item {
     target: "calendar"
     function toggle() {
       root.withTargetScreen(screen => {
-                              var calendarPanel = PanelService.getPanel("calendarPanel", screen);
-                              calendarPanel?.toggle(null, "Clock");
+                              var clockPanel = PanelService.getPanel("clockPanel", screen);
+                              clockPanel?.toggle(null, "Clock");
                             });
     }
   }
