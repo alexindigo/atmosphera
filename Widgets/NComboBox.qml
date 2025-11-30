@@ -120,7 +120,7 @@ RowLayout {
           width: ListView.view ? ListView.view.width : (parentComboBox ? parentComboBox.width - Style.marginM * 3 : 0)
           hoverEnabled: true
           highlighted: ListView.view.currentIndex === itemIndex
-          
+
           property bool pendingClick: false
           Timer {
             id: clickRetryTimer
