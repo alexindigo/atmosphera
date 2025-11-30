@@ -140,7 +140,9 @@ Singleton {
                                                 lines.push(`\n[templates.emacs]`);
                                                 lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
                                                 lines.push(`output_path = "${standardPathTemplate}"`);
-                                                lines.push(`post_hook = "sh -c 'if [ -d \\"${doomConfigDir}\\" ]; then mkdir -p \\"${doomDir}\\" && mv \\"${standardPath}\\" \\"${doomPath}\\" && rmdir \\"${homeDir}/.emacs.d/themes\\" 2>/dev/null; rmdir \\"${homeDir}/.emacs.d\\" 2>/dev/null; fi'"`);
+                                                // Move to doom if doom exists, then remove empty .emacs.d/themes and .emacs.d directories
+                                                // Check directories are empty before removing
+                                                lines.push(`post_hook = "sh -c 'if [ -d \\"${doomConfigDir}\\" ] && [ -f \\"${standardPath}\\" ]; then mkdir -p \\"${doomDir}\\" && mv \\"${standardPath}\\" \\"${doomPath}\\" && rmdir \\"${homeDir}/.emacs.d/themes\\" 2>/dev/null && rmdir \\"${homeDir}/.emacs.d\\" 2>/dev/null || true; fi'"`);
                                               }
                                             } else {
                                               // Handle regular apps
