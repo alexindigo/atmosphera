@@ -11,22 +11,10 @@ from gi.repository import ECal, EDataServer, ICalGLib
 start_time = int(sys.argv[1])
 end_time = int(sys.argv[2])
 
-# for testing :
-# ----------------------
-# now = datetime.now()
-# start_date = now - timedelta(days=31)
-# end_date = now + timedelta(days=14)
-# start_time = int(start_date.timestamp())
-# end_time = int(end_date.timestamp())
-# ----------------------
-
 print(f"Starting with time range: {start_time} to {end_time}", file=sys.stderr)
 
 all_events = []
 
-# ----------------------
-# Utilitary Functions
-# ----------------------
 def safe_get_time(ical_time):
     if not ical_time:
         return None, False
@@ -55,9 +43,6 @@ def add_event(summary, calendar_name, start_ts, end_ts, location="", description
         'description': description
     })
 
-# ----------------------
-# Get Events from Calendars
-# ----------------------
 registry = EDataServer.SourceRegistry.new_sync(None)
 sources = registry.list_sources(EDataServer.SOURCE_EXTENSION_CALENDAR)
 
@@ -227,9 +212,6 @@ for source in sources:
     except Exception as e:
         print(f"  Error for {calendar_name}: {e}", file=sys.stderr)
 
-# ----------------------
-# JSON output
-# ----------------------
 all_events.sort(key=lambda x: x['start'])
 print(json.dumps(all_events, indent=4))
 
