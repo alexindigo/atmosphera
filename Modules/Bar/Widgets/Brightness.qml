@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Modules.Bar.Extras
@@ -46,6 +47,8 @@ Item {
   function getIcon() {
     var monitor = getMonitor();
     var brightness = monitor ? monitor.brightness : 0;
+    if (brightness <= 0.001)
+      return "sun-off";
     return brightness <= 0.5 ? "brightness-low" : "brightness-high";
   }
 
@@ -74,9 +77,42 @@ Item {
     onTriggered: pill.hide()
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.open-display-settings"),
+        "action": "open-display-settings",
+        "icon": "sun"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "open-display-settings") {
+                     var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                     settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+                     settingsPanel.open();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   BarPill {
     id: pill
 
+    screen: root.screen
     density: Settings.data.bar.density
     oppositeDirection: BarService.getPillDirection(root)
     icon: getIcon()
@@ -99,8 +135,9 @@ Item {
 
     onWheel: function (angle) {
       var monitor = getMonitor();
-      if (!monitor)
+      if (!monitor || !monitor.brightnessControlAvailable)
         return;
+
       if (angle > 0) {
         monitor.increaseBrightness();
       } else if (angle < 0) {
@@ -108,16 +145,15 @@ Item {
       }
     }
 
-    onClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-      settingsPanel.open();
-    }
+    onClicked: PanelService.getPanel("brightnessPanel", screen)?.toggle(this)
 
     onRightClicked: {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-      settingsPanel.open();
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        popupMenuWindow.showContextMenu(contextMenu);
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+        contextMenu.openAtItem(pill, pos.x, pos.y);
+      }
     }
   }
 }

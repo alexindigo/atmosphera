@@ -5,33 +5,36 @@ import Quickshell
 import Quickshell.Io
 import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
+import qs.Commons.Migrations
+import qs.Modules.OSD
 import qs.Services.UI
 
 Singleton {
   id: root
 
-  // Used to access via Settings.data.xxx.yyy
-  readonly property alias data: adapter
   property bool isLoaded: false
   property bool directoriesCreated: false
-  property int settingsVersion: 23
-  property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
+  property bool shouldOpenSetupWizard: false
 
-  // Define our app directories
-  // Default config directory: ~/.config/noctalia
-  // Default cache directory: ~/.cache/noctalia
-  property string shellName: "noctalia"
-  property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
-  property string cacheDir: Quickshell.env("NOCTALIA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/" + shellName + "/"
-  property string cacheDirImages: cacheDir + "images/"
-  property string cacheDirImagesWallpapers: cacheDir + "images/wallpapers/"
-  property string cacheDirImagesNotifications: cacheDir + "images/notifications/"
-  property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
-
-  property string defaultLocation: "Tokyo"
-  property string defaultAvatar: Quickshell.env("HOME") + "/.face"
-  property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
-  property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
+  /*
+  Shell directories.
+  - Default config directory: ~/.config/noctalia
+  - Default cache directory: ~/.cache/noctalia
+  */
+  readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
+  readonly property int settingsVersion: 26
+  readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
+  readonly property string shellName: "noctalia"
+  readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
+  readonly property string cacheDir: Quickshell.env("NOCTALIA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/" + shellName + "/"
+  readonly property string cacheDirImages: cacheDir + "images/"
+  readonly property string cacheDirImagesWallpapers: cacheDir + "images/wallpapers/"
+  readonly property string cacheDirImagesNotifications: cacheDir + "images/notifications/"
+  readonly property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
+  readonly property string defaultLocation: "Tokyo"
+  readonly property string defaultAvatar: Quickshell.env("HOME") + "/.face"
+  readonly property string defaultVideosDirectory: Quickshell.env("HOME") + "/Videos"
+  readonly property string defaultWallpapersDirectory: Quickshell.env("HOME") + "/Pictures/Wallpapers"
 
   // Signal emitted when settings are loaded after startupcale changes
   signal settingsLoaded
@@ -62,7 +65,8 @@ Singleton {
     adapter.general.avatarImage = defaultAvatar;
     adapter.screenRecorder.directory = defaultVideosDirectory;
     adapter.wallpaper.directory = defaultWallpapersDirectory;
-    adapter.wallpaper.defaultWallpaper = Quickshell.shellDir + "/Assets/Wallpaper/noctalia.png";
+    adapter.ui.fontDefault = Qt.application.font.family;
+    adapter.ui.fontFixed = "monospace";
 
     // Set the adapter to the settingsFileView to trigger the real settings load
     settingsFileView.adapter = adapter;
@@ -73,7 +77,7 @@ Singleton {
   Timer {
     id: saveTimer
     running: false
-    interval: 1000
+    interval: 500
     onTriggered: {
       root.saveImmediate();
     }
@@ -97,9 +101,13 @@ Singleton {
       if (!isLoaded) {
         Logger.i("Settings", "Settings loaded");
 
+        // -----------------
+        // Run versioned migrations from MigrationRegistry
+        runVersionedMigrations();
+
         upgradeSettingsData();
-        validateMonitorConfigurations();
-        isLoaded = true;
+
+        root.isLoaded = true;
 
         // Emit the signal
         root.settingsLoaded();
@@ -112,10 +120,14 @@ Singleton {
       if (error.toString().includes("No such file") || error === 2) {
         // File doesn't exist, create it with default values
         writeAdapter();
+
         // Also write to fallback if set
         if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
           settingsFallbackFileView.writeAdapter();
         }
+
+        // We started without settings, we should open the setupWizard
+        root.shouldOpenSetupWizard = true;
       }
     }
   }
@@ -128,19 +140,20 @@ Singleton {
     printErrors: false
     watchChanges: false
   }
+
   JsonAdapter {
     id: adapter
 
     property int settingsVersion: root.settingsVersion
-    property bool setupCompleted: false
 
     // bar
     property JsonObject bar: JsonObject {
       property string position: "top" // "top", "bottom", "left", or "right"
       property real backgroundOpacity: 1.0
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds bar visibility per monitor
       property string density: "default" // "compact", "default", "comfortable"
       property bool showCapsule: true
+      property real capsuleOpacity: 1.0
 
       // Floating bar settings
       property bool floating: false
@@ -158,7 +171,13 @@ Singleton {
       widgets: JsonObject {
         property list<var> left: [
           {
-            "id": "ControlCenter"
+            "icon": "rocket",
+            "id": "CustomButton",
+            "leftClickExec": "qs -c noctalia-shell ipc call launcher toggle"
+          },
+          {
+            "id": "Clock",
+            "usePrimaryColor": false
           },
           {
             "id": "SystemMonitor"
@@ -195,7 +214,7 @@ Singleton {
             "id": "Brightness"
           },
           {
-            "id": "Clock"
+            "id": "ControlCenter"
           }
         ]
       }
@@ -204,7 +223,7 @@ Singleton {
     // general
     property JsonObject general: JsonObject {
       property string avatarImage: ""
-      property real dimmerOpacity: 0.8
+      property real dimmerOpacity: 0.6
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: false
       property real scaleRatio: 1.0
@@ -214,17 +233,19 @@ Singleton {
       property bool animationDisabled: false
       property bool compactLockScreen: false
       property bool lockOnSuspend: true
+      property bool showHibernateOnLockScreen: false
       property bool enableShadows: true
       property string shadowDirection: "bottom_right"
       property int shadowOffsetX: 2
       property int shadowOffsetY: 3
       property string language: ""
+      property bool allowPanelsOnScreenWithoutBar: true
     }
 
     // ui
     property JsonObject ui: JsonObject {
-      property string fontDefault: "Roboto"
-      property string fontFixed: "DejaVu Sans Mono"
+      property string fontDefault: ""
+      property string fontFixed: ""
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
@@ -237,6 +258,7 @@ Singleton {
     property JsonObject location: JsonObject {
       property string name: defaultLocation
       property bool weatherEnabled: true
+      property bool weatherShowEffects: true
       property bool useFahrenheit: false
       property bool use12hourFormat: false
       property bool showWeekNumberInCalendar: false
@@ -244,6 +266,28 @@ Singleton {
       property bool showCalendarWeather: true
       property bool analogClockInCalendar: false
       property int firstDayOfWeek: -1 // -1 = auto (use locale), 0 = Sunday, 1 = Monday, 6 = Saturday
+    }
+
+    // calendar
+    property JsonObject calendar: JsonObject {
+      property list<var> cards: [
+        {
+          "id": "calendar-header-card",
+          "enabled": true
+        },
+        {
+          "id": "calendar-month-card",
+          "enabled": true
+        },
+        {
+          "id": "timer-card",
+          "enabled": true
+        },
+        {
+          "id": "weather-card",
+          "enabled": true
+        }
+      ]
     }
 
     // screen recorder
@@ -264,10 +308,10 @@ Singleton {
       property bool enabled: true
       property bool overviewEnabled: false
       property string directory: ""
+      property list<var> monitorDirectories: []
       property bool enableMultiMonitorDirectories: false
       property bool recursiveSearch: false
       property bool setWallpaperOnAllMonitors: true
-      property string defaultWallpaper: ""
       property string fillMode: "crop"
       property color fillColor: "#000000"
       property bool randomEnabled: false
@@ -275,7 +319,6 @@ Singleton {
       property int transitionDuration: 1500 // 1500 ms
       property string transitionType: "random"
       property real transitionEdgeSmoothness: 0.05
-      property list<var> monitors: []
       property string panelPosition: "follow_bar"
       property bool hideWallpaperFilenames: false
       // Wallhaven settings
@@ -293,6 +336,7 @@ Singleton {
     // applauncher
     property JsonObject appLauncher: JsonObject {
       property bool enableClipboardHistory: false
+      property bool enableClipPreview: true
       // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "center"
       property list<string> pinnedExecs: []
@@ -301,6 +345,8 @@ Singleton {
       property string terminalCommand: "xterm -e"
       property bool customLaunchPrefixEnabled: false
       property string customLaunchPrefix: ""
+      // View mode: "list" or "grid"
+      property string viewMode: "list"
     }
 
     // control center
@@ -372,6 +418,11 @@ Singleton {
       property int memCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
+      property int cpuPollingInterval: 3000
+      property int tempPollingInterval: 3000
+      property int memPollingInterval: 3000
+      property int diskPollingInterval: 3000
+      property int networkPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""
@@ -380,12 +431,13 @@ Singleton {
     // dock
     property JsonObject dock: JsonObject {
       property bool enabled: true
-      property string displayMode: "always_visible" // "always_visible", "auto_hide", "exclusive"
+      property string displayMode: "auto_hide" // "always_visible", "auto_hide", "exclusive"
       property real backgroundOpacity: 1.0
+      property real radiusRatio: 0.1
       property real floatingRatio: 1.0
       property real size: 1
       property bool onlySameOutput: true
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds dock visibility per monitor
       // Desktop entry IDs pinned to the dock (e.g., "org.kde.konsole", "firefox.desktop")
       property list<string> pinnedApps: []
       property bool colorizeIcons: false
@@ -437,7 +489,7 @@ Singleton {
     // notifications
     property JsonObject notifications: JsonObject {
       property bool enabled: true
-      property list<string> monitors: []
+      property list<string> monitors: [] // holds notifications visibility per monitor
       property string location: "top_right"
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
@@ -452,10 +504,11 @@ Singleton {
     property JsonObject osd: JsonObject {
       property bool enabled: true
       property string location: "top_right"
-      property list<string> monitors: []
       property int autoHideMs: 2000
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
+      property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness]
+      property list<string> monitors: [] // holds osd visibility per monitor
     }
 
     // audio
@@ -467,6 +520,7 @@ Singleton {
       property string visualizerQuality: "high"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
+      property string externalMixer: "pwvucontrol || pavucontrol"
     }
 
     // brightness
@@ -504,6 +558,10 @@ Singleton {
       property bool walker: false
       property bool code: false
       property bool spicetify: false
+      property bool telegram: false
+      property bool cava: false
+      property bool emacs: false
+      property bool niri: false
       property bool enableUserTemplates: false
     }
 
@@ -518,16 +576,15 @@ Singleton {
       property string manualSunset: "18:30"
     }
 
+    property JsonObject changelog: JsonObject {
+      property string lastSeenVersion: ""
+    }
+
     // hooks
     property JsonObject hooks: JsonObject {
       property bool enabled: false
       property string wallpaperChange: ""
       property string darkModeChange: ""
-    }
-
-    // battery
-    property JsonObject battery: JsonObject {
-      property int chargingMode: 0
     }
   }
 
@@ -580,222 +637,42 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Function to validate monitor configurations
-  function validateMonitorConfigurations() {
-    var availableScreenNames = [];
-    for (var i = 0; i < Quickshell.screens.length; i++) {
-      availableScreenNames.push(Quickshell.screens[i].name);
-    }
+  // Run versioned migrations using MigrationRegistry
+  function runVersionedMigrations() {
+    const currentVersion = adapter.settingsVersion;
+    const migrations = MigrationRegistry.migrations;
 
-    Logger.d("Settings", "Available monitors: [" + availableScreenNames.join(", ") + "]");
-    Logger.d("Settings", "Configured bar monitors: [" + adapter.bar.monitors.join(", ") + "]");
+    // Get all migration versions and sort them
+    const versions = Object.keys(migrations).map(v => parseInt(v)).sort((a, b) => a - b);
 
-    // Check bar monitors
-    if (adapter.bar.monitors.length > 0) {
-      var hasValidBarMonitor = false;
-      for (var j = 0; j < adapter.bar.monitors.length; j++) {
-        if (availableScreenNames.includes(adapter.bar.monitors[j])) {
-          hasValidBarMonitor = true;
-          break;
-        }
-      }
-      if (!hasValidBarMonitor) {
-        Logger.w("Settings", "No configured bar monitors found on system, clearing bar monitor list to show on all screens");
-        adapter.bar.monitors = [];
-      } else
+    // Run migrations in order for versions newer than current
+    for (var i = 0; i < versions.length; i++) {
+      const version = versions[i];
 
-        //Logger.i("Settings", "Found valid bar monitors, keeping configuration")
-      {}
-    } else
+      if (currentVersion < version) {
+        // Create migration instance and run it
+        const migrationComponent = migrations[version];
+        const migration = migrationComponent.createObject(root);
 
-      //Logger.i("Settings", "Bar monitor list is empty, will show on all available screens")
-    {}
-  }
-
-  // -----------------------------------------------------
-  // If the settings structure has changed, ensure
-  // backward compatibility by upgrading the settings
-  function upgradeSettingsData() {
-    // Wait for BarWidgetRegistry to be ready
-    if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
-      Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade");
-      Qt.callLater(upgradeSettingsData);
-      return;
-    }
-
-    const sections = ["left", "center", "right"];
-
-    // -----------------
-    // 1st. convert old widget id to new id
-    for (var s = 0; s < sections.length; s++) {
-      const sectionName = sections[s];
-      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
-        var widget = adapter.bar.widgets[sectionName][i];
-
-        switch (widget.id) {
-        case "DarkModeToggle":
-          widget.id = "DarkMode";
-          break;
-        case "PowerToggle":
-          widget.id = "SessionMenu";
-          break;
-        case "ScreenRecorderIndicator":
-          widget.id = "ScreenRecorder";
-          break;
-        case "SidePanelToggle":
-          widget.id = "ControlCenter";
-          break;
-        }
-      }
-    }
-
-    // -----------------
-    // 2nd. remove any non existing widget type
-    var removedWidget = false;
-    for (var s = 0; s < sections.length; s++) {
-      const sectionName = sections[s];
-      const widgets = adapter.bar.widgets[sectionName];
-      // Iterate backward through the widgets array, so it does not break when removing a widget
-      for (var i = widgets.length - 1; i >= 0; i--) {
-        var widget = widgets[i];
-        if (!BarWidgetRegistry.hasWidget(widget.id)) {
-          Logger.w(`Settings`, `Deleted invalid widget ${widget.id}`);
-          widgets.splice(i, 1);
-          removedWidget = true;
-        }
-      }
-    }
-
-    // -----------------
-    // 3nd. upgrade widget settings
-    for (var s = 0; s < sections.length; s++) {
-      const sectionName = sections[s];
-      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
-        var widget = adapter.bar.widgets[sectionName][i];
-
-        // Check if widget registry supports user settings, if it does not, then there is nothing to do
-        const reg = BarWidgetRegistry.widgetMetadata[widget.id];
-        if ((reg === undefined) || (reg.allowUserSettings === undefined) || !reg.allowUserSettings) {
-          continue;
-        }
-
-        if (upgradeWidget(widget)) {
-          Logger.d("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget));
-        }
-      }
-    }
-
-    // -----------------
-    // 4th. safety check
-    // if a widget was deleted, ensure we still have a control center
-    if (removedWidget) {
-      var gotControlCenter = false;
-      for (var s = 0; s < sections.length; s++) {
-        const sectionName = sections[s];
-        for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
-          var widget = adapter.bar.widgets[sectionName][i];
-          if (widget.id === "ControlCenter") {
-            gotControlCenter = true;
-            break;
+        if (migration && typeof migration.migrate === "function") {
+          const success = migration.migrate(adapter, Logger);
+          if (!success) {
+            Logger.e("Settings", "Migration to v" + version + " failed");
           }
+        } else {
+          Logger.e("Settings", "Invalid migration for v" + version);
         }
-      }
 
-      if (!gotControlCenter) {
-        //const obj = JSON.parse('{"id": "ControlCenter"}');
-        adapter.bar.widgets["right"].push(({
-                                             "id": "ControlCenter"
-                                           }));
-        Logger.w("Settings", "Added a ControlCenter widget to the right section");
-      }
-    }
-
-    // -----------------
-    // 5th. Migrate Discord templates (version 20 → 21)
-    // Consolidate individual discord_* properties into unified discord property
-    if (adapter.settingsVersion < 21) {
-      // Read raw JSON file to access properties not in adapter schema
-      try {
-        var rawJson = settingsFileView.text();
-
-        if (rawJson) {
-          var parsed = JSON.parse(rawJson);
-          var anyDiscordEnabled = false;
-
-          // Check if any Discord client was enabled
-          const discordClients = ["discord_vesktop", "discord_webcord", "discord_armcord", "discord_equibop", "discord_lightcord", "discord_dorion", "discord_vencord"];
-
-          if (parsed.templates) {
-            for (var i = 0; i < discordClients.length; i++) {
-              if (parsed.templates[discordClients[i]]) {
-                anyDiscordEnabled = true;
-                break;
-              }
-            }
-          }
-
-          // Set unified discord property
-          adapter.templates.discord = anyDiscordEnabled;
-
-          Logger.i("Settings", "Migrated Discord templates to unified 'discord' property (enabled:", anyDiscordEnabled + ")");
+        // Clean up migration instance
+        if (migration) {
+          migration.destroy();
         }
-      } catch (error) {
-        Logger.w("Settings", "Failed to read raw JSON for Discord migration:", error);
-      }
-    }
-
-    // -----------------
-    // 6th. Migrate panel background opacity (version 21 → 22)
-    // Move appLauncher.backgroundOpacity to ui.panelBackgroundOpacity
-    if (adapter.settingsVersion < 22) {
-      // Read raw JSON file to access properties not in adapter schema
-      try {
-        var rawJson = settingsFileView.text();
-
-        if (rawJson) {
-          var parsed = JSON.parse(rawJson);
-          if (parsed.appLauncher && parsed.appLauncher.backgroundOpacity !== undefined) {
-            var oldOpacity = parsed.appLauncher.backgroundOpacity;
-            if (adapter.ui) {
-              adapter.ui.panelBackgroundOpacity = oldOpacity;
-              Logger.i("Settings", "Migrated appLauncher.backgroundOpacity to ui.panelBackgroundOpacity (value:", oldOpacity + ")");
-            }
-          }
-        }
-      } catch (error) {
-        Logger.w("Settings", "Failed to read raw JSON for migration:", error);
-      }
-    }
-
-    // -----------------
-    // 7th. Migrate dim desktop settings (version 22 → 23)
-    // If dimDesktop is enabled, set dimmerOpacity to 0.8 if it's not already set or is 0
-    // Then remove dimDesktop property as it's no longer needed
-    if (adapter.settingsVersion < 23) {
-      // Read raw JSON file to access dimDesktop property
-      try {
-        var rawJson = settingsFileView.text();
-
-        if (rawJson) {
-          var parsed = JSON.parse(rawJson);
-          if (parsed.general && parsed.general.dimDesktop === true) {
-            // Check if dimmerOpacity exists in raw JSON (not adapter default)
-            var dimmerOpacityInJson = parsed.general.dimmerOpacity;
-
-            // If dimmerOpacity wasn't explicitly set in JSON or was 0, set it to 0.8 (80% dimming)
-            if (dimmerOpacityInJson === undefined || dimmerOpacityInJson === 0) {
-              adapter.general.dimmerOpacity = 0.8;
-              Logger.i("Settings", "Migrated dimDesktop=true: set dimmerOpacity to 0.8 (80% dimming)");
-            }
-          }
-        }
-      } catch (error) {
-        Logger.w("Settings", "Failed to read raw JSON for dimDesktop migration:", error);
       }
     }
   }
 
   // -----------------------------------------------------
+  // Function to clean up deprecated user/custom bar widgets settings
   function upgradeWidget(widget) {
     // Backup the widget definition before altering
     const widgetBefore = JSON.stringify(widget);
@@ -828,5 +705,80 @@ Singleton {
     // Compare settings, to detect if something has been upgraded
     const widgetAfter = JSON.stringify(widget);
     return (widgetAfter !== widgetBefore);
+  }
+
+  // -----------------------------------------------------
+  // If the settings structure has changed, ensure
+  // backward compatibility by upgrading the settings
+  function upgradeSettingsData() {
+    // Wait for BarWidgetRegistry to be ready
+    if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
+      Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade");
+      Qt.callLater(upgradeSettingsData);
+      return;
+    }
+
+    const sections = ["left", "center", "right"];
+
+    // -----------------
+    // 1. remove any non existing widget type
+    var removedWidget = false;
+    for (var s = 0; s < sections.length; s++) {
+      const sectionName = sections[s];
+      const widgets = adapter.bar.widgets[sectionName];
+      // Iterate backward through the widgets array, so it does not break when removing a widget
+      for (var i = widgets.length - 1; i >= 0; i--) {
+        var widget = widgets[i];
+        if (!BarWidgetRegistry.hasWidget(widget.id)) {
+          Logger.w(`Settings`, `Deleted invalid widget ${widget.id}`);
+          widgets.splice(i, 1);
+          removedWidget = true;
+        }
+      }
+    }
+
+    // -----------------
+    // 2. upgrade user widget settings
+    for (var s = 0; s < sections.length; s++) {
+      const sectionName = sections[s];
+      for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
+        var widget = adapter.bar.widgets[sectionName][i];
+
+        // Check if widget registry supports user settings, if it does not, then there is nothing to do
+        const reg = BarWidgetRegistry.widgetMetadata[widget.id];
+        if ((reg === undefined) || (reg.allowUserSettings === undefined) || !reg.allowUserSettings) {
+          continue;
+        }
+
+        if (upgradeWidget(widget)) {
+          Logger.d("Settings", `Upgraded ${widget.id} widget:`, JSON.stringify(widget));
+        }
+      }
+    }
+
+    // -----------------
+    // 3. safety check
+    // if a widget was deleted, ensure we still have a control center
+    if (removedWidget) {
+      var gotControlCenter = false;
+      for (var s = 0; s < sections.length; s++) {
+        const sectionName = sections[s];
+        for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
+          var widget = adapter.bar.widgets[sectionName][i];
+          if (widget.id === "ControlCenter") {
+            gotControlCenter = true;
+            break;
+          }
+        }
+      }
+
+      if (!gotControlCenter) {
+        //const obj = JSON.parse('{"id": "ControlCenter"}');
+        adapter.bar.widgets["right"].push(({
+                                             "id": "ControlCenter"
+                                           }));
+        Logger.w("Settings", "Added a ControlCenter widget to the right section");
+      }
+    }
   }
 }

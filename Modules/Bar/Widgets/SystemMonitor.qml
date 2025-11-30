@@ -1,7 +1,9 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
 import qs.Services.System
 import qs.Services.UI
@@ -40,6 +42,7 @@ Rectangle {
   readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
+  readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
 
   readonly property real iconSize: textSize * 1.4
   readonly property real textSize: {
@@ -77,8 +80,8 @@ Rectangle {
   readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > tempCriticalThreshold
   readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > memWarningThreshold
   readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
-  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents["/"] > diskWarningThreshold
-  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents["/"] > diskCriticalThreshold
+  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskWarningThreshold
+  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskCriticalThreshold
 
   TextMetrics {
     id: percentMetrics
@@ -108,7 +111,45 @@ Rectangle {
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
   implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Style.capsuleColor
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    onClicked: mouse => {
+                 if (mouse.button === Qt.RightButton) {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.showContextMenu(contextMenu);
+                     const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                     contextMenu.openAtItem(root, pos.x, pos.y);
+                   }
+                 }
+               }
+  }
 
   // Status indicator component definition
   Component {
@@ -199,6 +240,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -273,6 +315,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -340,6 +383,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
           implicitWidth: iconSize
           implicitHeight: iconSize
 
@@ -388,13 +432,20 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "download-speed"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "download-speed"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+          }
         }
 
         NText {
@@ -431,13 +482,20 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "upload-speed"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "upload-speed"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+          }
         }
 
         NText {
@@ -489,19 +547,27 @@ Rectangle {
         rowSpacing: Style.marginXXS
         columnSpacing: Style.marginXXS
 
-        NIcon {
-          icon: "storage"
-          pointSize: iconSize
-          applyUiScale: false
+        Item {
           Layout.alignment: Qt.AlignCenter
           Layout.row: isVertical ? 1 : 0
           Layout.column: 0
-          // Invert color when disk indicator active (vertical uses highlight colors)
-          color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "storage"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color when disk indicator active (vertical uses highlight colors)
+            color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+          }
         }
 
         NText {
-          text: `${SystemStatService.diskPercents["/"]}%`
+          id: toto
+          text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: Settings.data.ui.fontFixed
           pointSize: textSize
           applyUiScale: false
@@ -515,6 +581,17 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: {
+          TooltipService.show(diskContent, diskPath, BarService.getTooltipDirection());
+        }
+        onExited: {
+          TooltipService.hide();
         }
       }
     }

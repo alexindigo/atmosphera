@@ -10,7 +10,12 @@ Singleton {
   id: root
 
   // Configuration
-  property int sleepDuration: 3000
+  readonly property int minimumIntervalMs: 250
+  readonly property int defaultIntervalMs: 3000
+
+  function normalizeInterval(value) {
+    return Math.max(minimumIntervalMs, value || defaultIntervalMs);
+  }
 
   // Public values
   property real cpuUsage: 0
@@ -42,31 +47,86 @@ Singleton {
 
   // --------------------------------------------
   Component.onCompleted: {
-    Logger.i("SystemStat", "Service started with interval:", root.sleepDuration, "ms");
+    Logger.i("SystemStat", "Service started with custom polling intervals");
 
     // Kickoff the cpu name detection for temperature
     cpuTempNameReader.checkNext();
   }
 
   // --------------------------------------------
-  // Timer for periodic updates
+  // Timer for CPU usage
   Timer {
-    id: updateTimer
-    interval: root.sleepDuration
+    id: cpuUsageTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.cpuPollingInterval)
     repeat: true
     running: true
     triggeredOnStart: true
-    onTriggered: {
-      // Trigger all direct system files reads
-      memInfoFile.reload();
-      cpuStatFile.reload();
-      netDevFile.reload();
-
-      // Run df (disk free) one time
-      dfProcess.running = true;
-
-      updateCpuTemperature();
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
     }
+    onTriggered: cpuStatFile.reload()
+  }
+
+  // Timer for CPU temperature
+  Timer {
+    id: cpuTempTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.tempPollingInterval)
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: updateCpuTemperature()
+  }
+
+  // Timer for memory stats
+  Timer {
+    id: memoryTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.memPollingInterval)
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: memInfoFile.reload()
+  }
+
+  // Timer for disk usage
+  Timer {
+    id: diskTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.diskPollingInterval)
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: dfProcess.running = true
+  }
+
+  // Timer for network speeds
+  Timer {
+    id: networkTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.networkPollingInterval)
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: netDevFile.reload()
   }
 
   // --------------------------------------------

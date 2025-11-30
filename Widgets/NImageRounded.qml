@@ -4,93 +4,66 @@ import Quickshell
 import Quickshell.Widgets
 import qs.Commons
 
-Rectangle {
+Item {
   id: root
 
+  property real radius: 0
   property string imagePath: ""
-  property color borderColor: Color.transparent
-  property real borderWidth: 0
-  property real imageRadius: width * 0.5
   property string fallbackIcon: ""
   property real fallbackIconSize: Style.fontSizeXXL
+  property real borderWidth: 0
+  property color borderColor: Color.transparent
+  property int imageFillMode: Image.PreserveAspectCrop
 
-  property real scaledRadius: imageRadius * Settings.data.general.radiusRatio
+  readonly property bool showFallback: (fallbackIcon !== undefined && fallbackIcon !== "") && (imagePath === undefined || imagePath === "")
 
   signal statusChanged(int status)
 
-  color: Color.transparent
-  radius: scaledRadius
-  anchors.margins: Style.marginXXS
-
   Rectangle {
-    color: Color.transparent
     anchors.fill: parent
+    radius: root.radius
+    color: Color.transparent
+    border.width: root.borderWidth
+    border.color: root.borderColor
 
     Image {
-      id: img
+      id: imageSource
       anchors.fill: parent
-      source: imagePath
-      visible: false // Hide since we're using it as shader source
+      anchors.margins: root.borderWidth
+      visible: false
+      source: root.imagePath
       mipmap: true
       smooth: true
       asynchronous: true
       antialiasing: true
-      fillMode: Image.PreserveAspectCrop
-
+      fillMode: root.imageFillMode
       onStatusChanged: root.statusChanged(status)
     }
 
     ShaderEffect {
       anchors.fill: parent
+      anchors.margins: root.borderWidth
+      visible: !root.showFallback
+      property variant source: imageSource
+      property real itemWidth: width
+      property real itemHeight: height
+      property real sourceWidth: imageSource.sourceSize.width
+      property real sourceHeight: imageSource.sourceSize.height
+      property real cornerRadius: Math.max(0, root.radius - root.borderWidth)
+      property real imageOpacity: 1.0
+      property int fillMode: root.imageFillMode
 
-      property var source: ShaderEffectSource {
-        sourceItem: img
-        hideSource: true
-        live: true
-        recursive: false
-        format: ShaderEffectSource.RGBA
-      }
-
-      // Use custom property names to avoid conflicts with final properties
-      property real itemWidth: root.width
-      property real itemHeight: root.height
-      property real cornerRadius: root.radius
-      property real imageOpacity: root.opacity
       fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
-
-      // Qt6 specific properties - ensure proper blending
       supportsAtlasTextures: false
       blending: true
-      // Make sure the background is transparent
-      Rectangle {
-        id: background
-        anchors.fill: parent
-        color: Color.transparent
-        z: -1
-      }
     }
 
-    // Fallback icon
-    Loader {
-      active: fallbackIcon !== undefined && fallbackIcon !== "" && (imagePath === undefined || imagePath === "")
-      anchors.centerIn: parent
-      sourceComponent: NIcon {
-        anchors.centerIn: parent
-        icon: fallbackIcon
-        pointSize: fallbackIconSize
-        z: 0
-      }
+    NIcon {
+      anchors.fill: parent
+      anchors.margins: root.borderWidth
+      visible: root.showFallback
+      icon: root.fallbackIcon
+      pointSize: root.fallbackIconSize
     }
-  }
-
-  // Border
-  Rectangle {
-    anchors.fill: parent
-    radius: parent.radius
-    color: Color.transparent
-    border.color: parent.borderColor
-    border.width: parent.borderWidth
-    antialiasing: true
-    z: 10
   }
 }

@@ -24,11 +24,24 @@ SmartPanel {
 
   property int currentStep: 0
   property int totalSteps: 5
+  property bool isCompleting: false
 
   onOpened: function () {
     selectedScaleRatio = Settings.data.general.scaleRatio;
     selectedBarPosition = Settings.data.bar.position;
     selectedWallpaperDirectory = Settings.data.wallpaper.directory || Settings.defaultWallpapersDirectory;
+    isCompleting = false;
+  }
+
+  Connections {
+    target: Settings
+    function onSettingsSaved() {
+      if (isCompleting) {
+        Logger.i("SetupWizard", "Settings saved, closing panel");
+        isCompleting = false;
+        root.close();
+      }
+    }
   }
 
   // Setup wizard data
@@ -95,7 +108,7 @@ SmartPanel {
                       color: Color.mSurfaceVariant
                       radius: width / 2
                       border.color: Color.mOutline
-                      border.width: 2
+                      border.width: Style.borderM
                       visible: parent.status === Image.Error
 
                       NIcon {
@@ -366,34 +379,63 @@ SmartPanel {
   }
 
   function completeSetup() {
-    Logger.i("SetupWizard", "Completing setup with selected options");
-
-    if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-      Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-      WallpaperService.refreshWallpapersList();
+    if (isCompleting) {
+      Logger.w("SetupWizard", "completeSetup() called while already completing, ignoring");
+      return;
     }
 
-    if (selectedWallpaper !== "") {
-      WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+    try {
+      Logger.i("SetupWizard", "Completing setup with selected options");
+      isCompleting = true;
+
+      if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
+        if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
+          Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+          WallpaperService.refreshWallpapersList();
+        }
+
+        if (selectedWallpaper !== "") {
+          WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+        }
+      }
+
+      Settings.data.general.scaleRatio = selectedScaleRatio;
+      Settings.data.bar.position = selectedBarPosition;
+
+      // Save settings immediately and wait for settingsSaved signal before closing
+      Settings.saveImmediate();
+      Logger.i("SetupWizard", "Setup completed successfully, waiting for settings save confirmation");
+
+      // Fallback: if settingsSaved signal doesn't fire within 2 seconds, close anyway
+      closeTimer.start();
+    } catch (error) {
+      Logger.e("SetupWizard", "Error completing setup:", error);
+      isCompleting = false;
     }
+  }
 
-    Settings.data.general.scaleRatio = selectedScaleRatio;
-    Settings.data.bar.position = selectedBarPosition;
-    Settings.data.setupCompleted = true;
-
-    Settings.saveImmediate();
-    Logger.i("SetupWizard", "Setup completed successfully");
-    root.close();
+  Timer {
+    id: closeTimer
+    interval: 2000
+    onTriggered: {
+      if (isCompleting) {
+        Logger.w("SetupWizard", "Settings save timeout, closing panel anyway");
+        isCompleting = false;
+        root.close();
+      }
+    }
   }
 
   function applyWallpaperSettings() {
-    if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
-      Settings.data.wallpaper.directory = selectedWallpaperDirectory;
-      WallpaperService.refreshWallpapersList();
-    }
+    if (typeof WallpaperService !== "undefined" && WallpaperService.refreshWallpapersList) {
+      if (selectedWallpaperDirectory !== Settings.data.wallpaper.directory) {
+        Settings.data.wallpaper.directory = selectedWallpaperDirectory;
+        WallpaperService.refreshWallpapersList();
+      }
 
-    if (selectedWallpaper !== "") {
-      WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+      if (selectedWallpaper !== "") {
+        WallpaperService.changeWallpaper(selectedWallpaper, undefined);
+      }
     }
   }
 

@@ -114,11 +114,14 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.cpu-warning-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: 0
         to: 100
         stepSize: 5
@@ -139,17 +142,42 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.cpu-critical-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: Settings.data.systemMonitor.cpuWarningThreshold
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.cpuCriticalThreshold
         onValueChanged: Settings.data.systemMonitor.cpuCriticalThreshold = value
         suffix: "%"
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: I18n.tr("settings.system-monitor.polling-interval.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
+        from: 250
+        to: 10000
+        stepSize: 250
+        value: Settings.data.systemMonitor.cpuPollingInterval
+        onValueChanged: Settings.data.systemMonitor.cpuPollingInterval = value
+        suffix: " ms"
       }
     }
   }
@@ -171,11 +199,14 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.temp-warning-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: 0
         to: 100
         stepSize: 5
@@ -195,17 +226,42 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.temp-critical-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: Settings.data.systemMonitor.tempWarningThreshold
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.tempCriticalThreshold
         onValueChanged: Settings.data.systemMonitor.tempCriticalThreshold = value
         suffix: "°C"
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: I18n.tr("settings.system-monitor.polling-interval.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
+        from: 250
+        to: 10000
+        stepSize: 250
+        value: Settings.data.systemMonitor.tempPollingInterval
+        onValueChanged: Settings.data.systemMonitor.tempPollingInterval = value
+        suffix: " ms"
       }
     }
   }
@@ -227,11 +283,14 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.mem-warning-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: 0
         to: 100
         stepSize: 5
@@ -251,17 +310,42 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.mem-critical-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: Settings.data.systemMonitor.memWarningThreshold
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.memCriticalThreshold
         onValueChanged: Settings.data.systemMonitor.memCriticalThreshold = value
         suffix: "%"
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: I18n.tr("settings.system-monitor.polling-interval.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
+        from: 250
+        to: 10000
+        stepSize: 250
+        value: Settings.data.systemMonitor.memPollingInterval
+        onValueChanged: Settings.data.systemMonitor.memPollingInterval = value
+        suffix: " ms"
       }
     }
   }
@@ -283,11 +367,14 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.disk-warning-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: 0
         to: 100
         stepSize: 5
@@ -307,17 +394,77 @@ ColumnLayout {
       spacing: Style.marginM
 
       NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.disk-critical-threshold.label")
         pointSize: Style.fontSizeS
       }
 
       NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
         from: Settings.data.systemMonitor.diskWarningThreshold
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.diskCriticalThreshold
         onValueChanged: Settings.data.systemMonitor.diskCriticalThreshold = value
         suffix: "%"
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: I18n.tr("settings.system-monitor.polling-interval.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
+        from: 250
+        to: 10000
+        stepSize: 250
+        value: Settings.data.systemMonitor.diskPollingInterval
+        onValueChanged: Settings.data.systemMonitor.diskPollingInterval = value
+        suffix: " ms"
+      }
+    }
+  }
+
+  // Network
+  NText {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginM
+    text: I18n.tr("settings.system-monitor.network-section.label")
+    pointSize: Style.fontSizeM
+  }
+
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginM
+
+      NText {
+        Layout.alignment: Qt.AlignHCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: I18n.tr("settings.system-monitor.polling-interval.label")
+        pointSize: Style.fontSizeS
+      }
+
+      NSpinBox {
+        Layout.alignment: Qt.AlignHCenter
+        from: 250
+        to: 10000
+        stepSize: 250
+        value: Settings.data.systemMonitor.networkPollingInterval
+        onValueChanged: Settings.data.systemMonitor.networkPollingInterval = value
+        suffix: " ms"
       }
     }
   }

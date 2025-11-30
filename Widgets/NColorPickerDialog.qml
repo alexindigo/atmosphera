@@ -1,15 +1,35 @@
+import QtQml
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../Helpers/ColorList.js" as ColorList
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 Popup {
   id: root
 
   property color selectedColor: Color.black
-  property real currentHue: 0
-  property real currentSaturation: 0
+
+  enum EditMode {
+    R,
+    G,
+    B,
+    H,
+    S,
+    V
+  }
+  property int editMode: NColorPickerDialog.EditMode.R
+
+  // Code to deal with Hue when color is achromatic
+  property real stableHue: 0
+  onSelectedColorChanged: {
+    if (selectedColor.hsvHue >= 0) {
+      stableHue = selectedColor.hsvHue;
+    }
+  }
+  readonly property real displayHue: selectedColor.hsvHue < 0 ? stableHue : selectedColor.hsvHue
 
   signal colorSelected(color color)
 
@@ -25,81 +45,6 @@ Popup {
   y: (parent.height - height) * 0.5
 
   modal: true
-
-  function rgbToHsv(r, g, b) {
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, v = max;
-    var d = max - min;
-    s = max === 0 ? 0 : d / max;
-    if (max === min) {
-      h = 0;
-    } else {
-      switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-      }
-      h /= 6;
-    }
-    return [h * 360, s * 100, v * 100];
-  }
-
-  function hsvToRgb(h, s, v) {
-    h /= 360;
-    s /= 100;
-    v /= 100;
-
-    var r, g, b;
-    var i = Math.floor(h * 6);
-    var f = h * 6 - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
-
-    switch (i % 6) {
-    case 0:
-      r = v;
-      g = t;
-      b = p;
-      break;
-    case 1:
-      r = q;
-      g = v;
-      b = p;
-      break;
-    case 2:
-      r = p;
-      g = v;
-      b = t;
-      break;
-    case 3:
-      r = p;
-      g = q;
-      b = v;
-      break;
-    case 4:
-      r = t;
-      g = p;
-      b = v;
-      break;
-    case 5:
-      r = v;
-      g = p;
-      b = q;
-      break;
-    }
-
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-  }
 
   background: Rectangle {
     color: Color.mSurface
@@ -190,256 +135,589 @@ Popup {
         }
       }
 
-      // Hex input
-      RowLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-
-        NLabel {
-          label: I18n.tr("widgets.color-picker.hex.label")
-          description: I18n.tr("widgets.color-picker.hex.description")
-          Layout.fillWidth: true
-        }
-
-        NTextInput {
-          text: root.selectedColor.toString().toUpperCase()
-          fontFamily: Settings.data.ui.fontFixed
-          Layout.fillWidth: true
-          onEditingFinished: {
-            if (/^#[0-9A-F]{6}$/i.test(text)) {
-              root.selectedColor = text;
-            }
-          }
-        }
-      }
-
-      // RGB sliders section
+      // Main Box
       NBox {
         Layout.fillWidth: true
-        Layout.preferredHeight: slidersSection.implicitHeight + Style.marginL * 2
+        Layout.preferredHeight: controlsOutterColumn.implicitHeight + Style.marginL * 2
+
+        ButtonGroup {
+          id: colorValues
+        }
 
         ColumnLayout {
-          id: slidersSection
+          id: controlsOutterColumn
           anchors.fill: parent
           anchors.margins: Style.marginL
           spacing: Style.marginM
 
-          NLabel {
-            label: I18n.tr("widgets.color-picker.rgb.label")
-            description: I18n.tr("widgets.color-picker.rgb.description")
-            Layout.fillWidth: true
-          }
-
           RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginM
+            spacing: Style.marginL // Ensure nice gap between Left and Right groups
 
-            NText {
-              text: "R"
-              font.weight: Font.Bold
-              Layout.preferredWidth: 20
-            }
-
-            NValueSlider {
-              id: redSlider
+            // SpinBoxes Column
+            ColumnLayout {
               Layout.fillWidth: true
-              from: 0
-              to: 255
-              value: Math.round(root.selectedColor.r * 255)
-              onMoved: value => {
-                         root.selectedColor = Qt.rgba(value / 255, root.selectedColor.g, root.selectedColor.b, 1);
-                         var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
-                       }
-              text: Math.round(value)
-            }
-          }
+              Layout.fillHeight: true
+              Layout.alignment: Qt.AlignTop
+              Layout.preferredWidth: 3
 
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginM
+              // --- RED ---
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
 
-            NText {
-              text: "G"
-              font.weight: Font.Bold
-              Layout.preferredWidth: 20
-            }
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "R"
+                  font.weight: Font.Bold
+                  checked: true
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.R
+                  Layout.fillWidth: false
+                }
 
-            NValueSlider {
-              id: greenSlider
-              Layout.fillWidth: true
-              from: 0
-              to: 255
-              value: Math.round(root.selectedColor.g * 255)
-              onMoved: value => {
-                         root.selectedColor = Qt.rgba(root.selectedColor.r, value / 255, root.selectedColor.b, 1);
-                         // Update stored hue and saturation when RGB changes
-                         var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
-                       }
-              text: Math.round(value)
-            }
-          }
+                NSpinBox {
+                  id: redSpinBox
+                  from: 0
+                  to: 255
 
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginM
-
-            NText {
-              text: "B"
-              font.weight: Font.Bold
-              Layout.preferredWidth: 20
-            }
-
-            NValueSlider {
-              id: blueSlider
-              Layout.fillWidth: true
-              from: 0
-              to: 255
-              value: Math.round(root.selectedColor.b * 255)
-              onMoved: value => {
-                         root.selectedColor = Qt.rgba(root.selectedColor.r, root.selectedColor.g, value / 255, 1);
-                         // Update stored hue and saturation when RGB changes
-                         var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                         root.currentHue = hsv[0];
-                         root.currentSaturation = hsv[1];
-                       }
-              text: Math.round(value)
-            }
-          }
-
-          RowLayout {
-            Layout.fillWidth: true
-            spacing: Style.marginM
-
-            NText {
-              text: I18n.tr("widgets.color-picker.brightness")
-              font.weight: Font.Bold
-              Layout.preferredWidth: 80
-            }
-
-            NValueSlider {
-              id: brightnessSlider
-              Layout.fillWidth: true
-              from: 0
-              to: 100
-              value: {
-                var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                return hsv[2];
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.selectedColor.r * 255)) {
+                      root.selectedColor = Qt.rgba(value / 255, root.selectedColor.g, root.selectedColor.b, 1);
+                    }
+                  }
+                  Binding {
+                    target: redSpinBox
+                    property: "value"
+                    value: Math.round(root.selectedColor.r * 255)
+                  }
+                }
               }
-              onMoved: value => {
-                         var hue = root.currentHue;
-                         var saturation = root.currentSaturation;
 
-                         if (hue === 0 && saturation === 0) {
-                           var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                           hue = hsv[0];
-                           saturation = hsv[1];
-                           root.currentHue = hue;
-                           root.currentSaturation = saturation;
-                         }
+              // --- GREEN ---
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
 
-                         var rgb = root.hsvToRgb(hue, saturation, value);
-                         root.selectedColor = Qt.rgba(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1);
-                       }
-              text: Math.round(brightnessSlider.value) + "%"
-            }
-          }
-        }
-      }
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "G"
+                  font.weight: Font.Bold
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.G
+                  Layout.fillWidth: false
+                }
 
-      NBox {
-        Layout.fillWidth: true
-        Layout.preferredHeight: themePalette.implicitHeight + Style.marginL * 2
+                NSpinBox {
+                  id: greenSpinBox
+                  from: 0
+                  to: 255
 
-        ColumnLayout {
-          id: themePalette
-          anchors.fill: parent
-          anchors.margins: Style.marginL
-          spacing: Style.marginS
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.selectedColor.g * 255)) {
+                      root.selectedColor = Qt.rgba(root.selectedColor.r, value / 255, root.selectedColor.b, 1);
+                    }
+                  }
+                  Binding {
+                    target: greenSpinBox
+                    property: "value"
+                    value: Math.round(root.selectedColor.g * 255)
+                  }
+                }
+              }
 
-          NLabel {
-            label: I18n.tr("widgets.color-picker.theme-colors.label")
-            description: I18n.tr("widgets.color-picker.theme-colors.description")
-            Layout.fillWidth: true
-          }
+              // --- BLUE ---
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
 
-          Flow {
-            spacing: 6
-            Layout.fillWidth: true
-            flow: Flow.LeftToRight
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "B"
+                  font.weight: Font.Bold
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.B
+                  Layout.fillWidth: false
+                }
 
-            Repeater {
-              model: [Color.mPrimary, Color.mSecondary, Color.mTertiary, Color.mError, Color.mSurface, Color.mSurfaceVariant, Color.mOutline, Color.white, Color.black]
+                NSpinBox {
+                  id: blueSpinBox
+                  from: 0
+                  to: 255
 
-              Rectangle {
-                width: 24
-                height: 24
-                radius: 4
-                color: modelData
-                border.color: root.selectedColor === modelData ? Color.mPrimary : Color.mOutline
-                border.width: root.selectedColor === modelData ? 2 : 1
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.selectedColor.b * 255)) {
+                      root.selectedColor = Qt.rgba(root.selectedColor.r, root.selectedColor.g, value / 255, 1);
+                    }
+                  }
+                  Binding {
+                    target: blueSpinBox
+                    property: "value"
+                    value: Math.round(root.selectedColor.b * 255)
+                  }
+                }
+              }
 
-                MouseArea {
-                  anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: {
-                    root.selectedColor = modelData;
-                    var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                    root.currentHue = hsv[0];
-                    root.currentSaturation = hsv[1];
+              // Spacer
+              Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+              }
+
+              // --- HUE ---
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
+
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "H"
+                  font.weight: Font.Bold
+                  checked: true
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.H
+                  Layout.fillWidth: false
+                }
+
+                NSpinBox {
+                  id: hueSpinBox
+                  from: 0
+                  to: 360
+
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.displayHue * 360)) {
+                      var newHue = value / 360;
+                      root.selectedColor = Qt.hsva(newHue, root.selectedColor.hsvSaturation, root.selectedColor.hsvValue, 1);
+                      root.stableHue = newHue;
+                    }
+                  }
+
+                  Binding {
+                    target: hueSpinBox
+                    property: "value"
+                    value: Math.round(root.displayHue * 360)
+                  }
+                }
+              }
+
+              // --- SATURATION ---
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginM
+
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "S"
+                  font.weight: Font.Bold
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.S
+                  Layout.fillWidth: false
+                }
+
+                NSpinBox {
+                  id: satSpinBox
+                  from: 0
+                  to: 100
+
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.selectedColor.hsvSaturation * 100)) {
+                      root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, value / 100, root.selectedColor.hsvValue, 1);
+                    }
+                  }
+                  Binding {
+                    target: satSpinBox
+                    property: "value"
+                    value: Math.round(root.selectedColor.hsvSaturation * 100)
+                  }
+                }
+              }
+
+              // --- VALUE ---
+              RowLayout {
+                spacing: Style.marginM
+
+                NRadioButton {
+                  ButtonGroup.group: colorValues
+                  text: "V"
+                  font.weight: Font.Bold
+                  onClicked: root.editMode = NColorPickerDialog.EditMode.V
+                  Layout.fillWidth: false
+                }
+
+                NSpinBox {
+                  id: valSpinBox
+                  from: 0
+                  to: 100
+
+                  onValueChanged: {
+                    if (!selectedSlider.pressed && !fieldMouse.pressed && !hexInput.activeFocus && value !== Math.round(root.selectedColor.hsvValue * 100)) {
+                      root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, root.selectedColor.hsvSaturation, value / 100, 1);
+                    }
+                  }
+                  Binding {
+                    target: valSpinBox
+                    property: "value"
+                    value: Math.round(root.selectedColor.hsvValue * 100)
+                  }
+                }
+              }
+
+              // Spacer
+              Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+              }
+
+              // Hex input
+              RowLayout {
+                id: hexInput
+                Layout.fillWidth: true
+                spacing: Style.marginM
+
+                NLabel {
+                  label: "Hex:"
+                  Layout.alignment: Qt.AlignVCenter
+                }
+
+                NTextInput {
+                  text: root.selectedColor.toString().toUpperCase()
+                  fontFamily: Settings.data.ui.fontFixed
+                  Layout.fillWidth: true
+                  Layout.minimumWidth: implicitWidth
+                  onEditingFinished: {
+                    if (/^#[0-9A-F]{6}$/i.test(text)) {
+                      root.selectedColor = text;
+                    }
                   }
                 }
               }
             }
-          }
-        }
-      }
 
-      NBox {
-        Layout.fillWidth: true
-        Layout.preferredHeight: genericPalette.implicitHeight + Style.marginL * 2
+            RowLayout {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              Layout.preferredWidth: 5
+              Layout.alignment: Qt.AlignTop
+              spacing: Style.marginS
 
-        ColumnLayout {
-          id: genericPalette
-          anchors.fill: parent
-          anchors.margins: Style.marginL
-          spacing: Style.marginS
+              Layout.topMargin: Math.round(2 * Style.uiScaleRatio) //Shim to try and line up colorField with SpinBoxes
 
-          NLabel {
-            label: I18n.tr("widgets.color-picker.palette.label")
-            description: I18n.tr("widgets.color-picker.palette.description")
-            Layout.fillWidth: true
-          }
+              // --- SLIDER ---
+              NColorSlider {
+                id: selectedSlider
+                Layout.fillHeight: true
+                rainbowMode: root.editMode === "h"
+                topColor: {
+                  if (rainbowMode)
+                    return "transparent";
+                  switch (root.editMode) {
+                  case NColorPickerDialog.EditMode.R:
+                    return "#FF0000";
+                  case NColorPickerDialog.EditMode.G:
+                    return "#00FF00";
+                  case NColorPickerDialog.EditMode.B:
+                    return "#0000FF";
+                  default:
+                    return "#FFFFFF";
+                  }
+                }
 
-          Flow {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 6
-            flow: Flow.LeftToRight
+                Binding {
+                  target: selectedSlider
+                  property: "value"
+                  when: !selectedSlider.pressed // Only update from model when NOT dragging
+                  value: {
+                    switch (root.editMode) {
+                    case NColorPickerDialog.EditMode.R:
+                      return root.selectedColor.r;
+                    case NColorPickerDialog.EditMode.G:
+                      return root.selectedColor.g;
+                    case NColorPickerDialog.EditMode.B:
+                      return root.selectedColor.b;
+                    case NColorPickerDialog.EditMode.H:
+                      return root.displayHue;
+                    case NColorPickerDialog.EditMode.S:
+                      return root.selectedColor.hsvSaturation;
+                    case NColorPickerDialog.EditMode.V:
+                      return root.selectedColor.hsvValue;
+                    default:
+                      return 0;
+                    }
+                  }
+                }
 
-            Repeater {
-              model: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#E74C3C", "#E67E22", "#F1C40F", "#2ECC71", "#1ABC9C", "#3498DB", "#2980B9", "#9B59B6", "#34495E", "#2C3E50", "#95A5A6", "#7F8C8D",
-                Color.white, Color.black]
+                onMoved: {
+                  var v = value;
+                  switch (root.editMode) {
+                  case NColorPickerDialog.EditMode.R:
+                    root.selectedColor = Qt.rgba(v, root.selectedColor.g, root.selectedColor.b, 1);
+                    break;
+                  case NColorPickerDialog.EditMode.G:
+                    root.selectedColor = Qt.rgba(root.selectedColor.r, v, root.selectedColor.b, 1);
+                    break;
+                  case NColorPickerDialog.EditMode.B:
+                    root.selectedColor = Qt.rgba(root.selectedColor.r, root.selectedColor.g, v, 1);
+                    break;
+                  case NColorPickerDialog.EditMode.H:
+                    root.selectedColor = Qt.hsva(v, root.selectedColor.hsvSaturation, root.selectedColor.hsvValue, 1);
+                    root.stableHue = v;
+                    break;
+                  case NColorPickerDialog.EditMode.S:
+                    root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, v, root.selectedColor.hsvValue, 1);
+                    break;
+                  case NColorPickerDialog.EditMode.V:
+                    root.selectedColor = Qt.hsva(root.selectedColor.hsvHue, root.selectedColor.hsvSaturation, v, 1);
+                    break;
+                  }
+                }
+              }
 
+              // Color Field
               Rectangle {
-                width: 24
-                height: 24
-                radius: Style.radiusXXS
-                color: modelData
-                border.color: root.selectedColor === modelData ? Color.mPrimary : Color.mOutline
-                border.width: Math.max(1, root.selectedColor === modelData ? Style.borderM : Style.borderS)
+                id: colorField
+                Layout.fillWidth: true
+
+                Layout.preferredHeight: width
+                Layout.alignment: Qt.AlignTop
+
+                radius: 0
+                border.color: Color.mOutline
+                border.width: Style.borderS
+                clip: true
+
+                ShaderEffect {
+                  anchors.fill: parent
+                  anchors.margins: 1 // Avoid drawing over the border
+
+                  fragmentShader: "../Shaders/qsb/color_picker.frag.qsb"
+
+                  // Pass which radio is selected
+                  readonly property real fixedVal: {
+                    switch (root.editMode) {
+                    case NColorPickerDialog.EditMode.R:
+                      return root.selectedColor.r;
+                    case NColorPickerDialog.EditMode.G:
+                      return root.selectedColor.g;
+                    case NColorPickerDialog.EditMode.B:
+                      return root.selectedColor.b;
+                    case NColorPickerDialog.EditMode.H:
+                      return root.displayHue;
+                    case NColorPickerDialog.EditMode.S:
+                      return root.selectedColor.hsvSaturation;
+                    case NColorPickerDialog.EditMode.V:
+                      return root.selectedColor.hsvValue;
+                    default:
+                      return 0;
+                    }
+                  }
+
+                  // Send as one vector because GPUs are so damn picky
+                  property vector4d params: Qt.vector4d(1.0, fixedVal, root.editMode, 0)
+                }
 
                 MouseArea {
+                  id: fieldMouse
                   anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: {
-                    root.selectedColor = modelData;
-                    var hsv = root.rgbToHsv(root.selectedColor.r * 255, root.selectedColor.g * 255, root.selectedColor.b * 255);
-                    root.currentHue = hsv[0];
-                    root.currentSaturation = hsv[1];
+                  cursorShape: Qt.CrossCursor
+
+                  // Update color when clicking or dragging
+                  function updateColor(mouse) {
+                    // Normalize X and Y (0.0 to 1.0)
+                    var xVal = Math.max(0, Math.min(1, mouse.x / width));
+                    var yVal = Math.max(0, Math.min(1, 1.0 - (mouse.y / height))); // Flip Y (0 at bottom)
+
+                    // Get the current fixed value (from the slider)
+                    var fixed = 0.0;
+
+                    switch (root.editMode) {
+                    case NColorPickerDialog.EditMode.R:
+                      fixed = root.selectedColor.r;
+                      root.selectedColor = Qt.rgba(fixed, xVal, yVal, 1);
+                      break;
+                    case NColorPickerDialog.EditMode.G:
+                      fixed = root.selectedColor.g;
+                      root.selectedColor = Qt.rgba(xVal, fixed, yVal, 1);
+                      break;
+                    case NColorPickerDialog.EditMode.B:
+                      fixed = root.selectedColor.b;
+                      root.selectedColor = Qt.rgba(xVal, yVal, fixed, 1);
+                      break;
+                    case NColorPickerDialog.EditMode.H:
+                      // Use stableHue to prevent flipping to -1
+                      fixed = root.displayHue;
+                      root.selectedColor = Qt.hsva(fixed, xVal, yVal, 1);
+                      root.stableHue = fixed;
+                      break;
+                    case NColorPickerDialog.EditMode.S:
+                      fixed = root.selectedColor.hsvSaturation;
+                      root.selectedColor = Qt.hsva(xVal, fixed, yVal, 1);
+                      // If we dragged Hue (xVal), update stableHue
+                      root.stableHue = yVal;
+                      break;
+                    case NColorPickerDialog.EditMode.V:
+                      fixed = root.selectedColor.hsvValue;
+                      root.selectedColor = Qt.hsva(xVal, yVal, fixed, 1);
+                      // If we dragged Hue (xVal), update stableHue
+                      root.stableHue = xVal;
+                      break;
+                    }
+                  }
+                  onPressed: mouse => updateColor(mouse)
+                  onPositionChanged: mouse => updateColor(mouse)
+                }
+
+                // Color Indicator
+                Rectangle {
+                  width: 10
+                  height: 10
+                  radius: 5
+                  color: "transparent"
+                  border.color: root.selectedColor.hsvValue < 0.5 ? "white" : "black"
+                  border.width: 1
+
+                  // Find position based on the current color
+                  readonly property point selectedPos: {
+                    switch (root.editMode) {
+                    case NColorPickerDialog.EditMode.R:
+                      return Qt.point(root.selectedColor.g, root.selectedColor.b);
+                    case NColorPickerDialog.EditMode.G:
+                      return Qt.point(root.selectedColor.r, root.selectedColor.b);
+                    case NColorPickerDialog.EditMode.B:
+                      return Qt.point(root.selectedColor.r, root.selectedColor.g);
+                    case NColorPickerDialog.EditMode.H:
+                      return Qt.point(root.selectedColor.hsvSaturation, root.selectedColor.hsvValue);
+                    case NColorPickerDialog.EditMode.S:
+                      return Qt.point(root.displayHue, root.selectedColor.hsvValue);
+                    case NColorPickerDialog.EditMode.V:
+                      return Qt.point(root.displayHue, root.selectedColor.hsvSaturation);
+                    default:
+                      return Qt.point(0, 0);
+                    }
+                  }
+
+                  // Convert values to pixel position
+                  x: (selectedPos.x * parent.width) - width / 2
+                  y: ((1.0 - selectedPos.y) * parent.height) - height / 2
+                }
+
+                // Redraw the border in case Color Indicator is near the edge
+                Rectangle {
+                  anchors.fill: parent
+                  color: "transparent"
+                  border.color: Color.mOutline
+                  border.width: Style.borderS
+                  antialiasing: false
+                }
+              }
+            }
+          }
+
+          NCollapsible {
+            id: paletteCollapsible
+            label: I18n.tr("widgets.color-picker.palette.label")
+            description: I18n.tr("widgets.color-picker.palette.description")
+
+            Layout.fillWidth: true
+            contentSpacing: Style.marginS
+
+            GridLayout {
+              Layout.alignment: Qt.AlignHCenter
+              columns: 15
+              columnSpacing: 6
+              rowSpacing: 6
+
+              NLabel {
+                Layout.columnSpan: 15
+                Layout.fillWidth: true
+                description: I18n.tr("widgets.color-picker.palette.theme-colors")
+              }
+
+              Repeater {
+                model: [
+                  {
+                    name: "mPrimary",
+                    color: Color.mPrimary
+                  },
+                  {
+                    name: "mSecondary",
+                    color: Color.mSecondary
+                  },
+                  {
+                    name: "mTertiary",
+                    color: Color.mTertiary
+                  },
+                  {
+                    name: "mError",
+                    color: Color.mError
+                  },
+                  {
+                    name: "mSurface",
+                    color: Color.mSurface
+                  },
+                  {
+                    name: "mSurfaceVariant",
+                    color: Color.mSurfaceVariant
+                  },
+                  {
+                    name: "mOutline",
+                    color: Color.mOutline
+                  }
+                ]
+
+                Rectangle {
+                  width: 24
+                  height: 24
+                  radius: Style.radiusXXS
+                  color: modelData.color
+                  border.color: root.selectedColor.toString() === modelData.color.toString() ? Color.mPrimary : Color.mOutline
+                  border.width: Math.max(1, root.selectedColor.toString() === modelData.color.toString() ? Style.borderM : Style.borderS)
+
+                  MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+
+                    onEntered: {
+                      TooltipService.show(parent, modelData.name + "\n" + parent.color.toString().toUpperCase());
+                    }
+                    onExited: {
+                      TooltipService.hide();
+                    }
+                    onClicked: {
+                      root.selectedColor = modelData.color;
+                      TooltipService.hide();
+                    }
+                  }
+                }
+              }
+
+              NDivider {
+                Layout.columnSpan: 15
+                Layout.fillWidth: true
+                Layout.topMargin: Style.marginXS
+                Layout.bottomMargin: 0
+              }
+
+              Repeater {
+                model: ColorList.colors
+
+                Rectangle {
+                  width: 24
+                  height: 24
+                  radius: 4
+                  color: modelData.color
+                  border.color: root.selectedColor.toString() === modelData.color.toString() ? Color.mPrimary : Color.mOutline
+                  border.width: root.selectedColor.toString() === modelData.color.toString() ? 2 : 1
+
+                  MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+
+                    onEntered: {
+                      TooltipService.show(screen, parent, modelData.name + "\n" + parent.color.toString().toUpperCase(), "auto");
+                    }
+                    onExited: {
+                      TooltipService.hide();
+                    }
+                    onClicked: {
+                      root.selectedColor = modelData.color;
+                      TooltipService.hide();
+                    }
                   }
                 }
               }
@@ -450,8 +728,8 @@ Popup {
 
       RowLayout {
         Layout.fillWidth: true
-        Layout.topMargin: 20
-        Layout.bottomMargin: 20
+        Layout.topMargin: 1
+        Layout.bottomMargin: 1
         spacing: 10
 
         Item {

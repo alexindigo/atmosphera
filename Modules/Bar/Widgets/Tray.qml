@@ -16,22 +16,22 @@ Rectangle {
   property ShellScreen screen
 
   // Trigger re-evaluation when window is registered
-  property int trayMenuUpdateTrigger: 0
+  property int popupMenuUpdateTrigger: 0
 
-  // Get shared tray menu window from PanelService (reactive to trigger changes)
-  readonly property var trayMenuWindow: {
+  // Get shared popup menu window from PanelService (reactive to trigger changes)
+  readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger;
-    return PanelService.getTrayMenuWindow(screen);
+    var _ = popupMenuUpdateTrigger;
+    return PanelService.getPopupMenuWindow(screen);
   }
 
-  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+  readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
 
   Connections {
     target: PanelService
-    function onTrayMenuWindowRegistered(registeredScreen) {
+    function onPopupMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++;
+        root.popupMenuUpdateTrigger++;
       }
     }
   }
@@ -161,10 +161,14 @@ Rectangle {
     }
     //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
-    // Escape all special regex characters in the rule
-    let escapedRule = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Convert '*' to '.*' for wildcard matching
-    let pattern = escapedRule.replace(/\\\*/g, '.*');
+    // First, convert '*' to a placeholder to preserve it, then escape other special regex characters
+    // Use a unique placeholder that won't appear in normal strings
+    const placeholder = '\uE000'; // Private use character
+    let processedRule = rule.replace(/\*/g, placeholder);
+    // Escape all special regex characters (but placeholder won't match this)
+    let escapedRule = processedRule.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    // Convert placeholder back to '.*' for wildcard matching
+    let pattern = escapedRule.replace(new RegExp(placeholder, 'g'), '.*');
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$';
 
@@ -183,9 +187,9 @@ Rectangle {
   function toggleDrawer(button) {
     TooltipService.hideImmediately();
 
-    // Close the tray menu if it's open
-    if (trayMenuWindow && trayMenuWindow.visible) {
-      trayMenuWindow.close();
+    // Close the popup menu if it's open
+    if (popupMenuWindow && popupMenuWindow.visible) {
+      popupMenuWindow.close();
     }
 
     const panel = PanelService.getPanel("trayDrawerPanel", root.screen);
@@ -225,7 +229,7 @@ Rectangle {
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Style.capsuleColor
 
   Flow {
     id: trayFlow
@@ -241,7 +245,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Settings.data.colorSchemes.darkMode ? (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent) : Color.mPrimary
+      colorBg: Color.transparent
       colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent
@@ -320,8 +324,8 @@ Rectangle {
 
                          if (mouse.button === Qt.LeftButton) {
                            // Close any open menu first
-                           if (trayMenuWindow) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow) {
+                             popupMenuWindow.close();
                            }
 
                            if (!modelData.onlyMenu) {
@@ -329,8 +333,8 @@ Rectangle {
                            }
                          } else if (mouse.button === Qt.MiddleButton) {
                            // Close the menu if it was visible
-                           if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow && popupMenuWindow.visible) {
+                             popupMenuWindow.close();
                              return;
                            }
                            modelData.secondaryActivate && modelData.secondaryActivate();
@@ -338,8 +342,8 @@ Rectangle {
                            TooltipService.hideImmediately();
 
                            // Close the menu if it was visible
-                           if (trayMenuWindow && trayMenuWindow.visible) {
-                             trayMenuWindow.close();
+                           if (popupMenuWindow && popupMenuWindow.visible) {
+                             popupMenuWindow.close();
                              return;
                            }
 
@@ -348,8 +352,8 @@ Rectangle {
                              PanelService.openedPanel.close();
                            }
 
-                           if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                             trayMenuWindow.open();
+                           if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
+                             popupMenuWindow.open();
 
                              // Position menu based on bar position
                              let menuX, menuY;
@@ -376,10 +380,10 @@ Rectangle {
                          }
                        }
             onEntered: {
-              if (trayMenuWindow) {
-                trayMenuWindow.close();
+              if (popupMenuWindow) {
+                popupMenuWindow.close();
               }
-              TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
             }
             onExited: TooltipService.hide()
           }
@@ -396,7 +400,7 @@ Rectangle {
       density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
-      colorBg: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+      colorBg: Color.transparent
       colorFg: Color.mOnSurface
       colorBorder: Color.transparent
       colorBorderHover: Color.transparent

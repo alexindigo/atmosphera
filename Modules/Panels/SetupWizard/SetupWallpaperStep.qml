@@ -63,101 +63,28 @@ ColumnLayout {
     }
   }
 
-  // Large preview with rounded corners and shadow effect
+  // Large preview area
   Rectangle {
     Layout.fillWidth: true
     Layout.fillHeight: true
     Layout.minimumHeight: 180
     color: Color.mSurfaceVariant
     radius: Style.radiusL
-    border.color: selectedWallpaper !== "" ? Color.mPrimary : Color.mOutline
-    border.width: selectedWallpaper !== "" ? 2 : 1
-    clip: true
 
-    // Mirror WallpaperPanel approach with rounded shader mask
-    NImageCached {
-      id: previewCached
+    // Image with rounded corners
+    NImageRounded {
       anchors.fill: parent
-      anchors.margins: 4
-      cacheFolder: Settings.cacheDirImagesWallpapers
+      visible: selectedWallpaper !== ""
       imagePath: selectedWallpaper !== "" ? "file://" + selectedWallpaper : ""
-      visible: false // used as texture source for the shader
-    }
-
-    ShaderEffect {
-      anchors.fill: parent
-      anchors.margins: 4
-      property var source: ShaderEffectSource {
-        sourceItem: previewCached
-        hideSource: true
-        live: true
-        recursive: false
-        format: ShaderEffectSource.RGBA
-      }
-      property real itemWidth: width
-      property real itemHeight: height
-      property real cornerRadius: Style.radiusL
-      property real imageOpacity: 1.0
-      fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/rounded_image.frag.qsb")
-      supportsAtlasTextures: false
-      blending: true
-    }
-
-    // Loading placeholder
-    Rectangle {
-      anchors.fill: parent
-      color: Color.mSurfaceVariant
       radius: Style.radiusL
-      visible: (previewCached.status === Image.Loading || previewCached.status === Image.Null) && selectedWallpaper !== ""
-
-      NIcon {
-        icon: "image"
-        pointSize: Style.fontSizeXXL
-        color: Color.mOnSurfaceVariant
-        anchors.centerIn: parent
-      }
-    }
-
-    // Error placeholder
-    Rectangle {
-      anchors.fill: parent
-      color: Color.mError
-      opacity: 0.1
-      radius: Style.radiusL
-      visible: previewCached.status === Image.Error && selectedWallpaper !== ""
-
-      ColumnLayout {
-        anchors.centerIn: parent
-        spacing: Style.marginS
-
-        NIcon {
-          icon: "alert-circle"
-          pointSize: Style.fontSizeXXL
-          color: Color.mError
-          Layout.alignment: Qt.AlignHCenter
-        }
-
-        NText {
-          text: I18n.tr("setup.wallpaper.preview-error")
-          pointSize: Style.fontSizeS
-          color: Color.mError
-          Layout.alignment: Qt.AlignHCenter
-        }
-      }
-    }
-
-    NBusyIndicator {
-      anchors.centerIn: parent
-      visible: (previewCached.status === Image.Loading || previewCached.status === Image.Null) && selectedWallpaper !== ""
-      running: visible
-      size: 28
+      borderColor: selectedWallpaper !== "" ? Color.mPrimary : Color.mOutline
+      borderWidth: selectedWallpaper !== "" ? 2 : 1
     }
 
     ColumnLayout {
       anchors.centerIn: parent
       spacing: Style.marginL
       visible: selectedWallpaper === ""
-      opacity: 0.6
 
       Rectangle {
         Layout.alignment: Qt.AlignHCenter
@@ -165,12 +92,11 @@ ColumnLayout {
         height: 64
         radius: width / 2
         color: Color.mPrimary
-        opacity: 0.15
 
         NIcon {
           icon: "sparkles"
           pointSize: Style.fontSizeXXL
-          color: Color.mPrimary
+          color: Color.mOnPrimary
           anchors.centerIn: parent
         }
       }
@@ -194,7 +120,7 @@ ColumnLayout {
   // Wallpaper gallery strip
   Item {
     Layout.fillWidth: true
-    Layout.preferredHeight: 90
+    Layout.preferredHeight: 88
     visible: filteredWallpapers.length > 0
 
     ScrollView {
@@ -232,20 +158,30 @@ ColumnLayout {
 
         Repeater {
           model: filteredWallpapers
-          delegate: Rectangle {
-            Layout.preferredWidth: 120
-            Layout.preferredHeight: 80
-            color: Color.mSurface
-            border.color: selectedWallpaper === modelData ? Color.mPrimary : Color.mOutline
-            border.width: selectedWallpaper === modelData ? 2 : 1
-            clip: true
+          delegate: Item {
+            readonly property int borderWidth: Style.borderM
+            readonly property int imageMargin: 1
+            readonly property int baseWidth: 120
+            readonly property int baseHeight: 80
 
-            // Cached thumbnail
-            NImageCached {
-              id: thumbCached
+            Layout.preferredWidth: baseWidth + (borderWidth + imageMargin) * 2
+            Layout.preferredHeight: baseHeight + (borderWidth + imageMargin) * 2
+
+            // Border container with proper spacing to prevent clipping
+            Rectangle {
               anchors.fill: parent
-              anchors.margins: 3
-              source: "file://" + modelData
+              anchors.margins: imageMargin
+              color: Color.transparent
+              border.color: selectedWallpaper === modelData ? Color.mPrimary : Color.mOutline
+              border.width: borderWidth
+
+              // Cached thumbnail
+              NImageCached {
+                id: thumbCached
+                anchors.fill: parent
+                anchors.margins: borderWidth
+                source: "file://" + modelData
+              }
             }
 
             // Loading state

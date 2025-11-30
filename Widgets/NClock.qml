@@ -49,6 +49,10 @@ Item {
 
   property color progressColor: root.secondHandColor
 
+  // Font size properties for digital clock
+  property real hoursFontSize: Style.fontSizeXS
+  property real minutesFontSize: Style.fontSizeXXS
+
   height: Math.round((Style.fontSizeXXXL * 1.9) / 2 * Style.uiScaleRatio) * 2
   width: root.height
 
@@ -76,6 +80,16 @@ Item {
       if (item.hasOwnProperty("progressColor")) {
         item.progressColor = Qt.binding(function () {
           return root.progressColor;
+        });
+      }
+      if (item.hasOwnProperty("hoursFontSize")) {
+        item.hoursFontSize = Qt.binding(function () {
+          return root.hoursFontSize;
+        });
+      }
+      if (item.hasOwnProperty("minutesFontSize")) {
+        item.minutesFontSize = Qt.binding(function () {
+          return root.minutesFontSize;
         });
       }
     }
@@ -187,6 +201,8 @@ Item {
     property color backgroundColor: Color.mPrimary
     property color clockColor: Color.mOnPrimary
     property color progressColor: Color.mError
+    property real hoursFontSize: Style.fontSizeXS
+    property real minutesFontSize: Style.fontSizeXXS
 
     anchors.fill: parent
 
@@ -238,7 +254,7 @@ Item {
           return t.split(" ")[0];
         }
 
-        pointSize: Style.fontSizeXS
+        pointSize: hoursFontSize
         font.weight: Style.fontWeightBold
         color: clockColor
         family: Settings.data.ui.fontFixed
@@ -247,7 +263,7 @@ Item {
 
       NText {
         text: Qt.formatTime(now, "mm")
-        pointSize: Style.fontSizeXXS
+        pointSize: minutesFontSize
         font.weight: Style.fontWeightBold
         color: clockColor
         family: Settings.data.ui.fontFixed

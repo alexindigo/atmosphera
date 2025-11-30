@@ -1,5 +1,7 @@
 # Pull Request
 
+<!-- If this is a color scheme PR, please create it in https://github.com/noctalia-dev/noctalia-colorschemes instead -->
+
 ## Motivation
 Provide a clear and concise explanation of what this PR does and why it is needed.
 
@@ -20,6 +22,7 @@ Describe how you tested your changes and mark the relevant items.
 - [ ] Tested on Hyprland
 - [ ] Tested on sway
 - [ ] Tested with different bar positions and density settings
+- [ ] Tested at different interface scaling values
 - [ ] Tested with multiple monitors (if applicable)
 
 ## Screenshots / Videos

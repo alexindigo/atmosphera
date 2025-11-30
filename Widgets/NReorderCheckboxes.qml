@@ -78,6 +78,7 @@ Item {
       property bool enabled: modelData.enabled || false
       property bool required: modelData.required || false
       readonly property bool isDisabled: (root.disabledIds || []).indexOf(modelData.id) !== -1
+      readonly property bool canDrag: !delegateItem.isDisabled
       property bool dragging: false
       property int dragStartY: 0
       property int dragStartIndex: -1
@@ -125,14 +126,14 @@ Item {
             id: dragHandleMouseArea
 
             anchors.fill: parent
-            cursorShape: (!delegateItem.required && !delegateItem.isDisabled) ? Qt.SizeVerCursor : Qt.ArrowCursor
+            cursorShape: delegateItem.canDrag ? Qt.SizeVerCursor : Qt.ArrowCursor
             hoverEnabled: true
             preventStealing: false
-            enabled: !delegateItem.required && !delegateItem.isDisabled
+            enabled: delegateItem.canDrag
             z: 1000
 
             onPressed: mouse => {
-                         if (delegateItem.required || delegateItem.isDisabled) {
+                         if (!delegateItem.canDrag) {
                            return;
                          }
                          delegateItem.dragStartIndex = delegateItem.index;

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
@@ -84,19 +85,69 @@ Item {
     }
   }
 
+  function openExternalMixer() {
+    Quickshell.execDetached(["sh", "-c", Settings.data.audio.externalMixer]);
+  }
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.toggle-mute"),
+        "action": "toggle-mute",
+        "icon": AudioService.inputMuted ? "microphone-off" : "microphone"
+      },
+      {
+        "label": I18n.tr("context-menu.open-mixer"),
+        "action": "open-mixer",
+        "icon": "adjustments"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "toggle-mute") {
+                     AudioService.setInputMuted(!AudioService.inputMuted);
+                   } else if (action === "open-mixer") {
+                     root.openExternalMixer();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   BarPill {
     id: pill
 
+    screen: root.screen
     oppositeDirection: BarService.getPillDirection(root)
     icon: AudioService.getInputIcon()
     density: Settings.data.bar.density
     autoHide: false // Important to be false so we can hover as long as we want
-    text: Math.round(AudioService.inputVolume * 100)
+    text: {
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
+      return Math.round(displayVolume * 100);
+    }
     suffix: "%"
     forceOpen: displayMode === "alwaysShow"
     forceClose: displayMode === "alwaysHide"
     tooltipText: I18n.tr("tooltips.microphone-volume-at", {
-                           "volume": Math.round(AudioService.inputVolume * 100)
+                           "volume": (() => {
+                                        const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                        const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
+                                        return Math.round(displayVolume * 100);
+                                      })()
                          })
 
     onWheel: function (delta) {
@@ -116,10 +167,13 @@ Item {
       PanelService.getPanel("audioPanel", screen)?.toggle(this);
     }
     onRightClicked: {
-      AudioService.setInputMuted(!AudioService.inputMuted);
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        popupMenuWindow.showContextMenu(contextMenu);
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+        contextMenu.openAtItem(pill, pos.x, pos.y);
+      }
     }
-    onMiddleClicked: {
-      Quickshell.execDetached(["pwvucontrol"]);
-    }
+    onMiddleClicked: root.openExternalMixer()
   }
 }

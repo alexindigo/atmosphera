@@ -1,7 +1,9 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.UI
 import qs.Widgets
 
@@ -46,7 +48,7 @@ Rectangle {
   implicitHeight: isBarVertical ? Math.round(verticalLoader.implicitHeight + Style.marginS * 2) : Style.capsuleHeight
 
   radius: Style.radiusS
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Style.capsuleColor
 
   Item {
     id: clockContainer
@@ -115,22 +117,62 @@ Rectangle {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.open-calendar"),
+        "action": "open-calendar",
+        "icon": "calendar"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "open-calendar") {
+                     PanelService.getPanel("clockPanel", screen)?.toggle(root);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   MouseArea {
     id: clockMouseArea
     anchors.fill: parent
     cursorShape: Qt.PointingHandCursor
     hoverEnabled: true
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     onEntered: {
-      if (!PanelService.getPanel("calendarPanel", screen)?.active) {
-        TooltipService.show(Screen, root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection());
+      if (!PanelService.getPanel("clockPanel", screen)?.active) {
+        TooltipService.show(root, I18n.tr("clock.tooltip"), BarService.getTooltipDirection());
       }
     }
     onExited: {
       TooltipService.hide();
     }
-    onClicked: {
-      TooltipService.hide();
-      PanelService.getPanel("calendarPanel", screen)?.toggle(this);
-    }
+    onClicked: mouse => {
+                 TooltipService.hide();
+                 if (mouse.button === Qt.RightButton) {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.showContextMenu(contextMenu);
+                     const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                     contextMenu.openAtItem(root, pos.x, pos.y);
+                   }
+                 } else {
+                   PanelService.getPanel("clockPanel", screen)?.toggle(this);
+                 }
+               }
   }
 }

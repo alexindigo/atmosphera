@@ -66,8 +66,5 @@ PanelWindow {
 
   Component.onCompleted: {
     Logger.d("BarExclusionZone", "Created for screen:", screen?.name);
-    Logger.d("BarExclusionZone", "  Position:", barPosition, "Exclusive:", exclusive, "Floating:", barFloating);
-    Logger.d("BarExclusionZone", "  Anchors - top:", anchors.top, "bottom:", anchors.bottom, "left:", anchors.left, "right:", anchors.right);
-    Logger.d("BarExclusionZone", "  Size:", width, "x", height, "implicitWidth:", implicitWidth, "implicitHeight:", implicitHeight);
   }
 }

@@ -8,6 +8,8 @@ import qs.Widgets
 Item {
   id: root
 
+  required property ShellScreen screen
+
   property string icon: ""
   property string text: ""
   property string suffix: ""
@@ -19,17 +21,10 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
 
-  // Bar position detection for pill direction
-  readonly property string barPosition: Settings.data.bar.position
-  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
-
-  // Determine pill direction based on section position
-  readonly property bool openDownward: oppositeDirection
-  readonly property bool openUpward: !oppositeDirection
-
-  // Effective shown state (true if animated open or forced, but not if force closed)
-  readonly property bool revealed: !forceClose && (forceOpen || showPill)
+  readonly property bool collapseToIcon: forceClose && !forceOpen
 
   signal shown
   signal hidden
@@ -46,11 +41,22 @@ Item {
 
   // Sizing logic for vertical bars
   readonly property int buttonSize: Style.capsuleHeight
+  readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
   readonly property int pillHeight: buttonSize
-  readonly property int pillPaddingVertical: 3 * 2 // Very precise adjustment don't replace by Style.margin
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
-  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + pillPaddingVertical * 2)) : buttonSize
-  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + pillPaddingVertical * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + pillPaddingVertical * 4))
+  readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginM * 2)) : buttonSize
+  readonly property int maxPillHeight: rotateText ? Math.max(1, Math.round(textItem.implicitWidth + Style.marginM * 2 + Math.round(iconCircle.height / 4))) : Math.max(1, Math.round(textItem.implicitHeight + Style.marginM * 2))
+
+  // Determine pill direction based on section position
+  readonly property bool openDownward: oppositeDirection
+  readonly property bool openUpward: !oppositeDirection
+
+  // Effective shown state (true if animated open or forced, but not if force closed)
+  readonly property bool revealed: !forceClose && (forceOpen || showPill)
+
+  // Always prioritize hover color, then the custom one and finally the fallback color
+  readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
+  readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
 
   readonly property real iconSize: {
     switch (root.density) {
@@ -72,13 +78,29 @@ Item {
 
   // For vertical bars: width is just icon size, height includes pill space
   width: buttonSize
-  height: revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize
+  height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
 
   Connections {
     target: root
     function onTooltipTextChanged() {
       if (hovered) {
         TooltipService.updateText(root.tooltipText);
+      }
+    }
+  }
+
+  // Unified background for the entire pill area to avoid overlapping opacity
+  Rectangle {
+    id: pillBackground
+    width: buttonSize
+    height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
+    radius: halfButtonSize
+    color: root.bgColor
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
       }
     }
   }
@@ -94,9 +116,7 @@ Item {
     y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
-
-    readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
+    color: Color.transparent // Make pill background transparent to avoid double opacity
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
     topLeftRadius: openUpward ? halfButtonSize : 0
@@ -110,7 +130,7 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: rotateText ? Math.round(iconCircle.height / 4) : getVerticalCenterOffset()
+      anchors.verticalCenterOffset: openDownward ? Style.marginXXS : -Style.marginXXS
       rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
@@ -119,15 +139,12 @@ Item {
       font.weight: Style.fontWeightMedium
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
-      color: forceOpen ? Color.mOnSurface : Color.mPrimary
+      color: root.fgColor
       visible: revealed
 
       function getVerticalCenterOffset() {
-        var offset = openDownward ? Math.round(pillPaddingVertical * 0.75) : -Math.round(pillPaddingVertical * 0.75);
-        if (forceOpen) {
-          offset += oppositeDirection ? -Style.marginXXS : Style.marginXXS;
-        }
-        return offset;
+        // A small, symmetrical offset to push the text slightly away from the icon's edge.
+        return openDownward ? Style.marginXS : -Style.marginXS;
       }
     }
     Behavior on width {
@@ -147,7 +164,7 @@ Item {
     Behavior on opacity {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.OutCubic
       }
     }
@@ -158,25 +175,18 @@ Item {
     width: buttonSize
     height: buttonSize
     radius: width * 0.5
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Color.transparent // Make icon background transparent to avoid double opacity
 
     // Icon positioning based on direction
     x: 0
     y: openUpward ? (parent.height - height) : 0
     anchors.horizontalCenter: parent.horizontalCenter
 
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationNormal
-        easing.type: Easing.InOutQuad
-      }
-    }
-
     NIcon {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? Color.mOnHover : Color.mOnSurface
+      color: root.fgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -208,7 +218,7 @@ Item {
       property: "opacity"
       from: 0
       to: 1
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.OutCubic
     }
     onStarted: {
@@ -257,7 +267,7 @@ Item {
       property: "opacity"
       from: 1
       to: 0
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.InCubic
     }
     onStopped: {
@@ -284,7 +294,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
+      TooltipService.show(pill, root.tooltipText, BarService.getTooltipDirection(), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }
@@ -313,6 +323,8 @@ Item {
   }
 
   function show() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showAnim.start();
@@ -323,6 +335,8 @@ Item {
   }
 
   function hide() {
+    if (collapseToIcon)
+      return;
     if (forceOpen) {
       return;
     }
@@ -333,6 +347,8 @@ Item {
   }
 
   function showDelayed() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showTimer.start();

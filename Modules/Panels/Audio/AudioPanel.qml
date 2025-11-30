@@ -13,19 +13,74 @@ SmartPanel {
 
   property real localOutputVolume: AudioService.volume || 0
   property bool localOutputVolumeChanging: false
+  property int lastSinkId: -1
 
   property real localInputVolume: AudioService.inputVolume || 0
   property bool localInputVolumeChanging: false
+  property int lastSourceId: -1
 
   preferredWidth: Math.round(340 * Style.uiScaleRatio)
   preferredHeight: Math.round(420 * Style.uiScaleRatio)
 
+  // Reset local volume when device changes - use current device's volume
+  Connections {
+    target: AudioService
+    function onSinkChanged() {
+      if (AudioService.sink) {
+        const newSinkId = AudioService.sink.id;
+        if (newSinkId !== lastSinkId) {
+          lastSinkId = newSinkId;
+          // Immediately set local volume to current device's volume
+          localOutputVolume = AudioService.volume;
+        }
+      } else {
+        lastSinkId = -1;
+        localOutputVolume = 0;
+      }
+    }
+  }
+
+  Connections {
+    target: AudioService
+    function onSourceChanged() {
+      if (AudioService.source) {
+        const newSourceId = AudioService.source.id;
+        if (newSourceId !== lastSourceId) {
+          lastSourceId = newSourceId;
+          // Immediately set local volume to current device's volume
+          localInputVolume = AudioService.inputVolume;
+        }
+      } else {
+        lastSourceId = -1;
+        localInputVolume = 0;
+      }
+    }
+  }
+
   // Connections to update local volumes when AudioService changes
+  Connections {
+    target: AudioService
+    function onVolumeChanged() {
+      if (!localOutputVolumeChanging && AudioService.sink && AudioService.sink.id === lastSinkId) {
+        localOutputVolume = AudioService.volume;
+      }
+    }
+  }
+
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
-      if (!localOutputVolumeChanging) {
+      if (!localOutputVolumeChanging && AudioService.sink && AudioService.sink.id === lastSinkId) {
         localOutputVolume = AudioService.volume;
+      }
+    }
+  }
+
+  Connections {
+    target: AudioService
+    function onInputVolumeChanged() {
+      if (!localInputVolumeChanging && AudioService.source && AudioService.source.id === lastSourceId) {
+        localInputVolume = AudioService.inputVolume;
       }
     }
   }
@@ -33,23 +88,30 @@ SmartPanel {
   Connections {
     target: AudioService.source?.audio ? AudioService.source?.audio : null
     function onVolumeChanged() {
-      if (!localInputVolumeChanging) {
+      if (!localInputVolumeChanging && AudioService.source && AudioService.source.id === lastSourceId) {
         localInputVolume = AudioService.inputVolume;
       }
     }
   }
 
   // Timer to debounce volume changes
+  // Only sync if the device hasn't changed (check by comparing IDs)
   Timer {
     interval: 100
     running: true
     repeat: true
     onTriggered: {
-      if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
-        AudioService.setVolume(localOutputVolume);
+      // Only sync if sink hasn't changed
+      if (AudioService.sink && AudioService.sink.id === lastSinkId) {
+        if (Math.abs(localOutputVolume - AudioService.volume) >= 0.01) {
+          AudioService.setVolume(localOutputVolume);
+        }
       }
-      if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
-        AudioService.setInputVolume(localInputVolume);
+      // Only sync if source hasn't changed
+      if (AudioService.source && AudioService.source.id === lastSourceId) {
+        if (Math.abs(localInputVolume - AudioService.inputVolume) >= 0.01) {
+          AudioService.setInputVolume(localInputVolume);
+        }
       }
     }
   }
@@ -95,6 +157,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.output-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
+              AudioService.suppressOutputOSD();
               AudioService.setOutputMuted(!AudioService.muted);
             }
           }
@@ -104,6 +167,7 @@ SmartPanel {
             tooltipText: I18n.tr("tooltips.input-muted")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
+              AudioService.suppressInputOSD();
               AudioService.setInputMuted(!AudioService.inputMuted);
             }
           }
@@ -240,10 +304,6 @@ SmartPanel {
                 }
               }
             }
-          }
-
-          Item {
-            Layout.fillHeight: true
           }
         }
       }

@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Media
 import qs.Services.UI
 import qs.Widgets
@@ -37,9 +38,15 @@ Item {
   // Backward compatibility: honor legacy hideWhenIdle setting if present
   readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
   readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showArtistFirst: (widgetSettings.showArtistFirst !== undefined) ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
   readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
   readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
   readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
+
+  // Private constants for element sizes
+  readonly property int _iconOnlySize: Math.round(18 * scaling)
+  readonly property int _artAndProgressSize: Math.round(21 * scaling)
 
   // Maximum widget width with user settings support
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
@@ -65,7 +72,7 @@ Item {
 
   // Hide conditions
   readonly property bool shouldHideIdle: ((hideMode === "idle") || hideWhenIdle) && !MediaService.isPlaying
-  readonly property bool isEmptyForHideMode: (!hasActivePlayer) && (hideMode === "hidden" || hideMode === "transparent")
+  readonly property bool isEmptyForHideMode: (!hasActivePlayer) && (hideMode === "hidden")
 
   implicitHeight: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight) : 0
   implicitWidth: visible ? (isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)) : 0
@@ -94,7 +101,11 @@ Item {
   }
 
   function getTitle() {
-    return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "");
+    if (showArtistFirst) {
+      return (MediaService.trackArtist !== "" ? `${MediaService.trackArtist} - ` : "") + MediaService.trackTitle;
+    } else {
+      return MediaService.trackTitle + (MediaService.trackArtist !== "" ? ` - ${MediaService.trackArtist}` : "");
+    }
   }
 
   function calculatedVerticalDimension() {
@@ -104,15 +115,17 @@ Item {
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0;
-    var margins = Style.marginS * scaling * 2; // Left and right margins
 
-    // Icon or album art width
-    if (!hasActivePlayer || !showAlbumArt) {
-      // Icon width
-      contentWidth += Math.round(18 * scaling);
+    // Icon, progress ring, or album art width
+    if (!hasActivePlayer || (!showAlbumArt && !showProgressRing)) {
+      // Icon width only
+      contentWidth += _iconOnlySize;
+    } else if (showProgressRing && hasActivePlayer) {
+      // Progress ring width (same as album art width to maintain consistent sizing)
+      contentWidth += _artAndProgressSize;
     } else if (showAlbumArt && hasActivePlayer) {
       // Album art width
-      contentWidth += 21 * scaling;
+      contentWidth += _artAndProgressSize;
     }
 
     // Spacing between icon/art and text; only if there is text
@@ -126,25 +139,26 @@ Item {
       contentWidth += Style.marginXXS * 2;
     }
 
-    // Add container margins
-    contentWidth += margins;
-
     return Math.ceil(contentWidth);
   }
 
   // Dynamic width: adapt to content but respect maximum width setting
   readonly property real dynamicWidth: {
+    var contentWidth = calculateContentWidth();
+    // For vertical bars, there are no horizontal margins to add
+    var margins = isVerticalBar ? 0 : (Style.marginS * scaling * 2);
+    var totalWidth = contentWidth + margins;
+
     // If using fixed width mode, always use maxWidth
     if (useFixedWidth) {
       return maxWidth;
     }
-    // Otherwise, adapt to content
+    // If there's no active player, the widget should be compact
     if (!hasActivePlayer) {
-      // Keep compact when no active player
-      return calculateContentWidth();
+      return totalWidth;
     }
-    // Use content width but don't exceed user-set maximum width
-    return Math.min(calculateContentWidth(), maxWidth);
+    // Adapt to content but don't exceed user-set maximum width
+    return Math.min(totalWidth, maxWidth);
   }
 
   //  A hidden text element to safely measure the full title width
@@ -157,6 +171,58 @@ Item {
     pointSize: Style.fontSizeS * scaling
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: {
+      var items = [];
+      if (hasActivePlayer && MediaService.canPlay) {
+        items.push({
+                     "label": MediaService.isPlaying ? I18n.tr("context-menu.pause") : I18n.tr("context-menu.play"),
+                     "action": "play-pause",
+                     "icon": MediaService.isPlaying ? "media-pause" : "media-play"
+                   });
+      }
+      if (hasActivePlayer && MediaService.canGoPrevious) {
+        items.push({
+                     "label": I18n.tr("context-menu.previous"),
+                     "action": "previous",
+                     "icon": "media-prev"
+                   });
+      }
+      if (hasActivePlayer && MediaService.canGoNext) {
+        items.push({
+                     "label": I18n.tr("context-menu.next"),
+                     "action": "next",
+                     "icon": "media-next"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "play-pause") {
+                     MediaService.playPause();
+                   } else if (action === "previous") {
+                     MediaService.previous();
+                   } else if (action === "next") {
+                     MediaService.next();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Rectangle {
     id: mediaMini
     visible: root.visible
@@ -165,7 +231,7 @@ Item {
     width: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)
     height: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
     radius: isVerticalBar ? width / 2 : Style.radiusM
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Style.capsuleColor
 
     // Smooth width transition
     Behavior on width {
@@ -250,27 +316,129 @@ Item {
           color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
           pointSize: Style.fontSizeL * scaling
           verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
           Layout.alignment: Qt.AlignVCenter
-          visible: !hasActivePlayer || (!showAlbumArt && !trackArt.visible)
+          Layout.preferredWidth: _iconOnlySize
+          Layout.preferredHeight: _iconOnlySize
+          visible: !hasActivePlayer || (!showAlbumArt && !showProgressRing)
         }
 
         ColumnLayout {
           Layout.alignment: Qt.AlignVCenter
-          visible: showAlbumArt && hasActivePlayer
           spacing: 0
 
+          // Progress circle (independent of album art)
           Item {
-            Layout.preferredWidth: Math.round(21 * scaling)
-            Layout.preferredHeight: Math.round(21 * scaling)
+            Layout.preferredWidth: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.preferredHeight: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.minimumWidth: (hasActivePlayer && showProgressRing) ? _artAndProgressSize : 0
+            Layout.minimumHeight: (hasActivePlayer && showProgressRing) ? _artAndProgressSize : 0
+            Layout.maximumWidth: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.maximumHeight: (hasActivePlayer && (showProgressRing || showAlbumArt)) ? _artAndProgressSize : 0
+            Layout.fillWidth: false
+            Layout.fillHeight: false
+            visible: hasActivePlayer && (showProgressRing || showAlbumArt)  // Show container when there's active player and either feature is enabled
 
-            NImageCircled {
-              id: trackArt
+            // Progress circle - always available when showProgressRing is true
+            Canvas {
+              id: progressCanvas
               anchors.fill: parent
-              imagePath: MediaService.trackArtUrl
-              fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
-              fallbackIconSize: 10
-              borderWidth: 0
-              border.color: Color.transparent
+              anchors.margins: 0 // Align exactly with parent to avoid clipping
+              visible: hasActivePlayer && showProgressRing // Only show when progress ring is enabled
+              z: 0 // Behind the album art or icon
+
+              // Calculate progress ratio: 0 to 1
+              property real progressRatio: {
+                if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+                  return 0;
+                const r = MediaService.currentPosition / MediaService.trackLength;
+                if (isNaN(r) || !isFinite(r))
+                  return 0;
+                return Math.max(0, Math.min(1, r));
+              }
+
+              onProgressRatioChanged: requestPaint()
+
+              onPaint: {
+                var ctx = getContext("2d");
+                // Check if width/height are valid before calculating radius
+                if (width <= 0 || height <= 0) {
+                  return; // Skip drawing if dimensions are invalid
+                }
+
+                var centerX = width / 2;
+                var centerY = height / 2;
+                var radius = Math.max(0, Math.min(width, height) / 2 - (1.25 * scaling)); // Larger radius, accounting for line width to approach edge
+
+                ctx.reset();
+
+                // Background circle (full track, not played yet)
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.lineWidth = 2.5 * scaling; // Thicker line width based on scaling property
+                ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
+                ctx.stroke();
+
+                // Progress arc (played portion)
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
+                ctx.lineWidth = 2.5 * scaling; // Thicker line width based on scaling property
+                ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
+                ctx.lineCap = "round";
+                ctx.stroke();
+              }
+            }
+
+            // Connection to update progress when media position changes
+            Connections {
+              target: MediaService
+              function onCurrentPositionChanged() {
+                progressCanvas.requestPaint();
+              }
+              function onTrackLengthChanged() {
+                progressCanvas.requestPaint();
+              }
+            }
+
+            // Property to track mPrimary color changes and trigger repaint
+            Item {
+              id: colorTrackerHorizontal
+              property color currentColor: Color.mPrimary
+              onCurrentColorChanged: progressCanvas.requestPaint()
+            }
+
+            // Album art or icon - only show album art when enabled and player is active
+            Item {
+              anchors.fill: parent
+              anchors.margins: showProgressRing ? (3 * scaling) : 0.5 // Adjusted to align with progress circle better
+
+              NImageRounded {
+                id: trackArt
+                anchors.fill: parent
+                anchors.margins: showProgressRing ? 0 : -1 * scaling // Add negative margin to make album art larger when no progress ring
+                radius: width * 0.5
+                visible: showAlbumArt && hasActivePlayer
+                imagePath: MediaService.trackArtUrl
+                fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
+                fallbackIconSize: showProgressRing ? 10 : 12 // Larger fallback icon when no progress ring
+                borderWidth: 0
+                borderColor: Color.transparent
+                z: 1 // In front of the progress circle
+              }
+
+              // Fallback icon when no album art or album art not shown
+              NIcon {
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
+                icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+                color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+                pointSize: (showAlbumArt || showProgressRing) ? 8 * scaling : 12 * scaling  // Smaller when inside album art circle or progress ring, larger when alone
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                visible: (!showAlbumArt && hasActivePlayer) && showProgressRing
+                z: 1 // In front of the progress circle
+              }
             }
           }
         }
@@ -279,10 +447,10 @@ Item {
           id: titleContainer
           Layout.preferredWidth: {
             // Calculate available width based on other elements in the row
-            var iconWidth = (windowIcon.visible ? (18 * scaling + Style.marginS * scaling) : 0);
-            var albumArtWidth = (hasActivePlayer && showAlbumArt ? (21 * scaling + Style.marginS * scaling) : 0);
+            var iconWidth = (windowIcon.visible ? (_iconOnlySize + Style.marginS * scaling) : 0);
+            var artWidth = (hasActivePlayer && (showAlbumArt || showProgressRing) ? (_artAndProgressSize + Style.marginS * scaling) : 0);
             var totalMargins = Style.marginXXS * 2;
-            var availableWidth = mainContainer.width - iconWidth - albumArtWidth - totalMargins;
+            var availableWidth = mainContainer.width - iconWidth - artWidth - totalMargins;
             return Math.max(20, availableWidth);
           }
           Layout.maximumWidth: Layout.preferredWidth
@@ -426,31 +594,108 @@ Item {
         }
       }
 
-      // Vertical layout for left/right bars - icon only
+      // Progress circle for vertical layout - follows background radius
+      Canvas {
+        id: progressCanvasVertical
+        anchors.fill: parent
+        anchors.margins: 0 // Align with parent container (mainContainer which matches mediaMini)
+        visible: isVerticalBar && showProgressRing // Control visibility with setting
+        z: 0 // Behind other content
+
+        // Calculate progress ratio: 0 to 1
+        property real progressRatio: {
+          if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+            return 0;
+          const r = MediaService.currentPosition / MediaService.trackLength;
+          if (isNaN(r) || !isFinite(r))
+            return 0;
+          return Math.max(0, Math.min(1, r));
+        }
+
+        onProgressRatioChanged: requestPaint()
+
+        onPaint: {
+          var ctx = getContext("2d");
+          // Check if width/height are valid before calculating radius
+          if (width <= 0 || height <= 0) {
+            return; // Skip drawing if dimensions are invalid
+          }
+
+          var centerX = width / 2;
+          var centerY = height / 2;
+          // Align with mediaMini radius which is circular in vertical mode
+          var radius = Math.max(0, Math.min(width, height) / 2 - 4); // Position ring near the outer edge of background
+
+          ctx.reset();
+
+          // Background circle (full track, not played yet)
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+          ctx.lineWidth = 2.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.4); // More opaque for better visibility
+          ctx.stroke();
+
+          // Progress arc (played portion)
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
+          ctx.lineWidth = 2.5 * scaling; // Line width based on scaling property, thinner for vertical layout
+          ctx.strokeStyle = Color.mPrimary; // Use primary color for progress
+          ctx.lineCap = "round";
+          ctx.stroke();
+        }
+      }
+
+      // Vertical layout for left/right bars - icon or album art
       Item {
         id: verticalLayout
         anchors.centerIn: parent
-        width: parent.width - Style.marginM * 2
-        height: parent.height - Style.marginM * 2
+        width: showProgressRing ? (Style.baseWidgetSize * 0.5 * scaling) : (calculatedVerticalDimension() - 4 * scaling)
+        height: width
         visible: isVerticalBar
-        z: 1 // Above the visualizer
+        z: 1 // Above the visualizer and progress ring
 
-        // Media icon
-        Item {
-          width: Style.baseWidgetSize * 0.5
-          height: width
-          anchors.centerIn: parent
-
-          NIcon {
-            id: mediaIconVertical
-            anchors.fill: parent
-            icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
-            color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeL * scaling
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-          }
+        // Album Art
+        NImageRounded {
+          anchors.fill: parent
+          visible: showAlbumArt && hasActivePlayer
+          radius: width * 0.5
+          imagePath: MediaService.trackArtUrl
+          fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
+          fallbackIconSize: 12
+          borderWidth: 0
         }
+
+        // Media icon (fallback)
+        NIcon {
+          id: mediaIconVertical
+          anchors.centerIn: parent
+          width: parent.width
+          height: parent.height
+          visible: !showAlbumArt || !hasActivePlayer
+          icon: hasActivePlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
+          color: hasActivePlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
+          pointSize: Style.fontSizeM * scaling
+          verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
+        }
+      }
+
+      // Connection to update vertical progress when media position changes
+      Connections {
+        target: MediaService
+        function onCurrentPositionChanged() {
+          progressCanvasVertical.requestPaint();
+        }
+        function onTrackLengthChanged() {
+          progressCanvasVertical.requestPaint();
+        }
+      }
+
+      // Property to track mPrimary color changes and trigger repaint for vertical canvas
+      Item {
+        id: colorTrackerVertical
+        property color currentColor: Color.mPrimary
+        onCurrentColorChanged: progressCanvasVertical.requestPaint()
       }
 
       // Mouse area for hover detection
@@ -461,25 +706,31 @@ Item {
         cursorShape: hasActivePlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => {
-                     if (!hasActivePlayer || !MediaService.currentPlayer || !MediaService.canPlay) {
-                       return;
-                     }
-
                      if (mouse.button === Qt.LeftButton) {
+                       if (!hasActivePlayer || !MediaService.currentPlayer || !MediaService.canPlay) {
+                         return;
+                       }
                        MediaService.playPause();
-                     } else if (mouse.button == Qt.RightButton) {
-                       MediaService.next();
+                     } else if (mouse.button === Qt.RightButton) {
                        TooltipService.hide();
-                     } else if (mouse.button == Qt.MiddleButton) {
-                       MediaService.previous();
-                       TooltipService.hide();
+                       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                       if (popupMenuWindow) {
+                         popupMenuWindow.showContextMenu(contextMenu);
+                         const pos = BarService.getContextMenuPosition(mediaMini, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                         contextMenu.openAtItem(mediaMini, pos.x, pos.y);
+                       }
+                     } else if (mouse.button === Qt.MiddleButton) {
+                       if (hasActivePlayer && MediaService.canGoPrevious) {
+                         MediaService.previous();
+                         TooltipService.hide();
+                       }
                      }
                    }
 
         onEntered: {
           var textToShow = hasActivePlayer ? tooltipText : placeholderText;
           if ((textToShow !== "") && isVerticalBar || (scrollingMode === "never")) {
-            TooltipService.show(Screen, root, textToShow, BarService.getTooltipDirection());
+            TooltipService.show(root, textToShow, BarService.getTooltipDirection());
           }
         }
         onExited: {

@@ -8,6 +8,8 @@ RadioButton {
 
   property real pointSize: Style.fontSizeM
 
+  implicitWidth: outerCircle.implicitWidth + Style.marginS + contentItem.implicitWidth
+
   indicator: Rectangle {
     id: outerCircle
 

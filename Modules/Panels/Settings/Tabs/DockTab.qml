@@ -86,17 +86,17 @@ ColumnLayout {
     spacing: Style.marginXXS
     Layout.fillWidth: true
     NLabel {
-      label: I18n.tr("settings.dock.appearance.dead-opacity.label")
-      description: I18n.tr("settings.dock.appearance.dead-opacity.description")
+      label: I18n.tr("settings.dock.appearance.border-radius.label")
+      description: I18n.tr("settings.dock.appearance.border-radius.description")
     }
     NValueSlider {
       Layout.fillWidth: true
       from: 0
       to: 1
       stepSize: 0.01
-      value: Settings.data.dock.deadOpacity
-      onMoved: value => Settings.data.dock.deadOpacity = value
-      text: Math.floor(Settings.data.dock.deadOpacity * 100) + "%"
+      value: Settings.data.dock.radiusRatio
+      onMoved: value => Settings.data.dock.radiusRatio = value
+      text: Math.floor(Settings.data.dock.radiusRatio * 100) + "%"
     }
   }
 

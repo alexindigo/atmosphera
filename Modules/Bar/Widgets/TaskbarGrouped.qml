@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -20,7 +21,8 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property string density: Settings.data.bar.density
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -33,11 +35,13 @@ Item {
     }
     return {};
   }
-  readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
-  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+
   readonly property int characterCount: 2
-  readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : true
+  readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
+  readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
+
   property ListModel localWorkspaces: ListModel {}
   property real masterProgress: 0.0
   property bool effectsActive: false
@@ -46,6 +50,11 @@ Item {
   // Wheel scroll handling
   property int wheelAccumulatedDelta: 0
   property bool wheelCooldown: false
+
+  // Context menu state
+  property var selectedWindow: null
+  property string selectedAppName: ""
+  property int modelUpdateTrigger: 0  // Dummy property to force model re-evaluation
 
   function refreshWorkspaces() {
     localWorkspaces.clear();
@@ -67,6 +76,7 @@ Item {
 
       localWorkspaces.append(workspaceData);
     }
+
     updateWorkspaceFocus();
   }
 
@@ -156,6 +166,56 @@ Item {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: {
+      // Reference modelUpdateTrigger to make binding reactive
+      const _ = root.modelUpdateTrigger;
+
+      var items = [];
+      if (root.selectedWindow) {
+        items.push({
+                     "label": I18n.tr("context-menu.activate-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "activate",
+                     "icon": "focus"
+                   });
+        items.push({
+                     "label": I18n.tr("context-menu.close-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "close",
+                     "icon": "x"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "activate" && selectedWindow) {
+                     CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "close" && selectedWindow) {
+                     CompositorService.closeWindow(selectedWindow);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                   selectedWindow = null;
+                   selectedAppName = "";
+                 }
+  }
+
   // Debounce timer for wheel interactions
   Timer {
     id: wheelDebounce
@@ -208,19 +268,39 @@ Item {
 
       radius: Style.radiusS
       border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
-      border.width: 1
+      border.width: Style.borderS
       width: (hasWindows ? iconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginXS : Style.marginL)
       height: (hasWindows ? iconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVerticalBar ? Style.marginL : Style.marginXS)
-      color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+      color: Style.capsuleColor
 
       MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         enabled: !hasWindows
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: {
-          CompositorService.switchToWorkspace(workspaceModel);
-        }
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        preventStealing: true
+        onPressed: mouse => {
+                     if (mouse.button === Qt.LeftButton) {
+                       CompositorService.switchToWorkspace(workspaceModel);
+                     }
+                   }
+        onReleased: mouse => {
+                      if (mouse.button === Qt.RightButton) {
+                        mouse.accepted = true;
+                        TooltipService.hide();
+                        root.selectedWindow = "";
+                        root.selectedAppName = "";
+
+                        // Store position and size for timer callback
+                        const globalPos = container.mapToItem(root, 0, 0);
+                        contextMenuOpenTimer1.globalX = globalPos.x;
+                        contextMenuOpenTimer1.globalY = globalPos.y;
+                        contextMenuOpenTimer1.itemWidth = container.width;
+                        contextMenuOpenTimer1.itemHeight = container.height;
+                        contextMenuOpenTimer1.restart();
+                      }
+                    }
       }
 
       Flow {
@@ -292,21 +372,41 @@ Item {
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
               acceptedButtons: Qt.LeftButton | Qt.RightButton
+              preventStealing: true
 
-              onPressed: function (mouse) {
-                if (!model) {
-                  return;
-                }
+              onPressed: mouse => {
+                           if (!model) {
+                             return;
+                           }
 
-                if (mouse.button === Qt.LeftButton) {
-                  CompositorService.focusWindow(model);
-                } else if (mouse.button === Qt.RightButton) {
-                  CompositorService.closeWindow(model);
-                }
-              }
+                           if (mouse.button === Qt.LeftButton) {
+                             CompositorService.focusWindow(model);
+                           }
+                         }
+
+              onReleased: mouse => {
+                            if (!model) {
+                              return;
+                            }
+
+                            if (mouse.button === Qt.RightButton) {
+                              mouse.accepted = true;
+                              TooltipService.hide();
+                              root.selectedWindow = model;
+                              root.selectedAppName = CompositorService.getCleanAppName(model.appId, model.title);
+
+                              // Store position and size for timer callback
+                              const globalPos = taskbarItem.mapToItem(root, 0, 0);
+                              contextMenuOpenTimer2.globalX = globalPos.x;
+                              contextMenuOpenTimer2.globalY = globalPos.y;
+                              contextMenuOpenTimer2.itemWidth = taskbarItem.width;
+                              contextMenuOpenTimer2.itemHeight = taskbarItem.height;
+                              contextMenuOpenTimer2.restart();
+                            }
+                          }
               onEntered: {
                 taskbarItem.itemHovered = true;
-                TooltipService.show(Screen, taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
+                TooltipService.show(taskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
               }
               onExited: {
                 taskbarItem.itemHovered = false;
@@ -329,7 +429,8 @@ Item {
           topMargin: -Style.fontSizeXS * 0.5
         }
 
-        width: Math.max(workspaceNumber.implicitWidth + Style.marginXS, Style.fontSizeXXS * 2)
+        // Doube width margin necessary here for Name or Name+Index, but double height not needed.
+        width: Math.max(workspaceNumber.implicitWidth + (Style.marginXS * 2), Style.fontSizeXXS * 2)
         height: Math.max(workspaceNumber.implicitHeight + Style.marginXS, Style.fontSizeXXS * 2)
 
         Rectangle {
@@ -346,7 +447,11 @@ Item {
             if (hasWindows)
               return Color.mSecondary;
 
-            return Qt.alpha(Color.mOutline, 0.3);
+            if (Settings.data.colorSchemes.darkMode) {
+              return Qt.darker(Color.mSecondary, 1.5);
+            } else {
+              return Qt.lighter(Color.mSecondary, 1.5);
+            }
           }
 
           scale: workspaceModel.isActive ? 1.0 : 0.9
@@ -389,13 +494,13 @@ Item {
           text: {
             if (workspaceModel.name && workspaceModel.name.length > 0) {
               if (root.labelMode === "name") {
-                return workspaceModel.name.substring(0, root.characterCount)
+                return workspaceModel.name.substring(0, root.characterCount);
               }
               if (root.labelMode === "index+name") {
-                return (workspaceModel.idx.toString() + " " + workspaceModel.name.substring(0, root.characterCount))
+                return (workspaceModel.idx.toString() + workspaceModel.name.substring(0, 1));
               }
             }
-            return workspaceModel.idx.toString()
+            return workspaceModel.idx.toString();
           }
 
           family: Settings.data.ui.fontFixed
@@ -411,21 +516,10 @@ Item {
               return Color.mOnPrimary;
             if (workspaceModel.isUrgent)
               return Color.mOnError;
-            if (hasWindows)
-              return Color.mOnSecondary;
+            // if (hasWindows)
+            //   return Color.mOnSecondary;
 
-            return Color.mOnSurface;
-          }
-
-          opacity: {
-            if (workspaceModel.isFocused)
-              return 1.0;
-            if (workspaceModel.isUrgent)
-              return 0.9;
-            if (hasWindows)
-              return 0.8;
-
-            return 0.6;
+            return Color.mOnSecondary;
           }
 
           Behavior on opacity {
@@ -462,6 +556,84 @@ Item {
     Repeater {
       model: localWorkspaces
       delegate: workspaceRepeaterDelegate
+    }
+  }
+
+  Timer {
+    id: contextMenuOpenTimer1
+    interval: 10
+    repeat: false
+    property real globalX: 0
+    property real globalY: 0
+    property real itemWidth: 0
+    property real itemHeight: 0
+    onTriggered: openContextMenu(globalX, globalY, itemWidth, itemHeight)
+  }
+
+  Timer {
+    id: contextMenuOpenTimer2
+    interval: 10
+    repeat: false
+    property real globalX: 0
+    property real globalY: 0
+    property real itemWidth: 0
+    property real itemHeight: 0
+    onTriggered: openContextMenu(globalX, globalY, itemWidth, itemHeight)
+  }
+
+  // --------------------------------------------------
+  function openContextMenu(globalX, globalY, itemWidth, itemHeight) {
+    // Directly build and set model as a new array (bypass binding issues)
+    var items = [];
+    if (root.selectedWindow) {
+      items.push({
+                   "label": I18n.tr("context-menu.activate-app", {
+                                      "app": root.selectedAppName
+                                    }),
+                   "action": "activate",
+                   "icon": "focus"
+                 });
+      items.push({
+                   "label": I18n.tr("context-menu.close-app", {
+                                      "app": root.selectedAppName
+                                    }),
+                   "action": "close",
+                   "icon": "x"
+                 });
+    }
+    items.push({
+                 "label": I18n.tr("context-menu.widget-settings"),
+                 "action": "widget-settings",
+                 "icon": "settings"
+               });
+
+    // Set the model directly
+    contextMenu.model = items;
+
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.open();
+
+      // Calculate menu position
+      let menuX, menuY;
+      if (root.barPosition === "top") {
+        menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
+        menuY = Style.barHeight + Style.marginS;
+      } else if (root.barPosition === "bottom") {
+        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
+        menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
+        menuY = -menuHeight - Style.marginS;
+      } else if (root.barPosition === "left") {
+        menuX = Style.barHeight + Style.marginS;
+        menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
+      } else {
+        // right
+        menuX = -contextMenu.implicitWidth - Style.marginS;
+        menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
+      }
+
+      contextMenu.openAtItem(root, menuX, menuY);
+      popupMenuWindow.contentItem = contextMenu;
     }
   }
 }

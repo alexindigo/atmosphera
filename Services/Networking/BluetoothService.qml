@@ -70,10 +70,10 @@ Singleton {
       root.lastBluetoothBlocked = root.blocked;
       if (bluetoothBlockedToggled) {
         checkWifiBlocked.running = true;
-      } else if (adapter.enabled) {
+      } else if (adapter.state === BluetoothAdapterState.Enabled) {
         ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
         discoveryTimer.running = true;
-      } else {
+      } else if (adapter.state === BluetoothAdapterState.Disabled) {
         ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
       }
     }
@@ -152,13 +152,13 @@ Singleton {
 
   function getStatusString(device) {
     if (device.state === BluetoothDeviceState.Connecting) {
-      return "Connecting...";
+      return I18n.tr("bluetooth.panel.connecting");
     }
     if (device.pairing) {
-      return "Pairing...";
+      return I18n.tr("bluetooth.panel.pairing");
     }
     if (device.blocked) {
-      return "Blocked";
+      return I18n.tr("bluetooth.panel.blocked");
     }
     return "";
   }

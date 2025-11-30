@@ -301,7 +301,7 @@ ColumnLayout {
               Layout.fillWidth: true
               Layout.preferredHeight: 48
               radius: Style.radiusM
-              border.width: 1
+              border.width: Style.borderS
 
               property bool isActive: Settings.data.colorSchemes.matugenSchemeType === modelData.key
 

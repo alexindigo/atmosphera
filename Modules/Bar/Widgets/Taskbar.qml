@@ -20,7 +20,8 @@ Rectangle {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.data.bar.position
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property string density: Settings.data.bar.density
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
@@ -39,6 +40,54 @@ Rectangle {
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : widgetMetadata.hideMode
   readonly property bool onlySameOutput: (widgetSettings.onlySameOutput !== undefined) ? widgetSettings.onlySameOutput : widgetMetadata.onlySameOutput
   readonly property bool onlyActiveWorkspaces: (widgetSettings.onlyActiveWorkspaces !== undefined) ? widgetSettings.onlyActiveWorkspaces : widgetMetadata.onlyActiveWorkspaces
+
+  // Context menu state
+  property var selectedWindow: null
+  property string selectedAppName: ""
+  property int modelUpdateTrigger: 0  // Dummy property to force model re-evaluation
+
+  NPopupContextMenu {
+    id: contextMenu
+    model: {
+      // Reference modelUpdateTrigger to make binding reactive
+      const _ = root.modelUpdateTrigger;
+
+      var items = [];
+      if (root.selectedWindow) {
+        items.push({
+                     "label": I18n.tr("context-menu.activate-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "activate",
+                     "icon": "focus"
+                   });
+        items.push({
+                     "label": I18n.tr("context-menu.close-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "close",
+                     "icon": "x"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+      return items;
+    }
+    onTriggered: action => {
+                   if (action === "activate" && selectedWindow) {
+                     CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "close" && selectedWindow) {
+                     CompositorService.closeWindow(selectedWindow);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                   selectedWindow = null;
+                   selectedAppName = "";
+                 }
+  }
 
   function updateHasWindow() {
     try {
@@ -90,7 +139,7 @@ Rectangle {
   implicitWidth: visible ? (isVerticalBar ? Style.capsuleHeight : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
   implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
   radius: Style.radiusM
-  color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+  color: Style.capsuleColor
 
   GridLayout {
     id: taskbarLayout
@@ -116,7 +165,7 @@ Rectangle {
         required property var modelData
         property ShellScreen screen: root.screen
 
-        visible: (!onlySameOutput || modelData.output == screen.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function (ws) {
+        visible: (!onlySameOutput || modelData.output === screen?.name) && (!onlyActiveWorkspaces || CompositorService.getActiveWorkspaces().map(function (ws) {
           return ws.id;
         }).includes(modelData.workspaceId))
 
@@ -159,6 +208,7 @@ Rectangle {
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           acceptedButtons: Qt.LeftButton | Qt.RightButton
+          preventStealing: true
 
           onPressed: function (mouse) {
             if (!taskbarItem.modelData)
@@ -169,17 +219,95 @@ Rectangle {
               } catch (error) {
                 Logger.e("Taskbar", "Failed to activate toplevel: " + error);
               }
-            } else if (mouse.button === Qt.RightButton) {
-              try {
-                CompositorService.closeWindow(taskbarItem.modelData);
-              } catch (error) {
-                Logger.e("Taskbar", "Failed to close toplevel: " + error);
-              }
             }
           }
-          onEntered: TooltipService.show(Screen, taskbarItem, taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app.", BarService.getTooltipDirection())
+
+          onReleased: function (mouse) {
+            if (!taskbarItem.modelData)
+              return;
+            if (mouse.button === Qt.RightButton) {
+              mouse.accepted = true;
+              TooltipService.hide();
+              root.selectedWindow = taskbarItem.modelData;
+              root.selectedAppName = CompositorService.getCleanAppName(taskbarItem.modelData.appId, taskbarItem.modelData.title);
+
+              // Store position and size for timer callback
+              const globalPos = taskbarItem.mapToItem(root, 0, 0);
+              contextMenuOpenTimer.globalX = globalPos.x;
+              contextMenuOpenTimer.globalY = globalPos.y;
+              contextMenuOpenTimer.itemWidth = taskbarItem.width;
+              contextMenuOpenTimer.itemHeight = taskbarItem.height;
+              contextMenuOpenTimer.restart();
+            }
+          }
+          onEntered: TooltipService.show(taskbarItem, taskbarItem.modelData.title || taskbarItem.modelData.appId || "Unknown app.", BarService.getTooltipDirection())
           onExited: TooltipService.hide()
         }
+      }
+    }
+  }
+
+  Timer {
+    id: contextMenuOpenTimer
+    interval: 10
+    repeat: false
+    property real globalX: 0
+    property real globalY: 0
+    property real itemWidth: 0
+    property real itemHeight: 0
+
+    onTriggered: {
+      // Directly build and set model as a new array (bypass binding issues)
+      var items = [];
+      if (root.selectedWindow) {
+        items.push({
+                     "label": I18n.tr("context-menu.activate-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "activate",
+                     "icon": "focus"
+                   });
+        items.push({
+                     "label": I18n.tr("context-menu.close-app", {
+                                        "app": root.selectedAppName
+                                      }),
+                     "action": "close",
+                     "icon": "x"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
+                 });
+
+      // Set the model directly
+      contextMenu.model = items;
+
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        popupMenuWindow.open();
+
+        // Calculate menu position
+        let menuX, menuY;
+        if (root.barPosition === "top") {
+          menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
+          menuY = Style.barHeight + Style.marginS;
+        } else if (root.barPosition === "bottom") {
+          const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
+          menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
+          menuY = -menuHeight - Style.marginS;
+        } else if (root.barPosition === "left") {
+          menuX = Style.barHeight + Style.marginS;
+          menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
+        } else {
+          // right
+          menuX = -contextMenu.implicitWidth - Style.marginS;
+          menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
+        }
+
+        contextMenu.openAtItem(root, menuX, menuY);
+        popupMenuWindow.contentItem = contextMenu;
       }
     }
   }

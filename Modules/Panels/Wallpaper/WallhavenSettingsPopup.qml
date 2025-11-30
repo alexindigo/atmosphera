@@ -98,7 +98,7 @@ Popup {
     border.color: Color.mOutline
     border.width: Style.borderM
 
-    NDropShadows {
+    NDropShadow {
       source: backgroundRect
     }
   }

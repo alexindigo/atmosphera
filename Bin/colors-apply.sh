@@ -4,7 +4,7 @@
 if [ "$#" -ne 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox}" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri}" >&2
     exit 1
 fi
 
@@ -198,6 +198,81 @@ vicinae)
 pywalfox)
     echo "🎨 Updating pywalfox themes..."
     pywalfox update
+    ;;
+
+cava)
+    echo "🎨 Applying 'noctalia' theme to cava..."
+    CONFIG_FILE="$HOME/.config/cava/config"
+    THEME_MODIFIED=false
+
+    # Check if the config file exists.
+    if [ -f "$CONFIG_FILE" ]; then
+        # Check if [color] section exists
+        if grep -q '^\[color\]' "$CONFIG_FILE"; then
+            echo "[color] section found, checking theme setting..."
+            # Check if theme is already set to noctalia under [color]
+            if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = "noctalia"'; then
+                echo "Theme already set to noctalia under [color], skipping modification."
+            else
+                # Check if theme line exists under [color] section
+                if sed -n '/^\[color\]/,/^\[/p' "$CONFIG_FILE" | grep -q '^theme = '; then
+                    # Replace existing theme line under [color]
+                    sed -i '/^\[color\]/,/^\[/{s/^theme = .*/theme = "noctalia"/}' "$CONFIG_FILE"
+                    THEME_MODIFIED=true
+                else
+                    # Add theme line after [color]
+                    sed -i '/^\[color\]/a theme = "noctalia"' "$CONFIG_FILE"
+                    THEME_MODIFIED=true
+                fi
+            fi
+        else
+            echo "[color] section not found, adding it with theme..."
+            # Add [color] section with theme at the end of file
+            echo "" >>"$CONFIG_FILE"
+            echo "[color]" >>"$CONFIG_FILE"
+            echo 'theme = "noctalia"' >>"$CONFIG_FILE"
+            THEME_MODIFIED=true
+        fi
+
+        # Reload cava if it's running
+        if pgrep -f cava >/dev/null; then
+            echo "Reloading cava configuration..."
+            pkill -USR1 cava
+            echo "✅ Cava reloaded successfully"
+        else
+            if [ "$THEME_MODIFIED" = true ]; then
+                echo "✅ Configuration updated. Start cava to see the changes."
+            else
+                echo "✅ Configuration already correct."
+            fi
+        fi
+    else
+        echo "Error: cava config file not found at $CONFIG_FILE" >&2
+        exit 1
+    fi
+    ;;
+
+niri)
+    echo "🎨 Applying 'noctalia' theme to niri..."
+    CONFIG_FILE="$HOME/.config/niri/config.kdl"
+    INCLUDE_LINE='include "./noctalia.kdl"'
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo "$INCLUDE_LINE" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if include line already exists
+        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo "$INCLUDE_LINE" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
+        fi
+    fi
     ;;
 
 *)

@@ -27,9 +27,9 @@ NBox {
 
     NText {
       text: root.label
-      pointSize: Style.fontSizeL
+      pointSize: Style.fontSizeS
       color: Color.mSecondary
-      font.weight: Style.fontWeightMedium
+      font.weight: Style.fontWeightBold
       visible: root.model.length > 0
       Layout.fillWidth: true
       Layout.leftMargin: Style.marginM
@@ -86,7 +86,7 @@ NBox {
             NText {
               text: modelData.name || modelData.deviceName
               pointSize: Style.fontSizeM
-              font.weight: Style.fontWeightMedium
+              font.weight: modelData.connected ? Style.fontWeightBold : Style.fontWeightMedium
               elide: Text.ElideRight
               color: getContentColor(Color.mOnSurface)
               Layout.fillWidth: true

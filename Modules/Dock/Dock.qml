@@ -313,7 +313,7 @@ Loader {
               height: Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
               anchors.centerIn: parent
-              radius: Style.radiusL
+              radius: height * 0.5 * Settings.data.dock.radiusRatio
               border.width: Style.borderS
               border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
@@ -514,7 +514,7 @@ Loader {
                           const appName = appButton.appTitle || appButton.appId || "Unknown";
                           const tooltipText = appName.length > 40 ? appName.substring(0, 37) + "..." : appName;
                           if (!contextMenu.visible) {
-                            TooltipService.show(Screen, appButton, tooltipText, "top");
+                            TooltipService.show(appButton, tooltipText, "top");
                           }
                           if (autoHide) {
                             showTimer.stop();

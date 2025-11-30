@@ -27,6 +27,10 @@ Singleton {
   property bool codeAvailable: false
   property bool gnomeCalendarAvailable: false
   property bool spicetifyAvailable: false
+  property bool telegramAvailable: false
+  property bool cavaAvailable: false
+  property bool emacsAvailable: false
+  property bool niriAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -91,7 +95,7 @@ Singleton {
             }
           }
 
-          Logger.i("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "));
+          Logger.d("ProgramChecker", "Detected Discord clients:", detectedClients.join(", "));
         }
       }
 
@@ -151,7 +155,7 @@ Singleton {
             }
           }
 
-          Logger.i("ProgramChecker", "Detected Code clients:", detectedClients.join(", "));
+          Logger.d("ProgramChecker", "Detected Code clients:", detectedClients.join(", "));
         }
       }
 
@@ -181,7 +185,11 @@ Singleton {
                                             "wlsunsetAvailable": ["which", "wlsunset"],
                                             "codeAvailable": ["which", "code"],
                                             "gnomeCalendarAvailable": ["which", "gnome-calendar"],
-                                            "spicetifyAvailable": ["which", "spicetify"]
+                                            "spicetifyAvailable": ["which", "spicetify"],
+                                            "telegramAvailable": ["sh", "-c", "command -v telegram-desktop >/dev/null 2>&1 || command -v Telegram >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'org.telegram.desktop')"],
+                                            "cavaAvailable": ["which", "cava"],
+                                            "emacsAvailable": ["sh", "-c", "test -d \"$HOME/.config/doom\" || test -d \"$HOME/.emacs.d\""],
+                                            "niriAvailable": ["which", "niri"]
                                           })
 
   // Internal tracking
