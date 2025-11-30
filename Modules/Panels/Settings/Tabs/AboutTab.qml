@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Noctalia
+import qs.Services.System
 import qs.Widgets
 
 ColumnLayout {
@@ -26,6 +27,24 @@ ColumnLayout {
     Logger.d("AboutTab", "Component.onCompleted - Is git version:", root.isGitVersion);
     // Only fetch commit info for -git versions
     if (root.isGitVersion) {
+      // On NixOS, extract commit hash from the store path
+      if (HostService.isNixOS) {
+        var shellDir = Quickshell.shellDir || "";
+        Logger.d("AboutTab", "Component.onCompleted - NixOS detected, shellDir:", shellDir);
+        if (shellDir) {
+          // Extract commit hash from path like: /nix/store/...-noctalia-shell-2025-11-30_225e6d3/share/noctalia-shell
+          // Pattern matches: noctalia-shell-YYYY-MM-DD_<commit_hash>
+          var match = shellDir.match(/noctalia-shell-\d{4}-\d{2}-\d{2}_([0-9a-f]{7,})/i);
+          if (match && match[1]) {
+            // Use first 7 characters of the commit hash
+            root.commitInfo = match[1].substring(0, 7);
+            Logger.d("AboutTab", "Component.onCompleted - Extracted commit from NixOS path:", root.commitInfo);
+            return;
+          } else {
+            Logger.d("AboutTab", "Component.onCompleted - Could not extract commit from NixOS path, trying fallback");
+          }
+        }
+      }
       // Try to get Arch package version first (which includes commit hash)
       pacmanProcess.running = true;
       // Start fallback timer in case pacman fails to start
