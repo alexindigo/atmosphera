@@ -16,7 +16,10 @@ Item {
 
   signal hidden
 
-  width: Math.round(420 * Style.uiScaleRatio + Style.marginM * 1.5 * 2)
+  readonly property int notificationWidth: Math.round(400 * Style.uiScaleRatio)
+
+  // Use exact notification width to match notifications precisely
+  width: notificationWidth
   height: Math.round(contentLayout.implicitHeight + Style.marginM * 3 * 2)
   visible: true
   opacity: 0
@@ -26,25 +29,30 @@ Item {
   Rectangle {
     id: background
     anchors.fill: parent
-    anchors.margins: Style.marginM * 1.5
+    anchors.margins: Style.marginM
     radius: Style.radiusL
-    color: Color.mSurface
+    color: Qt.alpha(Color.mSurface, Settings.data.notifications.backgroundOpacity || 1.0)
 
     // Colored border based on type
     border.width: Math.max(2, Style.borderM)
     border.color: {
+      var baseColor;
       switch (root.type) {
       case "warning":
-        return Color.mPrimary;
+        baseColor = Color.mPrimary;
+        break;
       case "error":
-        return Color.mError;
+        baseColor = Color.mError;
+        break;
       default:
-        return Color.mOutline;
+        baseColor = Color.mOutline;
+        break;
       }
+      return Qt.alpha(baseColor, Settings.data.notifications.backgroundOpacity || 1.0);
     }
   }
 
-  NDropShadows {
+  NDropShadow {
     anchors.fill: background
     source: background
     autoPaddingEnabled: true
@@ -87,11 +95,14 @@ Item {
 
   RowLayout {
     id: contentLayout
-    anchors.fill: parent
-    anchors.topMargin: Style.marginL
-    anchors.bottomMargin: Style.marginL
-    anchors.leftMargin: Style.marginL * 2
-    anchors.rightMargin: Style.marginL * 2
+    anchors.top: parent.top
+    anchors.topMargin: Style.marginM
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: Style.marginM
+    anchors.left: parent.left
+    anchors.leftMargin: Style.marginM * 3
+    anchors.right: parent.right
+    anchors.rightMargin: Style.marginM * 3
     spacing: Style.marginL
 
     // Icon

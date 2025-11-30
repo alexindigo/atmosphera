@@ -26,6 +26,7 @@ import qs.Services.Control
 import qs.Services.Hardware
 import qs.Services.Location
 import qs.Services.Networking
+import qs.Services.Noctalia
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
@@ -36,6 +37,7 @@ ShellRoot {
 
   property bool i18nLoaded: false
   property bool settingsLoaded: false
+  property bool shellStateLoaded: false
 
   Component.onCompleted: {
     Logger.i("Shell", "---------------------------");
@@ -46,6 +48,11 @@ ShellRoot {
     target: Quickshell
     function onReloadCompleted() {
       Quickshell.inhibitReloadPopup();
+    }
+    function onReloadFailed() {
+      if (!Settings?.isDebug) {
+        Quickshell.inhibitReloadPopup();
+      }
     }
   }
 
@@ -62,8 +69,18 @@ ShellRoot {
       settingsLoaded = true;
     }
   }
+
+  Connections {
+    target: ShellState ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        shellStateLoaded = true;
+      }
+    }
+  }
+
   Loader {
-    active: i18nLoaded && settingsLoaded
+    active: i18nLoaded && settingsLoaded && shellStateLoaded
 
     sourceComponent: Item {
       Component.onCompleted: {
@@ -80,34 +97,25 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         FontService.init();
+        GitHubService.init();
+        UpdateService.init();
+        UpdateService.showLatestChangelog();
 
-        // Only open the setup wizard for new users
-        if (!Settings.data.setupCompleted) {
-          checkSetupWizard();
-        }
+        checkSetupWizard();
       }
 
       Overview {}
       Background {}
+      AllScreens {}
       Dock {}
+      Notification {}
       ToastOverlay {}
       OSD {}
-      Notification {}
 
-      LockScreen {
-        id: lockScreen
-        Component.onCompleted: {
-          // Save a ref. to our lockScreen so we can access it  easily
-          PanelService.lockScreen = lockScreen;
-        }
-      }
+      LockScreen {}
 
-      // IPCService is treated as a service but it's actually an
-      // Item that needs to exists in the shell.
+      // IPCService is treated as a service but it's actually an Item that needs to exists in the shell.
       IPCService {}
-
-      // MainScreen for each screen
-      AllScreens {}
     }
   }
 
@@ -124,7 +132,12 @@ ShellRoot {
   }
 
   function checkSetupWizard() {
-    // Wait for distro service
+    // Only open the setup wizard for new users
+    if (!Settings.shouldOpenSetupWizard) {
+      return;
+    }
+
+    // Wait for HostService to be fully ready
     if (!HostService.isReady) {
       Qt.callLater(checkSetupWizard);
       return;
@@ -132,15 +145,10 @@ ShellRoot {
 
     // No setup wizard on NixOS
     if (HostService.isNixOS) {
-      Settings.data.setupCompleted = true;
       return;
     }
 
-    if (Settings.data.settingsVersion >= Settings.settingsVersion) {
-      setupWizardTimer.start();
-    } else {
-      Settings.data.setupCompleted = true;
-    }
+    setupWizardTimer.start();
   }
 
   function showSetupWizard() {

@@ -29,5 +29,7 @@ ColumnLayout {
     wrapMode: Text.WordWrap
     visible: description !== ""
     Layout.fillWidth: true
+    // allow HTML like <i>...</i> in labels/descriptions
+    textFormat: Text.StyledText
   }
 }

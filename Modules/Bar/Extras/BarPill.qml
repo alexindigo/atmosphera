@@ -7,6 +7,8 @@ import qs.Widgets
 Item {
   id: root
 
+  required property ShellScreen screen
+
   property string icon: ""
   property string text: ""
   property string suffix: ""
@@ -18,6 +20,8 @@ Item {
   property bool oppositeDirection: false
   property bool hovered: false
   property bool rotateText: false
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
@@ -43,6 +47,7 @@ Item {
     Component {
       id: verticalPillComponent
       BarPillVertical {
+        screen: root.screen
         icon: root.icon
         text: root.text
         suffix: root.suffix
@@ -54,6 +59,8 @@ Item {
         hovered: root.hovered
         density: root.density
         rotateText: root.rotateText
+        customBackgroundColor: root.customBackgroundColor
+        customTextIconColor: root.customTextIconColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()
@@ -68,6 +75,7 @@ Item {
     Component {
       id: horizontalPillComponent
       BarPillHorizontal {
+        screen: root.screen
         icon: root.icon
         text: root.text
         suffix: root.suffix
@@ -78,6 +86,8 @@ Item {
         oppositeDirection: root.oppositeDirection
         hovered: root.hovered
         density: root.density
+        customBackgroundColor: root.customBackgroundColor
+        customTextIconColor: root.customTextIconColor
         onShown: root.shown()
         onHidden: root.hidden()
         onEntered: root.entered()

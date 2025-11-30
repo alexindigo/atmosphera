@@ -405,7 +405,7 @@ ColumnLayout {
     color: selected ? Color.mPrimary : Color.mSurfaceVariant
     implicitHeight: Math.max(Style.baseWidgetSize * 0.55, 24)
     implicitWidth: chipLabel.implicitWidth + Style.marginM * 1.5
-    border.width: 1
+    border.width: Style.borderS
     border.color: selected ? Color.transparent : Color.mOutline
 
     MouseArea {

@@ -7,6 +7,7 @@ ColumnLayout {
 
   property string label: ""
   property string description: ""
+  property bool enableDescriptionRichText: false
 
   spacing: Style.marginXXS
   Layout.fillWidth: true
@@ -27,5 +28,6 @@ ColumnLayout {
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
     visible: root.description !== ""
+    richTextEnabled: root.enableDescriptionRichText
   }
 }

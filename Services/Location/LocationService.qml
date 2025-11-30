@@ -207,7 +207,7 @@ Singleton {
             root.coordinatesReady = true;
 
             isFetchingWeather = false;
-            Logger.i("Location", "Cached weather to disk - stable coordinates updated");
+            Logger.d("Location", "Cached weather to disk - stable coordinates updated");
           } catch (e) {
             errorCallback("Location", "Failed to parse weather data");
           }
@@ -237,6 +237,8 @@ Singleton {
     if (code >= 45 && code <= 48)
       return "weather-cloud-haze";
     if (code >= 51 && code <= 67)
+      return "weather-cloud-rain";
+    if (code >= 80 && code <= 82)
       return "weather-cloud-rain";
     if (code >= 71 && code <= 77)
       return "weather-cloud-snow";

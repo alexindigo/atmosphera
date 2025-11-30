@@ -46,8 +46,8 @@ Item {
     target: "calendar"
     function toggle() {
       root.withTargetScreen(screen => {
-                              var calendarPanel = PanelService.getPanel("calendarPanel", screen);
-                              calendarPanel?.toggle(null, "Clock");
+                              var clockPanel = PanelService.getPanel("clockPanel", screen);
+                              clockPanel?.toggle(null, "Clock");
                             });
     }
   }
@@ -78,6 +78,10 @@ Item {
       NotificationService.dismissOldestActive();
     }
 
+    function removeOldestHistory() {
+      NotificationService.removeOldestHistory();
+    }
+
     function dismissAll() {
       NotificationService.dismissAllActive();
     }
@@ -95,21 +99,33 @@ Item {
     function toggle() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && !launcherPanel?.activePlugin))
                               launcherPanel?.toggle();
+                              launcherPanel?.setSearchText("");
                             });
     }
     function clipboard() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              launcherPanel?.setSearchText(">clip ");
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">clip")))
                               launcherPanel?.toggle();
+                              launcherPanel?.setSearchText(">clip ");
                             });
     }
     function calculator() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              launcherPanel?.setSearchText(">calc ");
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">calc")))
                               launcherPanel?.toggle();
+                              launcherPanel?.setSearchText(">calc ");
+                            });
+    }
+    function emoji() {
+      root.withTargetScreen(screen => {
+                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">emoji")))
+                              launcherPanel?.toggle();
+                              launcherPanel?.setSearchText(">emoji ");
                             });
     }
   }
@@ -120,24 +136,8 @@ Item {
     // New preferred method - lock the screen
     function lock() {
       // Only lock if not already locked (prevents the red screen issue)
-      // Note: No unlock via IPC for security reasons
-      if (!lockScreen.active) {
-        lockScreen.triggeredViaDeprecatedCall = false;
-        lockScreen.active = true;
-      }
-    }
-
-    // Deprecated: Use 'lockScreen lock' instead
-    function toggle() {
-      // Mark as triggered via deprecated call - warning will show in lock screen
-      lockScreen.triggeredViaDeprecatedCall = true;
-
-      // Log deprecation warning for users checking logs
-      Logger.w("IPC", "The 'lockScreen toggle' IPC call is deprecated. Use 'lockScreen lock' instead.");
-
-      // Still functional for backward compatibility
-      if (!lockScreen.active) {
-        lockScreen.active = true;
+      if (!PanelService.lockScreen.active) {
+        PanelService.lockScreen.active = true;
       }
     }
   }
@@ -220,6 +220,13 @@ Item {
                                 controlCenterPanel?.toggle();
                               }
                             });
+    }
+  }
+
+  IpcHandler {
+    target: "dock"
+    function toggle() {
+      Settings.data.dock.enabled = !Settings.data.dock.enabled;
     }
   }
 
@@ -359,7 +366,29 @@ Item {
     }
   }
 
+  IpcHandler {
+    target: "state"
+
+    // Returns all settings and shell state as JSON
+    function all(): string {
+      try {
+        var snapshot = ShellState.buildStateSnapshot();
+        if (!snapshot) {
+          throw new Error("State snapshot unavailable");
+        }
+        return JSON.stringify(snapshot, null, 2);
+      } catch (error) {
+        Logger.e("IPC", "Failed to serialize state:", error);
+        return JSON.stringify({
+                                "error": "Failed to serialize state: " + error
+                              }, null, 2);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------
   // Queue an IPC panel operation - will execute when screen is detected
+  // -------------------------------------------------------------------
   function withTargetScreen(callback) {
     if (pendingCallback) {
       Logger.w("IPC", "Another IPC call is pending, ignoring new call");
@@ -376,7 +405,6 @@ Item {
       screenDetectorLoader.active = true;
     }
   }
-
   /**
   * For IPC calls on multi-monitors setup that will open panels on screen,
   * we need to open a QS PanelWindow and wait for it's "screen" property to stabilize.
@@ -393,6 +421,16 @@ Item {
 
       // Execute pending callback if any
       if (pendingCallback) {
+        if (!Settings.data.general.allowPanelsOnScreenWithoutBar) {
+          // If we explicitely disabled panels on screen without bar, check if bar is configured
+          // for this screen, and fallback to primary screen if necessary
+          var monitors = Settings.data.bar.monitors || [];
+          const hasBar = monitors.length === 0 || monitors.includes(detectedScreen?.name);
+          if (!hasBar) {
+            detectedScreen = Quickshell.screens[0];
+          }
+        }
+
         Logger.d("IPC", "Executing pending IPC callback on screen:", detectedScreen.name);
         pendingCallback(detectedScreen);
         pendingCallback = null;
@@ -421,4 +459,6 @@ Item {
       }
     }
   }
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
 }

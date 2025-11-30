@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -51,17 +52,61 @@ NIconButton {
   icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
   tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.open-notification-history-disable-dnd") : I18n.tr("tooltips.open-notification-history-enable-dnd")
   tooltipDirection: BarService.getTooltipDirection()
-  colorBg: (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": NotificationService.doNotDisturb ? I18n.tr("context-menu.disable-dnd") : I18n.tr("context-menu.enable-dnd"),
+        "action": "toggle-dnd",
+        "icon": NotificationService.doNotDisturb ? "bell" : "bell-off"
+      },
+      {
+        "label": I18n.tr("context-menu.clear-history"),
+        "action": "clear-history",
+        "icon": "trash"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "toggle-dnd") {
+                     NotificationService.doNotDisturb = !NotificationService.doNotDisturb;
+                   } else if (action === "clear-history") {
+                     NotificationService.clearHistory();
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
 
   onClicked: {
     var panel = PanelService.getPanel("notificationHistoryPanel", screen);
     panel?.toggle(this);
   }
 
-  onRightClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
+  onRightClicked: {
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.showContextMenu(contextMenu);
+      const pos = BarService.getContextMenuPosition(root, contextMenu.implicitWidth, contextMenu.implicitHeight);
+      contextMenu.openAtItem(root, pos.x, pos.y);
+    }
+  }
 
   Loader {
     anchors.right: parent.right
@@ -78,7 +123,7 @@ NIconButton {
       radius: height / 2
       color: Color.mError
       border.color: Color.mSurface
-      border.width: 1
+      border.width: Style.borderS
       visible: count > 0 || !hideWhenZero
     }
   }

@@ -13,20 +13,21 @@ Singleton {
   property var schemes: []
   property bool scanning: false
   property string schemesDirectory: Quickshell.shellDir + "/Assets/ColorScheme"
+  property string downloadedSchemesDirectory: Settings.configDir + "colorschemes"
   property string colorsJsonFilePath: Settings.configDir + "colors.json"
 
   Connections {
     target: Settings.data.colorSchemes
     function onDarkModeChanged() {
-      Logger.i("ColorScheme", "Detected dark mode change");
+      Logger.d("ColorScheme", "Detected dark mode change");
       if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
         // Re-apply current scheme to pick the right variant
         applyScheme(Settings.data.colorSchemes.predefinedScheme);
       }
       // Toast: dark/light mode switched
       const enabled = !!Settings.data.colorSchemes.darkMode;
-      const label = enabled ? "Dark mode" : "Light mode";
-      const description = enabled ? "Enabled" : "Enabled";
+      const label = enabled ? I18n.tr("toast.dark-mode.dark-mode") : I18n.tr("toast.dark-mode.light-mode");
+      const description = I18n.tr("toast.dark-mode.enabled");
       ToastService.showNotice(label, description, "dark-mode");
     }
   }
@@ -43,8 +44,11 @@ Singleton {
     Logger.d("ColorScheme", "Load colorScheme");
     scanning = true;
     schemes = [];
-    // Use find command to locate all scheme.json files
-    findProcess.command = ["find", schemesDirectory, "-name", "*.json", "-type", "f"];
+    // Use find command to locate all scheme.json files in both directories
+    // First ensure the downloaded schemes directory exists
+    Quickshell.execDetached(["mkdir", "-p", downloadedSchemesDirectory]);
+    // Find in both preinstalled and downloaded directories
+    findProcess.command = ["find", schemesDirectory, downloadedSchemesDirectory, "-name", "*.json", "-type", "f"];
     findProcess.running = true;
   }
 
@@ -62,6 +66,8 @@ Singleton {
       return "Noctalia (legacy)";
     } else if (schemeName === "Tokyo-Night") {
       return "Tokyo Night";
+    } else if (schemeName === "Rosepine") {
+      return "Rose Pine";
     }
     return schemeName;
   }
@@ -80,8 +86,20 @@ Singleton {
       schemeName = "Noctalia-legacy";
     } else if (schemeName === "Tokyo Night") {
       schemeName = "Tokyo-Night";
+    } else if (schemeName === "Rose Pine") {
+      schemeName = "Rosepine";
     }
-    return schemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    // Check preinstalled directory first, then downloaded directory
+    var preinstalledPath = schemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    var downloadedPath = downloadedSchemesDirectory + "/" + schemeName + "/" + schemeName + ".json";
+    // Try to find the scheme in the loaded schemes list to determine which directory it's in
+    for (var i = 0; i < schemes.length; i++) {
+      if (schemes[i].indexOf("/" + schemeName + "/") !== -1 || schemes[i].indexOf("/" + schemeName + ".json") !== -1) {
+        return schemes[i];
+      }
+    }
+    // Fallback: prefer preinstalled, then downloaded
+    return preinstalledPath;
   }
 
   function applyScheme(nameOrPath) {
@@ -199,6 +217,7 @@ Singleton {
   FileView {
     id: colorsWriter
     path: colorsJsonFilePath
+    printErrors: false
     onSaved:
 
     // Logger.i("ColorScheme", "Colors saved")

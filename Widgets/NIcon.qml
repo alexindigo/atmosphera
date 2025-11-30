@@ -26,4 +26,5 @@ Text {
   font.pointSize: applyUiScale ? root.pointSize * Style.uiScaleRatio : root.pointSize
   color: Color.mOnSurface
   verticalAlignment: Text.AlignVCenter
+  horizontalAlignment: Text.AlignHCenter
 }

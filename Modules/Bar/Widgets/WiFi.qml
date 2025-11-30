@@ -1,9 +1,11 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Services.Networking
 import qs.Services.UI
+import qs.Widgets
 
 Item {
   id: root
@@ -33,9 +35,40 @@ Item {
   implicitWidth: pill.width
   implicitHeight: pill.height
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": Settings.data.network.wifiEnabled ? I18n.tr("context-menu.disable-wifi") : I18n.tr("context-menu.enable-wifi"),
+        "action": "toggle-wifi",
+        "icon": Settings.data.network.wifiEnabled ? "wifi-off" : "wifi"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "toggle-wifi") {
+                     NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
+                   } else if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   BarPill {
     id: pill
 
+    screen: root.screen
     density: Settings.data.bar.density
     oppositeDirection: BarService.getPillDirection(root)
     icon: {
@@ -76,9 +109,16 @@ Item {
     }
     autoHide: false
     forceOpen: !isBarVertical && root.displayMode === "alwaysShow"
-    forceClose: isBarVertical || root.displayMode === "alwaysHide" || !pill.text
+    forceClose: isBarVertical || root.displayMode === "alwaysHide" || text === ""
     onClicked: PanelService.getPanel("wifiPanel", screen)?.toggle(this)
-    onRightClicked: NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled)
+    onRightClicked: {
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        popupMenuWindow.showContextMenu(contextMenu);
+        const pos = BarService.getContextMenuPosition(pill, contextMenu.implicitWidth, contextMenu.implicitHeight);
+        contextMenu.openAtItem(pill, pos.x, pos.y);
+      }
+    }
     tooltipText: {
       if (pill.text !== "") {
         return pill.text;

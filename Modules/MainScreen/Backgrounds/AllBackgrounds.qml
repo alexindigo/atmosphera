@@ -46,8 +46,6 @@ Item {
 
       Component.onCompleted: {
         Logger.d("AllBackgrounds", "AllBackgrounds initialized");
-        Logger.d("AllBackgrounds", "  bar:", root.bar);
-        Logger.d("AllBackgrounds", "  windowRoot:", root.windowRoot);
       }
 
       /**
@@ -71,6 +69,13 @@ Item {
         backgroundColor: panelBackgroundColor
       }
 
+      // Battery
+      PanelBackground {
+        panel: root.windowRoot.batteryPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
+
       // Bluetooth
       PanelBackground {
         panel: root.windowRoot.bluetoothPanelPlaceholder
@@ -78,9 +83,16 @@ Item {
         backgroundColor: panelBackgroundColor
       }
 
-      // Calendar
+      // Brightness
       PanelBackground {
-        panel: root.windowRoot.calendarPanelPlaceholder
+        panel: root.windowRoot.brightnessPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
+
+      // Clock
+      PanelBackground {
+        panel: root.windowRoot.clockPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: panelBackgroundColor
       }
@@ -88,6 +100,13 @@ Item {
       // Control Center
       PanelBackground {
         panel: root.windowRoot.controlCenterPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
+
+      // Changelog
+      PanelBackground {
+        panel: root.windowRoot.changelogPanelPlaceholder
         shapeContainer: backgroundsShape
         backgroundColor: panelBackgroundColor
       }
@@ -150,7 +169,7 @@ Item {
     }
 
     // Apply shadow to the cached layer
-    NDropShadows {
+    NDropShadow {
       anchors.fill: parent
       source: backgroundsShape
     }

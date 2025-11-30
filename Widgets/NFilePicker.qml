@@ -268,7 +268,7 @@ Popup {
 
           NIconButton {
             icon: filePickerPanel.showSearchBar ? "filepicker-x" : "filepicker-search"
-            tooltipText: filePickerPanel.showSearchBar ? "Close Search" : "Search"
+            tooltipText: filePickerPanel.showSearchBar ? I18n.tr("tooltips.search-close") : I18n.tr("tooltips.search")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               filePickerPanel.showSearchBar = !filePickerPanel.showSearchBar;
@@ -333,13 +333,13 @@ Popup {
 
           NIconButton {
             icon: filePickerPanel.viewMode ? "filepicker-list" : "filepicker-layout-grid"
-            tooltipText: filePickerPanel.viewMode ? "List View" : "Grid View"
+            tooltipText: filePickerPanel.viewMode ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: filePickerPanel.viewMode = !filePickerPanel.viewMode
           }
           NIconButton {
             icon: root.showHiddenFiles ? "filepicker-eye-off" : "filepicker-eye"
-            tooltipText: root.showHiddenFiles ? "Hide Hidden Files" : "Show Hidden Files"
+            tooltipText: root.showHiddenFiles ? I18n.tr("tooltips.hidden-files-hide") : I18n.tr("tooltips.hidden-files-show")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               root.showHiddenFiles = !root.showHiddenFiles;
@@ -784,7 +784,7 @@ Popup {
         }
 
         NButton {
-          text: root.selectionMode === "folders" ? "Select Folder" : "Select File"
+          text: root.selectionMode === "folders" ? I18n.tr("widgets.file-picker.select-folder") : I18n.tr("widgets.file-picker.select-file")
           icon: "filepicker-check"
           enabled: filePickerPanel.currentSelection.length > 0
           onClicked: root.confirmSelection()

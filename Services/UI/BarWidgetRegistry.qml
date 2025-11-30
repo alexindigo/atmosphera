@@ -36,6 +36,7 @@ Singleton {
                            "TaskbarGrouped": taskbarGroupedComponent,
                            "Tray": trayComponent,
                            "Volume": volumeComponent,
+                           "VPN": vpnComponent,
                            "WiFi": wiFiComponent,
                            "WallpaperSelector": wallpaperSelectorComponent,
                            "Workspace": workspaceComponent
@@ -58,12 +59,13 @@ Singleton {
                                      "SessionMenu": "WidgetSettings/SessionMenuSettings.qml",
                                      "Spacer": "WidgetSettings/SpacerSettings.qml",
                                      "SystemMonitor": "WidgetSettings/SystemMonitorSettings.qml",
-                                     "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
-                                     "Volume": "WidgetSettings/VolumeSettings.qml",
-                                     "WiFi": "WidgetSettings/WiFiSettings.qml",
-                                     "Workspace": "WidgetSettings/WorkspaceSettings.qml",
                                      "Taskbar": "WidgetSettings/TaskbarSettings.qml",
-                                     "Tray": "WidgetSettings/TraySettings.qml"
+                                     "TaskbarGrouped": "WidgetSettings/TaskbarGroupedSettings.qml",
+                                     "Tray": "WidgetSettings/TraySettings.qml",
+                                     "Volume": "WidgetSettings/VolumeSettings.qml",
+                                     "VPN": "WidgetSettings/VPNSettings.qml",
+                                     "WiFi": "WidgetSettings/WiFiSettings.qml",
+                                     "Workspace": "WidgetSettings/WorkspaceSettings.qml"
                                    })
 
   property var widgetMetadata: ({
@@ -85,7 +87,8 @@ Singleton {
                                   "Battery": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover",
-                                    "warningThreshold": 30
+                                    "warningThreshold": 30,
+                                    "deviceNativePath": ""
                                   },
                                   "Bluetooth": {
                                     "allowUserSettings": true,
@@ -108,7 +111,9 @@ Singleton {
                                     "useDistroLogo": false,
                                     "icon": "noctalia",
                                     "customIconPath": "",
-                                    "colorizeDistroLogo": false
+                                    "colorizeDistroLogo": false,
+                                    "colorizeSystemIcon": "none",
+                                    "enableColorization": false
                                   },
                                   "CustomButton": {
                                     "allowUserSettings": true,
@@ -124,7 +129,17 @@ Singleton {
                                     "textIntervalMs": 3000,
                                     "textCollapse": "",
                                     "parseJson": false,
-                                    "hideTextInVerticalBar": false
+                                    "wheelExec": "",
+                                    "wheelUpExec": "",
+                                    "wheelDownExec": "",
+                                    "wheelMode": "unified",
+                                    "wheelUpdateText": false,
+                                    "wheelUpUpdateText": false,
+                                    "wheelDownUpdateText": false,
+                                    "maxTextLength": {
+                                      "horizontal": 10,
+                                      "vertical": 10
+                                    }
                                   },
                                   "KeyboardLayout": {
                                     "allowUserSettings": true,
@@ -147,7 +162,9 @@ Singleton {
                                     "useFixedWidth": false,
                                     "hideWhenIdle": false,
                                     "showAlbumArt": false,
+                                    "showArtistFirst": true,
                                     "showVisualizer": false,
+                                    "showProgressRing": true,
                                     "visualizerType": "linear"
                                   },
                                   "Microphone": {
@@ -175,7 +192,8 @@ Singleton {
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,
-                                    "showDiskUsage": false
+                                    "showDiskUsage": false,
+                                    "diskPath": "/"
                                   },
                                   "Taskbar": {
                                     "allowUserSettings": true,
@@ -186,11 +204,9 @@ Singleton {
                                   },
                                   "TaskbarGrouped": {
                                     "allowUserSettings": true,
-                                    "showWorkspaceNumbers": true,
-                                    "showNumbersOnlyWhenOccupied": true,
-                                    "labelMode": "index",
                                     "hideUnoccupied": false,
-                                    "characterCount": 2,
+                                    "labelMode": "index",
+                                    "showLabelsOnlyWhenOccupied": true,
                                     "colorizeIcons": false
                                   },
                                   "Tray": {
@@ -200,6 +216,10 @@ Singleton {
                                     "pinned": [],
                                     "drawerEnabled": true
                                   },
+                                  "VPN": {
+                                    "allowUserSettings": true,
+                                    "displayMode": "onhover"
+                                  },
                                   "WiFi": {
                                     "allowUserSettings": true,
                                     "displayMode": "onhover"
@@ -207,6 +227,7 @@ Singleton {
                                   "Workspace": {
                                     "allowUserSettings": true,
                                     "labelMode": "index",
+                                    "followFocusedScreen": false,
                                     "hideUnoccupied": false,
                                     "characterCount": 2
                                   },
@@ -288,6 +309,9 @@ Singleton {
   }
   property Component volumeComponent: Component {
     Volume {}
+  }
+  property Component vpnComponent: Component {
+    VPN {}
   }
   property Component wiFiComponent: Component {
     WiFi {}

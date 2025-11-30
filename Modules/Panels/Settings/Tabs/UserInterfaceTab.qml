@@ -154,13 +154,21 @@ ColumnLayout {
       }
     }
 
+    NToggle {
+      visible: (Quickshell.screens.length > 1)
+      label: I18n.tr("settings.user-interface.allow-panels-without-bar.label")
+      description: I18n.tr("settings.user-interface.allow-panels-without-bar.description")
+      checked: Settings.data.general.allowPanelsOnScreenWithoutBar
+      onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
+    }
+
     NDivider {
       Layout.fillWidth: true
       Layout.topMargin: Style.marginL
       Layout.bottomMargin: Style.marginL
     }
 
-    // User Interface
+    // User Interface Scaling
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true

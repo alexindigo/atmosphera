@@ -63,6 +63,21 @@ ColumnLayout {
     Settings.data.sessionMenu.powerOptions = toSave;
   }
 
+  function updateEntry(idx, properties) {
+    var newModel = entriesModel.slice();
+    newModel[idx] = Object.assign({}, newModel[idx], properties);
+    entriesModel = newModel;
+    saveEntries();
+  }
+
+  function reorderEntries(fromIndex, toIndex) {
+    var newModel = entriesModel.slice();
+    var item = newModel.splice(fromIndex, 1)[0];
+    newModel.splice(toIndex, 0, item);
+    entriesModel = newModel;
+    saveEntries();
+  }
+
   Component.onCompleted: {
     entriesModel = [];
 
@@ -213,9 +228,6 @@ ColumnLayout {
         clip: true
         model: entriesModel
 
-        // Store reference to root's saveEntries function
-        property var saveEntriesFunc: root.saveEntries
-
         delegate: Item {
           id: delegateItem
           width: listView.width
@@ -228,7 +240,6 @@ ColumnLayout {
           property int dragStartY: 0
           property int dragStartIndex: -1
           property int dragTargetIndex: -1
-          property var saveEntriesFunc: listView.saveEntriesFunc
 
           Rectangle {
             anchors.fill: parent
@@ -310,11 +321,7 @@ ColumnLayout {
                 onReleased: {
                   preventStealing = false;
                   if (delegateItem.dragStartIndex !== -1 && delegateItem.dragTargetIndex !== -1 && delegateItem.dragStartIndex !== delegateItem.dragTargetIndex) {
-                    var newModel = entriesModel.slice();
-                    var item = newModel.splice(delegateItem.dragStartIndex, 1)[0];
-                    newModel.splice(delegateItem.dragTargetIndex, 0, item);
-                    entriesModel = newModel;
-                    root.saveEntries();
+                    root.reorderEntries(delegateItem.dragStartIndex, delegateItem.dragTargetIndex);
                   }
                   delegateItem.dragging = false;
                   delegateItem.dragStartIndex = -1;
@@ -361,12 +368,9 @@ ColumnLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                  var newModel = entriesModel.slice();
-                  newModel[index] = Object.assign({}, newModel[index], {
-                                                    "enabled": !modelData.enabled
-                                                  });
-                  entriesModel = newModel;
-                  delegateItem.saveEntriesFunc();
+                  root.updateEntry(index, {
+                                     "enabled": !modelData.enabled
+                                   });
                 }
               }
             }
@@ -395,12 +399,9 @@ ColumnLayout {
               NToggle {
                 checked: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
                 onToggled: function (checked) {
-                  var newModel = entriesModel.slice();
-                  newModel[delegateItem.index] = Object.assign({}, newModel[delegateItem.index], {
-                                                                 "countdownEnabled": checked
-                                                               });
-                  entriesModel = newModel;
-                  delegateItem.saveEntriesFunc();
+                  root.updateEntry(delegateItem.index, {
+                                     "countdownEnabled": checked
+                                   });
                 }
               }
             }

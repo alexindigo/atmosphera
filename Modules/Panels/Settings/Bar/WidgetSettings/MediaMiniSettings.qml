@@ -17,11 +17,13 @@ ColumnLayout {
   // Deprecated: hideWhenIdle now folded into hideMode = "idle"
   property bool valueHideWhenIdle: widgetData.hideWhenIdle !== undefined ? widgetData.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
   property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
+  property bool valueShowArtistFirst: widgetData.showArtistFirst !== undefined ? widgetData.showArtistFirst : widgetMetadata.showArtistFirst
   property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
   property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
   property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
   property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
   property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
+  property bool valueShowProgressRing: widgetData.showProgressRing !== undefined ? widgetData.showProgressRing : widgetMetadata.showProgressRing
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -34,11 +36,13 @@ ColumnLayout {
     settings.hideMode = valueHideMode;
     // No longer store hideWhenIdle separately; kept for backward compatibility only
     settings.showAlbumArt = valueShowAlbumArt;
+    settings.showArtistFirst = valueShowArtistFirst;
     settings.showVisualizer = valueShowVisualizer;
     settings.visualizerType = valueVisualizerType;
     settings.scrollingMode = valueScrollingMode;
     settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
     settings.useFixedWidth = valueUseFixedWidth;
+    settings.showProgressRing = valueShowProgressRing;
     return settings;
   }
 
@@ -73,6 +77,13 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.media-mini.show-album-art.description")
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.media-mini.show-artist-first.label")
+    description: I18n.tr("bar.widget-settings.media-mini.show-artist-first.description")
+    checked: valueShowArtistFirst
+    onToggled: checked => valueShowArtistFirst = checked
   }
 
   NToggle {
@@ -119,6 +130,13 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.media-mini.use-fixed-width.description")
     checked: valueUseFixedWidth
     onToggled: checked => valueUseFixedWidth = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.media-mini.show-progress-ring.label")
+    description: I18n.tr("bar.widget-settings.media-mini.show-progress-ring.description")
+    checked: valueShowProgressRing
+    onToggled: checked => valueShowProgressRing = checked
   }
 
   NComboBox {

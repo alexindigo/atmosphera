@@ -59,10 +59,24 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("settings.launcher.settings.grid-view.label")
+    description: I18n.tr("settings.launcher.settings.grid-view.description")
+    checked: Settings.data.appLauncher.viewMode === "grid"
+    onToggled: checked => Settings.data.appLauncher.viewMode = checked ? "grid" : "list"
+  }
+
+  NToggle {
     label: I18n.tr("settings.launcher.settings.clipboard-history.label")
     description: I18n.tr("settings.launcher.settings.clipboard-history.description")
     checked: Settings.data.appLauncher.enableClipboardHistory
     onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
+  }
+
+  NToggle {
+    label: I18n.tr("settings.launcher.settings.clip-preview.label")
+    description: I18n.tr("settings.launcher.settings.clip-preview.description")
+    checked: Settings.data.appLauncher.enableClipPreview
+    onToggled: checked => Settings.data.appLauncher.enableClipPreview = checked
   }
 
   NToggle {

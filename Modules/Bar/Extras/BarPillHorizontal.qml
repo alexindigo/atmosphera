@@ -8,7 +8,7 @@ import qs.Widgets
 Item {
   id: root
 
-  property ShellScreen screen
+  required property ShellScreen screen
 
   property string icon: ""
   property string text: ""
@@ -20,6 +20,10 @@ Item {
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
+  property color customBackgroundColor: Color.transparent
+  property color customTextIconColor: Color.transparent
+
+  readonly property bool collapseToIcon: forceClose && !forceOpen
 
   // Effective shown state (true if hovered/animated open or forced)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
@@ -42,6 +46,10 @@ Item {
   readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5)
   readonly property int pillMaxWidth: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap))
 
+  // Always prioritize hover color, then the custom one and finally the fallback color
+  readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
+  readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
+
   readonly property real iconSize: {
     switch (root.density) {
     case "compact":
@@ -60,7 +68,7 @@ Item {
     }
   }
 
-  width: pillHeight + Math.max(0, pill.width - pillOverlap)
+  width: collapseToIcon ? pillHeight : pillHeight + Math.max(0, pill.width - pillOverlap)
   height: pillHeight
 
   Connections {
@@ -68,6 +76,25 @@ Item {
     function onTooltipTextChanged() {
       if (hovered) {
         TooltipService.updateText(root.tooltipText);
+      }
+    }
+  }
+
+  // Unified background for the entire pill area to avoid overlapping opacity
+  Rectangle {
+    id: pillBackground
+    width: collapseToIcon ? pillHeight : root.width
+    height: pillHeight
+    radius: halfPillHeight
+    color: root.bgColor
+    anchors.verticalCenter: parent.verticalCenter
+
+    readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
+
+    Behavior on color {
+      ColorAnimation {
+        duration: Style.animationFast
+        easing.type: Easing.InOutQuad
       }
     }
   }
@@ -82,7 +109,7 @@ Item {
                            (iconCircle.x + iconCircle.width / 2) - width // Opens left
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Color.transparent // Make pill background transparent to avoid double opacity
 
     readonly property int halfPillHeight: Math.round(pillHeight * 0.5)
 
@@ -110,7 +137,7 @@ Item {
       pointSize: textSize
       applyUiScale: false
       font.weight: Style.fontWeightBold
-      color: forceOpen ? Color.mOnSurface : Color.mPrimary
+      color: root.fgColor
       visible: revealed
     }
 
@@ -124,7 +151,7 @@ Item {
     Behavior on opacity {
       enabled: showAnim.running || hideAnim.running
       NumberAnimation {
-        duration: Style.animationNormal
+        duration: Style.animationFast
         easing.type: Easing.OutCubic
       }
     }
@@ -135,23 +162,16 @@ Item {
     width: pillHeight
     height: pillHeight
     radius: width * 0.5
-    color: hovered ? Color.mHover : Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Color.transparent // Make icon background transparent to avoid double opacity
     anchors.verticalCenter: parent.verticalCenter
 
     x: oppositeDirection ? 0 : (parent.width - width)
-
-    Behavior on color {
-      ColorAnimation {
-        duration: Style.animationNormal
-        easing.type: Easing.InOutQuad
-      }
-    }
 
     NIcon {
       icon: root.icon
       pointSize: iconSize
       applyUiScale: false
-      color: hovered ? Color.mOnHover : Color.mOnSurface
+      color: root.fgColor
       // Center horizontally
       x: (iconCircle.width - width) / 2
       // Center vertically accounting for font metrics
@@ -175,7 +195,7 @@ Item {
       property: "opacity"
       from: 0
       to: 1
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.OutCubic
     }
     onStarted: {
@@ -216,7 +236,7 @@ Item {
       property: "opacity"
       from: 1
       to: 0
-      duration: Style.animationNormal
+      duration: Style.animationFast
       easing.type: Easing.InCubic
     }
     onStopped: {
@@ -243,7 +263,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(Screen, pill, root.tooltipText, BarService.getTooltipDirection(), Style.tooltipDelayLong);
+      TooltipService.show(pill, root.tooltipText, BarService.getTooltipDirection(), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }
@@ -272,6 +292,8 @@ Item {
   }
 
   function show() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showAnim.start();
@@ -282,6 +304,8 @@ Item {
   }
 
   function hide() {
+    if (collapseToIcon)
+      return;
     if (forceOpen) {
       return;
     }
@@ -292,6 +316,8 @@ Item {
   }
 
   function showDelayed() {
+    if (collapseToIcon)
+      return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
       showTimer.start();

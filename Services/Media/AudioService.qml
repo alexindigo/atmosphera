@@ -2,210 +2,339 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.Commons
 
 Singleton {
   id: root
 
-  readonly property var nodes: Pipewire.nodes.values.reduce((acc, node) => {
-                                                              if (!node.isStream) {
-                                                                if (node.isSink) {
-                                                                  acc.sinks.push(node);
-                                                                } else if (node.audio) {
-                                                                  acc.sources.push(node);
-                                                                }
-                                                              }
-                                                              return acc;
-                                                            }, {
-                                                              "sources": [],
-                                                              "sinks": []
-                                                            })
-
-  readonly property PwNode sink: Pipewire.defaultAudioSink
-  readonly property PwNode rawSource: Pipewire.defaultAudioSource
-  readonly property PwNode source: (rawSource && !rawSource.isSink && (!rawSource.mediaClass || rawSource.mediaClass.startsWith("Audio/Source"))) ? rawSource : null
+  // Devices
+  readonly property PwNode sink: Pipewire.ready ? Pipewire.defaultAudioSink : null
+  readonly property PwNode source: validatedSource
   readonly property bool hasInput: !!source
-  Component.onCompleted: updateInputVolume()
+  readonly property list<PwNode> sinks: deviceNodes.sinks
+  readonly property list<PwNode> sources: deviceNodes.sources
 
-  readonly property list<PwNode> sinks: nodes.sinks
-  readonly property list<PwNode> sources: nodes.sources
+  readonly property real epsilon: 0.005
 
-  // Volume [0..1] is readonly from outside
-  readonly property alias volume: root._volume
-  property real _volume: sink?.audio?.volume ?? 0
+  // Output Volume - read directly from device
+  readonly property real volume: {
+    if (!sink?.audio)
+    return 0;
+    const vol = sink.audio.volume;
+    if (vol === undefined || isNaN(vol))
+    return 0;
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    return Math.max(0, Math.min(maxVolume, vol));
+  }
+  readonly property bool muted: sink?.audio?.muted ?? true
 
-  readonly property alias muted: root._muted
-  property bool _muted: !!sink?.audio?.muted
+  // Input Volume - read directly from device
+  readonly property real inputVolume: {
+    if (!source?.audio)
+    return 0;
+    const vol = source.audio.volume;
+    if (vol === undefined || isNaN(vol))
+    return 0;
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    return Math.max(0, Math.min(maxVolume, vol));
+  }
+  readonly property bool inputMuted: source?.audio?.muted ?? true
 
-  // Input volume [0..1] is readonly from outside
-  readonly property alias inputVolume: root._inputVolume
-  property real _inputVolume: 0
+  // Allow callers to skip the next OSD notification when they are already
+  // presenting volume state (e.g. the Audio Panel UI). We track this as a short
+  // time window so suppression applies to every monitor, not just the first one
+  // that receives the signal.
+  property double outputOSDSuppressedUntilMs: 0
+  property double inputOSDSuppressedUntilMs: 0
 
-  readonly property alias inputMuted: root._inputMuted
-  property bool _inputMuted: !!source?.audio?.muted
+  function suppressOutputOSD(durationMs = 400) {
+    const target = Date.now() + durationMs;
+    outputOSDSuppressedUntilMs = Math.max(outputOSDSuppressedUntilMs, target);
+  }
+
+  function suppressInputOSD(durationMs = 400) {
+    const target = Date.now() + durationMs;
+    inputOSDSuppressedUntilMs = Math.max(inputOSDSuppressedUntilMs, target);
+  }
+
+  function consumeOutputOSDSuppression(): bool {
+    return Date.now() < outputOSDSuppressedUntilMs;
+  }
+
+  function consumeInputOSDSuppression(): bool {
+    return Date.now() < inputOSDSuppressedUntilMs;
+  }
 
   readonly property real stepVolume: Settings.data.audio.volumeStep / 100.0
 
-  function updateInputVolume() {
-    if (source && source.audio) {
-      var vol = source.audio.volume;
-      if (vol !== undefined && !isNaN(vol)) {
-        root._inputVolume = vol;
-      }
-      // Don't reset to 0 if volume is undefined/NaN - preserve last known value
-      root._inputMuted = !!source.audio.muted;
-    } else {
-      // Only reset muted state
-      root._inputMuted = true;
+  // Filtered device nodes (non-stream sinks and sources)
+  readonly property var deviceNodes: Pipewire.ready ? Pipewire.nodes.values.reduce((acc, node) => {
+                                                                                     if (!node.isStream) {
+                                                                                       if (node.isSink) {
+                                                                                         acc.sinks.push(node);
+                                                                                       } else if (node.audio) {
+                                                                                         acc.sources.push(node);
+                                                                                       }
+                                                                                     }
+                                                                                     return acc;
+                                                                                   }, {
+                                                                                     "sources": [],
+                                                                                     "sinks": []
+                                                                                   }) : {
+                                                        "sources": [],
+                                                        "sinks": []
+                                                      }
+
+  // Validated source (ensures it's a proper audio source, not a sink)
+  readonly property PwNode validatedSource: {
+    if (!Pipewire.ready) {
+      return null;
     }
+    const raw = Pipewire.defaultAudioSource;
+    if (!raw || raw.isSink || !raw.audio) {
+      return null;
+    }
+    // Optional: check type if available (type reflects media.class per docs)
+    if (raw.type && typeof raw.type === "string" && !raw.type.startsWith("Audio/Source")) {
+      return null;
+    }
+    return raw;
   }
 
-  // Update input volume when source property changes
-  onSourceChanged: {
-    updateInputVolume();
+  // Internal state for feedback loop prevention
+  property bool isSettingOutputVolume: false
+  property bool isSettingInputVolume: false
+
+  // Bind default sink and source to ensure their properties are available
+  PwObjectTracker {
+    id: sinkTracker
+    objects: root.sink ? [root.sink] : []
   }
 
+  PwObjectTracker {
+    id: sourceTracker
+    objects: root.source ? [root.source] : []
+  }
+
+  // Bind all devices to ensure their properties are available
   PwObjectTracker {
     objects: [...root.sinks, ...root.sources]
   }
 
+  // Watch output device changes for clamping
   Connections {
-    target: sink?.audio ? sink?.audio : null
+    target: sink?.audio ?? null
 
     function onVolumeChanged() {
-      var vol = (sink?.audio.volume ?? 0);
-      if (isNaN(vol)) {
+      // Ignore volume changes if we're the one setting it (to prevent feedback loop)
+      if (root.isSettingOutputVolume) {
         return;
       }
-      // Only update if the value actually changed to prevent spurious signals
-      if (Math.abs(root._volume - vol) > 0.001) {
-        root._volume = vol;
+
+      if (!root.sink?.audio) {
+        return;
       }
-    }
 
-    function onMutedChanged() {
-      var newMuted = (sink?.audio.muted ?? true);
-      // Only update if the value actually changed
-      if (root._muted !== newMuted) {
-        root._muted = newMuted;
-        Logger.i("AudioService", "OnMuteChanged:", root._muted);
-      }
-    }
-  }
-
-  Connections {
-    target: source?.audio ? source?.audio : null
-
-    function onVolumeChanged() {
-      var vol = source?.audio?.volume;
+      const vol = root.sink.audio.volume;
       if (vol === undefined || isNaN(vol)) {
-        // Don't reset to 0 if volume is undefined/NaN - preserve last known value
         return;
       }
-      // Only update if the value actually changed to prevent spurious signals
-      if (Math.abs(root._inputVolume - vol) > 0.001) {
-        root._inputVolume = vol;
-      }
-    }
 
-    function onMutedChanged() {
-      var newMuted = (source?.audio.muted ?? true);
-      // Only update if the value actually changed
-      if (root._inputMuted !== newMuted) {
-        root._inputMuted = newMuted;
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+
+      // If volume exceeds max, clamp it (but only if we didn't just set it)
+      if (vol > maxVolume) {
+        root.isSettingOutputVolume = true;
+        Qt.callLater(() => {
+                       if (root.sink?.audio && root.sink.audio.volume > maxVolume) {
+                         root.sink.audio.volume = maxVolume;
+                       }
+                       root.isSettingOutputVolume = false;
+                     });
       }
     }
   }
+
+  // Watch input device changes for clamping
   Connections {
-    target: Pipewire
+    target: source?.audio ?? null
 
-    function onDefaultAudioSinkChanged() {
-    }
+    function onVolumeChanged() {
+      // Ignore volume changes if we're the one setting it (to prevent feedback loop)
+      if (root.isSettingInputVolume) {
+        return;
+      }
 
-    function onDefaultAudioSourceChanged() {
-      updateInputVolume();
+      if (!root.source?.audio) {
+        return;
+      }
+
+      const vol = root.source.audio.volume;
+      if (vol === undefined || isNaN(vol)) {
+        return;
+      }
+
+      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+
+      // If volume exceeds max, clamp it (but only if we didn't just set it)
+      if (vol > maxVolume) {
+        root.isSettingInputVolume = true;
+        Qt.callLater(() => {
+                       if (root.source?.audio && root.source.audio.volume > maxVolume) {
+                         root.source.audio.volume = maxVolume;
+                       }
+                       root.isSettingInputVolume = false;
+                     });
+      }
     }
   }
 
+  // Output Control
   function increaseVolume() {
-    setVolume(volume + stepVolume);
+    if (!Pipewire.ready || !sink?.audio) {
+      return;
+    }
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    if (volume >= maxVolume) {
+      return;
+    }
+    setVolume(Math.min(maxVolume, volume + stepVolume));
   }
 
   function decreaseVolume() {
-    setVolume(volume - stepVolume);
+    if (!Pipewire.ready || !sink?.audio) {
+      return;
+    }
+    if (volume <= 0) {
+      return;
+    }
+    setVolume(Math.max(0, volume - stepVolume));
   }
 
   function setVolume(newVolume: real) {
-    if (sink?.ready && sink?.audio) {
-      // Clamp it accordingly
-      sink.audio.muted = false;
-      sink.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume));
-      //Logger.i("AudioService", "SetVolume", sink.audio.volume);
-    } else {
-      Logger.w("AudioService", "No sink available");
+    if (!Pipewire.ready || !sink?.ready || !sink?.audio) {
+      Logger.w("AudioService", "No sink available or not ready");
+      return;
     }
+
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
+    const delta = Math.abs(clampedVolume - sink.audio.volume);
+    if (delta < root.epsilon) {
+      return;
+    }
+
+    // Set flag to prevent feedback loop, then set the actual volume
+    isSettingOutputVolume = true;
+    sink.audio.muted = false;
+    sink.audio.volume = clampedVolume;
+
+    // Clear flag after a short delay to allow external changes to be detected
+    Qt.callLater(() => {
+                   isSettingOutputVolume = false;
+                 });
   }
 
   function setOutputMuted(muted: bool) {
-    if (sink?.ready && sink?.audio) {
-      sink.audio.muted = muted;
-    } else {
-      Logger.w("AudioService", "No sink available");
+    if (!Pipewire.ready || !sink?.audio) {
+      Logger.w("AudioService", "No sink available or Pipewire not ready");
+      return;
     }
-  }
 
-  function increaseInputVolume() {
-    setInputVolume(inputVolume + stepVolume);
-  }
-
-  function decreaseInputVolume() {
-    setInputVolume(inputVolume - stepVolume);
-  }
-
-  function setInputVolume(newVolume: real) {
-    if (source?.ready && source?.audio) {
-      // Clamp it accordingly
-      source.audio.muted = false;
-      source.audio.volume = Math.max(0, Math.min(Settings.data.audio.volumeOverdrive ? 1.5 : 1.0, newVolume));
-    } else {
-      Logger.w("AudioService", "No source available");
-    }
-  }
-
-  function setInputMuted(muted: bool) {
-    if (source?.ready && source?.audio) {
-      source.audio.muted = muted;
-    } else {
-      Logger.w("AudioService", "No source available");
-    }
-  }
-
-  function setAudioSink(newSink: PwNode): void {
-    Pipewire.preferredDefaultAudioSink = newSink;
-    // Volume is changed by the sink change
-    root._volume = newSink?.audio?.volume ?? 0;
-    root._muted = !!newSink?.audio?.muted;
-  }
-
-  function setAudioSource(newSource: PwNode): void {
-    Pipewire.preferredDefaultAudioSource = newSource;
-    // The source property will update automatically, which triggers onSourceChanged
-    // which calls updateInputVolume()
+    sink.audio.muted = muted;
   }
 
   function getOutputIcon() {
-    if (muted) {
+    if (muted)
       return "volume-mute";
+
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    const clampedVolume = Math.max(0, Math.min(volume, maxVolume));
+
+    // Show volume-x icon when volume is effectively 0% (within rounding threshold)
+    if (clampedVolume < root.epsilon) {
+      return "volume-x";
     }
-    return (volume <= Number.EPSILON) ? "volume-zero" : (volume <= 0.5) ? "volume-low" : "volume-high";
+    if (clampedVolume <= 0.5) {
+      return "volume-low";
+    }
+    return "volume-high";
+  }
+
+  // Input Control
+  function increaseInputVolume() {
+    if (!Pipewire.ready || !source?.audio) {
+      return;
+    }
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    if (inputVolume >= maxVolume) {
+      return;
+    }
+    setInputVolume(Math.min(maxVolume, inputVolume + stepVolume));
+  }
+
+  function decreaseInputVolume() {
+    if (!Pipewire.ready || !source?.audio) {
+      return;
+    }
+    setInputVolume(Math.max(0, inputVolume - stepVolume));
+  }
+
+  function setInputVolume(newVolume: real) {
+    if (!Pipewire.ready || !source?.ready || !source?.audio) {
+      Logger.w("AudioService", "No source available or not ready");
+      return;
+    }
+
+    const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+    const clampedVolume = Math.max(0, Math.min(maxVolume, newVolume));
+    const delta = Math.abs(clampedVolume - source.audio.volume);
+    if (delta < root.epsilon) {
+      return;
+    }
+
+    // Set flag to prevent feedback loop, then set the actual volume
+    isSettingInputVolume = true;
+    source.audio.muted = false;
+    source.audio.volume = clampedVolume;
+
+    // Clear flag after a short delay to allow external changes to be detected
+    Qt.callLater(() => {
+                   isSettingInputVolume = false;
+                 });
+  }
+
+  function setInputMuted(muted: bool) {
+    if (!Pipewire.ready || !source?.audio) {
+      Logger.w("AudioService", "No source available or Pipewire not ready");
+      return;
+    }
+
+    source.audio.muted = muted;
   }
 
   function getInputIcon() {
-    if (inputMuted) {
+    if (inputMuted || inputVolume <= Number.EPSILON) {
       return "microphone-mute";
     }
-    return (inputVolume <= Number.EPSILON) ? "microphone-mute" : "microphone";
+    return "microphone";
+  }
+
+  // Device Selection
+  function setAudioSink(newSink: PwNode): void {
+    if (!Pipewire.ready) {
+      Logger.w("AudioService", "Pipewire not ready");
+      return;
+    }
+    Pipewire.preferredDefaultAudioSink = newSink;
+  }
+
+  function setAudioSource(newSource: PwNode): void {
+    if (!Pipewire.ready) {
+      Logger.w("AudioService", "Pipewire not ready");
+      return;
+    }
+    Pipewire.preferredDefaultAudioSource = newSource;
   }
 }

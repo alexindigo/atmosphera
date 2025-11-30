@@ -283,7 +283,7 @@ Singleton {
     function increaseBrightness(): void {
       const value = !isNaN(monitor.queuedBrightness) ? monitor.queuedBrightness : monitor.brightness;
       // Enforce minimum brightness if enabled
-      if (Settings.data.brightness.enforceMinimum && value <= minBrightnessValue) {
+      if (Settings.data.brightness.enforceMinimum && value < minBrightnessValue) {
         setBrightnessDebounced(Math.max(stepSize, minBrightnessValue));
       } else {
         // Normal brightness increase

@@ -3,6 +3,7 @@ import QtQuick
 
 import Quickshell
 import qs.Commons
+import qs.Services.System
 
 Singleton {
   id: root
@@ -15,6 +16,16 @@ Singleton {
     return Math.floor(root.now / 1000);
   }
 
+  // Timer state (for countdown/stopwatch)
+  property bool timerRunning: false
+  property bool timerStopwatchMode: false
+  property int timerRemainingSeconds: 0
+  property int timerTotalSeconds: 0
+  property int timerElapsedSeconds: 0
+  property bool timerSoundPlaying: false
+  property int timerStartTimestamp: 0 // Unix timestamp when timer was started
+  property int timerPausedAt: 0 // Value when paused (for resuming)
+
   Timer {
     id: updateTimer
     interval: 1000
@@ -24,6 +35,20 @@ Singleton {
     onTriggered: {
       var newTime = new Date();
       root.now = newTime;
+
+      // Update timer if running
+      if (root.timerRunning && root.timerStartTimestamp > 0) {
+        const elapsedSinceStart = root.timestamp - root.timerStartTimestamp;
+
+        if (root.timerStopwatchMode) {
+          root.timerElapsedSeconds = root.timerPausedAt + elapsedSinceStart;
+        } else {
+          root.timerRemainingSeconds = root.timerTotalSeconds - elapsedSinceStart;
+          if (root.timerRemainingSeconds <= 0) {
+            root.timerOnFinished();
+          }
+        }
+      }
 
       // Adjust next interval to sync with the start of the next second
       var msIntoSecond = newTime.getMilliseconds();
@@ -100,11 +125,83 @@ Singleton {
       return "";
     const diff = Date.now() - date.getTime();
     if (diff < 60000)
-      return "now";
+      return I18n.tr("notifications.time.now");
+    if (diff < 120000)
+      return I18n.tr("notifications.time.diffM");
     if (diff < 3600000)
-      return `${Math.floor(diff / 60000)}m ago`;
+      return I18n.tr("notifications.time.diffMM", {
+                       "diff": Math.floor(diff / 60000)
+                     });
+    if (diff < 7200000)
+      return I18n.tr("notifications.time.diffH");
     if (diff < 86400000)
-      return `${Math.floor(diff / 3600000)}h ago`;
-    return `${Math.floor(diff / 86400000)}d ago`;
+      return I18n.tr("notifications.time.diffHH", {
+                       "diff": Math.floor(diff / 3600000)
+                     });
+    if (diff < 172800000)
+      return I18n.tr("notifications.time.diffD");
+    return I18n.tr("notifications.time.diffDD", {
+                     "diff": Math.floor(diff / 86400000)
+                   });
+  }
+
+  // Timer functions
+  function timerStart() {
+    if (root.timerStopwatchMode) {
+      root.timerRunning = true;
+      root.timerStartTimestamp = root.timestamp;
+      root.timerPausedAt = root.timerElapsedSeconds;
+    } else {
+      if (root.timerRemainingSeconds <= 0) {
+        return;
+      }
+      root.timerRunning = true;
+      root.timerTotalSeconds = root.timerRemainingSeconds;
+      root.timerStartTimestamp = root.timestamp;
+      root.timerPausedAt = 0;
+    }
+  }
+
+  function timerPause() {
+    if (root.timerRunning) {
+      // Save current state
+      if (root.timerStopwatchMode) {
+        root.timerPausedAt = root.timerElapsedSeconds;
+      } else {
+        root.timerPausedAt = root.timerRemainingSeconds;
+      }
+    }
+    root.timerRunning = false;
+    root.timerStartTimestamp = 0;
+    // Stop any repeating notification sound when pausing
+    SoundService.stopSound("alarm-beep.wav");
+    root.timerSoundPlaying = false;
+  }
+
+  function timerReset() {
+    root.timerRunning = false;
+    root.timerStartTimestamp = 0;
+    if (root.timerStopwatchMode) {
+      root.timerElapsedSeconds = 0;
+      root.timerPausedAt = 0;
+    } else {
+      root.timerRemainingSeconds = 0;
+      root.timerTotalSeconds = 0;
+      root.timerPausedAt = 0;
+    }
+    // Stop any repeating notification sound
+    SoundService.stopSound("alarm-beep.wav");
+    root.timerSoundPlaying = false;
+  }
+
+  function timerOnFinished() {
+    root.timerRunning = false;
+    root.timerRemainingSeconds = 0;
+    // Play notification sound with repeat at lower volume
+    root.timerSoundPlaying = true;
+    SoundService.playSound("alarm-beep.wav", {
+                             repeat: true,
+                             volume: 0.3
+                           });
   }
 }

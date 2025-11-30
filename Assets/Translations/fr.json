@@ -46,6 +46,11 @@
         }
       },
       "battery": {
+        "device": {
+          "default": "Par défaut (périphérique d'affichage)",
+          "description": "Sélectionnez le périphérique de batterie à afficher.",
+          "label": "Dispositif à pile"
+        },
         "display-mode": {
           "description": "Choisissez comment vous souhaitez que cette valeur apparaisse.",
           "label": "Mode d'affichage"
@@ -97,9 +102,13 @@
       "control-center": {
         "browse-file": "Parcourir les fichiers",
         "browse-library": "Parcourir la bibliothèque",
-        "colorize-distro-logo": {
-          "description": "Appliquez les couleurs du thème au logo de votre distribution.",
-          "label": "Coloriser le logo de la distribution"
+        "color-selection": {
+          "description": "Applique les couleurs du thème aux icônes.",
+          "label": "Sélectionner la Couleur"
+        },
+        "enable-colorization": {
+          "description": "Active la coloration pour l'icône du centre de contrôle, en appliquant les couleurs du thème.",
+          "label": "Activer la Coloration"
         },
         "icon": {
           "description": "Sélectionnez une icône de la bibliothèque ou un fichier personnalisé.",
@@ -123,10 +132,6 @@
           "stream-description": "Entrez une commande à exécuter en continu."
         },
         "dynamic-text": "Texte dynamique",
-        "hide-vertical": {
-          "description": "Si activé, le texte de la sortie de la commande ne sera pas affiché lorsque la barre est en disposition verticale (gauche ou droite).",
-          "label": "Masquer le texte dans la barre verticale"
-        },
         "icon": {
           "description": "Sélectionnez une icône dans la bibliothèque.",
           "label": "Icône"
@@ -135,6 +140,14 @@
           "description": "Commande à exécuter quand le bouton est cliqué à gauche.",
           "label": "Clic gauche",
           "update-text": "Mettre à jour le texte affiché au clic gauche."
+        },
+        "max-text-length-horizontal": {
+          "description": "Nombre maximal de caractères à afficher dans la barre horizontale (0 pour masquer le texte)",
+          "label": "Longueur max du texte (horizontal)"
+        },
+        "max-text-length-vertical": {
+          "description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte)",
+          "label": "Longueur max du texte (vertical)"
         },
         "middle-click": {
           "description": "Commande à exécuter quand le bouton est cliqué au milieu.",
@@ -157,6 +170,23 @@
         "text-stream": {
           "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
           "label": "Flux"
+        },
+        "wheel": {
+          "description": "Commande à exécuter lorsque la molette est utilisée.\nUtilisez $delta pour le delta de la molette dans la commande",
+          "label": "Molette",
+          "update-text": "Mettre à jour le texte affiché au défilement"
+        },
+        "wheel-down": {
+          "description": "Commande à exécuter lorsque la molette est défilée vers le bas.",
+          "label": "Commande molette bas"
+        },
+        "wheel-mode-separate": {
+          "description": "Activer des commandes séparées pour la molette haut et bas",
+          "label": "Commandes de molette séparées"
+        },
+        "wheel-up": {
+          "description": "Commande à exécuter lorsque la molette est défilée vers le haut.",
+          "label": "Commande molette haut"
         }
       },
       "dialog": {
@@ -202,6 +232,14 @@
           "description": "Afficher la pochette d'album de la piste en cours de lecture.",
           "label": "Afficher la pochette d'album"
         },
+        "show-artist-first": {
+          "description": "Afficher artiste - titre au lieu de titre - artiste.",
+          "label": "Afficher l'artiste en premier"
+        },
+        "show-progress-ring": {
+          "description": "Afficher un indicateur de progression circulaire montrant la progression de la piste.",
+          "label": "Afficher l'anneau de progression"
+        },
         "show-visualizer": {
           "description": "Afficher un visualiseur audio quand la musique est en cours de lecture.",
           "label": "Afficher le visualiseur"
@@ -242,9 +280,6 @@
         }
       },
       "system-monitor": {
-        "cpu-critical-threshold": {
-          "label": "CPU Usage (Critical)"
-        },
         "cpu-temperature": {
           "description": "Afficher les lectures de température du CPU si disponibles.",
           "label": "Température du CPU"
@@ -253,20 +288,9 @@
           "description": "Afficher le pourcentage d'utilisation actuel du CPU.",
           "label": "Utilisation du CPU"
         },
-        "cpu-warning-threshold": {
-          "label": "CPU Usage (Warning)"
-        },
-        "disk-critical-threshold": {
-          "label": "Storage Space (Critical)"
-        },
-        "disk-warning-threshold": {
-          "label": "Storage Space (Warning)"
-        },
-        "mem-critical-threshold": {
-          "label": "Memory Usage (Critical)"
-        },
-        "mem-warning-threshold": {
-          "label": "Memory Usage (Warning)"
+        "disk-path": {
+          "description": "Sélectionnez le point de montage du disque à surveiller.",
+          "label": "Chemin du disque"
         },
         "memory-percentage": {
           "description": "Afficher l'utilisation de la mémoire en pourcentage au lieu de valeurs absolues.",
@@ -283,16 +307,6 @@
         "storage-usage": {
           "description": "Afficher les informations d'utilisation de l'espace disque.",
           "label": "Utilisation du stockage"
-        },
-        "temp-critical-threshold": {
-          "label": "CPU Temperature (Critical)"
-        },
-        "temp-warning-threshold": {
-          "label": "CPU Temperature (Warning)"
-        },
-        "thresholds": {
-          "description": "Configurez les seuils des indicateurs visuels. Les indicateurs d'avertissement/critique apparaissent en couleurs mises en surbrillance lorsque les valeurs dépassent ces limites.",
-          "header": "Seuils"
         }
       },
       "taskbar": {
@@ -340,6 +354,10 @@
           "description": "Nombre de caractères à afficher des noms d'espaces de travail (1-10).",
           "label": "Nombre de caractères"
         },
+        "follow-focused-screen": {
+          "description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
+          "label": "Suivre l'Écran Ciblé"
+        },
         "hide-unoccupied": {
           "description": "Ne pas afficher les espaces de travail sans fenêtres.",
           "label": "Masquer les inoccupés"
@@ -352,14 +370,20 @@
     }
   },
   "battery": {
+    "battery-level": "Niveau de batterie",
+    "brightness": "Luminosité",
     "charging": "En charge.",
     "charging-rate": "Taux de charge : {rate} W.",
     "discharging": "En décharge.",
     "discharging-rate": "Taux de décharge : {rate} W.",
     "health": "État : {percent}%",
     "idle": "Inactif.",
+    "inhibit-idle-description": "Maintient le système éveillé.",
+    "inhibit-idle-label": "Garder éveillé",
     "no-battery-detected": "Aucune batterie détectée.",
+    "panel-title": "Batterie",
     "plugged-in": "Branché.",
+    "power-profile": "Profil d’alimentation",
     "time-left": "Temps restant : {time}.",
     "time-until-full": "Temps jusqu'à charge complète : {time}."
   },
@@ -369,11 +393,12 @@
       "blocked": "Bloqué",
       "connect": "Connecter",
       "connected-devices": "Appareils connectés",
+      "connecting": "Connexion en cours...",
       "disabled": "Le Bluetooth est désactivé",
       "disconnect": "Déconnecter",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
       "known-devices": "Appareils connus",
-      "pairing": "Appairage...",
+      "pairing": "Appairage en cours...",
       "pairing-mode": "Assurez-vous que votre appareil est en mode d'appairage.",
       "scanning": "Recherche d'appareils en cours...",
       "title": "Bluetooth"
@@ -383,12 +408,77 @@
     "panel": {
       "week": "Semaine"
     },
+    "timer": {
+      "countdown": "Compte à rebours",
+      "duration": "Durée",
+      "hours": "h",
+      "minutes": "m",
+      "pause": "Pause",
+      "reset": "Réinitialiser",
+      "seconds": "s",
+      "start": "Commencer",
+      "stopwatch": "Chronomètre",
+      "timer": "Minuteur",
+      "title": "Minuteur"
+    },
     "weather": {
       "loading": "Chargement de la météo…"
     }
   },
+  "changelog": {
+    "error": {
+      "fetch-failed": "Impossible de charger les données du journal des modifications. Veuillez réessayer plus tard.",
+      "rate-limit": "Limite de GitHub atteinte. Réessayez dans quelques minutes."
+    },
+    "panel": {
+      "buttons": {
+        "discord": "Rejoindre notre Discord",
+        "dismiss": "Ok"
+      },
+      "empty": "Les notes de version ne sont pas encore disponibles.",
+      "highlight-title": "Points importants",
+      "section": {
+        "released": "Publié le {date}",
+        "version": "Version {version}"
+      },
+      "subtitle": {
+        "fresh": "Merci d’avoir installé Noctalia ! Voici ce que contient cette version.",
+        "updated": "Mise à jour depuis {previousVersion}"
+      },
+      "title": "Quoi de neuf dans {version}",
+      "version": {
+        "new-user": "Nouvelle installation"
+      }
+    }
+  },
   "clock": {
     "tooltip": "Ouvrir le calendrier"
+  },
+  "context-menu": {
+    "activate-app": "Activer {app}",
+    "clear-history": "Effacer l'historique",
+    "close-app": "Fermer {app}",
+    "connect-vpn": "Se connecter à {name}",
+    "cycle-visualizer": "Visualiseur de cycle",
+    "disable-bluetooth": "Désactiver le Bluetooth",
+    "disable-dnd": "Désactiver le mode Ne pas déranger",
+    "disable-wifi": "Désactiver le Wi-Fi",
+    "disconnect-vpn": "Se déconnecter de {name}",
+    "enable-bluetooth": "Activer le Bluetooth",
+    "enable-dnd": "Activer le mode Ne pas déranger",
+    "enable-wifi": "Activer le Wi-Fi",
+    "next": "Suivant",
+    "open-calendar": "Ouvrir le calendrier",
+    "open-display-settings": "Paramètres d'affichage",
+    "open-launcher": "Ouvrir le lanceur",
+    "open-mixer": "Table de mixage audio",
+    "open-settings": "Ouvrir les paramètres",
+    "pause": "Pause",
+    "play": "Jouer",
+    "previous": "Précédent",
+    "random-wallpaper": "Fond d'écran aléatoire",
+    "toggle-mute": "Activer/désactiver le mode muet",
+    "widget-settings": "Paramètres du widget"
   },
   "dock": {
     "menu": {
@@ -422,6 +512,21 @@
       "description": "Vos notifications apparaîtront ici à mesure qu'elles arriveront.",
       "no-notifications": "Aucune notification",
       "title": "Notifications"
+    },
+    "range": {
+      "all": "Tout",
+      "earlier": "Plus anciennes",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier"
+    },
+    "time": {
+      "diffD": "il y a 1 jour",
+      "diffDD": "il y a {diff} jours",
+      "diffH": "il y a 1 heure",
+      "diffHH": "il y a {diff} heures",
+      "diffM": "il y a 1 minute",
+      "diffMM": "il y a {diff} minutes",
+      "now": "maintenant"
     }
   },
   "options": {
@@ -441,6 +546,7 @@
     },
     "colors": {
       "error": "Erreur",
+      "none": "Aucun",
       "onSurface": "En surface",
       "primary": "Primaire",
       "secondary": "Secondaire",
@@ -589,7 +695,11 @@
     "clipboard-history-disabled-description": "Activez l'historique du presse-papiers dans les paramètres ou installez cliphist",
     "clipboard-loading": "Chargement de l'historique du presse-papiers...",
     "clipboard-loading-description": "Veuillez patienter",
-    "clipboard-search-description": "Rechercher dans l'historique du presse-papiers"
+    "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
+    "emoji": "Sélecteur d'émojis",
+    "emoji-loading": "Chargement des émojis...",
+    "emoji-loading-description": "Veuillez patienter",
+    "emoji-search-description": "Rechercher et copier des émojis"
   },
   "quickSettings": {
     "bluetooth": {
@@ -598,7 +708,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Cliquer pour gérer les appareils Bluetooth"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -607,7 +717,7 @@
         "enabled": "Rester éveillé"
       },
       "tooltip": {
-        "action": "Cliquer pour basculer le mode Rester éveillé"
+        "action": "Rester éveillé"
       }
     },
     "nightLight": {
@@ -617,7 +727,7 @@
         "forced": "Lumière nocturne"
       },
       "tooltip": {
-        "action": "Cliquer pour basculer le mode Lumière nocturne\nClic droit : Ouvrir les paramètres"
+        "action": "Lumière nocturne"
       }
     },
     "notifications": {
@@ -626,7 +736,7 @@
         "enabled": "Notifications"
       },
       "tooltip": {
-        "action": "Clic gauche : Ouvrir l'historique des notifications\nClic droit : Basculer Ne pas déranger"
+        "action": "Notifications"
       }
     },
     "powerProfile": {
@@ -634,7 +744,7 @@
         "unavailable": "Profil d'alimentation"
       },
       "tooltip": {
-        "action": "Cliquer pour changer de profil d'alimentation",
+        "action": "Profil d'alimentation",
         "disabled": "Installez power-profiles-daemon pour utiliser les profils d'alimentation"
       }
     },
@@ -644,13 +754,13 @@
         "stopped": "Enregistrer"
       },
       "tooltip": {
-        "action": "Cliquer pour démarrer/arrêter l'enregistrement d'écran"
+        "action": "Enregistreur d'écran"
       }
     },
     "wallpaperSelector": {
       "label": "Fond d'écran",
       "tooltip": {
-        "action": "Clic gauche : Ouvrir le sélecteur de fond d'écran\nClic droit : Définir un fond d'écran aléatoire"
+        "action": "Sélecteur de fond d'écran"
       }
     },
     "wifi": {
@@ -660,7 +770,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Cliquer pour gérer les connexions Wi-Fi"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -686,6 +796,8 @@
       },
       "noctalia": {
         "download-latest": "Télécharger la dernière version",
+        "git-commit": "Commit Git :",
+        "git-commit-loading": "Chargement...",
         "installed-version": "Version installée :",
         "latest-version": "Dernière version :",
         "section": {
@@ -710,6 +822,11 @@
           "description": "Configurez les périphériques d'entrée et de sortie audio disponibles.",
           "label": "Périphériques audio"
         }
+      },
+      "external-mixer": {
+        "description": "Entrez la commande ou le chemin d'accès de l'application à lancer lors de l'activation de la fonctionnalité de mixeur audio externe.",
+        "label": "Commande de mixeur audio externe",
+        "placeholder": "pwvucontrol || pavucontrol"
       },
       "media": {
         "excluded-player": {
@@ -784,6 +901,10 @@
         "background-opacity": {
           "description": "Ajustez l'opacité de l'arrière-plan de la barre.",
           "label": "Opacité de l'arrière-plan"
+        },
+        "capsule-opacity": {
+          "description": "Définir le niveau d'opacité des arrière-plans des widgets quand la capsule est affichée.",
+          "label": "Opacité de la capsule"
         },
         "density": {
           "description": "Ajustez le remplissage de la barre pour un aspect compact ou spacieux.",
@@ -877,6 +998,41 @@
           "label": "Mode sombre"
         }
       },
+      "delete": {
+        "error": {
+          "description": "Échec de la suppression de {scheme}",
+          "title": "Échec de la suppression"
+        },
+        "success": {
+          "description": "{scheme} supprimé avec succès",
+          "title": "Jeu de couleurs supprimé"
+        }
+      },
+      "download": {
+        "button": "Télécharger plus",
+        "delete": "Supprimer",
+        "download": "Télécharger",
+        "downloading": "Téléchargement...",
+        "empty": "Aucun jeu de couleurs disponible",
+        "error": {
+          "api-error": "Erreur API: {status}",
+          "description": "Échec du téléchargement de {scheme}",
+          "download-failed": "Échec du téléchargement avec le code de sortie: {code}",
+          "invalid-response": "Format de réponse API invalide",
+          "no-files": "Aucun fichier trouvé pour le jeu de couleurs",
+          "parse-failed": "Échec de l'analyse de la réponse API: {error}",
+          "rate-limit": "Limite de débit de l'API GitHub dépassée",
+          "title": "Échec du téléchargement"
+        },
+        "fetching": "Récupération des jeux de couleurs disponibles...",
+        "installed": "Installé",
+        "refresh": "Actualiser",
+        "success": {
+          "description": "{scheme} téléchargé avec succès",
+          "title": "Jeu de couleurs téléchargé"
+        },
+        "title": "Télécharger des jeux de couleurs"
+      },
       "predefined": {
         "generate-templates": {
           "description": "Génère des modèles Matugen (GTK, thèmes de terminal, etc.) lors de l'utilisation de schémas de couleurs prédéfinis.",
@@ -888,15 +1044,27 @@
         }
       },
       "templates": {
+        "compositors": {
+          "description": "Thématisation du compositeur.",
+          "label": "Compositeurs",
+          "niri": {
+            "description": "Écrire {filepath}. Requiert niri v25.11+",
+            "description-missing": "Nécessite l'installation de {app}"
+          }
+        },
         "misc": {
-          "description": "Options de configuration supplémentaires.",
-          "label": "Divers",
+          "description": "Créez vos propres modèles",
+          "label": "Avancé",
           "user-templates": {
-            "description": "Activer la configuration Matugen définie par l'utilisateur. Un fichier modèle sera créé dans ~/.config/noctalia/user-templates.toml lors de la première activation",
-            "label": "Modèles utilisateur"
+            "description": "N'activez que si vous savez ce que vous faites, consultez notre documentation en ligne",
+            "label": "Activer les modèles utilisateur"
           }
         },
         "programs": {
+          "cava": {
+            "description": "Écrire {filepath}.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "code": {
             "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
             "description-missing": "Aucun client Code détecté. Installez VSCode ou VSCodium."
@@ -917,6 +1085,10 @@
           },
           "spicetify": {
             "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
+          "telegram": {
+            "description": "Écrire {filepath}.",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "vicinae": {
@@ -1102,9 +1274,11 @@
         },
         "temperature": {
           "day": "Jour",
+          "day-description": "Contrôle la température pendant la journée.",
           "description": "Réglez la chaleur des couleurs pour la nuit et le jour.",
           "label": "Température de couleur",
-          "night": "Nuit"
+          "night": "Nuit",
+          "night-description": "Contrôle la température pendant la nuit."
         }
       },
       "title": "Affichage"
@@ -1114,6 +1288,10 @@
         "background-opacity": {
           "description": "Ajustez l'opacité de l'arrière-plan du dock.",
           "label": "Opacité de l'arrière-plan"
+        },
+        "border-radius": {
+          "description": "Ajuster le rayon de bordure du dock.",
+          "label": "Rayon de bordure"
         },
         "colorize-icons": {
           "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement).",
@@ -1204,7 +1382,8 @@
           "description": "Modifiez vos informations utilisateur et votre avatar.",
           "label": "Profil"
         },
-        "select-avatar": "Sélectionner une image d'avatar"
+        "select-avatar": "Sélectionner une image d'avatar",
+        "tooltip": "Parcourir pour une image d’avatar"
       },
       "screen-corners": {
         "radius": {
@@ -1266,6 +1445,10 @@
           "description": "Ajustez l'opacité de l'arrière-plan du lanceur.",
           "label": "Opacité de l'arrière-plan"
         },
+        "clip-preview": {
+          "description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
+          "label": "Activer l'aperçu du presse-papiers"
+        },
         "clipboard-history": {
           "description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
           "label": "Activer l'historique du presse-papiers"
@@ -1277,6 +1460,10 @@
         "custom-launch-prefix-enabled": {
           "description": "Utiliser un préfixe personnalisé pour lancer les applications au lieu de la méthode par défaut.",
           "label": "Activer le préfixe de lancement personnalisé"
+        },
+        "grid-view": {
+          "description": "Afficher les éléments dans une grille au lieu d'une liste.",
+          "label": "Vue grille"
         },
         "position": {
           "description": "Choisissez où le panneau du lanceur apparaît.",
@@ -1302,6 +1489,20 @@
       "title": "Lanceur"
     },
     "location": {
+      "calendar": {
+        "cards": {
+          "section": {
+            "description": "Organiser et activer/désactiver les cartes dans le panneau de calendrier.",
+            "label": "Cartes de calendrier"
+          }
+        },
+        "header": {
+          "label": "En-tête du calendrier"
+        },
+        "month": {
+          "label": "Mois calendaire"
+        }
+      },
       "date-time": {
         "12hour-format": {
           "description": "Affiche l'heure au format 12 heures sur l'écran de verrouillage et dans le calendrier. L'horloge de la barre possède ses propres paramètres.",
@@ -1354,6 +1555,10 @@
           "description": "Choisissez votre unité de température préférée.",
           "label": "Météo"
         },
+        "show-effects": {
+          "description": "Affiche des effets visuels supplémentaires (comme la pluie, la neige ou la foudre) sur la carte météo.",
+          "label": "Afficher les effets météorologiques"
+        },
         "show-in-calendar": {
           "description": "Afficher les prévisions météo quotidiennes directement dans votre vue calendrier.",
           "label": "Afficher la météo dans le calendrier"
@@ -1368,6 +1573,10 @@
       "lock-on-suspend": {
         "description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
         "label": "Verrouiller à la suspension"
+      },
+      "show-hibernate": {
+        "description": "Afficher l’option 'hiberner' dans les actions d’énergie.",
+        "label": "Afficher l’hibernation"
       },
       "title": "Écran de verrouillage"
     },
@@ -1495,7 +1704,29 @@
           "label": "Général"
         }
       },
-      "title": "Affichage à l'écran"
+      "title": "Affichage à l'écran",
+      "types": {
+        "brightness": {
+          "description": "Afficher l'OSD lorsque la luminosité de l'écran change.",
+          "label": "Luminosité"
+        },
+        "input-volume": {
+          "description": "Afficher l'OSD lorsque le volume du microphone change.",
+          "label": "Volume d'entrée"
+        },
+        "lockkey": {
+          "description": "Afficher l'OSD lorsque Verr Maj, Verr Num ou Arrêt défil est activée ou désactivée.",
+          "label": "Touches de verrouillage"
+        },
+        "section": {
+          "description": "Sélectionnez les événements qui déclenchent l'OSD. Si aucun événement n'est sélectionné, tous les événements disponibles déclencheront l'OSD.",
+          "label": "Événements de déclenchement OSD"
+        },
+        "volume": {
+          "description": "Afficher l'OSD lorsque le volume de sortie audio change.",
+          "label": "Volume de sortie"
+        }
+      }
     },
     "screen-recorder": {
       "audio": {
@@ -1630,6 +1861,12 @@
       "memory-section": {
         "label": "Utilisation mémoire"
       },
+      "network-section": {
+        "label": "Réseau"
+      },
+      "polling-interval": {
+        "label": "Intervalle d'interrogation"
+      },
       "temp-critical-threshold": {
         "label": "Seuil critique"
       },
@@ -1640,7 +1877,7 @@
         "label": "Température CPU"
       },
       "thresholds-section": {
-        "description": "Définir des seuils pour les métriques système ; les valeurs supérieures à ces seuils seront mises en évidence.",
+        "description": "Ajustez les seuils d’avertissement/critiques et les intervalles d’interrogation pour chaque métrique système.",
         "label": "Seuils"
       },
       "title": "Moniteur système",
@@ -1653,6 +1890,10 @@
       }
     },
     "user-interface": {
+      "allow-panels-without-bar": {
+        "description": "Quand cette option est activée, les panneaux peuvent s'ouvrir sur n'importe quel écran. Quand elle est désactivée, les panneaux s'ouvriront uniquement sur les écrans qui ont une barre, ce qui peut réduire l'utilisation de la mémoire.",
+        "label": "Autoriser les panneaux sur les écrans sans barre."
+      },
       "animation-disable": {
         "description": "Désactiver toutes les animations pour une expérience plus rapide et plus réactive.",
         "label": "Désactiver les animations de l'interface utilisateur"
@@ -1868,6 +2109,11 @@
       "unavailable": "Historique du presse-papiers indisponible",
       "unavailable-desc": "L'application 'cliphist' n'est pas installée. Veuillez l'installer pour utiliser les fonctionnalités d'historique du presse-papiers."
     },
+    "dark-mode": {
+      "dark-mode": "Mode sombre",
+      "enabled": "Activé",
+      "light-mode": "Mode clair"
+    },
     "do-not-disturb": {
       "disabled": "'Ne pas déranger' désactivé",
       "disabled-desc": "Affichage de toutes les notifications.",
@@ -1928,6 +2174,10 @@
       "title-matugen": "Le traitement du modèle Matugen a échoué.",
       "title-predefined": "Le traitement du schéma de couleurs prédéfini a échoué."
     },
+    "vpn": {
+      "connected": "Connecté à '{name}'",
+      "disconnected": "Déconnecté de '{name}'"
+    },
     "wallpaper-colors": {
       "disabled": "Couleurs du fond d'écran désactivées",
       "enabled": "Couleurs du fond d'écran activées",
@@ -1944,63 +2194,70 @@
   "tooltips": {
     "add-widget": "Ajouter un widget",
     "bluetooth-devices": "Appareils Bluetooth",
-    "brightness-at": "Luminosité : {brightness}%\nClic droit pour les paramètres.\nFaites défiler pour modifier la luminosité.",
-    "cancel-timer": "Annuler le minuteur",
+    "brightness-at": "Luminosité : {brightness}%",
+    "cancel-timer": "Minuteur",
     "clear-history": "Effacer l'historique",
-    "click-to-start-recording": "Cliquez pour démarrer l'enregistrement",
-    "click-to-stop-recording": "Cliquez pour arrêter l'enregistrement",
-    "close": "Fermer",
-    "connect-disconnect-devices": "Clic gauche pour connecter. Clic droit pour oublier.",
+    "click-to-start-recording": "Enregistreur d'écran (démarrer l'enregistrement)",
+    "click-to-stop-recording": "Enregistreur d'écran (arrêter l'enregistrement)",
+    "close": "Bouton fermer",
+    "connect-disconnect-devices": "Appareil Bluetooth",
     "delete-notification": "Supprimer la notification",
-    "disable-keep-awake": "Cliquez pour désactiver le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
-    "do-not-disturb-disabled": "'Ne pas déranger' désactivé",
-    "do-not-disturb-enabled": "'Ne pas déranger' activé",
-    "enable-keep-awake": "Cliquez pour activer le mode 'rester éveillé'.\nFaites défiler pour ajuster le délai.",
+    "disable-keep-awake": "Rester éveillé",
+    "do-not-disturb-disabled": "Ne pas déranger",
+    "do-not-disturb-enabled": "Ne pas déranger",
+    "enable-keep-awake": "Rester éveillé",
     "forget-network": "Oublier le réseau",
-    "home": "Accueil",
-    "input-muted": "Couper l'entrée audio",
+    "grid-view": "Vue en grille",
+    "hidden-files-hide": "Fichiers cachés",
+    "hidden-files-show": "Fichiers cachés",
+    "home": "Répertoire home",
+    "input-muted": "Microphone",
     "keep-awake": "Rester éveillé",
     "keyboard-layout": "Disposition du clavier {layout}",
-    "manage-wifi": "Gérer le Wi-Fi",
-    "microphone-volume-at": "Volume du microphone à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
-    "move-to-center-section": "Déplacer vers la section centrale",
-    "move-to-left-section": "Déplacer vers la section de gauche",
-    "move-to-right-section": "Déplacer vers la section de droite",
-    "next-media": "Média suivant",
+    "list-view": "Vue en liste",
+    "manage-vpn": "Connexions VPN",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Volume du microphone : {volume}%",
+    "move-to-center-section": "Section centrale",
+    "move-to-left-section": "Section de gauche",
+    "move-to-right-section": "Section de droite",
+    "next-media": "Piste suivante",
     "next-month": "Mois suivant",
-    "night-light-disabled": "L'éclairage nocturne est désactivé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
-    "night-light-enabled": "L'éclairage nocturne est activé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
-    "night-light-forced": "L'éclairage nocturne est forcé.\nClic gauche pour changer de mode.\nClic droit pour accéder aux paramètres.",
-    "night-light-not-installed": "L'éclairage nocturne n'est pas disponible.\nwlsunset n'est pas installé.",
-    "noctalia-performance-disabled": "Le mode performance Noctalia est désactivé.\nClic gauche pour activer.",
-    "noctalia-performance-enabled": "Le mode performance Noctalia est activé.\nClic gauche pour désactiver.",
-    "open-control-center": "Ouvrir le centre de contrôle",
-    "open-notification-history-disable-dnd": "Ouvrir l'historique des notifications\nClic droit pour désactiver \"Ne pas déranger\".",
-    "open-notification-history-enable-dnd": "Ouvrir l'historique des notifications\nClic droit pour activer \"Ne pas déranger\".",
-    "open-settings": "Ouvrir les paramètres",
-    "open-tray-dropdown": "Ouvrir le menu déroulant de la barre d'état",
-    "open-wallpaper-selector": "Ouvrir le sélecteur de fond d'écran",
-    "output-muted": "Couper la sortie audio",
-    "pause": "Pause",
-    "play": "Lecture",
-    "power-profile": "Profil d'alimentation '{profile}'",
-    "previous-media": "Média précédent",
+    "night-light-disabled": "Éclairage nocturne",
+    "night-light-enabled": "Éclairage nocturne",
+    "night-light-forced": "Éclairage nocturne",
+    "night-light-not-installed": "Éclairage nocturne (non disponible)",
+    "noctalia-performance-disabled": "Mode performance Noctalia",
+    "noctalia-performance-enabled": "Mode performance Noctalia",
+    "open-control-center": "Centre de contrôle",
+    "open-notification-history-disable-dnd": "Historique des notifications",
+    "open-notification-history-enable-dnd": "Historique des notifications",
+    "open-settings": "Paramètres",
+    "open-tray-dropdown": "Barre d'état système",
+    "open-wallpaper-selector": "Sélecteur de fond d'écran",
+    "output-muted": "Sortie audio",
+    "pause": "Bouton pause",
+    "play": "Bouton lecture",
+    "power-profile": "{profile} profil d'alimentation",
+    "previous-media": "Piste précédente",
     "previous-month": "Mois précédent",
     "refresh": "Actualiser",
     "refresh-devices": "Actualiser les appareils",
     "refresh-wallhaven": "Actualiser les résultats de Wallhaven",
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
-    "screen-recorder-not-installed": "L'enregistreur d'écran n'est pas installé",
+    "screen-recorder-not-installed": "Enregistreur d'écran (non installé)",
+    "search": "Rechercher",
+    "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
-    "set-power-profile": "Définir le profil d'alimentation \"{profile}\"",
-    "start-screen-recording": "Démarrer l'enregistrement d'écran",
-    "stop-screen-recording": "Arrêter l'enregistrement d'écran",
-    "switch-to-dark-mode": "Passer en mode sombre",
-    "switch-to-light-mode": "Passer en mode clair",
-    "up": "Remonter",
-    "volume-at": "Volume de sortie à {volume}%.\nClic gauche pour les paramètres. Clic droit pour activer/désactiver le mode muet.\nFaites défiler pour modifier le volume.",
-    "wallpaper-selector": "Clic gauche : Ouvrir le sélecteur de fond d'écran.\nClic droit : Définir un fond d'écran aléatoire.",
+    "set-power-profile": "{profile} profil d'alimentation",
+    "start-screen-recording": "Enregistreur d'écran",
+    "stop-screen-recording": "Enregistreur d'écran",
+    "switch-to-dark-mode": "Mode sombre",
+    "switch-to-light-mode": "Mode clair",
+    "up": "Répertoire parent",
+    "volume-at": "Volume de sortie : {volume}%",
+    "wallpaper-selector": "Sélecteur de fond d'écran",
     "widget-settings": "Paramètres du widget"
   },
   "wallpaper": {
@@ -2095,23 +2352,11 @@
   "widgets": {
     "color-picker": {
       "apply": "Appliquer",
-      "brightness": "Luminosité",
       "cancel": "Annuler",
-      "hex": {
-        "description": "Entrez un code couleur hexadécimal.",
-        "label": "Couleur hexadécimale"
-      },
       "palette": {
         "description": "Choisissez parmi une large gamme de couleurs prédéfinies.",
-        "label": "Palette"
-      },
-      "rgb": {
-        "description": "Ajustez les valeurs de rouge, vert, bleu et de luminosité.",
-        "label": "Valeurs RVB"
-      },
-      "theme-colors": {
-        "description": "Accès rapide à la palette de couleurs de votre thème.",
-        "label": "Couleurs du thème"
+        "label": "Palette",
+        "theme-colors": "Accès rapide à la palette de couleurs de votre thème."
       },
       "title": "Sélecteur de couleurs"
     },
@@ -2187,6 +2432,7 @@
   },
   "wifi": {
     "panel": {
+      "available-networks": "Réseaux disponibles",
       "connect": "Connecter",
       "connected": "Connecté",
       "disabled": "Le Wi-Fi est désactivé",
@@ -2197,6 +2443,7 @@
       "forget": "Oublier",
       "forget-network": "Oublier ce réseau ?",
       "forgetting": "Oubli en cours...",
+      "known-networks": "Réseaux connus",
       "no-networks": "Aucun réseau trouvé",
       "password": "Mot de passe",
       "saved": "Enregistré",

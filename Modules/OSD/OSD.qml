@@ -1,18 +1,26 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Pipewire
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Hardware
+import qs.Services.Keyboard
 import qs.Services.Media
-import qs.Services.System
 import qs.Widgets
 
 // Unified OSD component that displays volume, input volume, and brightness changes
 Variants {
+  id: osd
+
+  // Do not change the order or it will break settings.
+  enum Type {
+    Volume,
+    InputVolume,
+    Brightness,
+    LockKey
+  }
+
   model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || Settings.data.osd.monitors.length === 0) && Settings.data.osd.enabled)
 
   delegate: Loader {
@@ -23,43 +31,39 @@ Variants {
     active: false
 
     // OSD State
-    property string currentOSDType: "" // "volume", "inputVolume", "brightness", or ""
+    property int currentOSDType: -1 // OSD.Type enum value, -1 means none
+    property bool startupComplete: false
+    property real currentBrightness: 0
 
-    // Audio Output State
-    property real lastKnownVolume: -1
-    property bool volumeInitialized: false
-    property bool muteInitialized: false
-
-    // Audio Input State
-    property real lastKnownInputVolume: -1
-    property bool inputInitialized: false
-
-    // Brightness State
-    property real lastUpdatedBrightness: 0
-    property bool brightnessInitialized: false
+    // Lock Key States
+    property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
 
     // Current values (computed properties)
     readonly property real currentVolume: AudioService.volume
     readonly property bool isMuted: AudioService.muted
     readonly property real currentInputVolume: AudioService.inputVolume
     readonly property bool isInputMuted: AudioService.inputMuted
-    readonly property real currentBrightness: lastUpdatedBrightness
+    readonly property real epsilon: 0.005
 
-    // ============================================================================
     // Helper Functions
-    // ============================================================================
     function getIcon() {
       switch (currentOSDType) {
-      case "volume":
+      case OSD.Type.Volume:
         if (isMuted)
           return "volume-mute";
-        if (currentVolume <= Number.EPSILON)
-          return "volume-zero";
+        // Show volume-x icon when volume is effectively 0% (within rounding threshold)
+        if (currentVolume < root.epsilon)
+          return "volume-x";
         return currentVolume <= 0.5 ? "volume-low" : "volume-high";
-      case "inputVolume":
+      case OSD.Type.InputVolume:
         return isInputMuted ? "microphone-off" : "microphone";
-      case "brightness":
+      case OSD.Type.Brightness:
+        // Show sun-off icon when brightness is effectively 0% (within rounding threshold)
+        if (currentBrightness < root.epsilon)
+          return "sun-off";
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
+      case OSD.Type.LockKey:
+        return "keyboard";
       default:
         return "";
       }
@@ -67,81 +71,88 @@ Variants {
 
     function getCurrentValue() {
       switch (currentOSDType) {
-      case "volume":
+      case OSD.Type.Volume:
         return isMuted ? 0 : currentVolume;
-      case "inputVolume":
+      case OSD.Type.InputVolume:
         return isInputMuted ? 0 : currentInputVolume;
-      case "brightness":
+      case OSD.Type.Brightness:
         return currentBrightness;
+      case OSD.Type.LockKey:
+        return 1.0; // Always show 100% when showing lock key status
       default:
         return 0;
       }
     }
 
     function getMaxValue() {
-      if (currentOSDType === "volume" || currentOSDType === "inputVolume") {
+      if (currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) {
         return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
       }
       return 1.0;
     }
 
     function getDisplayPercentage() {
+      if (currentOSDType === OSD.Type.LockKey) {
+        // For lock keys, return the pre-determined status text
+        return lastLockKeyChanged;
+      }
+
       const value = getCurrentValue();
       const max = getMaxValue();
+      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && Settings.data.audio.volumeOverdrive) {
+        const pct = Math.round(value * 100);
+        return pct + "%";
+      }
       const pct = Math.round(Math.min(max, value) * 100);
       return pct + "%";
     }
 
     function getProgressColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      return isMutedState ? Color.mError : Color.mPrimary;
+      const isMutedState = (currentOSDType === OSD.Type.Volume && isMuted) || (currentOSDType === OSD.Type.InputVolume && isInputMuted);
+      if (isMutedState) {
+        return Color.mError;
+      }
+      // When volumeOverdrive is enabled, show error color if volume is above 100%
+      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && Settings.data.audio.volumeOverdrive) {
+        const value = getCurrentValue();
+        if (value > 1.0) {
+          return Color.mError;
+        }
+      }
+      // For lock keys, use a different color to indicate the lock state
+      if (currentOSDType === OSD.Type.LockKey) {
+        // Check the specific lock key that was changed
+        if (lastLockKeyChanged.startsWith("CAPS")) {
+          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("NUM")) {
+          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("SCROLL")) {
+          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        }
+      }
+      return Color.mPrimary;
     }
 
     function getIconColor() {
-      const isMutedState = (currentOSDType === "volume" && isMuted) || (currentOSDType === "inputVolume" && isInputMuted);
-      return isMutedState ? Color.mError : Color.mOnSurface;
-    }
+      const isMutedState = (currentOSDType === OSD.Type.Volume && isMuted) || (currentOSDType === OSD.Type.InputVolume && isInputMuted);
+      if (isMutedState)
+        return Color.mError;
 
-    // ============================================================================
-    // Audio Initialization
-    // ============================================================================
-    function initializeAudioValues() {
-      // Initialize output volume
-      if (AudioService.sink?.ready && AudioService.sink?.audio && lastKnownVolume < 0) {
-        const vol = AudioService.volume;
-        if (vol !== undefined && !isNaN(vol)) {
-          lastKnownVolume = vol;
-          volumeInitialized = true;
-          muteInitialized = true;
+      if (currentOSDType === OSD.Type.LockKey) {
+        // Check the specific lock key that was changed
+        if (lastLockKeyChanged.startsWith("CAPS")) {
+          return LockKeysService.capsLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("NUM")) {
+          return LockKeysService.numLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
+        } else if (lastLockKeyChanged.startsWith("SCROLL")) {
+          return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
         }
       }
 
-      // Initialize input volume
-      if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio && lastKnownInputVolume < 0) {
-        const inputVol = AudioService.inputVolume;
-        if (inputVol !== undefined && !isNaN(inputVol)) {
-          lastKnownInputVolume = inputVol;
-          inputInitialized = true;
-        }
-      }
+      return Color.mOnSurface;
     }
 
-    function resetOutputInit() {
-      lastKnownVolume = -1;
-      volumeInitialized = false;
-      muteInitialized = false;
-      Qt.callLater(initializeAudioValues);
-    }
-
-    function resetInputInit() {
-      lastKnownInputVolume = -1;
-      inputInitialized = false;
-      Qt.callLater(initializeAudioValues);
-    }
-
-    // ============================================================================
     // Brightness Handling
-    // ============================================================================
     function connectBrightnessMonitors() {
       for (var i = 0; i < BrightnessService.monitors.length; i++) {
         const monitor = BrightnessService.monitors[i];
@@ -151,20 +162,29 @@ Variants {
     }
 
     function onBrightnessChanged(newBrightness) {
-      lastUpdatedBrightness = newBrightness;
-
-      if (!brightnessInitialized) {
-        brightnessInitialized = true;
-        return;
-      }
-
-      showOSD("brightness");
+      currentBrightness = newBrightness;
+      showOSD(OSD.Type.Brightness);
     }
 
-    // ============================================================================
+    // Check if a specific OSD type is enabled
+    function isTypeEnabled(type) {
+      const enabledTypes = Settings.data.osd.enabledTypes || [];
+      // If enabledTypes is empty, all types are enabled (backwards compatibility)
+      if (enabledTypes.length === 0)
+        return true;
+      return enabledTypes.includes(type);
+    }
+
     // OSD Display Control
-    // ============================================================================
     function showOSD(type) {
+      // Ignore all OSD requests during startup period
+      if (!startupComplete)
+        return;
+
+      // Check if this OSD type is enabled
+      if (!isTypeEnabled(type))
+        return;
+
       currentOSDType = type;
 
       if (!root.active) {
@@ -189,96 +209,52 @@ Variants {
       }
     }
 
-    // ============================================================================
     // Signal Connections
-    // ============================================================================
-
-    // Pipewire state monitoring
-    Connections {
-      target: Pipewire
-
-      function onReadyChanged() {
-        if (Pipewire.ready)
-          Qt.callLater(initializeAudioValues);
-      }
-
-      function onDefaultAudioSinkChanged() {
-        resetOutputInit();
-      }
-
-      function onDefaultAudioSourceChanged() {
-        resetInputInit();
-      }
-    }
 
     // AudioService monitoring
     Connections {
       target: AudioService
 
-      function onSinkChanged() {
-        if (AudioService.sink?.ready && AudioService.sink?.audio) {
-          resetOutputInit();
-        }
-      }
-
-      function onSourceChanged() {
-        if (AudioService.hasInput && AudioService.source?.ready && AudioService.source?.audio) {
-          resetInputInit();
-        }
-      }
-
       function onVolumeChanged() {
-        if (lastKnownVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownVolume < 0)
-            return;
-        }
-        if (!volumeInitialized)
-          return;
-        if (Math.abs(AudioService.volume - lastKnownVolume) > 0.001) {
-          lastKnownVolume = AudioService.volume;
-          showOSD("volume");
-        }
+        showOSD(OSD.Type.Volume);
       }
 
       function onMutedChanged() {
-        if (lastKnownVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownVolume < 0)
-            return;
-        }
-        if (!muteInitialized)
+        if (AudioService.consumeOutputOSDSuppression())
           return;
-        showOSD("volume");
+        showOSD(OSD.Type.Volume);
       }
 
       function onInputVolumeChanged() {
-        if (!AudioService.hasInput)
-          return;
-        if (lastKnownInputVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownInputVolume < 0)
-            return;
-        }
-        if (!inputInitialized)
-          return;
-        if (Math.abs(AudioService.inputVolume - lastKnownInputVolume) > 0.001) {
-          lastKnownInputVolume = AudioService.inputVolume;
-          showOSD("inputVolume");
-        }
+        if (AudioService.hasInput)
+          showOSD(OSD.Type.InputVolume);
       }
 
       function onInputMutedChanged() {
         if (!AudioService.hasInput)
           return;
-        if (lastKnownInputVolume < 0) {
-          initializeAudioValues();
-          if (lastKnownInputVolume < 0)
-            return;
-        }
-        if (!inputInitialized)
+        if (AudioService.consumeInputOSDSuppression())
           return;
-        showOSD("inputVolume");
+        showOSD(OSD.Type.InputVolume);
+      }
+
+      // Refresh OSD when device changes to ensure correct volume is displayed
+      function onSinkChanged() {
+        // If volume OSD is currently showing, refresh it to show new device's volume
+        if (root.currentOSDType === OSD.Type.Volume) {
+          Qt.callLater(() => {
+                         showOSD(OSD.Type.Volume);
+                       });
+        }
+      }
+
+      function onSourceChanged() {
+        // If input volume OSD is currently showing, refresh it to show new device's volume
+        if (root.currentOSDType === OSD.Type.InputVolume) {
+          Qt.callLater(() => {
+                         showOSD(OSD.Type.InputVolume);
+                       });
+        }
       }
     }
 
@@ -290,48 +266,38 @@ Variants {
       }
     }
 
-    // Initialization timers
+    // LockKeys monitoring with a cleaner approach
+    Connections {
+      target: LockKeysService
+
+      function onCapsLockChanged(active) {
+        root.lastLockKeyChanged = active ? "CAPS ON" : "CAPS OFF";
+        root.showOSD(OSD.Type.LockKey);
+      }
+
+      function onNumLockChanged(active) {
+        root.lastLockKeyChanged = active ? "NUM ON" : "NUM OFF";
+        root.showOSD(OSD.Type.LockKey);
+      }
+
+      function onScrollLockChanged(active) {
+        root.lastLockKeyChanged = active ? "SCROLL ON" : "SCROLL OFF";
+        root.showOSD(OSD.Type.LockKey);
+      }
+    }
+
+    // Startup timer - connect brightness monitors and enable OSD after 2 seconds
     Timer {
-      id: initTimer
-      interval: 500
+      id: startupTimer
+      interval: 2000
       running: true
       onTriggered: {
-        if (Pipewire.ready)
-          initializeAudioValues();
-        muteInitialized = true;
         connectBrightnessMonitors();
+        root.startupComplete = true;
       }
     }
 
-    Timer {
-      id: reinitTimer
-      interval: 1000
-      running: true
-      repeat: true
-      onTriggered: {
-        if (!Pipewire.ready)
-          return;
-        const needsOutputInit = lastKnownVolume < 0;
-        const needsInputInit = AudioService.hasInput && lastKnownInputVolume < 0;
-
-        if (needsOutputInit || needsInputInit) {
-          initializeAudioValues();
-
-          // Stop timer if both are initialized
-          const outputDone = lastKnownVolume >= 0;
-          const inputDone = !AudioService.hasInput || lastKnownInputVolume >= 0;
-          if (outputDone && inputDone) {
-            running = false;
-          }
-        } else {
-          running = false;
-        }
-      }
-    }
-
-    // ============================================================================
     // Visual Component
-    // ============================================================================
     sourceComponent: PanelWindow {
       id: panel
       screen: modelData
@@ -345,10 +311,14 @@ Variants {
       readonly property bool verticalMode: location === "left" || location === "right"
 
       // Dimensions
-      readonly property int hWidth: Math.round(320 * Style.uiScaleRatio)
-      readonly property int hHeight: Math.round(72 * Style.uiScaleRatio)
-      readonly property int vWidth: Math.round(80 * Style.uiScaleRatio)
-      readonly property int vHeight: Math.round(280 * Style.uiScaleRatio)
+      readonly property bool isShortMode: root.currentOSDType === OSD.Type.LockKey
+      readonly property int longHWidth: Math.round(320 * Style.uiScaleRatio)
+      readonly property int longHHeight: Math.round(72 * Style.uiScaleRatio)
+      readonly property int shortHWidth: Math.round(180 * Style.uiScaleRatio)
+      readonly property int longVWidth: Math.round(80 * Style.uiScaleRatio)
+      readonly property int longVHeight: Math.round(280 * Style.uiScaleRatio)
+      readonly property int shortVHeight: Math.round(180 * Style.uiScaleRatio)
+
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
         return base % 2 === 0 ? base : base + 1;
@@ -377,8 +347,8 @@ Variants {
       margins.left: calculateMargin(anchors.left, "left")
       margins.right: calculateMargin(anchors.right, "right")
 
-      implicitWidth: verticalMode ? vWidth : hWidth
-      implicitHeight: verticalMode ? vHeight : hHeight
+      implicitWidth: verticalMode ? longVWidth : (isShortMode ? shortHWidth : longHWidth)
+      implicitHeight: verticalMode ? (isShortMode ? shortVHeight : longVHeight) : longHHeight
       color: Color.transparent
 
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
@@ -418,7 +388,8 @@ Variants {
           interval: Style.animationNormal + 50
           onTriggered: {
             osdItem.visible = false;
-            root.currentOSDType = "";
+            root.currentOSDType = -1;
+            root.lastLockKeyChanged = ""; // Reset the lock key change indicator
             root.active = false;
           }
         }
@@ -436,7 +407,7 @@ Variants {
           }
         }
 
-        NDropShadows {
+        NDropShadow {
           anchors.fill: background
           source: background
           autoPaddingEnabled: true
@@ -459,7 +430,7 @@ Variants {
             spacing: Style.marginM
             clip: true
 
-            // TextMetrics to measure the maximum possible percentage width (150%)
+            // TextMetrics to measure the maximum possible percentage width
             TextMetrics {
               id: percentageMetrics
               font.family: Settings.data.ui.fontFixed
@@ -468,6 +439,7 @@ Variants {
               text: "150%" // Maximum possible value with volumeOverdrive
             }
 
+            // Common Icon for all types
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
@@ -482,7 +454,22 @@ Variants {
               }
             }
 
+            // Lock Key Status Text (replaces progress bar)
+            NText {
+              visible: root.currentOSDType === OSD.Type.LockKey
+              text: root.getDisplayPercentage()
+              color: root.getProgressColor()
+              pointSize: Style.fontSizeM
+              family: Settings.data.ui.fontFixed
+              font.weight: Style.fontWeightMedium
+              Layout.fillWidth: true
+              horizontalAlignment: Text.AlignHCenter
+              Layout.alignment: Qt.AlignVCenter
+            }
+
+            // Progress Bar for Volume/Brightness
             Rectangle {
+              visible: root.currentOSDType !== OSD.Type.LockKey
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
@@ -503,7 +490,6 @@ Variants {
                     easing.type: Easing.InOutQuad
                   }
                 }
-
                 Behavior on color {
                   ColorAnimation {
                     duration: Style.animationNormal
@@ -513,7 +499,9 @@ Variants {
               }
             }
 
+            // Percentage Text for Volume/Brightness
             NText {
+              visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
@@ -535,21 +523,27 @@ Variants {
             anchors.fill: parent
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
-            spacing: Style.marginS
+            spacing: root.currentOSDType === OSD.Type.LockKey ? Style.marginM : Style.marginS
             clip: true
 
+            // Unified Text display for Percentage or Lock Status
             NText {
               text: root.getDisplayPercentage()
-              color: Color.mOnSurface
-              pointSize: Style.fontSizeS
+              color: root.currentOSDType === OSD.Type.LockKey ? root.getProgressColor() : Color.mOnSurface
+              pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeM : Style.fontSizeS
               family: Settings.data.ui.fontFixed
+              font.weight: root.currentOSDType === OSD.Type.LockKey ? Style.fontWeightMedium : Style.fontWeightRegular
               Layout.fillWidth: true
-              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
+              Layout.alignment: Qt.AlignHCenter
               horizontalAlignment: Text.AlignHCenter
               verticalAlignment: Text.AlignVCenter
+              // Only set preferredHeight for the standard case to maintain layout
+              Layout.preferredHeight: root.currentOSDType === OSD.Type.LockKey ? -1 : Math.round(20 * Style.uiScaleRatio)
             }
 
+            // Progress Bar for Volume/Brightness
             Item {
+              visible: root.currentOSDType !== OSD.Type.LockKey
               Layout.fillWidth: true
               Layout.fillHeight: true
 
@@ -575,7 +569,6 @@ Variants {
                       easing.type: Easing.InOutQuad
                     }
                   }
-
                   Behavior on color {
                     ColorAnimation {
                       duration: Style.animationNormal
@@ -586,11 +579,12 @@ Variants {
               }
             }
 
+            // Unified Icon display
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              pointSize: Style.fontSizeL
-              Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+              pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeXL : Style.fontSizeL
+              Layout.alignment: root.currentOSDType === OSD.Type.LockKey ? Qt.AlignHCenter : (Qt.AlignHCenter | Qt.AlignBottom)
 
               Behavior on color {
                 ColorAnimation {
@@ -629,7 +623,7 @@ Variants {
           osdItem.opacity = 0;
           osdItem.scale = 0.85;
           osdItem.visible = false;
-          root.currentOSDType = "";
+          root.currentOSDType = -1;
           root.active = false;
         }
       }

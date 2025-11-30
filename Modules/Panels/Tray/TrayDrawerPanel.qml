@@ -43,8 +43,14 @@ SmartPanel {
   function wildCardMatch(str, rule) {
     if (!str || !rule)
       return false;
-    let escaped = rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    let pattern = '^' + escaped.replace(/\\\*/g, '.*') + '$';
+    // First, convert '*' to a placeholder to preserve it, then escape other special regex characters
+    // Use a unique placeholder that won't appear in normal strings
+    const placeholder = '\uE000'; // Private use character
+    let processedRule = rule.replace(/\*/g, placeholder);
+    // Escape all special regex characters (but placeholder won't match this)
+    let escaped = processedRule.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    // Convert placeholder back to '.*' for wildcard matching
+    let pattern = '^' + escaped.replace(new RegExp(placeholder, 'g'), '.*') + '$';
     try {
       return new RegExp(pattern, 'i').test(str);
     } catch (e) {
@@ -100,22 +106,22 @@ SmartPanel {
   }
 
   // Trigger re-evaluation when window is registered
-  property int trayMenuUpdateTrigger: 0
+  property int popupMenuUpdateTrigger: 0
 
   // Get the trayMenu window and loader from PanelService (reactive to trigger changes)
-  readonly property var trayMenuWindow: {
+  readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = trayMenuUpdateTrigger;
-    return PanelService.getTrayMenuWindow(screen);
+    var _ = popupMenuUpdateTrigger;
+    return PanelService.getPopupMenuWindow(screen);
   }
 
-  readonly property var trayMenu: trayMenuWindow ? trayMenuWindow.trayMenuLoader : null
+  readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
 
   Connections {
     target: PanelService
-    function onTrayMenuWindowRegistered(registeredScreen) {
+    function onPopupMenuWindowRegistered(registeredScreen) {
       if (registeredScreen === screen) {
-        root.trayMenuUpdateTrigger++;
+        root.popupMenuUpdateTrigger++;
       }
     }
   }
@@ -184,21 +190,27 @@ SmartPanel {
                              if (!modelData.onlyMenu) {
                                modelData.activate();
                              }
+                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                               PanelService.openedPanel.close();
+                             }
                            } else if (mouse.button === Qt.MiddleButton) {
                              // Middle click: activate with middle button
                              modelData.secondaryActivate && modelData.secondaryActivate();
+                             if ((PanelService.openedPanel !== null) && !PanelService.openedPanel.isClosing) {
+                               PanelService.openedPanel.close();
+                             }
                            } else if (mouse.button === Qt.RightButton) {
                              // Right click: open context menu
                              TooltipService.hideImmediately();
 
                              // Close menu if already visible
-                             if (trayMenuWindow && trayMenuWindow.visible) {
-                               trayMenuWindow.close();
+                             if (popupMenuWindow && popupMenuWindow.visible) {
+                               popupMenuWindow.close();
                                return;
                              }
 
-                             if (modelData.hasMenu && modelData.menu && trayMenuWindow && trayMenu && trayMenu.item) {
-                               trayMenuWindow.open();
+                             if (modelData.hasMenu && modelData.menu && popupMenuWindow && trayMenu && trayMenu.item) {
+                               popupMenuWindow.open();
 
                                // Position menu at the tray icon
                                const barPosition = Settings.data.bar.position;
@@ -232,10 +244,10 @@ SmartPanel {
                        }
 
               onEntered: {
-                if (trayMenuWindow) {
-                  trayMenuWindow.close();
+                if (popupMenuWindow) {
+                  popupMenuWindow.close();
                 }
-                TooltipService.show(Screen, trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+                TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
               }
               onExited: TooltipService.hide()
             }

@@ -89,6 +89,27 @@ ColumnLayout {
     onToggled: checked => Settings.data.bar.showCapsule = checked
   }
 
+  ColumnLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginXXS
+    visible: Settings.data.bar.showCapsule
+
+    NLabel {
+      label: I18n.tr("settings.bar.appearance.capsule-opacity.label")
+      description: I18n.tr("settings.bar.appearance.capsule-opacity.description")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: Settings.data.bar.capsuleOpacity
+      onMoved: value => Settings.data.bar.capsuleOpacity = value
+      text: Math.floor(Settings.data.bar.capsuleOpacity * 100) + "%"
+    }
+  }
+
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.floating.label")

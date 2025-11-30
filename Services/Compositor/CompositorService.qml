@@ -32,19 +32,24 @@ Singleton {
   // Backend service loader
   property var backend: null
 
-  // Cache file path
-  property string displayCachePath: ""
-
   Component.onCompleted: {
-    // Setup cache path (needs Settings to be available)
+    // Load display scales from ShellState
     Qt.callLater(() => {
-                   if (typeof Settings !== 'undefined' && Settings.cacheDir) {
-                     displayCachePath = Settings.cacheDir + "display.json";
-                     displayCacheFileView.path = displayCachePath;
+                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                     loadDisplayScalesFromState();
                    }
                  });
 
     detectCompositor();
+  }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        loadDisplayScalesFromState();
+      }
+    }
   }
 
   function detectCompositor() {
@@ -99,28 +104,21 @@ Singleton {
     }
   }
 
-  // Cache FileView for display scales
-  FileView {
-    id: displayCacheFileView
-    printErrors: false
-    watchChanges: false
-
-    adapter: JsonAdapter {
-      id: displayCacheAdapter
-      property var displays: ({})
-    }
-
-    onLoaded: {
-      // Load cached display scales
-      displayScales = displayCacheAdapter.displays || {};
+  // Load display scales from ShellState
+  function loadDisplayScalesFromState() {
+    try {
+      const cached = ShellState.getDisplay();
+      if (cached && Object.keys(cached).length > 0) {
+        displayScales = cached;
+        displayScalesLoaded = true;
+        Logger.d("CompositorService", "Loaded display scales from ShellState");
+      } else {
+        // Migration is now handled in Settings.qml
+        displayScalesLoaded = true;
+      }
+    } catch (error) {
+      Logger.e("CompositorService", "Failed to load display scales:", error);
       displayScalesLoaded = true;
-      // Logger.i("CompositorService", "Loaded display scales from cache:", JSON.stringify(displayScales))
-    }
-
-    onLoadFailed: {
-      // Cache doesn't exist yet, will be created on first update
-      displayScalesLoaded = true;
-      // Logger.i("CompositorService", "No display cache found, will create on first update")
     }
   }
 
@@ -229,17 +227,17 @@ Singleton {
     displayScales = scales;
     saveDisplayScalesToCache();
     displayScalesChanged();
-    Logger.i("CompositorService", "Display scales updated");
+    Logger.d("CompositorService", "Display scales updated");
   }
 
   // Save display scales to cache
   function saveDisplayScalesToCache() {
-    if (!displayCachePath) {
-      return;
+    try {
+      ShellState.setDisplay(displayScales);
+      Logger.d("CompositorService", "Saved display scales to ShellState");
+    } catch (error) {
+      Logger.e("CompositorService", "Failed to save display scales:", error);
     }
-
-    displayCacheAdapter.displays = displayScales;
-    displayCacheFileView.writeAdapter();
   }
 
   // Public function to get scale for a specific display
@@ -276,6 +274,14 @@ Singleton {
       return title || "";
     }
     return "";
+  }
+
+  // Get clean app name from appId
+  // Extracts the last segment from reverse domain notation (e.g., "org.kde.dolphin" -> "Dolphin")
+  // Falls back to title if appId is empty
+  function getCleanAppName(appId, fallbackTitle) {
+    var name = (appId || "").split(".").pop() || fallbackTitle || "Unknown";
+    return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   function getWindowsForWorkspace(workspaceId) {
@@ -369,16 +375,73 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl hibernate || loginctl hibernate"]);
   }
 
+  property int lockAndSuspendCheckCount: 0
+
   function lockAndSuspend() {
     Logger.i("Compositor", "Lock and suspend requested");
+
+    // If already locked, suspend immediately
+    if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
+      Logger.i("Compositor", "Screen already locked, suspending");
+      suspend();
+      return;
+    }
+
+    // Lock the screen first
     try {
-      if (PanelService && PanelService.lockScreen && !PanelService.lockScreen.active) {
+      if (PanelService && PanelService.lockScreen) {
         PanelService.lockScreen.active = true;
+        lockAndSuspendCheckCount = 0;
+
+        // Wait for lock screen to be confirmed active before suspending
+        lockAndSuspendTimer.start();
+      } else {
+        Logger.w("Compositor", "Lock screen not available, suspending without lock");
+        suspend();
       }
     } catch (e) {
       Logger.w("Compositor", "Failed to activate lock screen before suspend: " + e);
+      suspend();
     }
-    // Queue suspend to the next event loop cycle to allow lock UI to render
-    Qt.callLater(suspend);
+  }
+
+  Timer {
+    id: lockAndSuspendTimer
+    interval: 100
+    repeat: true
+    running: false
+
+    onTriggered: {
+      lockAndSuspendCheckCount++;
+
+      // Check if lock screen is now active
+      if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
+        // Verify the lock screen component is loaded
+        if (PanelService.lockScreen.item) {
+          Logger.i("Compositor", "Lock screen confirmed active, suspending");
+          stop();
+          lockAndSuspendCheckCount = 0;
+          suspend();
+        } else {
+          // Lock screen is active but component not loaded yet, wait a bit more
+          if (lockAndSuspendCheckCount > 20) {
+            // Max 2 seconds wait
+            Logger.w("Compositor", "Lock screen active but component not loaded, suspending anyway");
+            stop();
+            lockAndSuspendCheckCount = 0;
+            suspend();
+          }
+        }
+      } else {
+        // Lock screen not active yet, keep checking
+        if (lockAndSuspendCheckCount > 30) {
+          // Max 3 seconds wait
+          Logger.w("Compositor", "Lock screen failed to activate, suspending anyway");
+          stop();
+          lockAndSuspendCheckCount = 0;
+          suspend();
+        }
+      }
+    }
   }
 }

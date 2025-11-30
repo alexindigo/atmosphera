@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.System
 import qs.Widgets
 
 ColumnLayout {
@@ -20,6 +21,7 @@ ColumnLayout {
   property bool valueShowMemoryAsPercent: widgetData.showMemoryAsPercent !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
+  property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -30,6 +32,7 @@ ColumnLayout {
     settings.showMemoryAsPercent = valueShowMemoryAsPercent;
     settings.showNetworkStats = valueShowNetworkStats;
     settings.showDiskUsage = valueShowDiskUsage;
+    settings.diskPath = valueDiskPath;
 
     return settings;
   }
@@ -95,5 +98,22 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.system-monitor.storage-usage.description")
     checked: valueShowDiskUsage
     onToggled: checked => valueShowDiskUsage = checked
+  }
+
+  NComboBox {
+    id: diskPathComboBox
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.system-monitor.disk-path.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.disk-path.description")
+    visible: valueShowDiskUsage
+    model: {
+      const paths = Object.keys(SystemStatService.diskPercents).sort();
+      return paths.map(path => ({
+                                  key: path,
+                                  name: path
+                                }));
+    }
+    currentKey: valueDiskPath
+    onSelected: key => valueDiskPath = key
   }
 }

@@ -17,7 +17,6 @@ Singleton {
   property int maxVisible: 5
   property int maxHistory: 100
   property string historyFile: Quickshell.env("NOCTALIA_NOTIF_HISTORY_FILE") || (Settings.cacheDir + "notifications.json")
-  property string stateFile: Settings.cacheDir + "notifications-state.json"
 
   // State
   property real lastSeenTs: 0
@@ -137,6 +136,22 @@ Singleton {
   Component.onCompleted: {
     if (Settings.isLoaded) {
       updateNotificationServer();
+    }
+
+    // Load state from ShellState
+    Qt.callLater(() => {
+                   if (typeof ShellState !== 'undefined' && ShellState.isLoaded) {
+                     loadState();
+                   }
+                 });
+  }
+
+  Connections {
+    target: typeof ShellState !== 'undefined' ? ShellState : null
+    function onIsLoadedChanged() {
+      if (ShellState.isLoaded) {
+        loadState();
+      }
     }
   }
 
@@ -446,7 +461,8 @@ Singleton {
 
     while (historyList.count > maxHistory) {
       const old = historyList.get(historyList.count - 1);
-      if (old.cachedImage && !old.cachedImage.startsWith("image://")) {
+      // Only delete cached images that are in our cache directory
+      if (old.cachedImage && old.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
         Quickshell.execDetached(["rm", "-f", old.cachedImage]);
       }
       historyList.remove(historyList.count - 1);
@@ -468,23 +484,6 @@ Singleton {
     JsonAdapter {
       id: adapter
       property var notifications: []
-    }
-  }
-
-  // Persistence - State
-  FileView {
-    id: stateFileView
-    path: stateFile
-    printErrors: false
-    onLoaded: loadState()
-    onLoadFailed: error => {
-      if (error === 2)
-      writeAdapter();
-    }
-
-    JsonAdapter {
-      id: stateAdapter
-      property real lastSeenTs: 0
     }
   }
 
@@ -546,13 +545,11 @@ Singleton {
 
   function loadState() {
     try {
-      root.lastSeenTs = stateAdapter.lastSeenTs || 0;
+      const notifState = ShellState.getNotificationsState();
+      root.lastSeenTs = notifState.lastSeenTs || 0;
 
-      if (root.lastSeenTs === 0 && Settings.data.notifications && Settings.data.notifications.lastSeenTs) {
-        root.lastSeenTs = Settings.data.notifications.lastSeenTs;
-        saveState();
-        Logger.i("Notifications", "Migrated lastSeenTs from settings to state file");
-      }
+      // Migration is now handled in Settings.qml
+      Logger.d("Notifications", "Loaded state from ShellState");
     } catch (e) {
       Logger.e("Notifications", "Load state failed:", e);
     }
@@ -560,8 +557,10 @@ Singleton {
 
   function saveState() {
     try {
-      stateAdapter.lastSeenTs = root.lastSeenTs;
-      stateFileView.writeAdapter();
+      ShellState.setNotificationsState({
+                                         lastSeenTs: root.lastSeenTs
+                                       });
+      Logger.d("Notifications", "Saved state to ShellState");
     } catch (e) {
       Logger.e("Notifications", "Save state failed:", e);
     }
@@ -701,13 +700,28 @@ Singleton {
     for (var i = 0; i < historyList.count; i++) {
       const notif = historyList.get(i);
       if (notif.id === notificationId) {
-        if (notif.cachedImage && !notif.cachedImage.startsWith("image://")) {
+        // Only delete cached images that are in our cache directory
+        if (notif.cachedImage && notif.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
           Quickshell.execDetached(["rm", "-f", notif.cachedImage]);
         }
         historyList.remove(i);
         saveHistory();
         return true;
       }
+    }
+    return false;
+  }
+
+  function removeOldestHistory() {
+    if (historyList.count > 0) {
+      const oldest = historyList.get(historyList.count - 1);
+      // Only delete cached images that are in our cache directory
+      if (oldest.cachedImage && oldest.cachedImage.startsWith(Settings.cacheDirImagesNotifications)) {
+        Quickshell.execDetached(["rm", "-f", oldest.cachedImage]);
+      }
+      historyList.remove(historyList.count - 1);
+      saveHistory();
+      return true;
     }
     return false;
   }

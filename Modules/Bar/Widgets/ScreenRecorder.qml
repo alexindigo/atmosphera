@@ -1,3 +1,4 @@
+import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Services.Media
@@ -11,13 +12,13 @@ NIconButton {
 
   property ShellScreen screen
 
-  icon: "camera-video"
+  icon: ScreenRecorderService.isPending ? "" : "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")
   tooltipDirection: BarService.getTooltipDirection()
   density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : (Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent)
+  colorBg: ScreenRecorderService.isRecording ? Color.mPrimary : Style.capsuleColor
   colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
@@ -31,4 +32,32 @@ NIconButton {
   }
 
   onClicked: handleClick()
+
+  // Custom spinner shown only during pending start
+  NIcon {
+    id: pendingSpinner
+    icon: "loader-2"
+    visible: ScreenRecorderService.isPending
+    pointSize: {
+      switch (root.density) {
+      case "compact":
+        return Math.max(1, root.width * 0.65);
+      default:
+        return Math.max(1, root.width * 0.48);
+      }
+    }
+    applyUiScale: root.applyUiScale
+    color: root.enabled && root.hovering ? colorFgHover : colorFg
+    anchors.centerIn: parent
+    transformOrigin: Item.Center
+
+    RotationAnimation on rotation {
+      running: ScreenRecorderService.isPending
+      from: 0
+      to: 360
+      duration: Style.animationSlow
+      loops: Animation.Infinite
+      onStopped: pendingSpinner.rotation = 0
+    }
+  }
 }

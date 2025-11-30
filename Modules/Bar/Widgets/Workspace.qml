@@ -6,6 +6,7 @@ import QtQuick.Window
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Bar.Extras
 import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
@@ -45,6 +46,7 @@ Item {
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
+  readonly property bool followFocusedScreen: (widgetSettings.followFocusedScreen !== undefined) ? widgetSettings.followFocusedScreen : widgetMetadata.followFocusedScreen
   readonly property int characterCount: isVertical ? 2 : ((widgetSettings.characterCount !== undefined) ? widgetSettings.characterCount : widgetMetadata.characterCount)
 
   property bool isDestroying: false
@@ -71,15 +73,24 @@ Item {
     const d = Style.capsuleHeight * root.baseDimensionRatio;
     const factor = ws.isActive ? 2.2 : 1;
 
-    // For name mode, calculate width based on actual text content
-    if (labelMode === "name" && ws.name && ws.name.length > 0) {
-      const displayText = ws.name.substring(0, characterCount);
-      const textWidth = displayText.length * (d * 0.4); // Approximate width per character
-      const padding = d * 0.6; // Padding on both sides
-      return Math.max(d * factor, textWidth + padding);
+    // Don't calculate text width if labels are off
+    if (labelMode === "none") {
+      return d * factor;
     }
 
-    return d * factor;
+    var displayText = ws.idx.toString();
+
+    if (ws.name && ws.name.length > 0) {
+      if (root.labelMode === "name") {
+        displayText = ws.name.substring(0, characterCount);
+      } else if (root.labelMode === "index+name") {
+        displayText = ws.idx.toString() + " " + ws.name.substring(0, characterCount);
+      }
+    }
+
+    const textWidth = displayText.length * (d * 0.4); // Approximate width per character
+    const padding = d * 0.6;
+    return Math.max(d * factor, textWidth + padding);
   }
 
   function getWorkspaceHeight(ws) {
@@ -152,10 +163,20 @@ Item {
 
   function refreshWorkspaces() {
     localWorkspaces.clear();
+
+    var focusedOutput = null;
+    if (followFocusedScreen) {
+      for (var i = 0; i < CompositorService.workspaces.count; i++) {
+        const ws = CompositorService.workspaces.get(i);
+        if (ws.isFocused)
+          focusedOutput = ws.output.toLowerCase();
+      }
+    }
+
     if (screen !== null) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
         const ws = CompositorService.workspaces.get(i);
-        if (ws.output.toLowerCase() === screen.name.toLowerCase()) {
+        if ((followFocusedScreen && ws.output.toLowerCase() == focusedOutput) || (!followFocusedScreen && ws.output.toLowerCase() == screen.name.toLowerCase())) {
           if (hideUnoccupied && !ws.isOccupied && !ws.isFocused) {
             continue;
           }
@@ -211,15 +232,53 @@ Item {
     }
   }
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      },
+    ]
+
+    onTriggered: action => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   }
+                 }
+  }
+
   Rectangle {
     id: workspaceBackground
     width: isVertical ? Style.capsuleHeight : parent.width
     height: isVertical ? parent.height : Style.capsuleHeight
     radius: Style.radiusM
-    color: Settings.data.bar.showCapsule ? Color.mSurfaceVariant : Color.transparent
+    color: Style.capsuleColor
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.RightButton
+      onClicked: mouse => {
+                   if (mouse.button === Qt.RightButton) {
+                     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                     if (popupMenuWindow) {
+                       popupMenuWindow.showContextMenu(contextMenu);
+                       const pos = BarService.getContextMenuPosition(workspaceBackground, contextMenu.implicitWidth, contextMenu.implicitHeight);
+                       contextMenu.openAtItem(workspaceBackground, pos.x, pos.y);
+                     }
+                   }
+                 }
+    }
   }
 
   // Debounce timer for wheel interactions
@@ -289,11 +348,15 @@ Item {
                 x: (pill.width - width) / 2
                 y: (pill.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount);
-                  } else {
-                    return model.idx.toString();
+                  if (model.name && model.name.length > 0) {
+                    if (root.labelMode === "name") {
+                      return model.name.substring(0, characterCount);
+                    }
+                    if (root.labelMode === "index+name") {
+                      return (model.idx.toString() + " " + model.name.substring(0, characterCount));
+                    }
                   }
+                  return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
@@ -434,11 +497,15 @@ Item {
                 x: (pillVertical.width - width) / 2
                 y: (pillVertical.height - height) / 2 + (height - contentHeight) / 2
                 text: {
-                  if (labelMode === "name" && model.name && model.name.length > 0) {
-                    return model.name.substring(0, characterCount);
-                  } else {
-                    return model.idx.toString();
+                  if (model.name && model.name.length > 0) {
+                    if (root.labelMode === "name") {
+                      return model.name.substring(0, characterCount);
+                    }
+                    if (root.labelMode === "index+name") {
+                      return (model.idx.toString() + model.name.substring(0, 1));
+                    }
                   }
+                  return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
                 pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42

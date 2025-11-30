@@ -1,4 +1,5 @@
 {
+  quickshell,
   alejandra,
   statix,
   deadnix,
@@ -12,6 +13,8 @@
 mkShellNoCC {
   #it's faster than mkDerivation / mkShell
   packages = [
+    quickshell
+
     # nix
     alejandra # formatter
     statix # linter

@@ -10,18 +10,29 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  NHeader {
-    label: I18n.tr("settings.audio.volumes.section.label")
-    description: I18n.tr("settings.audio.volumes.section.description")
-  }
-
   property real localVolume: AudioService.volume
+
+  Connections {
+    target: AudioService
+    function onSinkChanged() {
+      // Immediately update local volume when device changes to prevent old value from being applied
+      localVolume = AudioService.volume;
+    }
+    function onVolumeChanged() {
+      localVolume = AudioService.volume;
+    }
+  }
 
   Connections {
     target: AudioService.sink?.audio ? AudioService.sink?.audio : null
     function onVolumeChanged() {
       localVolume = AudioService.volume;
     }
+  }
+
+  NHeader {
+    label: I18n.tr("settings.audio.volumes.section.label")
+    description: I18n.tr("settings.audio.volumes.section.description")
   }
 
   // Master Volume
@@ -42,7 +53,8 @@ ColumnLayout {
       running: true
       repeat: true
       onTriggered: {
-        if (Math.abs(localVolume - AudioService.volume) >= 0.01) {
+        // Don't set volume if device is switching - wait for new device's volume to be read
+        if (!AudioService.isSwitchingSink && Math.abs(localVolume - AudioService.volume) >= 0.01) {
           AudioService.setVolume(localVolume);
         }
       }
@@ -139,6 +151,15 @@ ColumnLayout {
       checked: Settings.data.audio.volumeOverdrive
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
+  }
+
+  // External mixer command
+  NTextInput {
+    label: I18n.tr("settings.audio.external-mixer.label")
+    description: I18n.tr("settings.audio.external-mixer.description")
+    placeholderText: I18n.tr("settings.audio.external-mixer.placeholder")
+    text: Settings.data.audio.externalMixer
+    onTextChanged: Settings.data.audio.externalMixer = text
   }
 
   NDivider {

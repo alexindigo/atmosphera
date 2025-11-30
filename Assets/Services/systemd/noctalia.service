@@ -1,7 +1,6 @@
 [Unit]
 Description=Noctalia Shell Service
-Requisite=graphical-session.target
-PartOf=graphical-session.target
+BindsTo=graphical-session.target
 After=graphical-session.target
 
 [Service]

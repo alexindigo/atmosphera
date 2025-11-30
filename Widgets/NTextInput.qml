@@ -200,7 +200,6 @@ ColumnLayout {
             tooltipText: I18n.tr("widgets.text-input.clear")
 
             Layout.alignment: Qt.AlignVCenter
-
             border.width: 0
 
             colorBg: Color.transparent
