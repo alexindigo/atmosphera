@@ -1289,15 +1289,9 @@
           "description": "Adjust the dock's background opacity.",
           "label": "Background opacity"
         },
-<<<<<<< HEAD
-        "dead-opacity": {
-          "description": "Adjust the opacity of dock icons for apps that aren't running.",
-          "label": "Dead Opacity"
-=======
         "border-radius": {
           "description": "Adjust the dock's border radius.",
           "label": "Border radius"
->>>>>>> 85fca41c5006362e9fb184eee97b5199c0e323a0
         },
         "colorize-icons": {
           "description": "Apply theme colors to dock app icons (non-focused apps only).",
