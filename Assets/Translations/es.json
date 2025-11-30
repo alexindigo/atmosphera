@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Encabezado"
-        },
-        "calendar": {
-          "label": "Calendario"
-        },
         "cards": {
           "section": {
             "description": "Organizar y activar/desactivar tarjetas en el panel del calendario.",
             "label": "Tarjetas de calendario"
           }
+        },
+        "header": {
+          "label": "Encabezado del calendario"
+        },
+        "month": {
+          "label": "Mes del calendario"
         }
       },
       "date-time": {

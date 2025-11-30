@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Header"
-        },
-        "calendar": {
-          "label": "Calendar"
-        },
         "cards": {
           "section": {
             "description": "Organize and enable/disable cards in the calendar panel.",
             "label": "Calendar cards"
           }
+        },
+        "header": {
+          "label": "Calendar Header"
+        },
+        "month": {
+          "label": "Calendar Month"
         }
       },
       "date-time": {

@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "ヘッダー"
-        },
-        "calendar": {
-          "label": "カレンダー"
-        },
         "cards": {
           "section": {
             "description": "カレンダーパネルのカードを整理し、有効・無効を切り替えます。",
             "label": "カレンダーカード"
           }
+        },
+        "header": {
+          "label": "カレンダーヘッダー"
+        },
+        "month": {
+          "label": "カレンダー月"
         }
       },
       "date-time": {

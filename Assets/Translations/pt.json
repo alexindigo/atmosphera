@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Cabeçalho"
-        },
-        "calendar": {
-          "label": "Calendário"
-        },
         "cards": {
           "section": {
             "description": "Organize e ative/desative cartões no painel do calendário.",
             "label": "Cartões de calendário"
           }
+        },
+        "header": {
+          "label": "Cabeçalho do Calendário"
+        },
+        "month": {
+          "label": "Mês do calendário"
         }
       },
       "date-time": {

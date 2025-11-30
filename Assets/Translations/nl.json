@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Koptekst"
-        },
-        "calendar": {
-          "label": "Kalender"
-        },
         "cards": {
           "section": {
             "description": "Kaarten organiseren en in-/uitschakelen in het kalenderpaneel.",
             "label": "Kalenderkaarten"
           }
+        },
+        "header": {
+          "label": "Kalenderkop"
+        },
+        "month": {
+          "label": "Kalendermaand"
         }
       },
       "date-time": {

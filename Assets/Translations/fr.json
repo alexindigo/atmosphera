@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "En-tête"
-        },
-        "calendar": {
-          "label": "Calendrier"
-        },
         "cards": {
           "section": {
             "description": "Organiser et activer/désactiver les cartes dans le panneau de calendrier.",
             "label": "Cartes de calendrier"
           }
+        },
+        "header": {
+          "label": "En-tête du calendrier"
+        },
+        "month": {
+          "label": "Mois calendaire"
         }
       },
       "date-time": {

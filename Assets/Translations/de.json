@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Überschrift"
-        },
-        "calendar": {
-          "label": "Kalender"
-        },
         "cards": {
           "section": {
             "description": "Karten im Kalenderfeld organisieren und aktivieren/deaktivieren.",
             "label": "Kalenderkarten"
           }
+        },
+        "header": {
+          "label": "Kalenderkopfzeile"
+        },
+        "month": {
+          "label": "Kalendermonat"
         }
       },
       "date-time": {

@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "标题"
-        },
-        "calendar": {
-          "label": "日历"
-        },
         "cards": {
           "section": {
             "description": "在日历面板中组织和启用/禁用卡片。",
             "label": "日历卡"
           }
+        },
+        "header": {
+          "label": "日历标题"
+        },
+        "month": {
+          "label": "日历月"
         }
       },
       "date-time": {

@@ -15,13 +15,13 @@ ColumnLayout {
       "id": "calendar-header-card",
       "text": I18n.tr("settings.location.calendar.header.label"),
       "enabled": true,
-      "required": false
+      "required": true
     },
     {
       "id": "calendar-month-card",
       "text": I18n.tr("settings.location.calendar.month.label"),
       "enabled": true,
-      "required": true
+      "required": false
     },
     {
       "id": "timer-card",

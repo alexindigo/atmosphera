@@ -1490,17 +1490,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Başlık"
-        },
-        "calendar": {
-          "label": "Takvim"
-        },
         "cards": {
           "section": {
             "description": "Takvim panelinde kartları düzenleyin ve etkinleştirin/devre dışı bırakın.",
             "label": "Takvim kartları"
           }
+        },
+        "header": {
+          "label": "Takvim Başlığı"
+        },
+        "month": {
+          "label": "Takvim Ayı"
         }
       },
       "date-time": {
