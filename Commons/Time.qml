@@ -197,10 +197,11 @@ Singleton {
   function timerOnFinished() {
     root.timerRunning = false;
     root.timerRemainingSeconds = 0;
-    // Play notification sound with repeat
+    // Play notification sound with repeat at lower volume
     root.timerSoundPlaying = true;
     SoundService.playSound("alarm-beep.wav", {
-                             repeat: true
+                             repeat: true,
+                             volume: 0.3
                            });
   }
 }

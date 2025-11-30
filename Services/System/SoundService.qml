@@ -1,4 +1,5 @@
 pragma Singleton
+import QtMultimedia
 
 import QtQuick
 import Quickshell
@@ -7,8 +8,90 @@ import qs.Commons
 Singleton {
   id: root
 
+  // Map to track active sound players: resolvedPath -> MediaPlayer instance
+  property var activePlayers: ({})
+
+  // Container for dynamically created players
+  Item {
+    id: playersContainer
+  }
+
+  // Component for creating MediaPlayer instances
+  Component {
+    id: playerComponent
+    MediaPlayer {
+      id: mediaPlayer
+      property string resolvedPath: ""
+      property bool shouldFallback: false
+      property real soundVolume: 1.0
+
+      audioOutput: AudioOutput {
+        volume: soundVolume
+      }
+
+      onErrorOccurred: {
+        Logger.w("SoundService", "Error playing sound:", source, error, errorString);
+        if (shouldFallback) {
+          const fallbackPath = Quickshell.shellDir + "/Assets/Sounds/notification.mp3";
+          if (fallbackPath !== resolvedPath) {
+            root.playSound(fallbackPath, {
+                             volume: soundVolume,
+                             fallback: false,
+                             repeat: false
+                           });
+          }
+        }
+        // Clean up on error
+        if (root.activePlayers[resolvedPath]) {
+          delete root.activePlayers[resolvedPath];
+        }
+        destroy();
+      }
+
+      onPlaybackStateChanged: function (state) {
+        if (state === MediaPlayer.StoppedState && loops === 1) {
+          // Clean up non-looping players when they finish
+          if (root.activePlayers[resolvedPath]) {
+            delete root.activePlayers[resolvedPath];
+          }
+          destroy();
+        }
+      }
+
+      Component.onCompleted: {
+        play();
+      }
+    }
+  }
+
   Component.onCompleted: {
     Logger.i("SoundService", "Service started");
+  }
+
+  /**
+  * Resolve sound path to absolute file path
+  * @param soundPath - Path to the sound file (absolute, relative to shellDir, or just filename for Assets/Sounds/)
+  * @returns Resolved absolute path
+  */
+  function resolvePath(soundPath) {
+    if (!soundPath || soundPath === "") {
+      return "";
+    }
+
+    let resolvedPath = soundPath;
+
+    // If it's just a filename (no path separators), assume it's in Assets/Sounds/
+    if (!soundPath.includes("/") && !soundPath.startsWith("file://")) {
+      resolvedPath = Quickshell.shellDir + "/Assets/Sounds/" + soundPath;
+    } else if (!soundPath.startsWith("/") && !soundPath.startsWith("file://")) {
+      // Relative path - assume it's relative to shellDir
+      resolvedPath = Quickshell.shellDir + "/" + soundPath;
+    } else if (soundPath.startsWith("file://")) {
+      resolvedPath = soundPath.substring(7); // Remove "file://" prefix
+    }
+    // Absolute paths are used as-is
+
+    return resolvedPath;
   }
 
   /**
@@ -31,83 +114,72 @@ Singleton {
     const repeat = opts.repeat !== undefined ? opts.repeat : false;
 
     // Resolve path
-    let resolvedPath = soundPath;
+    const resolvedPath = resolvePath(soundPath);
 
-    // If it's just a filename (no path separators), assume it's in Assets/Sounds/
-    if (!soundPath.includes("/") && !soundPath.startsWith("file://")) {
-      resolvedPath = Quickshell.shellDir + "/Assets/Sounds/" + soundPath;
-    } else if (!soundPath.startsWith("/") && !soundPath.startsWith("file://")) {
-      // Relative path - assume it's relative to shellDir
-      resolvedPath = Quickshell.shellDir + "/" + soundPath;
-    } else if (soundPath.startsWith("file://")) {
-      resolvedPath = soundPath.substring(7); // Remove "file://" prefix
-    }
-    // Absolute paths are used as-is
-
-    // Build command with volume if supported
-    const volumeArg = volume < 1.0 ? Math.round(volume * 100) : "";
-
-    // Try different audio players in order of preference
-    let command = "";
-
-    if (repeat) {
-      // Repeat mode - use mpv or ffplay with loop, or paplay in a while loop
-      if (volumeArg && volumeArg > 0) {
-        command = `mpv --no-video --really-quiet --loop=inf --volume=${volumeArg} "${resolvedPath}" 2>/dev/null || ffplay -nodisp -loop -1 -loglevel quiet -volume ${volumeArg} "${resolvedPath}" 2>/dev/null || (while true; do paplay --volume=${volumeArg} "${resolvedPath}" 2>/dev/null || break; done)`;
-      } else {
-        command = `mpv --no-video --really-quiet --loop=inf "${resolvedPath}" 2>/dev/null || ffplay -nodisp -loop -1 -loglevel quiet "${resolvedPath}" 2>/dev/null || (while true; do paplay "${resolvedPath}" 2>/dev/null || break; done)`;
-      }
-    } else {
-      // Normal play once mode
-      if (volumeArg && volumeArg > 0) {
-        command = `paplay --volume=${volumeArg} "${resolvedPath}" 2>/dev/null || mpv --no-video --really-quiet --volume=${volumeArg} "${resolvedPath}" 2>/dev/null || ffplay -nodisp -autoexit -loglevel quiet -volume ${volumeArg} "${resolvedPath}" 2>/dev/null`;
-      } else {
-        command = `paplay "${resolvedPath}" 2>/dev/null || mpv --no-video --really-quiet "${resolvedPath}" 2>/dev/null || ffplay -nodisp -autoexit -loglevel quiet "${resolvedPath}" 2>/dev/null`;
-      }
+    // Stop any existing player for this path if it's looping
+    if (repeat && activePlayers[resolvedPath]) {
+      stopSound(soundPath);
     }
 
-    // Add fallback to default notification sound if requested (only in non-repeat mode)
-    if (fallback && !repeat) {
-      const defaultSound = Quickshell.shellDir + "/Assets/Sounds/notification.mp3";
-      if (volumeArg && volumeArg > 0) {
-        command += ` || paplay --volume=${volumeArg} "${defaultSound}" 2>/dev/null || mpv --no-video --really-quiet --volume=${volumeArg} "${defaultSound}" 2>/dev/null || ffplay -nodisp -autoexit -loglevel quiet -volume ${volumeArg} "${defaultSound}" 2>/dev/null`;
-      } else {
-        command += ` || paplay "${defaultSound}" 2>/dev/null || mpv --no-video --really-quiet "${defaultSound}" 2>/dev/null || ffplay -nodisp -autoexit -loglevel quiet "${defaultSound}" 2>/dev/null`;
+    // Create MediaPlayer instance
+    const player = playerComponent.createObject(playersContainer, {
+                                                  resolvedPath: resolvedPath,
+                                                  source: "file://" + resolvedPath,
+                                                  loops: repeat ? MediaPlayer.Infinite : 1,
+                                                  soundVolume: Math.max(0, Math.min(1, volume)),
+                                                  shouldFallback: fallback && !repeat
+                                                });
+
+    if (!player) {
+      Logger.w("SoundService", "Failed to create MediaPlayer for:", resolvedPath);
+      // Try fallback if requested
+      if (fallback && !repeat) {
+        const defaultSound = Quickshell.shellDir + "/Assets/Sounds/notification.mp3";
+        if (defaultSound !== resolvedPath) {
+          playSound(defaultSound, {
+                      volume: volume,
+                      fallback: false,
+                      repeat: false
+                    });
+        }
       }
+      return;
     }
 
-    command += " || true"; // Always succeed
+    // Store player in activePlayers map
+    activePlayers[resolvedPath] = player;
 
-    Logger.d("SoundService", "Playing sound:", resolvedPath, volumeArg ? `(volume: ${volumeArg}%)` : "", repeat ? "(repeat)" : "");
-    Quickshell.execDetached(["sh", "-c", command]);
+    Logger.d("SoundService", "Playing sound:", resolvedPath, `(volume: ${Math.round(volume * 100)}%)`, repeat ? "(repeat)" : "");
   }
 
   /**
-  * Stop a playing sound by killing the audio player processes
-  * @param soundPath - Path to the sound file to stop (optional, if not provided stops all notification sounds)
+  * Stop a playing sound
+  * @param soundPath - Path to the sound file to stop (optional, if not provided stops all repeating sounds)
   */
   function stopSound(soundPath) {
-    let resolvedPath = soundPath;
-
     if (soundPath) {
       // Resolve path the same way as playSound
-      if (!soundPath.includes("/") && !soundPath.startsWith("file://")) {
-        resolvedPath = Quickshell.shellDir + "/Assets/Sounds/" + soundPath;
-      } else if (!soundPath.startsWith("/") && !soundPath.startsWith("file://")) {
-        resolvedPath = Quickshell.shellDir + "/" + soundPath;
-      } else if (soundPath.startsWith("file://")) {
-        resolvedPath = soundPath.substring(7);
-      }
+      const resolvedPath = resolvePath(soundPath);
 
-      // Kill processes playing this specific sound file
-      const command = `pkill -f "mpv.*${resolvedPath}" 2>/dev/null; pkill -f "ffplay.*${resolvedPath}" 2>/dev/null; pkill -f "paplay.*${resolvedPath}" 2>/dev/null; true`;
-      Logger.d("SoundService", "Stopping sound:", resolvedPath);
-      Quickshell.execDetached(["sh", "-c", command]);
+      // Stop and remove the player for this specific sound
+      if (activePlayers[resolvedPath]) {
+        const player = activePlayers[resolvedPath];
+        player.stop();
+        delete activePlayers[resolvedPath];
+        player.destroy();
+        Logger.d("SoundService", "Stopped sound:", resolvedPath);
+      }
     } else {
-      // Kill all mpv/ffplay/paplay processes (be careful with this)
-      const command = `pkill -f "mpv.*--loop=inf" 2>/dev/null; pkill -f "ffplay.*-loop" 2>/dev/null; pkill -f "while true.*paplay" 2>/dev/null; true`;
-      Logger.d("SoundService", "Stopping all repeating sounds");
-      Quickshell.execDetached(["sh", "-c", command]);
+      // Stop all active players (typically used for repeating sounds)
+      const paths = Object.keys(activePlayers);
+      for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+        const player = activePlayers[path];
+        player.stop();
+        player.destroy();
+      }
+      activePlayers = {};
+      Logger.d("SoundService", "Stopped all sounds");
     }
   }
 }
