@@ -1289,6 +1289,10 @@
           "description": "Adjust the dock's background opacity.",
           "label": "Background opacity"
         },
+        "dead-opacity": {
+          "description": "Adjust the opacity of app icons that are not running.",
+          "label": "Dead Opacity"
+        },
         "border-radius": {
           "description": "Adjust the dock's border radius.",
           "label": "Border radius"
