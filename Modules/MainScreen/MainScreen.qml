@@ -10,7 +10,6 @@ import qs.Commons
 // All panels
 import qs.Modules.Bar
 import qs.Modules.Bar.Extras
-import qs.Modules.Panels.Accessibility
 import qs.Modules.Panels.Audio
 import qs.Modules.Panels.Battery
 import qs.Modules.Panels.Bluetooth
@@ -51,7 +50,6 @@ PanelWindow {
   readonly property alias trayDrawerPanel: trayDrawerPanel
   readonly property alias wallpaperPanel: wallpaperPanel
   readonly property alias wifiPanel: wifiPanel
-  readonly property alias keyboardPanel: keyboardPanel
 
   // Expose panel backgrounds for AllBackgrounds
   readonly property var audioPanelPlaceholder: audioPanel.panelRegion
@@ -69,7 +67,6 @@ PanelWindow {
   readonly property var trayDrawerPanelPlaceholder: trayDrawerPanel.panelRegion
   readonly property var wallpaperPanelPlaceholder: wallpaperPanel.panelRegion
   readonly property var wifiPanelPlaceholder: wifiPanel.panelRegion
-  readonly property var keyboardPanelPlaceholder: keyboardPanel.panelRegion 
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
@@ -304,12 +301,6 @@ PanelWindow {
       objectName: "wifiPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
       z: 50
-    }
-
-    KeyboardPanel {
-      id: keyboardPanel
-      objectName: "keyboardPanel-" + (root.screen?.name || "unknown")
-      screen: root.screen
     }
 
     // ----------------------------------------------
