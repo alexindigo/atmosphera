@@ -1,5 +1,4 @@
 layout {
-    background-color "transparent"
 
     focus-ring {
         active-color   "{{colors.primary.default.hex}}"
