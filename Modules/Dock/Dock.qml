@@ -299,7 +299,7 @@ Loader {
               height: Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
               anchors.centerIn: parent
-              radius: height * 0.5 * Settings.data.general.radiusRatio
+              radius: Style.radiusL
               border.width: Style.borderS
               border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
