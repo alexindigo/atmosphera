@@ -355,7 +355,7 @@ NBox {
         id: dropIndicator
         width: 3
         height: Style.baseWidgetSize * 1.15
-        radius: width / 2
+        radius: Style.radiusXXS
         color: Color.mPrimary
         opacity: 0
         visible: opacity > 0

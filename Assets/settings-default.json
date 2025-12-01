@@ -246,7 +246,6 @@
     "enabled": true,
     "displayMode": "auto_hide",
     "backgroundOpacity": 1,
-    "radiusRatio": 0.1,
     "floatingRatio": 1,
     "size": 1,
     "onlySameOutput": true,

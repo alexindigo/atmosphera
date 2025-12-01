@@ -402,7 +402,7 @@ Variants {
                   Layout.preferredWidth: Math.round(40 * Style.uiScaleRatio)
                   Layout.preferredHeight: Math.round(40 * Style.uiScaleRatio)
                   Layout.alignment: Qt.AlignVCenter
-                  radius: width * 0.5
+                  radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
                   imagePath: model.originalImage || ""
                   borderColor: Color.transparent
                   borderWidth: 0

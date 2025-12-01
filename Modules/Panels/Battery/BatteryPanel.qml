@@ -240,7 +240,7 @@ SmartPanel {
               Rectangle {
                 Layout.fillWidth: true
                 height: Math.round(8 * Style.uiScaleRatio)
-                radius: height / 2
+                radius: Math.min(Style.radiusL, height / 2)
                 color: Color.mSurfaceVariant
 
                 Rectangle {

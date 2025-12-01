@@ -477,7 +477,7 @@ ColumnLayout {
             anchors.topMargin: -3
             width: 20
             height: 20
-            radius: width * 0.5
+            radius: Math.min(Style.radiusL, width / 2)
             color: Color.mSecondary
             border.width: Style.borderS
             border.color: Color.mOnSecondary
