@@ -271,7 +271,7 @@ ColumnLayout {
 
           NValueSlider {
             Layout.fillWidth: true
-            from: 0.1
+            from: 0
             to: 2.0
             stepSize: 0.01
             value: Settings.data.general.animationSpeed

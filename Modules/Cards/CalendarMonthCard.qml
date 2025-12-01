@@ -340,7 +340,7 @@ NBox {
                   Rectangle {
                     width: 4
                     height: width
-                    radius: width / 2
+                    radius: Style.radiusXXS
                     color: parent.parent.parent.parent.parent.getEventColor(modelData, modelData.today)
                   }
                 }

@@ -578,7 +578,7 @@ Popup {
                   anchors.margins: Style.marginS
                   width: 24
                   height: 24
-                  radius: width / 2
+                  radius: Math.min(Style.radiusL, width / 2)
                   color: Color.mSecondary
                   border.color: Color.mOutline
                   border.width: Style.borderS

@@ -494,6 +494,20 @@
     "unknown": "Desconhecido"
   },
   "launcher": {
+    "categories": {
+      "all": "Tudo",
+      "audiovideo": "Áudio e Vídeo",
+      "chat": "Bate-papo",
+      "development": "Desenvolvimento",
+      "education": "Educação",
+      "game": "Jogos",
+      "graphics": "Gráficos",
+      "misc": "Diversos",
+      "network": "Rede",
+      "office": "Escritório",
+      "system": "Sistema",
+      "webbrowser": "Navegador web"
+    },
     "pin": "Fixar no dock",
     "unpin": "Desafixar do dock"
   },

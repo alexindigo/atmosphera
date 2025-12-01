@@ -49,7 +49,7 @@ Rectangle {
       Rectangle {
         Layout.preferredWidth: root.height * 0.6
         Layout.preferredHeight: root.height * 0.6
-        radius: Layout.preferredWidth * 0.5
+        radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
         color: root.selectedColor
         border.color: Color.mOutline
         border.width: Style.borderS

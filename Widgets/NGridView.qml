@@ -36,6 +36,10 @@ Item {
   property alias delegate: gridView.delegate
   property alias cellWidth: gridView.cellWidth
   property alias cellHeight: gridView.cellHeight
+  property alias leftMargin: gridView.leftMargin
+  property alias rightMargin: gridView.rightMargin
+  property alias topMargin: gridView.topMargin
+  property alias bottomMargin: gridView.bottomMargin
   property alias currentIndex: gridView.currentIndex
   property alias count: gridView.count
   property alias contentHeight: gridView.contentHeight

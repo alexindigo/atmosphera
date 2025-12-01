@@ -498,6 +498,20 @@
     "unknown": "Unknown"
   },
   "launcher": {
+    "categories": {
+      "all": "All",
+      "audiovideo": "Audio & Video",
+      "chat": "Chat",
+      "development": "Development",
+      "education": "Education",
+      "game": "Games",
+      "graphics": "Graphics",
+      "misc": "Misc",
+      "network": "Network",
+      "office": "Office",
+      "system": "System",
+      "webbrowser": "Web Browser"
+    },
     "pin": "Pin to dock",
     "unpin": "Unpin from dock"
   },
