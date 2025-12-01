@@ -727,12 +727,20 @@ SmartPanel {
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
+              // Helper function to normalize app IDs for case-insensitive matching
+              function normalizeAppId(appId) {
+                if (!appId || typeof appId !== 'string')
+                  return "";
+                return appId.toLowerCase().trim();
+              }
+
               // Pin helpers
               function togglePin(appId) {
                 if (!appId)
                   return;
+                const normalizedId = normalizeAppId(appId);
                 let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.indexOf(appId);
+                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
                 if (idx >= 0)
                   arr.splice(idx, 1);
                 else
@@ -741,8 +749,11 @@ SmartPanel {
               }
 
               function isPinned(appId) {
+                if (!appId)
+                  return false;
                 const arr = Settings.data.dock.pinnedApps || [];
-                return appId && arr.indexOf(appId) >= 0;
+                const normalizedId = normalizeAppId(appId);
+                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
               }
 
               // Property to reliably track the current item's ID.
@@ -1049,12 +1060,20 @@ SmartPanel {
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
+              // Helper function to normalize app IDs for case-insensitive matching
+              function normalizeAppId(appId) {
+                if (!appId || typeof appId !== 'string')
+                  return "";
+                return appId.toLowerCase().trim();
+              }
+
               // Pin helpers
               function togglePin(appId) {
                 if (!appId)
                   return;
+                const normalizedId = normalizeAppId(appId);
                 let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.indexOf(appId);
+                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
                 if (idx >= 0)
                   arr.splice(idx, 1);
                 else
@@ -1063,8 +1082,11 @@ SmartPanel {
               }
 
               function isPinned(appId) {
+                if (!appId)
+                  return false;
                 const arr = Settings.data.dock.pinnedApps || [];
-                return appId && arr.indexOf(appId) >= 0;
+                const normalizedId = normalizeAppId(appId);
+                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
               }
 
               width: {
