@@ -1133,7 +1133,7 @@ Loader {
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
-                    horizontalAlignment: Qt.AlignLeft
+                    horizontalAlignment: Qt.AlignHCenter
                     buttonRadius: Style.radiusL
                     onClicked: CompositorService.logout()
                   }
@@ -1154,13 +1154,14 @@ Loader {
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
-                    horizontalAlignment: Qt.AlignLeft
+                    horizontalAlignment: Qt.AlignHCenter
                     buttonRadius: Style.radiusL
                     onClicked: CompositorService.suspend()
                   }
 
                   Item {
                     Layout.preferredWidth: 10
+                    visible: Settings.data.general.showHibernateOnLockScreen
                   }
 
                   NButton {
@@ -1175,7 +1176,7 @@ Loader {
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
-                    horizontalAlignment: Qt.AlignLeft
+                    horizontalAlignment: Qt.AlignHCenter
                     buttonRadius: Style.radiusL
                     visible: Settings.data.general.showHibernateOnLockScreen
                     onClicked: CompositorService.hibernate()
@@ -1183,6 +1184,7 @@ Loader {
 
                   Item {
                     Layout.preferredWidth: 10
+                    visible: Settings.data.general.showHibernateOnLockScreen
                   }
 
                   NButton {
@@ -1197,7 +1199,7 @@ Loader {
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
-                    horizontalAlignment: Qt.AlignLeft
+                    horizontalAlignment: Qt.AlignHCenter
                     buttonRadius: Style.radiusL
                     onClicked: CompositorService.reboot()
                   }
@@ -1218,7 +1220,7 @@ Loader {
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
-                    horizontalAlignment: Qt.AlignLeft
+                    horizontalAlignment: Qt.AlignHCenter
                     buttonRadius: Style.radiusL
                     onClicked: CompositorService.shutdown()
                   }
