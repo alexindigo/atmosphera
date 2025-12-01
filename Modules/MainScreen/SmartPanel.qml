@@ -691,7 +691,13 @@ Item {
     anchors.fill: parent
 
     // Screen-dependent attachment properties
-    readonly property bool allowAttach: Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar
+    // Allow panel content to override allowAttach (e.g., plugin panels)
+    readonly property bool allowAttach: {
+      if (contentLoader.item && contentLoader.item.allowAttach !== undefined) {
+        return contentLoader.item.allowAttach;
+      }
+      return Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar;
+    }
     readonly property bool allowAttachToBar: {
       if (!(Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar) || Settings.data.bar.backgroundOpacity < 1.0) {
         return false;

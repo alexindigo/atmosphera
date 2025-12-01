@@ -32,12 +32,7 @@ SmartPanel {
       readonly property var geometryPlaceholder: pluginContentItem
 
       // Panel properties expected by SmartPanel
-      property bool allowAttach: {
-        if (pluginContentLoader.item && pluginContentLoader.item.allowAttach !== undefined) {
-          return pluginContentLoader.item.allowAttach;
-        }
-        return true;
-      }
+      readonly property bool allowAttach: (pluginContentLoader.item && pluginContentLoader.item.allowAttach !== undefined) ? pluginContentLoader.item.allowAttach : true
       // Expose preferred dimensions from plugin panel content
       // Only define these if the plugin provides them
       property var contentPreferredWidth: {
