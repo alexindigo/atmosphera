@@ -97,6 +97,48 @@ Loader {
         }
       }
 
+      // Helper function to normalize app IDs for case-insensitive matching
+      function normalizeAppId(appId) {
+        if (!appId || typeof appId !== 'string')
+          return "";
+        return appId.toLowerCase().trim();
+      }
+
+      // Helper function to check if an app ID matches a pinned app (case-insensitive)
+      function isAppIdPinned(appId, pinnedApps) {
+        if (!appId || !pinnedApps || pinnedApps.length === 0)
+          return false;
+        const normalizedId = normalizeAppId(appId);
+        return pinnedApps.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+      }
+
+      // Helper function to get app name from desktop entry
+      function getAppNameFromDesktopEntry(appId) {
+        if (!appId)
+          return appId;
+
+        try {
+          if (typeof DesktopEntries !== 'undefined' && DesktopEntries.heuristicLookup) {
+            const entry = DesktopEntries.heuristicLookup(appId);
+            if (entry && entry.name) {
+              return entry.name;
+            }
+          }
+
+          if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId) {
+            const entry = DesktopEntries.byId(appId);
+            if (entry && entry.name) {
+              return entry.name;
+            }
+          }
+        } catch (e)
+          // Fall through to return original appId
+        {}
+
+        // Return original appId if we can't find a desktop entry
+        return appId;
+      }
+
       // Function to update the combined dock apps model
       function updateDockApps() {
         const runningApps = ToplevelManager ? (ToplevelManager.toplevels.values || []) : [];
@@ -378,7 +420,21 @@ Loader {
                       property bool isActive: modelData.toplevel && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel === modelData.toplevel
                       property bool hovered: appMouseArea.containsMouse
                       property string appId: modelData ? modelData.appId : ""
-                      property string appTitle: modelData ? (modelData.title || modelData.appId) : ""
+                      property string appTitle: {
+                        if (!modelData)
+                          return "";
+                        // For running apps, use the toplevel title directly (reactive)
+                        if (modelData.toplevel) {
+                          const toplevelTitle = modelData.toplevel.title || "";
+                          // If title is "Loading..." or empty, use desktop entry name
+                          if (!toplevelTitle || toplevelTitle === "Loading..." || toplevelTitle.trim() === "") {
+                            return root.getAppNameFromDesktopEntry(modelData.appId) || modelData.appId;
+                          }
+                          return toplevelTitle;
+                        }
+                        // For pinned apps that aren't running, use the stored title
+                        return modelData.title || modelData.appId || "";
+                      }
                       property bool isRunning: modelData && (modelData.type === "running" || modelData.type === "pinned-running")
 
                       // Listen for the toplevel being closed
