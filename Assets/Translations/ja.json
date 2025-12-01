@@ -494,6 +494,20 @@
     "unknown": "不明"
   },
   "launcher": {
+    "categories": {
+      "all": "すべて",
+      "audiovideo": "音声 & ビデオ",
+      "chat": "チャット",
+      "development": "開発",
+      "education": "教育",
+      "game": "ゲーム",
+      "graphics": "グラフィックス",
+      "misc": "その他",
+      "network": "ネットワーク",
+      "office": "オフィス",
+      "system": "システム",
+      "webbrowser": "ウェブブラウザ"
+    },
     "pin": "ドックにピン留め",
     "unpin": "ドックからピン留めを解除"
   },

@@ -494,6 +494,20 @@
     "unknown": "未知"
   },
   "launcher": {
+    "categories": {
+      "all": "全部",
+      "audiovideo": "音频和视频",
+      "chat": "聊天",
+      "development": "发展",
+      "education": "教育",
+      "game": "游戏",
+      "graphics": "图形",
+      "misc": "杂项",
+      "network": "网络",
+      "office": "办公室",
+      "system": "系统",
+      "webbrowser": "网页浏览器"
+    },
     "pin": "固定到 Dock",
     "unpin": "从 Dock 取消固定"
   },

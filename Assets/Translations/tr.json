@@ -494,6 +494,20 @@
     "unknown": "Bilinmiyor"
   },
   "launcher": {
+    "categories": {
+      "all": "Tümü",
+      "audiovideo": "Ses ve Video",
+      "chat": "Sohbet",
+      "development": "Gelişim",
+      "education": "Eğitim",
+      "game": "Oyunlar",
+      "graphics": "Grafikler",
+      "misc": "Çeşitli",
+      "network": "Ağ",
+      "office": "Ofis",
+      "system": "Sistem",
+      "webbrowser": "Web tarayıcı"
+    },
     "pin": "Dock'a sabitle",
     "unpin": "Dock'dan sabitlemeyi kaldır"
   },
