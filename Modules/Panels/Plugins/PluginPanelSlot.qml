@@ -20,6 +20,9 @@ SmartPanel {
   // Plugin instance
   property var pluginInstance: null
 
+  // Reference to the plugin content loader (set when panel content is created)
+  property var contentLoader: null
+
   // Panel content is dynamically loaded
   panelContent: Component {
     Item {
@@ -50,6 +53,9 @@ SmartPanel {
       }
 
       Component.onCompleted: {
+        // Store reference to the loader so loadPluginPanel can access it
+        root.contentLoader = pluginContentLoader;
+
         // Load plugin panel content if assigned
         if (root.currentPluginId !== "") {
           root.loadPluginPanel(root.currentPluginId);
@@ -76,6 +82,12 @@ SmartPanel {
       return false;
     }
 
+    // Check if loader is available
+    if (!root.contentLoader) {
+      Logger.e("PluginPanelSlot", "Content loader not available yet");
+      return false;
+    }
+
     var pluginDir = PluginRegistry.getPluginDir(pluginId);
     var panelPath = pluginDir + "/" + plugin.manifest.entryPoints.panel;
 
@@ -89,16 +101,16 @@ SmartPanel {
       var api = PluginService.getPluginAPI(pluginId);
 
       // Create instance with API
-      pluginContentLoader.active = true;
-      pluginContentLoader.sourceComponent = component;
+      root.contentLoader.active = true;
+      root.contentLoader.sourceComponent = component;
 
-      if (pluginContentLoader.item) {
+      if (root.contentLoader.item) {
         // Inject plugin API
-        if (pluginContentLoader.item.hasOwnProperty("pluginApi")) {
-          pluginContentLoader.item.pluginApi = api;
+        if (root.contentLoader.item.hasOwnProperty("pluginApi")) {
+          root.contentLoader.item.pluginApi = api;
         }
 
-        root.pluginInstance = pluginContentLoader.item;
+        root.pluginInstance = root.contentLoader.item;
         root.currentPluginId = pluginId;
 
         Logger.i("PluginPanelSlot", "Panel loaded for:", pluginId);
@@ -120,8 +132,10 @@ SmartPanel {
 
     Logger.i("PluginPanelSlot", "Unloading panel from slot", root.slotNumber);
 
-    pluginContentLoader.active = false;
-    pluginContentLoader.sourceComponent = null;
+    if (root.contentLoader) {
+      root.contentLoader.active = false;
+      root.contentLoader.sourceComponent = null;
+    }
     root.pluginInstance = null;
     root.currentPluginId = "";
   }

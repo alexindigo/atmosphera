@@ -316,9 +316,9 @@ Singleton {
     var pluginApi = createPluginAPI(pluginId, manifest);
 
     // Load main component if provides bar widget
-    if (manifest.provides.barWidget && manifest.entryPoints.main) {
-      var mainPath = pluginDir + "/" + manifest.entryPoints.main;
-      var component = Qt.createComponent("file://" + mainPath);
+    if (manifest.provides.barWidget && manifest.entryPoints.barWidget) {
+      var path = pluginDir + "/" + manifest.entryPoints.barWidget;
+      var component = Qt.createComponent("file://" + path);
 
       if (component.status === Component.Ready) {
         // Don't instantiate yet - BarWidgetRegistry will do that
@@ -406,14 +406,26 @@ Singleton {
       savePluginSettings(pluginId, api.pluginSettings);
     };
 
-    api.openPanel = function (panelId) {
-      // TODO: Implement panel opening
-      Logger.d("PluginAPI", "openPanel:", panelId);
+    api.openPanel = function (screen) {
+      // Open this plugin's panel on the specified screen
+      if (!screen) {
+        Logger.w("PluginAPI", "No screen available for opening panel");
+        return false;
+      }
+      return openPluginPanel(pluginId, screen);
     };
 
-    api.closePanel = function () {
-      // TODO: Implement panel closing
-      Logger.d("PluginAPI", "closePanel");
+    api.closePanel = function (screen) {
+      // Close this plugin's panel (find which slot it's in and close it)
+      for (var slotNum = 1; slotNum <= 2; slotNum++) {
+        var panelName = "pluginPanel" + slotNum;
+        var panel = PanelService.getPanel(panelName, screen);
+        if (panel && panel.currentPluginId === pluginId) {
+          panel.close();
+          return true;
+        }
+      }
+      return false;
     };
 
     api.showToast = function (message) {
@@ -545,5 +557,59 @@ Singleton {
   // Check if plugin is loaded
   function isPluginLoaded(pluginId) {
     return !!root.loadedPlugins[pluginId];
+  }
+
+  // Open a plugin's panel (finds a free slot and loads the panel)
+  function openPluginPanel(pluginId, screen) {
+    if (!isPluginLoaded(pluginId)) {
+      Logger.w("PluginService", "Cannot open panel: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    var plugin = root.loadedPlugins[pluginId];
+    if (!plugin || !plugin.manifest || !plugin.manifest.provides.panel) {
+      Logger.w("PluginService", "Plugin does not provide a panel:", pluginId);
+      return false;
+    }
+
+    // Try to find the plugin panel slot (pluginPanel1 or pluginPanel2)
+    // Try slot 1 first, then slot 2
+    for (var slotNum = 1; slotNum <= 2; slotNum++) {
+      var panelName = "pluginPanel" + slotNum;
+      var panel = PanelService.getPanel(panelName, screen);
+
+      if (panel) {
+        // If this slot is already showing this plugin's panel, toggle it
+        if (panel.currentPluginId === pluginId) {
+          panel.toggle();
+          return true;
+        }
+
+        // If this slot is empty, use it
+        if (panel.currentPluginId === "") {
+          // Open the panel first so the loader gets created
+          panel.open();
+          // Wait a brief moment for the panel to be fully created
+          Qt.callLater(function () {
+            panel.loadPluginPanel(pluginId);
+          });
+          return true;
+        }
+      }
+    }
+
+    // If both slots are occupied, use slot 1 (replace existing)
+    var panel1 = PanelService.getPanel("pluginPanel1", screen);
+    if (panel1) {
+      panel1.unloadPluginPanel();
+      panel1.open();
+      Qt.callLater(function () {
+        panel1.loadPluginPanel(pluginId);
+      });
+      return true;
+    }
+
+    Logger.e("PluginService", "Failed to find plugin panel slot");
+    return false;
   }
 }

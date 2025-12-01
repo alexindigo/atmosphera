@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Services.UI
 
 Item {
@@ -56,6 +57,17 @@ Item {
         item.scaling = Qt.binding(function () {
           return root.scaling;
         });
+      }
+
+      // Inject plugin API for plugin widgets
+      if (BarWidgetRegistry.isPluginWidget(widgetId)) {
+        var pluginId = widgetId.replace("plugin:", "");
+        var api = PluginService.getPluginAPI(pluginId);
+        if (api && item.hasOwnProperty("pluginApi")) {
+          // Inject API into widget
+          item.pluginApi = api;
+          Logger.d("BarWidgetLoader", "Injected plugin API for", widgetId);
+        }
       }
 
       // Register this widget instance with BarService
