@@ -14,6 +14,7 @@ import qs.Services.Hardware
 import qs.Services.Keyboard
 import qs.Services.Location
 import qs.Services.Media
+import qs.Services.Networking
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -64,10 +65,43 @@ Loader {
 
           Item {
             id: batteryIndicator
-            property var battery: UPower.displayDevice
-            property bool isReady: battery && battery.ready && battery.isLaptopBattery && battery.isPresent
-            property real percent: isReady ? (battery.percentage * 100) : 0
-            property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
+            property bool initializationComplete: false
+            Timer {
+              interval: 500
+              running: true
+              onTriggered: batteryIndicator.initializationComplete = true
+            }
+
+            // Find first connected Bluetooth device with battery
+            function findBluetoothBatteryDevice() {
+              if (!BluetoothService.devices) {
+                return null;
+              }
+              var devices = BluetoothService.devices.values || [];
+              for (var i = 0; i < devices.length; i++) {
+                var device = devices[i];
+                if (device && device.connected && device.batteryAvailable && device.battery !== undefined) {
+                  return device;
+                }
+              }
+              return null;
+            }
+
+            readonly property var bluetoothDevice: findBluetoothBatteryDevice()
+            readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
+            readonly property var battery: UPower.displayDevice
+            readonly property bool isDevicePresent: {
+              if (hasBluetoothBattery) {
+                return bluetoothDevice.connected === true;
+              }
+              if (battery) {
+                return (battery.type === UPowerDeviceType.Battery && battery.isPresent !== undefined) ? battery.isPresent : (battery.ready && battery.percentage !== undefined);
+              }
+              return false;
+            }
+            property bool isReady: initializationComplete && isDevicePresent && (hasBluetoothBattery || (battery && battery.ready && battery.percentage !== undefined))
+            property real percent: isReady ? (hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : 0
+            property bool charging: isReady ? (hasBluetoothBattery ? false : (battery ? battery.state === UPowerDeviceState.Charging : false)) : false
             property bool batteryVisible: isReady && percent > 0
           }
 
@@ -428,7 +462,7 @@ Loader {
             // Compact status indicators container (compact mode only)
             Rectangle {
               width: {
-                var hasBattery = UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent;
+                var hasBattery = batteryIndicator.isReady;
                 var hasKeyboard = keyboardLayout.currentLayout !== "Unknown";
 
                 if (hasBattery && hasKeyboard) {
@@ -446,7 +480,7 @@ Loader {
               topLeftRadius: Style.radiusL
               topRightRadius: Style.radiusL
               color: Color.mSurface
-              visible: Settings.data.general.compactLockScreen && ((UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent) || keyboardLayout.currentLayout !== "Unknown")
+              visible: Settings.data.general.compactLockScreen && (batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown")
 
               RowLayout {
                 anchors.centerIn: parent
@@ -455,16 +489,16 @@ Loader {
                 // Battery indicator
                 RowLayout {
                   spacing: 6
-                  visible: UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
+                  visible: batteryIndicator.isReady
 
                   NIcon {
-                    icon: BatteryService.getIcon(Math.round(UPower.displayDevice.percentage * 100), UPower.displayDevice.state === UPowerDeviceState.Charging, true)
+                    icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
                     pointSize: Style.fontSizeM
-                    color: UPower.displayDevice.state === UPowerDeviceState.Charging ? Color.mPrimary : Color.mOnSurfaceVariant
+                    color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
                   }
 
                   NText {
-                    text: Math.round(UPower.displayDevice.percentage * 100) + "%"
+                    text: Math.round(batteryIndicator.percent) + "%"
                     color: Color.mOnSurfaceVariant
                     pointSize: Style.fontSizeM
                     font.weight: Font.Medium
@@ -814,28 +848,25 @@ Loader {
 
                   // Battery and Keyboard Layout (full mode only)
                   ColumnLayout {
-                    Layout.preferredWidth: 60
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     spacing: 8
 
                     // Battery
                     RowLayout {
                       spacing: 4
-                      visible: UPower.displayDevice && UPower.displayDevice.ready && UPower.displayDevice.isPresent
+                      visible: batteryIndicator.isReady
 
                       NIcon {
-                        icon: BatteryService.getIcon(Math.round(UPower.displayDevice.percentage * 100), UPower.displayDevice.state === UPowerDeviceState.Charging, true)
+                        icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
                         pointSize: Style.fontSizeM
-                        color: UPower.displayDevice.state === UPowerDeviceState.Charging ? Color.mPrimary : Color.mOnSurfaceVariant
+                        color: batteryIndicator.charging ? Color.mPrimary : Color.mOnSurfaceVariant
                       }
 
                       NText {
-                        text: Math.round(UPower.displayDevice.percentage * 100) + "%"
+                        text: Math.round(batteryIndicator.percent) + "%"
                         color: Color.mOnSurfaceVariant
                         pointSize: Style.fontSizeM
                         font.weight: Font.Medium
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
                       }
                     }
 
