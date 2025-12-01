@@ -383,7 +383,7 @@ ColumnLayout {
               visible: wrapper.isRounded
               anchors.fill: parent
               color: Color.transparent
-              radius: Math.min(Style.radiusL, width / 2)
+              radius: width * 0.5
               border.width: Style.borderM
               border.color: Color.mPrimary
             }
