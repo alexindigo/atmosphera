@@ -32,11 +32,27 @@ SmartPanel {
       readonly property var maskRegion: pluginContentItem
 
       // Panel properties expected by SmartPanel
-      property bool allowAttach: true
-      property real topPadding: 0
-      property real bottomPadding: 0
-      property real leftPadding: 0
-      property real rightPadding: 0
+      property bool allowAttach: {
+        if (pluginContentLoader.item && pluginContentLoader.item.allowAttach !== undefined) {
+          return pluginContentLoader.item.allowAttach;
+        }
+        return true;
+      }
+      // Expose preferred dimensions from plugin panel content
+      // Only define these if the plugin provides them
+      property var contentPreferredWidth: {
+        if (pluginContentLoader.item && pluginContentLoader.item.contentPreferredWidth !== undefined && pluginContentLoader.item.contentPreferredWidth > 0) {
+          return pluginContentLoader.item.contentPreferredWidth;
+        }
+        return undefined;
+      }
+
+      property var contentPreferredHeight: {
+        if (pluginContentLoader.item && pluginContentLoader.item.contentPreferredHeight !== undefined && pluginContentLoader.item.contentPreferredHeight > 0) {
+          return pluginContentLoader.item.contentPreferredHeight;
+        }
+        return undefined;
+      }
 
       anchors.fill: parent
 
