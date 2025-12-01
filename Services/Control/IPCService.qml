@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Media
+import qs.Services.Noctalia
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
@@ -382,6 +383,46 @@ Item {
         return JSON.stringify({
                                 "error": "Failed to serialize state: " + error
                               }, null, 2);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------
+  // Plugin IPC namespace
+  // -------------------------------------------------------------------
+  IpcHandler {
+    target: "plugins"
+
+    // Dynamic plugin IPC calls
+    // Usage: qs -c noctalia-shell ipc call plugins invoke pluginId actionName [args]
+    // where args is an optional string that the plugin can parse
+    function invoke(pluginId: string, actionName: string, args: string) {
+      Logger.d("IPC", "Plugin IPC call:", pluginId, actionName, args);
+
+      // Check if plugin is loaded
+      if (!PluginService.isPluginLoaded(pluginId)) {
+        Logger.w("IPC", "Plugin not loaded:", pluginId);
+        return false;
+      }
+
+      // Get plugin API
+      var api = PluginService.getPluginAPI(pluginId);
+      if (!api) {
+        Logger.w("IPC", "Plugin API not found:", pluginId);
+        return false;
+      }
+
+      // Check if plugin has registered the IPC action
+      if (api.ipcHandlers && api.ipcHandlers[actionName]) {
+        try {
+          return api.ipcHandlers[actionName](args || "");
+        } catch (e) {
+          Logger.e("IPC", "Plugin IPC call failed:", e);
+          return false;
+        }
+      } else {
+        Logger.w("IPC", "Plugin", pluginId, "has no IPC action:", actionName);
+        return false;
       }
     }
   }

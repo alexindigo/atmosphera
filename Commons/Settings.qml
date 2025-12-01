@@ -7,6 +7,7 @@ import "../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Commons.Migrations
 import qs.Modules.OSD
+import qs.Services.Noctalia
 import qs.Services.UI
 
 Singleton {
@@ -710,6 +711,12 @@ Singleton {
     // Wait for BarWidgetRegistry to be ready
     if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
       Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade");
+      Qt.callLater(upgradeSettingsData);
+      return;
+    }
+
+    // Wait for PluginService to finish loading plugin widgets
+    if (!PluginService.pluginsFullyLoaded) {
       Qt.callLater(upgradeSettingsData);
       return;
     }
