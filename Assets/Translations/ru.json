@@ -494,6 +494,20 @@
     "unknown": "Неизвестно"
   },
   "launcher": {
+    "categories": {
+      "all": "Всё",
+      "audiovideo": "Аудио и видео",
+      "chat": "Чат",
+      "development": "Разработка",
+      "education": "Образование",
+      "game": "Игры",
+      "graphics": "Графика",
+      "misc": "Разное",
+      "network": "Сеть",
+      "office": "Офис",
+      "system": "Система",
+      "webbrowser": "Веб-браузер"
+    },
     "pin": "Закрепить на панели",
     "unpin": "Открепить от панели"
   },

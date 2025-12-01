@@ -120,7 +120,7 @@ NIconButton {
       readonly property int count: computeUnreadCount()
       height: 8
       width: height
-      radius: height / 2
+      radius: Style.radiusXS
       color: Color.mError
       border.color: Color.mSurface
       border.width: Style.borderS

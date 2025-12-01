@@ -523,7 +523,7 @@ SmartPanel {
         anchors.verticalCenter: parent.verticalCenter
         width: 20
         height: 20
-        radius: width * 0.5
+        radius: Math.min(Style.radiusL, width / 2)
         color: Color.mPrimary
         visible: buttonRoot.pending
 

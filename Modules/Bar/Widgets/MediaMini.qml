@@ -230,7 +230,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     width: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : ((shouldHideIdle || isEmptyForHideMode) ? 0 : dynamicWidth)
     height: isVerticalBar ? ((shouldHideIdle || isEmptyForHideMode) ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
-    radius: isVerticalBar ? width / 2 : Style.radiusM
+    radius: Style.radiusM
     color: Style.capsuleColor
 
     // Smooth width transition
@@ -416,7 +416,7 @@ Item {
                 id: trackArt
                 anchors.fill: parent
                 anchors.margins: showProgressRing ? 0 : -1 * scaling // Add negative margin to make album art larger when no progress ring
-                radius: width * 0.5
+                radius: Math.min(Style.radiusL, width / 2)
                 visible: showAlbumArt && hasActivePlayer
                 imagePath: MediaService.trackArtUrl
                 fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
@@ -658,7 +658,7 @@ Item {
         NImageRounded {
           anchors.fill: parent
           visible: showAlbumArt && hasActivePlayer
-          radius: width * 0.5
+          radius: Math.min(Style.radiusL, width / 2)
           imagePath: MediaService.trackArtUrl
           fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
           fallbackIconSize: 12

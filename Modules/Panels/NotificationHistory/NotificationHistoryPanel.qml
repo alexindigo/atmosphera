@@ -321,7 +321,7 @@ SmartPanel {
                     anchors.verticalCenter: parent.verticalCenter
                     width: Math.round(40 * Style.uiScaleRatio)
                     height: Math.round(40 * Style.uiScaleRatio)
-                    radius: width * 0.5
+                    radius: Math.min(Style.radiusL, width / 2)
                     imagePath: model.cachedImage || model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0

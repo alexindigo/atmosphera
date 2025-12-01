@@ -494,6 +494,20 @@
     "unknown": "Невідомо"
   },
   "launcher": {
+    "categories": {
+      "all": "Все",
+      "audiovideo": "Аудіо та відео",
+      "chat": "Чат",
+      "development": "Розвиток",
+      "education": "Освіта",
+      "game": "Ігри",
+      "graphics": "Графіка",
+      "misc": "Різне",
+      "network": "Мережа",
+      "office": "Офіс",
+      "system": "Система",
+      "webbrowser": "Веб-браузер"
+    },
     "pin": "Закріпити в доці",
     "unpin": "Відкріпити з доку"
   },
