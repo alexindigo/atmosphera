@@ -7,10 +7,8 @@ import qs.Services.Keyboard
 Item {
   id: root
 
-  // Sorts floating windows after scrolling ones
   property int floatingWindowPosition: Number.MAX_SAFE_INTEGER
 
-  // Properties that match the facade interface
   property ListModel workspaces: ListModel {}
   property var windows: []
   property int focusedWindowIndex: -1
@@ -19,13 +17,17 @@ Item {
 
   property var keyboardLayouts: []
 
-  // Signals that match the facade interface
+  property var maximizedWindows: []
+  property bool originalBarFloatingState: false
+  property bool barFloatingStateSaved: false
+  property bool originalBarOuterCornersState: false
+  property bool barOuterCornersStateSaved: false
+
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
   signal displayScalesChanged
 
-  // Initialization
   function initialize() {
     niriEventStream.connected = true;
     niriCommandSocket.connected = true;
@@ -47,17 +49,14 @@ Item {
     sendSocketCommand(niriEventStream, "EventStream");
   }
 
-  // Update workspaces
   function updateWorkspaces() {
     sendSocketCommand(niriCommandSocket, "Workspaces");
   }
 
-  // Update windows
   function updateWindows() {
     sendSocketCommand(niriCommandSocket, "Windows");
   }
 
-  // Query display scales
   function queryDisplayScales() {
     sendSocketCommand(niriCommandSocket, "Outputs");
   }
@@ -65,7 +64,6 @@ Item {
   function recollectOutputs(outputsData) {
     const scales = {};
 
-    // Niri returns an object with display names as keys
     for (const outputName in outputsData) {
       const output = outputsData[outputName];
       if (output && output.name) {
@@ -91,7 +89,6 @@ Item {
       }
     }
 
-    // Notify CompositorService (it will emit displayScalesChanged)
     if (CompositorService && CompositorService.onDisplayScalesUpdated) {
       CompositorService.onDisplayScalesUpdated(scales);
     }
@@ -113,7 +110,6 @@ Item {
                           });
     }
 
-    // Sort workspaces by output, then by index
     workspacesList.sort((a, b) => {
                           if (a.output !== b.output) {
                             return a.output.localeCompare(b.output);
@@ -121,7 +117,6 @@ Item {
                           return a.idx - b.idx;
                         });
 
-    // Update the workspaces ListModel
     workspaces.clear();
     for (var i = 0; i < workspacesList.length; i++) {
       workspaces.append(workspacesList[i]);
@@ -130,7 +125,6 @@ Item {
     workspaceChanged();
   }
 
-  // Niri command socket
   Socket {
     id: niriCommandSocket
     path: Quickshell.env("NIRI_SOCKET")
@@ -161,7 +155,6 @@ Item {
     }
   }
 
-  // Niri event stream socket
   Socket {
     id: niriEventStream
     path: Quickshell.env("NIRI_SOCKET")
@@ -204,7 +197,6 @@ Item {
     }
   }
 
-  // Utility functions
   function getWindowPosition(layout) {
     if (layout.pos_in_scrolling_layout) {
       return {
@@ -240,10 +232,6 @@ Item {
     };
   }
 
-  // Sort windows
-  // 1. by workspace ID
-  // 2. by position X
-  // 3. by position Y
   function compareWindows(a, b) {
     if (a.workspaceId !== b.workspaceId) {
       return a.workspaceId - b.workspaceId;
@@ -273,7 +261,6 @@ Item {
     activeWindowChanged();
   }
 
-  // Event handlers
   function handleWindowOpenedOrChanged(eventData) {
     try {
       const windowData = eventData.window;
@@ -281,20 +268,16 @@ Item {
       const newWindow = getWindowData(windowData);
 
       if (existingIndex >= 0) {
-        // Update existing window
         windows[existingIndex] = newWindow;
       } else {
-        // Add new window
         windows.push(newWindow);
       }
       windows.sort(compareWindows);
 
-      // Update focused window index if this window is focused
       if (newWindow.isFocused) {
         const oldFocusedIndex = focusedWindowIndex;
         focusedWindowIndex = windows.findIndex(w => w.id === windowData.id);
 
-        // Only emit activeWindowChanged if the focused window actually changed
         if (oldFocusedIndex !== focusedWindowIndex) {
           if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
             windows[oldFocusedIndex].isFocused = false;
@@ -315,16 +298,23 @@ Item {
       const windowIndex = windows.findIndex(w => w.id === windowId);
 
       if (windowIndex >= 0) {
-        // If this was the focused window, clear focus
+        const maximizedIndex = maximizedWindows.indexOf(windowId);
+        if (maximizedIndex >= 0) {
+          maximizedWindows.splice(maximizedIndex, 1);
+
+          if (maximizedWindows.length === 0 && barFloatingStateSaved) {
+            Settings.data.bar.floating = originalBarFloatingState;
+            barFloatingStateSaved = false;
+          }
+        }
+
         if (windowIndex === focusedWindowIndex) {
           focusedWindowIndex = -1;
           activeWindowChanged();
         } else if (focusedWindowIndex > windowIndex) {
-          // Adjust focused window index if needed
           focusedWindowIndex--;
         }
 
-        // Remove the window
         windows.splice(windowIndex, 1);
         windowListChanged();
       }
@@ -376,6 +366,66 @@ Item {
         const window = windows.find(w => w.id === windowId);
         if (window) {
           window.position = getWindowPosition(layout);
+
+          if (layout.window_size && window.output && CompositorService) {
+            const outputInfo = CompositorService.getDisplayInfo(window.output);
+            if (outputInfo && outputInfo.width && outputInfo.height) {
+              const windowWidth = layout.window_size[0];
+              const windowHeight = layout.window_size[1];
+              const outputWidth = outputInfo.width;
+              const outputHeight = outputInfo.height;
+
+              const barPosition = Settings.data.bar.position || "top";
+              const isVerticalBar = barPosition === "left" || barPosition === "right";
+              const barSize = Style.barHeight;
+
+              let widthMatch, heightMatch;
+              if (isVerticalBar) {
+                widthMatch = Math.abs(windowWidth - (outputWidth - barSize)) < 10;
+                heightMatch = Math.abs(windowHeight - outputHeight) < 10;
+              } else {
+                widthMatch = Math.abs(windowWidth - outputWidth) < 10;
+                heightMatch = Math.abs(windowHeight - (outputHeight - barSize)) < 50;
+              }
+
+              const isMaximized = widthMatch && heightMatch;
+              const wasMaximized = maximizedWindows.indexOf(windowId) >= 0;
+
+              if (isMaximized && !wasMaximized) {
+                Logger.i("NiriService", "Detected maximize-window-to-edges");
+                maximizedWindows.push(windowId);
+
+                if (!barFloatingStateSaved) {
+                  originalBarFloatingState = Settings.data.bar.floating;
+                  barFloatingStateSaved = true;
+                }
+
+                if (!barOuterCornersStateSaved) {
+                  originalBarOuterCornersState = Settings.data.bar.outerCorners;
+                  barOuterCornersStateSaved = true;
+                }
+
+                Settings.data.bar.floating = false;
+                Settings.data.bar.outerCorners = false;
+              } else if (!isMaximized && wasMaximized) {
+                const index = maximizedWindows.indexOf(windowId);
+                if (index >= 0) {
+                  maximizedWindows.splice(index, 1);
+                }
+
+                if (maximizedWindows.length === 0) {
+                  if (barFloatingStateSaved) {
+                    Settings.data.bar.floating = originalBarFloatingState;
+                    barFloatingStateSaved = false;
+                  }
+                  if (barOuterCornersStateSaved) {
+                    Settings.data.bar.outerCorners = originalBarOuterCornersState;
+                    barOuterCornersStateSaved = false;
+                  }
+                }
+              }
+            }
+          }
         }
       }
 
@@ -417,7 +467,6 @@ Item {
     }
   }
 
-  // Public functions
   function switchToWorkspace(workspace) {
     try {
       Quickshell.execDetached(["niri", "msg", "action", "focus-workspace", workspace.idx.toString()]);
