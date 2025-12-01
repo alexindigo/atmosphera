@@ -28,8 +28,8 @@ SmartPanel {
     Item {
       id: panelContainer
 
-      // Required by SmartPanel for click-through mask
-      readonly property var maskRegion: pluginContentItem
+      // Required by SmartPanel for background rendering geometry
+      readonly property var geometryPlaceholder: pluginContentItem
 
       // Panel properties expected by SmartPanel
       property bool allowAttach: {
