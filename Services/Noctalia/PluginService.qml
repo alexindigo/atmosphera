@@ -484,11 +484,15 @@ Singleton {
     var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
     var settingsJson = JSON.stringify(settings, null, 2);
 
+    // Write JSON directly using printf to avoid QML template escaping issues
+    // Escape backslashes and single quotes for shell safety
+    var escapedJson = settingsJson.replace(/\\/g, '\\\\').replace(/'/g, "'\\''");
+
     var writeProcess = Qt.createQmlObject(`
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["sh", "-c", "echo '${settingsJson}' > '${settingsFile}'"]
+        command: ["sh", "-c", "printf '%s' '${escapedJson}' > '${settingsFile}'"]
       }
     `, root, "WriteSettings_" + pluginId);
 
