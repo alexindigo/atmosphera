@@ -637,7 +637,7 @@ SmartPanel {
         // Emoji category tabs (shown when in browsing mode)
         NTabBar {
           id: emojiCategoryTabs
-          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
+          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && !root.searchText.startsWith(">")
           Layout.fillWidth: true
           currentIndex: {
             if (visible && emojiPlugin.categories) {
@@ -664,7 +664,7 @@ SmartPanel {
         // App category tabs (shown when browsing apps without search)
         NTabBar {
           id: appCategoryTabs
-          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode
+          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")
           Layout.fillWidth: true
           currentIndex: {
             if (visible && appsPlugin.availableCategories) {
