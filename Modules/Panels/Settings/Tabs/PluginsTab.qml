@@ -68,16 +68,6 @@ ColumnLayout {
             }
           }
 
-          NIconButton {
-            icon: "trash"
-            tooltipText: I18n.tr("settings.plugins.uninstall.tooltip")
-            baseSize: Style.baseWidgetSize * 0.7
-            onClicked: {
-              uninstallDialog.pluginToUninstall = modelData;
-              uninstallDialog.open();
-            }
-          }
-
           NToggle {
             checked: PluginRegistry.isPluginEnabled(modelData.id)
             baseSize: Style.baseWidgetSize * 0.7
@@ -120,34 +110,43 @@ ColumnLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
 
-    NButton {
-      text: I18n.tr("settings.plugins.filter.all")
-      backgroundColor: pluginFilter === "all" ? Color.mPrimary : Color.mSurfaceVariant
-      textColor: pluginFilter === "all" ? Color.mOnPrimary : Color.mOnSurfaceVariant
-      onClicked: pluginFilter = "all"
-    }
-
-    NButton {
-      text: I18n.tr("settings.plugins.filter.downloaded")
-      backgroundColor: pluginFilter === "downloaded" ? Color.mPrimary : Color.mSurfaceVariant
-      textColor: pluginFilter === "downloaded" ? Color.mOnPrimary : Color.mOnSurfaceVariant
-      onClicked: pluginFilter = "downloaded"
-    }
-
-    NButton {
-      text: I18n.tr("settings.plugins.filter.not-downloaded")
-      backgroundColor: pluginFilter === "notDownloaded" ? Color.mPrimary : Color.mSurfaceVariant
-      textColor: pluginFilter === "notDownloaded" ? Color.mOnPrimary : Color.mOnSurfaceVariant
-      onClicked: pluginFilter = "notDownloaded"
-    }
-
-    Item {
+    NTabBar {
+      id: filterTabBar
       Layout.fillWidth: true
+      currentIndex: 0
+      onCurrentIndexChanged: {
+        if (currentIndex === 0)
+          pluginFilter = "all";
+        else if (currentIndex === 1)
+          pluginFilter = "downloaded";
+        else if (currentIndex === 2)
+          pluginFilter = "notDownloaded";
+      }
+      spacing: Style.marginXS
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.all")
+        tabIndex: 0
+        checked: pluginFilter === "all"
+      }
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.downloaded")
+        tabIndex: 1
+        checked: pluginFilter === "downloaded"
+      }
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.not-downloaded")
+        tabIndex: 2
+        checked: pluginFilter === "notDownloaded"
+      }
     }
 
     NIconButton {
       icon: "refresh"
       tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
+      baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
         PluginService.refreshAvailablePlugins();
         ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
@@ -158,49 +157,47 @@ ColumnLayout {
   property string pluginFilter: "all"
 
   // Available plugins list
-  NScrollView {
+  NListView {
+    id: pluginListView
     Layout.fillWidth: true
     Layout.preferredHeight: 400
+    spacing: Style.marginM
 
-    NListView {
-      id: pluginListView
-      spacing: Style.marginM
+    model: {
+      var all = PluginService.availablePlugins || [];
+      var filtered = [];
 
-      model: {
-        var all = PluginService.availablePlugins || [];
-        var filtered = [];
+      for (var i = 0; i < all.length; i++) {
+        var plugin = all[i];
+        var downloaded = plugin.downloaded || false;
 
-        for (var i = 0; i < all.length; i++) {
-          var plugin = all[i];
-          var downloaded = plugin.downloaded || false;
-
-          if (pluginFilter === "all") {
-            filtered.push(plugin);
-          } else if (pluginFilter === "downloaded" && downloaded) {
-            filtered.push(plugin);
-          } else if (pluginFilter === "notDownloaded" && !downloaded) {
-            filtered.push(plugin);
-          }
+        if (pluginFilter === "all") {
+          filtered.push(plugin);
+        } else if (pluginFilter === "downloaded" && downloaded) {
+          filtered.push(plugin);
+        } else if (pluginFilter === "notDownloaded" && !downloaded) {
+          filtered.push(plugin);
         }
-
-        return filtered;
       }
 
-      delegate: RowLayout {
-        width: pluginListView.width
+      return filtered;
+    }
+
+    delegate: NBox {
+      width: ListView.view.width - pluginListView.scrollBarWidth
+      implicitHeight: contentRow.implicitHeight + Style.marginL * 2
+      color: Color.mSurface
+
+      RowLayout {
+        id: contentRow
+        anchors.fill: parent
+        anchors.margins: Style.marginL
         spacing: Style.marginM
 
-        Rectangle {
-          width: 48
-          height: 48
-          radius: Style.radiusM
-          color: Color.mSurfaceContainerHigh
-
-          NIcon {
-            anchors.centerIn: parent
-            icon: "plugin"
-            pointSize: Style.fontSizeXL
-          }
+        NIcon {
+          icon: "plugin"
+          pointSize: Style.fontSizeXL
+          color: Color.mOnSurface
         }
 
         ColumnLayout {
@@ -211,6 +208,7 @@ ColumnLayout {
             text: modelData.name
             font.weight: Font.Medium
             color: Color.mOnSurface
+            Layout.fillWidth: true
           }
 
           NText {
@@ -258,7 +256,7 @@ ColumnLayout {
 
         // Downloaded indicator
         NIcon {
-          icon: "check-circle"
+          icon: "circle-check"
           pointSize: Style.fontSizeM
           color: Color.mPrimary
           visible: modelData.downloaded === true
@@ -276,19 +274,6 @@ ColumnLayout {
             }
           }
         }
-
-        // Enable/Disable toggle (only for downloaded plugins)
-        NToggle {
-          visible: modelData.downloaded === true
-          checked: modelData.enabled || false
-          onToggled: function (checked) {
-            if (checked) {
-              PluginService.enablePlugin(modelData.id);
-            } else {
-              PluginService.disablePlugin(modelData.id);
-            }
-          }
-        }
       }
     }
   }
@@ -298,12 +283,6 @@ ColumnLayout {
     label: I18n.tr("settings.plugins.available.no-plugins-label")
     description: I18n.tr("settings.plugins.available.no-plugins-description")
     Layout.fillWidth: true
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
   }
 
   // ------------------------------
@@ -389,7 +368,14 @@ ColumnLayout {
     width: 500
     padding: Style.marginL
 
-    ColumnLayout {
+    background: Rectangle {
+      color: Color.mSurface
+      radius: Style.radiusS
+      border.color: Color.mPrimary
+      border.width: Style.borderM
+    }
+
+    contentItem: ColumnLayout {
       width: parent.width
       spacing: Style.marginL
 
@@ -470,7 +456,9 @@ ColumnLayout {
 
       NHeader {
         label: I18n.tr("settings.plugins.uninstall-dialog.title")
-        description: I18n.tr("settings.plugins.uninstall-dialog.description").replace("%1", uninstallDialog.pluginToUninstall?.name || "")
+        description: I18n.tr("settings.plugins.uninstall-dialog.description", {
+                               "plugin": uninstallDialog.pluginToUninstall?.name || ""
+                             })
       }
 
       RowLayout {
@@ -623,13 +611,21 @@ ColumnLayout {
   // ------------------------------
 
   function installPlugin(pluginMetadata) {
-    ToastService.show(I18n.tr("settings.plugins.installing").replace("%1", pluginMetadata.name));
+    ToastService.showNotice(I18n.tr("settings.plugins.installing", {
+                                      "plugin": pluginMetadata.name
+                                    }));
 
     PluginService.installPlugin(pluginMetadata, function (success, error) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.install-success").replace("%1", pluginMetadata.name));
+        ToastService.showNotice(I18n.tr("settings.plugins.install-success", {
+                                          "plugin": pluginMetadata.name
+                                        }));
+        // Auto-enable the plugin after installation
+        PluginService.enablePlugin(pluginMetadata.id);
       } else {
-        ToastService.showNotice(I18n.tr("settings.plugins.install-error").replace("%1", error || "Unknown error"));
+        ToastService.showNotice(I18n.tr("settings.plugins.install-error", {
+                                          "error": error || "Unknown error"
+                                        }));
       }
     });
   }
@@ -638,13 +634,19 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
-    ToastService.showNotice(I18n.tr("settings.plugins.uninstalling").replace("%1", pluginName));
+    ToastService.showNotice(I18n.tr("settings.plugins.uninstalling", {
+                                      "plugin": pluginName
+                                    }));
 
     PluginService.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-success").replace("%1", pluginName));
+        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-success", {
+                                          "plugin": pluginName
+                                        }));
       } else {
-        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-error").replace("%1", error || "Unknown error"));
+        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-error", {
+                                          "error": error || "Unknown error"
+                                        }));
       }
     });
   }

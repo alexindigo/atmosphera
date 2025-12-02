@@ -177,8 +177,8 @@ Singleton {
     var downloadCmd = `
       mkdir -p '${pluginDir}' &&
       cd '${pluginDir}' &&
-      (curl -L -s '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=1 --wildcards '*/${pluginPath}' ||
-       wget -q -O- '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=1 --wildcards '*/${pluginPath}')
+      (curl -L -s '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 --wildcards '*/${pluginPath}/*' ||
+       wget -q -O- '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 --wildcards '*/${pluginPath}/*')
     `;
 
     var downloadProcess = Qt.createQmlObject(`

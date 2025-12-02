@@ -36,7 +36,6 @@ Singleton {
 
     onLoaded: {
       Logger.i("PluginRegistry", "Loaded plugin states from:", path);
-      Logger.i("PluginRegistry", "FileView onLoaded triggered");
       root.pluginStates = adapter.states || {};
       root.pluginSources = adapter.sources || [];
 
@@ -53,6 +52,20 @@ Singleton {
 
       // Scan plugin folder to discover installed plugins
       scanPluginFolder();
+    }
+
+    onLoadFailed: function (error) {
+      Logger.w("PluginRegistry", "Failed to load plugins.json, will create it:", error);
+      // Initialize defaults and continue
+      root.pluginStates = {};
+      root.pluginSources = [
+            {
+              "name": "Official Noctalia Plugins",
+              "url": "https://github.com/noctalia-dev/noctalia-plugins"
+            }
+          ];
+      // Scan for installed plugins
+      root.scanPluginFolder();
     }
   }
 

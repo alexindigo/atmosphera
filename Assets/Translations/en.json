@@ -1768,17 +1768,19 @@
         "not-downloaded": "Not Downloaded"
       },
       "install": "Install",
-      "install-error": "Failed to install: %1",
-      "install-success": "Successfully installed %1",
-      "installing": "Installing %1...",
+      "install-error": "Failed to install: {error}",
+      "install-success": "Successfully installed {plugin}",
+      "installing": "Installing {plugin}...",
       "plugin-settings-title": "{plugin} Settings",
       "refresh": {
-        "refreshing": "Refreshing plugin list...",
+        "refreshing": "Refreshing plugins list...",
         "tooltip": "Refresh available plugins"
       },
       "settings": {
         "tooltip": "Plugin settings"
       },
+      "settings-error-not-loaded": "Plugin not loaded",
+      "settings-saved": "Plugin settings saved",
       "sources": {
         "add-custom": "Add custom repository",
         "add-dialog": {
@@ -1799,13 +1801,13 @@
       "title": "Plugins",
       "uninstall": "Uninstall",
       "uninstall-dialog": {
-        "description": "Are you sure you want to uninstall %1? This will remove all plugin data.",
+        "description": "Are you sure you want to uninstall {plugin}? This will remove all plugin data.",
         "title": "Uninstall plugin"
       },
-      "uninstall-error": "Failed to uninstall: %1",
-      "uninstall-success": "Successfully uninstalled %1",
+      "uninstall-error": "Failed to uninstall: {error}",
+      "uninstall-success": "Successfully uninstalled {plugin}",
       "uninstall.tooltip": "Uninstall plugin",
-      "uninstalling": "Uninstalling %1..."
+      "uninstalling": "Uninstalling {plugin}..."
     },
     "screen-recorder": {
       "audio": {
