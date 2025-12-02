@@ -99,7 +99,7 @@ Item {
     function toggle() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && !launcherPanel?.activePlugin))
+                              if (!launcherPanel?.isPanelOpen || (launcherPanel?.isPanelOpen && !launcherPanel?.activePlugin))
                               launcherPanel?.toggle();
                               launcherPanel?.setSearchText("");
                             });
@@ -107,24 +107,27 @@ Item {
     function clipboard() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">clip")))
-                              launcherPanel?.toggle();
+                              if (!launcherPanel?.isPanelOpen) {
+                                launcherPanel?.toggle();
+                              }
                               launcherPanel?.setSearchText(">clip ");
                             });
     }
     function calculator() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">calc")))
-                              launcherPanel?.toggle();
+                              if (!launcherPanel?.isPanelOpen) {
+                                launcherPanel?.toggle();
+                              }
                               launcherPanel?.setSearchText(">calc ");
                             });
     }
     function emoji() {
       root.withTargetScreen(screen => {
                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.windowActive || (launcherPanel?.windowActive && launcherPanel?.searchText.startsWith(">emoji")))
-                              launcherPanel?.toggle();
+                              if (!launcherPanel?.isPanelOpen) {
+                                launcherPanel?.toggle();
+                              }
                               launcherPanel?.setSearchText(">emoji ");
                             });
     }

@@ -69,7 +69,7 @@ ColumnLayout {
     id: whichPacmanProcess
     command: ["which", "pacman"]
     running: false
-    onExited: function(exitCode) {
+    onExited: function (exitCode) {
       if (exitCode === 0) {
         Logger.d("AboutTab", "whichPacmanProcess - pacman found, starting query");
         pacmanProcess.running = true;
