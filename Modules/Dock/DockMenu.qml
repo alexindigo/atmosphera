@@ -335,6 +335,7 @@ PopupWindow {
     ColumnLayout {
       id: contextMenuColumn
       anchors.left: parent.left
+      anchors.right: parent.right
       anchors.top: parent.top
       anchors.margins: Style.marginM
       spacing: 0
