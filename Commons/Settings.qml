@@ -228,6 +228,7 @@ Singleton {
       property bool forceBlackScreenCorners: false
       property real scaleRatio: 1.0
       property real radiusRatio: 1.0
+      property real boxRadiusRatio: 1.0
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
       property bool animationDisabled: false

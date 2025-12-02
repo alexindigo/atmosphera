@@ -23,12 +23,20 @@ Singleton {
   readonly property int fontWeightSemiBold: 600
   readonly property int fontWeightBold: 700
 
-  // Radii
-  readonly property int radiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
-  readonly property int radiusXS: Math.round(8 * Settings.data.general.radiusRatio)
-  readonly property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
-  readonly property int radiusM: Math.round(16 * Settings.data.general.radiusRatio)
-  readonly property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
+  // Radii (for panels: launcher, settings, control center, etc.)
+  readonly property int radiusXXS: Math.round(4 * Settings.data.general.boxRadiusRatio)
+  readonly property int radiusXS: Math.round(8 * Settings.data.general.boxRadiusRatio)
+  readonly property int radiusS: Math.round(12 * Settings.data.general.boxRadiusRatio)
+  readonly property int radiusM: Math.round(16 * Settings.data.general.boxRadiusRatio)
+  readonly property int radiusL: Math.round(20 * Settings.data.general.boxRadiusRatio)
+
+  // Control radii (for UI components: buttons, widgets, etc.)
+  readonly property int cRadiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
+  readonly property int cRadiusXS: Math.round(8 * Settings.data.general.radiusRatio)
+  readonly property int cRadiusS: Math.round(12 * Settings.data.general.radiusRatio)
+  readonly property int cRadiusM: Math.round(16 * Settings.data.general.radiusRatio)
+  readonly property int cRadiusL: Math.round(20 * Settings.data.general.radiusRatio)
+
   readonly property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 
   // Border

@@ -14,7 +14,7 @@ Rectangle {
   implicitWidth: 150
   implicitHeight: Math.round(Style.baseWidgetSize * 1.1)
 
-  radius: Style.radiusM
+  radius: Style.cRadiusM
   color: Color.mSurface
   border.color: Color.mOutline
   border.width: Style.borderS
@@ -49,7 +49,7 @@ Rectangle {
       Rectangle {
         Layout.preferredWidth: root.height * 0.6
         Layout.preferredHeight: root.height * 0.6
-        radius: Math.min(Style.radiusL, Layout.preferredWidth / 2)
+        radius: Math.min(Style.cRadiusL, Layout.preferredWidth / 2)
         color: root.selectedColor
         border.color: Color.mOutline
         border.width: Style.borderS

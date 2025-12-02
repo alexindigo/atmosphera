@@ -1917,10 +1917,15 @@
         "label": "Animation speed",
         "reset": "Reset animation speed"
       },
-      "border-radius": {
-        "description": "Controls the corner roundness of windows, buttons, and other elements.",
-        "label": "Border radius",
-        "reset": "Reset border radius"
+      "box-border-radius": {
+        "description": "Adjusts the corner roundness of major layout sections, such as sidebars, cards, and content panels.",
+        "label": "Container Radius",
+        "reset": "Reset container radius"
+      },
+      "control-border-radius": {
+        "description": "Controls the curvature of interactive elements, including buttons, toggles, and text fields.",
+        "label": "Input Radius",
+        "reset": "Reset input radius"
       },
       "dim-desktop": {
         "description": "Dim the desktop when panels or menus are open.",

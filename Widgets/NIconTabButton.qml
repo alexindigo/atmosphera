@@ -25,7 +25,7 @@ Rectangle {
   Layout.fillHeight: true
 
   // Styling
-  radius: Style.radiusXS
+  radius: Style.cRadiusXS
   color: root.checked ? Color.mPrimary : (root.isHovered ? Color.mHover : Color.mSurface)
 
   Behavior on color {

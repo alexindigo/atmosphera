@@ -98,7 +98,7 @@ Item {
 
           Layout.preferredWidth: root.baseSize
           Layout.preferredHeight: root.baseSize
-          radius: Style.radiusXS
+          radius: Style.cRadiusXS
           color: dragHandleMouseArea.containsMouse ? Color.mSurfaceVariant : Color.transparent
 
           Behavior on color {
@@ -199,7 +199,7 @@ Item {
 
           Layout.preferredWidth: root.baseSize
           Layout.preferredHeight: root.baseSize
-          radius: Style.radiusXS
+          radius: Style.cRadiusXS
           color: delegateItem.enabled ? root.activeColor : Color.mSurface
           border.color: delegateItem.required ? root.activeColor : Color.mOutline
           border.width: Style.borderS

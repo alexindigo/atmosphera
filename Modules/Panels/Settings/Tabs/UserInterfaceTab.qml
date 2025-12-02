@@ -209,14 +209,55 @@ ColumnLayout {
       }
     }
 
-    // Border Radius
+    // Box Border Radius
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
 
       NLabel {
-        label: I18n.tr("settings.user-interface.border-radius.label")
-        description: I18n.tr("settings.user-interface.border-radius.description")
+        label: I18n.tr("settings.user-interface.box-border-radius.label")
+        description: I18n.tr("settings.user-interface.box-border-radius.description")
+      }
+
+      RowLayout {
+        spacing: Style.marginL
+        Layout.fillWidth: true
+
+        NValueSlider {
+          Layout.fillWidth: true
+          from: 0
+          to: 2
+          stepSize: 0.01
+          value: Settings.data.general.boxRadiusRatio
+          onMoved: value => Settings.data.general.boxRadiusRatio = value
+          text: Math.floor(Settings.data.general.boxRadiusRatio * 100) + "%"
+        }
+
+        // Reset button container
+        Item {
+          Layout.preferredWidth: 30 * Style.uiScaleRatio
+          Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+          NIconButton {
+            icon: "refresh"
+            baseSize: Style.baseWidgetSize * 0.8
+            tooltipText: I18n.tr("settings.user-interface.box-border-radius.reset")
+            onClicked: Settings.data.general.boxRadiusRatio = 1.0
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+          }
+        }
+      }
+    }
+
+    // Control Border Radius (for UI components)
+    ColumnLayout {
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.user-interface.control-border-radius.label")
+        description: I18n.tr("settings.user-interface.control-border-radius.description")
       }
 
       RowLayout {
@@ -241,7 +282,7 @@ ColumnLayout {
           NIconButton {
             icon: "refresh"
             baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("settings.user-interface.border-radius.reset")
+            tooltipText: I18n.tr("settings.user-interface.control-border-radius.reset")
             onClicked: Settings.data.general.radiusRatio = 1.0
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter

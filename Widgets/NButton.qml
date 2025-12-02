@@ -20,7 +20,7 @@ Rectangle {
   property real iconSize: Style.fontSizeL
   property bool outlined: false
   property int horizontalAlignment: Qt.AlignHCenter
-  property real buttonRadius: Style.radiusS
+  property real buttonRadius: Style.cRadiusS
 
   // Signals
   signal clicked

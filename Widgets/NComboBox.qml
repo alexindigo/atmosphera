@@ -76,7 +76,7 @@ RowLayout {
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
       border.width: Style.borderS
-      radius: Style.radiusM
+      radius: Style.cRadiusM
 
       Behavior on border.color {
         ColorAnimation {
@@ -165,7 +165,7 @@ RowLayout {
           background: Rectangle {
             anchors.fill: parent
             color: highlighted ? Color.mHover : Color.transparent
-            radius: Style.radiusS
+            radius: Style.cRadiusS
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
@@ -195,7 +195,7 @@ RowLayout {
         color: Color.mSurfaceVariant
         border.color: Color.mOutline
         border.width: Style.borderS
-        radius: Style.radiusM
+        radius: Style.cRadiusM
       }
     }
 
