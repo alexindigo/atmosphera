@@ -301,14 +301,14 @@ ColumnLayout {
   Flow {
     id: topContributorsFlow
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
+    Layout.fillWidth: true
     spacing: Style.marginM
 
     Repeater {
       model: Math.min(root.contributors.length, root.topContributorsCount)
 
       delegate: Rectangle {
-        width: Math.round(Style.baseWidgetSize * 6.8)
+        width: Math.max(Math.round(topContributorsFlow.width / 2 - Style.marginM - 1), Math.round(Style.baseWidgetSize * 4))
         height: Math.round(Style.baseWidgetSize * 2.3)
         radius: Style.radiusM
         color: contributorArea.containsMouse ? Color.mHover : Color.transparent
@@ -462,7 +462,7 @@ ColumnLayout {
     id: remainingContributorsFlow
     visible: root.contributors.length > root.topContributorsCount
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: Math.round(Style.baseWidgetSize * 14)
+    Layout.fillWidth: true
     Layout.topMargin: Style.marginL
     spacing: Style.marginS
 
