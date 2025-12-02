@@ -1041,7 +1041,7 @@ Loader {
                       width: 36
                       height: 36
                       radius: Math.min(Style.radiusL, width / 2)
-                      color: eyeButtonArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.1) : "transparent"
+                      color: eyeButtonArea.containsMouse ? Color.mPrimary : Color.transparent
                       visible: passwordInput.text.length > 0
                       enabled: !lockContext.unlockInProgress
 
@@ -1049,7 +1049,14 @@ Loader {
                         anchors.centerIn: parent
                         icon: parent.parent.passwordVisible ? "eye-off" : "eye"
                         pointSize: Style.fontSizeM
-                        color: Color.mOnSurfaceVariant
+                        color: eyeButtonArea.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
+
+                        Behavior on color {
+                          ColorAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                          }
+                        }
                       }
 
                       MouseArea {
@@ -1077,16 +1084,23 @@ Loader {
                       width: 36
                       height: 36
                       radius: Math.min(Style.radiusL, width / 2)
-                      color: submitButtonArea.containsMouse ? Color.mPrimary : Qt.alpha(Color.mPrimary, 0.8)
+                      color: submitButtonArea.containsMouse ? Color.mPrimary : Color.transparent
                       border.color: Color.mPrimary
-                      border.width: 1
+                      border.width: Style.borderS
                       enabled: !lockContext.unlockInProgress
 
                       NIcon {
                         anchors.centerIn: parent
                         icon: "arrow-forward"
                         pointSize: Style.fontSizeM
-                        color: Color.mOnPrimary
+                        color: submitButtonArea.containsMouse ? Color.mOnPrimary : Color.mPrimary
+
+                        Behavior on color {
+                          ColorAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                          }
+                        }
                       }
 
                       MouseArea {
@@ -1095,6 +1109,13 @@ Loader {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: lockContext.tryUnlock()
+                      }
+
+                      Behavior on color {
+                        ColorAnimation {
+                          duration: 200
+                          easing.type: Easing.OutCubic
+                        }
                       }
                     }
 
@@ -1128,6 +1149,8 @@ Loader {
                     text: I18n.tr("session-menu.logout")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
+                    textColor: Color.mOnPrimary
+                    hoverColor: Color.mPrimary
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1147,6 +1170,8 @@ Loader {
                     text: I18n.tr("session-menu.suspend")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
+                    textColor: Color.mOnPrimary
+                    hoverColor: Color.mPrimary
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1167,6 +1192,8 @@ Loader {
                     text: I18n.tr("session-menu.hibernate")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
+                    textColor: Color.mOnPrimary
+                    hoverColor: Color.mPrimary
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1188,6 +1215,8 @@ Loader {
                     text: I18n.tr("session-menu.reboot")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
+                    textColor: Color.mOnPrimary
+                    hoverColor: Color.mPrimary
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
