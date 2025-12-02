@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Services.Compositor
 import qs.Services.UI
+import qs.Services.Noctalia
 import qs.Widgets
 
 ColumnLayout {
@@ -425,10 +426,26 @@ ColumnLayout {
     availableWidgets.clear();
     const widgets = BarWidgetRegistry.getAvailableWidgets();
     widgets.forEach(entry => {
+                      const isPlugin = BarWidgetRegistry.isPluginWidget(entry);
+                      let displayName = entry;
+                      
+                      // For plugin widgets, strip the "plugin:" prefix and try to get the actual plugin name
+                      if (isPlugin) {
+                        const pluginId = entry.replace("plugin:", "");
+                        const manifest = PluginRegistry.getPluginManifest(pluginId);
+                        if (manifest && manifest.name) {
+                          displayName = manifest.name;
+                        } else {
+                          // Fallback: just strip the prefix
+                          displayName = pluginId;
+                        }
+                      }
+                      
                       availableWidgets.append({
                                                 "key": entry,
-                                                "name": entry,
-                                                "badgeLocations": getWidgetLocations(entry)
+                                                "name": displayName,
+                                                "badgeLocations": getWidgetLocations(entry),
+                                                "isPlugin": isPlugin
                                               });
                     });
   }

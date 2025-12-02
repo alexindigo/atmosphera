@@ -252,8 +252,24 @@ NBox {
               anchors.centerIn: parent
               spacing: Style.marginXXS
 
+              // Plugin indicator icon
+              NIcon {
+                visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
+                icon: "plugin"
+                pointSize: Style.fontSizeXXS
+                color: root.getWidgetColor(modelData)[1]
+                Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
+                Layout.preferredHeight: Style.baseWidgetSize * 0.5
+              }
+
               NText {
-                text: modelData.id
+                text: {
+                  // Strip "plugin:" prefix for display
+                  if (root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)) {
+                    return modelData.id.replace("plugin:", "");
+                  }
+                  return modelData.id;
+                }
                 pointSize: Style.fontSizeXS
                 color: root.getWidgetColor(modelData)[1]
                 horizontalAlignment: Text.AlignHCenter

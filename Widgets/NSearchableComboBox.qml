@@ -222,6 +222,16 @@ RowLayout {
                   spacing: Style.marginS
                   Layout.alignment: Qt.AlignRight
 
+                  // Plugin badge indicator
+                  NIcon {
+                    visible: typeof isPlugin !== 'undefined' && isPlugin === true
+                    icon: "plugin"
+                    pointSize: Style.fontSizeXS
+                    color: highlighted ? Color.mOnHover : Color.mSecondary
+                    Layout.preferredWidth: Style.baseWidgetSize * 0.7
+                    Layout.preferredHeight: Style.baseWidgetSize * 0.7
+                  }
+
                   Repeater {
                     model: typeof badgeLocations !== 'undefined' ? badgeLocations : []
 
