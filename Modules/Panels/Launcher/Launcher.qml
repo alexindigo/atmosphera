@@ -963,14 +963,14 @@ SmartPanel {
             height: parent.height
             cellWidth: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return parent.width / 5;
+                return parent.width / root.targetGridColumns;
               }
               // Make cells fit exactly like the tab bar
               return parent.width / root.targetGridColumns;
             }
             cellHeight: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return (parent.width / 5) * 1.2;
+                return (parent.width / root.targetGridColumns) * 1.2;
               }
               return parent.width / root.targetGridColumns;
             }
@@ -1077,18 +1077,8 @@ SmartPanel {
                 return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
               }
 
-              width: {
-                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return (resultsGrid.width / 5) - Style.marginS;
-                }
-                return resultsGrid.cellWidth;
-              }
-              height: {
-                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return ((resultsGrid.width / 5) * 1.23) - Style.marginS;
-                }
-                return resultsGrid.cellHeight;
-              }
+              width: resultsGrid.cellWidth
+              height: resultsGrid.cellHeight
               radius: Style.radiusM
               color: gridEntry.isSelected ? Color.mHover : Color.mSurface
 
