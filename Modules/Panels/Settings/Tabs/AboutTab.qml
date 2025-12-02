@@ -46,13 +46,10 @@ ColumnLayout {
         }
         fetchGitCommit();
         return;
-      } else if (HostService.isArch) {
-        pacmanProcess.running = true;
-        gitFallbackTimer.start();
-        return;
       } else {
-        // For all other systems, skip pacman and go directly to git
-        fetchGitCommit();
+        // On non-NixOS systems, check for pacman first.
+        whichPacmanProcess.running = true;
+        return;
       }
     }
   }
@@ -63,6 +60,22 @@ ColumnLayout {
     running: false
     onTriggered: {
       if (!root.commitInfo) {
+        fetchGitCommit();
+      }
+    }
+  }
+
+  Process {
+    id: whichPacmanProcess
+    command: ["which", "pacman"]
+    running: false
+    onExited: function(exitCode) {
+      if (exitCode === 0) {
+        Logger.d("AboutTab", "whichPacmanProcess - pacman found, starting query");
+        pacmanProcess.running = true;
+        gitFallbackTimer.start();
+      } else {
+        Logger.d("AboutTab", "whichPacmanProcess - pacman not found, falling back to git");
         fetchGitCommit();
       }
     }

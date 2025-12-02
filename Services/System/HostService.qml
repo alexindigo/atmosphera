@@ -12,7 +12,6 @@ Singleton {
   property string osPretty: ""
   property string osLogo: ""
   property bool isNixOS: false
-  property bool isArch: false
   property bool isReady: false
 
   // User info
@@ -110,7 +109,6 @@ Singleton {
 
         const osId = (val("ID") || "").toLowerCase();
         root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos");
-        root.isArch = osId === "arch" || osId === "archlinux" || osId === "manjaro" || osId === "artix" || (root.osPretty || "").toLowerCase().includes("arch");
         const logoName = val("LOGO");
         if (logoName) {
           resolveLogo(logoName);
