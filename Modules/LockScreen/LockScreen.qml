@@ -1178,7 +1178,6 @@ Loader {
 
                   Item {
                     Layout.preferredWidth: 10
-                    visible: Settings.data.general.showHibernateOnLockScreen
                   }
 
                   NButton {
