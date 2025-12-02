@@ -275,10 +275,45 @@ Singleton {
 
     PluginRegistry.setPluginEnabled(pluginId, true);
     loadPlugin(pluginId);
+
+    // Add plugin widget to bar if it provides one
+    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
+      var widgetId = "plugin:" + pluginId;
+      addWidgetToBar(widgetId, "right"); // Default to right section
+    }
+
     updatePluginInAvailable(pluginId, {
                               enabled: true
                             });
     root.pluginEnabled(pluginId);
+    return true;
+  }
+
+  // Helper function to add a widget to the bar
+  function addWidgetToBar(widgetId, section) {
+    section = section || "right"; // Default to right section
+
+    // Check if widget already exists in any section
+    var sections = ["left", "center", "right"];
+    for (var s = 0; s < sections.length; s++) {
+      var widgets = Settings.data.bar.widgets[sections[s]] || [];
+      for (var i = 0; i < widgets.length; i++) {
+        if (widgets[i].id === widgetId) {
+          Logger.d("PluginService", "Widget already in bar:", widgetId);
+          return false;
+        }
+      }
+    }
+
+    // Add to specified section
+    var widgets = Settings.data.bar.widgets[section] || [];
+    widgets.push({
+                   id: widgetId
+                 });
+    Settings.data.bar.widgets[section] = widgets;
+
+    Logger.i("PluginService", "Added widget", widgetId, "to bar section:", section);
     return true;
   }
 
@@ -289,6 +324,10 @@ Singleton {
       return true;
     }
 
+    // Remove plugin widget from bar before unloading
+    var widgetId = "plugin:" + pluginId;
+    removeWidgetFromBar(widgetId);
+
     PluginRegistry.setPluginEnabled(pluginId, false);
     unloadPlugin(pluginId);
     updatePluginInAvailable(pluginId, {
@@ -296,6 +335,33 @@ Singleton {
                             });
     root.pluginDisabled(pluginId);
     return true;
+  }
+
+  // Helper function to remove a widget from all bar sections
+  function removeWidgetFromBar(widgetId) {
+    var sections = ["left", "center", "right"];
+    var changed = false;
+
+    for (var s = 0; s < sections.length; s++) {
+      var section = sections[s];
+      var widgets = Settings.data.bar.widgets[section] || [];
+      var newWidgets = [];
+
+      for (var i = 0; i < widgets.length; i++) {
+        if (widgets[i].id !== widgetId) {
+          newWidgets.push(widgets[i]);
+        } else {
+          changed = true;
+          Logger.i("PluginService", "Removed widget", widgetId, "from bar section:", section);
+        }
+      }
+
+      if (changed) {
+        Settings.data.bar.widgets[section] = newWidgets;
+      }
+    }
+
+    return changed;
   }
 
   // Load a plugin
