@@ -639,12 +639,13 @@ SmartPanel {
           id: emojiCategoryTabs
           visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
           Layout.fillWidth: true
-          currentIndex: {
+          property int computedCurrentIndex: {
             if (visible && emojiPlugin.categories) {
               return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
             }
             return 0;
           }
+          currentIndex: computedCurrentIndex
 
           Repeater {
             model: emojiPlugin.categories
@@ -661,17 +662,34 @@ SmartPanel {
           }
         }
 
+        Connections {
+          target: emojiPlugin
+          enabled: emojiCategoryTabs.visible
+          function onSelectedCategoryChanged() {
+            // Force update of currentIndex when selectedCategory changes
+            Qt.callLater(() => {
+                           if (emojiCategoryTabs.visible && emojiPlugin.categories) {
+                             const newIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+                             if (newIndex >= 0 && emojiCategoryTabs.currentIndex !== newIndex) {
+                               emojiCategoryTabs.currentIndex = newIndex;
+                             }
+                           }
+                         });
+          }
+        }
+
         // App category tabs (shown when browsing apps without search)
         NTabBar {
           id: appCategoryTabs
           visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")
           Layout.fillWidth: true
-          currentIndex: {
+          property int computedCurrentIndex: {
             if (visible && appsPlugin.availableCategories) {
               return appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
             }
             return 0;
           }
+          currentIndex: computedCurrentIndex
 
           Repeater {
             model: appsPlugin.availableCategories || []
@@ -686,6 +704,22 @@ SmartPanel {
                 appsPlugin.selectCategory(modelData);
               }
             }
+          }
+        }
+
+        Connections {
+          target: appsPlugin
+          enabled: appCategoryTabs.visible
+          function onSelectedCategoryChanged() {
+            // Force update of currentIndex when selectedCategory changes
+            Qt.callLater(() => {
+                           if (appCategoryTabs.visible && appsPlugin.availableCategories) {
+                             const newIndex = appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
+                             if (newIndex >= 0 && appCategoryTabs.currentIndex !== newIndex) {
+                               appCategoryTabs.currentIndex = newIndex;
+                             }
+                           }
+                         });
           }
         }
 
