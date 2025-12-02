@@ -436,6 +436,10 @@ Singleton {
     // Bind functions
     api.saveSettings = function () {
       savePluginSettings(pluginId, api.pluginSettings);
+
+      // Replace the entire pluginSettings object to trigger QML property bindings
+      // Make a shallow copy so bindings detect the change
+      api.pluginSettings = Object.assign({}, api.pluginSettings);
     };
 
     api.openPanel = function (screen) {
