@@ -31,6 +31,23 @@ NBox {
 
   color: Color.mSurface
   Layout.fillWidth: true
+  readonly property real widgetItemHeight: Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
+
+  function calculateWidgetWidth(gridWidth) {
+    // Calculate width to fit 3 widgets with spacing
+    // gridWidth is already the Grid's width (after margins)
+    // Column spacing: 2 gaps between 3 columns
+    var columnSpacing = 2 * Style.marginM;
+    var widgetWidth = (gridWidth - columnSpacing) / 3;
+    // Ensure minimum width and don't exceed available space
+    return Math.max(150 * Style.uiScaleRatio, Math.min(widgetWidth, gridWidth / 3));
+  }
+
+  function calculateGridColumns(availableWidth) {
+    // Always show 3 widgets per row
+    return 3;
+  }
+
   Layout.minimumHeight: {
     // header + minimal content area
     var absoluteMin = (Style.marginL * 2) + (Style.fontSizeL * 2) + Style.marginM + (65 * Style.uiScaleRatio);
@@ -40,16 +57,24 @@ NBox {
       return absoluteMin;
     }
 
-    // Calculate rows based on estimated widget layout
-    var availableWidth = parent.width - (Style.marginL * 2);
-    var avgWidgetWidth = 120 * Style.uiScaleRatio; // More accurate estimate
-    var widgetsPerRow = Math.max(1, Math.floor(availableWidth / avgWidgetWidth));
-    var rows = Math.ceil(widgetCount / widgetsPerRow);
+    // Calculate rows based on grid layout
+    // Use actual parent width if available, otherwise estimate
+    var availableWidth = (parent && parent.width > 0) ? (parent.width - (Style.marginL * 2)) : 400;
+    var columns = calculateGridColumns(availableWidth);
+    if (columns === 0)
+      columns = 1;
+    var rows = Math.ceil(widgetCount / columns);
+
+    // Calculate widget width for height calculation
+    var containerWidth = availableWidth;
+    var widgetWidth = calculateWidgetWidth(containerWidth);
 
     // Header height + spacing + (rows * widget height) + (spacing between rows) + margins
     var headerHeight = Style.fontSizeL * 2;
-    var widgetHeight = Style.baseWidgetSize * 1.15 * Style.uiScaleRatio;
-    var widgetAreaHeight = ((rows + 1) * widgetHeight) + ((rows - 1) * Style.marginS);
+    // Account for grid margins and add buffer to prevent overlap
+    var gridTopMargin = Style.marginXXS;
+    var gridBottomMargin = Style.marginXXS;
+    var widgetAreaHeight = gridTopMargin + (rows * widgetItemHeight) + ((rows - 1) * Style.marginS) + gridBottomMargin + Style.marginXS;
 
     return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight);
   }
@@ -152,18 +177,38 @@ NBox {
 
     // Drag and Drop Widget Area
     Item {
+      id: gridContainer
       Layout.fillWidth: true
-      Layout.fillHeight: true
+      Layout.preferredHeight: {
+        if (widgetModel.length === 0) {
+          return 65 * Style.uiScaleRatio;
+        }
+        // Use actual width, fallback to a reasonable default if not yet available
+        var containerWidth = width > 0 ? width : (parent ? parent.width : 400);
+        var columns = root.calculateGridColumns(containerWidth);
+        if (columns === 0)
+          columns = 1;
+        var rows = Math.ceil(widgetModel.length / columns);
+        // Calculate height: (rows * item height) + (row spacing between items) + grid margins
+        // Add extra buffer to prevent overlap
+        var gridTopMargin = Style.marginXXS;
+        var gridBottomMargin = Style.marginXXS;
+        var calculatedHeight = gridTopMargin + (rows * root.widgetItemHeight) + ((rows - 1) * Style.marginS) + gridBottomMargin + Style.marginXS;
+        return Math.max(65 * Style.uiScaleRatio, calculatedHeight);
+      }
       Layout.minimumHeight: 65 * Style.uiScaleRatio
-      clip: false // Don't clip children so ghost can move freely
+      clip: true // Clip to prevent overflow
 
-      Flow {
-        id: widgetFlow
+      Grid {
+        id: widgetGrid
         anchors.fill: parent
-        spacing: Style.marginS
-        flow: Flow.LeftToRight
+        anchors.margins: Style.marginXXS // Small margin to prevent edge overlap
+        columns: 3
+        rowSpacing: Style.marginS
+        columnSpacing: Style.marginM
 
         Repeater {
+          id: widgetRepeater
           model: widgetModel
 
           delegate: Rectangle {
@@ -171,8 +216,8 @@ NBox {
             required property int index
             required property var modelData
 
-            width: widgetContent.implicitWidth + Style.marginL
-            height: Style.baseWidgetSize * 1.15 * Style.uiScaleRatio
+            width: root.calculateWidgetWidth(parent.width)
+            height: root.widgetItemHeight
             radius: Style.radiusL
             color: root.getWidgetColor(modelData)[0]
             border.color: Color.mOutline
@@ -249,7 +294,8 @@ NBox {
             }
             RowLayout {
               id: widgetContent
-              anchors.centerIn: parent
+              anchors.fill: parent
+              anchors.margins: Style.marginXS
               spacing: Style.marginXXS
 
               // Plugin indicator icon
@@ -272,14 +318,19 @@ NBox {
                 }
                 pointSize: Style.fontSizeXS
                 color: root.getWidgetColor(modelData)[1]
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
-                Layout.preferredWidth: 60 * Style.uiScaleRatio
+                leftPadding: Style.marginS
+                rightPadding: Style.marginS
+                Layout.fillWidth: true
+                Layout.fillHeight: true
               }
 
               RowLayout {
                 spacing: 0
                 Layout.preferredWidth: buttonsCount * buttonsWidth * Style.uiScaleRatio
+                Layout.preferredHeight: parent.height
 
                 Loader {
                   active: root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(modelData.id)
@@ -443,7 +494,7 @@ NBox {
           for (var i = 0; i < widgetModel.length; i++) {
             if (i === draggedIndex)
               continue;
-            const widget = widgetFlow.children[i];
+            const widget = widgetRepeater.itemAt(i);
             if (!widget || widget.widgetIndex === undefined)
               continue;
 
@@ -468,9 +519,9 @@ NBox {
 
           // Check if we should insert at position 0 (very beginning)
           if (widgetModel.length > 0 && draggedIndex !== 0) {
-            const firstWidget = widgetFlow.children[0];
+            const firstWidget = widgetRepeater.itemAt(0);
             if (firstWidget) {
-              const dist = Math.sqrt(Math.pow(mouseX, 2) + Math.pow(mouseY - firstWidget.y, 2));
+              const dist = Math.sqrt(Math.pow(mouseX - firstWidget.x, 2) + Math.pow(mouseY - firstWidget.y, 2));
               if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
                 minDistance = dist;
                 bestIndex = 0;
@@ -522,7 +573,7 @@ NBox {
 
                      // Find which widget was clicked
                      for (var i = 0; i < widgetModel.length; i++) {
-                       const widget = widgetFlow.children[i];
+                       const widget = widgetRepeater.itemAt(i);
                        if (widget && widget.widgetIndex !== undefined) {
                          if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
                            const localX = mouse.x - widget.x;
