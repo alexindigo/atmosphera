@@ -360,7 +360,7 @@ Singleton {
     }
 
     // Load bar widget component if provided (don't instantiate - BarWidgetRegistry will do that)
-    if (manifest.provides.barWidget && manifest.entryPoints.barWidget) {
+    if (manifest.entryPoints && manifest.entryPoints.barWidget) {
       var widgetPath = pluginDir + "/" + manifest.entryPoints.barWidget;
       var widgetComponent = Qt.createComponent("file://" + widgetPath);
 
@@ -390,7 +390,7 @@ Singleton {
     Logger.i("PluginService", "Unloading plugin:", pluginId);
 
     // Unregister from BarWidgetRegistry
-    if (plugin.manifest.provides.barWidget) {
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.barWidget) {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
@@ -417,6 +417,7 @@ Singleton {
         readonly property string pluginId: "${pluginId}"
         readonly property string pluginDir: "${pluginDir}"
         property var pluginSettings: ({})
+        property var manifest: ({})
 
         // IPC handlers storage
         property var ipcHandlers: ({})
@@ -427,6 +428,9 @@ Singleton {
         property var closePanel: null
       }
     `, root, "PluginAPI_" + pluginId);
+
+    // Set manifest
+    api.manifest = manifest;
 
     // Load plugin settings
     loadPluginSettings(pluginId, function (settings) {
@@ -586,7 +590,7 @@ Singleton {
     }
 
     var plugin = root.loadedPlugins[pluginId];
-    if (!plugin || !plugin.manifest || !plugin.manifest.provides.panel) {
+    if (!plugin || !plugin.manifest || !plugin.manifest.entryPoints || !plugin.manifest.entryPoints.panel) {
       Logger.w("PluginService", "Plugin does not provide a panel:", pluginId);
       return false;
     }

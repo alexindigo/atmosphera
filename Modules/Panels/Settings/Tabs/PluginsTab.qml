@@ -58,18 +58,6 @@ ColumnLayout {
             description: modelData.description
           }
 
-          NToggle {
-            checked: PluginRegistry.isPluginEnabled(modelData.id)
-            baseSize: Style.baseWidgetSize * 0.7
-            onToggled: function (checked) {
-              if (checked) {
-                PluginService.enablePlugin(modelData.id);
-              } else {
-                PluginService.disablePlugin(modelData.id);
-              }
-            }
-          }
-
           NIconButton {
             icon: "settings"
             tooltipText: I18n.tr("settings.plugins.settings.tooltip")
@@ -87,6 +75,18 @@ ColumnLayout {
             onClicked: {
               uninstallDialog.pluginToUninstall = modelData;
               uninstallDialog.open();
+            }
+          }
+
+          NToggle {
+            checked: PluginRegistry.isPluginEnabled(modelData.id)
+            baseSize: Style.baseWidgetSize * 0.7
+            onToggled: function (checked) {
+              if (checked) {
+                PluginService.enablePlugin(modelData.id);
+              } else {
+                PluginService.disablePlugin(modelData.id);
+              }
             }
           }
         }

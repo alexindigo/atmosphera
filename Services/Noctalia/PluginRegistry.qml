@@ -340,13 +340,6 @@ Singleton {
       }
     }
 
-    if (!manifest.provides) {
-      return {
-        valid: false,
-        error: "Missing 'provides' field"
-      };
-    }
-
     if (!manifest.entryPoints) {
       return {
         valid: false,

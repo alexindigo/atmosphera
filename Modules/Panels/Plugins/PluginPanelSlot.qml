@@ -88,7 +88,7 @@ SmartPanel {
       return false;
     }
 
-    if (!plugin.manifest.provides.panel) {
+    if (!plugin.manifest.entryPoints || !plugin.manifest.entryPoints.panel) {
       Logger.w("PluginPanelSlot", "Plugin does not provide a panel:", pluginId);
       return false;
     }
