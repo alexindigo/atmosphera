@@ -23,19 +23,19 @@ Singleton {
   readonly property int fontWeightSemiBold: 600
   readonly property int fontWeightBold: 700
 
-  // Radii (for panels: launcher, settings, control center, etc.)
-  readonly property int radiusXXS: Math.round(4 * Settings.data.general.boxRadiusRatio)
-  readonly property int radiusXS: Math.round(8 * Settings.data.general.boxRadiusRatio)
-  readonly property int radiusS: Math.round(12 * Settings.data.general.boxRadiusRatio)
-  readonly property int radiusM: Math.round(16 * Settings.data.general.boxRadiusRatio)
-  readonly property int radiusL: Math.round(20 * Settings.data.general.boxRadiusRatio)
+  // Container Radii: major layout sections (sidebars, cards, content panels)
+  readonly property int radiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
+  readonly property int radiusXS: Math.round(8 * Settings.data.general.radiusRatio)
+  readonly property int radiusS: Math.round(12 * Settings.data.general.radiusRatio)
+  readonly property int radiusM: Math.round(16 * Settings.data.general.radiusRatio)
+  readonly property int radiusL: Math.round(20 * Settings.data.general.radiusRatio)
 
-  // Control radii (for UI components: buttons, widgets, etc.)
-  readonly property int cRadiusXXS: Math.round(4 * Settings.data.general.radiusRatio)
-  readonly property int cRadiusXS: Math.round(8 * Settings.data.general.radiusRatio)
-  readonly property int cRadiusS: Math.round(12 * Settings.data.general.radiusRatio)
-  readonly property int cRadiusM: Math.round(16 * Settings.data.general.radiusRatio)
-  readonly property int cRadiusL: Math.round(20 * Settings.data.general.radiusRatio)
+  // Input radii: interactive elements (buttons, toggles, text fields)
+  readonly property int iRadiusXXS: Math.round(4 * Settings.data.general.iRadiusRatio)
+  readonly property int iRadiusXS: Math.round(8 * Settings.data.general.iRadiusRatio)
+  readonly property int iRadiusS: Math.round(12 * Settings.data.general.iRadiusRatio)
+  readonly property int iRadiusM: Math.round(16 * Settings.data.general.iRadiusRatio)
+  readonly property int iRadiusL: Math.round(20 * Settings.data.general.iRadiusRatio)
 
   readonly property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
 

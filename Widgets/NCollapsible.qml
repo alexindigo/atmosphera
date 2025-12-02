@@ -25,7 +25,7 @@ ColumnLayout {
 
     // Material 3 style background
     color: root.expanded ? Color.mSecondary : Color.mSurfaceVariant
-    radius: Style.cRadiusL
+    radius: Style.iRadiusL
 
     // Subtle border
     border.color: root.expanded ? Color.mOnSecondary : Color.mOutline
@@ -149,7 +149,7 @@ ColumnLayout {
 
     visible: root.expanded
     color: Color.mSurface
-    radius: Style.cRadiusL
+    radius: Style.iRadiusL
     border.color: Color.mOutline
     border.width: Style.borderS
 

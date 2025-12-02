@@ -209,7 +209,7 @@ ColumnLayout {
       }
     }
 
-    // Box Border Radius
+    // Container Border Radius
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
@@ -228,9 +228,9 @@ ColumnLayout {
           from: 0
           to: 2
           stepSize: 0.01
-          value: Settings.data.general.boxRadiusRatio
-          onMoved: value => Settings.data.general.boxRadiusRatio = value
-          text: Math.floor(Settings.data.general.boxRadiusRatio * 100) + "%"
+          value: Settings.data.general.radiusRatio
+          onMoved: value => Settings.data.general.radiusRatio = value
+          text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
         }
 
         // Reset button container
@@ -242,7 +242,7 @@ ColumnLayout {
             icon: "refresh"
             baseSize: Style.baseWidgetSize * 0.8
             tooltipText: I18n.tr("settings.user-interface.box-border-radius.reset")
-            onClicked: Settings.data.general.boxRadiusRatio = 1.0
+            onClicked: Settings.data.general.radiusRatio = 1.0
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -269,9 +269,9 @@ ColumnLayout {
           from: 0
           to: 2
           stepSize: 0.01
-          value: Settings.data.general.radiusRatio
-          onMoved: value => Settings.data.general.radiusRatio = value
-          text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
+          value: Settings.data.general.iRadiusRatio
+          onMoved: value => Settings.data.general.iRadiusRatio = value
+          text: Math.floor(Settings.data.general.iRadiusRatio * 100) + "%"
         }
 
         // Reset button container
@@ -283,7 +283,7 @@ ColumnLayout {
             icon: "refresh"
             baseSize: Style.baseWidgetSize * 0.8
             tooltipText: I18n.tr("settings.user-interface.control-border-radius.reset")
-            onClicked: Settings.data.general.radiusRatio = 1.0
+            onClicked: Settings.data.general.iRadiusRatio = 1.0
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
           }
