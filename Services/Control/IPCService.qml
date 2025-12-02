@@ -454,6 +454,7 @@ Item {
       implicitHeight: 0
       color: Color.transparent
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
+      WlrLayershell.namespace: "noctalia-ipc-screen-detector"
       mask: Region {}
 
       onScreenChanged: {
