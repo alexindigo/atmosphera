@@ -965,29 +965,17 @@ SmartPanel {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
                 return parent.width / 5;
               }
-              // Use gridCellSize which already accounts for NTabBar margins
-              return root.gridCellSize + Style.marginXL;
+              // Make cells fit exactly like the tab bar
+              return parent.width / root.targetGridColumns;
             }
             cellHeight: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
                 return (parent.width / 5) * 1.2;
               }
-              return gridCellSize + Style.marginXL;
+              return parent.width / root.targetGridColumns;
             }
-            leftMargin: {
-              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return 0;
-              }
-              // Match NTabBar margins (Style.marginXS on each side) to align with category tabs
-              return Style.marginXS;
-            }
-            rightMargin: {
-              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return 0;
-              }
-              // Match NTabBar margins (Style.marginXS on each side) to align with category tabs
-              return Style.marginXS;
-            }
+            leftMargin: 0
+            rightMargin: 0
             topMargin: 0
             bottomMargin: 0
             model: results
