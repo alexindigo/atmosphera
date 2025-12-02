@@ -29,6 +29,9 @@ Singleton {
   property bool initialized: false
   property bool pluginsFullyLoaded: false
 
+  // Plugin container from shell.qml (for placing Main instances in graphics scene)
+  property var pluginContainer: null
+
   // Listen for PluginRegistry to finish loading
   Connections {
     target: PluginRegistry
@@ -315,34 +318,65 @@ Singleton {
     // Create plugin API object
     var pluginApi = createPluginAPI(pluginId, manifest);
 
-    // Load main component if provides bar widget
-    if (manifest.provides.barWidget && manifest.entryPoints.barWidget) {
-      var path = pluginDir + "/" + manifest.entryPoints.barWidget;
-      var component = Qt.createComponent("file://" + path);
+    // Initialize plugin entry with API and manifest
+    root.loadedPlugins[pluginId] = {
+      barWidgetComponent: null,
+      mainInstance: null,
+      api: pluginApi,
+      manifest: manifest
+    };
 
-      if (component.status === Component.Ready) {
-        // Don't instantiate yet - BarWidgetRegistry will do that
-        // Just register the component
-        root.loadedPlugins[pluginId] = {
-          component: component,
-          instance: null,
-          api: pluginApi,
-          manifest: manifest
-        };
+    // Load Main.qml entry point if it exists
+    if (manifest.entryPoints && manifest.entryPoints.main) {
+      var mainPath = pluginDir + "/" + manifest.entryPoints.main;
+      var mainComponent = Qt.createComponent("file://" + mainPath);
 
-        // Register with BarWidgetRegistry
-        if (manifest.provides.barWidget) {
-          BarWidgetRegistry.registerPluginWidget(pluginId, component, manifest.metadata);
+      if (mainComponent.status === Component.Ready) {
+        // Get the plugin container from shell.qml (must be in graphics scene)
+        if (!root.pluginContainer) {
+          Logger.e("PluginService", "Plugin container not set. Shell must set PluginService.pluginContainer.");
+          return;
         }
 
-        Logger.i("PluginService", "Loaded plugin:", pluginId);
-        root.pluginLoaded(pluginId);
-      } else if (component.status === Component.Error) {
-        Logger.e("PluginService", "Failed to load plugin component:", component.errorString());
+        // Instantiate Main.qml with container as parent (places it in graphics scene)
+        var mainInstance = mainComponent.createObject(root.pluginContainer);
+
+        if (mainInstance) {
+          // Set pluginApi property after creation
+          if (mainInstance.hasOwnProperty('pluginApi')) {
+            mainInstance.pluginApi = pluginApi;
+          } else {
+            Logger.w("PluginService", "Main.qml for", pluginId, "should declare 'property var pluginApi: null'");
+          }
+
+          root.loadedPlugins[pluginId].mainInstance = mainInstance;
+          Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
+        } else {
+          Logger.e("PluginService", "Failed to instantiate Main.qml for:", pluginId);
+        }
+      } else if (mainComponent.status === Component.Error) {
+        Logger.e("PluginService", "Failed to load Main.qml:", mainComponent.errorString());
       }
-    } else {
-      Logger.d("PluginService", "Plugin", pluginId, "does not provide a bar widget");
     }
+
+    // Load bar widget component if provided (don't instantiate - BarWidgetRegistry will do that)
+    if (manifest.provides.barWidget && manifest.entryPoints.barWidget) {
+      var widgetPath = pluginDir + "/" + manifest.entryPoints.barWidget;
+      var widgetComponent = Qt.createComponent("file://" + widgetPath);
+
+      if (widgetComponent.status === Component.Ready) {
+        root.loadedPlugins[pluginId].barWidgetComponent = widgetComponent;
+
+        // Register with BarWidgetRegistry
+        BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
+        Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
+      } else if (widgetComponent.status === Component.Error) {
+        Logger.e("PluginService", "Failed to load bar widget component:", widgetComponent.errorString());
+      }
+    }
+
+    Logger.i("PluginService", "Plugin loaded:", pluginId);
+    root.pluginLoaded(pluginId);
   }
 
   // Unload a plugin
@@ -360,9 +394,9 @@ Singleton {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
-    // Destroy instance if any
-    if (plugin.instance) {
-      plugin.instance.destroy();
+    // Destroy Main instance if any
+    if (plugin.mainInstance) {
+      plugin.mainInstance.destroy();
     }
 
     delete root.loadedPlugins[pluginId];
@@ -391,8 +425,6 @@ Singleton {
         property var saveSettings: null
         property var openPanel: null
         property var closePanel: null
-        property var showToast: null
-        property var registerIPC: null
       }
     `, root, "PluginAPI_" + pluginId);
 
@@ -426,21 +458,6 @@ Singleton {
         }
       }
       return false;
-    };
-
-    api.showToast = function (message) {
-      ToastService.show(message);
-    };
-
-    api.registerIPC = function (name, handler) {
-      if (!name || typeof handler !== 'function') {
-        Logger.e("PluginAPI", "Invalid IPC registration: name and handler function required");
-        return false;
-      }
-
-      api.ipcHandlers[name] = handler;
-      Logger.i("PluginAPI", "Registered IPC handler for plugin", pluginId, ":", name);
-      return true;
     };
 
     return api;
@@ -484,29 +501,23 @@ Singleton {
     var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
     var settingsJson = JSON.stringify(settings, null, 2);
 
-    // Write JSON directly using printf to avoid QML template escaping issues
-    // Escape backslashes and single quotes for shell safety
-    var escapedJson = settingsJson.replace(/\\/g, '\\\\').replace(/'/g, "'\\''");
+    // Use heredoc delimiter pattern to avoid all escaping issues
+    var delimiter = "PLUGIN_SETTINGS_EOF_" + Math.random().toString(36).substr(2, 9);
+    var fileEsc = settingsFile.replace(/'/g, "'\\''");
 
-    var writeProcess = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", "printf '%s' '${escapedJson}' > '${settingsFile}'"]
-      }
-    `, root, "WriteSettings_" + pluginId);
+    // Get parent directory and ensure it exists
+    var settingsDir = settingsFile.substring(0, settingsFile.lastIndexOf('/'));
+    var dirEsc = settingsDir.replace(/'/g, "'\\''");
 
-    writeProcess.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        Logger.d("PluginService", "Saved settings for:", pluginId);
-      } else {
-        Logger.e("PluginService", "Failed to save settings for:", pluginId);
-      }
+    // Build the shell command with heredoc (create dir first)
+    var writeCmd = "mkdir -p '" + dirEsc + "' && cat > '" + fileEsc + "' << '" + delimiter + "'\n" + settingsJson + "\n" + delimiter + "\n";
 
-      writeProcess.destroy();
-    });
+    Logger.d("PluginService", "Saving settings to:", settingsFile);
+    Logger.d("PluginService", "Settings JSON:", settingsJson);
 
-    writeProcess.running = true;
+    // Use Quickshell.execDetached to execute the command (use array syntax)
+    var pid = Quickshell.execDetached(["sh", "-c", writeCmd]);
+    Logger.d("PluginService", "Write process started, PID:", pid);
   }
 
   // Load manifest from file
