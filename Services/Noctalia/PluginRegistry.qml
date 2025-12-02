@@ -264,6 +264,32 @@ Singleton {
     });
   }
 
+  // Register a plugin (add to installed plugins after download)
+  function registerPlugin(manifest) {
+    var pluginId = manifest.id;
+    root.installedPlugins[pluginId] = manifest;
+
+    // Ensure state exists (default to disabled)
+    if (!root.pluginStates[pluginId]) {
+      root.pluginStates[pluginId] = {
+        enabled: false
+      };
+    }
+
+    save();
+    root.pluginsChanged();
+    Logger.i("PluginRegistry", "Registered plugin:", pluginId);
+  }
+
+  // Unregister a plugin (remove from registry)
+  function unregisterPlugin(pluginId) {
+    delete root.pluginStates[pluginId];
+    delete root.installedPlugins[pluginId];
+    save();
+    root.pluginsChanged();
+    Logger.i("PluginRegistry", "Unregistered plugin:", pluginId);
+  }
+
   // Remove plugin state (call after deleting plugin folder)
   function removePluginState(pluginId) {
     delete root.pluginStates[pluginId];

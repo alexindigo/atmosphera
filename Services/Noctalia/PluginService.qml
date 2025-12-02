@@ -94,7 +94,7 @@ Singleton {
 
   // Fetch plugin registry from a source
   function fetchPluginRegistry(source) {
-    var rawUrl = source.url + "/raw/main/registry.json";
+    var rawUrl = source.url + "/refs/heads/main/registry.json";
     var registryUrl = rawUrl.replace("github.com", "raw.githubusercontent.com");
 
     Logger.d("PluginService", "Fetching registry from:", registryUrl);
@@ -110,37 +110,53 @@ Singleton {
 
     activeFetches[source.url] = fetchProcess;
 
-    fetchProcess.exited.connect(function (exitCode) {
-      if (exitCode === 0) {
-        try {
-          var response = fetchProcess.stdout.text;
-          var registry = JSON.parse(response);
+    fetchProcess.stdout.onStreamFinished.connect(function () {
+      var response = fetchProcess.stdout.text;
 
-          if (registry && registry.plugins && Array.isArray(registry.plugins)) {
-            // Add source info to each plugin
-            for (var i = 0; i < registry.plugins.length; i++) {
-              var plugin = registry.plugins[i];
-              plugin.source = source;
+      // Debug: log the raw response
+      Logger.d("PluginService", "Registry response length:", response ? response.length : 0);
 
-              // Check if already downloaded
-              plugin.downloaded = PluginRegistry.isPluginDownloaded(plugin.id);
-              plugin.enabled = PluginRegistry.isPluginEnabled(plugin.id);
+      if (!response || response.trim() === "") {
+        Logger.e("PluginService", "Empty response from", source.name);
+        delete activeFetches[source.url];
+        fetchProcess.destroy();
+        return;
+      }
 
-              root.availablePlugins.push(plugin);
-            }
+      try {
+        var registry = JSON.parse(response);
 
-            Logger.i("PluginService", "Loaded", registry.plugins.length, "plugins from", source.name);
-            root.availablePluginsUpdated();
+        if (registry && registry.plugins && Array.isArray(registry.plugins)) {
+          // Add source info to each plugin
+          for (var i = 0; i < registry.plugins.length; i++) {
+            var plugin = registry.plugins[i];
+            plugin.source = source;
+
+            // Check if already downloaded
+            plugin.downloaded = PluginRegistry.isPluginDownloaded(plugin.id);
+            plugin.enabled = PluginRegistry.isPluginEnabled(plugin.id);
+
+            root.availablePlugins.push(plugin);
           }
-        } catch (e) {
-          Logger.e("PluginService", "Failed to parse registry from", source.name, ":", e);
+
+          Logger.i("PluginService", "Loaded", registry.plugins.length, "plugins from", source.name);
+          root.availablePluginsUpdated();
         }
-      } else {
-        Logger.e("PluginService", "Failed to fetch registry from", source.name);
+      } catch (e) {
+        Logger.e("PluginService", "Failed to parse registry from", source.name, ":", e);
+        Logger.e("PluginService", "Response was:", response ? response.substring(0, 200) : "null");
       }
 
       delete activeFetches[source.url];
       fetchProcess.destroy();
+    });
+
+    fetchProcess.exited.connect(function (exitCode) {
+      if (exitCode !== 0) {
+        Logger.e("PluginService", "Failed to fetch registry from", source.name, "- exit code:", exitCode);
+        delete activeFetches[source.url];
+        fetchProcess.destroy();
+      }
     });
 
     fetchProcess.running = true;
@@ -161,8 +177,8 @@ Singleton {
     var downloadCmd = `
       mkdir -p '${pluginDir}' &&
       cd '${pluginDir}' &&
-      (curl -L -s '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 '*/main/${pluginPath}' ||
-       wget -q -O- '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 '*/main/${pluginPath}')
+      (curl -L -s '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=1 --wildcards '*/${pluginPath}' ||
+       wget -q -O- '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=1 --wildcards '*/${pluginPath}')
     `;
 
     var downloadProcess = Qt.createQmlObject(`
