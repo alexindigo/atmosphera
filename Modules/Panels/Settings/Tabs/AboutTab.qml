@@ -27,7 +27,7 @@ ColumnLayout {
     Logger.d("AboutTab", "Component.onCompleted - Is git version:", root.isGitVersion);
     // Only fetch commit info for -git versions
     if (root.isGitVersion) {
-      // On NixOS, extract commit hash from the store path
+      // On NixOS, extract commit hash from the store path first
       if (HostService.isNixOS) {
         var shellDir = Quickshell.shellDir || "";
         Logger.d("AboutTab", "Component.onCompleted - NixOS detected, shellDir:", shellDir);
@@ -44,11 +44,16 @@ ColumnLayout {
             Logger.d("AboutTab", "Component.onCompleted - Could not extract commit from NixOS path, trying fallback");
           }
         }
+        fetchGitCommit();
+        return;
+      } else if (HostService.isArch) {
+        pacmanProcess.running = true;
+        gitFallbackTimer.start();
+        return;
+      } else {
+        // For all other systems, skip pacman and go directly to git
+        fetchGitCommit();
       }
-      // Try to get Arch package version first (which includes commit hash)
-      pacmanProcess.running = true;
-      // Start fallback timer in case pacman fails to start
-      gitFallbackTimer.start();
     }
   }
 
