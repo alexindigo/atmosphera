@@ -42,59 +42,53 @@ ColumnLayout {
         return plugins;
       }
 
-      delegate: RowLayout {
-        spacing: Style.marginM
+      delegate: NBox {
         Layout.fillWidth: true
+        implicitHeight: rowLayout.implicitHeight + Style.marginL * 2
+        color: Color.mSurface
 
-        NIcon {
-          icon: "plugin"
-          pointSize: Style.fontSizeL
-        }
+        RowLayout {
+          id: rowLayout
+          anchors.fill: parent
+          anchors.margins: Style.marginL
+          spacing: Style.marginM
 
-        ColumnLayout {
-          spacing: 2
-          Layout.fillWidth: true
-
-          NText {
-            text: modelData.name
-            font.weight: Font.Medium
-            color: Color.mOnSurface
+          NLabel {
+            label: modelData.name
+            description: modelData.description
           }
 
-          NText {
-            text: modelData.description
-            font.pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-          }
-        }
-
-        NToggle {
-          checked: PluginRegistry.isPluginEnabled(modelData.id)
-          onToggled: function (checked) {
-            if (checked) {
-              PluginService.enablePlugin(modelData.id);
-            } else {
-              PluginService.disablePlugin(modelData.id);
+          NToggle {
+            checked: PluginRegistry.isPluginEnabled(modelData.id)
+            baseSize: Style.baseWidgetSize * 0.7
+            onToggled: function (checked) {
+              if (checked) {
+                PluginService.enablePlugin(modelData.id);
+              } else {
+                PluginService.disablePlugin(modelData.id);
+              }
             }
           }
-        }
 
-        NIconButton {
-          icon: "settings"
-          tooltipText: I18n.tr("settings.plugins.settings.tooltip")
-          visible: modelData.entryPoints?.settings !== undefined
-          onClicked: {
-            // TODO: Open plugin settings dialog
-            Logger.i("PluginsTab", "Open settings for:", modelData.id);
+          NIconButton {
+            icon: "settings"
+            tooltipText: I18n.tr("settings.plugins.settings.tooltip")
+            baseSize: Style.baseWidgetSize * 0.7
+            visible: modelData.entryPoints?.settings !== undefined
+            onClicked: {
+              // TODO: Open plugin settings dialog
+              Logger.i("PluginsTab", "Open settings for:", modelData.id);
+            }
           }
-        }
 
-        NIconButton {
-          icon: "trash"
-          tooltipText: I18n.tr("settings.plugins.uninstall.tooltip")
-          onClicked: {
-            uninstallDialog.pluginToUninstall = modelData;
-            uninstallDialog.open();
+          NIconButton {
+            icon: "trash"
+            tooltipText: I18n.tr("settings.plugins.uninstall.tooltip")
+            baseSize: Style.baseWidgetSize * 0.7
+            onClicked: {
+              uninstallDialog.pluginToUninstall = modelData;
+              uninstallDialog.open();
+            }
           }
         }
       }
@@ -157,7 +151,7 @@ ColumnLayout {
       tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
       onClicked: {
         PluginService.refreshAvailablePlugins();
-        ToastService.show(I18n.tr("settings.plugins.refresh.refreshing"));
+        ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
       }
     }
   }
@@ -439,13 +433,13 @@ ColumnLayout {
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
             if (PluginRegistry.addPluginSource(sourceNameInput.text, sourceUrlInput.text)) {
-              ToastService.show(I18n.tr("settings.plugins.sources.add-dialog.success"));
+              ToastService.showNotice(I18n.tr("settings.plugins.sources.add-dialog.success"));
               PluginService.refreshAvailablePlugins();
               addSourceDialog.close();
               sourceNameInput.text = "";
               sourceUrlInput.text = "";
             } else {
-              ToastService.show(I18n.tr("settings.plugins.sources.add-dialog.error"));
+              ToastService.showNotice(I18n.tr("settings.plugins.sources.add-dialog.error"));
             }
           }
         }
@@ -459,12 +453,19 @@ ColumnLayout {
     modal: true
     dim: false
     anchors.centerIn: parent
-    width: 400
+    width: 400 * Style.uiScaleRatio
     padding: Style.marginL
 
     property var pluginToUninstall: null
 
-    ColumnLayout {
+    background: Rectangle {
+      color: Color.mSurface
+      radius: Style.radiusS
+      border.color: Color.mPrimary
+      border.width: Style.borderM
+    }
+
+    contentItem: ColumnLayout {
       width: parent.width
       spacing: Style.marginL
 
@@ -510,9 +511,9 @@ ColumnLayout {
 
     PluginService.installPlugin(pluginMetadata, function (success, error) {
       if (success) {
-        ToastService.show(I18n.tr("settings.plugins.install-success").replace("%1", pluginMetadata.name));
+        ToastService.showNotice(I18n.tr("settings.plugins.install-success").replace("%1", pluginMetadata.name));
       } else {
-        ToastService.show(I18n.tr("settings.plugins.install-error").replace("%1", error || "Unknown error"));
+        ToastService.showNotice(I18n.tr("settings.plugins.install-error").replace("%1", error || "Unknown error"));
       }
     });
   }
@@ -521,13 +522,13 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
-    ToastService.show(I18n.tr("settings.plugins.uninstalling").replace("%1", pluginName));
+    ToastService.showNotice(I18n.tr("settings.plugins.uninstalling").replace("%1", pluginName));
 
     PluginService.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
-        ToastService.show(I18n.tr("settings.plugins.uninstall-success").replace("%1", pluginName));
+        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-success").replace("%1", pluginName));
       } else {
-        ToastService.show(I18n.tr("settings.plugins.uninstall-error").replace("%1", error || "Unknown error"));
+        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-error").replace("%1", error || "Unknown error"));
       }
     });
   }
