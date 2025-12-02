@@ -95,8 +95,8 @@ ColumnLayout {
 
     NLabel {
       visible: PluginRegistry.getAllInstalledPluginIds().length === 0
-      label: I18n.tr("settings.plugins.installed.no-plugins")
-      description: I18n.tr("settings.plugins.installed.no-plugins.description")
+      label: I18n.tr("settings.plugins.installed.no-plugins-label")
+      description: I18n.tr("settings.plugins.installed.no-plugins-description")
       Layout.fillWidth: true
     }
   }
@@ -295,8 +295,8 @@ ColumnLayout {
 
   NLabel {
     visible: pluginListView.count === 0
-    label: I18n.tr("settings.plugins.available.no-plugins")
-    description: I18n.tr("settings.plugins.available.no-plugins.description")
+    label: I18n.tr("settings.plugins.available.no-plugins-label")
+    description: I18n.tr("settings.plugins.available.no-plugins-description")
     Layout.fillWidth: true
   }
 
@@ -534,7 +534,7 @@ ColumnLayout {
           Layout.fillWidth: true
 
           NText {
-            text: I18n.tr("system.plugin-settings-title", {
+            text: I18n.tr("settings.plugins.plugin-settings-title", {
                             "plugin": pluginSettingsDialog.currentPlugin?.name || ""
                           })
             pointSize: Style.fontSizeL

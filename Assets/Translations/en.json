@@ -5,7 +5,10 @@
   },
   "common": {
     "add": "Add",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "save": "Save",
+    "close": "Close"
   },
   "bar": {
     "widget-settings": {
@@ -1750,14 +1753,14 @@
       "installed": {
         "description": "Manage and configure all locally installed plugins.",
         "label": "Installed plugins",
-        "no-plugins": "No plugins installed",
-        "no-plugins.description": "Install plugins from the Available Plugins section below."
+        "no-plugins-label": "No plugins installed",
+        "no-plugins-description": "Install plugins from the Available Plugins section below."
       },
       "available": {
         "description": "Browse and install plugins from configured sources.",
         "label": "Available plugins",
-        "no-plugins": "No plugins available",
-        "no-plugins.description": "Check your plugin sources or refresh the list."
+        "no-plugins-label": "No plugins available",
+        "no-plugins-description": "Check your plugin sources or refresh the list."
       },
       "filter": {
         "all": "All",
@@ -1768,6 +1771,7 @@
       "install-error": "Failed to install: %1",
       "install-success": "Successfully installed %1",
       "installing": "Installing %1...",
+      "plugin-settings-title": "{plugin} Settings",
       "refresh": {
         "refreshing": "Refreshing plugin list...",
         "tooltip": "Refresh available plugins"
