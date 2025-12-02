@@ -65,12 +65,6 @@ Item {
     }
   }
 
-  Image {
-    id: sizeHelper
-    source: imageDataUrl
-    visible: false
-  }
-
   Rectangle {
     anchors.fill: parent
     color: Color.mSurface || "#f5f5f5"
@@ -101,32 +95,11 @@ Item {
         }
 
         Item {
-          id: imageContainer
           anchors.fill: parent
           anchors.margins: Style.marginS
 
           NImageRounded {
-            id: imagePreview
-            anchors.centerIn: parent
-            
-            readonly property real imageAspect: (sizeHelper.sourceSize.height > 0) ? sizeHelper.sourceSize.width / sizeHelper.sourceSize.height : 1.0
-            readonly property real containerAspect: (imageContainer.height > 0) ? imageContainer.width / imageContainer.height : 1.0
-
-            width: {
-                if (imageAspect > containerAspect) {
-                    return imageContainer.width;
-                } else {
-                    return imageContainer.height * imageAspect;
-                }
-            }
-            height: {
-                if (imageAspect > containerAspect) {
-                    return imageContainer.width / imageAspect;
-                } else {
-                    return imageContainer.height;
-                }
-            }
-
+            anchors.fill: parent
             imagePath: imageDataUrl
             visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
             radius: Style.radiusS
