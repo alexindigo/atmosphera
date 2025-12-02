@@ -416,7 +416,7 @@ Item {
                 id: trackArt
                 anchors.fill: parent
                 anchors.margins: showProgressRing ? 0 : -1 * scaling // Add negative margin to make album art larger when no progress ring
-                radius: Math.min(Style.radiusL, width / 2)
+                radius: width / 2
                 visible: showAlbumArt && hasActivePlayer
                 imagePath: MediaService.trackArtUrl
                 fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
@@ -658,7 +658,7 @@ Item {
         NImageRounded {
           anchors.fill: parent
           visible: showAlbumArt && hasActivePlayer
-          radius: Math.min(Style.radiusL, width / 2)
+          radius: width / 2
           imagePath: MediaService.trackArtUrl
           fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
           fallbackIconSize: 12
