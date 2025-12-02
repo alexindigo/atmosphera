@@ -1128,8 +1128,6 @@ Loader {
                     text: I18n.tr("session-menu.logout")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
-                    textColor: Color.mOnSurface
-                    hoverColor: Color.mHover
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1149,8 +1147,6 @@ Loader {
                     text: I18n.tr("session-menu.suspend")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
-                    textColor: Color.mOnSurface
-                    hoverColor: Color.mHover
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1171,8 +1167,6 @@ Loader {
                     text: I18n.tr("session-menu.hibernate")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
-                    textColor: Color.mOnSurface
-                    hoverColor: Color.mHover
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
@@ -1194,8 +1188,6 @@ Loader {
                     text: I18n.tr("session-menu.reboot")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
-                    textColor: Color.mOnSurface
-                    hoverColor: Color.mHover
                     fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
                     iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
                     fontWeight: Style.fontWeightMedium
