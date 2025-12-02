@@ -637,7 +637,7 @@ SmartPanel {
         // Emoji category tabs (shown when in browsing mode)
         NTabBar {
           id: emojiCategoryTabs
-          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && !root.searchText.startsWith(">")
+          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
           Layout.fillWidth: true
           currentIndex: {
             if (visible && emojiPlugin.categories) {
@@ -1091,13 +1091,13 @@ SmartPanel {
 
               width: {
                 if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return resultsGrid.width / 5;
+                  return (resultsGrid.width / 5) - Style.marginS;
                 }
                 return resultsGrid.cellWidth;
               }
               height: {
                 if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                  return (resultsGrid.width / 5) * 1.2;
+                  return ((resultsGrid.width / 5) * 1.23) - Style.marginS;
                 }
                 return resultsGrid.cellHeight;
               }
@@ -1113,13 +1113,9 @@ SmartPanel {
 
               ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: {
-                  if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                    return 4;
-                  }
-                  return Style.marginM;
-                }
-                spacing: Style.marginM
+                anchors.margins: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? 4 : Style.marginM
+                anchors.bottomMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? Style.marginL : Style.marginM
+                spacing: Style.marginS
 
                 // Icon badge or Image preview or Emoji
                 Rectangle {
@@ -1226,6 +1222,8 @@ SmartPanel {
                   elide: Text.ElideRight
                   Layout.fillWidth: true
                   Layout.maximumWidth: gridEntry.width - 8
+                  Layout.leftMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                  Layout.rightMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
                   horizontalAlignment: Text.AlignHCenter
                   wrapMode: Text.NoWrap
                   maximumLineCount: 1
