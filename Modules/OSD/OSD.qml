@@ -310,6 +310,15 @@ Variants {
       readonly property bool isRight: location.includes("_right") || location === "right"
       readonly property bool verticalMode: location === "left" || location === "right"
 
+      // TextMetrics for measuring lock key text width
+      TextMetrics {
+        id: lockKeyTextMetrics
+        font.family: Settings.data.ui.fontFixed
+        font.weight: Style.fontWeightMedium
+        font.pointSize: Style.fontSizeM * (Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
+        text: root.getDisplayPercentage()
+      }
+
       // Dimensions
       readonly property bool isShortMode: root.currentOSDType === OSD.Type.LockKey
       readonly property int longHWidth: Math.round(320 * Style.uiScaleRatio)
@@ -318,6 +327,25 @@ Variants {
       readonly property int longVWidth: Math.round(80 * Style.uiScaleRatio)
       readonly property int longVHeight: Math.round(280 * Style.uiScaleRatio)
       readonly property int shortVHeight: Math.round(180 * Style.uiScaleRatio)
+
+      // Dynamic width for horizontal lock keys based on text length
+      readonly property int lockKeyHWidth: {
+        if (root.currentOSDType !== OSD.Type.LockKey || verticalMode) {
+          return shortHWidth;
+        }
+        const text = root.getDisplayPercentage();
+        if (!text) {
+          return shortHWidth;
+        }
+        // TextMetrics is bound to root.getDisplayPercentage(), so it updates automatically
+        const textWidth = Math.ceil(lockKeyTextMetrics.width);
+        const iconWidth = Style.fontSizeXL * Style.uiScaleRatio;
+        const margins = Style.marginL * 2; // Left and right content margins
+        const spacing = Style.marginM; // Spacing between icon and text
+        const bgMargins = Style.marginM * 1.5 * 2; // Background margins
+        const totalWidth = textWidth + iconWidth + margins + spacing + bgMargins;
+        return Math.max(shortHWidth, Math.round(totalWidth * 1.1));
+      }
 
       // Dynamic height for vertical lock keys based on text length
       readonly property int lockKeyVHeight: {
@@ -377,7 +405,7 @@ Variants {
       margins.left: calculateMargin(anchors.left, "left")
       margins.right: calculateMargin(anchors.right, "right")
 
-      implicitWidth: verticalMode ? longVWidth : (isShortMode ? shortHWidth : longHWidth)
+      implicitWidth: verticalMode ? longVWidth : (isShortMode ? lockKeyHWidth : longHWidth)
       implicitHeight: verticalMode ? (isShortMode ? lockKeyVHeight : longVHeight) : longHHeight
       color: Color.transparent
 
