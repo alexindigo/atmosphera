@@ -319,6 +319,36 @@ Variants {
       readonly property int longVHeight: Math.round(280 * Style.uiScaleRatio)
       readonly property int shortVHeight: Math.round(180 * Style.uiScaleRatio)
 
+      // Dynamic height for vertical lock keys based on text length
+      readonly property int lockKeyVHeight: {
+        if (root.currentOSDType !== OSD.Type.LockKey || !verticalMode) {
+          return shortVHeight;
+        }
+        const text = root.getDisplayPercentage();
+        const charCount = text ? text.length : 0;
+        if (charCount === 0) {
+          return shortVHeight;
+        }
+        // Calculate height: font size * char count + margins + icon space
+        // Font size M (11pt) scaled, plus some spacing between chars
+        const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+        const charHeight = fontSize * 1.3; // Add 30% for line height (matches Layout.preferredHeight)
+        const textHeight = charCount * charHeight;
+        // Background margins (Style.marginM * 1.5 * 2 for top and bottom)
+        const bgMargins = Style.marginM * 1.5 * 2;
+        // Content margins (Style.marginL * 2 for top and bottom)
+        const contentMargins = Style.marginL * 2;
+        // Icon size: fontSizeXL scaled, with extra space for icon rendering and padding
+        const iconSize = Style.fontSizeXL * Style.uiScaleRatio * 1.8; // Add 80% for icon rendering and padding
+        // Spacing between text and icon (Style.marginM for lock keys)
+        const textIconSpacing = Style.marginM;
+        // Add extra buffer to ensure everything fits comfortably
+        const buffer = Style.marginL;
+        const totalHeight = textHeight + bgMargins + contentMargins + iconSize + textIconSpacing + buffer;
+        // Ensure minimum height and add extra padding for safety
+        return Math.max(shortVHeight, Math.round(totalHeight * 1.1));
+      }
+
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
         return base % 2 === 0 ? base : base + 1;
@@ -348,7 +378,7 @@ Variants {
       margins.right: calculateMargin(anchors.right, "right")
 
       implicitWidth: verticalMode ? longVWidth : (isShortMode ? shortHWidth : longHWidth)
-      implicitHeight: verticalMode ? (isShortMode ? shortVHeight : longVHeight) : longHHeight
+      implicitHeight: verticalMode ? (isShortMode ? lockKeyVHeight : longVHeight) : longHHeight
       color: Color.transparent
 
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
@@ -524,28 +554,85 @@ Variants {
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
             spacing: root.currentOSDType === OSD.Type.LockKey ? Style.marginM : Style.marginS
-            clip: true
+            clip: root.currentOSDType !== OSD.Type.LockKey
 
-            // Unified Text display for Percentage or Lock Status
+            // Vertical text display for Lock Keys
+            ColumnLayout {
+              id: lockKeyVerticalLayout
+              visible: root.currentOSDType === OSD.Type.LockKey
+              Layout.fillWidth: true
+              Layout.fillHeight: false
+              Layout.alignment: Qt.AlignHCenter
+              spacing: 0
+
+              property var lockKeyChars: []
+
+              function updateLockKeyChars() {
+                const text = root.getDisplayPercentage();
+                const chars = [];
+                for (let i = 0; i < text.length; i++) {
+                  chars.push(text[i]);
+                }
+                lockKeyChars = chars;
+              }
+
+              Component.onCompleted: updateLockKeyChars()
+
+              Connections {
+                target: root
+                function onLastLockKeyChangedChanged() {
+                  if (root.currentOSDType === OSD.Type.LockKey) {
+                    lockKeyVerticalLayout.updateLockKeyChars();
+                  }
+                }
+                function onCurrentOSDTypeChanged() {
+                  if (root.currentOSDType === OSD.Type.LockKey) {
+                    lockKeyVerticalLayout.updateLockKeyChars();
+                  }
+                }
+              }
+
+              Repeater {
+                model: lockKeyVerticalLayout.lockKeyChars
+
+                NText {
+                  text: modelData || ""
+                  color: root.getProgressColor()
+                  pointSize: Style.fontSizeM
+                  family: Settings.data.ui.fontFixed
+                  font.weight: Style.fontWeightMedium
+                  Layout.fillWidth: true
+                  Layout.preferredHeight: {
+                    const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+                    return Math.round(fontSize * 1.3); // Add 30% for line height
+                  }
+                  Layout.alignment: Qt.AlignHCenter
+                  horizontalAlignment: Text.AlignHCenter
+                  verticalAlignment: Text.AlignVCenter
+                }
+              }
+            }
+
+            // Unified Text display for Percentage (non-lock key)
             NText {
+              visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
-              color: root.currentOSDType === OSD.Type.LockKey ? root.getProgressColor() : Color.mOnSurface
-              pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeM : Style.fontSizeS
+              color: Color.mOnSurface
+              pointSize: Style.fontSizeS
               family: Settings.data.ui.fontFixed
-              font.weight: root.currentOSDType === OSD.Type.LockKey ? Style.fontWeightMedium : Style.fontWeightRegular
+              font.weight: Style.fontWeightRegular
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignHCenter
               horizontalAlignment: Text.AlignHCenter
               verticalAlignment: Text.AlignVCenter
-              // Only set preferredHeight for the standard case to maintain layout
-              Layout.preferredHeight: root.currentOSDType === OSD.Type.LockKey ? -1 : Math.round(20 * Style.uiScaleRatio)
+              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
             }
 
             // Progress Bar for Volume/Brightness
             Item {
               visible: root.currentOSDType !== OSD.Type.LockKey
               Layout.fillWidth: true
-              Layout.fillHeight: true
+              Layout.fillHeight: root.currentOSDType !== OSD.Type.LockKey
 
               Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -585,6 +672,8 @@ Variants {
               color: root.getIconColor()
               pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeXL : Style.fontSizeL
               Layout.alignment: root.currentOSDType === OSD.Type.LockKey ? Qt.AlignHCenter : (Qt.AlignHCenter | Qt.AlignBottom)
+              Layout.preferredHeight: root.currentOSDType === OSD.Type.LockKey ? (Style.fontSizeXL * Style.uiScaleRatio * 1.5) : -1
+              Layout.minimumHeight: root.currentOSDType === OSD.Type.LockKey ? (Style.fontSizeXL * Style.uiScaleRatio) : 0
 
               Behavior on color {
                 ColorAnimation {
