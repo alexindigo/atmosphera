@@ -1787,13 +1787,14 @@
           "description": "Add a GitHub repository as a plugin source.",
           "error": "Failed to add plugin source",
           "name": "Repository name",
-          "name.placeholder": "My Custom Plugins",
+          "name-placeholder": "My Custom Plugins",
           "success": "Plugin source added successfully",
           "title": "Add plugin source",
           "url": "Repository URL"
         },
         "description": "Manage plugin repositories where plugins are downloaded from.",
         "label": "Plugin sources",
+        "placeholder": "My cool repository",
         "remove": {
           "tooltip": "Remove plugin source"
         }

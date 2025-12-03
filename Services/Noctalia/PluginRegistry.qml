@@ -321,10 +321,13 @@ Singleton {
       }
     }
 
-    root.pluginSources.push({
-                              name: name,
-                              url: url
-                            });
+    // Create a new array to trigger property change notification
+    var newSources = root.pluginSources.slice();
+    newSources.push({
+                      name: name,
+                      url: url
+                    });
+    root.pluginSources = newSources;
     save();
     Logger.i("PluginRegistry", "Added plugin source:", name);
     return true;

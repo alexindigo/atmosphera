@@ -1787,12 +1787,14 @@
           "description": "Ajouter un dépôt GitHub comme source de plugin.",
           "error": "Échec de l'ajout de la source du plugin.",
           "name": "Nom du dépôt",
+          "name-placeholder": "Mes extensions personnalisées",
           "success": "Source du plugin ajoutée avec succès.",
           "title": "Ajouter la source du plugin",
           "url": "URL du dépôt"
         },
         "description": "Gérer les dépôts de plugins à partir desquels les plugins sont téléchargés.",
         "label": "Sources du plugin",
+        "placeholder": "Mon dépôt cool",
         "remove": {
           "tooltip": "Supprimer la source du plugin"
         }

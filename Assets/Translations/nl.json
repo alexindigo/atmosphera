@@ -1787,12 +1787,14 @@
           "description": "Voeg een GitHub repository toe als een pluginbron.",
           "error": "Pluginbron toevoegen mislukt",
           "name": "Repositorynaam",
+          "name-placeholder": "Mijn Aangepaste Plugins",
           "success": "Pluginbron succesvol toegevoegd",
           "title": "Pluginbron toevoegen",
           "url": "Repository URL"
         },
         "description": "Beheer plugin-repositories vanwaar plugins worden gedownload.",
         "label": "Pluginbronnen",
+        "placeholder": "Mijn coole repository",
         "remove": {
           "tooltip": "Pluginbron verwijderen"
         }
