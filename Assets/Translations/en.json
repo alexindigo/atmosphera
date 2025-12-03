@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Drag and drop widgets to reorder them. Badges indicate usage: [L]eft, [C]enter, [R]ight.",
+          "description": "Rearrange widgets by dragging. Right-click to manage.",
           "label": "Widgets positioning"
         }
       }
