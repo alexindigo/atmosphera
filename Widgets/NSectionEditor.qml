@@ -73,23 +73,10 @@ NBox {
 
   // Generate widget color from name checksum
   function getWidgetColor(widget) {
-    const totalSum = JSON.stringify(widget).split('').reduce((acc, character) => {
-                                                               return acc + character.charCodeAt(0);
-                                                             }, 0);
-    switch (totalSum % 6) {
-    case 0:
-      return [Color.mPrimary, Color.mOnPrimary];
-    case 1:
+    if (widget.id.startsWith('plugin:')) {
       return [Color.mSecondary, Color.mOnSecondary];
-    case 2:
-      return [Color.mTertiary, Color.mOnTertiary];
-    case 3:
-      return [Color.mError, Color.mOnError];
-    case 4:
-      return [Color.mOnSurface, Color.mSurface];
-    case 5:
-      return [Color.mOnSurfaceVariant, Color.mSurfaceVariant];
     }
+    return [Color.mPrimary, Color.mOnPrimary];
   }
 
   // Check if widget has settings (either core widget with allowUserSettings or plugin with settings entry point)
