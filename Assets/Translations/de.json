@@ -1917,10 +1917,15 @@
         "label": "Animationsgeschwindigkeit",
         "reset": "Animationsgeschwindigkeit zurücksetzen"
       },
-      "border-radius": {
-        "description": "Steuert die Eckenrundung von Fenstern, Schaltflächen und anderen Elementen.",
-        "label": "Eckenradius",
-        "reset": "Rahmenradius zurücksetzen"
+      "box-border-radius": {
+        "description": "Passt die Eckenrundung wichtiger Layoutbereiche an, wie z. B. Seitenleisten, Karten und Inhaltsbereiche.",
+        "label": "Behälterradius",
+        "reset": "Container-Radius zurücksetzen"
+      },
+      "control-border-radius": {
+        "description": "Steuert die Krümmung interaktiver Elemente, einschließlich Schaltflächen, Umschalter und Textfelder.",
+        "label": "Eingaberadius",
+        "reset": "Eingaberadius zurücksetzen"
       },
       "dim-desktop": {
         "description": "Den Desktop abdunkeln, wenn Fenster oder Menüs geöffnet sind.",

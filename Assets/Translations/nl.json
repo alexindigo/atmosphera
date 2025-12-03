@@ -1917,10 +1917,15 @@
         "label": "Animatiesnelheid",
         "reset": "Animatiesnelheid resetten"
       },
-      "border-radius": {
-        "description": "Bepaalt de hoekafronding van vensters, knoppen en andere elementen.",
-        "label": "Hoekafronding",
-        "reset": "Hoekafronding resetten"
+      "box-border-radius": {
+        "description": "Past de hoekronding aan van belangrijke lay-outsecties, zoals zijbalken, kaarten en inhoudspanelen.",
+        "label": "Container Radius",
+        "reset": "Containerstraal resetten"
+      },
+      "control-border-radius": {
+        "description": "Regelt de kromming van interactieve elementen, waaronder knoppen, schakelaars en tekstvelden.",
+        "label": "Voer straal in",
+        "reset": "Reset invoerradius"
       },
       "dim-desktop": {
         "description": "Dim de desktop wanneer panelen of menu's geopend zijn.",

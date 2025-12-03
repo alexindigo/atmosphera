@@ -383,6 +383,7 @@ Loader {
                         "en": "dddd, MMMM d",
                         "es": "dddd, d 'de' MMMM",
                         "fr": "dddd d MMMM",
+                        "ja": "yyyy年M月d日 dddd",
                         "nl": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
                         "zh": "yyyy年M月d日 dddd"
@@ -1205,7 +1206,6 @@ Loader {
 
                   Item {
                     Layout.preferredWidth: 10
-                    visible: Settings.data.general.showHibernateOnLockScreen
                   }
 
                   NButton {
