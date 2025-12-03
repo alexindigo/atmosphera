@@ -155,6 +155,7 @@ ColumnLayout {
 
       // List of plugin sources
       Repeater {
+        id: pluginSourcesRepeater
         model: PluginRegistry.pluginSources || []
 
         delegate: RowLayout {
@@ -167,8 +168,7 @@ ColumnLayout {
           }
 
           ColumnLayout {
-            spacing: 2
-            Layout.fillWidth: true
+            spacing: Style.marginS
 
             NText {
               text: modelData.name
@@ -183,10 +183,15 @@ ColumnLayout {
             }
           }
 
+          Item {
+            Layout.fillWidth: true
+          }
+
           NIconButton {
             icon: "trash"
             tooltipText: I18n.tr("settings.plugins.sources.remove.tooltip")
             visible: index !== 0 // Cannot remove official source
+            baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
               PluginRegistry.removePluginSource(modelData.url);
             }
@@ -280,6 +285,7 @@ ColumnLayout {
     id: pluginListView
     Layout.fillWidth: true
     Layout.preferredHeight: 400
+    spacing: Style.marginM
 
     model: {
       var all = PluginService.availablePlugins || [];
@@ -435,7 +441,7 @@ ColumnLayout {
       NTextInput {
         id: sourceNameInput
         label: I18n.tr("settings.plugins.sources.add-dialog.name")
-        placeholderText: I18n.tr("settings.plugins.sources.add-dialog.name.placeholder")
+        placeholderText: I18n.tr("settings.plugins.sources.add-dialog.name-placeholder")
         Layout.fillWidth: true
       }
 
@@ -607,6 +613,14 @@ ColumnLayout {
             }
           }
           return plugins;
+        });
+      });
+
+      // Force model refresh for plugin sources
+      pluginSourcesRepeater.model = undefined;
+      Qt.callLater(function () {
+        pluginSourcesRepeater.model = Qt.binding(function () {
+          return PluginRegistry.pluginSources || [];
         });
       });
     }

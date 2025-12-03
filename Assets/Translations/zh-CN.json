@@ -1787,12 +1787,14 @@
           "description": "添加一个 GitHub 仓库作为插件源。",
           "error": "无法添加插件源",
           "name": "仓库名称",
+          "name-placeholder": "我的自定义插件",
           "success": "插件源添加成功",
           "title": "添加插件源",
           "url": "仓库 URL"
         },
         "description": "管理插件仓库，插件从这些仓库下载。",
         "label": "插件源",
+        "placeholder": "我的酷仓库",
         "remove": {
           "tooltip": "移除插件源"
         }

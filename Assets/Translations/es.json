@@ -1787,12 +1787,14 @@
           "description": "Añadir un repositorio de GitHub como fuente de plugin.",
           "error": "Error al agregar la fuente del plugin",
           "name": "Nombre del repositorio",
+          "name-placeholder": "Mis plugins personalizados",
           "success": "Fuente del plugin añadida con éxito",
           "title": "Añadir fuente del plugin",
           "url": "URL del repositorio"
         },
         "description": "Gestionar los repositorios de plugins desde donde se descargan los plugins.",
         "label": "Fuentes del plugin",
+        "placeholder": "Mi repositorio genial",
         "remove": {
           "tooltip": "Eliminar fuente del plugin"
         }

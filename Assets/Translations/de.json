@@ -1787,12 +1787,14 @@
           "description": "Ein GitHub-Repository als Plugin-Quelle hinzufügen.",
           "error": "Fehler beim Hinzufügen der Plugin-Quelle",
           "name": "Repository-Name",
+          "name-placeholder": "Meine benutzerdefinierten Plugins",
           "success": "Plugin-Quelle erfolgreich hinzugefügt",
           "title": "Plugin-Quelle hinzufügen",
           "url": "Repository-URL"
         },
         "description": "Plugin-Repositories verwalten, von denen Plugins heruntergeladen werden.",
         "label": "Plugin-Quellen",
+        "placeholder": "Mein cooles Repository",
         "remove": {
           "tooltip": "Plugin-Quelle entfernen"
         }

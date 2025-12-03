@@ -1787,12 +1787,14 @@
           "description": "Bir GitHub deposunu eklenti kaynağı olarak ekle.",
           "error": "Eklenti kaynağı eklenemedi",
           "name": "Depo adı",
+          "name-placeholder": "Özel Eklentilerim",
           "success": "Eklenti kaynağı başarıyla eklendi.",
           "title": "Eklenti kaynağı ekle",
           "url": "Depo URL'si"
         },
         "description": "Eklentilerin indirildiği eklenti depolarını yönetin.",
         "label": "Eklenti kaynakları",
+        "placeholder": "Havalı depom",
         "remove": {
           "tooltip": "Eklenti kaynağını kaldır"
         }
