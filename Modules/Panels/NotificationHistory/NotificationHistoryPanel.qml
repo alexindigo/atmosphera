@@ -13,6 +13,9 @@ import qs.Widgets
 SmartPanel {
   id: root
 
+  preferredWidth: Math.round(420 * Style.uiScaleRatio)
+  preferredHeight: Math.round(540 * Style.uiScaleRatio)
+
   // 0 = All, 1 = Today, 2 = Yesterday, 3 = Earlier
   property int currentRange: 1  // start on Today by default
   property var rangeCounts: [0, 0, 0, 0]
@@ -105,9 +108,6 @@ SmartPanel {
     // Initialize lastKnownDate
     lastKnownDate = getDateKey(new Date());
   }
-
-  preferredWidth: Math.round(420 * Style.uiScaleRatio)
-  preferredHeight: Math.round(540 * Style.uiScaleRatio)
 
   onOpened: function () {
     NotificationService.updateLastSeenTs();
