@@ -54,7 +54,7 @@ SmartPanel {
   property bool resultsReady: false
   property bool ignoreMouseHover: false
 
-  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6)
+  readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
   readonly property bool isGridView: {
     // Always use list view for clipboard and calculator to better display content
@@ -104,10 +104,7 @@ SmartPanel {
 
   function onUpPressed() {
     if (isGridView) {
-      // Force update to prevent GridView interference
-      Qt.callLater(() => {
-                     selectPreviousRow();
-                   });
+      selectPreviousRow();
     } else {
       selectPreviousWrapped();
     }
@@ -115,10 +112,7 @@ SmartPanel {
 
   function onDownPressed() {
     if (isGridView) {
-      // Force update to prevent GridView interference
-      Qt.callLater(() => {
-                     selectNextRow();
-                   });
+      selectNextRow();
     } else {
       selectNextWrapped();
     }
@@ -364,7 +358,7 @@ SmartPanel {
 
   // Grid view navigation functions
   function selectPreviousRow() {
-    if (results.length > 0 && isGridView) {
+    if (results.length > 0 && isGridView && gridColumns > 0) {
       const currentRow = Math.floor(selectedIndex / gridColumns);
       const currentCol = selectedIndex % gridColumns;
 
@@ -395,7 +389,7 @@ SmartPanel {
   }
 
   function selectNextRow() {
-    if (results.length > 0 && isGridView) {
+    if (results.length > 0 && isGridView && gridColumns > 0) {
       const currentRow = Math.floor(selectedIndex / gridColumns);
       const currentCol = selectedIndex % gridColumns;
       const totalRows = Math.ceil(results.length / gridColumns);
@@ -627,6 +621,14 @@ SmartPanel {
                 } else if (event.key === Qt.Key_Right && root.isGridView) {
                   // In grid view, right arrow navigates the grid
                   root.onRightPressed();
+                  event.accepted = true;
+                } else if (event.key === Qt.Key_Up) {
+                  // Up arrow navigates the grid/list
+                  root.onUpPressed();
+                  event.accepted = true;
+                } else if (event.key === Qt.Key_Down) {
+                  // Down arrow navigates the grid/list
+                  root.onDownPressed();
                   event.accepted = true;
                 }
               });
@@ -1000,12 +1002,15 @@ SmartPanel {
                 return parent.width / root.targetGridColumns;
               }
               // Make cells fit exactly like the tab bar
+              // Cell width scales automatically as parent.width scales with uiScaleRatio
               return parent.width / root.targetGridColumns;
             }
             cellHeight: {
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
                 return (parent.width / root.targetGridColumns) * 1.2;
               }
+              // Cell height scales automatically as parent.width scales with uiScaleRatio
+              // Content (badge, text) scales via badgeSize which now uses uiScaleRatio
               return parent.width / root.targetGridColumns;
             }
             leftMargin: 0
@@ -1018,18 +1023,26 @@ SmartPanel {
             focus: false
             interactive: true
 
-            onWidthChanged: {
+            Component.onCompleted: {
+              // Initialize gridColumns when grid view is created
+              updateGridColumns();
+            }
+
+            function updateGridColumns() {
               // Update gridColumns based on actual GridView width
               // This ensures navigation works correctly regardless of panel size
               if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
                 // Always 5 columns for emoji browsing mode
                 root.gridColumns = 5;
               } else {
-                const actualCols = Math.floor(width / cellWidth);
-                if (actualCols > 0 && actualCols !== root.gridColumns) {
-                  root.gridColumns = actualCols;
-                }
+                // Since cellWidth = width / targetGridColumns, the number of columns is always targetGridColumns
+                // Just use targetGridColumns directly
+                root.gridColumns = root.targetGridColumns;
               }
+            }
+
+            onWidthChanged: {
+              updateGridColumns();
             }
 
             // Completely disable GridView key handling
@@ -1135,13 +1148,17 @@ SmartPanel {
                     if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
                       return gridEntry.width - 8;
                     }
-                    return badgeSize * 1.5;
+                    // Scale badge relative to cell size for proper scaling on all resolutions
+                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                    return Math.round(gridEntry.width * 0.6);
                   }
                   Layout.preferredHeight: {
                     if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
                       return gridEntry.width - 8;
                     }
-                    return badgeSize * 1.5;
+                    // Scale badge relative to cell size for proper scaling on all resolutions
+                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                    return Math.round(gridEntry.width * 0.6);
                   }
                   Layout.alignment: Qt.AlignHCenter
                   radius: Style.radiusM
@@ -1209,11 +1226,18 @@ SmartPanel {
                     pointSize: {
                       if (modelData.emojiChar) {
                         if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                          return Math.max(Style.fontSizeL, gridEntry.width * 0.4);
+                          // Scale with cell width but cap at reasonable maximum
+                          const cellBasedSize = gridEntry.width * 0.4;
+                          const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                          return Math.min(cellBasedSize, maxSize);
                         }
-                        return Style.fontSizeXXL * 2;
+                        return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
                       }
-                      return Style.fontSizeXL;
+                      // Scale font size relative to cell width for low res, but cap at maximum
+                      const cellBasedSize = gridEntry.width * 0.25;
+                      const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
+                      const maxSize = Style.fontSizeXXL * Style.uiScaleRatio;
+                      return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                     }
                     font.weight: Style.fontWeightBold
                     color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
@@ -1225,9 +1249,13 @@ SmartPanel {
                   text: modelData.name || "Unknown"
                   pointSize: {
                     if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
-                      return Style.fontSizeS;
+                      return Style.fontSizeS * Style.uiScaleRatio;
                     }
-                    return Style.fontSizeS;
+                    // Scale font size relative to cell width for low res, but cap at maximum
+                    const cellBasedSize = gridEntry.width * 0.12;
+                    const baseSize = Style.fontSizeS * Style.uiScaleRatio;
+                    const maxSize = Style.fontSizeM * Style.uiScaleRatio;
+                    return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                   }
                   font.weight: Style.fontWeightSemiBold
                   color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
