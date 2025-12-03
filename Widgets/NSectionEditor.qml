@@ -19,8 +19,10 @@ NBox {
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
 
+  readonly property int gridColumns: 3
   readonly property real miniButtonSize: Style.baseWidgetSize * 0.65
   readonly property bool isAtMaxCapacity: maxWidgets >= 0 && widgetModel.length >= maxWidgets
+  readonly property real widgetItemHeight: Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
 
   signal addWidget(string widgetId, string section)
   signal removeWidget(string section, int index)
@@ -33,21 +35,12 @@ NBox {
 
   color: Color.mSurface
   Layout.fillWidth: true
-  readonly property real widgetItemHeight: Style.baseWidgetSize * 1.3 * Style.uiScaleRatio
 
+  // Calculate width to fit gridColumns widgets with spacing
   function calculateWidgetWidth(gridWidth) {
-    // Calculate width to fit 3 widgets with spacing
-    // gridWidth is already the Grid's width (after margins)
-    // Column spacing: 2 gaps between 3 columns
-    var columnSpacing = 2 * Style.marginM;
-    var widgetWidth = (gridWidth - columnSpacing) / 3;
-    // Ensure minimum width and don't exceed available space
-    return Math.max(150 * Style.uiScaleRatio, Math.min(widgetWidth, gridWidth / 3));
-  }
-
-  function calculateGridColumns(availableWidth) {
-    // Always show 3 widgets per row
-    return 3;
+    var columnSpacing = (root.gridColumns - 1) * Style.marginM;
+    var widgetWidth = (gridWidth - columnSpacing) / root.gridColumns;
+    return widgetWidth;
   }
 
   Layout.minimumHeight: {
@@ -62,10 +55,7 @@ NBox {
     // Calculate rows based on grid layout
     // Use actual parent width if available, otherwise estimate
     var availableWidth = (parent && parent.width > 0) ? (parent.width - (Style.marginL * 2)) : 400;
-    var columns = calculateGridColumns(availableWidth);
-    if (columns === 0)
-      columns = 1;
-    var rows = Math.ceil(widgetCount / columns);
+    var rows = Math.ceil(widgetCount / root.gridColumns);
 
     // Calculate widget width for height calculation
     var containerWidth = availableWidth;
@@ -204,10 +194,7 @@ NBox {
         }
         // Use actual width, fallback to a reasonable default if not yet available
         var containerWidth = width > 0 ? width : (parent ? parent.width : 400);
-        var columns = root.calculateGridColumns(containerWidth);
-        if (columns === 0)
-          columns = 1;
-        var rows = Math.ceil(widgetModel.length / columns);
+        var rows = Math.ceil(widgetModel.length / root.gridColumns);
         // Calculate height: (rows * item height) + (row spacing between items) + grid margins
         // Add extra buffer to prevent overlap
         var gridTopMargin = Style.marginXXS;
@@ -222,7 +209,7 @@ NBox {
         id: widgetGrid
         anchors.fill: parent
         anchors.margins: Style.marginXXS // Small margin to prevent edge overlap
-        columns: 3
+        columns: root.gridColumns
         rowSpacing: Style.marginS
         columnSpacing: Style.marginM
 
