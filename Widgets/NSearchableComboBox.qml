@@ -223,19 +223,39 @@ RowLayout {
                 }
 
                 RowLayout {
-                  spacing: 0
+                  spacing: Style.marginXXS
                   Layout.alignment: Qt.AlignRight
 
                   // Generic badge renderer
                   Repeater {
-                    model: (typeof badges !== 'undefined' && badges !== null) ? badges.count : 0
+                    model: {
+                      if (typeof badges === 'undefined' || badges === null)
+                        return 0;
+                      // Handle both arrays and ListModels
+                      if (typeof badges.length !== 'undefined')
+                        return badges.length;
+                      if (typeof badges.count !== 'undefined')
+                        return badges.count;
+                      return 0;
+                    }
 
                     delegate: NIcon {
                       required property int index
-                      readonly property var badgeData: badges.get(index)
+                      readonly property var badgeData: {
+                        if (typeof badges === 'undefined' || badges === null)
+                          return null;
+                        // Handle both arrays and ListModels
+                        if (typeof badges.length !== 'undefined')
+                          return badges[index];
+                        if (typeof badges.get !== 'undefined')
+                          return badges.get(index);
+                        return null;
+                      }
 
-                      icon: badgeData.icon || ""
+                      icon: badgeData && badgeData.icon ? badgeData.icon : ""
                       pointSize: {
+                        if (!badgeData || !badgeData.size)
+                          return Style.fontSizeXS;
                         if (badgeData.size === "xsmall")
                           return Style.fontSizeXXS;
                         else if (badgeData.size === "medium")
@@ -243,7 +263,7 @@ RowLayout {
                         else
                           return Style.fontSizeXS;
                       }
-                      color: highlighted ? Color.mOnHover : (badgeData.color || Color.mOnSurface)
+                      color: highlighted ? Color.mOnHover : (badgeData && badgeData.color ? badgeData.color : Color.mOnSurface)
                       Layout.preferredWidth: Style.baseWidgetSize * 0.6
                       Layout.preferredHeight: Style.baseWidgetSize * 0.6
                       visible: badgeData && badgeData.icon !== undefined && badgeData.icon !== ""
