@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Widgets
 
 NBox {
@@ -28,6 +29,7 @@ NBox {
   signal moveWidget(string fromSection, int index, string toSection)
   signal dragPotentialStarted
   signal dragPotentialEnded
+  signal openPluginSettingsRequested(var pluginManifest)
 
   color: Color.mSurface
   Layout.fillWidth: true
@@ -98,6 +100,23 @@ NBox {
     case 5:
       return [Color.mOnSurfaceVariant, Color.mSurfaceVariant];
     }
+  }
+
+  // Check if widget has settings (either core widget with allowUserSettings or plugin with settings entry point)
+  function widgetHasSettings(widgetId) {
+    // Check if it's a core widget with user settings
+    if (root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(widgetId)) {
+      return true;
+    }
+
+    // Check if it's a plugin with settings
+    if (root.widgetRegistry && root.widgetRegistry.isPluginWidget(widgetId)) {
+      var pluginId = widgetId.replace("plugin:", "");
+      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      return manifest?.entryPoints?.settings !== undefined;
+    }
+
+    return false;
   }
 
   ColumnLayout {
@@ -226,7 +245,7 @@ NBox {
             // Store the widget index for drag operations
             property int widgetIndex: index
             readonly property int buttonsWidth: Math.round(20)
-            readonly property int buttonsCount: 1 + (root.widgetRegistry ? root.widgetRegistry.widgetHasUserSettings(modelData.id) : 0)
+            readonly property int buttonsCount: root.widgetHasSettings(modelData.id) ? 1 : 0
 
             // Visual feedback during drag
             opacity: flowDragArea.draggedIndex === index ? 0.5 : 1.0
@@ -267,26 +286,37 @@ NBox {
                   "action": "right",
                   "icon": "arrow-bar-to-right",
                   "visible": root.availableSections.includes("right") && root.sectionId !== "right"
+                },
+                {
+                  "label": I18n.tr("tooltips.remove-widget"),
+                  "action": "remove",
+                  "icon": "trash",
+                  "visible": true
                 }
               ]
 
-              onTriggered: action => root.moveWidget(root.sectionId, index, action)
+              onTriggered: action => {
+                             if (action === "remove") {
+                               root.removeWidget(root.sectionId, index);
+                             } else {
+                               root.moveWidget(root.sectionId, index, action);
+                             }
+                           }
             }
 
             // MouseArea for the context menu
             MouseArea {
               id: contextMouseArea
-              enabled: root.availableSections.length > 1 // Enable if there are other sections to move to
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               z: -1 // Below the buttons but above background
 
               onPressed: mouse => {
                            if (mouse.button === Qt.RightButton) {
-                             // Check if click is not on the buttons area
+                             // Check if click is not on the settings button area (if visible)
                              const localX = mouse.x;
                              const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
-                             if (localX < buttonsStartX) {
+                             if (localX < buttonsStartX || parent.buttonsCount === 0) {
                                contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
                              }
                            }
@@ -296,17 +326,8 @@ NBox {
               id: widgetContent
               anchors.fill: parent
               anchors.margins: Style.marginXS
+              anchors.rightMargin: Style.marginS
               spacing: Style.marginXXS
-
-              // Plugin indicator icon
-              NIcon {
-                visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
-                icon: "plugin"
-                pointSize: Style.fontSizeXXS
-                color: root.getWidgetColor(modelData)[1]
-                Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
-                Layout.preferredHeight: Style.baseWidgetSize * 0.5
-              }
 
               NText {
                 text: {
@@ -327,13 +348,23 @@ NBox {
                 Layout.fillHeight: true
               }
 
+              // Plugin indicator icon
+              NIcon {
+                visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
+                icon: "plugin"
+                pointSize: Style.fontSizeXXS
+                color: root.getWidgetColor(modelData)[1]
+                Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
+                Layout.preferredHeight: Style.baseWidgetSize * 0.5
+              }
+
               RowLayout {
                 spacing: 0
                 Layout.preferredWidth: buttonsCount * buttonsWidth * Style.uiScaleRatio
                 Layout.preferredHeight: parent.height
 
                 Loader {
-                  active: root.widgetRegistry && root.widgetRegistry.widgetHasUserSettings(modelData.id)
+                  active: root.widgetHasSettings(modelData.id)
                   sourceComponent: NIconButton {
                     icon: "settings"
                     tooltipText: I18n.tr("tooltips.widget-settings")
@@ -344,49 +375,53 @@ NBox {
                     colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
                     colorFgHover: Color.mOnPrimary
                     onClicked: {
-                      var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
-                      function instantiateAndOpen() {
-                        var dialog = component.createObject(Overlay.overlay, {
-                                                              "widgetIndex": index,
-                                                              "widgetData": modelData,
-                                                              "widgetId": modelData.id,
-                                                              "sectionId": root.sectionId
-                                                            });
-                        if (dialog) {
-                          dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
-                          dialog.open();
+                      // Check if this is a plugin widget
+                      var isPlugin = root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id);
+
+                      if (isPlugin) {
+                        // Handle plugin settings - emit signal for parent to handle
+                        var pluginId = modelData.id.replace("plugin:", "");
+                        var manifest = PluginRegistry.getPluginManifest(pluginId);
+
+                        if (!manifest || !manifest.entryPoints?.settings) {
+                          Logger.e("NSectionEditor", "Plugin settings not found for:", pluginId);
+                          return;
+                        }
+
+                        // Emit signal to request opening plugin settings
+                        root.openPluginSettingsRequested(manifest);
+                      } else {
+                        // Handle core widget settings
+                        var component = Qt.createComponent(Qt.resolvedUrl(root.settingsDialogComponent));
+                        function instantiateAndOpen() {
+                          var dialog = component.createObject(Overlay.overlay, {
+                                                                "widgetIndex": index,
+                                                                "widgetData": modelData,
+                                                                "widgetId": modelData.id,
+                                                                "sectionId": root.sectionId
+                                                              });
+                          if (dialog) {
+                            dialog.updateWidgetSettings.connect(root.updateWidgetSettings);
+                            dialog.open();
+                          } else {
+                            Logger.e("NSectionEditor", "Failed to create settings dialog instance");
+                          }
+                        }
+                        if (component.status === Component.Ready) {
+                          instantiateAndOpen();
+                        } else if (component.status === Component.Error) {
+                          Logger.e("NSectionEditor", component.errorString());
                         } else {
-                          Logger.e("NSectionEditor", "Failed to create settings dialog instance");
+                          component.statusChanged.connect(function () {
+                            if (component.status === Component.Ready) {
+                              instantiateAndOpen();
+                            } else if (component.status === Component.Error) {
+                              Logger.e("NSectionEditor", component.errorString());
+                            }
+                          });
                         }
                       }
-                      if (component.status === Component.Ready) {
-                        instantiateAndOpen();
-                      } else if (component.status === Component.Error) {
-                        Logger.e("NSectionEditor", component.errorString());
-                      } else {
-                        component.statusChanged.connect(function () {
-                          if (component.status === Component.Ready) {
-                            instantiateAndOpen();
-                          } else if (component.status === Component.Error) {
-                            Logger.e("NSectionEditor", component.errorString());
-                          }
-                        });
-                      }
                     }
-                  }
-                }
-
-                NIconButton {
-                  icon: "close"
-                  tooltipText: I18n.tr("tooltips.remove-widget")
-                  baseSize: miniButtonSize
-                  colorBorder: Qt.alpha(Color.mOutline, Style.opacityLight)
-                  colorBg: Color.mOnSurface
-                  colorFg: Color.mOnPrimary
-                  colorBgHover: Qt.alpha(Color.mOnPrimary, Style.opacityLight)
-                  colorFgHover: Color.mOnPrimary
-                  onClicked: {
-                    removeWidget(sectionId, index);
                   }
                 }
               }

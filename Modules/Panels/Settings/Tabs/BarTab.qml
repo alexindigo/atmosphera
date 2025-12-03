@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
-import qs.Services.UI
 import qs.Services.Noctalia
+import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
@@ -250,6 +250,7 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
+        onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
       }
 
       // Center Section
@@ -265,6 +266,7 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
+        onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
       }
 
       // Right Section
@@ -280,6 +282,7 @@ ColumnLayout {
         onReorderWidget: (section, fromIndex, toIndex) => _reorderWidgetInSection(section, fromIndex, toIndex)
         onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsInSection(section, index, settings)
         onMoveWidget: (fromSection, index, toSection) => _moveWidgetBetweenSections(fromSection, index, toSection)
+        onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
       }
     }
   }
@@ -428,7 +431,7 @@ ColumnLayout {
     widgets.forEach(entry => {
                       const isPlugin = BarWidgetRegistry.isPluginWidget(entry);
                       let displayName = entry;
-                      
+
                       // For plugin widgets, strip the "plugin:" prefix and try to get the actual plugin name
                       if (isPlugin) {
                         const pluginId = entry.replace("plugin:", "");
@@ -440,7 +443,7 @@ ColumnLayout {
                           displayName = pluginId;
                         }
                       }
-                      
+
                       availableWidgets.append({
                                                 "key": entry,
                                                 "name": displayName,
@@ -464,5 +467,12 @@ ColumnLayout {
     function onActiveWidgetsChanged() {
       updateAvailableWidgetsModel();
     }
+  }
+
+  // Shared Plugin Settings Popup
+  NPluginSettingsPopup {
+    id: pluginSettingsDialog
+    parent: Overlay.overlay
+    showToastOnSave: false
   }
 }
