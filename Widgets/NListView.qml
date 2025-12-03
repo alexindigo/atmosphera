@@ -20,6 +20,8 @@ Item {
     return listView.contentHeight > listView.height;
   }
   readonly property real scrollBarWidth: verticalScrollBarActive ? handleWidth : 0
+  readonly property real scrollBarSpacing: verticalScrollBarActive ? 4 : 0
+  readonly property real scrollBarTotalWidth: verticalScrollBarActive ? (handleWidth + 4) : 0
 
   // Forward ListView properties
   property alias model: listView.model

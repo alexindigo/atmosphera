@@ -802,7 +802,7 @@ SmartPanel {
                 }
               }
 
-              width: resultsList.width - Style.marginS
+              width: resultsList.width - Style.marginS - resultsList.scrollBarTotalWidth
               implicitHeight: entryHeight
               radius: Style.radiusM
               color: entry.isSelected ? Color.mHover : Color.mSurface
