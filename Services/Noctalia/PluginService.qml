@@ -43,6 +43,30 @@ Singleton {
     }
   }
 
+  // Listen for language changes to reload plugin translations
+  Connections {
+    target: I18n
+
+    function onLanguageChanged() {
+      Logger.d("PluginService", "Language changed to:", I18n.langCode, "- reloading plugin translations");
+
+      // Reload translations for all loaded plugins
+      for (var pluginId in root.loadedPlugins) {
+        var plugin = root.loadedPlugins[pluginId];
+        if (plugin && plugin.api && plugin.manifest) {
+          // Update current language
+          plugin.api.currentLanguage = I18n.langCode;
+
+          // Reload translations
+          loadPluginTranslationsAsync(pluginId, plugin.manifest, I18n.langCode, function (translations) {
+            plugin.api.pluginTranslations = translations;
+            Logger.d("PluginService", "Reloaded translations for plugin:", pluginId);
+          });
+        }
+      }
+    }
+  }
+
   function init() {
     if (root.initialized) {
       Logger.d("PluginService", "Already initialized, skipping");
@@ -504,22 +528,53 @@ Singleton {
         // IPC handlers storage
         property var ipcHandlers: ({})
 
+        // Translation storage
+        property var pluginTranslations: ({})
+        property string currentLanguage: ""
+
         // Functions will be bound below
         property var saveSettings: null
         property var openPanel: null
         property var closePanel: null
+        property var tr: null
+        property var trp: null
+        property var hasTranslation: null
       }
     `, root, "PluginAPI_" + pluginId);
 
     // Set manifest
     api.manifest = manifest;
 
+    // Set current language (can't use binding in Qt.createQmlObject string)
+    api.currentLanguage = I18n.langCode;
+
     // Load plugin settings
     loadPluginSettings(pluginId, function (settings) {
       api.pluginSettings = settings;
     });
 
+    // Load plugin translations for current language
+    loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
+      api.pluginTranslations = translations;
+    });
+
+    // ----------------------------------------
+    // Helper function to get nested property by dot notation
+    var getNestedProperty = function (obj, path) {
+      var keys = path.split('.');
+      var current = obj;
+      for (var i = 0; i < keys.length; i++) {
+        if (current === undefined || current === null) {
+          return undefined;
+        }
+        current = current[keys[i]];
+      }
+      return current;
+    };
+
+    // ----------------------------------------
     // Bind functions
+    // ----------------------------------------
     api.saveSettings = function () {
       savePluginSettings(pluginId, api.pluginSettings);
 
@@ -528,6 +583,7 @@ Singleton {
       api.pluginSettings = Object.assign({}, api.pluginSettings);
     };
 
+    // ----------------------------------------
     api.openPanel = function (screen) {
       // Open this plugin's panel on the specified screen
       if (!screen) {
@@ -537,6 +593,7 @@ Singleton {
       return openPluginPanel(pluginId, screen);
     };
 
+    // ----------------------------------------
     api.closePanel = function (screen) {
       // Close this plugin's panel (find which slot it's in and close it)
       for (var slotNum = 1; slotNum <= 2; slotNum++) {
@@ -550,7 +607,108 @@ Singleton {
       return false;
     };
 
+    // ----------------------------------------
+    // Translation function
+    api.tr = function (key, interpolations) {
+      if (typeof interpolations === 'undefined') {
+        interpolations = {};
+      }
+
+      var translation = getNestedProperty(api.pluginTranslations, key);
+
+      // Return formatted key if translation not found
+      if (translation === undefined || translation === null) {
+        return '## ' + key + ' ##';
+      }
+
+      // Ensure translation is a string
+      if (typeof translation !== 'string') {
+        return '## ' + key + ' ##';
+      }
+
+      // Handle interpolations (e.g., "Hello {name}!")
+      var result = translation;
+      for (var placeholder in interpolations) {
+        var regex = new RegExp('\\{' + placeholder + '\\}', 'g');
+        result = result.replace(regex, interpolations[placeholder]);
+      }
+
+      return result;
+    };
+
+    // ----------------------------------------
+    // Plural translation function
+    api.trp = function (key, count, defaultSingular, defaultPlural, interpolations) {
+      if (typeof defaultSingular === 'undefined') {
+        defaultSingular = '';
+      }
+      if (typeof defaultPlural === 'undefined') {
+        defaultPlural = '';
+      }
+      if (typeof interpolations === 'undefined') {
+        interpolations = {};
+      }
+
+      // Use key for singular, key_plural for plural
+      var pluralKey = count === 1 ? key : key + '_plural';
+
+      // Merge interpolations with count
+      var finalInterpolations = {
+        'count': count
+      };
+      for (var prop in interpolations) {
+        finalInterpolations[prop] = interpolations[prop];
+      }
+
+      // Use tr() to look up the translation
+      return api.tr(pluralKey, finalInterpolations);
+    };
+
+    // ----------------------------------------
+    // Check if translation exists
+    api.hasTranslation = function (key) {
+      return getNestedProperty(api.pluginTranslations, key) !== undefined;
+    };
+
     return api;
+  }
+
+  // Load plugin translations asynchronously
+  function loadPluginTranslationsAsync(pluginId, manifest, language, callback) {
+    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var translationFile = pluginDir + "/i18n/" + language + ".json";
+
+    var readProcess = Qt.createQmlObject(`
+      import QtQuick
+      import Quickshell.Io
+      Process {
+        command: ["cat", "${translationFile}"]
+        stdout: StdioCollector {}
+      }
+    `, root, "ReadTranslation_" + pluginId + "_" + language);
+
+    readProcess.exited.connect(function (exitCode) {
+      var translations = {};
+
+      if (exitCode === 0) {
+        try {
+          translations = JSON.parse(readProcess.stdout.text);
+          Logger.d("PluginService", "Loaded translations for", pluginId, "language:", language);
+        } catch (e) {
+          Logger.w("PluginService", "Failed to parse translations for", pluginId, "language:", language);
+        }
+      } else {
+        Logger.d("PluginService", "No translation file for", pluginId, "language:", language);
+      }
+
+      if (callback) {
+        callback(translations);
+      }
+
+      readProcess.destroy();
+    });
+
+    readProcess.running = true;
   }
 
   // Load plugin settings

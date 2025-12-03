@@ -35,9 +35,25 @@ Item {
     asynchronous: false
     sourceComponent: BarWidgetRegistry.getWidget(widgetId)
 
+    // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
+    property var _dummyApi: QtObject {
+      function tr(key) {
+        return "";
+      }
+      function trp(key, count) {
+        return "";
+      }
+    }
+
     onLoaded: {
       if (!item)
         return;
+
+      // Inject dummy API immediately to prevent undefined warnings during initialization
+      if (BarWidgetRegistry.isPluginWidget(widgetId) && item.hasOwnProperty("pluginApi") && !item.pluginApi) {
+        item.pluginApi = _dummyApi;
+      }
+
       Logger.d("BarWidgetLoader", "Loading widget", widgetId, "on screen:", widgetScreen.name);
 
       // Apply properties to loaded widget

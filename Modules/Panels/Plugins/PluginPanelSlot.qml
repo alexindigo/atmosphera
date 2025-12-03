@@ -60,6 +60,23 @@ SmartPanel {
           id: pluginContentLoader
           anchors.fill: parent
           active: false
+
+          // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
+          property var _dummyApi: QtObject {
+            function tr(key) {
+              return "";
+            }
+            function trp(key, count) {
+              return "";
+            }
+          }
+
+          onLoaded: {
+            // Inject the dummy API immediately to prevent undefined warnings
+            if (item && item.hasOwnProperty("pluginApi") && !item.pluginApi) {
+              item.pluginApi = _dummyApi;
+            }
+          }
         }
       }
 
@@ -111,12 +128,12 @@ SmartPanel {
       // Get plugin API
       var api = PluginService.getPluginAPI(pluginId);
 
-      // Create instance with API
+      // Activate loader and set component simultaneously
       root.contentLoader.active = true;
       root.contentLoader.sourceComponent = component;
 
+      // Immediately inject API (before any bindings evaluate)
       if (root.contentLoader.item) {
-        // Inject plugin API
         if (root.contentLoader.item.hasOwnProperty("pluginApi")) {
           root.contentLoader.item.pluginApi = api;
         }

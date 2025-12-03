@@ -549,6 +549,34 @@ ColumnLayout {
         Loader {
           id: settingsLoader
           Layout.fillWidth: true
+
+          // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
+          property var _dummyApi: QtObject {
+            property var pluginSettings: ({})
+            property var manifest: ({
+                                      metadata: {
+                                        defaultSettings: {}
+                                      }
+                                    })
+
+            function tr(key) {
+              return "";
+            }
+
+            function trp(key, count) {
+              return "";
+            }
+
+            function saveSettings() {
+            }
+          }
+
+          onLoaded: {
+            // Inject dummy API immediately to prevent undefined warnings during initialization
+            if (item && item.hasOwnProperty("pluginApi") && !item.pluginApi) {
+              item.pluginApi = _dummyApi;
+            }
+          }
         }
 
         // Action buttons
