@@ -3,6 +3,13 @@
     "error": "Authentication error",
     "failed": "Authentication failed"
   },
+  "common": {
+    "add": "Add",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "save": "Save",
+    "close": "Close"
+  },
   "bar": {
     "widget-settings": {
       "active-window": {
@@ -970,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Drag and drop widgets to reorder them. Badges indicate usage: [L]eft, [C]enter, [R]ight.",
+          "description": "Rearrange widgets by dragging. Right-click to manage.",
           "label": "Widgets positioning"
         }
       }
@@ -1741,6 +1748,66 @@
           "label": "Output volume"
         }
       }
+    },
+    "plugins": {
+      "installed": {
+        "description": "Manage and configure all locally installed plugins.",
+        "label": "Installed plugins",
+        "no-plugins-label": "No plugins installed",
+        "no-plugins-description": "Install plugins from the Available Plugins section below."
+      },
+      "available": {
+        "description": "Browse and install plugins from configured sources.",
+        "label": "Available plugins",
+        "no-plugins-label": "No plugins available",
+        "no-plugins-description": "Check your plugin sources or refresh the list."
+      },
+      "filter": {
+        "all": "All",
+        "downloaded": "Downloaded",
+        "not-downloaded": "Not Downloaded"
+      },
+      "install": "Install",
+      "install-error": "Failed to install: {error}",
+      "install-success": "Successfully installed {plugin}",
+      "installing": "Installing {plugin}...",
+      "plugin-settings-title": "{plugin} Settings",
+      "refresh": {
+        "refreshing": "Refreshing plugins list...",
+        "tooltip": "Refresh available plugins"
+      },
+      "settings": {
+        "tooltip": "Plugin settings"
+      },
+      "settings-error-not-loaded": "Plugin not loaded",
+      "settings-saved": "Plugin settings saved",
+      "sources": {
+        "add-custom": "Add custom repository",
+        "add-dialog": {
+          "description": "Add a GitHub repository as a plugin source.",
+          "error": "Failed to add plugin source",
+          "name": "Repository name",
+          "name.placeholder": "My Custom Plugins",
+          "success": "Plugin source added successfully",
+          "title": "Add plugin source",
+          "url": "Repository URL"
+        },
+        "description": "Manage plugin repositories where plugins are downloaded from.",
+        "label": "Plugin sources",
+        "remove": {
+          "tooltip": "Remove plugin source"
+        }
+      },
+      "title": "Plugins",
+      "uninstall": "Uninstall",
+      "uninstall-dialog": {
+        "description": "Are you sure you want to uninstall {plugin}? This will remove all plugin data.",
+        "title": "Uninstall plugin"
+      },
+      "uninstall-error": "Failed to uninstall: {error}",
+      "uninstall-success": "Successfully uninstalled {plugin}",
+      "uninstall.tooltip": "Uninstall plugin",
+      "uninstalling": "Uninstalling {plugin}..."
     },
     "screen-recorder": {
       "audio": {

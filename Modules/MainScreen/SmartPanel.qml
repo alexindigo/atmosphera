@@ -101,8 +101,8 @@ Item {
   function onCtrlKPressed() {
   }
 
-  // Expose panel region for click-through mask
-  readonly property var panelRegion: panelContent.maskRegion
+  // Expose panel region for background rendering
+  readonly property var panelRegion: panelContent.geometryPlaceholder
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
@@ -606,7 +606,7 @@ Item {
         if (!running && duration === 0) {
           if (root.isClosing && root.opacity === 0.0) {
             root.opacityFadeComplete = true;
-            var shouldFinalizeNow = panelContent.maskRegion && !panelContent.maskRegion.shouldAnimateWidth && !panelContent.maskRegion.shouldAnimateHeight;
+            var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
             if (shouldFinalizeNow) {
               Logger.d("SmartPanel", "Zero-duration opacity + no size animation - finalizing", root.objectName);
               Qt.callLater(root.finalizeClose);
@@ -624,12 +624,12 @@ Item {
           root.opacityFadeComplete = true;
           // If no size animation will run (centered attached panels only), finalize immediately
           // Detached panels (allowAttach === false) should always animate from top
-          var shouldFinalizeNow = panelContent.maskRegion && !panelContent.maskRegion.shouldAnimateWidth && !panelContent.maskRegion.shouldAnimateHeight;
+          var shouldFinalizeNow = panelContent.geometryPlaceholder && !panelContent.geometryPlaceholder.shouldAnimateWidth && !panelContent.geometryPlaceholder.shouldAnimateHeight;
           if (shouldFinalizeNow) {
             Logger.d("SmartPanel", "No animation - finalizing immediately", root.objectName);
             Qt.callLater(root.finalizeClose);
           } else {
-            Logger.d("SmartPanel", "Animation will run - waiting for size animation", root.objectName, "shouldAnimateHeight:", panelContent.maskRegion.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.maskRegion.shouldAnimateWidth);
+            Logger.d("SmartPanel", "Animation will run - waiting for size animation", root.objectName, "shouldAnimateHeight:", panelContent.geometryPlaceholder.shouldAnimateHeight, "shouldAnimateWidth:", panelContent.geometryPlaceholder.shouldAnimateWidth);
           }
         } // When opacity fade completes during open, stop watchdog
         else if (!running && root.isPanelVisible && root.opacity === 1.0) {
@@ -691,7 +691,13 @@ Item {
     anchors.fill: parent
 
     // Screen-dependent attachment properties
-    readonly property bool allowAttach: Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar
+    // Allow panel content to override allowAttach (e.g., plugin panels)
+    readonly property bool allowAttach: {
+      if (contentLoader.item && contentLoader.item.allowAttach !== undefined) {
+        return contentLoader.item.allowAttach;
+      }
+      return Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar;
+    }
     readonly property bool allowAttachToBar: {
       if (!(Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar) || Settings.data.bar.backgroundOpacity < 1.0) {
         return false;
@@ -715,8 +721,8 @@ Item {
     readonly property bool touchingLeftBar: allowAttachToBar && root.barPosition === "left" && root.barIsVertical && Math.abs(panelBackground.x - (root.barMarginH + Style.barHeight)) <= 1
     readonly property bool touchingRightBar: allowAttachToBar && root.barPosition === "right" && root.barIsVertical && Math.abs((panelBackground.x + panelBackground.width) - (root.width - root.barMarginH - Style.barHeight)) <= 1
 
-    // Expose panelBackground for mask region
-    property alias maskRegion: panelBackground
+    // Expose panelBackground for geometry placeholder
+    property alias geometryPlaceholder: panelBackground
 
     // The actual panel background - provides geometry for PanelBackground rendering
     Item {

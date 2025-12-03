@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Services.UI
 
 Item {
@@ -34,9 +35,25 @@ Item {
     asynchronous: false
     sourceComponent: BarWidgetRegistry.getWidget(widgetId)
 
+    // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
+    property var _dummyApi: QtObject {
+      function tr(key) {
+        return "";
+      }
+      function trp(key, count) {
+        return "";
+      }
+    }
+
     onLoaded: {
       if (!item)
         return;
+
+      // Inject dummy API immediately to prevent undefined warnings during initialization
+      if (BarWidgetRegistry.isPluginWidget(widgetId) && item.hasOwnProperty("pluginApi") && !item.pluginApi) {
+        item.pluginApi = _dummyApi;
+      }
+
       Logger.d("BarWidgetLoader", "Loading widget", widgetId, "on screen:", widgetScreen.name);
 
       // Apply properties to loaded widget
@@ -56,6 +73,17 @@ Item {
         item.scaling = Qt.binding(function () {
           return root.scaling;
         });
+      }
+
+      // Inject plugin API for plugin widgets
+      if (BarWidgetRegistry.isPluginWidget(widgetId)) {
+        var pluginId = widgetId.replace("plugin:", "");
+        var api = PluginService.getPluginAPI(pluginId);
+        if (api && item.hasOwnProperty("pluginApi")) {
+          // Inject API into widget
+          item.pluginApi = api;
+          Logger.d("BarWidgetLoader", "Injected plugin API for", widgetId);
+        }
       }
 
       // Register this widget instance with BarService
