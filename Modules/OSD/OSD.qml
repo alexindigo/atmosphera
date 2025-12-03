@@ -45,6 +45,15 @@ Variants {
     readonly property bool isInputMuted: AudioService.inputMuted
     readonly property real epsilon: 0.005
 
+    // LockKey OSD enabled state (reactive to settings)
+    readonly property bool lockKeyOSDEnabled: {
+      const enabledTypes = Settings.data.osd.enabledTypes || [];
+      // If enabledTypes is empty, all types are enabled (backwards compatibility)
+      if (enabledTypes.length === 0)
+        return true;
+      return enabledTypes.includes(OSD.Type.LockKey);
+    }
+
     // Helper Functions
     function getIcon() {
       switch (currentOSDType) {
@@ -267,8 +276,9 @@ Variants {
     }
 
     // LockKeys monitoring with a cleaner approach
+    // Only connect when LockKey OSD is enabled to avoid starting the service unnecessarily
     Connections {
-      target: LockKeysService
+      target: root.lockKeyOSDEnabled ? LockKeysService : null
 
       function onCapsLockChanged(active) {
         root.lastLockKeyChanged = active ? "CAPS ON" : "CAPS OFF";
