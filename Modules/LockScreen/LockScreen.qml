@@ -311,7 +311,7 @@ Loader {
                   Layout.preferredWidth: 70
                   Layout.preferredHeight: 70
                   Layout.alignment: Qt.AlignVCenter
-                  radius: Math.min(Style.radiusL, width / 2)
+                  radius: width / 2
                   color: Color.transparent
 
                   Rectangle {
@@ -340,7 +340,7 @@ Loader {
                     anchors.centerIn: parent
                     width: 66
                     height: 66
-                    radius: Math.min(Style.radiusL, width / 2)
+                    radius: width / 2
                     imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
                     fallbackIcon: "person"
 
