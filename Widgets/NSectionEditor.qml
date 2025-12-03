@@ -40,7 +40,7 @@ NBox {
   function calculateWidgetWidth(gridWidth) {
     var columnSpacing = (root.gridColumns - 1) * Style.marginM;
     var widgetWidth = (gridWidth - columnSpacing) / root.gridColumns;
-    return widgetWidth;
+    return Math.floor(widgetWidth);
   }
 
   Layout.minimumHeight: {
@@ -66,7 +66,7 @@ NBox {
     // Account for grid margins and add buffer to prevent overlap
     var gridTopMargin = Style.marginXXS;
     var gridBottomMargin = Style.marginXXS;
-    var widgetAreaHeight = gridTopMargin + (rows * widgetItemHeight) + ((rows - 1) * Style.marginS) + gridBottomMargin + Style.marginXS;
+    var widgetAreaHeight = gridTopMargin + (rows * widgetItemHeight) + ((rows - 1) * Style.marginS) + gridBottomMargin + Style.marginM;
 
     return Math.max(absoluteMin, (Style.marginL * 2) + headerHeight + Style.marginM + widgetAreaHeight);
   }
@@ -432,7 +432,7 @@ NBox {
         width: 3
         height: Style.baseWidgetSize * 1.15
         radius: Style.radiusXXS
-        color: Color.mPrimary
+        color: Color.mSecondary
         opacity: 0
         visible: opacity > 0
         z: 1999
