@@ -1816,6 +1816,23 @@
           "label": "电源操作"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "为此操作执行的自定义命令。留空则使用默认系统命令。",
+          "label": "命令",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "内部锁屏（无命令）",
+          "logout": "内部注销（无命令）"
+        },
+        "default-info": {
+          "description": "如果没有指定自定义命令，将使用默认的系统命令。",
+          "label": "默认命令"
+        },
+        "title": "配置 {entry}",
+        "tooltip": "配置命令"
+      },
       "general": {
         "section": {
           "description": "配置会话菜单面板的行为和外观。",

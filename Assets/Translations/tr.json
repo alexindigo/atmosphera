@@ -1816,6 +1816,23 @@
           "label": "Güç eylemleri"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Bu işlem için yürütülecek özel komut. Varsayılan sistem komutunu kullanmak için boş bırakın.",
+          "label": "Komut",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Dahili kilit ekranı (komut yok)",
+          "logout": "Dahili çıkış (komut yok)"
+        },
+        "default-info": {
+          "description": "Özel bir komut belirtilmezse, varsayılan sistem komutu kullanılır.",
+          "label": "Varsayılan komut"
+        },
+        "title": "{entry} yapılandır",
+        "tooltip": "Yapılandırma komutu"
+      },
       "general": {
         "section": {
           "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",

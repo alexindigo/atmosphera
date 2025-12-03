@@ -1816,6 +1816,23 @@
           "label": "Energieaktionen"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Benutzerdefinierter Befehl, der für diese Aktion ausgeführt werden soll. Leer lassen, um den Standard-Systembefehl zu verwenden.",
+          "label": "Befehl",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Interner Sperrbildschirm (kein Befehl)",
+          "logout": "Interne Abmeldung (kein Befehl)"
+        },
+        "default-info": {
+          "description": "Wenn kein benutzerdefinierter Befehl angegeben ist, wird der standardmäßige Systembefehl verwendet.",
+          "label": "Standardbefehl"
+        },
+        "title": "Konfiguriere {entry}",
+        "tooltip": "Konfigurationsbefehl"
+      },
       "general": {
         "section": {
           "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",

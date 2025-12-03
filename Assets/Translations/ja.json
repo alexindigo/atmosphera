@@ -1816,6 +1816,23 @@
           "label": "電源操作"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "このアクションのために実行するカスタムコマンド。空欄のままにすると、デフォルトのシステムコマンドが使用されます。",
+          "label": "コマンド",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "内部ロック画面（コマンドなし）",
+          "logout": "内部ログアウト (コマンドなし)"
+        },
+        "default-info": {
+          "description": "カスタムコマンドが指定されていない場合、デフォルトのシステムコマンドが使用されます。",
+          "label": "デフォルトのコマンド"
+        },
+        "title": "{entry} を構成する",
+        "tooltip": "コマンドを構成する"
+      },
       "general": {
         "section": {
           "description": "セッションメニューパネルの動作と外観を設定します。",

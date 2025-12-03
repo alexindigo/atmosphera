@@ -1816,6 +1816,23 @@
           "label": "Ações de energia"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Comando personalizado para executar para esta ação. Deixe vazio para usar o comando padrão do sistema.",
+          "label": "Comando",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Tela de bloqueio interna (sem comando)",
+          "logout": "Logout interno (sem comando)"
+        },
+        "default-info": {
+          "description": "Se nenhum comando personalizado for especificado, o comando padrão do sistema será usado.",
+          "label": "Comando padrão"
+        },
+        "title": "Configurar {entry}",
+        "tooltip": "Configurar comando"
+      },
       "general": {
         "section": {
           "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",

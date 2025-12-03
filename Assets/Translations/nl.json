@@ -1816,6 +1816,23 @@
           "label": "Energieacties"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Aangepast commando om uit te voeren voor deze actie. Laat leeg om het standaard systeemcommando te gebruiken.",
+          "label": "Commando",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Intern vergrendelscherm (geen commando)",
+          "logout": "Interne afmelding (geen commando)"
+        },
+        "default-info": {
+          "description": "Als er geen aangepast commando is opgegeven, wordt het standaard systeemcommando gebruikt.",
+          "label": "Standaardopdracht"
+        },
+        "title": "Configureer {entry}",
+        "tooltip": "Configureer opdracht"
+      },
       "general": {
         "section": {
           "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",

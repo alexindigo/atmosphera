@@ -1816,6 +1816,23 @@
           "label": "Power actions"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Custom command to execute for this action. Leave empty to use the default system command.",
+          "label": "Command",
+          "placeholder": "e.g., systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Internal lock screen (no command)",
+          "logout": "Internal logout (no command)"
+        },
+        "default-info": {
+          "description": "If no custom command is specified, the default system command will be used.",
+          "label": "Default command"
+        },
+        "title": "Configure {entry}",
+        "tooltip": "Configure command"
+      },
       "general": {
         "section": {
           "description": "Configure the session menu panel behavior and appearance.",

@@ -1816,6 +1816,23 @@
           "label": "Actions d'alimentation"
         }
       },
+      "entry-settings": {
+        "command": {
+          "description": "Commande personnalisée à exécuter pour cette action. Laisser vide pour utiliser la commande système par défaut.",
+          "label": "Commande",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Écran de verrouillage interne (sans commande)",
+          "logout": "Déconnexion interne (sans commande)"
+        },
+        "default-info": {
+          "description": "Si aucune commande personnalisée n'est spécifiée, la commande système par défaut sera utilisée.",
+          "label": "Commande par défaut"
+        },
+        "title": "Configurer {entry}",
+        "tooltip": "Configurer la commande"
+      },
       "general": {
         "section": {
           "description": "Configurer le comportement et l'apparence du panneau du menu de session.",

@@ -101,7 +101,8 @@ SmartPanel {
                        "icon": metadata.icon,
                        "title": metadata.title,
                        "isShutdown": metadata.isShutdown,
-                       "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true
+                       "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
+                       "command": settingOption.command || ""
                      });
       }
     }
@@ -125,7 +126,8 @@ SmartPanel {
                          "icon": metadata.icon,
                          "title": metadata.title,
                          "isShutdown": metadata.isShutdown,
-                         "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true
+                         "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
+                         "command": settingOption.command || ""
                        });
         }
       }
@@ -190,6 +192,25 @@ SmartPanel {
     // Stop timer but don't reset other properties yet
     countdownTimer.stop();
 
+    // Find the option to check for custom command
+    var option = null;
+    for (var i = 0; i < powerOptions.length; i++) {
+      if (powerOptions[i].action === action) {
+        option = powerOptions[i];
+        break;
+      }
+    }
+
+    // If custom command is defined, execute it
+    if (option && option.command && option.command.trim() !== "") {
+      Logger.i("SessionMenu", "Executing custom command for action:", action, "Command:", option.command);
+      Quickshell.execDetached(["sh", "-c", option.command]);
+      cancelTimer();
+      root.close();
+      return;
+    }
+
+    // Otherwise, use default behavior
     switch (action) {
     case "lock":
       // Access lockScreen via PanelService
