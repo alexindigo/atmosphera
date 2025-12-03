@@ -24,7 +24,7 @@ ColumnLayout {
     NImageRounded {
       Layout.preferredWidth: 88 * Style.uiScaleRatio
       Layout.preferredHeight: width
-      radius: Math.min((Layout.preferredWidth / 2) * Settings.data.general.radiusRatio, Layout.preferredWidth / 2)
+      radius: width / 2
       imagePath: Settings.preprocessPath(Settings.data.general.avatarImage)
       fallbackIcon: "person"
       borderColor: Color.mPrimary
