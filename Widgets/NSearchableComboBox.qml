@@ -184,7 +184,11 @@ RowLayout {
             id: defaultDelegate
             ItemDelegate {
               id: delegateRoot
-              width: listView.width
+              width: listView.width - listView.scrollBarTotalWidth
+              leftPadding: Style.marginM
+              rightPadding: Style.marginM
+              topPadding: Style.marginS
+              bottomPadding: Style.marginS
               hoverEnabled: true
               highlighted: ListView.view.currentIndex === index
 
@@ -201,7 +205,7 @@ RowLayout {
               }
 
               contentItem: RowLayout {
-                width: parent.width
+                width: delegateRoot.width - delegateRoot.leftPadding - delegateRoot.rightPadding
                 spacing: Style.marginM
 
                 NText {
@@ -248,7 +252,7 @@ RowLayout {
                 }
               }
               background: Rectangle {
-                width: listView.width
+                anchors.fill: parent
                 color: highlighted ? Color.mHover : Color.transparent
                 radius: Style.iRadiusS
                 Behavior on color {
