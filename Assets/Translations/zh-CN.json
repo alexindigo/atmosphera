@@ -454,6 +454,13 @@
   "clock": {
     "tooltip": "打开日历"
   },
+  "common": {
+    "add": "添加",
+    "apply": "应用",
+    "cancel": "取消",
+    "close": "关闭",
+    "save": "保存"
+  },
   "context-menu": {
     "activate-app": "激活 {app}",
     "clear-history": "清除历史记录",
@@ -1741,6 +1748,64 @@
           "label": "输出音量"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "浏览并安装来自已配置源的插件。",
+        "label": "可用插件",
+        "no-plugins-description": "检查你的插件源或刷新列表。",
+        "no-plugins-label": "没有可用的插件"
+      },
+      "filter": {
+        "all": "全部",
+        "downloaded": "已下载",
+        "not-downloaded": "未下载"
+      },
+      "install": "安装",
+      "install-error": "安装失败：{error}",
+      "install-success": "成功安装 {plugin}",
+      "installed": {
+        "description": "管理和配置所有本地安装的插件。",
+        "label": "已安装插件",
+        "no-plugins-description": "从下方“可用插件”部分安装插件。",
+        "no-plugins-label": "未安装插件"
+      },
+      "installing": "正在安装 {plugin}...",
+      "plugin-settings-title": "{插件} 设置",
+      "refresh": {
+        "refreshing": "正在刷新插件列表...",
+        "tooltip": "刷新可用插件"
+      },
+      "settings": {
+        "tooltip": "插件设置"
+      },
+      "settings-error-not-loaded": "插件未加载",
+      "settings-saved": "插件设置已保存",
+      "sources": {
+        "add-custom": "添加自定义存储库",
+        "add-dialog": {
+          "description": "添加一个 GitHub 仓库作为插件源。",
+          "error": "无法添加插件源",
+          "name": "仓库名称",
+          "success": "插件源添加成功",
+          "title": "添加插件源",
+          "url": "仓库 URL"
+        },
+        "description": "管理插件仓库，插件从这些仓库下载。",
+        "label": "插件源",
+        "remove": {
+          "tooltip": "移除插件源"
+        }
+      },
+      "title": "插件",
+      "uninstall": "卸载",
+      "uninstall-dialog": {
+        "description": "你确定要卸载 {plugin} 吗？ 这将移除所有插件数据。",
+        "title": "卸载插件"
+      },
+      "uninstall-error": "卸载失败：{error}",
+      "uninstall-success": "成功卸载 {plugin}",
+      "uninstalling": "正在卸载 {plugin}..."
     },
     "screen-recorder": {
       "audio": {

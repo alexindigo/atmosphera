@@ -3,13 +3,6 @@
     "error": "Authentication error",
     "failed": "Authentication failed"
   },
-  "common": {
-    "add": "Add",
-    "cancel": "Cancel",
-    "apply": "Apply",
-    "save": "Save",
-    "close": "Close"
-  },
   "bar": {
     "widget-settings": {
       "active-window": {
@@ -460,6 +453,13 @@
   },
   "clock": {
     "tooltip": "Clock"
+  },
+  "common": {
+    "add": "Add",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save"
   },
   "context-menu": {
     "activate-app": "Activate {app}",
@@ -1750,17 +1750,11 @@
       }
     },
     "plugins": {
-      "installed": {
-        "description": "Manage and configure all locally installed plugins.",
-        "label": "Installed plugins",
-        "no-plugins-label": "No plugins installed",
-        "no-plugins-description": "Install plugins from the Available Plugins section below."
-      },
       "available": {
         "description": "Browse and install plugins from configured sources.",
         "label": "Available plugins",
-        "no-plugins-label": "No plugins available",
-        "no-plugins-description": "Check your plugin sources or refresh the list."
+        "no-plugins-description": "Check your plugin sources or refresh the list.",
+        "no-plugins-label": "No plugins available"
       },
       "filter": {
         "all": "All",
@@ -1770,6 +1764,12 @@
       "install": "Install",
       "install-error": "Failed to install: {error}",
       "install-success": "Successfully installed {plugin}",
+      "installed": {
+        "description": "Manage and configure all locally installed plugins.",
+        "label": "Installed plugins",
+        "no-plugins-description": "Install plugins from the Available Plugins section below.",
+        "no-plugins-label": "No plugins installed"
+      },
       "installing": "Installing {plugin}...",
       "plugin-settings-title": "{plugin} Settings",
       "refresh": {

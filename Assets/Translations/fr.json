@@ -454,6 +454,13 @@
   "clock": {
     "tooltip": "Ouvrir le calendrier"
   },
+  "common": {
+    "add": "Ajouter",
+    "apply": "Postuler",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "save": "Enregistrer"
+  },
   "context-menu": {
     "activate-app": "Activer {app}",
     "clear-history": "Effacer l'historique",
@@ -1741,6 +1748,64 @@
           "label": "Volume de sortie"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "Parcourir et installer des plugins à partir des sources configurées.",
+        "label": "Plugins disponibles",
+        "no-plugins-description": "Vérifiez les sources de vos plugins ou actualisez la liste.",
+        "no-plugins-label": "Aucun plugin disponible."
+      },
+      "filter": {
+        "all": "Tout",
+        "downloaded": "Téléchargé",
+        "not-downloaded": "Non téléchargé"
+      },
+      "install": "Installer",
+      "install-error": "Échec de l'installation : {error}",
+      "install-success": "Installation de {plugin} réussie.",
+      "installed": {
+        "description": "Gérer et configurer tous les plugins installés localement.",
+        "label": "Plugins installés",
+        "no-plugins-description": "Installez les extensions depuis la section Extensions disponibles ci-dessous.",
+        "no-plugins-label": "Aucun plugin installé"
+      },
+      "installing": "Installation de {plugin}...",
+      "plugin-settings-title": "Paramètres de {plugin}",
+      "refresh": {
+        "refreshing": "Actualisation de la liste des plugins...",
+        "tooltip": "Actualiser les extensions disponibles"
+      },
+      "settings": {
+        "tooltip": "Paramètres du plugin"
+      },
+      "settings-error-not-loaded": "Plugin non chargé",
+      "settings-saved": "Paramètres du plugin enregistrés",
+      "sources": {
+        "add-custom": "Ajouter un dépôt personnalisé",
+        "add-dialog": {
+          "description": "Ajouter un dépôt GitHub comme source de plugin.",
+          "error": "Échec de l'ajout de la source du plugin.",
+          "name": "Nom du dépôt",
+          "success": "Source du plugin ajoutée avec succès.",
+          "title": "Ajouter la source du plugin",
+          "url": "URL du dépôt"
+        },
+        "description": "Gérer les dépôts de plugins à partir desquels les plugins sont téléchargés.",
+        "label": "Sources du plugin",
+        "remove": {
+          "tooltip": "Supprimer la source du plugin"
+        }
+      },
+      "title": "Modules d'extension",
+      "uninstall": "Désinstaller",
+      "uninstall-dialog": {
+        "description": "Êtes-vous sûr de vouloir désinstaller {plugin} ? Cette action supprimera toutes les données du plugin.",
+        "title": "Désinstaller le plugin"
+      },
+      "uninstall-error": "Échec de la désinstallation : {error}",
+      "uninstall-success": "{plugin} a été désinstallé(e) avec succès.",
+      "uninstalling": "Désinstallation de {plugin}..."
     },
     "screen-recorder": {
       "audio": {

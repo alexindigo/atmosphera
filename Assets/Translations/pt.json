@@ -454,6 +454,13 @@
   "clock": {
     "tooltip": "Abrir calendário"
   },
+  "common": {
+    "add": "Adicionar",
+    "apply": "Aplicar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "save": "Salvar"
+  },
   "context-menu": {
     "activate-app": "Ativar {app}",
     "clear-history": "Limpar histórico",
@@ -1741,6 +1748,64 @@
           "label": "Volume de saída"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "Navegue e instale plugins a partir de fontes configuradas.",
+        "label": "Plugins disponíveis",
+        "no-plugins-description": "Verifique as fontes do seu plugin ou atualize a lista.",
+        "no-plugins-label": "Nenhum plugin disponível."
+      },
+      "filter": {
+        "all": "Tudo",
+        "downloaded": "Baixado",
+        "not-downloaded": "Não Baixado"
+      },
+      "install": "Instalar",
+      "install-error": "Falha ao instalar: {error}",
+      "install-success": "{plugin} instalado com sucesso.",
+      "installed": {
+        "description": "Gerenciar e configurar todos os plugins instalados localmente.",
+        "label": "Plugins instalados",
+        "no-plugins-description": "Instale os plugins da seção Plugins Disponíveis abaixo.",
+        "no-plugins-label": "Nenhum plugin instalado"
+      },
+      "installing": "Instalando {plugin}...",
+      "plugin-settings-title": "Configurações do {plugin}",
+      "refresh": {
+        "refreshing": "Atualizando a lista de plugins...",
+        "tooltip": "Atualizar plugins disponíveis"
+      },
+      "settings": {
+        "tooltip": "Configurações do plugin"
+      },
+      "settings-error-not-loaded": "Plugin não carregado",
+      "settings-saved": "Configurações do plugin salvas.",
+      "sources": {
+        "add-custom": "Adicionar repositório personalizado",
+        "add-dialog": {
+          "description": "Adicionar um repositório GitHub como fonte de plugin.",
+          "error": "Falha ao adicionar a fonte do plugin.",
+          "name": "Nome do repositório",
+          "success": "Fonte do plugin adicionada com sucesso.",
+          "title": "Adicionar fonte do plugin",
+          "url": "URL do repositório"
+        },
+        "description": "Gerenciar repositórios de plugins de onde os plugins são baixados.",
+        "label": "Fontes de plugins",
+        "remove": {
+          "tooltip": "Remover código fonte do plugin"
+        }
+      },
+      "title": "Plugins",
+      "uninstall": "Desinstalar",
+      "uninstall-dialog": {
+        "description": "Tem certeza de que deseja desinstalar {plugin}? Isso removerá todos os dados do plugin.",
+        "title": "Desinstalar plugin"
+      },
+      "uninstall-error": "Falha ao desinstalar: {error}",
+      "uninstall-success": "{plugin} desinstalado com sucesso",
+      "uninstalling": "Desinstalando {plugin}..."
     },
     "screen-recorder": {
       "audio": {

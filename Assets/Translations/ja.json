@@ -454,6 +454,13 @@
   "clock": {
     "tooltip": "カレンダーを開く"
   },
+  "common": {
+    "add": "追加",
+    "apply": "適用",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "save": "保存"
+  },
   "context-menu": {
     "activate-app": "{app} をアクティブにする",
     "clear-history": "履歴を削除する",
@@ -1741,6 +1748,64 @@
           "label": "出力音量"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "構成されたソースからプラグインをブラウズしてインストールします。",
+        "label": "利用できるプラグイン",
+        "no-plugins-description": "プラグインのソースを確認するか、リストを更新してください。",
+        "no-plugins-label": "利用できるプラグインはありません"
+      },
+      "filter": {
+        "all": "すべて",
+        "downloaded": "ダウンロード済み",
+        "not-downloaded": "ダウンロードされていません"
+      },
+      "install": "インストール",
+      "install-error": "インストールに失敗しました: {error}",
+      "install-success": "{plugin} のインストールに成功しました。",
+      "installed": {
+        "description": "ローカルにインストールされたすべてのプラグインを管理および設定します。",
+        "label": "インストール済みプラグイン",
+        "no-plugins-description": "下の利用可能なプラグインのセクションからプラグインをインストールしてください。",
+        "no-plugins-label": "プラグインはインストールされていません。"
+      },
+      "installing": "{plugin} をインストール中...",
+      "plugin-settings-title": "{plugin} 設定",
+      "refresh": {
+        "refreshing": "プラグインリストを更新中...",
+        "tooltip": "利用可能なプラグインを更新"
+      },
+      "settings": {
+        "tooltip": "プラグイン設定"
+      },
+      "settings-error-not-loaded": "プラグインはロードされませんでした。",
+      "settings-saved": "プラグイン設定を保存しました。",
+      "sources": {
+        "add-custom": "カスタムリポジトリを追加",
+        "add-dialog": {
+          "description": "GitHubリポジトリをプラグインソースとして追加する。",
+          "error": "プラグインソースの追加に失敗しました",
+          "name": "リポジトリ名",
+          "success": "プラグインソースが正常に追加されました。",
+          "title": "プラグインソースを追加",
+          "url": "リポジトリのURL"
+        },
+        "description": "プラグインのダウンロード元となるプラグインリポジトリを管理します。",
+        "label": "プラグインのソース",
+        "remove": {
+          "tooltip": "プラグインソースを削除"
+        }
+      },
+      "title": "プラグイン",
+      "uninstall": "アンインストール",
+      "uninstall-dialog": {
+        "description": "{plugin} をアンインストールしてもよろしいですか？プラグインのデータはすべて削除されます。",
+        "title": "プラグインをアンインストールする"
+      },
+      "uninstall-error": "アンインストールに失敗しました: {error}",
+      "uninstall-success": "{plugin} のアンインストールに成功しました。",
+      "uninstalling": "{plugin} をアンインストールしています..."
     },
     "screen-recorder": {
       "audio": {

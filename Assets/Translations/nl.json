@@ -454,6 +454,13 @@
   "clock": {
     "tooltip": "Kalender openen"
   },
+  "common": {
+    "add": "Toevoegen",
+    "apply": "Toepassen",
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "save": "Opslaan"
+  },
   "context-menu": {
     "activate-app": "Activeer {app}",
     "clear-history": "Geschiedenis wissen",
@@ -1741,6 +1748,64 @@
           "label": "Uitvoervolume"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "Blader door en installeer plugins vanuit geconfigureerde bronnen.",
+        "label": "Beschikbare plug-ins",
+        "no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
+        "no-plugins-label": "Geen plug-ins beschikbaar"
+      },
+      "filter": {
+        "all": "Alles",
+        "downloaded": "Gedownload",
+        "not-downloaded": "Niet gedownload"
+      },
+      "install": "Installeren",
+      "install-error": "Installatie mislukt: {error}",
+      "install-success": "{plugin} succesvol geïnstalleerd",
+      "installed": {
+        "description": "Beheer en configureer alle lokaal geïnstalleerde plugins.",
+        "label": "Geïnstalleerde plug-ins",
+        "no-plugins-description": "Installeer plugins uit de sectie Beschikbare plugins hieronder.",
+        "no-plugins-label": "Geen plugins geïnstalleerd"
+      },
+      "installing": "{plugin} installeren...",
+      "plugin-settings-title": "{plugin} Instellingen",
+      "refresh": {
+        "refreshing": "Pluginlijst vernieuwen...",
+        "tooltip": "Beschikbare plugins vernieuwen"
+      },
+      "settings": {
+        "tooltip": "Plugin instellingen"
+      },
+      "settings-error-not-loaded": "Plugin niet geladen",
+      "settings-saved": "Plugininstellingen opgeslagen",
+      "sources": {
+        "add-custom": "Aangepaste repository toevoegen",
+        "add-dialog": {
+          "description": "Voeg een GitHub repository toe als een pluginbron.",
+          "error": "Pluginbron toevoegen mislukt",
+          "name": "Repositorynaam",
+          "success": "Pluginbron succesvol toegevoegd",
+          "title": "Pluginbron toevoegen",
+          "url": "Repository URL"
+        },
+        "description": "Beheer plugin-repositories vanwaar plugins worden gedownload.",
+        "label": "Pluginbronnen",
+        "remove": {
+          "tooltip": "Pluginbron verwijderen"
+        }
+      },
+      "title": "Plugins",
+      "uninstall": "Verwijderen",
+      "uninstall-dialog": {
+        "description": "Weet je zeker dat je {plugin} wilt verwijderen? Hiermee worden alle plugin-gegevens verwijderd.",
+        "title": "Plugin verwijderen"
+      },
+      "uninstall-error": "Verwijderen mislukt: {error}",
+      "uninstall-success": "{plugin} is succesvol verwijderd.",
+      "uninstalling": "{plugin} verwijderen..."
     },
     "screen-recorder": {
       "audio": {
