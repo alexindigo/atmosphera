@@ -1740,7 +1740,7 @@
           "label": "Touches de verrouillage"
         },
         "section": {
-          "description": "Sélectionnez les événements qui déclenchent l'OSD. Si aucun événement n'est sélectionné, tous les événements disponibles déclencheront l'OSD.",
+          "description": "Sélectionnez les événements qui déclenchent l'OSD.",
           "label": "Événements de déclenchement OSD"
         },
         "volume": {

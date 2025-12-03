@@ -1740,7 +1740,7 @@
           "label": "Teclas de bloqueo"
         },
         "section": {
-          "description": "Seleccione los eventos que activan el OSD. Si no se selecciona ningún evento, todos los eventos disponibles activarán el OSD.",
+          "description": "Seleccione los eventos que activan el OSD.",
           "label": "Eventos de activación OSD"
         },
         "volume": {

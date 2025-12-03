@@ -1740,7 +1740,7 @@
           "label": "Kilit tuşları"
         },
         "section": {
-          "description": "OSD'yi tetikleyecek olayları seçin. Hiçbir olay seçilmezse, mevcut tüm olaylar OSD'yi tetikleyecektir.",
+          "description": "OSD'yi tetikleyecek olayları seçin.",
           "label": "OSD tetikleme olayları"
         },
         "volume": {

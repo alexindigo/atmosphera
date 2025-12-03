@@ -1740,7 +1740,7 @@
           "label": "Vergrendeltoetsen"
         },
         "section": {
-          "description": "Selecteer de gebeurtenissen die de OSD activeren. Als er geen gebeurtenissen zijn geselecteerd, activeren alle beschikbare gebeurtenissen de OSD.",
+          "description": "Selecteer de gebeurtenissen die de OSD activeren.",
           "label": "OSD triggergebeurtenissen"
         },
         "volume": {

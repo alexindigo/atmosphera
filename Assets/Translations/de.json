@@ -1067,7 +1067,7 @@
       "templates": {
         "compositors": {
           "description": "Compositor-Theming.",
-          "label": "Compositor/innen",
+          "label": "Compositor",
           "niri": {
             "description": "Schreibe {filepath}. Benötigt niri v25.11+",
             "description-missing": "Benötigt die Installation von {app}"
@@ -1740,7 +1740,7 @@
           "label": "Feststelltasten"
         },
         "section": {
-          "description": "Wählen Sie die Ereignisse aus, die das OSD auslösen. Wenn keine Ereignisse ausgewählt werden, lösen alle verfügbaren Ereignisse das OSD aus.",
+          "description": "Wählen Sie die Ereignisse aus, die das OSD auslösen.",
           "label": "OSD-Auslöseereignisse"
         },
         "volume": {

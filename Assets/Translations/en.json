@@ -1740,7 +1740,7 @@
           "label": "Lock keys"
         },
         "section": {
-          "description": "Select the events that trigger the OSD. If no events are selected, all available events will trigger the OSD.",
+          "description": "Select the events that trigger the OSD.",
           "label": "OSD trigger events"
         },
         "volume": {

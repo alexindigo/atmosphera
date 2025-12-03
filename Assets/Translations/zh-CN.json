@@ -1740,7 +1740,7 @@
           "label": "锁定键"
         },
         "section": {
-          "description": "选择触发OSD的事件。如果未选择任何事件，则所有可用事件都将触发OSD。",
+          "description": "选择触发OSD的事件。",
           "label": "OSD触发事件"
         },
         "volume": {
