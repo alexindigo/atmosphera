@@ -53,9 +53,52 @@ ColumnLayout {
           anchors.margins: Style.marginL
           spacing: Style.marginM
 
-          NLabel {
-            label: modelData.name
-            description: modelData.description
+          NIcon {
+            icon: "plugin"
+            pointSize: Style.fontSizeXL
+            color: Color.mOnSurface
+          }
+
+          ColumnLayout {
+            spacing: 2
+            Layout.fillWidth: true
+
+            NText {
+              text: modelData.name
+              font.weight: Font.Medium
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+            }
+
+            NText {
+              text: modelData.description
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+              wrapMode: Text.WordWrap
+              Layout.fillWidth: true
+            }
+
+            RowLayout {
+              spacing: Style.marginS
+
+              NText {
+                text: "v" + modelData.version
+                font.pointSize: Style.fontSizeXXS
+                color: Color.mOnSurfaceVariant
+              }
+
+              NText {
+                text: "•"
+                font.pointSize: Style.fontSizeXXS
+                color: Color.mOnSurfaceVariant
+              }
+
+              NText {
+                text: modelData.author
+                font.pointSize: Style.fontSizeXXS
+                color: Color.mOnSurfaceVariant
+              }
+            }
           }
 
           NIconButton {
@@ -98,195 +141,7 @@ ColumnLayout {
   }
 
   // ------------------------------
-  // Section 2: Available Plugins
-  // ------------------------------
-  NHeader {
-    label: I18n.tr("settings.plugins.available.label")
-    description: I18n.tr("settings.plugins.available.description")
-  }
-
-  // Filter controls
-  RowLayout {
-    spacing: Style.marginM
-    Layout.fillWidth: true
-
-    NTabBar {
-      id: filterTabBar
-      Layout.fillWidth: true
-      currentIndex: 0
-      onCurrentIndexChanged: {
-        if (currentIndex === 0)
-          pluginFilter = "all";
-        else if (currentIndex === 1)
-          pluginFilter = "downloaded";
-        else if (currentIndex === 2)
-          pluginFilter = "notDownloaded";
-      }
-      spacing: Style.marginXS
-
-      NTabButton {
-        text: I18n.tr("settings.plugins.filter.all")
-        tabIndex: 0
-        checked: pluginFilter === "all"
-      }
-
-      NTabButton {
-        text: I18n.tr("settings.plugins.filter.downloaded")
-        tabIndex: 1
-        checked: pluginFilter === "downloaded"
-      }
-
-      NTabButton {
-        text: I18n.tr("settings.plugins.filter.not-downloaded")
-        tabIndex: 2
-        checked: pluginFilter === "notDownloaded"
-      }
-    }
-
-    NIconButton {
-      icon: "refresh"
-      tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
-      baseSize: Style.baseWidgetSize * 0.9
-      onClicked: {
-        PluginService.refreshAvailablePlugins();
-        ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
-      }
-    }
-  }
-
-  property string pluginFilter: "all"
-
-  // Available plugins list
-  NListView {
-    id: pluginListView
-    Layout.fillWidth: true
-    Layout.preferredHeight: 400
-    spacing: Style.marginM
-
-    model: {
-      var all = PluginService.availablePlugins || [];
-      var filtered = [];
-
-      for (var i = 0; i < all.length; i++) {
-        var plugin = all[i];
-        var downloaded = plugin.downloaded || false;
-
-        if (pluginFilter === "all") {
-          filtered.push(plugin);
-        } else if (pluginFilter === "downloaded" && downloaded) {
-          filtered.push(plugin);
-        } else if (pluginFilter === "notDownloaded" && !downloaded) {
-          filtered.push(plugin);
-        }
-      }
-
-      return filtered;
-    }
-
-    delegate: NBox {
-      width: ListView.view.width - pluginListView.scrollBarWidth
-      implicitHeight: contentRow.implicitHeight + Style.marginL * 2
-      color: Color.mSurface
-
-      RowLayout {
-        id: contentRow
-        anchors.fill: parent
-        anchors.margins: Style.marginL
-        spacing: Style.marginM
-
-        NIcon {
-          icon: "plugin"
-          pointSize: Style.fontSizeXL
-          color: Color.mOnSurface
-        }
-
-        ColumnLayout {
-          spacing: 2
-          Layout.fillWidth: true
-
-          NText {
-            text: modelData.name
-            font.weight: Font.Medium
-            color: Color.mOnSurface
-            Layout.fillWidth: true
-          }
-
-          NText {
-            text: modelData.description
-            font.pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-          }
-
-          RowLayout {
-            spacing: Style.marginS
-
-            NText {
-              text: "v" + modelData.version
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: "•"
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: modelData.author
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: "•"
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-
-            NText {
-              text: modelData.source?.name || "Unknown"
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-            }
-          }
-        }
-
-        // Downloaded indicator
-        NIcon {
-          icon: "circle-check"
-          pointSize: Style.fontSizeM
-          color: Color.mPrimary
-          visible: modelData.downloaded === true
-        }
-
-        // Install/Uninstall button
-        NButton {
-          text: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
-          onClicked: {
-            if (modelData.downloaded) {
-              uninstallDialog.pluginToUninstall = modelData;
-              uninstallDialog.open();
-            } else {
-              installPlugin(modelData);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  NLabel {
-    visible: pluginListView.count === 0
-    label: I18n.tr("settings.plugins.available.no-plugins-label")
-    description: I18n.tr("settings.plugins.available.no-plugins-description")
-    Layout.fillWidth: true
-  }
-
-  // ------------------------------
-  // Section 3: Plugin Sources
+  // Section 2: Plugin Sources
   // ------------------------------
   NCollapsible {
     Layout.fillWidth: true
@@ -353,6 +208,199 @@ ColumnLayout {
         Layout.fillWidth: true
       }
     }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
+  }
+
+  // ------------------------------
+  // Section 3: Available Plugins
+  // ------------------------------
+  NHeader {
+    label: I18n.tr("settings.plugins.available.label")
+    description: I18n.tr("settings.plugins.available.description")
+  }
+
+  // Filter controls
+  RowLayout {
+    spacing: Style.marginM
+    Layout.fillWidth: true
+
+    NTabBar {
+      id: filterTabBar
+      Layout.fillWidth: true
+      currentIndex: 0
+      onCurrentIndexChanged: {
+        if (currentIndex === 0)
+          pluginFilter = "all";
+        else if (currentIndex === 1)
+          pluginFilter = "downloaded";
+        else if (currentIndex === 2)
+          pluginFilter = "notDownloaded";
+      }
+      spacing: Style.marginXS
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.all")
+        tabIndex: 0
+        checked: pluginFilter === "all"
+      }
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.downloaded")
+        tabIndex: 1
+        checked: pluginFilter === "downloaded"
+      }
+
+      NTabButton {
+        text: I18n.tr("settings.plugins.filter.not-downloaded")
+        tabIndex: 2
+        checked: pluginFilter === "notDownloaded"
+      }
+    }
+
+    NIconButton {
+      icon: "refresh"
+      tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
+      baseSize: Style.baseWidgetSize * 0.9
+      onClicked: {
+        PluginService.refreshAvailablePlugins();
+        ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
+      }
+    }
+  }
+
+  property string pluginFilter: "all"
+
+  // Available plugins list
+  NListView {
+    id: pluginListView
+    Layout.fillWidth: true
+    Layout.preferredHeight: 400
+
+    model: {
+      var all = PluginService.availablePlugins || [];
+      var filtered = [];
+
+      for (var i = 0; i < all.length; i++) {
+        var plugin = all[i];
+        var downloaded = plugin.downloaded || false;
+
+        if (pluginFilter === "all") {
+          filtered.push(plugin);
+        } else if (pluginFilter === "downloaded" && downloaded) {
+          filtered.push(plugin);
+        } else if (pluginFilter === "notDownloaded" && !downloaded) {
+          filtered.push(plugin);
+        }
+      }
+
+      return filtered;
+    }
+
+    delegate: NBox {
+      width: ListView.view.width - pluginListView.scrollBarWidth
+      implicitHeight: contentRow.implicitHeight + Style.marginL * 2
+      color: Color.mSurface
+
+      RowLayout {
+        id: contentRow
+        anchors.fill: parent
+        anchors.margins: Style.marginL
+        spacing: Style.marginM
+
+        NIcon {
+          icon: "plugin"
+          pointSize: Style.fontSizeXL
+          color: Color.mOnSurface
+        }
+
+        ColumnLayout {
+          spacing: 2
+          Layout.fillWidth: true
+
+          NText {
+            text: modelData.name
+            font.weight: Font.Medium
+            color: Color.mOnSurface
+            Layout.fillWidth: true
+          }
+
+          NText {
+            text: modelData.description
+            font.pointSize: Style.fontSizeXS
+            color: Color.mOnSurfaceVariant
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+
+          RowLayout {
+            spacing: Style.marginS
+
+            NText {
+              text: "v" + modelData.version
+              font.pointSize: Style.fontSizeXXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: "•"
+              font.pointSize: Style.fontSizeXXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: modelData.author
+              font.pointSize: Style.fontSizeXXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: "•"
+              font.pointSize: Style.fontSizeXXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: modelData.source?.name || "Unknown"
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+          }
+        }
+
+        // Downloaded indicator
+        NIcon {
+          icon: "circle-check"
+          pointSize: Style.fontSizeM
+          color: Color.mPrimary
+          visible: modelData.downloaded === true
+        }
+
+        // Install/Uninstall button
+        NButton {
+          text: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
+          onClicked: {
+            if (modelData.downloaded) {
+              uninstallDialog.pluginToUninstall = modelData;
+              uninstallDialog.open();
+            } else {
+              installPlugin(modelData);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  NLabel {
+    visible: pluginListView.count === 0
+    label: I18n.tr("settings.plugins.available.no-plugins-label")
+    description: I18n.tr("settings.plugins.available.no-plugins-description")
+    Layout.fillWidth: true
   }
 
   // ------------------------------
