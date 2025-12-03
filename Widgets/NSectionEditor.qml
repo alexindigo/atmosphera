@@ -305,9 +305,15 @@ NBox {
 
               NText {
                 text: {
-                  // Strip "plugin:" prefix for display
+                  // For plugin widgets, get the actual plugin name from manifest
                   if (root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)) {
-                    return modelData.id.replace("plugin:", "");
+                    const pluginId = modelData.id.replace("plugin:", "");
+                    const manifest = PluginRegistry.getPluginManifest(pluginId);
+                    if (manifest && manifest.name) {
+                      return manifest.name;
+                    }
+                    // Fallback: just strip the prefix
+                    return pluginId;
                   }
                   return modelData.id;
                 }
