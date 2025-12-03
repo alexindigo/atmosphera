@@ -227,6 +227,9 @@ ColumnLayout {
 
     NHeader {
       label: I18n.tr("settings.bar.widgets.section.label")
+    }
+
+    NLabel {
       description: I18n.tr("settings.bar.widgets.section.description")
     }
 
@@ -415,14 +418,36 @@ ColumnLayout {
       if (instances[i].widgetId === widgetId) {
         const section = instances[i].section;
         if (section === "left")
-          locations["L"] = true;
+          locations["arrow-bar-to-left"] = true;
         else if (section === "center")
-          locations["C"] = true;
+          locations["layout-columns"] = true;
         else if (section === "right")
-          locations["R"] = true;
+          locations["arrow-bar-to-right"] = true;
       }
     }
-    return Object.keys(locations).join('');
+    return Object.keys(locations);
+  }
+
+  function createBadges(isPlugin, locations) {
+    const badges = [];
+
+    // Add plugin badge first (with custom color)
+    if (isPlugin) {
+      badges.push({
+                    "icon": "plugin",
+                    "color": Color.mSecondary
+                  });
+    }
+
+    // Add location badges (with default styling)
+    locations.forEach(function (location) {
+      badges.push({
+                    "icon": location,
+                    "color": Color.mOnSurfaceVariant
+                  });
+    });
+
+    return badges;
   }
 
   function updateAvailableWidgetsModel() {
@@ -447,8 +472,7 @@ ColumnLayout {
                       availableWidgets.append({
                                                 "key": entry,
                                                 "name": displayName,
-                                                "badgeLocations": getWidgetLocations(entry),
-                                                "isPlugin": isPlugin
+                                                "badges": createBadges(isPlugin, getWidgetLocations(entry))
                                               });
                     });
   }
