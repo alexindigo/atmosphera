@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Hardware
 import qs.Services.Networking
+import qs.Services.Power
 import qs.Widgets
 
 SmartPanel {
@@ -156,6 +157,32 @@ SmartPanel {
     return I18n.tr("battery.idle");
   }
   readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
+  
+  readonly property bool powerProfileAvailable: PowerProfileService.available
+  readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
+  readonly property bool profilesAvailable: PowerProfileService.available
+  property int profileIndex: profileToIndex(PowerProfileService.profile)
+  
+  function profileToIndex(p) {
+    return powerProfiles.indexOf(p) ?? 1;
+  }
+
+  function indexToProfile(idx) {
+    return powerProfiles[idx] ?? PowerProfile.Balanced;
+  }
+
+  function setProfileByIndex(idx) {
+    var prof = indexToProfile(idx);
+    profileIndex = idx;
+    PowerProfileService.setProfile(prof);
+  }
+  
+  Connections {
+    target: PowerProfileService
+    function onProfileChanged() {
+      profileIndex = profileToIndex(PowerProfileService.profile);
+    }
+  }
 
   panelContent: Item {
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
@@ -281,6 +308,83 @@ SmartPanel {
           }
         }
       }
+
+      NBox {
+        Layout.fillWidth: true
+        height: controlsLayout.implicitHeight + Style.marginL * 2
+
+        ColumnLayout {
+          id: controlsLayout
+          anchors.fill: parent
+          anchors.margins: Style.marginL
+          spacing: Style.marginL
+
+          ColumnLayout {
+            visible: root.powerProfileAvailable
+
+            RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
+              
+              NIcon {
+                icon: PowerProfileService.getIcon()
+                pointSize: Style.fontSizeM
+                color: Color.mPrimary
+              }
+              NText {
+                text: I18n.tr("battery.power-profile")
+                font.weight: Style.fontWeightBold
+                color: Color.mOnSurface
+                Layout.fillWidth: true
+              }
+              NText {
+                text: PowerProfileService.getName(profileIndex)
+                color: Color.mOnSurfaceVariant
+              }
+            }
+
+            NValueSlider {
+              Layout.fillWidth: true
+              from: 0
+              to: 2
+              stepSize: 1
+              snapAlways: true
+              value: profileIndex
+              enabled: profilesAvailable
+              onPressedChanged: (pressed, v) => {
+                                  if (!pressed) {
+                                    setProfileByIndex(v);
+                                  }
+                                }
+              onMoved: v => {
+                         profileIndex = v;
+                       }
+            }
+          }
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginS
+            
+            NIcon {
+              icon: "rocket"
+              pointSize: Style.fontSizeM
+              color: Color.mPrimary
+            }
+            NText {
+              text: I18n.tr("toast.noctalia-performance.label")
+              pointSize: Style.fontSizeM
+              font.weight: Style.fontWeightBold
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+            }
+            NToggle {
+              checked: PowerProfileService.noctaliaPerformanceMode
+              onToggled: checked => PowerProfileService.noctaliaPerformanceMode = checked
+            }
+          }
+        }
+      }
     }
-  }
+  }  
 }

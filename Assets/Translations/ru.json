@@ -372,20 +372,20 @@
   "battery": {
     "battery-level": "Уровень заряда батареи",
     "brightness": "Яркость",
-    "charging": "Зарядка.",
-    "charging-rate": "Скорость зарядки: {rate} Вт.",
-    "discharging": "Разрядка.",
-    "discharging-rate": "Скорость разрядки: {rate} Вт.",
+    "charging": "Зарядка",
+    "charging-rate": "Скорость зарядки: {rate} Вт",
+    "discharging": "Разрядка",
+    "discharging-rate": "Скорость разрядки: {rate} Вт",
     "health": "Здоровье: {percent}%",
-    "idle": "Простой.",
+    "idle": "Простой",
     "inhibit-idle-description": "Не дает системе уснуть.",
     "inhibit-idle-label": "Не давать засыпать",
-    "no-battery-detected": "Батарея не обнаружена.",
+    "no-battery-detected": "Батарея не обнаружена",
     "panel-title": "Батарея",
-    "plugged-in": "Подключено.",
+    "plugged-in": "Подключено",
     "power-profile": "Профиль питания",
-    "time-left": "Осталось времени: {time}.",
-    "time-until-full": "Время до полной зарядки: {time}."
+    "time-left": "Осталось времени: {time}",
+    "time-until-full": "Время до полной зарядки: {time}"
   },
   "bluetooth": {
     "panel": {

@@ -372,20 +372,20 @@
   "battery": {
     "battery-level": "Batterijniveau",
     "brightness": "Helderheid",
-    "charging": "Opladen.",
-    "charging-rate": "Laadsnelheid: {rate} W.",
-    "discharging": "Ontladen.",
-    "discharging-rate": "Ontlaadsnelheid: {rate} W.",
+    "charging": "Opladen",
+    "charging-rate": "Laadsnelheid: {rate} W",
+    "discharging": "Ontladen",
+    "discharging-rate": "Ontlaadsnelheid: {rate} W",
     "health": "Gezondheid: {percent}%",
-    "idle": "In rust.",
+    "idle": "In rust",
     "inhibit-idle-description": "Houdt het systeem wakker.",
     "inhibit-idle-label": "Wakker houden",
-    "no-battery-detected": "Geen batterij gedetecteerd.",
+    "no-battery-detected": "Geen batterij gedetecteerd",
     "panel-title": "Batterij",
-    "plugged-in": "Op netstroom.",
+    "plugged-in": "Op netstroom",
     "power-profile": "Energieprofiel",
-    "time-left": "Resterende tijd: {time}.",
-    "time-until-full": "Tijd tot vol: {time}."
+    "time-left": "Resterende tijd: {time}",
+    "time-until-full": "Tijd tot vol: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -2170,7 +2170,7 @@
     "noctalia-performance": {
       "disabled": "Prestatiemodus uitgeschakeld",
       "enabled": "Prestatiemodus ingeschakeld",
-      "label": "Noctalia-prestatiemodus"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Energieprofiel gewijzigd",

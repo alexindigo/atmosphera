@@ -372,20 +372,20 @@
   "battery": {
     "battery-level": "Niveau de batterie",
     "brightness": "Luminosité",
-    "charging": "En charge.",
-    "charging-rate": "Taux de charge : {rate} W.",
-    "discharging": "En décharge.",
-    "discharging-rate": "Taux de décharge : {rate} W.",
+    "charging": "En charge",
+    "charging-rate": "Taux de charge : {rate} W",
+    "discharging": "En décharge",
+    "discharging-rate": "Taux de décharge : {rate} W",
     "health": "État : {percent}%",
-    "idle": "Inactif.",
+    "idle": "Inactif",
     "inhibit-idle-description": "Maintient le système éveillé.",
     "inhibit-idle-label": "Garder éveillé",
-    "no-battery-detected": "Aucune batterie détectée.",
+    "no-battery-detected": "Aucune batterie détectée",
     "panel-title": "Batterie",
-    "plugged-in": "Branché.",
+    "plugged-in": "Branché",
     "power-profile": "Profil d’alimentation",
-    "time-left": "Temps restant : {time}.",
-    "time-until-full": "Temps jusqu'à charge complète : {time}."
+    "time-left": "Temps restant : {time}",
+    "time-until-full": "Temps jusqu'à charge complète : {time}"
   },
   "bluetooth": {
     "panel": {
@@ -2170,7 +2170,7 @@
     "noctalia-performance": {
       "disabled": "Mode performance désactivé",
       "enabled": "Mode performance activé",
-      "label": "Performance de Noctalia"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Profil d'alimentation changé",

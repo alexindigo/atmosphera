@@ -372,20 +372,20 @@
   "battery": {
     "battery-level": "电池电量",
     "brightness": "亮度",
-    "charging": "正在充电。",
-    "charging-rate": "充电速率：{rate} W。",
-    "discharging": "正在放电。",
-    "discharging-rate": "放电速率：{rate} W。",
+    "charging": "正在充电",
+    "charging-rate": "充电速率：{rate} W",
+    "discharging": "正在放电",
+    "discharging-rate": "放电速率：{rate} W",
     "health": "健康状况：{percent}%",
-    "idle": "空闲。",
+    "idle": "空闲",
     "inhibit-idle-description": "保持系统唤醒。",
     "inhibit-idle-label": "保持唤醒",
-    "no-battery-detected": "未检测到电池。",
+    "no-battery-detected": "未检测到电池",
     "panel-title": "电池",
-    "plugged-in": "已接通电源。",
+    "plugged-in": "已接通电源",
     "power-profile": "电源模式",
-    "time-left": "剩余时间：{time}。",
-    "time-until-full": "充满所需时间：{time}。"
+    "time-left": "剩余时间：{time}",
+    "time-until-full": "充满所需时间：{time}"
   },
   "bluetooth": {
     "panel": {
@@ -2170,7 +2170,7 @@
     "noctalia-performance": {
       "disabled": "性能模式已禁用",
       "enabled": "已启用性能模式",
-      "label": "夜之颂演出"
+      "label": "Noctalia 性能"
     },
     "power-profile": {
       "changed": "电源模式已更改",

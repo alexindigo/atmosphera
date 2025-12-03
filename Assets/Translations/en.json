@@ -2170,7 +2170,7 @@
     "noctalia-performance": {
       "disabled": "Performance mode disabled",
       "enabled": "Performance mode enabled",
-      "label": "Noctalia performance"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Power profile changed",
@@ -2246,8 +2246,8 @@
     "night-light-enabled": "Night Light",
     "night-light-forced": "Night Light",
     "night-light-not-installed": "Night Light (not available)",
-    "noctalia-performance-disabled": "Noctalia performance mode",
-    "noctalia-performance-enabled": "Noctalia performance mode",
+    "noctalia-performance-disabled": "Noctalia Performance Mode",
+    "noctalia-performance-enabled": "Noctalia Performance Mode",
     "open-control-center": "Control center",
     "open-notification-history-disable-dnd": "Notification history",
     "open-notification-history-enable-dnd": "Notification history",

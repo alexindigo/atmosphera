@@ -372,20 +372,20 @@
   "battery": {
     "battery-level": "Pil seviyesi",
     "brightness": "Parlaklık",
-    "charging": "Şarj oluyor.",
-    "charging-rate": "Şarj oranı: {rate} W.",
-    "discharging": "Deşarj oluyor.",
-    "discharging-rate": "Deşarj oranı: {rate} W.",
+    "charging": "Şarj oluyor",
+    "charging-rate": "Şarj oranı: {rate} W",
+    "discharging": "Deşarj oluyor",
+    "discharging-rate": "Deşarj oranı: {rate} W",
     "health": "Sağlık: {percent}%",
-    "idle": "Boşta.",
+    "idle": "Boşta",
     "inhibit-idle-description": "Sistemi uyanık tutar.",
     "inhibit-idle-label": "Uyanık tut",
-    "no-battery-detected": "Pil tespit edilmedi.",
+    "no-battery-detected": "Pil tespit edilmedi",
     "panel-title": "Pil",
-    "plugged-in": "Prize takılı.",
+    "plugged-in": "Prize takılı",
     "power-profile": "Güç profili",
-    "time-left": "Kalan süre: {time}.",
-    "time-until-full": "Dolma süresi: {time}."
+    "time-left": "Kalan süre: {time}",
+    "time-until-full": "Dolma süresi: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -2170,7 +2170,7 @@
     "noctalia-performance": {
       "disabled": "Performans modu devre dışı bırakıldı",
       "enabled": "Performans modu etkinleştirildi",
-      "label": "Noctalia performansı"
+      "label": "Noctalia Performans"
     },
     "power-profile": {
       "changed": "Güç profili değişti",
