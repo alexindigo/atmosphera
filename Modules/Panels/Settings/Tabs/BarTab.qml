@@ -117,13 +117,6 @@ ColumnLayout {
     checked: Settings.data.bar.floating
     onToggled: checked => {
                  Settings.data.bar.floating = checked;
-                 if (checked) {
-                   // Disable outer corners when floating is enabled
-                   Settings.data.bar.outerCorners = false;
-                 } else {
-                   // Enable outer corners when floating is disabled
-                   Settings.data.bar.outerCorners = true;
-                 }
                }
   }
 
