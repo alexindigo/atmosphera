@@ -26,43 +26,48 @@ PopupWindow {
 
   property real menuContentWidth: 160
 
-  implicitWidth: Math.max(160, menuContentWidth + (Style.marginM * 2))
+  implicitWidth: menuContentWidth + (Style.marginM * 2)
   implicitHeight: contextMenuColumn.implicitHeight + (Style.marginM * 2)
   color: Color.transparent
   visible: false
 
   // Hidden text element for measuring text width
-  NText {
+  Text {
     id: textMeasure
     visible: false
-    pointSize: Style.fontSizeS
+    font.pointSize: Style.fontSizeS
+    font.family: "Sans Serif" // Match your NText font if different
     wrapMode: Text.NoWrap
     elide: Text.ElideNone
   }
 
   // Calculate the maximum width needed for all menu items
   function calculateMenuWidth() {
-    let maxWidth = 0;
+    let maxWidth = 0; // Start with 0, we'll apply minimum later
     if (root.items && root.items.length > 0) {
       for (let i = 0; i < root.items.length; i++) {
         const item = root.items[i];
-        if (item) {
+        if (item && item.text) {
           // Calculate width: margins + icon (if present) + spacing + text width
           let itemWidth = Style.marginS * 2; // left and right margins
+
           if (item.icon && item.icon !== "") {
             itemWidth += Style.fontSizeL + Style.marginS; // icon + spacing
           }
+
           // Measure actual text width
-          textMeasure.text = item.text || "";
-          textMeasure.forceLayout();
-          itemWidth += textMeasure.contentWidth;
+          textMeasure.text = item.text;
+          const textWidth = textMeasure.contentWidth;
+          itemWidth += textWidth;
+
           if (itemWidth > maxWidth) {
             maxWidth = itemWidth;
           }
         }
       }
     }
-    menuContentWidth = Math.max(160, maxWidth);
+    // Apply a reasonable minimum width (like 120px)
+    menuContentWidth = Math.max(120, maxWidth);
   }
 
   function initItems() {
@@ -123,9 +128,7 @@ PopupWindow {
 
     root.items = next;
     // Force width recalculation when items change
-    Qt.callLater(() => {
-                   calculateMenuWidth();
-                 });
+    calculateMenuWidth();
   }
 
   // Helper function to normalize app IDs for case-insensitive matching
@@ -212,21 +215,28 @@ PopupWindow {
       return;
     }
 
+    // First hide completely
+    visible = false;
+
+    // Then set up new data
     anchorItem = item;
     toplevel = toplevelData;
     initItems();
-    // Calculate width after items are initialized
+
+    // Force a complete re-evaluation by waiting for the next frame
     Qt.callLater(() => {
-                   calculateMenuWidth();
+                   Qt.callLater(() => {
+                                  visible = true;
+                                  canAutoClose = false;
+                                  gracePeriodTimer.restart();
+                                });
                  });
-    visible = true;
-    canAutoClose = false;
-    gracePeriodTimer.restart();
   }
 
   function hide() {
     visible = false;
     root.items.length = 0;
+    menuContentWidth = 120; // Reset to minimum
   }
 
   // Helper function to determine which menu item is under the mouse
