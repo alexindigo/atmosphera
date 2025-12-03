@@ -288,7 +288,7 @@ Item {
   }
 
   function show() {
-    if (collapseToIcon)
+    if (collapseToIcon || root.text.trim().length === 0)
       return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
@@ -312,7 +312,7 @@ Item {
   }
 
   function showDelayed() {
-    if (collapseToIcon)
+    if (collapseToIcon || root.text.trim().length === 0)
       return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
