@@ -1917,10 +1917,15 @@
         "label": "Velocidad de animación",
         "reset": "Restablecer la velocidad de la animación"
       },
-      "border-radius": {
-        "description": "Controla la redondez de las esquinas de las ventanas, los botones y otros elementos.",
-        "label": "Radio de borde",
-        "reset": "Restablecer el radio del borde"
+      "box-border-radius": {
+        "description": "Ajusta la redondez de las esquinas de las secciones principales del diseño, como barras laterales, tarjetas y paneles de contenido.",
+        "label": "Radio del contenedor",
+        "reset": "Restablecer el radio del contenedor"
+      },
+      "control-border-radius": {
+        "description": "Controla la curvatura de los elementos interactivos, incluyendo botones, interruptores y campos de texto.",
+        "label": "Radio de entrada",
+        "reset": "Restablecer el radio de entrada"
       },
       "dim-desktop": {
         "description": "Atenuar el escritorio cuando los paneles o menús estén abiertos.",

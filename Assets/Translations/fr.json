@@ -1917,10 +1917,15 @@
         "label": "Vitesse d'animation",
         "reset": "Réinitialiser la vitesse de l'animation"
       },
-      "border-radius": {
-        "description": "Contrôle l'arrondi des angles des fenêtres, des boutons et d'autres éléments.",
-        "label": "Rayon de bordure",
-        "reset": "Réinitialiser le rayon de la bordure"
+      "box-border-radius": {
+        "description": "Ajuste de l'arrondi des coins des principales sections de la mise en page, telles que les barres latérales, les cartes et les panneaux de contenu.",
+        "label": "Rayon du conteneur",
+        "reset": "Réinitialiser le rayon du conteneur"
+      },
+      "control-border-radius": {
+        "description": "Contrôle la courbure des éléments interactifs, y compris les boutons, les bascules et les champs de texte.",
+        "label": "Rayon d'entrée",
+        "reset": "Réinitialiser le rayon d'entrée"
       },
       "dim-desktop": {
         "description": "Atténuer le bureau lorsque des panneaux ou des menus sont ouverts.",

@@ -1917,10 +1917,15 @@
         "label": "Animasyon hızı",
         "reset": "Animasyon hızını sıfırla"
       },
-      "border-radius": {
-        "description": "Pencerelerin, düğmelerin ve diğer elemanların köşe yuvarlaklığını kontrol eder.",
-        "label": "Kenar yarıçapı",
-        "reset": "Kenar yarıçapını sıfırla"
+      "box-border-radius": {
+        "description": "Kenar çubukları, kartlar ve içerik panelleri gibi ana düzen bölümlerinin köşe yuvarlaklığını ayarlar.",
+        "label": "Konteyner Yarıçapı",
+        "reset": "Konteyner yarıçapını sıfırla"
+      },
+      "control-border-radius": {
+        "description": "İnteraktif öğelerin, düğmeler, geçişler ve metin alanları dahil olmak üzere, eğriliğini kontrol eder.",
+        "label": "Giriş Yarıçapı",
+        "reset": "Giriş yarıçapını sıfırla"
       },
       "dim-desktop": {
         "description": "Paneller veya menüler açıkken masaüstünü karart.",

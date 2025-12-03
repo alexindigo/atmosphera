@@ -1917,10 +1917,15 @@
         "label": "动画速度",
         "reset": "重置动画速度"
       },
-      "border-radius": {
-        "description": "控制窗口、按钮和其他元素的圆角程度。",
-        "label": "边框半径",
-        "reset": "重置边框半径"
+      "box-border-radius": {
+        "description": "调整主要布局部分（如侧边栏、卡片和内容面板）的圆角程度。",
+        "label": "容器半径",
+        "reset": "重置容器半径"
+      },
+      "control-border-radius": {
+        "description": "控制交互元素的曲率，包括按钮、开关和文本字段。",
+        "label": "输入半径",
+        "reset": "重置输入半径"
       },
       "dim-desktop": {
         "description": "当面板或菜单打开时，桌面变暗。",

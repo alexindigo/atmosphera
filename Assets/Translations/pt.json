@@ -1917,10 +1917,15 @@
         "label": "Velocidade da animação",
         "reset": "Redefinir velocidade da animação"
       },
-      "border-radius": {
-        "description": "Controla o arredondamento dos cantos de janelas, botões e outros elementos.",
-        "label": "Raio da borda",
-        "reset": "Redefinir raio da borda"
+      "box-border-radius": {
+        "description": "Ajusta o arredondamento dos cantos das principais seções do layout, como barras laterais, cards e painéis de conteúdo.",
+        "label": "Raio do Contêiner",
+        "reset": "Redefinir raio do recipiente"
+      },
+      "control-border-radius": {
+        "description": "Controla a curvatura de elementos interativos, incluindo botões, alternâncias e campos de texto.",
+        "label": "Raio de entrada",
+        "reset": "Redefinir raio de entrada"
       },
       "dim-desktop": {
         "description": "Escurecer a área de trabalho quando painéis ou menus estiverem abertos.",
