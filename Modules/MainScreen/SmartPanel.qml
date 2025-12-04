@@ -110,6 +110,15 @@ Item {
   readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0
   readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical * Style.marginXL : 0
 
+  // Check if bar should be visible on this screen
+  readonly property bool barShouldShow: {
+    if (!BarService.isVisible)
+      return false;
+    var monitors = Settings.data.bar.monitors || [];
+    var screenName = screen?.name || "";
+    return monitors.length === 0 || monitors.includes(screenName);
+  }
+
   // Helper to detect if any anchor is explicitly set
   readonly property bool hasExplicitHorizontalAnchor: panelAnchorHorizontalCenter || panelAnchorLeft || panelAnchorRight
   readonly property bool hasExplicitVerticalAnchor: panelAnchorVerticalCenter || panelAnchorTop || panelAnchorBottom
@@ -979,6 +988,21 @@ Item {
 
       // Smart corner state calculation based on bar attachment and edge touching
       property int topLeftCornerState: {
+        // If bar is not visible, don't show outer corners based on bar attachment
+        if (!root.barShouldShow) {
+          // Only check edge touching, not bar touching
+          var edgeInverted = panelContent.allowAttach && (panelContent.touchingLeftEdge || panelContent.touchingTopEdge);
+          if (edgeInverted) {
+            if (panelContent.touchingLeftEdge && panelContent.touchingTopEdge)
+              return 0; // Both edges: no inversion (normal rounded corner)
+            if (panelContent.touchingLeftEdge)
+              return 2; // Left edge: vertical inversion
+            if (panelContent.touchingTopEdge)
+              return 1; // Top edge: horizontal inversion
+          }
+          return 0;
+        }
+
         var barInverted = panelContent.allowAttachToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft));
         var barTouchInverted = panelContent.touchingTopBar || panelContent.touchingLeftBar;
         // Invert if touching either edge that forms this corner (left OR top), regardless of bar position
@@ -999,6 +1023,21 @@ Item {
       }
 
       property int topRightCornerState: {
+        // If bar is not visible, don't show outer corners based on bar attachment
+        if (!root.barShouldShow) {
+          // Only check edge touching, not bar touching
+          var edgeInverted = panelContent.allowAttach && (panelContent.touchingRightEdge || panelContent.touchingTopEdge);
+          if (edgeInverted) {
+            if (panelContent.touchingRightEdge && panelContent.touchingTopEdge)
+              return 0; // Both edges: no inversion (normal rounded corner)
+            if (panelContent.touchingRightEdge)
+              return 2; // Right edge: vertical inversion
+            if (panelContent.touchingTopEdge)
+              return 1; // Top edge: horizontal inversion
+          }
+          return 0;
+        }
+
         var barInverted = panelContent.allowAttachToBar && ((root.barPosition === "top" && !root.barIsVertical && root.effectivePanelAnchorTop) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight));
         var barTouchInverted = panelContent.touchingTopBar || panelContent.touchingRightBar;
         // Invert if touching either edge that forms this corner (right OR top), regardless of bar position
@@ -1019,6 +1058,21 @@ Item {
       }
 
       property int bottomLeftCornerState: {
+        // If bar is not visible, don't show outer corners based on bar attachment
+        if (!root.barShouldShow) {
+          // Only check edge touching, not bar touching
+          var edgeInverted = panelContent.allowAttach && (panelContent.touchingLeftEdge || panelContent.touchingBottomEdge);
+          if (edgeInverted) {
+            if (panelContent.touchingLeftEdge && panelContent.touchingBottomEdge)
+              return 0; // Both edges: no inversion (normal rounded corner)
+            if (panelContent.touchingLeftEdge)
+              return 2; // Left edge: vertical inversion
+            if (panelContent.touchingBottomEdge)
+              return 1; // Bottom edge: horizontal inversion
+          }
+          return 0;
+        }
+
         var barInverted = panelContent.allowAttachToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "left" && root.barIsVertical && root.effectivePanelAnchorLeft));
         var barTouchInverted = panelContent.touchingBottomBar || panelContent.touchingLeftBar;
         // Invert if touching either edge that forms this corner (left OR bottom), regardless of bar position
@@ -1039,6 +1093,21 @@ Item {
       }
 
       property int bottomRightCornerState: {
+        // If bar is not visible, don't show outer corners based on bar attachment
+        if (!root.barShouldShow) {
+          // Only check edge touching, not bar touching
+          var edgeInverted = panelContent.allowAttach && (panelContent.touchingRightEdge || panelContent.touchingBottomEdge);
+          if (edgeInverted) {
+            if (panelContent.touchingRightEdge && panelContent.touchingBottomEdge)
+              return 0; // Both edges: no inversion (normal rounded corner)
+            if (panelContent.touchingRightEdge)
+              return 2; // Right edge: vertical inversion
+            if (panelContent.touchingBottomEdge)
+              return 1; // Bottom edge: horizontal inversion
+          }
+          return 0;
+        }
+
         var barInverted = panelContent.allowAttachToBar && ((root.barPosition === "bottom" && !root.barIsVertical && root.effectivePanelAnchorBottom) || (root.barPosition === "right" && root.barIsVertical && root.effectivePanelAnchorRight));
         var barTouchInverted = panelContent.touchingBottomBar || panelContent.touchingRightBar;
         // Invert if touching either edge that forms this corner (right OR bottom), regardless of bar position
