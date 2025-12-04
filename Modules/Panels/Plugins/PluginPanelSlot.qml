@@ -63,6 +63,13 @@ SmartPanel {
 
           // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
           property var _dummyApi: QtObject {
+            property var pluginSettings: ({})
+            property var manifest: ({
+                                      metadata: {
+                                        defaultSettings: {}
+                                      }
+                                    })
+
             function tr(key) {
               return "";
             }

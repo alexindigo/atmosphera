@@ -29,29 +29,38 @@ Item {
     return (item && item.visible) ? Math.round(item[prop]) : 0;
   }
 
+  // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
+  property var _dummyApi: QtObject {
+    property var pluginSettings: ({})
+    property var manifest: ({
+                              metadata: {
+                                defaultSettings: {}
+                              }
+                            })
+
+    function tr(key) {
+      return "";
+    }
+    function trp(key, count) {
+      return "";
+    }
+  }
+
   Loader {
     id: loader
     anchors.fill: parent
     asynchronous: false
     sourceComponent: BarWidgetRegistry.getWidget(widgetId)
 
-    // Create a dummy pluginApi that returns empty strings to avoid undefined warnings
-    property var _dummyApi: QtObject {
-      function tr(key) {
-        return "";
-      }
-      function trp(key, count) {
-        return "";
-      }
-    }
-
     onLoaded: {
       if (!item)
         return;
 
-      // Inject dummy API immediately to prevent undefined warnings during initialization
-      if (BarWidgetRegistry.isPluginWidget(widgetId) && item.hasOwnProperty("pluginApi") && !item.pluginApi) {
-        item.pluginApi = _dummyApi;
+      // Inject dummy API immediately for plugin widgets before any other code runs
+      if (BarWidgetRegistry.isPluginWidget(widgetId) && item.hasOwnProperty("pluginApi")) {
+        if (!item.pluginApi) {
+          item.pluginApi = root._dummyApi;
+        }
       }
 
       Logger.d("BarWidgetLoader", "Loading widget", widgetId, "on screen:", widgetScreen.name);

@@ -672,14 +672,14 @@ Singleton {
     // Wait for PluginService to finish loading plugins first
     // This prevents deleting plugin widgets during reload before plugins are registered
     if (!PluginService.initialized || !PluginService.pluginsFullyLoaded) {
-      Logger.w("Settings", "Plugins not fully loaded yet, deferring upgrade");
+      Logger.d("Settings", "Plugins not fully loaded yet, deferring upgrade");
       Qt.callLater(upgradeSettings);
       return;
     }
 
     // Wait for BarWidgetRegistry to be ready
     if (!BarWidgetRegistry.widgets || Object.keys(BarWidgetRegistry.widgets).length === 0) {
-      Logger.w("Settings", "BarWidgetRegistry not ready, deferring upgrade");
+      Logger.d("Settings", "BarWidgetRegistry not ready, deferring upgrade");
       Qt.callLater(upgradeSettings);
       return;
     }
