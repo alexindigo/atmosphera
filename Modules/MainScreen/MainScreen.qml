@@ -418,7 +418,7 @@ PanelWindow {
   // Centralized Keyboard Shortcuts
   // ========================================
   // These shortcuts delegate to the opened panel's handler functions
-  // Panels can implement: onEscapePressed, onTabPressed, onShiftTabPressed,
+  // Panels can implement: onEscapePressed, onTabPressed, onBackTabPressed,
   // onUpPressed, onDownPressed, onReturnPressed
 
   Shortcut {
@@ -444,11 +444,11 @@ PanelWindow {
   }
 
   Shortcut {
-    sequence: "Shift+Tab"
+    sequence: "Backtab"
     enabled: root.isPanelOpen
     onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onShiftTabPressed) {
-        PanelService.openedPanel.onShiftTabPressed();
+      if (PanelService.openedPanel && PanelService.openedPanel.onBackTabPressed) {
+        PanelService.openedPanel.onBackTabPressed();
       }
     }
   }
@@ -539,16 +539,6 @@ PanelWindow {
     onActivated: {
       if (PanelService.openedPanel && PanelService.openedPanel.onPageDownPressed) {
         PanelService.openedPanel.onPageDownPressed();
-      }
-    }
-  }
-
-  Shortcut {
-    sequence: "Backtab"
-    enabled: root.isPanelOpen
-    onActivated: {
-      if (PanelService.openedPanel && PanelService.openedPanel.onBackTabPressed) {
-        PanelService.openedPanel.onBackTabPressed();
       }
     }
   }
