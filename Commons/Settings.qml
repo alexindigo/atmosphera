@@ -669,8 +669,10 @@ Singleton {
   // If the settings structure has changed, ensure
   // backward compatibility by upgrading the settings
   function upgradeSettings() {
-    // Wait for PluginService to finish loading plugin widgets
-    if (!PluginService.pluginsFullyLoaded) {
+    // Wait for PluginService to finish loading plugins first
+    // This prevents deleting plugin widgets during reload before plugins are registered
+    if (!PluginService.initialized || !PluginService.pluginsFullyLoaded) {
+      Logger.w("Settings", "Plugins not fully loaded yet, deferring upgrade");
       Qt.callLater(upgradeSettings);
       return;
     }
