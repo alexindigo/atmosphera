@@ -381,14 +381,16 @@ ColumnLayout {
         // Downloaded indicator
         NIcon {
           icon: "circle-check"
-          pointSize: Style.fontSizeM
+          pointSize: Style.fontSizeXL
           color: Color.mPrimary
           visible: modelData.downloaded === true
         }
 
         // Install/Uninstall button
-        NButton {
-          text: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
+        NIconButton {
+          icon: modelData.downloaded ? "trash" : "download"
+          baseSize: Style.baseWidgetSize * 0.9
+          tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
           onClicked: {
             if (modelData.downloaded) {
               uninstallDialog.pluginToUninstall = modelData;

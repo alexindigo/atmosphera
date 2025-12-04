@@ -32,13 +32,32 @@ Singleton {
   // Plugin container from shell.qml (for placing Main instances in graphics scene)
   property var pluginContainer: null
 
+  // Track if we need to initialize once container is ready
+  property bool needsInit: false
+
+  // Watch for pluginContainer to be set
+  onPluginContainerChanged: {
+    if (root.pluginContainer && root.needsInit) {
+      Logger.d("PluginService", "Plugin container now available, initializing plugins");
+      root.needsInit = false;
+      root.init();
+    }
+  }
+
   // Listen for PluginRegistry to finish loading
   Connections {
     target: PluginRegistry
 
     function onPluginsChanged() {
       if (!root.initialized) {
-        root.init();
+        if (root.pluginContainer) {
+          // Container already available, init now
+          root.init();
+        } else {
+          // Container not ready, wait for it
+          Logger.d("PluginService", "Deferring plugin init until container is ready");
+          root.needsInit = true;
+        }
       }
     }
   }

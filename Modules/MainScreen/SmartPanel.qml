@@ -76,7 +76,7 @@ Item {
   }
   function onTabPressed() {
   }
-  function onShiftTabPressed() {
+  function onBackTabPressed() {
   }
   function onUpPressed() {
   }
