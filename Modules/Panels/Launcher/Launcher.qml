@@ -87,7 +87,7 @@ SmartPanel {
       var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
       var nextIndex = (currentIndex + 1) % emojiPlugin.categories.length;
       emojiPlugin.selectCategory(emojiPlugin.categories[nextIndex]);
-    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode) {
+    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")) {
       // In apps browsing mode (no search), Tab navigates between categories
       var availableCategories = appsPlugin.availableCategories || ["all"];
       var currentIndex = availableCategories.indexOf(appsPlugin.selectedCategory);
@@ -99,7 +99,18 @@ SmartPanel {
   }
 
   function onBackTabPressed() {
-    selectPreviousWrapped();
+    if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+      var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+      var previousIndex = ((currentIndex - 1) % emojiPlugin.categories.length + emojiPlugin.categories.length) % emojiPlugin.categories.length;
+      emojiPlugin.selectCategory(emojiPlugin.categories[previousIndex]);
+    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")) {
+      var availableCategories = appsPlugin.availableCategories || ["all"];
+      var currentIndex = availableCategories.indexOf(appsPlugin.selectedCategory);
+      var previousIndex = ((currentIndex - 1) % availableCategories.length + availableCategories.length) % availableCategories.length;
+      appsPlugin.selectCategory(availableCategories[previousIndex]);
+    } else {
+      selectPreviousWrapped();
+    }
   }
 
   function onUpPressed() {
@@ -614,20 +625,16 @@ SmartPanel {
                 } else if (event.key === Qt.Key_Backtab) {
                   root.onBackTabPressed();
                   event.accepted = true;
-                } else if (event.key === Qt.Key_Left && root.isGridView) {
-                  // In grid view, left arrow navigates the grid
+                } else if (event.key === Qt.Key_Left) {
                   root.onLeftPressed();
                   event.accepted = true;
-                } else if (event.key === Qt.Key_Right && root.isGridView) {
-                  // In grid view, right arrow navigates the grid
+                } else if (event.key === Qt.Key_Right) {
                   root.onRightPressed();
                   event.accepted = true;
                 } else if (event.key === Qt.Key_Up) {
-                  // Up arrow navigates the grid/list
                   root.onUpPressed();
                   event.accepted = true;
                 } else if (event.key === Qt.Key_Down) {
-                  // Down arrow navigates the grid/list
                   root.onDownPressed();
                   event.accepted = true;
                 }
