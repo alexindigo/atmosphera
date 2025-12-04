@@ -31,24 +31,20 @@ Item {
     return {};
   }
 
-  function getSetting(key, metaKey) {
-    return (widgetSettings[key] !== undefined) ? widgetSettings[key] : widgetMetadata[metaKey || key];
-  }
-
   // Bar orientation
   readonly property bool isVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
 
   // Widget settings
-  readonly property string hideMode: getSetting("hideMode", "hideMode") || "hidden"
-  readonly property bool hideWhenIdle: getSetting("hideWhenIdle", "hideWhenIdle") || false
-  readonly property bool showAlbumArt: getSetting("showAlbumArt")
-  readonly property bool showArtistFirst: getSetting("showArtistFirst")
-  readonly property bool showVisualizer: getSetting("showVisualizer")
-  readonly property string visualizerType: getSetting("visualizerType") || "linear"
-  readonly property string scrollingMode: getSetting("scrollingMode")
-  readonly property bool showProgressRing: getSetting("showProgressRing")
-  readonly property bool useFixedWidth: getSetting("useFixedWidth")
-  readonly property real maxWidth: getSetting("maxWidth") || Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
+  readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
+  readonly property bool hideWhenIdle: (widgetSettings.hideWhenIdle !== undefined) ? widgetSettings.hideWhenIdle : (widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
+  readonly property bool showAlbumArt: (widgetSettings.showAlbumArt !== undefined) ? widgetSettings.showAlbumArt : widgetMetadata.showAlbumArt
+  readonly property bool showArtistFirst: (widgetSettings.showArtistFirst !== undefined) ? widgetSettings.showArtistFirst : widgetMetadata.showArtistFirst
+  readonly property bool showVisualizer: (widgetSettings.showVisualizer !== undefined) ? widgetSettings.showVisualizer : widgetMetadata.showVisualizer
+  readonly property string visualizerType: (widgetSettings.visualizerType !== undefined && widgetSettings.visualizerType !== "") ? widgetSettings.visualizerType : widgetMetadata.visualizerType
+  readonly property string scrollingMode: (widgetSettings.scrollingMode !== undefined) ? widgetSettings.scrollingMode : widgetMetadata.scrollingMode
+  readonly property bool showProgressRing: (widgetSettings.showProgressRing !== undefined) ? widgetSettings.showProgressRing : widgetMetadata.showProgressRing
+  readonly property bool useFixedWidth: (widgetSettings.useFixedWidth !== undefined) ? widgetSettings.useFixedWidth : widgetMetadata.useFixedWidth
+  readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
 
   // Dimensions
   readonly property int iconSize: Math.round(18 * scaling)
