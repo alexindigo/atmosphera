@@ -935,6 +935,10 @@
           "description": "Barı yüzen bir 'hap' olarak görüntüler. Not: Bu, ekran köşelerini kenarlara taşıyacaktır.",
           "label": "Yüzen bar"
         },
+        "auto-hide": {
+          "description": "Çubuğu otomatik olarak gizler ve imleci ekranın kenarına getirdiğinizde yeniden gösterir.",
+          "label": "Çubuğu otomatik gizle"
+        },
         "margins": {
           "description": "Yüzen barın etrafındaki kenar boşluklarını ayarlayın.",
           "horizontal": "Yatay",
