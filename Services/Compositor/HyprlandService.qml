@@ -442,12 +442,8 @@ Item {
       }
 
       const windowId = window.id.toString();
-
-      // Focus the window
       Hyprland.dispatch(`focuswindow address:0x${windowId}`);
-
-      // Bring the focused window to the top (essential for Float Mode)
-      Hyprland.dispatch(`alterzorder top,address:0x${windowId}`);
+      Hyprland.dispatch(`alterzorder top,address:0x${windowId}`); // Bring the focused window to the top (essential for Float Mode)
     } catch (e) {
       Logger.e("HyprlandService", "Failed to switch window:", e);
     }
