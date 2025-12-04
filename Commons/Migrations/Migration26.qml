@@ -19,7 +19,7 @@ QtObject {
         const card = oldCards[i];
         if ((card.id === "banner-card" || card.id === "calendar-card") && card.enabled) {
           anyCalendarEnabled = true;
-        } else if (card.id !== "banner-card" && card.id !== "calendar-card") {
+        } else if (card.id !== "banner-card" && card.id !== "calendar-card" && card.id !== 'calendar-month-card' && card.id !== 'calendar-header-card') {
           // Keep other cards as-is (timer, weather)
           newCards.push(card);
         }
