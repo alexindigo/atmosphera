@@ -51,6 +51,18 @@ NBox {
       Layout.fillWidth: true
       spacing: Style.marginS
 
+
+      Item {
+        Layout.preferredWidth: Style.marginS
+      }
+
+      NText {
+        text: I18n.locale.monthName(root.calendarMonth, Locale.LongFormat).toUpperCase() + " " + root.calendarYear
+        pointSize: Style.fontSizeM
+        font.weight: Style.fontWeightBold
+        color: Color.white
+      }
+
       NDivider {
         Layout.fillWidth: true
       }
