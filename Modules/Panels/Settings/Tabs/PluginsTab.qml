@@ -289,6 +289,7 @@ ColumnLayout {
     Layout.fillWidth: true
     Layout.preferredHeight: 400
     spacing: Style.marginM
+    visible: pluginListView.count > 0
 
     model: {
       var all = PluginService.availablePlugins || [];
