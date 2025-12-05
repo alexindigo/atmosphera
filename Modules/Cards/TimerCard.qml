@@ -108,8 +108,13 @@ NBox {
         selectByMouse: false
         cursorVisible: false
         cursorDelegate: Item {} // Empty cursor delegate to hide cursor
-        readOnly: isStopwatchMode || isRunning
-        enabled: !isRunning
+        // Only allow editing when:
+        // 1. Not in stopwatch mode
+        // 2. Timer is not running
+        // 3. Timer has never been started (totalSeconds == 0) - this includes after reset
+        // This prevents editing when paused (when totalSeconds > 0)
+        readOnly: isStopwatchMode || isRunning || totalSeconds > 0
+        enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
         font.family: Settings.data.ui.fontFixed
 
         // Calculate if hours are being shown
@@ -145,20 +150,69 @@ NBox {
         }
 
         // Display formatted time, but show input buffer when editing
-        text: {
+        // Use a computed property that explicitly tracks dependencies
+        property string _cachedText: ""
+        property int _textUpdateCounter: 0
+
+        function updateText() {
           if (isStopwatchMode) {
-            return formatTime(elapsedSeconds, false); // Stopwatch: only show hours if >= 1 hour
+            _cachedText = formatTime(elapsedSeconds, false);
+          } else if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer !== "") {
+            // Only use editing mode if we actually have input buffer content
+            _cachedText = formatTimeFromDigits(timerDisplayItem.inputBuffer);
+          } else {
+            // When not editing OR when paused (not running), show the actual remaining time
+            _cachedText = formatTime(remainingSeconds, isRunning);
           }
-          if (!timerDisplayItem.isEditing) {
-            // When not editing and not running, always show hours
-            // When running, only show hours if >= 1 hour
-            return formatTime(remainingSeconds, isRunning);
-          }
-          if (timerDisplayItem.inputBuffer !== "") {
-            return formatTimeFromDigits(timerDisplayItem.inputBuffer);
-          }
-          return formatTime(0, false);
+          _textUpdateCounter = _textUpdateCounter + 1;
         }
+
+        text: {
+          // Reference counter to force binding re-evaluation
+          const counter = _textUpdateCounter;
+          return _cachedText;
+        }
+
+        // Watch for changes to all relevant properties
+        Connections {
+          target: root
+          function onRemainingSecondsChanged() {
+            // Update immediately when remainingSeconds changes
+            timerInput.updateText();
+          }
+          function onIsRunningChanged() {
+            // When isRunning changes, update twice - once immediately and once after a delay
+            // This ensures we catch the update even if remainingSeconds changes at the same time
+            timerInput.updateText();
+            Qt.callLater(() => {
+                           timerInput.updateText();
+                         });
+          }
+          function onElapsedSecondsChanged() {
+            timerInput.updateText();
+          }
+          function onIsStopwatchModeChanged() {
+            timerInput.updateText();
+          }
+        }
+
+        // Also watch Time.timerRemainingSeconds directly as a backup
+        Connections {
+          target: Time
+          function onTimerRemainingSecondsChanged() {
+            timerInput.updateText();
+          }
+        }
+
+        Connections {
+          target: timerDisplayItem
+          function onIsEditingChanged() {
+            timerInput.updateText();
+          }
+        }
+
+        // Initialize text on component completion
+        Component.onCompleted: updateText()
 
         // Only accept digit keys
         Keys.onPressed: event => {
@@ -259,10 +313,11 @@ NBox {
 
         MouseArea {
           anchors.fill: parent
-          enabled: !isRunning && !isStopwatchMode
+          // Only allow clicking to edit when timer hasn't been started or has been reset
+          enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
           cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
           onClicked: {
-            if (!isRunning && !isStopwatchMode) {
+            if (!isRunning && !isStopwatchMode && totalSeconds === 0) {
               timerInput.forceActiveFocus();
             }
           }
@@ -445,5 +500,9 @@ NBox {
 
   function resetTimer() {
     Time.timerReset();
+    // Clear editing state when reset
+    timerDisplayItem.isEditing = false;
+    timerDisplayItem.inputBuffer = "";
+    timerInput.focus = false;
   }
 }
