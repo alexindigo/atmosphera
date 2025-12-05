@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Warnung anzeigen, wenn Batterie unter diesen Prozentsatz fällt.",
           "label": "Schwellenwert für niedrigen Batteriestand"
+        },
+        "show-power-profile": {
+          "description": "Zeige die Auswahl des Energieprofils im Batterie-Panel an.",
+          "label": "Energieprofil-Steuerung anzeigen"
+        },
+        "show-noctalia-performance": {
+          "description": "Zeige den Noctalia-Leistungsmodus-Schalter im Batterie-Panel an.",
+          "label": "Noctalia-Performance-Schalter anzeigen"
         }
       },
       "brightness": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Akkustand",
     "brightness": "Helligkeit",
-    "charging": "Wird geladen.",
-    "charging-rate": "Laderate: {rate} W.",
-    "discharging": "Wird entladen.",
-    "discharging-rate": "Entladerate: {rate} W.",
+    "charging": "Wird geladen",
+    "charging-rate": "Laderate: {rate} W",
+    "discharging": "Wird entladen",
+    "discharging-rate": "Entladerate: {rate} W",
     "health": "Zustand: {percent}%",
-    "idle": "Leerlauf.",
+    "idle": "Leerlauf",
     "inhibit-idle-description": "Hält das System wach.",
     "inhibit-idle-label": "Wach halten",
-    "no-battery-detected": "Keine Batterie erkannt.",
+    "no-battery-detected": "Keine Batterie erkannt",
     "panel-title": "Akku",
-    "plugged-in": "Angeschlossen.",
+    "plugged-in": "Angeschlossen",
     "power-profile": "Energieprofil",
-    "time-left": "Verbleibende Zeit: {time}.",
-    "time-until-full": "Verbleibende Ladezeit: {time}."
+    "time-left": "Verbleibende Zeit: {time}",
+    "time-until-full": "Verbleibende Ladezeit: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -942,7 +950,7 @@
           "vertical": "Vertikal"
         },
         "outer-corners": {
-          "description": "Zeigt nach außen gewölbte Ecken auf der Leiste an.",
+          "description": "Nach außen gewölbte Ecken auf der Leiste anzeigen.",
           "label": "Äußere Ecken"
         },
         "position": {
@@ -1467,7 +1475,7 @@
           "label": "Hintergrund-Transparenz"
         },
         "clip-preview": {
-          "description": "Zeigt eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
+          "description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"
         },
         "clipboard-history": {
@@ -1526,7 +1534,7 @@
       },
       "date-time": {
         "12hour-format": {
-          "description": "Zeigt die Uhrzeit im 12-Stunden-Format auf dem Sperrbildschirm und im Kalender an. Die Uhr in der Statusleiste hat eigene Einstellungen.",
+          "description": "Zeige die Uhrzeit im 12-Stunden-Format auf dem Sperrbildschirm und im Kalender an. Die Uhr in der Statusleiste hat eigene Einstellungen.",
           "label": "12-Stunden-Zeitformat benutzen"
         },
         "first-day-of-week": {
@@ -1547,7 +1555,7 @@
           "label": "Analoge Uhr verwenden"
         },
         "week-numbers": {
-          "description": "Zeigt die Kalenderwochen an (z.B. Woche 38).",
+          "description": "Zeige die Woche des Jahres (z.B. Woche 38) im Kalender an.",
           "label": "Wochennummern anzeigen"
         }
       },
@@ -1577,7 +1585,7 @@
           "label": "Wetter"
         },
         "show-effects": {
-          "description": "Zeigt zusätzliche visuelle Effekte (wie Regen, Schnee oder Blitze) auf der Wetterkarte an.",
+          "description": "Zeige zusätzliche visuelle Effekte (wie Regen, Schnee oder Blitze) auf der Wetterkarte an.",
           "label": "Wettereffekte anzeigen"
         },
         "show-in-calendar": {
@@ -2254,7 +2262,7 @@
     "noctalia-performance": {
       "disabled": "Leistungsmodus deaktiviert",
       "enabled": "Leistungsmodus aktiviert",
-      "label": "Noctalia-Aufführung"
+      "label": "Noctalia-Performance"
     },
     "power-profile": {
       "changed": "Energieprofil geändert",

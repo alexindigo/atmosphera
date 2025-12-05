@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Show a warning when battery falls below this percentage.",
           "label": "Low battery warning threshold"
+        },
+        "show-power-profile": {
+          "description": "Display the power profile selection inside the battery panel.",
+          "label": "Show power profile controls"
+        },
+        "show-noctalia-performance": {
+          "description": "Display the Noctalia Performance Mode toggle inside the battery panel.",
+          "label": "Show Noctalia Performance toggle"
         }
       },
       "brightness": {
@@ -458,6 +466,7 @@
     "add": "Add",
     "apply": "Apply",
     "cancel": "Cancel",
+    "check-settings": "Check Settings for details",
     "close": "Close",
     "save": "Save"
   },
@@ -932,7 +941,7 @@
           "label": "Bar density"
         },
         "floating": {
-          "description": "Displays the bar as a floating 'pill'.",
+          "description": "Display the bar as a floating 'pill'.",
           "label": "Floating bar"
         },
         "margins": {
@@ -942,7 +951,7 @@
           "vertical": "Vertical"
         },
         "outer-corners": {
-          "description": "Displays outwardly curved corners on the bar.",
+          "description": "Display outwardly curved corners on the bar.",
           "label": "Outer corners"
         },
         "position": {
@@ -1526,7 +1535,7 @@
       },
       "date-time": {
         "12hour-format": {
-          "description": "Displays time in 12-hour format on the lock screen and calendar. The bar clock has its own settings.",
+          "description": "Display time in 12-hour format on the lock screen and calendar. The bar clock has its own settings.",
           "label": "Use 12-hour time format"
         },
         "first-day-of-week": {
@@ -1547,7 +1556,7 @@
           "label": "Use analog style clock"
         },
         "week-numbers": {
-          "description": "Displays the week of the year (e.g., week 38) in the calendar.",
+          "description": "Display the week of the year (e.g., week 38) in the calendar.",
           "label": "Show week numbers"
         }
       },
@@ -1577,7 +1586,7 @@
           "label": "Weather"
         },
         "show-effects": {
-          "description": "Shows additional visual effects (like rain, snow, or lightning) on the weather card.",
+          "description": "Show additional visual effects (like rain, snow, or lightning) on the weather card.",
           "label": "Display weather effects"
         },
         "show-in-calendar": {
@@ -1808,7 +1817,16 @@
       "uninstall-error": "Failed to uninstall: {error}",
       "uninstall-success": "Successfully uninstalled {plugin}",
       "uninstall.tooltip": "Uninstall plugin",
-      "uninstalling": "Uninstalling {plugin}..."
+      "uninstalling": "Uninstalling {plugin}...",
+      "update": "Update",
+      "update-all": "Update All ({count})",
+      "update-all-success": "All plugins updated successfully",
+      "update-available": "{count} update(s) available",
+      "update-error": "Failed to update {plugin}: {error}",
+      "update-incompatible": "Requires Noctalia v{version} or higher",
+      "update-success": "Updated {plugin} to v{version}",
+      "update-version": "v{current} → v{new}",
+      "updating": "Updating {plugin}..."
     },
     "screen-recorder": {
       "audio": {
@@ -2255,7 +2273,7 @@
     "noctalia-performance": {
       "disabled": "Performance mode disabled",
       "enabled": "Performance mode enabled",
-      "label": "Noctalia performance"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Power profile changed",
@@ -2331,8 +2349,8 @@
     "night-light-enabled": "Night Light",
     "night-light-forced": "Night Light",
     "night-light-not-installed": "Night Light (not available)",
-    "noctalia-performance-disabled": "Noctalia performance mode",
-    "noctalia-performance-enabled": "Noctalia performance mode",
+    "noctalia-performance-disabled": "Noctalia Performance Mode",
+    "noctalia-performance-enabled": "Noctalia Performance Mode",
     "open-control-center": "Control center",
     "open-notification-history-disable-dnd": "Notification history",
     "open-notification-history-enable-dnd": "Notification history",
