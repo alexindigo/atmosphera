@@ -1237,7 +1237,7 @@
         },
         "section": {
           "description": "Widget'ları sürükleyerek sıralarını değiştirebilirsiniz. Widget'ları bölümler arasında aktarmak veya kaldırmak için sağ tıklama menüsünü kullanın.",
-          "label": "Kısayut widget'ları"
+          "label": "Kısayol widget'ları"
         },
         "sectionLeft": "Sol",
         "sectionRight": "Sağ"
