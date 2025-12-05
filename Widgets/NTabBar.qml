@@ -16,7 +16,7 @@ Rectangle {
   Layout.fillWidth: true
   implicitHeight: Style.baseWidgetSize + Style.marginXS * 2
   color: Color.mSurfaceVariant
-  radius: Style.radiusS
+  radius: Style.iRadiusS
 
   RowLayout {
     id: tabRow

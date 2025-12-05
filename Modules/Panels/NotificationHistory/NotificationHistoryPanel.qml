@@ -13,13 +13,23 @@ import qs.Widgets
 SmartPanel {
   id: root
 
+  preferredWidth: Math.round(420 * Style.uiScaleRatio)
+  preferredHeight: Math.round(540 * Style.uiScaleRatio)
+
   // 0 = All, 1 = Today, 2 = Yesterday, 3 = Earlier
   property int currentRange: 1  // start on Today by default
   property var rangeCounts: [0, 0, 0, 0]
   property bool groupByDate: true
+  property var lastKnownDate: null  // Track the current date to detect day changes
 
   function dateOnly(d) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  function getDateKey(d) {
+    // Returns a string key for the date (YYYY-MM-DD) for comparison
+    var date = dateOnly(d);
+    return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
   }
 
   function rangeForTimestamp(ts) {
@@ -76,13 +86,37 @@ SmartPanel {
     }
   }
 
-  Component.onCompleted: recalcRangeCounts()
+  // Timer to check for day changes at midnight
+  // Only runs when panel is open (component is only instantiated when open)
+  Timer {
+    id: dayChangeTimer
+    interval: 60000  // Check every minute
+    repeat: true
+    running: root.isPanelOpen  // Explicitly tie to panel open state
+    onTriggered: {
+      var currentDateKey = getDateKey(new Date());
+      if (lastKnownDate !== null && lastKnownDate !== currentDateKey) {
+        // Day has changed, recalculate counts
+        recalcRangeCounts();
+      }
+      lastKnownDate = currentDateKey;
+    }
+  }
 
-  preferredWidth: Math.round(420 * Style.uiScaleRatio)
-  preferredHeight: Math.round(540 * Style.uiScaleRatio)
+  Component.onCompleted: {
+    recalcRangeCounts();
+    // Initialize lastKnownDate
+    lastKnownDate = getDateKey(new Date());
+  }
 
   onOpened: function () {
     NotificationService.updateLastSeenTs();
+    // Check if day has changed since last check (in case panel was closed during day change)
+    var currentDateKey = getDateKey(new Date());
+    if (lastKnownDate !== null && lastKnownDate !== currentDateKey) {
+      recalcRangeCounts();
+      lastKnownDate = currentDateKey;
+    }
   }
 
   panelContent: Rectangle {
@@ -321,7 +355,7 @@ SmartPanel {
                     anchors.verticalCenter: parent.verticalCenter
                     width: Math.round(40 * Style.uiScaleRatio)
                     height: Math.round(40 * Style.uiScaleRatio)
-                    radius: width * 0.5
+                    radius: Math.min(Style.radiusL, width / 2)
                     imagePath: model.cachedImage || model.originalImage || ""
                     borderColor: Color.transparent
                     borderWidth: 0

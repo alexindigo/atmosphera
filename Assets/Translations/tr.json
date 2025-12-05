@@ -27,7 +27,7 @@
           "label": "Uygulama ikonunu göster"
         },
         "use-fixed-width": {
-          "description": "Etkinleştirildiğinde, widget dinamik olarak içerik göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
+          "description": "Etkinleştirildiğinde, widget dinamik olarak içeriğe göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
           "label": "Sabit Genişlik Kullan"
         }
       },
@@ -47,7 +47,7 @@
       },
       "battery": {
         "device": {
-          "default": "Varsayılan (Görüntü Aygıtı)",
+          "default": "Varsayılan (Bileşik Aygıt)",
           "description": "Görüntülenecek pil cihazını seçin.",
           "label": "Pil cihazı"
         },
@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Batarya bu yüzdeye düştüğünde uyarı göster.",
           "label": "Düşük batarya eşiği"
+        },
+        "show-power-profile": {
+          "description": "Pil panelinde güç profili seçimlerini göster.",
+          "label": "Güç profili denetimlerini göster"
+        },
+        "show-noctalia-performance": {
+          "description": "Pil panelinde Noctalia performans modu anahtarını göster.",
+          "label": "Noctalia Performans anahtarını göster"
         }
       },
       "brightness": {
@@ -266,7 +274,7 @@
         },
         "show-unread-badge": {
           "description": "Okunmamış bildirim sayısını gösteren bir rozet göster.",
-          "label": "Okunmamayakutu göster"
+          "label": "Okunmamış bildirimleri göster"
         }
       },
       "section-editor": {
@@ -281,7 +289,7 @@
       },
       "system-monitor": {
         "cpu-temperature": {
-          "description": "Mevcut CPU sıcaklık okumalarını gösterilir.",
+          "description": "Mevcut CPU sıcaklık okumalarını gösterir.",
           "label": "CPU sıcaklığı"
         },
         "cpu-usage": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Pil seviyesi",
     "brightness": "Parlaklık",
-    "charging": "Şarj oluyor.",
-    "charging-rate": "Şarj oranı: {rate} W.",
-    "discharging": "Deşarj oluyor.",
-    "discharging-rate": "Deşarj oranı: {rate} W.",
+    "charging": "Şarj oluyor",
+    "charging-rate": "Şarj oranı: {rate} W",
+    "discharging": "Deşarj oluyor",
+    "discharging-rate": "Deşarj oranı: {rate} W",
     "health": "Sağlık: {percent}%",
-    "idle": "Boşta.",
+    "idle": "Boşta",
     "inhibit-idle-description": "Sistemi uyanık tutar.",
     "inhibit-idle-label": "Uyanık tut",
-    "no-battery-detected": "Pil tespit edilmedi.",
+    "no-battery-detected": "Pil tespit edilmedi",
     "panel-title": "Pil",
-    "plugged-in": "Prize takılı.",
+    "plugged-in": "Prize takılı",
     "power-profile": "Güç profili",
-    "time-left": "Kalan süre: {time}.",
-    "time-until-full": "Dolma süresi: {time}."
+    "time-left": "Kalan süre: {time}",
+    "time-until-full": "Dolma süresi: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -454,6 +462,13 @@
   "clock": {
     "tooltip": "Takvimi aç"
   },
+  "common": {
+    "add": "Ekle",
+    "apply": "Uygula",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "save": "Kaydet"
+  },
   "context-menu": {
     "activate-app": "{app}'i etkinleştir",
     "clear-history": "Geçmişi temizle",
@@ -474,7 +489,7 @@
     "open-mixer": "Ses mikseri",
     "open-settings": "Ayarları aç",
     "pause": "Duraklat",
-    "play": "Oyna",
+    "play": "Oynat",
     "previous": "Önceki",
     "random-wallpaper": "Rastgele duvar kağıdı",
     "toggle-mute": "Sesi kapat/aç",
@@ -494,6 +509,20 @@
     "unknown": "Bilinmiyor"
   },
   "launcher": {
+    "categories": {
+      "all": "Tümü",
+      "audiovideo": "Ses ve Video",
+      "chat": "Sohbet",
+      "development": "Geliştirme",
+      "education": "Eğitim",
+      "game": "Oyunlar",
+      "graphics": "Grafikler",
+      "misc": "Çeşitli",
+      "network": "Ağ",
+      "office": "Ofis",
+      "system": "Sistem",
+      "webbrowser": "Web tarayıcı"
+    },
     "pin": "Dock'a sabitle",
     "unpin": "Dock'dan sabitlemeyi kaldır"
   },
@@ -547,7 +576,7 @@
     "colors": {
       "error": "Hata",
       "none": "Hiçbiri",
-      "onSurface": "Üstünde",
+      "onSurface": "Üzerinde",
       "primary": "Birincil",
       "secondary": "İkincil",
       "tertiary": "Üçüncül"
@@ -708,7 +737,7 @@
         "enabled": "Bluetooth"
       },
       "tooltip": {
-        "action": "Tıklayarak Bluetooth cihazlarını yönet"
+        "action": "Bluetooth"
       }
     },
     "keepAwake": {
@@ -717,7 +746,7 @@
         "enabled": "Uyanık Tut"
       },
       "tooltip": {
-        "action": "Tıklayarak uyanık kalma modunu aç/kapat"
+        "action": "Uyanık Tut"
       }
     },
     "nightLight": {
@@ -727,7 +756,7 @@
         "forced": "Gece Işığı"
       },
       "tooltip": {
-        "action": "Tıklayarak gece ışığı modunu değiştir\nSağ tık: Ayarları aç"
+        "action": "Gece ışığı"
       }
     },
     "notifications": {
@@ -736,7 +765,7 @@
         "enabled": "Bildirimler"
       },
       "tooltip": {
-        "action": "Sol tık: Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç"
+        "action": "Bildirimler"
       }
     },
     "powerProfile": {
@@ -744,7 +773,7 @@
         "unavailable": "Güç Profili"
       },
       "tooltip": {
-        "action": "Tıklayarak güç profilini değiştir",
+        "action": "Güç profili",
         "disabled": "Güç profillerini kullanmak için power-profiles-daemon kur"
       }
     },
@@ -754,13 +783,13 @@
         "stopped": "Kaydet"
       },
       "tooltip": {
-        "action": "Tıklayarak ekran kaydını başlat/durdur"
+        "action": "Ekran kaydedici"
       }
     },
     "wallpaperSelector": {
       "label": "Duvar Kağıdı",
       "tooltip": {
-        "action": "Sol tık: Duvar kağıdı seçiciyi aç\nSağ tık: Rastgele duvar kağıdı ayarla"
+        "action": "Duvar kağıdı seçici"
       }
     },
     "wifi": {
@@ -770,7 +799,7 @@
         "wifi": "Wi-Fi"
       },
       "tooltip": {
-        "action": "Tıklayarak Wi-Fi bağlantılarını yönet"
+        "action": "Wi-Fi"
       }
     }
   },
@@ -891,7 +920,7 @@
           "label": "Ses adım boyutu"
         },
         "volume-overdrive": {
-          "description": "Sesi %100'in üzerine çıkarmaya izin ver. Tüm donanımlar desteklemeyebilir.",
+          "description": "Sesi %100'ün üzerine çıkarmaya izin ver. Bazı donanımlar desteklemeyebilir.",
           "label": "Ses aşımına izin ver"
         }
       }
@@ -956,7 +985,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Widget'ları yeniden sıralamak için sürükleyip bırakın. Rozetler kullanımı gösterir: [S]ol, [O]rta, [S]ağ.",
+          "description": "Widget'ları sıralarını değiştirmek için sürükleyin. Widget'ları bölümler arasında aktarmak veya kaldırmak için sağ tıklama menüsünü kullanın.",
           "label": "Widget konumlandırma"
         }
       }
@@ -1215,8 +1244,8 @@
           "cancel": "İptal"
         },
         "section": {
-          "description": "Kısayut widget'larını yapılandırın ve yönetin.",
-          "label": "Kısayut widget'ları"
+          "description": "Widget'ları sürükleyerek sıralarını değiştirebilirsiniz. Widget'ları bölümler arasında aktarmak veya kaldırmak için sağ tıklama menüsünü kullanın.",
+          "label": "Kısayol widget'ları"
         },
         "sectionLeft": "Sol",
         "sectionRight": "Sağ"
@@ -1459,7 +1488,7 @@
         },
         "custom-launch-prefix-enabled": {
           "description": "Uygulamaları başlatmak için varsayılan yöntem yerine özel bir ön ek kullanın.",
-          "label": "Özel başlatma önekini etkinleştir"
+          "label": "Özel başlatma ön ekini etkinleştir"
         },
         "grid-view": {
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
@@ -1490,17 +1519,17 @@
     },
     "location": {
       "calendar": {
-        "banner": {
-          "label": "Başlık"
-        },
-        "calendar": {
-          "label": "Takvim"
-        },
         "cards": {
           "section": {
             "description": "Takvim panelinde kartları düzenleyin ve etkinleştirin/devre dışı bırakın.",
             "label": "Takvim kartları"
           }
+        },
+        "header": {
+          "label": "Takvim Başlığı"
+        },
+        "month": {
+          "label": "Takvim Ayı"
         }
       },
       "date-time": {
@@ -1659,8 +1688,8 @@
           "label": "Klavye düzeni"
         },
         "section": {
-          "description": "Toast görünümünü ve davranışını yapılandırın.",
-          "label": "Tost"
+          "description": "Bildirim penceresi görünümünü ve davranışını yapılandırın.",
+          "label": "Bildirim Penceresi"
         }
       }
     },
@@ -1719,7 +1748,7 @@
           "label": "Kilit tuşları"
         },
         "section": {
-          "description": "OSD'yi tetikleyecek olayları seçin. Hiçbir olay seçilmezse, mevcut tüm olaylar OSD'yi tetikleyecektir.",
+          "description": "OSD'yi tetikleyecek olayları seçin.",
           "label": "OSD tetikleme olayları"
         },
         "volume": {
@@ -1727,6 +1756,66 @@
           "label": "Çıkış sesi"
         }
       }
+    },
+    "plugins": {
+      "available": {
+        "description": "Yapılandırılmış kaynaklardan eklentilere göz atın ve yükleyin.",
+        "label": "Mevcut eklentiler",
+        "no-plugins-description": "Eklenti kaynaklarınızı kontrol edin veya listeyi yenileyin.",
+        "no-plugins-label": "Kullanılabilir eklenti yok"
+      },
+      "filter": {
+        "all": "Tüm",
+        "downloaded": "İndirildi",
+        "not-downloaded": "İndirilmedi"
+      },
+      "install": "Yükle",
+      "install-error": "Yükleme başarısız oldu: {error}",
+      "install-success": "{plugin} başarıyla kuruldu",
+      "installed": {
+        "description": "Yerel olarak yüklenmiş tüm eklentileri yönetin ve yapılandırın.",
+        "label": "Yüklü eklentiler",
+        "no-plugins-description": "Aşağıdaki Mevcut Eklentiler bölümünden eklentileri kurun.",
+        "no-plugins-label": "Eklenti kurulu değil"
+      },
+      "installing": "{eklenti} kuruluyor...",
+      "plugin-settings-title": "{plugin} Ayarları",
+      "refresh": {
+        "refreshing": "Eklenti listesi yenileniyor...",
+        "tooltip": "Mevcut eklentileri yenile"
+      },
+      "settings": {
+        "tooltip": "Eklenti ayarları"
+      },
+      "settings-error-not-loaded": "Eklenti yüklenmedi",
+      "settings-saved": "Eklenti ayarları kaydedildi.",
+      "sources": {
+        "add-custom": "Özel depo ekle",
+        "add-dialog": {
+          "description": "Bir GitHub deposunu eklenti kaynağı olarak ekle.",
+          "error": "Eklenti kaynağı eklenemedi",
+          "name": "Depo adı",
+          "name-placeholder": "Özel Eklentilerim",
+          "success": "Eklenti kaynağı başarıyla eklendi.",
+          "title": "Eklenti kaynağı ekle",
+          "url": "Depo URL'si"
+        },
+        "description": "Eklentilerin indirildiği eklenti depolarını yönetin.",
+        "label": "Eklenti kaynakları",
+        "placeholder": "Havalı depom",
+        "remove": {
+          "tooltip": "Eklenti kaynağını kaldır"
+        }
+      },
+      "title": "Eklentiler",
+      "uninstall": "Kaldır",
+      "uninstall-dialog": {
+        "description": "{plugin} eklentisini kaldırmak istediğinizden emin misiniz? Bu, tüm eklenti verilerini kaldıracaktır.",
+        "title": "Eklentiyi kaldır"
+      },
+      "uninstall-error": "Kaldırma başarısız oldu: {error}",
+      "uninstall-success": "{plugin} başarıyla kaldırıldı.",
+      "uninstalling": "{plugin} kaldırılıyor..."
     },
     "screen-recorder": {
       "audio": {
@@ -1801,6 +1890,23 @@
           "description": "Oturum Menüsünde hangi güç eylemlerinin görüneceğini ve hangi sırada görüneceğini özelleştirin.",
           "label": "Güç eylemleri"
         }
+      },
+      "entry-settings": {
+        "command": {
+          "description": "Bu işlem için yürütülecek özel komut. Varsayılan sistem komutunu kullanmak için boş bırakın.",
+          "label": "Komut",
+          "placeholder": "systemctl poweroff"
+        },
+        "default-command": {
+          "lock": "Dahili kilit ekranı (komut yok)",
+          "logout": "Dahili oturum kapatma (komut yok)"
+        },
+        "default-info": {
+          "description": "Özel bir komut belirtilmezse, varsayılan sistem komutu kullanılır.",
+          "label": "Varsayılan komut"
+        },
+        "title": "{entry} yapılandır",
+        "tooltip": "Yapılandırma komutu"
       },
       "general": {
         "section": {
@@ -1903,10 +2009,15 @@
         "label": "Animasyon hızı",
         "reset": "Animasyon hızını sıfırla"
       },
-      "border-radius": {
-        "description": "Pencerelerin, düğmelerin ve diğer elemanların köşe yuvarlaklığını kontrol eder.",
-        "label": "Kenar yarıçapı",
-        "reset": "Kenar yarıçapını sıfırla"
+      "box-border-radius": {
+        "description": "Kenar çubukları, kartlar ve içerik panelleri gibi ana düzen bölümlerinin köşe yuvarlaklığını ayarlar.",
+        "label": "Konteyner Yarıçapı",
+        "reset": "Konteyner yarıçapını sıfırla"
+      },
+      "control-border-radius": {
+        "description": "İnteraktif öğelerin, düğmeler, geçişler ve metin alanları dahil olmak üzere, eğriliğini kontrol eder.",
+        "label": "Giriş Yarıçapı",
+        "reset": "Giriş yarıçapını sıfırla"
       },
       "dim-desktop": {
         "description": "Paneller veya menüler açıkken masaüstünü karart.",
@@ -1963,7 +2074,7 @@
           "label": "Özel aralık"
         },
         "interval": {
-          "description": "Duvar kağıtlarını otomatik olarak ne sıklıkla değiştireceğiniz.",
+          "description": "Duvar kağıtlarının otomatik değiştirilme sıklığını belirleyin.",
           "label": "Duvar kağıdı aralığı"
         },
         "random-wallpaper": {
@@ -2151,7 +2262,7 @@
     "noctalia-performance": {
       "disabled": "Performans modu devre dışı bırakıldı",
       "enabled": "Performans modu etkinleştirildi",
-      "label": "Noctalia performansı"
+      "label": "Noctalia Performans"
     },
     "power-profile": {
       "changed": "Güç profili değişti",
@@ -2194,70 +2305,70 @@
   "tooltips": {
     "add-widget": "Widget ekle",
     "bluetooth-devices": "Bluetooth cihazları",
-    "brightness-at": "Parlaklık: %{brightness}\nAyarlar için sağ tık.\nParlaklığı değiştirmek için kaydırın.",
-    "cancel-timer": "Zamanlayıcıyı iptal et",
+    "brightness-at": "Parlaklık: %{brightness}",
+    "cancel-timer": "Zamanlayıcı",
     "clear-history": "Geçmişi temizle",
-    "click-to-start-recording": "Kaydı başlatmak için tıklayın",
-    "click-to-stop-recording": "Kaydı durdurmak için tıklayın",
-    "close": "Kapat",
-    "connect-disconnect-devices": "Bağlanmak için sol tık. Unutmak için sağ tık.",
+    "click-to-start-recording": "Ekran kaydedici (kaydı başlat)",
+    "click-to-stop-recording": "Ekran kaydedici (kaydı durdur)",
+    "close": "Kapat düğmesi",
+    "connect-disconnect-devices": "Bluetooth cihazı",
     "delete-notification": "Bildiriyi sil",
-    "disable-keep-awake": "Uyanık kalmayı devre dışı bırakmak için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
-    "do-not-disturb-disabled": "'Rahatsız etme' devre dışı",
-    "do-not-disturb-enabled": "'Rahatsız etme' etkin",
-    "enable-keep-awake": "Uyanık kalmayı etkinleştirmek için tıklayın.\nZaman aşımını ayarlamak için kaydırın.",
+    "disable-keep-awake": "Uyanık kal",
+    "do-not-disturb-disabled": "Rahatsız etme",
+    "do-not-disturb-enabled": "Rahatsız etme",
+    "enable-keep-awake": "Uyanık kal",
     "forget-network": "Ağı unut",
     "grid-view": "Izgara görünümü",
-    "hidden-files-hide": "Gizli dosyaları gizle",
-    "hidden-files-show": "Gizli dosyaları göster",
-    "home": "Ana Sayfa",
-    "input-muted": "Giriş sessizliğini değiştir",
+    "hidden-files-hide": "Gizli dosyalar",
+    "hidden-files-show": "Gizli dosyalar",
+    "home": "Ana dizin",
+    "input-muted": "Mikrofon",
     "keep-awake": "Uyanık kal",
     "keyboard-layout": "{layout} klavye düzeni",
     "list-view": "Liste görünümü",
-    "manage-vpn": "VPN bağlantılarını yönet",
-    "manage-wifi": "Wi-Fi yönet",
-    "microphone-volume-at": "Mikrofon sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
-    "move-to-center-section": "Orta bölüme taşı",
-    "move-to-left-section": "Sol bölüme taşı",
-    "move-to-right-section": "Sağ bölüme taşı",
-    "next-media": "Sonraki medya",
+    "manage-vpn": "VPN bağlantıları",
+    "manage-wifi": "Wi-Fi",
+    "microphone-volume-at": "Mikrofon sesi: %{volume}",
+    "move-to-center-section": "Orta bölüm",
+    "move-to-left-section": "Sol bölüm",
+    "move-to-right-section": "Sağ bölüm",
+    "next-media": "Sonraki parça",
     "next-month": "Sonraki ay",
-    "night-light-disabled": "Gece ışığı devre dışı.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-enabled": "Gece ışığı etkin.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-forced": "Gece ışığı zorla.\nMod arasında geçiş yapmak için sol tık.\nAyarlara erişmek için sağ tık.",
-    "night-light-not-installed": "Gece ışığı mevcut değil.\nwlsunset yüklü değil.",
-    "noctalia-performance-disabled": "Noctalia performans modu devre dışı.\nEtkinleştirmek için sol tıklayın.",
-    "noctalia-performance-enabled": "Noctalia performans modu etkin.\nDevre dışı bırakmak için sol tıklayın.",
-    "open-control-center": "Kontrol merkezini aç",
-    "open-notification-history-disable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
-    "open-notification-history-enable-dnd": "Bildirim geçmişini aç\nSağ tık: Bağlam menüsünü aç",
-    "open-settings": "Ayarları aç",
-    "open-tray-dropdown": "Tepsi açılır menüsünü aç",
-    "open-wallpaper-selector": "Duvar kağıdı seçiciyi aç",
-    "output-muted": "Çıkış sessizliğini değiştir",
-    "pause": "Duraklat",
-    "play": "Oynat",
-    "power-profile": "'{profile}' güç profili",
-    "previous-media": "Önceki medya",
+    "night-light-disabled": "Gece ışığı",
+    "night-light-enabled": "Gece ışığı",
+    "night-light-forced": "Gece ışığı",
+    "night-light-not-installed": "Gece ışığı (mevcut değil)",
+    "noctalia-performance-disabled": "Noctalia performans modu",
+    "noctalia-performance-enabled": "Noctalia performans modu",
+    "open-control-center": "Kontrol merkezi",
+    "open-notification-history-disable-dnd": "Bildirim geçmişi",
+    "open-notification-history-enable-dnd": "Bildirim geçmişi",
+    "open-settings": "Ayarlar",
+    "open-tray-dropdown": "Sistem tepsisi",
+    "open-wallpaper-selector": "Duvar kağıdı seçici",
+    "output-muted": "Ses çıkışı",
+    "pause": "Duraklat düğmesi",
+    "play": "Oynat düğmesi",
+    "power-profile": "{profile} güç profili",
+    "previous-media": "Önceki parça",
     "previous-month": "Önceki ay",
     "refresh": "Yenile",
     "refresh-devices": "Cihazları yenile",
     "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
     "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
     "remove-widget": "Widget kaldır",
-    "screen-recorder-not-installed": "Ekran kaydedici yüklü değil",
+    "screen-recorder-not-installed": "Ekran kaydedici (yüklü değil)",
     "search": "Ara",
     "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
-    "set-power-profile": "\"{profile}\" güç profilini ayarla",
-    "start-screen-recording": "Ekran kaydını başlat",
-    "stop-screen-recording": "Ekran kaydını durdur",
-    "switch-to-dark-mode": "Koyu moda geç",
-    "switch-to-light-mode": "Açık moda geç",
-    "up": "Yukarı",
-    "volume-at": "Çıkış sesi %{volume}\nAyarlar için sol tık. Sessize almak için sağ tık.\nSesi değiştirmek için kaydırın.",
-    "wallpaper-selector": "Sol tık: Duvar kağıdı seçiciyi aç.\nSağ tık: Rastgele duvar kağıdı ayarla.",
+    "set-power-profile": "{profile} güç profili",
+    "start-screen-recording": "Ekran kaydedici",
+    "stop-screen-recording": "Ekran kaydedici",
+    "switch-to-dark-mode": "Koyu mod",
+    "switch-to-light-mode": "Açık mod",
+    "up": "Üst dizin",
+    "volume-at": "Çıkış sesi: %{volume}",
+    "wallpaper-selector": "Duvar kağıdı seçici",
     "widget-settings": "Widget ayarları"
   },
   "wallpaper": {
@@ -2410,7 +2521,7 @@
     "file-picker": {
       "cancel": "İptal",
       "search-placeholder": "Dosya ve klasörlerde ara...",
-      "select-current": "Mevcutı Seç",
+      "select-current": "Mevcudu Seç",
       "select-file": "Dosya Seç",
       "select-folder": "Klasör Seç",
       "title": "Dosya seçici"

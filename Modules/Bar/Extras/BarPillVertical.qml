@@ -41,7 +41,6 @@ Item {
 
   // Sizing logic for vertical bars
   readonly property int buttonSize: Style.capsuleHeight
-  readonly property int halfButtonSize: Math.round(buttonSize * 0.5)
   readonly property int pillHeight: buttonSize
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
   readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginM * 2)) : buttonSize
@@ -94,7 +93,7 @@ Item {
     id: pillBackground
     width: buttonSize
     height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
-    radius: halfButtonSize
+    radius: Style.radiusM
     color: root.bgColor
 
     Behavior on color {
@@ -119,10 +118,10 @@ Item {
     color: Color.transparent // Make pill background transparent to avoid double opacity
 
     // Radius logic for vertical expansion - rounded on the side that connects to icon
-    topLeftRadius: openUpward ? halfButtonSize : 0
-    bottomLeftRadius: openDownward ? halfButtonSize : 0
-    topRightRadius: openUpward ? halfButtonSize : 0
-    bottomRightRadius: openDownward ? halfButtonSize : 0
+    topLeftRadius: openUpward ? Style.radiusM : 0
+    bottomLeftRadius: openDownward ? Style.radiusM : 0
+    topRightRadius: openUpward ? Style.radiusM : 0
+    bottomRightRadius: openDownward ? Style.radiusM : 0
 
     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -174,7 +173,7 @@ Item {
     id: iconCircle
     width: buttonSize
     height: buttonSize
-    radius: width * 0.5
+    radius: Math.min(Style.radiusL, width / 2)
     color: Color.transparent // Make icon background transparent to avoid double opacity
 
     // Icon positioning based on direction
@@ -323,7 +322,7 @@ Item {
   }
 
   function show() {
-    if (collapseToIcon)
+    if (collapseToIcon || root.text.trim().length === 0)
       return;
     if (!showPill) {
       shouldAnimateHide = autoHide;
@@ -347,7 +346,7 @@ Item {
   }
 
   function showDelayed() {
-    if (collapseToIcon)
+    if (collapseToIcon || root.text.trim().length === 0)
       return;
     if (!showPill) {
       shouldAnimateHide = autoHide;

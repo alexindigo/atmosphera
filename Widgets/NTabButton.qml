@@ -22,7 +22,7 @@ Rectangle {
   Layout.fillHeight: true
 
   // Styling
-  radius: Style.radiusXS
+  radius: Style.iRadiusXS
   color: root.checked ? Color.mPrimary : (root.isHovered ? Color.mHover : Color.mSurface)
 
   Behavior on color {
@@ -34,7 +34,13 @@ Rectangle {
 
   NText {
     id: tabText
-    anchors.centerIn: parent
+    anchors {
+      left: parent.left
+      right: parent.right
+      verticalCenter: parent.verticalCenter
+      leftMargin: Style.marginS
+      rightMargin: Style.marginS
+    }
     text: root.text
     pointSize: Style.fontSizeM
     font.weight: root.checked ? Style.fontWeightSemiBold : Style.fontWeightRegular
