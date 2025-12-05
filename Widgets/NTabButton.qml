@@ -23,7 +23,7 @@ Rectangle {
   Layout.minimumWidth: 140
 
   // Styling
-  radius: Style.iRadiusXS
+  radius: Style.iRadiusM
   color: root.checked ? Color.mPrimary : (root.isHovered ? Color.mHover : Color.mSurface)
 
   Behavior on color {
