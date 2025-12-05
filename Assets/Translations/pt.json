@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Arraste e solte widgets para reordená-los. Os emblemas indicam o uso: [E]squerda, [C]entro, [D]ireita.",
+          "description": "Arraste os widgets para alterar a ordem. Use o menu do botão direito para transferir widgets entre seções ou removê-los.",
           "label": "Posicionamento dos widgets"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Cancelar"
         },
         "section": {
-          "description": "Configure e gerencie os widgets de atalhos.",
+          "description": "Arraste os widgets para alterar a ordem. Use o menu do botão direito para transferir widgets entre seções ou removê-los.",
           "label": "Widgets de atalhos"
         },
         "sectionLeft": "Esquerda",

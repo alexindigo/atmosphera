@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Faites glisser et déposez les widgets pour les réorganiser. Les badges indiquent l'utilisation : [G]auche, [C]entre, [D]roite.",
+          "description": "Faites glisser les widgets pour modifier leur ordre. Utilisez le menu contextuel (clic droit) pour transférer les widgets entre les sections ou les supprimer.",
           "label": "Positionnement des widgets"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Annuler"
         },
         "section": {
-          "description": "Configurer et gérer les widgets de raccourcis.",
+          "description": "Faites glisser les widgets pour modifier leur ordre. Utilisez le menu contextuel (clic droit) pour transférer des widgets entre les sections ou les supprimer.",
           "label": "Widgets de raccourcis"
         },
         "sectionLeft": "Gauche",

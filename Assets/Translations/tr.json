@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Widget'ları yeniden sıralamak için sürükleyip bırakın. Rozetler kullanımı gösterir: [S]ol, [O]rta, [S]ağ.",
+          "description": "Widget'ları sıralarını değiştirmek için sürükleyin. Widget'ları bölümler arasında aktarmak veya kaldırmak için sağ tıklama menüsünü kullanın.",
           "label": "Widget konumlandırma"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "İptal"
         },
         "section": {
-          "description": "Kısayol widget'larını yapılandırın ve yönetin.",
+          "description": "Widget'ları sürükleyerek sıralarını değiştirebilirsiniz. Widget'ları bölümler arasında aktarmak veya kaldırmak için sağ tıklama menüsünü kullanın.",
           "label": "Kısayol widget'ları"
         },
         "sectionLeft": "Sol",

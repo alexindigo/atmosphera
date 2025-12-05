@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Arrastra y suelta widgets para reordenarlos. Las insignias indican el uso: [I]zquierda, [C]entro, [D]erecha.",
+          "description": "Arrastra los widgets para cambiar su orden. Usa el menú contextual (clic derecho) para transferir widgets entre secciones o eliminarlos.",
           "label": "Posicionamiento de widgets"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Cancelar"
         },
         "section": {
-          "description": "Configurar y administrar los widgets de accesos directos.",
+          "description": "Arrastra los widgets para cambiar su orden. Usa el menú contextual (clic derecho) para transferir widgets entre secciones o eliminarlos.",
           "label": "Widgets de accesos directos"
         },
         "sectionLeft": "Izquierda",
