@@ -266,7 +266,7 @@
         },
         "show-unread-badge": {
           "description": "Okunmamış bildirim sayısını gösteren bir rozet göster.",
-          "label": "Okunmayanları göster"
+          "label": "Okunmamış bildirimleri göster"
         }
       },
       "section-editor": {
