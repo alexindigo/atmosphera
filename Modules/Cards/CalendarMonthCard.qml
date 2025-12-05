@@ -51,7 +51,6 @@ NBox {
       Layout.fillWidth: true
       spacing: Style.marginS
 
-
       Item {
         Layout.preferredWidth: Style.marginS
       }
