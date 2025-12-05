@@ -128,6 +128,20 @@ ShellRoot {
           PluginService.pluginContainer = pluginContainer;
         }
       }
+
+      // Listen for when available plugins are fetched, then check for updates
+      Connections {
+        target: PluginService
+        property bool hasCheckedOnStartup: false
+
+        function onAvailablePluginsUpdated() {
+          // Only check once on startup, after first plugin list is fetched
+          if (!hasCheckedOnStartup && Object.keys(PluginService.activeFetches).length === 0) {
+            hasCheckedOnStartup = true;
+            PluginService.checkForUpdates();
+          }
+        }
+      }
     }
   }
 

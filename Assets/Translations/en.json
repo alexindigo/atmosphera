@@ -458,6 +458,7 @@
     "add": "Add",
     "apply": "Apply",
     "cancel": "Cancel",
+    "check-settings": "Check Settings for details",
     "close": "Close",
     "save": "Save"
   },
@@ -1808,7 +1809,16 @@
       "uninstall-error": "Failed to uninstall: {error}",
       "uninstall-success": "Successfully uninstalled {plugin}",
       "uninstall.tooltip": "Uninstall plugin",
-      "uninstalling": "Uninstalling {plugin}..."
+      "uninstalling": "Uninstalling {plugin}...",
+      "update": "Update",
+      "update-all": "Update All ({count})",
+      "update-all-success": "All plugins updated successfully",
+      "update-available": "{count} update(s) available",
+      "update-error": "Failed to update {plugin}: {error}",
+      "update-incompatible": "Requires Noctalia v{version} or higher",
+      "update-success": "Updated {plugin} to v{version}",
+      "update-version": "v{current} → v{new}",
+      "updating": "Updating {plugin}..."
     },
     "screen-recorder": {
       "audio": {
