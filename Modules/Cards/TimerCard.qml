@@ -327,6 +327,7 @@ NBox {
 
     // Control buttons
     RowLayout {
+      id: buttonRow
       Layout.fillWidth: true
       spacing: Style.marginS
 
@@ -372,8 +373,13 @@ NBox {
     }
 
     // Mode tabs (Android-style) - below buttons
+    // Match width and height exactly with the control buttons above
     NTabBar {
+      id: modeTabBar
       Layout.fillWidth: true
+      Layout.preferredWidth: buttonRow.width
+      Layout.preferredHeight: startButton.implicitHeight
+      implicitHeight: startButton.implicitHeight
       Layout.alignment: Qt.AlignHCenter
       visible: !isRunning
       currentIndex: isStopwatchMode ? 1 : 0
@@ -395,18 +401,39 @@ NBox {
           }
         }
       }
-      spacing: Style.marginXS
+      // Match spacing exactly with button row
+      spacing: Style.marginS
+
+      // Access internal RowLayout to remove margins so spacing matches button row
+      Component.onCompleted: {
+        // The NTabBar has a RowLayout child (tabRow) with margins
+        // We need to remove those margins to match the button row spacing
+        Qt.callLater(() => {
+                       if (modeTabBar.children && modeTabBar.children.length > 0) {
+                         for (var i = 0; i < modeTabBar.children.length; i++) {
+                           var child = modeTabBar.children[i];
+                           // Look for RowLayout (it will have spacing property)
+                           if (child && typeof child.spacing !== 'undefined' && child.anchors) {
+                             child.anchors.margins = 0;
+                             break;
+                           }
+                         }
+                       }
+                     });
+      }
 
       NTabButton {
         text: I18n.tr("calendar.timer.countdown")
         tabIndex: 0
         checked: !isStopwatchMode
+        radius: Style.iRadiusS
       }
 
       NTabButton {
         text: I18n.tr("calendar.timer.stopwatch")
         tabIndex: 1
         checked: isStopwatchMode
+        radius: Style.iRadiusS
       }
     }
   }
