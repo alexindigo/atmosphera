@@ -20,6 +20,7 @@ Rectangle {
   // Sizing
   Layout.fillWidth: true
   Layout.fillHeight: true
+  Layout.minimumWidth: 140
 
   // Styling
   radius: Style.iRadiusXS
