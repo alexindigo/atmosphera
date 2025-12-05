@@ -82,14 +82,14 @@ Variants {
         if (barPos !== "left")
           return 0;
         const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
-        return floatMarginH;
+        return Style.barHeight + floatMarginH;
       }
 
       readonly property int barOffsetRight: {
         if (barPos !== "right")
           return 0;
         const floatMarginH = isFloating ? Settings.data.bar.marginHorizontal * Style.marginXL : 0;
-        return floatMarginH;
+        return Style.barHeight + floatMarginH;
       }
 
       // Anchoring
