@@ -235,7 +235,6 @@ cava)
         fi
 
         # Reload cava if it's running, but only if it's not using stdin config
-        # (CavaService manages Cava via stdin, and reloading would cause it to read the config file)
         if pgrep -f cava >/dev/null; then
             # Check if Cava is running with -p /dev/stdin (managed by CavaService)
             if pgrep -af cava | grep -q -- "-p.*stdin"; then

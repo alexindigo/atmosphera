@@ -17,7 +17,6 @@ Item {
 
   property var keyboardLayouts: []
 
-
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
