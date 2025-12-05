@@ -8,6 +8,7 @@ import qs.Modules.MainScreen
 import qs.Services.Hardware
 import qs.Services.Networking
 import qs.Services.Power
+import qs.Services.UI
 import qs.Widgets
 
 SmartPanel {
@@ -158,11 +159,16 @@ SmartPanel {
   }
   readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
   
+  property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
+  readonly property var batteryWidgetSettings: batteryWidgetInstance ? batteryWidgetInstance.widgetSettings : null
+  readonly property var batteryWidgetMetadata: BarWidgetRegistry.widgetMetadata["Battery"]
   readonly property bool powerProfileAvailable: PowerProfileService.available
   readonly property var powerProfiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
   readonly property bool profilesAvailable: PowerProfileService.available
   property int profileIndex: profileToIndex(PowerProfileService.profile)
-  
+  readonly property bool showPowerProfiles: resolveWidgetSetting("showPowerProfiles", false)
+  readonly property bool showNoctaliaPerformance: resolveWidgetSetting("showNoctaliaPerformance", false)
+
   function profileToIndex(p) {
     return powerProfiles.indexOf(p) ?? 1;
   }
@@ -177,10 +183,25 @@ SmartPanel {
     PowerProfileService.setProfile(prof);
   }
   
+  function resolveWidgetSetting(key, defaultValue) {
+    if (batteryWidgetSettings && batteryWidgetSettings[key] !== undefined)
+      return batteryWidgetSettings[key];
+    if (batteryWidgetMetadata && batteryWidgetMetadata[key] !== undefined)
+      return batteryWidgetMetadata[key];
+    return defaultValue;
+  }
+  
   Connections {
     target: PowerProfileService
     function onProfileChanged() {
       profileIndex = profileToIndex(PowerProfileService.profile);
+    }
+  }
+  
+  Connections {
+    target: BarService
+    function onActiveWidgetsChanged() {
+      batteryWidgetInstance = BarService.lookupWidget("Battery", screen ? screen.name : null);
     }
   }
 
@@ -312,6 +333,7 @@ SmartPanel {
       NBox {
         Layout.fillWidth: true
         height: controlsLayout.implicitHeight + Style.marginL * 2
+        visible: root.showPowerProfiles || root.showNoctaliaPerformance
 
         ColumnLayout {
           id: controlsLayout
@@ -320,17 +342,12 @@ SmartPanel {
           spacing: Style.marginL
 
           ColumnLayout {
-            visible: root.powerProfileAvailable
+            visible: root.powerProfileAvailable && root.showPowerProfiles
 
             RowLayout {
               Layout.fillWidth: true
               spacing: Style.marginS
-              
-              NIcon {
-                icon: PowerProfileService.getIcon()
-                pointSize: Style.fontSizeM
-                color: Color.mPrimary
-              }
+
               NText {
                 text: I18n.tr("battery.power-profile")
                 font.weight: Style.fontWeightBold
@@ -349,6 +366,7 @@ SmartPanel {
               to: 2
               stepSize: 1
               snapAlways: true
+              heightRatio: 0.5
               value: profileIndex
               enabled: profilesAvailable
               onPressedChanged: (pressed, v) => {
@@ -360,23 +378,51 @@ SmartPanel {
                          profileIndex = v;
                        }
             }
+            
+             RowLayout {
+              Layout.fillWidth: true
+              spacing: Style.marginS
+              
+              NIcon {
+                icon: "powersaver"
+                pointSize: Style.fontSizeS
+                color: PowerProfileService.getIcon() === "powersaver" ? Color.mPrimary : Color.mOnSurfaceVariant
+              }
+              NIcon {
+                icon: "balanced"
+                pointSize: Style.fontSizeS
+                color: PowerProfileService.getIcon() === "balanced" ? Color.mPrimary : Color.mOnSurfaceVariant
+                Layout.fillWidth: true
+              }
+              NIcon {
+                icon: "performance"
+                pointSize: Style.fontSizeS
+                color: PowerProfileService.getIcon() === "performance" ? Color.mPrimary : Color.mOnSurfaceVariant
+              }
+            }
+          }
+          
+          NDivider {
+            Layout.fillWidth: true
+            visible: root.showPowerProfiles && root.showNoctaliaPerformance
           }
 
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
+            visible: root.showNoctaliaPerformance
             
-            NIcon {
-              icon: "rocket"
-              pointSize: Style.fontSizeM
-              color: Color.mPrimary
-            }
             NText {
               text: I18n.tr("toast.noctalia-performance.label")
               pointSize: Style.fontSizeM
               font.weight: Style.fontWeightBold
               color: Color.mOnSurface
               Layout.fillWidth: true
+            }
+            NIcon {
+              icon: PowerProfileService.noctaliaPerformanceMode ? "rocket" : "rocket-off"
+              pointSize: Style.fontSizeL
+              color: PowerProfileService.noctaliaPerformanceMode ? Color.mPrimary : Color.mOnSurfaceVariant
             }
             NToggle {
               checked: PowerProfileService.noctaliaPerformanceMode

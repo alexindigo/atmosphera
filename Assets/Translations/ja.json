@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "バッテリー残量がこのパーセンテージを下回ると警告を表示します。",
           "label": "低バッテリー警告の閾値"
+        },
+        "show-power-profile": {
+          "description": "バッテリーパネルに電源プロファイルの選択を表示します。",
+          "label": "電源プロファイルコントロールを表示"
+        },
+        "show-noctalia-performance": {
+          "description": "バッテリーパネルにNoctaliaパフォーマンスモードのトグルを表示します。",
+          "label": "Noctaliaパフォーマンストグルを表示"
         }
       },
       "brightness": {
@@ -2170,7 +2178,7 @@
     "noctalia-performance": {
       "disabled": "パフォーマンスモード: 無効",
       "enabled": "パフォーマンスモード: 有効",
-      "label": "Noctalia パフォーマンス"
+      "label": "Noctaliaパフォーマンス"
     },
     "power-profile": {
       "changed": "電源プロファイルを変更しました",
