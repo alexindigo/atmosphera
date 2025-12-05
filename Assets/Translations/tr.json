@@ -1236,8 +1236,8 @@
           "cancel": "İptal"
         },
         "section": {
-          "description": "Kısayut widget'larını yapılandırın ve yönetin.",
-          "label": "Kısayut widget'ları"
+          "description": "Kısayol widget'larını yapılandırın ve yönetin.",
+          "label": "Kısayol widget'ları"
         },
         "sectionLeft": "Sol",
         "sectionRight": "Sağ"
