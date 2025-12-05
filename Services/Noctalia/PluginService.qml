@@ -111,7 +111,12 @@ Singleton {
         Logger.d("PluginService", "Manifest found for", enabledIds[i]);
         loadPlugin(enabledIds[i]);
       } else {
-        Logger.e("PluginService", "No manifest for enabled plugin:", enabledIds[i]);
+        Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - cleaning up");
+        // Plugin was deleted from disk but still marked as enabled
+        // Unregister it completely and remove its widget from bar
+        var widgetId = "plugin:" + enabledIds[i];
+        removeWidgetFromBar(widgetId);
+        PluginRegistry.unregisterPlugin(enabledIds[i]);
       }
     }
 
