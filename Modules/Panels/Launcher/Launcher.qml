@@ -1296,9 +1296,8 @@ SmartPanel {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onEntered: {
-                  if (!root.ignoreMouseHover) {
-                    selectedIndex = index;
-                  }
+                  root.ignoreMouseHover = false;
+                  selectedIndex = index;
                 }
                 onClicked: mouse => {
                              if (mouse.button === Qt.LeftButton) {
