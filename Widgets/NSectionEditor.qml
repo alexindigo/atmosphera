@@ -283,6 +283,7 @@ NBox {
               id: contextMouseArea
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
+              cursorShape: Qt.PointingHandCursor
               z: -1 // Below the buttons but above background
 
               onPressed: mouse => {

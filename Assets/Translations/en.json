@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Rearrange widgets by dragging. Right-click to manage.",
+          "description": "Drag widgets to change their order. Use the right-click menu to transfer widgets between sections or remove them.",
           "label": "Widgets positioning"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Cancel"
         },
         "section": {
-          "description": "Configure and manage the shortcuts widgets.",
+          "description": "Drag widgets to change their order. Use the right-click menu to transfer widgets between sections or remove them.",
           "label": "Shortcuts widgets"
         },
         "sectionLeft": "Left",

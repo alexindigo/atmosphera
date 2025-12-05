@@ -12,7 +12,7 @@ ColumnLayout {
   width: parent.width
 
   // ------------------------------
-  // Section 1: Installed Plugins
+  // Installed Plugins
   // ------------------------------
   NHeader {
     label: I18n.tr("settings.plugins.installed.label")
@@ -141,8 +141,14 @@ ColumnLayout {
   }
 
   // ------------------------------
-  // Section 2: Plugin Sources
+  // Available Plugins (Sources + Filter + List)
   // ------------------------------
+  NHeader {
+    label: I18n.tr("settings.plugins.available.label")
+    description: I18n.tr("settings.plugins.available.description")
+  }
+
+  // Sources
   NCollapsible {
     Layout.fillWidth: true
     label: I18n.tr("settings.plugins.sources.label")
@@ -187,6 +193,17 @@ ColumnLayout {
             Layout.fillWidth: true
           }
 
+          // Enable/Disable a source
+          NToggle {
+            checked: modelData.enabled !== false // Default to true if not set
+            baseSize: Style.baseWidgetSize * 0.7
+            onToggled: function (checked) {
+              PluginRegistry.setSourceEnabled(modelData.url, checked);
+              PluginService.refreshAvailablePlugins();
+              ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
+            }
+          }
+
           NIconButton {
             icon: "trash"
             tooltipText: I18n.tr("settings.plugins.sources.remove.tooltip")
@@ -213,20 +230,6 @@ ColumnLayout {
         Layout.fillWidth: true
       }
     }
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
-  }
-
-  // ------------------------------
-  // Section 3: Available Plugins
-  // ------------------------------
-  NHeader {
-    label: I18n.tr("settings.plugins.available.label")
-    description: I18n.tr("settings.plugins.available.description")
   }
 
   // Filter controls
