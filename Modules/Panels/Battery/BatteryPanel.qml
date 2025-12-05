@@ -158,7 +158,7 @@ SmartPanel {
     return I18n.tr("battery.idle");
   }
   readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
-  
+
   property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
   readonly property var batteryWidgetSettings: batteryWidgetInstance ? batteryWidgetInstance.widgetSettings : null
   readonly property var batteryWidgetMetadata: BarWidgetRegistry.widgetMetadata["Battery"]
@@ -182,7 +182,7 @@ SmartPanel {
     profileIndex = idx;
     PowerProfileService.setProfile(prof);
   }
-  
+
   function resolveWidgetSetting(key, defaultValue) {
     if (batteryWidgetSettings && batteryWidgetSettings[key] !== undefined)
       return batteryWidgetSettings[key];
@@ -190,14 +190,14 @@ SmartPanel {
       return batteryWidgetMetadata[key];
     return defaultValue;
   }
-  
+
   Connections {
     target: PowerProfileService
     function onProfileChanged() {
       profileIndex = profileToIndex(PowerProfileService.profile);
     }
   }
-  
+
   Connections {
     target: BarService
     function onActiveWidgetsChanged() {
@@ -378,11 +378,11 @@ SmartPanel {
                          profileIndex = v;
                        }
             }
-            
-             RowLayout {
+
+            RowLayout {
               Layout.fillWidth: true
               spacing: Style.marginS
-              
+
               NIcon {
                 icon: "powersaver"
                 pointSize: Style.fontSizeS
@@ -401,7 +401,7 @@ SmartPanel {
               }
             }
           }
-          
+
           NDivider {
             Layout.fillWidth: true
             visible: root.showPowerProfiles && root.showNoctaliaPerformance
@@ -411,7 +411,7 @@ SmartPanel {
             Layout.fillWidth: true
             spacing: Style.marginS
             visible: root.showNoctaliaPerformance
-            
+
             NText {
               text: I18n.tr("toast.noctalia-performance.label")
               pointSize: Style.fontSizeM
@@ -432,5 +432,5 @@ SmartPanel {
         }
       }
     }
-  }  
+  }
 }

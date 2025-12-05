@@ -154,7 +154,7 @@ ColumnLayout {
     maximum: 50
     onValueChanged: valueWarningThreshold = value
   }
-  
+
   NToggle {
     label: I18n.tr("bar.widget-settings.battery.show-power-profile.label")
     description: I18n.tr("bar.widget-settings.battery.show-power-profile.description")
