@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",
           "label": "Seuil d'avertissement de batterie faible"
+        },
+        "show-power-profile": {
+          "description": "Afficher la sélection du profil d'alimentation dans le panneau batterie.",
+          "label": "Afficher les contrôles de profil d'alimentation"
+        },
+        "show-noctalia-performance": {
+          "description": "Afficher le basculement du mode performance Noctalia dans le panneau batterie.",
+          "label": "Afficher le basculement Noctalia Performance"
         }
       },
       "brightness": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Niveau de batterie",
     "brightness": "Luminosité",
-    "charging": "En charge.",
-    "charging-rate": "Taux de charge : {rate} W.",
-    "discharging": "En décharge.",
-    "discharging-rate": "Taux de décharge : {rate} W.",
+    "charging": "En charge",
+    "charging-rate": "Taux de charge : {rate} W",
+    "discharging": "En décharge",
+    "discharging-rate": "Taux de décharge : {rate} W",
     "health": "État : {percent}%",
-    "idle": "Inactif.",
+    "idle": "Inactif",
     "inhibit-idle-description": "Maintient le système éveillé.",
     "inhibit-idle-label": "Garder éveillé",
-    "no-battery-detected": "Aucune batterie détectée.",
+    "no-battery-detected": "Aucune batterie détectée",
     "panel-title": "Batterie",
-    "plugged-in": "Branché.",
+    "plugged-in": "Branché",
     "power-profile": "Profil d’alimentation",
-    "time-left": "Temps restant : {time}.",
-    "time-until-full": "Temps jusqu'à charge complète : {time}."
+    "time-left": "Temps restant : {time}",
+    "time-until-full": "Temps jusqu'à charge complète : {time}"
   },
   "bluetooth": {
     "panel": {
@@ -932,7 +940,7 @@
           "label": "Densité de la barre"
         },
         "floating": {
-          "description": "Affiche la barre sous forme de 'pilule' flottante.",
+          "description": "Afficher la barre sous forme de 'pilule' flottante.",
           "label": "Barre flottante"
         },
         "margins": {
@@ -942,7 +950,7 @@
           "vertical": "Verticale"
         },
         "outer-corners": {
-          "description": "Affiche des coins incurvés vers l'extérieur sur la barre.",
+          "description": "Afficher des coins incurvés vers l'extérieur sur la barre.",
           "label": "Coins extérieurs"
         },
         "position": {
@@ -1526,7 +1534,7 @@
       },
       "date-time": {
         "12hour-format": {
-          "description": "Affiche l'heure au format 12 heures sur l'écran de verrouillage et dans le calendrier. L'horloge de la barre possède ses propres paramètres.",
+          "description": "Afficher l'heure au format 12 heures sur l'écran de verrouillage et dans le calendrier. L'horloge de la barre possède ses propres paramètres.",
           "label": "Utiliser le format horaire de 12 heures"
         },
         "first-day-of-week": {
@@ -1547,7 +1555,7 @@
           "label": "Utiliser une horloge de style analogique."
         },
         "week-numbers": {
-          "description": "Affiche la semaine de l'année (ex: Semaine 38) dans le calendrier.",
+          "description": "Afficher la semaine de l'année (ex: Semaine 38) dans le calendrier.",
           "label": "Afficher les numéros de semaine"
         }
       },
@@ -1577,7 +1585,7 @@
           "label": "Météo"
         },
         "show-effects": {
-          "description": "Affiche des effets visuels supplémentaires (comme la pluie, la neige ou la foudre) sur la carte météo.",
+          "description": "Afficher des effets visuels supplémentaires (comme la pluie, la neige ou la foudre) sur la carte météo.",
           "label": "Afficher les effets météorologiques"
         },
         "show-in-calendar": {
@@ -2254,7 +2262,7 @@
     "noctalia-performance": {
       "disabled": "Mode performance désactivé",
       "enabled": "Mode performance activé",
-      "label": "Performance de Noctalia"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Profil d'alimentation changé",

@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Toon een waarschuwing wanneer de batterij onder dit percentage komt.",
           "label": "Waarschuwingsdrempel voor lage batterij"
+        },
+        "show-power-profile": {
+          "description": "Toon de keuze van het stroomprofiel in het batterijpaneel.",
+          "label": "Stroomprofielbediening tonen"
+        },
+        "show-noctalia-performance": {
+          "description": "Toon de Noctalia-prestatiemodus-schakelaar in het batterijpaneel.",
+          "label": "Noctalia-Performance-schakelaar tonen"
         }
       },
       "brightness": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Batterijniveau",
     "brightness": "Helderheid",
-    "charging": "Opladen.",
-    "charging-rate": "Laadsnelheid: {rate} W.",
-    "discharging": "Ontladen.",
-    "discharging-rate": "Ontlaadsnelheid: {rate} W.",
+    "charging": "Opladen",
+    "charging-rate": "Laadsnelheid: {rate} W",
+    "discharging": "Ontladen",
+    "discharging-rate": "Ontlaadsnelheid: {rate} W",
     "health": "Gezondheid: {percent}%",
-    "idle": "In rust.",
+    "idle": "In rust",
     "inhibit-idle-description": "Houdt het systeem wakker.",
     "inhibit-idle-label": "Wakker houden",
-    "no-battery-detected": "Geen batterij gedetecteerd.",
+    "no-battery-detected": "Geen batterij gedetecteerd",
     "panel-title": "Batterij",
-    "plugged-in": "Op netstroom.",
+    "plugged-in": "Op netstroom",
     "power-profile": "Energieprofiel",
-    "time-left": "Resterende tijd: {time}.",
-    "time-until-full": "Tijd tot vol: {time}."
+    "time-left": "Resterende tijd: {time}",
+    "time-until-full": "Tijd tot vol: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -932,7 +940,7 @@
           "label": "Balkdichtheid"
         },
         "floating": {
-          "description": "Geeft de balk weer als een zwevende 'pil'.",
+          "description": "Toon de balk weer als een zwevende 'pil'.",
           "label": "Zwevende balk"
         },
         "margins": {
@@ -942,7 +950,7 @@
           "vertical": "Verticaal"
         },
         "outer-corners": {
-          "description": "Geeft naar buiten afgeronde hoeken op de balk weer.",
+          "description": "Toon naar buiten afgeronde hoeken op de balk weer.",
           "label": "Buitenhoeken"
         },
         "position": {
@@ -1526,7 +1534,7 @@
       },
       "date-time": {
         "12hour-format": {
-          "description": "Toont tijd in 12-uurs formaat op het vergrendelscherm en in de kalender. De klok op de balk heeft zijn eigen instellingen.",
+          "description": "Toon tijd in 12-uurs formaat op het vergrendelscherm en in de kalender. De klok op de balk heeft zijn eigen instellingen.",
           "label": "12-uurs tijdnotatie gebruiken"
         },
         "first-day-of-week": {
@@ -1547,7 +1555,7 @@
           "label": "Analoge klok gebruiken"
         },
         "week-numbers": {
-          "description": "Toont het weeknummer van het jaar (bijv. week 38) in de kalender.",
+          "description": "Toon het weeknummer van het jaar (bijv. week 38) in de kalender.",
           "label": "Weeknummers tonen"
         }
       },
@@ -1577,7 +1585,7 @@
           "label": "Weer"
         },
         "show-effects": {
-          "description": "Toont extra visuele effecten (zoals regen, sneeuw of bliksem) op de weerkaart.",
+          "description": "Toon extra visuele effecten (zoals regen, sneeuw of bliksem) op de weerkaart.",
           "label": "Weerseffecten weergeven"
         },
         "show-in-calendar": {
@@ -2254,7 +2262,7 @@
     "noctalia-performance": {
       "disabled": "Prestatiemodus uitgeschakeld",
       "enabled": "Prestatiemodus ingeschakeld",
-      "label": "Noctalia-prestatiemodus"
+      "label": "Noctalia Performance"
     },
     "power-profile": {
       "changed": "Energieprofiel gewijzigd",
