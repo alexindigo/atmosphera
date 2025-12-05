@@ -339,7 +339,7 @@ SmartPanel {
           id: controlsLayout
           anchors.fill: parent
           anchors.margins: Style.marginL
-          spacing: Style.marginL
+          spacing: Style.marginM
 
           ColumnLayout {
             visible: root.powerProfileAvailable && root.showPowerProfiles
