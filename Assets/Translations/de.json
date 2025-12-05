@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Widgets per Drag & Drop neu anordnen. Symoble zeigen die Verwendung an: [L]inks, [M]itte, [R]echts.",
+          "description": "Ziehen Sie Widgets, um ihre Reihenfolge zu ändern. Verwenden Sie das Rechtsklick-Menü, um Widgets zwischen Abschnitten zu verschieben oder sie zu entfernen.",
           "label": "Widget-Positionierung"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Abbrechen"
         },
         "section": {
-          "description": "Konfigurieren und verwalten Sie die Verknüpfungs-Widgets.",
+          "description": "Ziehen Sie Widgets, um ihre Reihenfolge zu ändern. Verwenden Sie das Rechtsklick-Menü, um Widgets zwischen Abschnitten zu verschieben oder sie zu entfernen.",
           "label": "Widgets für Kurzbefehle"
         },
         "sectionLeft": "Links",

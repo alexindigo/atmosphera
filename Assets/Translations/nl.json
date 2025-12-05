@@ -977,7 +977,7 @@
       },
       "widgets": {
         "section": {
-          "description": "Sleep widgets om ze te herschikken. Badges geven gebruik aan: [L]inks, [C]entrum, [R]echts.",
+          "description": "Sleep widgets om hun volgorde te wijzigen. Gebruik het rechtermuisknopmenu om widgets tussen secties te verplaatsen of te verwijderen.",
           "label": "Widgetpositionering"
         }
       }
@@ -1236,7 +1236,7 @@
           "cancel": "Annuleren"
         },
         "section": {
-          "description": "Configureer en beheer de snelkoppeling-widgets.",
+          "description": "Sleep widgets om hun volgorde te wijzigen. Gebruik het rechtermuisknopmenu om widgets tussen secties te verplaatsen of te verwijderen.",
           "label": "Snelkoppeling-widgets"
         },
         "sectionLeft": "Links",
