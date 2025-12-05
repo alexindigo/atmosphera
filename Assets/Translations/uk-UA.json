@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Показувати попередження, коли батарея падає нижче цього відсотка.",
           "label": "Поріг попередження про низький заряд батареї"
+        },
+        "show-power-profile": {
+          "description": "Відображати вибір профілю живлення в панелі батареї.",
+          "label": "Показувати елементи керування профілем живлення"
+        },
+        "show-noctalia-performance": {
+          "description": "Відображати перемикач режиму продуктивності Noctalia в панелі батареї.",
+          "label": "Показувати перемикач Продуктивність Noctalia"
         }
       },
       "brightness": {
@@ -373,14 +381,14 @@
     "battery-level": "Рівень заряду акумулятора",
     "brightness": "Яскравість",
     "charging": "Заряджається",
-    "charging-rate": "Швидкість зарядки: {rate} Вт.",
+    "charging-rate": "Швидкість зарядки: {rate} Вт",
     "discharging": "Розряджається",
-    "discharging-rate": "Швидкість розрядки: {rate} Вт.",
+    "discharging-rate": "Швидкість розрядки: {rate} Вт",
     "health": "Стан: {percent}%",
     "idle": "Простій",
     "inhibit-idle-description": "Підтримує систему активною.",
     "inhibit-idle-label": "Не давати заснути",
-    "no-battery-detected": "Батарею не виявлено.",
+    "no-battery-detected": "Батарею не виявлено",
     "panel-title": "Батарея",
     "plugged-in": "Підключено",
     "power-profile": "Профіль живлення",

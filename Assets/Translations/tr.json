@@ -27,7 +27,7 @@
           "label": "Uygulama ikonunu göster"
         },
         "use-fixed-width": {
-          "description": "Etkinleştirildiğinde, widget dinamik olarak içerik göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
+          "description": "Etkinleştirildiğinde, widget dinamik olarak içeriğe göre ayarlamak yerine her zaman maksimum genişliği kullanır.",
           "label": "Sabit Genişlik Kullan"
         }
       },
@@ -47,7 +47,7 @@
       },
       "battery": {
         "device": {
-          "default": "Varsayılan (Görüntü Aygıtı)",
+          "default": "Varsayılan (Bileşik Aygıt)",
           "description": "Görüntülenecek pil cihazını seçin.",
           "label": "Pil cihazı"
         },
@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Batarya bu yüzdeye düştüğünde uyarı göster.",
           "label": "Düşük batarya eşiği"
+        },
+        "show-power-profile": {
+          "description": "Pil panelinde güç profili seçimlerini göster.",
+          "label": "Güç profili denetimlerini göster"
+        },
+        "show-noctalia-performance": {
+          "description": "Pil panelinde Noctalia performans modu anahtarını göster.",
+          "label": "Noctalia Performans anahtarını göster"
         }
       },
       "brightness": {
@@ -266,7 +274,7 @@
         },
         "show-unread-badge": {
           "description": "Okunmamış bildirim sayısını gösteren bir rozet göster.",
-          "label": "Okunmamayakutu göster"
+          "label": "Okunmamış bildirimleri göster"
         }
       },
       "section-editor": {
@@ -281,7 +289,7 @@
       },
       "system-monitor": {
         "cpu-temperature": {
-          "description": "Mevcut CPU sıcaklık okumalarını gösterilir.",
+          "description": "Mevcut CPU sıcaklık okumalarını gösterir.",
           "label": "CPU sıcaklığı"
         },
         "cpu-usage": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Pil seviyesi",
     "brightness": "Parlaklık",
-    "charging": "Şarj oluyor.",
-    "charging-rate": "Şarj oranı: {rate} W.",
-    "discharging": "Deşarj oluyor.",
-    "discharging-rate": "Deşarj oranı: {rate} W.",
+    "charging": "Şarj oluyor",
+    "charging-rate": "Şarj oranı: {rate} W",
+    "discharging": "Deşarj oluyor",
+    "discharging-rate": "Deşarj oranı: {rate} W",
     "health": "Sağlık: {percent}%",
-    "idle": "Boşta.",
+    "idle": "Boşta",
     "inhibit-idle-description": "Sistemi uyanık tutar.",
     "inhibit-idle-label": "Uyanık tut",
-    "no-battery-detected": "Pil tespit edilmedi.",
+    "no-battery-detected": "Pil tespit edilmedi",
     "panel-title": "Pil",
-    "plugged-in": "Prize takılı.",
+    "plugged-in": "Prize takılı",
     "power-profile": "Güç profili",
-    "time-left": "Kalan süre: {time}.",
-    "time-until-full": "Dolma süresi: {time}."
+    "time-left": "Kalan süre: {time}",
+    "time-until-full": "Dolma süresi: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -481,7 +489,7 @@
     "open-mixer": "Ses mikseri",
     "open-settings": "Ayarları aç",
     "pause": "Duraklat",
-    "play": "Oyna",
+    "play": "Oynat",
     "previous": "Önceki",
     "random-wallpaper": "Rastgele duvar kağıdı",
     "toggle-mute": "Sesi kapat/aç",
@@ -505,7 +513,7 @@
       "all": "Tümü",
       "audiovideo": "Ses ve Video",
       "chat": "Sohbet",
-      "development": "Gelişim",
+      "development": "Geliştirme",
       "education": "Eğitim",
       "game": "Oyunlar",
       "graphics": "Grafikler",
@@ -568,7 +576,7 @@
     "colors": {
       "error": "Hata",
       "none": "Hiçbiri",
-      "onSurface": "Üstünde",
+      "onSurface": "Üzerinde",
       "primary": "Birincil",
       "secondary": "İkincil",
       "tertiary": "Üçüncül"
@@ -912,7 +920,7 @@
           "label": "Ses adım boyutu"
         },
         "volume-overdrive": {
-          "description": "Sesi %100'in üzerine çıkarmaya izin ver. Tüm donanımlar desteklemeyebilir.",
+          "description": "Sesi %100'ün üzerine çıkarmaya izin ver. Bazı donanımlar desteklemeyebilir.",
           "label": "Ses aşımına izin ver"
         }
       }
@@ -1480,7 +1488,7 @@
         },
         "custom-launch-prefix-enabled": {
           "description": "Uygulamaları başlatmak için varsayılan yöntem yerine özel bir ön ek kullanın.",
-          "label": "Özel başlatma önekini etkinleştir"
+          "label": "Özel başlatma ön ekini etkinleştir"
         },
         "grid-view": {
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
@@ -1680,8 +1688,8 @@
           "label": "Klavye düzeni"
         },
         "section": {
-          "description": "Toast görünümünü ve davranışını yapılandırın.",
-          "label": "Tost"
+          "description": "Bildirim penceresi görünümünü ve davranışını yapılandırın.",
+          "label": "Bildirim Penceresi"
         }
       }
     },
@@ -1891,7 +1899,7 @@
         },
         "default-command": {
           "lock": "Dahili kilit ekranı (komut yok)",
-          "logout": "Dahili çıkış (komut yok)"
+          "logout": "Dahili oturum kapatma (komut yok)"
         },
         "default-info": {
           "description": "Özel bir komut belirtilmezse, varsayılan sistem komutu kullanılır.",
@@ -2066,7 +2074,7 @@
           "label": "Özel aralık"
         },
         "interval": {
-          "description": "Duvar kağıtlarını otomatik olarak ne sıklıkla değiştireceğiniz.",
+          "description": "Duvar kağıtlarının otomatik değiştirilme sıklığını belirleyin.",
           "label": "Duvar kağıdı aralığı"
         },
         "random-wallpaper": {
@@ -2254,7 +2262,7 @@
     "noctalia-performance": {
       "disabled": "Performans modu devre dışı bırakıldı",
       "enabled": "Performans modu etkinleştirildi",
-      "label": "Noctalia performansı"
+      "label": "Noctalia Performans"
     },
     "power-profile": {
       "changed": "Güç profili değişti",
@@ -2336,7 +2344,7 @@
     "open-notification-history-disable-dnd": "Bildirim geçmişi",
     "open-notification-history-enable-dnd": "Bildirim geçmişi",
     "open-settings": "Ayarlar",
-    "open-tray-dropdown": "Sistem tepsisı",
+    "open-tray-dropdown": "Sistem tepsisi",
     "open-wallpaper-selector": "Duvar kağıdı seçici",
     "output-muted": "Ses çıkışı",
     "pause": "Duraklat düğmesi",
@@ -2513,7 +2521,7 @@
     "file-picker": {
       "cancel": "İptal",
       "search-placeholder": "Dosya ve klasörlerde ara...",
-      "select-current": "Mevcutı Seç",
+      "select-current": "Mevcudu Seç",
       "select-file": "Dosya Seç",
       "select-folder": "Klasör Seç",
       "title": "Dosya seçici"

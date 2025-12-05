@@ -58,6 +58,14 @@
         "low-battery-threshold": {
           "description": "Показывать предупреждение, когда уровень заряда батареи падает ниже этого процента.",
           "label": "Порог предупреждения о низком заряде батареи"
+        },
+        "show-power-profile": {
+          "description": "Отображать выбор профиля питания в панели батареи.",
+          "label": "Показывать элементы управления профилем питания"
+        },
+        "show-noctalia-performance": {
+          "description": "Отображать переключатель режима производительности Noctalia в панели батареи.",
+          "label": "Показывать переключатель Производительность Noctalia"
         }
       },
       "brightness": {
@@ -372,20 +380,20 @@
   "battery": {
     "battery-level": "Уровень заряда батареи",
     "brightness": "Яркость",
-    "charging": "Зарядка.",
-    "charging-rate": "Скорость зарядки: {rate} Вт.",
-    "discharging": "Разрядка.",
-    "discharging-rate": "Скорость разрядки: {rate} Вт.",
+    "charging": "Зарядка",
+    "charging-rate": "Скорость зарядки: {rate} Вт",
+    "discharging": "Разрядка",
+    "discharging-rate": "Скорость разрядки: {rate} Вт",
     "health": "Здоровье: {percent}%",
-    "idle": "Простой.",
+    "idle": "Простой",
     "inhibit-idle-description": "Не дает системе уснуть.",
     "inhibit-idle-label": "Не давать засыпать",
-    "no-battery-detected": "Батарея не обнаружена.",
+    "no-battery-detected": "Батарея не обнаружена",
     "panel-title": "Батарея",
-    "plugged-in": "Подключено.",
+    "plugged-in": "Подключено",
     "power-profile": "Профиль питания",
-    "time-left": "Осталось времени: {time}.",
-    "time-until-full": "Время до полной зарядки: {time}."
+    "time-left": "Осталось времени: {time}",
+    "time-until-full": "Время до полной зарядки: {time}"
   },
   "bluetooth": {
     "panel": {
@@ -932,7 +940,7 @@
           "label": "Плотность панели"
         },
         "floating": {
-          "description": "Отображает панель как плавающую «таблетку».",
+          "description": "Отображает панель как плавающую 'таблетку'.",
           "label": "Плавающая панель"
         },
         "margins": {
