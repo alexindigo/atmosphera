@@ -392,6 +392,7 @@ Item {
       values: CavaService.values
       fillColor: Color.mPrimary
       opacity: 0.4
+      barPosition: Settings.data.bar.position
     }
   }
 
