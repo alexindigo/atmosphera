@@ -31,7 +31,7 @@ SmartPanel {
   panelAnchorBottom: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("bottom_")
   panelAnchorTop: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("top_")
 
-  preferredWidth: Math.round(460 * Style.uiScaleRatio)
+  preferredWidth: Math.round(420 * Style.uiScaleRatio)
   preferredHeight: {
     var height = 0;
     var count = 0;

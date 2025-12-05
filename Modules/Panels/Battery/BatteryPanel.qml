@@ -12,7 +12,7 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(360 * Style.uiScaleRatio)
+  preferredWidth: Math.round(420 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
   // Get device selection from Battery widget settings (check right section first, then any Battery widget)

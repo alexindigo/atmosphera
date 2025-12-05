@@ -11,12 +11,63 @@ ColumnLayout {
   spacing: Style.marginL
   width: parent.width
 
+  // Track which plugins are currently updating
+  property var updatingPlugins: ({})
+
+  // Check for updates when tab becomes visible
+  onVisibleChanged: {
+    if (visible && PluginService.pluginsFullyLoaded) {
+      PluginService.checkForUpdates();
+    }
+  }
+
   // ------------------------------
   // Installed Plugins
   // ------------------------------
   NHeader {
     label: I18n.tr("settings.plugins.installed.label")
     description: I18n.tr("settings.plugins.installed.description")
+  }
+
+  // Update All button
+  NButton {
+    property int updateCount: Object.keys(PluginService.pluginUpdates).length
+    property bool isUpdating: false
+
+    text: I18n.tr("settings.plugins.update-all", {
+                    "count": updateCount
+                  })
+    icon: "download"
+    visible: updateCount >= 2
+    enabled: !isUpdating
+    backgroundColor: Color.mPrimary
+    textColor: Color.mOnPrimary
+    Layout.fillWidth: true
+    onClicked: {
+      isUpdating = true;
+      var pluginIds = Object.keys(PluginService.pluginUpdates);
+      var currentIndex = 0;
+
+      function updateNext() {
+        if (currentIndex >= pluginIds.length) {
+          isUpdating = false;
+          ToastService.showNotice(I18n.tr("settings.plugins.update-all-success"));
+          return;
+        }
+
+        var pluginId = pluginIds[currentIndex];
+        currentIndex++;
+
+        PluginService.updatePlugin(pluginId, function (success, error) {
+          if (!success) {
+            Logger.w("PluginsTab", "Failed to update", pluginId + ":", error);
+          }
+          Qt.callLater(updateNext);
+        });
+      }
+
+      updateNext();
+    }
   }
 
   ColumnLayout {
@@ -27,9 +78,10 @@ ColumnLayout {
       id: installedPluginsRepeater
 
       model: {
-        // Make this reactive to PluginRegistry changes
+        // Make this reactive to PluginRegistry and PluginService changes
         var _ = PluginRegistry.installedPlugins; // Force dependency
         var __ = PluginRegistry.pluginStates;    // Force dependency
+        var ___ = PluginService.pluginUpdates;   // Force dependency on updates
 
         var allIds = PluginRegistry.getAllInstalledPluginIds();
         var plugins = [];
@@ -82,9 +134,15 @@ ColumnLayout {
               spacing: Style.marginS
 
               NText {
-                text: "v" + modelData.version
+                property var updateInfo: PluginService.pluginUpdates[modelData.id]
+
+                text: updateInfo ? I18n.tr("settings.plugins.update-version", {
+                                             "current": modelData.version,
+                                             "new": updateInfo.availableVersion
+                                           }) : "v" + modelData.version
                 font.pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
+                color: updateInfo ? Color.mPrimary : Color.mOnSurfaceVariant
+                font.weight: updateInfo ? Font.Medium : Font.Normal
               }
 
               NText {
@@ -108,6 +166,47 @@ ColumnLayout {
             visible: modelData.entryPoints?.settings !== undefined
             onClicked: {
               pluginSettingsDialog.openPluginSettings(modelData);
+            }
+          }
+
+          NButton {
+            id: updateButton
+            property string pluginId: modelData.id
+            property bool isUpdating: root.updatingPlugins[pluginId] === true
+
+            text: isUpdating ? I18n.tr("settings.plugins.updating", {
+                                         "plugin": modelData.name
+                                       }) : I18n.tr("settings.plugins.update")
+            icon: isUpdating ? "" : "download"
+            visible: PluginService.pluginUpdates[pluginId] !== undefined
+            enabled: !isUpdating
+            backgroundColor: Color.mPrimary
+            textColor: Color.mOnPrimary
+            onClicked: {
+              var pid = pluginId;
+              var pname = modelData.name;
+              var rootRef = root;
+              var updates = Object.assign({}, rootRef.updatingPlugins);
+              updates[pid] = true;
+              rootRef.updatingPlugins = updates;
+
+              PluginService.updatePlugin(pid, function (success, error) {
+                var updates2 = Object.assign({}, rootRef.updatingPlugins);
+                updates2[pid] = false;
+                rootRef.updatingPlugins = updates2;
+
+                if (success) {
+                  ToastService.showNotice(I18n.tr("settings.plugins.update-success", {
+                                                    "plugin": pname,
+                                                    "version": PluginService.pluginUpdates[pid]?.availableVersion || ""
+                                                  }));
+                } else {
+                  ToastService.showError(I18n.tr("settings.plugins.update-error", {
+                                                   "plugin": pname,
+                                                   "error": error || "Unknown error"
+                                                 }));
+                }
+              });
             }
           }
 
@@ -276,8 +375,18 @@ ColumnLayout {
       baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
         PluginService.refreshAvailablePlugins();
+        checkUpdatesTimer.restart();
         ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
       }
+    }
+  }
+
+  // Timer to check for updates after refresh
+  Timer {
+    id: checkUpdatesTimer
+    interval: 100
+    onTriggered: {
+      PluginService.checkForUpdates();
     }
   }
 

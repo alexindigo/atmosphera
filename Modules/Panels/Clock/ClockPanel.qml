@@ -14,7 +14,7 @@ SmartPanel {
   id: root
 
   // Calculate width based on settings
-  preferredWidth: Math.round((Settings.data.location.showWeekNumberInCalendar ? 460 : 440) * Style.uiScaleRatio)
+  preferredWidth: Math.round((Settings.data.location.showWeekNumberInCalendar ? 440 : 420) * Style.uiScaleRatio)
 
   panelContent: Item {
     anchors.fill: parent
