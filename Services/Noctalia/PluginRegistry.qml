@@ -44,7 +44,8 @@ Singleton {
         root.pluginSources = [
           {
             "name": "Official Noctalia Plugins",
-            "url": "https://github.com/noctalia-dev/noctalia-plugins"
+            "url": "https://github.com/noctalia-dev/noctalia-plugins",
+            "enabled": true
           }
         ];
         root.save();
@@ -61,7 +62,8 @@ Singleton {
       root.pluginSources = [
             {
               "name": "Official Noctalia Plugins",
-              "url": "https://github.com/noctalia-dev/noctalia-plugins"
+              "url": "https://github.com/noctalia-dev/noctalia-plugins",
+              "enabled": true
             }
           ];
       // Scan for installed plugins
@@ -325,7 +327,8 @@ Singleton {
     var newSources = root.pluginSources.slice();
     newSources.push({
                       name: name,
-                      url: url
+                      url: url,
+                      enabled: true
                     });
     root.pluginSources = newSources;
     save();
@@ -351,6 +354,55 @@ Singleton {
     save();
     Logger.i("PluginRegistry", "Removed plugin source:", url);
     return true;
+  }
+
+  // Set source enabled/disabled state
+  function setSourceEnabled(url, enabled) {
+    var newSources = [];
+    var found = false;
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].url === url) {
+        newSources.push({
+                          name: root.pluginSources[i].name,
+                          url: root.pluginSources[i].url,
+                          enabled: enabled
+                        });
+        found = true;
+      } else {
+        newSources.push(root.pluginSources[i]);
+      }
+    }
+
+    if (!found) {
+      Logger.w("PluginRegistry", "Source not found:", url);
+      return false;
+    }
+
+    root.pluginSources = newSources;
+    save();
+    Logger.i("PluginRegistry", "Source", url, enabled ? "enabled" : "disabled");
+    return true;
+  }
+
+  // Check if source is enabled
+  function isSourceEnabled(url) {
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].url === url) {
+        return root.pluginSources[i].enabled !== false; // Default to true if not set
+      }
+    }
+    return false;
+  }
+
+  // Get enabled sources only
+  function getEnabledSources() {
+    var enabledSources = [];
+    for (var i = 0; i < root.pluginSources.length; i++) {
+      if (root.pluginSources[i].enabled !== false) {
+        enabledSources.push(root.pluginSources[i]);
+      }
+    }
+    return enabledSources;
   }
 
   // Get plugin directory path

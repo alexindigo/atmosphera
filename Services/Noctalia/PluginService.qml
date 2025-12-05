@@ -129,9 +129,10 @@ Singleton {
     Logger.i("PluginService", "Refreshing available plugins");
     root.availablePlugins = [];
 
-    var sources = PluginRegistry.pluginSources;
-    for (var i = 0; i < sources.length; i++) {
-      fetchPluginRegistry(sources[i]);
+    var enabledSources = PluginRegistry.getEnabledSources();
+    Logger.d("PluginService", "Fetching from", enabledSources.length, "enabled sources");
+    for (var i = 0; i < enabledSources.length; i++) {
+      fetchPluginRegistry(enabledSources[i]);
     }
   }
 
