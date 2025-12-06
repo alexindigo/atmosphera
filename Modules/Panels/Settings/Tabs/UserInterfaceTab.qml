@@ -316,7 +316,7 @@ ColumnLayout {
             to: 2.0
             stepSize: 0.01
             value: Settings.data.general.animationSpeed
-            onMoved: value => Settings.data.general.animationSpeed = value
+            onMoved: value => Settings.data.general.animationSpeed = Math.max(value, 0.05)
             text: Math.round(Settings.data.general.animationSpeed * 100) + "%"
           }
 
