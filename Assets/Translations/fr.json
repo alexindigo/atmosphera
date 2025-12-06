@@ -131,10 +131,21 @@
           "label": "Afficher la sortie de la commande",
           "stream-description": "Entrez une commande à exécuter en continu."
         },
+        "hide-mode": {
+          "description": "Contrôle la visibilité du widget quand la commande n'a pas de sortie.",
+          "label": "Mode masqué",
+          "expandWithOutput": "Étendre quand il y a une sortie",
+          "alwaysExpanded": "Toujours étendu",
+          "maxTransparent": "Étendu au maximum mais transparent"
+        },
         "dynamic-text": "Texte dynamique",
         "icon": {
           "description": "Sélectionnez une icône dans la bibliothèque.",
           "label": "Icône"
+        },
+        "show-icon": {
+          "description": "Bascule la visibilité de l'icône du widget.",
+          "label": "Afficher l'icône"
         },
         "left-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à gauche.",

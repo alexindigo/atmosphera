@@ -131,10 +131,21 @@
           "label": "显示命令输出",
           "stream-description": "输入一个要持续运行的命令。"
         },
+        "hide-mode": {
+          "description": "控制命令无输出时小部件的可见性。",
+          "label": "隐藏模式",
+          "expandWithOutput": "有输出时展开",
+          "alwaysExpanded": "始终展开",
+          "maxTransparent": "最大展开但透明"
+        },
         "dynamic-text": "动态文本",
         "icon": {
           "description": "从库中选择图标。",
           "label": "图标"
+        },
+        "show-icon": {
+          "description": "切换小部件图标的可见性。",
+          "label": "显示图标"
         },
         "left-click": {
           "description": "左键点击按钮时执行的命令。",

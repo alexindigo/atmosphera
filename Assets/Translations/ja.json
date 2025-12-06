@@ -131,10 +131,21 @@
           "label": "コマンド出力を表示",
           "stream-description": "継続的に実行するコマンドを入力します。"
         },
+        "hide-mode": {
+          "description": "コマンドが出力を持っていない場合のウィジェットの表示を制御します。",
+          "label": "非表示モード",
+          "expandWithOutput": "出力があるときに展開",
+          "alwaysExpanded": "常に展開",
+          "maxTransparent": "最大展開だが透過"
+        },
         "dynamic-text": "動的テキスト",
         "icon": {
           "description": "ライブラリからアイコンを選択します。",
           "label": "アイコン"
+        },
+        "show-icon": {
+          "description": "ウィジェットのアイコンの表示を切り替えます。",
+          "label": "アイコンを表示"
         },
         "left-click": {
           "description": "ボタンを左クリックした際に実行するコマンド。",

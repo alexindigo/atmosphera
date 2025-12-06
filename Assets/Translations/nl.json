@@ -131,10 +131,21 @@
           "label": "Commando-uitvoer weergeven",
           "stream-description": "Voer een commando in dat continu wordt uitgevoerd."
         },
+        "hide-mode": {
+          "description": "Bepaalt de zichtbaarheid van de widget wanneer het commando geen uitvoer heeft.",
+          "label": "Verbergmodus",
+          "expandWithOutput": "Uitklappen wanneer er uitvoer is",
+          "alwaysExpanded": "Altijd uitgeklapt",
+          "maxTransparent": "Maximaal uitgeklapt maar transparant"
+        },
         "dynamic-text": "Dynamische tekst",
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek.",
           "label": "Pictogram"
+        },
+        "show-icon": {
+          "description": "Schakelt de zichtbaarheid van het widgetpictogram.",
+          "label": "Pictogram weergeven"
         },
         "left-click": {
           "description": "Commando dat wordt uitgevoerd wanneer met de linkermuisknop op de knop wordt geklikt.",

@@ -131,10 +131,21 @@
           "label": "Befehlsausgabe anzeigen",
           "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
+        "hide-mode": {
+          "description": "Steuert die Sichtbarkeit des Widgets, wenn der Befehl keine Ausgabe hat.",
+          "label": "Ausblendmodus",
+          "expandWithOutput": "Mit Ausgabe erweitern",
+          "alwaysExpanded": "Immer erweitert",
+          "maxTransparent": "Maximal erweitert aber transparent"
+        },
         "dynamic-text": "Dynamischer Text",
         "icon": {
           "description": "Symbol aus der Bibliothek auswählen.",
           "label": "Symbol"
+        },
+        "show-icon": {
+          "description": "Schaltet die Sichtbarkeit des Widget-Symbols um.",
+          "label": "Symbol anzeigen"
         },
         "left-click": {
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche links angeklickt wird.",

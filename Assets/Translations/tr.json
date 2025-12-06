@@ -131,10 +131,21 @@
           "label": "Komut Çıktısını Göster",
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
+        "hide-mode": {
+          "description": "Komutun çıktı vermemesi durumunda gerecin görünürlüğünü kontrol eder.",
+          "label": "Gizleme modu",
+          "expandWithOutput": "Çıktı olduğunda genişlet",
+          "alwaysExpanded": "Her zaman geniş",
+          "maxTransparent": "Maksimum geniş ama saydam"
+        },
         "dynamic-text": "Dinamik metin",
         "icon": {
           "description": "Kütüphaneden bir ikon seçin.",
           "label": "İkon"
+        },
+        "show-icon": {
+          "description": "Gerecin ikonunun görünürlüğünü değiştirir.",
+          "label": "İkonu göster"
         },
         "left-click": {
           "description": "Butona sol tıklandığında yürütülecek komut.",

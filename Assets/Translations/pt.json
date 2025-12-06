@@ -131,10 +131,21 @@
           "label": "Exibir Saída de Comando",
           "stream-description": "Insira um comando para executar continuamente."
         },
+        "hide-mode": {
+          "description": "Controla a visibilidade do widget quando o comando não tem saída.",
+          "label": "Modo de ocultação",
+          "expandWithOutput": "Expandir quando tem saída",
+          "alwaysExpanded": "Sempre expandido",
+          "maxTransparent": "Totalmente expandido mas transparente"
+        },
         "dynamic-text": "Texto dinâmico",
         "icon": {
           "description": "Selecione um ícone da biblioteca.",
           "label": "Ícone"
+        },
+        "show-icon": {
+          "description": "Alterna a visibilidade do ícone do widget.",
+          "label": "Mostrar ícone"
         },
         "left-click": {
           "description": "Comando a executar quando o botão é clicado com o botão esquerdo.",
