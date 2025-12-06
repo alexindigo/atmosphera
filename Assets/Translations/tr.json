@@ -59,13 +59,13 @@
           "description": "Batarya bu yüzdeye düştüğünde uyarı göster.",
           "label": "Düşük batarya eşiği"
         },
-        "show-power-profile": {
-          "description": "Pil panelinde güç profili seçimlerini göster.",
-          "label": "Güç profili denetimlerini göster"
-        },
         "show-noctalia-performance": {
           "description": "Pil panelinde Noctalia performans modu anahtarını göster.",
           "label": "Noctalia Performans anahtarını göster"
+        },
+        "show-power-profile": {
+          "description": "Pil panelinde güç profili seçimlerini göster.",
+          "label": "Güç profili denetimlerini göster"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Ekle",
     "apply": "Uygula",
     "cancel": "İptal",
+    "check-settings": "Ayrıntılar için Ayarları Kontrol Et",
     "close": "Kapat",
     "save": "Kaydet"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Kaldırma başarısız oldu: {error}",
       "uninstall-success": "{plugin} başarıyla kaldırıldı.",
-      "uninstalling": "{plugin} kaldırılıyor..."
+      "uninstalling": "{plugin} kaldırılıyor...",
+      "update": "Güncelleme",
+      "update-all": "Tümünü Güncelle ({count})",
+      "update-all-success": "Tüm eklentiler başarıyla güncellendi.",
+      "update-available": "{count} eklenti için güncelleme mevcut",
+      "update-error": "Eklenti güncellenemedi: {plugin}: {error}",
+      "update-incompatible": "Noctalia v{version} veya üzeri gerektirir.",
+      "update-success": "{plugin} v{version} sürümüne güncellendi",
+      "update-version": "v{mevcut} → v{yeni}",
+      "updating": "{plugin} güncelleniyor..."
     },
     "screen-recorder": {
       "audio": {

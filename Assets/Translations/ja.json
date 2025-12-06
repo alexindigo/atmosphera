@@ -59,13 +59,13 @@
           "description": "バッテリー残量がこのパーセンテージを下回ると警告を表示します。",
           "label": "低バッテリー警告の閾値"
         },
-        "show-power-profile": {
-          "description": "バッテリーパネルに電源プロファイルの選択を表示します。",
-          "label": "電源プロファイルコントロールを表示"
-        },
         "show-noctalia-performance": {
           "description": "バッテリーパネルにNoctaliaパフォーマンスモードのトグルを表示します。",
           "label": "Noctaliaパフォーマンストグルを表示"
+        },
+        "show-power-profile": {
+          "description": "バッテリーパネルに電源プロファイルの選択を表示します。",
+          "label": "電源プロファイルコントロールを表示"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "追加",
     "apply": "適用",
     "cancel": "キャンセル",
+    "check-settings": "詳細については設定を確認してください。",
     "close": "閉じる",
     "save": "保存"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "アンインストールに失敗しました: {error}",
       "uninstall-success": "{plugin} のアンインストールに成功しました。",
-      "uninstalling": "{plugin} をアンインストールしています..."
+      "uninstalling": "{plugin} をアンインストールしています...",
+      "update": "更新",
+      "update-all": "すべて更新 ({count})",
+      "update-all-success": "すべてのプラグインが正常に更新されました。",
+      "update-available": "{count}個のプラグインアップデートがあります",
+      "update-error": "プラグインの更新に失敗しました: {plugin}: {error}",
+      "update-incompatible": "Noctalia v{version} 以降が必要です。",
+      "update-success": "{plugin} を v{version} にアップデートしました。",
+      "update-version": "v{現在} → v{新規}",
+      "updating": "{plugin}を更新しています..."
     },
     "screen-recorder": {
       "audio": {

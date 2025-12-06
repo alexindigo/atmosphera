@@ -59,13 +59,13 @@
           "description": "Toon een waarschuwing wanneer de batterij onder dit percentage komt.",
           "label": "Waarschuwingsdrempel voor lage batterij"
         },
-        "show-power-profile": {
-          "description": "Toon de keuze van het stroomprofiel in het batterijpaneel.",
-          "label": "Stroomprofielbediening tonen"
-        },
         "show-noctalia-performance": {
           "description": "Toon de Noctalia-prestatiemodus-schakelaar in het batterijpaneel.",
           "label": "Noctalia-Performance-schakelaar tonen"
+        },
+        "show-power-profile": {
+          "description": "Toon de keuze van het stroomprofiel in het batterijpaneel.",
+          "label": "Stroomprofielbediening tonen"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Toevoegen",
     "apply": "Toepassen",
     "cancel": "Annuleren",
+    "check-settings": "Controleer Instellingen voor details.",
     "close": "Sluiten",
     "save": "Opslaan"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Verwijderen mislukt: {error}",
       "uninstall-success": "{plugin} is succesvol verwijderd.",
-      "uninstalling": "{plugin} verwijderen..."
+      "uninstalling": "{plugin} verwijderen...",
+      "update": "Update",
+      "update-all": "Alles bijwerken ({count})",
+      "update-all-success": "Alle plugins succesvol bijgewerkt",
+      "update-available": "{count} plugin(s) update(s) beschikbaar",
+      "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
+      "update-incompatible": "Vereist Noctalia v{version} of hoger",
+      "update-success": "{plugin} is bijgewerkt naar v{version}",
+      "update-version": "v{huidig} → v{nieuw}",
+      "updating": "{plugin} bijwerken..."
     },
     "screen-recorder": {
       "audio": {

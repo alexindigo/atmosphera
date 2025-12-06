@@ -59,13 +59,13 @@
           "description": "Показывать предупреждение, когда уровень заряда батареи падает ниже этого процента.",
           "label": "Порог предупреждения о низком заряде батареи"
         },
-        "show-power-profile": {
-          "description": "Отображать выбор профиля питания в панели батареи.",
-          "label": "Показывать элементы управления профилем питания"
-        },
         "show-noctalia-performance": {
           "description": "Отображать переключатель режима производительности Noctalia в панели батареи.",
           "label": "Показывать переключатель Производительность Noctalia"
+        },
+        "show-power-profile": {
+          "description": "Отображать выбор профиля питания в панели батареи.",
+          "label": "Показывать элементы управления профилем питания"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Добавить",
     "apply": "Применить",
     "cancel": "Отменить",
+    "check-settings": "Проверьте настройки для получения подробной информации.",
     "close": "Закрыть",
     "save": "Сохранить"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Не удалось удалить: {error}",
       "uninstall-success": "{plugin} успешно удален.",
-      "uninstalling": "Удаление {plugin}..."
+      "uninstalling": "Удаление {plugin}...",
+      "update": "Обновление",
+      "update-all": "Обновить все ({count})",
+      "update-all-success": "Все плагины успешно обновлены.",
+      "update-available": "Доступно {count} обновлений плагинов",
+      "update-error": "Не удалось обновить плагин: {plugin}: {error}",
+      "update-incompatible": "Требуется Noctalia v{version} или выше",
+      "update-success": "Плагин {plugin} обновлён до версии {version}",
+      "update-version": "v{текущее} → v{новое}",
+      "updating": "Обновление {plugin}..."
     },
     "screen-recorder": {
       "audio": {

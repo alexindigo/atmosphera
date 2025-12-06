@@ -59,13 +59,13 @@
           "description": "Показувати попередження, коли батарея падає нижче цього відсотка.",
           "label": "Поріг попередження про низький заряд батареї"
         },
-        "show-power-profile": {
-          "description": "Відображати вибір профілю живлення в панелі батареї.",
-          "label": "Показувати елементи керування профілем живлення"
-        },
         "show-noctalia-performance": {
           "description": "Відображати перемикач режиму продуктивності Noctalia в панелі батареї.",
           "label": "Показувати перемикач Продуктивність Noctalia"
+        },
+        "show-power-profile": {
+          "description": "Відображати вибір профілю живлення в панелі батареї.",
+          "label": "Показувати елементи керування профілем живлення"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Додати",
     "apply": "Подати заявку",
     "cancel": "Скасувати",
+    "check-settings": "Перевірте налаштування для деталей.",
     "close": "Закрити",
     "save": "Зберегти"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Не вдалося видалити: {error}",
       "uninstall-success": "Успішно видалено {plugin}",
-      "uninstalling": "Видалення {plugin}..."
+      "uninstalling": "Видалення {plugin}...",
+      "update": "Оновлення",
+      "update-all": "Оновити все ({count})",
+      "update-all-success": "Усі плагіни успішно оновлено.",
+      "update-available": "Доступно оновлень для {count} плагінів",
+      "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
+      "update-incompatible": "Потрібна Noctalia v{version} або вище",
+      "update-success": "Оновлено {plugin} до версії {version}",
+      "update-version": "v{current} → v{new}",
+      "updating": "Оновлення {plugin}..."
     },
     "screen-recorder": {
       "audio": {

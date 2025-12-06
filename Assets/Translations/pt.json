@@ -59,13 +59,13 @@
           "description": "Mostrar um aviso quando a bateria cair abaixo desta porcentagem.",
           "label": "Limite de aviso de bateria fraca"
         },
-        "show-power-profile": {
-          "description": "Exibir a seleção de perfil de energia no painel da bateria.",
-          "label": "Mostrar controles de perfil de energia"
-        },
         "show-noctalia-performance": {
           "description": "Exibir o interruptor do modo de desempenho Noctalia no painel da bateria.",
           "label": "Mostrar alternância de Noctalia Desempenho"
+        },
+        "show-power-profile": {
+          "description": "Exibir a seleção de perfil de energia no painel da bateria.",
+          "label": "Mostrar controles de perfil de energia"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Adicionar",
     "apply": "Aplicar",
     "cancel": "Cancelar",
+    "check-settings": "Verifique as configurações para obter detalhes.",
     "close": "Fechar",
     "save": "Salvar"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Falha ao desinstalar: {error}",
       "uninstall-success": "{plugin} desinstalado com sucesso",
-      "uninstalling": "Desinstalando {plugin}..."
+      "uninstalling": "Desinstalando {plugin}...",
+      "update": "Atualização",
+      "update-all": "Atualizar Tudo ({count})",
+      "update-all-success": "Todos os plugins foram atualizados com sucesso.",
+      "update-available": "{count} atualização(ões) de plugin disponível(eis)",
+      "update-error": "Falha ao atualizar o plugin: {plugin}: {error}",
+      "update-incompatible": "Requer Noctalia v{version} ou superior",
+      "update-success": "{plugin} atualizado para a versão {version}",
+      "update-version": "v{atual} → v{novo}",
+      "updating": "Atualizando {plugin}..."
     },
     "screen-recorder": {
       "audio": {

@@ -59,13 +59,13 @@
           "description": "Show a warning when battery falls below this percentage.",
           "label": "Low battery warning threshold"
         },
-        "show-power-profile": {
-          "description": "Display the power profile selection inside the battery panel.",
-          "label": "Show power profile controls"
-        },
         "show-noctalia-performance": {
           "description": "Display the Noctalia Performance Mode toggle inside the battery panel.",
           "label": "Show Noctalia Performance toggle"
+        },
+        "show-power-profile": {
+          "description": "Display the power profile selection inside the battery panel.",
+          "label": "Show power profile controls"
         }
       },
       "brightness": {
@@ -1821,8 +1821,8 @@
       "update": "Update",
       "update-all": "Update All ({count})",
       "update-all-success": "All plugins updated successfully",
-      "update-available": "{count} update(s) available",
-      "update-error": "Failed to update {plugin}: {error}",
+      "update-available": "{count} plugins update(s) available",
+      "update-error": "Failed to update plugin: {plugin}: {error}",
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",

@@ -59,13 +59,13 @@
           "description": "当电量低于此百分比时显示警告。",
           "label": "低电量警告阈值"
         },
-        "show-power-profile": {
-          "description": "在电池面板中显示电源配置文件选择。",
-          "label": "显示电源配置文件控件"
-        },
         "show-noctalia-performance": {
           "description": "在电池面板中显示 Noctalia 性能模式切换。",
           "label": "显示 Noctalia 性能切换"
+        },
+        "show-power-profile": {
+          "description": "在电池面板中显示电源配置文件选择。",
+          "label": "显示电源配置文件控件"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "添加",
     "apply": "应用",
     "cancel": "取消",
+    "check-settings": "查看设置了解详情",
     "close": "关闭",
     "save": "保存"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "卸载失败：{error}",
       "uninstall-success": "成功卸载 {plugin}",
-      "uninstalling": "正在卸载 {plugin}..."
+      "uninstalling": "正在卸载 {plugin}...",
+      "update": "更新",
+      "update-all": "全部更新（{count}）",
+      "update-all-success": "所有插件已成功更新",
+      "update-available": "有{count}个插件可更新",
+      "update-error": "更新插件失败：{plugin}：{error}",
+      "update-incompatible": "需要 Noctalia v{version} 或更高版本",
+      "update-success": "已将 {plugin} 更新至 v{version}",
+      "update-version": "v{当前} → v{新}",
+      "updating": "正在更新 {plugin}..."
     },
     "screen-recorder": {
       "audio": {

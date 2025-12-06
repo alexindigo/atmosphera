@@ -133,10 +133,8 @@ ShellRoot {
       Connections {
         target: PluginService
         property bool hasCheckedOnStartup: false
-
         function onAvailablePluginsUpdated() {
-          // Only check once on startup, after first plugin list is fetched
-          if (!hasCheckedOnStartup && Object.keys(PluginService.activeFetches).length === 0) {
+          if (!hasCheckedOnStartup) {
             hasCheckedOnStartup = true;
             PluginService.checkForUpdates();
           }

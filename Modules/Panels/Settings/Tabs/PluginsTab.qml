@@ -185,6 +185,7 @@ ColumnLayout {
             onClicked: {
               var pid = pluginId;
               var pname = modelData.name;
+              var pversion = PluginService.pluginUpdates[pid]?.availableVersion || "";
               var rootRef = root;
               var updates = Object.assign({}, rootRef.updatingPlugins);
               updates[pid] = true;
@@ -198,7 +199,7 @@ ColumnLayout {
                 if (success) {
                   ToastService.showNotice(I18n.tr("settings.plugins.update-success", {
                                                     "plugin": pname,
-                                                    "version": PluginService.pluginUpdates[pid]?.availableVersion || ""
+                                                    "version": pversion
                                                   }));
                 } else {
                   ToastService.showError(I18n.tr("settings.plugins.update-error", {

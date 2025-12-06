@@ -59,13 +59,13 @@
           "description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",
           "label": "Seuil d'avertissement de batterie faible"
         },
-        "show-power-profile": {
-          "description": "Afficher la sélection du profil d'alimentation dans le panneau batterie.",
-          "label": "Afficher les contrôles de profil d'alimentation"
-        },
         "show-noctalia-performance": {
           "description": "Afficher le basculement du mode performance Noctalia dans le panneau batterie.",
           "label": "Afficher le basculement Noctalia Performance"
+        },
+        "show-power-profile": {
+          "description": "Afficher la sélection du profil d'alimentation dans le panneau batterie.",
+          "label": "Afficher les contrôles de profil d'alimentation"
         }
       },
       "brightness": {
@@ -466,6 +466,7 @@
     "add": "Ajouter",
     "apply": "Postuler",
     "cancel": "Annuler",
+    "check-settings": "Vérifier les paramètres pour plus de détails.",
     "close": "Fermer",
     "save": "Enregistrer"
   },
@@ -1815,7 +1816,16 @@
       },
       "uninstall-error": "Échec de la désinstallation : {error}",
       "uninstall-success": "{plugin} a été désinstallé(e) avec succès.",
-      "uninstalling": "Désinstallation de {plugin}..."
+      "uninstalling": "Désinstallation de {plugin}...",
+      "update": "Mise à jour",
+      "update-all": "Mettre à jour tout ({count})",
+      "update-all-success": "Tous les plugins ont été mis à jour avec succès.",
+      "update-available": "{count} mise(s) à jour de plugin(s) disponible(s)",
+      "update-error": "Échec de la mise à jour du plugin : {plugin} : {error}",
+      "update-incompatible": "Nécessite Noctalia v{version} ou une version ultérieure.",
+      "update-success": "Mise à jour du plugin {plugin} vers la version {version}.",
+      "update-version": "v{actuel} → v{nouveau}",
+      "updating": "Mise à jour de {plugin}..."
     },
     "screen-recorder": {
       "audio": {
