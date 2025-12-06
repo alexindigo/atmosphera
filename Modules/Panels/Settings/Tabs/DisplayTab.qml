@@ -373,6 +373,7 @@ ColumnLayout {
   // Manual scheduling
   ColumnLayout {
     spacing: Style.marginS
+    Layout.fillWidth: true
     visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
     NLabel {
@@ -380,14 +381,18 @@ ColumnLayout {
       description: I18n.tr("settings.display.night-light.manual-schedule.description")
     }
 
-    RowLayout {
+    // Use a Grid or Flow layout for better wrapping on narrow screens
+    GridLayout {
       Layout.fillWidth: true
-      spacing: Style.marginS
+      columns: 4
+      columnSpacing: Style.marginS
+      rowSpacing: Style.marginS
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
         pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
+        Layout.alignment: Qt.AlignVCenter
       }
 
       NComboBox {
@@ -395,17 +400,15 @@ ColumnLayout {
         currentKey: Settings.data.nightLight.manualSunrise
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
         onSelected: key => Settings.data.nightLight.manualSunrise = key
-        minimumWidth: 120
-      }
-
-      Item {
-        Layout.preferredWidth: 20
+        Layout.fillWidth: true
+        Layout.minimumWidth: 100
       }
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
         pointSize: Style.fontSizeM
         color: Color.mOnSurfaceVariant
+        Layout.alignment: Qt.AlignVCenter
       }
 
       NComboBox {
@@ -413,7 +416,8 @@ ColumnLayout {
         currentKey: Settings.data.nightLight.manualSunset
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
         onSelected: key => Settings.data.nightLight.manualSunset = key
-        minimumWidth: 120
+        Layout.fillWidth: true
+        Layout.minimumWidth: 100
       }
     }
   }
