@@ -75,9 +75,8 @@ ColumnLayout {
 
         ColumnLayout {
           id: contentCol
-          width: parent.width - 2 * Style.marginL
-          x: Style.marginL
-          y: Style.marginL
+          anchors.fill: parent
+          anchors.margins: Style.marginL
           spacing: Style.marginXXS
 
           NLabel {
