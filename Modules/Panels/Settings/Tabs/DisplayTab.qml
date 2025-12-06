@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Location
+import qs.Services.UI
 import qs.Widgets
 
 ColumnLayout {
@@ -60,7 +61,6 @@ ColumnLayout {
 
   ColumnLayout {
     spacing: Style.marginL
-    Layout.fillWidth: true
 
     Repeater {
       model: Quickshell.screens || []
@@ -76,11 +76,9 @@ ColumnLayout {
 
         ColumnLayout {
           id: contentCol
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.top: parent.top
-          anchors.margins: Style.marginL
-          width: parent.width - (Style.marginL * 2)
+          width: parent.width - 2 * Style.marginL
+          x: Style.marginL
+          y: Style.marginL
           spacing: Style.marginXXS
 
           NLabel {
@@ -94,7 +92,6 @@ ColumnLayout {
                         "scale": compositorScale
                       });
             }
-            Layout.fillWidth: true
           }
 
           // Brightness
@@ -381,11 +378,10 @@ ColumnLayout {
     NLabel {
       label: I18n.tr("settings.display.night-light.manual-schedule.label")
       description: I18n.tr("settings.display.night-light.manual-schedule.description")
-      Layout.fillWidth: true
     }
 
     RowLayout {
-      Layout.fillWidth: false
+      Layout.fillWidth: true
       spacing: Style.marginS
 
       NText {
