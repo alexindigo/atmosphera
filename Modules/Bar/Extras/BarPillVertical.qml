@@ -52,6 +52,7 @@ Item {
 
   // Effective shown state (true if animated open or forced, but not if force closed)
   readonly property bool revealed: !forceClose && (forceOpen || showPill)
+  readonly property bool hasIcon: root.icon !== ""
 
   // Always prioritize hover color, then the custom one and finally the fallback color
   readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
@@ -77,7 +78,18 @@ Item {
 
   // For vertical bars: width is just icon size, height includes pill space
   width: buttonSize
-  height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
+  height: {
+    if (collapseToIcon) {
+      return hasIcon ? buttonSize : 0
+    }
+    if (revealed) {
+      var overlap = hasIcon ? pillOverlap : 0
+      var baseHeight = hasIcon ? buttonSize : 0
+      return baseHeight + Math.max(0, maxPillHeight - overlap)
+    }
+    // Fallback to buttonSize in idle state to remain clickable
+    return buttonSize
+  }
 
   Connections {
     target: root
@@ -92,9 +104,11 @@ Item {
   Rectangle {
     id: pillBackground
     width: buttonSize
-    height: collapseToIcon ? buttonSize : (revealed ? (buttonSize + maxPillHeight - pillOverlap) : buttonSize)
+    height: root.height
     radius: Style.radiusM
     color: root.bgColor
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
 
     Behavior on color {
       ColorAnimation {
@@ -112,7 +126,10 @@ Item {
 
     // Position based on direction - center the pill relative to the icon
     x: 0
-    y: openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2)
+    y: {
+      if (!hasIcon) return 0;
+      return openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2);
+    }
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
     color: Color.transparent // Make pill background transparent to avoid double opacity
@@ -129,7 +146,7 @@ Item {
       id: textItem
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      anchors.verticalCenterOffset: openDownward ? Style.marginXXS : -Style.marginXXS
+      anchors.verticalCenterOffset: hasIcon ? (openDownward ? Style.marginXXS : -Style.marginXXS) : 0
       rotation: rotateText ? -90 : 0
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
