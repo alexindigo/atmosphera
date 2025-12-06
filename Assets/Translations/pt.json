@@ -943,10 +943,6 @@
           "description": "Exibe a barra como uma 'pílula' flutuante.",
           "label": "Barra flutuante"
         },
-        "auto-hide": {
-          "description": "Oculta a barra automaticamente e volta a mostrá-la quando o cursor estiver próximo da borda do ecrã.",
-          "label": "Ocultar barra automaticamente"
-        },
         "margins": {
           "description": "Ajuste as margens ao redor da barra flutuante.",
           "horizontal": "Horizontal",
