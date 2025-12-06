@@ -68,7 +68,7 @@ SmartPanel {
   }
 
   // Target columns, but actual columns may vary based on available width
-  // Account for NTabBar margins (Style.marginXS on each side) to match category tabs width
+  // Account for NTabBar margins to match category tabs width
   readonly property int targetGridColumns: 5
   readonly property int gridContentWidth: listPanelWidth - (2 * Style.marginXS)
   readonly property int gridCellSize: Math.floor((gridContentWidth - ((targetGridColumns - 1) * Style.marginS)) / targetGridColumns)
@@ -648,6 +648,7 @@ SmartPanel {
           id: emojiCategoryTabs
           visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
           Layout.fillWidth: true
+          margins: Style.marginM
           property int computedCurrentIndex: {
             if (visible && emojiPlugin.categories) {
               return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
@@ -692,6 +693,7 @@ SmartPanel {
           id: appCategoryTabs
           visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
           Layout.fillWidth: true
+          margins: Style.marginM
           property int computedCurrentIndex: {
             if (visible && appsPlugin.availableCategories) {
               return appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
