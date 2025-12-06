@@ -37,7 +37,7 @@ ColumnLayout {
     settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces;
     settings.colorizeIcons = valueColorizeIcons;
     settings.showTitle = valueShowTitle;
-    settings.titleWidth = valueTitleWidth;
+    settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
     return settings;
   }
 
@@ -96,40 +96,13 @@ ColumnLayout {
     enabled: !isVerticalBar
   }
 
-  NLabel {
+  NTextInput {
+    id: titleWidthInput
     visible: root.valueShowTitle && !isVerticalBar
+    Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.taskbar.title-width.label")
     description: I18n.tr("bar.widget-settings.taskbar.title-width.description")
-  }
-
-  RowLayout {
-    visible: root.valueShowTitle && !isVerticalBar
-    spacing: Style.marginL
-    Layout.fillWidth: true
-
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 30
-      to: 300
-      stepSize: 5
-      value: root.valueTitleWidth
-      onMoved: value => root.valueTitleWidth = value
-      text: root.valueTitleWidth + "px"
-    }
-
-    // Reset button container
-    Item {
-      Layout.preferredWidth: 30 * Style.uiScaleRatio
-      Layout.preferredHeight: 30 * Style.uiScaleRatio
-
-      NIconButton {
-        icon: "refresh"
-        baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("bar.widget-settings.taskbar.title-width.reset-tooltip")
-        onClicked: root.valueTitleWidth = 120
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-      }
-    }
+    text: widgetData.titleWidth || widgetMetadata.titleWidth
+    placeholderText: I18n.tr("placeholders.enter-width-pixels")
   }
 }
