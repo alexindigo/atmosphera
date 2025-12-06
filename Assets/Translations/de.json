@@ -943,10 +943,6 @@
           "description": "Statusleiste als schwebende 'Pille' anzeigen.",
           "label": "Schwebende Statusleiste"
         },
-        "auto-hide": {
-          "description": "Statusleiste automatisch ausblenden und beim Bewegen des Mauszeigers an den Bildschirmrand wieder einblenden.",
-          "label": "Statusleiste automatisch ausblenden"
-        },
         "margins": {
           "description": "Ränder um die schwebende Statusleiste anpassen.",
           "horizontal": "Horizontal",

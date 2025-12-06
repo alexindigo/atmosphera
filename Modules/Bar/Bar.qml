@@ -28,16 +28,6 @@ Item {
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
 
-  // Optional auto-hide controller (provided by BarContentWindow / AllScreens)
-  // When not set, auto-hide is effectively disabled for this bar instance
-  property var autoHideContext: null
-
-  // Derived auto-hide state used for bar animations
-  readonly property bool autoHide: autoHideContext ? autoHideContext.barAutoHide : false
-  readonly property bool hidden: autoHideContext ? autoHideContext.barHidden : false
-  readonly property int hideAnimationDuration: autoHideContext ? autoHideContext.barHideAnimationDuration : Style.animationNormal
-  readonly property int showAnimationDuration: autoHideContext ? autoHideContext.barShowAnimationDuration : Style.animationNormal
-
   // Fill the parent (the Loader)
   anchors.fill: parent
 
@@ -76,72 +66,6 @@ Item {
         y: (root.barPosition === "bottom") ? (parent.height - Style.barHeight) : 0
         width: root.barIsVertical ? Style.barHeight : parent.width
         height: root.barIsVertical ? parent.height : Style.barHeight
-
-        // Auto-hide: slide and fade the entire bar off-screen when hidden
-        opacity: root.autoHide && root.hidden ? 0.0 : 1.0
-
-        // Slide distance depends on bar orientation
-        readonly property real offX: {
-          if (!root.autoHide)
-            return 0;
-          switch (root.barPosition) {
-          case "left":
-            return -width;
-          case "right":
-            return width;
-          default:
-            return 0;
-          }
-        }
-
-        readonly property real offY: {
-          if (!root.autoHide)
-            return 0;
-          switch (root.barPosition) {
-          case "top":
-            return -height;
-          case "bottom":
-            return height;
-          default:
-            return 0;
-          }
-        }
-
-        transform: Translate {
-          id: slide
-          x: root.autoHide && root.hidden ? bar.offX : 0
-          y: root.autoHide && root.hidden ? bar.offY : 0
-          Behavior on x {
-            NumberAnimation {
-              duration: root.hidden ? root.hideAnimationDuration : root.showAnimationDuration
-              easing.type: Easing.InOutCubic
-            }
-          }
-          Behavior on y {
-            NumberAnimation {
-              duration: root.hidden ? root.hideAnimationDuration : root.showAnimationDuration
-              easing.type: Easing.InOutCubic
-            }
-          }
-        }
-
-        Behavior on opacity {
-          NumberAnimation {
-            duration: root.hidden ? root.hideAnimationDuration : root.showAnimationDuration
-            easing.type: Easing.InOutQuad
-          }
-        }
-
-        // Mark bar hovered without stealing events from child widgets
-        HoverHandler {
-          id: barHoverHandler
-          onHoveredChanged: {
-            if (!root.autoHideContext || !root.autoHideContext.barAutoHide)
-              return;
-
-            root.autoHideContext.barHovered = hovered;
-          }
-        }
 
         // Corner states for new unified background system
         // State -1: No radius (flat/square corner)

@@ -944,10 +944,6 @@
           "description": "Display the bar as a floating 'pill'.",
           "label": "Floating bar"
         },
-        "auto-hide": {
-          "description": "Automatically hide the bar and reveal it when hovering near the screen edge.",
-          "label": "Auto-hide bar"
-        },
         "margins": {
           "description": "Adjust the margins around the floating bar.",
           "horizontal": "Horizontal",

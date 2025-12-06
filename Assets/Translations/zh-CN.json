@@ -943,10 +943,6 @@
           "description": "将工具栏显示为浮动的“药丸”形状。",
           "label": "浮动状态栏"
         },
-        "auto-hide": {
-          "description": "自动隐藏状态栏，并在鼠标移到屏幕边缘时重新显示。",
-          "label": "自动隐藏状态栏"
-        },
         "margins": {
           "description": "调整浮动状态栏周围的边距。",
           "horizontal": "水平",

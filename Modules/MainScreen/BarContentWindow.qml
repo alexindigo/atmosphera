@@ -20,10 +20,6 @@ PanelWindow {
   // Note: screen property is inherited from PanelWindow and should be set by parent
   color: Color.transparent // Transparent - background is in MainScreen below
 
-  // Optional auto-hide controller for this screen (provided by AllScreens)
-  // Exposes shared state such as barHidden and hover flags
-  property var autoHideContext: null
-
   Component.onCompleted: {
     Logger.d("BarContentWindow", "Bar content window created for screen:", barWindow.screen?.name);
   }
@@ -64,6 +60,5 @@ PanelWindow {
   Bar {
     anchors.fill: parent
     screen: barWindow.screen
-    autoHideContext: barWindow.autoHideContext
   }
 }
