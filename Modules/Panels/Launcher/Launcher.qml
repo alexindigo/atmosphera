@@ -320,6 +320,14 @@ SmartPanel {
     }
   }
 
+  CommandPlugin {
+    id: cmdPlugin
+    Component.onCompleted: {
+      registerPlugin(this);
+      Logger.d("Launcher", "Registered: CommandPlugin");
+    }
+  }
+
   EmojiPlugin {
     id: emojiPlugin
     Component.onCompleted: {
