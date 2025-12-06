@@ -381,12 +381,10 @@ ColumnLayout {
       description: I18n.tr("settings.display.night-light.manual-schedule.description")
     }
 
-    // Use a Grid or Flow layout for better wrapping on narrow screens
-    GridLayout {
+    // Sunrise time
+    RowLayout {
       Layout.fillWidth: true
-      columns: 4
-      columnSpacing: Style.marginS
-      rowSpacing: Style.marginS
+      spacing: Style.marginS
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
@@ -401,8 +399,13 @@ ColumnLayout {
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
         onSelected: key => Settings.data.nightLight.manualSunrise = key
         Layout.fillWidth: true
-        Layout.minimumWidth: 100
       }
+    }
+
+    // Sunset time
+    RowLayout {
+      Layout.fillWidth: true
+      spacing: Style.marginS
 
       NText {
         text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
@@ -417,7 +420,6 @@ ColumnLayout {
         placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
         onSelected: key => Settings.data.nightLight.manualSunset = key
         Layout.fillWidth: true
-        Layout.minimumWidth: 100
       }
     }
   }
