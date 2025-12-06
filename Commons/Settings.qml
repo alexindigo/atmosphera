@@ -157,6 +157,9 @@ Singleton {
       property real marginVertical: 0.25
       property real marginHorizontal: 0.25
 
+      // Auto-hiding bar setting
+      property bool autoHide: false
+
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true
 

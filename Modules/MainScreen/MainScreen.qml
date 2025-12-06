@@ -35,6 +35,10 @@ import qs.Services.UI
 PanelWindow {
   id: root
 
+  // Optional auto-hide controller provided by AllScreens per screen
+  // When set, indicates whether the bar is auto-hidden or visible
+  property var autoHideContext: null
+
   // Expose panels as readonly property aliases
   readonly property alias audioPanel: audioPanel
   readonly property alias batteryPanel: batteryPanel
@@ -100,6 +104,10 @@ PanelWindow {
   property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
   property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
 
+  // Helper flags for bar visibility from auto-hide context
+  readonly property bool barAutoHide: autoHideContext ? autoHideContext.barAutoHide : false
+  readonly property bool barHidden: autoHideContext ? autoHideContext.barHidden : false
+
   color: {
     if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
       return Qt.alpha(Color.mShadow, dimmerOpacity);
@@ -151,9 +159,9 @@ PanelWindow {
       x: barPlaceholder.x
       y: barPlaceholder.y
 
-      // Set width/height to 0 if bar shouldn't show on this screen (makes region empty)
-      width: root.barShouldShow ? barPlaceholder.width : 0
-      height: root.barShouldShow ? barPlaceholder.height : 0
+      // Set width/height to 0 if bar shouldn't show on this screen or is auto-hidden
+      width: (root.barShouldShow && !(root.barAutoHide && root.barHidden)) ? barPlaceholder.width : 0
+      height: (root.barShouldShow && !(root.barAutoHide && root.barHidden)) ? barPlaceholder.height : 0
       intersection: Intersection.Subtract
     }
 
@@ -181,7 +189,8 @@ PanelWindow {
     Backgrounds.AllBackgrounds {
       id: unifiedBackgrounds
       anchors.fill: parent
-      bar: barPlaceholder.barItem || null
+      // Hide bar background when bar is auto-hidden
+      bar: (root.barAutoHide && root.barHidden) ? null : (barPlaceholder.barItem || null)
       windowRoot: root
       z: 0 // Behind all content
     }

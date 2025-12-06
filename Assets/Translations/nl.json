@@ -943,6 +943,10 @@
           "description": "Toon de balk weer als een zwevende 'pil'.",
           "label": "Zwevende balk"
         },
+        "auto-hide": {
+          "description": "Verberg de balk automatisch en toon hem opnieuw wanneer je de muisaanwijzer naar de schermrand beweegt.",
+          "label": "Balk automatisch verbergen"
+        },
         "margins": {
           "description": "Pas de marges rond de zwevende balk aan.",
           "horizontal": "Horizontaal",

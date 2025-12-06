@@ -943,6 +943,10 @@
           "description": "Muestra la barra como una 'píldora' flotante.",
           "label": "Barra flotante"
         },
+        "auto-hide": {
+          "description": "Oculta la barra automáticamente y la muestra de nuevo al colocar el cursor cerca del borde de la pantalla.",
+          "label": "Ocultar barra automáticamente"
+        },
         "margins": {
           "description": "Ajusta los márgenes alrededor de la barra flotante.",
           "horizontal": "Horizontal",

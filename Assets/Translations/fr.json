@@ -943,6 +943,10 @@
           "description": "Afficher la barre sous forme de 'pilule' flottante.",
           "label": "Barre flottante"
         },
+        "auto-hide": {
+          "description": "Masquer automatiquement la barre et la réafficher lorsque le pointeur survole le bord de l’écran.",
+          "label": "Masquer automatiquement la barre"
+        },
         "margins": {
           "description": "Ajustez les marges autour de la barre flottante.",
           "horizontal": "Horizontale",

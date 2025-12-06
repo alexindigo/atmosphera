@@ -13,6 +13,7 @@ PanelWindow {
   id: root
 
   property bool exclusive: Settings.data.bar.exclusive !== undefined ? Settings.data.bar.exclusive : false
+  readonly property bool autoHide: Settings.data.bar.autoHide === true
 
   readonly property string barPosition: Settings.data.bar.position || "top"
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
@@ -28,7 +29,7 @@ PanelWindow {
   // Wayland layer shell configuration
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.namespace: "noctalia-bar-exclusion-" + (screen?.name || "unknown")
-  WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
+  WlrLayershell.exclusionMode: autoHide ? ExclusionMode.Ignore : (exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore)
 
   // Anchor based on bar position
   anchors {
