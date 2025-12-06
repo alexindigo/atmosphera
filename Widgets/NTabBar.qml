@@ -14,14 +14,17 @@ Rectangle {
 
   // Styling
   Layout.fillWidth: true
-  implicitHeight: Style.baseWidgetSize
+  implicitHeight: Style.baseWidgetSize + (Style.marginM * 2)
   color: Color.mSurfaceVariant
   radius: Style.iRadiusS
 
   RowLayout {
     id: tabRow
     anchors.fill: parent
-    anchors.margins: 0
+    anchors.topMargin: Style.marginM
+    anchors.bottomMargin: Style.marginM
+    anchors.leftMargin: Style.marginM
+    anchors.rightMargin: Style.marginM
     spacing: root.spacing
   }
 }
