@@ -131,10 +131,21 @@
           "label": "Display command output",
           "stream-description": "Enter a command to run continuously."
         },
+        "hide-mode": {
+          "description": "Controls widget visibility when the command has no output.",
+          "label": "Hide mode",
+          "expandWithOutput": "Expand when has output",
+          "alwaysExpanded": "Always expanded",
+          "maxTransparent": "Max expanded but transparent"
+        },
         "dynamic-text": "Dynamic text",
         "icon": {
           "description": "Select an icon from the library.",
           "label": "Icon"
+        },
+        "show-icon": {
+          "description": "Toggles the visibility of the widget's icon.",
+          "label": "Show icon"
         },
         "left-click": {
           "description": "Command to execute when the button is left-clicked.",

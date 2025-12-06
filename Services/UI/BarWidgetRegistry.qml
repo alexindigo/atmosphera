@@ -118,6 +118,8 @@ Singleton {
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "heart",
+                                    "showIcon": true,
+                                    "hideMode": "alwaysExpanded",
                                     "leftClickExec": "",
                                     "leftClickUpdateText": false,
                                     "rightClickExec": "",
