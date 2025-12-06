@@ -32,11 +32,11 @@ PopupWindow {
   visible: false
 
   // Hidden text element for measuring text width
-  Text {
+  NText {
     id: textMeasure
     visible: false
-    font.pointSize: Style.fontSizeS
-    font.family: "Sans Serif" // Match your NText font if different
+    pointSize: Style.fontSizeS
+    family: "Sans Serif" // Match your NText font if different
     wrapMode: Text.NoWrap
     elide: Text.ElideNone
   }
@@ -67,7 +67,7 @@ PopupWindow {
       }
     }
     // Apply a reasonable minimum width (like 120px)
-    menuContentWidth = Math.max(120, maxWidth);
+    menuContentWidth = Math.max(120, Math.ceil(maxWidth));
   }
 
   function initItems() {
