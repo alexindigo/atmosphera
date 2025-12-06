@@ -60,6 +60,7 @@ ColumnLayout {
 
   ColumnLayout {
     spacing: Style.marginL
+    Layout.fillWidth: true
 
     Repeater {
       model: Quickshell.screens || []
