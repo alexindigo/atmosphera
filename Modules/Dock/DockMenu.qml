@@ -35,7 +35,7 @@ PopupWindow {
   Text {
     id: textMeasure
     visible: false
-    font.pointSize: Style.fontSizeS
+    font.pointSize: Style.fontSizeS * Style.uiScaleRatio
     font.family: "Sans Serif" // Match your NText font if different
     wrapMode: Text.NoWrap
     elide: Text.ElideNone
@@ -67,7 +67,7 @@ PopupWindow {
       }
     }
     // Apply a reasonable minimum width (like 120px)
-    menuContentWidth = Math.max(120, maxWidth);
+    menuContentWidth = Math.max(120, Math.ceil(maxWidth));
   }
 
   function initItems() {
