@@ -478,6 +478,7 @@ NBox {
       MouseArea {
         id: flowDragArea
         anchors.fill: parent
+        anchors.margins: -20 * Style.uiScaleRatio // Buffer zone to prevent premature cancel
         z: -1
 
         acceptedButtons: Qt.LeftButton
@@ -618,6 +619,28 @@ NBox {
 
         onPositionChanged: mouse => {
                              if (draggedIndex !== -1 && potentialDrag) {
+                               // Check if mouse is too far outside the actual parent bounds
+                               const buffer = 30 * Style.uiScaleRatio;
+                               const isOutside = mouse.x < -buffer || mouse.x > parent.width + buffer || mouse.y < -buffer || mouse.y > parent.height + buffer;
+
+                               if (isOutside && (dragStarted || potentialDrag)) {
+                                 // Cancel drag if mouse is too far outside
+                                 if (potentialDrag) {
+                                   root.dragPotentialEnded();
+                                 }
+                                 dragStarted = false;
+                                 potentialDrag = false;
+                                 draggedIndex = -1;
+                                 draggedWidget = null;
+                                 dropTargetIndex = -1;
+                                 draggedModelData = null;
+                                 preventStealing = false;
+                                 dropIndicator.opacity = 0;
+                                 pulseAnimation.running = false;
+                                 dragGhost.width = 0;
+                                 return;
+                               }
+
                                const deltaX = mouse.x - startPos.x;
                                const deltaY = mouse.y - startPos.y;
                                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -669,10 +692,23 @@ NBox {
                     }
 
         onExited: {
-          if (dragStarted) {
-            // Hide drop indicator when mouse leaves, but keep ghost visible
+          if (dragStarted || potentialDrag) {
+            // Cancel drag when mouse leaves the area
+            if (potentialDrag) {
+              root.dragPotentialEnded();
+            }
+
+            // Reset everything
+            dragStarted = false;
+            potentialDrag = false;
+            draggedIndex = -1;
+            draggedWidget = null;
+            dropTargetIndex = -1;
+            draggedModelData = null;
+            preventStealing = false;
             dropIndicator.opacity = 0;
             pulseAnimation.running = false;
+            dragGhost.width = 0;
           }
         }
 
