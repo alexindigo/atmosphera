@@ -525,6 +525,12 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
+  }
+
   // ------------------------------
   // Dialogs
   // ------------------------------

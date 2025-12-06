@@ -347,9 +347,18 @@ ColumnLayout {
         label: I18n.tr("bar.widget-settings.custom-button.hide-mode.label", "Hide mode")
         description: I18n.tr("bar.widget-settings.custom-button.hide-mode.description", "Controls widget visibility when the command has no output.")
         model: [
-          { name: I18n.tr("bar.widget-settings.custom-button.hide-mode.alwaysExpanded", "Always expanded"), key: "alwaysExpanded" },
-          { name: I18n.tr("bar.widget-settings.custom-button.hide-mode.expandWithOutput", "Expand when has output"), key: "expandWithOutput" },
-          { name: I18n.tr("bar.widget-settings.custom-button.hide-mode.maxTransparent", "Max expanded but transparent"), key: "maxTransparent" }
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.alwaysExpanded", "Always expanded"),
+            key: "alwaysExpanded"
+          },
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.expandWithOutput", "Expand when has output"),
+            key: "expandWithOutput"
+          },
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.maxTransparent", "Max expanded but transparent"),
+            key: "maxTransparent"
+          }
         ]
         currentKey: valueHideMode
         onSelected: key => valueHideMode = key

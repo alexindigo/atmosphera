@@ -71,7 +71,7 @@ Item {
 
   width: {
     if (collapseToIcon) {
-        return hasIcon ? pillHeight : 0;
+      return hasIcon ? pillHeight : 0;
     }
     var overlap = hasIcon ? pillOverlap : 0;
     var baseWidth = hasIcon ? pillHeight : 0;
@@ -112,7 +112,8 @@ Item {
     height: pillHeight
 
     x: {
-      if (!hasIcon) return 0;
+      if (!hasIcon)
+        return 0;
       return oppositeDirection ? (iconCircle.x + iconCircle.width / 2) : (iconCircle.x + iconCircle.width / 2) - width;
     }
 
@@ -129,7 +130,8 @@ Item {
       id: textItem
       anchors.verticalCenter: parent.verticalCenter
       x: {
-        if (!hasIcon) return (parent.width - width) / 2;
+        if (!hasIcon)
+          return (parent.width - width) / 2;
 
         // Better text horizontal centering
         var centerX = (parent.width - width) / 2;

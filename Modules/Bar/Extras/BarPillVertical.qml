@@ -80,15 +80,15 @@ Item {
   width: buttonSize
   height: {
     if (collapseToIcon) {
-      return hasIcon ? buttonSize : 0
+      return hasIcon ? buttonSize : 0;
     }
     if (revealed) {
-      var overlap = hasIcon ? pillOverlap : 0
-      var baseHeight = hasIcon ? buttonSize : 0
-      return baseHeight + Math.max(0, maxPillHeight - overlap)
+      var overlap = hasIcon ? pillOverlap : 0;
+      var baseHeight = hasIcon ? buttonSize : 0;
+      return baseHeight + Math.max(0, maxPillHeight - overlap);
     }
     // Fallback to buttonSize in idle state to remain clickable
-    return buttonSize
+    return buttonSize;
   }
 
   Connections {
@@ -127,7 +127,8 @@ Item {
     // Position based on direction - center the pill relative to the icon
     x: 0
     y: {
-      if (!hasIcon) return 0;
+      if (!hasIcon)
+        return 0;
       return openUpward ? (iconCircle.y + iconCircle.height / 2 - height) : (iconCircle.y + iconCircle.height / 2);
     }
 

@@ -183,7 +183,6 @@ ColumnLayout {
   }
 
   NDivider {
-    visible: Settings.data.dock.enabled
     Layout.fillWidth: true
     Layout.topMargin: Style.marginL
     Layout.bottomMargin: Style.marginL

@@ -518,10 +518,11 @@ SmartPanel {
           }
         }
 
-        // Overlay gradient to smooth the hard cut due to scrolling at the bottom
+        // Overlay gradient to smooth the hard cut due to scrolling at the bottom (only visible when scrollable)
         Rectangle {
           anchors.fill: parent
           color: Color.transparent
+          visible: scrollView.ScrollBar.vertical && scrollView.ScrollBar.vertical.size < 1.0
           gradient: Gradient {
             GradientStop {
               position: 0.0

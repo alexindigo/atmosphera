@@ -105,7 +105,8 @@ Item {
         return "";
       }
     }
-    if (!showIcon) return "";
+    if (!showIcon)
+      return "";
     var actualIcon = _dynamicIcon !== "" ? _dynamicIcon : customIcon;
     if (hideMode === "expandWithOutput" && actualIcon === "") {
       return "question-mark";
