@@ -1495,6 +1495,10 @@
           "description": "Display items in a grid layout instead of a list.",
           "label": "Grid view"
         },
+        "show-categories": {
+          "description": "Show category tabs for filtering applications.",
+          "label": "Show categories"
+        },
         "position": {
           "description": "Choose where the launcher panel appears.",
           "label": "Position"

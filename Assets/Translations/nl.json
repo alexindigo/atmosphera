@@ -1495,6 +1495,10 @@
           "description": "Items in een raster weergeven in plaats van een lijst.",
           "label": "Rasterweergave"
         },
+        "show-categories": {
+          "description": "Categorieën-tabbladen weergeven voor het filteren van applicaties.",
+          "label": "Categorieën weergeven"
+        },
         "position": {
           "description": "Kies waar het launcher-paneel verschijnt.",
           "label": "Positie"

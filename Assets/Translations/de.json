@@ -1495,6 +1495,10 @@
           "description": "Elemente in einem Raster statt in einer Liste anzeigen.",
           "label": "Rasteransicht"
         },
+        "show-categories": {
+          "description": "Kategorienregisterkarten zum Filtern von Anwendungen anzeigen.",
+          "label": "Kategorien anzeigen"
+        },
         "position": {
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
           "label": "Position"

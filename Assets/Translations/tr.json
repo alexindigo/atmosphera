@@ -1495,6 +1495,10 @@
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
           "label": "Izgara görünümü"
         },
+        "show-categories": {
+          "description": "Uygulamaları filtrelemek için kategori sekmelerini göster.",
+          "label": "Kategorileri göster"
+        },
         "position": {
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
           "label": "Konum"

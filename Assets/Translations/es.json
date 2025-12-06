@@ -1495,6 +1495,10 @@
           "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
           "label": "Vista de cuadrícula"
         },
+        "show-categories": {
+          "description": "Mostrar pestañas de categorías para filtrar aplicaciones.",
+          "label": "Mostrar categorías"
+        },
         "position": {
           "description": "Elige dónde aparece el panel del lanzador.",
           "label": "Posición"

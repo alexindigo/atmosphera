@@ -1495,6 +1495,10 @@
           "description": "以网格布局而非列表显示项目。",
           "label": "网格视图"
         },
+        "show-categories": {
+          "description": "显示用于筛选应用程序的类别标签。",
+          "label": "显示类别"
+        },
         "position": {
           "description": "选择启动器面板出现的位置。",
           "label": "位置"

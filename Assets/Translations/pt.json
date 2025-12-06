@@ -1495,6 +1495,10 @@
           "description": "Exibir itens em uma grade em vez de uma lista.",
           "label": "Visualização em grade"
         },
+        "show-categories": {
+          "description": "Mostrar abas de categorias para filtrar aplicativos.",
+          "label": "Mostrar categorias"
+        },
         "position": {
           "description": "Escolha onde o painel do lançador aparece.",
           "label": "Posição"

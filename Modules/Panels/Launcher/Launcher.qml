@@ -690,7 +690,7 @@ SmartPanel {
         // App category tabs (shown when browsing apps without search)
         NTabBar {
           id: appCategoryTabs
-          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")
+          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
           Layout.fillWidth: true
           property int computedCurrentIndex: {
             if (visible && appsPlugin.availableCategories) {
