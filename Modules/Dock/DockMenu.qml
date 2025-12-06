@@ -32,11 +32,11 @@ PopupWindow {
   visible: false
 
   // Hidden text element for measuring text width
-  Text {
+  NText {
     id: textMeasure
     visible: false
-    font.pointSize: Style.fontSizeS * Style.uiScaleRatio
-    font.family: "Sans Serif" // Match your NText font if different
+    pointSize: Style.fontSizeS
+    family: "Sans Serif" // Match your NText font if different
     wrapMode: Text.NoWrap
     elide: Text.ElideNone
   }
