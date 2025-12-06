@@ -91,6 +91,7 @@ ColumnLayout {
                         "scale": compositorScale
                       });
             }
+            Layout.fillWidth: true
           }
 
           // Brightness
@@ -377,6 +378,7 @@ ColumnLayout {
     NLabel {
       label: I18n.tr("settings.display.night-light.manual-schedule.label")
       description: I18n.tr("settings.display.night-light.manual-schedule.description")
+      Layout.fillWidth: true
     }
 
     RowLayout {
