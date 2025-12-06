@@ -75,8 +75,11 @@ ColumnLayout {
 
         ColumnLayout {
           id: contentCol
-          anchors.fill: parent
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.top: parent.top
           anchors.margins: Style.marginL
+          width: parent.width - (Style.marginL * 2)
           spacing: Style.marginXXS
 
           NLabel {
