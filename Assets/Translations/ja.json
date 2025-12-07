@@ -345,6 +345,10 @@
           "description": "バーが配置されているディスプレイ上のアプリのみを表示します。",
           "label": "同じディスプレイのみ"
         },
+        "show-pinned-apps": {
+          "description": "ドックからピン留めされたアプリをタスクバーに表示する。",
+          "label": "ピン留めされたアプリを表示"
+        },
         "show-title": {
           "description": "タスクバーにウィンドウタイトルを表示します。",
           "description-disabled": "縦型タスクバーはタイトル表示に対応していません。",
@@ -354,9 +358,6 @@
           "description": "タスクバーのウィンドウタイトルの幅を設定します（ピクセル単位）。",
           "label": "タイトル幅",
           "reset-tooltip": "タイトル幅をリセット"
-        "show-pinned-apps": {
-          "description": "ドックからピン留めされたアプリをタスクバーに表示する。",
-          "label": "ピン留めされたアプリを表示"
         }
       },
       "taskbar-grouped": {

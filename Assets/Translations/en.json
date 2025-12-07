@@ -345,6 +345,10 @@
           "description": "Show only apps from the output where the bar is located.",
           "label": "Only from same output"
         },
+        "show-pinned-apps": {
+          "description": "Show pinned apps from the dock in the taskbar.",
+          "label": "Show pinned apps"
+        },
         "show-title": {
           "description": "Display window titles in the taskbar.",
           "description-disabled": "Vertical taskbar does not support showing titles.",
@@ -354,9 +358,6 @@
           "description": "Set the width of window titles in the taskbar (in pixels).",
           "label": "Title width",
           "reset-tooltip": "Reset title width"
-        "show-pinned-apps": {
-          "description": "Show pinned apps from the dock in the taskbar.",
-          "label": "Show pinned apps"
         }
       },
       "taskbar-grouped": {

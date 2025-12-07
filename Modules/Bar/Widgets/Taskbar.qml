@@ -335,29 +335,6 @@ Rectangle {
               duration: Style.animationFast
               easing.type: Easing.InOutQuad
             }
-          height: parent.height
-          source: ThemeIcons.iconForAppId(modelData.appId)
-          smooth: true
-          asynchronous: true
-          // Opacity: Focused (1.0) > Pinned Running (0.7) > Regular Running (0.6) > Just Pinned (0.4)
-          opacity: isFocused ? Style.opacityFull : (isPinnedRunning ? 0.7 : (isRunning ? 0.6 : 0.4))
-
-          // For pinned apps that aren't running: use a muted color to indicate not running
-          // For other apps: use standard colorization if enabled
-          layer.enabled: (isPinned && !isRunning) || (root.widgetSettings.colorizeIcons !== false && !isFocused)
-          layer.effect: ShaderEffect {
-            property color targetColor: {
-              // Pinned but not running: use a muted/desaturated color to indicate not running
-              if (isPinned && !isRunning) {
-                // Use a muted secondary or outline color
-                return Settings.data.colorSchemes.darkMode ? Qt.darker(Color.mSecondary, 1.3) : Qt.lighter(Color.mSecondary, 1.5);
-              }
-              // Standard colorization for other cases
-              return Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant;
-            }
-            property real colorizeMode: 0.0 // Dock mode (grayscale)
-
-            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
           }
         }
 
@@ -426,16 +403,6 @@ Rectangle {
               color: titleFgColor
               opacity: Style.opacityFull
             }
-          // Active indicator (focused window)
-          Rectangle {
-            id: iconBackground
-            anchors.bottomMargin: -2
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 4
-            height: 4
-            color: isFocused ? Color.mPrimary : Color.transparent
-            radius: Math.min(Style.radiusXXS, width / 2)
           }
         }
 

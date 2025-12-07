@@ -345,6 +345,10 @@
           "description": "仅显示任务栏所在屏幕上的应用程序",
           "label": "仅显示同屏幕"
         },
+        "show-pinned-apps": {
+          "description": "在任务栏中显示 Dock 上固定的应用。",
+          "label": "显示已置顶的应用"
+        },
         "show-title": {
           "description": "在任务栏中显示窗口标题。",
           "description-disabled": "垂直任务栏不支持显示标题。",
@@ -354,9 +358,6 @@
           "description": "设置任务栏中窗口标题的宽度（以像素为单位）。",
           "label": "标题宽度",
           "reset-tooltip": "重置标题宽度"
-        "show-pinned-apps": {
-          "description": "在任务栏中显示 Dock 上固定的应用。",
-          "label": "显示已置顶的应用"
         }
       },
       "taskbar-grouped": {
