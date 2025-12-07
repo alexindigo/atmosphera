@@ -14,6 +14,16 @@ ColumnLayout {
   // Track which plugins are currently updating
   property var updatingPlugins: ({})
 
+  function stripAuthorEmail(author) {
+    if (!author)
+      return "";
+    var lastBracket = author.lastIndexOf("<");
+    if (lastBracket >= 0) {
+      return author.substring(0, lastBracket).trim();
+    }
+    return author;
+  }
+
   // Check for updates when tab becomes visible
   onVisibleChanged: {
     if (visible && PluginService.pluginsFullyLoaded) {
@@ -152,7 +162,7 @@ ColumnLayout {
               }
 
               NText {
-                text: modelData.author
+                text: stripAuthorEmail(modelData.author)
                 font.pointSize: Style.fontSizeXXS
                 color: Color.mOnSurfaceVariant
               }
@@ -473,7 +483,7 @@ ColumnLayout {
             }
 
             NText {
-              text: modelData.author
+              text: stripAuthorEmail(modelData.author)
               font.pointSize: Style.fontSizeXXS
               color: Color.mOnSurfaceVariant
             }
