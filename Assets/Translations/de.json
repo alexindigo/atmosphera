@@ -364,6 +364,10 @@
         "drawer-enabled": {
           "description": "Wenn aktiviert, werden nicht angeheftete Tray-Elemente in einem Schubladen-Panel angezeigt. Wenn deaktiviert, werden alle Tray-Elemente inline angezeigt.",
           "label": "Schublade aktivieren"
+        },
+        "hide-passive": {
+          "description": "Wenn aktiviert, werden Tray-Elemente mit dem Status \"Passiv\" ausgeblendet.",
+          "label": "Passive Gegenstände ausblenden"
         }
       },
       "volume": {

@@ -65,15 +65,49 @@ Rectangle {
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
 
-  // Debounce timer for updateFilteredItems to prevent excessive calls
-  // when multiple events (e.g., SystemTray changes, settings saves)
-  // trigger it in rapid succession, reducing redundant processing.
   Timer {
     id: updateDebounceTimer
     interval: 100 // milliseconds
     running: false
     repeat: false
     onTriggered: _performFilteredItemsUpdate()
+  }
+
+  readonly property var statusSignature: {
+    if (!SystemTray.items || !SystemTray.items.values) {
+      return "";
+    }
+    var sig = "";
+    var items = SystemTray.items.values;
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item) {
+        // Direct property access creates reactive binding
+        var s = item.status;
+        sig += (item.id || i) + ":" + (s !== undefined ? s : -1);
+      }
+    }
+    // Trigger update when signature changes (status changed)
+    if (root.hidePassive) {
+      Qt.callLater(root.updateFilteredItems);
+    }
+    return sig;
+  }
+  Repeater {
+    id: statusConnectionsRepeater
+    model: SystemTray.items && SystemTray.items.values ? SystemTray.items.values : []
+
+    delegate: Item {
+      Connections {
+        target: modelData
+        enabled: modelData !== null && modelData !== undefined
+        function onStatusChanged() {
+          if (root.hidePassive) {
+            root.updateFilteredItems();
+          }
+        }
+      }
+    }
   }
 
   function _performFilteredItemsUpdate() {
@@ -89,7 +123,6 @@ Rectangle {
         const title = item.tooltipTitle || item.name || item.id || "";
 
         // Skip passive items if hidePassive is enabled
-        // Check if status exists and is Passive (using both enum and numeric comparison for safety)
         if (root.hidePassive && item.status !== undefined && (item.status === SystemTray.Passive || item.status === 0)) {
           continue;
         }
@@ -215,6 +248,7 @@ Rectangle {
     target: SystemTray.items
     function onValuesChanged() {
       root.updateFilteredItems();
+      // Repeater will automatically update when items change
     }
   }
 
@@ -233,7 +267,6 @@ Rectangle {
   Component.onCompleted: {
     root.updateFilteredItems(); // Initial update
   }
-
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight

@@ -364,6 +364,10 @@
         "drawer-enabled": {
           "description": "Cuando está habilitado, los elementos de la bandeja no anclados se muestran en un panel cajón. Cuando está deshabilitado, todos los elementos de la bandeja se muestran en línea.",
           "label": "Habilitar cajón"
+        },
+        "hide-passive": {
+          "description": "Cuando está activado, los elementos de la bandeja con estado Pasivo se ocultarán.",
+          "label": "Ocultar objetos pasivos"
         }
       },
       "volume": {

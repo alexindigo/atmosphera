@@ -364,6 +364,10 @@
         "drawer-enabled": {
           "description": "启用时，未固定的托盘项显示在抽屉面板中。禁用时，所有托盘项都内联显示。",
           "label": "启用抽屉"
+        },
+        "hide-passive": {
+          "description": "启用后，将隐藏状态为“被动”的托盘图标。",
+          "label": "隐藏被动物品"
         }
       },
       "volume": {

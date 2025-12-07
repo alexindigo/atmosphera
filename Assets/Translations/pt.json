@@ -364,6 +364,10 @@
         "drawer-enabled": {
           "description": "Quando habilitado, os itens da bandeja não fixados são exibidos em um painel gaveta. Quando desabilitado, todos os itens da bandeja são exibidos inline.",
           "label": "Habilitar gaveta"
+        },
+        "hide-passive": {
+          "description": "Quando ativado, os itens da bandeja com status Passivo serão ocultados.",
+          "label": "Ocultar itens passivos"
         }
       },
       "volume": {
