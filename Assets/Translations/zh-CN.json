@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "仅显示任务栏所在屏幕上的应用程序",
           "label": "仅显示同屏幕"
+        },
+        "show-pinned-apps": {
+          "description": "在任务栏中显示 Dock 上固定的应用。",
+          "label": "显示已置顶的应用"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "全部",
-      "pinned": "已固定",
       "audiovideo": "音频和视频",
       "chat": "聊天",
       "development": "发展",
@@ -533,6 +536,7 @@
       "misc": "杂项",
       "network": "网络",
       "office": "办公室",
+      "pinned": "已固定",
       "system": "系统",
       "webbrowser": "网页浏览器"
     },

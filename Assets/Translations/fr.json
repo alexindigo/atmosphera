@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Afficher uniquement les applications de la sortie où la barre est située.",
           "label": "Seulement à partir de la même sortie"
+        },
+        "show-pinned-apps": {
+          "description": "Afficher les applications épinglées du dock dans la barre des tâches.",
+          "label": "Afficher les applications épinglées"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Tout",
-      "pinned": "Épinglé",
       "audiovideo": "Audio et vidéo",
       "chat": "Conversation",
       "development": "Développement",
@@ -533,6 +536,7 @@
       "misc": "Divers",
       "network": "Réseau",
       "office": "Bureau",
+      "pinned": "Épinglé",
       "system": "Système",
       "webbrowser": "Navigateur web"
     },

@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Mostrar apenas os aplicativos da saída onde a barra está localizada.",
           "label": "Apenas da mesma saída"
+        },
+        "show-pinned-apps": {
+          "description": "Mostrar aplicativos fixados do Dock na barra de tarefas.",
+          "label": "Mostrar aplicativos fixados"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Tudo",
-      "pinned": "Fixado",
       "audiovideo": "Áudio e Vídeo",
       "chat": "Bate-papo",
       "development": "Desenvolvimento",
@@ -533,6 +536,7 @@
       "misc": "Diversos",
       "network": "Rede",
       "office": "Escritório",
+      "pinned": "Fixado",
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },

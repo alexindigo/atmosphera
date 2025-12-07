@@ -333,10 +333,6 @@
           "description": "Apply theme colors to taskbar icons.",
           "label": "Colorize icons"
         },
-        "show-pinned-apps": {
-          "description": "Show pinned apps from the dock in the taskbar.",
-          "label": "Show pinned apps"
-        },
         "hide-mode": {
           "description": "Controls how the widget behaves when there are no matching windows.",
           "label": "Hiding mode"
@@ -348,6 +344,10 @@
         "only-same-output": {
           "description": "Show only apps from the output where the bar is located.",
           "label": "Only from same output"
+        },
+        "show-pinned-apps": {
+          "description": "Show pinned apps from the dock in the taskbar.",
+          "label": "Show pinned apps"
         }
       },
       "taskbar-grouped": {
@@ -527,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "All",
-      "pinned": "Pinned",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Development",
@@ -537,6 +536,7 @@
       "misc": "Misc",
       "network": "Network",
       "office": "Office",
+      "pinned": "Pinned",
       "system": "System",
       "webbrowser": "Web Browser"
     },

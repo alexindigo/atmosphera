@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Zeige nur Apps von dem Bildschirm, auf dem sich die Taskbar befindet.",
           "label": "Nur vom gleichen Bildschirm"
+        },
+        "show-pinned-apps": {
+          "description": "Angeheftete Apps aus dem Dock in der Taskleiste anzeigen.",
+          "label": "Angeheftete Apps anzeigen"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Alle",
-      "pinned": "Angeheftet",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Entwicklung",
@@ -533,6 +536,7 @@
       "misc": "Verschiedenes",
       "network": "Netzwerk",
       "office": "Büro",
+      "pinned": "Angeheftet",
       "system": "System",
       "webbrowser": "Webbrowser"
     },

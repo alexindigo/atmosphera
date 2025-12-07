@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Muestra solo las aplicaciones del resultado donde se encuentra la barra.",
           "label": "Solo de la misma salida"
+        },
+        "show-pinned-apps": {
+          "description": "Mostrar las aplicaciones ancladas desde el dock en la barra de tareas.",
+          "label": "Mostrar aplicaciones ancladas"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Todo",
-      "pinned": "Anclado",
       "audiovideo": "Audio y video",
       "chat": "Chat",
       "development": "Desarrollo",
@@ -533,6 +536,7 @@
       "misc": "Varios",
       "network": "Red",
       "office": "Oficina",
+      "pinned": "Anclado",
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },

@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Toon alleen apps van de output waarop de balk zich bevindt.",
           "label": "Alleen van dezelfde output"
+        },
+        "show-pinned-apps": {
+          "description": "Toon vastgemaakte apps van het dock in de taakbalk.",
+          "label": "Toon vastgemaakte apps"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Alle",
-      "pinned": "Vastgemaakt",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Ontwikkeling",
@@ -533,6 +536,7 @@
       "misc": "Diversen",
       "network": "Netwerk",
       "office": "Kantoor",
+      "pinned": "Vastgemaakt",
       "system": "Systeem",
       "webbrowser": "Webbrowser"
     },

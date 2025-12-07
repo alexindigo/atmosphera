@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "バーが配置されているディスプレイ上のアプリのみを表示します。",
           "label": "同じディスプレイのみ"
+        },
+        "show-pinned-apps": {
+          "description": "ドックからピン留めされたアプリをタスクバーに表示する。",
+          "label": "ピン留めされたアプリを表示"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "すべて",
-      "pinned": "ピン留め",
       "audiovideo": "音声 & ビデオ",
       "chat": "チャット",
       "development": "開発",
@@ -533,6 +536,7 @@
       "misc": "その他",
       "network": "ネットワーク",
       "office": "オフィス",
+      "pinned": "ピン留め",
       "system": "システム",
       "webbrowser": "ウェブブラウザ"
     },

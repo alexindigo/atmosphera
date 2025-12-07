@@ -344,6 +344,10 @@
         "only-same-output": {
           "description": "Sadece çubuğun bulunduğu çıktıdan uygulamaları göster.",
           "label": "Sadece aynı çıktıdan"
+        },
+        "show-pinned-apps": {
+          "description": "Dock'taki sabitlenmiş uygulamaları görev çubuğunda göster.",
+          "label": "Sabitlenmiş uygulamaları göster"
         }
       },
       "taskbar-grouped": {
@@ -523,7 +527,6 @@
   "launcher": {
     "categories": {
       "all": "Tümü",
-      "pinned": "Sabitlendi",
       "audiovideo": "Ses ve Görüntü",
       "chat": "Sohbet",
       "development": "Geliştirme",
@@ -533,6 +536,7 @@
       "misc": "Çeşitli",
       "network": "Ağ",
       "office": "Ofis",
+      "pinned": "Sabitlendi",
       "system": "Sistem",
       "webbrowser": "Tarayıcı"
     },
