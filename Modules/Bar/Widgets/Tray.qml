@@ -61,6 +61,7 @@ Rectangle {
   property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
   property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
+  property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
 
@@ -86,6 +87,11 @@ Rectangle {
         }
 
         const title = item.tooltipTitle || item.name || item.id || "";
+
+        // Skip passive items if hidePassive is enabled
+        if (root.hidePassive && item.status === SystemTray.Passive) {
+          continue;
+        }
 
         // Check if blacklisted
         let isBlacklisted = false;
@@ -159,7 +165,6 @@ Rectangle {
     if (!str || !rule) {
       return false;
     }
-    //Logger.d("Tray", "wildCardMatch - Input str:", str, "rule:", rule)
 
     // First, convert '*' to a placeholder to preserve it, then escape other special regex characters
     // Use a unique placeholder that won't appear in normal strings
@@ -172,11 +177,9 @@ Rectangle {
     // Add ^ and $ to match the entire string
     pattern = '^' + pattern + '$';
 
-    //Logger.d("Tray", "wildCardMatch - Generated pattern:", pattern)
     try {
       const regex = new RegExp(pattern, 'i');
       // 'i' for case-insensitive
-      //Logger.d("Tray", "wildCardMatch - Regex test result:", regex.test(str))
       return regex.test(str);
     } catch (e) {
       Logger.w("Tray", "Invalid regex pattern for wildcard match:", rule, e.message);

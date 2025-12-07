@@ -39,6 +39,7 @@ SmartPanel {
 
   // Read pinned list directly from settings for reactivity
   readonly property var pinnedList: widgetSettings.pinned || []
+  readonly property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true
 
   function wildCardMatch(str, rule) {
     if (!str || !rule)
@@ -73,6 +74,11 @@ SmartPanel {
   // Show items that are NOT pinned (unpinned items go to drawer)
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
   readonly property var trayValues: trayValuesAll.filter(function (it) {
+    // Filter out passive items if hidePassive is enabled
+    if (root.hidePassive && it.status === SystemTray.Passive) {
+      return false;
+    }
+    // Filter out pinned items (they show in the bar)
     return !root.isPinned(it);
   })
   readonly property int itemCount: trayValues.length
