@@ -105,7 +105,9 @@ Singleton {
 
     var name = (device.name || device.deviceName || "").toLowerCase();
     var icon = (device.icon || "").toLowerCase();
-
+    if (icon.includes("controller") || icon.includes("gamepad") || name.includes("controller") || name.includes("gamepad")) {
+      return "bt-device-gamepad";
+    }
     if (icon.includes("microphone") || name.includes("microphone")) {
       return "bt-device-microphone";
     }
