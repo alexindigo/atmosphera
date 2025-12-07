@@ -266,7 +266,7 @@ Item {
             anchors.fill: parent
             visible: showProgressRing
             progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-            lineWidth: 2.5 * scaling
+            lineWidth: 2 * scaling
           }
 
           Item {

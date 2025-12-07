@@ -105,27 +105,38 @@ Singleton {
 
     var name = (device.name || device.deviceName || "").toLowerCase();
     var icon = (device.icon || "").toLowerCase();
-    if (icon.includes("headset") || icon.includes("audio") || name.includes("headphone") || name.includes("airpod") || name.includes("headset") || name.includes("arctis")) {
+    if (icon.includes("controller") || icon.includes("gamepad") || name.includes("controller") || name.includes("gamepad")) {
+      return "bt-device-gamepad";
+    }
+    if (icon.includes("microphone") || name.includes("microphone")) {
+      return "bt-device-microphone";
+    }
+    if (name.includes("pod") || name.includes("bud") || name.includes("minor")) {
+      return "bt-device-earbuds";
+    }
+    if (icon.includes("headset") || name.includes("arctis") || name.includes("headset") || name.includes("major")) {
+      return "bt-device-headset";
+    }
+    if (icon.includes("headphone") || name.includes("headphone")) {
       return "bt-device-headphones";
     }
-
     if (icon.includes("mouse") || name.includes("mouse")) {
       return "bt-device-mouse";
     }
     if (icon.includes("keyboard") || name.includes("keyboard")) {
       return "bt-device-keyboard";
     }
-    if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung")) {
-      return "bt-device-phone";
-    }
     if (icon.includes("watch") || name.includes("watch")) {
       return "bt-device-watch";
     }
-    if (icon.includes("speaker") || name.includes("speaker")) {
+    if (icon.includes("speaker") || name.includes("speaker") || name.includes("audio") || name.includes("sound")) {
       return "bt-device-speaker";
     }
     if (icon.includes("display") || name.includes("tv")) {
       return "bt-device-tv";
+    }
+    if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung")) {
+      return "bt-device-phone";
     }
     return "bt-device-generic";
   }

@@ -68,7 +68,7 @@ SmartPanel {
   }
 
   // Target columns, but actual columns may vary based on available width
-  // Account for NTabBar margins (Style.marginXS on each side) to match category tabs width
+  // Account for NTabBar margins to match category tabs width
   readonly property int targetGridColumns: 5
   readonly property int gridContentWidth: listPanelWidth - (2 * Style.marginXS)
   readonly property int gridCellSize: Math.floor((gridContentWidth - ((targetGridColumns - 1) * Style.marginS)) / targetGridColumns)
@@ -87,7 +87,7 @@ SmartPanel {
       var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
       var nextIndex = (currentIndex + 1) % emojiPlugin.categories.length;
       emojiPlugin.selectCategory(emojiPlugin.categories[nextIndex]);
-    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")) {
+    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories) {
       // In apps browsing mode (no search), Tab navigates between categories
       var availableCategories = appsPlugin.availableCategories || ["all"];
       var currentIndex = availableCategories.indexOf(appsPlugin.selectedCategory);
@@ -103,7 +103,7 @@ SmartPanel {
       var currentIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
       var previousIndex = ((currentIndex - 1) % emojiPlugin.categories.length + emojiPlugin.categories.length) % emojiPlugin.categories.length;
       emojiPlugin.selectCategory(emojiPlugin.categories[previousIndex]);
-    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")) {
+    } else if ((activePlugin === null || activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories) {
       var availableCategories = appsPlugin.availableCategories || ["all"];
       var currentIndex = availableCategories.indexOf(appsPlugin.selectedCategory);
       var previousIndex = ((currentIndex - 1) % availableCategories.length + availableCategories.length) % availableCategories.length;
@@ -317,6 +317,14 @@ SmartPanel {
         registerPlugin(this);
         Logger.d("Launcher", "Registered: ClipboardPlugin");
       }
+    }
+  }
+
+  CommandPlugin {
+    id: cmdPlugin
+    Component.onCompleted: {
+      registerPlugin(this);
+      Logger.d("Launcher", "Registered: CommandPlugin");
     }
   }
 
@@ -648,6 +656,7 @@ SmartPanel {
           id: emojiCategoryTabs
           visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
           Layout.fillWidth: true
+          margins: Style.marginM
           property int computedCurrentIndex: {
             if (visible && emojiPlugin.categories) {
               return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
@@ -690,8 +699,9 @@ SmartPanel {
         // App category tabs (shown when browsing apps without search)
         NTabBar {
           id: appCategoryTabs
-          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">")
+          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
           Layout.fillWidth: true
+          margins: Style.marginM
           property int computedCurrentIndex: {
             if (visible && appsPlugin.availableCategories) {
               return appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);

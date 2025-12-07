@@ -140,6 +140,13 @@
           "stream-description": "Insira um comando para executar continuamente."
         },
         "dynamic-text": "Texto dinâmico",
+        "hide-mode": {
+          "alwaysExpanded": "Sempre expandido",
+          "description": "Controla a visibilidade do widget quando o comando não tem saída.",
+          "expandWithOutput": "Expandir quando tem saída",
+          "label": "Modo de ocultação",
+          "maxTransparent": "Totalmente expandido mas transparente"
+        },
         "icon": {
           "description": "Selecione um ícone da biblioteca.",
           "label": "Ícone"
@@ -174,6 +181,10 @@
           "description": "Comando a executar quando o botão é clicado com o botão direito.",
           "label": "Clique direito",
           "update-text": "Atualizar o texto exibido ao clicar com o botão direito."
+        },
+        "show-icon": {
+          "description": "Alterna a visibilidade do ícone do widget.",
+          "label": "Mostrar ícone"
         },
         "text-stream": {
           "description": "As linhas transmitidas do comando serão exibidas como texto no botão.",
@@ -343,6 +354,9 @@
           "description": "Definir a largura dos títulos de janelas na barra de tarefas (em pixels).",
           "label": "Largura do título",
           "reset-tooltip": "Redefinir largura do título"
+        "show-pinned-apps": {
+          "description": "Mostrar aplicativos fixados do Dock na barra de tarefas.",
+          "label": "Mostrar aplicativos fixados"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "Quando habilitado, os itens da bandeja não fixados são exibidos em um painel gaveta. Quando desabilitado, todos os itens da bandeja são exibidos inline.",
           "label": "Habilitar gaveta"
+        },
+        "hide-passive": {
+          "description": "Quando ativado, os itens da bandeja com status Passivo serão ocultados.",
+          "label": "Ocultar itens passivos"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "Diversos",
       "network": "Rede",
       "office": "Escritório",
+      "pinned": "Fixado",
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "pin": "Fixar no dock",
-    "unpin": "Desafixar do dock"
+    "pin": "Fixar",
+    "unpin": "Desafixar"
   },
   "lock-screen": {
     "authenticating": "Autenticando...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "Carregando histórico da área de transferência...",
     "clipboard-loading-description": "Por favor, aguarde",
     "clipboard-search-description": "Pesquisar no histórico da área de transferência",
+    "command": "Comando",
+    "command-description": "Executar comandos shell",
+    "command-name": "Comando",
     "emoji": "Seletor de emojis",
     "emoji-loading": "Carregando emojis...",
     "emoji-loading-description": "Por favor, aguarde",
@@ -1337,6 +1359,10 @@
           "description": "Aplicar cores do tema aos ícones de aplicativos da dock (apenas aplicativos não focados).",
           "label": "Colorir ícones"
         },
+        "dead-opacity": {
+          "description": "Ajustar a opacidade dos ícones de aplicativos que não estão em execução.",
+          "label": "Opacidade Morta"
+        },
         "display": {
           "always-visible": "Sempre visível",
           "auto-hide": "Ocultar automaticamente",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "Ajustar o tamanho geral do Dock.",
           "label": "Tamanho do Dock"
+        },
+        "inactive-indicators": {
+          "description": "Exibir indicadores de pílula para todos os aplicativos, não apenas para o aplicativo ativo no momento.",
+          "label": "Indicadores de execução"
+        },
+        "pinned-static": {
+          "description": "Sempre posicione os ícones de aplicativos fixados à esquerda em ordem estática.",
+          "label": "Aplicativos Fixados Estaticamente"
         },
         "section": {
           "description": "Personalize o comportamento e a aparência da dock.",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "Personalize o comportamento e a aparência do lançador.",
           "label": "Aparência"
+        },
+        "show-categories": {
+          "description": "Mostrar abas de categorias para filtrar aplicativos.",
+          "label": "Mostrar categorias"
         },
         "sort-by-usage": {
           "description": "Quando ativado, os aplicativos mais usados aparecem primeiro na lista.",

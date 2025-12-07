@@ -140,6 +140,13 @@
           "stream-description": "Voer een commando in dat continu wordt uitgevoerd."
         },
         "dynamic-text": "Dynamische tekst",
+        "hide-mode": {
+          "alwaysExpanded": "Altijd uitgeklapt",
+          "description": "Bepaalt de zichtbaarheid van de widget wanneer het commando geen uitvoer heeft.",
+          "expandWithOutput": "Uitklappen wanneer er uitvoer is",
+          "label": "Verbergmodus",
+          "maxTransparent": "Maximaal uitgeklapt maar transparant"
+        },
         "icon": {
           "description": "Selecteer een pictogram uit de bibliotheek.",
           "label": "Pictogram"
@@ -174,6 +181,10 @@
           "description": "Commando dat wordt uitgevoerd wanneer met de rechtermuisknop op de knop wordt geklikt.",
           "label": "Rechtermuisklik",
           "update-text": "Tekst bijwerken die wordt weergegeven bij rechtsklikken"
+        },
+        "show-icon": {
+          "description": "Schakelt de zichtbaarheid van het widgetpictogram.",
+          "label": "Pictogram weergeven"
         },
         "text-stream": {
           "description": "Gestreamde regels uit het commando worden als tekst op de knop weergegeven.",
@@ -343,6 +354,9 @@
           "description": "Stel de breedte van venstertitels in de taakbalk in (in pixels).",
           "label": "Titelbreedte",
           "reset-tooltip": "Titelbreedte resetten"
+        "show-pinned-apps": {
+          "description": "Toon vastgemaakte apps van het dock in de taakbalk.",
+          "label": "Toon vastgemaakte apps"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "Indien ingeschakeld worden niet-vastgemaakte systeemvakitems in een lade weergegeven. Indien uitgeschakeld worden alle items inline getoond.",
           "label": "Lade inschakelen"
+        },
+        "hide-passive": {
+          "description": "Indien ingeschakeld, worden tray-items met de status Passief verborgen.",
+          "label": "Verberg passieve items"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "Diversen",
       "network": "Netwerk",
       "office": "Kantoor",
+      "pinned": "Vastgemaakt",
       "system": "Systeem",
       "webbrowser": "Webbrowser"
     },
-    "pin": "Aan dock vastmaken",
-    "unpin": "Van dock losmaken"
+    "pin": "Vastmaken",
+    "unpin": "Losmaken"
   },
   "lock-screen": {
     "authenticating": "Bezig met verifiëren...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "Klembordgeschiedenis laden...",
     "clipboard-loading-description": "Even geduld",
     "clipboard-search-description": "Zoek in klembordgeschiedenis",
+    "command": "Commando",
+    "command-description": "Shell-opdrachten uitvoeren",
+    "command-name": "Commando",
     "emoji": "Emoji-kiezer",
     "emoji-loading": "Emoji's laden...",
     "emoji-loading-description": "Even geduld",
@@ -1337,6 +1359,10 @@
           "description": "Pas themakleuren toe op dock-pictogrammen (alleen niet-focuste apps).",
           "label": "Pictogrammen inkleuren"
         },
+        "dead-opacity": {
+          "description": "Pas de transparantie aan van app-iconen die niet actief zijn.",
+          "label": "Dode opaciteit"
+        },
         "display": {
           "always-visible": "Altijd zichtbaar",
           "auto-hide": "Automatisch verbergen",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "Pas de algehele grootte van de dock aan.",
           "label": "Grootte van de dock"
+        },
+        "inactive-indicators": {
+          "description": "Toon indicatorpillen voor alle apps, niet alleen de actieve.",
+          "label": "Lopende indicatoren"
+        },
+        "pinned-static": {
+          "description": "Zet vastgemaakte app-pictogrammen altijd in statische volgorde aan de linkerkant.",
+          "label": "Statische vastgezette apps"
         },
         "section": {
           "description": "Pas het gedrag en uiterlijk van de dock aan.",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "Pas het gedrag en uiterlijk van de launcher aan.",
           "label": "Uiterlijk"
+        },
+        "show-categories": {
+          "description": "Categorieën-tabbladen weergeven voor het filteren van applicaties.",
+          "label": "Categorieën weergeven"
         },
         "sort-by-usage": {
           "description": "Indien ingeschakeld, verschijnen vaak gestarte apps bovenaan in de lijst.",

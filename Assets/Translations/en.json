@@ -140,6 +140,13 @@
           "stream-description": "Enter a command to run continuously."
         },
         "dynamic-text": "Dynamic text",
+        "hide-mode": {
+          "alwaysExpanded": "Always expanded",
+          "description": "Controls widget visibility when the command has no output.",
+          "expandWithOutput": "Expand when has output",
+          "label": "Hide mode",
+          "maxTransparent": "Max expanded but transparent"
+        },
         "icon": {
           "description": "Select an icon from the library.",
           "label": "Icon"
@@ -174,6 +181,10 @@
           "description": "Command to execute when the button is right-clicked.",
           "label": "Right click",
           "update-text": "Update displayed text on right-click"
+        },
+        "show-icon": {
+          "description": "Toggles the visibility of the widget's icon.",
+          "label": "Show icon"
         },
         "text-stream": {
           "description": "Streamed lines from the command will be displayed as text on the button.",
@@ -343,6 +354,9 @@
           "description": "Set the width of window titles in the taskbar (in pixels).",
           "label": "Title width",
           "reset-tooltip": "Reset title width"
+        "show-pinned-apps": {
+          "description": "Show pinned apps from the dock in the taskbar.",
+          "label": "Show pinned apps"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "When enabled, unpinned tray items are shown in a drawer panel. When disabled, all tray items are shown inline.",
           "label": "Enable drawer"
+        },
+        "hide-passive": {
+          "description": "When enabled, tray items with Passive status will be hidden.",
+          "label": "Hide passive items"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "Misc",
       "network": "Network",
       "office": "Office",
+      "pinned": "Pinned",
       "system": "System",
       "webbrowser": "Web Browser"
     },
-    "pin": "Pin to dock",
-    "unpin": "Unpin from dock"
+    "pin": "Pin",
+    "unpin": "Unpin"
   },
   "lock-screen": {
     "authenticating": "Authenticating...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "Loading clipboard history...",
     "clipboard-loading-description": "Please wait",
     "clipboard-search-description": "Search clipboard history",
+    "command": "Command",
+    "command-description": "Run shell commands",
+    "command-name": "Command",
     "emoji": "Emoji picker",
     "emoji-loading": "Loading emojis...",
     "emoji-loading-description": "Please wait",
@@ -1337,6 +1359,10 @@
           "description": "Apply theme colors to dock app icons (non-focused apps only).",
           "label": "Colorize Icons"
         },
+        "dead-opacity": {
+          "description": "Adjust the opacity of app icons that are not running.",
+          "label": "Dead Opacity"
+        },
         "display": {
           "always-visible": "Always visible",
           "auto-hide": "Auto hide",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "Adjust the overall size of the dock.",
           "label": "Dock size"
+        },
+        "inactive-indicators": {
+          "description": "Display indicatator pills for all apps, not just the currently active one.",
+          "label": "Running Indicators"
+        },
+        "pinned-static": {
+          "description": "Always push pinned app icons to the left in static order.",
+          "label": "Static Pinned Apps"
         },
         "section": {
           "description": "Customize the dock's behavior and appearance.",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "Customize the launcher's behavior and appearance.",
           "label": "Appearance"
+        },
+        "show-categories": {
+          "description": "Show category tabs for filtering applications.",
+          "label": "Show categories"
         },
         "sort-by-usage": {
           "description": "When enabled, frequently launched apps appear first in the list.",

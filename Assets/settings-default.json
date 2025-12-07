@@ -175,7 +175,8 @@
     "terminalCommand": "xterm -e",
     "customLaunchPrefixEnabled": false,
     "customLaunchPrefix": "",
-    "viewMode": "list"
+    "viewMode": "list",
+    "showCategories": true
   },
   "controlCenter": {
     "position": "close_to_bar_button",
@@ -376,9 +377,6 @@
     "dayTemp": "6500",
     "manualSunrise": "06:30",
     "manualSunset": "18:30"
-  },
-  "changelog": {
-    "lastSeenVersion": ""
   },
   "hooks": {
     "enabled": false,

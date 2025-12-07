@@ -21,6 +21,7 @@ ColumnLayout {
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
   property bool valueShowTitle: isVerticalBar ? false : widgetData.showTitle !== undefined ? widgetData.showTitle : widgetMetadata.showTitle
   property int valueTitleWidth: widgetData.titleWidth !== undefined ? widgetData.titleWidth : widgetMetadata.titleWidth
+  property bool valueShowPinnedApps: widgetData.showPinnedApps !== undefined ? widgetData.showPinnedApps : widgetMetadata.showPinnedApps
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -38,6 +39,7 @@ ColumnLayout {
     settings.colorizeIcons = valueColorizeIcons;
     settings.showTitle = valueShowTitle;
     settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
+    settings.showPinnedApps = valueShowPinnedApps;
     return settings;
   }
 
@@ -104,5 +106,9 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.taskbar.title-width.description")
     text: widgetData.titleWidth || widgetMetadata.titleWidth
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
+    label: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.label")
+    description: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.description")
+    checked: root.valueShowPinnedApps
+    onToggled: checked => root.valueShowPinnedApps = checked
   }
 }

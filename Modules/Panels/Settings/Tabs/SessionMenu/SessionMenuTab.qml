@@ -510,4 +510,10 @@ ColumnLayout {
       }
     }
   }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
+  }
 }

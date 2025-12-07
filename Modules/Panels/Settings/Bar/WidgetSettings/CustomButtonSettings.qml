@@ -18,6 +18,8 @@ ColumnLayout {
   property bool valueParseJson: widgetData.parseJson !== undefined ? widgetData.parseJson : widgetMetadata.parseJson
   property int valueMaxTextLengthHorizontal: widgetData?.maxTextLength?.horizontal ?? widgetMetadata?.maxTextLength?.horizontal
   property int valueMaxTextLengthVertical: widgetData?.maxTextLength?.vertical ?? widgetMetadata?.maxTextLength?.vertical
+  property string valueHideMode: (widgetData.hideMode !== undefined) ? widgetData.hideMode : widgetMetadata.hideMode
+  property bool valueShowIcon: (widgetData.showIcon !== undefined) ? widgetData.showIcon : widgetMetadata.showIcon
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -39,6 +41,8 @@ ColumnLayout {
     settings.textCollapse = textCollapseInput.text;
     settings.textStream = valueTextStream;
     settings.parseJson = valueParseJson;
+    settings.showIcon = valueShowIcon;
+    settings.hideMode = valueHideMode;
     settings.maxTextLength = {
       "horizontal": valueMaxTextLengthHorizontal,
       "vertical": valueMaxTextLengthVertical
@@ -86,6 +90,15 @@ ColumnLayout {
         onIconSelected: function (iconName) {
           valueIcon = iconName;
         }
+      }
+
+      NToggle {
+        id: showIconToggle
+        label: I18n.tr("bar.widget-settings.custom-button.show-icon.label", "Show icon")
+        description: I18n.tr("bar.widget-settings.custom-button.show-icon.description", "Toggles the visibility of the widget's icon.")
+        checked: valueShowIcon
+        onToggled: checked => valueShowIcon = checked
+        visible: textCommandInput.text !== ""
       }
 
       RowLayout {
@@ -166,7 +179,7 @@ ColumnLayout {
         Layout.fillWidth: true
         label: I18n.tr("bar.widget-settings.custom-button.wheel-mode-separate.label", "Separate wheel commands")
         description: I18n.tr("bar.widget-settings.custom-button.wheel-mode-separate.description", "Enable separate commands for wheel up and down")
-        property bool internalChecked: (widgetData?.wheelMode || widgetMetadata?.wheelMode || "unified") === "separate"
+        property bool internalChecked: (widgetData?.wheelMode || widgetMetadata?.wheelMode) === "separate"
         checked: internalChecked
         onToggled: checked => {
                      internalChecked = checked;
@@ -188,7 +201,7 @@ ColumnLayout {
             label: I18n.tr("bar.widget-settings.custom-button.wheel.label")
             description: I18n.tr("bar.widget-settings.custom-button.wheel.description")
             placeholderText: I18n.tr("placeholders.enter-command")
-            text: widgetData?.wheelExec || widgetMetadata?.wheelExec || ""
+            text: widgetData?.wheelExec || widgetMetadata?.wheelExec
           }
 
           NToggle {
@@ -217,7 +230,7 @@ ColumnLayout {
               label: I18n.tr("bar.widget-settings.custom-button.wheel-up.label")
               description: I18n.tr("bar.widget-settings.custom-button.wheel-up.description")
               placeholderText: I18n.tr("placeholders.enter-command")
-              text: widgetData?.wheelUpExec || widgetMetadata?.wheelUpExec || ""
+              text: widgetData?.wheelUpExec || widgetMetadata?.wheelUpExec
             }
 
             NToggle {
@@ -227,7 +240,7 @@ ColumnLayout {
               Layout.bottomMargin: Style.marginS
               onEntered: TooltipService.show(wheelUpUpdateText, I18n.tr("bar.widget-settings.custom-button.wheel.update-text"), "auto")
               onExited: TooltipService.hide()
-              checked: (widgetData?.wheelUpUpdateText !== undefined) ? widgetData.wheelUpUpdateText : (widgetMetadata?.wheelUpUpdateText ?? false)
+              checked: (widgetData?.wheelUpUpdateText !== undefined) ? widgetData.wheelUpUpdateText : widgetMetadata?.wheelUpUpdateText
               onToggled: isChecked => checked = isChecked
             }
           }
@@ -241,7 +254,7 @@ ColumnLayout {
               label: I18n.tr("bar.widget-settings.custom-button.wheel-down.label")
               description: I18n.tr("bar.widget-settings.custom-button.wheel-down.description")
               placeholderText: I18n.tr("placeholders.enter-command")
-              text: widgetData?.wheelDownExec || widgetMetadata?.wheelDownExec || ""
+              text: widgetData?.wheelDownExec || widgetMetadata?.wheelDownExec
             }
 
             NToggle {
@@ -251,7 +264,7 @@ ColumnLayout {
               Layout.bottomMargin: Style.marginS
               onEntered: TooltipService.show(wheelDownUpdateText, I18n.tr("bar.widget-settings.custom-button.wheel.update-text"), "auto")
               onExited: TooltipService.hide()
-              checked: (widgetData?.wheelDownUpdateText !== undefined) ? widgetData.wheelDownUpdateText : (widgetMetadata?.wheelDownUpdateText ?? false)
+              checked: (widgetData?.wheelDownUpdateText !== undefined) ? widgetData.wheelDownUpdateText : widgetMetadata?.wheelDownUpdateText
               onToggled: isChecked => checked = isChecked
             }
           }
@@ -325,8 +338,31 @@ ColumnLayout {
         visible: !valueTextStream
         label: I18n.tr("bar.widget-settings.custom-button.refresh-interval.label")
         description: I18n.tr("bar.widget-settings.custom-button.refresh-interval.description")
-        placeholderText: String(widgetMetadata.textIntervalMs || 3000)
+        placeholderText: String(widgetMetadata.textIntervalMs)
         text: widgetData && widgetData.textIntervalMs !== undefined ? String(widgetData.textIntervalMs) : ""
+      }
+
+      NComboBox {
+        id: hideModeComboBox
+        label: I18n.tr("bar.widget-settings.custom-button.hide-mode.label", "Hide mode")
+        description: I18n.tr("bar.widget-settings.custom-button.hide-mode.description", "Controls widget visibility when the command has no output.")
+        model: [
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.alwaysExpanded", "Always expanded"),
+            key: "alwaysExpanded"
+          },
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.expandWithOutput", "Expand when has output"),
+            key: "expandWithOutput"
+          },
+          {
+            name: I18n.tr("bar.widget-settings.custom-button.hide-mode.maxTransparent", "Max expanded but transparent"),
+            key: "maxTransparent"
+          }
+        ]
+        currentKey: valueHideMode
+        onSelected: key => valueHideMode = key
+        visible: textCommandInput.text !== "" && valueTextStream == true
       }
     }
   }

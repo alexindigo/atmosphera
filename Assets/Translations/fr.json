@@ -140,6 +140,13 @@
           "stream-description": "Entrez une commande à exécuter en continu."
         },
         "dynamic-text": "Texte dynamique",
+        "hide-mode": {
+          "alwaysExpanded": "Toujours étendu",
+          "description": "Contrôle la visibilité du widget quand la commande n'a pas de sortie.",
+          "expandWithOutput": "Étendre quand il y a une sortie",
+          "label": "Mode masqué",
+          "maxTransparent": "Étendu au maximum mais transparent"
+        },
         "icon": {
           "description": "Sélectionnez une icône dans la bibliothèque.",
           "label": "Icône"
@@ -174,6 +181,10 @@
           "description": "Commande à exécuter quand le bouton est cliqué à droite.",
           "label": "Clic droit",
           "update-text": "Mettre à jour le texte affiché lors d'un clic droit."
+        },
+        "show-icon": {
+          "description": "Bascule la visibilité de l'icône du widget.",
+          "label": "Afficher l'icône"
         },
         "text-stream": {
           "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
@@ -343,6 +354,9 @@
           "description": "Définir la largeur des titres de fenêtres dans la barre des tâches (en pixels).",
           "label": "Largeur du titre",
           "reset-tooltip": "Réinitialiser la largeur du titre"
+        "show-pinned-apps": {
+          "description": "Afficher les applications épinglées du dock dans la barre des tâches.",
+          "label": "Afficher les applications épinglées"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir. Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",
           "label": "Activer le tiroir"
+        },
+        "hide-passive": {
+          "description": "Lorsque cette option est activée, les éléments de la barre d'état système ayant le statut Passif seront masqués.",
+          "label": "Masquer les objets passifs"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "Divers",
       "network": "Réseau",
       "office": "Bureau",
+      "pinned": "Épinglé",
       "system": "Système",
       "webbrowser": "Navigateur web"
     },
-    "pin": "Épingler au dock",
-    "unpin": "Retirer du dock"
+    "pin": "Épingler",
+    "unpin": "Détacher"
   },
   "lock-screen": {
     "authenticating": "Authentification...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "Chargement de l'historique du presse-papiers...",
     "clipboard-loading-description": "Veuillez patienter",
     "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
+    "command": "Commande",
+    "command-description": "Exécuter des commandes shell",
+    "command-name": "Commande",
     "emoji": "Sélecteur d'émojis",
     "emoji-loading": "Chargement des émojis...",
     "emoji-loading-description": "Veuillez patienter",
@@ -1337,6 +1359,10 @@
           "description": "Appliquer les couleurs du thème aux icônes d'applications du dock (applications non focalisées uniquement).",
           "label": "Coloriser les icônes"
         },
+        "dead-opacity": {
+          "description": "Ajuster l'opacité des icônes d'applications qui ne sont pas en cours d'exécution.",
+          "label": "Opacité morte"
+        },
         "display": {
           "always-visible": "Toujours visible",
           "auto-hide": "Masquer automatiquement",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "Ajuster la taille globale du Dock.",
           "label": "Taille du Dock"
+        },
+        "inactive-indicators": {
+          "description": "Afficher les pastilles d'indicateur pour toutes les applications, pas seulement celle qui est active.",
+          "label": "Indicateurs de fonctionnement"
+        },
+        "pinned-static": {
+          "description": "Toujours pousser les icônes d'applications épinglées vers la gauche dans un ordre statique.",
+          "label": "Applications épinglées statiques"
         },
         "section": {
           "description": "Personnalisez le comportement et l'apparence du dock.",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "Personnalisez le comportement et l'apparence du lanceur.",
           "label": "Apparence"
+        },
+        "show-categories": {
+          "description": "Afficher les onglets de catégories pour filtrer les applications.",
+          "label": "Afficher les catégories"
         },
         "sort-by-usage": {
           "description": "Lorsque cette option est activée, les applications fréquemment lancées apparaissent en premier dans la liste.",

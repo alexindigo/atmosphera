@@ -140,6 +140,13 @@
           "stream-description": "输入一个要持续运行的命令。"
         },
         "dynamic-text": "动态文本",
+        "hide-mode": {
+          "alwaysExpanded": "始终展开",
+          "description": "控制命令无输出时小部件的可见性。",
+          "expandWithOutput": "有输出时展开",
+          "label": "隐藏模式",
+          "maxTransparent": "最大展开但透明"
+        },
         "icon": {
           "description": "从库中选择图标。",
           "label": "图标"
@@ -174,6 +181,10 @@
           "description": "右键点击按钮时执行的命令。",
           "label": "右键点击",
           "update-text": "右键单击时更新显示的文本"
+        },
+        "show-icon": {
+          "description": "切换小部件图标的可见性。",
+          "label": "显示图标"
         },
         "text-stream": {
           "description": "来自命令的流式输出行将作为文本显示在按钮上。",
@@ -343,6 +354,9 @@
           "description": "设置任务栏中窗口标题的宽度（以像素为单位）。",
           "label": "标题宽度",
           "reset-tooltip": "重置标题宽度"
+        "show-pinned-apps": {
+          "description": "在任务栏中显示 Dock 上固定的应用。",
+          "label": "显示已置顶的应用"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "启用时，未固定的托盘项显示在抽屉面板中。禁用时，所有托盘项都内联显示。",
           "label": "启用抽屉"
+        },
+        "hide-passive": {
+          "description": "启用后，将隐藏状态为“被动”的托盘图标。",
+          "label": "隐藏被动物品"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "杂项",
       "network": "网络",
       "office": "办公室",
+      "pinned": "已固定",
       "system": "系统",
       "webbrowser": "网页浏览器"
     },
-    "pin": "固定到 Dock",
-    "unpin": "从 Dock 取消固定"
+    "pin": "固定",
+    "unpin": "取消固定"
   },
   "lock-screen": {
     "authenticating": "正在验证...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "正在加载剪贴板历史记录...",
     "clipboard-loading-description": "请稍候",
     "clipboard-search-description": "搜索剪贴板历史记录",
+    "command": "命令",
+    "command-description": "运行 shell 命令",
+    "command-name": "命令",
     "emoji": "表情符号选择器",
     "emoji-loading": "正在加载表情符号...",
     "emoji-loading-description": "请稍候",
@@ -1337,6 +1359,10 @@
           "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。",
           "label": "着色图标"
         },
+        "dead-opacity": {
+          "description": "调整未运行的应用程序图标的不透明度。",
+          "label": "死亡不透明度"
+        },
         "display": {
           "always-visible": "始终可见",
           "auto-hide": "自动隐藏",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "调整 Dock 的整体大小。",
           "label": "Dock 大小"
+        },
+        "inactive-indicators": {
+          "description": "为所有应用显示指示器小药丸，而不仅仅是当前活跃的应用。",
+          "label": "运行指标"
+        },
+        "pinned-static": {
+          "description": "始终将固定的应用图标按静态顺序推到左侧。",
+          "label": "静态固定应用"
         },
         "section": {
           "description": "自定义 Dock 的行为和外观。",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "自定义启动器的行为和外观。",
           "label": "外观"
+        },
+        "show-categories": {
+          "description": "显示用于筛选应用程序的类别标签。",
+          "label": "显示类别"
         },
         "sort-by-usage": {
           "description": "启用后，经常启动的应用程序将显示在列表首位。",

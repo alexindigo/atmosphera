@@ -120,6 +120,8 @@ Singleton {
                                   "CustomButton": {
                                     "allowUserSettings": true,
                                     "icon": "heart",
+                                    "showIcon": true,
+                                    "hideMode": "alwaysExpanded",
                                     "leftClickExec": "",
                                     "leftClickUpdateText": false,
                                     "rightClickExec": "",
@@ -205,6 +207,7 @@ Singleton {
                                     "colorizeIcons": false,
                                     "showTitle": false,
                                     "titleWidth": 120
+                                    "showPinnedApps": true
                                   },
                                   "TaskbarGrouped": {
                                     "allowUserSettings": true,

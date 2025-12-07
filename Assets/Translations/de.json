@@ -140,6 +140,13 @@
           "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
         "dynamic-text": "Dynamischer Text",
+        "hide-mode": {
+          "alwaysExpanded": "Immer erweitert",
+          "description": "Steuert die Sichtbarkeit des Widgets, wenn der Befehl keine Ausgabe hat.",
+          "expandWithOutput": "Mit Ausgabe erweitern",
+          "label": "Ausblendmodus",
+          "maxTransparent": "Maximal erweitert aber transparent"
+        },
         "icon": {
           "description": "Symbol aus der Bibliothek auswählen.",
           "label": "Symbol"
@@ -174,6 +181,10 @@
           "description": "Befehl, der ausgeführt wird, wenn die Schaltfläche rechts angeklickt wird.",
           "label": "Rechtsklick",
           "update-text": "Text beim Rechtsklick aktualisieren"
+        },
+        "show-icon": {
+          "description": "Schaltet die Sichtbarkeit des Widget-Symbols um.",
+          "label": "Symbol anzeigen"
         },
         "text-stream": {
           "description": "Gestreamte Zeilen aus dem Befehl werden als Text auf der Schaltfläche angezeigt.",
@@ -343,6 +354,9 @@
           "description": "Breite der Fenstertitel in der Taskleiste festlegen (in Pixel).",
           "label": "Titelbreite",
           "reset-tooltip": "Titelbreite zurücksetzen"
+        "show-pinned-apps": {
+          "description": "Angeheftete Apps aus dem Dock in der Taskleiste anzeigen.",
+          "label": "Angeheftete Apps anzeigen"
         }
       },
       "taskbar-grouped": {
@@ -359,6 +373,10 @@
         "drawer-enabled": {
           "description": "Wenn aktiviert, werden nicht angeheftete Tray-Elemente in einem Schubladen-Panel angezeigt. Wenn deaktiviert, werden alle Tray-Elemente inline angezeigt.",
           "label": "Schublade aktivieren"
+        },
+        "hide-passive": {
+          "description": "Wenn aktiviert, werden Tray-Elemente mit dem Status \"Passiv\" ausgeblendet.",
+          "label": "Passive Gegenstände ausblenden"
         }
       },
       "volume": {
@@ -531,11 +549,12 @@
       "misc": "Verschiedenes",
       "network": "Netzwerk",
       "office": "Büro",
+      "pinned": "Angeheftet",
       "system": "System",
       "webbrowser": "Webbrowser"
     },
-    "pin": "An das Dock anheften",
-    "unpin": "Vom Dock lösen"
+    "pin": "Anheften",
+    "unpin": "Lösen"
   },
   "lock-screen": {
     "authenticating": "Authentifizierung...",
@@ -736,6 +755,9 @@
     "clipboard-loading": "Lade Zwischenablageverlauf...",
     "clipboard-loading-description": "Bitte warten",
     "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
+    "command": "Befehl",
+    "command-description": "Shell-Befehle ausführen",
+    "command-name": "Befehl",
     "emoji": "Emoji-Auswahl",
     "emoji-loading": "Lade Emojis...",
     "emoji-loading-description": "Bitte warten",
@@ -1337,6 +1359,10 @@
           "description": "Theme-Farben auf Dock-App-Symbole anwenden (nur nicht fokussierte Apps).",
           "label": "Symbole einfärben"
         },
+        "dead-opacity": {
+          "description": "Die Deckkraft von App-Symbolen anpassen, die nicht ausgeführt werden.",
+          "label": "Tote Opazität"
+        },
         "display": {
           "always-visible": "Immer sichtbar",
           "auto-hide": "Automatisch ausblenden",
@@ -1351,6 +1377,14 @@
         "icon-size": {
           "description": "Gesamtgröße des Docks anpassen.",
           "label": "Dock-Größe"
+        },
+        "inactive-indicators": {
+          "description": "Anzeige von Indikator-Pillen für alle Apps, nicht nur für die aktuell aktive.",
+          "label": "Laufende Indikatoren"
+        },
+        "pinned-static": {
+          "description": "Gepinnten App-Symbole immer in statischer Reihenfolge nach links schieben.",
+          "label": "Statische angeheftete Apps"
         },
         "section": {
           "description": "Verhalten und Erscheinungsbild des Docks anpassen.",
@@ -1512,6 +1546,10 @@
         "section": {
           "description": "Verhalten und Erscheinungsbild des Starters anpassen.",
           "label": "Erscheinungsbild"
+        },
+        "show-categories": {
+          "description": "Kategorienregisterkarten zum Filtern von Anwendungen anzeigen.",
+          "label": "Kategorien anzeigen"
         },
         "sort-by-usage": {
           "description": "Wenn aktiviert, erscheinen häufig gestartete Apps zuerst in der Liste.",
