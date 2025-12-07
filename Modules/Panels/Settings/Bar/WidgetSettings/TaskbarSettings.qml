@@ -91,6 +91,14 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.label")
+    description: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.description")
+    checked: root.valueShowPinnedApps
+    onToggled: checked => root.valueShowPinnedApps = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.taskbar.show-title.label")
     description: isVerticalBar ? I18n.tr("bar.widget-settings.taskbar.show-title.description-disabled") : I18n.tr("bar.widget-settings.taskbar.show-title.description")
     checked: root.valueShowTitle
@@ -106,9 +114,5 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.taskbar.title-width.description")
     text: widgetData.titleWidth || widgetMetadata.titleWidth
     placeholderText: I18n.tr("placeholders.enter-width-pixels")
-    label: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.label")
-    description: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.description")
-    checked: root.valueShowPinnedApps
-    onToggled: checked => root.valueShowPinnedApps = checked
   }
 }
