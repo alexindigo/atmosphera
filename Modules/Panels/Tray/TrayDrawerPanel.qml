@@ -73,14 +73,21 @@ SmartPanel {
   // Dynamic sizing based on item count
   // Show items that are NOT pinned (unpinned items go to drawer)
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
-  readonly property var trayValues: trayValuesAll.filter(function (it) {
-    // Filter out passive items if hidePassive is enabled
-    if (root.hidePassive && it.status === SystemTray.Passive) {
-      return false;
-    }
-    // Filter out pinned items (they show in the bar)
-    return !root.isPinned(it);
-  })
+  // Explicitly reference hidePassive to ensure reactivity
+  readonly property var trayValues: {
+    var _ = root.hidePassive; // Force dependency tracking
+    return trayValuesAll.filter(function (it) {
+      if (!it)
+        return false;
+      // Filter out passive items if hidePassive is enabled
+      // Check if status exists and is Passive (using both enum and numeric comparison for safety)
+      if (root.hidePassive && it.status !== undefined && (it.status === SystemTray.Passive || it.status === 0)) {
+        return false;
+      }
+      // Filter out pinned items (they show in the bar)
+      return !root.isPinned(it);
+    });
+  }
   readonly property int itemCount: trayValues.length
   readonly property int maxColumns: 8
   readonly property real cellSize: Math.round(Style.capsuleHeight * 0.65)
