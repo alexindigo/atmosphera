@@ -105,8 +105,12 @@ Singleton {
 
     var name = (device.name || device.deviceName || "").toLowerCase();
     var icon = (device.icon || "").toLowerCase();
-        if (icon.includes("microphone") || name.includes("microphone")) {
+
+    if (icon.includes("microphone") || name.includes("microphone")) {
       return "bt-device-microphone";
+    }
+    if (name.includes("pod") || name.includes("bud") || name.includes("minor")) {
+      return "bt-device-earbuds";
     }
     if (icon.includes("headset")  || name.includes("arctis") || name.includes("headset") || name.includes("major")) {
       return "bt-device-headset";
@@ -128,9 +132,6 @@ Singleton {
     }
     if (icon.includes("display") || name.includes("tv")) {
       return "bt-device-tv";
-    }
-    if (icon.includes("earbud") || name.includes("pod") || name.includes("bud") || name.includes("minor")) {
-      return "bt-device-earbuds";
     }
     if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung")) {
       return "bt-device-phone";
