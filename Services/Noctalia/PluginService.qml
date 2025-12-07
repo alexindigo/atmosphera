@@ -1065,12 +1065,10 @@ Singleton {
 
         // If this slot is empty, use it
         if (panel.currentPluginId === "") {
-          // Open the panel first so the loader gets created
+          // Set the pluginId first - when panel opens and panelContent loads,
+          // Component.onCompleted will call loadPluginPanel automatically
+          panel.currentPluginId = pluginId;
           panel.open();
-          // Wait a brief moment for the panel to be fully created
-          Qt.callLater(function () {
-            panel.loadPluginPanel(pluginId);
-          });
           return true;
         }
       }
@@ -1080,10 +1078,10 @@ Singleton {
     var panel1 = PanelService.getPanel("pluginPanel1", screen);
     if (panel1) {
       panel1.unloadPluginPanel();
+      // Set the pluginId first - when panel opens and panelContent loads,
+      // Component.onCompleted will call loadPluginPanel automatically
+      panel1.currentPluginId = pluginId;
       panel1.open();
-      Qt.callLater(function () {
-        panel1.loadPluginPanel(pluginId);
-      });
       return true;
     }
 
