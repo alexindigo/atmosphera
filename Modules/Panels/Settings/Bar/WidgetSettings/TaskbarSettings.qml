@@ -12,11 +12,15 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
+  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+
   // Local state
   property string valueHideMode: "hidden"
   property bool valueOnlyActiveWorkspaces: widgetData.onlyActiveWorkspaces !== undefined ? widgetData.onlyActiveWorkspaces : widgetMetadata.onlyActiveWorkspaces
   property bool valueOnlySameOutput: widgetData.onlySameOutput !== undefined ? widgetData.onlySameOutput : widgetMetadata.onlySameOutput
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+  property bool valueShowTitle: isVerticalBar ? false : widgetData.showTitle !== undefined ? widgetData.showTitle : widgetMetadata.showTitle
+  property int valueTitleWidth: widgetData.titleWidth !== undefined ? widgetData.titleWidth : widgetMetadata.titleWidth
   property bool valueShowPinnedApps: widgetData.showPinnedApps !== undefined ? widgetData.showPinnedApps : widgetMetadata.showPinnedApps
 
   Component.onCompleted: {
@@ -33,6 +37,8 @@ ColumnLayout {
     settings.onlySameOutput = valueOnlySameOutput;
     settings.onlyActiveWorkspaces = valueOnlyActiveWorkspaces;
     settings.colorizeIcons = valueColorizeIcons;
+    settings.showTitle = valueShowTitle;
+    settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
     settings.showPinnedApps = valueShowPinnedApps;
     return settings;
   }
@@ -85,6 +91,21 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.taskbar.show-title.label")
+    description: isVerticalBar ? I18n.tr("bar.widget-settings.taskbar.show-title.description-disabled") : I18n.tr("bar.widget-settings.taskbar.show-title.description")
+    checked: root.valueShowTitle
+    onToggled: checked => root.valueShowTitle = checked
+    enabled: !isVerticalBar
+  }
+
+  NTextInput {
+    id: titleWidthInput
+    visible: root.valueShowTitle && !isVerticalBar
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.taskbar.title-width.label")
+    description: I18n.tr("bar.widget-settings.taskbar.title-width.description")
+    text: widgetData.titleWidth || widgetMetadata.titleWidth
+    placeholderText: I18n.tr("placeholders.enter-width-pixels")
     label: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.label")
     description: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.description")
     checked: root.valueShowPinnedApps

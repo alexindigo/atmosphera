@@ -205,6 +205,8 @@ Singleton {
                                     "onlyActiveWorkspaces": true,
                                     "hideMode": "hidden",
                                     "colorizeIcons": false,
+                                    "showTitle": false,
+                                    "titleWidth": 120
                                     "showPinnedApps": true
                                   },
                                   "TaskbarGrouped": {
