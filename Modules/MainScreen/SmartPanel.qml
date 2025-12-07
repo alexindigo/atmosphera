@@ -68,37 +68,12 @@ Item {
 
   property bool exclusiveKeyboard: true
 
-  // Keyboard event handlers - override these in specific panels to handle shortcuts
+  // Keyboard event handler
   // These are called from MainScreen's centralized shortcuts
+  // override these in specific panels to handle shortcuts
   function onEscapePressed() {
     if (closeWithEscape)
       close();
-  }
-  function onTabPressed() {
-  }
-  function onBackTabPressed() {
-  }
-  function onUpPressed() {
-  }
-  function onDownPressed() {
-  }
-  function onLeftPressed() {
-  }
-  function onRightPressed() {
-  }
-  function onReturnPressed() {
-  }
-  function onHomePressed() {
-  }
-  function onEndPressed() {
-  }
-  function onPageUpPressed() {
-  }
-  function onPageDownPressed() {
-  }
-  function onCtrlJPressed() {
-  }
-  function onCtrlKPressed() {
   }
 
   // Expose panel region for background rendering
