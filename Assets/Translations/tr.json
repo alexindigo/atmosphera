@@ -1350,6 +1350,10 @@
           "description": "Rıhtım uygulama simgelerine tema renklerini uygulayın (sadece odaklanılmamış uygulamalar).",
           "label": "Simgeleri Renklendir"
         },
+        "dead-opacity": {
+          "description": "Çalışmayan uygulama simgelerinin opaklığını ayarlayın.",
+          "label": "Ölü Opaklık"
+        },
         "display": {
           "always-visible": "Her zaman görünür",
           "auto-hide": "Otomatik gizle",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "Rıhtımın genel boyutunu ayarlayın.",
           "label": "Rıhtım boyutu"
+        },
+        "inactive-indicators": {
+          "description": "Tüm uygulamalar için, sadece etkin olan için değil, gösterge haplarını göster.",
+          "label": "Çalışan Göstergeler"
+        },
+        "pinned-static": {
+          "description": "Sabit sırada, sabitlenmiş uygulama simgelerini her zaman sola itin.",
+          "label": "Sabitlenmiş Statik Uygulamalar"
         },
         "section": {
           "description": "Rıhtımın davranışını ve görünümünü özelleştirin.",

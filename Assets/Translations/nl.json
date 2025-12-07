@@ -1350,6 +1350,10 @@
           "description": "Pas themakleuren toe op dock-pictogrammen (alleen niet-focuste apps).",
           "label": "Pictogrammen inkleuren"
         },
+        "dead-opacity": {
+          "description": "Pas de transparantie aan van app-iconen die niet actief zijn.",
+          "label": "Dode opaciteit"
+        },
         "display": {
           "always-visible": "Altijd zichtbaar",
           "auto-hide": "Automatisch verbergen",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "Pas de algehele grootte van de dock aan.",
           "label": "Grootte van de dock"
+        },
+        "inactive-indicators": {
+          "description": "Toon indicatorpillen voor alle apps, niet alleen de actieve.",
+          "label": "Lopende indicatoren"
+        },
+        "pinned-static": {
+          "description": "Zet vastgemaakte app-pictogrammen altijd in statische volgorde aan de linkerkant.",
+          "label": "Statische vastgezette apps"
         },
         "section": {
           "description": "Pas het gedrag en uiterlijk van de dock aan.",

@@ -114,7 +114,7 @@ Singleton {
     if (name.includes("pod") || name.includes("bud") || name.includes("minor")) {
       return "bt-device-earbuds";
     }
-    if (icon.includes("headset")  || name.includes("arctis") || name.includes("headset") || name.includes("major")) {
+    if (icon.includes("headset") || name.includes("arctis") || name.includes("headset") || name.includes("major")) {
       return "bt-device-headset";
     }
     if (icon.includes("headphone") || name.includes("headphone")) {

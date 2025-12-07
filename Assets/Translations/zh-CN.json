@@ -1350,6 +1350,10 @@
           "description": "将主题颜色应用到 Dock 应用图标（仅限非聚焦应用）。",
           "label": "着色图标"
         },
+        "dead-opacity": {
+          "description": "调整未运行的应用程序图标的不透明度。",
+          "label": "死亡不透明度"
+        },
         "display": {
           "always-visible": "始终可见",
           "auto-hide": "自动隐藏",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "调整 Dock 的整体大小。",
           "label": "Dock 大小"
+        },
+        "inactive-indicators": {
+          "description": "为所有应用显示指示器小药丸，而不仅仅是当前活跃的应用。",
+          "label": "运行指标"
+        },
+        "pinned-static": {
+          "description": "始终将固定的应用图标按静态顺序推到左侧。",
+          "label": "静态固定应用"
         },
         "section": {
           "description": "自定义 Dock 的行为和外观。",

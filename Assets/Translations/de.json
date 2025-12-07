@@ -1350,6 +1350,10 @@
           "description": "Theme-Farben auf Dock-App-Symbole anwenden (nur nicht fokussierte Apps).",
           "label": "Symbole einfärben"
         },
+        "dead-opacity": {
+          "description": "Die Deckkraft von App-Symbolen anpassen, die nicht ausgeführt werden.",
+          "label": "Tote Opazität"
+        },
         "display": {
           "always-visible": "Immer sichtbar",
           "auto-hide": "Automatisch ausblenden",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "Gesamtgröße des Docks anpassen.",
           "label": "Dock-Größe"
+        },
+        "inactive-indicators": {
+          "description": "Anzeige von Indikator-Pillen für alle Apps, nicht nur für die aktuell aktive.",
+          "label": "Laufende Indikatoren"
+        },
+        "pinned-static": {
+          "description": "Gepinnten App-Symbole immer in statischer Reihenfolge nach links schieben.",
+          "label": "Statische angeheftete Apps"
         },
         "section": {
           "description": "Verhalten und Erscheinungsbild des Docks anpassen.",

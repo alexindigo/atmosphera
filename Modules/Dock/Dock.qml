@@ -148,46 +148,46 @@ Loader {
 
         //push an app onto combined with the given appType
         function pushApp(appType, toplevel, appId, title) {
-            if (!processedAppIds.has(appId) && !(toplevel && Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
-                combined.push({
-                    "type": appType,
-                    "toplevel": toplevel,
-                    "appId": appId,
-                    "title": title
-                });
-                processedAppIds.add(appId);
-            }
+          if (!processedAppIds.has(appId) && !(toplevel && Settings.data.dock.onlySameOutput && toplevel.screens && !toplevel.screens.includes(modelData))) {
+            combined.push({
+                            "type": appType,
+                            "toplevel": toplevel,
+                            "appId": appId,
+                            "title": title
+                          });
+            processedAppIds.add(appId);
+          }
         }
 
         function pushRunning(first) {
-            runningApps.forEach(toplevel => {
-                if (toplevel) {
-                    pushApp((first && pinnedApps.includes(toplevel.appId)) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
-                }
-            });
+          runningApps.forEach(toplevel => {
+                                if (toplevel) {
+                                  pushApp((first && pinnedApps.includes(toplevel.appId)) ? "pinned-running" : "running", toplevel, toplevel.appId, toplevel.title);
+                                }
+                              });
         }
 
         function pushPinned() {
-            pinnedApps.forEach(pinnedAppId => {
-                var toplevel = null;
-                for (var app of runningApps) {
-                    if (app.appId === pinnedAppId) {
-                        toplevel = app;
-                    }
-                }
-                pushApp(toplevel ? "pinned-running" : "pinned", toplevel, pinnedAppId, toplevel ? toplevel.title : pinnedAppId);
-            });
+          pinnedApps.forEach(pinnedAppId => {
+                               var toplevel = null;
+                               for (var app of runningApps) {
+                                 if (app.appId === pinnedAppId) {
+                                   toplevel = app;
+                                 }
+                               }
+                               pushApp(toplevel ? "pinned-running" : "pinned", toplevel, pinnedAppId, toplevel ? toplevel.title : pinnedAppId);
+                             });
         }
 
         //if pinnedStatic then push all pinned and then all remaining running apps
         if (Settings.data.dock.pinnedStatic) {
-            pushPinned();
-            pushRunning(false);
+          pushPinned();
+          pushRunning(false);
 
-            //else add all running apps and then remaining pinned apps
+          //else add all running apps and then remaining pinned apps
         } else {
-            pushRunning(true);
-            pushPinned();
+          pushRunning(true);
+          pushPinned();
         }
 
         dockApps = combined;
@@ -663,7 +663,7 @@ Loader {
 
                       // Active indicator
                       Rectangle {
-                        visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive;
+                        visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
                         width: iconSize * 0.2
                         height: iconSize * 0.1
                         color: Color.mPrimary

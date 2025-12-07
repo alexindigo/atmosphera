@@ -1350,6 +1350,10 @@
           "description": "ドックのアプリアイコンにテーマカラーを適用します（非フォーカス時のみ）。",
           "label": "テーマカラーの適用"
         },
+        "dead-opacity": {
+          "description": "実行されていないアプリのアイコンの不透明度を調整します。",
+          "label": "死んだ不透明度"
+        },
         "display": {
           "always-visible": "常に表示",
           "auto-hide": "自動的に隠す",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "ドック全体のサイズを調整します。",
           "label": "ドックのサイズ"
+        },
+        "inactive-indicators": {
+          "description": "現在アクティブなアプリだけでなく、すべてのアプリのインジケーターピルを表示する。",
+          "label": "実行指標"
+        },
+        "pinned-static": {
+          "description": "ピン留めされたアプリのアイコンは、常に静的な順序で左に寄せてください。",
+          "label": "固定された静的アプリ"
         },
         "section": {
           "description": "ドックの動作と外観をカスタマイズします。",

@@ -1350,6 +1350,10 @@
           "description": "Aplicar cores do tema aos ícones de aplicativos da dock (apenas aplicativos não focados).",
           "label": "Colorir ícones"
         },
+        "dead-opacity": {
+          "description": "Ajustar a opacidade dos ícones de aplicativos que não estão em execução.",
+          "label": "Opacidade Morta"
+        },
         "display": {
           "always-visible": "Sempre visível",
           "auto-hide": "Ocultar automaticamente",
@@ -1364,6 +1368,14 @@
         "icon-size": {
           "description": "Ajustar o tamanho geral do Dock.",
           "label": "Tamanho do Dock"
+        },
+        "inactive-indicators": {
+          "description": "Exibir indicadores de pílula para todos os aplicativos, não apenas para o aplicativo ativo no momento.",
+          "label": "Indicadores de execução"
+        },
+        "pinned-static": {
+          "description": "Sempre posicione os ícones de aplicativos fixados à esquerda em ordem estática.",
+          "label": "Aplicativos Fixados Estaticamente"
         },
         "section": {
           "description": "Personalize o comportamento e a aparência da dock.",
