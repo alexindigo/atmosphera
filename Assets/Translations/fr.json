@@ -139,21 +139,17 @@
           "label": "Afficher la sortie de la commande",
           "stream-description": "Entrez une commande à exécuter en continu."
         },
+        "dynamic-text": "Texte dynamique",
         "hide-mode": {
-          "description": "Contrôle la visibilité du widget quand la commande n'a pas de sortie.",
-          "label": "Mode masqué",
-          "expandWithOutput": "Étendre quand il y a une sortie",
           "alwaysExpanded": "Toujours étendu",
+          "description": "Contrôle la visibilité du widget quand la commande n'a pas de sortie.",
+          "expandWithOutput": "Étendre quand il y a une sortie",
+          "label": "Mode masqué",
           "maxTransparent": "Étendu au maximum mais transparent"
         },
-        "dynamic-text": "Texte dynamique",
         "icon": {
           "description": "Sélectionnez une icône dans la bibliothèque.",
           "label": "Icône"
-        },
-        "show-icon": {
-          "description": "Bascule la visibilité de l'icône du widget.",
-          "label": "Afficher l'icône"
         },
         "left-click": {
           "description": "Commande à exécuter quand le bouton est cliqué à gauche.",
@@ -185,6 +181,10 @@
           "description": "Commande à exécuter quand le bouton est cliqué à droite.",
           "label": "Clic droit",
           "update-text": "Mettre à jour le texte affiché lors d'un clic droit."
+        },
+        "show-icon": {
+          "description": "Bascule la visibilité de l'icône du widget.",
+          "label": "Afficher l'icône"
         },
         "text-stream": {
           "description": "Les lignes diffusées depuis la commande seront affichées sous forme de texte sur le bouton.",
@@ -737,6 +737,9 @@
     "clipboard-loading": "Chargement de l'historique du presse-papiers...",
     "clipboard-loading-description": "Veuillez patienter",
     "clipboard-search-description": "Rechercher dans l'historique du presse-papiers",
+    "command": "Commande",
+    "command-description": "Exécuter des commandes shell",
+    "command-name": "Commande",
     "emoji": "Sélecteur d'émojis",
     "emoji-loading": "Chargement des émojis...",
     "emoji-loading-description": "Veuillez patienter",
@@ -1506,10 +1509,6 @@
           "description": "Afficher les éléments dans une grille au lieu d'une liste.",
           "label": "Vue grille"
         },
-        "show-categories": {
-          "description": "Afficher les onglets de catégories pour filtrer les applications.",
-          "label": "Afficher les catégories"
-        },
         "position": {
           "description": "Choisissez où le panneau du lanceur apparaît.",
           "label": "Position"
@@ -1517,6 +1516,10 @@
         "section": {
           "description": "Personnalisez le comportement et l'apparence du lanceur.",
           "label": "Apparence"
+        },
+        "show-categories": {
+          "description": "Afficher les onglets de catégories pour filtrer les applications.",
+          "label": "Afficher les catégories"
         },
         "sort-by-usage": {
           "description": "Lorsque cette option est activée, les applications fréquemment lancées apparaissent en premier dans la liste.",
