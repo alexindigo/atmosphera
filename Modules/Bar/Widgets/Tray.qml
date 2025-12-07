@@ -21,7 +21,7 @@ Rectangle {
   // Get shared popup menu window from PanelService (reactive to trigger changes)
   readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = popupMenuUpdateTrigger;
+    var popupMenuUpdateTriggerRef = popupMenuUpdateTrigger;
     return PanelService.getPopupMenuWindow(screen);
   }
 

@@ -13,8 +13,8 @@ ColumnLayout {
   // Local state
   property var localBlacklist: widgetData.blacklist || []
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
-  property bool valueDrawerEnabled: widgetData.drawerEnabled !== undefined ? widgetData.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true)
-  property bool valueHidePassive: widgetData.hidePassive !== undefined ? widgetData.hidePassive : (widgetMetadata.hidePassive !== undefined ? widgetMetadata.hidePassive : true)
+  property bool valueDrawerEnabled: widgetData.drawerEnabled !== undefined ? widgetData.drawerEnabled : widgetMetadata.drawerEnabled
+  property bool valueHidePassive: widgetData.hidePassive !== undefined ? widgetData.hidePassive : widgetMetadata.hidePassive
 
   ListModel {
     id: blacklistModel

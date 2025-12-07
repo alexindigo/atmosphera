@@ -25,7 +25,7 @@ SmartPanel {
   // Read widget settings for reactivity
   readonly property var widgetSettings: {
     // Reference settingsVersion to force recalculation when it changes
-    var _ = root.settingsVersion;
+    var settingsVersionRef = root.settingsVersion;
     if (widgetSection === "" || widgetIndex < 0)
       return {};
     var widgets = Settings.data.bar.widgets[widgetSection];
@@ -75,16 +75,15 @@ SmartPanel {
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
   // Explicitly reference hidePassive to ensure reactivity
   readonly property var trayValues: {
-    var _ = root.hidePassive; // Force dependency tracking
+    // Reference hidePassive to ensure dependency tracking
+    var hidePassiveRef = root.hidePassive;
     return trayValuesAll.filter(function (it) {
       if (!it)
         return false;
       // Filter out passive items if hidePassive is enabled
-      // Check if status exists and is Passive (using both enum and numeric comparison for safety)
       if (root.hidePassive && it.status !== undefined && (it.status === SystemTray.Passive || it.status === 0)) {
         return false;
       }
-      // Filter out pinned items (they show in the bar)
       return !root.isPinned(it);
     });
   }
@@ -124,7 +123,7 @@ SmartPanel {
   // Get the trayMenu window and loader from PanelService (reactive to trigger changes)
   readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
-    var _ = popupMenuUpdateTrigger;
+    var popupMenuUpdateTriggerRef = popupMenuUpdateTrigger;
     return PanelService.getPopupMenuWindow(screen);
   }
 
