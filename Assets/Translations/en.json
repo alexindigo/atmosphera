@@ -333,6 +333,10 @@
           "description": "Apply theme colors to taskbar icons.",
           "label": "Colorize icons"
         },
+        "show-pinned-apps": {
+          "description": "Show pinned apps from the dock in the taskbar.",
+          "label": "Show pinned apps"
+        },
         "hide-mode": {
           "description": "Controls how the widget behaves when there are no matching windows.",
           "label": "Hiding mode"
@@ -523,6 +527,7 @@
   "launcher": {
     "categories": {
       "all": "All",
+      "pinned": "Pinned",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Development",
@@ -535,8 +540,8 @@
       "system": "System",
       "webbrowser": "Web Browser"
     },
-    "pin": "Pin to dock",
-    "unpin": "Unpin from dock"
+    "pin": "Pin",
+    "unpin": "Unpin"
   },
   "lock-screen": {
     "authenticating": "Authenticating...",

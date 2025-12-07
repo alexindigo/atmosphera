@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Alle",
+      "pinned": "Vastgemaakt",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Ontwikkeling",
@@ -535,8 +536,8 @@
       "system": "Systeem",
       "webbrowser": "Webbrowser"
     },
-    "pin": "Aan dock vastmaken",
-    "unpin": "Van dock losmaken"
+    "pin": "Vastmaken",
+    "unpin": "Losmaken"
   },
   "lock-screen": {
     "authenticating": "Bezig met verifiëren...",

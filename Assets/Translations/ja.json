@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "すべて",
+      "pinned": "ピン留め",
       "audiovideo": "音声 & ビデオ",
       "chat": "チャット",
       "development": "開発",
@@ -535,8 +536,8 @@
       "system": "システム",
       "webbrowser": "ウェブブラウザ"
     },
-    "pin": "ドックにピン留め",
-    "unpin": "ドックからピン留めを解除"
+    "pin": "ピン留め",
+    "unpin": "ピン留め解除"
   },
   "lock-screen": {
     "authenticating": "認証中...",

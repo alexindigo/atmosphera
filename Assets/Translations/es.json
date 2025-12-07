@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Todo",
+      "pinned": "Anclado",
       "audiovideo": "Audio y video",
       "chat": "Chat",
       "development": "Desarrollo",
@@ -535,8 +536,8 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "pin": "Anclar al dock",
-    "unpin": "Desanclar del dock"
+    "pin": "Anclar",
+    "unpin": "Desanclar"
   },
   "lock-screen": {
     "authenticating": "Autenticando...",

@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Всё",
+      "pinned": "Закреплено",
       "audiovideo": "Аудио и видео",
       "chat": "Чат",
       "development": "Разработка",
@@ -535,8 +536,8 @@
       "system": "Система",
       "webbrowser": "Веб-браузер"
     },
-    "pin": "Закрепить на панели",
-    "unpin": "Открепить от панели"
+    "pin": "Закрепить",
+    "unpin": "Открепить"
   },
   "lock-screen": {
     "authenticating": "Аутентификация...",

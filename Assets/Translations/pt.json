@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Tudo",
+      "pinned": "Fixado",
       "audiovideo": "Áudio e Vídeo",
       "chat": "Bate-papo",
       "development": "Desenvolvimento",
@@ -535,8 +536,8 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "pin": "Fixar no dock",
-    "unpin": "Desafixar do dock"
+    "pin": "Fixar",
+    "unpin": "Desafixar"
   },
   "lock-screen": {
     "authenticating": "Autenticando...",

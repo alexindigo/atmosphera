@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Tümü",
+      "pinned": "Sabitlendi",
       "audiovideo": "Ses ve Görüntü",
       "chat": "Sohbet",
       "development": "Geliştirme",
@@ -535,8 +536,8 @@
       "system": "Sistem",
       "webbrowser": "Tarayıcı"
     },
-    "pin": "Rıhtıma sabitle",
-    "unpin": "Rıhtımdan sabitlemeyi kaldır"
+    "pin": "Sabitle",
+    "unpin": "Sabitlemeyi kaldır"
   },
   "lock-screen": {
     "authenticating": "Doğrulanıyor...",

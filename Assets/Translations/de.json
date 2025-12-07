@@ -523,6 +523,7 @@
   "launcher": {
     "categories": {
       "all": "Alle",
+      "pinned": "Angeheftet",
       "audiovideo": "Audio & Video",
       "chat": "Chat",
       "development": "Entwicklung",
@@ -535,8 +536,8 @@
       "system": "System",
       "webbrowser": "Webbrowser"
     },
-    "pin": "An das Dock anheften",
-    "unpin": "Vom Dock lösen"
+    "pin": "Anheften",
+    "unpin": "Lösen"
   },
   "lock-screen": {
     "authenticating": "Authentifizierung...",
