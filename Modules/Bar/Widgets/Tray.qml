@@ -89,7 +89,8 @@ Rectangle {
         const title = item.tooltipTitle || item.name || item.id || "";
 
         // Skip passive items if hidePassive is enabled
-        if (root.hidePassive && item.status === SystemTray.Passive) {
+        // Check if status exists and is Passive (using both enum and numeric comparison for safety)
+        if (root.hidePassive && item.status !== undefined && (item.status === SystemTray.Passive || item.status === 0)) {
           continue;
         }
 
@@ -222,6 +223,11 @@ Rectangle {
     function onSettingsSaved() {
       root.updateFilteredItems();
     }
+  }
+
+  // Watch for hidePassive changes to update filtering immediately
+  onHidePassiveChanged: {
+    root.updateFilteredItems();
   }
 
   Component.onCompleted: {
