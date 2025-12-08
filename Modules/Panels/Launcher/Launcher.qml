@@ -973,11 +973,11 @@ SmartPanel {
                   RowLayout {
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     spacing: Style.marginXS
-                    visible: (!!entry.appId && entry.isSelected && Settings.data.dock.enabled) || (!!modelData.clipboardId && entry.isSelected)
+                    visible: (!!entry.appId && entry.isSelected) || (!!modelData.clipboardId && entry.isSelected)
 
                     // Pin/Unpin action icon button
                     NIconButton {
-                      visible: !!entry.appId && !modelData.isImage && entry.isSelected && Settings.data.dock.enabled
+                      visible: !!entry.appId && !modelData.isImage && entry.isSelected
                       icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
                       tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
                       onClicked: entry.togglePin(entry.appId)
@@ -1314,7 +1314,7 @@ SmartPanel {
 
               // Action buttons (overlay in top-right corner)
               Row {
-                visible: (!!gridEntry.appId && gridEntry.isSelected && Settings.data.dock.enabled) || (!!modelData.clipboardId && gridEntry.isSelected)
+                visible: (!!gridEntry.appId && gridEntry.isSelected) || (!!modelData.clipboardId && gridEntry.isSelected)
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.margins: Style.marginXS
@@ -1323,7 +1323,7 @@ SmartPanel {
 
                 // Pin/Unpin action icon button
                 NIconButton {
-                  visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected && Settings.data.dock.enabled
+                  visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected
                   icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
                   tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
                   onClicked: gridEntry.togglePin(gridEntry.appId)
