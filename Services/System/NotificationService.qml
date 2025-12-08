@@ -278,13 +278,17 @@ Singleton {
       return "";
     }
 
+    // Default sound file path
+    const defaultSoundFile = Quickshell.shellDir + "/Assets/Sounds/notification-generic.wav";
+
     // If separate sounds is disabled, always use normal sound for all urgencies
     if (!settings.separateSounds) {
       const soundFile = settings.normalSoundFile;
       if (soundFile && soundFile.trim() !== "") {
         return soundFile;
       }
-      return "";
+      // Return default if no sound file configured
+      return defaultSoundFile;
     }
 
     // Map urgency levels to sound file keys (when separate sounds is enabled)
@@ -310,8 +314,8 @@ Singleton {
       return soundFile;
     }
 
-    // No sound file configured
-    return "";
+    // Return default sound file if none configured for this urgency level
+    return defaultSoundFile;
   }
 
   function updateExistingNotification(internalId, notification, data) {
