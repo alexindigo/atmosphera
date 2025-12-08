@@ -501,7 +501,14 @@ SmartPanel {
       visible: root.previewActive
       width: root.previewPanelWidth
       height: Math.round(400 * Style.uiScaleRatio)
-      x: ui.width + Style.marginM
+      x: {
+        // If launcher is on the right side, show preview on the left
+        if (root.panelPosition.endsWith("_right") || root.panelPosition === "center_right") {
+          return -root.previewPanelWidth - Style.marginM;
+        }
+        // Otherwise, show preview on the right
+        return ui.width + Style.marginM;
+      }
       y: {
         if (!resultsViewLoader.item)
           return Style.marginL;
