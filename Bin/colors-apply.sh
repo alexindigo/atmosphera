@@ -55,7 +55,7 @@ EOF
         echo "Created new config file with noctalia theme."
     else
         # Check if theme is already set to noctalia
-        if grep -q "include=~/.config/foot/themes/noctalia" "$CONFIG_FILE"; then
+        if grep -q "include.*noctalia" "$CONFIG_FILE"; then
             echo "Theme already set to noctalia, skipping modification."
         else
             # Remove any existing theme include line to prevent duplicates.
