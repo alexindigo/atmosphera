@@ -118,6 +118,7 @@ Rectangle {
         if (passOutput && passWorkspace) {
           const isPinned = isAppIdPinned(w.appId, pinnedApps);
           runningWindows.push({
+                                "id": w.id,
                                 "type": isPinned ? "pinned-running" : "running",
                                 "window": w,
                                 "appId": w.appId,
@@ -137,6 +138,7 @@ Rectangle {
                            if (!processedAppIds.has(normalizedPinnedId)) {
                              const appName = getAppNameFromDesktopEntry(pinnedAppId);
                              runningWindows.push({
+                                                   "id": pinnedAppId,
                                                    "type": "pinned",
                                                    "window": null,
                                                    "appId": pinnedAppId,
@@ -314,8 +316,8 @@ Rectangle {
         readonly property real contentWidth: root.showTitle ? root.itemSize + itemSpacing + root.titleWidth : root.itemSize
 
         readonly property string title: modelData.title || modelData.appId || "Unknown application"
-        readonly property color titleBgColor: (isHovered || modelData.isFocused) ? Color.mHover : Style.capsuleColor
-        readonly property color titleFgColor: (isHovered || modelData.isFocused) ? Color.mOnHover : Color.mOnSurface
+        readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
+        readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
 
         Layout.preferredWidth: root.showTitle ? contentWidth + Style.marginM * 2 : contentWidth
         Layout.preferredHeight: root.itemSize
