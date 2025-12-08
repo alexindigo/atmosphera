@@ -310,22 +310,23 @@ Rectangle {
         readonly property bool isPinned: modelData.type === "pinned" || modelData.type === "pinned-running"
         readonly property bool isFocused: isRunning && modelData.window && modelData.window.isFocused
         readonly property bool isPinnedRunning: isPinned && isRunning && !isFocused
-
         readonly property bool isHovered: root.hoveredWindowId === modelData.id
+
+        readonly property bool shouldShowTitle: root.showTitle && modelData.type !== "pinned"
         readonly property real itemSpacing: Style.marginS
-        readonly property real contentWidth: root.showTitle ? root.itemSize + itemSpacing + root.titleWidth : root.itemSize
+        readonly property real contentWidth: shouldShowTitle ? root.itemSize + itemSpacing + root.titleWidth : root.itemSize
 
         readonly property string title: modelData.title || modelData.appId || "Unknown application"
         readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
         readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
 
-        Layout.preferredWidth: root.showTitle ? contentWidth + Style.marginM * 2 : contentWidth
+        Layout.preferredWidth: root.showTitle ? contentWidth + Style.marginM * 2 : contentWidth // Add margins for both pinned and running apps
         Layout.preferredHeight: root.itemSize
         Layout.alignment: Qt.AlignCenter
 
         Rectangle {
           id: titleBackground
-          visible: root.showTitle
+          visible: shouldShowTitle
           anchors.centerIn: parent
           width: parent.width
           height: root.height
@@ -363,7 +364,7 @@ Rectangle {
                 source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
                 smooth: true
                 asynchronous: true
-                opacity: (root.showTitle || taskbarItem.isFocused) ? Style.opacityFull : 0.6
+                opacity: (shouldShowTitle || taskbarItem.isFocused) ? Style.opacityFull : 0.6
 
                 // Apply dock shader to all taskbar icons
                 layer.enabled: widgetSettings.colorizeIcons !== false
@@ -377,7 +378,7 @@ Rectangle {
 
               Rectangle {
                 id: iconBackground
-                visible: !root.showTitle
+                visible: !shouldShowTitle
                 anchors.bottomMargin: -2
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -390,7 +391,7 @@ Rectangle {
 
             NText {
               id: titleText
-              visible: root.showTitle
+              visible: shouldShowTitle
               Layout.preferredWidth: root.titleWidth
               Layout.preferredHeight: root.itemSize
               Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
