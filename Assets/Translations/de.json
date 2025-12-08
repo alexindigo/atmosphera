@@ -345,6 +345,10 @@
           "description": "Zeige nur Apps von dem Bildschirm, auf dem sich die Taskbar befindet.",
           "label": "Nur vom gleichen Bildschirm"
         },
+        "show-pinned-apps": {
+          "description": "Angeheftete Apps aus dem Dock in der Taskleiste anzeigen.",
+          "label": "Angeheftete Apps anzeigen"
+        },
         "show-title": {
           "description": "Fenstertitel in der Taskleiste anzeigen.",
           "description-disabled": "Vertikale Taskleiste unterstützt keine Titelanzeige.",
@@ -354,9 +358,6 @@
           "description": "Breite der Fenstertitel in der Taskleiste festlegen (in Pixel).",
           "label": "Titelbreite",
           "reset-tooltip": "Titelbreite zurücksetzen"
-        "show-pinned-apps": {
-          "description": "Angeheftete Apps aus dem Dock in der Taskleiste anzeigen.",
-          "label": "Angeheftete Apps anzeigen"
         }
       },
       "taskbar-grouped": {
