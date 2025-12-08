@@ -1731,11 +1731,15 @@
           "label": "Aparência"
         }
       },
-      "title": "Notificações",
       "sounds": {
         "enabled": {
           "description": "Ativar efeitos sonoros para notificações recebidas.",
           "label": "Ativar sons de notificação"
+        },
+        "excluded-apps": {
+          "description": "Pular a reprodução do som de notificação configurado para aplicativos específicos que têm seus próprios sons integrados.",
+          "label": "Aplicativos excluídos",
+          "placeholder": "discord,firefox,chrome,chromium,edge"
         },
         "files": {
           "critical": {
@@ -1753,17 +1757,17 @@
             "label": "Som de urgência normal",
             "select-title": "Selecionar Arquivo de Som de Urgência Normal"
           },
-          "unified": {
-            "description": "Caminho para o arquivo de som tocado para notificações.",
-            "label": "Som de notificação",
-            "select-title": "Selecionar Arquivo de Som de Notificação"
-          },
           "placeholder": "Digitar o caminho para o arquivo de som",
           "section": {
             "description": "Configurar arquivos de som personalizados para diferentes níveis de urgência de notificação.",
             "label": "Arquivos de som"
           },
-          "select-file": "Selecionar Arquivo de Som"
+          "select-file": "Selecionar Arquivo de Som",
+          "unified": {
+            "description": "Caminho para o arquivo de som tocado para notificações.",
+            "label": "Som de notificação",
+            "select-title": "Selecionar Arquivo de Som de Notificação"
+          }
         },
         "section": {
           "description": "Configurar efeitos sonoros e volume de notificações.",
@@ -1773,16 +1777,16 @@
           "description": "Usar arquivos de som diferentes para notificações de prioridade baixa, normal e crítica.",
           "label": "Usar sons diferentes por prioridade"
         },
+        "unavailable": {
+          "description": "Instale o Qt6 Multimedia para habilitar sons de notificação.",
+          "label": "Sons de notificação indisponíveis"
+        },
         "volume": {
           "description": "Ajustar o nível de volume para sons de notificação.",
           "label": "Volume do som"
-        },
-        "excluded-apps": {
-          "description": "Pular a reprodução do som de notificação configurado para aplicativos específicos que têm seus próprios sons integrados.",
-          "label": "Aplicativos excluídos",
-          "placeholder": "discord,firefox,chrome,chromium,edge"
         }
       },
+      "title": "Notificações",
       "toast": {
         "keyboard": {
           "description": "Mostrar uma notificação quando o layout do teclado mudar.",

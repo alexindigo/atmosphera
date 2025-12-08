@@ -127,10 +127,38 @@ ColumnLayout {
       description: I18n.tr("settings.notifications.sounds.section.description")
     }
 
+    // QtMultimedia unavailable message
+    NBox {
+      Layout.fillWidth: true
+      visible: !SoundService.multimediaAvailable
+      implicitHeight: unavailableContent.implicitHeight + Style.marginL * 2
+
+      RowLayout {
+        id: unavailableContent
+        anchors.fill: parent
+        anchors.margins: Style.marginL
+        spacing: Style.marginM
+
+        NIcon {
+          icon: "warning"
+          color: Color.mOnSurfaceVariant
+          pointSize: Style.fontSizeXL
+          Layout.alignment: Qt.AlignTop
+        }
+
+        NLabel {
+          Layout.fillWidth: true
+          label: I18n.tr("settings.notifications.sounds.unavailable.label")
+          description: I18n.tr("settings.notifications.sounds.unavailable.description")
+        }
+      }
+    }
+
     NToggle {
       label: I18n.tr("settings.notifications.sounds.enabled.label")
       description: I18n.tr("settings.notifications.sounds.enabled.description")
       checked: Settings.data.notifications?.sounds?.enabled ?? false
+      visible: SoundService.multimediaAvailable
       onToggled: checked => Settings.data.notifications.sounds.enabled = checked
     }
 
@@ -138,7 +166,7 @@ ColumnLayout {
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
-      visible: Settings.data.notifications?.sounds?.enabled ?? false
+      visible: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false)
 
       NLabel {
         label: I18n.tr("settings.notifications.sounds.volume.label")
@@ -159,7 +187,7 @@ ColumnLayout {
     // Separate Sounds Toggle
     NToggle {
       Layout.fillWidth: true
-      visible: Settings.data.notifications?.sounds?.enabled ?? false
+      visible: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false)
       label: I18n.tr("settings.notifications.sounds.separate.label")
       description: I18n.tr("settings.notifications.sounds.separate.description")
       checked: Settings.data.notifications?.sounds?.separateSounds ?? false
@@ -170,7 +198,7 @@ ColumnLayout {
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
-      visible: (Settings.data.notifications?.sounds?.enabled ?? false) && !(Settings.data.notifications?.sounds?.separateSounds ?? false)
+      visible: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false) && !(Settings.data.notifications?.sounds?.separateSounds ?? false)
 
       NLabel {
         label: I18n.tr("settings.notifications.sounds.files.unified.label")
@@ -197,7 +225,7 @@ ColumnLayout {
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
-      visible: (Settings.data.notifications?.sounds?.enabled ?? false) && (Settings.data.notifications?.sounds?.separateSounds ?? false)
+      visible: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false) && (Settings.data.notifications?.sounds?.separateSounds ?? false)
 
       // Low Urgency Sound File
       ColumnLayout {
@@ -268,7 +296,7 @@ ColumnLayout {
   ColumnLayout {
     spacing: Style.marginXXS
     Layout.fillWidth: true
-    visible: Settings.data.notifications?.sounds?.enabled ?? false
+    visible: SoundService.multimediaAvailable && (Settings.data.notifications?.sounds?.enabled ?? false)
 
     NLabel {
       label: I18n.tr("settings.notifications.sounds.excluded-apps.label")

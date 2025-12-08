@@ -34,6 +34,10 @@ Singleton {
   property var quickshellIdToInternalId: ({})
   property var imageQueue: []
 
+  // Rate limiting for notification sounds (minimum 100ms between sounds)
+  property var lastSoundTime: 0
+  readonly property int minSoundInterval: 100
+
   PanelWindow {
     implicitHeight: 0
     implicitWidth: 0
@@ -209,6 +213,18 @@ Singleton {
 
   // Function to play notification sound using existing SoundService
   function playNotificationSound(urgency, appName) {
+    // Rate limiting - prevent sound spam
+    const now = Date.now();
+    if (now - lastSoundTime < minSoundInterval) {
+      return;
+    }
+    lastSoundTime = now;
+
+    // Check if QtMultimedia is available
+    if (!SoundService.multimediaAvailable) {
+      return;
+    }
+
     // Check if notification sounds are enabled
     if (!Settings.data.notifications?.sounds?.enabled) {
       return;

@@ -1731,21 +1731,15 @@
           "label": "Appearance"
         }
       },
-      "title": "Notifications",
-      "toast": {
-        "keyboard": {
-          "description": "Show a toast when the keyboard layout changes.",
-          "label": "Keyboard layout"
-        },
-        "section": {
-          "description": "Configure toast appearance and behavior.",
-          "label": "Toast"
-        }
-      },
       "sounds": {
         "enabled": {
           "description": "Enable sound effects for incoming notifications.",
           "label": "Enable notification sounds"
+        },
+        "excluded-apps": {
+          "description": "Skip playing the configured notification sound for specific applications that have their own built-in sounds.",
+          "label": "Excluded applications",
+          "placeholder": "discord,firefox,chrome,chromium,edge"
         },
         "files": {
           "critical": {
@@ -1763,34 +1757,44 @@
             "label": "Normal urgency sound",
             "select-title": "Select Normal Urgency Sound File"
           },
-          "unified": {
-            "description": "Path to the sound file played for notifications.",
-            "label": "Notification sound",
-            "select-title": "Select Notification Sound File"
-          },
           "placeholder": "Enter path to sound file",
           "section": {
             "description": "Configure custom sound files for different notification urgency levels.",
             "label": "Sound files"
           },
-          "select-file": "Select Sound File"
+          "select-file": "Select Sound File",
+          "unified": {
+            "description": "Path to the sound file played for notifications.",
+            "label": "Notification sound",
+            "select-title": "Select Notification Sound File"
+          }
         },
         "section": {
           "description": "Configure notification sound effects and volume.",
           "label": "Sound settings"
         },
-        "excluded-apps": {
-          "description": "Skip playing the configured notification sound for specific applications that have their own built-in sounds.",
-          "label": "Excluded applications",
-          "placeholder": "discord,firefox,chrome,chromium,edge"
-        },
         "separate": {
           "description": "Use different sound files for low, normal, and critical priority notifications.",
           "label": "Use different sounds per priority"
         },
+        "unavailable": {
+          "description": "Install Qt6 Multimedia to enable notification sounds.",
+          "label": "Notification sounds unavailable"
+        },
         "volume": {
           "description": "Adjust the volume level for notification sounds.",
           "label": "Sound volume"
+        }
+      },
+      "title": "Notifications",
+      "toast": {
+        "keyboard": {
+          "description": "Show a toast when the keyboard layout changes.",
+          "label": "Keyboard layout"
+        },
+        "section": {
+          "description": "Configure toast appearance and behavior.",
+          "label": "Toast"
         }
       }
     },
