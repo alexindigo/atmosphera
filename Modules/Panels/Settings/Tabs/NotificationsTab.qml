@@ -143,7 +143,7 @@ ColumnLayout {
           icon: "warning"
           color: Color.mOnSurfaceVariant
           pointSize: Style.fontSizeXL
-          Layout.alignment: Qt.AlignTop
+          Layout.alignment: Qt.AlignVCenter
         }
 
         NLabel {
