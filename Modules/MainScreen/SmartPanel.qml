@@ -809,15 +809,15 @@ Item {
           if (attachedToVerticalBar) {
             return false;
           }
-          // Panel anchored to left/right edge - animate from that edge instead
-          if (root.panelAnchorLeft || root.panelAnchorRight) {
+          // Panel anchored to left/right/bottom edge - animate from that edge instead
+          if (root.panelAnchorLeft || root.panelAnchorRight || root.panelAnchorBottom) {
             return false;
           }
           // Attached to top edge
           if (panelContent.allowAttach && root.panelAnchorTop) {
             return true;
           }
-          // Default: animate from top (for floating panels)
+          // Default: animate from top (for floating panels with no explicit anchors)
           return true;
         }
         // Panel is visible - use calculated positions
@@ -834,7 +834,21 @@ Item {
       }
       readonly property bool animateFromBottom: {
         if (!root.isPanelVisible) {
+          // Attached to horizontal bar at bottom
           if (panelContent.allowAttachToBar && root.effectivePanelAnchorBottom && !root.barIsVertical) {
+            return true;
+          }
+          // Attached to vertical bar (left/right) - don't animate from bottom
+          var attachedToVerticalBar = panelContent.allowAttachToBar && root.barIsVertical && ((root.effectivePanelAnchorLeft && root.barPosition === "left") || (root.effectivePanelAnchorRight && root.barPosition === "right"));
+          if (attachedToVerticalBar) {
+            return false;
+          }
+          // Panel anchored to top/left/right edge - don't animate from bottom
+          if (root.panelAnchorTop || root.panelAnchorLeft || root.panelAnchorRight) {
+            return false;
+          }
+          // Attached to bottom edge (when bar is vertical, panel can still be anchored to bottom)
+          if (panelContent.allowAttach && root.panelAnchorBottom) {
             return true;
           }
           return false;
