@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Abrir calendário"
+    "tooltip": "Relógio"
   },
   "common": {
     "add": "Adicionar",
@@ -1458,7 +1458,7 @@
           "label": "Perfil"
         },
         "select-avatar": "Selecionar imagem de avatar",
-        "tooltip": "Procurar imagem de avatar"
+        "tooltip": "Foto de perfil"
       },
       "screen-corners": {
         "radius": {
@@ -1895,7 +1895,7 @@
         "output-folder": {
           "description": "Pasta onde as gravações de tela serão salvas.",
           "label": "Pasta de saída",
-          "tooltip": "Procurar pasta de saída"
+          "tooltip": "Pasta de saída"
         },
         "section": {
           "description": "Gerencie a saída e o conteúdo da gravação de tela.",
@@ -2181,7 +2181,7 @@
         "folder": {
           "description": "Caminho para a sua pasta principal de papéis de parede.",
           "label": "Pasta de papéis de parede",
-          "tooltip": "Procurar pasta de papéis de parede"
+          "tooltip": "Pasta de papéis de parede"
         },
         "hide-wallpaper-filenames": {
           "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
@@ -2190,7 +2190,7 @@
         "monitor-specific": {
           "description": "Defina uma pasta de papel de parede diferente para cada monitor.",
           "label": "Diretórios específicos por monitor",
-          "tooltip": "Procurar pasta de papéis de parede"
+          "tooltip": "Pasta de papéis de parede do monitor"
         },
         "recursive-search": {
           "description": "Também buscar papéis de parede em subpastas do diretório de papéis de parede.",
@@ -2205,7 +2205,7 @@
         "selector": {
           "description": "Escolha o seu papel de parede.",
           "label": "Seletor de papel de parede",
-          "tooltip": "Abrir o seletor de papel de parede"
+          "tooltip": "Seletor de papel de parede"
         },
         "selector-position": {
           "description": "Escolha onde o painel do seletor de papel de parede aparece.",
@@ -2369,7 +2369,7 @@
     "clear-history": "Limpar histórico",
     "click-to-start-recording": "Gravador de tela (iniciar gravação)",
     "click-to-stop-recording": "Gravador de tela (parar gravação)",
-    "close": "Botão fechar",
+    "close": "Fechar",
     "connect-disconnect-devices": "Dispositivo Bluetooth",
     "delete-notification": "Excluir notificação",
     "disable-keep-awake": "Manter acordado",
@@ -2406,8 +2406,8 @@
     "open-tray-dropdown": "Bandeja do sistema",
     "open-wallpaper-selector": "Seletor de papel de parede",
     "output-muted": "Saída de áudio",
-    "pause": "Botão pausar",
-    "play": "Botão reproduzir",
+    "pause": "Pausar",
+    "play": "Reproduzir",
     "power-profile": "{profile} perfil de energia",
     "previous-media": "Faixa anterior",
     "previous-month": "Mês anterior",

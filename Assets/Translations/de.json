@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Kalender öffnen"
+    "tooltip": "Uhr"
   },
   "common": {
     "add": "Hinzufügen",
@@ -1458,7 +1458,7 @@
           "label": "Profil"
         },
         "select-avatar": "Avatar auswählen",
-        "tooltip": "Nach Avatarbild suchen"
+        "tooltip": "Profilbild"
       },
       "screen-corners": {
         "radius": {
@@ -1895,7 +1895,7 @@
         "output-folder": {
           "description": "Ordner, in dem Bildschirmaufnahmen gespeichert werden.",
           "label": "Ausgabe-Ordner",
-          "tooltip": "Nach Ausgabe-Ordner suchen"
+          "tooltip": "Ausgabe-Ordner"
         },
         "section": {
           "description": "Bildschirmaufnahme-Ausgabe und -Inhalt verwalten.",
@@ -2057,7 +2057,7 @@
     "user-interface": {
       "allow-panels-without-bar": {
         "description": "Wenn aktiviert, können sich Panels auf jedem Bildschirm öffnen. Wenn deaktiviert, öffnen sich Panels nur auf Bildschirmen mit einer Leiste, was den Speicherverbrauch reduzieren kann.",
-        "label": "Paneele auf Bildschirmen ohne Leiste zulassen"
+        "label": "Panels auf Bildschirmen ohne Leiste zulassen"
       },
       "animation-disable": {
         "description": "Deaktivieren Sie alle Animationen für eine schnellere und reaktionsfreudigere Erfahrung.",
@@ -2088,12 +2088,12 @@
         "reset": "Deckkraft des gedimmten Desktops zurücksetzen"
       },
       "panel-background-opacity": {
-        "description": "Hintergrunddeckkraft für alle Paneele festlegen (Launcher, Kontrollzentrum, Einstellungen usw.).",
-        "label": "Paneel-Hintergrunddeckkraft"
+        "description": "Hintergrunddeckkraft für alle Panels festlegen (Launcher, Kontrollzentrum, Einstellungen usw.).",
+        "label": "Panel-Hintergrunddeckkraft"
       },
       "panels-attached-to-bar": {
-        "description": "Die Paneele rasten an der Stange und den Bildschirmrändern ein und sorgen so für ein nahtloses Erscheinungsbild mit stilvollen, umgekehrten Ecken.",
-        "label": "Paneele an Kanten ausrichten"
+        "description": "Die Panels rasten an der Stange und den Bildschirmrändern ein und sorgen so für ein nahtloses Erscheinungsbild mit stilvollen, umgekehrten Ecken.",
+        "label": "Panels an Kanten ausrichten"
       },
       "panels-overlay": {
         "description": "Stellt sicher, dass Panels und die Leiste sichtbar bleiben, auch über Vollbildanwendungen.",
@@ -2181,7 +2181,7 @@
         "folder": {
           "description": "Pfad zu Ihrem Haupt-Hintergrundbild-Ordner.",
           "label": "Hintergrundbild-Ordner",
-          "tooltip": "Nach Hintergrundbild-Ordner suchen"
+          "tooltip": "Hintergrundbild-Ordner"
         },
         "hide-wallpaper-filenames": {
           "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
@@ -2190,7 +2190,7 @@
         "monitor-specific": {
           "description": "Unterschiedlichen Hintergrundbild-Ordner für jeden Monitor festlegen.",
           "label": "Monitor-spezifische Verzeichnisse",
-          "tooltip": "Nach Hintergrundbild-Ordner suchen"
+          "tooltip": "Monitor-Hintergrundbild-Ordner"
         },
         "recursive-search": {
           "description": "Auch nach Hintergrundbildern in Unterordnern des Hintergrundbild-Verzeichnisses suchen.",
@@ -2205,7 +2205,7 @@
         "selector": {
           "description": "Wählen Sie Ihr Hintergrundbild aus.",
           "label": "Hintergrundbild-Auswahl",
-          "tooltip": "Hintergrundbild-Auswahl öffnen"
+          "tooltip": "Hintergrundbild-Auswahl"
         },
         "selector-position": {
           "description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
@@ -2369,7 +2369,7 @@
     "clear-history": "Verlauf löschen",
     "click-to-start-recording": "Bildschirmrekorder (Aufnahme starten)",
     "click-to-stop-recording": "Bildschirmrekorder (Aufnahme stoppen)",
-    "close": "Schließen-Button",
+    "close": "Schließen",
     "connect-disconnect-devices": "Bluetooth-Gerät",
     "delete-notification": "Benachrichtigung löschen",
     "disable-keep-awake": "Wach halten",
@@ -2406,8 +2406,8 @@
     "open-tray-dropdown": "System-Tray",
     "open-wallpaper-selector": "Hintergrundbild-Auswahl",
     "output-muted": "Audio-Ausgabe",
-    "pause": "Pause-Button",
-    "play": "Wiedergabe-Button",
+    "pause": "Pause",
+    "play": "Wiedergabe",
     "power-profile": "{profile} Energieprofil",
     "previous-media": "Vorheriger Titel",
     "previous-month": "Vorheriger Monat",

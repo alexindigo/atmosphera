@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Takvimi aç"
+    "tooltip": "Saat"
   },
   "common": {
     "add": "Ekle",
@@ -1458,7 +1458,7 @@
           "label": "Profil"
         },
         "select-avatar": "Avatar görüntüsü seç",
-        "tooltip": "Avatar resmi ara"
+        "tooltip": "Profil resmi"
       },
       "screen-corners": {
         "radius": {
@@ -1895,7 +1895,7 @@
         "output-folder": {
           "description": "Ekran kayıtlarının kaydedileceği klasör.",
           "label": "Çıktı klasörü",
-          "tooltip": "Çıktı klasörüne göz at"
+          "tooltip": "Çıktı klasörü"
         },
         "section": {
           "description": "Ekran kaydı çıktısını ve içeriğini yönetin.",
@@ -2181,7 +2181,7 @@
         "folder": {
           "description": "Ana duvar kağıdı klasörünüzün yolu.",
           "label": "Duvar kağıdı klasörü",
-          "tooltip": "Duvar kağıdı klasörüne göz atın"
+          "tooltip": "Duvar kağıdı klasörü"
         },
         "hide-wallpaper-filenames": {
           "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
@@ -2190,7 +2190,7 @@
         "monitor-specific": {
           "description": "Her ekran için farklı bir duvar kağıdı klasörü ayarlayın.",
           "label": "Ekran özgü dizinler",
-          "tooltip": "Duvar kağıdı klasörüne göz atın"
+          "tooltip": "Monitör duvar kâğıdı klasörü"
         },
         "recursive-search": {
           "description": "Duvar kağıdı dizinin alt klasörlerinde de duvar kağıdı arayın.",
@@ -2205,7 +2205,7 @@
         "selector": {
           "description": "Duvar kâğıdınızı seçin.",
           "label": "Duvar kâğıdı seçici",
-          "tooltip": "Duvar kâğıdı seçiciyi aç"
+          "tooltip": "Duvar kâğıdı seçici"
         },
         "selector-position": {
           "description": "Duvar kağıdı seçici panelinin nerede görüneceğini seçin.",
@@ -2369,7 +2369,7 @@
     "clear-history": "Geçmişi temizle",
     "click-to-start-recording": "Ekran kaydedici (kaydı başlat)",
     "click-to-stop-recording": "Ekran kaydedici (kaydı durdur)",
-    "close": "Kapat düğmesi",
+    "close": "Kapat",
     "connect-disconnect-devices": "Bluetooth cihazı",
     "delete-notification": "Bildiriyi sil",
     "disable-keep-awake": "Uyanık kal",
@@ -2406,8 +2406,8 @@
     "open-tray-dropdown": "Sistem tepsisi",
     "open-wallpaper-selector": "Duvar kağıdı seçici",
     "output-muted": "Ses çıkışı",
-    "pause": "Duraklat düğmesi",
-    "play": "Oynat düğmesi",
+    "pause": "Duraklat",
+    "play": "Oynat",
     "power-profile": "{profile} güç profili",
     "previous-media": "Önceki parça",
     "previous-month": "Önceki ay",
