@@ -991,13 +991,12 @@ SmartPanel {
                       z: 1
                       onClicked: {
                         if (modelData.clipboardId) {
+                          // Set plugin state before deletion so refresh works
+                          clipPlugin.gotResults = false;
+                          clipPlugin.isWaitingForData = true;
+                          clipPlugin.lastSearchText = root.searchText;
+                          // Delete the item - deleteById now uses Process and will refresh automatically
                           ClipboardService.deleteById(String(modelData.clipboardId));
-                          // Force refresh after deletion
-                          Qt.callLater(() => {
-                                         clipPlugin.gotResults = false;
-                                         clipPlugin.lastSearchText = "";
-                                         ClipboardService.list(100);
-                                       });
                         }
                       }
                     }
@@ -1337,13 +1336,12 @@ SmartPanel {
                   z: 11
                   onClicked: {
                     if (modelData.clipboardId) {
+                      // Set plugin state before deletion so refresh works
+                      clipPlugin.gotResults = false;
+                      clipPlugin.isWaitingForData = true;
+                      clipPlugin.lastSearchText = root.searchText;
+                      // Delete the item - deleteById now uses Process and will refresh automatically
                       ClipboardService.deleteById(String(modelData.clipboardId));
-                      // Force refresh after deletion
-                      Qt.callLater(() => {
-                                     clipPlugin.gotResults = false;
-                                     clipPlugin.lastSearchText = "";
-                                     ClipboardService.list(100);
-                                   });
                     }
                   }
                 }
