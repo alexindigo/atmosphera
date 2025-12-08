@@ -363,7 +363,7 @@ Rectangle {
                 source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
                 smooth: true
                 asynchronous: true
-                opacity: (root.showTitle || modelData.isFocused) ? Style.opacityFull : 0.6
+                opacity: (root.showTitle || taskbarItem.isFocused) ? Style.opacityFull : 0.6
 
                 // Apply dock shader to all taskbar icons
                 layer.enabled: widgetSettings.colorizeIcons !== false
@@ -383,7 +383,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 4
                 height: 4
-                color: modelData.isFocused ? Color.mPrimary : Color.transparent
+                color: taskbarItem.isFocused ? Color.mPrimary : Color.transparent
                 radius: Math.min(Style.radiusXXS, width / 2)
               }
             }
