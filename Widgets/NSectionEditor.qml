@@ -278,25 +278,26 @@ NBox {
                            }
             }
 
-            // MouseArea for the context menu
+            // MouseArea for the context menu - only active when not dragging
             MouseArea {
               id: contextMouseArea
               anchors.fill: parent
               acceptedButtons: Qt.RightButton
               cursorShape: Qt.PointingHandCursor
               z: -1 // Below the buttons but above background
+              enabled: !flowDragArea.dragStarted && !flowDragArea.potentialDrag
 
               onPressed: mouse => {
-                           if (mouse.button === Qt.RightButton) {
-                             // Check if click is not on the settings button area (if visible)
-                             const localX = mouse.x;
-                             const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
-                             if (localX < buttonsStartX || parent.buttonsCount === 0) {
-                               contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
-                             }
+                           mouse.accepted = true;
+                           // Check if click is not on the settings button area (if visible)
+                           const localX = mouse.x;
+                           const buttonsStartX = parent.width - (parent.buttonsCount * parent.buttonsWidth);
+                           if (localX < buttonsStartX || parent.buttonsCount === 0) {
+                             contextMenu.openAtItem(widgetItem, mouse.x, mouse.y);
                            }
                          }
             }
+
             RowLayout {
               id: widgetContent
               anchors.fill: parent
@@ -478,22 +479,22 @@ NBox {
       MouseArea {
         id: flowDragArea
         anchors.fill: parent
-        anchors.margins: -20 * Style.uiScaleRatio // Buffer zone to prevent premature cancel
-        z: -1
+        z: 100 // Above widgets to ensure it captures events first
 
         acceptedButtons: Qt.LeftButton
-        preventStealing: false
-        propagateComposedEvents: false
+        preventStealing: true // Always prevent stealing to ensure we get all events
+        propagateComposedEvents: true // Allow events to propagate when not handled
         hoverEnabled: true // Always track mouse for drag operations
 
         property point startPos: Qt.point(0, 0)
         property bool dragStarted: false
         property bool potentialDrag: false // Track if we're in a potential drag interaction
         property int draggedIndex: -1
-        property real dragThreshold: 15
+        property real dragThreshold: 8 // Reduced threshold for more responsive drag
         property Item draggedWidget: null
         property int dropTargetIndex: -1
         property var draggedModelData: null
+        property bool isOverButtonArea: false
 
         // Drop position calculation
         function updateDropIndicator(mouseX, mouseY) {
@@ -579,7 +580,21 @@ NBox {
           }
         }
 
+        function resetDragState() {
+          dragStarted = false;
+          potentialDrag = false;
+          draggedIndex = -1;
+          draggedWidget = null;
+          dropTargetIndex = -1;
+          draggedModelData = null;
+          isOverButtonArea = false;
+          dropIndicator.opacity = 0;
+          pulseAnimation.running = false;
+          dragGhost.width = 0;
+        }
+
         onPressed: mouse => {
+                     // Reset state
                      startPos = Qt.point(mouse.x, mouse.y);
                      dragStarted = false;
                      potentialDrag = false;
@@ -587,6 +602,7 @@ NBox {
                      draggedWidget = null;
                      dropTargetIndex = -1;
                      draggedModelData = null;
+                     isOverButtonArea = false;
 
                      // Find which widget was clicked
                      for (var i = 0; i < widgetModel.length; i++) {
@@ -594,57 +610,40 @@ NBox {
                        if (widget && widget.widgetIndex !== undefined) {
                          if (mouse.x >= widget.x && mouse.x <= widget.x + widget.width && mouse.y >= widget.y && mouse.y <= widget.y + widget.height) {
                            const localX = mouse.x - widget.x;
-                           const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth);
+                           const buttonsStartX = widget.width - (widget.buttonsCount * widget.buttonsWidth * Style.uiScaleRatio);
 
-                           if (localX < buttonsStartX) {
-                             // This is a draggable area - prevent panel close immediately
+                           if (localX >= buttonsStartX && widget.buttonsCount > 0) {
+                             // Click is on button area - don't start drag, propagate event
+                             isOverButtonArea = true;
+                             mouse.accepted = false;
+                             return;
+                           } else {
+                             // This is a draggable area
                              draggedIndex = widget.widgetIndex;
                              draggedWidget = widget;
                              draggedModelData = widget.modelData;
                              potentialDrag = true;
-                             preventStealing = true;
+                             mouse.accepted = true;
 
                              // Signal that interaction started (prevents panel close)
                              root.dragPotentialStarted();
-                             break;
-                           } else {
-                             // This is a button area - let the click through
-                             mouse.accepted = false;
                              return;
                            }
                          }
                        }
                      }
+
+                     // Click was not on any widget
+                     mouse.accepted = false;
                    }
 
         onPositionChanged: mouse => {
-                             if (draggedIndex !== -1 && potentialDrag) {
-                               // Check if mouse is too far outside the actual parent bounds
-                               const buffer = 30 * Style.uiScaleRatio;
-                               const isOutside = mouse.x < -buffer || mouse.x > parent.width + buffer || mouse.y < -buffer || mouse.y > parent.height + buffer;
-
-                               if (isOutside && (dragStarted || potentialDrag)) {
-                                 // Cancel drag if mouse is too far outside
-                                 if (potentialDrag) {
-                                   root.dragPotentialEnded();
-                                 }
-                                 dragStarted = false;
-                                 potentialDrag = false;
-                                 draggedIndex = -1;
-                                 draggedWidget = null;
-                                 dropTargetIndex = -1;
-                                 draggedModelData = null;
-                                 preventStealing = false;
-                                 dropIndicator.opacity = 0;
-                                 pulseAnimation.running = false;
-                                 dragGhost.width = 0;
-                                 return;
-                               }
-
+                             if (potentialDrag && draggedIndex !== -1) {
                                const deltaX = mouse.x - startPos.x;
                                const deltaY = mouse.y - startPos.y;
                                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
+                               // Start drag if threshold exceeded
                                if (!dragStarted && distance > dragThreshold) {
                                  dragStarted = true;
 
@@ -679,38 +678,9 @@ NBox {
                       }
 
                       // Reset everything
-                      dragStarted = false;
-                      potentialDrag = false;
-                      draggedIndex = -1;
-                      draggedWidget = null;
-                      dropTargetIndex = -1;
-                      draggedModelData = null;
-                      preventStealing = false;
-                      dropIndicator.opacity = 0;
-                      pulseAnimation.running = false;
-                      dragGhost.width = 0;
+                      resetDragState();
+                      mouse.accepted = true;
                     }
-
-        onExited: {
-          if (dragStarted || potentialDrag) {
-            // Cancel drag when mouse leaves the area
-            if (potentialDrag) {
-              root.dragPotentialEnded();
-            }
-
-            // Reset everything
-            dragStarted = false;
-            potentialDrag = false;
-            draggedIndex = -1;
-            draggedWidget = null;
-            dropTargetIndex = -1;
-            draggedModelData = null;
-            preventStealing = false;
-            dropIndicator.opacity = 0;
-            pulseAnimation.running = false;
-            dragGhost.width = 0;
-          }
-        }
 
         onCanceled: {
           // Handle cancel (e.g., ESC key pressed during drag)
@@ -718,17 +688,7 @@ NBox {
             root.dragPotentialEnded();
           }
 
-          // Reset everything
-          dragStarted = false;
-          potentialDrag = false;
-          draggedIndex = -1;
-          draggedWidget = null;
-          dropTargetIndex = -1;
-          draggedModelData = null;
-          preventStealing = false;
-          dropIndicator.opacity = 0;
-          pulseAnimation.running = false;
-          dragGhost.width = 0;
+          resetDragState();
         }
       }
     }
