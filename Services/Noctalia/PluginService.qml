@@ -470,7 +470,7 @@ Singleton {
 
     // Initialize plugin entry with API and manifest
     root.loadedPlugins[pluginId] = {
-      barWidgetComponent: null,
+      barWidget: null,
       mainInstance: null,
       api: pluginApi,
       manifest: manifest
@@ -500,6 +500,7 @@ Singleton {
           }
 
           root.loadedPlugins[pluginId].mainInstance = mainInstance;
+          pluginApi.mainInstance = mainInstance;
           Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
         } else {
           Logger.e("PluginService", "Failed to instantiate Main.qml for:", pluginId);
@@ -515,7 +516,8 @@ Singleton {
       var widgetComponent = Qt.createComponent("file://" + widgetPath);
 
       if (widgetComponent.status === Component.Ready) {
-        root.loadedPlugins[pluginId].barWidgetComponent = widgetComponent;
+        root.loadedPlugins[pluginId].barWidget = widgetComponent;
+        pluginApi.barWidget = widgetComponent;
 
         // Register with BarWidgetRegistry
         BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
@@ -568,6 +570,10 @@ Singleton {
         readonly property string pluginDir: "${pluginDir}"
         property var pluginSettings: ({})
         property var manifest: ({})
+
+        // Instance references (set after loading)
+        property var mainInstance: null
+        property var barWidget: null
 
         // IPC handlers storage
         property var ipcHandlers: ({})
