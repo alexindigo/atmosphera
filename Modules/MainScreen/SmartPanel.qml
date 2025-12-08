@@ -372,15 +372,27 @@ Item {
           calculatedX = Style.marginL;
         }
       } else {
-        // No explicit anchor: default to centering on bar
+        // No explicit anchor: attach to bar if allowAttach, otherwise center
         if (root.barIsVertical) {
-          if (root.barPosition === "left") {
-            var availableStart = root.barMarginH + Style.barHeight;
-            var availableWidth = root.width - availableStart - Style.marginL;
-            calculatedX = availableStart + (availableWidth - panelWidth) / 2;
+          if (panelContent.allowAttach) {
+            // Attach to the bar edge
+            if (root.barPosition === "left") {
+              var leftBarEdge = root.barMarginH + Style.barHeight;
+              calculatedX = leftBarEdge;
+            } else {
+              var rightBarEdge = root.width - root.barMarginH - Style.barHeight;
+              calculatedX = rightBarEdge - panelWidth;
+            }
           } else {
-            var availableWidth = root.width - root.barMarginH - Style.barHeight - Style.marginL;
-            calculatedX = Style.marginL + (availableWidth - panelWidth) / 2;
+            // Not attached: center in available space
+            if (root.barPosition === "left") {
+              var availableStart = root.barMarginH + Style.barHeight;
+              var availableWidth = root.width - availableStart - Style.marginL;
+              calculatedX = availableStart + (availableWidth - panelWidth) / 2;
+            } else {
+              var availableWidth = root.width - root.barMarginH - Style.barHeight - Style.marginL;
+              calculatedX = Style.marginL + (availableWidth - panelWidth) / 2;
+            }
           }
         } else {
           if (panelContent.allowAttach) {
@@ -792,10 +804,8 @@ Item {
             return true;
           }
           // Attached to vertical bar (left/right) - don't animate from top
-          // Only if panel is on the SAME side as the bar AND has explicit anchoring
-          // Centered/floating panels (no explicit anchor) should animate from top
-          var hasExplicitBarSideAnchor = root.panelAnchorLeft || root.panelAnchorRight || root.useButtonPosition;
-          var attachedToVerticalBar = hasExplicitBarSideAnchor && panelContent.allowAttachToBar && root.barIsVertical && ((root.effectivePanelAnchorLeft && root.barPosition === "left") || (root.effectivePanelAnchorRight && root.barPosition === "right"));
+          // Panels attach to bar if they have allowAttach (with or without explicit anchor)
+          var attachedToVerticalBar = panelContent.allowAttachToBar && root.barIsVertical && ((root.effectivePanelAnchorLeft && root.barPosition === "left") || (root.effectivePanelAnchorRight && root.barPosition === "right"));
           if (attachedToVerticalBar) {
             return false;
           }
