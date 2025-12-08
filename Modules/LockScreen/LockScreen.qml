@@ -87,9 +87,29 @@ Loader {
               return null;
             }
 
+            // Find laptop battery device, falling back to displayDevice if none found
+            function findLaptopBattery() {
+              if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
+                return UPower.displayDevice;
+              }
+
+              if (!UPower.devices) {
+                return UPower.displayDevice;
+              }
+
+              var devices = UPower.devices.values || [];
+              for (var i = 0; i < devices.length; i++) {
+                var device = devices[i];
+                if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery && device.percentage !== undefined) {
+                  return device;
+                }
+              }
+              return UPower.displayDevice;
+            }
+
             readonly property var bluetoothDevice: findBluetoothBatteryDevice()
             readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
-            readonly property var battery: UPower.displayDevice
+            readonly property var battery: findLaptopBattery()
             readonly property bool isDevicePresent: {
               if (hasBluetoothBattery) {
                 return bluetoothDevice.connected === true;
