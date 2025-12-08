@@ -31,18 +31,16 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 - **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support
 
 ## Audio Assets
-
-- **[DrNI on Freesound](https://freesound.org/people/DrNI/sounds/34562/)** - Notification sound effect
+- **[Universfield on Pixabay](https://pixabay.com/users/universfield-28281460/)** - Notification sound effect
+- **[DrNI on Freesound](https://freesound.org/people/DrNI/sounds/34562/)** - Timer's alarm sound effect
 
 
 ## Special Thanks
-
 - The **Wayland** community for building the future of Linux desktop graphics
 - The **Niri**, **Hyprland**, **Sway**, and **MangoWC** teams for their excellent Wayland compositors
 - All the contributors and users who have helped make Noctalia better
 
 ## License
-
 Noctalia Shell is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 Each dependency listed above is governed by its own respective license. Please refer to their individual projects for licensing information.
