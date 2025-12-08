@@ -21,15 +21,22 @@ SmartPanel {
     return monitors.length === 0 || monitors.includes(screen?.name);
   }
 
-  // When position is "close_to_bar_button" but there's no bar, fall back to center
+  // If widget doesn't exist but bar does, explicitly attach to bar based on bar position
   readonly property bool shouldCenter: controlCenterPosition === "close_to_bar_button" && !hasBarOnScreen
 
-  panelAnchorHorizontalCenter: shouldCenter || (controlCenterPosition !== "close_to_bar_button" && (controlCenterPosition.endsWith("_center") || controlCenterPosition === "center"))
-  panelAnchorVerticalCenter: shouldCenter || controlCenterPosition === "center"
-  panelAnchorLeft: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.endsWith("_left")
-  panelAnchorRight: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.endsWith("_right")
-  panelAnchorBottom: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("bottom_")
-  panelAnchorTop: !shouldCenter && controlCenterPosition !== "close_to_bar_button" && controlCenterPosition.startsWith("top_")
+  // When using "close_to_bar_button" and there's a bar, attach to bar based on bar position
+  // (If widget exists, SmartPanel will use button positioning instead of anchors)
+  readonly property bool isCloseToBarButton: controlCenterPosition === "close_to_bar_button"
+  readonly property bool shouldAttachToBar: isCloseToBarButton && hasBarOnScreen
+  readonly property string barPosition: Settings.data.bar.position || "top"
+  readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
+
+  panelAnchorHorizontalCenter: shouldCenter || (!isCloseToBarButton && (controlCenterPosition.endsWith("_center") || controlCenterPosition === "center"))
+  panelAnchorVerticalCenter: shouldCenter || (!isCloseToBarButton && controlCenterPosition === "center")
+  panelAnchorLeft: (!shouldCenter && !isCloseToBarButton && controlCenterPosition.endsWith("_left")) || (shouldAttachToBar && barPosition === "left" && barIsVertical)
+  panelAnchorRight: (!shouldCenter && !isCloseToBarButton && controlCenterPosition.endsWith("_right")) || (shouldAttachToBar && barPosition === "right" && barIsVertical)
+  panelAnchorBottom: (!shouldCenter && !isCloseToBarButton && controlCenterPosition.startsWith("bottom_")) || (shouldAttachToBar && barPosition === "bottom" && !barIsVertical)
+  panelAnchorTop: (!shouldCenter && !isCloseToBarButton && controlCenterPosition.startsWith("top_")) || (shouldAttachToBar && barPosition === "top" && !barIsVertical)
 
   preferredWidth: Math.round(420 * Style.uiScaleRatio)
   preferredHeight: {
