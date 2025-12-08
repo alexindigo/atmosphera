@@ -554,6 +554,7 @@
       "system": "System",
       "webbrowser": "Webbrowser"
     },
+    "delete": "Löschen",
     "pin": "Anheften",
     "unpin": "Lösen"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Gesamten Zwischenablageverlauf löschen",
     "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablageverlauf entfernen",
     "clipboard-clear-history": "Zwischenablageverlauf löschen",
+    "clipboard-delete": "Zwischenablageeintrag löschen",
     "clipboard-history-disabled": "Zwischenablageverlauf deaktiviert",
     "clipboard-history-disabled-description": "Zwischenablageverlauf in den Einstellungen aktivieren oder cliphist installieren",
     "clipboard-loading": "Lade Zwischenablageverlauf...",

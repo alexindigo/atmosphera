@@ -554,6 +554,7 @@
       "system": "システム",
       "webbrowser": "ウェブブラウザ"
     },
+    "delete": "削除 (Sakujo)",
     "pin": "ピン留め",
     "unpin": "ピン留め解除"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "クリップボード履歴をすべて消去",
     "clipboard-clear-description-full": "クリップボード履歴からすべての項目を削除します",
     "clipboard-clear-history": "クリップボード履歴を消去",
+    "clipboard-delete": "クリップボードのエントリを削除",
     "clipboard-history-disabled": "クリップボード履歴は無効です",
     "clipboard-history-disabled-description": "設定で履歴を有効にするか、cliphist をインストールしてください",
     "clipboard-loading": "クリップボード履歴を読み込み中...",

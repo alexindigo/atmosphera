@@ -314,7 +314,10 @@ Singleton {
     if (!root.cliphistAvailable) {
       return;
     }
-    Quickshell.execDetached(["cliphist", "delete", id]);
+    const idStr = String(id);
+    // Use execDetached with piped command, similar to wipeAll
+    // This prevents the command from hanging
+    Quickshell.execDetached(["sh", "-c", `echo ${idStr} | cliphist delete`]);
     revision++;
     Qt.callLater(() => list());
   }

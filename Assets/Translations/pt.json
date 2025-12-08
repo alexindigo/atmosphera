@@ -554,6 +554,7 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
+    "delete": "Apagar",
     "pin": "Fixar",
     "unpin": "Desafixar"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Limpar todo o histórico da área de transferência",
     "clipboard-clear-description-full": "Remover todos os itens do histórico da área de transferência",
     "clipboard-clear-history": "Limpar histórico da área de transferência",
+    "clipboard-delete": "Apagar entrada da área de transferência",
     "clipboard-history-disabled": "Histórico da área de transferência desativado",
     "clipboard-history-disabled-description": "Ative o histórico da área de transferência nas configurações ou instale o cliphist",
     "clipboard-loading": "Carregando histórico da área de transferência...",

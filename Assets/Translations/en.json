@@ -554,6 +554,7 @@
       "system": "System",
       "webbrowser": "Web Browser"
     },
+    "delete": "Delete",
     "pin": "Pin",
     "unpin": "Unpin"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Clear all clipboard history",
     "clipboard-clear-description-full": "Remove all items from clipboard history",
     "clipboard-clear-history": "Clear clipboard history",
+    "clipboard-delete": "Delete clipboard entry",
     "clipboard-history-disabled": "Clipboard history disabled",
     "clipboard-history-disabled-description": "Enable clipboard history in settings or install cliphist",
     "clipboard-loading": "Loading clipboard history...",

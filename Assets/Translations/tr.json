@@ -554,6 +554,7 @@
       "system": "Sistem",
       "webbrowser": "Tarayıcı"
     },
+    "delete": "Sil",
     "pin": "Sabitle",
     "unpin": "Sabitlemeyi kaldır"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Tüm panoya geçmişini temizle",
     "clipboard-clear-description-full": "Tüm öğeleri panoya geçmişinden kaldır",
     "clipboard-clear-history": "Panoya geçmişini temizle",
+    "clipboard-delete": "Panodaki öğeyi sil",
     "clipboard-history-disabled": "Panoya geçmişi devre dışı",
     "clipboard-history-disabled-description": "Panoya geçmişini ayarlarda etkinleştir veya cliphist kur",
     "clipboard-loading": "Panoya geçmişi yükleniyor...",

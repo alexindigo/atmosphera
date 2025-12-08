@@ -554,6 +554,7 @@
       "system": "Système",
       "webbrowser": "Navigateur web"
     },
+    "delete": "Supprimer",
     "pin": "Épingler",
     "unpin": "Détacher"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Effacer tout l'historique du presse-papiers",
     "clipboard-clear-description-full": "Supprimer tous les éléments de l'historique du presse-papiers",
     "clipboard-clear-history": "Effacer l'historique du presse-papiers",
+    "clipboard-delete": "Supprimer l'entrée du presse-papiers",
     "clipboard-history-disabled": "Historique du presse-papiers désactivé",
     "clipboard-history-disabled-description": "Activez l'historique du presse-papiers dans les paramètres ou installez cliphist",
     "clipboard-loading": "Chargement de l'historique du presse-papiers...",

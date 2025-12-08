@@ -554,6 +554,7 @@
       "system": "Systeem",
       "webbrowser": "Webbrowser"
     },
+    "delete": "Verwijderen",
     "pin": "Vastmaken",
     "unpin": "Losmaken"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Klembordgeschiedenis wissen",
     "clipboard-clear-description-full": "Alle items uit de klembordgeschiedenis verwijderen",
     "clipboard-clear-history": "Klembordgeschiedenis wissen",
+    "clipboard-delete": "Klemborditem verwijderen",
     "clipboard-history-disabled": "Klembordgeschiedenis uitgeschakeld",
     "clipboard-history-disabled-description": "Schakel klembordgeschiedenis in de instellingen in of installeer cliphist",
     "clipboard-loading": "Klembordgeschiedenis laden...",

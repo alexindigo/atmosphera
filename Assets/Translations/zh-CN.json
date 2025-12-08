@@ -554,6 +554,7 @@
       "system": "系统",
       "webbrowser": "网页浏览器"
     },
+    "delete": "删除",
     "pin": "固定",
     "unpin": "取消固定"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "清除所有剪贴板历史记录",
     "clipboard-clear-description-full": "从剪贴板历史记录中移除所有项目",
     "clipboard-clear-history": "清除剪贴板历史记录",
+    "clipboard-delete": "删除剪贴板条目",
     "clipboard-history-disabled": "剪贴板历史记录已禁用",
     "clipboard-history-disabled-description": "在设置中启用剪贴板历史记录或安装 cliphist",
     "clipboard-loading": "正在加载剪贴板历史记录...",

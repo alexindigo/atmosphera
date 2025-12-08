@@ -554,6 +554,7 @@
       "system": "Система",
       "webbrowser": "Веб-браузер"
     },
+    "delete": "Удалить",
     "pin": "Закрепить",
     "unpin": "Открепить"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Очистить всю историю буфера обмена",
     "clipboard-clear-description-full": "Удалить все элементы из истории буфера обмена",
     "clipboard-clear-history": "Очистить историю буфера обмена",
+    "clipboard-delete": "Удалить запись из буфера обмена",
     "clipboard-history-disabled": "История буфера обмена отключена",
     "clipboard-history-disabled-description": "Включите историю буфера обмена в настройках или установите cliphist",
     "clipboard-loading": "Загрузка истории буфера обмена...",

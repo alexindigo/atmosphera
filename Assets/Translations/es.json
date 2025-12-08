@@ -554,6 +554,7 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
+    "delete": "Borrar",
     "pin": "Anclar",
     "unpin": "Desanclar"
   },
@@ -751,6 +752,7 @@
     "clipboard-clear-description": "Limpiar todo el historial del portapapeles",
     "clipboard-clear-description-full": "Eliminar todos los elementos del historial del portapapeles",
     "clipboard-clear-history": "Limpiar historial del portapapeles",
+    "clipboard-delete": "Borrar entrada del portapapeles",
     "clipboard-history-disabled": "Historial del portapapeles desactivado",
     "clipboard-history-disabled-description": "Activa el historial del portapapeles en la configuración o instala cliphist",
     "clipboard-loading": "Cargando historial del portapapeles...",
