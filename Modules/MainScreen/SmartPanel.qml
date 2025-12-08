@@ -792,8 +792,10 @@ Item {
             return true;
           }
           // Attached to vertical bar (left/right) - don't animate from top
-          // Only if panel is on the SAME side as the bar
-          var attachedToVerticalBar = panelContent.allowAttachToBar && root.barIsVertical && ((root.effectivePanelAnchorLeft && root.barPosition === "left") || (root.effectivePanelAnchorRight && root.barPosition === "right"));
+          // Only if panel is on the SAME side as the bar AND has explicit anchoring
+          // Centered/floating panels (no explicit anchor) should animate from top
+          var hasExplicitBarSideAnchor = root.panelAnchorLeft || root.panelAnchorRight || root.useButtonPosition;
+          var attachedToVerticalBar = hasExplicitBarSideAnchor && panelContent.allowAttachToBar && root.barIsVertical && ((root.effectivePanelAnchorLeft && root.barPosition === "left") || (root.effectivePanelAnchorRight && root.barPosition === "right"));
           if (attachedToVerticalBar) {
             return false;
           }
