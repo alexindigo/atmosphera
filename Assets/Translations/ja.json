@@ -868,7 +868,6 @@
         }
       },
       "noctalia": {
-        "download-latest": "最新版をダウンロード",
         "git-commit": "Gitコミット:",
         "git-commit-loading": "読み込み中...",
         "installed-version": "現在のバージョン:",

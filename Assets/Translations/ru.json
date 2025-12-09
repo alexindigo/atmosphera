@@ -868,7 +868,6 @@
         }
       },
       "noctalia": {
-        "download-latest": "Скачать последний выпуск",
         "git-commit": "Git коммит:",
         "git-commit-loading": "Загрузка...",
         "installed-version": "Установленная версия:",

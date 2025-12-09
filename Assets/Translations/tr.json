@@ -868,7 +868,6 @@
         }
       },
       "noctalia": {
-        "download-latest": "En son sürümü indir",
         "git-commit": "Git commit:",
         "git-commit-loading": "Yükleniyor...",
         "installed-version": "Yüklü sürüm:",

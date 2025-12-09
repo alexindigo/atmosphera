@@ -214,34 +214,6 @@ ColumnLayout {
         pointSize: Style.fontSizeXS
       }
     }
-
-    // Update button
-    NButton {
-      visible: {
-        if (root.latestVersion === "Unknown")
-          return false;
-
-        const latest = root.latestVersion.replace("v", "").split(".");
-        const current = root.currentVersion.replace("v", "").split(".");
-        for (var i = 0; i < Math.max(latest.length, current.length); i++) {
-          const l = parseInt(latest[i] || "0");
-          const c = parseInt(current[i] || "0");
-          if (l > c)
-            return true;
-
-          if (l < c)
-            return false;
-        }
-        return false;
-      }
-      icon: "download"
-      text: I18n.tr("settings.about.noctalia.download-latest")
-      outlined: !hovered
-      fontSize: Style.fontSizeXS
-      onClicked: {
-        Quickshell.execDetached(["xdg-open", "https://github.com/Ly-sec/Noctalia/releases/latest"]);
-      }
-    }
   }
 
   // Ko-fi support button
