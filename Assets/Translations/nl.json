@@ -337,6 +337,10 @@
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen overeenkomende vensters zijn.",
           "label": "Verbergmodus"
         },
+        "max-width": {
+          "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
+          "label": "Maximale breedte"
+        },
         "only-active-workspaces": {
           "description": "Toon alleen apps van actieve werkruimten.",
           "label": "Alleen van actieve werkruimten"
@@ -354,18 +358,14 @@
           "description-disabled": "Verticale taakbalk ondersteunt geen titelopties.",
           "label": "Titel weergeven"
         },
-        "title-width": {
-          "description": "Stel de breedte van venstertitels in de taakbalk in (in pixels).",
-          "label": "Titelbreedte",
-          "reset-tooltip": "Titelbreedte resetten"
-        },
         "smart-width": {
           "description": "Pas automatisch de breedte van items aan op basis van het aantal items.",
           "label": "Slimme breedte"
         },
-        "max-width": {
-          "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
-          "label": "Maximale breedte"
+        "title-width": {
+          "description": "Stel de breedte van venstertitels in de taakbalk in (in pixels).",
+          "label": "Titelbreedte",
+          "reset-tooltip": "Titelbreedte resetten"
         }
       },
       "taskbar-grouped": {

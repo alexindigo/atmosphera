@@ -337,6 +337,10 @@
           "description": "当没有匹配的窗口时控制小部件的行为。",
           "label": "隐藏模式"
         },
+        "max-width": {
+          "description": "任务栏的最大宽度（占屏幕宽度的百分比）。",
+          "label": "最大宽度"
+        },
         "only-active-workspaces": {
           "description": "仅显示来自活动工作区的应用程序",
           "label": "仅显示活动工作区"
@@ -354,18 +358,14 @@
           "description-disabled": "垂直任务栏不支持显示标题。",
           "label": "显示标题"
         },
-        "title-width": {
-          "description": "设置任务栏中窗口标题的宽度（以像素为单位）。",
-          "label": "标题宽度",
-          "reset-tooltip": "重置标题宽度"
-        },
         "smart-width": {
           "description": "根据条目数量自动调整条目宽度。",
           "label": "智能宽度"
         },
-        "max-width": {
-          "description": "任务栏的最大宽度（占屏幕宽度的百分比）。",
-          "label": "最大宽度"
+        "title-width": {
+          "description": "设置任务栏中窗口标题的宽度（以像素为单位）。",
+          "label": "标题宽度",
+          "reset-tooltip": "重置标题宽度"
         }
       },
       "taskbar-grouped": {

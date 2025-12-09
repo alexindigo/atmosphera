@@ -337,6 +337,10 @@
           "description": "一致するウィンドウがない場合のウィジェットの動作を制御します。",
           "label": "非表示モード"
         },
+        "max-width": {
+          "description": "画面幅に対するタスクバーの最大幅の割合。",
+          "label": "最大幅"
+        },
         "only-active-workspaces": {
           "description": "アクティブなワークスペースのアプリのみを表示します。",
           "label": "アクティブなワークスペースのみ"
@@ -354,18 +358,14 @@
           "description-disabled": "縦型タスクバーはタイトル表示に対応していません。",
           "label": "タイトルを表示"
         },
-        "title-width": {
-          "description": "タスクバーのウィンドウタイトルの幅を設定します（ピクセル単位）。",
-          "label": "タイトル幅",
-          "reset-tooltip": "タイトル幅をリセット"
-        },
         "smart-width": {
           "description": "エントリの数に基づいてエントリの幅を自動的に調整します。",
           "label": "スマート幅"
         },
-        "max-width": {
-          "description": "画面幅に対するタスクバーの最大幅の割合。",
-          "label": "最大幅"
+        "title-width": {
+          "description": "タスクバーのウィンドウタイトルの幅を設定します（ピクセル単位）。",
+          "label": "タイトル幅",
+          "reset-tooltip": "タイトル幅をリセット"
         }
       },
       "taskbar-grouped": {

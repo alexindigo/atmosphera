@@ -337,6 +337,10 @@
           "description": "Steuert das Verhalten des Widgets, wenn keine übereinstimmenden Fenster vorhanden sind.",
           "label": "Ausblendmodus"
         },
+        "max-width": {
+          "description": "Maximale Breite der Taskleiste als Prozentsatz der Bildschirmbreite.",
+          "label": "Maximale Breite"
+        },
         "only-active-workspaces": {
           "description": "Zeige nur Apps von aktiven Arbeitsbereichen.",
           "label": "Nur von aktiven Arbeitsbereichen"
@@ -354,18 +358,14 @@
           "description-disabled": "Vertikale Taskleiste unterstützt keine Titelanzeige.",
           "label": "Titel anzeigen"
         },
-        "title-width": {
-          "description": "Breite der Fenstertitel in der Taskleiste festlegen (in Pixel).",
-          "label": "Titelbreite",
-          "reset-tooltip": "Titelbreite zurücksetzen"
-        },
         "smart-width": {
           "description": "Breite der Einträge automatisch basierend auf der Anzahl der Einträge anpassen.",
           "label": "Intelligente Breite"
         },
-        "max-width": {
-          "description": "Maximale Breite der Taskleiste als Prozentsatz der Bildschirmbreite.",
-          "label": "Maximale Breite"
+        "title-width": {
+          "description": "Breite der Fenstertitel in der Taskleiste festlegen (in Pixel).",
+          "label": "Titelbreite",
+          "reset-tooltip": "Titelbreite zurücksetzen"
         }
       },
       "taskbar-grouped": {

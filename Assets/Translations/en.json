@@ -337,6 +337,10 @@
           "description": "Controls how the widget behaves when there are no matching windows.",
           "label": "Hiding mode"
         },
+        "max-width": {
+          "description": "Maximum width of the taskbar as a percentage of screen width.",
+          "label": "Maximum width"
+        },
         "only-active-workspaces": {
           "description": "Show only apps from active workspaces.",
           "label": "Only from active workspaces"
@@ -354,18 +358,14 @@
           "description-disabled": "Vertical taskbar does not support showing titles.",
           "label": "Show title"
         },
-        "title-width": {
-          "description": "Set the width of window titles in the taskbar (in pixels).",
-          "label": "Title width",
-          "reset-tooltip": "Reset title width"
-        },
         "smart-width": {
           "description": "Automatically adjust entry width based on the number of entries.",
           "label": "Smart width"
         },
-        "max-width": {
-          "description": "Maximum width of the taskbar as a percentage of screen width.",
-          "label": "Maximum width"
+        "title-width": {
+          "description": "Set the width of window titles in the taskbar (in pixels).",
+          "label": "Title width",
+          "reset-tooltip": "Reset title width"
         }
       },
       "taskbar-grouped": {

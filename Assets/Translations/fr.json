@@ -337,6 +337,10 @@
           "description": "Contrôle le comportement du widget lorsqu'il n'y a pas de fenêtres correspondantes.",
           "label": "Mode de masquage"
         },
+        "max-width": {
+          "description": "Largeur maximale de la barre des tâches en pourcentage de la largeur de l'écran.",
+          "label": "Largeur maximale"
+        },
         "only-active-workspaces": {
           "description": "Afficher uniquement les applications des espaces de travail actifs.",
           "label": "Seulement depuis les espaces de travail actifs."
@@ -354,18 +358,14 @@
           "description-disabled": "La barre des tâches verticale ne prend pas en charge l'affichage des titres.",
           "label": "Afficher le titre"
         },
-        "title-width": {
-          "description": "Définir la largeur des titres de fenêtres dans la barre des tâches (en pixels).",
-          "label": "Largeur du titre",
-          "reset-tooltip": "Réinitialiser la largeur du titre"
-        },
         "smart-width": {
           "description": "Ajuster automatiquement la largeur des entrées en fonction du nombre d'entrées.",
           "label": "Largeur intelligente"
         },
-        "max-width": {
-          "description": "Largeur maximale de la barre des tâches en pourcentage de la largeur de l'écran.",
-          "label": "Largeur maximale"
+        "title-width": {
+          "description": "Définir la largeur des titres de fenêtres dans la barre des tâches (en pixels).",
+          "label": "Largeur du titre",
+          "reset-tooltip": "Réinitialiser la largeur du titre"
         }
       },
       "taskbar-grouped": {

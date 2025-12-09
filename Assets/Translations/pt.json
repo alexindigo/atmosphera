@@ -337,6 +337,10 @@
           "description": "Controla como o widget se comporta quando não há janelas correspondentes.",
           "label": "Modo de ocultação"
         },
+        "max-width": {
+          "description": "Largura máxima da barra de tarefas como porcentagem da largura da tela.",
+          "label": "Largura máxima"
+        },
         "only-active-workspaces": {
           "description": "Mostrar apenas aplicativos de áreas de trabalho ativas.",
           "label": "Apenas de espaços de trabalho ativos"
@@ -354,18 +358,14 @@
           "description-disabled": "A barra de tarefas vertical não suporta exibir títulos.",
           "label": "Mostrar título"
         },
-        "title-width": {
-          "description": "Definir a largura dos títulos de janelas na barra de tarefas (em pixels).",
-          "label": "Largura do título",
-          "reset-tooltip": "Redefinir largura do título"
-        },
         "smart-width": {
           "description": "Ajustar automaticamente a largura das entradas com base no número de entradas.",
           "label": "Largura inteligente"
         },
-        "max-width": {
-          "description": "Largura máxima da barra de tarefas como porcentagem da largura da tela.",
-          "label": "Largura máxima"
+        "title-width": {
+          "description": "Definir a largura dos títulos de janelas na barra de tarefas (em pixels).",
+          "label": "Largura do título",
+          "reset-tooltip": "Redefinir largura do título"
         }
       },
       "taskbar-grouped": {

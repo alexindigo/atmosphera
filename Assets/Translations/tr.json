@@ -337,6 +337,10 @@
           "description": "Eşleşen pencere olmadığında araç takımının nasıl davrandığını kontrol eder.",
           "label": "Gizleme modu"
         },
+        "max-width": {
+          "description": "Görev çubuğunun ekran genişliğine göre maksimum genişliği yüzdesi.",
+          "label": "Maksimum genişlik"
+        },
         "only-active-workspaces": {
           "description": "Sadece aktif çalışma alanlarından uygulamaları göster.",
           "label": "Sadece aktif çalışma alanlarından"
@@ -354,18 +358,14 @@
           "description-disabled": "Dikey görev çubuğu başlık göstermeyi desteklemiyor.",
           "label": "Başlığı göster"
         },
-        "title-width": {
-          "description": "Görev çubuğundaki pencere başlıklarının genişliğini ayarla (piksel olarak).",
-          "label": "Başlık genişliği",
-          "reset-tooltip": "Başlık genişliğini sıfırla"
-        },
         "smart-width": {
           "description": "Girdi sayısına göre girdi genişliğini otomatik olarak ayarla.",
           "label": "Akıllı genişlik"
         },
-        "max-width": {
-          "description": "Görev çubuğunun ekran genişliğine göre maksimum genişliği yüzdesi.",
-          "label": "Maksimum genişlik"
+        "title-width": {
+          "description": "Görev çubuğundaki pencere başlıklarının genişliğini ayarla (piksel olarak).",
+          "label": "Başlık genişliği",
+          "reset-tooltip": "Başlık genişliğini sıfırla"
         }
       },
       "taskbar-grouped": {
