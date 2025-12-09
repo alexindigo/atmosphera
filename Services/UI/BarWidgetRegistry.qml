@@ -207,7 +207,9 @@ Singleton {
                                     "colorizeIcons": false,
                                     "showTitle": false,
                                     "titleWidth": 120,
-                                    "showPinnedApps": true
+                                    "showPinnedApps": true,
+                                    "smartWidth": true,
+                                    "maxTaskbarWidth": 40
                                   },
                                   "TaskbarGrouped": {
                                     "allowUserSettings": true,

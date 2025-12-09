@@ -358,6 +358,14 @@
           "description": "タスクバーのウィンドウタイトルの幅を設定します（ピクセル単位）。",
           "label": "タイトル幅",
           "reset-tooltip": "タイトル幅をリセット"
+        },
+        "smart-width": {
+          "description": "エントリの数に基づいてエントリの幅を自動的に調整します。",
+          "label": "スマート幅"
+        },
+        "max-width": {
+          "description": "画面幅に対するタスクバーの最大幅の割合。",
+          "label": "最大幅"
         }
       },
       "taskbar-grouped": {

@@ -358,6 +358,14 @@
           "description": "Görev çubuğundaki pencere başlıklarının genişliğini ayarla (piksel olarak).",
           "label": "Başlık genişliği",
           "reset-tooltip": "Başlık genişliğini sıfırla"
+        },
+        "smart-width": {
+          "description": "Girdi sayısına göre girdi genişliğini otomatik olarak ayarla.",
+          "label": "Akıllı genişlik"
+        },
+        "max-width": {
+          "description": "Görev çubuğunun ekran genişliğine göre maksimum genişliği yüzdesi.",
+          "label": "Maksimum genişlik"
         }
       },
       "taskbar-grouped": {

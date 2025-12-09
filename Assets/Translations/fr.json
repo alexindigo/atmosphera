@@ -358,6 +358,14 @@
           "description": "Définir la largeur des titres de fenêtres dans la barre des tâches (en pixels).",
           "label": "Largeur du titre",
           "reset-tooltip": "Réinitialiser la largeur du titre"
+        },
+        "smart-width": {
+          "description": "Ajuster automatiquement la largeur des entrées en fonction du nombre d'entrées.",
+          "label": "Largeur intelligente"
+        },
+        "max-width": {
+          "description": "Largeur maximale de la barre des tâches en pourcentage de la largeur de l'écran.",
+          "label": "Largeur maximale"
         }
       },
       "taskbar-grouped": {

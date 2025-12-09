@@ -358,6 +358,14 @@
           "description": "Stel de breedte van venstertitels in de taakbalk in (in pixels).",
           "label": "Titelbreedte",
           "reset-tooltip": "Titelbreedte resetten"
+        },
+        "smart-width": {
+          "description": "Pas automatisch de breedte van items aan op basis van het aantal items.",
+          "label": "Slimme breedte"
+        },
+        "max-width": {
+          "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
+          "label": "Maximale breedte"
         }
       },
       "taskbar-grouped": {

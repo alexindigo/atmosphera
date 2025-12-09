@@ -358,6 +358,14 @@
           "description": "Set the width of window titles in the taskbar (in pixels).",
           "label": "Title width",
           "reset-tooltip": "Reset title width"
+        },
+        "smart-width": {
+          "description": "Automatically adjust entry width based on the number of entries.",
+          "label": "Smart width"
+        },
+        "max-width": {
+          "description": "Maximum width of the taskbar as a percentage of screen width.",
+          "label": "Maximum width"
         }
       },
       "taskbar-grouped": {

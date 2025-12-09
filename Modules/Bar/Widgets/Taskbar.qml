@@ -41,7 +41,34 @@ Rectangle {
   readonly property bool onlySameOutput: (widgetSettings.onlySameOutput !== undefined) ? widgetSettings.onlySameOutput : widgetMetadata.onlySameOutput
   readonly property bool onlyActiveWorkspaces: (widgetSettings.onlyActiveWorkspaces !== undefined) ? widgetSettings.onlyActiveWorkspaces : widgetMetadata.onlyActiveWorkspaces
   readonly property bool showTitle: isVerticalBar ? false : (widgetSettings.showTitle !== undefined) ? widgetSettings.showTitle : widgetMetadata.showTitle
-  readonly property int titleWidth: (widgetSettings.titleWidth !== undefined) ? widgetSettings.titleWidth : widgetMetadata.titleWidth
+  readonly property bool smartWidth: (widgetSettings.smartWidth !== undefined) ? widgetSettings.smartWidth : widgetMetadata.smartWidth
+  readonly property int maxTaskbarWidthPercent: (widgetSettings.maxTaskbarWidth !== undefined) ? widgetSettings.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
+
+  // Maximum width for the taskbar widget to prevent overlapping with other widgets
+  readonly property real maxTaskbarWidth: {
+    if (!screen || isVerticalBar || !smartWidth || maxTaskbarWidthPercent <= 0)
+      return 0;
+    var barFloating = Settings.data.bar.floating || false;
+    var barMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
+    var availableWidth = screen.width - (barMarginH * 2);
+    return Math.round(availableWidth * (maxTaskbarWidthPercent / 100));
+  }
+
+  readonly property int titleWidth: {
+    if (smartWidth && showTitle && !isVerticalBar && combinedModel.length > 0) {
+      var entriesCount = combinedModel.length;
+      var baseWidth = 140;
+      var calculatedWidth = baseWidth / Math.sqrt(entriesCount);
+
+      if (maxTaskbarWidth > 0) {
+        var maxWidthPerEntry = (maxTaskbarWidth / entriesCount) - itemSize - Style.marginS - Style.marginM * 2;
+        calculatedWidth = Math.min(calculatedWidth, maxWidthPerEntry);
+      }
+
+      return Math.max(Math.round(calculatedWidth), 20);
+    }
+    return (widgetSettings.titleWidth !== undefined) ? widgetSettings.titleWidth : widgetMetadata.titleWidth;
+  }
   readonly property bool showPinnedApps: (widgetSettings.showPinnedApps !== undefined) ? widgetSettings.showPinnedApps : widgetMetadata.showPinnedApps
 
   // Context menu state
@@ -277,7 +304,21 @@ Rectangle {
     }
   }
 
-  implicitWidth: visible ? (isVerticalBar ? Style.capsuleHeight : showTitle ? Math.round(taskbarLayout.implicitWidth) : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2)) : 0
+  implicitWidth: {
+    if (!visible)
+      return 0;
+    if (isVerticalBar)
+      return Style.capsuleHeight;
+
+    var calculatedWidth = showTitle ? Math.round(taskbarLayout.implicitWidth) : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2);
+
+    // Apply maximum width constraint when smartWidth is enabled
+    if (smartWidth && maxTaskbarWidth > 0) {
+      return Math.min(calculatedWidth, maxTaskbarWidth);
+    }
+
+    return calculatedWidth;
+  }
   implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
   radius: Style.radiusM
   color: Style.capsuleColor

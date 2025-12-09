@@ -358,6 +358,14 @@
           "description": "设置任务栏中窗口标题的宽度（以像素为单位）。",
           "label": "标题宽度",
           "reset-tooltip": "重置标题宽度"
+        },
+        "smart-width": {
+          "description": "根据条目数量自动调整条目宽度。",
+          "label": "智能宽度"
+        },
+        "max-width": {
+          "description": "任务栏的最大宽度（占屏幕宽度的百分比）。",
+          "label": "最大宽度"
         }
       },
       "taskbar-grouped": {
