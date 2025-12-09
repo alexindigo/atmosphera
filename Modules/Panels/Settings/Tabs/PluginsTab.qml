@@ -285,22 +285,35 @@ ColumnLayout {
 
           ColumnLayout {
             spacing: Style.marginS
+            Layout.fillWidth: true
 
             NText {
               text: modelData.name
               font.weight: Font.Medium
               color: Color.mOnSurface
+              Layout.fillWidth: true
             }
 
             NText {
               text: modelData.url
               font.pointSize: Style.fontSizeS
               color: Color.mOnSurfaceVariant
+              Layout.fillWidth: true
             }
           }
 
           Item {
             Layout.fillWidth: true
+          }
+
+          NIconButton {
+            icon: "trash"
+            tooltipText: I18n.tr("settings.plugins.sources.remove.tooltip")
+            visible: index !== 0 // Cannot remove official source
+            baseSize: Style.baseWidgetSize * 0.7
+            onClicked: {
+              PluginRegistry.removePluginSource(modelData.url);
+            }
           }
 
           // Enable/Disable a source
@@ -311,16 +324,6 @@ ColumnLayout {
               PluginRegistry.setSourceEnabled(modelData.url, checked);
               PluginService.refreshAvailablePlugins();
               ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
-            }
-          }
-
-          NIconButton {
-            icon: "trash"
-            tooltipText: I18n.tr("settings.plugins.sources.remove.tooltip")
-            visible: index !== 0 // Cannot remove official source
-            baseSize: Style.baseWidgetSize * 0.7
-            onClicked: {
-              PluginRegistry.removePluginSource(modelData.url);
             }
           }
         }
