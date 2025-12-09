@@ -165,6 +165,16 @@ Item {
 
     model: [
       {
+        "label": I18n.tr("context-menu.wifi"),
+        "action": "wifi",
+        "icon": "wifi"
+      },
+      {
+        "label": I18n.tr("context-menu.bluetooth"),
+        "action": "bluetooth",
+        "icon": "bluetooth"
+      },
+      {
         "label": I18n.tr("context-menu.widget-settings"),
         "action": "widget-settings",
         "icon": "settings"
@@ -179,6 +189,10 @@ Item {
 
                    if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   } else if (action === "wifi") {
+                     PanelService.getPanel("wifiPanel", screen)?.toggle(pill);
+                   } else if (action === "bluetooth") {
+                     PanelService.getPanel("bluetoothPanel", screen)?.toggle(pill);
                    }
                  }
   }

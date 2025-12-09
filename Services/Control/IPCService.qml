@@ -9,6 +9,7 @@ import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Media
 import qs.Services.Noctalia
+import qs.Services.Networking
 import qs.Services.Power
 import qs.Services.System
 import qs.Services.Theming
@@ -289,6 +290,54 @@ Item {
         BatteryService.setChargingMode(BatteryService.ChargingMode.Lifespan);
         break;
       }
+    }
+  }
+
+  IpcHandler {
+    target: "wifi"
+    function toggle() {
+      NetworkService.setWifiEnabled(!Settings.data.network.wifiEnabled);
+    }
+    function enable() {
+      NetworkService.setWifiEnabled(true);
+    }
+    function disable() {
+      NetworkService.setWifiEnabled(false);
+    }
+    function togglePanel() {
+      root.withTargetScreen(screen => {
+                              var wifiPanel = PanelService.getPanel("wifiPanel", screen);
+                              wifiPanel?.toggle(null, "WiFi");
+                            });
+    }
+  }
+
+  IpcHandler {
+    target: "bluetooth"
+    function toggle() {
+      BluetoothService.setBluetoothEnabled(!BluetoothService.enabled);
+    }
+    function enable() {
+      BluetoothService.setBluetoothEnabled(true);
+    }
+    function disable() {
+      BluetoothService.setBluetoothEnabled(false);
+    }
+    function togglePanel() {
+      root.withTargetScreen(screen => {
+                              var bluetoothPanel = PanelService.getPanel("bluetoothPanel", screen);
+                              bluetoothPanel?.toggle(null, "Bluetooth");
+                            });
+    }
+  }
+
+  IpcHandler {
+    target: "battery"
+    function togglePanel() {
+      root.withTargetScreen(screen => {
+                              var batteryPanel = PanelService.getPanel("batteryPanel", screen);
+                              batteryPanel?.toggle(null, "Battery");
+                            });
     }
   }
 
