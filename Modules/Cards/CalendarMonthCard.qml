@@ -59,7 +59,7 @@ NBox {
         text: I18n.locale.monthName(root.calendarMonth, Locale.LongFormat).toUpperCase() + " " + root.calendarYear
         pointSize: Style.fontSizeM
         font.weight: Style.fontWeightBold
-        color: Color.white
+        color: Color.mOnSurface
       }
 
       NDivider {
