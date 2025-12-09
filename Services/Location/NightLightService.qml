@@ -21,12 +21,12 @@ Singleton {
 
     var command = buildCommand();
 
-    // Compare with previous command to avoid unecessary restart
+    // Compare with previous command to avoid unnecessary restart
     if (JSON.stringify(command) !== JSON.stringify(lastCommand)) {
       lastCommand = command;
       runner.command = command;
 
-      // Set running to false so it may restarts below if still enabled
+      // Set running to false so it may restart below if still enabled
       runner.running = false;
     }
     runner.running = params.enabled;
@@ -49,7 +49,9 @@ Singleton {
         cmd.push("-l", `${LocationService.stableLatitude}`, "-L", `${LocationService.stableLongitude}`);
       } else {
         cmd.push("-S", params.manualSunrise);
-        cmd.push("-s", params.manualSunset);
+        // Avoid midnight edge case - 00:00 causes wlsunset issues at day transition
+        var sunset = params.manualSunset === "00:00" ? "23:59" : params.manualSunset;
+        cmd.push("-s", sunset);
       }
       cmd.push("-d", 60 * 15); // 15min progressive fade at sunset/sunrise
     }
