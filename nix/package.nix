@@ -14,6 +14,7 @@
   wlsunset,
   wl-clipboard,
   imagemagick,
+  wget,
   gpu-screen-recorder, # optional
 }: let
   src = lib.cleanSourceWith {
@@ -45,6 +46,7 @@
       wlsunset
       wl-clipboard
       imagemagick
+      wget
     ]
     ++ lib.optionals (stdenvNoCC.hostPlatform.system == "x86_64-linux") [
       gpu-screen-recorder
