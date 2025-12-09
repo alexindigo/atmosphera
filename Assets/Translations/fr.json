@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Ouvrir le calendrier"
+    "tooltip": "Horloge"
   },
   "common": {
     "add": "Ajouter",
@@ -1460,7 +1460,7 @@
           "label": "Profil"
         },
         "select-avatar": "Sélectionner une image d'avatar",
-        "tooltip": "Parcourir pour une image d’avatar"
+        "tooltip": "Photo de profil"
       },
       "screen-corners": {
         "radius": {
@@ -1956,7 +1956,7 @@
         "output-folder": {
           "description": "Dossier où les enregistrements d'écran seront sauvegardés.",
           "label": "Dossier de sortie",
-          "tooltip": "Parcourir le dossier de sortie"
+          "tooltip": "Dossier de sortie"
         },
         "section": {
           "description": "Gérez la sortie et le contenu de l'enregistrement d'écran.",
@@ -2242,7 +2242,7 @@
         "folder": {
           "description": "Chemin vers votre dossier principal de fonds d'écran.",
           "label": "Dossier des fonds d'écran",
-          "tooltip": "Parcourir le dossier des fonds d'écran"
+          "tooltip": "Dossier des fonds d'écran"
         },
         "hide-wallpaper-filenames": {
           "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
@@ -2251,7 +2251,7 @@
         "monitor-specific": {
           "description": "Définissez un dossier de fond d'écran différent pour chaque moniteur.",
           "label": "Dossiers spécifiques au moniteur",
-          "tooltip": "Parcourir le dossier des fonds d'écran"
+          "tooltip": "Dossier des fonds d'écran du moniteur"
         },
         "recursive-search": {
           "description": "Rechercher également des fonds d'écran dans les sous-dossiers du répertoire des fonds d'écran.",
@@ -2266,7 +2266,7 @@
         "selector": {
           "description": "Choisissez votre fond d’écran.",
           "label": "Sélecteur de fond d’écran",
-          "tooltip": "Ouvrir le sélecteur de fond d’écran"
+          "tooltip": "Sélecteur de fond d’écran"
         },
         "selector-position": {
           "description": "Choisissez l'emplacement d'affichage du panneau de sélection du fond d'écran.",
@@ -2430,7 +2430,7 @@
     "clear-history": "Effacer l'historique",
     "click-to-start-recording": "Enregistreur d'écran (démarrer l'enregistrement)",
     "click-to-stop-recording": "Enregistreur d'écran (arrêter l'enregistrement)",
-    "close": "Bouton fermer",
+    "close": "Fermer",
     "connect-disconnect-devices": "Appareil Bluetooth",
     "delete-notification": "Supprimer la notification",
     "disable-keep-awake": "Rester éveillé",
@@ -2467,8 +2467,8 @@
     "open-tray-dropdown": "Barre d'état système",
     "open-wallpaper-selector": "Sélecteur de fond d'écran",
     "output-muted": "Sortie audio",
-    "pause": "Bouton pause",
-    "play": "Bouton lecture",
+    "pause": "Pause",
+    "play": "Lecture",
     "power-profile": "{profile} profil d'alimentation",
     "previous-media": "Piste précédente",
     "previous-month": "Mois précédent",

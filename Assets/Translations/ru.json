@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Открыть календарь"
+    "tooltip": "Часы"
   },
   "common": {
     "add": "Добавить",
@@ -1460,7 +1460,7 @@
           "label": "Профиль"
         },
         "select-avatar": "Выбрать изображение аватара",
-        "tooltip": "Выбрать изображение аватара"
+        "tooltip": "Фото профілю"
       },
       "screen-corners": {
         "radius": {
@@ -1956,7 +1956,7 @@
         "output-folder": {
           "description": "Папка, в которую будут сохраняться записи экрана.",
           "label": "Выходная папка",
-          "tooltip": "Обзор выходной папки"
+          "tooltip": "Выходная папки"
         },
         "section": {
           "description": "Управление выводом и содержимым записи экрана.",
@@ -2242,7 +2242,7 @@
         "folder": {
           "description": "Путь к вашей основной папке с обоями.",
           "label": "Папка с обоями",
-          "tooltip": "Обзор папки с обоями"
+          "tooltip": "Папка с обоями"
         },
         "hide-wallpaper-filenames": {
           "description": "Скрыть имена файлов обоев в селекторе.",
@@ -2251,7 +2251,7 @@
         "monitor-specific": {
           "description": "Установить отдельную папку с обоями для каждого монитора.",
           "label": "Каталоги для конкретного монитора",
-          "tooltip": "Обзор папки с обоями для монитора"
+          "tooltip": "Папка обоев монитора"
         },
         "recursive-search": {
           "description": "Также искать обои во вложенных папках каталога обоев.",
@@ -2266,7 +2266,7 @@
         "selector": {
           "description": "Выберите обои.",
           "label": "Выбор обоев",
-          "tooltip": "Открыть выбор обоев"
+          "tooltip": "Выбор обоев"
         },
         "selector-position": {
           "description": "Выберите, где появляется панель выбора обоев.",
@@ -2430,7 +2430,7 @@
     "clear-history": "Очистить историю",
     "click-to-start-recording": "Запись экрана (начать запись)",
     "click-to-stop-recording": "Запись экрана (остановить запись)",
-    "close": "Кнопка закрыть",
+    "close": "Закрыть",
     "connect-disconnect-devices": "Устройство Bluetooth",
     "delete-notification": "Удалить уведомление",
     "disable-keep-awake": "Не засыпать",
@@ -2467,8 +2467,8 @@
     "open-tray-dropdown": "Системный трей",
     "open-wallpaper-selector": "Выбор обоев",
     "output-muted": "Аудиовыход",
-    "pause": "Кнопка пауза",
-    "play": "Кнопка воспроизвести",
+    "pause": "Пауза",
+    "play": "Воспроизвести",
     "power-profile": "{profile} профиль питания",
     "previous-media": "Предыдущий трек",
     "previous-month": "Предыдущий месяц",

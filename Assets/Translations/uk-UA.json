@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Відкрити календар"
+    "tooltip": "Годинник"
   },
   "common": {
     "add": "Додати",
@@ -1460,7 +1460,7 @@
           "label": "Профіль"
         },
         "select-avatar": "Вибрати зображення аватара",
-        "tooltip": "Переглянути зображення аватара"
+        "tooltip": "Фото профілю"
       },
       "screen-corners": {
         "radius": {
@@ -1956,7 +1956,7 @@
         "output-folder": {
           "description": "Тека, де зберігатимуться записи екрана.",
           "label": "Тека виведення",
-          "tooltip": "Огляд теки виведення"
+          "tooltip": "Теки виведення"
         },
         "section": {
           "description": "Керуйте виведенням та вмістом запису екрана.",
@@ -2242,7 +2242,7 @@
         "folder": {
           "description": "Шлях до основної теки шпалер.",
           "label": "Тека шпалер",
-          "tooltip": "Огляд теки шпалер"
+          "tooltip": "Тека шпалер"
         },
         "hide-wallpaper-filenames": {
           "description": "Приховати назви файлів шпалер у селекторі.",
@@ -2251,7 +2251,7 @@
         "monitor-specific": {
           "description": "Встановити різні теки шпалер для кожного монітора.",
           "label": "Окремі теки для моніторів",
-          "tooltip": "Огляд теки шпалер"
+          "tooltip": "Тека шпалер монітора"
         },
         "recursive-search": {
           "description": "Також шукати шпалери в підтеках теки шпалер.",
@@ -2266,7 +2266,7 @@
         "selector": {
           "description": "Виберіть свої шпалери.",
           "label": "Вибір шпалер",
-          "tooltip": "Відкрити вибір шпалер"
+          "tooltip": "Вибір шпалер"
         },
         "selector-position": {
           "description": "Виберіть, де відображатиметься панель вибору шпалер.",
@@ -2430,7 +2430,7 @@
     "clear-history": "Очистити історію",
     "click-to-start-recording": "Запис екрана (почати запис)",
     "click-to-stop-recording": "Запис екрана (зупинити запис)",
-    "close": "Кнопка закрити",
+    "close": "Закрити",
     "connect-disconnect-devices": "Пристрій Bluetooth",
     "delete-notification": "Видалити сповіщення",
     "disable-keep-awake": "Заборона сну",
@@ -2467,8 +2467,8 @@
     "open-tray-dropdown": "Системний трей",
     "open-wallpaper-selector": "Вибір шпалер",
     "output-muted": "Аудіовихід",
-    "pause": "Кнопка пауза",
-    "play": "Кнопка відтворити",
+    "pause": "Пауза",
+    "play": "Відтворити",
     "power-profile": "{profile} профіль живлення",
     "previous-media": "Попередній трек",
     "previous-month": "Попередній місяць",

@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "カレンダーを開く"
+    "tooltip": "時計"
   },
   "common": {
     "add": "追加",
@@ -1460,7 +1460,7 @@
           "label": "プロフィール"
         },
         "select-avatar": "アバター画像を選択",
-        "tooltip": "アバター画像を参照"
+        "tooltip": "プロフィール写真"
       },
       "screen-corners": {
         "radius": {
@@ -1956,7 +1956,7 @@
         "output-folder": {
           "description": "画面録画ファイルを保存するフォルダ。",
           "label": "出力フォルダ",
-          "tooltip": "出力フォルダを参照"
+          "tooltip": "出力フォルダ"
         },
         "section": {
           "description": "画面録画の出力先や内容を管理します。",
@@ -2242,7 +2242,7 @@
         "folder": {
           "description": "メインの壁紙フォルダのパス。",
           "label": "壁紙フォルダ",
-          "tooltip": "壁紙フォルダを参照"
+          "tooltip": "壁紙フォルダ"
         },
         "hide-wallpaper-filenames": {
           "description": "壁紙選択パネル内で、壁紙のファイル名を非表示にします。",
@@ -2251,7 +2251,7 @@
         "monitor-specific": {
           "description": "ディスプレイごとに異なる壁紙フォルダを設定します。",
           "label": "ディスプレイ別の壁紙フォルダ",
-          "tooltip": "ディスプレイ別の壁紙フォルダを参照"
+          "tooltip": "モニター壁紙フォルダ"
         },
         "recursive-search": {
           "description": "壁紙フォルダのサブフォルダ内も検索対象にします。",
@@ -2266,7 +2266,7 @@
         "selector": {
           "description": "壁紙を選択します。",
           "label": "壁紙選択パネル",
-          "tooltip": "壁紙選択パネルを開く"
+          "tooltip": "壁紙選択パネル"
         },
         "selector-position": {
           "description": "壁紙選択パネルの表示位置を選択します。",
@@ -2430,7 +2430,7 @@
     "clear-history": "履歴を消去",
     "click-to-start-recording": "画面録画 (録画開始)",
     "click-to-stop-recording": "画面録画 (録画停止)",
-    "close": "閉じるボタン",
+    "close": "閉じる",
     "connect-disconnect-devices": "Bluetooth デバイス",
     "delete-notification": "通知を削除",
     "disable-keep-awake": "スリープ防止",
@@ -2467,8 +2467,8 @@
     "open-tray-dropdown": "システムトレイ",
     "open-wallpaper-selector": "壁紙選択パネル",
     "output-muted": "音声出力",
-    "pause": "一時停止ボタン",
-    "play": "再生ボタン",
+    "pause": "一時停止",
+    "play": "再生",
     "power-profile": "電源プロファイル: {profile}",
     "previous-media": "前のトラック",
     "previous-month": "前月",

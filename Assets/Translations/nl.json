@@ -489,7 +489,7 @@
     }
   },
   "clock": {
-    "tooltip": "Kalender openen"
+    "tooltip": "Klok"
   },
   "common": {
     "add": "Toevoegen",
@@ -1460,7 +1460,7 @@
           "label": "Profiel"
         },
         "select-avatar": "Avatarafbeelding selecteren",
-        "tooltip": "Bladeren naar avatarafbeelding"
+        "tooltip": "Profielfoto"
       },
       "screen-corners": {
         "radius": {
@@ -1956,7 +1956,7 @@
         "output-folder": {
           "description": "Map waarin schermopnamen worden opgeslagen.",
           "label": "Uitvoermap",
-          "tooltip": "Bladeren naar uitvoermap"
+          "tooltip": "Uitvoermap"
         },
         "section": {
           "description": "Beheer schermopname-uitvoer en inhoud.",
@@ -2242,7 +2242,7 @@
         "folder": {
           "description": "Pad naar je hoofdachtergrondmap.",
           "label": "Achtergrondmap",
-          "tooltip": "Bladeren naar achtergrondmap"
+          "tooltip": "Achtergrondmap"
         },
         "hide-wallpaper-filenames": {
           "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
@@ -2251,7 +2251,7 @@
         "monitor-specific": {
           "description": "Stel een andere achtergrondmap in voor elke monitor.",
           "label": "Monitor-specifieke mappen",
-          "tooltip": "Bladeren naar achtergrondmap"
+          "tooltip": "Monitor-achtergrondmap"
         },
         "recursive-search": {
           "description": "Zoek ook naar achtergronden in submappen van de achtergrondmap.",
@@ -2266,7 +2266,7 @@
         "selector": {
           "description": "Kies je achtergrond.",
           "label": "Achtergrondkiezer",
-          "tooltip": "Achtergrondkiezer openen"
+          "tooltip": "Achtergrondkiezer"
         },
         "selector-position": {
           "description": "Kies waar het achtergrondselectiepaneel verschijnt.",
@@ -2430,7 +2430,7 @@
     "clear-history": "Geschiedenis wissen",
     "click-to-start-recording": "Schermrecorder (opname starten)",
     "click-to-stop-recording": "Schermrecorder (opname stoppen)",
-    "close": "Sluiten-knop",
+    "close": "Sluiten",
     "connect-disconnect-devices": "Bluetooth-apparaat",
     "delete-notification": "Melding verwijderen",
     "disable-keep-awake": "Wakker houden",
@@ -2467,8 +2467,8 @@
     "open-tray-dropdown": "Systeemvak",
     "open-wallpaper-selector": "Achtergrondkiezer",
     "output-muted": "Audio-uitvoer",
-    "pause": "Pauze-knop",
-    "play": "Afspelen-knop",
+    "pause": "Pauzeren",
+    "play": "Afspelen",
     "power-profile": "{profile} energieprofiel",
     "previous-media": "Vorige track",
     "previous-month": "Vorige maand",
