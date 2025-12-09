@@ -1659,6 +1659,10 @@
         "description": "Mostrar la opción 'hibernar' en las acciones de energía.",
         "label": "Mostrar hibernar"
       },
+      "show-session-buttons": {
+        "description": "Permitir el acceso a la configuración de energía desde la pantalla de bloqueo.",
+        "label": "Controles de energía"
+      },
       "title": "Pantalla de bloqueo"
     },
     "network": {

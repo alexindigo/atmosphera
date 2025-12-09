@@ -1659,6 +1659,10 @@
         "description": "Afficher l’option 'hiberner' dans les actions d’énergie.",
         "label": "Afficher l’hibernation"
       },
+      "show-session-buttons": {
+        "description": "Autoriser l'accès aux paramètres d'alimentation depuis l'écran de verrouillage.",
+        "label": "Commandes d'alimentation"
+      },
       "title": "Écran de verrouillage"
     },
     "network": {

@@ -1659,6 +1659,10 @@
         "description": "Güç işlemlerinde 'hazırda beklet' seçeneğini göster.",
         "label": "Hazırda beklet seçeneğini göster"
       },
+      "show-session-buttons": {
+        "description": "Kilit ekranından güç ayarlarına erişime izin ver.",
+        "label": "Güç kontrolleri"
+      },
       "title": "Ekran Kilit"
     },
     "network": {

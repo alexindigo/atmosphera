@@ -1659,6 +1659,10 @@
         "description": "Show the option 'hibernate' in the energy actions.",
         "label": "Show hibernate"
       },
+      "show-session-buttons": {
+        "description": "Allow access to power settings from the lock screen.",
+        "label": "Power controls"
+      },
       "title": "Lock Screen"
     },
     "network": {

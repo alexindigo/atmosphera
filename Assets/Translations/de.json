@@ -1659,6 +1659,10 @@
         "description": "Die Option 'Ruhezustand' in den Energieaktionen anzeigen.",
         "label": "Ruhezustand anzeigen"
       },
+      "show-session-buttons": {
+        "description": "Zugriff auf die Energieeinstellungen vom Sperrbildschirm aus erlauben.",
+        "label": "Leistungsregler"
+      },
       "title": "Sperrbildschirm"
     },
     "network": {

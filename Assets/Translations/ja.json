@@ -1659,6 +1659,10 @@
         "description": "電源メニューのオプションに「ハイバネート（休止状態）」を表示します。",
         "label": "ハイバネートを表示"
       },
+      "show-session-buttons": {
+        "description": "ロック画面から電源設定へのアクセスを許可します。",
+        "label": "電源制御"
+      },
       "title": "ロック画面"
     },
     "network": {

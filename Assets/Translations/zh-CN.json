@@ -1659,6 +1659,10 @@
         "description": "在电源操作中显示'休眠'选项。",
         "label": "显示休眠"
       },
+      "show-session-buttons": {
+        "description": "允许从锁屏访问电源设置。",
+        "label": "电源控制"
+      },
       "title": "锁屏"
     },
     "network": {
