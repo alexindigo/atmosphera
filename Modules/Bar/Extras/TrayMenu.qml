@@ -50,13 +50,95 @@ PopupWindow {
   visible: false
   color: Color.transparent
   anchor.item: anchorItem
-  anchor.rect.x: anchorX
-  anchor.rect.y: {
-    if (isSubMenu) {
-      const offsetY = Settings.data.bar.position === "bottom" ? -10 : 10;
-      return anchorY + offsetY;
+  anchor.rect.x: {
+    if (anchorItem && screen) {
+      let baseX = anchorX;
+
+      // Calculate position relative to current screen
+      let menuScreenX;
+      if (isSubMenu && anchorItem.Window && anchorItem.Window.window) {
+        const posInPopup = anchorItem.mapToItem(null, 0, 0);
+        const parentWindow = anchorItem.Window.window;
+        const windowXOnScreen = parentWindow.x - screen.x;
+        menuScreenX = windowXOnScreen + posInPopup.x + baseX;
+      } else {
+        const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
+        menuScreenX = anchorGlobalPos.x + baseX;
+      }
+
+      const menuRight = menuScreenX + implicitWidth;
+      const screenRight = screen.width;
+
+      // Adjust if menu would clip on the right
+      if (menuRight > screenRight) {
+        const overflow = menuRight - screenRight;
+        return baseX - overflow - Style.marginM;
+      }
+      // Adjust if menu would clip on the left
+      if (menuScreenX < 0) {
+        return baseX - menuScreenX + Style.marginM;
+      }
+      return baseX;
     }
-    return anchorY + Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight;
+    return anchorX;
+  }
+  anchor.rect.y: {
+    if (anchorItem && screen) {
+      const barPosition = Settings.data.bar.position;
+
+      // Calculate base Y offset (relative to anchor item)
+      let baseY = anchorY;
+      if (!isSubMenu && barPosition === "bottom") {
+        // For bottom bar, position menu above the anchor with margin
+        baseY = -(implicitHeight + Style.marginM);
+      }
+
+      // Calculate position relative to current screen (not global coordinates)
+      let menuScreenY;
+      if (isSubMenu && anchorItem.Window && anchorItem.Window.window) {
+        // Submenu: anchor is inside parent PopupWindow
+        const posInPopup = anchorItem.mapToItem(null, 0, 0);
+        const parentWindow = anchorItem.Window.window;
+        // Convert global window Y to screen-relative Y by subtracting screen offset
+        const windowYOnScreen = parentWindow.y - screen.y;
+        menuScreenY = windowYOnScreen + posInPopup.y + baseY;
+      } else if (!isSubMenu && barPosition === "bottom") {
+        // Bottom bar main menu: subtract baseY to position above anchor
+        const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
+        menuScreenY = anchorGlobalPos.y - baseY;
+      } else {
+        // Main menu for other positions: add baseY
+        const anchorGlobalPos = anchorItem.mapToItem(null, 0, 0);
+        menuScreenY = anchorGlobalPos.y + baseY;
+      }
+
+      const menuBottom = menuScreenY + implicitHeight;
+      const screenBottom = screen.height;
+
+      // Adjust baseY if menu would clip
+      if (menuBottom > screenBottom) {
+        // Clip at bottom - shift up by the overflow amount
+        const overflow = menuBottom - screenBottom;
+        if (!isSubMenu && barPosition === "bottom") {
+          return baseY + overflow + Style.marginM;
+        }
+        return baseY - overflow - Style.marginM;
+      }
+      if (menuScreenY < 0) {
+        // Clip at top - shift down
+        if (!isSubMenu && barPosition === "bottom") {
+          return baseY + menuScreenY - Style.marginM;
+        }
+        return baseY - menuScreenY + Style.marginM;
+      }
+      return baseY;
+    }
+
+    // Fallback if no anchor/screen
+    if (isSubMenu) {
+      return anchorY;
+    }
+    return anchorY + (Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight);
   }
 
   function showAt(item, x, y) {
