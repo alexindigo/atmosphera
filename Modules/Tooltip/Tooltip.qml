@@ -25,6 +25,8 @@ PopupWindow {
   property bool animatingOut: true
   property int screenWidth: 1920
   property int screenHeight: 1080
+  property int screenX: 0
+  property int screenY: 0
 
   visible: false
   color: Color.transparent
@@ -138,6 +140,8 @@ PopupWindow {
       if (targetGlobal.x >= s.x && targetGlobal.x < s.x + s.width && targetGlobal.y >= s.y && targetGlobal.y < s.y + s.height) {
         screenWidth = s.width;
         screenHeight = s.height;
+        screenX = s.x;
+        screenY = s.y;
         foundScreen = true;
         break;
       }
@@ -175,8 +179,12 @@ PopupWindow {
     const tipHeight = tooltipText.implicitHeight + (padding * 2);
     root.implicitHeight = tipHeight;
 
-    // Get target's global position
-    var targetGlobal = targetItem.mapToItem(null, 0, 0);
+    // Get target's global position and convert to screen-relative
+    var targetGlobalAbs = targetItem.mapToGlobal(0, 0);
+    var targetGlobal = {
+      "x": targetGlobalAbs.x - screenX,
+      "y": targetGlobalAbs.y - screenY
+    };
     const targetWidth = targetItem.width;
     const targetHeight = targetItem.height;
 
@@ -184,7 +192,7 @@ PopupWindow {
     var newAnchorY = 0;
 
     if (direction === "auto") {
-      // Calculate available space in each direction
+      // Calculate available space in each direction (screen-relative)
       const spaceLeft = targetGlobal.x;
       const spaceRight = screenWidth - (targetGlobal.x + targetWidth);
       const spaceTop = targetGlobal.y;
@@ -242,16 +250,6 @@ PopupWindow {
 
       newAnchorX = selectedPosition.x;
       newAnchorY = selectedPosition.y;
-
-      // Adjust horizontal position to keep tooltip on screen
-      if (direction === "auto") {
-        const globalX = targetGlobal.x + newAnchorX;
-        if (globalX < 0) {
-          newAnchorX = -targetGlobal.x + margin;
-        } else if (globalX + tipWidth > screenWidth) {
-          newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin;
-        }
-      }
     } else {
       // Manual direction positioning
       switch (direction) {
@@ -272,6 +270,22 @@ PopupWindow {
         newAnchorY = targetHeight + margin;
         break;
       }
+    }
+
+    // Adjust horizontal position to keep tooltip on screen
+    const globalX = targetGlobal.x + newAnchorX;
+    if (globalX < 0) {
+      newAnchorX = -targetGlobal.x + margin;
+    } else if (globalX + tipWidth > screenWidth) {
+      newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin;
+    }
+
+    // Adjust vertical position to keep tooltip on screen
+    const globalY = targetGlobal.y + newAnchorY;
+    if (globalY < 0) {
+      newAnchorY = -targetGlobal.y + margin;
+    } else if (globalY + tipHeight > screenHeight) {
+      newAnchorY = screenHeight - targetGlobal.y - tipHeight - margin;
     }
 
     // Apply position first (before making visible)
@@ -340,8 +354,12 @@ PopupWindow {
       const tipHeight = tooltipText.implicitHeight + (padding * 2);
       root.implicitHeight = tipHeight;
 
-      // Reposition based on current direction
-      var targetGlobal = targetItem.mapToItem(null, 0, 0);
+      // Reposition based on current direction (screen-relative)
+      var targetGlobalAbs = targetItem.mapToGlobal(0, 0);
+      var targetGlobal = {
+        "x": targetGlobalAbs.x - screenX,
+        "y": targetGlobalAbs.y - screenY
+      };
       const targetWidth = targetItem.width;
       const targetHeight = targetItem.height;
 
@@ -371,6 +389,14 @@ PopupWindow {
         newAnchorX = -targetGlobal.x + margin;
       } else if (globalX + tipWidth > screenWidth) {
         newAnchorX = screenWidth - targetGlobal.x - tipWidth - margin;
+      }
+
+      // Adjust vertical position to keep tooltip on screen if needed
+      const globalY = targetGlobal.y + newAnchorY;
+      if (globalY < 0) {
+        newAnchorY = -targetGlobal.y + margin;
+      } else if (globalY + tipHeight > screenHeight) {
+        newAnchorY = screenHeight - targetGlobal.y - tipHeight - margin;
       }
 
       // Apply the new anchor positions
