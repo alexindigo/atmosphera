@@ -1922,7 +1922,6 @@
       },
       "uninstall-error": "Failed to uninstall: {error}",
       "uninstall-success": "Successfully uninstalled {plugin}",
-      "uninstall.tooltip": "Uninstall plugin",
       "uninstalling": "Uninstalling {plugin}...",
       "update": "Update",
       "update-all": "Update All ({count})",
