@@ -188,9 +188,6 @@ Singleton {
     const data = createData(notification);
     addToHistory(data);
 
-    // Play notification sound if enabled (before checking for existing notifications)
-    playNotificationSound(data.urgency, notification.appName);
-
     if (root.doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
       return;
 
@@ -209,33 +206,19 @@ Singleton {
 
     // Add new notification
     addNewNotification(quickshellId, notification, data);
+    playNotificationSound(data.urgency, notification.appName);
   }
 
-  // Function to play notification sound using existing SoundService
   function playNotificationSound(urgency, appName) {
-    // Rate limiting - prevent sound spam
-    const now = Date.now();
-    if (now - lastSoundTime < minSoundInterval) {
-      return;
-    }
-    lastSoundTime = now;
-
-    // Check if QtMultimedia is available
     if (!SoundService.multimediaAvailable) {
       return;
     }
-
-    // Check if notification sounds are enabled
     if (!Settings.data.notifications?.sounds?.enabled) {
       return;
     }
-
-    // Always respect do not disturb mode
-    if (root.doNotDisturb) {
+    if (AudioService.muted) {
       return;
     }
-
-    // Check if this app should be excluded
     if (appName) {
       const excludedApps = Settings.data.notifications.sounds.excludedApps || "";
       if (excludedApps.trim() !== "") {
@@ -249,11 +232,6 @@ Singleton {
       }
     }
 
-    // Check if system is muted
-    if (AudioService.muted) {
-      return;
-    }
-
     // Get the sound file for this urgency level
     const soundFile = getNotificationSoundFile(urgency);
     if (!soundFile || soundFile.trim() === "") {
@@ -261,6 +239,13 @@ Singleton {
       Logger.i("NotificationService", `No sound file configured for urgency ${urgency}`);
       return;
     }
+
+    // Rate limiting - prevent sound spam
+    const now = Date.now();
+    if (now - lastSoundTime < minSoundInterval) {
+      return;
+    }
+    lastSoundTime = now;
 
     // Play sound using existing SoundService
     const volume = Settings.data.notifications?.sounds?.volume ?? 0.5;
