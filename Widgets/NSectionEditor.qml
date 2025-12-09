@@ -195,7 +195,7 @@ NBox {
       Grid {
         id: widgetGrid
         anchors.fill: parent
-        anchors.margins: Style.marginXXS // Small margin to prevent edge overlap
+        anchors.margins: Style.marginS
         columns: root.gridColumns
         rowSpacing: Style.marginS
         columnSpacing: Style.marginM
@@ -497,6 +497,16 @@ NBox {
         property bool isOverButtonArea: false
 
         // Drop position calculation
+        // Map widget coordinates from grid-local to gridContainer coordinates
+        function mapWidgetCoords(widget) {
+          return {
+            x: widget.x + widgetGrid.x,
+            y: widget.y + widgetGrid.y,
+            width: widget.width,
+            height: widget.height
+          };
+        }
+
         function updateDropIndicator(mouseX, mouseY) {
           if (!dragStarted || draggedIndex === -1) {
             dropIndicator.opacity = 0;
@@ -516,22 +526,24 @@ NBox {
             if (!widget || widget.widgetIndex === undefined)
               continue;
 
+            const mapped = mapWidgetCoords(widget);
+
             // Check distance to left edge (insert before)
-            const leftDist = Math.sqrt(Math.pow(mouseX - widget.x, 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2));
+            const leftDist = Math.sqrt(Math.pow(mouseX - mapped.x, 2) + Math.pow(mouseY - (mapped.y + mapped.height / 2), 2));
 
             // Check distance to right edge (insert after)
-            const rightDist = Math.sqrt(Math.pow(mouseX - (widget.x + widget.width), 2) + Math.pow(mouseY - (widget.y + widget.height / 2), 2));
+            const rightDist = Math.sqrt(Math.pow(mouseX - (mapped.x + mapped.width), 2) + Math.pow(mouseY - (mapped.y + mapped.height / 2), 2));
 
             if (leftDist < minDistance) {
               minDistance = leftDist;
               bestIndex = i;
-              bestPosition = Qt.point(widget.x - dropIndicator.width / 2 - Style.marginXS, widget.y);
+              bestPosition = Qt.point(mapped.x - dropIndicator.width / 2 - Style.marginXS, mapped.y);
             }
 
             if (rightDist < minDistance) {
               minDistance = rightDist;
               bestIndex = i + 1;
-              bestPosition = Qt.point(widget.x + widget.width + Style.marginXS - dropIndicator.width / 2, widget.y);
+              bestPosition = Qt.point(mapped.x + mapped.width + Style.marginXS - dropIndicator.width / 2, mapped.y);
             }
           }
 
@@ -539,11 +551,13 @@ NBox {
           if (widgetModel.length > 0 && draggedIndex !== 0) {
             const firstWidget = widgetRepeater.itemAt(0);
             if (firstWidget) {
-              const dist = Math.sqrt(Math.pow(mouseX - firstWidget.x, 2) + Math.pow(mouseY - firstWidget.y, 2));
-              if (dist < minDistance && mouseX < firstWidget.x + firstWidget.width / 2) {
+              const mapped = mapWidgetCoords(firstWidget);
+              const dist = Math.sqrt(Math.pow(mouseX - mapped.x, 2) + Math.pow(mouseY - mapped.y, 2));
+              if (dist < minDistance && mouseX < mapped.x + mapped.width / 2) {
                 minDistance = dist;
                 bestIndex = 0;
-                bestPosition = Qt.point(Math.max(0, firstWidget.x - dropIndicator.width - Style.marginS), firstWidget.y);
+                // Position indicator to the left of the first widget
+                bestPosition = Qt.point(mapped.x - dropIndicator.width / 2 - Style.marginXS, mapped.y);
               }
             }
           }
