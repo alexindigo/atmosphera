@@ -29,25 +29,26 @@ Singleton {
   readonly property string avatarCacheDir: Settings.cacheDirImages + "contributors/"
   readonly property string metadataPath: avatarCacheDir + "metadata.json"
 
+  property bool isInitialized: false
+
   FileView {
     id: githubDataFileView
     path: githubDataFile
-    watchChanges: true
-    onFileChanged: reload()
-    onAdapterUpdated: writeAdapter()
+    watchChanges: false  // Disable to prevent reload on our own writes
     Component.onCompleted: {
       loadCacheMetadata();
-      reload();
     }
     onLoaded: {
-      loadFromCache();
+      if (!root.isInitialized) {
+        root.isInitialized = true;
+        loadFromCache();
+      }
     }
     onLoadFailed: function (error) {
       if (error.toString().includes("No such file") || error === 2) {
-        // Fetch data after a short delay to ensure file is created
-        Qt.callLater(() => {
-                       fetchFromGitHub();
-                     });
+        // No cache file exists, fetch fresh data
+        root.isInitialized = true;
+        fetchFromGitHub();
       }
     }
 
@@ -63,25 +64,29 @@ Singleton {
   // --------------------------------
   function init() {
     Logger.i("GitHub", "Service started");
-    loadFromCache();
+    // FileView will handle loading automatically via onLoaded
   }
 
   // --------------------------------
   function loadFromCache() {
     const now = Time.timestamp;
     var needsRefetch = false;
+
+    Logger.i("GitHub", "Checking cache - timestamp:", data.timestamp, "now:", now, "age:", data.timestamp ? Math.round((now - data.timestamp) / 60) : "N/A", "minutes");
+
     if (!data.timestamp || (now >= data.timestamp + githubUpdateFrequency)) {
       needsRefetch = true;
-      Logger.d("GitHub", "Cache expired or missing, scheduling fetch");
+      Logger.i("GitHub", "Cache expired or missing, scheduling fetch (update frequency:", Math.round(githubUpdateFrequency / 60), "minutes)");
     } else {
-      Logger.d("GitHub", "Loading cached GitHub data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
+      Logger.i("GitHub", "Cache is fresh, using cached data (age:", Math.round((now - data.timestamp) / 60), "minutes)");
     }
 
     if (data.version) {
       root.latestVersion = data.version;
     }
-    if (data.contributors) {
+    if (data.contributors && data.contributors.length > 0) {
       root.contributors = data.contributors;
+      Logger.d("GitHub", "Loaded", data.contributors.length, "contributors from cache");
     }
 
     if (needsRefetch) {
@@ -104,17 +109,19 @@ Singleton {
   // --------------------------------
   function saveData() {
     data.timestamp = Time.timestamp;
-    Logger.d("GitHub", "Saving data to cache file:", githubDataFile);
+    Logger.d("GitHub", "Saving data to cache file:", githubDataFile, "with timestamp:", data.timestamp);
     Logger.d("GitHub", "Data to save - version:", data.version, "contributors:", data.contributors.length);
 
     // Ensure cache directory exists
     Quickshell.execDetached(["mkdir", "-p", Settings.cacheDir]);
 
-    Qt.callLater(() => {
-                   // Use direct ID reference to the FileView
-                   githubDataFileView.writeAdapter();
-                   Logger.d("GitHub", "Cache file written successfully");
-                 });
+    try {
+      // Write immediately instead of Qt.callLater to ensure it completes
+      githubDataFileView.writeAdapter();
+      Logger.d("GitHub", "Cache file written successfully");
+    } catch (error) {
+      Logger.e("GitHub", "Failed to write cache file:", error);
+    }
   }
 
   // --------------------------------
