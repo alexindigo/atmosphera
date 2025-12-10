@@ -183,6 +183,7 @@ Singleton {
           doNotDisturb: NotificationService.doNotDisturb,
           noctaliaPerformanceMode: PowerProfileService.noctaliaPerformanceMode,
           barVisible: BarService.isVisible,
+          lockScreenActive: PanelService.lockScreen?.active || false,
           wallpapers: WallpaperService.currentWallpapers || {},
           // -------------
           display: shellStateData.display || {},
