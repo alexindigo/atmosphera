@@ -529,7 +529,7 @@
     "pause": "Duraklat",
     "play": "Oynat",
     "previous": "Önceki",
-    "random-wallpaper": "Rastgele duvar kağıdı",
+    "random-wallpaper": "Rastgele duvar kâğıdı",
     "toggle-mute": "Sesi kapat/aç",
     "widget-settings": "Araç takımı ayarları"
   },
@@ -745,7 +745,7 @@
     "search-icons": "örn., noctalia, niri, battery, cloud",
     "search-launcher": "Girişleri arayın... veya > komutları için kullanın",
     "search-wallhaven": "Wallhaven'da ara...",
-    "search-wallpapers": "Duvar kağıtlarını filtrelemek için yazın...",
+    "search-wallpapers": "Duvar kâğıtlarını filtrelemek için yazın...",
     "select": "Seç",
     "test": "Test"
   },
@@ -831,9 +831,9 @@
       }
     },
     "wallpaperSelector": {
-      "label": "Duvar Kağıdı",
+      "label": "Duvar Kâğıdı",
       "tooltip": {
-        "action": "Duvar kağıdı seçici"
+        "action": "Duvar kâğıdı seçici"
       }
     },
     "wifi": {
@@ -1053,8 +1053,8 @@
           "label": "Renk kaynağı"
         },
         "use-wallpaper-colors": {
-          "description": "Matugen kullanarak duvar kağıdınızdan renk şemaları oluşturun. Bütünleşik bir tema oluşturmak için renkleri otomatik olarak çıkarır.",
-          "label": "Duvar kağıdı renklerini kullan"
+          "description": "Matugen kullanarak duvar kâğıdınızdan renk şemaları oluşturun. Bütünleşik bir tema oluşturmak için renkleri otomatik olarak çıkarır.",
+          "label": "Duvar kâğıdı renklerini kullan"
         }
       },
       "dark-mode": {
@@ -1464,10 +1464,10 @@
         },
         "section": {
           "description": "Kullanıcı detaylarınızı ve avatarınızı düzenleyin.",
-          "label": "Profil"
+          "label": "Avatar"
         },
-        "select-avatar": "Avatar görüntüsü seç",
-        "tooltip": "Profil resmi"
+        "select-avatar": "Avatar resmini seç",
+        "tooltip": "Avatar resmi"
       },
       "screen-corners": {
         "radius": {
@@ -1497,7 +1497,7 @@
           "label": "Komut Bilgisi"
         },
         "parameters": {
-          "description": "• Duvar Kağıdı Kancası: $1 = duvar kağıdı yolu, $2 = ekran adı\n• Tema Geçiş Kancası: $1 = true/false (koyu mod durumu)",
+          "description": "• Duvar Kâğıdı Kancası: $1 = duvar kâğıdı yolu, $2 = ekran adı\n• Tema Geçiş Kancası: $1 = true/false (koyu mod durumu)",
           "label": "Kullanılabilir Parametreler"
         }
       },
@@ -1518,9 +1518,9 @@
       },
       "title": "Kancalar",
       "wallpaper-changed": {
-        "description": "Duvar kağıdı değiştiğinde çalıştırılacak komut.",
-        "label": "Duvar kağıdı değişti",
-        "placeholder": "örn., notify-send \"Duvar Kağıdı\" \"Değişti\""
+        "description": "Duvar kâğıdı değiştiğinde çalıştırılacak komut.",
+        "label": "Duvar kâğıdı değişti",
+        "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
       }
     },
     "launcher": {
@@ -2201,12 +2201,12 @@
           "label": "Özel aralık"
         },
         "interval": {
-          "description": "Duvar kağıtlarının otomatik değiştirilme sıklığını belirleyin.",
-          "label": "Duvar kağıdı aralığı"
+          "description": "Duvar kâğıtlarının otomatik değiştirilme sıklığını belirleyin.",
+          "label": "Duvar kâğıdı aralığı"
         },
         "random-wallpaper": {
-          "description": "Düzenli aralıklarla rastgele duvar kağıdı değişiklikleri planlayın.",
-          "label": "Rastgele duvar kağıdı"
+          "description": "Düzenli aralıklarla rastgele duvar kâğıdı değişiklikleri planlayın.",
+          "label": "Rastgele duvar kâğıdı"
         },
         "section": {
           "label": "Otomasyon"
@@ -2218,7 +2218,7 @@
           "label": "Geçiş kenarını yumuşat"
         },
         "fill-color": {
-          "description": "Duvar kağıdının arkasında görünebilecek bir dolgu rengi seçin.",
+          "description": "Duvar kâğıdının arkasında görünebilecek bir dolgu rengi seçin.",
           "label": "Doldurma rengi"
         },
         "fill-mode": {
@@ -2233,54 +2233,54 @@
           "label": "Geçiş süresi"
         },
         "transition-type": {
-          "description": "Duvar kağıtları arasında geçiş yaparken animasyon türü.",
+          "description": "Duvar kâğıtları arasında geçiş yaparken animasyon türü.",
           "label": "Geçiş türü"
         }
       },
       "settings": {
         "enable-management": {
-          "description": "Duvar kağıtlarını Noctalia ile yönetin. Başka bir uygulamayı kullanmayı tercih ediyorsanız işareti kaldırın.",
-          "label": "Duvar kağıdı yönetimini etkinleştir"
+          "description": "Duvar kâğıtlarını Noctalia ile yönetin. Başka bir uygulamayı kullanmayı tercih ediyorsanız işareti kaldırın.",
+          "label": "Duvar kâğıdı yönetimini etkinleştir"
         },
         "enable-overview": {
-          "description": "Genel bakış ekranına bulanık ve karartılmış bir duvar kağıdı uygular.",
-          "label": "Genel bakış duvar kağıdını etkinleştir"
+          "description": "Genel bakış ekranına bulanık ve karartılmış bir duvar kâğıdı uygular.",
+          "label": "Genel bakış duvar kâğıdını etkinleştir"
         },
         "folder": {
-          "description": "Ana duvar kağıdı klasörünüzün yolu.",
-          "label": "Duvar kağıdı klasörü",
-          "tooltip": "Duvar kağıdı klasörü"
+          "description": "Ana duvar kâğıdı klasörünüzün yolu.",
+          "label": "Duvar kâğıdı klasörü",
+          "tooltip": "Duvar kâğıdı klasörü"
         },
         "hide-wallpaper-filenames": {
-          "description": "Seçicide duvar kağıdı dosya adlarını gizle.",
+          "description": "Seçicide duvar kâğıdı dosya adlarını gizle.",
           "label": "Dosya adlarını gizle"
         },
         "monitor-specific": {
-          "description": "Her ekran için farklı bir duvar kağıdı klasörü ayarlayın.",
-          "label": "Ekran özgü dizinler",
-          "tooltip": "Monitör duvar kâğıdı klasörü"
+          "description": "Her ekran için farklı bir duvar kâğıdı klasörü ayarlayın.",
+          "label": "Ekrana özgü dizinler",
+          "tooltip": "Ekrana özgü duvar kâğıdı klasörü"
         },
         "recursive-search": {
-          "description": "Duvar kağıdı dizinin alt klasörlerinde de duvar kağıdı arayın.",
+          "description": "Duvar kâğıdı dizinin alt klasörlerinde de duvar kâğıdı arayın.",
           "label": "Alt klasörleri ara"
         },
         "section": {
-          "description": "Duvar kağıtlarının nasıl yönetileceğini ve görüntüleneceğini kontrol edin.",
-          "label": "Duvar kağıdı ayarları"
+          "description": "Duvar kâğıtlarının nasıl yönetileceğini ve görüntüleneceğini kontrol edin.",
+          "label": "Duvar kâğıdı ayarları"
         },
-        "select-folder": "Duvar kağıdı klasörünü seç",
-        "select-monitor-folder": "Ekran duvar kağıdı klasörünü seç",
+        "select-folder": "Duvar kâğıdı klasörünü seç",
+        "select-monitor-folder": "Ekran duvar kâğıdı klasörünü seç",
         "selector": {
           "description": "Duvar kâğıdınızı seçin.",
           "label": "Duvar kâğıdı seçici",
           "tooltip": "Duvar kâğıdı seçici"
         },
         "selector-position": {
-          "description": "Duvar kağıdı seçici panelinin nerede görüneceğini seçin.",
+          "description": "Duvar kâğıdı seçici panelinin nerede görüneceğini seçin.",
           "label": "Pozisyon"
         }
       },
-      "title": "Duvar kağıdı"
+      "title": "Duvar kâğıdı"
     }
   },
   "setup": {
@@ -2293,19 +2293,19 @@
       "subheader": "Araç çubuğu konumunu, yoğunluğunu, ölçeğini ve daha fazlasını ayarlayın."
     },
     "wallpaper": {
-      "choose-dir": "Duvar kağıdı görüntülerinizi içeren bir dizin seçin",
+      "choose-dir": "Duvar kâğıdı görüntülerinizi içeren bir dizin seçin",
       "dir": {
-        "browse": "Duvar kağıdı klasörüne göz at",
-        "description": "Duvar kağıtlarınızı içeren klasörü seçin",
-        "label": "Duvar kağıdı dizini",
-        "select-title": "Duvar kağıdı klasörünü seç"
+        "browse": "Duvar kâğıdı klasörüne göz at",
+        "description": "Duvar kâğıtlarınızı içeren klasörü seçin",
+        "label": "Duvar kâğıdı dizini",
+        "select-title": "Duvar kâğıdı klasörünü seç"
       },
-      "header": "Duvar kağıdınızı seçin",
-      "no-dir": "Duvar kağıdı dizini seçilmedi",
+      "header": "Duvar kâğıdınızı seçin",
+      "no-dir": "Duvar kâğıdı dizini seçilmedi",
       "no-valid": "Şurada geçerli görüntü dosyası bulunamadı: {dir}",
-      "none-in-dir": "Dizinde duvar kağıdı bulunamadı",
+      "none-in-dir": "Dizinde duvar kâğıdı bulunamadı",
       "preview-error": "Görüntü yüklenemedi",
-      "select-prompt": "Aşağıdan bir duvar kağıdı seçin",
+      "select-prompt": "Aşağıdan bir duvar kâğıdı seçin",
       "subheader": "Güzel bir arka planla ortamı ayarlayın."
     },
     "welcome": {
@@ -2417,10 +2417,10 @@
       "disconnected": "'{name}' bağlantısı kesildi"
     },
     "wallpaper-colors": {
-      "disabled": "Duvar kağıdı renkleri devre dışı",
-      "enabled": "Duvar kağıdı renkleri etkin",
-      "label": "Duvar kağıdı renkleri oluşturma",
-      "not-installed": "Matugen kurulu değil - duvar kağıdı renk çıkarmak için gerekli"
+      "disabled": "Duvar kâğıdı renkleri devre dışı",
+      "enabled": "Duvar kâğıdı renkleri etkin",
+      "label": "Duvar kâğıdı renkleri oluşturma",
+      "not-installed": "Matugen kurulu değil - duvar kâğıdı renk çıkarmak için gerekli"
     },
     "wifi": {
       "connected": "'{ssid}' ile bağlandı",
@@ -2472,7 +2472,7 @@
     "open-notification-history-enable-dnd": "Bildirim geçmişi",
     "open-settings": "Ayarlar",
     "open-tray-dropdown": "Sistem tepsisi",
-    "open-wallpaper-selector": "Duvar kağıdı seçici",
+    "open-wallpaper-selector": "Duvar kâğıdı seçici",
     "output-muted": "Ses çıkışı",
     "pause": "Duraklat",
     "play": "Oynat",
@@ -2482,7 +2482,7 @@
     "refresh": "Yenile",
     "refresh-devices": "Cihazları yenile",
     "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
-    "refresh-wallpaper-list": "Duvar kağıdı listesini yenile",
+    "refresh-wallpaper-list": "Duvar kâğıdı listesini yenile",
     "remove-widget": "Araç takımını kaldır",
     "screen-recorder-not-installed": "Ekran kaydedici (yüklü değil)",
     "search": "Ara",
@@ -2495,11 +2495,11 @@
     "switch-to-light-mode": "Açık mod",
     "up": "Üst dizin",
     "volume-at": "Çıkış sesi: %{volume}",
-    "wallpaper-selector": "Duvar kağıdı seçici",
+    "wallpaper-selector": "Duvar kâğıdı seçici",
     "widget-settings": "Araç takımı ayarları"
   },
   "wallpaper": {
-    "configure-directory": "Resimler içeren duvar kağıdı dizininizi yapılandırın.",
+    "configure-directory": "Resimler içeren duvar kâğıdı dizininizi yapılandırın.",
     "fill-modes": {
       "center": "Merkez",
       "crop": "Kırp (Doldur)",
@@ -2507,10 +2507,10 @@
       "stretch": "Ger"
     },
     "no-match": "Eşleşme bulunamadı.",
-    "no-wallpaper": "Duvar kağıdı bulunamadı.",
+    "no-wallpaper": "Duvar kâğıdı bulunamadı.",
     "panel": {
       "apply-all-monitors": {
-        "description": "Seçilen duvar kağıdını tüm monitörlere aynı anda uygulayın.",
+        "description": "Seçilen duvar kâğıdını tüm monitörlere aynı anda uygulayın.",
         "label": "Tüm monitörler için uygula"
       },
       "categories": {
@@ -2553,7 +2553,7 @@
         "local": "Yerel",
         "wallhaven": "Wallhaven"
       },
-      "title": "Duvar kağıdı seçici",
+      "title": "Duvar kâğıdı seçici",
       "wallhaven-settings": {
         "apply": "Uygula",
         "title": "Wallhaven Ayarları"
@@ -2570,8 +2570,8 @@
     "try-different-search": "Farklı bir arama sorgusu deneyin.",
     "unknown": "Bilinmiyor",
     "wallhaven": {
-      "loading": "Duvar kağıtları yükleniyor...",
-      "no-results": "Duvar kağıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
+      "loading": "Duvar kâğıtları yükleniyor...",
+      "no-results": "Duvar kâğıdı bulunamadı. Farklı bir arama sorgusu deneyin.",
       "page": "{current} / {total}"
     }
   },
