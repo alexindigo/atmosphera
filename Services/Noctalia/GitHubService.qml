@@ -122,7 +122,26 @@ Singleton {
     // Only save when all processes are finished
     if (!versionProcess.running && !contributorsProcess.running) {
       root.isFetchingData = false;
-      root.saveData();
+
+      // Check results
+      var anySucceeded = versionProcess.fetchSucceeded || contributorsProcess.fetchSucceeded;
+      var wasRateLimited = versionProcess.wasRateLimited || contributorsProcess.wasRateLimited;
+
+      if (anySucceeded) {
+        root.saveData();
+        Logger.d("GitHub", "Successfully fetched data from GitHub");
+      } else if (wasRateLimited) {
+        root.saveData();
+        Logger.w("GitHub", "API rate limited - using cached data (retry in", Math.round(githubUpdateFrequency / 60), "minutes)");
+      } else {
+        Logger.w("GitHub", "API request failed - using cached data without updating timestamp");
+      }
+
+      // Reset fetch flags for next time
+      versionProcess.fetchSucceeded = false;
+      versionProcess.wasRateLimited = false;
+      contributorsProcess.fetchSucceeded = false;
+      contributorsProcess.wasRateLimited = false;
     }
   }
 
@@ -419,6 +438,9 @@ Singleton {
   Process {
     id: versionProcess
 
+    property bool fetchSucceeded: false
+    property bool wasRateLimited: false
+
     command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/releases/latest"]
 
     stdout: StdioCollector {
@@ -431,17 +453,19 @@ Singleton {
               const version = data.tag_name;
               root.data.version = version;
               root.latestVersion = version;
-              Logger.d("GitHub", "Latest version fetched from GitHub:", version);
+              versionProcess.fetchSucceeded = true;
+              Logger.d("GitHub", "Latest version fetched:", version);
             } else if (data.message) {
-              Logger.w("GitHub", "Latest release fetch warning:", data.message);
-            } else {
-              Logger.w("GitHub", "No tag_name in GitHub response");
+              // Check if it's a rate limit error
+              if (data.message.includes("rate limit")) {
+                versionProcess.wasRateLimited = true;
+              } else {
+                Logger.w("GitHub", "Version API error:", data.message);
+              }
             }
-          } else {
-            Logger.w("GitHub", "Empty response from GitHub API");
           }
         } catch (e) {
-          Logger.e("GitHub", "Failed to parse version:", e);
+          Logger.e("GitHub", "Failed to parse version response:", e);
         }
 
         // Check if both processes are done
@@ -453,6 +477,9 @@ Singleton {
   Process {
     id: contributorsProcess
 
+    property bool fetchSucceeded: false
+    property bool wasRateLimited: false
+
     command: ["curl", "-s", "https://api.github.com/repos/noctalia-dev/noctalia-shell/contributors?per_page=100"]
 
     stdout: StdioCollector {
@@ -463,18 +490,23 @@ Singleton {
           if (response && response.trim()) {
             const data = JSON.parse(response);
             Logger.d("GitHub", "Parsed contributors data type:", typeof data, "length:", Array.isArray(data) ? data.length : "not array");
-            root.data.contributors = data || [];
-            root.contributors = root.data.contributors;
-            Logger.d("GitHub", "Contributors fetched from GitHub:", root.contributors.length);
-          } else {
-            Logger.w("GitHub", "Empty response from GitHub API for contributors");
-            root.data.contributors = [];
-            root.contributors = [];
+            // Only update if we got a valid array
+            if (Array.isArray(data)) {
+              root.data.contributors = data;
+              root.contributors = root.data.contributors;
+              contributorsProcess.fetchSucceeded = true;
+              Logger.d("GitHub", "Contributors fetched:", root.contributors.length);
+            } else if (data.message) {
+              // Check if it's a rate limit error
+              if (data.message.includes("rate limit")) {
+                contributorsProcess.wasRateLimited = true;
+              } else {
+                Logger.w("GitHub", "Contributors API error:", data.message);
+              }
+            }
           }
         } catch (e) {
-          Logger.e("GitHub", "Failed to parse contributors:", e);
-          root.data.contributors = [];
-          root.contributors = [];
+          Logger.e("GitHub", "Failed to parse contributors response:", e);
         }
 
         // Check if both processes are done
