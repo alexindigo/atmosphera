@@ -158,21 +158,17 @@ Singleton {
     }
   }
 
-  // Fetch plugin registry from a source
+  // Fetch plugin registry from a source using git sparse-checkout
   function fetchPluginRegistry(source) {
-    var rawUrl = source.url + "/refs/heads/main/registry.json";
-    var registryUrl = rawUrl.replace("github.com", "raw.githubusercontent.com");
+    var repoUrl = source.url;
 
-    Logger.d("PluginService", "Fetching registry from:", registryUrl);
+    Logger.d("PluginService", "Fetching registry from:", repoUrl);
 
-    var fetchProcess = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", "curl -L -s '${registryUrl}' || wget -q -O- '${registryUrl}'"]
-        stdout: StdioCollector {}
-      }
-    `, root, "FetchRegistry_" + Date.now());
+    // Use git sparse-checkout to fetch only registry.json (--no-cone for single file)
+    // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
+    var fetchCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set --no-cone /registry.json 2>/dev/null && cat \"$temp_dir/registry.json\"; rm -rf \"$temp_dir\"";
+
+    var fetchProcess = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "' + fetchCmd.replace(/"/g, '\\"') + '"]; stdout: StdioCollector {} }', root, "FetchRegistry_" + Date.now());
 
     activeFetches[source.url] = fetchProcess;
 
@@ -228,7 +224,7 @@ Singleton {
     fetchProcess.running = true;
   }
 
-  // Download and install a plugin
+  // Download and install a plugin using git sparse-checkout
   function installPlugin(pluginMetadata, callback) {
     var pluginId = pluginMetadata.id;
     var source = pluginMetadata.source;
@@ -237,23 +233,13 @@ Singleton {
 
     var pluginDir = PluginRegistry.getPluginDir(pluginId);
     var repoUrl = source.url;
-    var pluginPath = pluginId;
 
-    // Download plugin folder from GitHub
-    var downloadCmd = `
-      mkdir -p '${pluginDir}' &&
-      cd '${pluginDir}' &&
-      (curl -L -s '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 --wildcards '*/${pluginPath}/*' ||
-       wget -q -O- '${repoUrl}/archive/refs/heads/main.tar.gz' | tar -xz --strip-components=2 --wildcards '*/${pluginPath}/*')
-    `;
+    // Use git sparse-checkout to clone only the plugin subfolder
+    // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
+    var downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && cp -r \"$temp_dir/" + pluginId + "/.\" '" + pluginDir
+        + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
 
-    var downloadProcess = Qt.createQmlObject(`
-      import QtQuick
-      import Quickshell.Io
-      Process {
-        command: ["sh", "-c", "${downloadCmd}"]
-      }
-    `, root, "DownloadPlugin_" + pluginId);
+    var downloadProcess = Qt.createQmlObject('import QtQuick; import Quickshell.Io; Process { command: ["sh", "-c", "' + downloadCmd.replace(/"/g, '\\"') + '"] }', root, "DownloadPlugin_" + pluginId);
 
     downloadProcess.exited.connect(function (exitCode) {
       if (exitCode === 0) {

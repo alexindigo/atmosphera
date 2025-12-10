@@ -386,7 +386,7 @@ ColumnLayout {
     NIconButton {
       icon: "refresh"
       tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
-      baseSize: Style.baseWidgetSize * 0.9
+      baseSize: Style.baseWidgetSize * 0.8
       onClicked: {
         PluginService.refreshAvailablePlugins();
         checkUpdatesTimer.restart();
@@ -516,7 +516,7 @@ ColumnLayout {
           // Install/Uninstall button
           NIconButton {
             icon: modelData.downloaded ? "trash" : "download"
-            baseSize: Style.baseWidgetSize * 0.9
+            baseSize: Style.baseWidgetSize * 0.7
             tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
             onClicked: {
               if (modelData.downloaded) {
