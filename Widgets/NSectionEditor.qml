@@ -110,6 +110,7 @@ NBox {
         font.weight: Style.fontWeightBold
         color: Color.mOnSurface
         Layout.alignment: Qt.AlignVCenter
+        elide: Text.ElideRight
       }
 
       // Widget count indicator (when max is set)
@@ -324,23 +325,29 @@ NBox {
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
+                wrapMode: Text.NoWrap
                 leftPadding: Style.marginS
-                rightPadding: Style.marginS
+                rightPadding: Style.marginXXS
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                clip: true
               }
 
               // Plugin indicator icon
-              NIcon {
-                visible: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
-                icon: "plugin"
-                pointSize: Style.fontSizeXXS
-                color: root.getWidgetColor(modelData)[1]
-                Layout.preferredWidth: visible ? Style.baseWidgetSize * 0.5 : 0
+              Loader {
+                id: pluginIconLoader
+                active: root.widgetRegistry && root.widgetRegistry.isPluginWidget(modelData.id)
+                sourceComponent: NIcon {
+                  icon: "plugin"
+                  pointSize: Style.fontSizeXXS
+                  color: root.getWidgetColor(modelData)[1]
+                }
+                Layout.preferredWidth: active ? Style.baseWidgetSize * 0.5 : 0
                 Layout.preferredHeight: Style.baseWidgetSize * 0.5
               }
 
               RowLayout {
+                id: buttonsLayout
                 spacing: 0
                 Layout.preferredWidth: buttonsCount * buttonsWidth * Style.uiScaleRatio
                 Layout.preferredHeight: parent.height
