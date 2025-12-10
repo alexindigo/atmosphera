@@ -116,7 +116,7 @@ PopupWindow {
       if (entry != null) {
         entry.actions.forEach(function (action) {
           next.push({
-                      "icon": "",
+                      "icon": "chevron-right",
                       "text": action.name,
                       "action": function () {
                         action.execute();
