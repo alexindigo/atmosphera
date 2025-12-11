@@ -11,14 +11,15 @@ Singleton {
   // Widget registry object mapping widget names to components
   property var widgets: ({
                            "Bluetooth": bluetoothComponent,
-                           "Notifications": notificationsComponent,
+                           "CustomButton": customButtonComponent,
+                           "DarkMode": darkModeComponent,
                            "KeepAwake": keepAwakeComponent,
                            "NightLight": nightLightComponent,
+                           "Notifications": notificationsComponent,
                            "PowerProfile": powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
                            "WiFi": wiFiComponent,
-                           "WallpaperSelector": wallpaperSelectorComponent,
-                           "CustomButton": customButtonComponent
+                           "WallpaperSelector": wallpaperSelectorComponent
                          })
 
   property var widgetMetadata: ({
@@ -38,14 +39,20 @@ Singleton {
   property Component bluetoothComponent: Component {
     Bluetooth {}
   }
-  property Component notificationsComponent: Component {
-    Notifications {}
+  property Component customButtonComponent: Component {
+    CustomButton {}
+  }
+  property Component darkModeComponent: Component {
+    DarkMode {}
   }
   property Component keepAwakeComponent: Component {
     KeepAwake {}
   }
   property Component nightLightComponent: Component {
     NightLight {}
+  }
+  property Component notificationsComponent: Component {
+    Notifications {}
   }
   property Component powerProfileComponent: Component {
     PowerProfile {}
@@ -58,9 +65,6 @@ Singleton {
   }
   property Component wallpaperSelectorComponent: Component {
     WallpaperSelector {}
-  }
-  property Component customButtonComponent: Component {
-    CustomButton {}
   }
 
   function init() {
