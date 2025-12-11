@@ -491,6 +491,8 @@ Item {
       id: hoverArea
       anchors.fill: parent
       hoverEnabled: true
+      acceptedButtons: Qt.NoButton
+      cursorShape: hasPlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
     }
 
     function updateState() {
