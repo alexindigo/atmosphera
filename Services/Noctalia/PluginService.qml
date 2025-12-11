@@ -34,6 +34,10 @@ Singleton {
   // Plugin updates available: { pluginId: { currentVersion, availableVersion } }
   property var pluginUpdates: ({})
 
+  // Plugin load errors: { pluginId: { error: string, entryPoint: string, timestamp: date } }
+  property var pluginErrors: ({})
+  signal pluginLoadError(string pluginId, string entryPoint, string error)
+
   // Track active fetches
   property var activeFetches: ({})
 
@@ -462,6 +466,9 @@ Singleton {
       manifest: manifest
     };
 
+    // Clear any previous errors for this plugin
+    root.clearPluginError(pluginId);
+
     // Load Main.qml entry point if it exists
     if (manifest.entryPoints && manifest.entryPoints.main) {
       var mainPath = pluginDir + "/" + manifest.entryPoints.main;
@@ -489,10 +496,10 @@ Singleton {
           pluginApi.mainInstance = mainInstance;
           Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
         } else {
-          Logger.e("PluginService", "Failed to instantiate Main.qml for:", pluginId);
+          root.recordPluginError(pluginId, "main", "Failed to instantiate Main.qml");
         }
       } else if (mainComponent.status === Component.Error) {
-        Logger.e("PluginService", "Failed to load Main.qml:", mainComponent.errorString());
+        root.recordPluginError(pluginId, "main", mainComponent.errorString());
       }
     }
 
@@ -509,7 +516,7 @@ Singleton {
         BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
         Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
       } else if (widgetComponent.status === Component.Error) {
-        Logger.e("PluginService", "Failed to load bar widget component:", widgetComponent.errorString());
+        root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
       }
     }
 
@@ -1079,5 +1086,35 @@ Singleton {
 
     Logger.e("PluginService", "Failed to find plugin panel slot");
     return false;
+  }
+
+  // ----- Error tracking functions -----
+
+  function recordPluginError(pluginId, entryPoint, errorMessage) {
+    var errors = Object.assign({}, root.pluginErrors);
+    errors[pluginId] = {
+      error: errorMessage,
+      entryPoint: entryPoint,
+      timestamp: new Date()
+    };
+    root.pluginErrors = errors;
+    root.pluginLoadError(pluginId, entryPoint, errorMessage);
+    Logger.e("PluginService", "Plugin load error [" + pluginId + "/" + entryPoint + "]:", errorMessage);
+  }
+
+  function clearPluginError(pluginId) {
+    if (pluginId in root.pluginErrors) {
+      var errors = Object.assign({}, root.pluginErrors);
+      delete errors[pluginId];
+      root.pluginErrors = errors;
+    }
+  }
+
+  function getPluginError(pluginId) {
+    return root.pluginErrors[pluginId] || null;
+  }
+
+  function hasPluginError(pluginId) {
+    return pluginId in root.pluginErrors;
   }
 }

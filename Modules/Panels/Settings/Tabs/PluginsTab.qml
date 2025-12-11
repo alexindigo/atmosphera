@@ -118,7 +118,7 @@ ColumnLayout {
           NIcon {
             icon: "plugin"
             pointSize: Style.fontSizeXL
-            color: Color.mOnSurface
+            color: PluginService.hasPluginError(modelData.id) ? Color.mError : Color.mOnSurface
           }
 
           ColumnLayout {
@@ -165,6 +165,29 @@ ColumnLayout {
                 text: stripAuthorEmail(modelData.author)
                 font.pointSize: Style.fontSizeXXS
                 color: Color.mOnSurfaceVariant
+              }
+            }
+
+            // Error indicator
+            RowLayout {
+              spacing: Style.marginS
+              visible: PluginService.hasPluginError(modelData.id)
+
+              NIcon {
+                icon: "alert-triangle"
+                pointSize: Style.fontSizeS
+                color: Color.mError
+              }
+
+              NText {
+                property var errorInfo: PluginService.getPluginError(modelData.id)
+                text: errorInfo ? errorInfo.error : ""
+                font.pointSize: Style.fontSizeXXS
+                color: Color.mError
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                maximumLineCount: 3
               }
             }
           }

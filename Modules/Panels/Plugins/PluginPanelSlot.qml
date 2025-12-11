@@ -160,7 +160,7 @@ SmartPanel {
         return true;
       }
     } else if (component.status === Component.Error) {
-      Logger.e("PluginPanelSlot", "Failed to load panel component:", component.errorString());
+      PluginService.recordPluginError(pluginId, "panel", component.errorString());
       return false;
     }
 
