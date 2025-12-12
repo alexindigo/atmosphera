@@ -1144,6 +1144,10 @@
             "description": "Write {filepath}",
             "description-missing": "Requires {app} to be installed"
           },
+          "yazi": {
+            "description": "Write {filepath}. Flavor needs to be activated manually.",
+            "description-missing": "Requires {app} to be installed"
+          },
           "code": {
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually",
             "description-missing": "No Code client detected. Install VSCode or VSCodium"

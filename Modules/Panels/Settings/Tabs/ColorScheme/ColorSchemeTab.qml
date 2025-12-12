@@ -896,6 +896,24 @@ ColumnLayout {
       }
 
       NCheckbox {
+        label: "Yazi"
+        description: ProgramCheckerService.yaziAvailable ? I18n.tr("settings.color-scheme.templates.programs.yazi.description", {
+                                                                     "filepath": "~/.config/yazi/flavors/noctalia.yazi/flavor.toml"
+                                                                   }) : I18n.tr("settings.color-scheme.templates.programs.yazi.description-missing", {
+                                                                                  "app": "yazi"
+                                                                                })
+        checked: Settings.data.templates.yazi
+        enabled: ProgramCheckerService.yaziAvailable
+        opacity: ProgramCheckerService.yaziAvailable ? 1.0 : 0.6
+        onToggled: checked => {
+                     if (ProgramCheckerService.yaziAvailable) {
+                       Settings.data.templates.yazi = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
+
+      NCheckbox {
         label: "Emacs"
         description: ProgramCheckerService.emacsAvailable ? "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nApply manually: (load-theme 'noctalia t)" : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
                                                                                                                                                                                                        "app": "emacs"
