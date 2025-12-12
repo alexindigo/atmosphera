@@ -22,6 +22,7 @@ RowLayout {
 
   spacing: Style.marginL
   Layout.fillWidth: true
+  opacity: enabled ? 1.0 : 0.6
 
   function itemCount() {
     if (!root.model)

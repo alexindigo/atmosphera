@@ -1153,6 +1153,10 @@
             "description": "Escribir {filepath} para {client}",
             "description-missing": "No se detectó cliente de Discord. Instala vencord, vesktop, webcord, armcord, equibop, lightcord o dorion."
           },
+          "emacs": {
+            "description": "Escribe {filepath} y recarga.",
+            "description-missing": "Requiere que {app} esté instalada."
+          },
           "fuzzel": {
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
@@ -1177,6 +1181,10 @@
           "walker": {
             "description": "Escribir {filepath} y establecer tema a noctalia",
             "description-missing": "Requiere que {app} esté instalado"
+          },
+          "yazi": {
+            "description": "Escriba en {filepath}. El sabor debe activarse manualmente.",
+            "description-missing": "Requiere que {app} esté instalada."
           }
         },
         "section": {

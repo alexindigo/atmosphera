@@ -1153,6 +1153,10 @@
             "description": "Schreibt {filepath} für {client}",
             "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion"
           },
+          "emacs": {
+            "description": "Schreibe {Dateipfad} und lade neu.",
+            "description-missing": "Benötigt die Installation von {app}"
+          },
           "fuzzel": {
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert die Installation von {app}"
@@ -1177,6 +1181,10 @@
           "walker": {
             "description": "Schreibt {filepath} und setzt das Theme auf Noctalia",
             "description-missing": "Erfordert die Installation von {app}"
+          },
+          "yazi": {
+            "description": "Schreibe {Dateipfad}. Flavor muss manuell aktiviert werden.",
+            "description-missing": "Benötigt die Installation von {app}"
           }
         },
         "section": {

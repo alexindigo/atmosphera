@@ -1153,6 +1153,10 @@
             "description": "Écrire {filepath} pour {client}",
             "description-missing": "Aucun client Discord détecté. Installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
+          "emacs": {
+            "description": "Écrire {filepath} et recharger.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "fuzzel": {
             "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
@@ -1177,6 +1181,10 @@
           "walker": {
             "description": "Écrire {filepath} et définir le thème sur noctalia",
             "description-missing": "Nécessite que le lanceur {app} soit installé"
+          },
+          "yazi": {
+            "description": "Écrire dans {filepath}. La saveur doit être activée manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
           }
         },
         "section": {

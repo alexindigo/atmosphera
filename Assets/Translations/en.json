@@ -1144,10 +1144,6 @@
             "description": "Write {filepath}",
             "description-missing": "Requires {app} to be installed"
           },
-          "yazi": {
-            "description": "Write {filepath}. Flavor needs to be activated manually.",
-            "description-missing": "Requires {app} to be installed"
-          },
           "code": {
             "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually",
             "description-missing": "No Code client detected. Install VSCode or VSCodium"
@@ -1156,6 +1152,10 @@
           "discord": {
             "description": "Write {filepath} for {client}. Hyprluna theme needs to be activated manually",
             "description-missing": "No Discord client detected. Install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion"
+          },
+          "emacs": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
           },
           "fuzzel": {
             "description": "Write {filepath} and reload",
@@ -1180,6 +1180,10 @@
           },
           "walker": {
             "description": "Write {filepath} and set theme to noctalia",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "yazi": {
+            "description": "Write {filepath}. Flavor needs to be activated manually.",
             "description-missing": "Requires {app} to be installed"
           }
         },

@@ -1153,6 +1153,10 @@
             "description": "Schrijf {filepath} voor {client}. Het Hyprluna-thema moet handmatig worden geactiveerd.",
             "description-missing": "Geen Discord-client gedetecteerd. Installeer vencord, vesktop, webcord, armcord, equibop, lightcord of dorion."
           },
+          "emacs": {
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
           "fuzzel": {
             "description": "Schrijf {filepath} en herlaad.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
@@ -1176,6 +1180,10 @@
           },
           "walker": {
             "description": "Schrijf {filepath} en stel het thema in op noctalia.",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
+          "yazi": {
+            "description": "Schrijf {filepath}. Smaak moet handmatig worden geactiveerd.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           }
         },

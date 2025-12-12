@@ -1144,10 +1144,6 @@
             "description": "{filepath} dosyasına yaz.",
             "description-missing": "Kurulum için {app} gereklidir"
           },
-          "yazi": {
-            "description": "{filepath} dosyasına yaz. Temanın manuel etkinleştirilmesi gerekir.",
-            "description-missing": "Kurulum için {app} gereklidir"
-          },
           "code": {
             "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
             "description-missing": "Code istemcisi tespit edilmedi. VSCode veya VSCodium kurun."
@@ -1156,6 +1152,10 @@
           "discord": {
             "description": "{client} için {filepath} dosyasına yaz. Hyprluna temasının manuel olarak etkinleştirilmesi gerekir.",
             "description-missing": "Discord istemcisi tespit edilmedi. Vencord, vesktop, webcord, armcord, equibop, lightcord veya dorion kurun."
+          },
+          "emacs": {
+            "description": "{filepath} yaz ve yeniden yükle",
+            "description-missing": "{app} uygulamasının yüklü olmasını gerektirir"
           },
           "fuzzel": {
             "description": "{filepath} dosyasına yaz ve yeniden yükle",
@@ -1180,6 +1180,10 @@
           },
           "walker": {
             "description": "{filepath} dosyasına yaz ve temayı noctalia olarak ayarla",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
+          "yazi": {
+            "description": "{filepath} dosyasına yaz. Temanın manuel etkinleştirilmesi gerekir.",
             "description-missing": "Kurulum için {app} gereklidir"
           }
         },

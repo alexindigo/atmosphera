@@ -1153,6 +1153,10 @@
             "description": "Записать {filepath} для {client}. Тему Hyprluna нужно активировать вручную.",
             "description-missing": "Клиент Discord не обнаружен. Установите vencord, vesktop, webcord, armcord, equibop, lightcord или dorion."
           },
+          "emacs": {
+            "description": "Записать {filepath} и перезагрузить",
+            "description-missing": "Требуется установка {app}"
+          },
           "fuzzel": {
             "description": "Записать {filepath} и перезагрузить",
             "description-missing": "Требуется установка {app}"
@@ -1176,6 +1180,10 @@
           },
           "walker": {
             "description": "Записать {filepath} и установить тему noctalia",
+            "description-missing": "Требуется установка {app}"
+          },
+          "yazi": {
+            "description": "Записать {filepath}. Вкус необходимо активировать вручную.",
             "description-missing": "Требуется установка {app}"
           }
         },
