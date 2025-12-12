@@ -59,7 +59,6 @@ Item {
   // Context menu state for grouped mode
   property var selectedWindow: null
   property string selectedAppName: ""
-  property int modelUpdateTrigger: 0
 
   property bool isDestroying: false
   property bool hovered: false
@@ -682,18 +681,19 @@ Item {
 
       required property var model
       property var workspaceModel: model
+      property bool hasWindows: (workspaceModel?.windows?.count ?? 0) > 0
 
       radius: Style.radiusS
       border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
       border.width: Style.borderS
-      width: (workspaceModel.isOccupied ? groupedIconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVertical ? Style.marginXS : Style.marginL)
-      height: (workspaceModel.isOccupied ? groupedIconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVertical ? Style.marginL : Style.marginXS)
+      width: (hasWindows ? groupedIconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVertical ? Style.marginXS : Style.marginL)
+      height: (hasWindows ? groupedIconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVertical ? Style.marginL : Style.marginXS)
       color: Style.capsuleColor
 
       MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        enabled: !groupedContainer.workspaceModel.isOccupied
+        enabled: !groupedContainer.hasWindows
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         preventStealing: true
@@ -818,7 +818,7 @@ Item {
       Item {
         id: groupedWorkspaceNumberContainer
 
-        visible: root.labelMode !== "none" && (!root.showLabelsOnlyWhenOccupied || groupedContainer.workspaceModel.isOccupied)
+        visible: root.labelMode !== "none" && (!root.showLabelsOnlyWhenOccupied || groupedContainer.hasWindows || groupedContainer.workspaceModel.isFocused)
 
         anchors {
           left: parent.left
@@ -841,7 +841,7 @@ Item {
               return Color.mPrimary;
             if (groupedContainer.workspaceModel.isUrgent)
               return Color.mError;
-            if (groupedContainer.workspaceModel.isOccupied)
+            if (groupedContainer.hasWindows)
               return Color.mSecondary;
 
             if (Settings.data.colorSchemes.darkMode) {
