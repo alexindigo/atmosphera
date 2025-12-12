@@ -238,6 +238,17 @@ Singleton {
       "postProcess": () => `${colorsApplyScript} cava`
     },
     {
+      "id": "yazi",
+      "name": "Yazi",
+      "category": "applications",
+      "input": "yazi.toml",
+      "outputs": [
+        {
+          "path": "~/.config/yazi/flavors/noctalia.yazi/flavor.toml"
+        }
+      ]
+    },
+    {
       "id": "emacs",
       "name": "Emacs",
       "category": "applications",
