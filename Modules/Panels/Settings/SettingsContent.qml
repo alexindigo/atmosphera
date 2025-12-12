@@ -385,7 +385,7 @@ Item {
                   text: I18n.tr(modelData.label)
                   color: tabTextColor
                   pointSize: Style.fontSizeM
-                  font.weight: Style.fontWeightBold
+                  font.weight: Style.fontWeightSemiBold
                   Layout.fillWidth: true
                   Layout.alignment: Qt.AlignVCenter
                 }
