@@ -62,17 +62,18 @@ RowLayout {
 
     Layout.minimumWidth: root.minimumWidth
     Layout.preferredHeight: root.preferredHeight
-    model: model
-    currentIndex: findIndexByKey(currentKey)
+    model: root.model
+    currentIndex: root.findIndexByKey(root.currentKey)
+
     onActivated: {
-      var item = getItem(combo.currentIndex);
+      var item = root.getItem(combo.currentIndex);
       if (item && item.key !== undefined)
         root.selected(item.key);
     }
 
     background: Rectangle {
       implicitWidth: Style.baseWidgetSize * 3.75
-      implicitHeight: preferredHeight
+      implicitHeight: root.preferredHeight
       color: Color.mSurface
       border.color: combo.activeFocus ? Color.mSecondary : Color.mOutline
       border.width: Style.borderS
@@ -91,8 +92,14 @@ RowLayout {
       pointSize: Style.fontSizeM
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
-      color: (combo.currentIndex >= 0 && combo.currentIndex < itemCount()) ? Color.mOnSurface : Color.mOnSurfaceVariant
-      text: (combo.currentIndex >= 0 && combo.currentIndex < itemCount()) ? (getItem(combo.currentIndex) ? getItem(combo.currentIndex).name : root.placeholder) : root.placeholder
+      color: combo.currentIndex >= 0 ? Color.mOnSurface : Color.mOnSurfaceVariant
+      text: {
+        if (combo.currentIndex >= 0 && combo.currentIndex < root.itemCount()) {
+          var item = root.getItem(combo.currentIndex);
+          return item ? item.name : root.placeholder;
+        }
+        return root.placeholder;
+      }
     }
 
     indicator: NIcon {
@@ -105,67 +112,84 @@ RowLayout {
     popup: Popup {
       y: combo.height
       implicitWidth: combo.width - Style.marginM
-      implicitHeight: Math.min(root.popupHeight, contentItem.implicitHeight + Style.marginM * 2)
+      implicitHeight: Math.min(root.popupHeight, listView.contentHeight + Style.marginM * 2)
       padding: Style.marginM
 
-      contentItem: NListView {
+      contentItem: ListView {
+        id: listView
+        clip: true
         model: combo.popup.visible ? root.model : null
-        implicitHeight: contentHeight
-        horizontalPolicy: ScrollBar.AlwaysOff
-        verticalPolicy: ScrollBar.AsNeeded
+        boundsBehavior: Flickable.StopAtBounds
+        highlightMoveDuration: 0
 
-        delegate: ItemDelegate {
-          property var parentComboBox: combo
-          property int itemIndex: index
-          width: ListView.view ? ListView.view.width : (parentComboBox ? parentComboBox.width - Style.marginM * 3 : 0)
-          hoverEnabled: true
-          highlighted: ListView.view.currentIndex === itemIndex
+        ScrollBar.vertical: ScrollBar {
+          policy: listView.contentHeight > listView.height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
 
-          property bool pendingClick: false
-          Timer {
-            id: clickRetryTimer
-            interval: 50
-            repeat: false
-            onTriggered: {
-              if (parent.pendingClick && parent.ListView.view && !parent.ListView.view.flicking && !parent.ListView.view.moving) {
-                parent.pendingClick = false;
-                var item = root.getItem(parent.itemIndex);
-                if (item && item.key !== undefined && parent.parentComboBox) {
-                  root.selected(item.key);
-                  parent.parentComboBox.currentIndex = parent.itemIndex;
-                  parent.parentComboBox.popup.close();
-                }
-              } else if (parent.pendingClick) {
-                restart();
+          contentItem: Rectangle {
+            implicitWidth: 6
+            implicitHeight: 100
+            radius: Style.iRadiusM
+            color: parent.pressed ? Qt.alpha(Color.mHover, 0.9) : parent.hovered ? Qt.alpha(Color.mHover, 0.9) : Qt.alpha(Color.mHover, 0.8)
+            opacity: parent.active ? 1.0 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
               }
             }
-          }
 
-          onHoveredChanged: {
-            if (hovered) {
-              ListView.view.currentIndex = itemIndex;
-            }
-          }
-
-          onClicked: {
-            if (ListView.view && (ListView.view.flicking || ListView.view.moving)) {
-              ListView.view.cancelFlick();
-              pendingClick = true;
-              clickRetryTimer.start();
-            } else {
-              var item = root.getItem(itemIndex);
-              if (item && item.key !== undefined && parentComboBox) {
-                root.selected(item.key);
-                parentComboBox.currentIndex = itemIndex;
-                parentComboBox.popup.close();
+            Behavior on color {
+              ColorAnimation {
+                duration: Style.animationFast
               }
             }
           }
 
           background: Rectangle {
+            implicitWidth: 6
+            implicitHeight: 100
+            color: Color.transparent
+            opacity: parent.active ? 0.3 : 0.0
+            radius: Style.iRadiusM / 2
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Style.animationFast
+              }
+            }
+          }
+        }
+
+        delegate: Rectangle {
+          id: delegateRect
+          required property int index
+          property bool isHighlighted: listView.currentIndex === index
+
+          width: listView.width
+          height: delegateText.implicitHeight + Style.marginS * 2
+          radius: Style.iRadiusS
+          color: isHighlighted ? Color.mHover : Color.transparent
+
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+            }
+          }
+
+          NText {
+            id: delegateText
             anchors.fill: parent
-            color: highlighted ? Color.mHover : Color.transparent
-            radius: Style.iRadiusS
+            anchors.leftMargin: Style.marginM
+            anchors.rightMargin: Style.marginM
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+            pointSize: Style.fontSizeM
+            color: delegateRect.isHighlighted ? Color.mOnHover : Color.mOnSurface
+            text: {
+              var item = root.getItem(delegateRect.index);
+              return item && item.name ? item.name : "";
+            }
+
             Behavior on color {
               ColorAnimation {
                 duration: Style.animationFast
@@ -173,18 +197,19 @@ RowLayout {
             }
           }
 
-          contentItem: NText {
-            text: {
-              var item = root.getItem(index);
-              return item && item.name ? item.name : "";
+          MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onContainsMouseChanged: {
+              if (containsMouse)
+                listView.currentIndex = delegateRect.index;
             }
-            pointSize: Style.fontSizeM
-            color: highlighted ? Color.mOnHover : Color.mOnSurface
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-            Behavior on color {
-              ColorAnimation {
-                duration: Style.animationFast
+            onClicked: {
+              var item = root.getItem(delegateRect.index);
+              if (item && item.key !== undefined) {
+                root.selected(item.key);
+                combo.currentIndex = delegateRect.index;
+                combo.popup.close();
               }
             }
           }
@@ -202,7 +227,7 @@ RowLayout {
     Connections {
       target: root
       function onCurrentKeyChanged() {
-        combo.currentIndex = root.findIndexByKey(currentKey);
+        combo.currentIndex = root.findIndexByKey(root.currentKey);
       }
     }
   }
