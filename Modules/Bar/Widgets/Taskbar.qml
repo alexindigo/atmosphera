@@ -366,6 +366,11 @@ Rectangle {
                    }
                    selectedWindow = null;
                    selectedAppName = "";
+                   // Close the popup menu window after handling the action
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
                  }
   }
 
