@@ -368,12 +368,6 @@
           "reset-tooltip": "Restablecer ancho del título"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Mostrar solo la etiqueta del espacio de trabajo para los espacios de trabajo que tienen ventanas abiertas.",
-          "label": "Mostrar etiqueta solo cuando esté ocupado."
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Aplicar colores del tema a los iconos de la bandeja del sistema.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Elegir cómo se muestran las etiquetas de los espacios de trabajo.",
           "label": "Modo de etiqueta"
+        },
+        "show-applications": {
+          "description": "Mostrar los iconos de las aplicaciones dentro de cada espacio de trabajo.",
+          "label": "Mostrar aplicaciones"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Mostrar solo las etiquetas del espacio de trabajo cuando contengan ventanas.",
+          "label": "Mostrar etiquetas solo cuando esté ocupado."
         }
       }
     }

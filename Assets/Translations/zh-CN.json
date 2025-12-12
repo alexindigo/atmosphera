@@ -368,12 +368,6 @@
           "reset-tooltip": "重置标题宽度"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "只显示有打开窗口的工作区标签。",
-          "label": "仅在被占用时显示标签"
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "将主题颜色应用到系统托盘图标。",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "选择工作区标签的显示方式。",
           "label": "标签模式"
+        },
+        "show-applications": {
+          "description": "在每个工作区内显示应用程序图标。",
+          "label": "显示应用程序"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "仅在工作区包含窗口时显示工作区标签。",
+          "label": "仅在被占用时显示标签"
         }
       }
     }

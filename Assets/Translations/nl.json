@@ -368,12 +368,6 @@
           "reset-tooltip": "Titelbreedte resetten"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Toon alleen de werkomgevinglabels voor werkomgevingen met open vensters.",
-          "label": "Label alleen tonen wanneer bezet"
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Pas themakleuren toe op systeemvakpictogrammen.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Kies hoe labels van werkruimten worden weergegeven.",
           "label": "Labelmodus"
+        },
+        "show-applications": {
+          "description": "Toon applicatiepictogrammen in elke werkruimte.",
+          "label": "Toon applicaties"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Toon alleen werkruimtelabels wanneer ze vensters bevatten.",
+          "label": "Toon labels alleen wanneer bezet."
         }
       }
     }

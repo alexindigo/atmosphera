@@ -368,12 +368,6 @@
           "reset-tooltip": "Reset title width"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Only show workspace label for workspaces that have open windows.",
-          "label": "Show label only when occupied"
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Apply theme colors to tray icons.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Choose how workspace labels are displayed.",
           "label": "Label mode"
+        },
+        "show-applications": {
+          "description": "Display application icons inside each workspace.",
+          "label": "Show applications"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Only show workspace labels when they contain windows.",
+          "label": "Show labels only when occupied"
         }
       }
     }

@@ -368,12 +368,6 @@
           "reset-tooltip": "タイトル幅をリセット"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "ウィンドウが開いているワークスペースにのみラベルを表示します。",
-          "label": "ウィンドウがある時のみラベルを表示"
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "トレイのアイコンにテーマカラーを適用します。",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "ワークスペースラベルの表示方法を選択します。",
           "label": "ラベルモード"
+        },
+        "show-applications": {
+          "description": "ワークスペース内にアプリケーションのアイコンを表示する。",
+          "label": "アプリケーションを表示 (Apuriikeeshon o hyōji)"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "ウィンドウを含む場合にのみ、ワークスペースのラベルを表示する。",
+          "label": "占有されている場合のみラベルを表示する"
         }
       }
     }

@@ -17,12 +17,20 @@ ColumnLayout {
   property bool valueFollowFocusedScreen: widgetData.followFocusedScreen !== undefined ? widgetData.followFocusedScreen : widgetMetadata.followFocusedScreen
   property int valueCharacterCount: widgetData.characterCount !== undefined ? widgetData.characterCount : widgetMetadata.characterCount
 
+  // Grouped mode settings
+  property bool valueShowApplications: widgetData.showApplications !== undefined ? widgetData.showApplications : widgetMetadata.showApplications
+  property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
+  property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.labelMode = valueLabelMode;
     settings.hideUnoccupied = valueHideUnoccupied;
     settings.characterCount = valueCharacterCount;
     settings.followFocusedScreen = valueFollowFocusedScreen;
+    settings.showApplications = valueShowApplications;
+    settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
+    settings.colorizeIcons = valueColorizeIcons;
     return settings;
   }
 
@@ -53,11 +61,14 @@ ColumnLayout {
     minimumWidth: 200
   }
 
-  NToggle {
-    label: I18n.tr("bar.widget-settings.workspace.follow-focused-screen.label")
-    description: I18n.tr("bar.widget-settings.workspace.follow-focused-screen.description")
-    checked: valueFollowFocusedScreen
-    onToggled: checked => valueFollowFocusedScreen = checked
+  NSpinBox {
+    label: I18n.tr("bar.widget-settings.workspace.character-count.label")
+    description: I18n.tr("bar.widget-settings.workspace.character-count.description")
+    from: 1
+    to: 10
+    value: valueCharacterCount
+    onValueChanged: valueCharacterCount = value
+    visible: valueLabelMode === "name"
   }
 
   NToggle {
@@ -67,13 +78,32 @@ ColumnLayout {
     onToggled: checked => valueHideUnoccupied = checked
   }
 
-  NSpinBox {
-    label: I18n.tr("bar.widget-settings.workspace.character-count.label")
-    description: I18n.tr("bar.widget-settings.workspace.character-count.description")
-    from: 1
-    to: 10
-    value: valueCharacterCount
-    onValueChanged: valueCharacterCount = value
-    visible: valueLabelMode === "name"
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.show-labels-only-when-occupied.label")
+    description: I18n.tr("bar.widget-settings.workspace.show-labels-only-when-occupied.description")
+    checked: valueShowLabelsOnlyWhenOccupied
+    onToggled: checked => valueShowLabelsOnlyWhenOccupied = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.follow-focused-screen.label")
+    description: I18n.tr("bar.widget-settings.workspace.follow-focused-screen.description")
+    checked: valueFollowFocusedScreen
+    onToggled: checked => valueFollowFocusedScreen = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.show-applications.label")
+    description: I18n.tr("bar.widget-settings.workspace.show-applications.description")
+    checked: valueShowApplications
+    onToggled: checked => valueShowApplications = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.active-window.colorize-icons.label")
+    description: I18n.tr("bar.widget-settings.active-window.colorize-icons.description")
+    checked: valueColorizeIcons
+    onToggled: checked => valueColorizeIcons = checked
+    visible: valueShowApplications
   }
 }

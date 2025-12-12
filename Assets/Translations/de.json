@@ -368,12 +368,6 @@
           "reset-tooltip": "Titelbreite zurücksetzen"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Zeige nur die Workspace-Bezeichnung für Workspaces an, die offene Fenster haben.",
-          "label": "Zeige Label nur bei Belegung"
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Theme-Farben auf Tray-Symbole anwenden.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Wählen Sie, wie Arbeitsbereichs-Beschriftungen angezeigt werden.",
           "label": "Beschriftungsmodus"
+        },
+        "show-applications": {
+          "description": "Anwendungssymbole in jedem Arbeitsbereich anzeigen.",
+          "label": "Anwendungen anzeigen"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Arbeitsbereichsbezeichnungen nur anzeigen, wenn sie Fenster enthalten.",
+          "label": "Beschriftungen nur anzeigen, wenn belegt"
         }
       }
     }

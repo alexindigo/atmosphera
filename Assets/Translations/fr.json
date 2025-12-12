@@ -368,12 +368,6 @@
           "reset-tooltip": "Réinitialiser la largeur du titre"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Afficher uniquement l'étiquette de l'espace de travail pour les espaces de travail qui ont des fenêtres ouvertes.",
-          "label": "Afficher l'étiquette uniquement lorsque c'est occupé."
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Appliquer les couleurs du thème aux icônes de la barre système.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Choisir comment les étiquettes d'espace de travail sont affichées.",
           "label": "Mode d'étiquette"
+        },
+        "show-applications": {
+          "description": "Afficher les icônes des applications dans chaque espace de travail.",
+          "label": "Afficher les applications"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Afficher uniquement les étiquettes d'espace de travail lorsqu'elles contiennent des fenêtres.",
+          "label": "Afficher les étiquettes uniquement lorsque le champ est occupé."
         }
       }
     }

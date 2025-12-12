@@ -368,12 +368,6 @@
           "reset-tooltip": "Başlık genişliğini sıfırla"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Sadece açık pencereleri olan çalışma alanları için çalışma alanı etiketini göster.",
-          "label": "Sadece dolu olduğunda etiketi göster."
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Tepsi simgelerine tema renklerini uygula.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Çalışma alanı etiketlerinin nasıl gösterileceğini seçin.",
           "label": "Etiket Modu"
+        },
+        "show-applications": {
+          "description": "Her çalışma alanının içinde uygulama simgelerini görüntüle.",
+          "label": "Uygulamaları göster"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Yalnızca pencere içeren çalışma alanı etiketlerini göster.",
+          "label": "Yalnızca dolu olduğunda etiketleri göster"
         }
       }
     }

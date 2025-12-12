@@ -368,12 +368,6 @@
           "reset-tooltip": "Redefinir largura do título"
         }
       },
-      "taskbar-grouped": {
-        "show-labels-only-when-occupied": {
-          "description": "Mostrar apenas o rótulo da área de trabalho para áreas de trabalho que têm janelas abertas.",
-          "label": "Mostrar rótulo somente quando ocupado."
-        }
-      },
       "tray": {
         "colorize-icons": {
           "description": "Aplicar cores do tema aos ícones da bandeja do sistema.",
@@ -410,6 +404,14 @@
         "label-mode": {
           "description": "Escolher como os rótulos de espaço de trabalho são exibidos.",
           "label": "Modo de rótulo"
+        },
+        "show-applications": {
+          "description": "Exibir ícones de aplicativos dentro de cada espaço de trabalho.",
+          "label": "Mostrar aplicativos"
+        },
+        "show-labels-only-when-occupied": {
+          "description": "Mostrar rótulos de área de trabalho apenas quando contiverem janelas.",
+          "label": "Mostrar rótulos apenas quando ocupado."
         }
       }
     }
