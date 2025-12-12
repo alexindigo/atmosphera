@@ -323,7 +323,7 @@ Item {
       Rectangle {
         id: sidebar
         clip: true
-        Layout.preferredWidth: 220 * Style.uiScaleRatio
+        Layout.preferredWidth: 200 * Style.uiScaleRatio
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         color: Color.transparent
@@ -334,7 +334,6 @@ Item {
           NListView {
             id: sidebarList
             anchors.fill: parent
-            anchors.margins: Style.marginS
             model: root.tabsModel
             spacing: Style.marginXS
             currentIndex: root.currentTabIndex

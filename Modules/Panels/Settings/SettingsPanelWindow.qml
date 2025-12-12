@@ -62,7 +62,6 @@ FloatingWindow {
   // Main content
   Rectangle {
     anchors.fill: parent
-    anchors.margins: Style.marginL
     color: Color.transparent
     radius: Style.radiusL
 
