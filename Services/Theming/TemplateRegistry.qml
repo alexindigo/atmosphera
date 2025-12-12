@@ -163,6 +163,11 @@ Singleton {
           "name": "equibop",
           "path": "~/.config/equibop",
           "requiresThemesFolder": false
+ 	},
+  	{
+          "name": "equicord",
+          "path": "~/.config/Equicord",
+          "requiresThemesFolder": false
         },
         {
           "name": "lightcord",
