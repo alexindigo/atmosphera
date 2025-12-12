@@ -705,6 +705,11 @@
       "hover": "悬停时滚动",
       "never": "从不滚动"
     },
+    "settings-panel-mode": {
+      "attached": "连接到杆的面板",
+      "centered": "居中面板",
+      "window": "分离窗口"
+    },
     "shadow-direction": {
       "bottom": "下方",
       "bottom_left": "左下",
@@ -2176,9 +2181,9 @@
         "description": "自定义界面的外观、感觉和行为。",
         "label": "外观"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "使设置窗口与边栏保持对齐，实现统一的外观。",
-        "label": "将设置窗口贴合边栏"
+      "settings-panel-mode": {
+        "description": "选择设置布局（可能需要重新打开）。",
+        "label": "设置面板模式"
       },
       "shadows": {
         "description": "启用条形图和面板下的阴影。",

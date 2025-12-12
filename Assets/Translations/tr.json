@@ -705,6 +705,11 @@
       "hover": "Üzerine Gelince Kaydır",
       "never": "Asla Kaydırma"
     },
+    "settings-panel-mode": {
+      "attached": "Çubuğa bağlı panel",
+      "centered": "Ortalanmış panel",
+      "window": "Ayrı pencere"
+    },
     "shadow-direction": {
       "bottom": "Alt",
       "bottom_left": "Sol alt",
@@ -2176,9 +2181,9 @@
         "description": "Arayüzün görünümünü, hissini ve davranışını özelleştirin.",
         "label": "Görünüm"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Ayarlar penceresini çubukla hizalayarak tutarlı bir görünüm sağlayın.",
-        "label": "Ayarlar penceresini çubuğa hizala"
+      "settings-panel-mode": {
+        "description": "Ayarlar düzenini seçin (yeniden açılması gerekebilir).",
+        "label": "Ayarlar paneli modu"
       },
       "shadows": {
         "description": "Çubukların ve panellerin altında gölgelerin etkinleştirilmesini sağlar.",

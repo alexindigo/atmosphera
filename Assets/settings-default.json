@@ -1,5 +1,5 @@
 {
-  "settingsVersion": 26,
+  "settingsVersion": 0,
   "bar": {
     "position": "top",
     "backgroundOpacity": 1,
@@ -94,7 +94,7 @@
     "tooltipsEnabled": true,
     "panelBackgroundOpacity": 1,
     "panelsAttachedToBar": true,
-    "settingsPanelAttachToBar": false
+    "settingsPanelMode": "attached"
   },
   "location": {
     "name": "Tokyo",

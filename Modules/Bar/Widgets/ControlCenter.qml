@@ -123,7 +123,11 @@ NIconButton {
                    if (action === "open-launcher") {
                      PanelService.getPanel("launcherPanel", screen)?.toggle();
                    } else if (action === "open-settings") {
-                     PanelService.getPanel("settingsPanel", screen)?.toggle();
+                     if (Settings.data.ui.settingsPanelMode === "window") {
+                       SettingsPanelService.toggleWindow();
+                     } else {
+                       PanelService.getPanel("settingsPanel", screen)?.toggle();
+                     }
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }

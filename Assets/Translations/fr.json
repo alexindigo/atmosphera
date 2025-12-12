@@ -705,6 +705,11 @@
       "hover": "Défiler au Survol",
       "never": "Ne Jamais Défiler"
     },
+    "settings-panel-mode": {
+      "attached": "Panneau fixé à une barre",
+      "centered": "Panneau centré",
+      "window": "Fenêtre séparée"
+    },
     "shadow-direction": {
       "bottom": "En bas",
       "bottom_left": "En bas à gauche",
@@ -2176,9 +2181,9 @@
         "description": "Personnaliser l'apparence, l'ergonomie et le comportement de l'interface.",
         "label": "Apparence"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Alignez la fenêtre des paramètres sur la barre pour un rendu cohérent.",
-        "label": "Aligner la fenêtre des paramètres sur la barre"
+      "settings-panel-mode": {
+        "description": "Choisir la disposition des paramètres (peut nécessiter une réouverture).",
+        "label": "Mode du panneau de configuration"
       },
       "shadows": {
         "description": "Active les ombres portées sous les barres et les panneaux.",

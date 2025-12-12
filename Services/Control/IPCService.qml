@@ -37,10 +37,14 @@ Item {
   IpcHandler {
     target: "settings"
     function toggle() {
-      root.withTargetScreen(screen => {
-                              var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                              settingsPanel?.toggle();
-                            });
+      if (Settings.data.ui.settingsPanelMode === "window") {
+        SettingsPanelService.toggleWindow();
+      } else {
+        root.withTargetScreen(screen => {
+                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                settingsPanel?.toggle();
+                              });
+      }
     }
   }
 

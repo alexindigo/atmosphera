@@ -21,6 +21,7 @@ import qs.Modules.LockScreen
 import qs.Modules.MainScreen
 import qs.Modules.Notification
 import qs.Modules.OSD
+import qs.Modules.Panels.Settings
 import qs.Modules.Toast
 import qs.Services.Control
 import qs.Services.Hardware
@@ -116,6 +117,9 @@ ShellRoot {
       OSD {}
 
       LockScreen {}
+
+      // Settings window mode (single window across all monitors)
+      SettingsPanelWindow {}
 
       // IPCService is treated as a service but it must be in graphics scene.
       IPCService {}

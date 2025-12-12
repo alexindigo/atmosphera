@@ -705,6 +705,11 @@
       "hover": "Rolar ao Passar o Mouse",
       "never": "Nunca Rolar"
     },
+    "settings-panel-mode": {
+      "attached": "Painel anexado à barra",
+      "centered": "Painel centralizado",
+      "window": "Janela separada"
+    },
     "shadow-direction": {
       "bottom": "Inferior",
       "bottom_left": "Inferior esquerda",
@@ -2176,9 +2181,9 @@
         "description": "Personalize a aparência, a sensação e o comportamento da interface.",
         "label": "Aparência"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Mantenha a janela de Configurações alinhada com a barra para um visual uniforme.",
-        "label": "Ajustar Configurações à barra"
+      "settings-panel-mode": {
+        "description": "Escolha o layout das configurações (pode ser necessário reabrir).",
+        "label": "Modo do painel de configurações"
       },
       "shadows": {
         "description": "Ativa sombras projetadas sob barras e painéis.",

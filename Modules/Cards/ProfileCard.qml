@@ -60,9 +60,14 @@ NBox {
         icon: "settings"
         tooltipText: I18n.tr("tooltips.open-settings")
         onClicked: {
-          var panel = PanelService.getPanel("settingsPanel", screen);
-          panel.requestedTab = SettingsPanel.Tab.General;
-          panel.open();
+          if (Settings.data.ui.settingsPanelMode === "window") {
+            SettingsPanelService.openWindow(SettingsPanel.Tab.General);
+            PanelService.openedPanel?.close();
+          } else {
+            var panel = PanelService.getPanel("settingsPanel", screen);
+            panel.requestedTab = SettingsPanel.Tab.General;
+            panel.open();
+          }
         }
       }
 

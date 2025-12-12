@@ -46,6 +46,7 @@ ColumnLayout {
       }
     }
 
+    // Panels attached to bar and screen edges
     NToggle {
       label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
       description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
@@ -53,12 +54,27 @@ ColumnLayout {
       onToggled: checked => Settings.data.ui.panelsAttachedToBar = checked
     }
 
-    NToggle {
-      label: I18n.tr("settings.user-interface.settings-panel-attached-to-bar.label")
-      description: I18n.tr("settings.user-interface.settings-panel-attached-to-bar.description")
-      checked: Settings.data.ui.settingsPanelAttachToBar
-      enabled: Settings.data.ui.panelsAttachedToBar
-      onToggled: checked => Settings.data.ui.settingsPanelAttachToBar = checked
+    // Settings panel display mode
+    NComboBox {
+      label: I18n.tr("settings.user-interface.settings-panel-mode.label")
+      description: I18n.tr("settings.user-interface.settings-panel-mode.description")
+      Layout.fillWidth: true
+      model: [
+        {
+          "key": "attached",
+          "name": I18n.tr("options.settings-panel-mode.attached")
+        },
+        {
+          "key": "centered",
+          "name": I18n.tr("options.settings-panel-mode.centered")
+        },
+        {
+          "key": "window",
+          "name": I18n.tr("options.settings-panel-mode.window")
+        }
+      ]
+      currentKey: Settings.data.ui.settingsPanelMode
+      onSelected: key => Settings.data.ui.settingsPanelMode = key
     }
 
     NToggle {

@@ -705,6 +705,11 @@
       "hover": "Scrollen bij hover",
       "never": "Nooit scrollen"
     },
+    "settings-panel-mode": {
+      "attached": "Paneel bevestigd aan staaf",
+      "centered": "Gecentreerd paneel",
+      "window": "Apart venster"
+    },
     "shadow-direction": {
       "bottom": "Onder",
       "bottom_left": "Linksonder",
@@ -2176,9 +2181,9 @@
         "description": "Pas de look, feel en het gedrag van de interface aan.",
         "label": "Uiterlijk"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Houd het instellingenvenster uitgelijnd met de balk voor een uniforme uitstraling.",
-        "label": "Instellingenvenster aan balk vastklikken"
+      "settings-panel-mode": {
+        "description": "Kies lay-out voor instellingen (mogelijk opnieuw openen vereist).",
+        "label": "Instellingenpaneelmodus"
       },
       "shadows": {
         "description": "Schakelt slagschaduwen onder balken en panelen in.",

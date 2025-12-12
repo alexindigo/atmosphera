@@ -705,6 +705,11 @@
       "hover": "Desplazar al Pasar",
       "never": "Nunca Desplazar"
     },
+    "settings-panel-mode": {
+      "attached": "Panel adjunto a la barra",
+      "centered": "Panel centrado",
+      "window": "Ventana separada"
+    },
     "shadow-direction": {
       "bottom": "Inferior",
       "bottom_left": "Inferior izquierda",
@@ -2176,9 +2181,9 @@
         "description": "Personaliza la apariencia, el ambiente y el comportamiento de la interfaz.",
         "label": "Apariencia"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "Mantén la ventana de Configuración alineada con la barra para un aspecto unificado.",
-        "label": "Ajustar Configuración a la barra"
+      "settings-panel-mode": {
+        "description": "Elegir diseño de configuración (puede requerir reapertura).",
+        "label": "Modo panel de configuración"
       },
       "shadows": {
         "description": "Habilita sombras paralelas debajo de las barras y los paneles.",

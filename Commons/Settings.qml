@@ -23,7 +23,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 26
+  readonly property int settingsVersion: 27
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -102,15 +102,25 @@ Singleton {
       if (!isLoaded) {
         Logger.i("Settings", "Settings loaded");
 
-        upgradeSettings();
+        // Load raw JSON for migrations (adapter doesn't expose removed properties)
+        var rawJson = null;
+        try {
+          rawJson = JSON.parse(settingsFileView.text());
+        } catch (e) {
+          Logger.w("Settings", "Could not parse raw JSON for migrations");
+        }
 
-        root.isLoaded = true;
-
-        // Emit the signal
-        root.settingsLoaded();
+        // Run versioned migrations immediately, don't move it in upgradeSettings
+        runVersionedMigrations(rawJson);
 
         // Finally, update our local settings version
         adapter.settingsVersion = settingsVersion;
+
+        // Emit the signal
+        root.isLoaded = true;
+        root.settingsLoaded();
+
+        upgradeSettings();
       }
     }
     onLoadFailed: function (error) {
@@ -141,7 +151,7 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    property int settingsVersion: root.settingsVersion
+    property int settingsVersion: 0
 
     // bar
     property JsonObject bar: JsonObject {
@@ -251,7 +261,7 @@ Singleton {
       property bool tooltipsEnabled: true
       property real panelBackgroundOpacity: 1.0
       property bool panelsAttachedToBar: true
-      property bool settingsPanelAttachToBar: false
+      property string settingsPanelMode: "attached" // "centered", "attached", "window"
     }
 
     // location
@@ -643,9 +653,12 @@ Singleton {
 
   // -----------------------------------------------------
   // Run versioned migrations using MigrationRegistry
-  function runVersionedMigrations() {
+  // rawJson is the parsed JSON file content (before adapter filtering)
+  function runVersionedMigrations(rawJson) {
     const currentVersion = adapter.settingsVersion;
     const migrations = MigrationRegistry.migrations;
+
+    Logger.i("Settings", "adapter.settingsVersion:", adapter.settingsVersion);
 
     // Get all migration versions and sort them
     const versions = Object.keys(migrations).map(v => parseInt(v)).sort((a, b) => a - b);
@@ -660,7 +673,7 @@ Singleton {
         const migration = migrationComponent.createObject(root);
 
         if (migration && typeof migration.migrate === "function") {
-          const success = migration.migrate(adapter, Logger);
+          const success = migration.migrate(adapter, Logger, rawJson);
           if (!success) {
             Logger.e("Settings", "Migration to v" + version + " failed");
           }
@@ -694,10 +707,6 @@ Singleton {
       Qt.callLater(upgradeSettings);
       return;
     }
-
-    // -----------------
-    // Run versioned migrations from MigrationRegistry
-    runVersionedMigrations();
 
     // -----------------
     const sections = ["left", "center", "right"];

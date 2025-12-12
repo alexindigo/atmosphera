@@ -705,6 +705,11 @@
       "hover": "ホバー時にスクロール",
       "never": "スクロールしない"
     },
+    "settings-panel-mode": {
+      "attached": "棒に取り付けられたパネル",
+      "centered": "中央パネル",
+      "window": "別ウィンドウ"
+    },
     "shadow-direction": {
       "bottom": "下",
       "bottom_left": "左下",
@@ -2176,9 +2181,9 @@
         "description": "インターフェースの外観や操作感、挙動をカスタマイズします。",
         "label": "外観"
       },
-      "settings-panel-attached-to-bar": {
-        "description": "設定ウィンドウをバーに合わせて配置し、統一感のある外観にします。",
-        "label": "設定ウィンドウをバーに吸着"
+      "settings-panel-mode": {
+        "description": "設定レイアウトを選択 (再起動が必要な場合があります)",
+        "label": "設定パネルモード"
       },
       "shadows": {
         "description": "バーやパネルの下にドロップシャドウ（影）を表示します。",
