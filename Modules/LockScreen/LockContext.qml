@@ -30,6 +30,8 @@ Scope {
       return;
     }
 
+    if (currentText === "") return;
+
     if (root.unlockInProgress) {
       Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
       return;
@@ -57,14 +59,10 @@ Scope {
         infoMessage = message;
       }
 
-      if (responseRequired && root.unlockInProgress) {
+      if (this.responseRequired) {
         Logger.i("LockContext", "Responding to PAM with password");
-        respond(root.currentText);
+        this.respond(root.currentText);
       }
-    }
-
-    onResponseRequiredChanged: {
-      Logger.i("LockContext", "Response required changed:", responseRequired);
     }
 
     onCompleted: result => {
@@ -74,6 +72,7 @@ Scope {
                      root.unlocked();
                    } else {
                      Logger.i("LockContext", "Authentication failed");
+                     root.currentText = "";
                      errorMessage = I18n.tr("lock-screen.authentication-failed");
                      showFailure = true;
                      root.failed();
