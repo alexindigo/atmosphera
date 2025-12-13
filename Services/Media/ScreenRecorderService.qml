@@ -124,12 +124,15 @@ Singleton {
         }
 
         // If it failed to start, show a clear error toast with stderr
+        // But don't show error if user intentionally cancelled via portal
         if (exitCode !== 0) {
           const err = String(recorderProcess.stderr.text || "").trim();
-          if (err.length > 0)
+          // Check if this was a user cancellation
+          const wasCancelled = err.includes("canceled by the user") || err.includes("cancelled by the user");
+          if (err.length > 0 && !wasCancelled) {
             ToastService.showError(I18n.tr("toast.recording.failed-start"), err);
-          else
-            ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-gpu"));
+          }
+          // If user cancelled, silently return without error toast
         }
       } else if (isRecording) {
         // Process ended normally while recording
