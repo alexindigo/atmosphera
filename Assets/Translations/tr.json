@@ -1154,7 +1154,7 @@
             "description-missing": "Discord istemcisi tespit edilmedi. Vencord, vesktop, webcord, armcord, equibop, lightcord veya dorion kurun."
           },
           "emacs": {
-            "description": "{filepath} yaz ve yeniden yükle",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandart: ~/.emacs.d/themes/noctalia.el\n\nManuel olarak uygula: (load-theme 'noctalia t)",
             "description-missing": "{app} uygulamasının yüklü olmasını gerektirir"
           },
           "fuzzel": {

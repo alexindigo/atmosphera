@@ -898,7 +898,7 @@ ColumnLayout {
 
       NCheckbox {
         label: "Emacs"
-        description: ProgramCheckerService.emacsAvailable ? "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nApply manually: (load-theme 'noctalia t)" : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
+        description: ProgramCheckerService.emacsAvailable ? I18n.tr("settings.color-scheme.templates.programs.emacs.description") : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
                                                                                                                                                                                                        "app": "emacs"
                                                                                                                                                                                                      })
         checked: Settings.data.templates.emacs

@@ -1154,7 +1154,7 @@
             "description-missing": "Aucun client Discord détecté. Installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
           },
           "emacs": {
-            "description": "Écrire {filepath} et recharger.",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nAppliquer manuellement: (load-theme 'noctalia t)",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "fuzzel": {

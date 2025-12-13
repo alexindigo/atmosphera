@@ -1154,7 +1154,7 @@
             "description-missing": "Discord クライアントが検出されません。vencord、vesktop、webcord、armcord、equibop、lightcord、dorion のいずれかをインストールしてください。"
           },
           "emacs": {
-            "description": "{filepath} を書き出して再読み込み",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el\n標準: ~/.emacs.d/themes/noctalia.el\n\n手動で適用: (load-theme 'noctalia t)",
             "description-missing": "{app} がインストールされている必要があります。"
           },
           "fuzzel": {
