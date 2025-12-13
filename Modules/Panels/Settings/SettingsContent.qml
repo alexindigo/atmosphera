@@ -475,10 +475,34 @@ Item {
                   anchors.fill: parent
                   hoverEnabled: true
                   acceptedButtons: Qt.LeftButton
-                  onEntered: tabItem.hovering = true
-                  onExited: tabItem.hovering = false
-                  onCanceled: tabItem.hovering = false
-                  onClicked: root.currentTabIndex = index
+                  cursorShape: Qt.PointingHandCursor
+                  onEntered: {
+                    tabItem.hovering = true;
+                    // Show tooltip when sidebar is collapsed
+                    if (!root.sidebarExpanded) {
+                      TooltipService.show(tabItem, I18n.tr(modelData.label));
+                    }
+                  }
+                  onExited: {
+                    tabItem.hovering = false;
+                    // Hide tooltip when sidebar is collapsed
+                    if (!root.sidebarExpanded) {
+                      TooltipService.hide();
+                    }
+                  }
+                  onCanceled: {
+                    tabItem.hovering = false;
+                    if (!root.sidebarExpanded) {
+                      TooltipService.hide();
+                    }
+                  }
+                  onClicked: {
+                    root.currentTabIndex = index;
+                    // Hide tooltip on click
+                    if (!root.sidebarExpanded) {
+                      TooltipService.hide();
+                    }
+                  }
                 }
               }
 
