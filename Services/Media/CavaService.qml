@@ -17,13 +17,16 @@ Singleton {
   */
   property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
 
-  property var values: Array(barsCount).fill(0)
+  property var values: []
   property int barsCount: 32
 
   // Idle detection to reduce GPU usage when there's no audio
   property bool isIdle: true
   property int idleFrameCount: 0
   readonly property int idleThreshold: 30 // Frames of silence before considered idle (0.5s at 60fps)
+
+  // Pre-allocated array for quick parsing
+  property var _parseBuffer: new Array(barsCount)
 
   // Simple config
   property var config: ({
@@ -81,10 +84,35 @@ Singleton {
     }
     stdout: SplitParser {
       onRead: data => {
-        const newValues = data.slice(0, -1).split(";").map(v => parseInt(v, 10) / 100);
+        // Optimized parsing directly into pre-allocated buffer
+        const buffer = root._parseBuffer;
+        let idx = 0;
+        let num = 0;
+        let allZero = true;
 
-        // Check if all values are effectively zero (< 0.01)
-        const allZero = newValues.every(v => v < 0.01);
+        for (let i = 0, len = data.length - 1; i < len; i++) {
+          const c = data.charCodeAt(i);
+          if (c === 59) {
+            // semicolon
+            const val = num * 0.01;
+            buffer[idx++] = val;
+            if (val >= 0.01) {
+              allZero = false;
+            }
+            num = 0;
+          } else if (c >= 48 && c <= 57) {
+            // digit 0-9
+            num = num * 10 + (c - 48);
+          }
+        }
+        // Handle last value if no trailing semicolon
+        if (num > 0 || idx < root.barsCount) {
+          const val = num * 0.01;
+          buffer[idx++] = val;
+          if (val >= 0.01) {
+            allZero = false;
+          }
+        }
 
         if (allZero) {
           root.idleFrameCount++;
@@ -108,9 +136,9 @@ Singleton {
           }
         }
 
-        // Update values only if there's a significant change
-        if (!isIdle) {
-          root.values = newValues;
+        // Update values only if not idle - copy buffer to trigger binding updates
+        if (!root.isIdle) {
+          root.values = buffer.slice(0, idx);
         }
       }
     }
