@@ -349,9 +349,9 @@
           "description": "アクティブなワークスペースのアプリのみを表示します。",
           "label": "アクティブなワークスペースのみ"
         },
-        "only-same-output": {
-          "description": "バーが配置されているディスプレイ上のアプリのみを表示します。",
-          "label": "同じディスプレイのみ"
+        "only-same-monitor": {
+          "description": "バーがあるモニターのアプリのみ表示する。",
+          "label": "同じモニターからのみ"
         },
         "show-pinned-apps": {
           "description": "ドックからピン留めされたアプリをタスクバーに表示する。",
@@ -1425,9 +1425,9 @@
         "label": "ドックの有効化"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "ドックが配置されているディスプレイ上のアプリのみを表示します。",
-          "label": "同じディスプレイのアプリのみ表示"
+        "only-same-monitor": {
+          "description": "ドックがあるモニターのアプリのみを表示する。",
+          "label": "同じモニターのアプリのみ"
         },
         "section": {
           "description": "ドックを表示するディスプレイを選択します。未選択の場合は全てに表示されます。",

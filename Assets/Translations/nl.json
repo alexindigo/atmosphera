@@ -349,9 +349,9 @@
           "description": "Toon alleen apps van actieve werkruimten.",
           "label": "Alleen van actieve werkruimten"
         },
-        "only-same-output": {
-          "description": "Toon alleen apps van de output waarop de balk zich bevindt.",
-          "label": "Alleen van dezelfde output"
+        "only-same-monitor": {
+          "description": "Toon alleen apps van de monitor waar de balk zich bevindt.",
+          "label": "Alleen vanaf dezelfde monitor"
         },
         "show-pinned-apps": {
           "description": "Toon vastgemaakte apps van het dock in de taakbalk.",
@@ -1425,9 +1425,9 @@
         "label": "Dock inschakelen"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Toon alleen apps van het uitvoerscherm waar de dock zich bevindt.",
-          "label": "Alleen apps van dezelfde output"
+        "only-same-monitor": {
+          "description": "Toon alleen apps van de monitor waar het dock zich bevindt.",
+          "label": "Alleen apps van dezelfde monitor"
         },
         "section": {
           "description": "Dock op specifieke monitoren weergeven. Standaard op alle als er geen zijn gekozen.",

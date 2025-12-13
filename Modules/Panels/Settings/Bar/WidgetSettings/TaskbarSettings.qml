@@ -71,8 +71,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.taskbar.only-same-output.label")
-    description: I18n.tr("bar.widget-settings.taskbar.only-same-output.description")
+    label: I18n.tr("bar.widget-settings.taskbar.only-same-monitor.label")
+    description: I18n.tr("bar.widget-settings.taskbar.only-same-monitor.description")
     checked: root.valueOnlySameOutput
     onToggled: checked => root.valueOnlySameOutput = checked
   }

@@ -349,9 +349,9 @@
           "description": "Afficher uniquement les applications des espaces de travail actifs.",
           "label": "Seulement depuis les espaces de travail actifs."
         },
-        "only-same-output": {
-          "description": "Afficher uniquement les applications de la sortie où la barre est située.",
-          "label": "Seulement à partir de la même sortie"
+        "only-same-monitor": {
+          "description": "Afficher uniquement les applications de l'écran où se trouve la barre.",
+          "label": "Seulement à partir du même écran."
         },
         "show-pinned-apps": {
           "description": "Afficher les applications épinglées du dock dans la barre des tâches.",
@@ -1425,9 +1425,9 @@
         "label": "Activer le dock"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Afficher uniquement les applications de la sortie où le dock est situé.",
-          "label": "Seulement les applications de la même sortie"
+        "only-same-monitor": {
+          "description": "Afficher uniquement les applications de l'écran où se trouve le dock.",
+          "label": "Seulement les applications du même écran."
         },
         "section": {
           "description": "Afficher le dock sur des écrans spécifiques. Par défaut, il s'affiche sur tous les écrans si aucun n'est sélectionné.",

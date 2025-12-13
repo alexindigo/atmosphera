@@ -349,9 +349,9 @@
           "description": "Show only apps from active workspaces.",
           "label": "Only from active workspaces"
         },
-        "only-same-output": {
-          "description": "Show only apps from the output where the bar is located.",
-          "label": "Only from same output"
+        "only-same-monitor": {
+          "description": "Show only apps from the monitor where the bar is located.",
+          "label": "Only from same monitor"
         },
         "show-pinned-apps": {
           "description": "Show pinned apps from the dock in the taskbar.",
@@ -1425,9 +1425,9 @@
         "label": "Enable dock"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Show only apps from the output where the dock is located.",
-          "label": "Only apps from same output"
+        "only-same-monitor": {
+          "description": "Show only apps from the monitor where the dock is located.",
+          "label": "Only apps from same monitor"
         },
         "section": {
           "description": "Show dock on specific monitors. Defaults to all if none are chosen.",

@@ -349,9 +349,9 @@
           "description": "仅显示来自活动工作区的应用程序",
           "label": "仅显示活动工作区"
         },
-        "only-same-output": {
-          "description": "仅显示任务栏所在屏幕上的应用程序",
-          "label": "仅显示同屏幕"
+        "only-same-monitor": {
+          "description": "仅显示工具栏所在显示器上的应用。",
+          "label": "仅从同一显示器"
         },
         "show-pinned-apps": {
           "description": "在任务栏中显示 Dock 上固定的应用。",
@@ -1425,9 +1425,9 @@
         "label": "启用 Dock"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "仅显示输出结果中dock所在位置的应用。",
-          "label": "仅来自相同输出的应用"
+        "only-same-monitor": {
+          "description": "仅显示停靠栏所在显示器上的应用程序。",
+          "label": "仅限来自同一显示器的应用"
         },
         "section": {
           "description": "在特定显示器上显示 Dock。如果未选择任何显示器，则默认为全部。",

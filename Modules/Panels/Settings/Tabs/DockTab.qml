@@ -158,8 +158,8 @@ ColumnLayout {
 
   NToggle {
     visible: Settings.data.dock.enabled
-    label: I18n.tr("settings.dock.monitors.only-same-output.label")
-    description: I18n.tr("settings.dock.monitors.only-same-output.description")
+    label: I18n.tr("settings.dock.monitors.only-same-monitor.label")
+    description: I18n.tr("settings.dock.monitors.only-same-monitor.description")
     checked: Settings.data.dock.onlySameOutput
     onToggled: checked => Settings.data.dock.onlySameOutput = checked
   }

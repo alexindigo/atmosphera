@@ -349,9 +349,9 @@
           "description": "Zeige nur Apps von aktiven Arbeitsbereichen.",
           "label": "Nur von aktiven Arbeitsbereichen"
         },
-        "only-same-output": {
-          "description": "Zeige nur Apps von dem Bildschirm, auf dem sich die Taskbar befindet.",
-          "label": "Nur vom gleichen Bildschirm"
+        "only-same-monitor": {
+          "description": "Zeige nur Apps von dem Monitor an, auf dem sich die Leiste befindet.",
+          "label": "Nur vom selben Monitor"
         },
         "show-pinned-apps": {
           "description": "Angeheftete Apps aus dem Dock in der Taskleiste anzeigen.",
@@ -1425,9 +1425,9 @@
         "label": "Dock aktivieren"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Zeige nur Apps von dem Bildschirm, auf dem sich das Dock befindet.",
-          "label": "Nur Apps vom gleichen Bildschirm"
+        "only-same-monitor": {
+          "description": "Zeige nur Apps von dem Monitor an, auf dem sich das Dock befindet.",
+          "label": "Nur Apps vom selben Monitor"
         },
         "section": {
           "description": "Dock auf bestimmten Monitoren anzeigen. Standardmäßig werden alle angezeigt, wenn keine ausgewählt wurden.",

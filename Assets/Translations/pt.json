@@ -349,9 +349,9 @@
           "description": "Mostrar apenas aplicativos de áreas de trabalho ativas.",
           "label": "Apenas de espaços de trabalho ativos"
         },
-        "only-same-output": {
-          "description": "Mostrar apenas os aplicativos da saída onde a barra está localizada.",
-          "label": "Apenas da mesma saída"
+        "only-same-monitor": {
+          "description": "Mostrar apenas aplicativos do monitor onde a barra está localizada.",
+          "label": "Apenas do mesmo monitor"
         },
         "show-pinned-apps": {
           "description": "Mostrar aplicativos fixados do Dock na barra de tarefas.",
@@ -1425,9 +1425,9 @@
         "label": "Ativar dock"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Mostrar apenas aplicativos da saída onde o dock está localizado.",
-          "label": "Apenas aplicativos da mesma saída"
+        "only-same-monitor": {
+          "description": "Mostrar apenas aplicativos do monitor onde a dock está localizada.",
+          "label": "Apenas aplicativos do mesmo monitor"
         },
         "section": {
           "description": "Mostrar dock em monitores específicos. O padrão é todos se nenhum for escolhido.",

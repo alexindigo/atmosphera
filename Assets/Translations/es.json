@@ -349,9 +349,9 @@
           "description": "Mostrar solo las aplicaciones de los espacios de trabajo activos.",
           "label": "Solo desde espacios de trabajo activos"
         },
-        "only-same-output": {
-          "description": "Muestra solo las aplicaciones del resultado donde se encuentra la barra.",
-          "label": "Solo de la misma salida"
+        "only-same-monitor": {
+          "description": "Mostrar solo las aplicaciones del monitor donde se encuentra la barra.",
+          "label": "Solo desde el mismo monitor"
         },
         "show-pinned-apps": {
           "description": "Mostrar las aplicaciones ancladas desde el dock en la barra de tareas.",
@@ -1425,9 +1425,9 @@
         "label": "Habilitar dock"
       },
       "monitors": {
-        "only-same-output": {
-          "description": "Mostrar solo las aplicaciones de la salida donde se encuentra el dock.",
-          "label": "Solo aplicaciones de la misma salida"
+        "only-same-monitor": {
+          "description": "Mostrar solo las aplicaciones del monitor donde se encuentra el dock.",
+          "label": "Solo aplicaciones del mismo monitor"
         },
         "section": {
           "description": "Mostrar el dock en monitores específicos. Por defecto, se muestra en todos si no se elige ninguno.",
