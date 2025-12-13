@@ -61,6 +61,11 @@ Singleton {
                                         schemes: [],
                                         timestamp: 0
                                       })
+
+      // UI state: settings panel, etc.
+      property var ui: ({
+                          settingsSidebarExpanded: true
+                        })
     }
 
     onLoaded: {
@@ -171,6 +176,28 @@ Singleton {
     };
   }
 
+  // UI state
+  function setUiState(stateData) {
+    adapter.ui = stateData;
+    save();
+  }
+
+  function getUiState() {
+    return adapter.ui || {
+      settingsSidebarExpanded: true
+    };
+  }
+
+  function setSettingsSidebarExpanded(expanded) {
+    let uiState = getUiState();
+    uiState.settingsSidebarExpanded = expanded;
+    setUiState(uiState);
+  }
+
+  function getSettingsSidebarExpanded() {
+    return getUiState().settingsSidebarExpanded !== false; // default to true
+  }
+
   // -----------------------------------------------------
   function buildStateSnapshot() {
     try {
@@ -189,7 +216,8 @@ Singleton {
           display: shellStateData.display || {},
           notificationsState: shellStateData.notificationsState || {},
           changelogState: shellStateData.changelogState || {},
-          colorSchemesList: shellStateData.colorSchemesList || {}
+          colorSchemesList: shellStateData.colorSchemesList || {},
+          ui: shellStateData.ui || {}
         }
       };
     } catch (error) {

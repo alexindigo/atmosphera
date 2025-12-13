@@ -7,6 +7,7 @@ import qs.Modules.Panels.Settings.Tabs
 import qs.Modules.Panels.Settings.Tabs.ColorScheme
 import qs.Modules.Panels.Settings.Tabs.SessionMenu
 import qs.Services.System
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -19,12 +20,20 @@ Item {
   property int currentTabIndex: 0
   property var tabsModel: []
   property var activeScrollView: null
+  property bool sidebarExpanded: true
 
   // Signal when close button is clicked
   signal closeRequested
 
+  // Save sidebar state when it changes
+  onSidebarExpandedChanged: {
+    ShellState.setSettingsSidebarExpanded(sidebarExpanded);
+  }
+
   Component.onCompleted: {
     updateTabsModel();
+    // Restore sidebar state
+    sidebarExpanded = ShellState.getSettingsSidebarExpanded();
   }
 
   // Tab components
@@ -323,120 +332,193 @@ Item {
       Rectangle {
         id: sidebar
         clip: true
-        Layout.preferredWidth: 200 * Style.uiScaleRatio
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         color: Color.transparent
 
-        Item {
+        Behavior on Layout.preferredWidth {
+          NumberAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.InOutQuad
+          }
+        }
+
+        ColumnLayout {
           anchors.fill: parent
+          spacing: Style.marginS
 
-          NListView {
-            id: sidebarList
-            anchors.fill: parent
-            model: root.tabsModel
-            spacing: Style.marginXS
-            currentIndex: root.currentTabIndex
-            verticalPolicy: ScrollBar.AsNeeded
+          // Sidebar toggle button
+          Item {
+            id: toggleContainer
+            Layout.fillWidth: true
+            Layout.preferredHeight: toggleRow.implicitHeight + Style.marginS * 2
 
-            delegate: Rectangle {
-              id: tabItem
-              width: sidebarList.verticalScrollBarActive ? sidebarList.width - sidebarList.scrollBarWidth - Style.marginXS : sidebarList.width
-              height: tabEntryRow.implicitHeight + Style.marginS * 2
+            Rectangle {
+              id: sidebarToggle
+              width: toggleRow.implicitWidth + Style.marginS * 2
+              height: parent.height
+              anchors.left: parent.left
               radius: Style.radiusS
-              color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
-              readonly property bool selected: index === root.currentTabIndex
-              property bool hovering: false
-              property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnHover : Color.mOnSurface)
-
-              Behavior on width {
-                NumberAnimation {
-                  duration: Style.animationFast
-                }
-              }
+              color: toggleMouseArea.containsMouse ? Color.mHover : Color.transparent
 
               Behavior on color {
                 ColorAnimation {
                   duration: Style.animationFast
-                }
-              }
-
-              Behavior on tabTextColor {
-                ColorAnimation {
-                  duration: Style.animationFast
+                  easing.type: Easing.InOutQuad
                 }
               }
 
               RowLayout {
-                id: tabEntryRow
-                anchors.fill: parent
+                id: toggleRow
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
                 anchors.leftMargin: Style.marginS
-                anchors.rightMargin: Style.marginS
-                spacing: Style.marginM
+                spacing: 0
 
                 NIcon {
-                  icon: modelData.icon
-                  color: tabTextColor
+                  icon: root.sidebarExpanded ? "layout-sidebar-left-expand" : "layout-sidebar-right-expand"
+                  color: Color.mOnSurface
                   pointSize: Style.fontSizeXL
-                }
-
-                NText {
-                  text: I18n.tr(modelData.label)
-                  color: tabTextColor
-                  pointSize: Style.fontSizeM
-                  font.weight: Style.fontWeightSemiBold
-                  Layout.fillWidth: true
-                  Layout.alignment: Qt.AlignVCenter
                 }
               }
 
               MouseArea {
+                id: toggleMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
-                acceptedButtons: Qt.LeftButton
-                onEntered: tabItem.hovering = true
-                onExited: tabItem.hovering = false
-                onCanceled: tabItem.hovering = false
-                onClicked: root.currentTabIndex = index
-              }
-            }
-
-            onCurrentIndexChanged: {
-              if (currentIndex !== root.currentTabIndex) {
-                root.currentTabIndex = currentIndex;
-              }
-            }
-
-            Connections {
-              target: root
-              function onCurrentTabIndexChanged() {
-                if (sidebarList.currentIndex !== root.currentTabIndex) {
-                  sidebarList.currentIndex = root.currentTabIndex;
-                  sidebarList.positionViewAtIndex(root.currentTabIndex, ListView.Contain);
+                cursorShape: Qt.PointingHandCursor
+                onEntered: {
+                  TooltipService.show(sidebarToggle, root.sidebarExpanded ? I18n.tr("tooltips.collapse") : I18n.tr("tooltips.expand"));
+                }
+                onExited: {
+                  TooltipService.hide();
+                }
+                onClicked: {
+                  TooltipService.hide();
+                  root.sidebarExpanded = !root.sidebarExpanded;
                 }
               }
             }
           }
 
-          // Overlay gradient for sidebar scrolling
-          Rectangle {
-            anchors.fill: parent
-            anchors.margins: Style.borderS
-            radius: Style.radiusM
-            color: Color.transparent
-            visible: sidebarList.verticalScrollBarActive
-            gradient: Gradient {
-              GradientStop {
-                position: 0.0
-                color: Color.transparent
+          Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            NListView {
+              id: sidebarList
+              anchors.fill: parent
+              model: root.tabsModel
+              spacing: Style.marginXS
+              currentIndex: root.currentTabIndex
+              verticalPolicy: ScrollBar.AsNeeded
+
+              delegate: Rectangle {
+                id: tabItem
+                width: sidebarList.verticalScrollBarActive ? sidebarList.width - sidebarList.scrollBarWidth - Style.marginXS : sidebarList.width
+                height: tabEntryRow.implicitHeight + Style.marginS * 2
+                radius: Style.radiusS
+                color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
+                readonly property bool selected: index === root.currentTabIndex
+                property bool hovering: false
+                property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnHover : Color.mOnSurface)
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+
+                Behavior on tabTextColor {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.InOutQuad
+                  }
+                }
+
+                RowLayout {
+                  id: tabEntryRow
+                  anchors.fill: parent
+                  anchors.leftMargin: Style.marginS
+                  anchors.rightMargin: Style.marginS
+                  spacing: Style.marginM
+
+                  NIcon {
+                    icon: modelData.icon
+                    color: tabTextColor
+                    pointSize: Style.fontSizeXL
+                    Layout.alignment: Qt.AlignVCenter
+                  }
+
+                  NText {
+                    text: I18n.tr(modelData.label)
+                    color: tabTextColor
+                    pointSize: Style.fontSizeM
+                    font.weight: Style.fontWeightSemiBold
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: root.sidebarExpanded
+                    opacity: root.sidebarExpanded ? 1.0 : 0.0
+
+                    Behavior on opacity {
+                      NumberAnimation {
+                        duration: Style.animationFast
+                        easing.type: Easing.InOutQuad
+                      }
+                    }
+                  }
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  hoverEnabled: true
+                  acceptedButtons: Qt.LeftButton
+                  onEntered: tabItem.hovering = true
+                  onExited: tabItem.hovering = false
+                  onCanceled: tabItem.hovering = false
+                  onClicked: root.currentTabIndex = index
+                }
               }
-              GradientStop {
-                position: 0.95
-                color: Color.transparent
+
+              onCurrentIndexChanged: {
+                if (currentIndex !== root.currentTabIndex) {
+                  root.currentTabIndex = currentIndex;
+                }
               }
-              GradientStop {
-                position: 1.0
-                color: Color.mSurfaceVariant
+
+              Connections {
+                target: root
+                function onCurrentTabIndexChanged() {
+                  if (sidebarList.currentIndex !== root.currentTabIndex) {
+                    sidebarList.currentIndex = root.currentTabIndex;
+                    sidebarList.positionViewAtIndex(root.currentTabIndex, ListView.Contain);
+                  }
+                }
+              }
+            }
+
+            // Overlay gradient for sidebar scrolling
+            Rectangle {
+              anchors.fill: parent
+              anchors.margins: Style.borderS
+              radius: Style.radiusM
+              color: Color.transparent
+              visible: sidebarList.verticalScrollBarActive
+              gradient: Gradient {
+                GradientStop {
+                  position: 0.0
+                  color: Color.transparent
+                }
+                GradientStop {
+                  position: 0.95
+                  color: Color.transparent
+                }
+                GradientStop {
+                  position: 1.0
+                  color: Color.mSurfaceVariant
+                }
               }
             }
           }
