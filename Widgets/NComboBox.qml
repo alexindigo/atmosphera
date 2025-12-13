@@ -119,6 +119,7 @@ RowLayout {
 
       contentItem: ListView {
         id: listView
+        property var comboBox: combo
         clip: true
         model: combo.popup.visible ? root.model : null
         boundsBehavior: Flickable.StopAtBounds
@@ -210,8 +211,8 @@ RowLayout {
               var item = root.getItem(delegateRect.index);
               if (item && item.key !== undefined) {
                 root.selected(item.key);
-                root.comboBox.currentIndex = delegateRect.index;
-                root.comboBox.popup.close();
+                listView.comboBox.currentIndex = delegateRect.index;
+                listView.comboBox.popup.close();
               }
             }
           }
