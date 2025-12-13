@@ -18,6 +18,7 @@ RowLayout {
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
   property Component delegate: null
+  property bool modelReady: true
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1
 
@@ -95,6 +96,11 @@ RowLayout {
 
   onSearchTextChanged: filterModel()
   onModelChanged: filterModel()
+  onModelReadyChanged: {
+    if (modelReady) {
+      filterModel();
+    }
+  }
   Component.onCompleted: filterModel()
 
   // Watch for model content changes (e.g., async font loading)

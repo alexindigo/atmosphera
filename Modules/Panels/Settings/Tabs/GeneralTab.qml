@@ -86,28 +86,26 @@ ColumnLayout {
         label: I18n.tr("settings.general.fonts.default.label")
         description: I18n.tr("settings.general.fonts.default.description")
         model: FontService.availableFonts
+        modelReady: FontService.fontsLoaded
         currentKey: Settings.data.ui.fontDefault
         placeholder: I18n.tr("settings.general.fonts.default.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.default.search-placeholder")
         popupHeight: 420
         minimumWidth: 300
-        onSelected: function (key) {
-          Settings.data.ui.fontDefault = key;
-        }
+        onSelected: key => Settings.data.ui.fontDefault = key
       }
 
       NSearchableComboBox {
         label: I18n.tr("settings.general.fonts.monospace.label")
         description: I18n.tr("settings.general.fonts.monospace.description")
         model: FontService.monospaceFonts
+        modelReady: FontService.fontsLoaded
         currentKey: Settings.data.ui.fontFixed
         placeholder: I18n.tr("settings.general.fonts.monospace.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.monospace.search-placeholder")
         popupHeight: 320
         minimumWidth: 300
-        onSelected: function (key) {
-          Settings.data.ui.fontFixed = key;
-        }
+        onSelected: key => Settings.data.ui.fontFixed = key
       }
 
       ColumnLayout {
