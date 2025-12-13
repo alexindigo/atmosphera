@@ -22,8 +22,9 @@ SmartPanel {
     // Check right section first (most common location for Battery widget)
     var rightWidgets = Settings.data.bar.widgets.right || [];
     for (var i = 0; i < rightWidgets.length; i++) {
-      if (rightWidgets[i].id === "Battery" && rightWidgets[i].deviceNativePath) {
-        return rightWidgets[i].deviceNativePath;
+      var widget = rightWidgets[i];
+      if (widget && widget.id === "Battery" && widget.deviceNativePath) {
+        return widget.deviceNativePath;
       }
     }
     // Check other sections
@@ -31,8 +32,9 @@ SmartPanel {
     for (var s = 0; s < sections.length; s++) {
       var widgets = Settings.data.bar.widgets[sections[s]] || [];
       for (var j = 0; j < widgets.length; j++) {
-        if (widgets[j].id === "Battery" && widgets[j].deviceNativePath) {
-          return widgets[j].deviceNativePath;
+        var widget = widgets[j];
+        if (widget && widget.id === "Battery" && widget.deviceNativePath) {
+          return widget.deviceNativePath;
         }
       }
     }

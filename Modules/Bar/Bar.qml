@@ -17,6 +17,16 @@ Item {
   // This property will be set by MainScreen
   property ShellScreen screen: null
 
+  // Filter widgets to only include those that exist in the registry
+  // This prevents errors when plugins are missing or widgets are being cleaned up
+  function filterValidWidgets(widgets: list<var>): list<var> {
+    if (!widgets)
+      return [];
+    return widgets.filter(function (w) {
+      return w && w.id && BarWidgetRegistry.hasWidget(w.id);
+    });
+  }
+
   // Expose bar region for click-through mask
   readonly property var barRegion: barContentLoader.item?.children[0] || null
 
@@ -186,7 +196,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.left
+          model: root.filterValidWidgets(Settings.data.bar.widgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -212,7 +222,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.center
+          model: root.filterValidWidgets(Settings.data.bar.widgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -239,7 +249,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.right
+          model: root.filterValidWidgets(Settings.data.bar.widgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -277,7 +287,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.left
+          model: root.filterValidWidgets(Settings.data.bar.widgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -305,7 +315,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.center
+          model: root.filterValidWidgets(Settings.data.bar.widgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -334,7 +344,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: Settings.data.bar.widgets.right
+          model: root.filterValidWidgets(Settings.data.bar.widgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
