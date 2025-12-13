@@ -30,8 +30,6 @@ Scope {
       return;
     }
 
-    if (currentText === "") return;
-
     if (root.unlockInProgress) {
       Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
       return;
