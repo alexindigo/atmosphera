@@ -311,6 +311,10 @@
           "description": "Sélectionnez le point de montage du disque à surveiller.",
           "label": "Chemin du disque"
         },
+        "gpu-temperature": {
+          "description": "Afficher les relevés de température du GPU, si disponibles.",
+          "label": "Température du GPU"
+        },
         "memory-percentage": {
           "description": "Afficher l'utilisation de la mémoire en pourcentage au lieu de valeurs absolues.",
           "label": "Mémoire en pourcentage"
@@ -2067,14 +2071,8 @@
       "title": "Menu de session"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Seuil critique"
-      },
       "cpu-section": {
         "label": "Utilisation CPU"
-      },
-      "cpu-warning-threshold": {
-        "label": "Seuil d'avertissement"
       },
       "critical-color": {
         "label": "Couleur critique"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Couleurs de surbrillance personnalisées"
       },
-      "disk-critical-threshold": {
-        "label": "Seuil critique"
-      },
       "disk-section": {
         "label": "Utilisation disque"
-      },
-      "disk-warning-threshold": {
-        "label": "Seuil d'avertissement"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Général"
         }
       },
+      "gpu-section": {
+        "label": "Température du GPU"
+      },
       "highlight-colors-section": {
         "label": "Couleurs de surlignage"
-      },
-      "mem-critical-threshold": {
-        "label": "Seuil critique"
-      },
-      "mem-warning-threshold": {
-        "label": "Seuil d'avertissement"
       },
       "memory-section": {
         "label": "Utilisation mémoire"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Intervalle d'interrogation"
       },
-      "temp-critical-threshold": {
-        "label": "Seuil critique"
-      },
-      "temp-warning-threshold": {
-        "label": "Seuil d'avertissement"
-      },
       "temperature-section": {
         "label": "Température CPU"
+      },
+      "threshold": {
+        "critical": "Seuil critique",
+        "warning": "Seuil d'alerte"
       },
       "thresholds-section": {
         "description": "Ajustez les seuils d’avertissement/critiques et les intervalles d’interrogation pour chaque métrique système.",

@@ -311,6 +311,10 @@
           "description": "Seleccione qué punto de montaje de disco desea supervisar.",
           "label": "Ruta del disco"
         },
+        "gpu-temperature": {
+          "description": "Mostrar las lecturas de temperatura de la GPU si están disponibles.",
+          "label": "Temperatura de la GPU"
+        },
         "memory-percentage": {
           "description": "Mostrar el uso de memoria como porcentaje en lugar de valores absolutos.",
           "label": "Memoria como porcentaje"
@@ -2067,14 +2071,8 @@
       "title": "Menú de sesión"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Umbral crítico"
-      },
       "cpu-section": {
         "label": "Uso de CPU"
-      },
-      "cpu-warning-threshold": {
-        "label": "Umbral de advertencia"
       },
       "critical-color": {
         "label": "Color crítico"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Colores de resaltado personalizados"
       },
-      "disk-critical-threshold": {
-        "label": "Umbral crítico"
-      },
       "disk-section": {
         "label": "Uso de disco"
-      },
-      "disk-warning-threshold": {
-        "label": "Umbral de advertencia"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "General"
         }
       },
+      "gpu-section": {
+        "label": "Temperatura de la GPU"
+      },
       "highlight-colors-section": {
         "label": "Colores de resaltado"
-      },
-      "mem-critical-threshold": {
-        "label": "Umbral crítico"
-      },
-      "mem-warning-threshold": {
-        "label": "Umbral de advertencia"
       },
       "memory-section": {
         "label": "Uso de memoria"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Intervalo de sondeo"
       },
-      "temp-critical-threshold": {
-        "label": "Umbral crítico"
-      },
-      "temp-warning-threshold": {
-        "label": "Umbral de advertencia"
-      },
       "temperature-section": {
         "label": "Temperatura de la CPU"
+      },
+      "threshold": {
+        "critical": "Umbral crítico",
+        "warning": "Umbral de advertencia"
       },
       "thresholds-section": {
         "description": "Ajusta los umbrales de advertencia/crítico y los intervalos de sondeo para cada métrica del sistema.",

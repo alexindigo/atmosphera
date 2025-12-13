@@ -311,6 +311,10 @@
           "description": "Select which disk mount point to monitor.",
           "label": "Disk path"
         },
+        "gpu-temperature": {
+          "description": "Show GPU temperature readings if available.",
+          "label": "GPU temperature"
+        },
         "memory-percentage": {
           "description": "Show memory usage as a percentage instead of absolute values.",
           "label": "Memory as percentage"
@@ -2067,14 +2071,8 @@
       "title": "Session Menu"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Critical threshold"
-      },
       "cpu-section": {
         "label": "CPU usage"
-      },
-      "cpu-warning-threshold": {
-        "label": "Warning threshold"
       },
       "critical-color": {
         "label": "Critical color"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Custom highlight colors"
       },
-      "disk-critical-threshold": {
-        "label": "Critical threshold"
-      },
       "disk-section": {
         "label": "Disk usage"
-      },
-      "disk-warning-threshold": {
-        "label": "Warning threshold"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "General"
         }
       },
+      "gpu-section": {
+        "label": "GPU temperature"
+      },
       "highlight-colors-section": {
         "label": "Highlight colors"
-      },
-      "mem-critical-threshold": {
-        "label": "Critical threshold"
-      },
-      "mem-warning-threshold": {
-        "label": "Warning threshold"
       },
       "memory-section": {
         "label": "Memory usage"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Polling interval"
       },
-      "temp-critical-threshold": {
-        "label": "Critical threshold"
-      },
-      "temp-warning-threshold": {
-        "label": "Warning threshold"
-      },
       "temperature-section": {
         "label": "CPU temperature"
+      },
+      "threshold": {
+        "critical": "Critical threshold",
+        "warning": "Warning threshold"
       },
       "thresholds-section": {
         "description": "Adjust warning/critical thresholds and polling intervals for each system metric.",

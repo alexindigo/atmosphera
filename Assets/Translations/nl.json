@@ -311,6 +311,10 @@
           "description": "Selecteer welk schijfkoppelpunt u wilt monitoren.",
           "label": "Schijfpad"
         },
+        "gpu-temperature": {
+          "description": "Toon GPU-temperatuurmetingen indien beschikbaar.",
+          "label": "GPU-temperatuur"
+        },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
           "label": "Geheugen als percentage"
@@ -2067,14 +2071,8 @@
       "title": "Sessiemenu"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Kritieke drempel"
-      },
       "cpu-section": {
         "label": "CPU-gebruik"
-      },
-      "cpu-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
       },
       "critical-color": {
         "label": "Kritische kleur"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Aangepaste markeerkleuren"
       },
-      "disk-critical-threshold": {
-        "label": "Kritieke drempel"
-      },
       "disk-section": {
         "label": "Schijfgebruik"
-      },
-      "disk-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Algemeen"
         }
       },
+      "gpu-section": {
+        "label": "GPU-temperatuur"
+      },
       "highlight-colors-section": {
         "label": "Markeerkleuren"
-      },
-      "mem-critical-threshold": {
-        "label": "Kritieke drempel"
-      },
-      "mem-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
       },
       "memory-section": {
         "label": "Geheugengebruik"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Peilingsinterval"
       },
-      "temp-critical-threshold": {
-        "label": "Kritieke drempel"
-      },
-      "temp-warning-threshold": {
-        "label": "Waarschuwingsdrempel"
-      },
       "temperature-section": {
         "label": "CPU-temperatuur"
+      },
+      "threshold": {
+        "critical": "Kritische drempel",
+        "warning": "Waarschuwingsdrempel"
       },
       "thresholds-section": {
         "description": "Pas de waarschuwing/kritieke drempels en de pollingsintervallen voor elke systeemmetriek aan.",

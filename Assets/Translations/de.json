@@ -311,6 +311,10 @@
           "description": "Wählen Sie den Festplatten-Mountpunkt aus, der überwacht werden soll.",
           "label": "Festplattenpfad"
         },
+        "gpu-temperature": {
+          "description": "Zeige GPU-Temperaturwerte an, falls verfügbar.",
+          "label": "GPU-Temperatur"
+        },
         "memory-percentage": {
           "description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen.",
           "label": "Speicher als Prozentsatz"
@@ -2067,14 +2071,8 @@
       "title": "Sitzungsmenü"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Kritische Schwelle"
-      },
       "cpu-section": {
         "label": "CPU-Auslastung"
-      },
-      "cpu-warning-threshold": {
-        "label": "Warnschwelle"
       },
       "critical-color": {
         "label": "Kritische Farbe"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Benutzerdefinierte Hervorhebungsfarben"
       },
-      "disk-critical-threshold": {
-        "label": "Kritische Schwelle"
-      },
       "disk-section": {
         "label": "Festplattennutzung"
-      },
-      "disk-warning-threshold": {
-        "label": "Warnschwelle"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Allgemein"
         }
       },
+      "gpu-section": {
+        "label": "GPU-Temperatur"
+      },
       "highlight-colors-section": {
         "label": "Hervorhebungsfarben"
-      },
-      "mem-critical-threshold": {
-        "label": "Kritische Schwelle"
-      },
-      "mem-warning-threshold": {
-        "label": "Warnschwelle"
       },
       "memory-section": {
         "label": "Speicherverbrauch"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Abfrageintervall"
       },
-      "temp-critical-threshold": {
-        "label": "Kritische Schwelle"
-      },
-      "temp-warning-threshold": {
-        "label": "Warnschwelle"
-      },
       "temperature-section": {
         "label": "CPU-Temperatur"
+      },
+      "threshold": {
+        "critical": "Kritische Schwelle",
+        "warning": "Warnschwelle"
       },
       "thresholds-section": {
         "description": "Passe die Warn-/Kritisch-Schwellen und die Abfrageintervalle für jede Systemmetrik an.",

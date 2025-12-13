@@ -311,6 +311,10 @@
           "description": "İzlenecek disk bağlama noktasını seçin.",
           "label": "Disk yolu"
         },
+        "gpu-temperature": {
+          "description": "GPU sıcaklık değerleri varsa göster.",
+          "label": "GPU sıcaklığı"
+        },
         "memory-percentage": {
           "description": "Mutlak değerler yerine bellek kullanımını yüzde olarak göster.",
           "label": "Bellek yüzde olarak"
@@ -2067,14 +2071,8 @@
       "title": "Oturum Menüsü"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
       "cpu-section": {
         "label": "İşlemci Kullanımı"
-      },
-      "cpu-warning-threshold": {
-        "label": "Uyarı Eşiği"
       },
       "critical-color": {
         "label": "Kritik renk"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Özel vurgulama renkleri"
       },
-      "disk-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
       "disk-section": {
         "label": "Disk Kullanımı"
-      },
-      "disk-warning-threshold": {
-        "label": "Uyarı Eşiği"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Genel"
         }
       },
+      "gpu-section": {
+        "label": "GPU sıcaklığı"
+      },
       "highlight-colors-section": {
         "label": "Vurgulama Renkleri"
-      },
-      "mem-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
-      "mem-warning-threshold": {
-        "label": "Uyarı Eşiği"
       },
       "memory-section": {
         "label": "Bellek Kullanımı"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Yoklama aralığı"
       },
-      "temp-critical-threshold": {
-        "label": "Kritik Eşiği"
-      },
-      "temp-warning-threshold": {
-        "label": "Uyarı Eşiği"
-      },
       "temperature-section": {
         "label": "İşlemci Sıcaklığı"
+      },
+      "threshold": {
+        "critical": "Kritik eşik",
+        "warning": "Uyarı eşiği"
       },
       "thresholds-section": {
         "description": "Her sistem ölçüsü için uyarı/kritik eşiklerini ve yoklama aralıklarını ayarlayın.",

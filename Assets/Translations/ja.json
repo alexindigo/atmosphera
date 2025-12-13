@@ -311,6 +311,10 @@
           "description": "監視するディスクのマウントポイントを選択します。",
           "label": "ディスクパス"
         },
+        "gpu-temperature": {
+          "description": "利用可能であれば、GPU温度の測定値を表示します。",
+          "label": "GPU温度 (GPU ondo)"
+        },
         "memory-percentage": {
           "description": "メモリ使用量を絶対値ではなくパーセンテージで表示します。",
           "label": "メモリをパーセント表示"
@@ -2067,14 +2071,8 @@
       "title": "セッションメニュー"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "危険閾値"
-      },
       "cpu-section": {
         "label": "CPU 使用率"
-      },
-      "cpu-warning-threshold": {
-        "label": "警告閾値"
       },
       "critical-color": {
         "label": "危険時の色"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "カスタムハイライト色"
       },
-      "disk-critical-threshold": {
-        "label": "危険閾値"
-      },
       "disk-section": {
         "label": "ストレージ使用量"
-      },
-      "disk-warning-threshold": {
-        "label": "警告閾値"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "一般"
         }
       },
+      "gpu-section": {
+        "label": "GPU温度 (GPU ondo)"
+      },
       "highlight-colors-section": {
         "label": "ハイライト色"
-      },
-      "mem-critical-threshold": {
-        "label": "危険閾値"
-      },
-      "mem-warning-threshold": {
-        "label": "警告閾値"
       },
       "memory-section": {
         "label": "メモリ使用量"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "ポーリング間隔"
       },
-      "temp-critical-threshold": {
-        "label": "危険閾値"
-      },
-      "temp-warning-threshold": {
-        "label": "警告閾値"
-      },
       "temperature-section": {
         "label": "CPU 温度"
+      },
+      "threshold": {
+        "critical": "臨界閾値 (Rinkai kīchi)",
+        "warning": "警告しきい値"
       },
       "thresholds-section": {
         "description": "各システムメトリックの警告/危険しきい値とポーリング間隔を調整します。",

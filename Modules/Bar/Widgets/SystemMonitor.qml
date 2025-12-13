@@ -38,6 +38,7 @@ Rectangle {
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
+  readonly property bool showGpuTemp: (widgetSettings.showGpuTemp !== undefined) ? widgetSettings.showGpuTemp : widgetMetadata.showGpuTemp
   readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
   readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
@@ -68,6 +69,8 @@ Rectangle {
   readonly property int cpuCriticalThreshold: Settings.data.systemMonitor.cpuCriticalThreshold
   readonly property int tempWarningThreshold: Settings.data.systemMonitor.tempWarningThreshold
   readonly property int tempCriticalThreshold: Settings.data.systemMonitor.tempCriticalThreshold
+  readonly property int gpuWarningThreshold: Settings.data.systemMonitor.gpuWarningThreshold
+  readonly property int gpuCriticalThreshold: Settings.data.systemMonitor.gpuCriticalThreshold
   readonly property int memWarningThreshold: Settings.data.systemMonitor.memWarningThreshold
   readonly property int memCriticalThreshold: Settings.data.systemMonitor.memCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
@@ -78,6 +81,8 @@ Rectangle {
   readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuUsage > cpuCriticalThreshold
   readonly property bool tempWarning: showCpuTemp && SystemStatService.cpuTemp > tempWarningThreshold
   readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > tempCriticalThreshold
+  readonly property bool gpuWarning: showGpuTemp && SystemStatService.gpuAvailable && SystemStatService.gpuTemp > gpuWarningThreshold
+  readonly property bool gpuCritical: showGpuTemp && SystemStatService.gpuAvailable && SystemStatService.gpuTemp > gpuCriticalThreshold
   readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > memWarningThreshold
   readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
   readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskWarningThreshold
@@ -341,6 +346,74 @@ Rectangle {
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when temp indicator active
           color: isVertical ? (tempCritical ? criticalColor : (tempWarning ? warningColor : textColor)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor)
+          Layout.row: isVertical ? 0 : 0
+          Layout.column: isVertical ? 0 : 1
+          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+      }
+    }
+
+    // GPU Temperature Component
+    Item {
+      id: gpuTempContainer
+      Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
+      Layout.preferredHeight: Style.capsuleHeight
+      Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
+      visible: showGpuTemp && SystemStatService.gpuAvailable
+
+      // Status indicator covering the entire component
+      Loader {
+        sourceComponent: statusIndicatorComponent
+        anchors.centerIn: parent
+
+        onLoaded: {
+          item.warning = Qt.binding(() => gpuWarning);
+          item.critical = Qt.binding(() => gpuCritical);
+          item.indicatorWidth = Qt.binding(() => gpuTempContainer.width);
+          item.warningColor = Qt.binding(() => root.warningColor);
+          item.criticalColor = Qt.binding(() => root.criticalColor);
+        }
+      }
+
+      GridLayout {
+        id: gpuTempContent
+        anchors.centerIn: parent
+        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: isVertical ? 2 : 1
+        columns: isVertical ? 1 : 2
+        rowSpacing: Style.marginXXS
+        columnSpacing: Style.marginXXS
+
+        Item {
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: isVertical ? 1 : 0
+          Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "gpu-temperature"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            // Invert color when GPU temp indicator active
+            color: isVertical ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mOnSurface)) : ((gpuWarning || gpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface)
+          }
+        }
+
+        NText {
+          text: `${Math.round(SystemStatService.gpuTemp)}°`
+          family: Settings.data.ui.fontFixed
+          pointSize: textSize
+          applyUiScale: false
+          font.weight: Style.fontWeightMedium
+          Layout.alignment: Qt.AlignCenter
+          Layout.preferredWidth: isVertical ? -1 : tempTextWidth
+          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          verticalAlignment: Text.AlignVCenter
+          // Use highlight colors in vertical bar; otherwise invert text color to bar background when GPU temp indicator active
+          color: isVertical ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : textColor)) : ((gpuWarning || gpuCritical) ? Color.mSurfaceVariant : textColor)
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0

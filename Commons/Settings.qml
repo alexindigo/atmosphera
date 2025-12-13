@@ -425,12 +425,15 @@ Singleton {
       property int cpuCriticalThreshold: 90
       property int tempWarningThreshold: 80
       property int tempCriticalThreshold: 90
+      property int gpuWarningThreshold: 80
+      property int gpuCriticalThreshold: 90
       property int memWarningThreshold: 80
       property int memCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
       property int cpuPollingInterval: 3000
       property int tempPollingInterval: 3000
+      property int gpuPollingInterval: 3000
       property int memPollingInterval: 3000
       property int diskPollingInterval: 3000
       property int networkPollingInterval: 3000

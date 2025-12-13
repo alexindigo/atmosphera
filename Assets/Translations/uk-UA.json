@@ -311,6 +311,10 @@
           "description": "Виберіть точку монтування диска для моніторингу.",
           "label": "Шлях до диска"
         },
+        "gpu-temperature": {
+          "description": "Показувати показники температури GPU, якщо доступні.",
+          "label": "Температура GPU"
+        },
         "memory-percentage": {
           "description": "Показувати використання пам'яті у відсотках замість абсолютних значень.",
           "label": "Пам'ять у відсотках"
@@ -2067,14 +2071,8 @@
       "title": "Меню сеансу"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Критичний поріг"
-      },
       "cpu-section": {
         "label": "Використання ЦП"
-      },
-      "cpu-warning-threshold": {
-        "label": "Поріг попередження"
       },
       "critical-color": {
         "label": "Критичний колір"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Власні кольори підсвічування"
       },
-      "disk-critical-threshold": {
-        "label": "Критичний поріг"
-      },
       "disk-section": {
         "label": "Використання диска"
-      },
-      "disk-warning-threshold": {
-        "label": "Поріг попередження"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Загальне"
         }
       },
+      "gpu-section": {
+        "label": "Температура GPU"
+      },
       "highlight-colors-section": {
         "label": "Кольори підсвічування"
-      },
-      "mem-critical-threshold": {
-        "label": "Критичний поріг"
-      },
-      "mem-warning-threshold": {
-        "label": "Поріг попередження"
       },
       "memory-section": {
         "label": "Використання пам'яті"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Інтервал опитування"
       },
-      "temp-critical-threshold": {
-        "label": "Критичний поріг"
-      },
-      "temp-warning-threshold": {
-        "label": "Поріг попередження"
-      },
       "temperature-section": {
         "label": "Температура ЦП"
+      },
+      "threshold": {
+        "critical": "Критичний поріг",
+        "warning": "Порогове значення попередження"
       },
       "thresholds-section": {
         "description": "Налаштуйте пороги попередження/критичні пороги та інтервали опитування для кожного системного показника.",

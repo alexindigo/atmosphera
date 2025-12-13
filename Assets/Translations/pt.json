@@ -311,6 +311,10 @@
           "description": "Selecione qual ponto de montagem de disco monitorar.",
           "label": "Caminho do disco"
         },
+        "gpu-temperature": {
+          "description": "Mostrar as leituras de temperatura da GPU, se disponíveis.",
+          "label": "Temperatura da GPU"
+        },
         "memory-percentage": {
           "description": "Mostrar o uso de memória como percentual em vez de valores absolutos.",
           "label": "Memória como percentual"
@@ -2067,14 +2071,8 @@
       "title": "Menu de sessão"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "Limite crítico"
-      },
       "cpu-section": {
         "label": "Uso da CPU"
-      },
-      "cpu-warning-threshold": {
-        "label": "Limite de aviso"
       },
       "critical-color": {
         "label": "Cor crítica"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "Cores de destaque personalizadas"
       },
-      "disk-critical-threshold": {
-        "label": "Limite crítico"
-      },
       "disk-section": {
         "label": "Uso do disco"
-      },
-      "disk-warning-threshold": {
-        "label": "Limite de aviso"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "Geral"
         }
       },
+      "gpu-section": {
+        "label": "Temperatura da GPU"
+      },
       "highlight-colors-section": {
         "label": "Cores de destaque"
-      },
-      "mem-critical-threshold": {
-        "label": "Limite crítico"
-      },
-      "mem-warning-threshold": {
-        "label": "Limite de aviso"
       },
       "memory-section": {
         "label": "Uso de memória"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "Intervalo de pesquisa"
       },
-      "temp-critical-threshold": {
-        "label": "Limite crítico"
-      },
-      "temp-warning-threshold": {
-        "label": "Limite de aviso"
-      },
       "temperature-section": {
         "label": "Temperatura da CPU"
+      },
+      "threshold": {
+        "critical": "Limiar crítico",
+        "warning": "Limite de alerta"
       },
       "thresholds-section": {
         "description": "Ajuste os limites de aviso/crítico e os intervalos de consulta para cada métrica do sistema.",

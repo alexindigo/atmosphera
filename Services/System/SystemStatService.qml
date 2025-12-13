@@ -20,6 +20,9 @@ Singleton {
   // Public values
   property real cpuUsage: 0
   property real cpuTemp: 0
+  property real gpuTemp: 0
+  property bool gpuAvailable: false
+  property string gpuType: "" // "amd", "intel", "nvidia"
   property real memGb: 0
   property real memPercent: 0
   property var diskPercents: ({})
@@ -45,12 +48,19 @@ Singleton {
   property int intelTempFilesChecked: 0
   property int intelTempMaxFiles: 20 // Will test up to temp20_input
 
+  // GPU temperature detection
+  readonly property var supportedTempGpuSensorNames: ["amdgpu", "xe"]
+  property string gpuTempHwmonPath: ""
+
   // --------------------------------------------
   Component.onCompleted: {
     Logger.i("SystemStat", "Service started with custom polling intervals");
 
     // Kickoff the cpu name detection for temperature
     cpuTempNameReader.checkNext();
+
+    // Kickoff the gpu sensor detection for temperature
+    gpuTempNameReader.checkNext();
   }
 
   // --------------------------------------------
@@ -127,6 +137,21 @@ Singleton {
       }
     }
     onTriggered: netDevFile.reload()
+  }
+
+  // Timer for GPU temperature
+  Timer {
+    id: gpuTempTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.gpuPollingInterval)
+    repeat: true
+    running: root.gpuAvailable
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: updateGpuTemperature()
   }
 
   // --------------------------------------------
@@ -249,6 +274,98 @@ Singleton {
                      // Qt.callLater is mandatory
                      checkNextIntelTemp();
                    });
+    }
+  }
+
+  // --------------------------------------------
+  // --------------------------------------------
+  // GPU Temperature
+  // ----
+  // #1 - Find GPU sensor: "amdgpu" or "xe" (Intel Arc)
+  FileView {
+    id: gpuTempNameReader
+    property int currentIndex: 0
+    printErrors: false
+
+    function checkNext() {
+      if (currentIndex >= 16) {
+        // No sysfs GPU sensor found, try nvidia-smi
+        Logger.d("SystemStat", "No sysfs GPU sensor found, checking for nvidia-smi");
+        nvidiaSmiCheck.running = true;
+        return;
+      }
+
+      gpuTempNameReader.path = `/sys/class/hwmon/hwmon${currentIndex}/name`;
+      gpuTempNameReader.reload();
+    }
+
+    onLoaded: {
+      const name = text().trim();
+      if (root.supportedTempGpuSensorNames.includes(name)) {
+        root.gpuTempHwmonPath = `/sys/class/hwmon/hwmon${currentIndex}`;
+        root.gpuType = name === "amdgpu" ? "amd" : "intel";
+        root.gpuAvailable = true;
+        Logger.i("SystemStat", `Found ${name} GPU thermal sensor at ${root.gpuTempHwmonPath}`);
+      } else {
+        currentIndex++;
+        Qt.callLater(() => {
+                       checkNext();
+                     });
+      }
+    }
+
+    onLoadFailed: function (error) {
+      currentIndex++;
+      Qt.callLater(() => {
+                     checkNext();
+                   });
+    }
+  }
+
+  // ----
+  // #2 - Read GPU sensor value (AMD/Intel via sysfs)
+  FileView {
+    id: gpuTempReader
+    printErrors: false
+
+    onLoaded: {
+      const data = text().trim();
+      root.gpuTemp = Math.round(parseInt(data) / 1000.0);
+    }
+  }
+
+  // ----
+  // #3 - Check if nvidia-smi is available (for NVIDIA GPUs)
+  Process {
+    id: nvidiaSmiCheck
+    command: ["which", "nvidia-smi"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (text.trim().length > 0) {
+          root.gpuType = "nvidia";
+          root.gpuAvailable = true;
+          Logger.i("SystemStat", "Found NVIDIA GPU (nvidia-smi available)");
+        } else {
+          Logger.d("SystemStat", "No GPU temperature sensor found");
+        }
+      }
+    }
+  }
+
+  // ----
+  // #4 - Read GPU temperature via nvidia-smi (NVIDIA only)
+  Process {
+    id: nvidiaTempProcess
+    command: ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader,nounits"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const temp = parseInt(text.trim());
+        if (!isNaN(temp)) {
+          root.gpuTemp = temp;
+        }
+      }
     }
   }
 
@@ -463,5 +580,16 @@ Singleton {
     root.intelTempFilesChecked++;
     cpuTempReader.path = `${root.cpuTempHwmonPath}/temp${root.intelTempFilesChecked}_input`;
     cpuTempReader.reload();
+  }
+
+  // -------------------------------------------------------
+  // Function to update GPU temperature
+  function updateGpuTemperature() {
+    if (root.gpuType === "nvidia") {
+      nvidiaTempProcess.running = true;
+    } else if (root.gpuType === "amd" || root.gpuType === "intel") {
+      gpuTempReader.path = `${root.gpuTempHwmonPath}/temp1_input`;
+      gpuTempReader.reload();
+    }
   }
 }

@@ -311,6 +311,10 @@
           "description": "选择要监控的磁盘挂载点。",
           "label": "磁盘路径"
         },
+        "gpu-temperature": {
+          "description": "显示GPU温度读数（如果可用）。",
+          "label": "GPU温度"
+        },
         "memory-percentage": {
           "description": "以百分比而不是绝对值显示内存使用情况。",
           "label": "内存百分比"
@@ -2067,14 +2071,8 @@
       "title": "会话菜单"
     },
     "system-monitor": {
-      "cpu-critical-threshold": {
-        "label": "严重阈值"
-      },
       "cpu-section": {
         "label": "CPU 使用率"
-      },
-      "cpu-warning-threshold": {
-        "label": "警告阈值"
       },
       "critical-color": {
         "label": "严重颜色"
@@ -2082,14 +2080,8 @@
       "custom-highlight-colors-title": {
         "label": "自定义高亮颜色"
       },
-      "disk-critical-threshold": {
-        "label": "严重阈值"
-      },
       "disk-section": {
         "label": "磁盘使用率"
-      },
-      "disk-warning-threshold": {
-        "label": "警告阈值"
       },
       "general": {
         "section": {
@@ -2097,14 +2089,11 @@
           "label": "通用"
         }
       },
+      "gpu-section": {
+        "label": "GPU温度"
+      },
       "highlight-colors-section": {
         "label": "高亮颜色"
-      },
-      "mem-critical-threshold": {
-        "label": "严重阈值"
-      },
-      "mem-warning-threshold": {
-        "label": "警告阈值"
       },
       "memory-section": {
         "label": "内存使用率"
@@ -2115,14 +2104,12 @@
       "polling-interval": {
         "label": "轮询间隔"
       },
-      "temp-critical-threshold": {
-        "label": "严重阈值"
-      },
-      "temp-warning-threshold": {
-        "label": "警告阈值"
-      },
       "temperature-section": {
         "label": "CPU 温度"
+      },
+      "threshold": {
+        "critical": "临界阈值",
+        "warning": "警告阈值"
       },
       "thresholds-section": {
         "description": "为每个系统指标调整警告/严重阈值和轮询间隔。",
