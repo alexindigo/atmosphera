@@ -19,24 +19,9 @@ SmartPanel {
 
   // Get device selection from Battery widget settings (check right section first, then any Battery widget)
   function getBatteryDevicePath() {
-    // Check right section first (most common location for Battery widget)
-    var rightWidgets = Settings.data.bar.widgets.right || [];
-    for (var i = 0; i < rightWidgets.length; i++) {
-      var widget = rightWidgets[i];
-      if (widget && widget.id === "Battery" && widget.deviceNativePath) {
-        return widget.deviceNativePath;
-      }
-    }
-    // Check other sections
-    var sections = ["left", "center"];
-    for (var s = 0; s < sections.length; s++) {
-      var widgets = Settings.data.bar.widgets[sections[s]] || [];
-      for (var j = 0; j < widgets.length; j++) {
-        var widget = widgets[j];
-        if (widget && widget.id === "Battery" && widget.deviceNativePath) {
-          return widget.deviceNativePath;
-        }
-      }
+    var widget = BarService.lookupWidget("Battery");
+    if (widget !== undefined) {
+      return widget.deviceNativePath;
     }
     return "";
   }
