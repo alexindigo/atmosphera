@@ -1716,7 +1716,7 @@
         "reset": "重置超时时长",
         "respect-expire": {
           "description": "使用通知中设置的过期超时。",
-          "label": "尊重过期超时"
+          "label": "自动隐藏延时"
         },
         "section": {
           "description": "根据紧急级别配置通知保持可见的时间。",
