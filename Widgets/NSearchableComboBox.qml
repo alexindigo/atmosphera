@@ -39,55 +39,68 @@ RowLayout {
     return -1;
   }
 
-  function findIndexByKeyInFiltered(key) {
-    for (var i = 0; i < root.filteredModel.count; i++) {
-      if (root.filteredModel.get(i).key === key) {
+  // The active model used for the popup list (source model or filtered results)
+  readonly property var activeModel: isFiltered ? filteredModel : root.model
+
+  function findIndexInActiveModel(key) {
+    if (!activeModel || activeModel.count === undefined)
+      return -1;
+    for (var i = 0; i < activeModel.count; i++) {
+      if (activeModel.get(i).key === key) {
         return i;
       }
     }
     return -1;
   }
 
-  function filterModel() {
-    filteredModel.clear();
+  // Whether we're using filtered results or the source model directly
+  property bool isFiltered: false
 
+  function filterModel() {
     // Check if model exists and has items
     if (!root.model || root.model.count === undefined || root.model.count === 0) {
+      filteredModel.clear();
+      isFiltered = false;
       return;
     }
 
-    if (searchText.trim() === "") {
-      // If no search text, show all items
-      for (var i = 0; i < root.model.count; i++) {
-        filteredModel.append(root.model.get(i));
+    var query = searchText.trim();
+    if (query === "") {
+      // No search text - use source model directly, don't copy
+      filteredModel.clear();
+      isFiltered = false;
+      return;
+    }
+
+    // We have search text - need to filter
+    isFiltered = true;
+    filteredModel.clear();
+
+    // Convert ListModel to array for fuzzy search
+    var items = [];
+    for (var i = 0; i < root.model.count; i++) {
+      items.push(root.model.get(i));
+    }
+
+    // Use fuzzy search if available, fallback to simple search
+    if (typeof Fuzzysort !== 'undefined') {
+      var fuzzyResults = Fuzzysort.go(query, items, {
+                                        "key": "name",
+                                        "threshold": -1000,
+                                        "limit": 50
+                                      });
+
+      // Add results in order of relevance
+      for (var j = 0; j < fuzzyResults.length; j++) {
+        filteredModel.append(fuzzyResults[j].obj);
       }
     } else {
-      // Convert ListModel to array for fuzzy search
-      var items = [];
-      for (var i = 0; i < root.model.count; i++) {
-        items.push(root.model.get(i));
-      }
-
-      // Use fuzzy search if available, fallback to simple search
-      if (typeof Fuzzysort !== 'undefined') {
-        var fuzzyResults = Fuzzysort.go(searchText, items, {
-                                          "key": "name",
-                                          "threshold": -1000,
-                                          "limit": 50
-                                        });
-
-        // Add results in order of relevance
-        for (var j = 0; j < fuzzyResults.length; j++) {
-          filteredModel.append(fuzzyResults[j].obj);
-        }
-      } else {
-        // Fallback to simple search
-        var searchLower = searchText.toLowerCase();
-        for (var i = 0; i < items.length; i++) {
-          var item = items[i];
-          if (item.name.toLowerCase().includes(searchLower)) {
-            filteredModel.append(item);
-          }
+      // Fallback to simple search
+      var searchLower = query.toLowerCase();
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (item.name.toLowerCase().includes(searchLower)) {
+          filteredModel.append(item);
         }
       }
     }
@@ -109,11 +122,11 @@ RowLayout {
 
     Layout.minimumWidth: root.minimumWidth
     Layout.preferredHeight: root.preferredHeight
-    model: filteredModel
-    currentIndex: findIndexByKeyInFiltered(currentKey)
+    model: root.activeModel
+    currentIndex: findIndexInActiveModel(currentKey)
     onActivated: {
-      if (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) {
-        root.selected(filteredModel.get(combo.currentIndex).key);
+      if (combo.currentIndex >= 0 && root.activeModel && combo.currentIndex < root.activeModel.count) {
+        root.selected(root.activeModel.get(combo.currentIndex).key);
       }
     }
 
@@ -178,7 +191,8 @@ RowLayout {
           id: listView
           Layout.fillWidth: true
           Layout.fillHeight: true
-          model: combo.popup.visible ? filteredModel : null
+          // Use activeModel (source model when not filtering, filtered results when searching)
+          model: combo.popup.visible ? root.activeModel : null
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
 
@@ -203,8 +217,8 @@ RowLayout {
               }
 
               onClicked: {
-                root.selected(filteredModel.get(index).key);
-                combo.currentIndex = root.findIndexByKeyInFiltered(filteredModel.get(index).key);
+                var selectedKey = listView.model.get(index).key;
+                root.selected(selectedKey);
                 combo.popup.close();
               }
 
@@ -302,7 +316,7 @@ RowLayout {
     Connections {
       target: root
       function onCurrentKeyChanged() {
-        combo.currentIndex = root.findIndexByKeyInFiltered(currentKey);
+        combo.currentIndex = root.findIndexInActiveModel(root.currentKey);
       }
     }
 
