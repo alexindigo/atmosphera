@@ -18,7 +18,6 @@ RowLayout {
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
   property Component delegate: null
-  property bool modelReady: true
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1
 
@@ -95,21 +94,6 @@ RowLayout {
   }
 
   onSearchTextChanged: filterModel()
-  onModelChanged: filterModel()
-  onModelReadyChanged: {
-    if (modelReady) {
-      filterModel();
-    }
-  }
-  Component.onCompleted: filterModel()
-
-  // Watch for model content changes (e.g., async font loading)
-  //Connections {
-  //  target: root.model
-  //  function onCountChanged() {
-  //    filterModel();
-  //  }
-  //}
 
   NLabel {
     label: root.label
@@ -154,8 +138,13 @@ RowLayout {
       pointSize: Style.fontSizeM
       verticalAlignment: Text.AlignVCenter
       elide: Text.ElideRight
-      color: (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) ? Color.mOnSurface : Color.mOnSurfaceVariant
-      text: (combo.currentIndex >= 0 && combo.currentIndex < filteredModel.count) ? filteredModel.get(combo.currentIndex).name : root.placeholder
+
+      // Look up current selection directly in source model by key
+      readonly property int sourceIndex: root.findIndexByKey(root.currentKey)
+      readonly property bool hasSelection: sourceIndex >= 0 && sourceIndex < root.model.count
+
+      color: hasSelection ? Color.mOnSurface : Color.mOnSurfaceVariant
+      text: hasSelection ? root.model.get(sourceIndex).name : root.placeholder
     }
 
     indicator: NIcon {

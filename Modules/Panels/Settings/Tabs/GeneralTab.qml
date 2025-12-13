@@ -86,7 +86,6 @@ ColumnLayout {
         label: I18n.tr("settings.general.fonts.default.label")
         description: I18n.tr("settings.general.fonts.default.description")
         model: FontService.availableFonts
-        modelReady: FontService.fontsLoaded
         currentKey: Settings.data.ui.fontDefault
         placeholder: I18n.tr("settings.general.fonts.default.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.default.search-placeholder")
@@ -99,7 +98,6 @@ ColumnLayout {
         label: I18n.tr("settings.general.fonts.monospace.label")
         description: I18n.tr("settings.general.fonts.monospace.description")
         model: FontService.monospaceFonts
-        modelReady: FontService.fontsLoaded
         currentKey: Settings.data.ui.fontFixed
         placeholder: I18n.tr("settings.general.fonts.monospace.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.monospace.search-placeholder")
