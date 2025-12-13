@@ -30,6 +30,11 @@ Scope {
       return;
     }
 
+    if (root.unlockInProgress) {
+      Logger.i("LockContext", "Unlock already in progress, ignoring duplicate attempt");
+      return;
+    }
+
     root.unlockInProgress = true;
     errorMessage = "";
     showFailure = false;
@@ -52,7 +57,7 @@ Scope {
         infoMessage = message;
       }
 
-      if (responseRequired) {
+      if (responseRequired && root.unlockInProgress) {
         Logger.i("LockContext", "Responding to PAM with password");
         respond(root.currentText);
       }
@@ -60,10 +65,6 @@ Scope {
 
     onResponseRequiredChanged: {
       Logger.i("LockContext", "Response required changed:", responseRequired);
-      if (responseRequired && root.unlockInProgress) {
-        Logger.i("LockContext", "Automatically responding to PAM");
-        respond(root.currentText);
-      }
     }
 
     onCompleted: result => {
