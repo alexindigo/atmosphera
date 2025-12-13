@@ -72,44 +72,9 @@ Loader {
               onTriggered: batteryIndicator.initializationComplete = true
             }
 
-            // Find first connected Bluetooth device with battery
-            function findBluetoothBatteryDevice() {
-              if (!BluetoothService.devices) {
-                return null;
-              }
-              var devices = BluetoothService.devices.values || [];
-              for (var i = 0; i < devices.length; i++) {
-                var device = devices[i];
-                if (device && device.connected && device.batteryAvailable && device.battery !== undefined) {
-                  return device;
-                }
-              }
-              return null;
-            }
-
-            // Find laptop battery device, falling back to displayDevice if none found
-            function findLaptopBattery() {
-              if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
-                return UPower.displayDevice;
-              }
-
-              if (!UPower.devices) {
-                return UPower.displayDevice;
-              }
-
-              var devices = UPower.devices.values || [];
-              for (var i = 0; i < devices.length; i++) {
-                var device = devices[i];
-                if (device && device.type === UPowerDeviceType.Battery && device.isLaptopBattery && device.percentage !== undefined) {
-                  return device;
-                }
-              }
-              return UPower.displayDevice;
-            }
-
-            readonly property var bluetoothDevice: findBluetoothBatteryDevice()
+            readonly property var bluetoothDevice: BatteryService.findBluetoothBatteryDevice()
             readonly property bool hasBluetoothBattery: bluetoothDevice && bluetoothDevice.batteryAvailable && bluetoothDevice.battery !== undefined
-            readonly property var battery: findLaptopBattery()
+            readonly property var battery: BatteryService.findLaptopBattery()
             readonly property bool isDevicePresent: {
               if (hasBluetoothBattery) {
                 return bluetoothDevice.connected === true;
@@ -122,7 +87,7 @@ Loader {
             property bool isReady: initializationComplete && isDevicePresent && (hasBluetoothBattery || (battery && battery.ready && battery.percentage !== undefined))
             property real percent: isReady ? (hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : 0
             property bool charging: isReady ? (hasBluetoothBattery ? false : (battery ? battery.state === UPowerDeviceState.Charging : false)) : false
-            property bool batteryVisible: isReady && percent > 0
+            property bool batteryVisible: isReady && percent > 0 && BatteryService.hasAnyBattery()
           }
 
           Item {
@@ -483,7 +448,7 @@ Loader {
             // Compact status indicators container (compact mode only)
             Rectangle {
               width: {
-                var hasBattery = batteryIndicator.isReady;
+                var hasBattery = batteryIndicator.isReady && BatteryService.hasAnyBattery();
                 var hasKeyboard = keyboardLayout.currentLayout !== "Unknown";
 
                 if (hasBattery && hasKeyboard) {
@@ -501,7 +466,7 @@ Loader {
               topLeftRadius: Style.radiusL
               topRightRadius: Style.radiusL
               color: Color.mSurface
-              visible: Settings.data.general.compactLockScreen && (batteryIndicator.isReady || keyboardLayout.currentLayout !== "Unknown")
+              visible: Settings.data.general.compactLockScreen && ((batteryIndicator.isReady && BatteryService.hasAnyBattery()) || keyboardLayout.currentLayout !== "Unknown")
 
               RowLayout {
                 anchors.centerIn: parent
@@ -510,7 +475,7 @@ Loader {
                 // Battery indicator
                 RowLayout {
                   spacing: 6
-                  visible: batteryIndicator.isReady
+                  visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
                   NIcon {
                     icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
@@ -874,18 +839,19 @@ Loader {
                   }
 
                   Item {
-                    Layout.fillWidth: true
+                    Layout.fillWidth: batteryIndicator.isReady && BatteryService.hasAnyBattery()
                   }
 
                   // Battery and Keyboard Layout (full mode only)
                   ColumnLayout {
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                    Layout.alignment: (batteryIndicator.isReady && BatteryService.hasAnyBattery()) ? (Qt.AlignRight | Qt.AlignVCenter) : Qt.AlignVCenter
                     spacing: 8
+                    visible: (batteryIndicator.isReady && BatteryService.hasAnyBattery()) || keyboardLayout.currentLayout !== "Unknown"
 
                     // Battery
                     RowLayout {
                       spacing: 4
-                      visible: batteryIndicator.isReady
+                      visible: batteryIndicator.isReady && BatteryService.hasAnyBattery()
 
                       NIcon {
                         icon: BatteryService.getIcon(Math.round(batteryIndicator.percent), batteryIndicator.charging, batteryIndicator.isReady)
@@ -918,7 +884,6 @@ Loader {
                         pointSize: Style.fontSizeM
                         font.weight: Font.Medium
                         elide: Text.ElideRight
-                        Layout.fillWidth: true
                       }
                     }
                   }
