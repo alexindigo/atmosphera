@@ -17,6 +17,11 @@ Item {
 
   property var keyboardLayouts: []
 
+  property var workspaceMap: ({})
+  property var windowMap: ({})
+  property var pendingLayoutChanges: []
+  property bool activeWindowChangePending: false
+
   signal workspaceChanged
   signal activeWindowChanged
   signal windowListChanged
@@ -90,18 +95,22 @@ Item {
 
   function recollectWorkspaces(workspacesData) {
     const workspacesList = [];
+    const newWorkspaceMap = {};
 
     for (const ws of workspacesData) {
-      workspacesList.push({
-                            "id": ws.id,
-                            "idx": ws.idx,
-                            "name": ws.name || "",
-                            "output": ws.output || "",
-                            "isFocused": ws.is_focused === true,
-                            "isActive": ws.is_active === true,
-                            "isUrgent": ws.is_urgent === true,
-                            "isOccupied": ws.active_window_id ? true : false
-                          });
+      const wsData = {
+        "id": ws.id,
+        "idx": ws.idx,
+        "name": ws.name || "",
+        "output": ws.output || "",
+        "isFocused": ws.is_focused === true,
+        "isActive": ws.is_active === true,
+        "isUrgent": ws.is_urgent === true,
+        "isOccupied": ws.active_window_id ? true : false
+      };
+      workspacesList.push(wsData);
+      // Build lookup map for O(1) access
+      newWorkspaceMap[ws.id] = wsData;
     }
 
     workspacesList.sort((a, b) => {
@@ -115,6 +124,9 @@ Item {
     for (var i = 0; i < workspacesList.length; i++) {
       workspaces.append(workspacesList[i]);
     }
+
+    // Update workspace lookup map
+    workspaceMap = newWorkspaceMap;
 
     workspaceChanged();
   }
@@ -206,12 +218,8 @@ Item {
   }
 
   function getWindowOutput(win) {
-    for (var i = 0; i < workspaces.count; i++) {
-      if (workspaces.get(i).id === win.workspace_id) {
-        return workspaces.get(i).output;
-      }
-    }
-    return null;
+    const ws = workspaceMap[win.workspace_id];
+    return ws ? ws.output : null;
   }
 
   function getWindowData(win) {
@@ -238,11 +246,15 @@ Item {
 
   function recollectWindows(windowsData) {
     const windowsList = [];
+    const newWindowMap = {};
     for (const win of windowsData) {
-      windowsList.push(getWindowData(win));
+      const windowData = getWindowData(win);
+      windowsList.push(windowData);
+      newWindowMap[windowData.id] = windowData;
     }
     windowsList.sort(compareWindows);
     windows = windowsList;
+    windowMap = newWindowMap;
     windowListChanged();
 
     focusedWindowIndex = -1;
@@ -258,19 +270,24 @@ Item {
   function handleWindowOpenedOrChanged(eventData) {
     try {
       const windowData = eventData.window;
-      const existingIndex = windows.findIndex(w => w.id === windowData.id);
+      const windowId = windowData.id;
+      const existingWindow = windowMap[windowId];
       const newWindow = getWindowData(windowData);
 
-      if (existingIndex >= 0) {
-        windows[existingIndex] = newWindow;
+      if (existingWindow) {
+        const existingIndex = windows.indexOf(existingWindow);
+        if (existingIndex >= 0) {
+          windows[existingIndex] = newWindow;
+        }
       } else {
         windows.push(newWindow);
       }
+      windowMap[windowId] = newWindow;
       windows.sort(compareWindows);
 
       if (newWindow.isFocused) {
         const oldFocusedIndex = focusedWindowIndex;
-        focusedWindowIndex = windows.findIndex(w => w.id === windowData.id);
+        focusedWindowIndex = windows.indexOf(newWindow);
 
         if (oldFocusedIndex !== focusedWindowIndex) {
           if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
@@ -289,18 +306,23 @@ Item {
   function handleWindowClosed(eventData) {
     try {
       const windowId = eventData.id;
-      const windowIndex = windows.findIndex(w => w.id === windowId);
+      const window = windowMap[windowId];
 
-      if (windowIndex >= 0) {
-        if (windowIndex === focusedWindowIndex) {
-          focusedWindowIndex = -1;
-          activeWindowChanged();
-        } else if (focusedWindowIndex > windowIndex) {
-          focusedWindowIndex--;
+      if (window) {
+        const windowIndex = windows.indexOf(window);
+
+        if (windowIndex >= 0) {
+          if (windowIndex === focusedWindowIndex) {
+            focusedWindowIndex = -1;
+            activeWindowChanged();
+          } else if (focusedWindowIndex > windowIndex) {
+            focusedWindowIndex--;
+          }
+
+          windows.splice(windowIndex, 1);
+          delete windowMap[windowId];
+          windowListChanged();
         }
-
-        windows.splice(windowIndex, 1);
-        windowListChanged();
       }
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowClosed:", e);
@@ -325,7 +347,8 @@ Item {
       }
 
       if (focusedId) {
-        const newIndex = windows.findIndex(w => w.id === focusedId);
+        const focusedWindow = windowMap[focusedId];
+        const newIndex = focusedWindow ? windows.indexOf(focusedWindow) : -1;
 
         if (newIndex >= 0 && newIndex < windows.length) {
           windows[newIndex].isFocused = true;
@@ -336,28 +359,76 @@ Item {
         focusedWindowIndex = -1;
       }
 
-      activeWindowChanged();
+      // Throttle activeWindowChanged to avoid excessive emissions during hover
+      if (!activeWindowChangePending) {
+        activeWindowChangePending = true;
+        activeWindowChangeTimer.restart();
+      }
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowFocusChanged:", e);
     }
   }
 
+  Timer {
+    id: activeWindowChangeTimer
+    interval: 100  // 100ms throttle for focus changes
+    onTriggered: {
+      activeWindowChangePending = false;
+      activeWindowChanged();
+    }
+  }
+
   function handleWindowLayoutsChanged(eventData) {
     try {
+      // Accumulate pending changes
       for (const change of eventData.changes) {
+        pendingLayoutChanges.push(change);
+      }
+
+      // Process after a short delay to batch multiple changes
+      layoutChangeTimer.restart();
+    } catch (e) {
+      Logger.e("NiriService", "Error handling WindowLayoutChanged:", e);
+    }
+  }
+
+  Timer {
+    id: layoutChangeTimer
+    interval: 150  // 150ms debounce - batches rapid position updates during hover
+    onTriggered: {
+      if (pendingLayoutChanges.length === 0)
+        return;
+
+      // Process all pending changes
+      let needsSort = false;
+      const oldOrder = windows.map(w => w.id).join(',');
+
+      for (const change of pendingLayoutChanges) {
         const windowId = change[0];
         const layout = change[1];
-        const window = windows.find(w => w.id === windowId);
+        const window = windowMap[windowId];
         if (window) {
-          window.position = getWindowPosition(layout);
+          const newPosition = getWindowPosition(layout);
+          // Only update if position actually changed
+          if (window.position.x !== newPosition.x || window.position.y !== newPosition.y) {
+            window.position = newPosition;
+            needsSort = true;
+          }
         }
       }
 
-      windows.sort(compareWindows);
+      // Clear pending changes
+      pendingLayoutChanges = [];
 
-      windowListChanged();
-    } catch (e) {
-      Logger.e("NiriService", "Error handling WindowLayoutChanged:", e);
+      // Only sort if positions changed
+      if (needsSort) {
+        windows.sort(compareWindows);
+        const newOrder = windows.map(w => w.id).join(',');
+
+        if (oldOrder !== newOrder) {
+          windowListChanged();
+        }
+      }
     }
   }
 
