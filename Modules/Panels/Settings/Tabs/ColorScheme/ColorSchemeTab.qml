@@ -899,8 +899,8 @@ ColumnLayout {
       NCheckbox {
         label: "Emacs"
         description: ProgramCheckerService.emacsAvailable ? I18n.tr("settings.color-scheme.templates.programs.emacs.description") : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
-                                                                                                                                                                                                       "app": "emacs"
-                                                                                                                                                                                                     })
+                                                                                                                                              "app": "emacs"
+                                                                                                                                            })
         checked: Settings.data.templates.emacs
         enabled: ProgramCheckerService.emacsAvailable
         onToggled: checked => {
