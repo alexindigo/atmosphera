@@ -98,12 +98,12 @@ RowLayout {
   Component.onCompleted: filterModel()
 
   // Watch for model content changes (e.g., async font loading)
-  Connections {
-    target: root.model
-    function onCountChanged() {
-      filterModel();
-    }
-  }
+  //Connections {
+  //  target: root.model
+  //  function onCountChanged() {
+  //    filterModel();
+  //  }
+  //}
 
   NLabel {
     label: root.label
