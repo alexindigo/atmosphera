@@ -17,6 +17,7 @@ RowLayout {
   property string placeholder: ""
 
   readonly property real preferredHeight: Style.baseWidgetSize * 1.1 * Style.uiScaleRatio
+  readonly property var comboBox: combo
 
   signal selected(string key)
 
@@ -209,8 +210,8 @@ RowLayout {
               var item = root.getItem(delegateRect.index);
               if (item && item.key !== undefined) {
                 root.selected(item.key);
-                combo.currentIndex = delegateRect.index;
-                combo.popup.close();
+                root.comboBox.currentIndex = delegateRect.index;
+                root.comboBox.popup.close();
               }
             }
           }
