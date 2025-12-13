@@ -662,9 +662,10 @@ SmartPanel {
             visible: root.activePlugin === null || root.activePlugin === appsPlugin
             icon: Settings.data.appLauncher.viewMode === "grid" ? "layout-list" : "layout-grid"
             tooltipText: Settings.data.appLauncher.viewMode === "grid" ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
-            baseSize: Style.baseWidgetSize * 0.8
+            Layout.preferredWidth: searchInput.height
+            Layout.preferredHeight: searchInput.height
             onClicked: {
-              Settings.data.appLauncher.viewMode = Settings.data.appLauncher.viewMode === "grid" ? "list" : "grid"
+              Settings.data.appLauncher.viewMode = Settings.data.appLauncher.viewMode === "grid" ? "list" : "grid";
             }
           }
         }
