@@ -11,7 +11,6 @@ Singleton {
 
   property ListModel availableFonts: ListModel {}
   property ListModel monospaceFonts: ListModel {}
-  property ListModel displayFonts: ListModel {}
   property bool fontsLoaded: false
   property bool isLoading: false
 
@@ -61,7 +60,6 @@ Singleton {
     // Build arrays for batch insert
     var allBatch = [];
     var monoBatch = [];
-    var displayBatch = [];
 
     for (var k = 0; k < sortedFonts.length; k++) {
       var name = sortedFonts[k];
@@ -75,29 +73,20 @@ Singleton {
       if (monoLookup[name] || name.toLowerCase().includes("mono")) {
         monoBatch.push(fontObj);
       }
-
-      // Check if display font
-      var lower = name.toLowerCase();
-      if (lower.includes("display") || lower.includes("headline") || lower.includes("title")) {
-        displayBatch.push(fontObj);
-      }
     }
 
     // Clear and populate models (single batch operation)
     availableFonts.clear();
     monospaceFonts.clear();
-    displayFonts.clear();
 
     for (var m = 0; m < allBatch.length; m++)
       availableFonts.append(allBatch[m]);
     for (var n = 0; n < monoBatch.length; n++)
       monospaceFonts.append(monoBatch[n]);
-    for (var p = 0; p < displayBatch.length; p++)
-      displayFonts.append(displayBatch[p]);
 
     fontsLoaded = true;
     isLoading = false;
-    Logger.i("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display");
+    Logger.i("Font", "Loaded", availableFonts.count, "fonts,", monospaceFonts.count, "monospace");
   }
 
   // Temporary storage for process outputs

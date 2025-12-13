@@ -102,7 +102,7 @@ ShellRoot {
         HostService.init();
         GitHubService.init();
 
-        delayedTimer.running = true;
+        delayedInitTimer.running = true;
         checkSetupWizard();
       }
 
@@ -149,7 +149,7 @@ ShellRoot {
   // Delayed timer
   // ---------------------------------------------
   Timer {
-    id: delayedTimer
+    id: delayedInitTimer
     running: false
     interval: 1500
     onTriggered: {
@@ -165,7 +165,7 @@ ShellRoot {
   Timer {
     id: setupWizardTimer
     running: false
-    interval: 1000
+    interval: 2000
     onTriggered: {
       showSetupWizard();
     }
