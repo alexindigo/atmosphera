@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import qs.Commons
 
 Item {
@@ -13,135 +14,85 @@ Item {
   property bool showMinimumSignal: false
   property real minimumSignalValue: 0.05 // Default to 5% of height
 
-  // Rendering active state - only redraw when visible and values are changing
-  property bool renderingActive: visible && values && values.length > 0
+  // Reactive path that updates when values change
+  readonly property string svgPath: {
+    if (!values || !Array.isArray(values) || values.length === 0) {
+      return "";
+    }
 
-  // Redraw when necessary - only if rendering is active
-  onWidthChanged: if (renderingActive)
-                    canvas.requestPaint()
-  onHeightChanged: if (renderingActive)
-                     canvas.requestPaint()
-  onValuesChanged: if (renderingActive)
-                     canvas.requestPaint()
-  onFillColorChanged: if (renderingActive)
-                        canvas.requestPaint()
-  onStrokeColorChanged: if (renderingActive)
-                          canvas.requestPaint()
-  onShowMinimumSignalChanged: if (renderingActive)
-                                canvas.requestPaint()
-  onMinimumSignalValueChanged: if (renderingActive)
-                                 canvas.requestPaint()
-  onVerticalChanged: if (renderingActive)
-                       canvas.requestPaint()
+    // Apply minimum signal if enabled
+    const processedValues = showMinimumSignal ? values.map(v => v === 0 ? minimumSignalValue : v) : values;
 
-  // Clear canvas when not rendering
-  onRenderingActiveChanged: {
-    if (!renderingActive && canvas.available) {
-      var ctx = canvas.getContext("2d");
-      if (ctx)
-        ctx.reset();
-      canvas.requestPaint();
+    // Create the mirrored values
+    const partToMirror = processedValues.slice(1).reverse();
+    const mirroredValues = partToMirror.concat(processedValues);
+
+    if (mirroredValues.length < 2) {
+      return "";
+    }
+
+    const count = mirroredValues.length;
+
+    if (vertical) {
+      const stepY = height / (count - 1);
+      const centerX = width / 2;
+      const amplitude = width / 2;
+
+      let xOffset = mirroredValues[0] * amplitude;
+      let path = `M ${centerX - xOffset} 0`;
+
+      for (let i = 1; i < count; i++) {
+        const y = i * stepY;
+        xOffset = mirroredValues[i] * amplitude;
+        path += ` L ${centerX - xOffset} ${y}`;
+      }
+
+      for (let i = count - 1; i >= 0; i--) {
+        const y = i * stepY;
+        xOffset = mirroredValues[i] * amplitude;
+        path += ` L ${centerX + xOffset} ${y}`;
+      }
+
+      return path + " Z";
+    } else {
+      const stepX = width / (count - 1);
+      const centerY = height / 2;
+      const amplitude = height / 2;
+
+      let yOffset = mirroredValues[0] * amplitude;
+      let path = `M 0 ${centerY - yOffset}`;
+
+      for (let i = 1; i < count; i++) {
+        const x = i * stepX;
+        yOffset = mirroredValues[i] * amplitude;
+        path += ` L ${x} ${centerY - yOffset}`;
+      }
+
+      for (let i = count - 1; i >= 0; i--) {
+        const x = i * stepX;
+        yOffset = mirroredValues[i] * amplitude;
+        path += ` L ${x} ${centerY + yOffset}`;
+      }
+
+      return path + " Z";
     }
   }
 
-  Canvas {
-    id: canvas
+  Shape {
+    id: shape
     anchors.fill: parent
-    antialiasing: false // Disable for better performance - shape is smooth enough without it
-    renderStrategy: Canvas.Threaded // Render in separate thread to reduce main thread load
-    renderTarget: Canvas.FramebufferObject // Use FBO for better performance
+    layer.enabled: true
+    layer.samples: 4
+    containsMode: Shape.FillContains
 
-    onPaint: {
-      var ctx = getContext("2d");
-      ctx.reset();
+    ShapePath {
+      id: shapePath
+      fillColor: root.fillColor
+      strokeColor: root.strokeWidth > 0 ? root.strokeColor : "transparent"
+      strokeWidth: root.strokeWidth
 
-      if (!values || !Array.isArray(values) || values.length === 0) {
-        return;
-      }
-
-      // Apply minimum signal if enabled
-      var processedValues = values.map(function (v) {
-        return (root.showMinimumSignal && v === 0) ? root.minimumSignalValue : v;
-      });
-
-      // Create the mirrored values
-      const partToMirror = processedValues.slice(1).reverse();
-      const mirroredValues = partToMirror.concat(processedValues);
-
-      if (mirroredValues.length < 2) {
-        return;
-      }
-
-      ctx.fillStyle = root.fillColor;
-      ctx.strokeStyle = root.strokeColor;
-      ctx.lineWidth = root.strokeWidth;
-
-      const count = mirroredValues.length;
-
-      if (root.vertical) {
-        // Vertical orientation
-        const stepY = height / (count - 1);
-        const centerX = width / 2;
-        const amplitude = width / 2;
-
-        ctx.beginPath();
-
-        // Draw the left half of the waveform from top to bottom
-        var xOffset = mirroredValues[0] * amplitude;
-        ctx.moveTo(centerX - xOffset, 0);
-
-        for (var i = 1; i < count; i++) {
-          const y = i * stepY;
-          xOffset = mirroredValues[i] * amplitude;
-          const x = centerX - xOffset;
-          ctx.lineTo(x, y);
-        }
-
-        // Draw the right half of the waveform from bottom to top to create a closed shape
-        for (var i = count - 1; i >= 0; i--) {
-          const y = i * stepY;
-          xOffset = mirroredValues[i] * amplitude;
-          const x = centerX + xOffset; // Mirrored across the center
-          ctx.lineTo(x, y);
-        }
-
-        ctx.closePath();
-      } else {
-        // Horizontal orientation
-        const stepX = width / (count - 1);
-        const centerY = height / 2;
-        const amplitude = height / 2;
-
-        ctx.beginPath();
-
-        // Draw the top half of the waveform from left to right
-        var yOffset = mirroredValues[0] * amplitude;
-        ctx.moveTo(0, centerY - yOffset);
-
-        for (var i = 1; i < count; i++) {
-          const x = i * stepX;
-          yOffset = mirroredValues[i] * amplitude;
-          const y = centerY - yOffset;
-          ctx.lineTo(x, y);
-        }
-
-        // Draw the bottom half of the waveform from right to left to create a closed shape
-        for (var i = count - 1; i >= 0; i--) {
-          const x = i * stepX;
-          yOffset = mirroredValues[i] * amplitude;
-          const y = centerY + yOffset; // Mirrored across the center
-          ctx.lineTo(x, y);
-        }
-
-        ctx.closePath();
-      }
-
-      // --- Render the path ---
-      if (root.fillColor.a > 0) {
-        ctx.fill();
-      }
-      if (root.strokeWidth > 0) {
-        ctx.stroke();
+      PathSvg {
+        path: root.svgPath
       }
     }
   }
