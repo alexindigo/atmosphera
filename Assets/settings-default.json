@@ -378,6 +378,7 @@
     "spicetify": false,
     "telegram": false,
     "cava": false,
+    "yazi": false,
     "emacs": false,
     "niri": false,
     "enableUserTemplates": false
