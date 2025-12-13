@@ -352,6 +352,11 @@ Rectangle {
       return items;
     }
     onTriggered: (action, item) => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
                    if (action === "focus" && selectedWindow) {
                      CompositorService.focusWindow(selectedWindow);
                    } else if (action === "pin" && selectedWindow) {
@@ -366,11 +371,6 @@ Rectangle {
                    }
                    selectedWindow = null;
                    selectedAppName = "";
-                   // Close the popup menu window after handling the action
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
                  }
   }
 
@@ -562,9 +562,8 @@ Rectangle {
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
           acceptedButtons: Qt.LeftButton | Qt.RightButton
-          preventStealing: true
 
-          onPressed: function (mouse) {
+          onClicked: function (mouse) {
             if (!modelData)
               return;
             if (mouse.button === Qt.LeftButton) {
@@ -579,27 +578,13 @@ Rectangle {
                 // Pinned app not running - launch it
                 root.launchPinnedApp(modelData.appId);
               }
-            }
-          }
-
-          onReleased: function (mouse) {
-            if (!modelData)
-              return;
-            if (mouse.button === Qt.RightButton) {
-              mouse.accepted = true;
+            } else if (mouse.button === Qt.RightButton) {
               TooltipService.hide();
               // Only show context menu for running apps
               if (isRunning && modelData.window) {
                 root.selectedWindow = modelData.window;
                 root.selectedAppName = CompositorService.getCleanAppName(modelData.appId, modelData.title);
-
-                // Store position and size for timer callback
-                const globalPos = taskbarItem.mapToItem(root, 0, 0);
-                contextMenuOpenTimer.globalX = globalPos.x;
-                contextMenuOpenTimer.globalY = globalPos.y;
-                contextMenuOpenTimer.itemWidth = taskbarItem.width;
-                contextMenuOpenTimer.itemHeight = taskbarItem.height;
-                contextMenuOpenTimer.restart();
+                root.openTaskbarContextMenu(taskbarItem);
               }
             }
           }
@@ -616,96 +601,81 @@ Rectangle {
     }
   }
 
-  Timer {
-    id: contextMenuOpenTimer
-    interval: 10
-    repeat: false
-    property real globalX: 0
-    property real globalY: 0
-    property real itemWidth: 0
-    property real itemHeight: 0
-
-    onTriggered: {
-      // Directly build and set model as a new array (bypass binding issues)
-      var items = [];
-      if (root.selectedWindow) {
-        // Focus item (for running apps)
-        items.push({
-                     "label": I18n.tr("dock.menu.focus"),
-                     "action": "focus",
-                     "icon": "eye"
-                   });
-      }
-
-      // Pin/Unpin item (always available when right-clicking an app)
-      if (root.selectedWindow) {
-        const appId = root.selectedWindow.appId;
-        const isPinned = root.isAppPinned(appId);
-        items.push({
-                     "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
-                     "action": "pin",
-                     "icon": !isPinned ? "pin" : "unpin"
-                   });
-      }
-
-      if (root.selectedWindow) {
-        // Close item (for running apps)
-        items.push({
-                     "label": I18n.tr("dock.menu.close"),
-                     "action": "close",
-                     "icon": "x"
-                   });
-
-        // Add desktop entry actions (like "New Window", "Private Window", etc.)
-        if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedWindow?.appId) {
-          const appId = root.selectedWindow.appId;
-          const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(appId) : DesktopEntries.byId(appId);
-          if (entry != null && entry.actions) {
-            entry.actions.forEach(function (action) {
-              items.push({
-                           "label": action.name,
-                           "action": "desktop-action-" + action.name,
-                           "icon": "chevron-right",
-                           "desktopAction": action
-                         });
-            });
-          }
-        }
-      }
+  function openTaskbarContextMenu(item) {
+    // Build menu model directly
+    var items = [];
+    if (root.selectedWindow) {
+      // Focus item (for running apps)
       items.push({
-                   "label": I18n.tr("context-menu.widget-settings"),
-                   "action": "widget-settings",
-                   "icon": "settings"
+                   "label": I18n.tr("dock.menu.focus"),
+                   "action": "focus",
+                   "icon": "eye"
                  });
 
-      // Set the model directly
-      contextMenu.model = items;
+      // Pin/Unpin item
+      const appId = root.selectedWindow.appId;
+      const isPinned = root.isAppPinned(appId);
+      items.push({
+                   "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                   "action": "pin",
+                   "icon": !isPinned ? "pin" : "unpin"
+                 });
 
-      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-      if (popupMenuWindow) {
-        popupMenuWindow.open();
+      // Close item
+      items.push({
+                   "label": I18n.tr("dock.menu.close"),
+                   "action": "close",
+                   "icon": "x"
+                 });
 
-        // Calculate menu position
-        let menuX, menuY;
-        if (root.barPosition === "top") {
-          menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
-          menuY = Style.barHeight + Style.marginS;
-        } else if (root.barPosition === "bottom") {
-          const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
-          menuX = globalX + (itemWidth / 2) - (contextMenu.implicitWidth / 2);
-          menuY = -menuHeight - Style.marginS;
-        } else if (root.barPosition === "left") {
-          menuX = Style.barHeight + Style.marginS;
-          menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
-        } else {
-          // right
-          menuX = -contextMenu.implicitWidth - Style.marginS;
-          menuY = globalY + (itemHeight / 2) - (contextMenu.implicitHeight / 2);
+      // Add desktop entry actions (like "New Window", "Private Window", etc.)
+      if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedWindow.appId) {
+        const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(appId) : DesktopEntries.byId(appId);
+        if (entry != null && entry.actions) {
+          entry.actions.forEach(function (action) {
+            items.push({
+                         "label": action.name,
+                         "action": "desktop-action-" + action.name,
+                         "icon": "chevron-right",
+                         "desktopAction": action
+                       });
+          });
         }
-
-        contextMenu.openAtItem(root, menuX, menuY);
-        popupMenuWindow.contentItem = contextMenu;
       }
+    }
+    items.push({
+                 "label": I18n.tr("context-menu.widget-settings"),
+                 "action": "widget-settings",
+                 "icon": "settings"
+               });
+
+    // Set the model directly
+    contextMenu.model = items;
+
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.open();
+
+      // Calculate menu position
+      const globalPos = item.mapToItem(root, 0, 0);
+      let menuX, menuY;
+      if (root.barPosition === "top") {
+        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
+        menuY = Style.barHeight + Style.marginS;
+      } else if (root.barPosition === "bottom") {
+        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
+        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
+        menuY = -menuHeight - Style.marginS;
+      } else if (root.barPosition === "left") {
+        menuX = Style.barHeight + Style.marginS;
+        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
+      } else {
+        // right
+        menuX = -contextMenu.implicitWidth - Style.marginS;
+        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
+      }
+      popupMenuWindow.showContextMenu(contextMenu);
+      contextMenu.openAtItem(root, menuX, menuY);
     }
   }
 }

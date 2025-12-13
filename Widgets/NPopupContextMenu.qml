@@ -20,7 +20,7 @@ PopupWindow {
   property real anchorY: 0
   property real calculatedWidth: 180
 
-  signal triggered(string action)
+  signal triggered(string action, var item)
 
   implicitWidth: calculatedWidth
   implicitHeight: Math.min(600, flickable.contentHeight + (Style.marginS * 2))
@@ -197,7 +197,7 @@ PopupWindow {
 
               onClicked: {
                 if (menuItem.modelData.enabled !== false) {
-                  root.triggered(menuItem.modelData.action || menuItem.modelData.key || menuItem.index.toString());
+                  root.triggered(menuItem.modelData.action || menuItem.modelData.key || menuItem.index.toString(), menuItem.modelData);
                   // Don't call root.close() here - let the parent PopupMenuWindow handle closing
                 }
               }
