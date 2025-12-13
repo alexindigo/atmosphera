@@ -47,7 +47,9 @@ Scope {
 
   PamContext {
     id: pam
-    config: "login"
+    // Use custom PAM config to ensure predictable password-only authentication
+    configDirectory: Quickshell.shellDir + "/Assets/pam"
+    config: "password.conf"
     user: HostService.username
 
     onPamMessage: {
