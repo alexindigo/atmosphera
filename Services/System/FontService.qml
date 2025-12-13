@@ -15,250 +15,159 @@ Singleton {
   property bool fontsLoaded: false
   property bool isLoading: false
 
-  // Use objects for O(1) lookup instead of arrays
-  property var fontconfigMonospaceFonts: ({})
-
-  // Cache for font classification to avoid repeated checks
-  property var fontCache: ({})
-
-  // Chunk size for async processing
-  readonly property int chunkSize: 100
-
   // -------------------------------------------
+  // Auto-initialize when component is loaded
+  Component.onCompleted: init()
+
   function init() {
     Logger.i("Font", "Service started");
-    loadFontconfigMonospaceFonts();
+    loadFontsViaFcList();
   }
 
-  function loadFontconfigMonospaceFonts() {
-    fontconfigProcess.command = ["fc-list", ":mono", "family"];
-    fontconfigProcess.running = true;
-  }
-
-  function loadSystemFonts() {
+  // Load all fonts using fc-list in background - no main thread blocking
+  function loadFontsViaFcList() {
     if (isLoading)
       return;
-    Logger.d("Font", "Loading system fonts...");
     isLoading = true;
+    allFontsProcess.running = true;
+  }
 
-    var fontFamilies = Qt.fontFamilies();
+  function populateModels(allFontsText, monoFontsText) {
+    // Parse monospace fonts into a lookup set
+    var monoLookup = {};
+    var monoLines = monoFontsText.split('\n');
+    for (var i = 0; i < monoLines.length; i++) {
+      var line = monoLines[i].trim();
+      if (line)
+        monoLookup[line] = true;
+    }
 
-    // Pre-sort fonts before processing to ensure consistent order
-    fontFamilies.sort(function (a, b) {
+    // Parse all fonts
+    var allLines = allFontsText.split('\n');
+    var fontSet = {}; // Deduplicate font families
+
+    for (var j = 0; j < allLines.length; j++) {
+      var fontName = allLines[j].trim();
+      if (fontName && !fontSet[fontName]) {
+        fontSet[fontName] = true;
+      }
+    }
+
+    // Sort font names
+    var sortedFonts = Object.keys(fontSet).sort(function (a, b) {
       return a.localeCompare(b);
     });
 
-    // Clear existing models
-    availableFonts.clear();
-    monospaceFonts.clear();
-    displayFonts.clear();
-    fontCache = {};
-
-    // Process fonts in chunks to avoid blocking
-    processFontsAsync(fontFamilies, 0);
-  }
-
-  function processFontsAsync(fontFamilies, startIndex) {
-    var endIndex = Math.min(startIndex + chunkSize, fontFamilies.length);
-    var hasMore = endIndex < fontFamilies.length;
-
-    // Batch arrays to append all at once (much faster than individual appends)
-    var availableBatch = [];
-    var monospaceBatch = [];
+    // Build arrays for batch insert
+    var allBatch = [];
+    var monoBatch = [];
     var displayBatch = [];
 
-    for (var i = startIndex; i < endIndex; i++) {
-      var fontName = fontFamilies[i];
-      if (!fontName || fontName.trim() === "")
-        continue;
-
-      // Add to available fonts
+    for (var k = 0; k < sortedFonts.length; k++) {
+      var name = sortedFonts[k];
       var fontObj = {
-        "key": fontName,
-        "name": fontName
+        "key": name,
+        "name": name
       };
-      availableBatch.push(fontObj);
+      allBatch.push(fontObj);
 
-      // Check monospace (with caching)
-      if (isMonospaceFont(fontName)) {
-        monospaceBatch.push(fontObj);
+      // Check if monospace
+      if (monoLookup[name] || name.toLowerCase().includes("mono")) {
+        monoBatch.push(fontObj);
       }
 
-      // Check display font (with caching)
-      if (isDisplayFont(fontName)) {
+      // Check if display font
+      var lower = name.toLowerCase();
+      if (lower.includes("display") || lower.includes("headline") || lower.includes("title")) {
         displayBatch.push(fontObj);
       }
     }
 
-    // Batch append to models
-    batchAppendToModel(availableFonts, availableBatch);
-    batchAppendToModel(monospaceFonts, monospaceBatch);
-    batchAppendToModel(displayFonts, displayBatch);
+    // Clear and populate models (single batch operation)
+    availableFonts.clear();
+    monospaceFonts.clear();
+    displayFonts.clear();
 
-    if (hasMore) {
-      // Continue processing in next frame
-      Qt.callLater(function () {
-        processFontsAsync(fontFamilies, endIndex);
-      });
-    } else {
-      // Finished loading all fonts
-      finalizeFontLoading();
-    }
-  }
+    for (var m = 0; m < allBatch.length; m++)
+      availableFonts.append(allBatch[m]);
+    for (var n = 0; n < monoBatch.length; n++)
+      monospaceFonts.append(monoBatch[n]);
+    for (var p = 0; p < displayBatch.length; p++)
+      displayFonts.append(displayBatch[p]);
 
-  function batchAppendToModel(model, items) {
-    for (var i = 0; i < items.length; i++) {
-      model.append(items[i]);
-    }
-  }
-
-  function finalizeFontLoading() {
     fontsLoaded = true;
     isLoading = false;
-    Logger.d("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display");
+    Logger.i("Font", "Loaded", availableFonts.count, "fonts:", monospaceFonts.count, "monospace,", displayFonts.count, "display");
   }
 
-  function isMonospaceFont(fontName) {
-    // Check cache first
-    if (fontCache.hasOwnProperty(fontName)) {
-      return fontCache[fontName].isMonospace;
-    }
+  // Temporary storage for process outputs
+  property string _allFontsOutput: ""
+  property string _monoFontsOutput: ""
+  property bool _allFontsDone: false
+  property bool _monoFontsDone: false
 
-    var result = false;
-
-    // O(1) lookup using object instead of indexOf
-    if (fontconfigMonospaceFonts.hasOwnProperty(fontName)) {
-      result = true;
-    } else {
-      // Fallback: check for basic monospace patterns
-      var lowerFontName = fontName.toLowerCase();
-      if (lowerFontName.includes("mono") || lowerFontName.includes("monospace")) {
-        result = true;
-      }
-    }
-
-    // Cache the result
-    if (!fontCache[fontName]) {
-      fontCache[fontName] = {};
-    }
-    fontCache[fontName].isMonospace = result;
-
-    return result;
-  }
-
-  function isDisplayFont(fontName) {
-    // Check cache first
-    if (fontCache.hasOwnProperty(fontName) && fontCache[fontName].hasOwnProperty('isDisplay')) {
-      return fontCache[fontName].isDisplay;
-    }
-
-    var result = false;
-    var lowerFontName = fontName.toLowerCase();
-
-    if (lowerFontName.includes("display") || lowerFontName.includes("headline") || lowerFontName.includes("title")) {
-      result = true;
-    }
-
-    // Cache the result
-    if (!fontCache[fontName]) {
-      fontCache[fontName] = {};
-    }
-    fontCache[fontName].isDisplay = result;
-
-    return result;
-  }
-
-  function sortModel(model) {
-    // Convert to array
-    var fontsArray = [];
-    for (var i = 0; i < model.count; i++) {
-      fontsArray.push({
-                        "key": model.get(i).key,
-                        "name": model.get(i).name
-                      });
-    }
-
-    // Sort
-    fontsArray.sort(function (a, b) {
-      return a.name.localeCompare(b.name);
-    });
-
-    // Clear and rebuild
-    model.clear();
-    batchAppendToModel(model, fontsArray);
-  }
-
-  function addFallbackFonts(model, fallbackFonts) {
-    // Build a set of existing fonts for O(1) lookup
-    var existingFonts = {};
-    for (var i = 0; i < model.count; i++) {
-      existingFonts[model.get(i).name] = true;
-    }
-
-    var toAdd = [];
-    for (var j = 0; j < fallbackFonts.length; j++) {
-      var fontName = fallbackFonts[j];
-      if (!existingFonts[fontName]) {
-        toAdd.push({
-                     "key": fontName,
-                     "name": fontName
-                   });
-      }
-    }
-
-    if (toAdd.length > 0) {
-      batchAppendToModel(model, toAdd);
-      sortModel(model);
+  function checkBothProcessesDone() {
+    if (_allFontsDone && _monoFontsDone) {
+      populateModels(_allFontsOutput, _monoFontsOutput);
+      // Clear temp storage
+      _allFontsOutput = "";
+      _monoFontsOutput = "";
+      _allFontsDone = false;
+      _monoFontsDone = false;
     }
   }
 
-  function searchFonts(query) {
-    if (!query || query.trim() === "")
-      return availableFonts;
-
-    var results = [];
-    var lowerQuery = query.toLowerCase();
-
-    for (var i = 0; i < availableFonts.count; i++) {
-      var font = availableFonts.get(i);
-      if (font.name.toLowerCase().includes(lowerQuery)) {
-        results.push(font);
-      }
-    }
-
-    return results;
-  }
-
-  // Process for fontconfig commands
+  // Process to get all font families (runs in background)
   Process {
-    id: fontconfigProcess
+    id: allFontsProcess
+    command: ["fc-list", "--format", "%{family[0]}\\n"]
     running: false
 
     stdout: StdioCollector {
       onStreamFinished: {
-        if (this.text !== "") {
-          var lines = this.text.split('\n');
-          // Use object for O(1) lookup instead of array
-          var monospaceLookup = {};
+        root._allFontsOutput = this.text;
+        root._allFontsDone = true;
+        root.checkBothProcessesDone();
+      }
+    }
 
-          for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            if (line && line !== "") {
-              monospaceLookup[line] = true;
-            }
-          }
-
-          fontconfigMonospaceFonts = monospaceLookup;
-        }
-        loadSystemFonts();
+    onRunningChanged: {
+      if (running) {
+        // Start mono fonts process in parallel
+        monoFontsProcess.running = true;
       }
     }
 
     onExited: function (exitCode, exitStatus) {
       if (exitCode !== 0) {
-        fontconfigMonospaceFonts = {};
+        Logger.w("Font", "fc-list failed with exit code", exitCode);
+        root._allFontsOutput = "";
+        root._allFontsDone = true;
+        root.checkBothProcessesDone();
       }
-      loadSystemFonts();
+    }
+  }
+
+  // Process to get monospace font families (runs in background, parallel)
+  Process {
+    id: monoFontsProcess
+    command: ["fc-list", ":mono", "--format", "%{family[0]}\\n"]
+    running: false
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        root._monoFontsOutput = this.text;
+        root._monoFontsDone = true;
+        root.checkBothProcessesDone();
+      }
+    }
+
+    onExited: function (exitCode, exitStatus) {
+      if (exitCode !== 0) {
+        root._monoFontsOutput = "";
+        root._monoFontsDone = true;
+        root.checkBothProcessesDone();
+      }
     }
   }
 }
