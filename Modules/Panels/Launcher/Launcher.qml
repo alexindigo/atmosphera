@@ -645,7 +645,10 @@ SmartPanel {
                 } else if (event.key === Qt.Key_Down) {
                   root.onDownPressed();
                   event.accepted = true;
-                }
+                } else if (event.key === Qt.Key_Enter) {
+                  root.activate();
+                  event.accepted = true;
+                }
               });
             }
           }
