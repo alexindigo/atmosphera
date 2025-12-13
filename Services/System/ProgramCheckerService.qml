@@ -172,7 +172,7 @@ Singleton {
   // Programs to check - maps property names to commands
   readonly property var programsToCheck: ({
                                             "matugenAvailable": ["which", "matugen"],
-                                            "pywalfoxAvailable": ["which", "pywalfox"],
+                                            "pywalfoxAvailable": ["sh", "-c", "command -v pywalfox >/dev/null 2>&1 || test -x \"$HOME/.local/bin/pywalfox\""],
                                             "alacrittyAvailable": ["which", "alacritty"],
                                             "kittyAvailable": ["which", "kitty"],
                                             "ghosttyAvailable": ["which", "ghostty"],

@@ -332,7 +332,7 @@ Item {
       Rectangle {
         id: sidebar
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : (sidebarToggle.width + (sidebarList.verticalScrollBarActive ? sidebarList.scrollBarTotalWidth : 0))
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         color: Color.transparent
