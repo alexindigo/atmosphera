@@ -93,15 +93,25 @@ RowLayout {
     }
   }
 
-  onSearchTextChanged: filterModel()
-  onModelChanged: filterModel()
+  // Debounce timer to prevent excessive filterModel calls
+  Timer {
+    id: filterDebouncer
+    interval: 16 // ~60fps
+    repeat: false
+    onTriggered: filterModel()
+  }
+
+  onSearchTextChanged: filterDebouncer.restart()
+  onModelChanged: filterDebouncer.restart()
   Component.onCompleted: filterModel()
 
   // Watch for model content changes (e.g., async font loading)
+  // Only when component is actually visible to avoid wasting CPU
   Connections {
     target: root.model
+    enabled: root.visible && root.opacity > 0
     function onCountChanged() {
-      filterModel();
+      filterDebouncer.restart();
     }
   }
 
