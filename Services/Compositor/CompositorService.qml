@@ -93,6 +93,7 @@ Singleton {
       backendLoader.sourceComponent = niriComponent;
     }
   }
+
   Loader {
     id: backendLoader
     onLoaded: {
@@ -186,9 +187,17 @@ Singleton {
                                               });
 
     // Initial sync
-    syncWorkspaces();
-    syncWindows();
-    focusedWindowIndex = backend.focusedWindowIndex;
+    delayedTimer.running = true;
+  }
+
+  Timer {
+    id: delayedTimer
+    interval: 100
+    onTriggered: {
+      syncWorkspaces();
+      syncWindows();
+      focusedWindowIndex = backend.focusedWindowIndex;
+    }
   }
 
   function syncWorkspaces() {
