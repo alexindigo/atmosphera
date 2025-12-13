@@ -377,7 +377,7 @@ Item {
                 spacing: 0
 
                 NIcon {
-                  icon: root.sidebarExpanded ? "layout-sidebar-left-expand" : "layout-sidebar-right-expand"
+                  icon: root.sidebarExpanded ? "layout-sidebar-right-expand" : "layout-sidebar-left-expand"
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeXL
                 }
