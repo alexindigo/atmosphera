@@ -27,4 +27,3 @@ ColumnLayout {
     onToggled: checked => valueShowBackground = checked
   }
 }
-

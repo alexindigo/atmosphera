@@ -1318,6 +1318,101 @@
       },
       "title": "Bedieningscentrum"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "Toon een klokwidget op het bureaublad.",
+          "label": "Klokwidget inschakelen"
+        },
+        "height": {
+          "description": "Hoogte van de klokwidget in pixels.",
+          "label": "Hoogte"
+        },
+        "section": {
+          "description": "Configureer de weergave van de klokwidget.",
+          "label": "Klokwidget"
+        },
+        "show-background": {
+          "description": "Toon de achtergrondcontainer voor de klokwidget.",
+          "label": "Achtergrond weergeven"
+        },
+        "show-date": {
+          "description": "Toon de huidige datum onder de tijd.",
+          "label": "Toon datum"
+        },
+        "show-seconds": {
+          "description": "Toon seconden in de tijd.",
+          "label": "Toon seconden"
+        },
+        "width": {
+          "description": "Breedte van de klokwidget in pixels.",
+          "label": "Breedte"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Ga naar de bewerkingsmodus"
+        },
+        "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
+        "exit-button": "Bewerkingsmodus verlaten",
+        "label": "Bewerkingsmodus"
+      },
+      "enabled": {
+        "description": "Desktopwidgets volledig in- of uitschakelen.",
+        "label": "Desktopwidgets inschakelen"
+      },
+      "general": {
+        "section": {
+          "description": "Configureer widgets die op je bureaublad verschijnen.",
+          "label": "Desktopwidgets"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Toon een mediaplayer-widget op het bureaublad.",
+          "label": "Mediaspeler-widget inschakelen"
+        },
+        "section": {
+          "description": "Configureer het uiterlijk van de mediapeler-widget.",
+          "label": "Mediaspeler-widget"
+        },
+        "show-background": {
+          "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
+          "label": "Toon achtergrond"
+        },
+        "visualizer-type": {
+          "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
+          "label": "Visualisatietype"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "Selecteer de monitor waarvoor je widgets wilt configureren.",
+          "label": "Monitor"
+        }
+      },
+      "title": "Desktopwidgets",
+      "weather": {
+        "enabled": {
+          "description": "Toon een weerwidget op het bureaublad.",
+          "label": "Weerwidget inschakelen"
+        },
+        "section": {
+          "description": "Configureer de weergave van de weerwidget.",
+          "label": "Weerwidget"
+        },
+        "show-background": {
+          "description": "Toon de achtergrondcontainer voor de weerwidget.",
+          "label": "Toon achtergrond"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "Desktopwidgets toevoegen en configureren",
+          "label": "Desktopwidgets"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "Helderheid",

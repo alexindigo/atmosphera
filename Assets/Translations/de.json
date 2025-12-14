@@ -1318,6 +1318,101 @@
       },
       "title": "Kontrollzentrum"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "Eine Uhr als Widget auf dem Desktop anzeigen.",
+          "label": "Uhr-Widget aktivieren"
+        },
+        "height": {
+          "description": "Höhe des Uhr-Widgets in Pixeln.",
+          "label": "Höhe"
+        },
+        "section": {
+          "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
+          "label": "Uhr-Widget"
+        },
+        "show-background": {
+          "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
+          "label": "Hintergrund anzeigen"
+        },
+        "show-date": {
+          "description": "Zeige das aktuelle Datum unter der Uhrzeit an.",
+          "label": "Datum anzeigen"
+        },
+        "show-seconds": {
+          "description": "Sekunden in der Zeit anzeigen.",
+          "label": "Sekunden anzeigen"
+        },
+        "width": {
+          "description": "Breite des Uhr-Widgets in Pixeln.",
+          "label": "Breite"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Bearbeitungsmodus aktivieren"
+        },
+        "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
+        "exit-button": "Bearbeitungsmodus verlassen",
+        "label": "Bearbeitungsmodus"
+      },
+      "enabled": {
+        "description": "Desktop-Widgets vollständig aktivieren oder deaktivieren.",
+        "label": "Desktop-Widgets aktivieren"
+      },
+      "general": {
+        "section": {
+          "description": "Konfigurieren Sie Widgets, die auf Ihrem Desktop angezeigt werden.",
+          "label": "Desktop-Widgets"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Zeige ein Media-Player-Widget auf dem Desktop an.",
+          "label": "Medienplayer-Widget aktivieren"
+        },
+        "section": {
+          "description": "Konfigurieren Sie das Erscheinungsbild des Media-Player-Widgets.",
+          "label": "Media Player Widget"
+        },
+        "show-background": {
+          "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
+          "label": "Hintergrund anzeigen"
+        },
+        "visualizer-type": {
+          "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
+          "label": "Visualisierungsart"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "Wählen Sie den Monitor aus, für den Widgets konfiguriert werden sollen.",
+          "label": "Monitor"
+        }
+      },
+      "title": "Desktop-Widgets",
+      "weather": {
+        "enabled": {
+          "description": "Zeige ein Wetter-Widget auf dem Desktop an.",
+          "label": "Wetter-Widget aktivieren"
+        },
+        "section": {
+          "description": "Konfigurieren Sie das Erscheinungsbild des Wetter-Widgets.",
+          "label": "Wetter-Widget"
+        },
+        "show-background": {
+          "description": "Zeige den Hintergrundcontainer für das Wetter-Widget an.",
+          "label": "Hintergrund anzeigen"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "Desktop-Widgets hinzufügen und konfigurieren",
+          "label": "Desktop-Widgets"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "Helligkeit",

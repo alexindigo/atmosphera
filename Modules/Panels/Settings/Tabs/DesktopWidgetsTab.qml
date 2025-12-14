@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 
@@ -10,6 +11,9 @@ ColumnLayout {
   id: root
 
   spacing: Style.marginL
+
+  // Selected monitor for widget configuration
+  property string selectedMonitor: Quickshell.screens.length > 0 ? Quickshell.screens[0].name : ""
 
   NHeader {
     label: I18n.tr("settings.desktop-widgets.general.section.label")
@@ -30,15 +34,15 @@ ColumnLayout {
     text: I18n.tr("settings.desktop-widgets.edit-mode.button.label")
     icon: "edit"
     onClicked: {
-      Settings.data.desktopWidgets.editMode = true
+      Settings.data.desktopWidgets.editMode = true;
       if (Settings.data.ui.settingsPanelMode !== "window") {
-        var item = root.parent
+        var item = root.parent;
         while (item) {
           if (item.closeRequested !== undefined) {
-            item.closeRequested()
-            break
+            item.closeRequested();
+            break;
           }
-          item = item.parent
+          item = item.parent;
         }
       }
     }
@@ -49,6 +53,32 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
+  // Monitor selector
+  NHeader {
+    visible: Settings.data.desktopWidgets.enabled && Quickshell.screens.length > 1
+    label: I18n.tr("settings.desktop-widgets.monitor.section.label")
+    description: I18n.tr("settings.desktop-widgets.monitor.section.description")
+  }
+
+  NComboBox {
+    visible: Settings.data.desktopWidgets.enabled && Quickshell.screens.length > 1
+    Layout.fillWidth: true
+    model: {
+      var screens = [];
+      for (var i = 0; i < Quickshell.screens.length; i++) {
+        var screen = Quickshell.screens[i];
+        var compositorScale = CompositorService.getDisplayScale(screen.name);
+        screens.push({
+                       "key": screen.name,
+                       "name": screen.name + " (" + screen.width + "x" + screen.height + " @ " + compositorScale + "x)"
+                     });
+      }
+      return screens;
+    }
+    currentKey: root.selectedMonitor
+    onSelected: key => root.selectedMonitor = key
+  }
+
   // Desktop Widgets Section
   NSectionEditor {
     visible: Settings.data.desktopWidgets.enabled
@@ -57,7 +87,7 @@ ColumnLayout {
     sectionId: "desktop"
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml")
     widgetRegistry: DesktopWidgetRegistry
-    widgetModel: Settings.data.desktopWidgets.widgets
+    widgetModel: getWidgetsForMonitor(root.selectedMonitor)
     availableWidgets: availableWidgets
     maxWidgets: -1
     onAddWidget: (widgetId, section) => _addWidget(widgetId)
@@ -83,7 +113,7 @@ ColumnLayout {
       if (typeof DesktopWidgetRegistry === "undefined" || !DesktopWidgetRegistry) {
         Logger.e("DesktopWidgetsTab", "DesktopWidgetRegistry is not available");
         // Retry after a short delay
-        Qt.callLater(function() {
+        Qt.callLater(function () {
           if (typeof DesktopWidgetRegistry !== "undefined" && DesktopWidgetRegistry) {
             updateAvailableWidgetsModel();
           }
@@ -107,6 +137,41 @@ ColumnLayout {
     } catch (e) {
       Logger.e("DesktopWidgetsTab", "Error updating available widgets:", e, e.stack);
     }
+  }
+
+  // Get widgets for a specific monitor
+  function getWidgetsForMonitor(monitorName) {
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    for (var i = 0; i < monitorWidgets.length; i++) {
+      if (monitorWidgets[i].name === monitorName) {
+        return monitorWidgets[i].widgets || [];
+      }
+    }
+    return [];
+  }
+
+  // Set widgets for a specific monitor
+  function setWidgetsForMonitor(monitorName, widgets) {
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+    var found = false;
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === monitorName) {
+        newMonitorWidgets[i] = {
+          "name": monitorName,
+          "widgets": widgets
+        };
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      newMonitorWidgets.push({
+                               "name": monitorName,
+                               "widgets": widgets
+                             });
+    }
+    Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
   }
 
   function _addWidget(widgetId) {
@@ -134,35 +199,37 @@ ColumnLayout {
       newWidget.x = 100;
       newWidget.y = 300;
     }
-    var widgets = Settings.data.desktopWidgets.widgets.slice();
+    var widgets = getWidgetsForMonitor(root.selectedMonitor).slice();
     widgets.push(newWidget);
-    Settings.data.desktopWidgets.widgets = widgets;
+    setWidgetsForMonitor(root.selectedMonitor, widgets);
   }
 
   function _removeWidget(index) {
-    if (index >= 0 && index < Settings.data.desktopWidgets.widgets.length) {
-      var newArray = Settings.data.desktopWidgets.widgets.slice();
+    var widgets = getWidgetsForMonitor(root.selectedMonitor);
+    if (index >= 0 && index < widgets.length) {
+      var newArray = widgets.slice();
       newArray.splice(index, 1);
-      Settings.data.desktopWidgets.widgets = newArray;
+      setWidgetsForMonitor(root.selectedMonitor, newArray);
     }
   }
 
   function _reorderWidget(fromIndex, toIndex) {
-    if (fromIndex >= 0 && fromIndex < Settings.data.desktopWidgets.widgets.length && 
-        toIndex >= 0 && toIndex < Settings.data.desktopWidgets.widgets.length) {
-      var newArray = Settings.data.desktopWidgets.widgets.slice();
+    var widgets = getWidgetsForMonitor(root.selectedMonitor);
+    if (fromIndex >= 0 && fromIndex < widgets.length && toIndex >= 0 && toIndex < widgets.length) {
+      var newArray = widgets.slice();
       var item = newArray[fromIndex];
       newArray.splice(fromIndex, 1);
       newArray.splice(toIndex, 0, item);
-      Settings.data.desktopWidgets.widgets = newArray;
+      setWidgetsForMonitor(root.selectedMonitor, newArray);
     }
   }
 
   function _updateWidgetSettings(index, settings) {
-    if (index >= 0 && index < Settings.data.desktopWidgets.widgets.length) {
-      var newArray = Settings.data.desktopWidgets.widgets.slice();
+    var widgets = getWidgetsForMonitor(root.selectedMonitor);
+    if (index >= 0 && index < widgets.length) {
+      var newArray = widgets.slice();
       newArray[index] = Object.assign({}, newArray[index], settings);
-      Settings.data.desktopWidgets.widgets = newArray;
+      setWidgetsForMonitor(root.selectedMonitor, newArray);
     }
   }
 }

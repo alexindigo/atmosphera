@@ -385,6 +385,7 @@
     "yazi": false,
     "emacs": false,
     "niri": false,
+    "zed": false,
     "enableUserTemplates": false
   },
   "nightLight": {
@@ -400,5 +401,10 @@
     "enabled": false,
     "wallpaperChange": "",
     "darkModeChange": ""
+  },
+  "desktopWidgets": {
+    "enabled": false,
+    "editMode": false,
+    "monitorWidgets": []
   }
 }

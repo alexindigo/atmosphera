@@ -1318,6 +1318,101 @@
       },
       "title": "Central de Controle"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "Mostrar um widget de relógio na área de trabalho.",
+          "label": "Ativar widget de relógio"
+        },
+        "height": {
+          "description": "Altura do widget do relógio em pixels.",
+          "label": "Altura"
+        },
+        "section": {
+          "description": "Configurar a aparência do widget de relógio.",
+          "label": "Widget de Relógio"
+        },
+        "show-background": {
+          "description": "Mostrar o contêiner de fundo para o widget de relógio.",
+          "label": "Mostrar plano de fundo"
+        },
+        "show-date": {
+          "description": "Exiba a data atual abaixo da hora.",
+          "label": "Mostrar data"
+        },
+        "show-seconds": {
+          "description": "Exibir segundos na hora.",
+          "label": "Mostrar segundos"
+        },
+        "width": {
+          "description": "Largura do widget do relógio em pixels.",
+          "label": "Largura"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Entrar no modo de edição"
+        },
+        "description": "Ative o modo de edição para mover e reposicionar widgets da área de trabalho. Quando ativado, os widgets exibem um contorno de arrastar e podem ser reposicionados.",
+        "exit-button": "Sair do modo de edição",
+        "label": "Modo de edição"
+      },
+      "enabled": {
+        "description": "Ativar ou desativar widgets da área de trabalho completamente.",
+        "label": "Ativar widgets da área de trabalho"
+      },
+      "general": {
+        "section": {
+          "description": "Configure widgets que aparecem na sua área de trabalho.",
+          "label": "Widgets para desktop"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Mostrar um widget de reprodutor de mídia na área de trabalho.",
+          "label": "Ativar widget do reprodutor de mídia"
+        },
+        "section": {
+          "description": "Configurar a aparência do widget do reprodutor de mídia.",
+          "label": "Widget do Reprodutor de Mídia"
+        },
+        "show-background": {
+          "description": "Mostrar o contêiner de fundo para o widget do reprodutor de mídia.",
+          "label": "Mostrar plano de fundo"
+        },
+        "visualizer-type": {
+          "description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
+          "label": "Tipo de visualização"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "Selecione qual monitor configurar widgets para.",
+          "label": "Monitor"
+        }
+      },
+      "title": "Widgets da Área de Trabalho",
+      "weather": {
+        "enabled": {
+          "description": "Mostrar um widget de clima na área de trabalho.",
+          "label": "Ativar widget de clima"
+        },
+        "section": {
+          "description": "Configure a aparência do widget de clima.",
+          "label": "Widget do Clima"
+        },
+        "show-background": {
+          "description": "Mostrar o contêiner de fundo para o widget de clima.",
+          "label": "Mostrar plano de fundo"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "Adicionar e configurar widgets da área de trabalho",
+          "label": "Widgets da Área de Trabalho"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "Brilho",

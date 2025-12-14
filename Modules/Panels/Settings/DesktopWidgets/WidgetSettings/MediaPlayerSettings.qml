@@ -55,4 +55,3 @@ ColumnLayout {
     onSelected: key => valueVisualizerType = key
   }
 }
-

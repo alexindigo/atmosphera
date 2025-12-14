@@ -16,8 +16,9 @@ Singleton {
   *   - A control center is open
   *   - Desktop media player has a visualizer enabled
   */
-  readonly property bool hasDesktopMediaVisualizer: (function() {
-    if (!Settings.data.desktopWidgets.widgets) return false;
+  readonly property bool hasDesktopMediaVisualizer: (function () {
+    if (!Settings.data.desktopWidgets.widgets)
+      return false;
     for (var i = 0; i < Settings.data.desktopWidgets.widgets.length; i++) {
       var widget = Settings.data.desktopWidgets.widgets[i];
       if (widget.id === "MediaPlayer" && widget.visualizerType && widget.visualizerType !== "" && widget.visualizerType !== "none") {

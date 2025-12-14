@@ -91,14 +91,18 @@ Popup {
         }
 
         function findFirstFocusable(item) {
-          if (!item) return null;
-          if (item.focus !== undefined && item.focus === true) return item;
+          if (!item)
+            return null;
+          if (item.focus !== undefined && item.focus === true)
+            return item;
           if (item.children) {
             for (var i = 0; i < item.children.length; i++) {
               var child = item.children[i];
-              if (child && child.focus !== undefined && child.focus === true) return child;
+              if (child && child.focus !== undefined && child.focus === true)
+                return child;
               var found = findFirstFocusable(child);
-              if (found) return found;
+              if (found)
+                return found;
             }
           }
           return null;
@@ -151,4 +155,3 @@ Popup {
     }
   }
 }
-

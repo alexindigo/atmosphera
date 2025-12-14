@@ -1318,6 +1318,101 @@
       },
       "title": "控制中心"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "在桌面上显示一个时钟小部件。",
+          "label": "启用时钟小部件"
+        },
+        "height": {
+          "description": "时钟小部件的高度，以像素为单位。",
+          "label": "高度"
+        },
+        "section": {
+          "description": "配置时钟小部件外观。",
+          "label": "时钟小部件"
+        },
+        "show-background": {
+          "description": "显示时钟小部件的背景容器。",
+          "label": "显示背景"
+        },
+        "show-date": {
+          "description": "在时间下方显示当前日期。",
+          "label": "显示日期"
+        },
+        "show-seconds": {
+          "description": "在时间中显示秒。",
+          "label": "显示秒数"
+        },
+        "width": {
+          "description": "时钟小部件的宽度，以像素为单位。",
+          "label": "宽度"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "进入编辑模式"
+        },
+        "description": "启用编辑模式以移动和重新定位桌面小组件。启用后，小组件会显示拖动轮廓，并且可以重新定位。",
+        "exit-button": "退出编辑模式",
+        "label": "编辑模式"
+      },
+      "enabled": {
+        "description": "完全启用或禁用桌面小部件。",
+        "label": "启用桌面小部件"
+      },
+      "general": {
+        "section": {
+          "description": "配置显示在您桌面上的小部件。",
+          "label": "桌面小部件"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "在桌面上显示媒体播放器小部件。",
+          "label": "启用媒体播放器小部件"
+        },
+        "section": {
+          "description": "配置媒体播放器小部件外观。",
+          "label": "媒体播放器小部件"
+        },
+        "show-background": {
+          "description": "显示媒体播放器小部件的背景容器。",
+          "label": "显示背景"
+        },
+        "visualizer-type": {
+          "description": "选择桌面媒体播放器的背景可视化类型。",
+          "label": "可视化类型"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "选择要配置小部件的显示器",
+          "label": "监视器"
+        }
+      },
+      "title": "桌面小部件",
+      "weather": {
+        "enabled": {
+          "description": "在桌面上显示天气小部件。",
+          "label": "启用天气小部件"
+        },
+        "section": {
+          "description": "配置天气小部件外观。",
+          "label": "天气小部件"
+        },
+        "show-background": {
+          "description": "显示天气小部件的背景容器。",
+          "label": "显示背景"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "添加和配置桌面小部件",
+          "label": "桌面小部件"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "亮度",

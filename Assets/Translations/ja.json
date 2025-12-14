@@ -1318,6 +1318,101 @@
       },
       "title": "コントロールセンター"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "デスクトップに時計ウィジェットを表示する。",
+          "label": "時計ウィジェットを有効にする"
+        },
+        "height": {
+          "description": "時計ウィジェットの高さ（ピクセル単位）。",
+          "label": "高さ"
+        },
+        "section": {
+          "description": "時計ウィジェットの外観を設定します。",
+          "label": "時計ウィジェット"
+        },
+        "show-background": {
+          "description": "時計ウィジェットの背景コンテナを表示する。",
+          "label": "背景を表示"
+        },
+        "show-date": {
+          "description": "現在時刻の下に今日の日付を表示しなさい。",
+          "label": "日付を表示"
+        },
+        "show-seconds": {
+          "description": "時刻に秒を表示します。",
+          "label": "秒を表示"
+        },
+        "width": {
+          "description": "クロックウィジェットの幅（ピクセル単位）。",
+          "label": "幅"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "編集モードに入る"
+        },
+        "description": "デスクトップウィジェットを移動および再配置するには、編集モードを有効にしてください。有効にすると、ウィジェットにドラッグアウトラインが表示され、再配置できます。",
+        "exit-button": "編集モードを終了します。",
+        "label": "編集モード"
+      },
+      "enabled": {
+        "description": "デスクトップウィジェットを完全に有効または無効にします。",
+        "label": "デスクトップウィジェットを有効にする"
+      },
+      "general": {
+        "section": {
+          "description": "デスクトップに表示されるウィジェットを設定します。",
+          "label": "デスクトップウィジェット"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "デスクトップにメディアプレーヤーウィジェットを表示する。",
+          "label": "メディアプレーヤーウィジェットを有効にする"
+        },
+        "section": {
+          "description": "メディアプレーヤーウィジェットの外観を設定します。",
+          "label": "メディアプレーヤーウィジェット"
+        },
+        "show-background": {
+          "description": "メディアプレーヤーウィジェットの背景コンテナを表示する。",
+          "label": "背景を表示"
+        },
+        "visualizer-type": {
+          "description": "デスクトップメディアプレーヤーの背景の視覚化タイプを選択してください。",
+          "label": "視覚化の種類"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "ウィジェットを設定するモニターを選択してください。",
+          "label": "モニター"
+        }
+      },
+      "title": "デスクトップウィジェット",
+      "weather": {
+        "enabled": {
+          "description": "デスクトップに天気ウィジェットを表示する。",
+          "label": "天気ウィジェットを有効にする"
+        },
+        "section": {
+          "description": "天気ウィジェットの外観を設定します。",
+          "label": "天気ウィジェット"
+        },
+        "show-background": {
+          "description": "天気ウィジェットの背景コンテナを表示する。",
+          "label": "背景を表示"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "デスクトップウィジェットを追加して設定する",
+          "label": "デスクトップウィジェット"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "明るさ",

@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Location
@@ -22,7 +22,8 @@ Item {
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
   readonly property real currentTemp: {
-    if (!weatherReady) return 0;
+    if (!weatherReady)
+      return 0;
     var temp = LocationService.data.weather.current_weather.temperature;
     if (Settings.data.location.useFahrenheit) {
       temp = LocationService.celsiusToFahrenheit(temp);
@@ -30,7 +31,8 @@ Item {
     return Math.round(temp);
   }
   readonly property real todayMax: {
-    if (!weatherReady || !LocationService.data.weather.daily || LocationService.data.weather.daily.temperature_2m_max.length === 0) return 0;
+    if (!weatherReady || !LocationService.data.weather.daily || LocationService.data.weather.daily.temperature_2m_max.length === 0)
+      return 0;
     var temp = LocationService.data.weather.daily.temperature_2m_max[0];
     if (Settings.data.location.useFahrenheit) {
       temp = LocationService.celsiusToFahrenheit(temp);
@@ -38,7 +40,8 @@ Item {
     return Math.round(temp);
   }
   readonly property real todayMin: {
-    if (!weatherReady || !LocationService.data.weather.daily || LocationService.data.weather.daily.temperature_2m_min.length === 0) return 0;
+    if (!weatherReady || !LocationService.data.weather.daily || LocationService.data.weather.daily.temperature_2m_min.length === 0)
+      return 0;
     var temp = LocationService.data.weather.daily.temperature_2m_min[0];
     if (Settings.data.location.useFahrenheit) {
       temp = LocationService.celsiusToFahrenheit(temp);
@@ -58,7 +61,7 @@ Item {
 
   x: isDragging ? dragOffsetX : baseX
   y: isDragging ? dragOffsetY : baseY
-  
+
   // Update base position from widgetData when not dragging
   onWidgetDataChanged: {
     if (!isDragging) {
@@ -111,58 +114,68 @@ Item {
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton
     propagateComposedEvents: true
-    
+
     property point pressPos: Qt.point(0, 0)
     property bool isDraggingWidget: false
 
     onPressed: mouse => {
-      pressPos = Qt.point(mouse.x, mouse.y);
-      dragOffsetX = root.x;
-      dragOffsetY = root.y;
-      isDragging = true;
-      isDraggingWidget = true;
-      // Update base position to current position when starting drag
-      baseX = root.x;
-      baseY = root.y;
-    }
+                 pressPos = Qt.point(mouse.x, mouse.y);
+                 dragOffsetX = root.x;
+                 dragOffsetY = root.y;
+                 isDragging = true;
+                 isDraggingWidget = true;
+                 // Update base position to current position when starting drag
+                 baseX = root.x;
+                 baseY = root.y;
+               }
 
     onPositionChanged: mouse => {
-      if (isDragging && isDraggingWidget && pressed) {
-        var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
-        var newX = globalPos.x - pressPos.x;
-        var newY = globalPos.y - pressPos.y;
-        
-        if (root.parent && root.width > 0 && root.height > 0) {
-          newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
-          newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
-        }
-        
-        if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
-          return;
-        }
-        
-        dragOffsetX = newX;
-        dragOffsetY = newY;
-      }
-    }
+                         if (isDragging && isDraggingWidget && pressed) {
+                           var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
+                           var newX = globalPos.x - pressPos.x;
+                           var newY = globalPos.y - pressPos.y;
+
+                           if (root.parent && root.width > 0 && root.height > 0) {
+                             newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
+                             newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
+                           }
+
+                           if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
+                             return;
+                           }
+
+                           dragOffsetX = newX;
+                           dragOffsetY = newY;
+                         }
+                       }
 
     onReleased: mouse => {
-      if (isDragging && widgetIndex >= 0) {
-        var widgets = Settings.data.desktopWidgets.widgets.slice();
-        if (widgetIndex < widgets.length) {
-          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
-            "x": dragOffsetX,
-            "y": dragOffsetY
-          });
-          Settings.data.desktopWidgets.widgets = widgets;
-        }
-        // Update base position to final position
-        baseX = dragOffsetX;
-        baseY = dragOffsetY;
-        isDragging = false;
-        isDraggingWidget = false;
-      }
-    }
+                  if (isDragging && widgetIndex >= 0 && screen && screen.name) {
+                    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+                    var newMonitorWidgets = monitorWidgets.slice();
+                    for (var i = 0; i < newMonitorWidgets.length; i++) {
+                      if (newMonitorWidgets[i].name === screen.name) {
+                        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+                        if (widgetIndex < widgets.length) {
+                          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
+                                                                 "x": dragOffsetX,
+                                                                 "y": dragOffsetY
+                                                               });
+                          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                                 "widgets": widgets
+                                                               });
+                          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+                        }
+                        break;
+                      }
+                    }
+                    // Update base position to final position
+                    baseX = dragOffsetX;
+                    baseY = dragOffsetY;
+                    isDragging = false;
+                    isDraggingWidget = false;
+                  }
+                }
 
     onCanceled: {
       isDragging = false;
@@ -226,14 +239,14 @@ Item {
           font.weight: Style.fontWeightMedium
           color: Color.mOnSurface
         }
-        
+
         NText {
           text: "•"
           pointSize: Style.fontSizeXXS
           color: Color.mOnSurfaceVariant
           opacity: 0.5
         }
-        
+
         NText {
           text: "L:"
           pointSize: Style.fontSizeXS
@@ -249,4 +262,3 @@ Item {
     }
   }
 }
-

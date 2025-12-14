@@ -1318,6 +1318,101 @@
       },
       "title": "Kontrol Merkezi"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "Masaüstünde bir saat aracı göster.",
+          "label": "Saat widget'ını etkinleştir"
+        },
+        "height": {
+          "description": "Saat aracı yüksekliği piksel cinsinden.",
+          "label": "Yükseklik"
+        },
+        "section": {
+          "description": "Saat aracı görünümünü yapılandırın.",
+          "label": "Saat Widget'ı"
+        },
+        "show-background": {
+          "description": "Saat widget'ı için arka plan kabını göster.",
+          "label": "Arka planı göster"
+        },
+        "show-date": {
+          "description": "Saati gösterdikten sonra, mevcut tarihi de göster.",
+          "label": "Tarihi göster"
+        },
+        "show-seconds": {
+          "description": "Saniyeleri saatte göster.",
+          "label": "Saniyeleri göster"
+        },
+        "width": {
+          "description": "Saat widget'ının piksel cinsinden genişliği.",
+          "label": "Genişlik"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Düzenleme moduna gir"
+        },
+        "description": "Masaüstü araçlarını taşımak ve yeniden konumlandırmak için düzenleme modunu etkinleştirin. Etkinleştirildiğinde, araçlar bir sürükleme ana hattı gösterir ve yeniden konumlandırılabilir.",
+        "exit-button": "Düzenleme modundan çık",
+        "label": "Düzenleme modu"
+      },
+      "enabled": {
+        "description": "Masaüstü araçlarını tamamen etkinleştir veya devre dışı bırak.",
+        "label": "Masaüstü araçlarını etkinleştir"
+      },
+      "general": {
+        "section": {
+          "description": "Masaüstünüzde görünen araçları yapılandırın.",
+          "label": "Masaüstü Araçları"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Masaüstünde bir medya oynatıcı aracı göster.",
+          "label": "Medya oynatıcı widget'ını etkinleştir."
+        },
+        "section": {
+          "description": "Medya oynatıcı araç görünümünü yapılandırın.",
+          "label": "Medya Oynatıcı Aracı"
+        },
+        "show-background": {
+          "description": "Medya oynatıcı widget'ı için arka plan konteynerini göster.",
+          "label": "Arka planı göster"
+        },
+        "visualizer-type": {
+          "description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
+          "label": "Görselleştirme türü"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "Hangi monitör için widget'ları yapılandıracağınızı seçin",
+          "label": "Monitör"
+        }
+      },
+      "title": "Masaüstü Araçları",
+      "weather": {
+        "enabled": {
+          "description": "Masaüstünde bir hava durumu aracı göster.",
+          "label": "Hava durumu araç kutusunu etkinleştir"
+        },
+        "section": {
+          "description": "Hava durumu widget'ının görünümünü yapılandırın.",
+          "label": "Hava Durumu Aracı"
+        },
+        "show-background": {
+          "description": "Hava durumu widget'ı için arka plan konteynerini göster.",
+          "label": "Arka planı göster"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "Masaüstü araçlarını ekle ve yapılandır",
+          "label": "Masaüstü Araçları"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "Parlaklık",

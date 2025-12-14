@@ -1318,6 +1318,101 @@
       },
       "title": "Centre de contrôle"
     },
+    "desktop-widgets": {
+      "clock": {
+        "enabled": {
+          "description": "Afficher un widget d'horloge sur le bureau.",
+          "label": "Activer le widget horloge"
+        },
+        "height": {
+          "description": "Hauteur du widget horloge en pixels.",
+          "label": "Taille"
+        },
+        "section": {
+          "description": "Configurer l'apparence du widget horloge.",
+          "label": "Widget d'horloge"
+        },
+        "show-background": {
+          "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
+          "label": "Afficher l'arrière-plan"
+        },
+        "show-date": {
+          "description": "Afficher la date actuelle sous l'heure.",
+          "label": "Afficher la date"
+        },
+        "show-seconds": {
+          "description": "Afficher les secondes dans l'heure.",
+          "label": "Afficher les secondes"
+        },
+        "width": {
+          "description": "Largeur du widget horloge en pixels.",
+          "label": "Largeur"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Entrer en mode édition"
+        },
+        "description": "Activer le mode édition pour déplacer et repositionner les widgets du bureau. Une fois activé, les widgets affichent un contour de glissement et peuvent être repositionnés.",
+        "exit-button": "Quitter le mode édition",
+        "label": "Mode édition"
+      },
+      "enabled": {
+        "description": "Activer ou désactiver complètement les widgets du bureau.",
+        "label": "Activer les widgets de bureau"
+      },
+      "general": {
+        "section": {
+          "description": "Configurer les widgets qui apparaissent sur votre bureau.",
+          "label": "Widgets de bureau"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Afficher un widget de lecteur multimédia sur le bureau.",
+          "label": "Activer le widget lecteur multimédia"
+        },
+        "section": {
+          "description": "Configurer l'apparence du widget lecteur multimédia.",
+          "label": "Widget lecteur multimédia"
+        },
+        "show-background": {
+          "description": "Afficher le conteneur d'arrière-plan pour le widget lecteur multimédia.",
+          "label": "Afficher l'arrière-plan"
+        },
+        "visualizer-type": {
+          "description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
+          "label": "Type de visualisation"
+        }
+      },
+      "monitor": {
+        "section": {
+          "description": "Sélectionnez le moniteur pour lequel configurer les widgets.",
+          "label": "Moniteur"
+        }
+      },
+      "title": "Widgets de bureau",
+      "weather": {
+        "enabled": {
+          "description": "Afficher un widget météo sur le bureau.",
+          "label": "Activer le widget météo"
+        },
+        "section": {
+          "description": "Configurer l'apparence du widget météo.",
+          "label": "Widget Météo"
+        },
+        "show-background": {
+          "description": "Afficher le conteneur d'arrière-plan pour le widget météo.",
+          "label": "Afficher l'arrière-plan"
+        }
+      },
+      "widgets": {
+        "section": {
+          "description": "Ajouter et configurer des widgets de bureau.",
+          "label": "Widgets de bureau"
+        }
+      }
+    },
     "display": {
       "monitors": {
         "brightness": "Luminosité",

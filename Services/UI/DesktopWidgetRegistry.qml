@@ -30,7 +30,7 @@ Singleton {
     widgetsObj["MediaPlayer"] = mediaPlayerComponent;
     widgetsObj["Weather"] = weatherComponent;
     widgets = widgetsObj;
-    
+
     Logger.i("DesktopWidgetRegistry", "Service started");
     Logger.d("DesktopWidgetRegistry", "Available widgets:", Object.keys(widgets));
     Logger.d("DesktopWidgetRegistry", "Clock component:", clockComponent ? "exists" : "null");
@@ -98,4 +98,3 @@ Singleton {
     return [];
   }
 }
-

@@ -1,6 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Media
@@ -35,7 +35,7 @@ Item {
 
   x: isDragging ? dragOffsetX : baseX
   y: isDragging ? dragOffsetY : baseY
-  
+
   // Update base position from widgetData when not dragging
   onWidgetDataChanged: {
     if (!isDragging) {
@@ -168,72 +168,81 @@ Item {
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton
     propagateComposedEvents: true
-    
+
     property point pressPos: Qt.point(0, 0)
     property bool isDraggingWidget: false
 
     onPressed: mouse => {
-      // Don't start drag if clicking on control buttons
-      var clickX = mouse.x;
-      var clickY = mouse.y;
-      
-      var buttonArea = controlsRow.mapToItem(root, 0, 0);
-      var buttonWidth = controlsRow.width;
-      var buttonHeight = controlsRow.height;
-      
-      if (clickX >= buttonArea.x && clickX <= buttonArea.x + buttonWidth &&
-          clickY >= buttonArea.y && clickY <= buttonArea.y + buttonHeight) {
-        mouse.accepted = false;
-        return;
-      }
-      
-      pressPos = Qt.point(mouse.x, mouse.y);
-      dragOffsetX = root.x;
-      dragOffsetY = root.y;
-      isDragging = true;
-      isDraggingWidget = true;
-      // Update base position to current position when starting drag
-      baseX = root.x;
-      baseY = root.y;
-    }
+                 // Don't start drag if clicking on control buttons
+                 var clickX = mouse.x;
+                 var clickY = mouse.y;
+
+                 var buttonArea = controlsRow.mapToItem(root, 0, 0);
+                 var buttonWidth = controlsRow.width;
+                 var buttonHeight = controlsRow.height;
+
+                 if (clickX >= buttonArea.x && clickX <= buttonArea.x + buttonWidth && clickY >= buttonArea.y && clickY <= buttonArea.y + buttonHeight) {
+                   mouse.accepted = false;
+                   return;
+                 }
+
+                 pressPos = Qt.point(mouse.x, mouse.y);
+                 dragOffsetX = root.x;
+                 dragOffsetY = root.y;
+                 isDragging = true;
+                 isDraggingWidget = true;
+                 // Update base position to current position when starting drag
+                 baseX = root.x;
+                 baseY = root.y;
+               }
 
     onPositionChanged: mouse => {
-      if (isDragging && isDraggingWidget && pressed) {
-        var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
-        var newX = globalPos.x - pressPos.x;
-        var newY = globalPos.y - pressPos.y;
-        
-        if (root.parent && root.width > 0 && root.height > 0) {
-          newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
-          newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
-        }
-        
-        if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
-          return;
-        }
-        
-        dragOffsetX = newX;
-        dragOffsetY = newY;
-      }
-    }
+                         if (isDragging && isDraggingWidget && pressed) {
+                           var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
+                           var newX = globalPos.x - pressPos.x;
+                           var newY = globalPos.y - pressPos.y;
+
+                           if (root.parent && root.width > 0 && root.height > 0) {
+                             newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
+                             newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
+                           }
+
+                           if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
+                             return;
+                           }
+
+                           dragOffsetX = newX;
+                           dragOffsetY = newY;
+                         }
+                       }
 
     onReleased: mouse => {
-      if (isDragging && widgetIndex >= 0) {
-        var widgets = Settings.data.desktopWidgets.widgets.slice();
-        if (widgetIndex < widgets.length) {
-          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
-            "x": dragOffsetX,
-            "y": dragOffsetY
-          });
-          Settings.data.desktopWidgets.widgets = widgets;
-        }
-        // Update base position to final position
-        baseX = dragOffsetX;
-        baseY = dragOffsetY;
-        isDragging = false;
-        isDraggingWidget = false;
-      }
-    }
+                  if (isDragging && widgetIndex >= 0 && screen && screen.name) {
+                    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+                    var newMonitorWidgets = monitorWidgets.slice();
+                    for (var i = 0; i < newMonitorWidgets.length; i++) {
+                      if (newMonitorWidgets[i].name === screen.name) {
+                        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+                        if (widgetIndex < widgets.length) {
+                          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
+                                                                 "x": dragOffsetX,
+                                                                 "y": dragOffsetY
+                                                               });
+                          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                                 "widgets": widgets
+                                                               });
+                          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+                        }
+                        break;
+                      }
+                    }
+                    // Update base position to final position
+                    baseX = dragOffsetX;
+                    baseY = dragOffsetY;
+                    isDragging = false;
+                    isDraggingWidget = false;
+                  }
+                }
 
     onCanceled: {
       isDragging = false;
@@ -311,7 +320,8 @@ Item {
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant
         onClicked: {
-          if (enabled) MediaService.previous();
+          if (enabled)
+            MediaService.previous();
         }
       }
 
@@ -338,10 +348,10 @@ Item {
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant
         onClicked: {
-          if (enabled) MediaService.next();
+          if (enabled)
+            MediaService.next();
         }
       }
     }
   }
 }
-
