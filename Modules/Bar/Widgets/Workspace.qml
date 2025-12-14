@@ -171,8 +171,14 @@ Item {
       refreshWorkspaces();
     }
     function onWindowListChanged() {
-      if (showApplications || showLabelsOnlyWhenOccupied)
+      if (showApplications || showLabelsOnlyWhenOccupied) {
         refreshWorkspaces();
+      }
+    }
+    function onActiveWindowChanged() {
+      if (showApplications || showLabelsOnlyWhenOccupied) {
+        refreshWorkspaces();
+      }
     }
   }
 

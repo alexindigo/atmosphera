@@ -168,9 +168,8 @@ Singleton {
                                      });
 
     backend.activeWindowChanged.connect(() => {
-                                          // Sync active window when it changes
-                                          // TODO: Avoid re-syncing all windows
-                                          syncWindows();
+                                          // Only sync focus state, not entire window list
+                                          syncFocusedWindow();
                                           // Forward the signal
                                           activeWindowChanged();
                                         });
@@ -209,8 +208,23 @@ Singleton {
     for (var i = 0; i < ws.length; i++) {
       windows.append(ws[i]);
     }
-    // Emit signal to notify listeners that workspace list has been updated
+    // Emit signal to notify listeners that window list has been updated
     windowListChanged();
+  }
+
+  // Sync only the focused window state, not the entire window list
+  function syncFocusedWindow() {
+    const newIndex = backend.focusedWindowIndex;
+
+    // Update isFocused flags by syncing from backend
+    for (var i = 0; i < windows.count && i < backend.windows.length; i++) {
+      const backendFocused = backend.windows[i].isFocused;
+      if (windows.get(i).isFocused !== backendFocused) {
+        windows.setProperty(i, "isFocused", backendFocused);
+      }
+    }
+
+    focusedWindowIndex = newIndex;
   }
 
   // Update display scales from backend

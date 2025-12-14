@@ -381,6 +381,9 @@ Rectangle {
 
   Connections {
     target: CompositorService
+    function onActiveWindowChanged() {
+      updateCombinedModel();
+    }
     function onWindowListChanged() {
       updateCombinedModel();
     }
