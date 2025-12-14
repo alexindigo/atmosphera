@@ -215,7 +215,8 @@ Singleton {
                                     "blacklist": [],
                                     "colorizeIcons": false,
                                     "pinned": [],
-                                    "drawerEnabled": true
+                                    "drawerEnabled": true,
+                                    "hidePassive": false
                                   },
                                   "VPN": {
                                     "allowUserSettings": true,
