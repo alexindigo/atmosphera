@@ -1016,7 +1016,7 @@
           "label": "Show capsule"
         },
         "transparent": {
-          "description": "This will prevent panels to attach to the bar.",
+          "description": "This will prevent the panels from attaching to the bar.",
           "label": "Transparent background"
         }
       },
