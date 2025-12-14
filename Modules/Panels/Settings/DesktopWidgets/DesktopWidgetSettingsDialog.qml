@@ -15,7 +15,7 @@ Popup {
   property string widgetId: ""
   property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
 
-  signal updateWidgetSettings(int index, var settings)
+  signal updateWidgetSettings(string section, int index, var settings)
 
   width: Math.max(content.implicitWidth + padding * 2, 500)
   height: content.implicitHeight + padding * 2
@@ -126,7 +126,7 @@ Popup {
           onClicked: {
             if (settingsLoader.item && settingsLoader.item.saveSettings) {
               var newSettings = settingsLoader.item.saveSettings();
-              root.updateWidgetSettings(root.widgetIndex, newSettings);
+              root.updateWidgetSettings(root.sectionId, root.widgetIndex, newSettings);
               root.close();
             }
           }
