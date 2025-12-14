@@ -17,12 +17,18 @@ Singleton {
   *   - Desktop media player has a visualizer enabled
   */
   readonly property bool hasDesktopMediaVisualizer: (function () {
-    if (!Settings.data.desktopWidgets.widgets)
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets;
+    if (!monitorWidgets)
       return false;
-    for (var i = 0; i < Settings.data.desktopWidgets.widgets.length; i++) {
-      var widget = Settings.data.desktopWidgets.widgets[i];
-      if (widget.id === "MediaPlayer" && widget.visualizerType && widget.visualizerType !== "" && widget.visualizerType !== "none") {
-        return true;
+    for (var i = 0; i < monitorWidgets.length; i++) {
+      var widgets = monitorWidgets[i].widgets;
+      if (!widgets)
+        continue;
+      for (var j = 0; j < widgets.length; j++) {
+        var widget = widgets[j];
+        if (widget.id === "MediaPlayer" && widget.visualizerType && widget.visualizerType !== "" && widget.visualizerType !== "none") {
+          return true;
+        }
       }
     }
     return false;
