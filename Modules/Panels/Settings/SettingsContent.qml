@@ -332,7 +332,7 @@ Item {
       Rectangle {
         id: sidebar
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : (sidebarToggle.width + (sidebarList.verticalScrollBarActive ? sidebarList.scrollBarTotalWidth : 0))
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         color: Color.transparent
@@ -416,7 +416,7 @@ Item {
 
               delegate: Rectangle {
                 id: tabItem
-                width: sidebarList.verticalScrollBarActive ? sidebarList.width - sidebarList.scrollBarWidth - Style.marginXS : sidebarList.width
+                width: sidebarList.verticalScrollBarActive ? sidebarList.width - Style.marginXS : sidebarList.width
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
                 radius: Style.radiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
