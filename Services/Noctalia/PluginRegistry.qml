@@ -18,6 +18,7 @@ Singleton {
   property var installedPlugins: ({}) // { pluginId: manifest }
   property var pluginStates: ({}) // { pluginId: { enabled: bool } }
   property var pluginSources: [] // Array of { name, url }
+  property var pluginLoadVersions: ({}) // { pluginId: versionNumber } - for cache busting
 
   // Track async loading
   property int pendingManifests: 0
@@ -303,6 +304,15 @@ Singleton {
     save();
     root.pluginsChanged();
     Logger.i("PluginRegistry", "Unregistered plugin:", pluginId);
+  }
+
+  // Increment plugin load version (for cache busting when plugin is updated)
+  function incrementPluginLoadVersion(pluginId) {
+    var versions = Object.assign({}, root.pluginLoadVersions);
+    versions[pluginId] = (versions[pluginId] || 0) + 1;
+    root.pluginLoadVersions = versions;
+    Logger.d("PluginRegistry", "Incremented load version for", pluginId, "to", versions[pluginId]);
+    return versions[pluginId];
   }
 
   // Remove plugin state (call after deleting plugin folder)

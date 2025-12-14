@@ -136,8 +136,9 @@ SmartPanel {
 
     Logger.i("PluginPanelSlot", "Loading panel for plugin:", pluginId, "in slot", root.slotNumber);
 
-    // Load the panel component
-    var component = Qt.createComponent("file://" + panelPath);
+    // Load the panel component with cache-busting version parameter
+    var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+    var component = Qt.createComponent("file://" + panelPath + "?v=" + loadVersion);
 
     if (component.status === Component.Ready) {
       // Get plugin API
