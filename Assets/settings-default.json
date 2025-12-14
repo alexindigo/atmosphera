@@ -65,7 +65,7 @@
   },
   "general": {
     "avatarImage": "",
-    "dimmerOpacity": 0.6,
+    "dimmerOpacity": 0.2,
     "showScreenCorners": false,
     "forceBlackScreenCorners": false,
     "scaleRatio": 1,
