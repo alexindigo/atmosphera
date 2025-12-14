@@ -64,7 +64,7 @@ Singleton {
     cpuTempNameReader.checkNext();
 
     // Kickoff the gpu sensor detection for temperature
-    gpuTempNameReader.checkNext();
+    //gpuTempNameReader.checkNext();
   }
 
   // --------------------------------------------
