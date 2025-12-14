@@ -1165,6 +1165,10 @@
             "description": "Записать {filepath} и перезагрузить",
             "description-missing": "Требуется установка {app}"
           },
+          "zed": {
+            "description": "Записать {filepath} и перезагрузить",
+            "description-missing": "Требуется установка {app}"
+          },
           "label": "Программы",
           "pywalfox": {
             "description": "Записать {filepath} и запустить pywalfox update",

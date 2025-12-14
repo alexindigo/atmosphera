@@ -1165,6 +1165,10 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert die Installation von {app}"
           },
+          "zed": {
+            "description": "Schreibt {filepath} und lädt neu",
+            "description-missing": "Erfordert die Installation von {app}"
+          },
           "label": "Programme",
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
