@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Adjust the background opacity of the bar.",
-          "label": "Background opacity"
-        },
         "capsule-opacity": {
           "description": "Set the opacity level for widget backgrounds when capsule is shown.",
           "label": "Capsule opacity"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Show widget backgrounds.",
           "label": "Show capsule"
+        },
+        "transparent": {
+          "description": "This will prevent panels to attach to the bar.",
+          "label": "Transparent background"
         }
       },
       "monitors": {
@@ -1188,6 +1188,10 @@
           },
           "yazi": {
             "description": "Write {filepath}. Flavor needs to be activated manually.",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "zed": {
+            "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           }
         },
@@ -1633,10 +1637,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Adjust the background opacity of the launcher.",
-          "label": "Background opacity"
-        },
         "clip-preview": {
           "description": "Show a preview of the clipboard content when using the >clip command.",
           "label": "Enable clip preview"
@@ -2172,6 +2172,10 @@
       "disk-section": {
         "label": "Disk usage"
       },
+      "enable-nvidia-gpu": {
+        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics.",
+        "label": "Enable NVIDIA GPU monitoring"
+      },
       "general": {
         "section": {
           "description": "Configure the system monitor behavior and appearance.",
@@ -2247,7 +2251,7 @@
         "reset": "Reset dimmed desktop opacity"
       },
       "panel-background-opacity": {
-        "description": "Set the background opacity for all panels (launcher, control center, settings, etc.).",
+        "description": "Set the background opacity for all panels (bar, launcher, settings, etc...).",
         "label": "Panel background opacity"
       },
       "panels-attached-to-bar": {

@@ -430,27 +430,6 @@ ColumnLayout {
         Layout.bottomMargin: Style.marginS
       }
 
-      // Bar Background Opacity
-      ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginM
-        NLabel {
-          label: I18n.tr("settings.bar.appearance.background-opacity.label")
-          description: I18n.tr("settings.bar.appearance.background-opacity.description")
-        }
-        NValueSlider {
-          Layout.fillWidth: true
-          from: 0
-          to: 1
-          stepSize: 0.01
-          value: Settings.data.bar.backgroundOpacity
-          onMoved: function (value) {
-            Settings.data.bar.backgroundOpacity = value;
-          }
-          text: Math.floor(Settings.data.bar.backgroundOpacity * 100) + "%"
-        }
-      }
-
       // Divider
       Rectangle {
         Layout.fillWidth: true

@@ -19,9 +19,6 @@ Item {
       return false;
     return listView.contentHeight > listView.height;
   }
-  readonly property real scrollBarWidth: verticalScrollBarActive ? handleWidth : 0
-  readonly property real scrollBarSpacing: verticalScrollBarActive ? 4 : 0
-  readonly property real scrollBarTotalWidth: verticalScrollBarActive ? (handleWidth + 4) : 0
 
   // Forward ListView properties
   property alias model: listView.model
@@ -115,13 +112,12 @@ Item {
     id: listView
     anchors.fill: parent
 
-    anchors.rightMargin: root.verticalScrollBarActive ? root.handleWidth + 4 : 0
     clip: true
     boundsBehavior: Flickable.StopAtBounds
 
     ScrollBar.vertical: ScrollBar {
-      parent: root // Position relative to root Item, not listView
-      x: listView.mirrored ? 0 : root.width - width
+      parent: listView
+      x: listView.mirrored ? 0 : listView.width - width
       y: 0
       height: listView.height
       policy: root.verticalPolicy

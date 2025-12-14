@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Ajustez l'opacité de l'arrière-plan de la barre.",
-          "label": "Opacité de l'arrière-plan"
-        },
         "capsule-opacity": {
           "description": "Définir le niveau d'opacité des arrière-plans des widgets quand la capsule est affichée.",
           "label": "Opacité de la capsule"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Afficher les arrière-plans des widgets.",
           "label": "Afficher la capsule"
+        },
+        "transparent": {
+          "description": "Cela empêchera les panneaux de se fixer à la barre.",
+          "label": "Fond transparent"
         }
       },
       "monitors": {
@@ -1188,6 +1188,10 @@
           },
           "yazi": {
             "description": "Écrire dans {filepath}. La saveur doit être activée manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
+          "zed": {
+            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           }
         },
@@ -1544,10 +1548,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Ajustez l'opacité de l'arrière-plan du lanceur.",
-          "label": "Opacité de l'arrière-plan"
-        },
         "clip-preview": {
           "description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
           "label": "Activer l'aperçu du presse-papiers"
@@ -2083,6 +2083,10 @@
       "disk-section": {
         "label": "Utilisation disque"
       },
+      "enable-nvidia-gpu": {
+        "description": "Attention : Ceci va activer votre GPU NVIDIA, ce qui peut avoir un impact significatif sur l'autonomie de la batterie des ordinateurs portables dotés de cartes graphiques hybrides.",
+        "label": "Activer la surveillance du GPU NVIDIA"
+      },
       "general": {
         "section": {
           "description": "Configurer le comportement et l'apparence du Moniteur Système.",
@@ -2158,7 +2162,7 @@
         "reset": "Réinitialiser l'opacité du bureau atténué"
       },
       "panel-background-opacity": {
-        "description": "Définir l'opacité de fond pour tous les panneaux (Lanceur, Centre de contrôle, Paramètres, etc.).",
+        "description": "Définir l'opacité de l'arrière-plan pour tous les panneaux (barre, lanceur, paramètres, etc.).",
         "label": "Opacité de fond des panneaux"
       },
       "panels-attached-to-bar": {

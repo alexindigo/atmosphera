@@ -50,7 +50,8 @@ Singleton {
 
   // GPU temperature detection
   // On dual-GPU systems, we prioritize discrete GPUs over integrated GPUs
-  // Priority: NVIDIA > AMD dGPU > Intel Arc > AMD iGPU
+  // Priority: NVIDIA (opt-in) > AMD dGPU > Intel Arc > AMD iGPU
+  // Note: NVIDIA requires opt-in because nvidia-smi wakes the dGPU on laptops, draining battery
   readonly property var supportedTempGpuSensorNames: ["amdgpu", "xe"]
   property string gpuTempHwmonPath: ""
   property var foundGpuSensors: [] // [{hwmonPath, type, hasDedicatedVram}]
@@ -64,6 +65,29 @@ Singleton {
     cpuTempNameReader.checkNext();
 
     // Kickoff the gpu sensor detection for temperature
+    gpuTempNameReader.checkNext();
+  }
+
+  // Re-run GPU detection when NVIDIA opt-in setting changes
+  Connections {
+    target: Settings.data.systemMonitor
+    function onEnableNvidiaGpuChanged() {
+      Logger.i("SystemStat", "NVIDIA opt-in setting changed, re-detecting GPUs");
+      restartGpuDetection();
+    }
+  }
+
+  function restartGpuDetection() {
+    // Reset GPU state
+    root.gpuAvailable = false;
+    root.gpuType = "";
+    root.gpuTempHwmonPath = "";
+    root.gpuTemp = 0;
+    root.foundGpuSensors = [];
+    root.gpuVramCheckIndex = 0;
+
+    // Restart GPU detection
+    gpuTempNameReader.currentIndex = 0;
     gpuTempNameReader.checkNext();
   }
 
@@ -295,9 +319,17 @@ Singleton {
 
     function checkNext() {
       if (currentIndex >= 16) {
-        // Finished scanning all hwmon entries, now check for NVIDIA
-        Logger.d("SystemStat", `Found ${root.foundGpuSensors.length} sysfs GPU sensor(s), checking for nvidia-smi`);
-        nvidiaSmiCheck.running = true;
+        // Finished scanning all hwmon entries
+        // Only check nvidia-smi if user has explicitly enabled NVIDIA monitoring (opt-in)
+        // because nvidia-smi wakes up the dGPU on laptops, draining battery
+        if (Settings.data.systemMonitor.enableNvidiaGpu) {
+          Logger.d("SystemStat", `Found ${root.foundGpuSensors.length} sysfs GPU sensor(s), checking nvidia-smi (opt-in enabled)`);
+          nvidiaSmiCheck.running = true;
+        } else {
+          Logger.d("SystemStat", `Found ${root.foundGpuSensors.length} sysfs GPU sensor(s), skipping nvidia-smi (opt-in disabled)`);
+          root.gpuVramCheckIndex = 0;
+          checkNextGpuVram();
+        }
         return;
       }
 

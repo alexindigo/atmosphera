@@ -897,6 +897,23 @@ ColumnLayout {
       }
 
       NCheckbox {
+        label: "Zeditor"
+        description: ProgramCheckerService.zedAvailable ? I18n.tr("settings.color-scheme.templates.programs.zed.description", {
+                                                                    "filepath": "~/.config/zed/themes/noctalia.json"
+                                                                  }) : I18n.tr("settings.color-scheme.templates.programs.zed.description-missing", {
+                                                                                 "app": "zed"
+                                                                               })
+        checked: Settings.data.templates.zed
+        enabled: ProgramCheckerService.zedAvailable
+        onToggled: checked => {
+                     if (ProgramCheckerService.zedAvailable) {
+                       Settings.data.templates.zed = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
+
+      NCheckbox {
         label: "Emacs"
         description: ProgramCheckerService.emacsAvailable ? I18n.tr("settings.color-scheme.templates.programs.emacs.description") : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {
                                                                                                                                               "app": "emacs"

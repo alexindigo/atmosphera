@@ -10,7 +10,7 @@
     nixpkgs,
     ...
   }: let
-    eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+    eachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.linux;
     pkgsFor = eachSystem (system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default]);
   in {
     formatter = eachSystem (system: pkgsFor.${system}.alejandra);

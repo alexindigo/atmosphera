@@ -203,6 +203,17 @@ Singleton {
       ]
     },
     {
+      "id": "zed",
+      "name": "Zeditor",
+      "category": "applications",
+      "input": "zed.json",
+      "outputs": [
+        {
+          "path": "~/.config/zed/themes/noctalia.json"
+        }
+      ]
+    },
+    {
       "id": "spicetify",
       "name": "Spicetify",
       "category": "applications",

@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "调整状态栏的背景不透明度。",
-          "label": "背景不透明度"
-        },
         "capsule-opacity": {
           "description": "设置显示胶囊时小部件背景的不透明度。",
           "label": "胶囊不透明度"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "为每个小部件添加背景。",
           "label": "显示组件背景"
+        },
+        "transparent": {
+          "description": "这将阻止面板连接到栏上。",
+          "label": "透明背景"
         }
       },
       "monitors": {
@@ -1189,6 +1189,10 @@
           "yazi": {
             "description": "写入 {filepath}。需要手动激活风味。",
             "description-missing": "需要安装{app}"
+          },
+          "zed": {
+            "description": "写入 {filepath} 并重新加载",
+            "description-missing": "需要安装 {app}"
           }
         },
         "section": {
@@ -1544,10 +1548,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "调整启动器的背景不透明度。",
-          "label": "背景不透明度"
-        },
         "clip-preview": {
           "description": "在使用 >clip 命令时显示剪贴板内容的预览。",
           "label": "启用剪贴板预览"
@@ -2083,6 +2083,10 @@
       "disk-section": {
         "label": "磁盘使用率"
       },
+      "enable-nvidia-gpu": {
+        "description": "警告：这将唤醒您的 NVIDIA GPU，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",
+        "label": "启用 NVIDIA GPU 监控"
+      },
       "general": {
         "section": {
           "description": "配置系统监视器的行为和外观。",
@@ -2158,7 +2162,7 @@
         "reset": "重置变暗桌面不透明度"
       },
       "panel-background-opacity": {
-        "description": "设置所有面板的背景不透明度（启动器、控制中心、设置等）。",
+        "description": "设置所有面板（栏、启动器、设置等）的背景不透明度。",
         "label": "面板背景不透明度"
       },
       "panels-attached-to-bar": {
