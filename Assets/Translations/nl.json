@@ -1165,10 +1165,6 @@
             "description": "Schrijf {filepath} en herlaad.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           },
-          "zed": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
-          },
           "label": "Programma's",
           "pywalfox": {
             "description": "Schrijf {filepath} en voer pywalfox update uit.",
@@ -1192,6 +1188,10 @@
           },
           "yazi": {
             "description": "Schrijf {filepath}. Smaak moet handmatig worden geactiveerd.",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
+          "zed": {
+            "description": "Schrijf {filepath} en herlaad.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           }
         },
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Schijfgebruik"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Waarschuwing: Dit zal uw NVIDIA GPU activeren, wat een aanzienlijke impact kan hebben op de batterijduur van laptops met hybride grafische kaarten.",
+        "label": "NVIDIA GPU-monitoring inschakelen"
       },
       "general": {
         "section": {

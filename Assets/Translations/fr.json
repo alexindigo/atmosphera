@@ -1174,10 +1174,6 @@
             "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           },
-          "zed": {
-            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
-            "description-missing": "Nécessite l'installation de {app}"
-          },
           "telegram": {
             "description": "Écrire {filepath}.",
             "description-missing": "Nécessite l'installation de {app}"
@@ -1192,6 +1188,10 @@
           },
           "yazi": {
             "description": "Écrire dans {filepath}. La saveur doit être activée manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
+          "zed": {
+            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           }
         },
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Utilisation disque"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Attention : Ceci va activer votre GPU NVIDIA, ce qui peut avoir un impact significatif sur l'autonomie de la batterie des ordinateurs portables dotés de cartes graphiques hybrides.",
+        "label": "Activer la surveillance du GPU NVIDIA"
       },
       "general": {
         "section": {

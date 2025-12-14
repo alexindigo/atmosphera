@@ -1165,10 +1165,6 @@
             "description": "Schreibt {filepath} und lädt neu",
             "description-missing": "Erfordert die Installation von {app}"
           },
-          "zed": {
-            "description": "Schreibt {filepath} und lädt neu",
-            "description-missing": "Erfordert die Installation von {app}"
-          },
           "label": "Programme",
           "pywalfox": {
             "description": "Schreibt {filepath} und führt pywalfox update aus",
@@ -1193,6 +1189,10 @@
           "yazi": {
             "description": "Schreibe {Dateipfad}. Flavor muss manuell aktiviert werden.",
             "description-missing": "Benötigt die Installation von {app}"
+          },
+          "zed": {
+            "description": "Schreibt {filepath} und lädt neu",
+            "description-missing": "Erfordert die Installation von {app}"
           }
         },
         "section": {
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Festplattennutzung"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Warnung: Dies aktiviert Ihre NVIDIA-GPU, was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",
+        "label": "NVIDIA GPU-Überwachung aktivieren"
       },
       "general": {
         "section": {

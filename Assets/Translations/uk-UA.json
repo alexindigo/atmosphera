@@ -1165,10 +1165,6 @@
             "description": "Записати {filepath} та перезавантажити",
             "description-missing": "Потрібна установка {app}"
           },
-          "zed": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
-          },
           "label": "Застосунки",
           "pywalfox": {
             "description": "Записати {filepath} та запустити pywalfox update",
@@ -1193,6 +1189,10 @@
           "yazi": {
             "description": "Записати {filepath}. Смак потрібно активувати вручну.",
             "description-missing": "Потрібно встановити {app}"
+          },
+          "zed": {
+            "description": "Записати {filepath} та перезавантажити",
+            "description-missing": "Потрібна установка {app}"
           }
         },
         "section": {
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Використання диска"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Увага: Це розбудить ваш графічний процесор NVIDIA, що може значно вплинути на час роботи акумулятора на ноутбуках з гібридною графікою.",
+        "label": "Увімкнути моніторинг GPU NVIDIA"
       },
       "general": {
         "section": {

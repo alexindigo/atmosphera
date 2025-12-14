@@ -1165,10 +1165,6 @@
             "description": "{filepath} を書き込み、リロードします。",
             "description-missing": "{app} のインストールが必要です。"
           },
-          "zed": {
-            "description": "{filepath} を書き込み、リロードします。",
-            "description-missing": "{app} のインストールが必要です。"
-          },
           "label": "プログラム",
           "pywalfox": {
             "description": "{filepath} を書き込み、pywalfox update を実行します。",
@@ -1193,6 +1189,10 @@
           "yazi": {
             "description": "{filepath} を書き込みます。風味は手動で有効にする必要があります。",
             "description-missing": "{app} がインストールされている必要があります。"
+          },
+          "zed": {
+            "description": "{filepath} を書き込み、リロードします。",
+            "description-missing": "{app} のインストールが必要です。"
           }
         },
         "section": {
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "ストレージ使用量"
+      },
+      "enable-nvidia-gpu": {
+        "description": "警告：これにより NVIDIA GPU が起動し、ハイブリッド グラフィックスを搭載したラップトップのバッテリー寿命に大きな影響を与える可能性があります。",
+        "label": "NVIDIA GPU モニタリングを有効にする"
       },
       "general": {
         "section": {

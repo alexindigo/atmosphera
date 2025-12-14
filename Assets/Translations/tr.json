@@ -1165,10 +1165,6 @@
             "description": "{filepath} dosyasına yaz ve yeniden yükle",
             "description-missing": "Kurulum için {app} gereklidir"
           },
-          "zed": {
-            "description": "{filepath} dosyasına yaz ve yeniden yükle",
-            "description-missing": "Kurulum için {app} gereklidir"
-          },
           "label": "Programlar",
           "pywalfox": {
             "description": "{filepath} dosyasına yaz ve pywalfox güncellemesini çalıştır",
@@ -1192,6 +1188,10 @@
           },
           "yazi": {
             "description": "{filepath} dosyasına yaz. Temanın manuel etkinleştirilmesi gerekir.",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
+          "zed": {
+            "description": "{filepath} dosyasına yaz ve yeniden yükle",
             "description-missing": "Kurulum için {app} gereklidir"
           }
         },
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Disk Kullanımı"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Uyarı: Bu, NVIDIA GPU'nuzu uyandıracak ve bu da hibrit grafiklere sahip dizüstü bilgisayarlarda pil ömrünü önemli ölçüde etkileyebilir.",
+        "label": "NVIDIA GPU izlemeyi etkinleştir"
       },
       "general": {
         "section": {

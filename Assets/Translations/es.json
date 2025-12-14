@@ -1165,10 +1165,6 @@
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
           },
-          "zed": {
-            "description": "Escribir {filepath} y recargar",
-            "description-missing": "Requiere que {app} esté instalado"
-          },
           "label": "Programas",
           "pywalfox": {
             "description": "Escribir {filepath} y ejecutar pywalfox update",
@@ -1193,6 +1189,10 @@
           "yazi": {
             "description": "Escriba en {filepath}. El sabor debe activarse manualmente.",
             "description-missing": "Requiere que {app} esté instalada."
+          },
+          "zed": {
+            "description": "Escribir {filepath} y recargar",
+            "description-missing": "Requiere que {app} esté instalado"
           }
         },
         "section": {
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Uso de disco"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Advertencia: Esto activará tu GPU NVIDIA, lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
+        "label": "Habilitar la monitorización de la GPU NVIDIA"
       },
       "general": {
         "section": {

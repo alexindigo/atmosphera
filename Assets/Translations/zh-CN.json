@@ -1165,10 +1165,6 @@
             "description": "写入 {filepath} 并重新加载",
             "description-missing": "需要安装 {app}"
           },
-          "zed": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
-          },
           "label": "程序",
           "pywalfox": {
             "description": "写入 {filepath} 并运行 pywalfox update",
@@ -1193,6 +1189,10 @@
           "yazi": {
             "description": "写入 {filepath}。需要手动激活风味。",
             "description-missing": "需要安装{app}"
+          },
+          "zed": {
+            "description": "写入 {filepath} 并重新加载",
+            "description-missing": "需要安装 {app}"
           }
         },
         "section": {
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "磁盘使用率"
+      },
+      "enable-nvidia-gpu": {
+        "description": "警告：这将唤醒您的 NVIDIA GPU，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",
+        "label": "启用 NVIDIA GPU 监控"
       },
       "general": {
         "section": {

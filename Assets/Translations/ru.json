@@ -1165,10 +1165,6 @@
             "description": "Записать {filepath} и перезагрузить",
             "description-missing": "Требуется установка {app}"
           },
-          "zed": {
-            "description": "Записать {filepath} и перезагрузить",
-            "description-missing": "Требуется установка {app}"
-          },
           "label": "Программы",
           "pywalfox": {
             "description": "Записать {filepath} и запустить pywalfox update",
@@ -1192,6 +1188,10 @@
           },
           "yazi": {
             "description": "Записать {filepath}. Вкус необходимо активировать вручную.",
+            "description-missing": "Требуется установка {app}"
+          },
+          "zed": {
+            "description": "Записать {filepath} и перезагрузить",
             "description-missing": "Требуется установка {app}"
           }
         },
@@ -2082,6 +2082,10 @@
       },
       "disk-section": {
         "label": "Использование диска"
+      },
+      "enable-nvidia-gpu": {
+        "description": "Внимание: Это разбудит ваш графический процессор NVIDIA, что может значительно повлиять на время работы от аккумулятора на ноутбуках с гибридной графикой.",
+        "label": "Включить мониторинг GPU NVIDIA"
       },
       "general": {
         "section": {

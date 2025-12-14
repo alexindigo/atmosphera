@@ -1165,10 +1165,6 @@
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           },
-          "zed": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
-          },
           "label": "Programs",
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",
@@ -1192,6 +1188,10 @@
           },
           "yazi": {
             "description": "Write {filepath}. Flavor needs to be activated manually.",
+            "description-missing": "Requires {app} to be installed"
+          },
+          "zed": {
+            "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           }
         },
@@ -2083,6 +2083,10 @@
       "disk-section": {
         "label": "Disk usage"
       },
+      "enable-nvidia-gpu": {
+        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics.",
+        "label": "Enable NVIDIA GPU monitoring"
+      },
       "general": {
         "section": {
           "description": "Configure the system monitor behavior and appearance.",
@@ -2091,10 +2095,6 @@
       },
       "gpu-section": {
         "label": "GPU temperature"
-      },
-      "enable-nvidia-gpu": {
-        "label": "Enable NVIDIA GPU monitoring",
-        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics."
       },
       "highlight-colors-section": {
         "label": "Highlight colors"

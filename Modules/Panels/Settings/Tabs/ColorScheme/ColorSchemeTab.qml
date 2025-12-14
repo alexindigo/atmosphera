@@ -899,10 +899,10 @@ ColumnLayout {
       NCheckbox {
         label: "Zeditor"
         description: ProgramCheckerService.zedAvailable ? I18n.tr("settings.color-scheme.templates.programs.zed.description", {
-                                                                         "filepath": "~/.config/zed/themes/noctalia.json"
-                                                                       }) : I18n.tr("settings.color-scheme.templates.programs.zed.description-missing", {
-                                                                                      "app": "zed"
-                                                                                    })
+                                                                    "filepath": "~/.config/zed/themes/noctalia.json"
+                                                                  }) : I18n.tr("settings.color-scheme.templates.programs.zed.description-missing", {
+                                                                                 "app": "zed"
+                                                                               })
         checked: Settings.data.templates.zed
         enabled: ProgramCheckerService.zedAvailable
         onToggled: checked => {
@@ -912,7 +912,7 @@ ColumnLayout {
                      }
                    }
       }
-      
+
       NCheckbox {
         label: "Emacs"
         description: ProgramCheckerService.emacsAvailable ? I18n.tr("settings.color-scheme.templates.programs.emacs.description") : I18n.tr("settings.color-scheme.templates.programs.emacs.description-missing", {

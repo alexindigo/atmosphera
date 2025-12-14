@@ -211,7 +211,7 @@ Singleton {
         {
           "path": "~/.config/zed/themes/noctalia.json"
         }
-      ],
+      ]
     },
     {
       "id": "spicetify",
