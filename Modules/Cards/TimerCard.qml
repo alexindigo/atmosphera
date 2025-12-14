@@ -44,18 +44,18 @@ NBox {
     Item {
       id: timerDisplayItem
       Layout.fillWidth: true
-      Layout.preferredHeight: isRunning ? 160 * Style.uiScaleRatio : timerInput.implicitHeight
+      Layout.preferredHeight: (totalSeconds > 0) ? 160 * Style.uiScaleRatio : timerInput.implicitHeight
       Layout.alignment: Qt.AlignHCenter
 
       property string inputBuffer: ""
       property bool isEditing: false
 
-      // Circular progress ring (only for countdown mode when running)
+      // Circular progress ring (only for countdown mode when running or paused)
       Canvas {
         id: progressRing
         anchors.fill: parent
         anchors.margins: 12
-        visible: !isStopwatchMode && isRunning && totalSeconds > 0
+        visible: !isStopwatchMode && totalSeconds > 0
         z: -1
 
         property real progressRatio: {
@@ -66,7 +66,16 @@ NBox {
           return Math.max(0, Math.min(1, ratio));
         }
 
+        // Check if hours are being shown (for radius calculation)
+        readonly property bool showingHours: {
+          if (isStopwatchMode) {
+            return elapsedSeconds >= 3600;
+          }
+          return totalSeconds >= 3600;
+        }
+
         onProgressRatioChanged: requestPaint()
+        onShowingHoursChanged: requestPaint()
 
         onPaint: {
           var ctx = getContext("2d");
@@ -76,7 +85,8 @@ NBox {
 
           var centerX = width / 2;
           var centerY = height / 2;
-          var radius = Math.max(0, Math.min(width, height) / 2 - 6);
+          var radiusOffset = showingHours ? 6 : 16;
+          var radius = Math.max(0, Math.min(width, height) / 2 - radiusOffset);
 
           ctx.reset();
 
@@ -117,7 +127,7 @@ NBox {
         enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
         font.family: Settings.data.ui.fontFixed
 
-        // Calculate if hours are being shown
+        // Calculate if hours are being shown (for font sizing)
         readonly property bool showingHours: {
           if (isStopwatchMode) {
             return elapsedSeconds >= 3600;
@@ -126,21 +136,21 @@ NBox {
           if (timerDisplayItem.isEditing) {
             return true;
           }
-          // When not editing, only show hours if >= 1 hour
-          return remainingSeconds >= 3600;
+          // Show hours if total time >= 1 hour (formatting will show HH:MM:SS)
+          return totalSeconds >= 3600;
         }
 
         font.pointSize: {
-          if (!isRunning) {
+          if (totalSeconds === 0) {
             return Style.fontSizeXXXL;
           }
-          // When running, use smaller font if hours are shown
+          // When running or paused, use smaller font if hours are shown
           return showingHours ? Style.fontSizeXXL : (Style.fontSizeXXL * 1.2);
         }
 
         font.weight: Style.fontWeightBold
         color: {
-          if (isRunning) {
+          if (totalSeconds > 0) {
             return Color.mPrimary;
           }
           if (timerDisplayItem.isEditing) {
@@ -156,13 +166,14 @@ NBox {
 
         function updateText() {
           if (isStopwatchMode) {
-            _cachedText = formatTime(elapsedSeconds, false);
+            // For stopwatch, use elapsedSeconds as the reference for formatting
+            _cachedText = formatTime(elapsedSeconds, elapsedSeconds);
           } else if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer !== "") {
             // Only use editing mode if we actually have input buffer content
             _cachedText = formatTimeFromDigits(timerDisplayItem.inputBuffer);
           } else {
             // When not editing OR when paused (not running), show the actual remaining time
-            _cachedText = formatTime(remainingSeconds, isRunning);
+            _cachedText = formatTime(remainingSeconds, totalSeconds);
           }
           _textUpdateCounter = _textUpdateCounter + 1;
         }
@@ -340,7 +351,7 @@ NBox {
         NButton {
           id: startButton
           anchors.fill: parent
-          text: isRunning ? I18n.tr("calendar.timer.pause") : I18n.tr("calendar.timer.start")
+          text: isRunning ? I18n.tr("calendar.timer.pause") : (totalSeconds > 0 ? I18n.tr("calendar.timer.resume") : I18n.tr("calendar.timer.start"))
           icon: isRunning ? "player-pause" : "player-play"
           enabled: isStopwatchMode || remainingSeconds > 0
           onClicked: {
@@ -381,7 +392,7 @@ NBox {
       Layout.preferredHeight: startButton.implicitHeight
       implicitHeight: startButton.implicitHeight
       Layout.alignment: Qt.AlignHCenter
-      visible: !isRunning
+      visible: totalSeconds === 0
       currentIndex: isStopwatchMode ? 1 : 0
       onCurrentIndexChanged: {
         const newMode = currentIndex === 1;
@@ -446,16 +457,22 @@ NBox {
   readonly property int elapsedSeconds: Time.timerElapsedSeconds
   readonly property bool soundPlaying: Time.timerSoundPlaying
 
-  function formatTime(seconds, hideHoursWhenZero) {
+  function formatTime(seconds, totalTimeSeconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    // If hideHoursWhenZero is true (when running), only show hours if > 0
-    // Otherwise (when not running or editing), always show hours
-    if (hideHoursWhenZero && hours === 0) {
+    // If totalTimeSeconds is 0 or undefined, show full format (for editing/not started state)
+    if (!totalTimeSeconds || totalTimeSeconds === 0) {
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Always show minutes
+    // If total time < 3600 seconds (1 hour), show MM:SS
+    if (totalTimeSeconds < 3600) {
       return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
+    // If total time >= 3600 seconds, show HH:MM:SS
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
