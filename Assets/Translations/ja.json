@@ -1165,6 +1165,10 @@
             "description": "{filepath} を書き込み、リロードします。",
             "description-missing": "{app} のインストールが必要です。"
           },
+          "zed": {
+            "description": "{filepath} を書き込み、リロードします。",
+            "description-missing": "{app} のインストールが必要です。"
+          },
           "label": "プログラム",
           "pywalfox": {
             "description": "{filepath} を書き込み、pywalfox update を実行します。",

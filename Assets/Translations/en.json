@@ -1165,6 +1165,10 @@
             "description": "Write {filepath} and reload",
             "description-missing": "Requires {app} to be installed"
           },
+          "zed": {
+            "description": "Write {filepath} and reload",
+            "description-missing": "Requires {app} to be installed"
+          },
           "label": "Programs",
           "pywalfox": {
             "description": "Write {filepath} and run pywalfox update",

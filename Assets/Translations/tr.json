@@ -1165,6 +1165,10 @@
             "description": "{filepath} dosyasına yaz ve yeniden yükle",
             "description-missing": "Kurulum için {app} gereklidir"
           },
+          "zed": {
+            "description": "{filepath} dosyasına yaz ve yeniden yükle",
+            "description-missing": "Kurulum için {app} gereklidir"
+          },
           "label": "Programlar",
           "pywalfox": {
             "description": "{filepath} dosyasına yaz ve pywalfox güncellemesini çalıştır",
