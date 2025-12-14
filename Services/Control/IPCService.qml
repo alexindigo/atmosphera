@@ -18,6 +18,9 @@ import qs.Services.UI
 Item {
   id: root
 
+  // Screen detector passed from shell.qml
+  required property CurrentScreenDetector screenDetector
+
   IpcHandler {
     target: "bar"
     function toggle() {
@@ -40,10 +43,10 @@ Item {
       if (Settings.data.ui.settingsPanelMode === "window") {
         SettingsPanelService.toggleWindow();
       } else {
-        root.withTargetScreen(screen => {
-                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                settingsPanel?.toggle();
-                              });
+        root.screenDetector.withTargetScreen(screen => {
+                                               var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                               settingsPanel?.toggle();
+                                             });
       }
     }
   }
@@ -51,10 +54,10 @@ Item {
   IpcHandler {
     target: "calendar"
     function toggle() {
-      root.withTargetScreen(screen => {
-                              var clockPanel = PanelService.getPanel("clockPanel", screen);
-                              clockPanel?.toggle(null, "Clock");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var clockPanel = PanelService.getPanel("clockPanel", screen);
+                                             clockPanel?.toggle(null, "Clock");
+                                           });
     }
   }
 
@@ -62,10 +65,10 @@ Item {
     target: "notifications"
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
-      root.withTargetScreen(screen => {
-                              var notificationHistoryPanel = PanelService.getPanel("notificationHistoryPanel", screen);
-                              notificationHistoryPanel.toggle(null, "NotificationHistory");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var notificationHistoryPanel = PanelService.getPanel("notificationHistoryPanel", screen);
+                                             notificationHistoryPanel.toggle(null, "NotificationHistory");
+                                           });
     }
     function toggleDND() {
       NotificationService.doNotDisturb = !NotificationService.doNotDisturb;
@@ -103,39 +106,39 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      root.withTargetScreen(screen => {
-                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.isPanelOpen || (launcherPanel?.isPanelOpen && !launcherPanel?.activePlugin))
-                              launcherPanel?.toggle();
-                              launcherPanel?.setSearchText("");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                             if (!launcherPanel?.isPanelOpen || (launcherPanel?.isPanelOpen && !launcherPanel?.activePlugin))
+                                             launcherPanel?.toggle();
+                                             launcherPanel?.setSearchText("");
+                                           });
     }
     function clipboard() {
-      root.withTargetScreen(screen => {
-                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.isPanelOpen) {
-                                launcherPanel?.toggle();
-                              }
-                              launcherPanel?.setSearchText(">clip ");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                             if (!launcherPanel?.isPanelOpen) {
+                                               launcherPanel?.toggle();
+                                             }
+                                             launcherPanel?.setSearchText(">clip ");
+                                           });
     }
     function calculator() {
-      root.withTargetScreen(screen => {
-                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.isPanelOpen) {
-                                launcherPanel?.toggle();
-                              }
-                              launcherPanel?.setSearchText(">calc ");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                             if (!launcherPanel?.isPanelOpen) {
+                                               launcherPanel?.toggle();
+                                             }
+                                             launcherPanel?.setSearchText(">calc ");
+                                           });
     }
     function emoji() {
-      root.withTargetScreen(screen => {
-                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                              if (!launcherPanel?.isPanelOpen) {
-                                launcherPanel?.toggle();
-                              }
-                              launcherPanel?.setSearchText(">emoji ");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                             if (!launcherPanel?.isPanelOpen) {
+                                               launcherPanel?.toggle();
+                                             }
+                                             launcherPanel?.setSearchText(">emoji ");
+                                           });
     }
   }
 
@@ -206,10 +209,10 @@ Item {
   IpcHandler {
     target: "sessionMenu"
     function toggle() {
-      root.withTargetScreen(screen => {
-                              var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen);
-                              sessionMenuPanel?.toggle();
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen);
+                                             sessionMenuPanel?.toggle();
+                                           });
     }
 
     function lockAndSuspend() {
@@ -220,15 +223,15 @@ Item {
   IpcHandler {
     target: "controlCenter"
     function toggle() {
-      root.withTargetScreen(screen => {
-                              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
-                              if (Settings.data.controlCenter.position === "close_to_bar_button") {
-                                // Will attempt to open the panel next to the bar button if any.
-                                controlCenterPanel?.toggle(null, "ControlCenter");
-                              } else {
-                                controlCenterPanel?.toggle();
-                              }
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
+                                             if (Settings.data.controlCenter.position === "close_to_bar_button") {
+                                               // Will attempt to open the panel next to the bar button if any.
+                                               controlCenterPanel?.toggle(null, "ControlCenter");
+                                             } else {
+                                               controlCenterPanel?.toggle();
+                                             }
+                                           });
     }
   }
 
@@ -244,10 +247,10 @@ Item {
     target: "wallpaper"
     function toggle() {
       if (Settings.data.wallpaper.enabled) {
-        root.withTargetScreen(screen => {
-                                var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen);
-                                wallpaperPanel?.toggle();
-                              });
+        root.screenDetector.withTargetScreen(screen => {
+                                               var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen);
+                                               wallpaperPanel?.toggle();
+                                             });
       }
     }
 
@@ -309,10 +312,10 @@ Item {
       NetworkService.setWifiEnabled(false);
     }
     function togglePanel() {
-      root.withTargetScreen(screen => {
-                              var wifiPanel = PanelService.getPanel("wifiPanel", screen);
-                              wifiPanel?.toggle(null, "WiFi");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var wifiPanel = PanelService.getPanel("wifiPanel", screen);
+                                             wifiPanel?.toggle(null, "WiFi");
+                                           });
     }
   }
 
@@ -328,20 +331,20 @@ Item {
       BluetoothService.setBluetoothEnabled(false);
     }
     function togglePanel() {
-      root.withTargetScreen(screen => {
-                              var bluetoothPanel = PanelService.getPanel("bluetoothPanel", screen);
-                              bluetoothPanel?.toggle(null, "Bluetooth");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var bluetoothPanel = PanelService.getPanel("bluetoothPanel", screen);
+                                             bluetoothPanel?.toggle(null, "Bluetooth");
+                                           });
     }
   }
 
   IpcHandler {
     target: "battery"
     function togglePanel() {
-      root.withTargetScreen(screen => {
-                              var batteryPanel = PanelService.getPanel("batteryPanel", screen);
-                              batteryPanel?.toggle(null, "Battery");
-                            });
+      root.screenDetector.withTargetScreen(screen => {
+                                             var batteryPanel = PanelService.getPanel("batteryPanel", screen);
+                                             batteryPanel?.toggle(null, "Battery");
+                                           });
     }
   }
 
@@ -442,81 +445,4 @@ Item {
       }
     }
   }
-
-  // -------------------------------------------------------------------
-  // Queue an IPC panel operation - will execute when screen is detected
-  // -------------------------------------------------------------------
-  function withTargetScreen(callback) {
-    if (pendingCallback) {
-      Logger.w("IPC", "Another IPC call is pending, ignoring new call");
-      return;
-    }
-
-    // Single monitor setup can execute immediately
-    if (Quickshell.screens.length === 1) {
-      callback(Quickshell.screens[0]);
-    } else {
-      // Multi-monitors setup needs to start async detection
-      detectedScreen = null;
-      pendingCallback = callback;
-      screenDetectorLoader.active = true;
-    }
-  }
-  /**
-  * For IPC calls on multi-monitors setup that will open panels on screen,
-  * we need to open a QS PanelWindow and wait for it's "screen" property to stabilize.
-  */
-  property ShellScreen detectedScreen: null
-  property var pendingCallback: null
-
-  Timer {
-    id: screenDetectorDebounce
-    running: false
-    interval: 20
-    onTriggered: {
-      Logger.d("IPC", "Screen debounced to:", detectedScreen?.name || "null");
-
-      // Execute pending callback if any
-      if (pendingCallback) {
-        if (!Settings.data.general.allowPanelsOnScreenWithoutBar) {
-          // If we explicitely disabled panels on screen without bar, check if bar is configured
-          // for this screen, and fallback to primary screen if necessary
-          var monitors = Settings.data.bar.monitors || [];
-          const hasBar = monitors.length === 0 || monitors.includes(detectedScreen?.name);
-          if (!hasBar) {
-            detectedScreen = Quickshell.screens[0];
-          }
-        }
-
-        Logger.d("IPC", "Executing pending IPC callback on screen:", detectedScreen.name);
-        pendingCallback(detectedScreen);
-        pendingCallback = null;
-      }
-
-      // Clean up
-      screenDetectorLoader.active = false;
-    }
-  }
-
-  // Invisible dummy PanelWindow to detect which screen should receive IPC calls
-  Loader {
-    id: screenDetectorLoader
-    active: false
-
-    sourceComponent: PanelWindow {
-      implicitWidth: 0
-      implicitHeight: 0
-      color: Color.transparent
-      WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.namespace: "noctalia-ipc-screen-detector"
-      mask: Region {}
-
-      onScreenChanged: {
-        detectedScreen = screen;
-        screenDetectorDebounce.restart();
-      }
-    }
-  }
-  // -------------------------------------------------------------------
-  // -------------------------------------------------------------------
 }

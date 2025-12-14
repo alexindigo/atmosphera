@@ -47,6 +47,9 @@ Singleton {
   // Plugin container from shell.qml (for placing Main instances in graphics scene)
   property var pluginContainer: null
 
+  // Screen detector from shell.qml (for withTargetScreen in plugin API)
+  property var screenDetector: null
+
   // Track if we need to initialize once container is ready
   property bool needsInit: false
 
@@ -579,6 +582,7 @@ Singleton {
         property var saveSettings: null
         property var openPanel: null
         property var closePanel: null
+        property var withTargetScreen: null
         property var tr: null
         property var trp: null
         property var hasTranslation: null
@@ -648,6 +652,17 @@ Singleton {
         }
       }
       return false;
+    };
+
+    // ----------------------------------------
+    api.withTargetScreen = function (callback) {
+      // Detect which screen the cursor is on and call callback with that screen
+      if (!root.screenDetector) {
+        Logger.w("PluginAPI", "Screen detector not available, using primary screen");
+        callback(Quickshell.screens[0]);
+        return;
+      }
+      root.screenDetector.withTargetScreen(callback);
     };
 
     // ----------------------------------------

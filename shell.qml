@@ -121,15 +121,25 @@ ShellRoot {
       // Settings window mode (single window across all monitors)
       SettingsPanelWindow {}
 
+      // Shared screen detector for IPC and plugins
+      CurrentScreenDetector {
+        id: screenDetector
+      }
+
       // IPCService is treated as a service but it must be in graphics scene.
-      IPCService {}
+      IPCService {
+        id: ipcService
+        screenDetector: screenDetector
+      }
 
       // Container for plugins Main.qml instances (must be in graphics scene)
       Item {
         id: pluginContainer
         visible: false
+
         Component.onCompleted: {
           PluginService.pluginContainer = pluginContainer;
+          PluginService.screenDetector = screenDetector;
         }
       }
 
