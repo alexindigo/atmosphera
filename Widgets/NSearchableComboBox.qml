@@ -202,7 +202,7 @@ RowLayout {
             id: defaultDelegate
             ItemDelegate {
               id: delegateRoot
-              width: listView.width - listView.scrollBarTotalWidth
+              width: listView.width
               leftPadding: Style.marginM
               rightPadding: Style.marginM
               topPadding: Style.marginS

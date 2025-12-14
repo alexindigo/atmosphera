@@ -29,7 +29,6 @@ Item {
       return false;
     return gridView.contentHeight > gridView.height;
   }
-  readonly property real scrollBarWidth: verticalScrollBarActive ? handleWidth : 0
 
   // Forward GridView properties
   property alias model: gridView.model
