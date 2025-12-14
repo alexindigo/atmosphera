@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Ajuste a opacidade do fundo da barra.",
-          "label": "Opacidade do fundo"
-        },
         "capsule-opacity": {
           "description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
           "label": "Opacidade da cápsula"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Mostra o fundo dos widgets.",
           "label": "Mostrar cápsula"
+        },
+        "transparent": {
+          "description": "Isto impedirá que os painéis se fixem à barra.",
+          "label": "Fundo transparente"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Ajuste a opacidade do fundo do lançador.",
-          "label": "Opacidade do fundo"
-        },
         "clip-preview": {
           "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
           "label": "Ativar pré-visualização da área de transferência"
@@ -2158,7 +2154,7 @@
         "reset": "Redefinir opacidade da área de trabalho escurecida"
       },
       "panel-background-opacity": {
-        "description": "Definir a opacidade de fundo para todos os painéis (Launcher, Centro de Controle, Configurações, etc.).",
+        "description": "Definir a opacidade do fundo para todos os painéis (barra, iniciador, configurações, etc...).",
         "label": "Opacidade de fundo do painel"
       },
       "panels-attached-to-bar": {

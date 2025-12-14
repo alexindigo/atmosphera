@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Hintergrund-Transparenz der Statusleiste anpassen.",
-          "label": "Hintergrund-Transparenz"
-        },
         "capsule-opacity": {
           "description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
           "label": "Kapsel-Deckkraft"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Widget-Hintergründe anzeigen.",
           "label": "Kapsel anzeigen"
+        },
+        "transparent": {
+          "description": "Dies verhindert, dass Paneele an der Stange befestigt werden können.",
+          "label": "Transparenter Hintergrund"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Hintergrund-Transparenz des Starters anpassen.",
-          "label": "Hintergrund-Transparenz"
-        },
         "clip-preview": {
           "description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"
@@ -2158,7 +2154,7 @@
         "reset": "Deckkraft des gedimmten Desktops zurücksetzen"
       },
       "panel-background-opacity": {
-        "description": "Hintergrunddeckkraft für alle Panels festlegen (Launcher, Kontrollzentrum, Einstellungen usw.).",
+        "description": "Lege die Hintergrundtransparenz für alle Panels fest (Leiste, Starter, Einstellungen, usw.).",
         "label": "Panel-Hintergrunddeckkraft"
       },
       "panels-attached-to-bar": {

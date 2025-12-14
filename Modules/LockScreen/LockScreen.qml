@@ -133,7 +133,7 @@ Loader {
             anchors.fill: parent
             visible: Settings.data.general.showScreenCorners
 
-            property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+            property color cornerColor: Settings.data.general.forceBlackScreenCorners ? Color.black : Color.mSurface
             property real cornerRadius: Style.screenRadius
             property real cornerSize: Style.screenRadius
 
@@ -901,7 +901,7 @@ Loader {
                   Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
-                    radius: Style.radiusL
+                    radius: Style.iRadiusL
                     color: Color.mSurface
                     border.color: passwordInput.activeFocus ? Color.mPrimary : Qt.alpha(Color.mOutline, 0.3)
                     border.width: passwordInput.activeFocus ? 2 : 1
@@ -1036,7 +1036,7 @@ Loader {
                       anchors.verticalCenter: parent.verticalCenter
                       width: 36
                       height: 36
-                      radius: Math.min(Style.radiusL, width / 2)
+                      radius: Math.min(Style.iRadiusL, width / 2)
                       color: eyeButtonArea.containsMouse ? Color.mPrimary : Color.transparent
                       visible: passwordInput.text.length > 0
                       enabled: !lockContext.unlockInProgress
@@ -1079,7 +1079,7 @@ Loader {
                       anchors.verticalCenter: parent.verticalCenter
                       width: 36
                       height: 36
-                      radius: Math.min(Style.radiusL, width / 2)
+                      radius: Math.min(Style.iRadiusL, width / 2)
                       color: submitButtonArea.containsMouse ? Color.mPrimary : Color.transparent
                       border.color: Color.mPrimary
                       border.width: Style.borderS

@@ -23,7 +23,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 28
+  readonly property int settingsVersion: 29
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -156,11 +156,11 @@ Singleton {
     // bar
     property JsonObject bar: JsonObject {
       property string position: "top" // "top", "bottom", "left", or "right"
-      property real backgroundOpacity: 1.0
       property list<string> monitors: [] // holds bar visibility per monitor
       property string density: "default" // "compact", "default", "comfortable"
       property bool showCapsule: true
       property real capsuleOpacity: 1.0
+      property bool transparent: false
 
       // Floating bar settings
       property bool floating: false
@@ -259,7 +259,7 @@ Singleton {
       property real fontDefaultScale: 1.0
       property real fontFixedScale: 1.0
       property bool tooltipsEnabled: true
-      property real panelBackgroundOpacity: 1.0
+      property real panelBackgroundOpacity: 0.85
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
     }

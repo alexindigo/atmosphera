@@ -22,7 +22,7 @@ Item {
   // Reference to MainScreen (for panel access)
   required property var windowRoot
 
-  readonly property color panelBackgroundColor: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
+  readonly property color panelBackgroundColor: Color.mSurface
 
   anchors.fill: parent
 
@@ -33,6 +33,9 @@ Item {
     // Enable layer caching to prevent continuous re-rendering
     // This caches the Shape to a GPU texture, reducing GPU tessellation overhead
     layer.enabled: true
+
+    // Apply opacity to all backgrounds
+    opacity: Settings.data.ui.panelBackgroundOpacity
 
     // The unified Shape container
     Shape {
@@ -55,7 +58,7 @@ Item {
         bar: root.bar
         shapeContainer: backgroundsShape
         windowRoot: root.windowRoot
-        backgroundColor: Qt.alpha(Color.mSurface, Settings.data.bar.backgroundOpacity)
+        backgroundColor: Settings.data.bar.transparent ? Color.transparent : panelBackgroundColor
       }
 
       /**

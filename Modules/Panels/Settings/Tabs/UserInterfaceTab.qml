@@ -18,40 +18,20 @@ ColumnLayout {
       description: I18n.tr("settings.user-interface.section.description")
     }
 
-    NToggle {
-      label: I18n.tr("settings.user-interface.tooltips.label")
-      description: I18n.tr("settings.user-interface.tooltips.description")
-      checked: Settings.data.ui.tooltipsEnabled
-      onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
-    }
-
-    // Dim desktop opacity
-    ColumnLayout {
-      spacing: Style.marginXXS
-      Layout.fillWidth: true
-
-      NLabel {
-        label: I18n.tr("settings.user-interface.dimmer-opacity.label")
-        description: I18n.tr("settings.user-interface.dimmer-opacity.description")
-      }
-
-      NValueSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.general.dimmerOpacity
-        onMoved: value => Settings.data.general.dimmerOpacity = value
-        text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
-      }
-    }
-
     // Panels attached to bar and screen edges
     NToggle {
       label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
       description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
       checked: Settings.data.ui.panelsAttachedToBar
       onToggled: checked => Settings.data.ui.panelsAttachedToBar = checked
+    }
+
+    NToggle {
+      visible: (Quickshell.screens.length > 1)
+      label: I18n.tr("settings.user-interface.allow-panels-without-bar.label")
+      description: I18n.tr("settings.user-interface.allow-panels-without-bar.description")
+      checked: Settings.data.general.allowPanelsOnScreenWithoutBar
+      onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
     }
 
     // Settings panel display mode
@@ -75,6 +55,61 @@ ColumnLayout {
       ]
       currentKey: Settings.data.ui.settingsPanelMode
       onSelected: key => Settings.data.ui.settingsPanelMode = key
+    }
+
+    // Panel Background Opacity
+    ColumnLayout {
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.user-interface.panel-background-opacity.label")
+        description: I18n.tr("settings.user-interface.panel-background-opacity.description")
+      }
+
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0.4
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.ui.panelBackgroundOpacity
+        onMoved: value => Settings.data.ui.panelBackgroundOpacity = value
+        text: Math.floor(Settings.data.ui.panelBackgroundOpacity * 100) + "%"
+      }
+    }
+
+    // Dim desktop opacity
+    ColumnLayout {
+      spacing: Style.marginXXS
+      Layout.fillWidth: true
+
+      NLabel {
+        label: I18n.tr("settings.user-interface.dimmer-opacity.label")
+        description: I18n.tr("settings.user-interface.dimmer-opacity.description")
+      }
+
+      NValueSlider {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        stepSize: 0.01
+        value: Settings.data.general.dimmerOpacity
+        onMoved: value => Settings.data.general.dimmerOpacity = value
+        text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
+      }
+    }
+
+    NDivider {
+      Layout.fillWidth: true
+      Layout.topMargin: Style.marginL
+      Layout.bottomMargin: Style.marginL
+    }
+
+    NToggle {
+      label: I18n.tr("settings.user-interface.tooltips.label")
+      description: I18n.tr("settings.user-interface.tooltips.description")
+      checked: Settings.data.ui.tooltipsEnabled
+      onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
     }
 
     NToggle {
@@ -147,35 +182,6 @@ ColumnLayout {
           Settings.data.general.shadowOffsetY = opt.p.y;
         }
       }
-    }
-
-    // Panel Background Opacity
-    ColumnLayout {
-      spacing: Style.marginXXS
-      Layout.fillWidth: true
-
-      NLabel {
-        label: I18n.tr("settings.user-interface.panel-background-opacity.label")
-        description: I18n.tr("settings.user-interface.panel-background-opacity.description")
-      }
-
-      NValueSlider {
-        Layout.fillWidth: true
-        from: 0
-        to: 1
-        stepSize: 0.01
-        value: Settings.data.ui.panelBackgroundOpacity
-        onMoved: value => Settings.data.ui.panelBackgroundOpacity = value
-        text: Math.floor(Settings.data.ui.panelBackgroundOpacity * 100) + "%"
-      }
-    }
-
-    NToggle {
-      visible: (Quickshell.screens.length > 1)
-      label: I18n.tr("settings.user-interface.allow-panels-without-bar.label")
-      description: I18n.tr("settings.user-interface.allow-panels-without-bar.description")
-      checked: Settings.data.general.allowPanelsOnScreenWithoutBar
-      onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
     }
 
     NDivider {

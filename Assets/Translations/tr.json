@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Araç çubuğu arka plan opaklığını ayarlayın.",
-          "label": "Arka plan opaklığı"
-        },
         "capsule-opacity": {
           "description": "Kapsül gösterildiğinde araç takımı arka planlarının saydamlık seviyesini ayarla.",
           "label": "Kapsül saydamlığı"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Araç takımı arka planlarını göster.",
           "label": "Kapsülü göster"
+        },
+        "transparent": {
+          "description": "Bu, panellerin çubuğa takılmasını önleyecektir.",
+          "label": "Şeffaf arka plan"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Başlatıcının arka plan opaklığını ayarlayın.",
-          "label": "Arka plan opaklığı"
-        },
         "clip-preview": {
           "description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
           "label": "Panoyu önizlemeyi etkinleştir"
@@ -2158,7 +2154,7 @@
         "reset": "Karartılmış masaüstü opaklığını sıfırla"
       },
       "panel-background-opacity": {
-        "description": "Tüm paneller için arka plan opaklığını ayarlayın (Başlatıcı, Kontrol Merkezi, Ayarlar vb.).",
+        "description": "Tüm panellerin (çubuk, başlatıcı, ayarlar vb.) arka plan opaklığını ayarlayın.",
         "label": "Panel arka plan opaklığı"
       },
       "panels-attached-to-bar": {
