@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Io
+import Quickshell.Wayland
 import qs.Commons
 
 Item {
@@ -30,15 +30,16 @@ Item {
   }
 
   function connectToToplevel(toplevel) {
-    if (!toplevel || !toplevel.address) return;
+    if (!toplevel || !toplevel.address)
+      return;
 
     toplevel.activatedChanged.connect(() => {
-      Qt.callLater(onToplevelActivationChanged);
-    });
+                                        Qt.callLater(onToplevelActivationChanged);
+                                      });
 
     toplevel.titleChanged.connect(() => {
-      Qt.callLater(updateWindows);
-    });
+                                    Qt.callLater(updateWindows);
+                                  });
   }
 
   function onToplevelActivationChanged() {
@@ -55,7 +56,8 @@ Item {
     let idx = 0;
 
     for (const toplevel of toplevels) {
-      if (!toplevel) continue;
+      if (!toplevel)
+        continue;
 
       const addr = toplevel.address || "";
       if (addr && !trackedToplevels[addr]) {
@@ -66,13 +68,13 @@ Item {
       }
 
       newWindows.push({
-        "id": addr,
-        "appId": toplevel.appId || "",
-        "title": toplevel.title || "",
-        "workspaceId": 1,
-        "isFocused": toplevel.activated || false,
-        "toplevel": toplevel
-      });
+                        "id": addr,
+                        "appId": toplevel.appId || "",
+                        "title": toplevel.title || "",
+                        "workspaceId": 1,
+                        "isFocused": toplevel.activated || false,
+                        "toplevel": toplevel
+                      });
 
       if (toplevel.activated) {
         focusedIdx = idx;
