@@ -50,7 +50,7 @@ Variants {
       }
 
       Component.onCompleted: {
-        Logger.d("DesktopWidgets", "Create panel window for", screen?.name);
+        Logger.d("DesktopWidgets", "Created panel window for", screen?.name);
       }
 
       Item {

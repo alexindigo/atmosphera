@@ -1,23 +1,12 @@
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Location
 import qs.Widgets
 
-Item {
+DraggableDesktopWidget {
   id: root
-
-  property ShellScreen screen
-  property var widgetData: null
-  property int widgetIndex: -1
-
-  property bool isDragging: false
-  property real dragOffsetX: 0
-  property real dragOffsetY: 0
-  property real baseX: (widgetData && widgetData.x !== undefined) ? widgetData.x : 100
-  property real baseY: (widgetData && widgetData.y !== undefined) ? widgetData.y : 100
 
   readonly property bool weatherReady: Settings.data.location.weatherEnabled && (LocationService.data.weather !== null)
   readonly property int currentWeatherCode: weatherReady ? LocationService.data.weather.current_weather.weathercode : 0
@@ -59,135 +48,12 @@ Item {
   width: implicitWidth
   height: implicitHeight
 
-  x: isDragging ? dragOffsetX : baseX
-  y: isDragging ? dragOffsetY : baseY
-
-  // Update base position from widgetData when not dragging
-  onWidgetDataChanged: {
-    if (!isDragging) {
-      baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : 100;
-      baseY = (widgetData && widgetData.y !== undefined) ? widgetData.y : 100;
-    }
-  }
-
-  property color textColor: Color.mOnSurface
-  Rectangle {
-    anchors.fill: parent
-    anchors.margins: -Style.marginS
-    color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : "transparent"
-    border.color: (Settings.data.desktopWidgets.editMode || isDragging) ? (isDragging ? Qt.rgba(textColor.r, textColor.g, textColor.b, 0.5) : Color.mPrimary) : "transparent"
-    border.width: Settings.data.desktopWidgets.editMode ? 3 : (isDragging ? 2 : 0)
-    radius: Style.radiusL + Style.marginS
-    z: -1
-  }
-
-  Rectangle {
-    id: container
-    anchors.fill: parent
-    radius: Style.radiusL
-    color: Color.mSurface
-    border {
-      width: 1
-      color: Qt.alpha(Color.mOutline, 0.12)
-    }
-    clip: true
-    visible: (widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true
-
-    layer.enabled: Settings.data.general.enableShadows && !root.isDragging && ((widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true)
-    layer.effect: MultiEffect {
-      shadowEnabled: true
-      shadowBlur: Style.shadowBlur * 1.5
-      shadowOpacity: Style.shadowOpacity * 0.6
-      shadowColor: Color.black
-      shadowHorizontalOffset: Settings.data.general.shadowOffsetX
-      shadowVerticalOffset: Settings.data.general.shadowOffsetY
-      blurMax: Style.shadowBlurMax
-    }
-  }
-
-  MouseArea {
-    id: dragArea
-    anchors.fill: parent
-    z: 1
-    enabled: Settings.data.desktopWidgets.editMode
-    cursorShape: enabled && isDragging ? Qt.ClosedHandCursor : (enabled ? Qt.OpenHandCursor : Qt.ArrowCursor)
-    hoverEnabled: true
-    acceptedButtons: Qt.LeftButton
-    propagateComposedEvents: true
-
-    property point pressPos: Qt.point(0, 0)
-    property bool isDraggingWidget: false
-
-    onPressed: mouse => {
-                 pressPos = Qt.point(mouse.x, mouse.y);
-                 dragOffsetX = root.x;
-                 dragOffsetY = root.y;
-                 isDragging = true;
-                 isDraggingWidget = true;
-                 // Update base position to current position when starting drag
-                 baseX = root.x;
-                 baseY = root.y;
-               }
-
-    onPositionChanged: mouse => {
-                         if (isDragging && isDraggingWidget && pressed) {
-                           var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
-                           var newX = globalPos.x - pressPos.x;
-                           var newY = globalPos.y - pressPos.y;
-
-                           if (root.parent && root.width > 0 && root.height > 0) {
-                             newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
-                             newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
-                           }
-
-                           if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
-                             return;
-                           }
-
-                           dragOffsetX = newX;
-                           dragOffsetY = newY;
-                         }
-                       }
-
-    onReleased: mouse => {
-                  if (isDragging && widgetIndex >= 0 && screen && screen.name) {
-                    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-                    var newMonitorWidgets = monitorWidgets.slice();
-                    for (var i = 0; i < newMonitorWidgets.length; i++) {
-                      if (newMonitorWidgets[i].name === screen.name) {
-                        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-                        if (widgetIndex < widgets.length) {
-                          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
-                                                                 "x": dragOffsetX,
-                                                                 "y": dragOffsetY
-                                                               });
-                          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                                 "widgets": widgets
-                                                               });
-                          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-                        }
-                        break;
-                      }
-                    }
-                    // Update base position to final position
-                    baseX = dragOffsetX;
-                    baseY = dragOffsetY;
-                    isDragging = false;
-                    isDraggingWidget = false;
-                  }
-                }
-
-    onCanceled: {
-      isDragging = false;
-      isDraggingWidget = false;
-    }
-  }
-
   RowLayout {
     id: contentLayout
     anchors.fill: parent
     anchors.margins: Style.marginM
     spacing: Style.marginM
+    z: 2
 
     Item {
       Layout.preferredWidth: 64 * Style.uiScaleRatio
