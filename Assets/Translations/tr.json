@@ -1385,12 +1385,6 @@
           "label": "Görselleştirme türü"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "Hangi monitör için widget'ları yapılandıracağınızı seçin",
-          "label": "Monitör"
-        }
-      },
       "title": "Masaüstü Araçları",
       "weather": {
         "enabled": {

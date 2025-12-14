@@ -6,13 +6,26 @@ import qs.Commons
 Popup {
   id: root
 
-  property alias model: listView.model
+  property var model: []
   property real itemHeight: 36
   property real itemPadding: Style.marginM
   property int verticalPolicy: ScrollBar.AsNeeded
   property int horizontalPolicy: ScrollBar.AsNeeded
 
   signal triggered(string action)
+
+  // Filter out hidden items to avoid spacing artifacts from zero-height items
+  readonly property var filteredModel: {
+    if (!model || model.length === 0)
+      return [];
+    var filtered = [];
+    for (var i = 0; i < model.length; i++) {
+      if (model[i].visible !== false) {
+        filtered.push(model[i]);
+      }
+    }
+    return filtered;
+  }
 
   width: 180
   padding: Style.marginS
@@ -26,17 +39,17 @@ Popup {
 
   contentItem: NListView {
     id: listView
-    implicitHeight: contentHeight
+    implicitHeight: Math.max(contentHeight, root.itemHeight)
     spacing: Style.marginXXS
     interactive: contentHeight > root.height
     verticalPolicy: root.verticalPolicy
     horizontalPolicy: root.horizontalPolicy
+    model: root.filteredModel
 
     delegate: ItemDelegate {
       id: menuItem
       width: listView.width
-      height: modelData.visible !== false ? root.itemHeight : 0
-      visible: modelData.visible !== false
+      height: root.itemHeight
       opacity: modelData.enabled !== false ? 1.0 : 0.5
       enabled: modelData.enabled !== false
 

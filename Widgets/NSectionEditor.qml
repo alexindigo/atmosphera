@@ -15,6 +15,7 @@ NBox {
   property var availableWidgets: []
   property var availableSections: ["left", "center", "right"]
   property int maxWidgets: -1 // -1 means unlimited
+  property bool draggable: true // Enable/disable drag reordering
 
   property var widgetRegistry: null
   property string settingsDialogComponent: "BarWidgetSettingsDialog.qml"
@@ -128,7 +129,7 @@ NBox {
 
       NSearchableComboBox {
         id: comboBox
-        model: availableWidgets
+        model: availableWidgets ?? null
         label: ""
         description: ""
         placeholder: I18n.tr("bar.widget-settings.section-editor.placeholder")
@@ -142,7 +143,8 @@ NBox {
 
         // Re-filter when the model count changes (when widgets are loaded)
         Connections {
-          target: availableWidgets
+          target: availableWidgets ?? null
+          ignoreUnknownSignals: true
           function onCountChanged() {
             // Trigger a re-filter by clearing and re-setting the search text
             var currentSearch = comboBox.searchText;
@@ -480,6 +482,7 @@ NBox {
         id: flowDragArea
         anchors.fill: parent
         z: 100 // Above widgets to ensure it captures events first
+        enabled: root.draggable
 
         acceptedButtons: Qt.LeftButton
         preventStealing: true // Always prevent stealing to ensure we get all events

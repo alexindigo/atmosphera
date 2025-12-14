@@ -31,6 +31,8 @@ RowLayout {
   property string searchText: ""
 
   function findIndexByKey(key) {
+    if (!root.model)
+      return -1;
     for (var i = 0; i < root.model.count; i++) {
       if (root.model.get(i).key === key) {
         return i;
@@ -154,7 +156,7 @@ RowLayout {
 
       // Look up current selection directly in source model by key
       readonly property int sourceIndex: root.findIndexByKey(root.currentKey)
-      readonly property bool hasSelection: sourceIndex >= 0 && sourceIndex < root.model.count
+      readonly property bool hasSelection: root.model && sourceIndex >= 0 && sourceIndex < root.model.count
 
       color: hasSelection ? Color.mOnSurface : Color.mOnSurfaceVariant
       text: hasSelection ? root.model.get(sourceIndex).name : root.placeholder

@@ -1385,12 +1385,6 @@
           "label": "Tipo de visualização"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "Selecione qual monitor configurar widgets para.",
-          "label": "Monitor"
-        }
-      },
       "title": "Widgets da Área de Trabalho",
       "weather": {
         "enabled": {

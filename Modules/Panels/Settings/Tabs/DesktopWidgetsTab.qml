@@ -12,8 +12,11 @@ ColumnLayout {
 
   spacing: Style.marginL
 
-  // Selected monitor for widget configuration
-  property string selectedMonitor: Quickshell.screens.length > 0 ? Quickshell.screens[0].name : ""
+  // Available widgets model - declared early so Repeater delegates can access it
+  property alias availableWidgetsModel: availableWidgets
+  ListModel {
+    id: availableWidgets
+  }
 
   NHeader {
     label: I18n.tr("settings.desktop-widgets.general.section.label")
@@ -53,53 +56,30 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  // Monitor selector
-  NHeader {
-    visible: Settings.data.desktopWidgets.enabled && Quickshell.screens.length > 1
-    label: I18n.tr("settings.desktop-widgets.monitor.section.label")
-    description: I18n.tr("settings.desktop-widgets.monitor.section.description")
-  }
+  // One NSectionEditor per monitor
+  Repeater {
+    model: Settings.data.desktopWidgets.enabled ? Quickshell.screens : []
 
-  NComboBox {
-    visible: Settings.data.desktopWidgets.enabled && Quickshell.screens.length > 1
-    Layout.fillWidth: true
-    model: {
-      var screens = [];
-      for (var i = 0; i < Quickshell.screens.length; i++) {
-        var screen = Quickshell.screens[i];
-        var compositorScale = CompositorService.getDisplayScale(screen.name);
-        screens.push({
-                       "key": screen.name,
-                       "name": screen.name + " (" + screen.width + "x" + screen.height + " @ " + compositorScale + "x)"
-                     });
+    NSectionEditor {
+      required property var modelData
+
+      Layout.fillWidth: true
+      sectionName: {
+        var compositorScale = CompositorService.getDisplayScale(modelData.name);
+        return modelData.name + " (" + modelData.width + "x" + modelData.height + " @ " + compositorScale + "x)";
       }
-      return screens;
+      sectionId: modelData.name
+      settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml")
+      widgetRegistry: DesktopWidgetRegistry
+      widgetModel: getWidgetsForMonitor(modelData.name)
+      availableWidgets: root.availableWidgetsModel
+      availableSections: [] // No sections to move between - hides move menu items
+      draggable: false // Desktop widgets are positioned by X,Y, not list order
+      maxWidgets: -1
+      onAddWidget: (widgetId, section) => _addWidgetToMonitor(modelData.name, widgetId)
+      onRemoveWidget: (section, index) => _removeWidgetFromMonitor(modelData.name, index)
+      onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsForMonitor(modelData.name, index, settings)
     }
-    currentKey: root.selectedMonitor
-    onSelected: key => root.selectedMonitor = key
-  }
-
-  // Desktop Widgets Section
-  NSectionEditor {
-    visible: Settings.data.desktopWidgets.enabled
-    Layout.fillWidth: true
-    sectionName: I18n.tr("settings.desktop-widgets.widgets.section.label")
-    sectionId: "desktop"
-    settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml")
-    widgetRegistry: DesktopWidgetRegistry
-    widgetModel: getWidgetsForMonitor(root.selectedMonitor)
-    availableWidgets: availableWidgets
-    maxWidgets: -1
-    onAddWidget: (widgetId, section) => _addWidget(widgetId)
-    onRemoveWidget: (section, index) => _removeWidget(index)
-    onReorderWidget: (section, fromIndex, toIndex) => _reorderWidget(fromIndex, toIndex)
-    onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettings(index, settings)
-    onMoveWidget: (fromSection, index, toSection) => {} // Not needed for desktop widgets
-  }
-
-  // Available widgets model - must be a ListModel with id, not a property
-  ListModel {
-    id: availableWidgets
   }
 
   Component.onCompleted: {
@@ -174,7 +154,7 @@ ColumnLayout {
     Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
   }
 
-  function _addWidget(widgetId) {
+  function _addWidgetToMonitor(monitorName, widgetId) {
     var newWidget = {
       "id": widgetId
     };
@@ -199,37 +179,26 @@ ColumnLayout {
       newWidget.x = 100;
       newWidget.y = 300;
     }
-    var widgets = getWidgetsForMonitor(root.selectedMonitor).slice();
+    var widgets = getWidgetsForMonitor(monitorName).slice();
     widgets.push(newWidget);
-    setWidgetsForMonitor(root.selectedMonitor, widgets);
+    setWidgetsForMonitor(monitorName, widgets);
   }
 
-  function _removeWidget(index) {
-    var widgets = getWidgetsForMonitor(root.selectedMonitor);
+  function _removeWidgetFromMonitor(monitorName, index) {
+    var widgets = getWidgetsForMonitor(monitorName);
     if (index >= 0 && index < widgets.length) {
       var newArray = widgets.slice();
       newArray.splice(index, 1);
-      setWidgetsForMonitor(root.selectedMonitor, newArray);
+      setWidgetsForMonitor(monitorName, newArray);
     }
   }
 
-  function _reorderWidget(fromIndex, toIndex) {
-    var widgets = getWidgetsForMonitor(root.selectedMonitor);
-    if (fromIndex >= 0 && fromIndex < widgets.length && toIndex >= 0 && toIndex < widgets.length) {
-      var newArray = widgets.slice();
-      var item = newArray[fromIndex];
-      newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, item);
-      setWidgetsForMonitor(root.selectedMonitor, newArray);
-    }
-  }
-
-  function _updateWidgetSettings(index, settings) {
-    var widgets = getWidgetsForMonitor(root.selectedMonitor);
+  function _updateWidgetSettingsForMonitor(monitorName, index, settings) {
+    var widgets = getWidgetsForMonitor(monitorName);
     if (index >= 0 && index < widgets.length) {
       var newArray = widgets.slice();
       newArray[index] = Object.assign({}, newArray[index], settings);
-      setWidgetsForMonitor(root.selectedMonitor, newArray);
+      setWidgetsForMonitor(monitorName, newArray);
     }
   }
 }

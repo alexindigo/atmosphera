@@ -1385,12 +1385,6 @@
           "label": "Visualisatietype"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "Selecteer de monitor waarvoor je widgets wilt configureren.",
-          "label": "Monitor"
-        }
-      },
       "title": "Desktopwidgets",
       "weather": {
         "enabled": {

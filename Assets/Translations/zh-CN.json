@@ -1385,12 +1385,6 @@
           "label": "可视化类型"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "选择要配置小部件的显示器",
-          "label": "监视器"
-        }
-      },
       "title": "桌面小部件",
       "weather": {
         "enabled": {

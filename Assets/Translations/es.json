@@ -1385,12 +1385,6 @@
           "label": "Tipo de visualización"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "Seleccione el monitor para el que desea configurar los widgets.",
-          "label": "Monitor"
-        }
-      },
       "title": "Widgets de escritorio",
       "weather": {
         "enabled": {

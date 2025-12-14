@@ -1385,12 +1385,6 @@
           "label": "Visualization type"
         }
       },
-      "monitor": {
-        "section": {
-          "description": "Select which monitor to configure widgets for",
-          "label": "Monitor"
-        }
-      },
       "title": "Desktop Widgets",
       "weather": {
         "enabled": {
