@@ -434,6 +434,7 @@ Singleton {
       property int cpuPollingInterval: 3000
       property int tempPollingInterval: 3000
       property int gpuPollingInterval: 3000
+      property bool enableNvidiaGpu: false // Opt-in: nvidia-smi wakes dGPU on laptops, draining battery
       property int memPollingInterval: 3000
       property int diskPollingInterval: 3000
       property int networkPollingInterval: 3000

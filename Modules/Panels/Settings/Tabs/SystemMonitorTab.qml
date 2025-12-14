@@ -18,6 +18,15 @@ ColumnLayout {
     description: I18n.tr("settings.system-monitor.general.section.description")
   }
 
+  NToggle {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginM
+    label: I18n.tr("settings.system-monitor.enable-nvidia-gpu.label")
+    description: I18n.tr("settings.system-monitor.enable-nvidia-gpu.description")
+    checked: Settings.data.systemMonitor.enableNvidiaGpu
+    onToggled: checked => Settings.data.systemMonitor.enableNvidiaGpu = checked
+  }
+
   // Colors Section
   RowLayout {
     Layout.fillWidth: true

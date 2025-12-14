@@ -2088,6 +2088,10 @@
       "gpu-section": {
         "label": "GPU temperature"
       },
+      "enable-nvidia-gpu": {
+        "label": "Enable NVIDIA GPU monitoring",
+        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics."
+      },
       "highlight-colors-section": {
         "label": "Highlight colors"
       },
