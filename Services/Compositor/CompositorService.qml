@@ -168,8 +168,9 @@ Singleton {
                                      });
 
     backend.activeWindowChanged.connect(() => {
-                                          // Focus changes don't require rebuilding the window list
-                                          // focusedWindowIndex is already synced via property binding
+                                          // Sync active window when it changes
+                                          // TODO: Avoid re-syncing all windows
+                                          syncWindows();
                                           // Forward the signal
                                           activeWindowChanged();
                                         });
