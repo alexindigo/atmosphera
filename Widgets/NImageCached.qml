@@ -1,5 +1,3 @@
-pragma ComponentBehavior
-
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -44,9 +42,9 @@ Image {
       // Original image is shown and fully loaded, time to cache it
       const grabPath = cachePath;
       if (visible && width > 0 && height > 0 && Window.window && Window.window.visible)
-      grabToImage(res => {
-                    return res.saveToFile(grabPath);
-                  });
+        grabToImage(res => {
+                      return res.saveToFile(grabPath);
+                    });
     }
   }
 }
