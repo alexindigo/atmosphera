@@ -188,17 +188,9 @@ Singleton {
                                               });
 
     // Initial sync
-    delayedTimer.running = true;
-  }
-
-  Timer {
-    id: delayedTimer
-    interval: 100
-    onTriggered: {
-      syncWorkspaces();
-      syncWindows();
-      focusedWindowIndex = backend.focusedWindowIndex;
-    }
+    syncWorkspaces();
+    syncWindows();
+    focusedWindowIndex = backend.focusedWindowIndex;
   }
 
   function syncWorkspaces() {
