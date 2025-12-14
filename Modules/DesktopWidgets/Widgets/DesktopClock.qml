@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Modules.DesktopWidgets
 import qs.Widgets
 
 DraggableDesktopWidget {
