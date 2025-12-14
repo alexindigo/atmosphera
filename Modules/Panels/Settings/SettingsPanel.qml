@@ -69,6 +69,7 @@ SmartPanel {
     ColorScheme,
     LockScreen,
     ControlCenter,
+    DesktopWidgets,
     OSD,
     Display,
     Dock,

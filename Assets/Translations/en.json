@@ -1436,6 +1436,95 @@
       },
       "title": "Dock"
     },
+    "desktop-widgets": {
+      "widgets": {
+        "section": {
+          "label": "Desktop Widgets",
+          "description": "Add and configure desktop widgets"
+        }
+      },
+      "edit-mode": {
+        "button": {
+          "label": "Enter edit mode"
+        },
+        "description": "Enable edit mode to move and reposition desktop widgets. When enabled, widgets show a drag outline and can be repositioned.",
+        "exit-button": "Exit edit mode",
+        "label": "Edit mode"
+      },
+      "enabled": {
+        "description": "Enable or disable desktop widgets entirely.",
+        "label": "Enable desktop widgets"
+      },
+      "general": {
+        "section": {
+          "description": "Configure widgets that appear on your desktop.",
+          "label": "Desktop Widgets"
+        }
+      },
+      "clock": {
+        "enabled": {
+          "description": "Show a clock widget on the desktop.",
+          "label": "Enable clock widget"
+        },
+        "height": {
+          "description": "Height of the clock widget in pixels.",
+          "label": "Height"
+        },
+        "section": {
+          "description": "Configure the clock widget appearance.",
+          "label": "Clock Widget"
+        },
+        "show-date": {
+          "description": "Display the current date below the time.",
+          "label": "Show date"
+        },
+        "show-background": {
+          "description": "Show the background container for the clock widget.",
+          "label": "Show background"
+        },
+        "show-seconds": {
+          "description": "Display seconds in the time.",
+          "label": "Show seconds"
+        },
+        "width": {
+          "description": "Width of the clock widget in pixels.",
+          "label": "Width"
+        }
+      },
+      "media-player": {
+        "enabled": {
+          "description": "Show a media player widget on the desktop.",
+          "label": "Enable media player widget"
+        },
+        "section": {
+          "description": "Configure the media player widget appearance.",
+          "label": "Media Player Widget"
+        },
+        "show-background": {
+          "description": "Show the background container for the media player widget.",
+          "label": "Show background"
+        },
+        "visualizer-type": {
+          "description": "Choose a visualization type for the desktop media player background.",
+          "label": "Visualization type"
+        }
+      },
+      "weather": {
+        "enabled": {
+          "description": "Show a weather widget on the desktop.",
+          "label": "Enable weather widget"
+        },
+        "section": {
+          "description": "Configure the weather widget appearance.",
+          "label": "Weather Widget"
+        },
+        "show-background": {
+          "description": "Show the background container for the weather widget.",
+          "label": "Show background"
+        }
+      },
+      "title": "Desktop Widgets"
+    },
     "general": {
       "fonts": {
         "default": {

@@ -14,8 +14,10 @@ Singleton {
   *   - Bar has an audio visualizer
   *   - LockScreen is opened
   *   - A control center is open
+  *   - Desktop media player has a visualizer enabled
   */
-  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel"))
+  readonly property bool hasDesktopMediaVisualizer: Settings.data.desktopWidgets.mediaPlayer.enabled && Settings.data.desktopWidgets.mediaPlayer.visualizerType !== "" && Settings.data.desktopWidgets.mediaPlayer.visualizerType !== "none"
+  property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel")) || hasDesktopMediaVisualizer
 
   property var values: []
   property int barsCount: 32

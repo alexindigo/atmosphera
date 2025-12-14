@@ -1,0 +1,154 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
+import QtQuick.Layouts
+import Quickshell
+import qs.Commons
+import qs.Services.UI
+import qs.Widgets
+
+Popup {
+  id: root
+
+  property int widgetIndex: -1
+  property var widgetData: null
+  property string widgetId: ""
+  property string sectionId: "" // Not used for desktop widgets, but required by NSectionEditor
+
+  signal updateWidgetSettings(int index, var settings)
+
+  width: Math.max(content.implicitWidth + padding * 2, 500)
+  height: content.implicitHeight + padding * 2
+  padding: Style.marginXL
+  modal: true
+  dim: false
+  anchors.centerIn: parent
+
+  onOpened: {
+    if (widgetData && widgetId) {
+      loadWidgetSettings();
+    }
+    forceActiveFocus();
+  }
+
+  background: Rectangle {
+    id: bgRect
+    color: Color.mSurface
+    radius: Style.radiusL
+    border.color: Color.mPrimary
+    border.width: Style.borderM
+  }
+
+  contentItem: FocusScope {
+    id: focusScope
+    focus: true
+
+    ColumnLayout {
+      id: content
+      anchors.fill: parent
+      spacing: Style.marginM
+
+      RowLayout {
+        Layout.fillWidth: true
+
+        NText {
+          text: I18n.tr("system.widget-settings-title", {
+                          "widget": root.widgetId
+                        })
+          pointSize: Style.fontSizeL
+          font.weight: Style.fontWeightBold
+          color: Color.mPrimary
+          Layout.fillWidth: true
+        }
+
+        NIconButton {
+          icon: "close"
+          tooltipText: I18n.tr("tooltips.close")
+          onClicked: root.close()
+        }
+      }
+
+      Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Color.mOutline
+      }
+
+      Loader {
+        id: settingsLoader
+        Layout.fillWidth: true
+        onLoaded: {
+          if (item) {
+            Qt.callLater(() => {
+                           var firstInput = findFirstFocusable(item);
+                           if (firstInput) {
+                             firstInput.forceActiveFocus();
+                           } else {
+                             focusScope.forceActiveFocus();
+                           }
+                         });
+          }
+        }
+
+        function findFirstFocusable(item) {
+          if (!item) return null;
+          if (item.focus !== undefined && item.focus === true) return item;
+          if (item.children) {
+            for (var i = 0; i < item.children.length; i++) {
+              var child = item.children[i];
+              if (child && child.focus !== undefined && child.focus === true) return child;
+              var found = findFirstFocusable(child);
+              if (found) return found;
+            }
+          }
+          return null;
+        }
+      }
+
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.marginM
+        spacing: Style.marginM
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        NButton {
+          text: I18n.tr("bar.widget-settings.dialog.cancel")
+          outlined: true
+          onClicked: root.close()
+        }
+
+        NButton {
+          text: I18n.tr("bar.widget-settings.dialog.apply")
+          icon: "check"
+          onClicked: {
+            if (settingsLoader.item && settingsLoader.item.saveSettings) {
+              var newSettings = settingsLoader.item.saveSettings();
+              root.updateWidgetSettings(root.widgetIndex, newSettings);
+              root.close();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function loadWidgetSettings() {
+    const source = DesktopWidgetRegistry.widgetSettingsMap[widgetId];
+    if (source) {
+      var currentWidgetData = widgetData;
+      var widgets = Settings.data.desktopWidgets.widgets;
+      if (widgets && widgetIndex >= 0 && widgetIndex < widgets.length) {
+        currentWidgetData = widgets[widgetIndex];
+      }
+      var fullPath = Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/" + source);
+      settingsLoader.setSource(fullPath, {
+                                 "widgetData": currentWidgetData,
+                                 "widgetMetadata": DesktopWidgetRegistry.widgetMetadata[widgetId]
+                               });
+    }
+  }
+}
+

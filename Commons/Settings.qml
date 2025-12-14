@@ -605,6 +605,13 @@ Singleton {
       property string wallpaperChange: ""
       property string darkModeChange: ""
     }
+
+    // desktop widgets
+    property JsonObject desktopWidgets: JsonObject {
+      property bool enabled: false
+      property bool editMode: false
+      property list<var> widgets: []
+    }
   }
 
   // -----------------------------------------------------
