@@ -5,7 +5,7 @@ import qs.Commons
 
 /**
 * Detects which screen the cursor is currently on by creating a temporary
-* invisible PanelWindow. Use withTargetScreen() to get the screen asynchronously.
+* invisible PanelWindow. Use withCurrentScreen() to get the screen asynchronously.
 *
 * Usage:
 *   CurrentScreenDetector {
@@ -13,7 +13,7 @@ import qs.Commons
 *   }
 *
 *   function doSomething() {
-*     screenDetector.withTargetScreen(function(screen) {
+*     screenDetector.withCurrentScreen(function(screen) {
 *       // screen is the ShellScreen where cursor is
 *     })
 *   }
@@ -40,7 +40,7 @@ Item {
   * On single-monitor setups, executes immediately.
   * On multi-monitor setups, briefly opens an invisible window to detect the screen.
   */
-  function withTargetScreen(callback: var): void {
+  function withCurrentScreen(callback: var): void {
   if (root.pendingCallback) {
     Logger.w("CurrentScreenDetector", "Another detection is pending, ignoring new call");
     return;

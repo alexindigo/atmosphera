@@ -43,10 +43,10 @@ Item {
       if (Settings.data.ui.settingsPanelMode === "window") {
         SettingsPanelService.toggleWindow();
       } else {
-        root.screenDetector.withTargetScreen(screen => {
-                                               var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-                                               settingsPanel?.toggle();
-                                             });
+        root.screenDetector.withCurrentScreen(screen => {
+                                                var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                                settingsPanel?.toggle();
+                                              });
       }
     }
   }
@@ -54,10 +54,10 @@ Item {
   IpcHandler {
     target: "calendar"
     function toggle() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var clockPanel = PanelService.getPanel("clockPanel", screen);
-                                             clockPanel?.toggle(null, "Clock");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var clockPanel = PanelService.getPanel("clockPanel", screen);
+                                              clockPanel?.toggle(null, "Clock");
+                                            });
     }
   }
 
@@ -65,10 +65,10 @@ Item {
     target: "notifications"
     function toggleHistory() {
       // Will attempt to open the panel next to the bar button if any.
-      root.screenDetector.withTargetScreen(screen => {
-                                             var notificationHistoryPanel = PanelService.getPanel("notificationHistoryPanel", screen);
-                                             notificationHistoryPanel.toggle(null, "NotificationHistory");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var notificationHistoryPanel = PanelService.getPanel("notificationHistoryPanel", screen);
+                                              notificationHistoryPanel.toggle(null, "NotificationHistory");
+                                            });
     }
     function toggleDND() {
       NotificationService.doNotDisturb = !NotificationService.doNotDisturb;
@@ -106,39 +106,39 @@ Item {
   IpcHandler {
     target: "launcher"
     function toggle() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                             if (!launcherPanel?.isPanelOpen || (launcherPanel?.isPanelOpen && !launcherPanel?.activePlugin))
-                                             launcherPanel?.toggle();
-                                             launcherPanel?.setSearchText("");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel?.isPanelOpen || (launcherPanel?.isPanelOpen && !launcherPanel?.activePlugin))
+                                              launcherPanel?.toggle();
+                                              launcherPanel?.setSearchText("");
+                                            });
     }
     function clipboard() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                             if (!launcherPanel?.isPanelOpen) {
-                                               launcherPanel?.toggle();
-                                             }
-                                             launcherPanel?.setSearchText(">clip ");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel?.isPanelOpen) {
+                                                launcherPanel?.toggle();
+                                              }
+                                              launcherPanel?.setSearchText(">clip ");
+                                            });
     }
     function calculator() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                             if (!launcherPanel?.isPanelOpen) {
-                                               launcherPanel?.toggle();
-                                             }
-                                             launcherPanel?.setSearchText(">calc ");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel?.isPanelOpen) {
+                                                launcherPanel?.toggle();
+                                              }
+                                              launcherPanel?.setSearchText(">calc ");
+                                            });
     }
     function emoji() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                             if (!launcherPanel?.isPanelOpen) {
-                                               launcherPanel?.toggle();
-                                             }
-                                             launcherPanel?.setSearchText(">emoji ");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
+                                              if (!launcherPanel?.isPanelOpen) {
+                                                launcherPanel?.toggle();
+                                              }
+                                              launcherPanel?.setSearchText(">emoji ");
+                                            });
     }
   }
 
@@ -209,10 +209,10 @@ Item {
   IpcHandler {
     target: "sessionMenu"
     function toggle() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen);
-                                             sessionMenuPanel?.toggle();
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var sessionMenuPanel = PanelService.getPanel("sessionMenuPanel", screen);
+                                              sessionMenuPanel?.toggle();
+                                            });
     }
 
     function lockAndSuspend() {
@@ -223,15 +223,15 @@ Item {
   IpcHandler {
     target: "controlCenter"
     function toggle() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
-                                             if (Settings.data.controlCenter.position === "close_to_bar_button") {
-                                               // Will attempt to open the panel next to the bar button if any.
-                                               controlCenterPanel?.toggle(null, "ControlCenter");
-                                             } else {
-                                               controlCenterPanel?.toggle();
-                                             }
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
+                                              if (Settings.data.controlCenter.position === "close_to_bar_button") {
+                                                // Will attempt to open the panel next to the bar button if any.
+                                                controlCenterPanel?.toggle(null, "ControlCenter");
+                                              } else {
+                                                controlCenterPanel?.toggle();
+                                              }
+                                            });
     }
   }
 
@@ -247,10 +247,10 @@ Item {
     target: "wallpaper"
     function toggle() {
       if (Settings.data.wallpaper.enabled) {
-        root.screenDetector.withTargetScreen(screen => {
-                                               var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen);
-                                               wallpaperPanel?.toggle();
-                                             });
+        root.screenDetector.withCurrentScreen(screen => {
+                                                var wallpaperPanel = PanelService.getPanel("wallpaperPanel", screen);
+                                                wallpaperPanel?.toggle();
+                                              });
       }
     }
 
@@ -312,10 +312,10 @@ Item {
       NetworkService.setWifiEnabled(false);
     }
     function togglePanel() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var wifiPanel = PanelService.getPanel("wifiPanel", screen);
-                                             wifiPanel?.toggle(null, "WiFi");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var wifiPanel = PanelService.getPanel("wifiPanel", screen);
+                                              wifiPanel?.toggle(null, "WiFi");
+                                            });
     }
   }
 
@@ -331,20 +331,20 @@ Item {
       BluetoothService.setBluetoothEnabled(false);
     }
     function togglePanel() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var bluetoothPanel = PanelService.getPanel("bluetoothPanel", screen);
-                                             bluetoothPanel?.toggle(null, "Bluetooth");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var bluetoothPanel = PanelService.getPanel("bluetoothPanel", screen);
+                                              bluetoothPanel?.toggle(null, "Bluetooth");
+                                            });
     }
   }
 
   IpcHandler {
     target: "battery"
     function togglePanel() {
-      root.screenDetector.withTargetScreen(screen => {
-                                             var batteryPanel = PanelService.getPanel("batteryPanel", screen);
-                                             batteryPanel?.toggle(null, "Battery");
-                                           });
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var batteryPanel = PanelService.getPanel("batteryPanel", screen);
+                                              batteryPanel?.toggle(null, "Battery");
+                                            });
     }
   }
 
