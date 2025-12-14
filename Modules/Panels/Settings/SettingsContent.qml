@@ -331,11 +331,18 @@ Item {
       // Sidebar
       Rectangle {
         id: sidebar
+
+        readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
+
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : (sidebarToggle.width + (sidebarList.verticalScrollBarActive ? sidebarList.scrollBarTotalWidth : 0))
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : (sidebarToggle.width + (sidebarList.verticalScrollBarActive ? sidebarList.scrollBarTotalWidth : 0)) + (sidebar.panelVeryTransparent ? Style.marginM * 2 : 0)
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        color: Color.transparent
+
+        radius: sidebar.panelVeryTransparent ? Style.radiusM : 0
+        color: sidebar.panelVeryTransparent ? Color.mSurfaceVariant : Color.transparent
+        border.width: sidebar.panelVeryTransparent ? Style.borderS : 0
+        border.color: sidebar.panelVeryTransparent ? Color.mOutline : Color.transparent
 
         Behavior on Layout.preferredWidth {
           NumberAnimation {
@@ -347,6 +354,7 @@ Item {
         ColumnLayout {
           anchors.fill: parent
           spacing: Style.marginS
+          anchors.margins: sidebar.panelVeryTransparent ? Style.marginM : 0
 
           // Sidebar toggle button
           Item {

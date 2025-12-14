@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Ajusta la opacidad del fondo de la barra.",
-          "label": "Opacidad del fondo"
-        },
         "capsule-opacity": {
           "description": "Establecer el nivel de opacidad para los fondos de los widgets cuando se muestra la cápsula.",
           "label": "Opacidad de la cápsula"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Mostrar fondos de los widgets.",
           "label": "Mostrar cápsula"
+        },
+        "transparent": {
+          "description": "Esto evitará que los paneles se adhieran a la barra.",
+          "label": "Fondo transparente"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Ajusta la opacidad del fondo del lanzador.",
-          "label": "Opacidad del fondo"
-        },
         "clip-preview": {
           "description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
           "label": "Activar vista previa del portapapeles"
@@ -2158,7 +2154,7 @@
         "reset": "Restablecer la opacidad del escritorio atenuado"
       },
       "panel-background-opacity": {
-        "description": "Establecer la opacidad de fondo para todos los paneles (Launcher, Centro de control, Configuración, etc.).",
+        "description": "Establecer la opacidad del fondo para todos los paneles (barra, lanzador, ajustes, etc...).",
         "label": "Opacidad de fondo del panel"
       },
       "panels-attached-to-bar": {

@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "Pas de achtergronddekking van de balk aan.",
-          "label": "Achtergronddekking"
-        },
         "capsule-opacity": {
           "description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
           "label": "Capsule-doorzichtigheid"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "Widget-achtergronden tonen.",
           "label": "Capsules tonen"
+        },
+        "transparent": {
+          "description": "Dit voorkomt dat panelen aan de balk worden bevestigd.",
+          "label": "Transparante achtergrond"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "Pas de achtergronddekking van de launcher aan.",
-          "label": "Achtergronddekking"
-        },
         "clip-preview": {
           "description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
           "label": "Klembordvoorbeeld inschakelen"
@@ -2158,7 +2154,7 @@
         "reset": "Doorzichtigheid van gedimde desktop resetten"
       },
       "panel-background-opacity": {
-        "description": "Stel de achtergronddoorzichtigheid in voor alle panelen (Launcher, Control Center, Instellingen, enz.).",
+        "description": "Stel de achtergronddoorzichtigheid in voor alle panelen (balk, launcher, instellingen, enz...).",
         "label": "Paneel achtergronddoorzichtigheid"
       },
       "panels-attached-to-bar": {

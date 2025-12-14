@@ -981,10 +981,6 @@
     },
     "bar": {
       "appearance": {
-        "background-opacity": {
-          "description": "バーの背景の不透明度を調整します。",
-          "label": "背景の不透明度"
-        },
         "capsule-opacity": {
           "description": "カプセル表示時のウィジェット背景の不透明度を設定します。",
           "label": "カプセルの不透明度"
@@ -1018,6 +1014,10 @@
         "show-capsule": {
           "description": "ウィジェットの背景を表示します。",
           "label": "カプセルを表示"
+        },
+        "transparent": {
+          "description": "これにより、パネルがバーに取り付けられるのを防ぎます。",
+          "label": "透明な背景"
         }
       },
       "monitors": {
@@ -1544,10 +1544,6 @@
     },
     "launcher": {
       "settings": {
-        "background-opacity": {
-          "description": "ランチャーの背景の不透明度を調整します。",
-          "label": "背景の不透明度"
-        },
         "clip-preview": {
           "description": ">clip コマンド使用時に、クリップボードの内容をプレビュー表示します。",
           "label": "クリップボードのプレビューを有効化"
@@ -2158,7 +2154,7 @@
         "reset": "デスクトップを暗くした際の不透明度をリセット"
       },
       "panel-background-opacity": {
-        "description": "すべてのパネル（ランチャー、コントロールセンター、設定など）の背景の不透明度を設定します。",
+        "description": "すべてのパネル（バー、ランチャー、設定など）の背景の不透明度を設定します。",
         "label": "パネル背景の不透明度"
       },
       "panels-attached-to-bar": {

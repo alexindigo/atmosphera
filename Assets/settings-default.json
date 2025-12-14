@@ -2,11 +2,11 @@
   "settingsVersion": 0,
   "bar": {
     "position": "top",
-    "backgroundOpacity": 1,
     "monitors": [],
     "density": "default",
     "showCapsule": true,
     "capsuleOpacity": 1,
+    "transparent": false,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
@@ -92,7 +92,7 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
-    "panelBackgroundOpacity": 1,
+    "panelBackgroundOpacity": 0.85,
     "panelsAttachedToBar": true,
     "settingsPanelMode": "attached"
   },
