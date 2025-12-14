@@ -64,7 +64,7 @@ Singleton {
     cpuTempNameReader.checkNext();
 
     // Kickoff the gpu sensor detection for temperature
-    //gpuTempNameReader.checkNext();
+    gpuTempNameReader.checkNext();
   }
 
   // --------------------------------------------
@@ -698,9 +698,9 @@ Singleton {
   // -------------------------------------------------------
   // Function to update GPU temperature
   function updateGpuTemperature() {
-    if (root.gpuType === "nvidia") {
-      nvidiaTempProcess.running = true;
-    } else if (root.gpuType === "amd" || root.gpuType === "intel") {
+    if (root.gpuType === "nvidia")
+      //nvidiaTempProcess.running = true;
+    {} else if (root.gpuType === "amd" || root.gpuType === "intel") {
       gpuTempReader.path = `${root.gpuTempHwmonPath}/temp1_input`;
       gpuTempReader.reload();
     }
