@@ -1174,6 +1174,10 @@
             "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
             "description-missing": "Nécessite l'installation de {app}"
           },
+          "zed": {
+            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "telegram": {
             "description": "Écrire {filepath}.",
             "description-missing": "Nécessite l'installation de {app}"

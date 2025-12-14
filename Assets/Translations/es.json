@@ -1165,6 +1165,10 @@
             "description": "Escribir {filepath} y recargar",
             "description-missing": "Requiere que {app} esté instalado"
           },
+          "zed": {
+            "description": "Escribir {filepath} y recargar",
+            "description-missing": "Requiere que {app} esté instalado"
+          },
           "label": "Programas",
           "pywalfox": {
             "description": "Escribir {filepath} y ejecutar pywalfox update",

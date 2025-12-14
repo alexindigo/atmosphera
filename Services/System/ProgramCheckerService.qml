@@ -31,6 +31,7 @@ Singleton {
   property bool cavaAvailable: false
   property bool yaziAvailable: false
   property bool emacsAvailable: false
+  property bool zedAvailable: false
   property bool niriAvailable: false
 
   // Discord client auto-detection
@@ -190,6 +191,7 @@ Singleton {
                                             "telegramAvailable": ["sh", "-c", "command -v telegram-desktop >/dev/null 2>&1 || command -v Telegram >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'org.telegram.desktop')"],
                                             "cavaAvailable": ["which", "cava"],
                                             "yaziAvailable": ["which", "yazi"],
+                                            "zedAvailable": ["which", "zeditor"],
                                             "emacsAvailable": ["sh", "-c", "test -d \"$HOME/.config/doom\" || test -d \"$HOME/.emacs.d\""],
                                             "niriAvailable": ["which", "niri"]
                                           })

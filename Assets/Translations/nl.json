@@ -1165,6 +1165,10 @@
             "description": "Schrijf {filepath} en herlaad.",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
           },
+          "zed": {
+            "description": "Schrijf {filepath} en herlaad.",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
           "label": "Programma's",
           "pywalfox": {
             "description": "Schrijf {filepath} en voer pywalfox update uit.",
