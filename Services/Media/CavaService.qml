@@ -16,19 +16,16 @@ Singleton {
   *   - A control center is open
   *   - Desktop media player has a visualizer enabled
   */
-  readonly property bool hasDesktopMediaVisualizer: {
-    if (!Settings.data.desktopWidgets || !Settings.data.desktopWidgets.widgets) {
-      return false;
-    }
-    var widgets = Settings.data.desktopWidgets.widgets;
-    for (var i = 0; i < widgets.length; i++) {
-      var widget = widgets[i];
+  readonly property bool hasDesktopMediaVisualizer: (function() {
+    if (!Settings.data.desktopWidgets.widgets) return false;
+    for (var i = 0; i < Settings.data.desktopWidgets.widgets.length; i++) {
+      var widget = Settings.data.desktopWidgets.widgets[i];
       if (widget.id === "MediaPlayer" && widget.visualizerType && widget.visualizerType !== "" && widget.visualizerType !== "none") {
         return true;
       }
     }
     return false;
-  }
+  })()
   property bool shouldRun: BarService.hasAudioVisualizer || PanelService.lockScreen?.active || (PanelService.openedPanel && PanelService.openedPanel.objectName.startsWith("controlCenterPanel")) || hasDesktopMediaVisualizer
 
   property var values: []

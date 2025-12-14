@@ -17,6 +17,8 @@ Item {
   property bool isDragging: false
   property real dragOffsetX: 0
   property real dragOffsetY: 0
+  property real baseX: (widgetData && widgetData.x !== undefined) ? widgetData.x : 100
+  property real baseY: (widgetData && widgetData.y !== undefined) ? widgetData.y : 200
 
   readonly property bool showPrev: hasPlayer && MediaService.canGoPrevious
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
@@ -31,8 +33,16 @@ Item {
   width: implicitWidth
   height: implicitHeight
 
-  x: isDragging ? dragOffsetX : ((widgetData && widgetData.x !== undefined) ? widgetData.x : 100)
-  y: isDragging ? dragOffsetY : ((widgetData && widgetData.y !== undefined) ? widgetData.y : 200)
+  x: isDragging ? dragOffsetX : baseX
+  y: isDragging ? dragOffsetY : baseY
+  
+  // Update base position from widgetData when not dragging
+  onWidgetDataChanged: {
+    if (!isDragging) {
+      baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : 100;
+      baseY = (widgetData && widgetData.y !== undefined) ? widgetData.y : 200;
+    }
+  }
 
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
   readonly property bool isPlaying: MediaService.isPlaying
@@ -182,6 +192,9 @@ Item {
       dragOffsetY = root.y;
       isDragging = true;
       isDraggingWidget = true;
+      // Update base position to current position when starting drag
+      baseX = root.x;
+      baseY = root.y;
     }
 
     onPositionChanged: mouse => {
@@ -214,6 +227,9 @@ Item {
           });
           Settings.data.desktopWidgets.widgets = widgets;
         }
+        // Update base position to final position
+        baseX = dragOffsetX;
+        baseY = dragOffsetY;
         isDragging = false;
         isDraggingWidget = false;
       }

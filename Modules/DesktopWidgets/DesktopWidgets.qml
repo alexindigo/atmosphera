@@ -143,13 +143,6 @@ Variants {
                 item.parent = widgetsContainer;
                 item.widgetData = widgetData;
                 item.widgetIndex = widgetIndex;
-                // Set position from settings
-                if (widgetData.x !== undefined) {
-                  item.x = widgetData.x;
-                }
-                if (widgetData.y !== undefined) {
-                  item.y = widgetData.y;
-                }
               }
             }
           }
