@@ -335,7 +335,7 @@ Item {
         readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
 
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0)
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
 
