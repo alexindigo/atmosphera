@@ -421,44 +421,21 @@ ColumnLayout {
     }
   }
 
-  // Timer to check for updates after refresh
+  // Timer to check for updates after refresh starts
   Timer {
     id: checkUpdatesTimer
     interval: 100
     onTriggered: {
       PluginService.checkForUpdates();
-      // Force refresh after update check completes (async operation)
-      refreshAfterUpdateCheckTimer.restart();
     }
   }
 
-  // Timer to force refresh after async update check completes
-  // This polls multiple times because the async operation timing is unpredictable
+  // Timer to recheck updates after available plugins are updated
   Timer {
-    id: refreshAfterUpdateCheckTimer
-    interval: 300
-    property int pollAttempts: 0
-    property int maxAttempts: 10
-    property bool hasCalledCheck: false
-
+    id: recheckUpdatesTimer
+    interval: 50
     onTriggered: {
-      pollAttempts++;
-
-      // Only call checkForUpdates() once when available plugins are loaded
-      if (!hasCalledCheck && PluginService.availablePlugins.length > 0) {
-        PluginService.checkForUpdates();
-        hasCalledCheck = true;
-      }
-
-      root.installedPluginsRefreshCounter++;
-
-      // Continue polling if we haven't reached max attempts
-      if (pollAttempts < maxAttempts) {
-        refreshAfterUpdateCheckTimer.restart();
-      } else {
-        pollAttempts = 0;
-        hasCalledCheck = false;
-      }
+      PluginService.checkForUpdates();
     }
   }
 
@@ -847,6 +824,11 @@ ColumnLayout {
 
           return filtered;
         });
+      });
+
+      // Manually trigger update check after a small delay to ensure all registries are loaded
+      Qt.callLater(function () {
+        PluginService.checkForUpdates();
       });
     }
 
