@@ -12,10 +12,12 @@ ColumnLayout {
   property var widgetMetadata: null
 
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
+  property real valueScale: widgetData.scale !== undefined ? widgetData.scale : 1.0
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.showBackground = valueShowBackground;
+    settings.scale = valueScale;
     return settings;
   }
 
@@ -25,5 +27,30 @@ ColumnLayout {
     description: I18n.tr("settings.desktop-widgets.clock.show-background.description")
     checked: valueShowBackground
     onToggled: checked => valueShowBackground = checked
+  }
+
+  RowLayout {
+    Layout.fillWidth: true
+
+    NText {
+      text: I18n.tr("settings.desktop-widgets.scale.label") + ": " + Math.round(valueScale * 100) + "%"
+      Layout.fillWidth: true
+      verticalAlignment: Text.AlignVCenter
+      richTextEnabled: true
+    }
+
+    NSlider {
+      id: scaleSlider
+      Layout.fillWidth: true
+      from: 0.5
+      to: 3.0
+      stepSize: 0.1
+      value: valueScale
+      onValueChanged: {
+        if (value !== undefined) {
+          valueScale = value;
+        }
+      }
+    }
   }
 }

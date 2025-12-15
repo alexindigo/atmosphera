@@ -13,11 +13,13 @@ ColumnLayout {
 
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
   property string valueVisualizerType: widgetData.visualizerType !== undefined ? widgetData.visualizerType : (widgetMetadata ? widgetMetadata.visualizerType : "")
+  property real valueScale: widgetData.scale !== undefined ? widgetData.scale : 1.0
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.showBackground = valueShowBackground;
     settings.visualizerType = valueVisualizerType;
+    settings.scale = valueScale;
     return settings;
   }
 
@@ -53,5 +55,30 @@ ColumnLayout {
     ]
     currentKey: valueVisualizerType
     onSelected: key => valueVisualizerType = key
+  }
+
+  RowLayout {
+    Layout.fillWidth: true
+
+    NText {
+      text: I18n.tr("settings.desktop-widgets.scale.label") + ": " + Math.round(valueScale * 100) + "%"
+      Layout.fillWidth: true
+      verticalAlignment: Text.AlignVCenter
+      richTextEnabled: true
+    }
+
+    NSlider {
+      id: scaleSlider
+      Layout.fillWidth: true
+      from: 0.5
+      to: 3.0
+      stepSize: 0.1
+      value: valueScale
+      onValueChanged: {
+        if (value !== undefined) {
+          valueScale = value;
+        }
+      }
+    }
   }
 }

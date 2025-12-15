@@ -21,37 +21,93 @@ Item {
 
   // Exposed state for child content (e.g., to disable shadow during drag)
   readonly property bool isDragging: internal.isDragging
+  readonly property bool isScaling: internal.isScaling
 
   // Whether to show the background container
   property bool showBackground: (widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true
 
-  // Internal dragging state
+  // Widget size properties
+  property real widgetScale: (widgetData && widgetData.scale !== undefined) ? widgetData.scale : 1.0
+  property real minScale: 0.5
+  property real maxScale: 3.0
+
+  // Scaling sensitivity and threshold constants
+  readonly property real scaleSensitivity: 0.0015  // Sensitivity for scaling (scale change per pixel of movement)
+  readonly property real scaleUpdateThreshold: 0.015  // Minimum change required to update scale value
+
+  // Internal dragging and scaling state
   QtObject {
     id: internal
     property bool isDragging: false
+    property bool isScaling: false
     property real dragOffsetX: 0
     property real dragOffsetY: 0
     property real baseX: (root.widgetData && root.widgetData.x !== undefined) ? root.widgetData.x : root.defaultX
     property real baseY: (root.widgetData && root.widgetData.y !== undefined) ? root.widgetData.y : root.defaultY
+    property real initialWidth: 0
+    property real initialHeight: 0
+    property point initialMousePos: Qt.point(0, 0)
+    property real initialScale: 1.0
+    property real lastScale: 1.0  // Track the last applied scale during scaling operation
+
+    // Global state to manage scaling vs dragging exclusivity
+    // When any operation starts (drag or scale), lock the type until operation completes
+    property string operationType: ""  // "drag" or "scale" or ""
+  }
+
+  // Helper function to update widget data in settings
+  function updateWidgetData(properties) {
+    if (widgetIndex < 0 || !screen || !screen.name) {
+      return; // Early return if necessary data is missing
+    }
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === screen.name) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        if (widgetIndex < widgets.length) {
+          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], properties);
+          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+            "widgets": widgets
+          });
+          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        }
+        break;
+      }
+    }
   }
 
   x: internal.isDragging ? internal.dragOffsetX : internal.baseX
   y: internal.isDragging ? internal.dragOffsetY : internal.baseY
+
+  // Apply scale to the widget from top-left corner
+  scale: widgetScale
+  transformOrigin: Item.TopLeft
+  // Use smooth animation outside edit mode only
+  Behavior on scale { enabled: !Settings.data.desktopWidgets.editMode; NumberAnimation { duration: 200; easing.type: Easing.InOutQuad; } }
 
   // Update base position from widgetData when not dragging
   onWidgetDataChanged: {
     if (!internal.isDragging) {
       internal.baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : defaultX;
       internal.baseY = (widgetData && widgetData.y !== undefined) ? widgetData.y : defaultY;
+      // Update scale from widgetData if available
+      if (widgetData && widgetData.scale !== undefined) {
+        widgetScale = widgetData.scale;
+      }
     }
   }
 
   // Edit mode decoration rectangle
   Rectangle {
+    id: decorationRect
     anchors.fill: parent
     anchors.margins: -Style.marginS
     color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : "transparent"
-    border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ? (internal.isDragging ? Qt.rgba(textColor.r, textColor.g, textColor.b, 0.5) : Color.mPrimary) : "transparent"
+    border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ?
+                  (internal.isDragging ? Qt.rgba(textColor.r, textColor.g, textColor.b, 0.5) : Color.mPrimary) : "transparent"
     border.width: Settings.data.desktopWidgets.editMode ? 3 : (internal.isDragging ? 2 : 0)
     radius: Style.radiusL + Style.marginS
     z: -1
@@ -89,79 +145,130 @@ Item {
     z: 1
   }
 
-  // Drag MouseArea - blocks all interaction in edit mode
+
+  // Drag and Scale MouseArea - handles both dragging (left-click) and scaling (right-click)
   MouseArea {
-    id: dragArea
+    id: interactionArea
     anchors.fill: parent
     z: 1000
     visible: Settings.data.desktopWidgets.editMode
-    cursorShape: internal.isDragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+    cursorShape: {
+      if (internal.isDragging) return Qt.ClosedHandCursor;
+      if (internal.isScaling) return Qt.SizeAllCursor;
+      // Change cursor based on which button user is likely to press
+      // Right mouse button for scaling, left for dragging
+      return Qt.OpenHandCursor;
+    }
     hoverEnabled: true
-    acceptedButtons: Qt.AllButtons
+    acceptedButtons: Qt.AllButtons  // Accept both left and right clicks
 
     property point pressPos: Qt.point(0, 0)
+    property real initialScale: 1.0
 
     onPressed: mouse => {
-                 pressPos = Qt.point(mouse.x, mouse.y);
-                 internal.dragOffsetX = root.x;
-                 internal.dragOffsetY = root.y;
-                 internal.isDragging = true;
-                 // Update base position to current position when starting drag
-                 internal.baseX = root.x;
-                 internal.baseY = root.y;
-               }
+      // If any operation is already in progress, don't start a new one
+      if (internal.operationType !== "") {
+        return;
+      }
+
+      pressPos = Qt.point(mouse.x, mouse.y);
+
+      if (mouse.button === Qt.LeftButton) {
+        // Start dragging
+        internal.operationType = "drag";
+        internal.dragOffsetX = root.x;
+        internal.dragOffsetY = root.y;
+        internal.isDragging = true;
+        // Update base position to current position when starting drag
+        internal.baseX = root.x;
+        internal.baseY = root.y;
+      } else if (mouse.button === Qt.RightButton) {
+        // Start scaling
+        internal.operationType = "scale";
+        internal.isScaling = true;
+        internal.initialWidth = root.width;
+        internal.initialHeight = root.height;
+        internal.initialMousePos = Qt.point(mouse.x, mouse.y);
+        internal.initialScale = root.widgetScale;
+        internal.lastScale = root.widgetScale;  // Initialize lastScale to current scale
+      }
+    }
 
     onPositionChanged: mouse => {
-                         if (internal.isDragging && pressed) {
-                           var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
-                           var newX = globalPos.x - pressPos.x;
-                           var newY = globalPos.y - pressPos.y;
+      if (internal.isDragging && pressed && internal.operationType === "drag") {
+        var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
+        var newX = globalPos.x - pressPos.x;
+        var newY = globalPos.y - pressPos.y;
 
-                           // Boundary clamping
-                           if (root.parent && root.width > 0 && root.height > 0) {
-                             newX = Math.max(0, Math.min(newX, root.parent.width - root.width));
-                             newY = Math.max(0, Math.min(newY, root.parent.height - root.height));
-                           }
+        // Boundary clamping - account for scaled widget size
+        var scaledWidth = root.width * root.widgetScale;
+        var scaledHeight = root.height * root.widgetScale;
+        if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
+          newX = Math.max(0, Math.min(newX, root.parent.width - scaledWidth));
+          newY = Math.max(0, Math.min(newY, root.parent.height - scaledHeight));
+        }
 
-                           // Collision detection (if parent provides checkCollision function)
-                           if (root.parent && root.parent.checkCollision && root.parent.checkCollision(root, newX, newY)) {
-                             return;
-                           }
+        internal.dragOffsetX = newX;
+        internal.dragOffsetY = newY;
+      }
+      else if (internal.isScaling && pressed && internal.operationType === "scale") {
+        // Calculate relative movement from initial position
+        var dx = mouse.x - internal.initialMousePos.x;
+        var dy = mouse.y - internal.initialMousePos.y;
 
-                           internal.dragOffsetX = newX;
-                           internal.dragOffsetY = newY;
-                         }
-                       }
+        // Calculate combined movement with a more nuanced approach
+        // Use the primary direction of movement to determine scale change
+        var primaryMovement = (Math.abs(dx) > Math.abs(dy)) ? dx : dy;
+
+        // Calculate scale change based on movement relative to initial widget size
+        // This ensures consistent behavior regardless of current scale level
+        var scaleChange = primaryMovement * root.scaleSensitivity;
+
+        // Calculate new scale with constraints (adding to last applied scale, not initial scale)
+        var newScale = Math.max(minScale, Math.min(maxScale, internal.lastScale + scaleChange));
+
+        // Apply smoothing by checking if the change is significant enough
+        // Use a slightly higher threshold to prevent rapid changes
+        if (Math.abs(root.widgetScale - newScale) > root.scaleUpdateThreshold &&
+            !isNaN(newScale) &&
+            newScale > 0) {
+          root.widgetScale = newScale;
+          internal.lastScale = newScale;  // Update lastScale to the newly applied scale
+        }
+      }
+    }
 
     onReleased: mouse => {
-                  if (internal.isDragging && widgetIndex >= 0 && screen && screen.name) {
-                    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-                    var newMonitorWidgets = monitorWidgets.slice();
-                    for (var i = 0; i < newMonitorWidgets.length; i++) {
-                      if (newMonitorWidgets[i].name === screen.name) {
-                        var widgets = (newMonitorWidgets[i].widgets || []).slice();
-                        if (widgetIndex < widgets.length) {
-                          widgets[widgetIndex] = Object.assign({}, widgets[widgetIndex], {
-                                                                 "x": internal.dragOffsetX,
-                                                                 "y": internal.dragOffsetY
-                                                               });
-                          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
-                                                                 "widgets": widgets
-                                                               });
-                          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
-                        }
-                        break;
-                      }
-                    }
-                    // Update base position to final position
-                    internal.baseX = internal.dragOffsetX;
-                    internal.baseY = internal.dragOffsetY;
-                    internal.isDragging = false;
-                  }
-                }
+      if (internal.isDragging && internal.operationType === "drag" && widgetIndex >= 0 && screen && screen.name) {
+        // Update widget position using the helper function
+        root.updateWidgetData({
+          "x": internal.dragOffsetX,
+          "y": internal.dragOffsetY
+        });
+
+        // Update base position to final position
+        internal.baseX = internal.dragOffsetX;
+        internal.baseY = internal.dragOffsetY;
+        internal.isDragging = false;
+        internal.operationType = "";
+      }
+      else if (internal.isScaling && internal.operationType === "scale") {
+        // Update widget scale using the helper function
+        root.updateWidgetData({
+          "scale": root.widgetScale
+        });
+
+        internal.isScaling = false;
+        internal.operationType = "";
+        internal.lastScale = root.widgetScale;  // Sync lastScale with final scale when operation ends
+      }
+    }
 
     onCanceled: {
       internal.isDragging = false;
+      internal.isScaling = false;
+      internal.operationType = "";
+      internal.lastScale = root.widgetScale;  // Sync lastScale with current scale when operation is canceled
     }
   }
 }
