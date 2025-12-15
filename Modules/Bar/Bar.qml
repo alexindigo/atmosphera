@@ -165,8 +165,9 @@ Item {
               var widgets = BarService.getAllWidgetInstances(null, screen.name);
               for (var i = 0; i < widgets.length; i++) {
                 var widget = widgets[i];
-                if (!widget || !widget.visible)
+                if (!widget || !widget.visible || widget.widgetId === "Spacer") {
                   continue;
+                }
                 // Map click position to widget's coordinate space
                 var localPos = mapToItem(widget, mouse.x, mouse.y);
                 if (localPos.x >= -Style.marginS && localPos.x <= widget.width + Style.marginS) {
