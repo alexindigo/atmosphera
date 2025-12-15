@@ -1974,6 +1974,10 @@
           "description": "Show OSD when Caps Lock, Num Lock, or Scroll Lock are toggled.",
           "label": "Lock keys"
         },
+        "custom-text": {
+          "description": "Show OSD for custom text messages from IPC.",
+          "label": "Custom Text"
+        },
         "section": {
           "description": "Select the events that trigger the OSD.",
           "label": "OSD trigger events"

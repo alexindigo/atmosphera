@@ -1974,6 +1974,10 @@
           "description": "Mostrar o OSD quando Caps Lock, Num Lock ou Scroll Lock forem alternadas.",
           "label": "Teclas de bloqueio"
         },
+        "custom-text": {
+          "description": "Mostrar OSD para mensagens de texto personalizadas via IPC.",
+          "label": "Texto personalizado"
+        },
         "section": {
           "description": "Selecione os eventos que acionam o OSD.",
           "label": "Eventos de disparo OSD"

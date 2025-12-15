@@ -384,6 +384,18 @@ Item {
   }
 
   IpcHandler {
+    target: "osd"
+
+    function showText(text: string) {
+      OSDService.showCustomText(text, "");
+    }
+
+    function showTextWithIcon(text: string, icon: string) {
+      OSDService.showCustomText(text, icon);
+    }
+  }
+
+  IpcHandler {
     target: "media"
     function playPause() {
       MediaService.playPause();
