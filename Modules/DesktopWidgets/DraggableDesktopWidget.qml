@@ -160,7 +160,7 @@ Item {
       return Qt.OpenHandCursor;
     }
     hoverEnabled: true
-    acceptedButtons: Qt.AllButtons  // Accept both left and right clicks
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
     property point pressPos: Qt.point(0, 0)
     property real initialScale: 1.0
