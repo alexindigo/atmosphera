@@ -587,14 +587,38 @@ Singleton {
     if (bytesPerSecond < 1024 * 1024) {
       const kb = bytesPerSecond / 1024;
       if (kb < 10) {
-        return kb.toFixed(1) + "KB";
+        let formatted = kb.toFixed(1) + "KB";
+        if (formatted.length > 5) {
+          formatted = kb.toFixed(1) + "K";
+        }
+        return formatted;
       } else {
-        return Math.round(kb) + "KB";
+        let formatted = Math.round(kb) + "KB";
+        if (formatted.length > 5) {
+          formatted = Math.round(kb) + "K";
+        }
+        return formatted;
       }
     } else if (bytesPerSecond < 1024 * 1024 * 1024) {
-      return (bytesPerSecond / (1024 * 1024)).toFixed(1) + "MB";
+      const mb = bytesPerSecond / (1024 * 1024);
+      let formatted = mb.toFixed(1) + "MB";
+      if (formatted.length > 5) {
+        formatted = mb.toFixed(1) + "M";
+        if (formatted.length > 5) {
+          formatted = Math.round(mb) + "M";
+        }
+      }
+      return formatted;
     } else {
-      return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(1) + "GB";
+      const gb = bytesPerSecond / (1024 * 1024 * 1024);
+      let formatted = gb.toFixed(1) + "GB";
+      if (formatted.length > 5) {
+        formatted = gb.toFixed(1) + "G";
+        if (formatted.length > 5) {
+          formatted = Math.round(gb) + "G";
+        }
+      }
+      return formatted;
     }
   }
 
@@ -617,6 +641,26 @@ Singleton {
     }
     const display = Math.round(value).toString();
     return display + units[unitIndex];
+  }
+
+  // -------------------------------------------------------
+  // Smart formatter for memory values (GB) that prevents elision
+  // Tries to keep within 5 chars when possible, rounds if needed
+  function formatMemoryGb(memGb) {
+    // memGb is already a string from toFixed(1), convert to number
+    const value = parseFloat(memGb);
+    if (isNaN(value))
+      return "0G";
+
+    // Try with 1 decimal and "G"
+    let formatted = value.toFixed(1) + "G";
+
+    // If longer than 5 chars (e.g., "123.4G"), round to integer
+    if (formatted.length > 5) {
+      formatted = Math.round(value) + "G";
+    }
+
+    return formatted;
   }
 
   // -------------------------------------------------------
