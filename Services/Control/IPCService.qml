@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Compositor
 import qs.Services.Hardware
 import qs.Services.Media
@@ -41,10 +42,11 @@ Item {
     target: "settings"
     function toggle() {
       if (Settings.data.ui.settingsPanelMode === "window") {
-        SettingsPanelService.toggleWindow();
+        SettingsPanelService.toggleWindow(SettingsPanel.Tab.General);
       } else {
         root.screenDetector.withCurrentScreen(screen => {
                                                 var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+                                                settingsPanel.requestedTab = SettingsPanel.Tab.General;
                                                 settingsPanel?.toggle();
                                               });
       }

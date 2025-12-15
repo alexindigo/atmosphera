@@ -417,13 +417,9 @@ Item {
       Logger.i("CustomButton", `Executing command: ${leftClickExec}`);
     } else if (!leftClickUpdateText) {
       // No left click script was defined, open settings
-      if (Settings.data.ui.settingsPanelMode === "window") {
-        SettingsPanelService.openWindow(SettingsPanel.Tab.Bar);
-      } else {
-        var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-        settingsPanel.requestedTab = SettingsPanel.Tab.Bar;
-        settingsPanel.open();
-      }
+      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+      settingsPanel.requestedTab = SettingsPanel.Tab.Bar;
+      settingsPanel.open();
     }
     if (!textStream && leftClickUpdateText) {
       runTextCommand();

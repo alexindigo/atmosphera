@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.Bar.Extras
+import qs.Modules.Panels.Settings
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -123,11 +124,9 @@ NIconButton {
                    if (action === "open-launcher") {
                      PanelService.getPanel("launcherPanel", screen)?.toggle();
                    } else if (action === "open-settings") {
-                     if (Settings.data.ui.settingsPanelMode === "window") {
-                       SettingsPanelService.toggleWindow();
-                     } else {
-                       PanelService.getPanel("settingsPanel", screen)?.toggle();
-                     }
+                     var panel = PanelService.getPanel("settingsPanel", screen);
+                     panel.requestedTab = SettingsPanel.Tab.General;
+                     panel.toggle();
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }

@@ -60,14 +60,12 @@ NBox {
         icon: "settings"
         tooltipText: I18n.tr("tooltips.open-settings")
         onClicked: {
-          if (Settings.data.ui.settingsPanelMode === "window") {
-            SettingsPanelService.openWindow(SettingsPanel.Tab.General);
-            PanelService.openedPanel?.close();
-          } else {
-            var panel = PanelService.getPanel("settingsPanel", screen);
-            panel.requestedTab = SettingsPanel.Tab.General;
-            panel.open();
-          }
+          // Better close the control center in case the settings open in a separate window
+          PanelService.openedPanel?.close();
+
+          var panel = PanelService.getPanel("settingsPanel", screen);
+          panel.requestedTab = SettingsPanel.Tab.General;
+          panel.open();
         }
       }
 

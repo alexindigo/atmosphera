@@ -45,12 +45,8 @@ NIconButton {
   }
 
   onRightClicked: {
-    if (Settings.data.ui.settingsPanelMode === "window") {
-      SettingsPanelService.openWindow(SettingsPanel.Tab.Display);
-    } else {
-      var settingsPanel = PanelService.getPanel("settingsPanel", screen);
-      settingsPanel.requestedTab = SettingsPanel.Tab.Display;
-      settingsPanel.open();
-    }
+    var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+    settingsPanel.requestedTab = SettingsPanel.Tab.Display;
+    settingsPanel.open();
   }
 }
