@@ -6,5 +6,5 @@ import Quickshell
 Singleton {
   id: root
 
-  signal showCustomText(string text)
+  signal showCustomText(string text, string icon)
 }

@@ -37,6 +37,7 @@ Variants {
     property bool startupComplete: false
     property real currentBrightness: 0
     property string customText: ""
+    property string customIcon: ""
 
     // Lock Key States
     property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
@@ -51,13 +52,17 @@ Variants {
     // LockKey OSD enabled state (reactive to settings)
     readonly property bool lockKeyOSDEnabled: {
       const enabledTypes = Settings.data.osd.enabledTypes || [];
-      // If enabledTypes is empty, no types are enabled (no OSD will be shown)
       if (enabledTypes.length === 0)
         return false;
       return enabledTypes.includes(OSD.Type.LockKey);
     }
 
-    // Helper Functions
+    readonly property var validIcons: {
+      const iconKeys = Object.keys(Icons.icons);
+      const aliasKeys = Object.keys(Icons.aliases);
+      return new Set([...iconKeys, ...aliasKeys]);
+    }
+
     function getIcon() {
       switch (currentOSDType) {
       case OSD.Type.Volume:
@@ -77,7 +82,7 @@ Variants {
       case OSD.Type.LockKey:
         return "keyboard";
       case OSD.Type.CustomText:
-        return "info-circle";
+        return root.customIcon || "info-circle";
       default:
         return "";
       }
@@ -232,15 +237,23 @@ Variants {
     }
 
     // Signal Connections
-      Connections {
-        target: OSDService
+    Connections {
+      target: OSDService
 
-        function onShowCustomText(text) {
-          root.customText = text;
-          showOSD(OSD.Type.CustomText);
+      function onShowCustomText(text, icon) {
+        root.customText = text;
+
+        if (icon && root.validIcons.has(icon)) {
+          root.customIcon = icon;
+        } else {
+          if (icon) {
+            Logger.w("OSD", "Invalid custom icon name received: '" + icon + "'. Falling back to default.");
+          }
+          root.customIcon = "info-circle";
         }
+        showOSD(OSD.Type.CustomText);
       }
-
+    }
 
     // AudioService monitoring
     Connections {
@@ -524,8 +537,9 @@ Variants {
           onTriggered: {
             osdItem.visible = false;
             root.currentOSDType = -1;
-            root.lastLockKeyChanged = ""; // Reset the lock key change indicator
+            root.lastLockKeyChanged = "";
             root.customText = "";
+            root.customIcon = "";
             root.active = false;
           }
         }
