@@ -142,6 +142,7 @@ Variants {
         id: nextWallpaper
 
         property bool dimensionsCalculated: false
+        property bool pendingTransition: false
 
         source: ""
         smooth: true
@@ -153,11 +154,19 @@ Variants {
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.w("Next wallpaper failed to load:", source);
-          } else if (status === Image.Ready && !dimensionsCalculated) {
-            dimensionsCalculated = true;
-            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
-            if (optimalSize !== false) {
-              sourceSize = optimalSize;
+            pendingTransition = false;
+          } else if (status === Image.Ready) {
+            if (!dimensionsCalculated) {
+              dimensionsCalculated = true;
+              const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
+              if (optimalSize !== false) {
+                sourceSize = optimalSize;
+              }
+            }
+            if (pendingTransition) {
+              pendingTransition = false;
+              currentWallpaper.asynchronous = false;
+              transitionAnimation.start();
             }
           }
         }
@@ -429,8 +438,12 @@ Variants {
         }
 
         nextWallpaper.source = source;
-        currentWallpaper.asynchronous = false;
-        transitionAnimation.start();
+        if (nextWallpaper.status === Image.Ready) {
+          currentWallpaper.asynchronous = false;
+          transitionAnimation.start();
+        } else {
+          nextWallpaper.pendingTransition = true;
+        }
       }
 
       // ------------------------------------------------------
