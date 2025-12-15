@@ -7,6 +7,7 @@ import qs.Commons
 import qs.Services.Hardware
 import qs.Services.Keyboard
 import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 
 // Unified OSD component that displays volume, input volume, and brightness changes
@@ -18,7 +19,8 @@ Variants {
     Volume,
     InputVolume,
     Brightness,
-    LockKey
+    LockKey,
+    CustomText
   }
 
   model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || Settings.data.osd.monitors.length === 0) && Settings.data.osd.enabled)
@@ -34,6 +36,7 @@ Variants {
     property int currentOSDType: -1 // OSD.Type enum value, -1 means none
     property bool startupComplete: false
     property real currentBrightness: 0
+    property string customText: ""
 
     // Lock Key States
     property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
@@ -73,6 +76,8 @@ Variants {
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       case OSD.Type.LockKey:
         return "keyboard";
+      case OSD.Type.CustomText:
+        return "info-circle";
       default:
         return "";
       }
@@ -88,6 +93,8 @@ Variants {
         return currentBrightness;
       case OSD.Type.LockKey:
         return 1.0; // Always show 100% when showing lock key status
+      case OSD.Type.CustomText:
+        return 1.0;
       default:
         return 0;
       }
@@ -104,6 +111,9 @@ Variants {
       if (currentOSDType === OSD.Type.LockKey) {
         // For lock keys, return the pre-determined status text
         return lastLockKeyChanged;
+      }
+      if (currentOSDType === OSD.Type.CustomText) {
+        return customText;
       }
 
       const value = getCurrentValue();
@@ -138,6 +148,9 @@ Variants {
         } else if (lastLockKeyChanged.startsWith("SCROLL")) {
           return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
         }
+      }
+      if (currentOSDType === OSD.Type.CustomText) {
+        return Color.mPrimary;
       }
       return Color.mPrimary;
     }
@@ -219,6 +232,15 @@ Variants {
     }
 
     // Signal Connections
+      Connections {
+        target: OSDService
+
+        function onShowCustomText(text) {
+          root.customText = text;
+          showOSD(OSD.Type.CustomText);
+        }
+      }
+
 
     // AudioService monitoring
     Connections {
@@ -332,14 +354,44 @@ Variants {
         wrapMode: Text.NoWrap
       }
 
+      NText {
+        id: customTextMetrics
+        visible: false
+        text: root.customText
+        pointSize: Style.fontSizeM
+        family: Settings.data.ui.fontFixed
+        font.weight: Style.fontWeightMedium
+        elide: Text.ElideNone
+        wrapMode: Text.NoWrap
+      }
+
       // Dimensions
-      readonly property bool isShortMode: root.currentOSDType === OSD.Type.LockKey
+      readonly property bool isShortMode: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText
       readonly property int longHWidth: Math.round(320 * Style.uiScaleRatio)
       readonly property int longHHeight: Math.round(72 * Style.uiScaleRatio)
       readonly property int shortHWidth: Math.round(180 * Style.uiScaleRatio)
       readonly property int longVWidth: Math.round(80 * Style.uiScaleRatio)
       readonly property int longVHeight: Math.round(280 * Style.uiScaleRatio)
       readonly property int shortVHeight: Math.round(180 * Style.uiScaleRatio)
+
+      // Dynamic width for horizontal custom text based on text length
+      readonly property int customTextHWidth: {
+        if (root.currentOSDType !== OSD.Type.CustomText || verticalMode) {
+          return shortHWidth;
+        }
+        const textWidth = Math.ceil(customTextMetrics.contentWidth || 0);
+        if (textWidth === 0) {
+          // Fallback if measurement not ready
+          return longHWidth;
+        }
+        const iconWidth = Style.fontSizeXL * Style.uiScaleRatio;
+        const margins = Style.marginL * 2; // Left and right content margins
+        const spacing = Style.marginM; // Spacing between icon and text
+        const bgMargins = Style.marginM * 1.5 * 2; // Background margins
+        const totalWidth = textWidth + iconWidth + margins + spacing + bgMargins;
+        // Ensure minimum width and add some buffer
+        return Math.max(shortHWidth, Math.round(totalWidth * 1.1));
+      }
 
       // Dynamic width for horizontal lock keys based on text length
       // Explicitly bind to contentWidth to ensure reactivity
@@ -430,7 +482,7 @@ Variants {
       margins.left: calculateMargin(anchors.left, "left")
       margins.right: calculateMargin(anchors.right, "right")
 
-      implicitWidth: verticalMode ? longVWidth : (isShortMode ? lockKeyHWidth : longHWidth)
+      implicitWidth: verticalMode ? longVWidth : (root.currentOSDType === OSD.Type.CustomText ? customTextHWidth : (isShortMode ? lockKeyHWidth : longHWidth))
       implicitHeight: verticalMode ? (isShortMode ? lockKeyVHeight : longVHeight) : longHHeight
       color: Color.transparent
 
@@ -473,6 +525,7 @@ Variants {
             osdItem.visible = false;
             root.currentOSDType = -1;
             root.lastLockKeyChanged = ""; // Reset the lock key change indicator
+            root.customText = "";
             root.active = false;
           }
         }
@@ -537,9 +590,9 @@ Variants {
               }
             }
 
-            // Lock Key Status Text (replaces progress bar)
+            // Lock Key or Custom Status Text (replaces progress bar)
             NText {
-              visible: root.currentOSDType === OSD.Type.LockKey
+              visible: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText
               text: root.getDisplayPercentage()
               color: root.getProgressColor()
               pointSize: Style.fontSizeM
@@ -553,7 +606,7 @@ Variants {
 
             // Progress Bar for Volume/Brightness
             Rectangle {
-              visible: root.currentOSDType !== OSD.Type.LockKey
+              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
@@ -585,7 +638,7 @@ Variants {
 
             // Percentage Text for Volume/Brightness
             NText {
-              visible: root.currentOSDType !== OSD.Type.LockKey
+              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS

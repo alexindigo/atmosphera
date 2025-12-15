@@ -379,6 +379,13 @@ Item {
   }
 
   IpcHandler {
+    target: "osd"
+    function showText(text: string) {
+      OSDService.showCustomText(text);
+    }
+  }
+
+  IpcHandler {
     target: "media"
     function playPause() {
       MediaService.playPause();
