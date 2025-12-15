@@ -13,7 +13,7 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(420 * Style.uiScaleRatio)
+  preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(540 * Style.uiScaleRatio)
 
   // 0 = All, 1 = Today, 2 = Yesterday, 3 = Earlier

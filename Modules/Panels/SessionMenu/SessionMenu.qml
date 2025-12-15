@@ -15,7 +15,7 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(420 * Style.uiScaleRatio)
+  preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: {
     var headerHeight = Settings.data.sessionMenu.showHeader ? Style.baseWidgetSize * 0.6 : 0;
 
