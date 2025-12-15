@@ -380,8 +380,13 @@ Item {
 
   IpcHandler {
     target: "osd"
-    function showText(text: string, icon: string) {
-      OSDService.showCustomText(text, icon || "");
+
+    function showText(text: string) {
+      OSDService.showCustomText(text, "");
+    }
+
+    function showTextWithIcon(text: string, icon: string) {
+      OSDService.showCustomText(text, icon);
     }
   }
 
