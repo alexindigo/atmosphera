@@ -157,11 +157,11 @@
           "update-text": "左键单击时更新显示的文本"
         },
         "max-text-length-horizontal": {
-          "description": "在水平栏中显示的最大字符数（0 为隐藏文本）",
+          "description": "在水平栏中显示的最大字符数（0 为隐藏文本）。",
           "label": "最大文本长度（水平）"
         },
         "max-text-length-vertical": {
-          "description": "在垂直栏中显示的最大字符数（0 为隐藏文本）",
+          "description": "在垂直栏中显示的最大字符数（0 为隐藏文本）。",
           "label": "最大文本长度（垂直）"
         },
         "middle-click": {
@@ -191,7 +191,7 @@
           "label": "流"
         },
         "wheel": {
-          "description": "使用滚轮时执行的命令。\n在命令中使用 $delta 表示滚轮增量",
+          "description": "使用滚轮时执行的命令。<br>在命令中使用 $delta 表示滚轮增量。",
           "label": "滚轮",
           "update-text": "滚轮滚动时更新显示的文本"
         },
@@ -200,7 +200,7 @@
           "label": "滚轮向下命令"
         },
         "wheel-mode-separate": {
-          "description": "为滚轮向上和向下启用单独的命令",
+          "description": "为滚轮向上和向下启用单独的命令。",
           "label": "分开滚轮命令"
         },
         "wheel-up": {
@@ -294,7 +294,7 @@
       },
       "spacer": {
         "width": {
-          "description": "间距宽度（像素）",
+          "description": "间距宽度（像素）。",
           "label": "宽度"
         }
       },
@@ -378,7 +378,7 @@
           "label": "着色图标"
         },
         "drawer-enabled": {
-          "description": "启用时，未固定的托盘项显示在抽屉面板中。禁用时，所有托盘项都内联显示。",
+          "description": "启用时，未固定的托盘项显示在抽屉面板中。<br>禁用时，所有托盘项都内联显示。",
           "label": "启用抽屉"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "应用程序",
     "calculator": "计算器",
-    "calculator-description": "计算器 - 计算数学表达式",
+    "calculator-description": "计算器 — 计算数学表达式",
     "calculator-enter-expression": "输入数学表达式",
     "calculator-error": "错误",
     "calculator-name": "计算器",
@@ -1049,14 +1049,14 @@
       "color-source": {
         "matugen-scheme-type": {
           "description": {
-            "scheme-content": "推导出与底层图像紧密匹配的颜色",
-            "scheme-expressive": "充满活力的调色板，色彩饱和度高",
-            "scheme-fidelity": "保留原始色调的高保真调色板",
-            "scheme-fruit-salad": "鲜艳对比色的缤纷组合",
-            "scheme-monochrome": "围绕单一色调构建的极简调色板",
+            "scheme-content": "推导出与底层图像紧密匹配的颜色。",
+            "scheme-expressive": "充满活力的调色板，色彩饱和度高。",
+            "scheme-fidelity": "保留原始色调的高保真调色板。",
+            "scheme-fruit-salad": "鲜艳对比色的缤纷组合。",
+            "scheme-monochrome": "围绕单一色调构建的极简调色板。",
             "scheme-neutral": "柔和的色调，沉稳平静。",
-            "scheme-rainbow": "涵盖整个光谱的多元调色板",
-            "scheme-tonal-spot": "平衡的色调，重点突出"
+            "scheme-rainbow": "涵盖整个光谱的多元调色板。",
+            "scheme-tonal-spot": "平衡的色调，重点突出。"
           },
           "label": "Matugen 配色方案类型"
         },
@@ -1146,20 +1146,20 @@
         },
         "programs": {
           "cava": {
-            "description": "写入 {filepath}。",
+            "description": "写入 {filepath}",
             "description-missing": "需要安装 {app}"
           },
           "code": {
-            "description": "写入 {filepath}。Hyprluna 主题需要手动安装和激活。",
-            "description-missing": "未检测到 Code 客户端。请安装 VSCode 或 VSCodium。"
+            "description": "写入 {filepath}，Hyprluna 主题需要手动安装和激活",
+            "description-missing": "未检测到 Code 客户端，请安装 VSCode 或 VSCodium"
           },
-          "description": "应用程序特定主题。",
+          "description": "应用程序特定主题",
           "discord": {
-            "description": "为 {client} 写入 {filepath}",
-            "description-missing": "未检测到 Discord 客户端。请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion。"
+            "description": "为 {client} 写入 {filepath}，Hyprluna 主题需要手动安装和激活",
+            "description-missing": "未检测到 Discord 客户端，请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\n标准: ~/.emacs.d/themes/noctalia.el\n\n手动应用: (load-theme 'noctalia t)",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el<br>手动应用: (load-theme 'noctalia t)",
             "description-missing": "需要安装{app}"
           },
           "fuzzel": {
@@ -1172,11 +1172,11 @@
             "description-missing": "需要安装 {app}"
           },
           "spicetify": {
-            "description": "写入 {filepath}。Comfy 主题需要手动安装和激活。",
+            "description": "写入 {filepath}，Comfy 主题需要手动安装和激活",
             "description-missing": "需要安装 {app}"
           },
           "telegram": {
-            "description": "写入 {filepath}。",
+            "description": "写入 {filepath}",
             "description-missing": "需要安装 {app}"
           },
           "vicinae": {
@@ -1188,7 +1188,7 @@
             "description-missing": "需要安装 {app}"
           },
           "yazi": {
-            "description": "写入 {filepath}。需要手动激活风味。",
+            "description": "写入 {filepath}，需要手动激活 flavor",
             "description-missing": "需要安装{app}"
           },
           "zed": {
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "基于 <i>{location}</i> 的日落和日出时间 - 推荐。",
+          "description": "基于 <i>{location}</i> 的日落和日出时间 — 推荐。",
           "label": "自动调度"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• 命令通过 shell 执行 (sh -c)\n• 命令在后台运行（分离）\n• 测试按钮使用当前值执行",
+          "description": "• 命令通过 shell 执行 (sh -c)<br>• 命令在后台运行（分离）<br>• 测试按钮使用当前值执行",
           "label": "钩子命令信息"
         },
         "parameters": {
-          "description": "• 壁纸钩子: $1 = 壁纸路径, $2 = 屏幕名称\n• 主题切换钩子: $1 = true/false (深色模式状态)",
+          "description": "• 壁纸钩子: $1 = 壁纸路径, $2 = 屏幕名称<br>• 主题切换钩子: $1 = true/false (深色模式状态)",
           "label": "可用参数"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "启用屏显菜单"
         },
         "enabled": {
-          "description": "启用或禁用通知守护进程，需要重启 noctalia-shell。",
+          "description": "启用或禁用通知守护进程，需要重启 Noctalia shell。",
           "label": "启用通知"
         },
         "location": {
@@ -2493,11 +2493,11 @@
     },
     "power-profile": {
       "changed": "电源模式已更改",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "录制器因错误退出。",
-      "failed-gpu": "gpu-screen-recorder 意外退出。",
+      "failed-general": "录制器因错误退出",
+      "failed-gpu": "gpu-screen-recorder 意外退出",
       "failed-start": "开始录制失败",
       "no-portals": "桌面门户未运行",
       "no-portals-desc": "请启动 xdg-desktop-portal 和一个合成器门户 (wlr/hyprland/gnome/kde)。",
@@ -2520,7 +2520,7 @@
       "disabled": "壁纸颜色已禁用",
       "enabled": "壁纸颜色已启用",
       "label": "壁纸颜色生成",
-      "not-installed": "Matugen 未安装 - 壁纸颜色提取所需"
+      "not-installed": "Matugen 未安装 — 壁纸颜色提取所需"
     },
     "wifi": {
       "connected": "已连接到 '{ssid}'",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "日期无前导零 (1-31)"
       },
       "hour": {
-        "leading-zero": "小时有前导零 (00-23) - 24小时制",
-        "no-leading-zero": "小时无前导零 (0-23) - 24小时制"
+        "leading-zero": "小时有前导零 (00-23) — 24小时制",
+        "no-leading-zero": "小时无前导零 (0-23) — 24小时制"
       },
       "minute": {
         "leading-zero": "分钟有前导零 (00-59)",

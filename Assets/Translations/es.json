@@ -157,11 +157,11 @@
           "update-text": "Actualizar el texto mostrado al hacer clic izquierdo"
         },
         "max-text-length-horizontal": {
-          "description": "Número máximo de caracteres a mostrar en la barra horizontal (0 para ocultar el texto)",
+          "description": "Número máximo de caracteres a mostrar en la barra horizontal (0 para ocultar el texto).",
           "label": "Longitud máxima de texto (horizontal)"
         },
         "max-text-length-vertical": {
-          "description": "Número máximo de caracteres a mostrar en la barra vertical (0 para ocultar el texto)",
+          "description": "Número máximo de caracteres a mostrar en la barra vertical (0 para ocultar el texto).",
           "label": "Longitud máxima de texto (vertical)"
         },
         "middle-click": {
@@ -191,7 +191,7 @@
           "label": "Transmisión"
         },
         "wheel": {
-          "description": "Comando a ejecutar cuando se usa la rueda de desplazamiento.\nUsa $delta para el delta de la rueda de desplazamiento en el comando",
+          "description": "Comando a ejecutar cuando se usa la rueda de desplazamiento.<br>Usa $delta para el delta de la rueda de desplazamiento en el comando.",
           "label": "Rueda de desplazamiento",
           "update-text": "Actualizar texto mostrado al desplazarse"
         },
@@ -200,7 +200,7 @@
           "label": "Comando de rueda hacia abajo"
         },
         "wheel-mode-separate": {
-          "description": "Habilitar comandos separados para rueda arriba y abajo",
+          "description": "Habilitar comandos separados para rueda arriba y abajo.",
           "label": "Comandos de rueda separados"
         },
         "wheel-up": {
@@ -294,7 +294,7 @@
       },
       "spacer": {
         "width": {
-          "description": "Ancho del espaciado en píxeles",
+          "description": "Ancho del espaciado en píxeles.",
           "label": "Ancho"
         }
       },
@@ -378,7 +378,7 @@
           "label": "Colorear iconos"
         },
         "drawer-enabled": {
-          "description": "Cuando está habilitado, los elementos de la bandeja no anclados se muestran en un panel cajón. Cuando está deshabilitado, todos los elementos de la bandeja se muestran en línea.",
+          "description": "Cuando está habilitado, los elementos de la bandeja no anclados se muestran en un panel cajón.<br>Cuando está deshabilitado, todos los elementos de la bandeja se muestran en línea.",
           "label": "Habilitar cajón"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Aplicaciones",
     "calculator": "Calculadora",
-    "calculator-description": "Calculadora - evalúa expresiones matemáticas",
+    "calculator-description": "Calculadora — evalúa expresiones matemáticas",
     "calculator-enter-expression": "Ingresa una expresión matemática",
     "calculator-error": "Error",
     "calculator-name": "Calculadora",
@@ -1140,27 +1140,27 @@
           "description": "Crea tus propias plantillas",
           "label": "Avanzado",
           "user-templates": {
-            "description": "Solo habilita si sabes lo que estás haciendo, consulta nuestra documentación en línea",
+            "description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea",
             "label": "Habilitar plantillas de usuario"
           }
         },
         "programs": {
           "cava": {
-            "description": "Escribe {filepath}.",
-            "description-missing": "Requiere que {app} esté instalado/a."
+            "description": "Escribe {filepath}",
+            "description-missing": "Requiere que {app} esté instalado"
           },
           "code": {
-            "description": "Escribe {filepath}. El tema Hyprluna debe ser instalado y activado manualmente.",
-            "description-missing": "No se detectó cliente de Code. Instala VSCode o VSCodium."
+            "description": "Escribe {filepath} — el tema HyprLuna debe ser instalado y activado manualmente",
+            "description-missing": "No se detectó cliente de Code — instala VSCode o VSCodium"
           },
           "description": "Tematización específica de aplicaciones.",
           "discord": {
-            "description": "Escribir {filepath} para {client}",
-            "description-missing": "No se detectó cliente de Discord. Instala vencord, vesktop, webcord, armcord, equibop, lightcord o dorion."
+            "description": "Escribir {filepath} para {client} — el tema HyprLuna debe ser instalado y activado manualmente",
+            "description-missing": "No se detectó cliente de Discord — instala vencord, vesktop, webcord, armcord, equibop, lightcord o dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nEstándar: ~/.emacs.d/themes/noctalia.el\n\nAplicar manualmente: (load-theme 'noctalia t)",
-            "description-missing": "Requiere que {app} esté instalada."
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Estándar: ~/.emacs.d/themes/noctalia.el<br>Aplicar manualmente: (load-theme 'noctalia t)",
+            "description-missing": "Requiere que {app} esté instalada"
           },
           "fuzzel": {
             "description": "Escribir {filepath} y recargar",
@@ -1172,12 +1172,12 @@
             "description-missing": "Requiere que {app} esté instalado"
           },
           "spicetify": {
-            "description": "Escribe {filepath}. El tema Comfy debe ser instalado y activado manualmente.",
-            "description-missing": "Requiere que {app} esté instalado/a."
+            "description": "Escribe {filepath} — el tema Comfy debe ser instalado y activado manualmente",
+            "description-missing": "Requiere que {app} esté instalado"
           },
           "telegram": {
-            "description": "Escribe {filepath}.",
-            "description-missing": "Requiere que {app} esté instalado/a."
+            "description": "Escribe {filepath}",
+            "description-missing": "Requiere que {app} esté instalado"
           },
           "vicinae": {
             "description": "Escribir {filepath} y recargar",
@@ -1188,8 +1188,8 @@
             "description-missing": "Requiere que {app} esté instalado"
           },
           "yazi": {
-            "description": "Escriba en {filepath}. El sabor debe activarse manualmente.",
-            "description-missing": "Requiere que {app} esté instalada."
+            "description": "Escriba en {filepath} — el sabor debe activarse manualmente",
+            "description-missing": "Requiere que {app} esté instalada"
           },
           "zed": {
             "description": "Escribir {filepath} y recargar",
@@ -1203,7 +1203,7 @@
         "terminal": {
           "alacritty": {
             "description": "Escribe {filepath} y recarga",
-            "description-missing": "Requiere que {app} esté instalado/a."
+            "description-missing": "Requiere que {app} esté instalado"
           },
           "description": "Tematización del emulador de terminal.",
           "foot": {
@@ -1220,8 +1220,8 @@
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Escribe {filepath} y recarga.",
-            "description-missing": "Requiere que {app} esté instalado/a."
+            "description": "Escribe {filepath} y recarga",
+            "description-missing": "Requiere que {app} esté instalado"
           }
         },
         "ui": {
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "Basado en la hora del atardecer y amanecer en <i>{location}</i> - recomendado.",
+          "description": "Basado en la hora del atardecer y amanecer en <i>{location}</i> — recomendado.",
           "label": "Programación automática"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Los comandos se ejecutan a través de shell (sh -c)\n• Los comandos se ejecutan en segundo plano (desvinculados)\n• Los botones de prueba se ejecutan con los valores actuales",
+          "description": "• Los comandos se ejecutan a través de shell (sh -c)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
           "label": "Información de comandos de Hook"
         },
         "parameters": {
-          "description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla\n• Hook de cambio de tema: $1 = true/false (estado del modo oscuro)",
+          "description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla<br>• Hook de cambio de tema: $1 = true/false (estado del modo oscuro)",
           "label": "Parámetros disponibles"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "Activar visualización en pantalla"
         },
         "enabled": {
-          "description": "Activar o desactivar el demonio de notificaciones, requiere reiniciar noctalia-shell.",
+          "description": "Activar o desactivar el demonio de notificaciones, requiere reiniciar Noctalia shell.",
           "label": "Activar notificaciones"
         },
         "location": {
@@ -2409,7 +2409,7 @@
       "subheader": "Define el ambiente con un bonito fondo."
     },
     "welcome": {
-      "note": "Solo algunos conceptos básicos para empezar: todas las opciones están en Configuración."
+      "note": "Solo algunos conceptos básicos para empezar: todas las opciones están en configuración."
     }
   },
   "system": {
@@ -2493,11 +2493,11 @@
     },
     "power-profile": {
       "changed": "Perfil de energía cambiado",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile"
     },
     "recording": {
-      "failed-general": "La grabadora se cerró con un error.",
-      "failed-gpu": "gpu-screen-recorder se cerró inesperadamente.",
+      "failed-general": "Grabadora se cerró con un error",
+      "failed-gpu": "gpu-screen-recorder se cerró inesperadamente",
       "failed-start": "Fallo al iniciar la grabación",
       "no-portals": "Los portales de escritorio no están en ejecución",
       "no-portals-desc": "Inicia xdg-desktop-portal y un portal de compositor (wlr/hyprland/gnome/kde).",
@@ -2508,9 +2508,9 @@
       "stopping": "Deteniendo grabación..."
     },
     "theming-processor-failed": {
-      "desc-generic": "Se encontró un error al procesar las plantillas.",
-      "title-matugen": "Falló el procesamiento de la plantilla Matugen.",
-      "title-predefined": "Falló el procesamiento del esquema de color predefinido."
+      "desc-generic": "Se encontró un error al procesar las plantillas",
+      "title-matugen": "Falló el procesamiento de la plantilla Matugen",
+      "title-predefined": "Falló el procesamiento del esquema de color predefinido"
     },
     "vpn": {
       "connected": "Conectado a '{name}'",
@@ -2520,7 +2520,7 @@
       "disabled": "Colores del fondo de pantalla desactivados",
       "enabled": "Colores del fondo de pantalla activados",
       "label": "Generación de colores para fondos de pantalla",
-      "not-installed": "Matugen no instalado - requerido para extraer colores del fondo de pantalla"
+      "not-installed": "Matugen no instalado — requerido para extraer colores del fondo de pantalla"
     },
     "wifi": {
       "connected": "Conectado a '{ssid}'",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "Día sin cero inicial (1-31)"
       },
       "hour": {
-        "leading-zero": "Hora con cero inicial (00-23) - formato de 24 horas",
-        "no-leading-zero": "Hora sin cero inicial (0-23) - formato de 24 horas"
+        "leading-zero": "Hora con cero inicial (00-23) — formato de 24 horas",
+        "no-leading-zero": "Hora sin cero inicial (0-23) — formato de 24 horas"
       },
       "minute": {
         "leading-zero": "Minuto con cero inicial (00-59)",

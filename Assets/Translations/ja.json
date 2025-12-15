@@ -191,7 +191,7 @@
           "label": "ストリーム"
         },
         "wheel": {
-          "description": "スクロールホイール操作時に実行するコマンド。\nコマンド内で $delta を使用して回転量を取得できます。",
+          "description": "スクロールホイール操作時に実行するコマンド。<br>コマンド内で $delta を使用して回転量を取得できます。",
           "label": "スクロールホイール",
           "update-text": "スクロール時に表示テキストを更新"
         },
@@ -378,7 +378,7 @@
           "label": "テーマカラーの適用"
         },
         "drawer-enabled": {
-          "description": "有効にすると、ピン留めされていないトレイ項目をドロワーパネル内に表示します。\n無効にすると、すべての項目をインラインで表示します。",
+          "description": "有効にすると、ピン留めされていないトレイ項目をドロワーパネル内に表示します。<br>無効にすると、すべての項目をインラインで表示します。",
           "label": "ドロワーを有効化"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "アプリケーション",
     "calculator": "電卓",
-    "calculator-description": "電卓 - 数式を計算します",
+    "calculator-description": "電卓 — 数式を計算します",
     "calculator-enter-expression": "数式を入力",
     "calculator-error": "エラー",
     "calculator-name": "電卓",
@@ -1049,14 +1049,14 @@
       "color-source": {
         "matugen-scheme-type": {
           "description": {
-            "scheme-content": "元画像に馴染む色を抽出します",
-            "scheme-expressive": "彩度が高く、鮮やかで遊び心のあるパレット",
-            "scheme-fidelity": "元の色相を保持した、忠実度の高いパレット",
-            "scheme-fruit-salad": "明るく対照的なアクセントを混ぜたカラフルなパレット",
-            "scheme-monochrome": "単一の色相で構成されたミニマルなパレット",
-            "scheme-neutral": "彩度を抑えた、落ち着きのあるパレット",
-            "scheme-rainbow": "スペクトル全体をカバーする多様なパレット",
-            "scheme-tonal-spot": "アクセントを強調したバランスの良いパレット"
+            "scheme-content": "元画像に馴染む色を抽出します。",
+            "scheme-expressive": "彩度が高く、鮮やかで遊び心のあるパレット。",
+            "scheme-fidelity": "元の色相を保持した、忠実度の高いパレット。",
+            "scheme-fruit-salad": "明るく対照的なアクセントを混ぜたカラフルなパレット。",
+            "scheme-monochrome": "単一の色相で構成されたミニマルなパレット。",
+            "scheme-neutral": "彩度を抑えた、落ち着きのあるパレット。",
+            "scheme-rainbow": "スペクトル全体をカバーする多様なパレット。",
+            "scheme-tonal-spot": "アクセントを強調したバランスの良いパレット。"
           },
           "label": "Matugen のスキームタイプ"
         },
@@ -1140,60 +1140,60 @@
           "description": "独自のテンプレートを作成",
           "label": "詳細設定",
           "user-templates": {
-            "description": "操作方法を理解している場合のみ有効にしてください。オンラインドキュメントを参照してください",
+            "description": "操作方法を理解している場合のみ有効にしてください、オンラインドキュメントを参照してください",
             "label": "ユーザーテンプレートを有効化"
           }
         },
         "programs": {
           "cava": {
-            "description": "{filepath} を書き込みます。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込みます",
+            "description-missing": "{app} のインストールが必要です"
           },
           "code": {
-            "description": "{filepath} を書き込みます。Hyprluna テーマを手動でインストールして有効化する必要があります。",
-            "description-missing": "Code クライアントが検出されません。VSCode または VSCodium をインストールしてください。"
+            "description": "{filepath} を書き込みます、HyprLuna テーマを手動でインストールして有効化する必要があります",
+            "description-missing": "Code クライアントが検出されません。VSCode または VSCodium をインストールしてください"
           },
           "description": "アプリケーションごとのテーマ設定",
           "discord": {
-            "description": "{client} 用に {filepath} を書き込みます。Hyprluna テーマを手動でインストールして有効化する必要があります。",
-            "description-missing": "Discord クライアントが検出されません。vencord、vesktop、webcord、armcord、equibop、lightcord、dorion のいずれかをインストールしてください。"
+            "description": "{client} 用に {filepath} を書き込みます、HyprLuna テーマを手動でインストールして有効化する必要があります",
+            "description-missing": "Discord クライアントが検出されません、vencord、vesktop、webcord、armcord、equibop、lightcord、dorion のいずれかをインストールしてください"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\n標準: ~/.emacs.d/themes/noctalia.el\n\n手動で適用: (load-theme 'noctalia t)",
-            "description-missing": "{app} がインストールされている必要があります。"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>標準: ~/.emacs.d/themes/noctalia.el<br>手動で適用: (load-theme 'noctalia t)",
+            "description-missing": "{app} がインストールされている必要があります"
           },
           "fuzzel": {
-            "description": "{filepath} を書き込み、リロードします。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込み、リロードします",
+            "description-missing": "{app} のインストールが必要です"
           },
           "label": "プログラム",
           "pywalfox": {
-            "description": "{filepath} を書き込み、pywalfox update を実行します。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込み、pywalfox update を実行します",
+            "description-missing": "{app} のインストールが必要です"
           },
           "spicetify": {
-            "description": "{filepath} を書き込みます。Comfy テーマを手動でインストールして有効化する必要があります。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込みます、Comfy テーマを手動でインストールして有効化する必要があります",
+            "description-missing": "{app} のインストールが必要です"
           },
           "telegram": {
-            "description": "{filepath} を書き込みます。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込みます",
+            "description-missing": "{app} のインストールが必要です"
           },
           "vicinae": {
-            "description": "{filepath} を書き込み、リロードします。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込み、リロードします",
+            "description-missing": "{app} のインストールが必要です"
           },
           "walker": {
-            "description": "{filepath} を書き込み、テーマを noctalia に設定します。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込み、テーマを noctalia に設定します",
+            "description-missing": "{app} のインストールが必要です"
           },
           "yazi": {
-            "description": "{filepath} を書き込みます。風味は手動で有効にする必要があります。",
-            "description-missing": "{app} がインストールされている必要があります。"
+            "description": "{filepath} を書き込み、flavor は手動で有効にする必要があります",
+            "description-missing": "{app} がインストールされている必要があります"
           },
           "zed": {
-            "description": "{filepath} を書き込み、リロードします。",
-            "description-missing": "{app} のインストールが必要です。"
+            "description": "{filepath} を書き込み、リロードします",
+            "description-missing": "{app} のインストールが必要です"
           }
         },
         "section": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• コマンドはシェル (sh -c) 経由で実行されます\n• コマンドはバックグラウンドで実行されます\n• テストボタンは現在の設定値を使って実行されます",
+          "description": "• コマンドはシェル (sh -c) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",
           "label": "コマンド実行に関する情報"
         },
         "parameters": {
-          "description": "• 壁紙フック: $1 = 壁紙のパス, $2 = 画面名\n• テーマ切替フック: $1 = true/false（ダークモードの状態）",
+          "description": "• 壁紙フック: $1 = 壁紙のパス, $2 = 画面名<br>• テーマ切替フック: $1 = true/false（ダークモードの状態）",
           "label": "利用可能なパラメータ（引数）"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "OSD (オンスクリーン表示) を有効化"
         },
         "enabled": {
-          "description": "通知デーモンを有効化・無効化します（noctalia-shellの再起動が必要です）。",
+          "description": "通知デーモンを有効化・無効化します（Noctalia shellの再起動が必要です）。",
           "label": "通知を有効化"
         },
         "location": {
@@ -2493,11 +2493,11 @@
     },
     "power-profile": {
       "changed": "電源プロファイルを変更しました",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "レコーダーがエラーで終了しました。",
-      "failed-gpu": "gpu-screen-recorder が予期せず終了しました。",
+      "failed-general": "レコーダーがエラーで終了しました",
+      "failed-gpu": "gpu-screen-recorder が予期せず終了しました",
       "failed-start": "録画を開始できませんでした",
       "no-portals": "デスクトップポータルが実行されていません",
       "no-portals-desc": "xdg-desktop-portal およびコンポジタポータル (wlr/hyprland/gnome/kde) を起動してください。",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "ゼロ埋めなしの日付 (1-31)"
       },
       "hour": {
-        "leading-zero": "ゼロ埋めありの時間 (00-23) - 24時間表記",
-        "no-leading-zero": "ゼロ埋めなしの時間 (0-23) - 24時間表記"
+        "leading-zero": "ゼロ埋めありの時間 (00-23) — 24時間表記",
+        "no-leading-zero": "ゼロ埋めなしの時間 (0-23) — 24時間表記"
       },
       "minute": {
         "leading-zero": "ゼロ埋めありの分 (00-59)",
