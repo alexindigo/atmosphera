@@ -161,6 +161,20 @@ Item {
           preventStealing: true
           onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
+              // Check if click is over any widget
+              var widgets = BarService.getAllWidgetInstances(null, screen.name);
+              for (var i = 0; i < widgets.length; i++) {
+                var widget = widgets[i];
+                if (!widget || !widget.visible)
+                  continue;
+                // Map click position to widget's coordinate space
+                var localPos = mapToItem(widget, mouse.x, mouse.y);
+                if (localPos.x >= 0 && localPos.x <= widget.width) {
+                  // Click is over a widget - don't open control center
+                  return;
+                }
+              }
+              // Click is on empty bar background - open control center
               var controlCenterPanel = PanelService.getPanel("controlCenterPanel", screen);
               if (Settings.data.controlCenter.position === "close_to_bar_button") {
                 // Will attempt to open the panel next to the bar button if any.
