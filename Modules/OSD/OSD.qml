@@ -564,15 +564,13 @@ Variants {
             anchors.leftMargin: Style.marginL
             anchors.rightMargin: Style.marginL
             spacing: Style.marginM
-            clip: true
 
-            // TextMetrics to measure the maximum possible percentage width
             TextMetrics {
               id: percentageMetrics
               font.family: Settings.data.ui.fontFixed
               font.weight: Style.fontWeightMedium
               font.pointSize: Style.fontSizeS * (Settings.data.ui.fontFixedScale * Style.uiScaleRatio)
-              text: "150%" // Maximum possible value with volumeOverdrive
+              text: "150%"
             }
 
             // Common Icon for all types
@@ -660,47 +658,51 @@ Variants {
             anchors.fill: parent
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
-            spacing: root.currentOSDType === OSD.Type.LockKey ? Style.marginM : Style.marginS
-            clip: root.currentOSDType !== OSD.Type.LockKey
+            spacing: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText ? Style.marginM : Style.marginS
+            clip: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
 
-            // Vertical text display for Lock Keys
             ColumnLayout {
-              id: lockKeyVerticalLayout
-              visible: root.currentOSDType === OSD.Type.LockKey
+              id: textVerticalLayout
+              visible: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText
               Layout.fillWidth: true
               Layout.fillHeight: false
               Layout.alignment: Qt.AlignHCenter
               spacing: 0
 
-              property var lockKeyChars: []
+              property var verticalTextChars: []
 
-              function updateLockKeyChars() {
+              function updateVerticalTextChars() {
                 const text = root.getDisplayPercentage();
                 const chars = [];
                 for (let i = 0; i < text.length; i++) {
                   chars.push(text[i]);
                 }
-                lockKeyChars = chars;
+                verticalTextChars = chars;
               }
 
-              Component.onCompleted: updateLockKeyChars()
+              Component.onCompleted: updateVerticalTextChars()
 
               Connections {
                 target: root
                 function onLastLockKeyChangedChanged() {
                   if (root.currentOSDType === OSD.Type.LockKey) {
-                    lockKeyVerticalLayout.updateLockKeyChars();
+                    textVerticalLayout.updateVerticalTextChars();
+                  }
+                }
+                function onCustomTextChanged() {
+                  if (root.currentOSDType === OSD.Type.CustomText) {
+                    textVerticalLayout.updateVerticalTextChars();
                   }
                 }
                 function onCurrentOSDTypeChanged() {
-                  if (root.currentOSDType === OSD.Type.LockKey) {
-                    lockKeyVerticalLayout.updateLockKeyChars();
+                  if (root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText) {
+                    textVerticalLayout.updateVerticalTextChars();
                   }
                 }
               }
 
               Repeater {
-                model: lockKeyVerticalLayout.lockKeyChars
+                model: textVerticalLayout.verticalTextChars
 
                 NText {
                   text: modelData || ""
@@ -711,7 +713,7 @@ Variants {
                   Layout.fillWidth: true
                   Layout.preferredHeight: {
                     const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
-                    return Math.round(fontSize * 1.3); // Add 30% for line height
+                    return Math.round(fontSize * 1.3);
                   }
                   Layout.alignment: Qt.AlignHCenter
                   horizontalAlignment: Text.AlignHCenter
@@ -720,9 +722,8 @@ Variants {
               }
             }
 
-            // Unified Text display for Percentage (non-lock key)
             NText {
-              visible: root.currentOSDType !== OSD.Type.LockKey
+              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
@@ -735,11 +736,10 @@ Variants {
               Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
             }
 
-            // Progress Bar for Volume/Brightness
             Item {
-              visible: root.currentOSDType !== OSD.Type.LockKey
+              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
               Layout.fillWidth: true
-              Layout.fillHeight: root.currentOSDType !== OSD.Type.LockKey
+              Layout.fillHeight: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.CustomText
 
               Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -773,14 +773,13 @@ Variants {
               }
             }
 
-            // Unified Icon display
             NIcon {
               icon: root.getIcon()
               color: root.getIconColor()
-              pointSize: root.currentOSDType === OSD.Type.LockKey ? Style.fontSizeXL : Style.fontSizeL
-              Layout.alignment: root.currentOSDType === OSD.Type.LockKey ? Qt.AlignHCenter : (Qt.AlignHCenter | Qt.AlignBottom)
-              Layout.preferredHeight: root.currentOSDType === OSD.Type.LockKey ? (Style.fontSizeXL * Style.uiScaleRatio * 1.5) : -1
-              Layout.minimumHeight: root.currentOSDType === OSD.Type.LockKey ? (Style.fontSizeXL * Style.uiScaleRatio) : 0
+              pointSize: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText ? Style.fontSizeXL : Style.fontSizeL
+              Layout.alignment: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText ? Qt.AlignHCenter : (Qt.AlignHCenter | Qt.AlignBottom)
+              Layout.preferredHeight: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText ? (Style.fontSizeXL * Style.uiScaleRatio * 1.5) : -1
+              Layout.minimumHeight: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.CustomText ? (Style.fontSizeXL * Style.uiScaleRatio) : 0
 
               Behavior on color {
                 ColorAnimation {
