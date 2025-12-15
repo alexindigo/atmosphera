@@ -1358,9 +1358,6 @@
         "exit-button": "Sair do modo de edição",
         "label": "Modo de edição"
       },
-      "scale": {
-        "label": "Escala"
-      },
       "enabled": {
         "description": "Ativar ou desativar widgets da área de trabalho completamente.",
         "label": "Ativar widgets da área de trabalho"

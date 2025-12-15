@@ -1358,9 +1358,6 @@
         "exit-button": "Quitter le mode édition",
         "label": "Mode édition"
       },
-      "scale": {
-        "label": "Échelle"
-      },
       "enabled": {
         "description": "Activer ou désactiver complètement les widgets du bureau.",
         "label": "Activer les widgets de bureau"

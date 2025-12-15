@@ -1358,9 +1358,6 @@
         "exit-button": "Düzenleme modundan çık",
         "label": "Düzenleme modu"
       },
-      "scale": {
-        "label": "Ölçek"
-      },
       "enabled": {
         "description": "Masaüstü araçlarını tamamen etkinleştir veya devre dışı bırak.",
         "label": "Masaüstü araçlarını etkinleştir"
