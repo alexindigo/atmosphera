@@ -191,7 +191,7 @@
           "label": "Stream"
         },
         "wheel": {
-          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.\nVerwenden Sie $delta für die Scrollrad-Delta im Befehl.",
+          "description": "Befehl, der bei Verwendung des Scrollrads ausgeführt wird.<br>Verwenden Sie $delta für die Scrollrad-Delta im Befehl.",
           "label": "Scrollrad",
           "update-text": "Anzeigetext beim Scrollen aktualisieren"
         },
@@ -378,7 +378,7 @@
           "label": "Symbole einfärben"
         },
         "drawer-enabled": {
-          "description": "Wenn aktiviert, werden nicht angeheftete Tray-Elemente in einem Schubladen-Panel angezeigt. Wenn deaktiviert, werden alle Tray-Elemente inline angezeigt.",
+          "description": "Wenn aktiviert, werden nicht angeheftete Tray-Elemente in einem Schubladen-Panel angezeigt.<br>Wenn deaktiviert, werden alle Tray-Elemente inline angezeigt.",
           "label": "Schublade aktivieren"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Anwendungen",
     "calculator": "Rechner",
-    "calculator-description": "Rechner - mathematische Ausdrücke auswerten",
+    "calculator-description": "Rechner — mathematische Ausdrücke auswerten",
     "calculator-enter-expression": "Mathematischen Ausdruck eingeben",
     "calculator-error": "Fehler",
     "calculator-name": "Rechner",
@@ -1140,7 +1140,7 @@
           "description": "Erstellen Sie Ihre eigenen Vorlagen",
           "label": "Erweitert",
           "user-templates": {
-            "description": "Nur aktivieren, wenn Sie wissen, was Sie tun. Weitere Informationen finden Sie in unserer Online-Dokumentation",
+            "description": "Nur aktivieren, wenn Sie wissen, was Sie tun — weitere Informationen finden Sie in unserer Online-Dokumentation",
             "label": "Benutzer-Vorlagen aktivieren"
           }
         },
@@ -1150,29 +1150,29 @@
             "description-missing": "Benötigt die Installation von {app}"
           },
           "code": {
-            "description": "Schreibe {Dateipfad}. Das Hyprluna-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Kein Code-Client erkannt. Installieren Sie VSCode oder VSCodium"
+            "description": "Schreibe {Dateipfad} — das HyprLuna-Theme muss manuell installiert und aktiviert werden",
+            "description-missing": "Kein Code-Client erkannt — installieren Sie VSCode oder VSCodium"
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
-            "description": "Schreibt {filepath} für {client}",
-            "description-missing": "Kein Discord-Client erkannt. Installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion"
+            "description": "Schreibe {filepath} für {client} — das HyprLuna-Theme muss manuell installiert und aktiviert werden",
+            "description-missing": "Kein Discord-Client erkannt — installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nManuell anwenden: (load-theme 'noctalia t)",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Manuell anwenden: (load-theme 'noctalia t)",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "fuzzel": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert die Installation von {app}"
           },
           "label": "Programme",
           "pywalfox": {
-            "description": "Schreibt {filepath} und führt pywalfox update aus",
+            "description": "Schreibe {filepath} und führe pywalfox update aus",
             "description-missing": "Erfordert die Installation von {app}"
           },
           "spicetify": {
-            "description": "Schreibe {filepath}. Das Comfy-Theme muss manuell installiert und aktiviert werden",
+            "description": "Schreibe {filepath} — das Comfy-Theme muss manuell installiert und aktiviert werden",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "telegram": {
@@ -1180,19 +1180,19 @@
             "description-missing": "Benötigt die Installation von {app}"
           },
           "vicinae": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert die Installation von {app}"
           },
           "walker": {
-            "description": "Schreibt {filepath} und setzt das Theme auf Noctalia",
+            "description": "Schreibe {filepath} und setzt das Theme auf noctalia",
             "description-missing": "Erfordert die Installation von {app}"
           },
           "yazi": {
-            "description": "Schreibe {Dateipfad}. Flavor muss manuell aktiviert werden.",
+            "description": "Schreibe {Dateipfad} — Flavor muss manuell aktiviert werden",
             "description-missing": "Benötigt die Installation von {app}"
           },
           "zed": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert die Installation von {app}"
           }
         },
@@ -1207,15 +1207,15 @@
           },
           "description": "Terminal-Emulator-Theming.",
           "foot": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert {app} Terminal"
           },
           "ghostty": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert {app} Terminal"
           },
           "kitty": {
-            "description": "Schreibt {filepath} und lädt neu",
+            "description": "Schreibe {Dateipfad} und lade neu",
             "description-missing": "Erfordert {app} Terminal"
           },
           "label": "Terminal",
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "Basierend auf Sonnenuntergang und Sonnenaufgang in <i>{location}</i> - empfohlen.",
+          "description": "Basierend auf Sonnenuntergang und Sonnenaufgang in <i>{location}</i> — empfohlen.",
           "label": "Automatische Planung"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Befehle werden über Shell ausgeführt (sh -c)\n• Befehle laufen im Hintergrund (getrennt)\n• Test-Buttons führen mit aktuellen Werten aus",
+          "description": "• Befehle werden über Shell ausgeführt (sh -c)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
           "label": "Hook-Befehl-Informationen"
         },
         "parameters": {
-          "description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname\n• Theme-Wechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
+          "description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname<br>• Theme-Wechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
           "label": "Verfügbare Parameter"
         }
       },
@@ -2493,7 +2493,7 @@
     },
     "power-profile": {
       "changed": "Energieprofil geändert",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
       "failed-general": "Rekorder wurde mit einem Fehler beendet",
@@ -2508,9 +2508,9 @@
       "stopping": "Aufnahme wird gestoppt…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
+      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten",
       "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
-      "title-predefined": "Die Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen."
+      "title-predefined": "Die Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen"
     },
     "vpn": {
       "connected": "Verbunden mit '{name}'",
@@ -2520,7 +2520,7 @@
       "disabled": "Hintergrundbild-Farben deaktiviert",
       "enabled": "Hintergrundbild-Farben aktiviert",
       "label": "Hintergrundfarbengenerierung",
-      "not-installed": "Matugen nicht installiert - erforderlich für Hintergrundbild-Farbextraktion"
+      "not-installed": "Matugen nicht installiert — erforderlich für Hintergrundbild-Farbextraktion"
     },
     "wifi": {
       "connected": "Verbunden mit '{ssid}'",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "Tag ohne führende Null (1-31)"
       },
       "hour": {
-        "leading-zero": "Stunde mit führender Null (00-23) - 24-Stunden-Format",
-        "no-leading-zero": "Stunde ohne führende Null (0-23) - 24-Stunden-Format"
+        "leading-zero": "Stunde mit führender Null (00-23) — 24-Stunden-Format",
+        "no-leading-zero": "Stunde ohne führende Null (0-23) — 24-Stunden-Format"
       },
       "minute": {
         "leading-zero": "Minute mit führender Null (00-59)",

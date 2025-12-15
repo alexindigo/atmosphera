@@ -157,11 +157,11 @@
           "update-text": "Mettre à jour le texte affiché au clic gauche."
         },
         "max-text-length-horizontal": {
-          "description": "Nombre maximal de caractères à afficher dans la barre horizontale (0 pour masquer le texte)",
+          "description": "Nombre maximal de caractères à afficher dans la barre horizontale (0 pour masquer le texte).",
           "label": "Longueur max du texte (horizontal)"
         },
         "max-text-length-vertical": {
-          "description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte)",
+          "description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte).",
           "label": "Longueur max du texte (vertical)"
         },
         "middle-click": {
@@ -191,7 +191,7 @@
           "label": "Flux"
         },
         "wheel": {
-          "description": "Commande à exécuter lorsque la molette est utilisée.\nUtilisez $delta pour le delta de la molette dans la commande",
+          "description": "Commande à exécuter lorsque la molette est utilisée.<br>Utilisez $delta pour le delta de la molette dans la commande.",
           "label": "Molette",
           "update-text": "Mettre à jour le texte affiché au défilement"
         },
@@ -200,7 +200,7 @@
           "label": "Commande molette bas"
         },
         "wheel-mode-separate": {
-          "description": "Activer des commandes séparées pour la molette haut et bas",
+          "description": "Activer des commandes séparées pour la molette haut et bas.",
           "label": "Commandes de molette séparées"
         },
         "wheel-up": {
@@ -294,7 +294,7 @@
       },
       "spacer": {
         "width": {
-          "description": "Largeur de l'espacement en pixels",
+          "description": "Largeur de l'espacement en pixels.",
           "label": "Largeur"
         }
       },
@@ -378,7 +378,7 @@
           "label": "Coloriser les icônes"
         },
         "drawer-enabled": {
-          "description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir. Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",
+          "description": "Lorsqu'elle est activée, les éléments de la barre système non épinglés sont affichés dans un panneau tiroir.<br>Lorsqu'elle est désactivée, tous les éléments de la barre système sont affichés en ligne.",
           "label": "Activer le tiroir"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Applications",
     "calculator": "Calculatrice",
-    "calculator-description": "Calculatrice - évaluez des expressions mathématiques",
+    "calculator-description": "Calculatrice — évaluez des expressions mathématiques",
     "calculator-enter-expression": "Entrez une expression mathématique",
     "calculator-error": "Erreur",
     "calculator-name": "Calculatrice",
@@ -1140,43 +1140,43 @@
           "description": "Créez vos propres modèles",
           "label": "Avancé",
           "user-templates": {
-            "description": "N'activez que si vous savez ce que vous faites, consultez notre documentation en ligne",
+            "description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne",
             "label": "Activer les modèles utilisateur"
           }
         },
         "programs": {
           "cava": {
-            "description": "Écrire {filepath}.",
+            "description": "Écrire {filepath}",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "code": {
-            "description": "Écrire {filepath}. Le thème Hyprluna doit être installé et activé manuellement.",
-            "description-missing": "Aucun client Code détecté. Installez VSCode ou VSCodium."
+            "description": "Écrire {filepath} — le thème HyprLuna doit être installé et activé manuellement",
+            "description-missing": "Aucun client Code détecté — installez VSCode ou VSCodium"
           },
           "description": "Thématisation spécifique aux applications.",
           "discord": {
-            "description": "Écrire {filepath} pour {client}",
-            "description-missing": "Aucun client Discord détecté. Installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion."
+            "description": "Écrire {filepath} pour {client} — le thème HyprLuna doit être installé et activé manuellement",
+            "description-missing": "Aucun client Discord détecté — installez vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nAppliquer manuellement: (load-theme 'noctalia t)",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Appliquer manuellement: (load-theme 'noctalia t)",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "fuzzel": {
-            "description": "Écrire ~/.config/fuzzel/themes/noctalia et recharger",
+            "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le lanceur fuzzel soit installé"
           },
           "label": "Programmes",
           "pywalfox": {
-            "description": "Écrire ~/.cache/wal/colors.json et exécuter pywalfox update",
+            "description": "Écrire {filepath} et exécuter pywalfox update",
             "description-missing": "Nécessite que le paquet pywalfox soit installé"
           },
           "spicetify": {
-            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
+            "description": "Écrire {filepath} — le thème Comfy doit être installé et activé manuellement",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "telegram": {
-            "description": "Écrire {filepath}.",
+            "description": "Écrire {filepath}",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "vicinae": {
@@ -1188,11 +1188,11 @@
             "description-missing": "Nécessite que le lanceur {app} soit installé"
           },
           "yazi": {
-            "description": "Écrire dans {filepath}. La saveur doit être activée manuellement.",
+            "description": "Écrire dans {filepath} — flavor doit être activée manuellement",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "zed": {
-            "description": "Écrire {filepath}. Le thème Comfy doit être installé et activé manuellement.",
+            "description": "Écrire {filepath} — le thème Comfy doit être installé et activé manuellement",
             "description-missing": "Nécessite l'installation de {app}"
           }
         },
@@ -1202,20 +1202,20 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Écrire {filepath} et recharger.",
+            "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite l'installation de {app}"
           },
           "description": "Thématisation de l'émulateur de terminal.",
           "foot": {
-            "description": "Écrire ~/.config/foot/themes/noctalia et recharger",
+            "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le terminal foot soit installé"
           },
           "ghostty": {
-            "description": "Écrire ~/.config/ghostty/themes/noctalia et recharger",
+            "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le terminal ghostty soit installé"
           },
           "kitty": {
-            "description": "Écrire ~/.config/kitty/themes/noctalia.conf et recharger",
+            "description": "Écrire {filepath} et recharger",
             "description-missing": "Nécessite que le terminal Kitty soit installé"
           },
           "label": "Terminal",
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "Basé sur l'heure du coucher et du lever du soleil à <i>{location}</i> - recommandé.",
+          "description": "Basé sur l'heure du coucher et du lever du soleil à <i>{location}</i> — recommandé.",
           "label": "Planification automatique"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Les commandes sont exécutées via le shell (sh -c)\n• Les commandes s'exécutent en arrière-plan (détachées)\n• Les boutons de test s'exécutent avec les valeurs actuelles",
+          "description": "• Les commandes sont exécutées via le shell (sh -c)<br>• Les commandes s'exécutent en arrière-plan (détachées)<br>• Les boutons de test s'exécutent avec les valeurs actuelles",
           "label": "Informations sur la commande de hook"
         },
         "parameters": {
-          "description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran\n• Hook de bascule de thème : $1 = true/false (état du mode sombre)",
+          "description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran<br>• Hook de bascule de thème : $1 = true/false (état du mode sombre)",
           "label": "Paramètres disponibles"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "Activer l'affichage à l'écran (OSD)"
         },
         "enabled": {
-          "description": "Activer ou désactiver le démon de notifications, nécessite un redémarrage de noctalia-shell.",
+          "description": "Activer ou désactiver le démon de notifications, nécessite un redémarrage de Noctalia shell.",
           "label": "Activer les notifications"
         },
         "location": {
@@ -2409,7 +2409,7 @@
       "subheader": "Définissez l'ambiance avec un joli fond."
     },
     "welcome": {
-      "note": "Quelques réglages de base pour démarrer — toutes les options sont dans Paramètres"
+      "note": "Quelques réglages de base pour démarrer — toutes les options sont dans paramètres"
     }
   },
   "system": {
@@ -2493,11 +2493,11 @@
     },
     "power-profile": {
       "changed": "Profil d'alimentation changé",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "L'enregistreur s'est arrêté avec une erreur.",
-      "failed-gpu": "gpu-screen-recorder s'est arrêté de manière inattendue.",
+      "failed-general": "Enregistreur s'est arrêté avec une erreur",
+      "failed-gpu": "gpu-screen-recorder s'est arrêté de manière inattendue",
       "failed-start": "Échec du démarrage de l'enregistrement",
       "no-portals": "Les portails de bureau ne sont pas en cours d'exécution",
       "no-portals-desc": "Démarrez xdg-desktop-portal et un portail de compositeur (wlr/hyprland/gnome/kde).",
@@ -2508,9 +2508,9 @@
       "stopping": "Arrêt de l'enregistrement..."
     },
     "theming-processor-failed": {
-      "desc-generic": "Une erreur s'est produite lors du traitement des modèles.",
-      "title-matugen": "Le traitement du modèle Matugen a échoué.",
-      "title-predefined": "Le traitement du schéma de couleurs prédéfini a échoué."
+      "desc-generic": "Une erreur s'est produite lors du traitement des modèles",
+      "title-matugen": "Le traitement du modèle Matugen a échoué",
+      "title-predefined": "Le traitement du schéma de couleurs prédéfini a échoué"
     },
     "vpn": {
       "connected": "Connecté à '{name}'",
@@ -2520,7 +2520,7 @@
       "disabled": "Couleurs du fond d'écran désactivées",
       "enabled": "Couleurs du fond d'écran activées",
       "label": "Génération de couleurs pour fonds d'écran",
-      "not-installed": "Matugen non installé - requis pour l'extraction des couleurs du fond d'écran"
+      "not-installed": "Matugen non installé — requis pour l'extraction des couleurs du fond d'écran"
     },
     "wifi": {
       "connected": "Connecté à '{ssid}'",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "Jour sans zéro initial (1-31)"
       },
       "hour": {
-        "leading-zero": "Heure avec zéro initial (00-23) - format 24 heures",
-        "no-leading-zero": "Heure sans zéro initial (0-23) - format 24 heures"
+        "leading-zero": "Heure avec zéro initial (00-23) — format 24 heures",
+        "no-leading-zero": "Heure sans zéro initial (0-23) — format 24 heures"
       },
       "minute": {
         "leading-zero": "Minute avec zéro initial (00-59)",

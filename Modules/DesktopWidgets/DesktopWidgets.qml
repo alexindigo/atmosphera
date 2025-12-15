@@ -57,55 +57,6 @@ Variants {
         id: widgetsContainer
         anchors.fill: parent
 
-        // Collision detection to prevent widgets from overlapping
-        function checkCollision(widget, newX, newY) {
-          if (!widget || !widget.parent)
-            return false;
-
-          var widgetWidth = widget.width || 0;
-          var widgetHeight = widget.height || 0;
-
-          for (var i = 0; i < widgetsContainer.children.length; i++) {
-            var child = widgetsContainer.children[i];
-
-            // Skip self, container, and edit mode button (widgets can overlap button)
-            if (child === widget || child === widgetsContainer || child === editModeButton) {
-              continue;
-            }
-
-            var otherWidget = null;
-
-            // Handle Loader items - get the actual widget from the Loader
-            if (child.toString().indexOf("Loader") !== -1) {
-              if (!child.active || !child.item) {
-                continue;
-              }
-              otherWidget = child.item;
-            } else {
-              otherWidget = child;
-            }
-
-            if (!otherWidget || !otherWidget.visible) {
-              continue;
-            }
-
-            if (otherWidget === widget) {
-              continue;
-            }
-
-            var otherX = otherWidget.x || 0;
-            var otherY = otherWidget.y || 0;
-            var otherWidth = otherWidget.width || 0;
-            var otherHeight = otherWidget.height || 0;
-
-            // AABB overlap check
-            if (newX < otherX + otherWidth && newX + widgetWidth > otherX && newY < otherY + otherHeight && newY + widgetHeight > otherY) {
-              return true;
-            }
-          }
-
-          return false;
-        }
 
         // Load widgets dynamically from per-monitor array
         Repeater {

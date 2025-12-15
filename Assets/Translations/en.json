@@ -191,7 +191,7 @@
           "label": "Stream"
         },
         "wheel": {
-          "description": "Command to execute when the scroll wheel is used.\nUse $delta for the scroll wheel delta in the command.",
+          "description": "Command to execute when the scroll wheel is used.<br>Use $delta for the scroll wheel delta in the command.",
           "label": "Scroll wheel",
           "update-text": "Update displayed text on scroll"
         },
@@ -378,7 +378,7 @@
           "label": "Colorize icons"
         },
         "drawer-enabled": {
-          "description": "When enabled, unpinned tray items are shown in a drawer panel. When disabled, all tray items are shown inline.",
+          "description": "When enabled, unpinned tray items are shown in a drawer panel.<br>When disabled, all tray items are shown inline.",
           "label": "Enable drawer"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Applications",
     "calculator": "Calculator",
-    "calculator-description": "Calculator - evaluate mathematical expressions",
+    "calculator-description": "Calculator — evaluate mathematical expressions",
     "calculator-enter-expression": "Enter a mathematical expression",
     "calculator-error": "Error",
     "calculator-name": "Calculator",
@@ -1049,14 +1049,14 @@
       "color-source": {
         "matugen-scheme-type": {
           "description": {
-            "scheme-content": "Derives colors that closely match the underlying image",
-            "scheme-expressive": "Vibrant palette with playful saturation",
-            "scheme-fidelity": "High-fidelity palette that preserves source hues",
-            "scheme-fruit-salad": "Colorful mix of bright contrasting accents",
-            "scheme-monochrome": "Minimal palette built around a single hue",
-            "scheme-neutral": "Muted palette with subdued and calming tones",
-            "scheme-rainbow": "Diverse palette spanning the full spectrum",
-            "scheme-tonal-spot": "Balanced palette with focused accents"
+            "scheme-content": "Derives colors that closely match the underlying image.",
+            "scheme-expressive": "Vibrant palette with playful saturation.",
+            "scheme-fidelity": "High-fidelity palette that preserves source hues.",
+            "scheme-fruit-salad": "Colorful mix of bright contrasting accents.",
+            "scheme-monochrome": "Minimal palette built around a single hue.",
+            "scheme-neutral": "Muted palette with subdued and calming tones.",
+            "scheme-rainbow": "Diverse palette spanning the full spectrum.",
+            "scheme-tonal-spot": "Balanced palette with focused accents."
           },
           "label": "Matugen scheme type"
         },
@@ -1137,10 +1137,10 @@
           }
         },
         "misc": {
-          "description": "Create your own Templates",
+          "description": "Create your own templates",
           "label": "Advanced",
           "user-templates": {
-            "description": "Only enable if you know what you are doing, refer to our online documentation",
+            "description": "Only enable if you know what you are doing — refer to our online documentation",
             "label": "Enable user templates"
           }
         },
@@ -1150,16 +1150,16 @@
             "description-missing": "Requires {app} to be installed"
           },
           "code": {
-            "description": "Write {filepath}. Hyprluna theme needs to be installed and activated manually",
-            "description-missing": "No Code client detected. Install VSCode or VSCodium"
+            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually",
+            "description-missing": "No Code client detected — install VSCode or VSCodium"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client}. Hyprluna theme needs to be activated manually",
-            "description-missing": "No Discord client detected. Install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion"
+            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually",
+            "description-missing": "No Discord client detected — install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandard: ~/.emacs.d/themes/noctalia.el\n\nApply manually: (load-theme 'noctalia t)",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)",
             "description-missing": "Requires {app} to be installed"
           },
           "fuzzel": {
@@ -1172,7 +1172,7 @@
             "description-missing": "Requires {app} to be installed"
           },
           "spicetify": {
-            "description": "Write {filepath}. Comfy theme needs to be installed and activated manually",
+            "description": "Write {filepath} — Comfy theme needs to be installed and activated manually",
             "description-missing": "Requires {app} to be installed"
           },
           "telegram": {
@@ -1188,7 +1188,7 @@
             "description-missing": "Requires {app} to be installed"
           },
           "yazi": {
-            "description": "Write {filepath}. Flavor needs to be activated manually.",
+            "description": "Write {filepath} — flavor needs to be activated manually",
             "description-missing": "Requires {app} to be installed"
           },
           "zed": {
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "Based on the sunset and sunrise time in <i>{location}</i> - recommended.",
+          "description": "Based on the sunset and sunrise time in <i>{location}</i> — recommended.",
           "label": "Automatic scheduling"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Commands are executed via shell (sh -c)\n• Commands run in background (detached)\n• Test buttons execute with current values",
+          "description": "• Commands are executed via shell (sh -c)<br>• Commands run in background (detached)<br>• Test buttons execute with current values",
           "label": "Hook command information"
         },
         "parameters": {
-          "description": "• Wallpaper hook: $1 = wallpaper path, $2 = screen name\n• Theme toggle hook: $1 = true/false (Dark Mode state)",
+          "description": "• Wallpaper hook: $1 = wallpaper path, $2 = screen name<br>• Theme toggle hook: $1 = true/false (Dark Mode state)",
           "label": "Available parameters"
         }
       },
@@ -2409,7 +2409,7 @@
       "subheader": "Set the mood with a beautiful background."
     },
     "welcome": {
-      "note": "Just a few basics to get you started - full options are in the settings"
+      "note": "Just a few basics to get you started — full options are in the settings"
     }
   },
   "system": {
@@ -2493,7 +2493,7 @@
     },
     "power-profile": {
       "changed": "Power profile changed",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
       "failed-general": "Recorder exited with an error",
@@ -2508,7 +2508,7 @@
       "stopping": "Stopping recording…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Encountered an error while processing templates.",
+      "desc-generic": "Encountered an error while processing templates",
       "title-matugen": "Matugen templating processing failed",
       "title-predefined": "Predefined color cheme processing failed"
     },
@@ -2520,7 +2520,7 @@
       "disabled": "Wallpaper colors disabled",
       "enabled": "Wallpaper colors enabled",
       "label": "Wallpaper colors generation",
-      "not-installed": "Matugen not installed - required for wallpaper color extraction"
+      "not-installed": "Matugen not installed — required for wallpaper color extraction"
     },
     "wifi": {
       "connected": "Connected to '{ssid}'",
@@ -2722,8 +2722,8 @@
         "no-leading-zero": "Day without leading zero (1-31)"
       },
       "hour": {
-        "leading-zero": "Hour with leading zero (00-23) - 24-hour format",
-        "no-leading-zero": "Hour without leading zero (0-23) - 24-hour format"
+        "leading-zero": "Hour with leading zero (00-23) — 24-hour format",
+        "no-leading-zero": "Hour without leading zero (0-23) — 24-hour format"
       },
       "minute": {
         "leading-zero": "Minute with leading zero (00-59)",
