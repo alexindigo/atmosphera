@@ -170,9 +170,15 @@ Item {
                 }
                 // Map click position to widget's coordinate space
                 var localPos = mapToItem(widget, mouse.x, mouse.y);
-                if (localPos.x >= -Style.marginS && localPos.x <= widget.width + Style.marginS) {
-                  // Click is over a widget - don't open control center
-                  return;
+
+                if (root.barIsVertical) {
+                  if (localPos.y >= -Style.marginS && localPos.y <= widget.height + Style.marginS) {
+                    return;
+                  }
+                } else {
+                  if (localPos.x >= -Style.marginS && localPos.x <= widget.width + Style.marginS) {
+                    return;
+                  }
                 }
               }
               // Click is on empty bar background - open control center
