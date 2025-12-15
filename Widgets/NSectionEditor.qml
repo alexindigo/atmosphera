@@ -10,6 +10,7 @@ NBox {
   id: root
 
   property string sectionName: ""
+  property string sectionSubtitle: ""
   property string sectionId: ""
   property var widgetModel: []
   property var availableWidgets: []
@@ -105,12 +106,23 @@ NBox {
     RowLayout {
       Layout.fillWidth: true
 
-      NText {
-        text: sectionName
-        pointSize: Style.fontSizeL
-        font.weight: Style.fontWeightBold
-        color: Color.mOnSurface
+      ColumnLayout {
+        spacing: Style.marginXXS
         Layout.alignment: Qt.AlignVCenter
+
+        NText {
+          text: sectionName
+          pointSize: Style.fontSizeL
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+        }
+
+        NText {
+          visible: sectionSubtitle !== ""
+          text: sectionSubtitle
+          pointSize: Style.fontSizeS
+          color: Color.mOnSurfaceVariant
+        }
       }
 
       // Widget count indicator (when max is set)

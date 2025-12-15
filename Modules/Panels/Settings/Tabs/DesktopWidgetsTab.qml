@@ -64,10 +64,12 @@ ColumnLayout {
       required property var modelData
 
       Layout.fillWidth: true
-      sectionName: {
+      sectionName: modelData.name
+      sectionSubtitle: {
         var compositorScale = CompositorService.getDisplayScale(modelData.name);
-        return modelData.name + " (" + modelData.width + "x" + modelData.height + " @ " + compositorScale + "x)";
+        return "(" + modelData.width + "x" + modelData.height + " @ " + compositorScale + "x)";
       }
+
       sectionId: modelData.name
       settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml")
       widgetRegistry: DesktopWidgetRegistry
