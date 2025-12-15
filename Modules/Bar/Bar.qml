@@ -169,7 +169,7 @@ Item {
                   continue;
                 // Map click position to widget's coordinate space
                 var localPos = mapToItem(widget, mouse.x, mouse.y);
-                if (localPos.x >= 0 && localPos.x <= widget.width) {
+                if (localPos.x >= -Style.marginS && localPos.x <= widget.width + Style.marginS) {
                   // Click is over a widget - don't open control center
                   return;
                 }
