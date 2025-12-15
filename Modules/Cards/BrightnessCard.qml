@@ -82,9 +82,11 @@ NBox {
 
         NIconButton {
           icon: {
-            if (!brightnessMonitor) return "brightness-low";
+            if (!brightnessMonitor)
+              return "brightness-low";
             const brightness = brightnessMonitor.brightness || 0;
-            if (brightness <= 0.001) return "sun-off";
+            if (brightness <= 0.001)
+              return "sun-off";
             return brightness <= 0.5 ? "brightness-low" : "brightness-high";
           }
           baseSize: Style.baseWidgetSize * 0.5
@@ -128,4 +130,3 @@ NBox {
     }
   }
 }
-
