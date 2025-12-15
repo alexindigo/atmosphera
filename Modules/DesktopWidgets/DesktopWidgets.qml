@@ -57,7 +57,6 @@ Variants {
         id: widgetsContainer
         anchors.fill: parent
 
-
         // Load widgets dynamically from per-monitor array
         Repeater {
           model: screenLoader.screenWidgets
