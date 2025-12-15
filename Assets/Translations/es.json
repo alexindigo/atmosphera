@@ -1358,6 +1358,9 @@
         "exit-button": "Salir del modo de edición",
         "label": "Modo de edición"
       },
+      "scale": {
+        "label": "Escala"
+      },
       "enabled": {
         "description": "Activar o desactivar los widgets de escritorio por completo.",
         "label": "Habilitar widgets de escritorio"

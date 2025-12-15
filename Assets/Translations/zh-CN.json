@@ -1358,6 +1358,9 @@
         "exit-button": "退出编辑模式",
         "label": "编辑模式"
       },
+      "scale": {
+        "label": "缩放"
+      },
       "enabled": {
         "description": "完全启用或禁用桌面小部件。",
         "label": "启用桌面小部件"

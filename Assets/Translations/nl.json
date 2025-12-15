@@ -1358,6 +1358,9 @@
         "exit-button": "Bewerkingsmodus verlaten",
         "label": "Bewerkingsmodus"
       },
+      "scale": {
+        "label": "Schaal"
+      },
       "enabled": {
         "description": "Desktopwidgets volledig in- of uitschakelen.",
         "label": "Desktopwidgets inschakelen"

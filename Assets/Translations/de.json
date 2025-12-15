@@ -1358,6 +1358,9 @@
         "exit-button": "Bearbeitungsmodus verlassen",
         "label": "Bearbeitungsmodus"
       },
+      "scale": {
+        "label": "Skalierung"
+      },
       "enabled": {
         "description": "Desktop-Widgets vollständig aktivieren oder deaktivieren.",
         "label": "Desktop-Widgets aktivieren"
