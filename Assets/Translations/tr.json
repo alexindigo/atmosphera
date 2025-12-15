@@ -1884,6 +1884,10 @@
           "description": "Büyük Harf Kilidi, Sayı Kilidi veya Kaydırma Kilidi değiştirildiğinde OSD'yi göster.",
           "label": "Kilit tuşları"
         },
+        "custom-text": {
+          "description": "IPC üzerinden özel metin iletileri için OSD göster.",
+          "label": "Özel Metin"
+        },
         "section": {
           "description": "OSD'yi tetikleyecek olayları seçin.",
           "label": "OSD tetikleme olayları"

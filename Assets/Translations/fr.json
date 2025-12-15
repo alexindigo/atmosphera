@@ -1884,6 +1884,10 @@
           "description": "Afficher l'OSD lorsque Verr Maj, Verr Num ou Arrêt défil est activée ou désactivée.",
           "label": "Touches de verrouillage"
         },
+        "custom-text": {
+          "description": "Afficher l’OSD pour les messages texte personnalisés provenant de l’IPC.",
+          "label": "Texte personnalisé"
+        },
         "section": {
           "description": "Sélectionnez les événements qui déclenchent l'OSD.",
           "label": "Événements de déclenchement OSD"

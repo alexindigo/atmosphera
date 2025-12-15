@@ -1884,6 +1884,10 @@
           "description": "当切换大写锁定、数字锁定或滚动锁定时显示 OSD。",
           "label": "锁定键"
         },
+        "custom-text": {
+          "description": "显示来自 IPC 的自定义文本消息的 OSD。",
+          "label": "自定义文本"
+        },
         "section": {
           "description": "选择触发OSD的事件。",
           "label": "OSD触发事件"

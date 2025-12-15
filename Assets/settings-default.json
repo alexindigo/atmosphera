@@ -331,11 +331,7 @@
     "autoHideMs": 2000,
     "overlayLayer": true,
     "backgroundOpacity": 1,
-    "enabledTypes": [
-      0,
-      1,
-      2
-    ],
+    "enabledTypes": [0, 1, 2, 4],
     "monitors": []
   },
   "audio": {

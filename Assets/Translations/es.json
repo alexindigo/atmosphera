@@ -1884,6 +1884,10 @@
           "description": "Mostrar el OSD cuando se activen o desactiven Bloq Mayús, Bloq Num o Bloq Despl.",
           "label": "Teclas de bloqueo"
         },
+        "custom-text": {
+          "description": "Mostrar el OSD para mensajes de texto personalizados desde IPC.",
+          "label": "Texto personalizado"
+        },
         "section": {
           "description": "Seleccione los eventos que activan el OSD.",
           "label": "Eventos de activación OSD"

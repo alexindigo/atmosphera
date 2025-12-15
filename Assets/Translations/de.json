@@ -1884,6 +1884,10 @@
           "description": "OSD anzeigen, wenn Feststelltaste, Num-Taste oder Rollen-Taste umgeschaltet werden.",
           "label": "Feststelltasten"
         },
+        "custom-text": {
+          "description": "OSD für benutzerdefinierte Textnachrichten aus IPC anzeigen.",
+          "label": "Benutzerdefinierter Text"
+        },
         "section": {
           "description": "Wählen Sie die Ereignisse aus, die das OSD auslösen.",
           "label": "OSD-Auslöseereignisse"
