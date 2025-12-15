@@ -109,7 +109,7 @@ Rectangle {
     font.family: Settings.data.ui.fontFixed
     font.weight: Style.fontWeightMedium
     font.pointSize: textSize * Settings.data.ui.fontFixedScale
-    text: "99.9K" // Longest value part of network speed
+    text: "12.3G" // Representative of formatted memory/network values (smart formatting keeps most values to 5 chars or less)
   }
 
   anchors.centerIn: parent
@@ -471,7 +471,7 @@ Rectangle {
         }
 
         NText {
-          text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : `${SystemStatService.memGb.toFixed(1)}G`
+          text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
           family: Settings.data.ui.fontFixed
           pointSize: textSize
           applyUiScale: false
