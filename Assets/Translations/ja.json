@@ -1966,6 +1966,10 @@
           "description": "画面の輝度が変更された時に OSD を表示します。",
           "label": "画面の明るさ"
         },
+        "custom-text": {
+          "description": "IPC からのカスタムテキストメッセージの OSD を表示します。",
+          "label": "カスタムテキスト"
+        },
         "input-volume": {
           "description": "マイク音量が変更された時に OSD を表示します。",
           "label": "入力音量"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "Caps Lock、Num Lock、Scroll Lock の切り替え時にOSDを表示します。",
           "label": "ロックキー"
-        },
-        "custom-text": {
-          "description": "IPC からのカスタムテキストメッセージの OSD を表示します。",
-          "label": "カスタムテキスト"
         },
         "section": {
           "description": "OSD を表示するトリガー（イベント）を選択します。",

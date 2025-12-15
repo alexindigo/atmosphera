@@ -1966,6 +1966,10 @@
           "description": "Ekran parlaklığı değiştiğinde OSD'yi göster.",
           "label": "Parlaklık"
         },
+        "custom-text": {
+          "description": "IPC üzerinden özel metin iletileri için OSD göster.",
+          "label": "Özel Metin"
+        },
         "input-volume": {
           "description": "Mikrofon ses düzeyi değiştiğinde OSD'yi göster.",
           "label": "Giriş sesi"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "Büyük Harf Kilidi, Sayı Kilidi veya Kaydırma Kilidi değiştirildiğinde OSD'yi göster.",
           "label": "Kilit tuşları"
-        },
-        "custom-text": {
-          "description": "IPC üzerinden özel metin iletileri için OSD göster.",
-          "label": "Özel Metin"
         },
         "section": {
           "description": "OSD'yi tetikleyecek olayları seçin.",

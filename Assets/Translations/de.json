@@ -1966,6 +1966,10 @@
           "description": "OSD anzeigen, wenn sich die Bildschirmhelligkeit ändert.",
           "label": "Helligkeit"
         },
+        "custom-text": {
+          "description": "OSD für benutzerdefinierte Textnachrichten aus IPC anzeigen.",
+          "label": "Benutzerdefinierter Text"
+        },
         "input-volume": {
           "description": "OSD anzeigen, wenn sich die Mikrofonlautstärke ändert.",
           "label": "Eingangslautstärke"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "OSD anzeigen, wenn Feststelltaste, Num-Taste oder Rollen-Taste umgeschaltet werden.",
           "label": "Feststelltasten"
-        },
-        "custom-text": {
-          "description": "OSD für benutzerdefinierte Textnachrichten aus IPC anzeigen.",
-          "label": "Benutzerdefinierter Text"
         },
         "section": {
           "description": "Wählen Sie die Ereignisse aus, die das OSD auslösen.",

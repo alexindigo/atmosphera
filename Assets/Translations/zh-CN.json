@@ -1966,6 +1966,10 @@
           "description": "当屏幕亮度发生变化时显示 OSD。",
           "label": "亮度"
         },
+        "custom-text": {
+          "description": "显示来自 IPC 的自定义文本消息的 OSD。",
+          "label": "自定义文本"
+        },
         "input-volume": {
           "description": "当麦克风音量发生变化时显示 OSD。",
           "label": "输入音量"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "当切换大写锁定、数字锁定或滚动锁定时显示 OSD。",
           "label": "锁定键"
-        },
-        "custom-text": {
-          "description": "显示来自 IPC 的自定义文本消息的 OSD。",
-          "label": "自定义文本"
         },
         "section": {
           "description": "选择触发OSD的事件。",

@@ -31,6 +31,12 @@ ColumnLayout {
       "required": false
     },
     {
+      "id": "brightness-card",
+      "text": "Brightness",
+      "enabled": false,
+      "required": false
+    },
+    {
       "id": "weather-card",
       "text": "Weather",
       "enabled": true,

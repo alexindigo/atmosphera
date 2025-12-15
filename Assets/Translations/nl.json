@@ -1966,6 +1966,10 @@
           "description": "Toon het OSD wanneer de schermhelderheid verandert.",
           "label": "Helderheid"
         },
+        "custom-text": {
+          "description": "OSD weergeven voor aangepaste tekstberichten via IPC.",
+          "label": "Aangepaste tekst"
+        },
         "input-volume": {
           "description": "Toon het OSD wanneer het microfoonvolume verandert.",
           "label": "Invoervolume"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "Toon het OSD wanneer Caps Lock, Num Lock of Scroll Lock wordt omgeschakeld.",
           "label": "Vergrendeltoetsen"
-        },
-        "custom-text": {
-          "description": "OSD weergeven voor aangepaste tekstberichten via IPC.",
-          "label": "Aangepaste tekst"
         },
         "section": {
           "description": "Selecteer de gebeurtenissen die de OSD activeren.",

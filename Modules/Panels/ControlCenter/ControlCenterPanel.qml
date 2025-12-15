@@ -53,6 +53,9 @@ SmartPanel {
       case "audio-card":
         height += audioHeight;
         break;
+      case "brightness-card":
+        height += brightnessHeight;
+        break;
       case "weather-card":
         height += weatherHeight;
         break;
@@ -69,6 +72,7 @@ SmartPanel {
   readonly property int profileHeight: Math.round(64 * Style.uiScaleRatio)
   readonly property int shortcutsHeight: Math.round(52 * Style.uiScaleRatio)
   readonly property int audioHeight: Math.round(60 * Style.uiScaleRatio)
+  readonly property int brightnessHeight: Math.round(60 * Style.uiScaleRatio)
   readonly property int mediaSysMonHeight: Math.round(260 * Style.uiScaleRatio)
 
   // We keep a dynamic weather height due to a more complex layout and font scaling
@@ -106,6 +110,8 @@ SmartPanel {
               return shortcutsHeight;
             case "audio-card":
               return audioHeight;
+            case "brightness-card":
+              return brightnessHeight;
             case "weather-card":
               return weatherHeight;
             case "media-sysmon-card":
@@ -122,6 +128,8 @@ SmartPanel {
               return shortcutsCard;
             case "audio-card":
               return audioCard;
+            case "brightness-card":
+              return brightnessCard;
             case "weather-card":
               return weatherCard;
             case "media-sysmon-card":
@@ -145,6 +153,11 @@ SmartPanel {
     Component {
       id: audioCard
       AudioCard {}
+    }
+
+    Component {
+      id: brightnessCard
+      BrightnessCard {}
     }
 
     Component {

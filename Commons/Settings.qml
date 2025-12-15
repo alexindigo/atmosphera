@@ -409,6 +409,10 @@ Singleton {
           "enabled": true
         },
         {
+          "id": "brightness-card",
+          "enabled": false
+        },
+        {
           "id": "weather-card",
           "enabled": true
         },

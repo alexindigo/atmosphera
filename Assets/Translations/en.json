@@ -1966,6 +1966,10 @@
           "description": "Show OSD when screen brightness changes.",
           "label": "Brightness"
         },
+        "custom-text": {
+          "description": "Show OSD for custom text messages from IPC.",
+          "label": "Custom Text"
+        },
         "input-volume": {
           "description": "Show OSD when microphone volume changes.",
           "label": "Input volume"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "Show OSD when Caps Lock, Num Lock, or Scroll Lock are toggled.",
           "label": "Lock keys"
-        },
-        "custom-text": {
-          "description": "Show OSD for custom text messages from IPC.",
-          "label": "Custom Text"
         },
         "section": {
           "description": "Select the events that trigger the OSD.",

@@ -1966,6 +1966,10 @@
           "description": "Mostrar el OSD cuando cambie el brillo de la pantalla.",
           "label": "Brillo"
         },
+        "custom-text": {
+          "description": "Mostrar el OSD para mensajes de texto personalizados desde IPC.",
+          "label": "Texto personalizado"
+        },
         "input-volume": {
           "description": "Mostrar el OSD cuando cambie el volumen del micrófono.",
           "label": "Volumen de entrada"
@@ -1973,10 +1977,6 @@
         "lockkey": {
           "description": "Mostrar el OSD cuando se activen o desactiven Bloq Mayús, Bloq Num o Bloq Despl.",
           "label": "Teclas de bloqueo"
-        },
-        "custom-text": {
-          "description": "Mostrar el OSD para mensajes de texto personalizados desde IPC.",
-          "label": "Texto personalizado"
         },
         "section": {
           "description": "Seleccione los eventos que activan el OSD.",
