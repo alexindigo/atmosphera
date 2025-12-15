@@ -157,11 +157,11 @@
           "update-text": "Sol tıklamayla görüntülenen metni güncelle"
         },
         "max-text-length-horizontal": {
-          "description": "Yatay çubukta gösterilecek en fazla karakter sayısı (metni gizlemek için 0)",
+          "description": "Yatay çubukta gösterilecek en fazla karakter sayısı (metni gizlemek için 0).",
           "label": "En uzun metin uzunluğu (yatay)"
         },
         "max-text-length-vertical": {
-          "description": "Dikey çubukta gösterilecek en fazla karakter sayısı (metni gizlemek için 0)",
+          "description": "Dikey çubukta gösterilecek en fazla karakter sayısı (metni gizlemek için 0).",
           "label": "En uzun metin uzunluğu (dikey)"
         },
         "middle-click": {
@@ -191,7 +191,7 @@
           "label": "Akış"
         },
         "wheel": {
-          "description": "Kaydırma tekerleği kullanıldığında yürütülecek komut.\nKomutta kaydırma tekerleği deltası için $delta kullanın",
+          "description": "Kaydırma tekerleği kullanıldığında yürütülecek komut.<br>Komutta kaydırma tekerleği deltası için $delta kullanın.",
           "label": "Kaydırma tekerleği",
           "update-text": "Kaydırmada gösterilen metni güncelle"
         },
@@ -200,7 +200,7 @@
           "label": "Kaydırma tekerleği aşağı komutu"
         },
         "wheel-mode-separate": {
-          "description": "Kaydırma tekerleği yukarı ve aşağı için ayrı komutları etkinleştir",
+          "description": "Kaydırma tekerleği yukarı ve aşağı için ayrı komutları etkinleştir.",
           "label": "Ayrı kaydırma tekerleği komutları"
         },
         "wheel-up": {
@@ -294,7 +294,7 @@
       },
       "spacer": {
         "width": {
-          "description": " piksel olarak aralık genişliği",
+          "description": "Piksel olarak aralık genişliği.",
           "label": "Genişlik"
         }
       },
@@ -378,7 +378,7 @@
           "label": "Simgeleri Renklendir"
         },
         "drawer-enabled": {
-          "description": "Etkinleştirildiğinde, sabitlenmemiş tepsi öğeleri bir çekmece panelinde gösterilir. Devre dışı bırakıldığında, tüm tepsi öğeleri satır içi gösterilir.",
+          "description": "Etkinleştirildiğinde, sabitlenmemiş tepsi öğeleri bir çekmece panelinde gösterilir.<br>Devre dışı bırakıldığında, tüm tepsi öğeleri satır içi gösterilir.",
           "label": "Çekmeceyi Etkinleştir"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Uygulamalar",
     "calculator": "Hesap makinesi",
-    "calculator-description": "Hesap makinesi - matematiksel ifadeleri hesapla",
+    "calculator-description": "Hesap makinesi — matematiksel ifadeleri hesapla",
     "calculator-enter-expression": "Matematiksel bir ifade girin",
     "calculator-error": "Hata",
     "calculator-name": "Hesap makinesi",
@@ -1049,14 +1049,14 @@
       "color-source": {
         "matugen-scheme-type": {
           "description": {
-            "scheme-content": "Temel görüntüye yakın renkler türetir",
-            "scheme-expressive": "Oyuncak doygunlukla canlı palet",
-            "scheme-fidelity": "Kaynak tonlarını koruyan yüksek sadakatli palet",
-            "scheme-fruit-salad": "Canlı kontrast aksanların renkli karışımı",
-            "scheme-monochrome": "Tek bir ton etrafında inşa edilmiş minimal palet",
-            "scheme-neutral": "Sakinleştirici ve bastırılmış tonlarla yumuşak palet",
-            "scheme-rainbow": "Tam spektrumu kapsayan çeşitli palet",
-            "scheme-tonal-spot": "Odaklanmış aksanlarla dengeli palet"
+            "scheme-content": "Temel görüntüye yakın renkler türetir.",
+            "scheme-expressive": "Oyuncak doygunlukla canlı palet.",
+            "scheme-fidelity": "Kaynak tonlarını koruyan yüksek sadakatli palet.",
+            "scheme-fruit-salad": "Canlı kontrast aksanların renkli karışımı.",
+            "scheme-monochrome": "Tek bir ton etrafında inşa edilmiş minimal palet.",
+            "scheme-neutral": "Sakinleştirici ve bastırılmış tonlarla yumuşak palet.",
+            "scheme-rainbow": "Tam spektrumu kapsayan çeşitli palet.",
+            "scheme-tonal-spot": "Odaklanmış aksanlarla dengeli palet."
           },
           "label": "Matugen şema türü"
         },
@@ -1140,26 +1140,26 @@
           "description": "Kendi şablonlarınızı oluşturun",
           "label": "Gelişmiş",
           "user-templates": {
-            "description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin, çevrimiçi belgelerimize bakın",
+            "description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin — çevrimiçi belgelerimize bakın",
             "label": "Kullanıcı şablonlarını etkinleştir"
           }
         },
         "programs": {
           "cava": {
-            "description": "{filepath} dosyasına yaz.",
+            "description": "{filepath} dosyasına yaz",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "code": {
-            "description": "{filepath} dosyasına yaz. Hyprluna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
-            "description-missing": "Code istemcisi tespit edilmedi. VSCode veya VSCodium kurun."
+            "description": "{filepath} dosyasına yaz — HyprLuna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir",
+            "description-missing": "Code istemcisi tespit edilmedi — VSCode veya VSCodium kurun"
           },
           "description": "Uygulamaya özel temalandırma.",
           "discord": {
-            "description": "{client} için {filepath} dosyasına yaz. Hyprluna temasının manuel olarak etkinleştirilmesi gerekir.",
-            "description-missing": "Discord istemcisi tespit edilmedi. Vencord, vesktop, webcord, armcord, equibop, lightcord veya dorion kurun."
+            "description": "{client} için {filepath} dosyasına yaz — HyprLuna temasının manuel olarak etkinleştirilmesi gerekir",
+            "description-missing": "Discord istemcisi tespit edilmedi — Vencord, vesktop, webcord, armcord, equibop, lightcord veya dorion kurun"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandart: ~/.emacs.d/themes/noctalia.el\n\nManuel olarak uygula: (load-theme 'noctalia t)",
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standart: ~/.emacs.d/themes/noctalia.el<br>Manuel olarak uygula: (load-theme 'noctalia t)",
             "description-missing": "{app} uygulamasının yüklü olmasını gerektirir"
           },
           "fuzzel": {
@@ -1172,11 +1172,11 @@
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "spicetify": {
-            "description": "{filepath} dosyasına yaz. Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir.",
+            "description": "{filepath} dosyasına yaz — Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "telegram": {
-            "description": "{filepath} dosyasına yaz.",
+            "description": "{filepath} dosyasına yaz",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "vicinae": {
@@ -1188,7 +1188,7 @@
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "yazi": {
-            "description": "{filepath} dosyasına yaz. Temanın manuel etkinleştirilmesi gerekir.",
+            "description": "{filepath} dosyasına yaz — flavor manuel etkinleştirilmesi gerekir",
             "description-missing": "Kurulum için {app} gereklidir"
           },
           "zed": {
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "<i>{location}</i> konumunda gün batımı ve gün doğumu zamanına göre - önerilen.",
+          "description": "<i>{location}</i> konumunda gün batımı ve gün doğumu zamanına göre — önerilen.",
           "label": "Otomatik zamanlama"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Komutlar kabuk (sh -c) ile yürütülür\n• Komutlar arka planda yürütülür (ayrık)\n• Test düğmeleri mevcut değerlerle yürütülür",
+          "description": "• Komutlar kabuk (sh -c) ile yürütülür<br>• Komutlar arka planda yürütülür (ayrık)<br>• Test düğmeleri mevcut değerlerle yürütülür",
           "label": "Komut Bilgisi"
         },
         "parameters": {
-          "description": "• Duvar Kâğıdı Kancası: $1 = duvar kâğıdı yolu, $2 = ekran adı\n• Tema Geçiş Kancası: $1 = true/false (koyu mod durumu)",
+          "description": "• Duvar Kâğıdı Kancası: $1 = duvar kâğıdı yolu, $2 = ekran adı<br>• Tema Geçiş Kancası: $1 = true/false (koyu mod durumu)",
           "label": "Kullanılabilir Parametreler"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "Ekran görüntüsünü etkinleştir"
         },
         "enabled": {
-          "description": "Bildirim arka plan programını etkinleştir veya devre dışı bırak, noctalia-shell'in yeniden başlatılmasını gerektirir.",
+          "description": "Bildirim arka plan programını etkinleştir veya devre dışı bırak, Noctalia shell'in yeniden başlatılmasını gerektirir.",
           "label": "Bildirimleri etkinleştir"
         },
         "location": {
@@ -2405,7 +2405,7 @@
       "subheader": "Güzel bir arka planla ortamı ayarlayın."
     },
     "welcome": {
-      "note": "Başlamanız için birkaç temel ayar - tam seçenekler Ayarlar'da"
+      "note": "Başlamanız için birkaç temel ayar — tam seçenekler ayarlar'da"
     }
   },
   "system": {
@@ -2489,11 +2489,11 @@
     },
     "power-profile": {
       "changed": "Güç profili değişti",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Kayıtçısı bir hata ile kapandı.",
-      "failed-gpu": "gpu-screen-recorder beklenmedik şekilde kapandı.",
+      "failed-general": "Kayıtçı bir hata nedeniyle kapandı",
+      "failed-gpu": "gpu-screen-recorder beklenmedik şekilde kapandı",
       "failed-start": "Kayıt başlatma başarısız oldu",
       "no-portals": "Masaüstü portal çalışmıyor",
       "no-portals-desc": "xdg-desktop-portal ve bir kompozitör portalı (wlr/hyprland/gnome/kde) başlatın.",
@@ -2504,9 +2504,9 @@
       "stopping": "Kayıt durduruluyor..."
     },
     "theming-processor-failed": {
-      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı.",
-      "title-matugen": "Matugen şablon işleme başarısız oldu.",
-      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu."
+      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı",
+      "title-matugen": "Matugen şablon işleme başarısız oldu",
+      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu"
     },
     "vpn": {
       "connected": "'{name}' ile bağlantı kuruldu",
@@ -2516,7 +2516,7 @@
       "disabled": "Duvar kâğıdı renkleri devre dışı",
       "enabled": "Duvar kâğıdı renkleri etkin",
       "label": "Duvar kâğıdı renkleri oluşturma",
-      "not-installed": "Matugen kurulu değil - duvar kâğıdı renk çıkarmak için gerekli"
+      "not-installed": "Matugen kurulu değil — duvar kâğıdı renk çıkarmak için gerekli"
     },
     "wifi": {
       "connected": "'{ssid}' ile bağlandı",
@@ -2718,8 +2718,8 @@
         "no-leading-zero": "Sıfır olmadan gün (1-31)"
       },
       "hour": {
-        "leading-zero": "Sıfır ile başlayan saat (00-23) - 24 saat formatı",
-        "no-leading-zero": "Sıfır olmadan saat (0-23) - 24 saat formatı"
+        "leading-zero": "Sıfır ile başlayan saat (00-23) — 24 saat formatı",
+        "no-leading-zero": "Sıfır olmadan saat (0-23) — 24 saat formatı"
       },
       "minute": {
         "leading-zero": "Sıfır ile başlayan dakika (00-59)",

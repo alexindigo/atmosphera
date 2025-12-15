@@ -157,11 +157,11 @@
           "update-text": "Tekst bijwerken bij linksklik"
         },
         "max-text-length-horizontal": {
-          "description": "Maximaal aantal tekens dat moet worden weergegeven in horizontale balk (0 om tekst te verbergen)",
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in horizontale balk (0 om tekst te verbergen).",
           "label": "Max. tekstlengte (horizontaal)"
         },
         "max-text-length-vertical": {
-          "description": "Maximaal aantal tekens dat moet worden weergegeven in verticale balk (0 om tekst te verbergen)",
+          "description": "Maximaal aantal tekens dat moet worden weergegeven in verticale balk (0 om tekst te verbergen).",
           "label": "Max. tekstlengte (verticaal)"
         },
         "middle-click": {
@@ -191,7 +191,7 @@
           "label": "Stream"
         },
         "wheel": {
-          "description": "Commando om uit te voeren wanneer het scrollwiel wordt gebruikt.\nGebruik $delta voor de scrollwiel-delta in het commando",
+          "description": "Commando om uit te voeren wanneer het scrollwiel wordt gebruikt.<br>Gebruik $delta voor de scrollwiel-delta in het commando.",
           "label": "Scrollwiel",
           "update-text": "Weergegeven tekst bij scrollen bijwerken"
         },
@@ -200,7 +200,7 @@
           "label": "Scrollwiel omlaag commando"
         },
         "wheel-mode-separate": {
-          "description": "Afzonderlijke commando's inschakelen voor scrollwiel omhoog en omlaag",
+          "description": "Afzonderlijke commando's inschakelen voor scrollwiel omhoog en omlaag.",
           "label": "Afzonderlijke scrollwielcommando's"
         },
         "wheel-up": {
@@ -378,7 +378,7 @@
           "label": "Pictogrammen inkleuren"
         },
         "drawer-enabled": {
-          "description": "Indien ingeschakeld worden niet-vastgemaakte systeemvakitems in een lade weergegeven. Indien uitgeschakeld worden alle items inline getoond.",
+          "description": "Indien ingeschakeld worden niet-vastgemaakte systeemvakitems in een lade weergegeven.<br>Indien uitgeschakeld worden alle items inline getoond.",
           "label": "Lade inschakelen"
         },
         "hide-passive": {
@@ -764,7 +764,7 @@
   "plugins": {
     "applications": "Applicaties",
     "calculator": "Rekenmachine",
-    "calculator-description": "Rekenmachine - bereken wiskundige expressies",
+    "calculator-description": "Rekenmachine — bereken wiskundige expressies",
     "calculator-enter-expression": "Voer een wiskundige expressie in",
     "calculator-error": "Fout",
     "calculator-name": "Rekenmachine",
@@ -1140,60 +1140,60 @@
           "description": "Maak uw eigen sjablonen",
           "label": "Geavanceerd",
           "user-templates": {
-            "description": "Alleen inschakelen als u weet wat u doet, raadpleeg onze online documentatie",
+            "description": "Alleen inschakelen als u weet wat u doet — raadpleeg onze online documentatie",
             "label": "Gebruikerssjablonen inschakelen"
           }
         },
         "programs": {
           "cava": {
-            "description": "Schrijf {filepath}.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath}",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "code": {
-            "description": "Schrijf {filepath}. Het Hyprluna-thema moet handmatig worden geïnstalleerd en geactiveerd.",
-            "description-missing": "Geen Code-client gedetecteerd. Installeer VSCode of VSCodium."
+            "description": "Schrijf {filepath} — het HyprLuna-thema moet handmatig worden geïnstalleerd en geactiveerd",
+            "description-missing": "Geen Code-client gedetecteerd — installeer VSCode of VSCodium"
           },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
-            "description": "Schrijf {filepath} voor {client}. Het Hyprluna-thema moet handmatig worden geactiveerd.",
-            "description-missing": "Geen Discord-client gedetecteerd. Installeer vencord, vesktop, webcord, armcord, equibop, lightcord of dorion."
+            "description": "Schrijf {filepath} voor {client} — het HyprLuna-thema moet handmatig worden geactiveerd",
+            "description-missing": "Geen Discord-client gedetecteerd — installeer vencord, vesktop, webcord, armcord, equibop, lightcord of dorion"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el\nStandaard: ~/.emacs.d/themes/noctalia.el\n\nHandmatig toepassen: (load-theme 'noctalia t)",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standaard: ~/.emacs.d/themes/noctalia.el<br>Handmatig toepassen: (load-theme 'noctalia t)",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "fuzzel": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "label": "Programma's",
           "pywalfox": {
-            "description": "Schrijf {filepath} en voer pywalfox update uit.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en voer pywalfox update uit",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "spicetify": {
-            "description": "Schrijf {filepath}. Het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} — het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "telegram": {
-            "description": "Schrijf {filepath}.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath}",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "vicinae": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "walker": {
-            "description": "Schrijf {filepath} en stel het thema in op noctalia.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en stel het thema in op noctalia",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "yazi": {
-            "description": "Schrijf {filepath}. Smaak moet handmatig worden geactiveerd.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} — flavor moet handmatig worden geactiveerd",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "zed": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           }
         },
         "section": {
@@ -1202,26 +1202,26 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "description": "Thema's voor terminal-emulators.",
           "foot": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "ghostty": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "kitty": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Schrijf {filepath} en herlaad.",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath} en herlaad",
+            "description-missing": "Vereist dat {app} is geïnstalleerd"
           }
         },
         "ui": {
@@ -1434,7 +1434,7 @@
       },
       "night-light": {
         "auto-schedule": {
-          "description": "Gebaseerd op de zonsopgang- en zonsondergangtijd in <i>{location}</i> - aanbevolen.",
+          "description": "Gebaseerd op de zonsopgang- en zonsondergangtijd in <i>{location}</i> — aanbevolen.",
           "label": "Automatische planning"
         },
         "enable": {
@@ -1606,11 +1606,11 @@
     "hooks": {
       "info": {
         "command-info": {
-          "description": "• Commando's worden uitgevoerd via shell (sh -c)\n• Commando's draaien op de achtergrond (losgekoppeld)\n• Testknoppen worden uitgevoerd met de huidige waarden",
+          "description": "• Commando's worden uitgevoerd via shell (sh -c)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",
           "label": "Informatie over hook-commando's"
         },
         "parameters": {
-          "description": "• Wallpaper-hook: $1 = pad naar achtergrond, $2 = schermnaam\n• Theme Toggle-hook: $1 = true/false (status donkere modus)",
+          "description": "• Wallpaper-hook: $1 = pad naar achtergrond, $2 = schermnaam<br>• Theme Toggle-hook: $1 = true/false (status donkere modus)",
           "label": "Beschikbare parameters"
         }
       },
@@ -1841,7 +1841,7 @@
           "label": "On-screenweergave inschakelen"
         },
         "enabled": {
-          "description": "Schakel de meldingsdaemon in of uit, vereist een herstart van noctalia-shell.",
+          "description": "Schakel de meldingsdaemon in of uit, vereist een herstart van Noctalia shell.",
           "label": "Meldingen inschakelen"
         },
         "location": {
@@ -2405,7 +2405,7 @@
       "subheader": "Zet de toon met een mooie achtergrond."
     },
     "welcome": {
-      "note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in Instellingen."
+      "note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen."
     }
   },
   "system": {
@@ -2489,11 +2489,11 @@
     },
     "power-profile": {
       "changed": "Energieprofiel gewijzigd",
-      "profile-name": "\"{profile}\""
+      "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "De recorder is met een fout afgesloten.",
-      "failed-gpu": "gpu-screen-recorder is onverwacht afgesloten.",
+      "failed-general": "Recorder is met een fout afgesloten",
+      "failed-gpu": "gpu-screen-recorder is onverwacht afgesloten",
       "failed-start": "Starten van opname mislukt",
       "no-portals": "Desktop-portals worden niet uitgevoerd",
       "no-portals-desc": "Start xdg-desktop-portal en een compositor-portal (wlr/hyprland/gnome/kde).",
@@ -2516,7 +2516,7 @@
       "disabled": "Achtergrondkleuren uitgeschakeld",
       "enabled": "Achtergrondkleuren ingeschakeld",
       "label": "Achtergrondkleuren genereren",
-      "not-installed": "Matugen niet geïnstalleerd - vereist voor het extraheren van achtergrondkleuren"
+      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren"
     },
     "wifi": {
       "connected": "Verbonden met '{ssid}'",
@@ -2718,8 +2718,8 @@
         "no-leading-zero": "Dag zonder voorloopnul (1-31)"
       },
       "hour": {
-        "leading-zero": "Uur met voorloopnul (00-23) - 24-uurs formaat",
-        "no-leading-zero": "Uur zonder voorloopnul (0-23) - 24-uurs formaat"
+        "leading-zero": "Uur met voorloopnul (00-23) — 24-uurs formaat",
+        "no-leading-zero": "Uur zonder voorloopnul (0-23) — 24-uurs formaat"
       },
       "minute": {
         "leading-zero": "Minuut met voorloopnul (00-59)",
