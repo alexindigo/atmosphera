@@ -467,6 +467,27 @@ Variants {
         return Math.max(shortVHeight, Math.round(totalHeight * 1.1));
       }
 
+      readonly property int customTextVHeight: {
+        if (root.currentOSDType !== OSD.Type.CustomText || !verticalMode) {
+          return shortVHeight;
+        }
+        const text = root.customText;
+        const charCount = text ? text.length : 0;
+        if (charCount === 0) {
+          return shortVHeight;
+        }
+        const fontSize = Style.fontSizeM * Settings.data.ui.fontFixedScale * Style.uiScaleRatio;
+        const charHeight = fontSize * 1.3;
+        const textHeight = charCount * charHeight;
+        const bgMargins = Style.marginM * 1.5 * 2;
+        const contentMargins = Style.marginL * 2;
+        const iconSize = Style.fontSizeXL * Style.uiScaleRatio * 1.8;
+        const textIconSpacing = Style.marginM;
+        const buffer = Style.marginL;
+        const totalHeight = textHeight + bgMargins + contentMargins + iconSize + textIconSpacing + buffer;
+        return Math.max(shortVHeight, Math.round(totalHeight * 1.1));
+      }
+
       readonly property int barThickness: {
         const base = Math.max(8, Math.round(8 * Style.uiScaleRatio));
         return base % 2 === 0 ? base : base + 1;
@@ -496,7 +517,7 @@ Variants {
       margins.right: calculateMargin(anchors.right, "right")
 
       implicitWidth: verticalMode ? longVWidth : (root.currentOSDType === OSD.Type.CustomText ? customTextHWidth : (isShortMode ? lockKeyHWidth : longHWidth))
-      implicitHeight: verticalMode ? (isShortMode ? lockKeyVHeight : longVHeight) : longHHeight
+      implicitHeight: verticalMode ? (root.currentOSDType === OSD.Type.CustomText ? customTextVHeight : (isShortMode ? lockKeyVHeight : longVHeight)) : longHHeight
       color: Color.transparent
 
       WlrLayershell.namespace: "noctalia-osd-" + (screen?.name || "unknown")
