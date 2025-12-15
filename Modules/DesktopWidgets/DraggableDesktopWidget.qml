@@ -179,9 +179,6 @@ Item {
         internal.dragOffsetX = root.x;
         internal.dragOffsetY = root.y;
         internal.isDragging = true;
-        // Update base position to current position when starting drag
-        internal.baseX = root.x;
-        internal.baseY = root.y;
       } else if (mouse.button === Qt.RightButton) {
         // Start scaling
         internal.operationType = "scale";
@@ -190,15 +187,23 @@ Item {
         internal.initialHeight = root.height;
         internal.initialMousePos = Qt.point(mouse.x, mouse.y);
         internal.initialScale = root.widgetScale;
-        internal.lastScale = root.widgetScale;  // Initialize lastScale to current scale
+        internal.lastScale = root.widgetScale;
       }
     }
 
     onPositionChanged: mouse => {
       if (internal.isDragging && pressed && internal.operationType === "drag") {
-        var globalPos = mapToItem(root.parent, mouse.x, mouse.y);
-        var newX = globalPos.x - pressPos.x;
-        var newY = globalPos.y - pressPos.y;
+        // Calculate the offset from the initial press position
+        var globalPressPos = mapToItem(root.parent, pressPos.x, pressPos.y);
+        var globalCurrentPos = mapToItem(root.parent, mouse.x, mouse.y);
+
+        // Calculate the movement delta since the press
+        var deltaX = globalCurrentPos.x - globalPressPos.x;
+        var deltaY = globalCurrentPos.y - globalPressPos.y;
+
+        // Calculate new position based on the original position when drag started
+        var newX = internal.dragOffsetX + deltaX;
+        var newY = internal.dragOffsetY + deltaY;
 
         // Boundary clamping - account for scaled widget size
         var scaledWidth = root.width * root.widgetScale;
@@ -233,7 +238,7 @@ Item {
             !isNaN(newScale) &&
             newScale > 0) {
           root.widgetScale = newScale;
-          internal.lastScale = newScale;  // Update lastScale to the newly applied scale
+          internal.lastScale = newScale;
         }
       }
     }
@@ -260,7 +265,7 @@ Item {
 
         internal.isScaling = false;
         internal.operationType = "";
-        internal.lastScale = root.widgetScale;  // Sync lastScale with final scale when operation ends
+        internal.lastScale = root.widgetScale;
       }
     }
 
