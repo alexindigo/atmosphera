@@ -345,7 +345,7 @@ Item {
         readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
 
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0)
+        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0) + (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
 
@@ -361,12 +361,12 @@ Item {
           }
         }
 
+        // Sidebar toggle button
         ColumnLayout {
           anchors.fill: parent
           spacing: Style.marginS
           anchors.margins: sidebar.panelVeryTransparent ? Style.marginM : 0
 
-          // Sidebar toggle button
           Item {
             id: toggleContainer
             Layout.fillWidth: true
@@ -434,7 +434,7 @@ Item {
 
               delegate: Rectangle {
                 id: tabItem
-                width: sidebarList.verticalScrollBarActive ? sidebarList.width - Style.marginXS : sidebarList.width
+                width: sidebarList.width - (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
                 radius: Style.radiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
