@@ -24,6 +24,9 @@ Loader {
   id: root
   active: false
 
+  // Expose lockContext for hooks
+  readonly property var lockContext: item ? item.lockContext : null
+
   Component.onCompleted: {
     // Register with panel service
     PanelService.lockScreen = this;

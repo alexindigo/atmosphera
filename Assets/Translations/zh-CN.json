@@ -1642,6 +1642,16 @@
         "description": "壁纸更改时执行的命令。",
         "label": "壁纸已更改",
         "placeholder": "例如：notify-send \"壁纸\" \"已更改\""
+      },
+      "screen-lock": {
+        "description": "屏幕锁定时执行的命令。",
+        "label": "屏幕已锁定",
+        "placeholder": "例如：notify-send \"屏幕\" \"已锁定\""
+      },
+      "screen-unlock": {
+        "description": "屏幕解锁时执行的命令。",
+        "label": "屏幕已解锁",
+        "placeholder": "例如：notify-send \"屏幕\" \"已解锁\""
       }
     },
     "launcher": {

@@ -1642,6 +1642,16 @@
         "description": "Commando dat wordt uitgevoerd wanneer de achtergrond verandert.",
         "label": "Achtergrond gewijzigd",
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
+      },
+      "screen-lock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
+        "label": "Scherm vergrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Vergrendeld\""
+      },
+      "screen-unlock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
+        "label": "Scherm ontgrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
       }
     },
     "launcher": {

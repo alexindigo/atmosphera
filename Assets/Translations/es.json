@@ -1642,6 +1642,16 @@
         "description": "Comando a ejecutar cuando cambia el fondo de pantalla.",
         "label": "Fondo de pantalla cambiado",
         "placeholder": "ej., notify-send \"Fondo de pantalla\" \"Cambiado\""
+      },
+      "screen-lock": {
+        "description": "Comando a ejecutar cuando se bloquea la pantalla.",
+        "label": "Pantalla bloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Bloqueada\""
+      },
+      "screen-unlock": {
+        "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
+        "label": "Pantalla desbloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
       }
     },
     "launcher": {

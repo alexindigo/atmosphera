@@ -400,7 +400,9 @@
   "hooks": {
     "enabled": false,
     "wallpaperChange": "",
-    "darkModeChange": ""
+    "darkModeChange": "",
+    "screenLock": "",
+    "screenUnlock": ""
   },
   "desktopWidgets": {
     "enabled": false,

@@ -1642,6 +1642,16 @@
         "description": "Comando a ser executado quando o papel de parede muda.",
         "label": "Papel de parede alterado",
         "placeholder": "ex., notify-send \"Papel de parede\" \"Alterado\""
+      },
+      "screen-lock": {
+        "description": "Comando a ser executado quando a tela é bloqueada.",
+        "label": "Tela bloqueada",
+        "placeholder": "ex., notify-send \"Tela\" \"Bloqueada\""
+      },
+      "screen-unlock": {
+        "description": "Comando a ser executado quando a tela é desbloqueada.",
+        "label": "Tela desbloqueada",
+        "placeholder": "ex., notify-send \"Tela\" \"Desbloqueada\""
       }
     },
     "launcher": {

@@ -1642,6 +1642,16 @@
         "description": "Commande à exécuter lorsque le fond d'écran change.",
         "label": "Fond d'écran changé",
         "placeholder": "ex: notify-send \"Fond d'écran\" \"Changé\""
+      },
+      "screen-lock": {
+        "description": "Commande à exécuter lorsque l'écran est verrouillé.",
+        "label": "Écran verrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Verrouillé\""
+      },
+      "screen-unlock": {
+        "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
+        "label": "Écran déverrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
       }
     },
     "launcher": {

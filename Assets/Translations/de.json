@@ -1642,6 +1642,16 @@
         "description": "Befehl, der ausgeführt wird, wenn sich das Hintergrundbild ändert.",
         "label": "Hintergrundbild geändert",
         "placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
+      },
+      "screen-lock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
+        "label": "Bildschirm gesperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Gesperrt\""
+      },
+      "screen-unlock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
+        "label": "Bildschirm entsperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
       }
     },
     "launcher": {

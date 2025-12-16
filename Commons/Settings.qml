@@ -611,6 +611,8 @@ Singleton {
       property bool enabled: false
       property string wallpaperChange: ""
       property string darkModeChange: ""
+      property string screenLock: ""
+      property string screenUnlock: ""
     }
 
     // desktop widgets

@@ -23,6 +23,34 @@ Singleton {
     }
   }
 
+  // Track lock screen state for unlock hook
+  property bool wasLocked: false
+
+  Connections {
+    target: PanelService
+    function onLockScreenChanged() {
+      if (PanelService.lockScreen) {
+        lockScreenActiveConnection.target = PanelService.lockScreen;
+      }
+    }
+  }
+
+  Connections {
+    id: lockScreenActiveConnection
+    target: PanelService.lockScreen
+    function onActiveChanged() {
+      // Detect lock: was unlocked, now locked
+      if (!wasLocked && PanelService.lockScreen.active) {
+        executeLockHook();
+      }
+      // Detect unlock: was locked, now not locked
+      if (wasLocked && !PanelService.lockScreen.active) {
+        executeUnlockHook();
+      }
+      wasLocked = PanelService.lockScreen.active;
+    }
+  }
+
   // Execute wallpaper change hook
   function executeWallpaperHook(wallpaperPath, screenName) {
     if (!Settings.data.hooks?.enabled) {
@@ -64,8 +92,53 @@ Singleton {
     }
   }
 
+  // Execute screen lock hook
+  function executeLockHook() {
+    if (!Settings.data.hooks?.enabled) {
+      return;
+    }
+
+    const script = Settings.data.hooks?.screenLock;
+    if (!script || script === "") {
+      return;
+    }
+
+    try {
+      Quickshell.execDetached(["sh", "-c", script]);
+      Logger.d("HooksService", `Executed screen lock hook: ${script}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute screen lock hook: ${e}`);
+    }
+  }
+
+  // Execute screen unlock hook
+  function executeUnlockHook() {
+    if (!Settings.data.hooks?.enabled) {
+      return;
+    }
+
+    const script = Settings.data.hooks?.screenUnlock;
+    if (!script || script === "") {
+      return;
+    }
+
+    try {
+      Quickshell.execDetached(["sh", "-c", script]);
+      Logger.d("HooksService", `Executed screen unlock hook: ${script}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute screen unlock hook: ${e}`);
+    }
+  }
+
   // Initialize the service
   function init() {
     Logger.i("HooksService", "Service started");
+    // Initialize lock screen state tracking
+    Qt.callLater(() => {
+                   if (PanelService.lockScreen) {
+                     wasLocked = PanelService.lockScreen.active;
+                     lockScreenActiveConnection.target = PanelService.lockScreen;
+                   }
+                 });
   }
 }

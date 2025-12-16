@@ -1642,6 +1642,16 @@
         "description": "Duvar kâğıdı değiştiğinde çalıştırılacak komut.",
         "label": "Duvar kâğıdı değişti",
         "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
+      },
+      "screen-lock": {
+        "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
+        "label": "Ekran kilitlendi",
+        "placeholder": "örn., notify-send \"Ekran\" \"Kilitlendi\""
+      },
+      "screen-unlock": {
+        "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
+        "label": "Ekran kilidi açıldı",
+        "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
       }
     },
     "launcher": {

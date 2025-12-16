@@ -1618,7 +1618,7 @@
           "label": "Hook command information"
         },
         "parameters": {
-          "description": "• Wallpaper hook: $1 = wallpaper path, $2 = screen name<br>• Theme toggle hook: $1 = true/false (Dark Mode state)",
+          "description": "• Wallpaper hook: $1 = wallpaper path, $2 = screen name<br>• Theme toggle hook: $1 = true/false (Dark Mode state)<br>• Screen lock/unlock hooks: No parameters",
           "label": "Available parameters"
         }
       },
@@ -1642,6 +1642,16 @@
         "description": "Command to be executed when wallpaper changes.",
         "label": "Wallpaper changed",
         "placeholder": "e.g., notify-send \"Wallpaper\" \"Changed\""
+      },
+      "screen-lock": {
+        "description": "Command to be executed when the screen is locked.",
+        "label": "Screen locked",
+        "placeholder": "e.g., notify-send \"Screen\" \"Locked\""
+      },
+      "screen-unlock": {
+        "description": "Command to be executed when the lock screen is unlocked.",
+        "label": "Screen unlocked",
+        "placeholder": "e.g., notify-send \"Screen\" \"Unlocked\""
       }
     },
     "launcher": {

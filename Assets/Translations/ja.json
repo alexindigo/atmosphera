@@ -1642,6 +1642,16 @@
         "description": "壁紙が変更された際に実行されるコマンド。",
         "label": "壁紙変更時",
         "placeholder": "例: notify-send \"Wallpaper\" \"Changed\""
+      },
+      "screen-lock": {
+        "description": "画面がロックされた際に実行されるコマンド。",
+        "label": "画面ロック時",
+        "placeholder": "例: notify-send \"Screen\" \"Locked\""
+      },
+      "screen-unlock": {
+        "description": "ロック画面が解除された際に実行されるコマンド。",
+        "label": "画面ロック解除時",
+        "placeholder": "例: notify-send \"Screen\" \"Unlocked\""
       }
     },
     "launcher": {

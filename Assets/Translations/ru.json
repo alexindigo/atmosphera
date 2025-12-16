@@ -1642,6 +1642,16 @@
         "description": "Команда для выполнения при смене обоев.",
         "label": "Обои изменены",
         "placeholder": "например, notify-send \"Wallpaper\" \"Changed\""
+      },
+      "screen-lock": {
+        "description": "Команда для выполнения при блокировке экрана.",
+        "label": "Экран заблокирован",
+        "placeholder": "например, notify-send \"Экран\" \"Заблокирован\""
+      },
+      "screen-unlock": {
+        "description": "Команда для выполнения при разблокировке экрана.",
+        "label": "Экран разблокирован",
+        "placeholder": "например, notify-send \"Экран\" \"Разблокирован\""
       }
     },
     "launcher": {
