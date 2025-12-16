@@ -13,6 +13,8 @@ NBox {
   property var model: []
   property string passwordSsid: ""
   property string expandedSsid: ""
+  // Currently expanded info panel for a connected SSID
+  property string infoSsid: ""
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -203,6 +205,22 @@ NBox {
                 size: Style.baseWidgetSize * 0.5
               }
 
+              // Info toggle for connected network
+              NIconButton {
+                visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
+                icon: "info-circle"
+                tooltipText: I18n.tr("wifi.panel.info")
+                baseSize: Style.baseWidgetSize * 0.8
+                onClicked: {
+                  if (root.infoSsid === modelData.ssid) {
+                    root.infoSsid = "";
+                  } else {
+                    root.infoSsid = modelData.ssid;
+                    NetworkService.refreshActiveWifiDetails();
+                  }
+                }
+              }
+
               NIconButton {
                 visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "trash"
@@ -239,6 +257,60 @@ NBox {
                 fontSize: Style.fontSizeXS
                 backgroundColor: Color.mError
                 onClicked: NetworkService.disconnect(modelData.ssid)
+              }
+            }
+          }
+
+          // Connection info details
+          Rectangle {
+            visible: root.infoSsid === modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid
+            Layout.fillWidth: true
+            color: Color.mSurfaceVariant
+            radius: Style.radiusS
+            border.width: Style.borderS
+            border.color: Color.mOutline
+            height: infoColumn.implicitHeight + Style.marginS * 2
+
+            ColumnLayout {
+              id: infoColumn
+              anchors.fill: parent
+              anchors.margins: Style.marginS
+              spacing: Style.marginXS
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: NetworkService.signalIcon(modelData.signal, modelData.connected); pointSize: Style.fontSizeM; color: Color.mOnSurface }
+                NText { text: I18n.tr("system.signal-strength", {"signal": modelData.signal}); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: "lock"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+                NText { text: I18n.tr("wifi.panel.security") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: NetworkService.internetConnectivity ? "world" : "world-off"; pointSize: Style.fontSizeM; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
+                NText { text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited"); pointSize: Style.fontSizeXS; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: "activity"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+                NText { text: I18n.tr("wifi.panel.link-speed") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: (NetworkService.activeWifiDetails.rate || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+                NText { text: "IPv4: "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: (NetworkService.activeWifiDetails.ipv4 || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                NText { text: "•"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: I18n.tr("wifi.panel.gateway") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: (NetworkService.activeWifiDetails.gateway4 || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
               }
             }
           }

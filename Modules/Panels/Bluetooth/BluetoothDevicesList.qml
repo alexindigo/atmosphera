@@ -14,6 +14,8 @@ NBox {
   property string label: ""
   property string tooltipText: ""
   property var model: {}
+  // Per-list expanded details (by device key)
+  property string expandedDeviceKey: ""
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -46,6 +48,7 @@ NBox {
 
         readonly property bool canConnect: BluetoothService.canConnect(modelData)
         readonly property bool canDisconnect: BluetoothService.canDisconnect(modelData)
+        readonly property bool canPair: BluetoothService.canPair(modelData)
         readonly property bool isBusy: BluetoothService.isDeviceBusy(modelData)
 
         function getContentColor(defaultColor = Color.mOnSurface) {
@@ -146,7 +149,7 @@ NBox {
           NButton {
             id: button
             visible: (modelData.state !== BluetoothDeviceState.Connecting)
-            enabled: (canConnect || canDisconnect) && !isBusy
+            enabled: (canConnect || canDisconnect || canPair) && !isBusy
             outlined: !button.hovered
             fontSize: Style.fontSizeXS
             fontWeight: Style.fontWeightMedium
@@ -167,6 +170,9 @@ NBox {
               if (modelData.connected) {
                 return I18n.tr("bluetooth.panel.disconnect");
               }
+              if (device.canPair) {
+                return I18n.tr("bluetooth.panel.pair");
+              }
               return I18n.tr("bluetooth.panel.connect");
             }
             icon: (isBusy ? "busy" : null)
@@ -174,11 +180,87 @@ NBox {
               if (modelData.connected) {
                 BluetoothService.disconnectDevice(modelData);
               } else {
-                BluetoothService.connectDeviceWithTrust(modelData);
+                if (device.canPair) {
+                  BluetoothService.pairDevice(modelData);
+                } else {
+                  BluetoothService.connectDeviceWithTrust(modelData);
+                }
               }
             }
             onRightClicked: {
               BluetoothService.forgetDevice(modelData);
+            }
+          }
+
+          // Extra actions
+          RowLayout {
+            spacing: Style.marginXS
+
+            // Unpair for saved devices when not connected
+            NIconButton {
+              visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
+              icon: "trash"
+              tooltipText: I18n.tr("bluetooth.panel.unpair")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: BluetoothService.unpairDevice(modelData)
+            }
+
+            // Info for connected device
+            NIconButton {
+              visible: modelData.connected
+              icon: "info-circle"
+              tooltipText: I18n.tr("bluetooth.panel.info")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: {
+                const key = BluetoothService.deviceKey(modelData);
+                root.expandedDeviceKey = (root.expandedDeviceKey === key) ? "" : key;
+              }
+            }
+          }
+        }
+        // Expanded info section
+        Rectangle {
+          visible: root.expandedDeviceKey === BluetoothService.deviceKey(modelData)
+          Layout.fillWidth: true
+          height: infoColumn.implicitHeight + Style.marginS * 2
+          radius: Style.radiusS
+          color: Color.mSurfaceVariant
+          border.width: Style.borderS
+          border.color: Color.mOutline
+
+          ColumnLayout {
+            id: infoColumn
+            anchors.fill: parent
+            anchors.margins: Style.marginS
+            spacing: Style.marginXS
+
+            RowLayout {
+              spacing: Style.marginS
+              NIcon { icon: BluetoothService.getSignalIcon(modelData); pointSize: Style.fontSizeM; color: Color.mOnSurface }
+              NText { text: BluetoothService.getSignalStrength(modelData); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              NText { visible: modelData.signalStrength > 0; text: (modelData.signalStrength || 0) + "%"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+            }
+
+            RowLayout {
+              spacing: Style.marginS
+              NIcon { icon: "hash"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+              NText { text: I18n.tr("bluetooth.panel.device-address") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+              NText { text: modelData.address || "-"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+            }
+
+            RowLayout {
+              spacing: Style.marginS
+              NIcon { icon: "shield-check"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+              NText { text: I18n.tr("bluetooth.panel.paired") + ": " + (modelData.paired ? I18n.tr("common.yes") : I18n.tr("common.no")); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              NText { text: "•"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+              NText { text: I18n.tr("bluetooth.panel.trusted") + ": " + (modelData.trusted ? I18n.tr("common.yes") : I18n.tr("common.no")); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+            }
+
+            RowLayout {
+              visible: modelData.batteryAvailable
+              spacing: Style.marginS
+              NIcon { icon: "battery"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+              NText { text: BluetoothService.getBattery(modelData); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
             }
           }
         }

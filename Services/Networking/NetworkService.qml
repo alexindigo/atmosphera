@@ -23,6 +23,10 @@ Singleton {
   property bool ignoreScanResults: false
   property bool scanPending: false
 
+  // Active Wi‑Fi connection details (for info panel)
+  property var activeWifiDetails: ({})
+  property string activeWifiIf: ""
+
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "network.json"
   readonly property string cachedLastConnected: cacheAdapter.lastConnected
@@ -77,6 +81,13 @@ Singleton {
     id: saveDebounce
     interval: 1000
     onTriggered: cacheFileView.writeAdapter()
+  }
+
+  // Refresh details for the currently active Wi‑Fi link
+  function refreshActiveWifiDetails() {
+    activeWifiDetails = ({})
+    activeWifiIf = ""
+    wifiDeviceListProcess.running = true;
   }
 
   function saveCache() {
@@ -252,6 +263,99 @@ Singleton {
           root.ethernetConnected = connected;
           Logger.d("Network", "Ethernet connected:", root.ethernetConnected);
         }
+      }
+    }
+  }
+
+  // Discover connected Wi‑Fi interface
+  Process {
+    id: wifiDeviceListProcess
+    running: false
+    command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        let ifname = "";
+        const lines = text.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+          const parts = lines[i].trim().split(":");
+          if (parts.length >= 3) {
+            const dev = parts[0];
+            const type = parts[1];
+            const state = parts[2];
+            if (type === "wifi" && state === "connected") {
+              ifname = dev;
+              break;
+            }
+          }
+        }
+        root.activeWifiIf = ifname;
+        if (ifname) {
+          wifiDeviceShowProcess.ifname = ifname;
+          wifiDeviceShowProcess.running = true;
+        }
+      }
+    }
+  }
+
+  // Fetch IPv4 and gateway for the interface
+  Process {
+    id: wifiDeviceShowProcess
+    property string ifname: ""
+    running: false
+    command: ["nmcli", "-t", "-f", "IP4.ADDRESS,IP4.GATEWAY", "device", "show", ifname]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const details = root.activeWifiDetails || ({});
+        let ipv4 = "";
+        let gw4 = "";
+        const lines = text.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          const idx = line.indexOf(":");
+          if (idx === -1) continue;
+          const key = line.substring(0, idx);
+          const val = line.substring(idx + 1);
+          if (key.startsWith("IP4.ADDRESS")) {
+            ipv4 = val.split("/")[0];
+          } else if (key === "IP4.GATEWAY") {
+            gw4 = val;
+          }
+        }
+        details.ipv4 = ipv4;
+        details.gateway4 = gw4;
+        root.activeWifiDetails = details;
+
+        // Try to get link rate (best effort)
+        wifiIwLinkProcess.ifname = wifiDeviceShowProcess.ifname;
+        wifiIwLinkProcess.running = true;
+      }
+    }
+  }
+
+  // Optional: query Wi‑Fi bitrate via iw if available
+  Process {
+    id: wifiIwLinkProcess
+    property string ifname: ""
+    running: false
+    command: ["sh", "-c", "iw dev '" + ifname + "' link 2>/dev/null || true"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const details = root.activeWifiDetails || ({});
+        let rate = "";
+        const lines = text.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (line.toLowerCase().startsWith("tx bitrate:")) {
+            rate = line.substring(11).trim();
+            break;
+          }
+        }
+        details.rate = rate;
+        root.activeWifiDetails = details;
       }
     }
   }

@@ -453,10 +453,17 @@
       "disconnect": "Disconnect",
       "enable-message": "Enable Bluetooth to see available devices.",
       "known-devices": "Known devices",
+      "paired-devices": "Paired devices",
       "pairing": "Pairing...",
       "pairing-mode": "Make sure your device is in pairing mode.",
       "scanning": "Scanning for devices...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Pair",
+      "unpair": "Unpair",
+      "info": "Info",
+      "device-address": "Device address",
+      "paired": "Paired",
+      "trusted": "Trusted"
     }
   },
   "calendar": {
@@ -516,7 +523,9 @@
     "cancel": "Cancel",
     "check-settings": "Check Settings for details",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No"
   },
   "context-menu": {
     "activate-app": "Activate {app}",
@@ -2617,6 +2626,27 @@
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",
     "widget-settings": "Widget settings"
+  },
+  "wifi": {
+    "panel": {
+      "title": "Wi‑Fi",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "password": "Password",
+      "enter-password": "Enter Wi‑Fi password",
+      "connected": "Connected",
+      "disconnecting": "Disconnecting…",
+      "forgetting": "Forgetting…",
+      "saved": "Saved",
+      "forget-network": "Forget this network",
+      "forget": "Forget",
+      "info": "Info",
+      "security": "Security",
+      "internet-connected": "Internet connected",
+      "internet-limited": "No internet",
+      "link-speed": "Link speed",
+      "gateway": "Gateway"
+    }
   },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",

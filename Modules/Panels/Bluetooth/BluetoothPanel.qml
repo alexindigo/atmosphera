@@ -151,6 +151,7 @@ SmartPanel {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
               var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected);
+              filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
             model: items
@@ -158,14 +159,15 @@ SmartPanel {
             Layout.fillWidth: true
           }
 
-          // Known devices
+          // Paired devices
           BluetoothDevicesList {
-            label: I18n.tr("bluetooth.panel.known-devices")
+            label: I18n.tr("bluetooth.panel.paired-devices")
             tooltipText: I18n.tr("tooltips.connect-disconnect-devices")
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
               var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted));
+              filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
             model: items
@@ -173,13 +175,14 @@ SmartPanel {
             Layout.fillWidth: true
           }
 
-          // Available devices
+          // Available devices (for pairing)
           BluetoothDevicesList {
             label: I18n.tr("bluetooth.panel.available-devices")
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
               var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
+              filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
             model: items

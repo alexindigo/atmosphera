@@ -152,7 +152,8 @@ Singleton {
     Example: once your headphones are paired, you don’t need to type a PIN every time.
     Hence, instead of !device.paired, should be device.connected
     */
-    return !device.connected && !device.pairing && !device.blocked;
+    // Only allow connect if device is already paired or trusted
+    return !device.connected && (device.paired || device.trusted) && !device.pairing && !device.blocked;
   }
 
   function canDisconnect(device) {
@@ -224,6 +225,74 @@ Singleton {
     }
 
     return device.pairing || device.state === BluetoothDeviceState.Disconnecting || device.state === BluetoothDeviceState.Connecting;
+  }
+
+  // Return a stable unique key for a device (prefer MAC address)
+  function deviceKey(device) {
+    if (!device)
+      return "";
+    if (device.address && device.address.length > 0)
+      return device.address.toUpperCase();
+    if (device.nativePath && device.nativePath.length > 0)
+      return device.nativePath;
+    if (device.devicePath && device.devicePath.length > 0)
+      return device.devicePath;
+    return (device.name || device.deviceName || "") + "|" + (device.icon || "");
+  }
+
+  // Deduplicate a list of devices using the stable key
+  function dedupeDevices(devList) {
+    if (!devList || devList.length === 0)
+      return [];
+    const seen = ({});
+    const out = [];
+    for (let i = 0; i < devList.length; ++i) {
+      const d = devList[i];
+      if (!d)
+        continue;
+      const key = deviceKey(d);
+      if (key && !seen[key]) {
+        seen[key] = true;
+        out.push(d);
+      }
+    }
+    return out;
+  }
+
+  // Separate capability helpers
+  function canPair(device) {
+    if (!device)
+      return false;
+    return !device.connected && !device.paired && !device.trusted && !device.pairing && !device.blocked;
+  }
+
+  // Pairing and unpairing helpers
+  function pairDevice(device) {
+    if (!device)
+      return;
+    try {
+      if (typeof device.pair === 'function') {
+        device.pair();
+      } else {
+        // Fallback: trust and connect (most stacks will pair during connect)
+        device.trusted = true;
+        device.connect();
+      }
+    } catch (e) {
+      Logger.w("Bluetooth", "pairDevice failed", e);
+      // Fallback to connect if pair not supported
+      try {
+        device.trusted = true;
+        device.connect();
+      } catch (e2) {
+        Logger.w("Bluetooth", "pairDevice connect fallback failed", e2);
+      }
+    }
+  }
+
+  function unpairDevice(device) {
+    // Alias to forgetDevice for clarity in UI
+    forgetDevice(device);
   }
 
   function connectDeviceWithTrust(device) {
