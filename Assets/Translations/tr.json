@@ -1622,6 +1622,16 @@
           "label": "Kullanılabilir Parametreler"
         }
       },
+      "screen-lock": {
+        "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
+        "label": "Ekran kilitlendi",
+        "placeholder": "örn., notify-send \"Ekran\" \"Kilitlendi\""
+      },
+      "screen-unlock": {
+        "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
+        "label": "Ekran kilidi açıldı",
+        "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Tüm kanca komutlarını etkinleştirin veya devre dışı bırakın.",
@@ -1642,16 +1652,6 @@
         "description": "Duvar kâğıdı değiştiğinde çalıştırılacak komut.",
         "label": "Duvar kâğıdı değişti",
         "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
-      },
-      "screen-lock": {
-        "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
-        "label": "Ekran kilitlendi",
-        "placeholder": "örn., notify-send \"Ekran\" \"Kilitlendi\""
-      },
-      "screen-unlock": {
-        "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
-        "label": "Ekran kilidi açıldı",
-        "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
           "label": "Genel"
         }
+      },
+      "large-buttons-style": {
+        "description": "Oturum menüsünü büyük butonlarla ızgara düzeninde görüntüle.",
+        "label": "Büyük düğme stili"
       },
       "position": {
         "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",

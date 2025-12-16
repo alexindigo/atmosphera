@@ -282,6 +282,7 @@
     "countdownDuration": 10000,
     "position": "center",
     "showHeader": true,
+    "largeButtonsStyle": false,
     "powerOptions": [
       {
         "action": "lock",

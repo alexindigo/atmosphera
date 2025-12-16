@@ -1622,6 +1622,16 @@
           "label": "Verfügbare Parameter"
         }
       },
+      "screen-lock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
+        "label": "Bildschirm gesperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Gesperrt\""
+      },
+      "screen-unlock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
+        "label": "Bildschirm entsperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Alle Hook-Befehle aktivieren oder deaktivieren.",
@@ -1642,16 +1652,6 @@
         "description": "Befehl, der ausgeführt wird, wenn sich das Hintergrundbild ändert.",
         "label": "Hintergrundbild geändert",
         "placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
-      },
-      "screen-lock": {
-        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
-        "label": "Bildschirm gesperrt",
-        "placeholder": "z.B. notify-send \"Bildschirm\" \"Gesperrt\""
-      },
-      "screen-unlock": {
-        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
-        "label": "Bildschirm entsperrt",
-        "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
           "label": "Allgemein"
         }
+      },
+      "large-buttons-style": {
+        "description": "Das Sitzungsmenü mit großen Schaltflächen in einem Rasterlayout anzeigen.",
+        "label": "Stil: Große Schaltflächen"
       },
       "position": {
         "description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",

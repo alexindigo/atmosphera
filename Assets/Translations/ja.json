@@ -1622,6 +1622,16 @@
           "label": "利用可能なパラメータ（引数）"
         }
       },
+      "screen-lock": {
+        "description": "画面がロックされた際に実行されるコマンド。",
+        "label": "画面ロック時",
+        "placeholder": "例: notify-send \"Screen\" \"Locked\""
+      },
+      "screen-unlock": {
+        "description": "ロック画面が解除された際に実行されるコマンド。",
+        "label": "画面ロック解除時",
+        "placeholder": "例: notify-send \"Screen\" \"Unlocked\""
+      },
       "system-hooks": {
         "enable": {
           "description": "すべてのフックコマンドの有効・無効を切り替えます。",
@@ -1642,16 +1652,6 @@
         "description": "壁紙が変更された際に実行されるコマンド。",
         "label": "壁紙変更時",
         "placeholder": "例: notify-send \"Wallpaper\" \"Changed\""
-      },
-      "screen-lock": {
-        "description": "画面がロックされた際に実行されるコマンド。",
-        "label": "画面ロック時",
-        "placeholder": "例: notify-send \"Screen\" \"Locked\""
-      },
-      "screen-unlock": {
-        "description": "ロック画面が解除された際に実行されるコマンド。",
-        "label": "画面ロック解除時",
-        "placeholder": "例: notify-send \"Screen\" \"Unlocked\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "セッションメニューパネルの動作と外観を設定します。",
           "label": "一般"
         }
+      },
+      "large-buttons-style": {
+        "description": "セッションメニューを大きなボタンでグリッドレイアウトで表示する。",
+        "label": "大きなボタンのスタイル"
       },
       "position": {
         "description": "セッションメニューパネルの表示位置を選択します。",

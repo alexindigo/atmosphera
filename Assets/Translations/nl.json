@@ -1622,6 +1622,16 @@
           "label": "Beschikbare parameters"
         }
       },
+      "screen-lock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
+        "label": "Scherm vergrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Vergrendeld\""
+      },
+      "screen-unlock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
+        "label": "Scherm ontgrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Schakel alle hook-commando's in of uit.",
@@ -1642,16 +1652,6 @@
         "description": "Commando dat wordt uitgevoerd wanneer de achtergrond verandert.",
         "label": "Achtergrond gewijzigd",
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
-      },
-      "screen-lock": {
-        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
-        "label": "Scherm vergrendeld",
-        "placeholder": "bijv. notify-send \"Scherm\" \"Vergrendeld\""
-      },
-      "screen-unlock": {
-        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
-        "label": "Scherm ontgrendeld",
-        "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
           "label": "Algemeen"
         }
+      },
+      "large-buttons-style": {
+        "description": "Toon het sessiemenu met grote knoppen in een rasterindeling.",
+        "label": "Stijl met grote knoppen"
       },
       "position": {
         "description": "Kies waar het Sessiemenu-paneel verschijnt wanneer het wordt geopend.",

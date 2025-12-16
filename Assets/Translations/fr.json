@@ -1622,6 +1622,16 @@
           "label": "Paramètres disponibles"
         }
       },
+      "screen-lock": {
+        "description": "Commande à exécuter lorsque l'écran est verrouillé.",
+        "label": "Écran verrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Verrouillé\""
+      },
+      "screen-unlock": {
+        "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
+        "label": "Écran déverrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Activer ou désactiver toutes les commandes de hook.",
@@ -1642,16 +1652,6 @@
         "description": "Commande à exécuter lorsque le fond d'écran change.",
         "label": "Fond d'écran changé",
         "placeholder": "ex: notify-send \"Fond d'écran\" \"Changé\""
-      },
-      "screen-lock": {
-        "description": "Commande à exécuter lorsque l'écran est verrouillé.",
-        "label": "Écran verrouillé",
-        "placeholder": "ex: notify-send \"Écran\" \"Verrouillé\""
-      },
-      "screen-unlock": {
-        "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
-        "label": "Écran déverrouillé",
-        "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
           "label": "Général"
         }
+      },
+      "large-buttons-style": {
+        "description": "Afficher le menu de session avec de grands boutons dans une disposition en grille.",
+        "label": "Style boutons larges"
       },
       "position": {
         "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",

@@ -1622,6 +1622,16 @@
           "label": "Parâmetros Disponíveis"
         }
       },
+      "screen-lock": {
+        "description": "Comando a ser executado quando a tela é bloqueada.",
+        "label": "Tela bloqueada",
+        "placeholder": "ex., notify-send \"Tela\" \"Bloqueada\""
+      },
+      "screen-unlock": {
+        "description": "Comando a ser executado quando a tela é desbloqueada.",
+        "label": "Tela desbloqueada",
+        "placeholder": "ex., notify-send \"Tela\" \"Desbloqueada\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Ativa ou desativa todos os comandos de hook.",
@@ -1642,16 +1652,6 @@
         "description": "Comando a ser executado quando o papel de parede muda.",
         "label": "Papel de parede alterado",
         "placeholder": "ex., notify-send \"Papel de parede\" \"Alterado\""
-      },
-      "screen-lock": {
-        "description": "Comando a ser executado quando a tela é bloqueada.",
-        "label": "Tela bloqueada",
-        "placeholder": "ex., notify-send \"Tela\" \"Bloqueada\""
-      },
-      "screen-unlock": {
-        "description": "Comando a ser executado quando a tela é desbloqueada.",
-        "label": "Tela desbloqueada",
-        "placeholder": "ex., notify-send \"Tela\" \"Desbloqueada\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",
           "label": "Geral"
         }
+      },
+      "large-buttons-style": {
+        "description": "Exibir o menu de sessão com botões grandes em um layout de grade.",
+        "label": "Estilo de botões grandes"
       },
       "position": {
         "description": "Escolha onde o painel do Menu de sessão aparece quando aberto.",

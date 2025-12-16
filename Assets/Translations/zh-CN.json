@@ -1622,6 +1622,16 @@
           "label": "可用参数"
         }
       },
+      "screen-lock": {
+        "description": "屏幕锁定时执行的命令。",
+        "label": "屏幕已锁定",
+        "placeholder": "例如：notify-send \"屏幕\" \"已锁定\""
+      },
+      "screen-unlock": {
+        "description": "屏幕解锁时执行的命令。",
+        "label": "屏幕已解锁",
+        "placeholder": "例如：notify-send \"屏幕\" \"已解锁\""
+      },
       "system-hooks": {
         "enable": {
           "description": "启用或禁用所有钩子命令。",
@@ -1642,16 +1652,6 @@
         "description": "壁纸更改时执行的命令。",
         "label": "壁纸已更改",
         "placeholder": "例如：notify-send \"壁纸\" \"已更改\""
-      },
-      "screen-lock": {
-        "description": "屏幕锁定时执行的命令。",
-        "label": "屏幕已锁定",
-        "placeholder": "例如：notify-send \"屏幕\" \"已锁定\""
-      },
-      "screen-unlock": {
-        "description": "屏幕解锁时执行的命令。",
-        "label": "屏幕已解锁",
-        "placeholder": "例如：notify-send \"屏幕\" \"已解锁\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "配置会话菜单面板的行为和外观。",
           "label": "常规"
         }
+      },
+      "large-buttons-style": {
+        "description": "以网格布局显示带有大按钮的会话菜单。",
+        "label": "大按钮样式"
       },
       "position": {
         "description": "选择会话菜单面板打开时出现的位置。",

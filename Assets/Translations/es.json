@@ -1622,6 +1622,16 @@
           "label": "Parámetros disponibles"
         }
       },
+      "screen-lock": {
+        "description": "Comando a ejecutar cuando se bloquea la pantalla.",
+        "label": "Pantalla bloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Bloqueada\""
+      },
+      "screen-unlock": {
+        "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
+        "label": "Pantalla desbloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Activa o desactiva todos los comandos de hooks.",
@@ -1642,16 +1652,6 @@
         "description": "Comando a ejecutar cuando cambia el fondo de pantalla.",
         "label": "Fondo de pantalla cambiado",
         "placeholder": "ej., notify-send \"Fondo de pantalla\" \"Cambiado\""
-      },
-      "screen-lock": {
-        "description": "Comando a ejecutar cuando se bloquea la pantalla.",
-        "label": "Pantalla bloqueada",
-        "placeholder": "ej., notify-send \"Pantalla\" \"Bloqueada\""
-      },
-      "screen-unlock": {
-        "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
-        "label": "Pantalla desbloqueada",
-        "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Configurar el comportamiento y la apariencia del panel del menú de sesión.",
           "label": "General"
         }
+      },
+      "large-buttons-style": {
+        "description": "Mostrar el menú de sesión con botones grandes en un diseño de cuadrícula.",
+        "label": "Estilo de botones grandes"
       },
       "position": {
         "description": "Elige dónde aparece el panel del Menú de sesión cuando se abre.",

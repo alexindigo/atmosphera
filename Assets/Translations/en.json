@@ -1622,6 +1622,16 @@
           "label": "Available parameters"
         }
       },
+      "screen-lock": {
+        "description": "Command to be executed when the screen is locked.",
+        "label": "Screen locked",
+        "placeholder": "e.g., notify-send \"Screen\" \"Locked\""
+      },
+      "screen-unlock": {
+        "description": "Command to be executed when the lock screen is unlocked.",
+        "label": "Screen unlocked",
+        "placeholder": "e.g., notify-send \"Screen\" \"Unlocked\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Enable or disable all hook commands.",
@@ -1642,16 +1652,6 @@
         "description": "Command to be executed when wallpaper changes.",
         "label": "Wallpaper changed",
         "placeholder": "e.g., notify-send \"Wallpaper\" \"Changed\""
-      },
-      "screen-lock": {
-        "description": "Command to be executed when the screen is locked.",
-        "label": "Screen locked",
-        "placeholder": "e.g., notify-send \"Screen\" \"Locked\""
-      },
-      "screen-unlock": {
-        "description": "Command to be executed when the lock screen is unlocked.",
-        "label": "Screen unlocked",
-        "placeholder": "e.g., notify-send \"Screen\" \"Unlocked\""
       }
     },
     "launcher": {
@@ -2171,6 +2171,10 @@
           "description": "Configure the session menu panel behavior and appearance.",
           "label": "General"
         }
+      },
+      "large-buttons-style": {
+        "description": "Display the session menu with large buttons in a grid layout.",
+        "label": "Large buttons style"
       },
       "position": {
         "description": "Choose where the session menu panel appears when opened.",

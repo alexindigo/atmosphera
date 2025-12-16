@@ -220,6 +220,14 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("settings.session-menu.large-buttons-style.label")
+    description: I18n.tr("settings.session-menu.large-buttons-style.description")
+    checked: Settings.data.sessionMenu.largeButtonsStyle
+    onToggled: checked => Settings.data.sessionMenu.largeButtonsStyle = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
     label: I18n.tr("settings.session-menu.enable-countdown.label")
     description: I18n.tr("settings.session-menu.enable-countdown.description")
     checked: Settings.data.sessionMenu.enableCountdown

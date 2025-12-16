@@ -477,6 +477,7 @@ Singleton {
       property int countdownDuration: 10000
       property string position: "center"
       property bool showHeader: true
+      property bool largeButtonsStyle: false
       property list<var> powerOptions: [
         {
           "action": "lock",
