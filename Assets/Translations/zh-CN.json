@@ -2039,8 +2039,8 @@
           "title": "添加插件源",
           "url": "仓库 URL"
         },
-        "description": "管理插件仓库，插件从这些仓库下载。",
-        "label": "插件源",
+        "description": "管理插件仓库。",
+        "label": "来源",
         "placeholder": "我的酷仓库",
         "remove": {
           "tooltip": "移除插件源"

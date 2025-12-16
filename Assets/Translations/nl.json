@@ -2039,8 +2039,8 @@
           "title": "Pluginbron toevoegen",
           "url": "Repository URL"
         },
-        "description": "Beheer plugin-repositories vanwaar plugins worden gedownload.",
-        "label": "Pluginbronnen",
+        "description": "Beheer plugin-repositories.",
+        "label": "Bronnen",
         "placeholder": "Mijn coole repository",
         "remove": {
           "tooltip": "Pluginbron verwijderen"

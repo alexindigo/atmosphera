@@ -2039,8 +2039,8 @@
           "title": "Add plugin source",
           "url": "Repository URL"
         },
-        "description": "Manage plugin repositories where plugins are downloaded from.",
-        "label": "Plugin sources",
+        "description": "Manage plugin repositories.",
+        "label": "Sources",
         "placeholder": "My cool repository",
         "remove": {
           "tooltip": "Remove plugin source"

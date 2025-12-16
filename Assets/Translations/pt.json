@@ -2039,8 +2039,8 @@
           "title": "Adicionar fonte do plugin",
           "url": "URL do repositório"
         },
-        "description": "Gerenciar repositórios de plugins de onde os plugins são baixados.",
-        "label": "Fontes de plugins",
+        "description": "Gerenciar repositórios de plugins.",
+        "label": "Fontes",
         "placeholder": "Meu repositório legal",
         "remove": {
           "tooltip": "Remover código fonte do plugin"

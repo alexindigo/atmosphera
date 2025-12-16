@@ -2039,8 +2039,8 @@
           "title": "Eklenti kaynağı ekle",
           "url": "Depo URL'si"
         },
-        "description": "Eklentilerin indirildiği eklenti depolarını yönetin.",
-        "label": "Eklenti kaynakları",
+        "description": "Eklenti depolarını yönetin.",
+        "label": "Kaynaklar",
         "placeholder": "Havalı depom",
         "remove": {
           "tooltip": "Eklenti kaynağını kaldır"

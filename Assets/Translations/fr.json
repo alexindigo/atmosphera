@@ -2039,8 +2039,8 @@
           "title": "Ajouter la source du plugin",
           "url": "URL du dépôt"
         },
-        "description": "Gérer les dépôts de plugins à partir desquels les plugins sont téléchargés.",
-        "label": "Sources du plugin",
+        "description": "Gérer les dépôts d'extensions.",
+        "label": "Sources",
         "placeholder": "Mon dépôt cool",
         "remove": {
           "tooltip": "Supprimer la source du plugin"
