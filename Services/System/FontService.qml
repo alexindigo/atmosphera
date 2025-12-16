@@ -14,11 +14,9 @@ Singleton {
   property bool fontsLoaded: false
   property bool isLoading: false
 
-  // -------------------------------------------
-  // Auto-initialize when component is loaded
-  Component.onCompleted: init()
-
   function init() {
+    if (fontsLoaded || isLoading)
+      return;
     Logger.i("Font", "Service started");
     loadFontsViaFcList();
   }

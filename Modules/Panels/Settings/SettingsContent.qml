@@ -31,7 +31,6 @@ Item {
   }
 
   Component.onCompleted: {
-    updateTabsModel();
     // Restore sidebar state
     sidebarExpanded = ShellState.getSettingsSidebarExpanded();
   }
@@ -591,13 +590,13 @@ Item {
             spacing: Style.marginS
 
             NIcon {
-              icon: root.tabsModel[currentTabIndex]?.icon
+              icon: root.tabsModel[currentTabIndex]?.icon ?? ""
               color: Color.mPrimary
               pointSize: Style.fontSizeXXL
             }
 
             NText {
-              text: I18n.tr(root.tabsModel[currentTabIndex]?.label) || ""
+              text: root.tabsModel[root.currentTabIndex]?.label ? I18n.tr(root.tabsModel[root.currentTabIndex].label) : ""
               pointSize: Style.fontSizeXL
               font.weight: Style.fontWeightBold
               color: Color.mPrimary
