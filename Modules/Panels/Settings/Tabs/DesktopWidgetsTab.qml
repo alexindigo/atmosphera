@@ -19,6 +19,14 @@ ColumnLayout {
     id: availableWidgets
   }
 
+  // Listen for plugin widget registration/unregistration
+  Connections {
+    target: DesktopWidgetRegistry
+    function onPluginWidgetRegistryUpdated() {
+      updateAvailableWidgetsModel();
+    }
+  }
+
   NHeader {
     label: I18n.tr("settings.desktop-widgets.general.section.label")
     description: I18n.tr("settings.desktop-widgets.general.section.description")

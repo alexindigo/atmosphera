@@ -444,6 +444,38 @@ Singleton {
     return changed;
   }
 
+  // Remove plugin desktop widgets from all monitors' saved settings
+  function removePluginDesktopWidgetsFromSettings(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var changed = false;
+
+    for (var m = 0; m < monitorWidgets.length; m++) {
+      var monitor = monitorWidgets[m];
+      var widgets = monitor.widgets || [];
+      var newWidgets = [];
+
+      for (var i = 0; i < widgets.length; i++) {
+        if (widgets[i].id !== widgetId) {
+          newWidgets.push(widgets[i]);
+        } else {
+          changed = true;
+          Logger.i("PluginService", "Removed desktop widget", widgetId, "from monitor:", monitor.name);
+        }
+      }
+
+      if (newWidgets.length !== widgets.length) {
+        monitorWidgets[m].widgets = newWidgets;
+      }
+    }
+
+    if (changed) {
+      Settings.data.desktopWidgets.monitorWidgets = monitorWidgets;
+    }
+
+    return changed;
+  }
+
   // Load a plugin
   function loadPlugin(pluginId) {
     if (root.loadedPlugins[pluginId]) {
@@ -566,8 +598,9 @@ Singleton {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
-    // Unregister from DesktopWidgetRegistry
+    // Unregister from DesktopWidgetRegistry and clean up saved widget instances
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.desktopWidget) {
+      removePluginDesktopWidgetsFromSettings(pluginId);
       DesktopWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
