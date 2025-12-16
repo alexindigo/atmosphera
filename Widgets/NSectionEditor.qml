@@ -111,13 +111,17 @@ NBox {
         Layout.alignment: Qt.AlignVCenter
         Layout.fillWidth: false
         Layout.maximumWidth: {
-          // Reserve space for other elements: count indicator, combo box, button, and margins
+          // Reserve space for other elements: count indicator, combo box (~200), button (~50), and margins
           // Use a reasonable maximum that leaves room for controls on the right
+          // On smaller screens, use a smaller percentage to ensure controls fit
           var rowLayout = parent;
           if (rowLayout && rowLayout.width > 0) {
-            return Math.max(200 * Style.uiScaleRatio, rowLayout.width * 0.4);
+            // Use smaller percentage on smaller screens, but ensure minimum space for text
+            var minWidth = 150 * Style.uiScaleRatio;
+            var maxWidth = rowLayout.width < 600 ? rowLayout.width * 0.35 : rowLayout.width * 0.4;
+            return Math.max(minWidth, maxWidth);
           }
-          return 300 * Style.uiScaleRatio;
+          return 250 * Style.uiScaleRatio;
         }
 
         NText {

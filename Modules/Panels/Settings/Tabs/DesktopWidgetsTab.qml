@@ -76,7 +76,9 @@ ColumnLayout {
       sectionName: modelData.name
       sectionSubtitle: {
         var compositorScale = CompositorService.getDisplayScale(modelData.name);
-        return "(" + modelData.width + "x" + modelData.height + " @ " + compositorScale + "x)";
+        // Format scale to 2 decimal places to prevent overly long text
+        var formattedScale = compositorScale.toFixed(2);
+        return "(" + modelData.width + "x" + modelData.height + " @ " + formattedScale + "x)";
       }
 
       sectionId: modelData.name
