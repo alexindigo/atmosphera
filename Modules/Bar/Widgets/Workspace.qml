@@ -696,8 +696,8 @@ Item {
       height: (hasWindows ? groupedIconsFlow.implicitHeight : root.itemSize) + (root.isVertical ? Style.marginL : Style.marginXS)
       color: Style.capsuleColor
       radius: Style.radiusS
-      border.color: Style.capsuleBorderColor
-      border.width: Style.capsuleBorderWidth
+      border.color: Settings.data.bar.showOutline ? Style.capsuleBorderColor : (workspaceModel.isFocused ? Color.mPrimary : Color.mOutline)
+      border.width: Style.borderS
 
       MouseArea {
         anchors.fill: parent
