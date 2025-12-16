@@ -109,12 +109,22 @@ NBox {
       ColumnLayout {
         spacing: Style.marginXXS
         Layout.alignment: Qt.AlignVCenter
+        Layout.fillWidth: false
+        Layout.maximumWidth: {
+          // Limit the ColumnLayout to prevent it from taking too much space
+          // Reserve space for combo box (~200), button (~50), margins, and spacing
+          var reservedSpace = 300 * Style.uiScaleRatio;
+          var availableWidth = (root.width > 0) ? root.width : 400;
+          // Use at most 40% of available width, but ensure minimum readable width
+          return Math.max(150 * Style.uiScaleRatio, Math.min(availableWidth * 0.4, availableWidth - reservedSpace));
+        }
 
         NText {
           text: sectionName
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
+          Layout.fillWidth: true
         }
 
         NText {
@@ -122,6 +132,7 @@ NBox {
           text: sectionSubtitle
           pointSize: Style.fontSizeS
           color: Color.mOnSurfaceVariant
+          Layout.fillWidth: true
         }
       }
 
