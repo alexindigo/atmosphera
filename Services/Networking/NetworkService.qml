@@ -26,6 +26,10 @@ Singleton {
   // Active Wi‑Fi connection details (for info panel)
   property var activeWifiDetails: ({})
   property string activeWifiIf: ""
+  property bool detailsLoading: false
+  property double activeWifiDetailsTimestamp: 0
+  // Cache TTL to avoid spamming nmcli/iw on rapid toggles
+  property int activeWifiDetailsTtlMs: 5000
 
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "network.json"
@@ -85,8 +89,16 @@ Singleton {
 
   // Refresh details for the currently active Wi‑Fi link
   function refreshActiveWifiDetails() {
-    activeWifiDetails = ({})
-    activeWifiIf = ""
+    const now = Date.now();
+    // If we're already fetching, don't start a new one
+    if (detailsLoading)
+      return;
+
+    // Use cached details if they are fresh
+    if (activeWifiIf && activeWifiDetails && (now - activeWifiDetailsTimestamp) < activeWifiDetailsTtlMs)
+      return;
+
+    detailsLoading = true;
     wifiDeviceListProcess.running = true;
   }
 
@@ -293,6 +305,10 @@ Singleton {
         if (ifname) {
           wifiDeviceShowProcess.ifname = ifname;
           wifiDeviceShowProcess.running = true;
+        } else {
+          // Nothing to fetch
+          root.activeWifiDetailsTimestamp = Date.now();
+          root.detailsLoading = false;
         }
       }
     }
@@ -356,6 +372,8 @@ Singleton {
         }
         details.rate = rate;
         root.activeWifiDetails = details;
+        root.activeWifiDetailsTimestamp = Date.now();
+        root.detailsLoading = false;
       }
     }
   }
