@@ -54,6 +54,8 @@ Item {
   readonly property bool showApplications: (widgetSettings.showApplications !== undefined) ? widgetSettings.showApplications : widgetMetadata.showApplications
   readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
+  readonly property bool enableScrollWheel: (widgetSettings.enableScrollWheel !== undefined) ? widgetSettings.enableScrollWheel : widgetMetadata.enableScrollWheel
+
   readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
 
   // Context menu state for grouped mode
@@ -355,7 +357,7 @@ Item {
     id: wheelHandler
     target: root
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-    enabled: widgetSettings.enableScrollWheel
+    enabled: root.enableScrollWheel
     onWheel: function (event) {
       if (root.wheelCooldown)
         return;
