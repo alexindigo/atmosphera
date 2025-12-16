@@ -812,7 +812,7 @@ ColumnLayout {
               var clientName = client.name === "code" ? "VSCode" : "VSCodium";
               clientInfo.push(clientName);
             }
-            return "Detected: " + clientInfo.join(", ");
+            return "Applied to default profile. Detected: " + clientInfo.join(", ");
           }
         }
         Layout.fillWidth: true
@@ -823,6 +823,18 @@ ColumnLayout {
                      // Set unified code property
                      Settings.data.templates.code = checked;
                      if (ProgramCheckerService.availableCodeClients.length > 0) {
+                       if (!checked) {
+                         const homeDir = Quickshell.env("HOME");
+                         for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+                           var client = ProgramCheckerService.availableCodeClients[i];
+                           var configDir = client.name === "code" ? "Code" : "VSCodium";
+                           var settingsPath = `${homeDir}/.config/${configDir}/User/settings.json`;
+
+                           // Reset to Visual Studio Dark before uninstalling
+                           Quickshell.execDetached(["sh", "-c", `sed -i 's/"workbench.colorTheme":[[:space:]]*"[^"]*"/"workbench.colorTheme": "Visual Studio Dark"/' "${settingsPath}"`]);
+                           Quickshell.execDetached([client.name, "--uninstall-extension", "undefined_publisher.noctaliatheme"]);
+                         }
+                       }
                        AppThemeService.generate();
                      }
                    }
