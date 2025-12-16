@@ -194,6 +194,8 @@ Item {
     height: isVertical ? (isHidden ? 0 : verticalSize) : Style.capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
     Behavior on width {
       NumberAnimation {

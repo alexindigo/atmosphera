@@ -22,6 +22,8 @@ NIconButton {
   colorFg: PowerProfileService.noctaliaPerformanceMode ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   icon: PowerProfileService.noctaliaPerformanceMode ? "rocket" : "rocket-off"
   tooltipText: PowerProfileService.noctaliaPerformanceMode ? I18n.tr("tooltips.noctalia-performance-enabled") : I18n.tr("tooltips.noctalia-performance-disabled")

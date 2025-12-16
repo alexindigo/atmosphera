@@ -272,6 +272,8 @@ Rectangle {
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
   radius: Style.radiusM
   color: Style.capsuleColor
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   Flow {
     id: trayFlow

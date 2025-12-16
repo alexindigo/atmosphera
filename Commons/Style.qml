@@ -113,4 +113,7 @@ Singleton {
     }
   }
   readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
+
+  readonly property color capsuleBorderColor: Settings.data.bar.showOutline ? Color.mPrimary : Color.transparent
+  readonly property int capsuleBorderWidth: Settings.data.bar.showOutline ? Style.borderS : 0
 }

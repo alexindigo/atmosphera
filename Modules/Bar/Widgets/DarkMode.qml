@@ -20,4 +20,7 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
   onClicked: Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode
+
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 }

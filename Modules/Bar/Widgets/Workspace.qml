@@ -317,6 +317,8 @@ Item {
     height: isVertical ? parent.height : Style.capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
@@ -353,6 +355,7 @@ Item {
     id: wheelHandler
     target: root
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+    enabled: widgetSettings.enableScrollWheel
     onWheel: function (event) {
       if (root.wheelCooldown)
         return;
@@ -689,12 +692,12 @@ Item {
       property var workspaceModel: model
       property bool hasWindows: (workspaceModel?.windows?.count ?? 0) > 0
 
-      radius: Style.radiusS
-      border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
-      border.width: Style.borderS
       width: (hasWindows ? groupedIconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVertical ? Style.marginXS : Style.marginL)
       height: (hasWindows ? groupedIconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVertical ? Style.marginL : Style.marginXS)
       color: Style.capsuleColor
+      radius: Style.radiusS
+      border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
+      border.width: Style.borderS
 
       MouseArea {
         anchors.fill: parent

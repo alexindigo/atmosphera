@@ -77,6 +77,8 @@ Item {
     anchors.fill: parent
     radius: Style.radiusS
     color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
   }
 
   // Store visualizer type to force re-evaluation

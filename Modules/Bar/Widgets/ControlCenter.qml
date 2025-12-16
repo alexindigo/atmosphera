@@ -94,6 +94,9 @@ NIconButton {
   colorBorder: Color.transparent
   colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
 
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
+
   NPopupContextMenu {
     id: contextMenu
 

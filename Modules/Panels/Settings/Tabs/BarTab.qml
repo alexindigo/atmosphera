@@ -92,6 +92,14 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("settings.bar.appearance.show-outline.label")
+    description: I18n.tr("settings.bar.appearance.show-outline.description")
+    checked: Settings.data.bar.showOutline
+    onToggled: checked => Settings.data.bar.showOutline = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.show-capsule.label")
     description: I18n.tr("settings.bar.appearance.show-capsule.description")
     checked: Settings.data.bar.showCapsule

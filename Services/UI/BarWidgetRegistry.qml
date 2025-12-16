@@ -234,7 +234,8 @@ Singleton {
                                     "characterCount": 2,
                                     "showApplications": false,
                                     "showLabelsOnlyWhenOccupied": true,
-                                    "colorizeIcons": false
+                                    "colorizeIcons": false,
+                                    "enableScrollWheel": true
                                   },
                                   "Volume": {
                                     "allowUserSettings": true,

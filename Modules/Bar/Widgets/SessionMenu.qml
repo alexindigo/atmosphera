@@ -58,6 +58,8 @@ NIconButton {
   colorFg: root.iconColor
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   NPopupContextMenu {
     id: contextMenu

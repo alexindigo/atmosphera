@@ -26,5 +26,7 @@ NIconButton {
   colorFg: (PowerProfileService.profile === PowerProfile.Balanced) ? Color.mOnSurface : Color.mOnPrimary
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
   onClicked: PowerProfileService.cycleProfile()
 }

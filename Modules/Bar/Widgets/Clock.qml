@@ -49,6 +49,8 @@ Rectangle {
 
   radius: Style.radiusS
   color: Style.capsuleColor
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   Item {
     id: clockContainer

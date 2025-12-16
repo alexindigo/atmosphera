@@ -96,6 +96,8 @@ Item {
     radius: Style.radiusM
     color: root.bgColor
     anchors.verticalCenter: parent.verticalCenter
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
     Behavior on color {
       ColorAnimation {
@@ -270,6 +272,7 @@ Item {
     anchors.fill: parent
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+    cursorShape: root.clicked ? Qt.PointingHandCursor : Qt.ArrowCursor
     onEntered: {
       hovered = true;
       root.entered();

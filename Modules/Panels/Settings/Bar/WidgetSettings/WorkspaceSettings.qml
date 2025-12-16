@@ -21,6 +21,7 @@ ColumnLayout {
   property bool valueShowApplications: widgetData.showApplications !== undefined ? widgetData.showApplications : widgetMetadata.showApplications
   property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+  property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
@@ -31,6 +32,7 @@ ColumnLayout {
     settings.showApplications = valueShowApplications;
     settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
     settings.colorizeIcons = valueColorizeIcons;
+    settings.enableScrollWheel = valueEnableScrollWheel;
     return settings;
   }
 
@@ -90,6 +92,13 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.workspace.follow-focused-screen.description")
     checked: valueFollowFocusedScreen
     onToggled: checked => valueFollowFocusedScreen = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.widget-settings.workspace.enable-scrollwheel.label")
+    description: I18n.tr("bar.widget-settings.workspace.enable-scrollwheel.description")
+    checked: valueEnableScrollWheel
+    onToggled: checked => valueEnableScrollWheel = checked
   }
 
   NToggle {

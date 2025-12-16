@@ -23,6 +23,8 @@ NIconButton {
   colorFg: ScreenRecorderService.isRecording ? Color.mOnPrimary : Color.mOnSurface
   colorBorder: Color.transparent
   colorBorderHover: Color.transparent
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   function handleClick() {
     if (!ScreenRecorderService.isAvailable) {

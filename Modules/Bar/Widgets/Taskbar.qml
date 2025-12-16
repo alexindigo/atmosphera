@@ -432,6 +432,8 @@ Rectangle {
   implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
   radius: Style.radiusM
   color: Style.capsuleColor
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   GridLayout {
     id: taskbarLayout

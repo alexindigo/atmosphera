@@ -117,6 +117,8 @@ Rectangle {
   implicitHeight: isVertical ? Math.round(mainGrid.implicitHeight + Style.marginM * 2) : Style.capsuleHeight
   radius: Style.radiusM
   color: Style.capsuleColor
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   NPopupContextMenu {
     id: contextMenu

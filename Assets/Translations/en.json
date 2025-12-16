@@ -397,6 +397,10 @@
           "description": "Number of characters to display from workspace names (1-10).",
           "label": "Character count"
         },
+        "enable-scrollwheel": {
+          "description": "Switch between workspaces using the mouse scroll wheel.",
+          "label": "Scroll to switch workspaces"
+        },
         "follow-focused-screen": {
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow focused screen"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "Show widget backgrounds.",
           "label": "Show capsule"
+        },
+        "show-outline": {
+          "description": "Displays a visible border around every widget.",
+          "label": "Show widget outlines"
         },
         "transparent": {
           "description": "This will prevent the panels from attaching to the bar.",
