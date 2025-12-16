@@ -769,7 +769,7 @@ Item {
 
               Rectangle {
                 id: groupedFocusIndicator
-                anchors.bottomMargin: -2
+                anchors.bottomMargin: 0
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: model.isFocused ? 4 : 0
@@ -832,8 +832,8 @@ Item {
         anchors {
           left: parent.left
           top: parent.top
-          leftMargin: -Style.fontSizeXS * 0.5
-          topMargin: -Style.fontSizeXS * 0.5
+          leftMargin: -Style.fontSizeXS * 0.55
+          topMargin: -Style.fontSizeXS * 0.25
         }
 
         width: Math.max(groupedWorkspaceNumber.implicitWidth + (Style.marginXS * 2), Style.fontSizeXXS * 2)
@@ -843,7 +843,7 @@ Item {
           id: groupedWorkspaceNumberBackground
 
           anchors.fill: parent
-          radius: Math.min(Style.radiusL, width / 2)
+          radius: width / 2
 
           color: {
             if (groupedContainer.workspaceModel.isFocused)
@@ -860,7 +860,7 @@ Item {
             }
           }
 
-          scale: groupedContainer.workspaceModel.isActive ? 1.0 : 0.9
+          scale: groupedContainer.workspaceModel.isActive ? 1.0 : 0.8
 
           Behavior on scale {
             NumberAnimation {
