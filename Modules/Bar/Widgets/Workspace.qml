@@ -692,12 +692,12 @@ Item {
       property var workspaceModel: model
       property bool hasWindows: (workspaceModel?.windows?.count ?? 0) > 0
 
-      width: (hasWindows ? groupedIconsFlow.implicitWidth : root.itemSize * 0.8) + (root.isVertical ? Style.marginXS : Style.marginL)
-      height: (hasWindows ? groupedIconsFlow.implicitHeight : root.itemSize * 0.8) + (root.isVertical ? Style.marginL : Style.marginXS)
+      width: (hasWindows ? groupedIconsFlow.implicitWidth : root.itemSize) + (root.isVertical ? Style.marginXS : Style.marginXL)
+      height: (hasWindows ? groupedIconsFlow.implicitHeight : root.itemSize) + (root.isVertical ? Style.marginL : Style.marginXS)
       color: Style.capsuleColor
       radius: Style.radiusS
-      border.color: workspaceModel.isFocused ? Color.mPrimary : Color.mOutline
-      border.width: Style.borderS
+      border.color: Style.capsuleBorderColor
+      border.width: Style.capsuleBorderWidth
 
       MouseArea {
         anchors.fill: parent
@@ -737,8 +737,8 @@ Item {
 
             property bool itemHovered: false
 
-            width: root.itemSize * 0.8
-            height: root.itemSize * 0.8
+            width: root.itemSize
+            height: root.itemSize
 
             scale: itemHovered ? 1.1 : 1.0
 
