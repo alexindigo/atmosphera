@@ -1362,6 +1362,7 @@
         "button": {
           "label": "Ga naar de bewerkingsmodus"
         },
+        "controls-explanation": "Linkermuisknop: Widget verplaatsen\nRechtermuisknop: Widget vergroten/verkleinen",
         "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
         "exit-button": "Bewerkingsmodus verlaten",
         "label": "Bewerkingsmodus"

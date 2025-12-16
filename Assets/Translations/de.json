@@ -1362,6 +1362,7 @@
         "button": {
           "label": "Bearbeitungsmodus aktivieren"
         },
+        "controls-explanation": "Linke Maustaste: Widget verschieben\nRechte Maustaste: Widget Größe ändern",
         "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
         "exit-button": "Bearbeitungsmodus verlassen",
         "label": "Bearbeitungsmodus"

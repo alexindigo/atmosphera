@@ -132,7 +132,10 @@ Singleton {
                                                                         // Uninstall/reinstall with modified vsix to force theme reload
                                                                         var tmpDir = `/tmp/noctalia-vscode-${client.name}`;
                                                                         var modifiedVsix = `${tmpDir}/noctaliatheme.vsix`;
-                                                                        var reinstallVsix = `if command -v ${client.name} >/dev/null 2>&1; then ${client.name} --uninstall-extension undefined_publisher.noctaliatheme 2>&1; rm -rf ${tmpDir} && mkdir -p ${tmpDir} && unzip -q '${Quickshell.shellDir}/Assets/MatugenTemplates/noctaliatheme-0.0.1.vsix' -d ${tmpDir} && cp '${expandedPath}' ${tmpDir}/extension/themes/NoctaliaTheme-color-theme.json && cd ${tmpDir} && zip -q -r ${modifiedVsix} . && ${client.name} --install-extension ${modifiedVsix} 2>&1 && rm -rf ${tmpDir}; fi`;
+                                                                        var reinstallVsix = `if command -v ${client.name} >/dev/null 2>&1; then ${client.name} --uninstall-extension undefined_publisher.noctaliatheme 2>&1; rm -rf ${tmpDir} && mkdir -p ${tmpDir} && unzip -q '${Quickshell.shellDir}/Assets/MatugenTemplates/noctaliatheme-0.0.1.vsix' -d ${tmpDir
+                                                                        } && cp '
+
+${expandedPath}' ${tmpDir}/extension/themes/NoctaliaTheme-color-theme.json && cd ${tmpDir} && zip -q -r ${modifiedVsix} . && ${client.name} --install-extension ${modifiedVsix} 2>&1 && rm -rf ${tmpDir}; fi`;
                                                                         var updateSettingsJson = `if command -v ${client.name} >/dev/null 2>&1 && [ -f ${settingsPath} ]; then sed -i 's/\\\\\\"workbench.colorTheme\\\\\\":[[:space:]]*\\\\\\"[^\\\\\\"]*/\\\\\\"workbench.colorTheme\\\\\\": \\\\\\"NoctaliaTheme/' ${settingsPath}; fi`;
                                                                         lines.push(`post_hook = "sh -c \\"${reinstallVsix}; ${updateSettingsJson}\\""`);
                                                                       }

@@ -384,7 +384,7 @@ SmartPanel {
       width: timerText.width + Style.marginXL * 2
       height: timerText.height + Style.marginL * 2
       radius: Style.radiusM
-      color: Qt.alpha(Color.mSurface, 0.9)
+      color: Qt.alpha(Color.mSurface, Settings.data.ui.panelBackgroundOpacity)
       border.color: Color.mOutline
       border.width: Style.borderS
       z: 1000
@@ -687,11 +687,11 @@ SmartPanel {
       if (isSelected || mouseArea.containsMouse) {
         return Qt.alpha(Color.mPrimary, 1.0);
       }
-      return Qt.alpha(Color.mSurfaceVariant, 0.65);
+      return Qt.alpha(Color.mSurfaceVariant, Settings.data.ui.panelBackgroundOpacity);
     }
 
-    border.width: pending ? Style.borderM : (isSelected || mouseArea.containsMouse ? Style.borderM : 0)
-    border.color: pending ? Color.mPrimary : (isSelected || mouseArea.containsMouse ? Qt.alpha(Color.mPrimary, 0.5) : Color.transparent)
+    border.width: Style.borderS
+    border.color: Color.mOutline
 
     // Scale transform for hover effect
     transform: Scale {
@@ -788,7 +788,7 @@ SmartPanel {
       NText {
         Layout.alignment: Qt.AlignHCenter
         text: largeButtonRoot.title
-        font.weight: (largeButtonRoot.isSelected || mouseArea.containsMouse) ? Style.fontWeightBold : Style.fontWeightMedium
+        font.weight: Style.fontWeightMedium
         pointSize: Style.fontSizeL
         color: {
           if (largeButtonRoot.pending)
@@ -805,31 +805,6 @@ SmartPanel {
             duration: Style.animationFast
             easing.type: Easing.OutCirc
           }
-        }
-
-        Behavior on font.weight {
-          PropertyAnimation {
-            duration: Style.animationFast
-          }
-        }
-      }
-
-      // Pending indicator
-      Rectangle {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: -Style.marginM
-        width: 30
-        height: 30
-        radius: Math.min(Style.radiusL, width / 2)
-        color: Color.mPrimary
-        visible: largeButtonRoot.pending
-
-        NText {
-          anchors.centerIn: parent
-          text: Math.ceil(timeRemaining / 1000)
-          pointSize: Style.fontSizeM
-          font.weight: Style.fontWeightBold
-          color: Color.mOnPrimary
         }
       }
     }

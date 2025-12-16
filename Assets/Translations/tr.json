@@ -1362,6 +1362,7 @@
         "button": {
           "label": "Düzenleme moduna gir"
         },
+        "controls-explanation": "Sol fare tuşu: Araç taşı\nSağ fare tuşu: Araç yeniden boyutlandır",
         "description": "Masaüstü araçlarını taşımak ve yeniden konumlandırmak için düzenleme modunu etkinleştirin. Etkinleştirildiğinde, araçlar bir sürükleme ana hattı gösterir ve yeniden konumlandırılabilir.",
         "exit-button": "Düzenleme modundan çık",
         "label": "Düzenleme modu"

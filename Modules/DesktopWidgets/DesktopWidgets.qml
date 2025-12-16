@@ -137,6 +137,25 @@ Variants {
           z: 10000
           onClicked: Settings.data.desktopWidgets.editMode = false
         }
+
+        // Controls explanation text
+        NText {
+          id: controlsExplanation
+          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
+          anchors {
+            top: editModeButton.bottom
+            right: parent.right
+            topMargin: Style.marginM
+            rightMargin: editModeButton.barOffsetRight
+          }
+          text: I18n.tr("settings.desktop-widgets.edit-mode.controls-explanation")
+          pointSize: Style.fontSizeS
+          color: Color.mOnSurfaceVariant
+          horizontalAlignment: Text.AlignRight
+          wrapMode: Text.WordWrap
+          width: Math.min(implicitWidth, 300 * Style.uiScaleRatio)
+          z: 10000
+        }
       }
     }
   }

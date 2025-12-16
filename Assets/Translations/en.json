@@ -1362,6 +1362,7 @@
         "button": {
           "label": "Enter edit mode"
         },
+        "controls-explanation": "Left Mouse Button: Move widget\nRight Mouse Button: Resize widget",
         "description": "Enable edit mode to move and reposition desktop widgets. When enabled, widgets show a drag outline and can be repositioned.",
         "exit-button": "Exit edit mode",
         "label": "Edit mode"
