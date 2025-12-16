@@ -397,6 +397,10 @@
           "description": "Número de caracteres a exibir dos nomes de espaços de trabalho (1-10).",
           "label": "Número de caracteres"
         },
+        "enable-scrollwheel": {
+          "description": "Alternar entre áreas de trabalho usando a roda do mouse.",
+          "label": "Role para alternar entre áreas de trabalho."
+        },
         "follow-focused-screen": {
           "description": "Exibir áreas de trabalho da tela atualmente em foco, em vez da tela onde a barra está localizada.",
           "label": "Seguir Tela em Foco"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "Mostra o fundo dos widgets.",
           "label": "Mostrar cápsula"
+        },
+        "show-outline": {
+          "description": "Exibe uma borda visível ao redor de cada widget.",
+          "label": "Mostrar contornos do widget"
         },
         "transparent": {
           "description": "Isto impedirá que os painéis se fixem à barra.",

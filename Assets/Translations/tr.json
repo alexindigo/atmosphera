@@ -397,6 +397,10 @@
           "description": "Çalışma alanı adlarından gösterilecek karakter sayısı (1-10).",
           "label": "Karakter sayısı"
         },
+        "enable-scrollwheel": {
+          "description": "Fare tekerleği ile çalışma alanları arasında geçiş yapın.",
+          "label": "Çalışma alanları arasında geçiş yapmak için kaydırın"
+        },
         "follow-focused-screen": {
           "description": "Çubuğun bulunduğu ekran yerine, şu anda odaklanmış ekrandaki çalışma alanlarını göster.",
           "label": "Odaklanmış Ekranı Takip Et"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "Araç takımı arka planlarını göster.",
           "label": "Kapsülü göster"
+        },
+        "show-outline": {
+          "description": "Her widget'ın etrafında görünür bir kenarlık görüntüler.",
+          "label": "Araç kutusu ana hatlarını göster"
         },
         "transparent": {
           "description": "Bu, panellerin çubuğa takılmasını önleyecektir.",

@@ -397,6 +397,10 @@
           "description": "显示工作区名称的字符数量（1-10）。",
           "label": "字符数量"
         },
+        "enable-scrollwheel": {
+          "description": "使用鼠标滚轮切换工作区。",
+          "label": "滚动切换工作区"
+        },
         "follow-focused-screen": {
           "description": "显示当前焦点屏幕的工作区，而不是任务栏所在屏幕的工作区。",
           "label": "跟随焦点屏幕"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "为每个小部件添加背景。",
           "label": "显示组件背景"
+        },
+        "show-outline": {
+          "description": "在每个小部件周围显示可见边框。",
+          "label": "显示小部件轮廓"
         },
         "transparent": {
           "description": "这将阻止面板连接到栏上。",

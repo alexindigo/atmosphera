@@ -397,6 +397,10 @@
           "description": "Aantal tekens dat wordt weergegeven van werkruimtenamen (1-10).",
           "label": "Aantal tekens"
         },
+        "enable-scrollwheel": {
+          "description": "Schakel tussen werkruimtes met het muiswiel.",
+          "label": "Scroll om tussen werkruimtes te schakelen"
+        },
         "follow-focused-screen": {
           "description": "Werkruimten weergeven van het momenteel gefocuste scherm, in plaats van het scherm waar de balk zich bevindt.",
           "label": "Gefocust Scherm Volgen"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "Widget-achtergronden tonen.",
           "label": "Capsules tonen"
+        },
+        "show-outline": {
+          "description": "Toont een zichtbare rand rondom elke widget.",
+          "label": "Toon widget-omtrekken"
         },
         "transparent": {
           "description": "Dit voorkomt dat panelen aan de balk worden bevestigd.",

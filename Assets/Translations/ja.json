@@ -397,6 +397,10 @@
           "description": "ワークスペース名から表示する文字数 (1-10)。",
           "label": "文字数"
         },
+        "enable-scrollwheel": {
+          "description": "マウスホイールでワークスペースを切り替える。",
+          "label": "ワークスペースを切り替えるにはスクロールしてください"
+        },
         "follow-focused-screen": {
           "description": "バーが配置されている画面ではなく、現在フォーカスされている画面のワークスペースを表示します。",
           "label": "フォーカス中の画面に追従"
@@ -1015,6 +1019,10 @@
         "show-capsule": {
           "description": "ウィジェットの背景を表示します。",
           "label": "カプセルを表示"
+        },
+        "show-outline": {
+          "description": "すべてのウィジェットの周りに目に見える境界線を表示します。",
+          "label": "ウィジェットのアウトラインを表示"
         },
         "transparent": {
           "description": "これにより、パネルがバーに取り付けられるのを防ぎます。",
