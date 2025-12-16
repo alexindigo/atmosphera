@@ -345,7 +345,7 @@ Item {
         readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
 
         clip: true
-        Layout.preferredWidth: root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0) + (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
+        Layout.preferredWidth: Math.round(root.sidebarExpanded ? 200 * Style.uiScaleRatio : sidebarToggle.width + (panelVeryTransparent ? Style.marginM * 2 : 0) + (sidebarList.verticalScrollBarActive ? Style.marginM : 0))
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
 
@@ -370,11 +370,11 @@ Item {
           Item {
             id: toggleContainer
             Layout.fillWidth: true
-            Layout.preferredHeight: toggleRow.implicitHeight + Style.marginS * 2
+            Layout.preferredHeight: Math.round(toggleRow.implicitHeight + Style.marginS * 2)
 
             Rectangle {
               id: sidebarToggle
-              width: toggleRow.implicitWidth + Style.marginS * 2
+              width: Math.round(toggleRow.implicitWidth + Style.marginS * 2)
               height: parent.height
               anchors.left: parent.left
               radius: Style.radiusS

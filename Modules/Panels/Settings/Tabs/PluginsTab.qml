@@ -8,8 +8,6 @@ import qs.Widgets
 
 ColumnLayout {
   id: root
-  spacing: Style.marginL
-  width: parent.width
 
   // Track which plugins are currently updating
   property var updatingPlugins: ({})
@@ -111,7 +109,9 @@ ColumnLayout {
 
       delegate: NBox {
         Layout.fillWidth: true
-        implicitHeight: rowLayout.implicitHeight + Style.marginL * 2
+        Layout.leftMargin: Style.borderS
+        Layout.rightMargin: Style.borderS
+        implicitHeight: Math.round(rowLayout.implicitHeight) + Style.marginL * 2
         color: Color.mSurface
 
         RowLayout {
@@ -134,6 +134,7 @@ ColumnLayout {
               text: modelData.name
               font.weight: Font.Medium
               color: Color.mOnSurface
+              elide: Text.ElideRight
               Layout.fillWidth: true
             }
 
@@ -142,6 +143,8 @@ ColumnLayout {
               font.pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
               wrapMode: Text.WordWrap
+              maximumLineCount: 2
+              elide: Text.ElideRight
               Layout.fillWidth: true
             }
 
@@ -375,6 +378,7 @@ ColumnLayout {
   RowLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
+    Layout.bottomMargin: Style.marginM
 
     NTabBar {
       id: filterTabBar
@@ -471,7 +475,9 @@ ColumnLayout {
 
       delegate: NBox {
         Layout.fillWidth: true
-        implicitHeight: contentRow.implicitHeight + Style.marginL * 2
+        Layout.leftMargin: Style.borderS
+        Layout.rightMargin: Style.borderS
+        implicitHeight: Math.round(contentRow.implicitHeight + Style.marginL * 2)
         color: Color.mSurface
 
         RowLayout {
@@ -494,6 +500,7 @@ ColumnLayout {
               text: modelData.name
               font.weight: Font.Medium
               color: Color.mOnSurface
+              elide: Text.ElideRight
               Layout.fillWidth: true
             }
 
@@ -502,6 +509,8 @@ ColumnLayout {
               font.pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
               wrapMode: Text.WordWrap
+              maximumLineCount: 2
+              elide: Text.ElideRight
               Layout.fillWidth: true
             }
 
