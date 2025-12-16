@@ -4,6 +4,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Services.UI
 import qs.Widgets
 
@@ -140,6 +141,29 @@ Popup {
   }
 
   function loadWidgetSettings() {
+    // Handle plugin widgets
+    if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
+      var pluginId = widgetId.replace("plugin:", "");
+      var manifest = PluginRegistry.getPluginManifest(pluginId);
+
+      if (!manifest || !manifest.entryPoints || !manifest.entryPoints.settings) {
+        Logger.w("DesktopWidgetSettingsDialog", "Plugin does not have settings:", pluginId);
+        return;
+      }
+
+      var pluginDir = PluginRegistry.getPluginDir(pluginId);
+      var settingsPath = "file://" + pluginDir + "/" + manifest.entryPoints.settings;
+      var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+      var api = PluginService.getPluginAPI(pluginId);
+
+      settingsLoader.setSource(settingsPath + "?v=" + loadVersion, {
+                                 "widgetData": widgetData,
+                                 "pluginApi": api
+                               });
+      return;
+    }
+
+    // Handle core widgets
     const source = DesktopWidgetRegistry.widgetSettingsMap[widgetId];
     if (source) {
       var currentWidgetData = widgetData;

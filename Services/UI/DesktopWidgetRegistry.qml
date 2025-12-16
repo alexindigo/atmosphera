@@ -8,6 +8,9 @@ import qs.Modules.DesktopWidgets.Widgets
 Singleton {
   id: root
 
+  // Signal emitted when plugin widgets are registered/unregistered
+  signal pluginWidgetRegistryUpdated
+
   // Component definitions
   property Component clockComponent: Component {
     DesktopClock {}
@@ -62,6 +65,10 @@ Singleton {
                                   }
                                 })
 
+  // Plugin widget storage (mirroring BarWidgetRegistry pattern)
+  property var pluginWidgets: ({})
+  property var pluginWidgetMetadata: ({})
+
   function init() {
     Logger.i("DesktopWidgetRegistry", "Service started");
   }
@@ -88,13 +95,79 @@ Singleton {
     return (widgetMetadata[id] !== undefined) && (widgetMetadata[id].allowUserSettings === true);
   }
 
-  // Check if a widget is a plugin widget (desktop widgets don't support plugins yet)
+  // Check if a widget is a plugin widget
   function isPluginWidget(id) {
-    return false;
+    return id.startsWith("plugin:");
   }
 
-  // Get list of plugin widget IDs (empty for now)
+  // Get list of plugin widget IDs
   function getPluginWidgets() {
-    return [];
+    return Object.keys(pluginWidgets);
+  }
+
+  // Register a plugin desktop widget
+  function registerPluginWidget(pluginId, component, metadata) {
+    if (!pluginId || !component) {
+      Logger.e("DesktopWidgetRegistry", "Cannot register plugin widget: invalid parameters");
+      return false;
+    }
+
+    var widgetId = "plugin:" + pluginId;
+
+    // Create new objects to trigger QML property change detection
+    var newPluginWidgets = Object.assign({}, pluginWidgets);
+    newPluginWidgets[widgetId] = component;
+    pluginWidgets = newPluginWidgets;
+
+    var newPluginMetadata = Object.assign({}, pluginWidgetMetadata);
+    newPluginMetadata[widgetId] = metadata || {};
+    pluginWidgetMetadata = newPluginMetadata;
+
+    // Also add to main widgets object for unified access - reassign to trigger change
+    var newWidgets = Object.assign({}, widgets);
+    newWidgets[widgetId] = component;
+    widgets = newWidgets;
+
+    var newMetadata = Object.assign({}, widgetMetadata);
+    newMetadata[widgetId] = Object.assign({}, {
+                                            "allowUserSettings": true,
+                                            "showBackground": true
+                                          }, metadata || {});
+    widgetMetadata = newMetadata;
+
+    Logger.i("DesktopWidgetRegistry", "Registered plugin widget:", widgetId);
+    root.pluginWidgetRegistryUpdated();
+    return true;
+  }
+
+  // Unregister a plugin desktop widget
+  function unregisterPluginWidget(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+
+    if (!pluginWidgets[widgetId]) {
+      Logger.w("DesktopWidgetRegistry", "Plugin widget not registered:", widgetId);
+      return false;
+    }
+
+    // Create new objects without the widget to trigger QML property change detection
+    var newPluginWidgets = Object.assign({}, pluginWidgets);
+    delete newPluginWidgets[widgetId];
+    pluginWidgets = newPluginWidgets;
+
+    var newPluginMetadata = Object.assign({}, pluginWidgetMetadata);
+    delete newPluginMetadata[widgetId];
+    pluginWidgetMetadata = newPluginMetadata;
+
+    var newWidgets = Object.assign({}, widgets);
+    delete newWidgets[widgetId];
+    widgets = newWidgets;
+
+    var newMetadata = Object.assign({}, widgetMetadata);
+    delete newMetadata[widgetId];
+    widgetMetadata = newMetadata;
+
+    Logger.i("DesktopWidgetRegistry", "Unregistered plugin widget:", widgetId);
+    root.pluginWidgetRegistryUpdated();
+    return true;
   }
 }

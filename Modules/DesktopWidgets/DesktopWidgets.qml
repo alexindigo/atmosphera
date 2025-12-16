@@ -5,12 +5,16 @@ import Quickshell
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.Noctalia
 import qs.Services.UI
 import qs.Widgets
 
 Variants {
   id: root
   model: Quickshell.screens
+
+  // Direct binding to registry's widgets property for reactivity
+  readonly property var registeredWidgets: DesktopWidgetRegistry.widgets
 
   delegate: Loader {
     id: screenLoader
@@ -63,17 +67,16 @@ Variants {
 
           delegate: Loader {
             id: widgetLoader
-            active: DesktopWidgetRegistry.hasWidget(modelData.id)
+            // Bind to registeredWidgets to re-evaluate when plugins register/unregister
+            active: (modelData.id in root.registeredWidgets)
 
             property var widgetData: modelData
             property int widgetIndex: index
 
             sourceComponent: {
-              var component = DesktopWidgetRegistry.getWidget(modelData.id);
-              if (component) {
-                return component;
-              }
-              return null;
+              // Access registeredWidgets to create reactive binding
+              var widgets = root.registeredWidgets;
+              return widgets[modelData.id] || null;
             }
 
             onLoaded: {
@@ -82,6 +85,15 @@ Variants {
                 item.parent = widgetsContainer;
                 item.widgetData = widgetData;
                 item.widgetIndex = widgetIndex;
+
+                // Inject plugin API for plugin widgets
+                if (DesktopWidgetRegistry.isPluginWidget(modelData.id)) {
+                  var pluginId = modelData.id.replace("plugin:", "");
+                  var api = PluginService.getPluginAPI(pluginId);
+                  if (api && item.hasOwnProperty("pluginApi")) {
+                    item.pluginApi = api;
+                  }
+                }
               }
             }
           }

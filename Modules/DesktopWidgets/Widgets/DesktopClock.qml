@@ -22,8 +22,6 @@ DraggableDesktopWidget {
   property bool showSeconds: (widgetData && widgetData.showSeconds !== undefined) ? widgetData.showSeconds : true
   property bool showDate: (widgetData && widgetData.showDate !== undefined) ? widgetData.showDate : true
 
-  textColor: clockTextColor
-
   implicitWidth: contentLayout.implicitWidth + Style.marginXL * 2
   implicitHeight: contentLayout.implicitHeight + Style.marginXL * 2
   width: implicitWidth

@@ -14,7 +14,6 @@ Item {
   // Optional customization
   property real defaultX: 100
   property real defaultY: 100
-  property color textColor: Color.mOnSurface
 
   // Content slot - allows natural QML child syntax
   default property alias content: contentContainer.data
@@ -111,8 +110,8 @@ Item {
     id: decorationRect
     anchors.fill: parent
     anchors.margins: -Style.marginS
-    color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : "transparent"
-    border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ? (internal.isDragging ? Qt.rgba(textColor.r, textColor.g, textColor.b, 0.5) : Color.mPrimary) : "transparent"
+    color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : Color.transparent
+    border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : Color.transparent
     border.width: Settings.data.desktopWidgets.editMode ? 3 : (internal.isDragging ? 2 : 0)
     radius: Style.radiusL + Style.marginS
     z: -1

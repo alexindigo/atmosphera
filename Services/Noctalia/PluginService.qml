@@ -467,6 +467,7 @@ Singleton {
     // Initialize plugin entry with API and manifest
     root.loadedPlugins[pluginId] = {
       barWidget: null,
+      desktopWidget: null,
       mainInstance: null,
       api: pluginApi,
       manifest: manifest
@@ -528,6 +529,24 @@ Singleton {
       }
     }
 
+    // Load desktop widget component if provided (don't instantiate - DesktopWidgetRegistry will do that)
+    if (manifest.entryPoints && manifest.entryPoints.desktopWidget) {
+      var desktopWidgetPath = pluginDir + "/" + manifest.entryPoints.desktopWidget;
+      var desktopWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+      var desktopWidgetComponent = Qt.createComponent("file://" + desktopWidgetPath + "?v=" + desktopWidgetLoadVersion);
+
+      if (desktopWidgetComponent.status === Component.Ready) {
+        root.loadedPlugins[pluginId].desktopWidget = desktopWidgetComponent;
+        pluginApi.desktopWidget = desktopWidgetComponent;
+
+        // Register with DesktopWidgetRegistry
+        DesktopWidgetRegistry.registerPluginWidget(pluginId, desktopWidgetComponent, manifest.metadata);
+        Logger.i("PluginService", "Loaded desktop widget for plugin:", pluginId);
+      } else if (desktopWidgetComponent.status === Component.Error) {
+        root.recordPluginError(pluginId, "desktopWidget", desktopWidgetComponent.errorString());
+      }
+    }
+
     Logger.i("PluginService", "Plugin loaded:", pluginId);
     root.pluginLoaded(pluginId);
   }
@@ -545,6 +564,11 @@ Singleton {
     // Unregister from BarWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.barWidget) {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
+    }
+
+    // Unregister from DesktopWidgetRegistry
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.desktopWidget) {
+      DesktopWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
     // Destroy Main instance if any
@@ -575,6 +599,7 @@ Singleton {
         // Instance references (set after loading)
         property var mainInstance: null
         property var barWidget: null
+        property var desktopWidget: null
 
         // IPC handlers storage
         property var ipcHandlers: ({})

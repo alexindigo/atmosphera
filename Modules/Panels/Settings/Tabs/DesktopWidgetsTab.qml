@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.Noctalia
 import qs.Services.UI
 import qs.Widgets
 
@@ -34,11 +35,11 @@ ColumnLayout {
   NButton {
     visible: Settings.data.desktopWidgets.enabled
     Layout.fillWidth: true
-    text: I18n.tr("settings.desktop-widgets.edit-mode.button.label")
+    text: Settings.data.desktopWidgets.editMode ? I18n.tr("settings.desktop-widgets.edit-mode.exit-button") : I18n.tr("settings.desktop-widgets.edit-mode.button.label")
     icon: "edit"
     onClicked: {
-      Settings.data.desktopWidgets.editMode = true;
-      if (Settings.data.ui.settingsPanelMode !== "window") {
+      Settings.data.desktopWidgets.editMode = !Settings.data.desktopWidgets.editMode;
+      if (Settings.data.desktopWidgets.editMode && Settings.data.ui.settingsPanelMode !== "window") {
         var item = root.parent;
         while (item) {
           if (item.closeRequested !== undefined) {
@@ -110,9 +111,32 @@ ColumnLayout {
       }
       for (var i = 0; i < widgetIds.length; i++) {
         var widgetId = widgetIds[i];
+        var displayName = widgetId;
+
+        // Get plugin name for plugin widgets
+        var isPlugin = false;
+        if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
+          isPlugin = true;
+          var pluginId = widgetId.replace("plugin:", "");
+          var manifest = PluginRegistry.getPluginManifest(pluginId);
+          if (manifest && manifest.name) {
+            displayName = manifest.name;
+          }
+        }
+
+        // Add plugin badge first (with custom color)
+        const badges = [];
+        if (isPlugin) {
+          badges.push({
+                        "icon": "plugin",
+                        "color": Color.mSecondary
+                      });
+        }
+
         availableWidgets.append({
                                   "key": widgetId,
-                                  "name": widgetId
+                                  "name": displayName,
+                                  "badges": badges
                                 });
       }
       Logger.d("DesktopWidgetsTab", "Available widgets model count:", availableWidgets.count);
@@ -180,6 +204,10 @@ ColumnLayout {
     } else if (widgetId === "Weather") {
       newWidget.x = 100;
       newWidget.y = 300;
+    } else {
+      // Default position for plugin widgets
+      newWidget.x = 150;
+      newWidget.y = 150;
     }
     var widgets = getWidgetsForMonitor(monitorName).slice();
     widgets.push(newWidget);
