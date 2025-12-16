@@ -6,7 +6,7 @@ ColorScheme=Matugen
 Name=noctalia
 
 [ColorEffects:Disabled]
-Color={{colors.surface_dim.default.hex}}
+Color={{colors.surface_container_lowest.default.hex}}
 ColorAmount=0
 ColorEffect=0
 ContrastAmount=0.65
@@ -36,7 +36,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_surface.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:Complementary]
@@ -50,7 +50,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_primary_container.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:Header]
@@ -64,7 +64,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_surface.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:Header][Inactive]
@@ -78,7 +78,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_surface.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:Selection]
@@ -88,9 +88,9 @@ DecorationFocus={{colors.primary.default.hex}}
 DecorationHover={{colors.primary.default.hex}}
 ForegroundActive={{colors.on_primary.default.hex}}
 ForegroundInactive={{colors.on_surface_variant.default.hex}}
-ForegroundLink={{colors.secondary_fixed.default.hex}}
+ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error_container.default.hex}}
-ForegroundNeutral={{colors.tertiary_fixed_dim.default.hex}}
+ForegroundNeutral={{colors.tertiary_container.default.hex}}
 ForegroundNormal={{colors.on_primary.default.hex}}
 ForegroundPositive={{colors.tertiary_container.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
@@ -106,7 +106,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_background.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:View]
@@ -120,7 +120,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_background.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [Colors:Window]
@@ -134,7 +134,7 @@ ForegroundLink={{colors.secondary.default.hex}}
 ForegroundNegative={{colors.error.default.hex}}
 ForegroundNeutral={{colors.tertiary.default.hex}}
 ForegroundNormal={{colors.on_background.default.hex}}
-ForegroundPositive={{colors.tertiary_fixed.default.hex}}
+ForegroundPositive={{colors.tertiary.default.hex}}
 ForegroundVisited={{colors.on_secondary_container.default.hex}}
 
 [WM]
