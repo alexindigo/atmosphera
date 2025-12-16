@@ -423,6 +423,7 @@ Item {
           Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.bottomMargin: Style.marginXL
 
             NListView {
               id: sidebarList
@@ -540,28 +541,27 @@ Item {
                 }
               }
             }
-
-            // Overlay gradient for sidebar scrolling
-            Rectangle {
-              anchors.fill: parent
-              anchors.margins: Style.borderS
-              radius: Style.radiusM
+          }
+        }
+        // Overlay gradient for sidebar scrolling
+        Rectangle {
+          anchors.fill: parent
+          anchors.margins: Style.borderS
+          radius: Style.radiusM
+          color: Color.transparent
+          visible: sidebarList.verticalScrollBarActive
+          gradient: Gradient {
+            GradientStop {
+              position: 0.0
               color: Color.transparent
-              visible: sidebarList.verticalScrollBarActive
-              gradient: Gradient {
-                GradientStop {
-                  position: 0.0
-                  color: Color.transparent
-                }
-                GradientStop {
-                  position: 0.95
-                  color: Color.transparent
-                }
-                GradientStop {
-                  position: 1.0
-                  color: Color.mSurfaceVariant
-                }
-              }
+            }
+            GradientStop {
+              position: 0.95
+              color: Color.transparent
+            }
+            GradientStop {
+              position: 1.0
+              color: Color.mSurfaceVariant
             }
           }
         }
