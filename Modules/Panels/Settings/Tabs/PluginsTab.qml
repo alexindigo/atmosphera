@@ -383,6 +383,7 @@ ColumnLayout {
     NTabBar {
       id: filterTabBar
       Layout.fillWidth: true
+      spacing: Style.marginM
       currentIndex: 0
       onCurrentIndexChanged: {
         if (currentIndex === 0)
@@ -392,7 +393,6 @@ ColumnLayout {
         else if (currentIndex === 2)
           pluginFilter = "notDownloaded";
       }
-      spacing: Style.marginXS
 
       NTabButton {
         text: I18n.tr("settings.plugins.filter.all")
@@ -407,6 +407,7 @@ ColumnLayout {
       }
 
       NTabButton {
+        Layout.fillWidth: true
         text: I18n.tr("settings.plugins.filter.not-downloaded")
         tabIndex: 2
         checked: pluginFilter === "notDownloaded"
@@ -416,7 +417,7 @@ ColumnLayout {
     NIconButton {
       icon: "refresh"
       tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
-      baseSize: Style.baseWidgetSize * 0.8
+      baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
         PluginService.refreshAvailablePlugins();
         checkUpdatesTimer.restart();

@@ -14,7 +14,7 @@ Rectangle {
   default property alias content: tabRow.children
 
   // Styling
-  Layout.fillWidth: true
+  implicitWidth: tabRow.implicitWidth + (margins * 2)
   implicitHeight: Style.baseWidgetSize + (margins * 2)
   color: Color.mSurfaceVariant
   radius: Style.iRadiusS

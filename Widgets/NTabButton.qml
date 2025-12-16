@@ -18,9 +18,9 @@ Rectangle {
   signal clicked
 
   // Sizing
-  Layout.fillWidth: true
   Layout.fillHeight: true
-  Layout.minimumWidth: 140
+  Layout.minimumWidth: 100
+  implicitWidth: tabText.implicitWidth + Style.marginXL * 2
 
   // Styling
   radius: Style.iRadiusM
