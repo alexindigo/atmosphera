@@ -129,6 +129,7 @@ While all donations are greatly appreciated, they are completely voluntary.
 * LionHeartP
 * Nyxion ツ
 * RockDuck
+* Eynix
 * MrDowntempo
 * Tempus Thales
 * Raine
