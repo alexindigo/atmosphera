@@ -27,7 +27,6 @@ Loader {
 
       Component.onDestruction: {
         // Clean up resources to prevent memory leak when overviewEnabled is toggled off
-        timerDisableFx.stop();
         bgImage.layer.enabled = false;
         bgImage.source = "";
       }
