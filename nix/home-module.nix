@@ -103,6 +103,7 @@ in
             description = "General [config] section for Matugen’s TOML config file.";
           };
           templates = lib.mkOption {
+            default = { };
             type = lib.types.attrsOf (
               lib.types.submodule {
                 options = {
@@ -116,7 +117,7 @@ in
                   };
                   postHook = lib.mkOption {
                     type = lib.types.nullOr lib.types.str;
-                    default = "";
+                    default = null;
                     description = "Command to run after file is generated";
                   };
                 };
