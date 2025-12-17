@@ -52,12 +52,17 @@ Singleton {
   property var widgetMetadata: ({
                                   "Clock": {
                                     "allowUserSettings": true,
-                                    "showBackground": true
+                                    "showBackground": true,
+                                    "clockStyle": "digital",
+                                    "usePrimaryColor": false,
+                                    "useCustomFont": false,
+                                    "format": "HH:mm\\nd MMMM yyyy"
                                   },
                                   "MediaPlayer": {
                                     "allowUserSettings": true,
                                     "showBackground": true,
-                                    "visualizerType": ""
+                                    "visualizerType": "linear",
+                                    "hideMode": "visible"
                                   },
                                   "Weather": {
                                     "allowUserSettings": true,

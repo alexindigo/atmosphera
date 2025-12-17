@@ -11,9 +11,9 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
-  property string valueVisualizerType: widgetData.visualizerType !== undefined ? widgetData.visualizerType : (widgetMetadata ? widgetMetadata.visualizerType : "")
-  property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : (widgetMetadata ? widgetMetadata.hideMode : "visible")
+  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
+  property string valueVisualizerType: widgetData.visualizerType !== undefined ? widgetData.visualizerType : widgetMetadata.visualizerType
+  property string valueHideMode: widgetData.hideMode !== undefined ? widgetData.hideMode : widgetMetadata.hideMode
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});

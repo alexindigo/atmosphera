@@ -13,38 +13,23 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
-  property string valueClockStyle: {
-    // If clockStyle is "minimal", default to "digital" for the combo box
-    var style = widgetData.clockStyle !== undefined ? widgetData.clockStyle : "digital";
-    return style === "minimal" ? "digital" : style;
-  }
-  property bool valueMinimalMode: {
-    // Check if minimalMode is set, or if clockStyle is "minimal"
-    if (widgetData.minimalMode !== undefined) {
-      return widgetData.minimalMode;
-    }
-    return widgetData.clockStyle === "minimal";
-  }
-  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : false
-  property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : false
+  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
+  property string valueClockStyle: widgetData.clockStyle !== undefined ? widgetData.clockStyle : widgetMetadata.clockStyle
+  property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
+  property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
   property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : ""
-  property string valueFormat: widgetData.format !== undefined ? widgetData.format : "HH:mm\\nd MMMM yyyy"
+  property string valueFormat: widgetData.format !== undefined ? widgetData.format : widgetMetadata.format
 
   // Track the currently focused input field
   property var focusedInput: null
 
+  readonly property bool isMinimalMode: valueClockStyle === "minimal"
   readonly property var now: Time.now
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.showBackground = valueShowBackground;
-    if (valueMinimalMode) {
-      settings.clockStyle = "minimal";
-    } else {
-      settings.clockStyle = valueClockStyle;
-    }
-    settings.minimalMode = valueMinimalMode;
+    settings.clockStyle = valueClockStyle;
     settings.usePrimaryColor = valueUsePrimaryColor;
     settings.useCustomFont = valueUseCustomFont;
     settings.customFont = valueCustomFont;
@@ -79,22 +64,17 @@ ColumnLayout {
     }
   }
 
-  NToggle {
-    Layout.fillWidth: true
-    label: I18n.tr("settings.desktop-widgets.clock.minimal-mode.label")
-    description: I18n.tr("settings.desktop-widgets.clock.minimal-mode.description")
-    checked: valueMinimalMode
-    onToggled: checked => valueMinimalMode = checked
-  }
-
   NComboBox {
     Layout.fillWidth: true
-    visible: !valueMinimalMode
     label: I18n.tr("settings.desktop-widgets.clock.style.label")
     description: I18n.tr("settings.desktop-widgets.clock.style.description")
     currentKey: valueClockStyle
     minimumWidth: 260 * Style.uiScaleRatio
     model: [
+      {
+        "key": "minimal",
+        "name": I18n.tr("settings.desktop-widgets.clock.style.minimal")
+      },
       {
         "key": "digital",
         "name": I18n.tr("settings.desktop-widgets.clock.style.digital")
@@ -141,11 +121,11 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    visible: valueMinimalMode
+    visible: isMinimalMode
   }
 
   NHeader {
-    visible: valueMinimalMode
+    visible: isMinimalMode
     label: I18n.tr("settings.desktop-widgets.clock.clock-display.label")
     description: I18n.tr("settings.desktop-widgets.clock.clock-display.description")
   }
@@ -153,7 +133,7 @@ ColumnLayout {
   // Format editor - only visible in minimal mode
   RowLayout {
     id: main
-    visible: valueMinimalMode
+    visible: isMinimalMode
     spacing: Style.marginL
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
@@ -245,13 +225,13 @@ ColumnLayout {
   NDivider {
     Layout.topMargin: Style.marginM
     Layout.bottomMargin: Style.marginM
-    visible: valueMinimalMode
+    visible: isMinimalMode
   }
 
   NDateTimeTokens {
     Layout.fillWidth: true
     height: 200
-    visible: valueMinimalMode
+    visible: isMinimalMode
     onTokenClicked: token => root.insertToken(token)
   }
 
