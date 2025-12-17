@@ -50,6 +50,29 @@ NBox {
       property string inputBuffer: ""
       property bool isEditing: false
 
+      // Wheel handler for adjusting time in 5 second steps
+      WheelHandler {
+        id: timerWheelHandler
+        target: timerDisplayItem
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
+        onWheel: function (event) {
+          if (!enabled) {
+            return;
+          }
+          const step = 5; // 5 second steps
+          if (event.angleDelta.y > 0) {
+            // Scroll up - increase time
+            Time.timerRemainingSeconds = Math.max(0, Time.timerRemainingSeconds + step);
+            event.accepted = true;
+          } else if (event.angleDelta.y < 0) {
+            // Scroll down - decrease time
+            Time.timerRemainingSeconds = Math.max(0, Time.timerRemainingSeconds - step);
+            event.accepted = true;
+          }
+        }
+      }
+
       // Circular progress ring (only for countdown mode when running or paused)
       Canvas {
         id: progressRing
