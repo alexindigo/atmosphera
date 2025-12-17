@@ -434,6 +434,7 @@ NBox {
       }
 
       NTabButton {
+        Layout.fillWidth: true
         text: I18n.tr("calendar.timer.countdown")
         tabIndex: 0
         checked: !isStopwatchMode
@@ -441,6 +442,7 @@ NBox {
       }
 
       NTabButton {
+        Layout.fillWidth: true
         text: I18n.tr("calendar.timer.stopwatch")
         tabIndex: 1
         checked: isStopwatchMode
