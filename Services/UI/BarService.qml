@@ -95,6 +95,8 @@ Singleton {
     if (screenName && section !== null) {
       for (var key in widgetInstances) {
         var widget = widgetInstances[key];
+        if (!widget)
+          continue;
         if (widget.widgetId === widgetId && widget.screenName === screenName && widget.section === section) {
           if (index === null) {
             return widget.instance;
@@ -108,6 +110,8 @@ Singleton {
     // Return first match if no specific screen/section specified
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
@@ -126,6 +130,8 @@ Singleton {
 
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
 
       var matches = true;
       if (widgetId && widget.widgetId !== widgetId)
@@ -147,6 +153,8 @@ Singleton {
   function getWidgetWithMetadata(widgetId, screenName = null, section = null) {
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
@@ -164,6 +172,8 @@ Singleton {
 
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.section === section) {
         if (!screenName || widget.screenName === screenName) {
           widgets.push(widget.instance);
@@ -185,12 +195,15 @@ Singleton {
   function getAllRegisteredWidgets() {
     var result = [];
     for (var key in widgetInstances) {
+      var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       result.push({
                     "key": key,
-                    "widgetId": widgetInstances[key].widgetId,
-                    "section": widgetInstances[key].section,
-                    "screenName": widgetInstances[key].screenName,
-                    "index": widgetInstances[key].index
+                    "widgetId": widget.widgetId,
+                    "section": widget.section,
+                    "screenName": widget.screenName,
+                    "index": widget.index
                   });
     }
     return result;
@@ -200,6 +213,8 @@ Singleton {
   function hasWidget(widgetId, section = null, screenName = null) {
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (section === null || widget.section === section) {
           if (!screenName || widget.screenName === screenName) {
