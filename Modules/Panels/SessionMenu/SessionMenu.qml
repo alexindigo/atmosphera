@@ -304,6 +304,14 @@ SmartPanel {
     selectPreviousWrapped();
   }
 
+  function onLeftPressed() {
+    selectPreviousWrapped();
+  }
+  
+  function onRightPressed() {
+    selectNextWrapped();
+  }
+
   function onUpPressed() {
     selectPreviousWrapped();
   }
