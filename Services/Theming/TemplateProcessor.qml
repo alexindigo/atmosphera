@@ -141,6 +141,8 @@ Singleton {
 
 
 
+
+
 ${expandedPath}' ${tmpDir}/extension/themes/NoctaliaTheme-color-theme.json && cd ${tmpDir} && zip -q -r ${modifiedVsix} . && ${client.name} --install-extension ${modifiedVsix} 2>&1 && rm -rf ${tmpDir}; fi`;
                                                                         var updateSettingsJson = `if command -v ${client.name} >/dev/null 2>&1 && [ -f ${settingsPath} ]; then sed -i 's/\\\\\\"workbench.colorTheme\\\\\\":[[:space:]]*\\\\\\"[^\\\\\\"]*/\\\\\\"workbench.colorTheme\\\\\\": \\\\\\"NoctaliaTheme/' ${settingsPath}; fi`;
                                                                         lines.push(`post_hook = "sh -c \\"${reinstallVsix}; ${updateSettingsJson}\\""`);
