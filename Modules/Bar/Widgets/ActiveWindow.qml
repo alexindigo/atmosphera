@@ -199,6 +199,8 @@ Item {
     height: isVerticalBar ? ((!hasFocusedWindow) && hideMode === "hidden" ? 0 : calculatedVerticalDimension()) : Style.capsuleHeight
     radius: Style.radiusM
     color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
     // Smooth width transition
     Behavior on width {
