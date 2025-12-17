@@ -271,12 +271,16 @@ NBox {
         // Initialize text on component completion
         Component.onCompleted: updateText()
 
-        // Only accept digit keys
+        // Only accept digit keys - STRICT filtering
         Keys.onPressed: event => {
-                          if (isRunning || isStopwatchMode) {
+                          // Block everything if running or in stopwatch mode
+                          if (isRunning || isStopwatchMode || totalSeconds > 0) {
                             event.accepted = true;
                             return;
                           }
+
+                          // Get the actual text of the key pressed
+                          const keyText = event.text;
 
                           // Handle backspace
                           if (event.key === Qt.Key_Backspace) {
@@ -302,12 +306,6 @@ NBox {
                             return;
                           }
 
-                          // Allow navigation keys (but don't let them modify text)
-                          if (event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Home || event.key === Qt.Key_End || (event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.ShiftModifier)) {
-                            event.accepted = false; // Let default handling work for selection
-                            return;
-                          }
-
                           // Handle enter/return
                           if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                             applyTimeFromBuffer();
@@ -327,20 +325,25 @@ NBox {
                             return;
                           }
 
-                          // Only allow digits 0-9
-                          if (event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
+                          // STRICT: Only allow single digit characters 0-9
+                          // Check both the key code AND the text to be extra safe
+                          const isDigitKey = event.key >= Qt.Key_0 && event.key <= Qt.Key_9;
+                          const isDigitText = keyText.length === 1 && keyText >= '0' && keyText <= '9';
+
+                          if (isDigitKey && isDigitText) {
                             // Limit to 6 digits max
                             if (timerDisplayItem.inputBuffer.length >= 6) {
                               event.accepted = true; // Block if already at max
                               return;
                             }
                             // Add the digit to the buffer
-                            timerDisplayItem.inputBuffer += String.fromCharCode(event.key);
+                            timerDisplayItem.inputBuffer += keyText;
                             // Update the display and parse
                             parseDigitsToTime(timerDisplayItem.inputBuffer);
-                            event.accepted = true; // We handled it
+                            event.accepted = true;
                           } else {
-                            event.accepted = true; // Block all other keys
+                            // Block ALL other keys (including symbols, modifiers, etc.)
+                            event.accepted = true;
                           }
                         }
 
