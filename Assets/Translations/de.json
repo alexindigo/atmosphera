@@ -1341,9 +1341,17 @@
           "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
           "label": "Uhr-Widget"
         },
+        "minimal-mode": {
+          "description": "Verwende eine minimale Uhr-Anzeige mit Zeit und Datum.",
+          "label": "Minimaler Modus"
+        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"
+        },
+        "show-month-name": {
+          "description": "Zeige den Monatsnamen im Datum an. Wenn deaktiviert, wird die Monatsnummer angezeigt.",
+          "label": "Monatsnamen anzeigen"
         },
         "style": {
           "analog": "Analog",

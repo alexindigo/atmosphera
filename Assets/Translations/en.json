@@ -1341,9 +1341,17 @@
           "description": "Configure the clock widget appearance.",
           "label": "Clock Widget"
         },
+        "minimal-mode": {
+          "description": "Use a minimal clock display with time and date.",
+          "label": "Minimal mode"
+        },
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
+        },
+        "show-month-name": {
+          "description": "Display the month name in the date. When disabled, shows the month number.",
+          "label": "Show month name"
         },
         "style": {
           "analog": "Analog",

@@ -1341,9 +1341,17 @@
           "description": "Configurar la apariencia del widget de reloj.",
           "label": "Widget de reloj"
         },
+        "minimal-mode": {
+          "description": "Usar una visualización de reloj minimalista con hora y fecha.",
+          "label": "Modo minimalista"
+        },
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget de reloj.",
           "label": "Mostrar fondo"
+        },
+        "show-month-name": {
+          "description": "Mostrar el nombre del mes en la fecha. Cuando está desactivado, muestra el número del mes.",
+          "label": "Mostrar nombre del mes"
         },
         "style": {
           "analog": "Analógico",

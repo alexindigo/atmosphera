@@ -1341,9 +1341,17 @@
           "description": "Configureer de weergave van de klokwidget.",
           "label": "Klokwidget"
         },
+        "minimal-mode": {
+          "description": "Gebruik een minimale klokweergave met tijd en datum.",
+          "label": "Minimale modus"
+        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
+        },
+        "show-month-name": {
+          "description": "Toon de maandnaam in de datum. Wanneer uitgeschakeld, wordt het maandnummer weergegeven.",
+          "label": "Maandnaam weergeven"
         },
         "style": {
           "analog": "Analoog",

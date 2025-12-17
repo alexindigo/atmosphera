@@ -1341,9 +1341,17 @@
           "description": "時計ウィジェットの外観を設定します。",
           "label": "時計ウィジェット"
         },
+        "minimal-mode": {
+          "description": "時刻と日付を含むミニマルな時計表示を使用します。",
+          "label": "ミニマルモード"
+        },
         "show-background": {
           "description": "時計ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
+        },
+        "show-month-name": {
+          "description": "日付に月名を表示します。無効にすると、月番号が表示されます。",
+          "label": "月名を表示"
         },
         "style": {
           "analog": "アナログ",

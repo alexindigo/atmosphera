@@ -1341,9 +1341,17 @@
           "description": "配置时钟小部件外观。",
           "label": "时钟小部件"
         },
+        "minimal-mode": {
+          "description": "使用包含时间和日期的简约时钟显示。",
+          "label": "简约模式"
+        },
         "show-background": {
           "description": "显示时钟小部件的背景容器。",
           "label": "显示背景"
+        },
+        "show-month-name": {
+          "description": "在日期中显示月份名称。禁用时，显示月份数字。",
+          "label": "显示月份名称"
         },
         "style": {
           "analog": "模拟",

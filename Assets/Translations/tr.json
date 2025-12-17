@@ -1341,9 +1341,17 @@
           "description": "Saat aracı görünümünü yapılandırın.",
           "label": "Saat Widget'ı"
         },
+        "minimal-mode": {
+          "description": "Zaman ve tarih içeren minimal bir saat görüntüsü kullanın.",
+          "label": "Minimal mod"
+        },
         "show-background": {
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"
+        },
+        "show-month-name": {
+          "description": "Tarihte ay adını göster. Devre dışı bırakıldığında, ay numarasını gösterir.",
+          "label": "Ay adını göster"
         },
         "style": {
           "analog": "Analog",

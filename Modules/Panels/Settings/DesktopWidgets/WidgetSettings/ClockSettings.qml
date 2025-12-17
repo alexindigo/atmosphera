@@ -12,17 +12,44 @@ ColumnLayout {
   property var widgetMetadata: null
 
   property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
-  property string valueClockStyle: widgetData.clockStyle !== undefined ? widgetData.clockStyle : "digital"
+  property string valueClockStyle: {
+    // If clockStyle is "minimal", default to "digital" for the combo box
+    var style = widgetData.clockStyle !== undefined ? widgetData.clockStyle : "digital";
+    return style === "minimal" ? "digital" : style;
+  }
+  property bool valueMinimalMode: {
+    // Check if minimalMode is set, or if clockStyle is "minimal"
+    if (widgetData.minimalMode !== undefined) {
+      return widgetData.minimalMode;
+    }
+    return widgetData.clockStyle === "minimal";
+  }
+  property bool valueShowMonthName: widgetData.showMonthName !== undefined ? widgetData.showMonthName : true
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.showBackground = valueShowBackground;
-    settings.clockStyle = valueClockStyle;
+    if (valueMinimalMode) {
+      settings.clockStyle = "minimal";
+    } else {
+      settings.clockStyle = valueClockStyle;
+    }
+    settings.minimalMode = valueMinimalMode;
+    settings.showMonthName = valueShowMonthName;
     return settings;
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.desktop-widgets.clock.minimal-mode.label")
+    description: I18n.tr("settings.desktop-widgets.clock.minimal-mode.description")
+    checked: valueMinimalMode
+    onToggled: checked => valueMinimalMode = checked
   }
 
   NComboBox {
     Layout.fillWidth: true
+    visible: !valueMinimalMode
     label: I18n.tr("settings.desktop-widgets.clock.style.label")
     description: I18n.tr("settings.desktop-widgets.clock.style.description")
     currentKey: valueClockStyle
@@ -35,13 +62,18 @@ ColumnLayout {
       {
         "key": "analog",
         "name": I18n.tr("settings.desktop-widgets.clock.style.analog")
-      },
-      {
-        "key": "minimal",
-        "name": I18n.tr("settings.desktop-widgets.clock.style.minimal")
       }
     ]
     onSelected: key => valueClockStyle = key
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    visible: valueMinimalMode
+    label: I18n.tr("settings.desktop-widgets.clock.show-month-name.label")
+    description: I18n.tr("settings.desktop-widgets.clock.show-month-name.description")
+    checked: valueShowMonthName
+    onToggled: checked => valueShowMonthName = checked
   }
 
   NToggle {

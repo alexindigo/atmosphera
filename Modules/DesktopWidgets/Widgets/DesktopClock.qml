@@ -22,6 +22,7 @@ DraggableDesktopWidget {
   property bool showSeconds: (widgetData && widgetData.showSeconds !== undefined) ? widgetData.showSeconds : true
   property bool showDate: (widgetData && widgetData.showDate !== undefined) ? widgetData.showDate : true
   property string clockStyle: (widgetData && widgetData.clockStyle) ? widgetData.clockStyle : "digital"
+  property bool showMonthName: (widgetData && widgetData.showMonthName !== undefined) ? widgetData.showMonthName : true
 
   readonly property real contentPadding: clockStyle === "minimal" ? Style.marginL : Style.marginXL
   implicitWidth: contentLoader.item ? (contentLoader.item.implicitWidth || contentLoader.item.width || 0) + contentPadding * 2 : 0
@@ -64,7 +65,17 @@ DraggableDesktopWidget {
       }
 
       NText {
-        text: Qt.formatDate(root.now, Qt.DefaultLocaleLongDate)
+        text: {
+          if (root.showMonthName) {
+            return I18n.locale.toString(root.now, "d MMMM yyyy");
+          } else {
+            // Format with month number: "17 12 2025"
+            var day = root.now.getDate();
+            var month = root.now.getMonth() + 1; // getMonth() is 0-based
+            var year = root.now.getFullYear();
+            return I18n.locale.toString(root.now, "d") + " " + month.toString() + " " + year.toString();
+          }
+        }
         pointSize: Style.fontSizeM
         font.weight: Style.fontWeightMedium
         color: clockTextColor

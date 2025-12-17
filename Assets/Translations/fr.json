@@ -1341,9 +1341,17 @@
           "description": "Configurer l'apparence du widget horloge.",
           "label": "Widget d'horloge"
         },
+        "minimal-mode": {
+          "description": "Utiliser un affichage d'horloge minimaliste avec l'heure et la date.",
+          "label": "Mode minimaliste"
+        },
         "show-background": {
           "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
           "label": "Afficher l'arrière-plan"
+        },
+        "show-month-name": {
+          "description": "Afficher le nom du mois dans la date. Lorsqu'il est désactivé, affiche le numéro du mois.",
+          "label": "Afficher le nom du mois"
         },
         "style": {
           "analog": "Analogique",
