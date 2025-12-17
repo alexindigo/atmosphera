@@ -319,13 +319,14 @@ Singleton {
     id: wifiDeviceShowProcess
     property string ifname: ""
     running: false
-    command: ["nmcli", "-t", "-f", "IP4.ADDRESS,IP4.GATEWAY", "device", "show", ifname]
+    command: ["nmcli", "-t", "-f", "IP4.ADDRESS,IP4.GATEWAY,IP4.DNS", "device", "show", ifname]
 
     stdout: StdioCollector {
       onStreamFinished: {
         const details = root.activeWifiDetails || ({});
         let ipv4 = "";
         let gw4 = "";
+        let dnsServers = [];
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
@@ -338,10 +339,16 @@ Singleton {
             ipv4 = val.split("/")[0];
           } else if (key === "IP4.GATEWAY") {
             gw4 = val;
+          } else if (key.startsWith("IP4.DNS")) {
+            if (val && dnsServers.indexOf(val) === -1) {
+              dnsServers.push(val);
+            }
           }
         }
         details.ipv4 = ipv4;
         details.gateway4 = gw4;
+        details.dnsServers = dnsServers;
+        details.dns = dnsServers.join(", ");
         root.activeWifiDetails = details;
 
         // Try to get link rate (best effort)
@@ -370,7 +377,40 @@ Singleton {
             break;
           }
         }
+        // Shorten verbose bitrate strings like: "360.0 MBit/s VHT-MCS 8 40MHz short GI"
+        let rateShort = "";
+        if (rate) {
+          var parts = rate.trim().split(" ");
+          // compact consecutive spaces
+          var compact = [];
+          for (var i = 0; i < parts.length; i++) {
+            var p = parts[i];
+            if (p && p.length > 0) compact.push(p);
+          }
+          // Find a token that represents Mbit/s and use the previous number
+          var unitIdx = -1;
+          for (var j = 0; j < compact.length; j++) {
+            var token = compact[j].toLowerCase();
+            if (token === "mbit/s" || token === "mb/s" || token === "mbits/s") {
+              unitIdx = j;
+              break;
+            }
+          }
+          if (unitIdx > 0) {
+            var num = compact[unitIdx - 1];
+            // Basic numeric check
+            var parsed = parseFloat(num);
+            if (!isNaN(parsed)) {
+              rateShort = parsed + " Mbit/s";
+            }
+          }
+          if (!rateShort) {
+            // Fallback to first two tokens
+            rateShort = compact.slice(0, 2).join(" ");
+          }
+        }
         details.rate = rate;
+        details.rateShort = rateShort;
         root.activeWifiDetails = details;
         root.activeWifiDetailsTimestamp = Date.now();
         root.detailsLoading = false;

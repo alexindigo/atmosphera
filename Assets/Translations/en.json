@@ -2645,7 +2645,8 @@
       "internet-connected": "Internet connected",
       "internet-limited": "No internet",
       "link-speed": "Link speed",
-      "gateway": "Gateway"
+      "gateway": "Gateway",
+      "dns": "DNS"
     }
   },
   "wallpaper": {
