@@ -1345,6 +1345,13 @@
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
         },
+        "style": {
+          "analog": "Analog",
+          "description": "Choose the clock display style.",
+          "digital": "Digital",
+          "label": "Clock style",
+          "minimal": "Minimal"
+        },
         "show-date": {
           "description": "Display the current date below the time.",
           "label": "Show date"

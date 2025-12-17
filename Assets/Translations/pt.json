@@ -1345,6 +1345,13 @@
           "description": "Mostrar o contêiner de fundo para o widget de relógio.",
           "label": "Mostrar plano de fundo"
         },
+        "style": {
+          "analog": "Analógico",
+          "description": "Escolha o estilo de exibição do relógio.",
+          "digital": "Digital",
+          "label": "Estilo do relógio",
+          "minimal": "Minimal"
+        },
         "show-date": {
           "description": "Exiba a data atual abaixo da hora.",
           "label": "Mostrar data"

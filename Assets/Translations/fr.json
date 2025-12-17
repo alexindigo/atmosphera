@@ -1345,6 +1345,13 @@
           "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
           "label": "Afficher l'arrière-plan"
         },
+        "style": {
+          "analog": "Analogique",
+          "description": "Choisissez le style d'affichage de l'horloge.",
+          "digital": "Numérique",
+          "label": "Style d'horloge",
+          "minimal": "Minimal"
+        },
         "show-date": {
           "description": "Afficher la date actuelle sous l'heure.",
           "label": "Afficher la date"

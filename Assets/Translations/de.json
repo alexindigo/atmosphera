@@ -1345,6 +1345,13 @@
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"
         },
+        "style": {
+          "analog": "Analog",
+          "description": "Wähle den Anzeigestil der Uhr.",
+          "digital": "Digital",
+          "label": "Uhrstil",
+          "minimal": "Minimal"
+        },
         "show-date": {
           "description": "Zeige das aktuelle Datum unter der Uhrzeit an.",
           "label": "Datum anzeigen"

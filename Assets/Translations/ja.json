@@ -1345,6 +1345,13 @@
           "description": "時計ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
         },
+        "style": {
+          "analog": "アナログ",
+          "description": "時計の表示スタイルを選択してください。",
+          "digital": "デジタル",
+          "label": "時計スタイル",
+          "minimal": "ミニマル"
+        },
         "show-date": {
           "description": "現在時刻の下に今日の日付を表示しなさい。",
           "label": "日付を表示"

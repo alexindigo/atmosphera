@@ -1345,6 +1345,13 @@
           "description": "显示时钟小部件的背景容器。",
           "label": "显示背景"
         },
+        "style": {
+          "analog": "模拟",
+          "description": "选择时钟显示样式。",
+          "digital": "数字",
+          "label": "时钟样式",
+          "minimal": "简约"
+        },
         "show-date": {
           "description": "在时间下方显示当前日期。",
           "label": "显示日期"

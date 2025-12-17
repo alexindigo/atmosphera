@@ -1345,6 +1345,13 @@
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"
         },
+        "style": {
+          "analog": "Analog",
+          "description": "Saat görüntüleme stilini seçin.",
+          "digital": "Dijital",
+          "label": "Saat stili",
+          "minimal": "Minimal"
+        },
         "show-date": {
           "description": "Saati gösterdikten sonra, mevcut tarihi de göster.",
           "label": "Tarihi göster"

@@ -1345,6 +1345,13 @@
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
         },
+        "style": {
+          "analog": "Analoog",
+          "description": "Kies de weergavestijl van de klok.",
+          "digital": "Digitaal",
+          "label": "Klokstijl",
+          "minimal": "Minimaal"
+        },
         "show-date": {
           "description": "Toon de huidige datum onder de tijd.",
           "label": "Toon datum"
