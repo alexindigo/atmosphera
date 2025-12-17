@@ -180,6 +180,24 @@ Item {
   }
 
   IpcHandler {
+    target: "nightLight"
+    function toggle() {
+      if (!ProgramCheckerService.wlsunsetAvailable) {
+        Logger.w("IPC", "wlsunset not available, cannot toggle night light");
+        return;
+      }
+
+      if (Settings.data.nightLight.forced) {
+        Settings.data.nightLight.enabled = false;
+        Settings.data.nightLight.forced = false;
+      } else {
+        Settings.data.nightLight.enabled = true;
+        Settings.data.nightLight.forced = true;
+      }
+    }
+  }
+
+  IpcHandler {
     target: "colorScheme"
     function set(schemeName: string) {
       ColorSchemeService.setPredefinedScheme(schemeName);
