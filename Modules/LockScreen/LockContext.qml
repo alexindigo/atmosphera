@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Pam
 import qs.Commons
 import qs.Services.System
@@ -16,27 +15,39 @@ Scope {
   property string errorMessage: ""
   property string infoMessage: ""
   property bool pamAvailable: typeof PamContext !== "undefined"
-  property string pamConfigDirectory: Settings.configDir + "pam"
-  property string pamConfig: "password.conf"
-  property bool pamConfigChecked: false
 
-  Component.onCompleted: {
-    // Check if /etc/pam.d/quickshell exists (typically provided by NixOS module)
-    // If it exists, use it; otherwise fall back to generated config in configDir
-    checkSystemPamConfig();
+  // Determine PAM config based on OS
+  // On NixOS: use /etc/pam.d/login
+  // Otherwise: use generated config in configDir
+  readonly property string pamConfigDirectory: {
+    if (HostService.isReady && HostService.isNixOS) {
+      return "/etc/pam.d";
+    }
+    return Settings.configDir + "pam";
+  }
+  readonly property string pamConfig: {
+    if (HostService.isReady && HostService.isNixOS) {
+      return "login";
+    }
+    return "password.conf";
   }
 
-  function checkSystemPamConfig() {
-    // Check if /etc/pam.d/quickshell exists
-    // On NixOS, this is typically provided by the NixOS module
-    // On other systems, it can be manually created
-    // If it doesn't exist, fall back to generated config in configDir
-    if (!pamConfigChecked) {
-      Logger.i("LockContext", "Checking for system PAM config: /etc/pam.d/quickshell");
-      systemPamCheckProcess.command = ["test", "-f", "/etc/pam.d/quickshell"];
-      systemPamCheckProcess.running = true;
+  Component.onCompleted: {
+    if (HostService.isReady) {
+      if (HostService.isNixOS) {
+        Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
+      } else {
+        Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
+      }
     } else {
-      Logger.d("LockContext", "PAM config already checked, skipping");
+      // Wait for HostService to be ready
+      HostService.isReadyChanged.connect(function () {
+        if (HostService.isNixOS) {
+          Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
+        } else {
+          Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
+        }
+      });
     }
   }
 
@@ -67,39 +78,11 @@ Scope {
     pam.start();
   }
 
-  // Process to check if system PAM config exists
-  Process {
-    id: systemPamCheckProcess
-    running: false
-
-    onRunningChanged: {
-      if (running) {
-        Logger.i("LockContext", "Started checking for system PAM config");
-      }
-    }
-
-    onExited: function (exitCode) {
-      Logger.d("LockContext", "PAM config check completed with exit code:", exitCode);
-      pamConfigChecked = true;
-      if (exitCode === 0) {
-        // /etc/pam.d/quickshell exists, use it
-        root.pamConfigDirectory = "/etc/pam.d";
-        root.pamConfig = "quickshell";
-        Logger.i("LockContext", "System PAM config found, using: /etc/pam.d/quickshell");
-      } else {
-        // Use generated config in configDir
-        root.pamConfigDirectory = Settings.configDir + "pam";
-        root.pamConfig = "password.conf";
-        Logger.i("LockContext", "System PAM config not found, using generated config:", root.pamConfigDirectory + "/" + root.pamConfig);
-      }
-    }
-  }
-
   PamContext {
     id: pam
     // Use custom PAM config to ensure predictable password-only authentication
-    // Prefers /etc/pam.d/quickshell if it exists (especially on NixOS)
-    // Otherwise uses config created in Settings.qml and stored in configDir/pam/
+    // On NixOS: uses /etc/pam.d/login
+    // Otherwise: uses config created in Settings.qml and stored in configDir/pam/
     configDirectory: root.pamConfigDirectory
     config: root.pamConfig
     user: HostService.username
