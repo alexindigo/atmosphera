@@ -286,6 +286,13 @@ Singleton {
         }
       }
     }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "ethernetState nmcli stderr:", text.trim());
+        }
+      }
+    }
   }
 
   // Discover connected Wi‑Fi interface
@@ -316,6 +323,18 @@ Singleton {
           wifiDeviceShowProcess.running = true;
         } else {
           // Nothing to fetch
+          root.activeWifiDetailsTimestamp = Date.now();
+          root.detailsLoading = false;
+        }
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "nmcli device list stderr:", text.trim());
+        }
+        // Fail-safe to avoid spinner
+        if (!root.activeWifiIf) {
           root.activeWifiDetailsTimestamp = Date.now();
           root.detailsLoading = false;
         }
@@ -363,6 +382,15 @@ Singleton {
         // Try to get link rate (best effort)
         wifiIwLinkProcess.ifname = wifiDeviceShowProcess.ifname;
         wifiIwLinkProcess.running = true;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "nmcli device show stderr:", text.trim());
+        }
+        // Still proceed to finalize details to avoid UI waiting forever
+        root.activeWifiDetailsTimestamp = Date.now();
       }
     }
   }
@@ -426,6 +454,15 @@ Singleton {
         root.detailsLoading = false;
       }
     }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "iw link stderr:", text.trim());
+        }
+        root.activeWifiDetailsTimestamp = Date.now();
+        root.detailsLoading = false;
+      }
+    }
   }
 
   // Only check the state of the actual interface
@@ -441,6 +478,13 @@ Singleton {
         Logger.d("Network", "Wi-Fi adapter was detect as enabled:", enabled);
         if (Settings.data.network.wifiEnabled !== enabled) {
           Settings.data.network.wifiEnabled = enabled;
+        }
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "Wi-Fi state query stderr:", text.trim());
         }
       }
     }
@@ -569,6 +613,19 @@ Singleton {
         }
         scanProcess.existingProfiles = profiles;
         scanProcess.running = true;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Network", "Profile check stderr:", text.trim());
+        }
+        // Fail safe
+        if (root.scanning) {
+          root.scanning = false;
+          delayedScanTimer.interval = 5000;
+          delayedScanTimer.restart();
+        }
       }
     }
   }
@@ -797,17 +854,20 @@ Singleton {
         if (text.trim()) {
           // Parse common errors
           if (text.indexOf("Secrets were required") !== -1 || text.indexOf("no secrets provided") !== -1) {
-            root.lastError = "Incorrect password";
+            root.lastError = I18n.tr("toast.wifi.incorrect-password");
             forget(connectProcess.ssid);
           } else if (text.indexOf("No network with SSID") !== -1) {
-            root.lastError = "Network not found";
+            root.lastError = I18n.tr("toast.wifi.network-not-found");
           } else if (text.indexOf("Timeout") !== -1) {
-            root.lastError = "Connection timeout";
+            root.lastError = I18n.tr("toast.wifi.connection-timeout");
           } else {
-            root.lastError = text.split("\n")[0].trim();
+            // Generic fallback
+            root.lastError = I18n.tr("toast.wifi.connection-failed");
           }
 
           Logger.w("Network", "Connect error: " + text);
+          // Notify user about the failure
+          ToastService.showWarning(I18n.tr("wifi.panel.title"), root.lastError || I18n.tr("toast.wifi.connection-failed"));
         }
       }
     }

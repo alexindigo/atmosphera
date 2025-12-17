@@ -463,7 +463,8 @@
       "info": "Info",
       "device-address": "Device address",
       "paired": "Paired",
-      "trusted": "Trusted"
+      "trusted": "Trusted",
+      "discoverable": "Discoverable"
     }
   },
   "calendar": {
@@ -2553,7 +2554,23 @@
       "connected": "Connected to '{ssid}'",
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "incorrect-password": "Incorrect password",
+      "network-not-found": "Network not found",
+      "connection-timeout": "Connection timeout",
+      "connection-failed": "Connection failed"
+    },
+    "bluetooth": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "pair-failed": "Failed to pair device",
+      "connect-failed": "Failed to connect to device",
+      "disconnect-failed": "Failed to disconnect from device",
+      "forget-failed": "Failed to forget device",
+      "state-change-failed": "Failed to change Bluetooth state",
+      "discoverable-enabled": "Discoverable enabled",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-change-failed": "Failed to change discoverable state"
     }
   },
   "tooltips": {

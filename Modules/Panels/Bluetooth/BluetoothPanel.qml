@@ -62,6 +62,17 @@ SmartPanel {
             baseSize: Style.baseWidgetSize * 0.65
           }
 
+          // Discoverability toggle (advertising)
+          NIconButton {
+            enabled: BluetoothService.enabled
+            icon: BluetoothService.discoverable ? "broadcast" : "broadcast-off"
+            tooltipText: I18n.tr("bluetooth.panel.discoverable")
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: {
+              BluetoothService.setDiscoverable(!BluetoothService.discoverable);
+            }
+          }
+
           NIconButton {
             enabled: BluetoothService.enabled
             icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"

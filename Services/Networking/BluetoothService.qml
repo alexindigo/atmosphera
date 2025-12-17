@@ -10,6 +10,14 @@ import qs.Services.UI
 Singleton {
   id: root
 
+  // Translation fallback helper (prevents ##key## leaking to UI)
+  function trOr(key, fallback) {
+    var v = I18n.tr(key);
+    if (!v) return fallback;
+    if (v.indexOf("##") === 0 && v.lastIndexOf("##") === v.length - 2) return fallback;
+    return v;
+  }
+
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
@@ -18,6 +26,8 @@ Singleton {
   readonly property bool enabled: (adapter && adapter.enabled !== undefined) ? adapter.enabled : false
   readonly property bool blocked: (adapter && adapter.state === BluetoothAdapterState.Blocked)
   readonly property bool discovering: (adapter && adapter.discovering) ? adapter.discovering : false
+  // Adapter discoverability (advertising) flag
+  readonly property bool discoverable: (adapter && adapter.discoverable !== undefined) ? adapter.discoverable : false
   readonly property var devices: adapter ? adapter.devices : null
   readonly property var pairedDevices: {
     if (!adapter || !adapter.devices) {
@@ -71,10 +81,10 @@ Singleton {
       if (bluetoothBlockedToggled) {
         checkWifiBlocked.running = true;
       } else if (adapter.state === BluetoothAdapterState.Enabled) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.enabled", "Enabled"), "bluetooth");
         discoveryTimer.running = true;
       } else if (adapter.state === BluetoothAdapterState.Disabled) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.disabled", "Disabled"), "bluetooth-off");
       }
     }
   }
@@ -280,12 +290,14 @@ Singleton {
       }
     } catch (e) {
       Logger.w("Bluetooth", "pairDevice failed", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.pair-failed"));
       // Fallback to connect if pair not supported
       try {
         device.trusted = true;
         device.connect();
       } catch (e2) {
         Logger.w("Bluetooth", "pairDevice connect fallback failed", e2);
+        ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.connect-failed"));
       }
     }
   }
@@ -299,26 +311,38 @@ Singleton {
     if (!device) {
       return;
     }
-
-    device.trusted = true;
-    device.connect();
+    try {
+      device.trusted = true;
+      device.connect();
+    } catch (e) {
+      Logger.w("Bluetooth", "connectDeviceWithTrust failed", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.connect-failed"));
+    }
   }
 
   function disconnectDevice(device) {
     if (!device) {
       return;
     }
-
-    device.disconnect();
+    try {
+      device.disconnect();
+    } catch (e) {
+      Logger.w("Bluetooth", "disconnectDevice failed", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disconnect-failed"));
+    }
   }
 
   function forgetDevice(device) {
     if (!device) {
       return;
     }
-
-    device.trusted = false;
-    device.forget();
+    try {
+      device.trusted = false;
+      device.forget();
+    } catch (e) {
+      Logger.w("Bluetooth", "forgetDevice failed", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.forget-failed"));
+    }
   }
 
   function setBluetoothEnabled(state) {
@@ -328,7 +352,32 @@ Singleton {
     }
 
     Logger.i("Bluetooth", "SetBluetoothEnabled", state);
-    adapter.enabled = state;
+    try {
+      adapter.enabled = state;
+    } catch (e) {
+      Logger.w("Bluetooth", "Enable/Disable failed", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.state-change-failed"));
+    }
+  }
+
+  // Toggle adapter discoverability (advertising visibility)
+  function setDiscoverable(state) {
+    if (!adapter) {
+      Logger.w("Bluetooth", "setDiscoverable: No adapter available");
+      return;
+    }
+    try {
+      adapter.discoverable = state;
+      if (state) {
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-enabled", "Discoverable enabled"), "broadcast");
+      } else {
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-disabled", "Discoverable disabled"), "broadcast-off");
+      }
+      Logger.i("Bluetooth", "Discoverable state set to:", state);
+    } catch (e) {
+      Logger.w("Bluetooth", "Failed to change discoverable state", e);
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-change-failed", "Failed to change discoverable state"));
+    }
   }
 
   Process {
@@ -339,7 +388,7 @@ Singleton {
     stdout: StdioCollector {
       onStreamFinished: {
         var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
-        Logger.d("Network", "Wi-Fi adapter was detected as blocked:", blocked);
+        Logger.d("Network", "Wi-Fi adapter was detected as blocked:", wifiBlocked);
 
         // Check if airplane mode has been toggled
         if (wifiBlocked && wifiBlocked === root.blocked) {
@@ -351,12 +400,19 @@ Singleton {
           NetworkService.setWifiEnabled(true);
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.airplane-mode.disabled"), "plane-off");
         } else if (adapter.enabled) {
-          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
+          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.enabled", "Enabled"), "bluetooth");
           discoveryTimer.running = true;
         } else {
-          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
+          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.disabled", "Disabled"), "bluetooth-off");
         }
         root.airplaneModeToggled = false;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Bluetooth", "rfkill (wifi) stderr:", text.trim());
+        }
       }
     }
   }
