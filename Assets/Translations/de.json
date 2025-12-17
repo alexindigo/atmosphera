@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
+          "label": "Ausblendmodus"
+        },
         "enabled": {
           "description": "Zeige ein Media-Player-Widget auf dem Desktop an.",
           "label": "Medienplayer-Widget aktivieren"

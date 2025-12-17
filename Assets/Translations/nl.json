@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
+          "label": "Verbergmodus"
+        },
         "enabled": {
           "description": "Toon een mediaplayer-widget op het bureaublad.",
           "label": "Mediaspeler-widget inschakelen"

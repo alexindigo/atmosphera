@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "控制当没有媒体播放时小部件的行为。",
+          "label": "隐藏模式"
+        },
         "enabled": {
           "description": "在桌面上显示媒体播放器小部件。",
           "label": "启用媒体播放器小部件"

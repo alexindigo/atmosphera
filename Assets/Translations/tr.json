@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
+          "label": "Gizleme modu"
+        },
         "enabled": {
           "description": "Masaüstünde bir medya oynatıcı aracı göster.",
           "label": "Medya oynatıcı widget'ını etkinleştir."
