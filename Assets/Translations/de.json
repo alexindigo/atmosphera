@@ -1341,17 +1341,36 @@
           "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
           "label": "Uhr-Widget"
         },
+        "clock-display": {
+          "description": "Passen Sie die Anzeige Ihrer Uhr an, indem Sie Token aus der Liste unten hinzufügen. Um das 12-Stunden-Format zu verwenden, müssen Sie das 'AP'-Token einschließen.",
+          "label": "Uhrenanzeige"
+        },
+        "custom-font": {
+          "description": "Wählen Sie eine benutzerdefinierte Schriftart für die Uhrenanzeige aus.",
+          "label": "Benutzerdefinierte Schriftart",
+          "placeholder": "Benutzerdefinierte Schriftart auswählen...",
+          "search-placeholder": "Schriftarten suchen..."
+        },
+        "format": {
+          "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen.",
+          "label": "Format"
+        },
         "minimal-mode": {
           "description": "Verwende eine minimale Uhr-Anzeige mit Zeit und Datum.",
           "label": "Minimaler Modus"
         },
+        "preview": "Vorschau",
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"
         },
-        "show-month-name": {
-          "description": "Zeige den Monatsnamen im Datum an. Wenn deaktiviert, wird die Monatsnummer angezeigt.",
-          "label": "Monatsnamen anzeigen"
+        "use-custom-font": {
+          "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
+          "label": "Benutzerdefinierte Schriftart verwenden"
+        },
+        "use-primary-color": {
+          "description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung angewendet.",
+          "label": "Primärfarbe verwenden"
         },
         "style": {
           "analog": "Analog",

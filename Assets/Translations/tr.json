@@ -1341,17 +1341,36 @@
           "description": "Saat aracı görünümünü yapılandırın.",
           "label": "Saat Widget'ı"
         },
+        "clock-display": {
+          "description": "Saatinizin görüntüsünü özelleştirmek için aşağıdaki listeden jetonları ekleyin. 12 saat formatını kullanmak için 'AP' jetonunu eklemelisiniz.",
+          "label": "Saat görüntüleme"
+        },
+        "custom-font": {
+          "description": "Saat görüntüleme için özel bir yazı tipi seçin.",
+          "label": "Özel yazı tipi",
+          "placeholder": "Özel yazı tipi seçin...",
+          "search-placeholder": "Yazı tiplerini ara..."
+        },
+        "format": {
+          "description": "İpucu: Bir satır sonu oluşturmak için \\n kullanın.",
+          "label": "Biçim"
+        },
         "minimal-mode": {
           "description": "Zaman ve tarih içeren minimal bir saat görüntüsü kullanın.",
           "label": "Minimal mod"
         },
+        "preview": "Önizleme",
         "show-background": {
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"
         },
-        "show-month-name": {
-          "description": "Tarihte ay adını göster. Devre dışı bırakıldığında, ay numarasını gösterir.",
-          "label": "Ay adını göster"
+        "use-custom-font": {
+          "description": "Saat için varsayılan yazı tipi seçimini özel bir yazı tipiyle geçersiz kılın.",
+          "label": "Özel yazı tipi kullan"
+        },
+        "use-primary-color": {
+          "description": "Etkinleştirildiğinde, bu vurgu için birincil rengi uygular.",
+          "label": "Birincil rengi kullan"
         },
         "style": {
           "analog": "Analog",

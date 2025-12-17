@@ -1341,17 +1341,36 @@
           "description": "Configureer de weergave van de klokwidget.",
           "label": "Klokwidget"
         },
+        "clock-display": {
+          "description": "Pas de weergave van je klok aan door tokens uit onderstaande lijst toe te voegen. Om de 12-uursnotatie te gebruiken, moet je de 'AP'-token opnemen.",
+          "label": "Klokweergave"
+        },
+        "custom-font": {
+          "description": "Selecteer een aangepast lettertype voor de klokweergave.",
+          "label": "Aangepast lettertype",
+          "placeholder": "Selecteer aangepast lettertype...",
+          "search-placeholder": "Lettertypen zoeken..."
+        },
+        "format": {
+          "description": "Tip: gebruik \\n om een regeleinde te maken.",
+          "label": "Formaat"
+        },
         "minimal-mode": {
           "description": "Gebruik een minimale klokweergave met tijd en datum.",
           "label": "Minimale modus"
         },
+        "preview": "Voorbeeld",
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
         },
-        "show-month-name": {
-          "description": "Toon de maandnaam in de datum. Wanneer uitgeschakeld, wordt het maandnummer weergegeven.",
-          "label": "Maandnaam weergeven"
+        "use-custom-font": {
+          "description": "Overschrijf het standaardlettertype met een aangepast lettertype voor de klok.",
+          "label": "Aangepast lettertype gebruiken"
+        },
+        "use-primary-color": {
+          "description": "Indien ingeschakeld wordt de primaire kleur gebruikt voor nadruk.",
+          "label": "Primaire kleur gebruiken"
         },
         "style": {
           "analog": "Analoog",

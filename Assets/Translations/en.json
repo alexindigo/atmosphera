@@ -1341,17 +1341,36 @@
           "description": "Configure the clock widget appearance.",
           "label": "Clock Widget"
         },
+        "clock-display": {
+          "description": "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token.",
+          "label": "Clock display"
+        },
+        "custom-font": {
+          "description": "Select a custom font for the clock display.",
+          "label": "Custom font",
+          "placeholder": "Select custom font...",
+          "search-placeholder": "Search fonts..."
+        },
+        "format": {
+          "description": "Tip: Use \\n to create a line break.",
+          "label": "Format"
+        },
         "minimal-mode": {
           "description": "Use a minimal clock display with time and date.",
           "label": "Minimal mode"
         },
+        "preview": "Preview",
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
         },
-        "show-month-name": {
-          "description": "Display the month name in the date. When disabled, shows the month number.",
-          "label": "Show month name"
+        "use-custom-font": {
+          "description": "Override the default font selection with a custom font for the clock.",
+          "label": "Use custom font"
+        },
+        "use-primary-color": {
+          "description": "When enabled, this applies the primary color for emphasis.",
+          "label": "Use primary color"
         },
         "style": {
           "analog": "Analog",

@@ -1341,17 +1341,36 @@
           "description": "Configurar a aparência do widget de relógio.",
           "label": "Widget de Relógio"
         },
+        "clock-display": {
+          "description": "Personalize a exibição do seu relógio adicionando tokens da lista abaixo. Para usar o formato de 12 horas, você deve incluir o token 'AP'.",
+          "label": "Exibição do relógio"
+        },
+        "custom-font": {
+          "description": "Selecione uma fonte personalizada para a exibição do relógio.",
+          "label": "Fonte personalizada",
+          "placeholder": "Selecionar fonte personalizada...",
+          "search-placeholder": "Procurar fontes..."
+        },
+        "format": {
+          "description": "Dica: Use \\n para criar uma quebra de linha.",
+          "label": "Formato"
+        },
         "minimal-mode": {
           "description": "Usar uma exibição de relógio minimalista com hora e data.",
           "label": "Modo minimalista"
         },
+        "preview": "Pré-visualização",
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget de relógio.",
           "label": "Mostrar plano de fundo"
         },
-        "show-month-name": {
-          "description": "Exibir o nome do mês na data. Quando desativado, mostra o número do mês.",
-          "label": "Mostrar nome do mês"
+        "use-custom-font": {
+          "description": "Substitua a fonte padrão por uma fonte personalizada para o relógio.",
+          "label": "Usar fonte personalizada"
+        },
+        "use-primary-color": {
+          "description": "Quando ativado, aplica a cor primária para dar ênfase.",
+          "label": "Usar cor primária"
         },
         "style": {
           "analog": "Analógico",

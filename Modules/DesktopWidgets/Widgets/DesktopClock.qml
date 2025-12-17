@@ -11,6 +11,9 @@ DraggableDesktopWidget {
   readonly property var now: Time.now
 
   property color clockTextColor: {
+    if (usePrimaryColor) {
+      return Color.mPrimary;
+    }
     var txtColor = widgetData && widgetData.textColor ? widgetData.textColor : "";
     return (txtColor && txtColor !== "") ? txtColor : Color.mOnSurface;
   }
@@ -22,7 +25,10 @@ DraggableDesktopWidget {
   property bool showSeconds: (widgetData && widgetData.showSeconds !== undefined) ? widgetData.showSeconds : true
   property bool showDate: (widgetData && widgetData.showDate !== undefined) ? widgetData.showDate : true
   property string clockStyle: (widgetData && widgetData.clockStyle) ? widgetData.clockStyle : "digital"
-  property bool showMonthName: (widgetData && widgetData.showMonthName !== undefined) ? widgetData.showMonthName : true
+  property bool usePrimaryColor: (widgetData && widgetData.usePrimaryColor !== undefined) ? widgetData.usePrimaryColor : false
+  property bool useCustomFont: (widgetData && widgetData.useCustomFont !== undefined) ? widgetData.useCustomFont : false
+  property string customFont: (widgetData && widgetData.customFont) ? widgetData.customFont : ""
+  property string format: (widgetData && widgetData.format) ? widgetData.format : "HH:mm\\nd MMMM yyyy"
 
   readonly property real contentPadding: clockStyle === "minimal" ? Style.marginL : Style.marginXL
   implicitWidth: contentLoader.item ? (contentLoader.item.implicitWidth || contentLoader.item.width || 0) + contentPadding * 2 : 0
@@ -49,37 +55,27 @@ DraggableDesktopWidget {
   Component {
     id: minimalClockComponent
     ColumnLayout {
-      spacing: Style.marginXS
+      spacing: -2
       opacity: root.widgetOpacity
 
-      NText {
-        text: {
-          var timeFormat = Settings.data.location.use12hourFormat ? "hh:mm AP" : "HH:mm";
-          return I18n.locale.toString(root.now, timeFormat);
-        }
-        pointSize: Style.fontSizeXXL
-        font.weight: Style.fontWeightBold
-        color: clockTextColor
-        family: Settings.data.ui.fontFixed
-        Layout.alignment: Qt.AlignHCenter
-      }
-
-      NText {
-        text: {
-          if (root.showMonthName) {
-            return I18n.locale.toString(root.now, "d MMMM yyyy");
-          } else {
-            // Format with month number: "17 12 2025"
-            var day = root.now.getDate();
-            var month = root.now.getMonth() + 1; // getMonth() is 0-based
-            var year = root.now.getFullYear();
-            return I18n.locale.toString(root.now, "d") + " " + month.toString() + " " + year.toString();
+      Repeater {
+        model: I18n.locale.toString(root.now, root.format.trim()).split("\\n")
+        delegate: NText {
+          visible: text !== ""
+          text: modelData
+          family: root.useCustomFont && root.customFont ? root.customFont : Settings.data.ui.fontDefault
+          pointSize: {
+            if (model.length == 1) {
+              return Style.fontSizeXXL;
+            } else {
+              return (index == 0) ? Style.fontSizeXXL : Style.fontSizeM;
+            }
           }
+          font.weight: Style.fontWeightBold
+          color: root.clockTextColor
+          wrapMode: Text.WordWrap
+          Layout.alignment: Qt.AlignHCenter
         }
-        pointSize: Style.fontSizeM
-        font.weight: Style.fontWeightMedium
-        color: clockTextColor
-        Layout.alignment: Qt.AlignHCenter
       }
     }
   }

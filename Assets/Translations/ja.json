@@ -1341,17 +1341,36 @@
           "description": "時計ウィジェットの外観を設定します。",
           "label": "時計ウィジェット"
         },
+        "clock-display": {
+          "description": "以下のトークンを使用して時計の表示をカスタマイズします。12時間表記にするには AP トークンを含める必要があります。",
+          "label": "時計の表示形式"
+        },
+        "custom-font": {
+          "description": "時計表示用のカスタムフォントを選択します。",
+          "label": "カスタムフォント",
+          "placeholder": "カスタムフォントを選択...",
+          "search-placeholder": "フォントを検索..."
+        },
+        "format": {
+          "description": "ヒント: \\n を使用すると改行できます。",
+          "label": "フォーマット"
+        },
         "minimal-mode": {
           "description": "時刻と日付を含むミニマルな時計表示を使用します。",
           "label": "ミニマルモード"
         },
+        "preview": "プレビュー",
         "show-background": {
           "description": "時計ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
         },
-        "show-month-name": {
-          "description": "日付に月名を表示します。無効にすると、月番号が表示されます。",
-          "label": "月名を表示"
+        "use-custom-font": {
+          "description": "デフォルトのフォント設定を上書きし、時計にカスタムフォントを使用します。",
+          "label": "カスタムフォントを使用"
+        },
+        "use-primary-color": {
+          "description": "有効にすると、強調のためにプライマリカラーが適用されます。",
+          "label": "プライマリカラーを使用"
         },
         "style": {
           "analog": "アナログ",

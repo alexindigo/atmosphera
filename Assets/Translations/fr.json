@@ -1341,17 +1341,36 @@
           "description": "Configurer l'apparence du widget horloge.",
           "label": "Widget d'horloge"
         },
+        "clock-display": {
+          "description": "Personnalisez l'affichage de votre horloge en ajoutant des jetons de la liste ci-dessous. Pour utiliser le format 12 heures, vous devez inclure le jeton 'AP'.",
+          "label": "Affichage de l'horloge"
+        },
+        "custom-font": {
+          "description": "Sélectionner une police personnalisée pour l'affichage de l'horloge.",
+          "label": "Police personnalisée",
+          "placeholder": "Sélectionner une police personnalisée...",
+          "search-placeholder": "Rechercher des polices..."
+        },
+        "format": {
+          "description": "Astuce : Utilisez \\n pour créer un saut de ligne.",
+          "label": "Format"
+        },
         "minimal-mode": {
           "description": "Utiliser un affichage d'horloge minimaliste avec l'heure et la date.",
           "label": "Mode minimaliste"
         },
+        "preview": "Aperçu",
         "show-background": {
           "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
           "label": "Afficher l'arrière-plan"
         },
-        "show-month-name": {
-          "description": "Afficher le nom du mois dans la date. Lorsqu'il est désactivé, affiche le numéro du mois.",
-          "label": "Afficher le nom du mois"
+        "use-custom-font": {
+          "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
+          "label": "Utiliser une police personnalisée."
+        },
+        "use-primary-color": {
+          "description": "Lorsque cette option est activée, la couleur principale est utilisée pour la mise en évidence.",
+          "label": "Utiliser la couleur principale"
         },
         "style": {
           "analog": "Analogique",
