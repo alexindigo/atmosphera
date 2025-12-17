@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Toon een klokwidget op het bureaublad.",
-          "label": "Klokwidget inschakelen"
-        },
-        "height": {
-          "description": "Hoogte van de klokwidget in pixels.",
-          "label": "Hoogte"
-        },
-        "section": {
-          "description": "Configureer de weergave van de klokwidget.",
-          "label": "Klokwidget"
-        },
         "clock-display": {
           "description": "Pas de weergave van je klok aan door tokens uit onderstaande lijst toe te voegen. Om de 12-uursnotatie te gebruiken, moet je de 'AP'-token opnemen.",
           "label": "Klokweergave"
@@ -1351,33 +1339,30 @@
           "placeholder": "Selecteer aangepast lettertype...",
           "search-placeholder": "Lettertypen zoeken..."
         },
+        "enabled": {
+          "description": "Toon een klokwidget op het bureaublad.",
+          "label": "Klokwidget inschakelen"
+        },
         "format": {
           "description": "Tip: gebruik \\n om een regeleinde te maken.",
           "label": "Formaat"
+        },
+        "height": {
+          "description": "Hoogte van de klokwidget in pixels.",
+          "label": "Hoogte"
         },
         "minimal-mode": {
           "description": "Gebruik een minimale klokweergave met tijd en datum.",
           "label": "Minimale modus"
         },
         "preview": "Voorbeeld",
+        "section": {
+          "description": "Configureer de weergave van de klokwidget.",
+          "label": "Klokwidget"
+        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
-        },
-        "use-custom-font": {
-          "description": "Overschrijf het standaardlettertype met een aangepast lettertype voor de klok.",
-          "label": "Aangepast lettertype gebruiken"
-        },
-        "use-primary-color": {
-          "description": "Indien ingeschakeld wordt de primaire kleur gebruikt voor nadruk.",
-          "label": "Primaire kleur gebruiken"
-        },
-        "style": {
-          "analog": "Analoog",
-          "description": "Kies de weergavestijl van de klok.",
-          "digital": "Digitaal",
-          "label": "Klokstijl",
-          "minimal": "Minimaal"
         },
         "show-date": {
           "description": "Toon de huidige datum onder de tijd.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Toon seconden in de tijd.",
           "label": "Toon seconden"
+        },
+        "style": {
+          "analog": "Analoog",
+          "description": "Kies de weergavestijl van de klok.",
+          "digital": "Digitaal",
+          "label": "Klokstijl",
+          "minimal": "Minimaal"
+        },
+        "use-custom-font": {
+          "description": "Overschrijf het standaardlettertype met een aangepast lettertype voor de klok.",
+          "label": "Aangepast lettertype gebruiken"
+        },
+        "use-primary-color": {
+          "description": "Indien ingeschakeld wordt de primaire kleur gebruikt voor nadruk.",
+          "label": "Primaire kleur gebruiken"
         },
         "width": {
           "description": "Breedte van de klokwidget in pixels.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
-          "label": "Verbergmodus"
-        },
         "enabled": {
           "description": "Toon een mediaplayer-widget op het bureaublad.",
           "label": "Mediaspeler-widget inschakelen"
+        },
+        "hide-mode": {
+          "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
+          "label": "Verbergmodus"
         },
         "section": {
           "description": "Configureer het uiterlijk van de mediapeler-widget.",

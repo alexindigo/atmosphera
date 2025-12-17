@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Masaüstünde bir saat aracı göster.",
-          "label": "Saat widget'ını etkinleştir"
-        },
-        "height": {
-          "description": "Saat aracı yüksekliği piksel cinsinden.",
-          "label": "Yükseklik"
-        },
-        "section": {
-          "description": "Saat aracı görünümünü yapılandırın.",
-          "label": "Saat Widget'ı"
-        },
         "clock-display": {
           "description": "Saatinizin görüntüsünü özelleştirmek için aşağıdaki listeden jetonları ekleyin. 12 saat formatını kullanmak için 'AP' jetonunu eklemelisiniz.",
           "label": "Saat görüntüleme"
@@ -1351,33 +1339,30 @@
           "placeholder": "Özel yazı tipi seçin...",
           "search-placeholder": "Yazı tiplerini ara..."
         },
+        "enabled": {
+          "description": "Masaüstünde bir saat aracı göster.",
+          "label": "Saat widget'ını etkinleştir"
+        },
         "format": {
           "description": "İpucu: Bir satır sonu oluşturmak için \\n kullanın.",
           "label": "Biçim"
+        },
+        "height": {
+          "description": "Saat aracı yüksekliği piksel cinsinden.",
+          "label": "Yükseklik"
         },
         "minimal-mode": {
           "description": "Zaman ve tarih içeren minimal bir saat görüntüsü kullanın.",
           "label": "Minimal mod"
         },
         "preview": "Önizleme",
+        "section": {
+          "description": "Saat aracı görünümünü yapılandırın.",
+          "label": "Saat Widget'ı"
+        },
         "show-background": {
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"
-        },
-        "use-custom-font": {
-          "description": "Saat için varsayılan yazı tipi seçimini özel bir yazı tipiyle geçersiz kılın.",
-          "label": "Özel yazı tipi kullan"
-        },
-        "use-primary-color": {
-          "description": "Etkinleştirildiğinde, bu vurgu için birincil rengi uygular.",
-          "label": "Birincil rengi kullan"
-        },
-        "style": {
-          "analog": "Analog",
-          "description": "Saat görüntüleme stilini seçin.",
-          "digital": "Dijital",
-          "label": "Saat stili",
-          "minimal": "Minimal"
         },
         "show-date": {
           "description": "Saati gösterdikten sonra, mevcut tarihi de göster.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Saniyeleri saatte göster.",
           "label": "Saniyeleri göster"
+        },
+        "style": {
+          "analog": "Analog",
+          "description": "Saat görüntüleme stilini seçin.",
+          "digital": "Dijital",
+          "label": "Saat stili",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Saat için varsayılan yazı tipi seçimini özel bir yazı tipiyle geçersiz kılın.",
+          "label": "Özel yazı tipi kullan"
+        },
+        "use-primary-color": {
+          "description": "Etkinleştirildiğinde, bu vurgu için birincil rengi uygular.",
+          "label": "Birincil rengi kullan"
         },
         "width": {
           "description": "Saat widget'ının piksel cinsinden genişliği.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
-          "label": "Gizleme modu"
-        },
         "enabled": {
           "description": "Masaüstünde bir medya oynatıcı aracı göster.",
           "label": "Medya oynatıcı widget'ını etkinleştir."
+        },
+        "hide-mode": {
+          "description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
+          "label": "Gizleme modu"
         },
         "section": {
           "description": "Medya oynatıcı araç görünümünü yapılandırın.",

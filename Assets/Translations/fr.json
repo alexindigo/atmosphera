@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Afficher un widget d'horloge sur le bureau.",
-          "label": "Activer le widget horloge"
-        },
-        "height": {
-          "description": "Hauteur du widget horloge en pixels.",
-          "label": "Taille"
-        },
-        "section": {
-          "description": "Configurer l'apparence du widget horloge.",
-          "label": "Widget d'horloge"
-        },
         "clock-display": {
           "description": "Personnalisez l'affichage de votre horloge en ajoutant des jetons de la liste ci-dessous. Pour utiliser le format 12 heures, vous devez inclure le jeton 'AP'.",
           "label": "Affichage de l'horloge"
@@ -1351,33 +1339,30 @@
           "placeholder": "Sélectionner une police personnalisée...",
           "search-placeholder": "Rechercher des polices..."
         },
+        "enabled": {
+          "description": "Afficher un widget d'horloge sur le bureau.",
+          "label": "Activer le widget horloge"
+        },
         "format": {
           "description": "Astuce : Utilisez \\n pour créer un saut de ligne.",
           "label": "Format"
+        },
+        "height": {
+          "description": "Hauteur du widget horloge en pixels.",
+          "label": "Taille"
         },
         "minimal-mode": {
           "description": "Utiliser un affichage d'horloge minimaliste avec l'heure et la date.",
           "label": "Mode minimaliste"
         },
         "preview": "Aperçu",
+        "section": {
+          "description": "Configurer l'apparence du widget horloge.",
+          "label": "Widget d'horloge"
+        },
         "show-background": {
           "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
           "label": "Afficher l'arrière-plan"
-        },
-        "use-custom-font": {
-          "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
-          "label": "Utiliser une police personnalisée."
-        },
-        "use-primary-color": {
-          "description": "Lorsque cette option est activée, la couleur principale est utilisée pour la mise en évidence.",
-          "label": "Utiliser la couleur principale"
-        },
-        "style": {
-          "analog": "Analogique",
-          "description": "Choisissez le style d'affichage de l'horloge.",
-          "digital": "Numérique",
-          "label": "Style d'horloge",
-          "minimal": "Minimal"
         },
         "show-date": {
           "description": "Afficher la date actuelle sous l'heure.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Afficher les secondes dans l'heure.",
           "label": "Afficher les secondes"
+        },
+        "style": {
+          "analog": "Analogique",
+          "description": "Choisissez le style d'affichage de l'horloge.",
+          "digital": "Numérique",
+          "label": "Style d'horloge",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
+          "label": "Utiliser une police personnalisée."
+        },
+        "use-primary-color": {
+          "description": "Lorsque cette option est activée, la couleur principale est utilisée pour la mise en évidence.",
+          "label": "Utiliser la couleur principale"
         },
         "width": {
           "description": "Largeur du widget horloge en pixels.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
-          "label": "Mode de masquage"
-        },
         "enabled": {
           "description": "Afficher un widget de lecteur multimédia sur le bureau.",
           "label": "Activer le widget lecteur multimédia"
+        },
+        "hide-mode": {
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
+          "label": "Mode de masquage"
         },
         "section": {
           "description": "Configurer l'apparence du widget lecteur multimédia.",

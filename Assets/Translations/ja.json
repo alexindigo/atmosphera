@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "デスクトップに時計ウィジェットを表示する。",
-          "label": "時計ウィジェットを有効にする"
-        },
-        "height": {
-          "description": "時計ウィジェットの高さ（ピクセル単位）。",
-          "label": "高さ"
-        },
-        "section": {
-          "description": "時計ウィジェットの外観を設定します。",
-          "label": "時計ウィジェット"
-        },
         "clock-display": {
           "description": "以下のトークンを使用して時計の表示をカスタマイズします。12時間表記にするには AP トークンを含める必要があります。",
           "label": "時計の表示形式"
@@ -1351,33 +1339,30 @@
           "placeholder": "カスタムフォントを選択...",
           "search-placeholder": "フォントを検索..."
         },
+        "enabled": {
+          "description": "デスクトップに時計ウィジェットを表示する。",
+          "label": "時計ウィジェットを有効にする"
+        },
         "format": {
           "description": "ヒント: \\n を使用すると改行できます。",
           "label": "フォーマット"
+        },
+        "height": {
+          "description": "時計ウィジェットの高さ（ピクセル単位）。",
+          "label": "高さ"
         },
         "minimal-mode": {
           "description": "時刻と日付を含むミニマルな時計表示を使用します。",
           "label": "ミニマルモード"
         },
         "preview": "プレビュー",
+        "section": {
+          "description": "時計ウィジェットの外観を設定します。",
+          "label": "時計ウィジェット"
+        },
         "show-background": {
           "description": "時計ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
-        },
-        "use-custom-font": {
-          "description": "デフォルトのフォント設定を上書きし、時計にカスタムフォントを使用します。",
-          "label": "カスタムフォントを使用"
-        },
-        "use-primary-color": {
-          "description": "有効にすると、強調のためにプライマリカラーが適用されます。",
-          "label": "プライマリカラーを使用"
-        },
-        "style": {
-          "analog": "アナログ",
-          "description": "時計の表示スタイルを選択してください。",
-          "digital": "デジタル",
-          "label": "時計スタイル",
-          "minimal": "ミニマル"
         },
         "show-date": {
           "description": "現在時刻の下に今日の日付を表示しなさい。",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "時刻に秒を表示します。",
           "label": "秒を表示"
+        },
+        "style": {
+          "analog": "アナログ",
+          "description": "時計の表示スタイルを選択してください。",
+          "digital": "デジタル",
+          "label": "時計スタイル",
+          "minimal": "ミニマル"
+        },
+        "use-custom-font": {
+          "description": "デフォルトのフォント設定を上書きし、時計にカスタムフォントを使用します。",
+          "label": "カスタムフォントを使用"
+        },
+        "use-primary-color": {
+          "description": "有効にすると、強調のためにプライマリカラーが適用されます。",
+          "label": "プライマリカラーを使用"
         },
         "width": {
           "description": "クロックウィジェットの幅（ピクセル単位）。",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
-          "label": "非表示モード"
-        },
         "enabled": {
           "description": "デスクトップにメディアプレーヤーウィジェットを表示する。",
           "label": "メディアプレーヤーウィジェットを有効にする"
+        },
+        "hide-mode": {
+          "description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
+          "label": "非表示モード"
         },
         "section": {
           "description": "メディアプレーヤーウィジェットの外観を設定します。",

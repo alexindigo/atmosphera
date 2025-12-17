@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "在桌面上显示一个时钟小部件。",
-          "label": "启用时钟小部件"
-        },
-        "height": {
-          "description": "时钟小部件的高度，以像素为单位。",
-          "label": "高度"
-        },
-        "section": {
-          "description": "配置时钟小部件外观。",
-          "label": "时钟小部件"
-        },
         "clock-display": {
           "description": "通过从下面的列表添加标记来自定义时钟显示。要使用 12 小时制，必须包含 'AP' 标记。",
           "label": "时钟显示"
@@ -1351,33 +1339,30 @@
           "placeholder": "选择自定义字体...",
           "search-placeholder": "搜索字体..."
         },
+        "enabled": {
+          "description": "在桌面上显示一个时钟小部件。",
+          "label": "启用时钟小部件"
+        },
         "format": {
           "description": "提示：使用 \\n 创建换行。",
           "label": "格式"
+        },
+        "height": {
+          "description": "时钟小部件的高度，以像素为单位。",
+          "label": "高度"
         },
         "minimal-mode": {
           "description": "使用包含时间和日期的简约时钟显示。",
           "label": "简约模式"
         },
         "preview": "预览",
+        "section": {
+          "description": "配置时钟小部件外观。",
+          "label": "时钟小部件"
+        },
         "show-background": {
           "description": "显示时钟小部件的背景容器。",
           "label": "显示背景"
-        },
-        "use-custom-font": {
-          "description": "使用自定义字体覆盖时钟的默认字体选择。",
-          "label": "使用自定义字体"
-        },
-        "use-primary-color": {
-          "description": "启用后，将应用主颜色进行强调。",
-          "label": "使用主颜色"
-        },
-        "style": {
-          "analog": "模拟",
-          "description": "选择时钟显示样式。",
-          "digital": "数字",
-          "label": "时钟样式",
-          "minimal": "简约"
         },
         "show-date": {
           "description": "在时间下方显示当前日期。",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "在时间中显示秒。",
           "label": "显示秒数"
+        },
+        "style": {
+          "analog": "模拟",
+          "description": "选择时钟显示样式。",
+          "digital": "数字",
+          "label": "时钟样式",
+          "minimal": "简约"
+        },
+        "use-custom-font": {
+          "description": "使用自定义字体覆盖时钟的默认字体选择。",
+          "label": "使用自定义字体"
+        },
+        "use-primary-color": {
+          "description": "启用后，将应用主颜色进行强调。",
+          "label": "使用主颜色"
         },
         "width": {
           "description": "时钟小部件的宽度，以像素为单位。",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "控制当没有媒体播放时小部件的行为。",
-          "label": "隐藏模式"
-        },
         "enabled": {
           "description": "在桌面上显示媒体播放器小部件。",
           "label": "启用媒体播放器小部件"
+        },
+        "hide-mode": {
+          "description": "控制当没有媒体播放时小部件的行为。",
+          "label": "隐藏模式"
         },
         "section": {
           "description": "配置媒体播放器小部件外观。",

@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Show a clock widget on the desktop.",
-          "label": "Enable clock widget"
-        },
-        "height": {
-          "description": "Height of the clock widget in pixels.",
-          "label": "Height"
-        },
-        "section": {
-          "description": "Configure the clock widget appearance.",
-          "label": "Clock Widget"
-        },
         "clock-display": {
           "description": "Customize your clock's display by adding tokens from the list below. To use the 12-hour format, you must include the 'AP' token.",
           "label": "Clock display"
@@ -1351,33 +1339,30 @@
           "placeholder": "Select custom font...",
           "search-placeholder": "Search fonts..."
         },
+        "enabled": {
+          "description": "Show a clock widget on the desktop.",
+          "label": "Enable clock widget"
+        },
         "format": {
           "description": "Tip: Use \\n to create a line break.",
           "label": "Format"
+        },
+        "height": {
+          "description": "Height of the clock widget in pixels.",
+          "label": "Height"
         },
         "minimal-mode": {
           "description": "Use a minimal clock display with time and date.",
           "label": "Minimal mode"
         },
         "preview": "Preview",
+        "section": {
+          "description": "Configure the clock widget appearance.",
+          "label": "Clock Widget"
+        },
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
-        },
-        "use-custom-font": {
-          "description": "Override the default font selection with a custom font for the clock.",
-          "label": "Use custom font"
-        },
-        "use-primary-color": {
-          "description": "When enabled, this applies the primary color for emphasis.",
-          "label": "Use primary color"
-        },
-        "style": {
-          "analog": "Analog",
-          "description": "Choose the clock display style.",
-          "digital": "Digital",
-          "label": "Clock style",
-          "minimal": "Minimal"
         },
         "show-date": {
           "description": "Display the current date below the time.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Display seconds in the time.",
           "label": "Show seconds"
+        },
+        "style": {
+          "analog": "Analog",
+          "description": "Choose the clock display style.",
+          "digital": "Digital",
+          "label": "Clock style",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Override the default font selection with a custom font for the clock.",
+          "label": "Use custom font"
+        },
+        "use-primary-color": {
+          "description": "When enabled, this applies the primary color for emphasis.",
+          "label": "Use primary color"
         },
         "width": {
           "description": "Width of the clock widget in pixels.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Controls how the widget behaves when no media is playing.",
-          "label": "Hiding mode"
-        },
         "enabled": {
           "description": "Show a media player widget on the desktop.",
           "label": "Enable media player widget"
+        },
+        "hide-mode": {
+          "description": "Controls how the widget behaves when no media is playing.",
+          "label": "Hiding mode"
         },
         "section": {
           "description": "Configure the media player widget appearance.",

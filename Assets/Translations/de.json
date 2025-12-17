@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Eine Uhr als Widget auf dem Desktop anzeigen.",
-          "label": "Uhr-Widget aktivieren"
-        },
-        "height": {
-          "description": "Höhe des Uhr-Widgets in Pixeln.",
-          "label": "Höhe"
-        },
-        "section": {
-          "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
-          "label": "Uhr-Widget"
-        },
         "clock-display": {
           "description": "Passen Sie die Anzeige Ihrer Uhr an, indem Sie Token aus der Liste unten hinzufügen. Um das 12-Stunden-Format zu verwenden, müssen Sie das 'AP'-Token einschließen.",
           "label": "Uhrenanzeige"
@@ -1351,33 +1339,30 @@
           "placeholder": "Benutzerdefinierte Schriftart auswählen...",
           "search-placeholder": "Schriftarten suchen..."
         },
+        "enabled": {
+          "description": "Eine Uhr als Widget auf dem Desktop anzeigen.",
+          "label": "Uhr-Widget aktivieren"
+        },
         "format": {
           "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen.",
           "label": "Format"
+        },
+        "height": {
+          "description": "Höhe des Uhr-Widgets in Pixeln.",
+          "label": "Höhe"
         },
         "minimal-mode": {
           "description": "Verwende eine minimale Uhr-Anzeige mit Zeit und Datum.",
           "label": "Minimaler Modus"
         },
         "preview": "Vorschau",
+        "section": {
+          "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
+          "label": "Uhr-Widget"
+        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"
-        },
-        "use-custom-font": {
-          "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
-          "label": "Benutzerdefinierte Schriftart verwenden"
-        },
-        "use-primary-color": {
-          "description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung angewendet.",
-          "label": "Primärfarbe verwenden"
-        },
-        "style": {
-          "analog": "Analog",
-          "description": "Wähle den Anzeigestil der Uhr.",
-          "digital": "Digital",
-          "label": "Uhrstil",
-          "minimal": "Minimal"
         },
         "show-date": {
           "description": "Zeige das aktuelle Datum unter der Uhrzeit an.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Sekunden in der Zeit anzeigen.",
           "label": "Sekunden anzeigen"
+        },
+        "style": {
+          "analog": "Analog",
+          "description": "Wähle den Anzeigestil der Uhr.",
+          "digital": "Digital",
+          "label": "Uhrstil",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
+          "label": "Benutzerdefinierte Schriftart verwenden"
+        },
+        "use-primary-color": {
+          "description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung angewendet.",
+          "label": "Primärfarbe verwenden"
         },
         "width": {
           "description": "Breite des Uhr-Widgets in Pixeln.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
-          "label": "Ausblendmodus"
-        },
         "enabled": {
           "description": "Zeige ein Media-Player-Widget auf dem Desktop an.",
           "label": "Medienplayer-Widget aktivieren"
+        },
+        "hide-mode": {
+          "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
+          "label": "Ausblendmodus"
         },
         "section": {
           "description": "Konfigurieren Sie das Erscheinungsbild des Media-Player-Widgets.",

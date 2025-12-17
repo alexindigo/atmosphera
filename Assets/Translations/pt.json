@@ -1329,18 +1329,6 @@
     },
     "desktop-widgets": {
       "clock": {
-        "enabled": {
-          "description": "Mostrar um widget de relógio na área de trabalho.",
-          "label": "Ativar widget de relógio"
-        },
-        "height": {
-          "description": "Altura do widget do relógio em pixels.",
-          "label": "Altura"
-        },
-        "section": {
-          "description": "Configurar a aparência do widget de relógio.",
-          "label": "Widget de Relógio"
-        },
         "clock-display": {
           "description": "Personalize a exibição do seu relógio adicionando tokens da lista abaixo. Para usar o formato de 12 horas, você deve incluir o token 'AP'.",
           "label": "Exibição do relógio"
@@ -1351,33 +1339,30 @@
           "placeholder": "Selecionar fonte personalizada...",
           "search-placeholder": "Procurar fontes..."
         },
+        "enabled": {
+          "description": "Mostrar um widget de relógio na área de trabalho.",
+          "label": "Ativar widget de relógio"
+        },
         "format": {
           "description": "Dica: Use \\n para criar uma quebra de linha.",
           "label": "Formato"
+        },
+        "height": {
+          "description": "Altura do widget do relógio em pixels.",
+          "label": "Altura"
         },
         "minimal-mode": {
           "description": "Usar uma exibição de relógio minimalista com hora e data.",
           "label": "Modo minimalista"
         },
         "preview": "Pré-visualização",
+        "section": {
+          "description": "Configurar a aparência do widget de relógio.",
+          "label": "Widget de Relógio"
+        },
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget de relógio.",
           "label": "Mostrar plano de fundo"
-        },
-        "use-custom-font": {
-          "description": "Substitua a fonte padrão por uma fonte personalizada para o relógio.",
-          "label": "Usar fonte personalizada"
-        },
-        "use-primary-color": {
-          "description": "Quando ativado, aplica a cor primária para dar ênfase.",
-          "label": "Usar cor primária"
-        },
-        "style": {
-          "analog": "Analógico",
-          "description": "Escolha o estilo de exibição do relógio.",
-          "digital": "Digital",
-          "label": "Estilo do relógio",
-          "minimal": "Minimal"
         },
         "show-date": {
           "description": "Exiba a data atual abaixo da hora.",
@@ -1386,6 +1371,21 @@
         "show-seconds": {
           "description": "Exibir segundos na hora.",
           "label": "Mostrar segundos"
+        },
+        "style": {
+          "analog": "Analógico",
+          "description": "Escolha o estilo de exibição do relógio.",
+          "digital": "Digital",
+          "label": "Estilo do relógio",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Substitua a fonte padrão por uma fonte personalizada para o relógio.",
+          "label": "Usar fonte personalizada"
+        },
+        "use-primary-color": {
+          "description": "Quando ativado, aplica a cor primária para dar ênfase.",
+          "label": "Usar cor primária"
         },
         "width": {
           "description": "Largura do widget do relógio em pixels.",
@@ -1412,13 +1412,13 @@
         }
       },
       "media-player": {
-        "hide-mode": {
-          "description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
-          "label": "Modo de ocultação"
-        },
         "enabled": {
           "description": "Mostrar um widget de reprodutor de mídia na área de trabalho.",
           "label": "Ativar widget do reprodutor de mídia"
+        },
+        "hide-mode": {
+          "description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
+          "label": "Modo de ocultação"
         },
         "section": {
           "description": "Configurar a aparência do widget do reprodutor de mídia.",
