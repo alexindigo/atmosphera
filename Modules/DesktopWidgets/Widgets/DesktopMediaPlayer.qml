@@ -13,6 +13,17 @@ DraggableDesktopWidget {
 
   defaultY: 200
 
+  // Widget settings
+  readonly property string hideMode: (widgetData.hideMode !== undefined) ? widgetData.hideMode : "visible"
+  readonly property bool hasPlayer: MediaService.currentPlayer !== null
+  readonly property bool isPlaying: MediaService.isPlaying
+
+  // State
+  readonly property bool shouldHideIdle: (hideMode === "idle") && !isPlaying
+  readonly property bool shouldHideEmpty: !hasPlayer && hideMode === "hidden"
+  readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !Settings.data.desktopWidgets.editMode
+  visible: !isHidden
+
   readonly property bool showPrev: hasPlayer && MediaService.canGoPrevious
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
   readonly property int visibleButtonCount: 1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)
@@ -25,9 +36,6 @@ DraggableDesktopWidget {
   implicitHeight: contentLayout.implicitHeight + Style.marginM * 2
   width: implicitWidth
   height: implicitHeight
-
-  readonly property bool hasPlayer: MediaService.currentPlayer !== null
-  readonly property bool isPlaying: MediaService.isPlaying
 
   // Visualizer overlay (needs to be inside container bounds with masking)
   Item {
