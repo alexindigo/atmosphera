@@ -45,6 +45,8 @@ NBox {
       id: timerDisplayItem
       Layout.fillWidth: true
       Layout.preferredHeight: (totalSeconds > 0) ? 160 * Style.uiScaleRatio : timerInput.implicitHeight
+      Layout.topMargin: Style.marginM
+      Layout.bottomMargin: Style.marginM
       Layout.alignment: Qt.AlignHCenter
 
       property string inputBuffer: ""
@@ -69,6 +71,27 @@ NBox {
             // Scroll down - decrease time
             Time.timerRemainingSeconds = Math.max(0, Time.timerRemainingSeconds - step);
             event.accepted = true;
+          }
+        }
+      }
+
+      // Textbox border
+      Rectangle {
+        id: textboxBorder
+        anchors.centerIn: parent
+        anchors.margins: Style.marginM
+        width: Math.max(timerInput.implicitWidth + Style.marginM * 2, parent.width * 0.8)
+        height: timerInput.implicitHeight + Style.marginM * 2
+        radius: Style.iRadiusM
+        color: Color.mSurface
+        border.color: (timerInput.activeFocus || timerDisplayItem.isEditing) ? Color.mPrimary : Color.mOutline
+        border.width: Style.borderS
+        visible: !isRunning && !isStopwatchMode && totalSeconds === 0
+        z: 0
+
+        Behavior on border.color {
+          ColorAnimation {
+            duration: Style.animationFast
           }
         }
       }
