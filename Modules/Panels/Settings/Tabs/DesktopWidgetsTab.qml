@@ -92,7 +92,15 @@ ColumnLayout {
       onAddWidget: (widgetId, section) => _addWidgetToMonitor(modelData.name, widgetId)
       onRemoveWidget: (section, index) => _removeWidgetFromMonitor(modelData.name, index)
       onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsForMonitor(modelData.name, index, settings)
+      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
     }
+  }
+
+  // Shared Plugin Settings Popup
+  NPluginSettingsPopup {
+    id: pluginSettingsDialog
+    parent: Overlay.overlay
+    showToastOnSave: false
   }
 
   Component.onCompleted: {
