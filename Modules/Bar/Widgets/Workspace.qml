@@ -759,7 +759,7 @@ Item {
               source: ThemeIcons.iconForAppId(model.appId)
               smooth: true
               asynchronous: true
-              opacity: model.isFocused ? Style.opacityFull : 0.6
+              scale: model.isFocused ? 1.0 : 0.8
               layer.enabled: root.colorizeIcons && !model.isFocused
 
               Behavior on opacity {
