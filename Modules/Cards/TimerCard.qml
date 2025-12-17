@@ -20,7 +20,6 @@ NBox {
     spacing: Style.marginM
     clip: true
 
-    // Header
     RowLayout {
       Layout.fillWidth: true
       spacing: Style.marginS
@@ -62,20 +61,17 @@ NBox {
           if (!enabled) {
             return;
           }
-          const step = 5; // 5 second steps
+          const step = 5;
           if (event.angleDelta.y > 0) {
-            // Scroll up - increase time
             Time.timerRemainingSeconds = Math.max(0, Time.timerRemainingSeconds + step);
             event.accepted = true;
           } else if (event.angleDelta.y < 0) {
-            // Scroll down - decrease time
             Time.timerRemainingSeconds = Math.max(0, Time.timerRemainingSeconds - step);
             event.accepted = true;
           }
         }
       }
 
-      // Textbox border
       Rectangle {
         id: textboxBorder
         anchors.centerIn: parent
@@ -136,14 +132,12 @@ NBox {
 
           ctx.reset();
 
-          // Background circle (full track)
           ctx.beginPath();
           ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
           ctx.lineWidth = 4;
           ctx.strokeStyle = Qt.alpha(Color.mOnSurface, 0.2);
           ctx.stroke();
 
-          // Progress arc (elapsed portion)
           if (progressRatio > 0) {
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + progressRatio * 2 * Math.PI);
@@ -155,237 +149,282 @@ NBox {
         }
       }
 
-      TextInput {
-        id: timerInput
+      Item {
+        id: timerContainer
         anchors.centerIn: parent
-        width: Math.max(implicitWidth, parent.width)
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        selectByMouse: false
-        cursorVisible: false
-        cursorDelegate: Item {} // Empty cursor delegate to hide cursor
-        // Only allow editing when:
-        // 1. Not in stopwatch mode
-        // 2. Timer is not running
-        // 3. Timer has never been started (totalSeconds == 0) - this includes after reset
-        // This prevents editing when paused (when totalSeconds > 0)
-        readOnly: isStopwatchMode || isRunning || totalSeconds > 0
-        enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
-        font.family: Settings.data.ui.fontFixed
+        width: timerInput.implicitWidth
+        height: timerInput.implicitHeight + 8 // Always reserve space for underline
 
-        // Calculate if hours are being shown (for font sizing)
-        readonly property bool showingHours: {
-          if (isStopwatchMode) {
-            return elapsedSeconds >= 3600;
+        TextInput {
+          id: timerInput
+          anchors.verticalCenter: parent.verticalCenter
+          anchors.horizontalCenter: parent.horizontalCenter
+          width: Math.max(implicitWidth, timerDisplayItem.width)
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+          selectByMouse: false
+          cursorVisible: false
+          cursorDelegate: Item {} // Empty cursor delegate to hide cursor
+          // Only allow editing when:
+          // 1. Not in stopwatch mode
+          // 2. Timer is not running
+          // 3. Timer has never been started (totalSeconds == 0) - this includes after reset
+          // This prevents editing when paused (when totalSeconds > 0)
+          readOnly: isStopwatchMode || isRunning || totalSeconds > 0
+          enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
+          font.family: Settings.data.ui.fontFixed
+
+          // Calculate if hours are being shown (for font sizing)
+          readonly property bool showingHours: {
+            if (isStopwatchMode) {
+              return elapsedSeconds >= 3600;
+            }
+            // In edit mode, always show hours (HH:MM:SS format)
+            if (timerDisplayItem.isEditing) {
+              return true;
+            }
+            // Show hours if total time >= 1 hour (formatting will show HH:MM:SS)
+            return totalSeconds >= 3600;
           }
-          // In edit mode, always show hours (HH:MM:SS format)
-          if (timerDisplayItem.isEditing) {
-            return true;
+
+          font.pointSize: {
+            if (totalSeconds === 0) {
+              return Style.fontSizeXXXL;
+            }
+            // When running or paused, use smaller font if hours are shown
+            return showingHours ? Style.fontSizeXXL : (Style.fontSizeXXL * 1.2);
           }
-          // Show hours if total time >= 1 hour (formatting will show HH:MM:SS)
-          return totalSeconds >= 3600;
-        }
 
-        font.pointSize: {
-          if (totalSeconds === 0) {
-            return Style.fontSizeXXXL;
+          font.weight: Style.fontWeightBold
+          color: {
+            if (totalSeconds > 0) {
+              return Color.mPrimary;
+            }
+            if (timerDisplayItem.isEditing) {
+              return Color.mPrimary;
+            }
+            return Color.mOnSurface;
           }
-          // When running or paused, use smaller font if hours are shown
-          return showingHours ? Style.fontSizeXXL : (Style.fontSizeXXL * 1.2);
-        }
 
-        font.weight: Style.fontWeightBold
-        color: {
-          if (totalSeconds > 0) {
-            return Color.mPrimary;
+          // Use a computed property that explicitly tracks dependencies
+          property string _cachedText: ""
+          property int _textUpdateCounter: 0
+
+          function updateText() {
+            if (isStopwatchMode) {
+              // For stopwatch, use elapsedSeconds as the reference for formatting
+              _cachedText = formatTime(elapsedSeconds, elapsedSeconds);
+            } else if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer !== "") {
+              // Only use editing mode if we actually have input buffer content
+              _cachedText = formatTimeFromDigits(timerDisplayItem.inputBuffer);
+            } else if (timerDisplayItem.isEditing) {
+              // When editing but buffer is empty, show placeholder (00:00:00)
+              _cachedText = formatTime(0, 0);
+            } else {
+              _cachedText = formatTime(remainingSeconds, totalSeconds);
+            }
+            _textUpdateCounter = _textUpdateCounter + 1;
           }
-          if (timerDisplayItem.isEditing) {
-            return Color.mPrimary;
+
+          text: {
+            const counter = _textUpdateCounter;
+            return _cachedText;
           }
-          return Color.mOnSurface;
-        }
 
-        // Display formatted time, but show input buffer when editing
-        // Use a computed property that explicitly tracks dependencies
-        property string _cachedText: ""
-        property int _textUpdateCounter: 0
-
-        function updateText() {
-          if (isStopwatchMode) {
-            // For stopwatch, use elapsedSeconds as the reference for formatting
-            _cachedText = formatTime(elapsedSeconds, elapsedSeconds);
-          } else if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer !== "") {
-            // Only use editing mode if we actually have input buffer content
-            _cachedText = formatTimeFromDigits(timerDisplayItem.inputBuffer);
-          } else {
-            // When not editing OR when paused (not running), show the actual remaining time
-            _cachedText = formatTime(remainingSeconds, totalSeconds);
+          Connections {
+            target: root
+            function onRemainingSecondsChanged() {
+              timerInput.updateText();
+            }
+            function onIsRunningChanged() {
+              // Update twice to catch updates even if remainingSeconds changes at the same time
+              timerInput.updateText();
+              Qt.callLater(() => {
+                             timerInput.updateText();
+                           });
+            }
+            function onElapsedSecondsChanged() {
+              timerInput.updateText();
+            }
+            function onIsStopwatchModeChanged() {
+              timerInput.updateText();
+            }
           }
-          _textUpdateCounter = _textUpdateCounter + 1;
-        }
 
-        text: {
-          // Reference counter to force binding re-evaluation
-          const counter = _textUpdateCounter;
-          return _cachedText;
-        }
-
-        // Watch for changes to all relevant properties
-        Connections {
-          target: root
-          function onRemainingSecondsChanged() {
-            // Update immediately when remainingSeconds changes
-            timerInput.updateText();
+          Connections {
+            target: Time
+            function onTimerRemainingSecondsChanged() {
+              timerInput.updateText();
+            }
           }
-          function onIsRunningChanged() {
-            // When isRunning changes, update twice - once immediately and once after a delay
-            // This ensures we catch the update even if remainingSeconds changes at the same time
-            timerInput.updateText();
-            Qt.callLater(() => {
-                           timerInput.updateText();
-                         });
+
+          Connections {
+            target: timerDisplayItem
+            function onIsEditingChanged() {
+              timerInput.updateText();
+            }
           }
-          function onElapsedSecondsChanged() {
-            timerInput.updateText();
-          }
-          function onIsStopwatchModeChanged() {
-            timerInput.updateText();
-          }
-        }
 
-        // Also watch Time.timerRemainingSeconds directly as a backup
-        Connections {
-          target: Time
-          function onTimerRemainingSecondsChanged() {
-            timerInput.updateText();
-          }
-        }
+          Component.onCompleted: updateText()
 
-        Connections {
-          target: timerDisplayItem
-          function onIsEditingChanged() {
-            timerInput.updateText();
-          }
-        }
-
-        // Initialize text on component completion
-        Component.onCompleted: updateText()
-
-        // Only accept digit keys - STRICT filtering
-        Keys.onPressed: event => {
-                          // Block everything if running or in stopwatch mode
-                          if (isRunning || isStopwatchMode || totalSeconds > 0) {
-                            event.accepted = true;
-                            return;
-                          }
-
-                          // Get the actual text of the key pressed
-                          const keyText = event.text;
-
-                          // Handle backspace
-                          if (event.key === Qt.Key_Backspace) {
-                            if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer.length > 0) {
-                              timerDisplayItem.inputBuffer = timerDisplayItem.inputBuffer.slice(0, -1);
-                              if (timerDisplayItem.inputBuffer !== "") {
-                                parseDigitsToTime(timerDisplayItem.inputBuffer);
-                              } else {
-                                Time.timerRemainingSeconds = 0;
-                              }
-                            }
-                            event.accepted = true;
-                            return;
-                          }
-
-                          // Handle delete
-                          if (event.key === Qt.Key_Delete) {
-                            if (timerDisplayItem.isEditing) {
-                              timerDisplayItem.inputBuffer = "";
-                              Time.timerRemainingSeconds = 0;
-                            }
-                            event.accepted = true;
-                            return;
-                          }
-
-                          // Handle enter/return
-                          if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            applyTimeFromBuffer();
-                            timerDisplayItem.isEditing = false;
-                            focus = false;
-                            event.accepted = true;
-                            return;
-                          }
-
-                          // Handle escape
-                          if (event.key === Qt.Key_Escape) {
-                            timerDisplayItem.inputBuffer = "";
-                            Time.timerRemainingSeconds = 0;
-                            timerDisplayItem.isEditing = false;
-                            focus = false;
-                            event.accepted = true;
-                            return;
-                          }
-
-                          // STRICT: Only allow single digit characters 0-9
-                          // Check both the key code AND the text to be extra safe
-                          const isDigitKey = event.key >= Qt.Key_0 && event.key <= Qt.Key_9;
-                          const isDigitText = keyText.length === 1 && keyText >= '0' && keyText <= '9';
-
-                          if (isDigitKey && isDigitText) {
-                            // Limit to 6 digits max
-                            if (timerDisplayItem.inputBuffer.length >= 6) {
-                              event.accepted = true; // Block if already at max
+          Keys.onPressed: event => {
+                            if (isRunning || isStopwatchMode || totalSeconds > 0) {
+                              event.accepted = true;
                               return;
                             }
-                            // Add the digit to the buffer
-                            timerDisplayItem.inputBuffer += keyText;
-                            // Update the display and parse
-                            parseDigitsToTime(timerDisplayItem.inputBuffer);
-                            event.accepted = true;
-                          } else {
-                            // Block ALL other keys (including symbols, modifiers, etc.)
-                            event.accepted = true;
+
+                            const keyText = event.text;
+
+                            if (event.key === Qt.Key_Backspace) {
+                              if (timerDisplayItem.isEditing && timerDisplayItem.inputBuffer.length > 0) {
+                                timerDisplayItem.inputBuffer = timerDisplayItem.inputBuffer.slice(0, -1);
+                                if (timerDisplayItem.inputBuffer !== "") {
+                                  parseDigitsToTime(timerDisplayItem.inputBuffer);
+                                } else {
+                                  Time.timerRemainingSeconds = 0;
+                                }
+                              }
+                              event.accepted = true;
+                              return;
+                            }
+
+                            if (event.key === Qt.Key_Delete) {
+                              if (timerDisplayItem.isEditing) {
+                                timerDisplayItem.inputBuffer = "";
+                                Time.timerRemainingSeconds = 0;
+                              }
+                              event.accepted = true;
+                              return;
+                            }
+
+                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                              applyTimeFromBuffer();
+                              timerDisplayItem.isEditing = false;
+                              focus = false;
+                              event.accepted = true;
+                              return;
+                            }
+
+                            if (event.key === Qt.Key_Escape) {
+                              timerDisplayItem.inputBuffer = "";
+                              Time.timerRemainingSeconds = 0;
+                              timerDisplayItem.isEditing = false;
+                              focus = false;
+                              event.accepted = true;
+                              return;
+                            }
+
+                            // Only allow single digit characters 0-9 (check both key code and text)
+                            const isDigitKey = event.key >= Qt.Key_0 && event.key <= Qt.Key_9;
+                            const isDigitText = keyText.length === 1 && keyText >= '0' && keyText <= '9';
+
+                            if (isDigitKey && isDigitText) {
+                              if (timerDisplayItem.inputBuffer.length >= 6) {
+                                event.accepted = true;
+                                return;
+                              }
+                              timerDisplayItem.inputBuffer += keyText;
+                              parseDigitsToTime(timerDisplayItem.inputBuffer);
+                              event.accepted = true;
+                            } else {
+                              event.accepted = true;
+                            }
                           }
-                        }
 
-        Keys.onReturnPressed: {
-          applyTimeFromBuffer();
-          timerDisplayItem.isEditing = false;
-          focus = false;
-        }
-
-        Keys.onEscapePressed: {
-          timerDisplayItem.inputBuffer = "";
-          Time.timerRemainingSeconds = 0;
-          timerDisplayItem.isEditing = false;
-          focus = false;
-        }
-
-        onActiveFocusChanged: {
-          if (activeFocus) {
-            timerDisplayItem.isEditing = true;
-            timerDisplayItem.inputBuffer = "";
-          } else {
+          Keys.onReturnPressed: {
             applyTimeFromBuffer();
             timerDisplayItem.isEditing = false;
+            focus = false;
+          }
+
+          Keys.onEscapePressed: {
             timerDisplayItem.inputBuffer = "";
+            Time.timerRemainingSeconds = 0;
+            timerDisplayItem.isEditing = false;
+            focus = false;
+          }
+
+          onActiveFocusChanged: {
+            if (activeFocus) {
+              timerDisplayItem.isEditing = true;
+              timerDisplayItem.inputBuffer = "";
+            } else {
+              applyTimeFromBuffer();
+              timerDisplayItem.isEditing = false;
+              timerDisplayItem.inputBuffer = "";
+            }
+          }
+
+          MouseArea {
+            anchors.fill: parent
+            enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
+            cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
+            onClicked: {
+              if (!isRunning && !isStopwatchMode && totalSeconds === 0) {
+                timerInput.forceActiveFocus();
+              }
+            }
           }
         }
 
-        MouseArea {
-          anchors.fill: parent
-          // Only allow clicking to edit when timer hasn't been started or has been reset
-          enabled: !isRunning && !isStopwatchMode && totalSeconds === 0
-          cursorShape: enabled ? Qt.IBeamCursor : Qt.ArrowCursor
-          onClicked: {
-            if (!isRunning && !isStopwatchMode && totalSeconds === 0) {
-              timerInput.forceActiveFocus();
+        Rectangle {
+          id: editingUnderline
+          anchors.top: timerInput.bottom
+          anchors.topMargin: 2
+          height: 3
+          radius: 1.5
+          color: Color.mPrimary
+          visible: timerDisplayItem.isEditing && totalSeconds === 0
+
+          // Calculate which digit position we're at (0-5 for HHMMSS)
+          // We fill from right to left: empty buffer = position 5, "1" = position 5, "12" = position 4, etc.
+          property int currentDigitPos: {
+            const bufLen = timerDisplayItem.inputBuffer.length;
+            if (bufLen === 0)
+              return 5;
+            return Math.max(0, 6 - bufLen);
+          }
+
+          // Map digit position to character position in "HH:MM:SS" (skip colons)
+          property real digitWidth: timerInput.implicitWidth / 8
+          property real xOffset: {
+            const pos = currentDigitPos;
+            let charPos = pos;
+            if (pos >= 2)
+              charPos++;
+            if (pos >= 4)
+              charPos++;
+            return (charPos * digitWidth) - (timerInput.implicitWidth / 2);
+          }
+
+          x: parent.width / 2 + xOffset
+          width: digitWidth * 0.8
+
+          Behavior on x {
+            NumberAnimation {
+              duration: 150
+              easing.type: Easing.OutQuad
+            }
+          }
+
+          SequentialAnimation on opacity {
+            running: editingUnderline.visible
+            loops: Animation.Infinite
+            NumberAnimation {
+              from: 1.0
+              to: 0.3
+              duration: 600
+            }
+            NumberAnimation {
+              from: 0.3
+              to: 1.0
+              duration: 600
             }
           }
         }
       }
     }
 
-    // Control buttons
     RowLayout {
       id: buttonRow
       Layout.fillWidth: true
@@ -432,8 +471,6 @@ NBox {
       }
     }
 
-    // Mode tabs (Android-style) - below buttons
-    // Match width and height exactly with the control buttons above
     NTabBar {
       id: modeTabBar
       Layout.fillWidth: true
@@ -449,30 +486,24 @@ NBox {
           if (isRunning) {
             pauseTimer();
           }
-          // Stop any repeating notification sound when switching modes
           SoundService.stopSound("alarm-beep.wav");
           Time.timerSoundPlaying = false;
           Time.timerStopwatchMode = newMode;
           if (newMode) {
-            // Reset to 0 for stopwatch
             Time.timerElapsedSeconds = 0;
           } else {
             Time.timerRemainingSeconds = 0;
           }
         }
       }
-      // Match spacing exactly with button row
       spacing: Style.marginS
 
-      // Access internal RowLayout to remove margins so spacing matches button row
       Component.onCompleted: {
-        // The NTabBar has a RowLayout child (tabRow) with margins
-        // We need to remove those margins to match the button row spacing
+        // Remove margins from internal RowLayout to match button row spacing
         Qt.callLater(() => {
                        if (modeTabBar.children && modeTabBar.children.length > 0) {
                          for (var i = 0; i < modeTabBar.children.length; i++) {
                            var child = modeTabBar.children[i];
-                           // Look for RowLayout (it will have spacing property)
                            if (child && typeof child.spacing !== 'undefined' && child.anchors) {
                              child.anchors.margins = 0;
                              break;
@@ -500,7 +531,6 @@ NBox {
     }
   }
 
-  // Bind to Time for persistent timer state
   readonly property bool isRunning: Time.timerRunning
   property bool isStopwatchMode: Time.timerStopwatchMode
   readonly property int remainingSeconds: Time.timerRemainingSeconds
@@ -513,22 +543,17 @@ NBox {
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    // If totalTimeSeconds is 0 or undefined, show full format (for editing/not started state)
     if (!totalTimeSeconds || totalTimeSeconds === 0) {
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
-    // Always show minutes
-    // If total time < 3600 seconds (1 hour), show MM:SS
     if (totalTimeSeconds < 3600) {
       return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
-    // If total time >= 3600 seconds, show HH:MM:SS
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
   function formatTimeFromDigits(digits) {
-    // Parse digits right-to-left: last 2 = seconds, next 2 = minutes, rest = hours
     const len = digits.length;
     let seconds = 0;
     let minutes = 0;
@@ -544,17 +569,14 @@ NBox {
       hours = parseInt(digits.substring(0, len - 4)) || 0;
     }
 
-    // Clamp values
     seconds = Math.min(59, seconds);
     minutes = Math.min(59, minutes);
     hours = Math.min(99, hours);
 
-    // Always show HH:MM:SS format in edit mode
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   function parseDigitsToTime(digits) {
-    // Parse digits right-to-left: last 2 = seconds, next 2 = minutes, rest = hours
     const len = digits.length;
     let seconds = 0;
     let minutes = 0;
@@ -570,7 +592,6 @@ NBox {
       hours = parseInt(digits.substring(0, len - 4)) || 0;
     }
 
-    // Clamp values
     seconds = Math.min(59, seconds);
     minutes = Math.min(59, minutes);
     hours = Math.min(99, hours);
@@ -595,7 +616,6 @@ NBox {
 
   function resetTimer() {
     Time.timerReset();
-    // Clear editing state when reset
     timerDisplayItem.isEditing = false;
     timerDisplayItem.inputBuffer = "";
     timerInput.focus = false;

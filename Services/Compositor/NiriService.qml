@@ -114,7 +114,7 @@ Item {
         "isActive": ws.is_active === true,
         "isUrgent": ws.is_urgent === true,
         "isOccupied": ws.active_window_id ? true : false
-      }
+      };
 
       workspacesList.push(wsData);
       workspaceCache[ws.id] = wsData;
@@ -243,41 +243,38 @@ Item {
   }
 
   function toSortedWindowList(windowList) {
-    return windowList
-      .map(win => {
-        const workspace = workspaceCache[win.workspaceId];
-        const output = (workspace && workspace.output) ? outputCache[workspace.output] : null;
+    return windowList.map(win => {
+                            const workspace = workspaceCache[win.workspaceId];
+                            const output = (workspace && workspace.output) ? outputCache[workspace.output] : null;
 
-        return {
-          window: win,
-          workspaceIdx: workspace ? workspace.idx : 0,
-          outputX: output ? output.x : 0,
-          outputY: output ? output.y : 0,
-        };
-      })
-      .sort((a, b) => {
-        // Sort by output position first
-        if (a.outputX !== b.outputX) {
-          return a.outputX - b.outputX;
-        }
-        if (a.outputY !== b.outputY) {
-          return a.outputY - b.outputY;
-        }
-        // Then by workspace index
-        if (a.workspaceIdx !== b.workspaceIdx) {
-          return a.workspaceIdx - b.workspaceIdx;
-        }
-        // Then by window position
-        if (a.window.position.x !== b.window.position.x) {
-          return a.window.position.x - b.window.position.x;
-        }
-        if (a.window.position.y !== b.window.position.y) {
-          return a.window.position.y - b.window.position.y;
-        }
-        // Finally by window ID to ensure consistent ordering
-        return a.window.id - b.window.id;
-      })
-      .map(info => info.window);
+                            return {
+                              window: win,
+                              workspaceIdx: workspace ? workspace.idx : 0,
+                              outputX: output ? output.x : 0,
+                              outputY: output ? output.y : 0
+                            };
+                          }).sort((a, b) => {
+                                    // Sort by output position first
+                                    if (a.outputX !== b.outputX) {
+                                      return a.outputX - b.outputX;
+                                    }
+                                    if (a.outputY !== b.outputY) {
+                                      return a.outputY - b.outputY;
+                                    }
+                                    // Then by workspace index
+                                    if (a.workspaceIdx !== b.workspaceIdx) {
+                                      return a.workspaceIdx - b.workspaceIdx;
+                                    }
+                                    // Then by window position
+                                    if (a.window.position.x !== b.window.position.x) {
+                                      return a.window.position.x - b.window.position.x;
+                                    }
+                                    if (a.window.position.y !== b.window.position.y) {
+                                      return a.window.position.y - b.window.position.y;
+                                    }
+                                    // Finally by window ID to ensure consistent ordering
+                                    return a.window.id - b.window.id;
+                                  }).map(info => info.window);
   }
 
   function recollectWindows(windowsData) {
