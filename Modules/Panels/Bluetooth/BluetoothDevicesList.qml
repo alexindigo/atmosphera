@@ -52,7 +52,8 @@ NBox {
         readonly property bool isBusy: BluetoothService.isDeviceBusy(modelData)
         readonly property bool isExpanded: root.expandedDeviceKey === BluetoothService.deviceKey(modelData)
 
-        function getContentColor(defaultColor = Color.mOnSurface) {
+        function getContentColor(defaultColor) {
+          if (defaultColor === undefined) defaultColor = Color.mOnSurface;
           if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
             return Color.mPrimary;
           if (modelData.blocked)

@@ -215,7 +215,7 @@ NBox {
               NIconButton {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "info-circle"
-                tooltipText: I18n.tr("wifi.panel.info")
+                tooltipText: root.trOr("wifi.panel.info", "Info")
                 baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   if (root.infoSsid === modelData.ssid) {
@@ -276,18 +276,13 @@ NBox {
             border.width: Style.borderS
             border.color: Color.mOutline
             height: infoColumn.implicitHeight + Style.marginS * 2
+            clip: true
 
             ColumnLayout {
               id: infoColumn
               anchors.fill: parent
               anchors.margins: Style.marginS
               spacing: Style.marginXS
-
-              RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: NetworkService.signalIcon(modelData.signal, modelData.connected); pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: "Signal: " + modelData.signal + "%"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
-              }
 
               RowLayout {
                 spacing: Style.marginS
@@ -306,17 +301,56 @@ NBox {
                 spacing: Style.marginS
                 NIcon { icon: "activity"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
                 NText { text: root.trOr("wifi.panel.link-speed", "Link speed") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: (NetworkService.activeWifiDetails.rate || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                NText {
+                  text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0)
+                        ? NetworkService.activeWifiDetails.rateShort
+                        : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0)
+                            ? NetworkService.activeWifiDetails.rate
+                            : "-");
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                }
               }
 
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
                 NText { text: "IPv4: "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: (NetworkService.activeWifiDetails.ipv4 || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
-                NText { text: "•"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText {
+                  text: (NetworkService.activeWifiDetails.ipv4 || "-")
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
                 NText { text: root.trOr("wifi.panel.gateway", "Gateway") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: (NetworkService.activeWifiDetails.gateway4 || "-"); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                NText {
+                  text: (NetworkService.activeWifiDetails.gateway4 || "-")
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                }
+              }
+
+              RowLayout {
+                spacing: Style.marginS
+                NIcon { icon: "server"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
+                NText { text: root.trOr("wifi.panel.dns", "DNS") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText {
+                  text: (NetworkService.activeWifiDetails.dns || "-")
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                }
               }
             }
           }

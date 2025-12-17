@@ -78,6 +78,8 @@ Singleton {
     Logger.i("Network", "Service started");
     syncWifiState();
     scan();
+    // Preload details at startup if already connected
+    refreshActiveWifiDetails();
   }
 
   // Save cache with debounce
@@ -163,7 +165,8 @@ Singleton {
     Logger.d("Network", "Wi-Fi scan in progress...");
   }
 
-  function connect(ssid, password = "") {
+  function connect(ssid, password) {
+  if (password === undefined) password = "";
     if (connecting)
       return;
     connecting = true;
@@ -171,7 +174,7 @@ Singleton {
     lastError = "";
 
     // Check if we have a saved connection
-    if (networks[ssid]?.existing || cachedNetworks[ssid]) {
+    if ((networks[ssid] && networks[ssid].existing) || cachedNetworks[ssid]) {
       connectProcess.mode = "saved";
       connectProcess.ssid = ssid;
       connectProcess.password = "";
@@ -243,7 +246,8 @@ Singleton {
   }
 
   // Helper functions
-  function signalIcon(signal, isConnected = false) {
+  function signalIcon(signal, isConnected) {
+    if (isConnected === undefined) isConnected = false;
     if (isConnected && !root.internetConnectivity)
       return "world-off";
     if (signal >= 80)
@@ -267,10 +271,15 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        const connected = text.split("\n").some(line => {
-                                                  const parts = line.split(":");
-                                                  return parts[1] === "ethernet" && parts[2] === "connected";
-                                                });
+        var connected = false;
+        var lines = text.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+          var parts = lines[i].split(":");
+          if (parts.length >= 3 && parts[1] === "ethernet" && parts[2] === "connected") {
+            connected = true;
+            break;
+          }
+        }
         if (root.ethernetConnected !== connected) {
           root.ethernetConnected = connected;
           Logger.d("Network", "Ethernet connected:", root.ethernetConnected);
@@ -335,11 +344,11 @@ Singleton {
           if (idx === -1) continue;
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
-          if (key.startsWith("IP4.ADDRESS")) {
+          if (key.indexOf("IP4.ADDRESS") === 0) {
             ipv4 = val.split("/")[0];
           } else if (key === "IP4.GATEWAY") {
             gw4 = val;
-          } else if (key.startsWith("IP4.DNS")) {
+          } else if (key.indexOf("IP4.DNS") === 0) {
             if (val && dnsServers.indexOf(val) === -1) {
               dnsServers.push(val);
             }
@@ -370,10 +379,11 @@ Singleton {
         const details = root.activeWifiDetails || ({});
         let rate = "";
         const lines = text.split("\n");
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (line.toLowerCase().startsWith("tx bitrate:")) {
-            rate = line.substring(11).trim();
+        for (var k = 0; k < lines.length; k++) {
+          var line2 = lines[k].trim();
+          var low = line2.toLowerCase();
+          if (low.indexOf("tx bitrate:") === 0) {
+            rate = line2.substring(11).trim();
             break;
           }
         }
@@ -515,7 +525,7 @@ Singleton {
     id: pingCheckProcess
     command: ["sh", "-c", "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " + "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " + "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"]
 
-    onExited: (exitCode, exitStatus) => {
+    onExited: function(exitCode, exitStatus) {
       if (exitCode === 0) {
         connectivityCheckProcess.failedChecks = 0;
       } else {
@@ -549,10 +559,13 @@ Singleton {
           return;
         }
 
-        const profiles = {};
-        const lines = text.split("\n").filter(l => l.trim());
-        for (const line of lines) {
-          profiles[line.trim()] = true;
+        var profiles = {};
+        var lines = text.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+          var l = lines[i];
+          if (l && l.trim()) {
+            profiles[l.trim()] = true;
+          }
         }
         scanProcess.existingProfiles = profiles;
         scanProcess.running = true;
@@ -657,8 +670,8 @@ Singleton {
         // Logging
         const oldSSIDs = Object.keys(root.networks);
         const newSSIDs = Object.keys(networksMap);
-        const newNetworks = newSSIDs.filter(ssid => !oldSSIDs.includes(ssid));
-        const lostNetworks = oldSSIDs.filter(ssid => !newSSIDs.includes(ssid));
+        const newNetworks = newSSIDs.filter(function(ssid) { return oldSSIDs.indexOf(ssid) === -1; });
+        const lostNetworks = oldSSIDs.filter(function(ssid) { return newSSIDs.indexOf(ssid) === -1; });
 
         if (newNetworks.length > 0 || lostNetworks.length > 0) {
           if (newNetworks.length > 0) {
@@ -673,6 +686,22 @@ Singleton {
         Logger.d("Network", "Wi-Fi scan completed");
         root.networks = networksMap;
         root.scanning = false;
+
+        // Preload active Wi‑Fi details so Info panel shows instantly when opened
+        // This is lightweight and guarded by detailsLoading + TTL.
+        var hasConnected = false;
+        for (var ssid in networksMap) {
+          if (networksMap.hasOwnProperty(ssid)) {
+            var net = networksMap[ssid];
+            if (net && net.connected) {
+              hasConnected = true;
+              break;
+            }
+          }
+        }
+        if (hasConnected) {
+          root.refreshActiveWifiDetails();
+        }
 
         // Check if we need to start a new scan
         if (root.scanPending) {
@@ -707,7 +736,7 @@ Singleton {
       if (mode === "saved") {
         return ["nmcli", "connection", "up", "id", ssid];
       } else {
-        const cmd = ["nmcli", "device", "wifi", "connect", ssid];
+        var cmd = ["nmcli", "device", "wifi", "connect", ssid];
         if (password) {
           cmd.push("password", password);
         }
@@ -725,7 +754,7 @@ Singleton {
         // on success. Empty output or other messages indicate failure.
         const output = text.trim();
 
-        if (!output || (!output.includes("successfully activated") && !output.includes("Connection successfully"))) {
+        if (!output || (output.indexOf("successfully activated") === -1 && output.indexOf("Connection successfully") === -1)) {
           // No success message - likely an error occurred
           // Don't update anything, let stderr handler deal with it
           return;
@@ -744,9 +773,12 @@ Singleton {
         // Immediately update the UI before scanning
         root.updateNetworkStatus(connectProcess.ssid, true);
 
+        // Preload details immediately so Info panel has data instantly
+        root.refreshActiveWifiDetails();
+
         root.connecting = false;
         root.connectingTo = "";
-        Logger.i("Network", `Connected to network: '${connectProcess.ssid}'`);
+        Logger.i("Network", "Connected to network: '" + connectProcess.ssid + "'");
         ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.connected", {
                                                                        "ssid": connectProcess.ssid
                                                                      }), "wifi");
@@ -764,12 +796,12 @@ Singleton {
 
         if (text.trim()) {
           // Parse common errors
-          if (text.includes("Secrets were required") || text.includes("no secrets provided")) {
+          if (text.indexOf("Secrets were required") !== -1 || text.indexOf("no secrets provided") !== -1) {
             root.lastError = "Incorrect password";
             forget(connectProcess.ssid);
-          } else if (text.includes("No network with SSID")) {
+          } else if (text.indexOf("No network with SSID") !== -1) {
             root.lastError = "Network not found";
-          } else if (text.includes("Timeout")) {
+          } else if (text.indexOf("Timeout") !== -1) {
             root.lastError = "Connection timeout";
           } else {
             root.lastError = text.split("\n")[0].trim();
@@ -789,7 +821,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.i("Network", `Disconnected from network: '${disconnectProcess.ssid}'`);
+        Logger.i("Network", "Disconnected from network: '" + disconnectProcess.ssid + "'");
         ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disconnected", {
                                                                        "ssid": disconnectProcess.ssid
                                                                      }), "wifi-off");
@@ -823,38 +855,36 @@ Singleton {
     running: false
 
     // Try multiple common profile name patterns
-    command: ["sh", "-c", `
-      ssid="$1"
-      deleted=false
-
-      # Try exact SSID match first
-      if nmcli connection delete id "$ssid" 2>/dev/null; then
-      echo "Deleted profile: $ssid"
-      deleted=true
-      fi
-
-      # Try "Auto <SSID>" pattern
-      if nmcli connection delete id "Auto $ssid" 2>/dev/null; then
-      echo "Deleted profile: Auto $ssid"
-      deleted=true
-      fi
-
-      # Try "<SSID> 1", "<SSID> 2", etc. patterns
-      for i in 1 2 3; do
-      if nmcli connection delete id "$ssid $i" 2>/dev/null; then
-      echo "Deleted profile: $ssid $i"
-      deleted=true
-      fi
-      done
-
-      if [ "$deleted" = "false" ]; then
-      echo "No profiles found for SSID: $ssid"
-      fi
-      `, "--", ssid]
+    command: {
+      var script = "";
+      script += "ssid=\"$1\"\n";
+      script += "deleted=false\n\n";
+      script += "# Try exact SSID match first\n";
+      script += "if nmcli connection delete id \"$ssid\" 2>/dev/null; then\n";
+      script += "  echo \"Deleted profile: $ssid\"\n";
+      script += "  deleted=true\n";
+      script += "fi\n\n";
+      script += "# Try \"Auto $ssid\" pattern\n";
+      script += "if nmcli connection delete id \"Auto $ssid\" 2>/dev/null; then\n";
+      script += "  echo \"Deleted profile: Auto $ssid\"\n";
+      script += "  deleted=true\n";
+      script += "fi\n\n";
+      script += "# Try \"$ssid 1\", \"$ssid 2\", etc. patterns\n";
+      script += "for i in 1 2 3; do\n";
+      script += "  if nmcli connection delete id \"$ssid $i\" 2>/dev/null; then\n";
+      script += "    echo \"Deleted profile: $ssid $i\"\n";
+      script += "    deleted=true\n";
+      script += "  fi\n";
+      script += "done\n\n";
+      script += "if [ \"$deleted\" = \"false\" ]; then\n";
+      script += "  echo \"No profiles found for SSID: $ssid\"\n";
+      script += "fi\n";
+      return ["sh", "-c", script, "--", ssid];
+    }
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.i("Network", `Forget network: "${forgetProcess.ssid}"`);
+        Logger.i("Network", "Forget network: \"" + forgetProcess.ssid + "\"");
         Logger.d("Network", text.trim().replace(/[\r\n]/g, " "));
 
         // Update both cached and existing status immediately
@@ -878,7 +908,7 @@ Singleton {
     stderr: StdioCollector {
       onStreamFinished: {
         root.forgettingNetwork = "";
-        if (text.trim() && !text.includes("No profiles found")) {
+        if (text.trim() && text.indexOf("No profiles found") === -1) {
           Logger.w("Network", "Forget error: " + text);
         }
         // Still Trigger a scan even on error

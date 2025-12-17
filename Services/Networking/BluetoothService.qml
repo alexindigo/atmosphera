@@ -13,34 +13,34 @@ Singleton {
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
-  readonly property int state: adapter?.state ?? 0
+  readonly property int state: (adapter && adapter.state !== undefined) ? adapter.state : 0
   readonly property bool available: (adapter !== null)
-  readonly property bool enabled: adapter?.enabled ?? false
-  readonly property bool blocked: (adapter?.state === BluetoothAdapterState.Blocked)
-  readonly property bool discovering: (adapter && adapter.discovering) ?? false
+  readonly property bool enabled: (adapter && adapter.enabled !== undefined) ? adapter.enabled : false
+  readonly property bool blocked: (adapter && adapter.state === BluetoothAdapterState.Blocked)
+  readonly property bool discovering: (adapter && adapter.discovering) ? adapter.discovering : false
   readonly property var devices: adapter ? adapter.devices : null
   readonly property var pairedDevices: {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(dev => {
-                                           return dev && (dev.paired || dev.trusted);
-                                         });
+    return adapter.devices.values.filter(function(dev) {
+      return dev && (dev.paired || dev.trusted);
+    });
   }
   readonly property var connectedDevices: {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(dev => dev && dev.connected);
+    return adapter.devices.values.filter(function(dev) { return dev && dev.connected; });
   }
 
   readonly property var allDevicesWithBattery: {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(dev => {
-                                           return dev && dev.batteryAvailable && dev.battery > 0;
-                                         });
+    return adapter.devices.values.filter(function(dev) {
+      return dev && dev.batteryAvailable && dev.battery > 0;
+    });
   }
 
   function init() {
@@ -80,22 +80,22 @@ Singleton {
   }
 
   function sortDevices(devices) {
-    return devices.sort((a, b) => {
-                          var aName = a.name || a.deviceName || "";
-                          var bName = b.name || b.deviceName || "";
+    return devices.sort(function(a, b) {
+      var aName = a.name || a.deviceName || "";
+      var bName = b.name || b.deviceName || "";
 
-                          var aHasRealName = aName.includes(" ") && aName.length > 3;
-                          var bHasRealName = bName.includes(" ") && bName.length > 3;
+      var aHasRealName = aName.indexOf(" ") !== -1 && aName.length > 3;
+      var bHasRealName = bName.indexOf(" ") !== -1 && bName.length > 3;
 
-                          if (aHasRealName && !bHasRealName)
-                          return -1;
-                          if (!aHasRealName && bHasRealName)
-                          return 1;
+      if (aHasRealName && !bHasRealName)
+        return -1;
+      if (!aHasRealName && bHasRealName)
+        return 1;
 
-                          var aSignal = (a.signalStrength !== undefined && a.signalStrength > 0) ? a.signalStrength : 0;
-                          var bSignal = (b.signalStrength !== undefined && b.signalStrength > 0) ? b.signalStrength : 0;
-                          return bSignal - aSignal;
-                        });
+      var aSignal = (a.signalStrength !== undefined && a.signalStrength > 0) ? a.signalStrength : 0;
+      var bSignal = (b.signalStrength !== undefined && b.signalStrength > 0) ? b.signalStrength : 0;
+      return bSignal - aSignal;
+    });
   }
 
   function getDeviceIcon(device) {
@@ -105,37 +105,37 @@ Singleton {
 
     var name = (device.name || device.deviceName || "").toLowerCase();
     var icon = (device.icon || "").toLowerCase();
-    if (icon.includes("controller") || icon.includes("gamepad") || name.includes("controller") || name.includes("gamepad")) {
+    if (icon.indexOf("controller") !== -1 || icon.indexOf("gamepad") !== -1 || name.indexOf("controller") !== -1 || name.indexOf("gamepad") !== -1) {
       return "bt-device-gamepad";
     }
-    if (icon.includes("microphone") || name.includes("microphone")) {
+    if (icon.indexOf("microphone") !== -1 || name.indexOf("microphone") !== -1) {
       return "bt-device-microphone";
     }
-    if (name.includes("pod") || name.includes("bud") || name.includes("minor")) {
+    if (name.indexOf("pod") !== -1 || name.indexOf("bud") !== -1 || name.indexOf("minor") !== -1) {
       return "bt-device-earbuds";
     }
-    if (icon.includes("headset") || name.includes("arctis") || name.includes("headset") || name.includes("major")) {
+    if (icon.indexOf("headset") !== -1 || name.indexOf("arctis") !== -1 || name.indexOf("headset") !== -1 || name.indexOf("major") !== -1) {
       return "bt-device-headset";
     }
-    if (icon.includes("headphone") || name.includes("headphone")) {
+    if (icon.indexOf("headphone") !== -1 || name.indexOf("headphone") !== -1) {
       return "bt-device-headphones";
     }
-    if (icon.includes("mouse") || name.includes("mouse")) {
+    if (icon.indexOf("mouse") !== -1 || name.indexOf("mouse") !== -1) {
       return "bt-device-mouse";
     }
-    if (icon.includes("keyboard") || name.includes("keyboard")) {
+    if (icon.indexOf("keyboard") !== -1 || name.indexOf("keyboard") !== -1) {
       return "bt-device-keyboard";
     }
-    if (icon.includes("watch") || name.includes("watch")) {
+    if (icon.indexOf("watch") !== -1 || name.indexOf("watch") !== -1) {
       return "bt-device-watch";
     }
-    if (icon.includes("speaker") || name.includes("speaker") || name.includes("audio") || name.includes("sound")) {
+    if (icon.indexOf("speaker") !== -1 || name.indexOf("speaker") !== -1 || name.indexOf("audio") !== -1 || name.indexOf("sound") !== -1) {
       return "bt-device-speaker";
     }
-    if (icon.includes("display") || name.includes("tv")) {
+    if (icon.indexOf("display") !== -1 || name.indexOf("tv") !== -1) {
       return "bt-device-tv";
     }
-    if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung")) {
+    if (icon.indexOf("phone") !== -1 || name.indexOf("phone") !== -1 || name.indexOf("iphone") !== -1 || name.indexOf("android") !== -1 || name.indexOf("samsung") !== -1) {
       return "bt-device-phone";
     }
     return "bt-device-generic";
@@ -196,7 +196,7 @@ Singleton {
   }
 
   function getBattery(device) {
-    return `Battery: ${Math.round(device.battery * 100)}%`;
+    return "Battery: " + Math.round(device.battery * 100) + "%";
   }
 
   function getSignalIcon(device) {
@@ -338,7 +338,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        const wifiBlocked = text && text.trim().includes("Soft blocked: yes");
+        var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
         Logger.d("Network", "Wi-Fi adapter was detected as blocked:", blocked);
 
         // Check if airplane mode has been toggled

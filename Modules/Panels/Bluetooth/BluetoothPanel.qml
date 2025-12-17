@@ -58,7 +58,7 @@ SmartPanel {
           NToggle {
             id: bluetoothSwitch
             checked: BluetoothService.enabled
-            onToggled: checked => BluetoothService.setBluetoothEnabled(checked)
+            onToggled: function(checked) { BluetoothService.setBluetoothEnabled(checked); }
             baseSize: Style.baseWidgetSize * 0.65
           }
 
@@ -150,7 +150,7 @@ SmartPanel {
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && dev.connected);
+              var filtered = Bluetooth.devices.values.filter(function(dev) { return dev && !dev.blocked && dev.connected; });
               filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
@@ -166,7 +166,7 @@ SmartPanel {
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted));
+              var filtered = Bluetooth.devices.values.filter(function(dev) { return dev && !dev.blocked && !dev.connected && (dev.paired || dev.trusted); });
               filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
@@ -181,7 +181,7 @@ SmartPanel {
             property var items: {
               if (!BluetoothService.adapter || !Bluetooth.devices)
                 return [];
-              var filtered = Bluetooth.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
+              var filtered = Bluetooth.devices.values.filter(function(dev) { return dev && !dev.blocked && !dev.paired && !dev.trusted; });
               filtered = BluetoothService.dedupeDevices(filtered);
               return BluetoothService.sortDevices(filtered);
             }
@@ -199,9 +199,9 @@ SmartPanel {
                 return false;
               }
 
-              var availableCount = Bluetooth.devices.values.filter(dev => {
-                                                                     return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
-                                                                   }).length;
+              var availableCount = Bluetooth.devices.values.filter(function(dev) {
+                      return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
+                    }).length;
               return (availableCount === 0);
             }
 
