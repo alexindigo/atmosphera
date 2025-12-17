@@ -46,7 +46,8 @@ Scope {
   PamContext {
     id: pam
     // Use custom PAM config to ensure predictable password-only authentication
-    configDirectory: Quickshell.shellDir + "/Assets/pam"
+    // Config is created once in Settings.qml and stored in configDir/pam/
+    configDirectory: Settings.configDir + "pam"
     config: "password.conf"
     user: HostService.username
 
