@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
+          "label": "Modo de ocultação"
+        },
         "enabled": {
           "description": "Mostrar um widget de reprodutor de mídia na área de trabalho.",
           "label": "Ativar widget do reprodutor de mídia"

@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Controls how the widget behaves when no media is playing.",
+          "label": "Hiding mode"
+        },
         "enabled": {
           "description": "Show a media player widget on the desktop.",
           "label": "Enable media player widget"

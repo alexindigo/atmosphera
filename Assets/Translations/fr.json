@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
+          "label": "Mode de masquage"
+        },
         "enabled": {
           "description": "Afficher un widget de lecteur multimédia sur le bureau.",
           "label": "Activer le widget lecteur multimédia"

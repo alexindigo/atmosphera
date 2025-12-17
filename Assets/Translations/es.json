@@ -1412,6 +1412,10 @@
         }
       },
       "media-player": {
+        "hide-mode": {
+          "description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
+          "label": "Modo de ocultación"
+        },
         "enabled": {
           "description": "Mostrar un widget de reproductor multimedia en el escritorio.",
           "label": "Habilitar widget de reproductor multimedia"
