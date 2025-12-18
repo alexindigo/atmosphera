@@ -742,6 +742,10 @@
       "none": "None",
       "wave": "Wave"
     },
+    "visualizer-visibility": {
+      "always": "Always visible",
+      "with-background": "With background only"
+    },
     "workspace-labels": {
       "index": "Index",
       "index+name": "Index and name",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Choose a visualization type for the desktop media player background.",
           "label": "Visualization type"
+        },
+        "visualizer-visibility": {
+          "description": "Control when the audio visualizer is visible.",
+          "label": "Audio visualizer visibility"
         }
       },
       "title": "Desktop Widgets",

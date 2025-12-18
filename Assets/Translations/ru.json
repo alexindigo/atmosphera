@@ -742,6 +742,10 @@
       "none": "Нет",
       "wave": "Волна"
     },
+    "visualizer-visibility": {
+      "always": "Всегда видимый",
+      "with-background": "Только с фоном"
+    },
     "workspace-labels": {
       "index": "Индекс",
       "index+name": "Индекс и название",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Выберите тип визуализации для фона медиаплеера.",
           "label": "Тип визуализации"
+        },
+        "visualizer-visibility": {
+          "description": "Управлять видимостью аудиовизуализатора.",
+          "label": "Видимость аудиовизуализатора"
         }
       },
       "title": "Настольные виджеты",

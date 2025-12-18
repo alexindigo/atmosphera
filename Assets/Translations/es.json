@@ -742,6 +742,10 @@
       "none": "Ninguno",
       "wave": "Onda"
     },
+    "visualizer-visibility": {
+      "always": "Siempre visible",
+      "with-background": "Solo con fondo"
+    },
     "workspace-labels": {
       "index": "Índice",
       "index+name": "Índice y Nombre",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Elige un tipo de visualización para el fondo del reproductor multimedia de escritorio.",
           "label": "Tipo de visualización"
+        },
+        "visualizer-visibility": {
+          "description": "Controla cuándo el visualizador de audio es visible.",
+          "label": "Visibilidad del visualizador de audio"
         }
       },
       "title": "Widgets de escritorio",

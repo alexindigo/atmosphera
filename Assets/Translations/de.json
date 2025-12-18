@@ -742,6 +742,10 @@
       "none": "Keine",
       "wave": "Welle"
     },
+    "visualizer-visibility": {
+      "always": "Immer sichtbar",
+      "with-background": "Nur mit Hintergrund"
+    },
     "workspace-labels": {
       "index": "Index",
       "index+name": "Index und Name",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
           "label": "Visualisierungsart"
+        },
+        "visualizer-visibility": {
+          "description": "Steuern Sie, wann der Audio-Visualizer sichtbar ist.",
+          "label": "Audio-Visualizer-Sichtbarkeit"
         }
       },
       "title": "Desktop-Widgets",

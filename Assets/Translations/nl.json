@@ -742,6 +742,10 @@
       "none": "Geen",
       "wave": "Golf"
     },
+    "visualizer-visibility": {
+      "always": "Altijd zichtbaar",
+      "with-background": "Alleen met achtergrond"
+    },
     "workspace-labels": {
       "index": "Index",
       "index+name": "Index en Naam",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
           "label": "Visualisatietype"
+        },
+        "visualizer-visibility": {
+          "description": "Bepaal wanneer de audiovisualizer zichtbaar is.",
+          "label": "Audiovisualizer zichtbaarheid"
         }
       },
       "title": "Desktopwidgets",

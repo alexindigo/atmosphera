@@ -742,6 +742,10 @@
       "none": "Немає",
       "wave": "Хвиля"
     },
+    "visualizer-visibility": {
+      "always": "Завжди видимий",
+      "with-background": "Тільки з фоном"
+    },
     "workspace-labels": {
       "index": "Індекс",
       "index+name": "Індекс та назва",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Оберіть тип візуалізації для фону медіаплеєра на робочому столі.",
           "label": "Тип візуалізації"
+        },
+        "visualizer-visibility": {
+          "description": "Керувати видимістю аудіовізуалізатора.",
+          "label": "Видимість аудіовізуалізатора"
         }
       },
       "title": "Настільні віджети",

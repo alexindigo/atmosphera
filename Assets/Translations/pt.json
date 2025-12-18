@@ -742,6 +742,10 @@
       "none": "Nenhum",
       "wave": "Onda"
     },
+    "visualizer-visibility": {
+      "always": "Sempre visível",
+      "with-background": "Apenas com fundo"
+    },
     "workspace-labels": {
       "index": "Índice",
       "index+name": "Índice e Nome",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
           "label": "Tipo de visualização"
+        },
+        "visualizer-visibility": {
+          "description": "Controlar quando o visualizador de áudio está visível.",
+          "label": "Visibilidade do visualizador de áudio"
         }
       },
       "title": "Widgets da Área de Trabalho",

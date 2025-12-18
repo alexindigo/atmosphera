@@ -742,6 +742,10 @@
       "none": "なし",
       "wave": "ウェーブ"
     },
+    "visualizer-visibility": {
+      "always": "常に表示",
+      "with-background": "背景がある場合のみ"
+    },
     "workspace-labels": {
       "index": "番号",
       "index+name": "番号 + 名前",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "デスクトップメディアプレーヤーの背景の視覚化タイプを選択してください。",
           "label": "視覚化の種類"
+        },
+        "visualizer-visibility": {
+          "description": "オーディオビジュアライザーが表示されるタイミングを制御します。",
+          "label": "オーディオビジュアライザーの表示"
         }
       },
       "title": "デスクトップウィジェット",

@@ -742,6 +742,10 @@
       "none": "Aucun",
       "wave": "Vague"
     },
+    "visualizer-visibility": {
+      "always": "Toujours visible",
+      "with-background": "Avec fond uniquement"
+    },
     "workspace-labels": {
       "index": "Index",
       "index+name": "Index et Nom",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
           "label": "Type de visualisation"
+        },
+        "visualizer-visibility": {
+          "description": "Contrôler quand le visualiseur audio est visible.",
+          "label": "Visibilité du visualiseur audio"
         }
       },
       "title": "Widgets de bureau",

@@ -742,6 +742,10 @@
       "none": "无",
       "wave": "波形"
     },
+    "visualizer-visibility": {
+      "always": "始终可见",
+      "with-background": "仅在有背景时"
+    },
     "workspace-labels": {
       "index": "索引",
       "index+name": "索引和名称",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "选择桌面媒体播放器的背景可视化类型。",
           "label": "可视化类型"
+        },
+        "visualizer-visibility": {
+          "description": "控制音频可视化器的显示时机。",
+          "label": "音频可视化器可见性"
         }
       },
       "title": "桌面小部件",

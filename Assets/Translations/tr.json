@@ -742,6 +742,10 @@
       "none": "Hiçbiri",
       "wave": "Dalga"
     },
+    "visualizer-visibility": {
+      "always": "Her zaman görünür",
+      "with-background": "Sadece arka planla"
+    },
     "workspace-labels": {
       "index": "İndeks",
       "index+name": "Dizin ve Ad",
@@ -1431,6 +1435,10 @@
         "visualizer-type": {
           "description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
           "label": "Görselleştirme türü"
+        },
+        "visualizer-visibility": {
+          "description": "Ses görselleştiricisinin ne zaman görünür olduğunu kontrol edin.",
+          "label": "Ses görselleştirici görünürlüğü"
         }
       },
       "title": "Masaüstü Araçları",
