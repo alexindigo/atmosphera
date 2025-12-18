@@ -473,15 +473,18 @@ SmartPanel {
                   const props = modelData.properties;
                   // Exclude capture streams - check for stream.capture.sink property
                   if (props["stream.capture.sink"] !== undefined) {
+                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (stream.capture.sink)");
                     return true;
                   }
                   const mediaClass = props["media.class"] || "";
                   // Exclude Stream/Input (capture) but allow Stream/Output (playback)
                   if (mediaClass.includes("Capture") || mediaClass === "Stream/Input" || mediaClass === "Stream/Input/Audio") {
+                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (media.class:", mediaClass + ")");
                     return true;
                   }
                   const mediaRole = props["media.role"] || "";
                   if (mediaRole === "Capture") {
+                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (media.role: Capture)");
                     return true;
                   }
                   return false;
@@ -494,13 +497,21 @@ SmartPanel {
                     return "Unknown App";
                   }
 
+                  var nodeId = modelData.id || "unknown";
+                  var nodeReady = modelData.ready || false;
                   var props = modelData.properties;
                   var desc = modelData.description || "";
                   var name = modelData.name || "";
 
+                  // Log when computed property is evaluated (only when properties change)
+                  if (nodeReady && props) {
+                    Logger.i("AudioPanel", "appName computed for node", nodeId, "- ready:", nodeReady);
+                  }
+
                   // If properties aren't available yet, try description or name
                   if (!props) {
                     if (desc) {
+                      Logger.i("AudioPanel", "Node", nodeId, "- using description:", desc);
                       return desc;
                     }
                     if (name) {
@@ -509,12 +520,24 @@ SmartPanel {
                       if (nameParts.length > 0) {
                         var extracted = nameParts[0];
                         if (extracted) {
-                          return extracted.charAt(0).toUpperCase() + extracted.slice(1);
+                          var formatted = extracted.charAt(0).toUpperCase() + extracted.slice(1);
+                          Logger.i("AudioPanel", "Node", nodeId, "- extracted from name:", formatted);
+                          return formatted;
                         }
                       }
+                      Logger.i("AudioPanel", "Node", nodeId, "- using name:", name);
                       return name;
                     }
                     return "Unknown App";
+                  }
+
+                  // Log all available property keys (only once when properties become available)
+                  if (nodeReady) {
+                    var propKeys = [];
+                    for (var key in props) {
+                      propKeys.push(key);
+                    }
+                    Logger.i("AudioPanel", "Node", nodeId, "- available properties:", propKeys.join(", "));
                   }
 
                   // Try to get application name from various properties
@@ -524,6 +547,14 @@ SmartPanel {
                   var appId = props["application.id"] || "";
                   var binaryName = props["application.process.binary"] || "";
 
+                  if (nodeReady) {
+                    Logger.i("AudioPanel", "Node", nodeId, "- application.name:", computedAppName);
+                    Logger.i("AudioPanel", "Node", nodeId, "- media.name:", mediaName);
+                    Logger.i("AudioPanel", "Node", nodeId, "- media.title:", mediaTitle);
+                    Logger.i("AudioPanel", "Node", nodeId, "- application.id:", appId);
+                    Logger.i("AudioPanel", "Node", nodeId, "- application.process.binary:", binaryName);
+                  }
+
                   // If we have application.id, try to extract app name from it (e.g., "firefox.desktop" -> "firefox")
                   if (!computedAppName && appId) {
                     var parts = appId.split(".");
@@ -532,6 +563,7 @@ SmartPanel {
                       // Capitalize first letter and format nicely
                       if (computedAppName) {
                         computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
+                        Logger.i("AudioPanel", "Node", nodeId, "- extracted from appId:", computedAppName);
                       }
                     }
                   }
@@ -543,12 +575,17 @@ SmartPanel {
                       computedAppName = binParts[binParts.length - 1];
                       if (computedAppName) {
                         computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
+                        Logger.i("AudioPanel", "Node", nodeId, "- extracted from binary:", computedAppName);
                       }
                     }
                   }
 
                   // Priority: application.name > media.title > media.name > binary > description > name
                   var result = computedAppName || mediaTitle || mediaName || binaryName || desc || name;
+
+                  if (nodeReady) {
+                    Logger.i("AudioPanel", "Node", nodeId, "- intermediate result:", result);
+                  }
 
                   // If we still don't have a good name, try to extract from node name
                   if (!result || result === "" || result === "Unknown App") {
@@ -560,12 +597,17 @@ SmartPanel {
                         // Capitalize first letter
                         if (result) {
                           result = result.charAt(0).toUpperCase() + result.slice(1);
+                          Logger.i("AudioPanel", "Node", nodeId, "- extracted from node name:", result);
                         }
                       }
                     }
                   }
 
-                  return result || "Unknown App";
+                  var finalResult = result || "Unknown App";
+                  if (nodeReady) {
+                    Logger.i("AudioPanel", "Node", nodeId, "- final appName:", finalResult);
+                  }
+                  return finalResult;
                 }
 
                 // Get app icon from properties (returns file path)
