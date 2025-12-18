@@ -84,14 +84,6 @@ Item {
   // Apply scale to the widget from top-left corner
   scale: widgetScale
   transformOrigin: Item.TopLeft
-  // Use smooth animation outside edit mode only
-  Behavior on scale {
-    enabled: !Settings.data.desktopWidgets.editMode
-    NumberAnimation {
-      duration: 200
-      easing.type: Easing.InOutQuad
-    }
-  }
 
   // Update base position from widgetData when not dragging
   onWidgetDataChanged: {
