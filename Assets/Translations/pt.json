@@ -1403,6 +1403,9 @@
         "controls-explanation": "Botão esquerdo do mouse: Mover widget\nBotão direito do mouse: Redimensionar widget",
         "description": "Ative o modo de edição para mover e reposicionar widgets da área de trabalho. Quando ativado, os widgets exibem um contorno de arrastar e podem ser reposicionados.",
         "exit-button": "Sair do modo de edição",
+        "grid-snap": {
+          "label": "Alinhar à grade"
+        },
         "label": "Modo de edição"
       },
       "enabled": {

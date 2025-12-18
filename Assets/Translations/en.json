@@ -1403,6 +1403,9 @@
         "controls-explanation": "Left Mouse Button: Move widget\nRight Mouse Button: Resize widget",
         "description": "Enable edit mode to move and reposition desktop widgets. When enabled, widgets show a drag outline and can be repositioned.",
         "exit-button": "Exit edit mode",
+        "grid-snap": {
+          "label": "Grid snap"
+        },
         "label": "Edit mode"
       },
       "enabled": {

@@ -73,6 +73,138 @@ Variants {
         id: widgetsContainer
         anchors.fill: parent
 
+        // Visual grid overlay - shown when grid snap is enabled in edit mode
+        // Using Loader to properly unload Canvas when not needed
+        Loader {
+          id: gridOverlayLoader
+          active: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled && Settings.data.desktopWidgets.gridSnap
+          anchors.fill: parent
+          z: -1  // Behind widgets but above background
+          asynchronous: false
+
+          sourceComponent: Canvas {
+            id: gridOverlay
+            anchors.fill: parent
+            opacity: 0.3
+
+            // Grid size calculated based on screen resolution - matches DraggableDesktopWidget
+            // Ensures grid lines pass through the screen center on both axes
+            readonly property int gridSize: {
+              if (!window.screen)
+                return 30; // Fallback
+              var baseSize = Math.round(window.screen.width * 0.015);
+              baseSize = Math.max(20, Math.min(60, baseSize));
+
+              // Calculate center coordinates
+              var centerX = window.screen.width / 2;
+              var centerY = window.screen.height / 2;
+
+              // Find a grid size that divides evenly into both center coordinates
+              // This ensures a grid line crosses through the center on both axes
+              var bestSize = baseSize;
+              var bestDistance = Infinity;
+
+              // Try values around baseSize to find one that divides evenly into both centers
+              for (var offset = -10; offset <= 10; offset++) {
+                var candidate = baseSize + offset;
+                if (candidate < 20 || candidate > 60)
+                  continue;
+
+                // Check if this size divides evenly into both center coordinates
+                var remainderX = centerX % candidate;
+                var remainderY = centerY % candidate;
+
+                // If both remainders are 0, this is perfect - center is on grid lines
+                if (remainderX === 0 && remainderY === 0) {
+                  return candidate; // Perfect match, use it immediately
+                }
+
+                // Otherwise, find the closest to perfect alignment
+                var distance = Math.abs(remainderX) + Math.abs(remainderY);
+                if (distance < bestDistance) {
+                  bestDistance = distance;
+                  bestSize = candidate;
+                }
+              }
+
+              // If we found a perfect match, it would have returned already
+              // Otherwise, try to find a divisor of both centerX and centerY
+              // that's close to our best size
+              var gcd = function (a, b) {
+                while (b !== 0) {
+                  var temp = b;
+                  b = a % b;
+                  a = temp;
+                }
+                return a;
+              };
+
+              // Find common divisors of centerX and centerY
+              var centerGcd = gcd(Math.round(centerX), Math.round(centerY));
+              if (centerGcd > 0) {
+                // Find a divisor of centerGcd that's close to bestSize
+                for (var divisor = Math.floor(centerGcd / 60); divisor <= Math.ceil(centerGcd / 20); divisor++) {
+                  if (centerGcd % divisor !== 0)
+                    continue;
+                  var candidate = centerGcd / divisor;
+                  if (candidate >= 20 && candidate <= 60) {
+                    if (Math.abs(candidate - baseSize) < Math.abs(bestSize - baseSize)) {
+                      bestSize = candidate;
+                    }
+                  }
+                }
+              }
+
+              return bestSize;
+            }
+
+            onPaint: {
+              const ctx = getContext("2d");
+              ctx.reset();
+              ctx.strokeStyle = Color.mPrimary;
+              ctx.lineWidth = 1;
+
+              // Draw vertical lines
+              for (let x = 0; x <= width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+              }
+
+              // Draw horizontal lines
+              for (let y = 0; y <= height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+              }
+            }
+
+            // Repaint when size changes
+            onWidthChanged: requestPaint()
+            onHeightChanged: requestPaint()
+
+            Component.onCompleted: {
+              requestPaint();
+            }
+
+            Connections {
+              target: Settings.data.desktopWidgets
+              function onGridSnapChanged() {
+                if (gridOverlayLoader.active) {
+                  gridOverlay.requestPaint();
+                }
+              }
+              function onEditModeChanged() {
+                if (gridOverlayLoader.active) {
+                  gridOverlay.requestPaint();
+                }
+              }
+            }
+          }
+        }
+
         // Load widgets dynamically from per-monitor array
         Repeater {
           model: screenLoader.screenWidgets
@@ -168,6 +300,32 @@ Variants {
           wrapMode: Text.WordWrap
           width: Math.min(implicitWidth, 300 * Style.uiScaleRatio)
           z: 10000
+        }
+
+        // Grid snap checkbox
+        RowLayout {
+          id: gridSnapCheckbox
+          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
+          anchors {
+            top: controlsExplanation.bottom
+            right: parent.right
+            topMargin: Style.marginM
+            rightMargin: editModeButton.barOffsetRight
+          }
+          spacing: Style.marginS
+          z: 10000
+
+          NText {
+            text: I18n.tr("settings.desktop-widgets.edit-mode.grid-snap.label")
+            pointSize: Style.fontSizeS
+            color: Color.mOnSurfaceVariant
+            horizontalAlignment: Text.AlignRight
+          }
+
+          NCheckbox {
+            checked: Settings.data.desktopWidgets.gridSnap
+            onToggled: checked => Settings.data.desktopWidgets.gridSnap = checked
+          }
         }
       }
     }

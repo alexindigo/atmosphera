@@ -1403,6 +1403,9 @@
         "controls-explanation": "鼠标左键：移动小组件\n鼠标右键：调整小组件大小",
         "description": "启用编辑模式以移动和重新定位桌面小组件。启用后，小组件会显示拖动轮廓，并且可以重新定位。",
         "exit-button": "退出编辑模式",
+        "grid-snap": {
+          "label": "网格对齐"
+        },
         "label": "编辑模式"
       },
       "enabled": {

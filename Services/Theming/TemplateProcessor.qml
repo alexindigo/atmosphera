@@ -247,36 +247,35 @@ Singleton {
   }
 
   function processCodeClients(codeApp, colors, mode, homeDir) {
-    let script = ""
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false)
+    let script = "";
+    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
 
     codeApp.clients.forEach(client => {
                               if (!isCodeClientEnabled(client.name))
-                              return
+                              return;
+                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`;
+                              const outputPath = client.path.replace("~", homeDir);
+                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
 
-                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`
-                              const outputPath = client.path.replace("~", homeDir)
-                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
-                              
                               // Extract base config directory for checking
-                              var baseConfigDir = ""
+                              var baseConfigDir = "";
                               if (client.name === "code") {
-                                baseConfigDir = "~/.vscode".replace("~", homeDir)
+                                baseConfigDir = "~/.vscode".replace("~", homeDir);
                               } else if (client.name === "codium") {
-                                baseConfigDir = "~/.vscode-oss".replace("~", homeDir)
+                                baseConfigDir = "~/.vscode-oss".replace("~", homeDir);
                               }
 
-                              script += `\n`
-                              script += `if [ -d "${baseConfigDir}" ]; then\n`
-                              script += `  mkdir -p ${outputDir}\n`
-                              script += `  cp '${templatePath}' '${outputPath}'\n`
-                              script += `  ${replaceColorsInFile(outputPath, palette)}`
-                              script += `else\n`
-                              script += `  echo "Code client ${client.name} not found at ${baseConfigDir}, skipping"\n`
-                              script += `fi\n`
-                            })
+                              script += `\n`;
+                              script += `if [ -d "${baseConfigDir}" ]; then\n`;
+                              script += `  mkdir -p ${outputDir}\n`;
+                              script += `  cp '${templatePath}' '${outputPath}'\n`;
+                              script += `  ${replaceColorsInFile(outputPath, palette)}`;
+                              script += `else\n`;
+                              script += `  echo "Code client ${client.name} not found at ${baseConfigDir}, skipping"\n`;
+                              script += `fi\n`;
+                            });
 
-    return script
+    return script;
   }
 
   function processTemplate(app, colors, mode, homeDir) {

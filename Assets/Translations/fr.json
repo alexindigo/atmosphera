@@ -1403,6 +1403,9 @@
         "controls-explanation": "Bouton gauche de la souris : Déplacer le widget\nBouton droit de la souris : Redimensionner le widget",
         "description": "Activer le mode édition pour déplacer et repositionner les widgets du bureau. Une fois activé, les widgets affichent un contour de glissement et peuvent être repositionnés.",
         "exit-button": "Quitter le mode édition",
+        "grid-snap": {
+          "label": "Aligner sur la grille"
+        },
         "label": "Mode édition"
       },
       "enabled": {

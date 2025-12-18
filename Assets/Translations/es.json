@@ -1403,6 +1403,9 @@
         "controls-explanation": "Botón izquierdo del ratón: Mover widget\nBotón derecho del ratón: Redimensionar widget",
         "description": "Habilita el modo de edición para mover y cambiar la posición de los widgets del escritorio. Cuando está habilitado, los widgets muestran un contorno de arrastre y se pueden reposicionar.",
         "exit-button": "Salir del modo de edición",
+        "grid-snap": {
+          "label": "Ajustar a cuadrícula"
+        },
         "label": "Modo de edición"
       },
       "enabled": {
