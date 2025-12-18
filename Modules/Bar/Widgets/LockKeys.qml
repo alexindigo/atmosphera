@@ -49,6 +49,8 @@ Rectangle {
 
   radius: Style.radiusM
   color: Style.capsuleColor
+  border.color: Style.capsuleBorderColor
+  border.width: Style.capsuleBorderWidth
 
   NPopupContextMenu {
     id: contextMenu
