@@ -267,13 +267,14 @@ Rectangle {
   Component.onCompleted: {
     root.updateFilteredItems(); // Initial update
   }
-  visible: filteredItems.length > 0 || dropdownItems.length > 0
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
   radius: Style.radiusM
   color: Style.capsuleColor
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
+  visible: filteredItems.length > 0 || dropdownItems.length > 0
+  opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
 
   Flow {
     id: trayFlow
