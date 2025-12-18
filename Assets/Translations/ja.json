@@ -960,11 +960,11 @@
         "applications": {
           "empty": "現在、音声を再生しているアプリケーションはありません。"
         },
-        "output": "出力",
         "input": "入力",
+        "output": "出力",
         "tabs": {
-          "volumes": "音量",
-          "devices": "デバイス"
+          "devices": "デバイス",
+          "volumes": "音量"
         }
       },
       "title": "サウンド",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "コンポジタのテーマ設定。",
           "label": "合成者",
+          "mango": {
+            "description": "{filepath} を書き込みます。mango が必要です",
+            "description-missing": "{app} がインストールされている必要があります"
+          },
           "niri": {
             "description": "{filepath} を書き込みます。niri v25.11+ が必要です",
             "description-missing": "{app} がインストールされている必要があります"
-          },
-           "mango": {
-             "description": "{filepath} を書き込みます。mango が必要です",
-             "description-missing": "{app} がインストールされている必要があります"
-           }
+          }
         },
         "misc": {
           "description": "独自のテンプレートを作成",

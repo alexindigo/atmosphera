@@ -960,11 +960,11 @@
         "applications": {
           "empty": "目前没有应用程序正在播放音频。"
         },
-        "output": "输出",
         "input": "输入",
+        "output": "输出",
         "tabs": {
-          "volumes": "音量",
-          "devices": "设备"
+          "devices": "设备",
+          "volumes": "音量"
         }
       },
       "title": "音频",
@@ -1154,6 +1154,10 @@
         "compositors": {
           "description": "合成器主题。",
           "label": "合成器",
+          "mango": {
+            "description": "写入 {filepath}。需要芒果",
+            "description-missing": "需要安装 {app}"
+          },
           "niri": {
             "description": "写入 {filepath}。需要 niri v25.11+",
             "description-missing": "需要安装 {app}"

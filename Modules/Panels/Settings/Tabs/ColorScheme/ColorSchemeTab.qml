@@ -609,11 +609,11 @@ ColumnLayout {
         checked: Settings.data.templates.mango
         enabled: ProgramCheckerService.mangoAvailable
         onToggled: checked => {
-                      if (ProgramCheckerService.mangoAvailable) {
-                        Settings.data.templates.mango = checked;
-                        AppThemeService.generate();
-                      }
-                    }
+                     if (ProgramCheckerService.mangoAvailable) {
+                       Settings.data.templates.mango = checked;
+                       AppThemeService.generate();
+                     }
+                   }
       }
     }
 

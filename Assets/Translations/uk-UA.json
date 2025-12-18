@@ -960,11 +960,11 @@
         "applications": {
           "empty": "Зараз жоден додаток не відтворює аудіо."
         },
-        "output": "Вихід",
         "input": "Вхід",
+        "output": "Вихід",
         "tabs": {
-          "volumes": "Гучність",
-          "devices": "Пристрої"
+          "devices": "Пристрої",
+          "volumes": "Гучність"
         }
       },
       "title": "Аудіо",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Оформлення композитора.",
           "label": "Композитори",
+          "mango": {
+            "description": "Записати {filepath}. Потребує mango",
+            "description-missing": "Потрібно встановити {app}"
+          },
           "niri": {
             "description": "Записати {filepath}. Потребує niri v25.11+",
             "description-missing": "Потрібно встановити {app}"
-          },
-           "mango": {
-             "description": "Записати {filepath}. Потребує mango",
-             "description-missing": "Потрібно встановити {app}"
-           }
+          }
         },
         "misc": {
           "description": "Створіть власні шаблони",

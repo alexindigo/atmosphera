@@ -960,11 +960,11 @@
         "applications": {
           "empty": "Derzeit geben keine Anwendungen Audio wieder."
         },
-        "output": "Ausgabe",
         "input": "Eingabe",
+        "output": "Ausgabe",
         "tabs": {
-          "volumes": "Lautstärken",
-          "devices": "Geräte"
+          "devices": "Geräte",
+          "volumes": "Lautstärken"
         }
       },
       "title": "Audio",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Compositor-Theming.",
           "label": "Compositor",
+          "mango": {
+            "description": "Schreibe {filepath}. Benötigt mango",
+            "description-missing": "Benötigt die Installation von {app}"
+          },
           "niri": {
             "description": "Schreibe {filepath}. Benötigt niri v25.11+",
             "description-missing": "Benötigt die Installation von {app}"
-          },
-           "mango": {
-             "description": "Schreibe {filepath}. Benötigt mango",
-             "description-missing": "Benötigt die Installation von {app}"
-           }
+          }
         },
         "misc": {
           "description": "Erstellen Sie Ihre eigenen Vorlagen",

@@ -960,11 +960,11 @@
         "applications": {
           "empty": "В данный момент нет приложений, воспроизводящих звук."
         },
-        "output": "Выход",
         "input": "Вход",
+        "output": "Выход",
         "tabs": {
-          "volumes": "Громкость",
-          "devices": "Устройства"
+          "devices": "Устройства",
+          "volumes": "Громкость"
         }
       },
       "title": "Аудио",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Оформление композитора.",
           "label": "Компоновщики",
+          "mango": {
+            "description": "Записать {filepath}. Требуется mango",
+            "description-missing": "Требуется установка {app}"
+          },
           "niri": {
             "description": "Записать {filepath}. Требуется niri v25.11+",
             "description-missing": "Требуется установка {app}"
-          },
-           "mango": {
-             "description": "Записать {filepath}. Требуется mango",
-             "description-missing": "Требуется установка {app}"
-           }
+          }
         },
         "misc": {
           "description": "Создайте свои собственные шаблоны",

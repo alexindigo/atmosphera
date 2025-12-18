@@ -960,11 +960,11 @@
         "applications": {
           "empty": "Er spelen momenteel geen applicaties audio af."
         },
-        "output": "Uitvoer",
         "input": "Invoer",
+        "output": "Uitvoer",
         "tabs": {
-          "volumes": "Volumes",
-          "devices": "Apparaten"
+          "devices": "Apparaten",
+          "volumes": "Volumes"
         }
       },
       "title": "Audio",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Theming van compositor.",
           "label": "Compositors",
+          "mango": {
+            "description": "Schrijf {filepath}. Vereist mango",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
           "niri": {
             "description": "Schrijf {filepath}. Vereist niri v25.11+",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
-          },
-           "mango": {
-             "description": "Schrijf {filepath}. Vereist mango",
-             "description-missing": "Vereist dat {app} is geïnstalleerd."
-           }
+          }
         },
         "misc": {
           "description": "Maak uw eigen sjablonen",

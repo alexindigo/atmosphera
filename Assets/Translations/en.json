@@ -960,11 +960,11 @@
         "applications": {
           "empty": "No applications are currently playing audio"
         },
-        "output": "Output",
         "input": "Input",
+        "output": "Output",
         "tabs": {
-          "volumes": "Volumes",
-          "devices": "Devices"
+          "devices": "Devices",
+          "volumes": "Volumes"
         }
       },
       "title": "Audio",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Compositor theming.",
           "label": "Compositors",
+          "mango": {
+            "description": "Write {filepath}. Requires mango",
+            "description-missing": "Requires {app} to be installed"
+          },
           "niri": {
             "description": "Write {filepath}. Requires niri v25.11+",
             "description-missing": "Requires {app} to be installed"
-          },
-           "mango": {
-             "description": "Write {filepath}. Requires mango",
-             "description-missing": "Requires {app} to be installed"
-           }
+          }
         },
         "misc": {
           "description": "Create your own templates",

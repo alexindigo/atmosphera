@@ -960,11 +960,11 @@
         "applications": {
           "empty": "Nenhum aplicativo está reproduzindo áudio no momento."
         },
-        "output": "Saída",
         "input": "Entrada",
+        "output": "Saída",
         "tabs": {
-          "volumes": "Volumes",
-          "devices": "Dispositivos"
+          "devices": "Dispositivos",
+          "volumes": "Volumes"
         }
       },
       "title": "Áudio",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Tematização do compositor.",
           "label": "Compositores",
+          "mango": {
+            "description": "Escrever {filepath}. Requer mango",
+            "description-missing": "Requer que o {app} esteja instalado."
+          },
           "niri": {
             "description": "Escrever {filepath}. Requer Niri v25.11+",
             "description-missing": "Requer que o {app} esteja instalado."
-          },
-           "mango": {
-             "description": "Escrever {filepath}. Requer mango",
-             "description-missing": "Requer que o {app} esteja instalado."
-           }
+          }
         },
         "misc": {
           "description": "Crie seus próprios modelos",

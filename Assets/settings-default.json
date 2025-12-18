@@ -415,6 +415,7 @@
   "desktopWidgets": {
     "enabled": false,
     "editMode": false,
+    "gridSnap": false,
     "monitorWidgets": []
   }
 }

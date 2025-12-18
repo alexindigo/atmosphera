@@ -960,11 +960,11 @@
         "applications": {
           "empty": "Şu anda ses çalan uygulama yok."
         },
-        "output": "Çıkış",
         "input": "Giriş",
+        "output": "Çıkış",
         "tabs": {
-          "volumes": "Ses",
-          "devices": "Cihazlar"
+          "devices": "Cihazlar",
+          "volumes": "Ses"
         }
       },
       "title": "Ses",
@@ -1154,14 +1154,14 @@
         "compositors": {
           "description": "Birleştirici temalandırma.",
           "label": "Birleştiriciler",
+          "mango": {
+            "description": "{filepath} dosyasına yaz. mango gerektirir",
+            "description-missing": "{app} yüklü olmalıdır"
+          },
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",
             "description-missing": "{app} yüklü olmalıdır"
-          },
-           "mango": {
-             "description": "{filepath} dosyasına yaz. mango gerektirir",
-             "description-missing": "{app} yüklü olmalıdır"
-           }
+          }
         },
         "misc": {
           "description": "Kendi şablonlarınızı oluşturun",
