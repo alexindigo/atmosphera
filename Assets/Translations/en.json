@@ -956,6 +956,15 @@
           "label": "Visualization type"
         }
       },
+      "panel": {
+        "applications": {
+          "empty": "No applications are currently playing audio"
+        },
+        "tabs": {
+          "applications": "Applications",
+          "devices": "Devices"
+        }
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -2068,6 +2077,11 @@
         "downloaded": "Downloaded",
         "not-downloaded": "Not Downloaded"
       },
+      "hot-reload": {
+        "description": "Automatically reload plugins when their files change. Useful for plugin development.",
+        "label": "Hot reload (dev mode)"
+      },
+      "hot-reloaded": "Reloaded plugin: {name}",
       "install": "Install",
       "install-error": "Failed to install: {error}",
       "install-success": "Successfully installed {plugin}",
@@ -2123,12 +2137,7 @@
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",
-      "updating": "Updating {plugin}...",
-      "hot-reload": {
-        "description": "Automatically reload plugins when their files change. Useful for plugin development.",
-        "label": "Hot reload (dev mode)"
-      },
-      "hot-reloaded": "Reloaded plugin: {name}"
+      "updating": "Updating {plugin}..."
     },
     "screen-recorder": {
       "audio": {
@@ -2638,6 +2647,7 @@
     "move-to-center-section": "Center section",
     "move-to-left-section": "Left section",
     "move-to-right-section": "Right section",
+    "mute": "Mute",
     "next-media": "Next track",
     "next-month": "Next month",
     "night-light-disabled": "Night Light",
@@ -2672,6 +2682,7 @@
     "stop-screen-recording": "Screen recorder",
     "switch-to-dark-mode": "Dark Mode",
     "switch-to-light-mode": "Light Mode",
+    "unmute": "Unmute",
     "up": "Parent directory",
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",

@@ -956,6 +956,15 @@
           "label": "Tipo de visualización"
         }
       },
+      "panel": {
+        "applications": {
+          "empty": "Actualmente no hay aplicaciones reproduciendo audio."
+        },
+        "tabs": {
+          "applications": "Aplicaciones",
+          "devices": "Dispositivos"
+        }
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -2068,6 +2077,11 @@
         "downloaded": "Descargado",
         "not-downloaded": "No descargado"
       },
+      "hot-reload": {
+        "description": "Recarga automáticamente los plugins cuando sus archivos cambian. Útil para el desarrollo de plugins.",
+        "label": "Recarga en caliente (modo desarrollo)"
+      },
+      "hot-reloaded": "Plugin recargado: {name}",
       "install": "Instalar",
       "install-error": "Error al instalar: {error}",
       "install-success": "Se instaló {plugin} correctamente.",
@@ -2633,6 +2647,7 @@
     "move-to-center-section": "Sección central",
     "move-to-left-section": "Sección izquierda",
     "move-to-right-section": "Sección derecha",
+    "mute": "Silenciar",
     "next-media": "Siguiente pista",
     "next-month": "Mes siguiente",
     "night-light-disabled": "Luz nocturna",
@@ -2667,6 +2682,7 @@
     "stop-screen-recording": "Grabadora de pantalla",
     "switch-to-dark-mode": "Modo oscuro",
     "switch-to-light-mode": "Modo claro",
+    "unmute": "Activar el audio",
     "up": "Directorio superior",
     "volume-at": "Volumen de salida: {volume}%",
     "wallpaper-selector": "Selector de fondos de pantalla",

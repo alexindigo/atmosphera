@@ -956,6 +956,15 @@
           "label": "Tipo de visualização"
         }
       },
+      "panel": {
+        "applications": {
+          "empty": "Nenhum aplicativo está reproduzindo áudio no momento."
+        },
+        "tabs": {
+          "applications": "Aplicações",
+          "devices": "Dispositivos"
+        }
+      },
       "title": "Áudio",
       "volumes": {
         "input-volume": {
@@ -2068,6 +2077,11 @@
         "downloaded": "Baixado",
         "not-downloaded": "Não Baixado"
       },
+      "hot-reload": {
+        "description": "Recarrega automaticamente os plugins quando seus arquivos são alterados. Útil para o desenvolvimento de plugins.",
+        "label": "Recarga a quente (modo de desenvolvimento)"
+      },
+      "hot-reloaded": "Plugin recarregado: {name}",
       "install": "Instalar",
       "install-error": "Falha ao instalar: {error}",
       "install-success": "{plugin} instalado com sucesso.",
@@ -2633,6 +2647,7 @@
     "move-to-center-section": "Seção central",
     "move-to-left-section": "Seção esquerda",
     "move-to-right-section": "Seção direita",
+    "mute": "Silenciar",
     "next-media": "Próxima faixa",
     "next-month": "Próximo mês",
     "night-light-disabled": "Luz noturna",
@@ -2667,6 +2682,7 @@
     "stop-screen-recording": "Gravador de tela",
     "switch-to-dark-mode": "Modo escuro",
     "switch-to-light-mode": "Modo claro",
+    "unmute": "Desativar o mudo",
     "up": "Diretório superior",
     "volume-at": "Volume de saída: {volume}%",
     "wallpaper-selector": "Seletor de papel de parede",
