@@ -25,225 +25,63 @@ SmartPanel {
   // Use linkGroups to find nodes connected to the default audio sink
   // Note: We need to use link IDs since source/target properties require binding
   readonly property var appStreams: {
-    Logger.i("AudioPanel", "=== appStreams property evaluated ===");
-
-    if (!Pipewire.ready) {
-      Logger.w("AudioPanel", "Pipewire not ready");
-      return [];
-    }
-
-    if (!AudioService.sink) {
-      Logger.w("AudioPanel", "AudioService.sink is null");
+    if (!Pipewire.ready || !AudioService.sink) {
       return [];
     }
 
     var defaultSink = AudioService.sink;
     var defaultSinkId = defaultSink.id;
-    Logger.i("AudioPanel", "Default sink ID:", defaultSinkId, "name:", defaultSink.name || "unknown");
-
     var connectedStreamIds = {};
     var connectedStreams = [];
 
     // Use PwNodeLinkTracker to get properly bound link groups
     if (!sinkLinkTracker.linkGroups) {
-      Logger.w("AudioPanel", "sinkLinkTracker.linkGroups is null/undefined");
-      Logger.i("AudioPanel", "sinkLinkTracker.node:", sinkLinkTracker.node ? (sinkLinkTracker.node.id || "unknown") : "null");
       return [];
     }
-
-    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups type:", typeof sinkLinkTracker.linkGroups);
-    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups.length:", sinkLinkTracker.linkGroups.length);
-    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups.count:", sinkLinkTracker.linkGroups.count);
 
     // Check if linkGroups is an array or ObjectModel
     var linkGroupsCount = 0;
     if (sinkLinkTracker.linkGroups.length !== undefined) {
       linkGroupsCount = sinkLinkTracker.linkGroups.length;
-      Logger.i("AudioPanel", "Using .length, found", linkGroupsCount, "link groups");
     } else if (sinkLinkTracker.linkGroups.count !== undefined) {
       linkGroupsCount = sinkLinkTracker.linkGroups.count;
-      Logger.i("AudioPanel", "Using .count, found", linkGroupsCount, "link groups");
     } else {
-      Logger.w("AudioPanel", "Could not determine link groups count - no .length or .count property");
-      Logger.i("AudioPanel", "linkGroups keys:", Object.keys(sinkLinkTracker.linkGroups || {}));
       return [];
     }
 
     if (linkGroupsCount === 0) {
-      Logger.w("AudioPanel", "No link groups found - no applications connected to sink");
       return [];
     }
 
     // Collect intermediate node IDs that are connected to the sink
     var intermediateNodeIds = {};
 
-    // Helper function to find stream nodes connected to a target node (sink or intermediate node)
-    // Uses Pipewire.linkGroups to find link groups where target matches our node
-    function findStreamsConnectedToTarget(targetNodeId) {
-      var foundStreams = [];
-      var visitedNodes = {}; // Prevent infinite recursion
-
-      function findStreamsRecursive(nodeId, depth) {
-        if (depth > 5 || visitedNodes[nodeId]) {
-          return; // Prevent infinite recursion
-        }
-        visitedNodes[nodeId] = true;
-
-        try {
-          if (!Pipewire.linkGroups) {
-            Logger.w("AudioPanel", "Pipewire.linkGroups is null/undefined");
-            return;
-          }
-
-          Logger.i("AudioPanel", "Pipewire.linkGroups type:", typeof Pipewire.linkGroups);
-          Logger.i("AudioPanel", "Pipewire.linkGroups.get:", typeof Pipewire.linkGroups.get);
-          Logger.i("AudioPanel", "Pipewire.linkGroups.length:", Pipewire.linkGroups.length);
-          Logger.i("AudioPanel", "Pipewire.linkGroups.count:", Pipewire.linkGroups.count);
-
-          // Pipewire.linkGroups is an ObjectModel, iterate through it
-          Logger.i("AudioPanel", "Searching link groups for connections to node", nodeId, "(depth", depth + ")");
-
-          var k = 0;
-          var maxIterations = 1000; // Safety limit
-          var linkGroupsChecked = 0;
-          var consecutiveNulls = 0;
-
-          while (k < maxIterations) {
-            var linkGroup = null;
-            var accessError = null;
-
-            try {
-              // Try ObjectModel.get() first, then array access
-              if (Pipewire.linkGroups.get && typeof Pipewire.linkGroups.get === 'function') {
-                linkGroup = Pipewire.linkGroups.get(k);
-                Logger.i("AudioPanel", "Accessed link group", k, "via .get()");
-              } else if (Pipewire.linkGroups[k] !== undefined) {
-                linkGroup = Pipewire.linkGroups[k];
-                Logger.i("AudioPanel", "Accessed link group", k, "via array index");
-              } else {
-                // Try to see if we've reached the end
-                if (k === 0) {
-                  Logger.w("AudioPanel", "Cannot access link groups - both .get() and array access failed at index 0");
-                }
-                consecutiveNulls++;
-                if (consecutiveNulls > 10) {
-                  // Probably reached end
-                  break;
-                }
-                k++;
-                continue;
-              }
-            } catch (e) {
-              accessError = e;
-              Logger.w("AudioPanel", "Error accessing link group", k, ":", e);
-              consecutiveNulls++;
-              if (consecutiveNulls > 10) {
-                break;
-              }
-              k++;
-              continue;
-            }
-
-            if (!linkGroup) {
-              consecutiveNulls++;
-              if (consecutiveNulls > 10) {
-                // Reached end of list
-                break;
-              }
-              k++;
-              continue;
-            }
-
-            consecutiveNulls = 0; // Reset counter
-            linkGroupsChecked++;
-
-            // Link groups need to be bound to access source/target
-            // Try to access them, but they might be null if not bound
-            try {
-              if (!linkGroup.source || !linkGroup.target) {
-                k++;
-                continue;
-              }
-
-              var sourceId = linkGroup.source.id;
-              var targetId = linkGroup.target.id;
-
-              // Check if this link group connects to our target
-              if (targetId === nodeId) {
-                Logger.i("AudioPanel", "Found link group: source", sourceId, "-> target", targetId, "(depth", depth + ")");
-
-                // Check if source is a stream node
-                if (linkGroup.source.isStream && linkGroup.source.audio) {
-                  Logger.i("AudioPanel", "Source", sourceId, "is a stream node - adding");
-                  foundStreams.push(linkGroup.source);
-                } else {
-                  // Source is an intermediate node - recursively find streams connected to it
-                  Logger.i("AudioPanel", "Source", sourceId, "is intermediate (isStream:", linkGroup.source.isStream, ") - searching recursively");
-                  findStreamsRecursive(sourceId, depth + 1);
-                }
-              }
-            } catch (e) {
-              // Link group properties not accessible (might need binding)
-              Logger.i("AudioPanel", "Link group", k, "properties not accessible:", e);
-            }
-
-            k++;
-          }
-
-          Logger.i("AudioPanel", "Checked", linkGroupsChecked, "link group(s) for node", nodeId);
-        } catch (e) {
-          Logger.w("AudioPanel", "Error finding streams connected to target", nodeId, ":", e);
-        }
-      }
-
-      findStreamsRecursive(targetNodeId, 0);
-      return foundStreams;
-    }
-
-    // First, try direct approach from link groups
-    Logger.i("AudioPanel", "Processing", linkGroupsCount, "link group(s) (direct approach)...");
+    // Process link groups from sinkLinkTracker
     var nodesToCheck = [];
 
     for (var i = 0; i < linkGroupsCount; i++) {
       var linkGroup;
       if (sinkLinkTracker.linkGroups.get) {
-        // ObjectModel
         linkGroup = sinkLinkTracker.linkGroups.get(i);
-        Logger.i("AudioPanel", "Link group", i, "- using ObjectModel.get()");
       } else {
-        // Array
         linkGroup = sinkLinkTracker.linkGroups[i];
-        Logger.i("AudioPanel", "Link group", i, "- using array index");
       }
 
-      if (!linkGroup) {
-        Logger.w("AudioPanel", "Link group", i, "is null/undefined");
-        continue;
-      }
-
-      Logger.i("AudioPanel", "Link group", i, "- source:", linkGroup.source ? (linkGroup.source.id || "unknown") : "null");
-      Logger.i("AudioPanel", "Link group", i, "- target:", linkGroup.target ? (linkGroup.target.id || "unknown") : "null");
-
-      if (!linkGroup.source) {
-        Logger.w("AudioPanel", "Link group", i, "has no source node");
+      if (!linkGroup || !linkGroup.source) {
         continue;
       }
 
       var sourceNode = linkGroup.source;
-      Logger.i("AudioPanel", "Source node", sourceNode.id, "- isStream:", sourceNode.isStream, "isSink:", sourceNode.isSink, "audio:", !!sourceNode.audio);
-      Logger.i("AudioPanel", "Source node", sourceNode.id, "- name:", sourceNode.name || "unknown");
 
       // If it's a stream node, add it directly
       if (sourceNode.isStream && sourceNode.audio) {
         if (!connectedStreamIds[sourceNode.id]) {
           connectedStreamIds[sourceNode.id] = true;
           connectedStreams.push(sourceNode);
-          Logger.i("AudioPanel", "Added application stream (direct):", sourceNode.id, "- name:", sourceNode.name || "unknown");
         }
       } else {
         // Not a stream - this is an intermediate node, track it
         intermediateNodeIds[sourceNode.id] = true;
-        Logger.i("AudioPanel", "Found intermediate node", sourceNode.id, "- will check streams connected to it");
         nodesToCheck.push(sourceNode);
       }
     }
@@ -253,16 +91,12 @@ SmartPanel {
     // When intermediate nodes are present, include all active stream nodes
     // (reasonable assumption: if audio is playing, streams are connected)
     if (nodesToCheck.length > 0 || connectedStreams.length === 0) {
-      Logger.i("AudioPanel", "Intermediate nodes found or no direct streams - searching all stream nodes");
-      Logger.i("AudioPanel", "Intermediate node IDs:", Object.keys(intermediateNodeIds).join(", "));
-
       try {
         // Get all nodes from Pipewire
         var allNodes = [];
         if (Pipewire.nodes) {
           if (Pipewire.nodes.count !== undefined) {
             var nodeCount = Pipewire.nodes.count;
-            Logger.i("AudioPanel", "Total nodes in Pipewire (via .count):", nodeCount);
             for (var n = 0; n < nodeCount; n++) {
               var node;
               if (Pipewire.nodes.get) {
@@ -275,7 +109,6 @@ SmartPanel {
             }
           } else if (Pipewire.nodes.values) {
             allNodes = Pipewire.nodes.values;
-            Logger.i("AudioPanel", "Total nodes in Pipewire (via .values):", allNodes.length);
           }
         }
 
@@ -291,27 +124,22 @@ SmartPanel {
             continue; // Already added
           }
 
-          Logger.i("AudioPanel", "Found stream node", streamId, "- name:", node.name || "unknown");
-
           // When intermediate nodes are present, include all stream nodes
           // This is a reasonable heuristic since if audio is playing, they're likely connected
           if (Object.keys(intermediateNodeIds).length > 0) {
             connectedStreamIds[streamId] = true;
             connectedStreams.push(node);
-            Logger.i("AudioPanel", "Added stream node (intermediate nodes present):", streamId, "- name:", node.name || "unknown");
           } else if (connectedStreams.length === 0) {
             // Fallback: if no streams found yet, include as fallback
             connectedStreamIds[streamId] = true;
             connectedStreams.push(node);
-            Logger.i("AudioPanel", "Added stream node (fallback):", streamId, "- name:", node.name || "unknown");
           }
         }
-      } catch (e) {
-        Logger.w("AudioPanel", "Error finding stream nodes:", e);
-      }
+      } catch (e)
+        // Error finding stream nodes - continue with what we have
+      {}
     }
 
-    Logger.i("AudioPanel", "=== Found", connectedStreams.length, "audio application(s) ===");
     return connectedStreams;
   }
 
@@ -319,19 +147,6 @@ SmartPanel {
   PwNodeLinkTracker {
     id: sinkLinkTracker
     node: AudioService.sink
-
-    onNodeChanged: {
-      Logger.i("AudioPanel", "sinkLinkTracker.node changed to:", node ? (node.id || "unknown") : "null");
-    }
-
-    onLinkGroupsChanged: {
-      Logger.i("AudioPanel", "sinkLinkTracker.linkGroups changed");
-      Logger.i("AudioPanel", "linkGroups type:", typeof linkGroups);
-      if (linkGroups) {
-        Logger.i("AudioPanel", "linkGroups.length:", linkGroups.length);
-        Logger.i("AudioPanel", "linkGroups.count:", linkGroups.count);
-      }
-    }
   }
 
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
@@ -354,21 +169,15 @@ SmartPanel {
   Connections {
     target: AudioService
     function onSinkChanged() {
-      Logger.i("AudioPanel", "AudioService.sink changed");
       if (AudioService.sink) {
         const newSinkId = AudioService.sink.id;
-        Logger.i("AudioPanel", "New sink ID:", newSinkId, "name:", AudioService.sink.name || "unknown");
         if (newSinkId !== lastSinkId) {
-          Logger.i("AudioPanel", "Sink ID changed from", lastSinkId, "to", newSinkId);
           lastSinkId = newSinkId;
           // Immediately set local volume to current device's volume
           var vol = AudioService.volume;
           localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
-        } else {
-          Logger.i("AudioPanel", "Sink ID unchanged:", newSinkId);
         }
       } else {
-        Logger.w("AudioPanel", "AudioService.sink is now null");
         lastSinkId = -1;
         localOutputVolume = 0;
       }
@@ -727,18 +536,15 @@ SmartPanel {
                   const props = modelData.properties;
                   // Exclude capture streams - check for stream.capture.sink property
                   if (props["stream.capture.sink"] !== undefined) {
-                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (stream.capture.sink)");
                     return true;
                   }
                   const mediaClass = props["media.class"] || "";
                   // Exclude Stream/Input (capture) but allow Stream/Output (playback)
                   if (mediaClass.includes("Capture") || mediaClass === "Stream/Input" || mediaClass === "Stream/Input/Audio") {
-                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (media.class:", mediaClass + ")");
                     return true;
                   }
                   const mediaRole = props["media.role"] || "";
                   if (mediaRole === "Capture") {
-                    Logger.i("AudioPanel", "Hiding", modelData.name, "- capture stream (media.role: Capture)");
                     return true;
                   }
                   return false;
@@ -751,21 +557,13 @@ SmartPanel {
                     return "Unknown App";
                   }
 
-                  var nodeId = modelData.id || "unknown";
-                  var nodeReady = modelData.ready || false;
                   var props = modelData.properties;
                   var desc = modelData.description || "";
                   var name = modelData.name || "";
 
-                  // Log when computed property is evaluated (only when properties change)
-                  if (nodeReady && props) {
-                    Logger.i("AudioPanel", "appName computed for node", nodeId, "- ready:", nodeReady);
-                  }
-
                   // If properties aren't available yet, try description or name
                   if (!props) {
                     if (desc) {
-                      Logger.i("AudioPanel", "Node", nodeId, "- using description:", desc);
                       return desc;
                     }
                     if (name) {
@@ -774,24 +572,12 @@ SmartPanel {
                       if (nameParts.length > 0) {
                         var extracted = nameParts[0];
                         if (extracted) {
-                          var formatted = extracted.charAt(0).toUpperCase() + extracted.slice(1);
-                          Logger.i("AudioPanel", "Node", nodeId, "- extracted from name:", formatted);
-                          return formatted;
+                          return extracted.charAt(0).toUpperCase() + extracted.slice(1);
                         }
                       }
-                      Logger.i("AudioPanel", "Node", nodeId, "- using name:", name);
                       return name;
                     }
                     return "Unknown App";
-                  }
-
-                  // Log all available property keys (only once when properties become available)
-                  if (nodeReady) {
-                    var propKeys = [];
-                    for (var key in props) {
-                      propKeys.push(key);
-                    }
-                    Logger.i("AudioPanel", "Node", nodeId, "- available properties:", propKeys.join(", "));
                   }
 
                   // Try to get application name from various properties
@@ -801,14 +587,6 @@ SmartPanel {
                   var appId = props["application.id"] || "";
                   var binaryName = props["application.process.binary"] || "";
 
-                  if (nodeReady) {
-                    Logger.i("AudioPanel", "Node", nodeId, "- application.name:", computedAppName);
-                    Logger.i("AudioPanel", "Node", nodeId, "- media.name:", mediaName);
-                    Logger.i("AudioPanel", "Node", nodeId, "- media.title:", mediaTitle);
-                    Logger.i("AudioPanel", "Node", nodeId, "- application.id:", appId);
-                    Logger.i("AudioPanel", "Node", nodeId, "- application.process.binary:", binaryName);
-                  }
-
                   // If we have application.id, try to extract app name from it (e.g., "firefox.desktop" -> "firefox")
                   if (!computedAppName && appId) {
                     var parts = appId.split(".");
@@ -817,7 +595,6 @@ SmartPanel {
                       // Capitalize first letter and format nicely
                       if (computedAppName) {
                         computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                        Logger.i("AudioPanel", "Node", nodeId, "- extracted from appId:", computedAppName);
                       }
                     }
                   }
@@ -829,17 +606,12 @@ SmartPanel {
                       computedAppName = binParts[binParts.length - 1];
                       if (computedAppName) {
                         computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                        Logger.i("AudioPanel", "Node", nodeId, "- extracted from binary:", computedAppName);
                       }
                     }
                   }
 
                   // Priority: application.name > media.title > media.name > binary > description > name
                   var result = computedAppName || mediaTitle || mediaName || binaryName || desc || name;
-
-                  if (nodeReady) {
-                    Logger.i("AudioPanel", "Node", nodeId, "- intermediate result:", result);
-                  }
 
                   // If we still don't have a good name, try to extract from node name
                   if (!result || result === "" || result === "Unknown App") {
@@ -851,17 +623,12 @@ SmartPanel {
                         // Capitalize first letter
                         if (result) {
                           result = result.charAt(0).toUpperCase() + result.slice(1);
-                          Logger.i("AudioPanel", "Node", nodeId, "- extracted from node name:", result);
                         }
                       }
                     }
                   }
 
-                  var finalResult = result || "Unknown App";
-                  if (nodeReady) {
-                    Logger.i("AudioPanel", "Node", nodeId, "- final appName:", finalResult);
-                  }
-                  return finalResult;
+                  return result || "Unknown App";
                 }
 
                 // Get app icon from properties (returns file path)
