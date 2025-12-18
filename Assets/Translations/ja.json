@@ -960,8 +960,10 @@
         "applications": {
           "empty": "現在、音声を再生しているアプリケーションはありません。"
         },
+        "output": "出力",
+        "input": "入力",
         "tabs": {
-          "applications": "アプリケーション",
+          "volumes": "音量",
           "devices": "デバイス"
         }
       },

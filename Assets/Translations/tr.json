@@ -960,8 +960,10 @@
         "applications": {
           "empty": "Şu anda ses çalan uygulama yok."
         },
+        "output": "Çıkış",
+        "input": "Giriş",
         "tabs": {
-          "applications": "Uygulamalar",
+          "volumes": "Ses",
           "devices": "Cihazlar"
         }
       },

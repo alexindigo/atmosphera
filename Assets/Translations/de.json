@@ -960,8 +960,10 @@
         "applications": {
           "empty": "Derzeit geben keine Anwendungen Audio wieder."
         },
+        "output": "Ausgabe",
+        "input": "Eingabe",
         "tabs": {
-          "applications": "Anwendungen",
+          "volumes": "Lautstärken",
           "devices": "Geräte"
         }
       },

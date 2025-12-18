@@ -960,8 +960,10 @@
         "applications": {
           "empty": "Er spelen momenteel geen applicaties audio af."
         },
+        "output": "Uitvoer",
+        "input": "Invoer",
         "tabs": {
-          "applications": "Toepassingen",
+          "volumes": "Volumes",
           "devices": "Apparaten"
         }
       },

@@ -960,8 +960,10 @@
         "applications": {
           "empty": "Actualmente no hay aplicaciones reproduciendo audio."
         },
+        "output": "Salida",
+        "input": "Entrada",
         "tabs": {
-          "applications": "Aplicaciones",
+          "volumes": "Volúmenes",
           "devices": "Dispositivos"
         }
       },

@@ -302,26 +302,6 @@ SmartPanel {
           }
 
           NIconButton {
-            icon: AudioService.getOutputIcon()
-            tooltipText: I18n.tr("tooltips.output-muted")
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: {
-              AudioService.suppressOutputOSD();
-              AudioService.setOutputMuted(!AudioService.muted);
-            }
-          }
-
-          NIconButton {
-            icon: AudioService.getInputIcon()
-            tooltipText: I18n.tr("tooltips.input-muted")
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: {
-              AudioService.suppressInputOSD();
-              AudioService.setInputMuted(!AudioService.inputMuted);
-            }
-          }
-
-          NIconButton {
             icon: "close"
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
@@ -341,14 +321,14 @@ SmartPanel {
 
         NTabButton {
           Layout.fillWidth: true
-          text: I18n.tr("settings.audio.panel.tabs.devices")
+          text: I18n.tr("settings.audio.panel.tabs.volumes")
           tabIndex: 0
           checked: tabBar.currentIndex === 0
         }
 
         NTabButton {
           Layout.fillWidth: true
-          text: I18n.tr("settings.audio.panel.tabs.applications")
+          text: I18n.tr("settings.audio.panel.tabs.devices")
           tabIndex: 1
           checked: tabBar.currentIndex === 1
         }
@@ -360,148 +340,146 @@ SmartPanel {
         Layout.fillHeight: true
         currentIndex: root.currentTabIndex
 
-        // Devices Tab
+        // Applications Tab (Volume)
         NScrollView {
           horizontalPolicy: ScrollBar.AlwaysOff
           verticalPolicy: ScrollBar.AsNeeded
           clip: true
           contentWidth: availableWidth
 
-          // AudioService Devices
           ColumnLayout {
             spacing: Style.marginM
             width: parent.width
 
-            // -------------------------------
-            // Output Devices
-            ButtonGroup {
-              id: sinks
-            }
-
+            // Output Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginM * 2)
 
-              ColumnLayout {
-                id: outputColumn
+              RowLayout {
+                id: outputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.margins: Style.marginM
-                spacing: Style.marginS
+                spacing: Style.marginM
 
-                NText {
-                  text: I18n.tr("settings.audio.devices.output-device.label")
-                  pointSize: Style.fontSizeL
-                  color: Color.mPrimary
-                }
-
-                // Output Volume Slider
-                NValueSlider {
+                ColumnLayout {
                   Layout.fillWidth: true
-                  from: 0
-                  to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-                  value: localOutputVolume
-                  stepSize: 0.01
-                  heightRatio: 0.5
-                  onMoved: function (value) {
-                    localOutputVolume = value;
-                  }
-                  onPressedChanged: function (pressed) {
-                    localOutputVolumeChanging = pressed;
-                  }
-                  text: Math.round(localOutputVolume * 100) + "%"
-                  Layout.bottomMargin: Style.marginM
-                }
+                  spacing: Style.marginXS
 
-                Repeater {
-                  model: AudioService.sinks
-                  NRadioButton {
-                    ButtonGroup.group: sinks
-                    required property PwNode modelData
-                    pointSize: Style.fontSizeS
-                    text: modelData.description
-                    checked: AudioService.sink?.id === modelData.id
-                    onClicked: {
-                      AudioService.setAudioSink(modelData);
-                      localOutputVolume = AudioService.volume;
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginXS
+
+                    NText {
+                      text: I18n.tr("settings.audio.panel.output")
+                      pointSize: Style.fontSizeM
+                      color: Color.mPrimary
                     }
+
+                    NText {
+                      text: AudioService.sink ? (" - " + (AudioService.sink.description || AudioService.sink.name || "")) : ""
+                      pointSize: Style.fontSizeS
+                      color: Color.mOnSurfaceVariant
+                      elide: Text.ElideRight
+                      Layout.fillWidth: true
+                    }
+                  }
+
+                  NValueSlider {
                     Layout.fillWidth: true
+                    from: 0
+                    to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                    value: localOutputVolume
+                    stepSize: 0.01
+                    heightRatio: 0.5
+                    onMoved: function (value) {
+                      localOutputVolume = value;
+                    }
+                    onPressedChanged: function (pressed) {
+                      localOutputVolumeChanging = pressed;
+                    }
+                    text: Math.round(localOutputVolume * 100) + "%"
+                  }
+                }
+
+                NIconButton {
+                  icon: AudioService.getOutputIcon()
+                  tooltipText: I18n.tr("tooltips.output-muted")
+                  baseSize: Style.baseWidgetSize * 0.8
+                  onClicked: {
+                    AudioService.suppressOutputOSD();
+                    AudioService.setOutputMuted(!AudioService.muted);
                   }
                 }
               }
             }
 
-            // -------------------------------
-            // Input Devices
-            ButtonGroup {
-              id: sources
-            }
-
+            // Input Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginM * 2)
 
-              ColumnLayout {
-                id: inputColumn
+              RowLayout {
+                id: inputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.bottom: parent.bottom
                 anchors.margins: Style.marginM
-                spacing: Style.marginS
+                spacing: Style.marginM
 
-                NText {
-                  text: I18n.tr("settings.audio.devices.input-device.label")
-                  pointSize: Style.fontSizeL
-                  color: Color.mPrimary
-                }
-
-                // Input Volume Slider
-                NValueSlider {
+                ColumnLayout {
                   Layout.fillWidth: true
-                  from: 0
-                  to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-                  value: localInputVolume
-                  stepSize: 0.01
-                  heightRatio: 0.5
-                  onMoved: function (value) {
-                    localInputVolume = value;
+                  spacing: Style.marginXS
+
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginXS
+
+                    NText {
+                      text: I18n.tr("settings.audio.panel.input")
+                      pointSize: Style.fontSizeM
+                      color: Color.mPrimary
+                    }
+
+                    NText {
+                      text: AudioService.source ? (" - " + (AudioService.source.description || AudioService.source.name || "")) : ""
+                      pointSize: Style.fontSizeS
+                      color: Color.mOnSurfaceVariant
+                      elide: Text.ElideRight
+                      Layout.fillWidth: true
+                    }
                   }
-                  onPressedChanged: function (pressed) {
-                    localInputVolumeChanging = pressed;
+
+                  NValueSlider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                    value: localInputVolume
+                    stepSize: 0.01
+                    heightRatio: 0.5
+                    onMoved: function (value) {
+                      localInputVolume = value;
+                    }
+                    onPressedChanged: function (pressed) {
+                      localInputVolumeChanging = pressed;
+                    }
+                    text: Math.round(localInputVolume * 100) + "%"
                   }
-                  text: Math.round(localInputVolume * 100) + "%"
-                  Layout.bottomMargin: Style.marginM
                 }
 
-                Repeater {
-                  model: AudioService.sources
-                  NRadioButton {
-                    ButtonGroup.group: sources
-                    required property PwNode modelData
-                    pointSize: Style.fontSizeS
-                    text: modelData.description
-                    checked: AudioService.source?.id === modelData.id
-                    onClicked: AudioService.setAudioSource(modelData)
-                    Layout.fillWidth: true
+                NIconButton {
+                  icon: AudioService.getInputIcon()
+                  tooltipText: I18n.tr("tooltips.input-muted")
+                  baseSize: Style.baseWidgetSize * 0.8
+                  onClicked: {
+                    AudioService.suppressInputOSD();
+                    AudioService.setInputMuted(!AudioService.inputMuted);
                   }
                 }
               }
             }
-          }
-        }
-
-        // Applications Tab
-        NScrollView {
-          horizontalPolicy: ScrollBar.AlwaysOff
-          verticalPolicy: ScrollBar.AsNeeded
-          clip: true
-          contentWidth: availableWidth
-
-          ColumnLayout {
-            spacing: Style.marginM
-            width: parent.width
 
             // Bind all app stream nodes to access their audio properties
             PwObjectTracker {
@@ -527,7 +505,6 @@ SmartPanel {
                 property PwNodeAudio nodeAudio: (modelData && modelData.audio) ? modelData.audio : null
                 property real appVolume: (nodeAudio && nodeAudio.volume !== undefined) ? nodeAudio.volume : 0.0
                 property bool appMuted: (nodeAudio && nodeAudio.muted !== undefined) ? nodeAudio.muted : false
-                property bool volumeChanging: false
 
                 // Check if this is a capture stream (after node is bound)
                 readonly property bool isCaptureStream: {
@@ -798,6 +775,102 @@ SmartPanel {
               horizontalAlignment: Text.AlignHCenter
               Layout.fillWidth: true
               Layout.topMargin: Style.marginXL
+            }
+          }
+        }
+
+        // Devices Tab
+        NScrollView {
+          horizontalPolicy: ScrollBar.AlwaysOff
+          verticalPolicy: ScrollBar.AsNeeded
+          clip: true
+          contentWidth: availableWidth
+
+          // AudioService Devices
+          ColumnLayout {
+            spacing: Style.marginM
+            width: parent.width
+
+            // -------------------------------
+            // Output Devices
+            ButtonGroup {
+              id: sinks
+            }
+
+            NBox {
+              Layout.fillWidth: true
+              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginM * 2)
+
+              ColumnLayout {
+                id: outputColumn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: Style.marginM
+                spacing: Style.marginS
+
+                NText {
+                  text: I18n.tr("settings.audio.devices.output-device.label")
+                  pointSize: Style.fontSizeL
+                  color: Color.mPrimary
+                }
+
+                Repeater {
+                  model: AudioService.sinks
+                  NRadioButton {
+                    ButtonGroup.group: sinks
+                    required property PwNode modelData
+                    pointSize: Style.fontSizeS
+                    text: modelData.description
+                    checked: AudioService.sink?.id === modelData.id
+                    onClicked: {
+                      AudioService.setAudioSink(modelData);
+                      localOutputVolume = AudioService.volume;
+                    }
+                    Layout.fillWidth: true
+                  }
+                }
+              }
+            }
+
+            // -------------------------------
+            // Input Devices
+            ButtonGroup {
+              id: sources
+            }
+
+            NBox {
+              Layout.fillWidth: true
+              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginM * 2)
+
+              ColumnLayout {
+                id: inputColumn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.margins: Style.marginM
+                spacing: Style.marginS
+
+                NText {
+                  text: I18n.tr("settings.audio.devices.input-device.label")
+                  pointSize: Style.fontSizeL
+                  color: Color.mPrimary
+                }
+
+                Repeater {
+                  model: AudioService.sources
+                  NRadioButton {
+                    ButtonGroup.group: sources
+                    required property PwNode modelData
+                    pointSize: Style.fontSizeS
+                    text: modelData.description
+                    checked: AudioService.source?.id === modelData.id
+                    onClicked: AudioService.setAudioSource(modelData)
+                    Layout.fillWidth: true
+                  }
+                }
+              }
             }
           }
         }
