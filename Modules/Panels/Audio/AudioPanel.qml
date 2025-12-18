@@ -25,58 +25,111 @@ SmartPanel {
   // Use linkGroups to find nodes connected to the default audio sink
   // Note: We need to use link IDs since source/target properties require binding
   readonly property var appStreams: {
-    if (!Pipewire.ready || !AudioService.sink) {
+    Logger.i("AudioPanel", "=== appStreams property evaluated ===");
+
+    if (!Pipewire.ready) {
+      Logger.w("AudioPanel", "Pipewire not ready");
+      return [];
+    }
+
+    if (!AudioService.sink) {
+      Logger.w("AudioPanel", "AudioService.sink is null");
       return [];
     }
 
     var defaultSink = AudioService.sink;
     var defaultSinkId = defaultSink.id;
+    Logger.i("AudioPanel", "Default sink ID:", defaultSinkId, "name:", defaultSink.name || "unknown");
+
     var connectedStreamIds = {};
     var connectedStreams = [];
 
     // Use PwNodeLinkTracker to get properly bound link groups
     if (!sinkLinkTracker.linkGroups) {
+      Logger.w("AudioPanel", "sinkLinkTracker.linkGroups is null/undefined");
+      Logger.i("AudioPanel", "sinkLinkTracker.node:", sinkLinkTracker.node ? (sinkLinkTracker.node.id || "unknown") : "null");
       return [];
     }
+
+    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups type:", typeof sinkLinkTracker.linkGroups);
+    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups.length:", sinkLinkTracker.linkGroups.length);
+    Logger.i("AudioPanel", "sinkLinkTracker.linkGroups.count:", sinkLinkTracker.linkGroups.count);
 
     // Check if linkGroups is an array or ObjectModel
     var linkGroupsCount = 0;
     if (sinkLinkTracker.linkGroups.length !== undefined) {
       linkGroupsCount = sinkLinkTracker.linkGroups.length;
+      Logger.i("AudioPanel", "Using .length, found", linkGroupsCount, "link groups");
     } else if (sinkLinkTracker.linkGroups.count !== undefined) {
       linkGroupsCount = sinkLinkTracker.linkGroups.count;
+      Logger.i("AudioPanel", "Using .count, found", linkGroupsCount, "link groups");
     } else {
+      Logger.w("AudioPanel", "Could not determine link groups count - no .length or .count property");
+      Logger.i("AudioPanel", "linkGroups keys:", Object.keys(sinkLinkTracker.linkGroups || {}));
+      return [];
+    }
+
+    if (linkGroupsCount === 0) {
+      Logger.w("AudioPanel", "No link groups found - no applications connected to sink");
       return [];
     }
 
     // Get source nodes from link groups (these are properly bound via PwNodeLinkTracker)
+    Logger.i("AudioPanel", "Processing", linkGroupsCount, "link group(s)...");
     for (var i = 0; i < linkGroupsCount; i++) {
       var linkGroup;
       if (sinkLinkTracker.linkGroups.get) {
         // ObjectModel
         linkGroup = sinkLinkTracker.linkGroups.get(i);
+        Logger.i("AudioPanel", "Link group", i, "- using ObjectModel.get()");
       } else {
         // Array
         linkGroup = sinkLinkTracker.linkGroups[i];
+        Logger.i("AudioPanel", "Link group", i, "- using array index");
       }
 
-      if (!linkGroup || !linkGroup.source) {
+      if (!linkGroup) {
+        Logger.w("AudioPanel", "Link group", i, "is null/undefined");
+        continue;
+      }
+
+      Logger.i("AudioPanel", "Link group", i, "- source:", linkGroup.source ? (linkGroup.source.id || "unknown") : "null");
+      Logger.i("AudioPanel", "Link group", i, "- target:", linkGroup.target ? (linkGroup.target.id || "unknown") : "null");
+
+      if (!linkGroup.source) {
+        Logger.w("AudioPanel", "Link group", i, "has no source node");
         continue;
       }
 
       var sourceNode = linkGroup.source;
+      Logger.i("AudioPanel", "Source node", sourceNode.id, "- isStream:", sourceNode.isStream, "isSink:", sourceNode.isSink, "audio:", !!sourceNode.audio);
+      Logger.i("AudioPanel", "Source node", sourceNode.id, "- name:", sourceNode.name || "unknown");
 
       // Include stream nodes (applications) - these can be virtual sinks created by apps
       // Virtual sinks (isStream: true, isSink: true) are application-created nodes
       // Hardware sinks (isStream: false, isSink: true) are actual audio devices
-      if (sourceNode.isStream && sourceNode.audio) {
-        // Avoid duplicates
-        if (!connectedStreamIds[sourceNode.id]) {
-          connectedStreamIds[sourceNode.id] = true;
-          connectedStreams.push(sourceNode);
-        }
+      if (!sourceNode.isStream) {
+        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - not a stream (isStream:", sourceNode.isStream + ")");
+        continue;
       }
+
+      if (!sourceNode.audio) {
+        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - no audio property");
+        continue;
+      }
+
+      // Avoid duplicates
+      if (connectedStreamIds[sourceNode.id]) {
+        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - already added");
+        continue;
+      }
+
+      connectedStreamIds[sourceNode.id] = true;
+      connectedStreams.push(sourceNode);
+      Logger.i("AudioPanel", "Added application stream:", sourceNode.id, "- name:", sourceNode.name || "unknown");
     }
+
+    Logger.i("AudioPanel", "=== Found", connectedStreams.length, "audio application(s) ===");
     return connectedStreams;
   }
 
@@ -84,6 +137,19 @@ SmartPanel {
   PwNodeLinkTracker {
     id: sinkLinkTracker
     node: AudioService.sink
+
+    onNodeChanged: {
+      Logger.i("AudioPanel", "sinkLinkTracker.node changed to:", node ? (node.id || "unknown") : "null");
+    }
+
+    onLinkGroupsChanged: {
+      Logger.i("AudioPanel", "sinkLinkTracker.linkGroups changed");
+      Logger.i("AudioPanel", "linkGroups type:", typeof linkGroups);
+      if (linkGroups) {
+        Logger.i("AudioPanel", "linkGroups.length:", linkGroups.length);
+        Logger.i("AudioPanel", "linkGroups.count:", linkGroups.count);
+      }
+    }
   }
 
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
@@ -106,15 +172,21 @@ SmartPanel {
   Connections {
     target: AudioService
     function onSinkChanged() {
+      Logger.i("AudioPanel", "AudioService.sink changed");
       if (AudioService.sink) {
         const newSinkId = AudioService.sink.id;
+        Logger.i("AudioPanel", "New sink ID:", newSinkId, "name:", AudioService.sink.name || "unknown");
         if (newSinkId !== lastSinkId) {
+          Logger.i("AudioPanel", "Sink ID changed from", lastSinkId, "to", newSinkId);
           lastSinkId = newSinkId;
           // Immediately set local volume to current device's volume
           var vol = AudioService.volume;
           localOutputVolume = (vol !== undefined && !isNaN(vol)) ? vol : 0;
+        } else {
+          Logger.i("AudioPanel", "Sink ID unchanged:", newSinkId);
         }
       } else {
+        Logger.w("AudioPanel", "AudioService.sink is now null");
         lastSinkId = -1;
         localOutputVolume = 0;
       }
