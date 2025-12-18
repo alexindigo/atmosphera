@@ -453,10 +453,18 @@
       "disconnect": "Trennen",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
       "known-devices": "Bekannte Geräte",
+      "paired-devices": "Gekoppelte Geräte",
       "pairing": "Koppeln...",
       "pairing-mode": "Stellen Sie sicher, dass sich Ihr Gerät im Kopplungsmodus befindet.",
       "scanning": "Scannen nach Geräten...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Koppeln",
+      "unpair": "Entkoppeln",
+      "info": "Info",
+      "device-address": "Geräteadresse",
+      "paired": "Gekoppelt",
+      "trusted": "Vertrauenswürdig",
+      "discoverable": "Sichtbar"
     }
   },
   "calendar": {
@@ -516,7 +524,9 @@
     "cancel": "Abbrechen",
     "check-settings": "Überprüfe die Einstellungen für Details.",
     "close": "Schließen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "yes": "Ja",
+    "no": "Nein"
   },
   "context-menu": {
     "activate-app": "{app} aktivieren",
@@ -2459,7 +2469,15 @@
     },
     "bluetooth": {
       "disabled": "Deaktiviert",
-      "enabled": "Aktiviert"
+      "enabled": "Aktiviert",
+      "pair-failed": "Koppeln des Geräts fehlgeschlagen",
+      "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
+      "disconnect-failed": "Trennen vom Gerät fehlgeschlagen",
+      "forget-failed": "Entfernen des Geräts fehlgeschlagen",
+      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen",
+      "discoverable-enabled": "Sichtbar aktiviert",
+      "discoverable-disabled": "Sichtbar deaktiviert",
+      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen"
     },
     "clipboard": {
       "unavailable": "Zwischenablageverlauf nicht verfügbar",
@@ -2544,7 +2562,11 @@
       "connected": "Verbunden mit '{ssid}'",
       "disabled": "Deaktiviert",
       "disconnected": "Getrennt von '{ssid}'",
-      "enabled": "Aktiviert"
+      "enabled": "Aktiviert",
+      "incorrect-password": "Falsches Passwort",
+      "network-not-found": "Netzwerk nicht gefunden",
+      "connection-timeout": "Zeitüberschreitung bei der Verbindung",
+      "connection-failed": "Verbindung fehlgeschlagen"
     }
   },
   "tooltips": {

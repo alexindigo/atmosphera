@@ -16,14 +16,6 @@ NBox {
   // Currently expanded info panel for a connected SSID
   property string infoSsid: ""
 
-  // Fallback translation helper: returns fallback when key is missing
-  function trOr(key, fallback) {
-    const v = I18n.tr(key);
-    if (!v)
-      return fallback;
-    return (v.indexOf("##") === 0 && v.lastIndexOf("##") === v.length - 2) ? fallback : v;
-  }
-
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
   signal passwordCancelled
@@ -215,7 +207,7 @@ NBox {
               NIconButton {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "info-circle"
-                tooltipText: root.trOr("wifi.panel.info", "Info")
+                tooltipText: I18n.tr("wifi.panel.info")
                 baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   if (root.infoSsid === modelData.ssid) {
@@ -287,20 +279,20 @@ NBox {
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: "lock"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: root.trOr("wifi.panel.security", "Security") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: I18n.tr("wifi.panel.security") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
                 NText { text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
               }
 
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: NetworkService.internetConnectivity ? "world" : "world-off"; pointSize: Style.fontSizeM; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
-                NText { text: NetworkService.internetConnectivity ? root.trOr("wifi.panel.internet-connected", "Internet connected") : root.trOr("wifi.panel.internet-limited", "No internet"); pointSize: Style.fontSizeXS; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
+                NText { text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited"); pointSize: Style.fontSizeXS; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
               }
 
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: "activity"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: root.trOr("wifi.panel.link-speed", "Link speed") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: I18n.tr("wifi.panel.link-speed") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
                 NText {
                   text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0)
                         ? NetworkService.activeWifiDetails.rateShort
@@ -330,7 +322,7 @@ NBox {
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: root.trOr("wifi.panel.gateway", "Gateway") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: I18n.tr("wifi.panel.gateway") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
                 NText {
                   text: (NetworkService.activeWifiDetails.gateway4 || "-")
                   pointSize: Style.fontSizeXS
@@ -343,7 +335,7 @@ NBox {
               RowLayout {
                 spacing: Style.marginS
                 NIcon { icon: "server"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: root.trOr("wifi.panel.dns", "DNS") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                NText { text: I18n.tr("wifi.panel.dns") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
                 NText {
                   text: (NetworkService.activeWifiDetails.dns || "-")
                   pointSize: Style.fontSizeXS

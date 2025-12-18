@@ -2647,6 +2647,13 @@
   "wifi": {
     "panel": {
       "title": "Wi‑Fi",
+      "disabled": "Wi‑Fi is disabled",
+      "enable-message": "Enable Wi‑Fi to see available networks.",
+      "searching": "Searching for networks...",
+      "no-networks": "No Wi‑Fi networks found",
+      "scan-again": "Scan again",
+      "known-networks": "Known networks",
+      "available-networks": "Available networks",
       "connect": "Connect",
       "disconnect": "Disconnect",
       "password": "Password",
@@ -2834,28 +2841,6 @@
     },
     "tooltip": {
       "placeholder": "Placeholder"
-    }
-  },
-  "wifi": {
-    "panel": {
-      "available-networks": "Available networks",
-      "connect": "Connect",
-      "connected": "Connected",
-      "disabled": "Wi-Fi is disabled",
-      "disconnect": "Disconnect",
-      "disconnecting": "Disconnecting...",
-      "enable-message": "Enable Wi-Fi to see available networks.",
-      "enter-password": "Enter password...",
-      "forget": "Forget",
-      "forget-network": "Forget this network?",
-      "forgetting": "Forgetting...",
-      "known-networks": "Known networks",
-      "no-networks": "No networks found",
-      "password": "Password",
-      "saved": "Saved",
-      "scan-again": "Scan again",
-      "searching": "Searching for nearby networks...",
-      "title": "Wi-Fi"
     }
   }
 }

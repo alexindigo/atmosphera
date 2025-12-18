@@ -453,10 +453,18 @@
       "disconnect": "Desconectar",
       "enable-message": "Ative o Bluetooth para ver os dispositivos disponíveis.",
       "known-devices": "Dispositivos conhecidos",
+      "paired-devices": "Dispositivos emparelhados",
       "pairing": "Emparelhamento...",
       "pairing-mode": "Certifique-se de que seu dispositivo está em modo de pareamento.",
       "scanning": "Procurando por dispositivos...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Emparelhar",
+      "unpair": "Desemparelhar",
+      "info": "Informações",
+      "device-address": "Endereço do dispositivo",
+      "paired": "Emparelhado",
+      "trusted": "Confiável",
+      "discoverable": "Visível"
     }
   },
   "calendar": {
@@ -516,7 +524,9 @@
     "cancel": "Cancelar",
     "check-settings": "Verifique as configurações para obter detalhes.",
     "close": "Fechar",
-    "save": "Salvar"
+    "save": "Salvar",
+    "yes": "Sim",
+    "no": "Não"
   },
   "context-menu": {
     "activate-app": "Ativar {app}",
@@ -2459,7 +2469,15 @@
     },
     "bluetooth": {
       "disabled": "Desativado",
-      "enabled": "Ativado"
+      "enabled": "Ativado",
+      "pair-failed": "Falha ao emparelhar o dispositivo",
+      "connect-failed": "Falha ao conectar ao dispositivo",
+      "disconnect-failed": "Falha ao desconectar do dispositivo",
+      "forget-failed": "Falha ao esquecer o dispositivo",
+      "state-change-failed": "Falha ao alterar o estado do Bluetooth",
+      "discoverable-enabled": "Visível ativado",
+      "discoverable-disabled": "Visível desativado",
+      "discoverable-change-failed": "Falha ao alterar o estado de visibilidade"
     },
     "clipboard": {
       "unavailable": "Histórico da área de transferência indisponível",
@@ -2544,7 +2562,11 @@
       "connected": "Conectado a '{ssid}'",
       "disabled": "Desativado",
       "disconnected": "Desconectado de '{ssid}'",
-      "enabled": "Ativado"
+      "enabled": "Ativado",
+      "incorrect-password": "Senha incorreta",
+      "network-not-found": "Rede não encontrada",
+      "connection-timeout": "Tempo de conexão esgotado",
+      "connection-failed": "Falha na conexão"
     }
   },
   "tooltips": {

@@ -9,15 +9,7 @@ import qs.Services.UI
 
 Singleton {
   id: root
-
-  // Translation fallback helper (prevents ##key## leaking to UI)
-  function trOr(key, fallback) {
-    var v = I18n.tr(key);
-    if (!v) return fallback;
-    if (v.indexOf("##") === 0 && v.lastIndexOf("##") === v.length - 2) return fallback;
-    return v;
-  }
-
+    
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
@@ -81,10 +73,10 @@ Singleton {
       if (bluetoothBlockedToggled) {
         checkWifiBlocked.running = true;
       } else if (adapter.state === BluetoothAdapterState.Enabled) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.enabled", "Enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
         discoveryTimer.running = true;
       } else if (adapter.state === BluetoothAdapterState.Disabled) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.disabled", "Disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
       }
     }
   }
@@ -369,14 +361,14 @@ Singleton {
     try {
       adapter.discoverable = state;
       if (state) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-enabled", "Discoverable enabled"), "broadcast");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
       } else {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-disabled", "Discoverable disabled"), "broadcast-off");
+        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
       }
       Logger.i("Bluetooth", "Discoverable state set to:", state);
     } catch (e) {
       Logger.w("Bluetooth", "Failed to change discoverable state", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.discoverable-change-failed", "Failed to change discoverable state"));
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-change-failed"));
     }
   }
 
@@ -400,10 +392,10 @@ Singleton {
           NetworkService.setWifiEnabled(true);
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.airplane-mode.disabled"), "plane-off");
         } else if (adapter.enabled) {
-          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.enabled", "Enabled"), "bluetooth");
+          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
           discoveryTimer.running = true;
         } else {
-          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), trOr("toast.bluetooth.disabled", "Disabled"), "bluetooth-off");
+          ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
         }
         root.airplaneModeToggled = false;
       }
