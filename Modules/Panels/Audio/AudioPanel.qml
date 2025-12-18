@@ -77,59 +77,67 @@ SmartPanel {
     // Collect intermediate node IDs that are connected to the sink
     var intermediateNodeIds = {};
 
-    // Helper function to check if a node is connected to our sink (directly or through intermediate nodes)
-    // Uses Pipewire.links to traverse the link graph
-    function isNodeConnectedToSink(nodeId, targetSinkId, visited, depth) {
-      if (depth > 10 || visited[nodeId]) {
-        return false; // Prevent infinite recursion
-      }
-
-      if (nodeId === targetSinkId) {
-        return true; // Found the sink
-      }
-
-      visited[nodeId] = true;
+    // Helper function to find stream nodes connected to a target node (sink or intermediate node)
+    // Uses Pipewire.linkGroups which is easier to work with than links
+    function findStreamsConnectedToTarget(targetNodeId) {
+      var foundStreams = [];
 
       try {
-        // Check all links where this node is the source
-        if (Pipewire.links && Pipewire.links.count !== undefined) {
-          var linkCount = Pipewire.links.count;
-          Logger.i("AudioPanel", "Checking node", nodeId, "at depth", depth, "- total links:", linkCount);
+        if (!Pipewire.linkGroups) {
+          Logger.w("AudioPanel", "Pipewire.linkGroups is null/undefined");
+          return foundStreams;
+        }
 
-          for (var k = 0; k < linkCount; k++) {
-            var link;
-            if (Pipewire.links.get) {
-              link = Pipewire.links.get(k);
+        var linkGroupCount = 0;
+        if (Pipewire.linkGroups.count !== undefined) {
+          linkGroupCount = Pipewire.linkGroups.count;
+        } else if (Pipewire.linkGroups.length !== undefined) {
+          linkGroupCount = Pipewire.linkGroups.length;
+        } else {
+          Logger.w("AudioPanel", "Cannot determine linkGroups count");
+          return foundStreams;
+        }
+
+        Logger.i("AudioPanel", "Searching", linkGroupCount, "link groups for connections to target", targetNodeId);
+
+        for (var k = 0; k < linkGroupCount; k++) {
+          var linkGroup;
+          if (Pipewire.linkGroups.get) {
+            linkGroup = Pipewire.linkGroups.get(k);
+          } else {
+            linkGroup = Pipewire.linkGroups[k];
+          }
+
+          if (!linkGroup || !linkGroup.source || !linkGroup.target) {
+            continue;
+          }
+
+          var sourceId = linkGroup.source.id;
+          var targetId = linkGroup.target.id;
+
+          // Check if this link group connects to our target
+          if (targetId === targetNodeId) {
+            Logger.i("AudioPanel", "Found link group: source", sourceId, "-> target", targetId);
+
+            // Check if source is a stream node
+            if (linkGroup.source.isStream && linkGroup.source.audio) {
+              Logger.i("AudioPanel", "Source", sourceId, "is a stream node - adding");
+              foundStreams.push(linkGroup.source);
             } else {
-              link = Pipewire.links[k];
-            }
-
-            if (!link || !link.source || !link.target) {
-              continue;
-            }
-
-            // If this link starts from our node, check if the target is our sink or continue traversing
-            if (link.source.id === nodeId) {
-              var targetId = link.target.id;
-              Logger.i("AudioPanel", "Found link from", nodeId, "to", targetId);
-
-              if (targetId === targetSinkId) {
-                Logger.i("AudioPanel", "Node", nodeId, "is connected to sink", targetSinkId);
-                return true;
-              }
-
-              // Recursively check if the target connects to our sink
-              if (isNodeConnectedToSink(targetId, targetSinkId, visited, depth + 1)) {
-                return true;
+              // Source is an intermediate node - recursively find streams connected to it
+              Logger.i("AudioPanel", "Source", sourceId, "is intermediate - searching recursively");
+              var nestedStreams = findStreamsConnectedToTarget(sourceId);
+              for (var s = 0; s < nestedStreams.length; s++) {
+                foundStreams.push(nestedStreams[s]);
               }
             }
           }
         }
       } catch (e) {
-        Logger.w("AudioPanel", "Error checking connections for node", nodeId, ":", e);
+        Logger.i("AudioPanel", "Error finding streams connected to target", targetNodeId, ":", e);
       }
 
-      return false;
+      return foundStreams;
     }
 
     // First, try direct approach from link groups
@@ -180,77 +188,40 @@ SmartPanel {
       }
     }
 
-    // If we found intermediate nodes or no direct streams, check all stream nodes
-    // Use Pipewire.links to traverse the graph and find which streams connect to our sink
+    // If we found intermediate nodes, use linkGroups to find streams connected to them or the sink
     if (nodesToCheck.length > 0 || connectedStreams.length === 0) {
-      Logger.i("AudioPanel", "Checking all stream nodes for connections to sink", defaultSinkId);
+      Logger.i("AudioPanel", "Searching for streams connected to sink", defaultSinkId, "or intermediate nodes");
       Logger.i("AudioPanel", "Intermediate node IDs:", Object.keys(intermediateNodeIds).join(", "));
 
-      try {
-        if (Pipewire.nodes && Pipewire.nodes.count !== undefined) {
-          var nodeCount = Pipewire.nodes.count;
-          Logger.i("AudioPanel", "Total nodes in Pipewire:", nodeCount);
+      // First, find streams directly connected to the sink
+      var sinkStreams = findStreamsConnectedToTarget(defaultSinkId);
+      Logger.i("AudioPanel", "Found", sinkStreams.length, "stream(s) directly connected to sink");
 
-          for (var j = 0; j < nodeCount; j++) {
-            var node;
-            if (Pipewire.nodes.get) {
-              node = Pipewire.nodes.get(j);
-            } else {
-              node = Pipewire.nodes[j];
-            }
+      for (var s = 0; s < sinkStreams.length; s++) {
+        var stream = sinkStreams[s];
+        var streamId = stream.id;
+        if (!connectedStreamIds[streamId]) {
+          connectedStreamIds[streamId] = true;
+          connectedStreams.push(stream);
+          Logger.i("AudioPanel", "Added stream connected to sink:", streamId, "- name:", stream.name || "unknown");
+        }
+      }
 
-            if (!node || !node.isStream || !node.audio) {
-              continue;
-            }
+      // Then, find streams connected to intermediate nodes
+      for (var intermediateId in intermediateNodeIds) {
+        Logger.i("AudioPanel", "Searching for streams connected to intermediate node", intermediateId);
+        var intermediateStreams = findStreamsConnectedToTarget(parseInt(intermediateId));
+        Logger.i("AudioPanel", "Found", intermediateStreams.length, "stream(s) connected to intermediate node", intermediateId);
 
-            var streamId = node.id;
-            if (connectedStreamIds[streamId]) {
-              continue; // Already added
-            }
-
-            Logger.i("AudioPanel", "Checking stream node", streamId, "- name:", node.name || "unknown");
-
-            // Check if this stream is connected to our sink by traversing the link graph
-            var visited = {};
-            if (isNodeConnectedToSink(streamId, defaultSinkId, visited, 0)) {
-              connectedStreamIds[streamId] = true;
-              connectedStreams.push(node);
-              Logger.i("AudioPanel", "Added application stream (connected to sink):", streamId, "- name:", node.name || "unknown");
-            } else {
-              Logger.i("AudioPanel", "Stream node", streamId, "not connected to sink", defaultSinkId);
-            }
-          }
-        } else if (Pipewire.nodes && Pipewire.nodes.values) {
-          // Fallback to .values if .count doesn't exist
-          var allNodes = Pipewire.nodes.values;
-          Logger.i("AudioPanel", "Total nodes in Pipewire (using .values):", allNodes.length);
-
-          for (var j = 0; j < allNodes.length; j++) {
-            var node = allNodes[j];
-            if (!node || !node.isStream || !node.audio) {
-              continue;
-            }
-
-            var streamId = node.id;
-            if (connectedStreamIds[streamId]) {
-              continue; // Already added
-            }
-
-            Logger.i("AudioPanel", "Checking stream node", streamId, "- name:", node.name || "unknown");
-
-            // Check if this stream is connected to our sink by traversing the link graph
-            var visited = {};
-            if (isNodeConnectedToSink(streamId, defaultSinkId, visited, 0)) {
-              connectedStreamIds[streamId] = true;
-              connectedStreams.push(node);
-              Logger.i("AudioPanel", "Added application stream (connected to sink):", streamId, "- name:", node.name || "unknown");
-            } else {
-              Logger.i("AudioPanel", "Stream node", streamId, "not connected to sink", defaultSinkId);
-            }
+        for (var s = 0; s < intermediateStreams.length; s++) {
+          var stream = intermediateStreams[s];
+          var streamId = stream.id;
+          if (!connectedStreamIds[streamId]) {
+            connectedStreamIds[streamId] = true;
+            connectedStreams.push(stream);
+            Logger.i("AudioPanel", "Added stream connected to intermediate node:", streamId, "- name:", stream.name || "unknown");
           }
         }
-      } catch (e) {
-        Logger.w("AudioPanel", "Error checking all stream nodes:", e);
       }
     }
 
