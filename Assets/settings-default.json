@@ -273,7 +273,8 @@
     "colorizeIcons": false,
     "pinnedStatic": false,
     "inactiveIndicators": false,
-    "deadOpacity": 0.6
+    "deadOpacity": 0.6,
+    "animationSpeed": 1.0
   },
   "network": {
     "wifiEnabled": true
