@@ -244,9 +244,9 @@ Variants {
           }
         }
 
-        // Exit edit mode button
-        NButton {
-          id: editModeButton
+        // Background for edit mode controls
+        Rectangle {
+          id: editModeControlsBackground
           visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
 
           readonly property string barPos: Settings.data.bar.position || "top"
@@ -271,11 +271,64 @@ Variants {
             topMargin: barOffsetTop
             rightMargin: barOffsetRight
           }
+
+          // Calculate width to accommodate all controls
+          width: {
+            var buttonWidth = editModeButton.visible ? editModeButton.implicitWidth : 0;
+            var explanationWidth = controlsExplanation.visible ? controlsExplanation.width : 0;
+            var checkboxWidth = gridSnapCheckbox.visible ? gridSnapCheckbox.implicitWidth : 0;
+            return Math.max(buttonWidth, explanationWidth, checkboxWidth, 200) + (Style.marginXL * 2);
+          }
+
+          // Calculate height to cover all controls with spacing
+          height: {
+            var buttonHeight = editModeButton.visible ? editModeButton.height : 0;
+            var explanationHeight = controlsExplanation.visible ? controlsExplanation.height : 0;
+            var checkboxHeight = gridSnapCheckbox.visible ? gridSnapCheckbox.height : 0;
+            return buttonHeight + Style.marginXL + explanationHeight + Style.marginXL + checkboxHeight + (Style.marginXL * 2);
+          }
+
+          color: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.85)
+          radius: Style.radiusL
+          border {
+            width: 1
+            color: Qt.alpha(Color.mOutline, 0.2)
+          }
+          z: 9999
+        }
+
+        // Exit edit mode button
+        NButton {
+          id: editModeButton
+          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
+
+          readonly property string barPos: Settings.data.bar.position || "top"
+          readonly property bool barFloating: Settings.data.bar.floating || false
+          // Calculate offset from bar based on position and floating state
+          readonly property int barOffsetTop: {
+            if (barPos !== "top")
+              return Style.marginXL * Style.uiScaleRatio;
+            const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical * Style.marginXL) : 0;
+            return Style.barHeight + floatMarginV + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
+          }
+          readonly property int barOffsetRight: {
+            if (barPos !== "right")
+              return Style.marginXL * Style.uiScaleRatio;
+            const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
+            return Style.barHeight + floatMarginH + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
+          }
+
+          anchors {
+            top: editModeControlsBackground.top
+            right: editModeControlsBackground.right
+            topMargin: Style.marginXL
+            rightMargin: Style.marginXL
+          }
           text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
-          icon: "check"
-          backgroundColor: Color.mSurface
-          textColor: Color.mOnSurface
-          hoverColor: Color.mSurfaceVariant
+          icon: "logout"
+          //backgroundColor: Color.mSurface
+          //textColor: Color.mOnSurface
+          //hoverColor: Color.mSurfaceVariant
           outlined: false
           fontSize: Style.fontSizeM * 1.1
           iconSize: Style.fontSizeL * 1.1
@@ -289,9 +342,9 @@ Variants {
           visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
           anchors {
             top: editModeButton.bottom
-            right: parent.right
-            topMargin: Style.marginM
-            rightMargin: editModeButton.barOffsetRight
+            right: editModeControlsBackground.right
+            topMargin: Style.marginXL
+            rightMargin: Style.marginXL
           }
           text: I18n.tr("settings.desktop-widgets.edit-mode.controls-explanation")
           pointSize: Style.fontSizeS
@@ -308,9 +361,9 @@ Variants {
           visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
           anchors {
             top: controlsExplanation.bottom
-            right: parent.right
-            topMargin: Style.marginM
-            rightMargin: editModeButton.barOffsetRight
+            right: editModeControlsBackground.right
+            topMargin: Style.marginXL
+            rightMargin: Style.marginXL
           }
           spacing: Style.marginS
           z: 10000
