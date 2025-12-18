@@ -286,9 +286,9 @@ mango)
     CONFIG_DIR="$HOME/.config/mango"
     MAIN_CONFIG="$CONFIG_DIR/config.conf"
     THEME_FILE="$CONFIG_DIR/noctalia.conf"
-     BACKUP_FILE="$CONFIG_DIR/theme_backup.conf"
-     # This sources the noctalia theme file
-     SOURCE_LINE="source = $THEME_FILE"
+    BACKUP_FILE="$CONFIG_DIR/theme.conf.bak"
+    # This sources the noctalia theme file
+    SOURCE_LINE="source = $THEME_FILE"
 
     # Color variables that should be moved to theme file
     COLOR_VARS="shadowscolor|rootcolor|bordercolor|focuscolor|maximizescreencolor|urgentcolor|scratchpadcolor|globalcolor|overlaycolor"
