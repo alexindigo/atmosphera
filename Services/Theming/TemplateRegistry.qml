@@ -285,6 +285,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${colorsApplyScript} niri`
+    },
+    {
+      "id": "mango",
+      "name": "Mango",
+      "category": "compositors",
+      "input": "mango.conf",
+      "outputs": [
+        {
+          "path": "~/.config/mango/noctalia.conf"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} mango`
     }
   ]
 

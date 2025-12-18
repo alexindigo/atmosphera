@@ -33,6 +33,7 @@ Singleton {
   property bool emacsAvailable: false
   property bool zedAvailable: false
   property bool niriAvailable: false
+  property bool mangoAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -193,7 +194,8 @@ Singleton {
                                             "yaziAvailable": ["which", "yazi"],
                                             "zedAvailable": ["which", "zeditor"],
                                             "emacsAvailable": ["sh", "-c", "test -d \"$HOME/.config/doom\" || test -d \"$HOME/.emacs.d\""],
-                                            "niriAvailable": ["which", "niri"]
+                                            "niriAvailable": ["which", "niri"],
+                                            "mangoAvailable": ["which", "mmsg"]
                                           })
 
   // Internal tracking

@@ -1157,7 +1157,11 @@
           "niri": {
             "description": "Escrever {filepath}. Requer Niri v25.11+",
             "description-missing": "Requer que o {app} esteja instalado."
-          }
+          },
+           "mango": {
+             "description": "Escrever {filepath}. Requer mango",
+             "description-missing": "Requer que o {app} esteja instalado."
+           }
         },
         "misc": {
           "description": "Crie seus próprios modelos",

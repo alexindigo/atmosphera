@@ -1157,7 +1157,11 @@
           "niri": {
             "description": "Escribir {filepath}. Requiere niri v25.11+",
             "description-missing": "Requiere que {app} esté instalada."
-          }
+          },
+           "mango": {
+             "description": "Escribir {filepath}. Requiere mango",
+             "description-missing": "Requiere que {app} esté instalada."
+           }
         },
         "misc": {
           "description": "Crea tus propias plantillas",

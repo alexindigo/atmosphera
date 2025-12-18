@@ -1157,7 +1157,11 @@
           "niri": {
             "description": "Schrijf {filepath}. Vereist niri v25.11+",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
-          }
+          },
+           "mango": {
+             "description": "Schrijf {filepath}. Vereist mango",
+             "description-missing": "Vereist dat {app} is geïnstalleerd."
+           }
         },
         "misc": {
           "description": "Maak uw eigen sjablonen",

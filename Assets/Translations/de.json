@@ -1157,7 +1157,11 @@
           "niri": {
             "description": "Schreibe {filepath}. Benötigt niri v25.11+",
             "description-missing": "Benötigt die Installation von {app}"
-          }
+          },
+           "mango": {
+             "description": "Schreibe {filepath}. Benötigt mango",
+             "description-missing": "Benötigt die Installation von {app}"
+           }
         },
         "misc": {
           "description": "Erstellen Sie Ihre eigenen Vorlagen",
