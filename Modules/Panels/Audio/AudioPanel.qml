@@ -78,65 +78,125 @@ SmartPanel {
     var intermediateNodeIds = {};
 
     // Helper function to find stream nodes connected to a target node (sink or intermediate node)
-    // Uses Pipewire.linkGroups which is easier to work with than links
+    // Uses Pipewire.linkGroups to find link groups where target matches our node
     function findStreamsConnectedToTarget(targetNodeId) {
       var foundStreams = [];
+      var visitedNodes = {}; // Prevent infinite recursion
 
-      try {
-        if (!Pipewire.linkGroups) {
-          Logger.w("AudioPanel", "Pipewire.linkGroups is null/undefined");
-          return foundStreams;
+      function findStreamsRecursive(nodeId, depth) {
+        if (depth > 5 || visitedNodes[nodeId]) {
+          return; // Prevent infinite recursion
         }
+        visitedNodes[nodeId] = true;
 
-        var linkGroupCount = 0;
-        if (Pipewire.linkGroups.count !== undefined) {
-          linkGroupCount = Pipewire.linkGroups.count;
-        } else if (Pipewire.linkGroups.length !== undefined) {
-          linkGroupCount = Pipewire.linkGroups.length;
-        } else {
-          Logger.w("AudioPanel", "Cannot determine linkGroups count");
-          return foundStreams;
-        }
-
-        Logger.i("AudioPanel", "Searching", linkGroupCount, "link groups for connections to target", targetNodeId);
-
-        for (var k = 0; k < linkGroupCount; k++) {
-          var linkGroup;
-          if (Pipewire.linkGroups.get) {
-            linkGroup = Pipewire.linkGroups.get(k);
-          } else {
-            linkGroup = Pipewire.linkGroups[k];
+        try {
+          if (!Pipewire.linkGroups) {
+            Logger.w("AudioPanel", "Pipewire.linkGroups is null/undefined");
+            return;
           }
 
-          if (!linkGroup || !linkGroup.source || !linkGroup.target) {
-            continue;
-          }
+          Logger.i("AudioPanel", "Pipewire.linkGroups type:", typeof Pipewire.linkGroups);
+          Logger.i("AudioPanel", "Pipewire.linkGroups.get:", typeof Pipewire.linkGroups.get);
+          Logger.i("AudioPanel", "Pipewire.linkGroups.length:", Pipewire.linkGroups.length);
+          Logger.i("AudioPanel", "Pipewire.linkGroups.count:", Pipewire.linkGroups.count);
 
-          var sourceId = linkGroup.source.id;
-          var targetId = linkGroup.target.id;
+          // Pipewire.linkGroups is an ObjectModel, iterate through it
+          Logger.i("AudioPanel", "Searching link groups for connections to node", nodeId, "(depth", depth + ")");
 
-          // Check if this link group connects to our target
-          if (targetId === targetNodeId) {
-            Logger.i("AudioPanel", "Found link group: source", sourceId, "-> target", targetId);
+          var k = 0;
+          var maxIterations = 1000; // Safety limit
+          var linkGroupsChecked = 0;
+          var consecutiveNulls = 0;
 
-            // Check if source is a stream node
-            if (linkGroup.source.isStream && linkGroup.source.audio) {
-              Logger.i("AudioPanel", "Source", sourceId, "is a stream node - adding");
-              foundStreams.push(linkGroup.source);
-            } else {
-              // Source is an intermediate node - recursively find streams connected to it
-              Logger.i("AudioPanel", "Source", sourceId, "is intermediate - searching recursively");
-              var nestedStreams = findStreamsConnectedToTarget(sourceId);
-              for (var s = 0; s < nestedStreams.length; s++) {
-                foundStreams.push(nestedStreams[s]);
+          while (k < maxIterations) {
+            var linkGroup = null;
+            var accessError = null;
+
+            try {
+              // Try ObjectModel.get() first, then array access
+              if (Pipewire.linkGroups.get && typeof Pipewire.linkGroups.get === 'function') {
+                linkGroup = Pipewire.linkGroups.get(k);
+                Logger.i("AudioPanel", "Accessed link group", k, "via .get()");
+              } else if (Pipewire.linkGroups[k] !== undefined) {
+                linkGroup = Pipewire.linkGroups[k];
+                Logger.i("AudioPanel", "Accessed link group", k, "via array index");
+              } else {
+                // Try to see if we've reached the end
+                if (k === 0) {
+                  Logger.w("AudioPanel", "Cannot access link groups - both .get() and array access failed at index 0");
+                }
+                consecutiveNulls++;
+                if (consecutiveNulls > 10) {
+                  // Probably reached end
+                  break;
+                }
+                k++;
+                continue;
               }
+            } catch (e) {
+              accessError = e;
+              Logger.w("AudioPanel", "Error accessing link group", k, ":", e);
+              consecutiveNulls++;
+              if (consecutiveNulls > 10) {
+                break;
+              }
+              k++;
+              continue;
             }
+
+            if (!linkGroup) {
+              consecutiveNulls++;
+              if (consecutiveNulls > 10) {
+                // Reached end of list
+                break;
+              }
+              k++;
+              continue;
+            }
+
+            consecutiveNulls = 0; // Reset counter
+            linkGroupsChecked++;
+
+            // Link groups need to be bound to access source/target
+            // Try to access them, but they might be null if not bound
+            try {
+              if (!linkGroup.source || !linkGroup.target) {
+                k++;
+                continue;
+              }
+
+              var sourceId = linkGroup.source.id;
+              var targetId = linkGroup.target.id;
+
+              // Check if this link group connects to our target
+              if (targetId === nodeId) {
+                Logger.i("AudioPanel", "Found link group: source", sourceId, "-> target", targetId, "(depth", depth + ")");
+
+                // Check if source is a stream node
+                if (linkGroup.source.isStream && linkGroup.source.audio) {
+                  Logger.i("AudioPanel", "Source", sourceId, "is a stream node - adding");
+                  foundStreams.push(linkGroup.source);
+                } else {
+                  // Source is an intermediate node - recursively find streams connected to it
+                  Logger.i("AudioPanel", "Source", sourceId, "is intermediate (isStream:", linkGroup.source.isStream, ") - searching recursively");
+                  findStreamsRecursive(sourceId, depth + 1);
+                }
+              }
+            } catch (e) {
+              // Link group properties not accessible (might need binding)
+              Logger.i("AudioPanel", "Link group", k, "properties not accessible:", e);
+            }
+
+            k++;
           }
+
+          Logger.i("AudioPanel", "Checked", linkGroupsChecked, "link group(s) for node", nodeId);
+        } catch (e) {
+          Logger.w("AudioPanel", "Error finding streams connected to target", nodeId, ":", e);
         }
-      } catch (e) {
-        Logger.i("AudioPanel", "Error finding streams connected to target", targetNodeId, ":", e);
       }
 
+      findStreamsRecursive(targetNodeId, 0);
       return foundStreams;
     }
 
