@@ -247,58 +247,36 @@ Singleton {
   }
 
   function processCodeClients(codeApp, colors, mode, homeDir) {
-    let script = "";
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
+    let script = ""
+    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false)
 
     codeApp.clients.forEach(client => {
                               if (!isCodeClientEnabled(client.name))
-                              return;
-                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`;
-                              const outputPath = client.path.replace("~", homeDir);
-                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
+                              return
 
+                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`
+                              const outputPath = client.path.replace("~", homeDir)
+                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'))
+                              
                               // Extract base config directory for checking
-                              var baseConfigDir = "";
+                              var baseConfigDir = ""
                               if (client.name === "code") {
-                                baseConfigDir = "~/.vscode".replace("~", homeDir);
+                                baseConfigDir = "~/.vscode".replace("~", homeDir)
                               } else if (client.name === "codium") {
-                                baseConfigDir = "~/.vscode-oss".replace("~", homeDir);
+                                baseConfigDir = "~/.vscode-oss".replace("~", homeDir)
                               }
 
-                              var configDir = client.name === "code" ? "Code" : "VSCodium";
-                              var settingsPath = `${homeDir}/.config/${configDir}/User/settings.json`;
+                              script += `\n`
+                              script += `if [ -d "${baseConfigDir}" ]; then\n`
+                              script += `  mkdir -p ${outputDir}\n`
+                              script += `  cp '${templatePath}' '${outputPath}'\n`
+                              script += `  ${replaceColorsInFile(outputPath, palette)}`
+                              script += `else\n`
+                              script += `  echo "Code client ${client.name} not found at ${baseConfigDir}, skipping"\n`
+                              script += `fi\n`
+                            })
 
-                              // Uninstall, modify vsix, then reinstall - forces VSCode to reload with updated colors
-                              var tmpDir = `/tmp/noctalia-vscode-${client.name}`;
-                              var tmpTheme = `${tmpDir}/theme.json`;
-                              var modifiedVsix = `${tmpDir}/noctaliatheme.vsix`;
-
-                              // Generate theme, uninstall, modify vsix, reinstall
-                              script += `
-                                if [ -d "${baseConfigDir}" ]; then
-                                  if command -v ${client.name} >/dev/null 2>&1; then
-
-                                    rm -rf ${tmpDir} && mkdir -p ${tmpDir}
-                                    cp '${templatePath}' '${tmpTheme}'
-                                    ${replaceColorsInFile(tmpTheme, palette)}
-                                    ${client.name} --uninstall-extension undefined_publisher.noctaliatheme 2>&1
-                                    unzip -q '${Quickshell.shellDir}/Assets/MatugenTemplates/noctaliatheme-0.0.1.vsix' -d ${tmpDir}
-                                    cp '${tmpTheme}' ${tmpDir}/extension/themes/NoctaliaTheme-color-theme.json
-                                    cd ${tmpDir} && zip -q -r ${modifiedVsix} .
-                                    ${client.name} --install-extension ${modifiedVsix} 2>&1
-                                    rm -rf ${tmpDir}
-                                
-                                    if [ -f "${settingsPath}" ]; then
-                                      sed -i 's/\\"workbench.colorTheme\\":[[:space:]]*\\"[^\\"]*/\\"workbench.colorTheme\\": \\"NoctaliaTheme/' "${settingsPath}"
-                                    fi
-                                  fi
-                                else
-                                  echo "Code client ${client.name} not found at ${baseConfigDir}, skipping"
-                                fi
-                              `;
-                            });
-
-    return script;
+    return script
   }
 
   function processTemplate(app, colors, mode, homeDir) {
