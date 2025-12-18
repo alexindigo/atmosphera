@@ -61,7 +61,8 @@ Variants {
       readonly property string barPos: Settings.data.bar.position
       readonly property bool isFloating: Settings.data.bar.floating
 
-      readonly property int notifWidth: Math.round(400 * Style.uiScaleRatio)
+      readonly property int notifWidth: Math.round(440 * Style.uiScaleRatio)
+      readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
       // Calculate bar offsets for each edge separately
       readonly property int barOffsetTop: {
@@ -99,12 +100,12 @@ Variants {
       anchors.right: isRight
 
       // Margins for PanelWindow - only apply bar offset for the specific edge where the bar is
-      margins.top: isTop ? barOffsetTop : 0
-      margins.bottom: isBottom ? barOffsetBottom : 0
-      margins.left: isLeft ? barOffsetLeft : 0
-      margins.right: isRight ? barOffsetRight : 0
+      margins.top: isTop ? barOffsetTop - shadowPadding + Style.marginM : 0
+      margins.bottom: isBottom ? barOffsetBottom - shadowPadding + Style.marginM : 0
+      margins.left: isLeft ? barOffsetLeft - shadowPadding + Style.marginM : 0
+      margins.right: isRight ? barOffsetRight - shadowPadding + Style.marginM : 0
 
-      implicitWidth: notifWidth
+      implicitWidth: notifWidth + shadowPadding * 2
       implicitHeight: notificationStack.implicitHeight + Style.marginL
 
       property var animateConnection: null
@@ -150,8 +151,7 @@ Variants {
           horizontalCenter: parent.isCentered ? parent.horizontalCenter : undefined
         }
 
-        spacing: -Style.marginS
-        width: notifWidth
+        spacing: -notifWindow.shadowPadding * 2 + Style.marginM
 
         Behavior on implicitHeight {
           enabled: !Settings.data.general.animationDisabled
@@ -178,8 +178,8 @@ Variants {
             readonly property int animationDelay: index * 100
             readonly property int slideDistance: 300
 
-            Layout.preferredWidth: notifWidth
-            Layout.preferredHeight: notificationContent.implicitHeight + Style.marginL * 2
+            Layout.preferredWidth: notifWidth + notifWindow.shadowPadding * 2
+            Layout.preferredHeight: notificationContent.implicitHeight + Style.marginL * 2 + notifWindow.shadowPadding * 2
             Layout.maximumHeight: Layout.preferredHeight
 
             // Animation properties
@@ -200,7 +200,7 @@ Variants {
             Rectangle {
               id: cardBackground
               anchors.fill: parent
-              anchors.margins: Style.marginM
+              anchors.margins: notifWindow.shadowPadding
               radius: Style.radiusL
               border.color: Qt.alpha(Color.mOutline, Settings.data.notifications.backgroundOpacity || 1.0)
               border.width: Style.borderS
@@ -386,7 +386,7 @@ Variants {
             // Content
             ColumnLayout {
               id: notificationContent
-              anchors.fill: parent
+              anchors.fill: cardBackground
               anchors.margins: Style.marginM
               spacing: Style.marginM
 
@@ -529,10 +529,10 @@ Variants {
               icon: "close"
               tooltipText: I18n.tr("tooltips.close")
               baseSize: Style.baseWidgetSize * 0.6
-              anchors.top: parent.top
-              anchors.topMargin: Style.marginXL
-              anchors.right: parent.right
-              anchors.rightMargin: Style.marginXL
+              anchors.top: cardBackground.top
+              anchors.topMargin: Style.marginM
+              anchors.right: cardBackground.right
+              anchors.rightMargin: Style.marginM
 
               onClicked: {
                 NotificationService.removeFromHistory(model.id);
