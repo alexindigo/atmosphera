@@ -226,6 +226,32 @@ Singleton {
     return false;
   }
 
+  // Unregister all widget instances for a plugin (used during hot reload)
+  // Note: We don't destroy instances here - the Loader manages that when the component is unregistered
+  function destroyPluginWidgetInstances(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+    var keysToRemove = [];
+
+    // Find all instances of this plugin's widget
+    for (var key in widgetInstances) {
+      var widget = widgetInstances[key];
+      if (widget && widget.widgetId === widgetId) {
+        keysToRemove.push(key);
+        Logger.d("BarService", "Unregistering plugin widget instance:", key);
+      }
+    }
+
+    // Remove from registry
+    for (var i = 0; i < keysToRemove.length; i++) {
+      delete widgetInstances[keysToRemove[i]];
+    }
+
+    if (keysToRemove.length > 0) {
+      Logger.i("BarService", "Unregistered", keysToRemove.length, "instance(s) of plugin widget:", widgetId);
+      root.activeWidgetsChanged();
+    }
+  }
+
   // Get pill direction for a widget instance
   function getPillDirection(widgetInstance) {
     try {

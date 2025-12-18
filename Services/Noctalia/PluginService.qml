@@ -14,6 +14,7 @@ Singleton {
   signal pluginUnloaded(string pluginId)
   signal pluginEnabled(string pluginId)
   signal pluginDisabled(string pluginId)
+  signal pluginReloaded(string pluginId)
   signal availablePluginsUpdated
   signal allPluginsLoaded
 
@@ -37,6 +38,16 @@ Singleton {
   // Plugin load errors: { pluginId: { error: string, entryPoint: string, timestamp: date } }
   property var pluginErrors: ({})
   signal pluginLoadError(string pluginId, string entryPoint, string error)
+
+  // Hot reload: file watchers for plugin directories
+  property var pluginFileWatchers: ({}) // { pluginId: FileView }
+  property bool hotReloadEnabled: Settings.isDebug
+
+  onHotReloadEnabledChanged: {
+    if (root.initialized) {
+      setHotReloadEnabled(root.hotReloadEnabled);
+    }
+  }
 
   // Track active fetches
   property var activeFetches: ({})
@@ -581,10 +592,14 @@ Singleton {
 
     Logger.i("PluginService", "Plugin loaded:", pluginId);
     root.pluginLoaded(pluginId);
+
+    // Set up hot reload watcher if enabled
+    setupPluginFileWatcher(pluginId);
   }
 
   // Unload a plugin
-  function unloadPlugin(pluginId) {
+  // preserveSettings: if true, don't remove desktop widget settings (used for hot reload)
+  function unloadPlugin(pluginId, preserveSettings) {
     var plugin = root.loadedPlugins[pluginId];
     if (!plugin) {
       Logger.w("PluginService", "Plugin not loaded:", pluginId);
@@ -593,14 +608,20 @@ Singleton {
 
     Logger.i("PluginService", "Unloading plugin:", pluginId);
 
+    // Remove hot reload watcher
+    removePluginFileWatcher(pluginId);
+
     // Unregister from BarWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.barWidget) {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
-    // Unregister from DesktopWidgetRegistry and clean up saved widget instances
+    // Unregister from DesktopWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.desktopWidget) {
-      removePluginDesktopWidgetsFromSettings(pluginId);
+      // Only remove settings when uninstalling, not during hot reload
+      if (!preserveSettings) {
+        removePluginDesktopWidgetsFromSettings(pluginId);
+      }
       DesktopWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
@@ -1210,5 +1231,189 @@ Singleton {
 
   function hasPluginError(pluginId) {
     return pluginId in root.pluginErrors;
+  }
+
+  // ----- Hot reload functions -----
+
+  // Set up file watcher for a plugin directory
+  function setupPluginFileWatcher(pluginId) {
+    if (!root.hotReloadEnabled) {
+      return;
+    }
+
+    // Don't create duplicate watchers
+    if (root.pluginFileWatchers[pluginId]) {
+      return;
+    }
+
+    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    if (!manifest) {
+      return;
+    }
+
+    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+
+    // Create a debounce timer for this plugin
+    var debounceTimer = Qt.createQmlObject(`
+      import QtQuick
+      Timer {
+        property string targetPluginId: ""
+        property var reloadCallback: null
+        interval: 500
+        repeat: false
+        onTriggered: {
+          if (reloadCallback) reloadCallback(targetPluginId);
+        }
+      }
+    `, root, "HotReloadDebounce_" + pluginId);
+
+    // Set properties after creation to pass the callback
+    debounceTimer.targetPluginId = pluginId;
+    debounceTimer.reloadCallback = root.reloadPlugin;
+
+    // Watch the manifest file - changes here indicate plugin updates
+    var manifestWatcher = Qt.createQmlObject(`
+      import Quickshell.Io
+      FileView {
+        path: "${pluginDir}/manifest.json"
+        watchChanges: true
+      }
+    `, root, "ManifestWatcher_" + pluginId);
+
+    var watchers = [manifestWatcher];
+
+    // Only watch entry points that actually exist in the manifest
+    var entryPoints = manifest.entryPoints || {};
+    var entryPointFiles = [];
+
+    if (entryPoints.main)
+      entryPointFiles.push(entryPoints.main);
+    if (entryPoints.barWidget)
+      entryPointFiles.push(entryPoints.barWidget);
+    if (entryPoints.desktopWidget)
+      entryPointFiles.push(entryPoints.desktopWidget);
+    if (entryPoints.panel)
+      entryPointFiles.push(entryPoints.panel);
+    if (entryPoints.settings)
+      entryPointFiles.push(entryPoints.settings);
+
+    for (var i = 0; i < entryPointFiles.length; i++) {
+      var entryPointFile = entryPointFiles[i];
+      var watcher = Qt.createQmlObject(`
+        import Quickshell.Io
+        FileView {
+          path: "${pluginDir}/${entryPointFile}"
+          watchChanges: true
+        }
+      `, root, "FileWatcher_" + pluginId + "_" + i);
+      watchers.push(watcher);
+    }
+
+    // Connect all watchers to the debounce timer
+    for (var j = 0; j < watchers.length; j++) {
+      watchers[j].fileChanged.connect(function () {
+        debounceTimer.restart();
+      });
+    }
+
+    root.pluginFileWatchers[pluginId] = {
+      watchers: watchers,
+      debounceTimer: debounceTimer
+    };
+
+    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId);
+  }
+
+  // Remove file watcher for a plugin
+  function removePluginFileWatcher(pluginId) {
+    var watcherData = root.pluginFileWatchers[pluginId];
+    if (!watcherData) {
+      return;
+    }
+
+    // Destroy all watchers
+    if (watcherData.watchers) {
+      for (var i = 0; i < watcherData.watchers.length; i++) {
+        if (watcherData.watchers[i]) {
+          watcherData.watchers[i].destroy();
+        }
+      }
+    }
+
+    // Destroy debounce timer
+    if (watcherData.debounceTimer) {
+      watcherData.debounceTimer.destroy();
+    }
+
+    delete root.pluginFileWatchers[pluginId];
+    Logger.d("PluginService", "Removed hot reload watcher for plugin:", pluginId);
+  }
+
+  // Reload a plugin (hot reload)
+  function reloadPlugin(pluginId) {
+    if (!root.loadedPlugins[pluginId]) {
+      Logger.w("PluginService", "Cannot reload: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    Logger.i("PluginService", "Hot reloading plugin:", pluginId);
+
+    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    if (!manifest) {
+      Logger.e("PluginService", "Cannot reload: manifest not found for:", pluginId);
+      return false;
+    }
+
+    // Unregister widget instances from the bar
+    BarService.destroyPluginWidgetInstances(pluginId);
+
+    // Unload the plugin (destroys components and instances)
+    // Pass true to preserve desktop widget settings during hot reload
+    unloadPlugin(pluginId, true);
+
+    // Increment load version to invalidate Qt's component cache
+    PluginRegistry.incrementPluginLoadVersion(pluginId);
+
+    // Use Qt.callLater to ensure destruction is complete before reloading
+    // This prevents IPC handler conflicts and other timing issues
+    Qt.callLater(function () {
+      // Reload the plugin
+      loadPlugin(pluginId);
+
+      // Re-setup file watcher (it was destroyed during unload)
+      setupPluginFileWatcher(pluginId);
+
+      // Emit signal
+      root.pluginReloaded(pluginId);
+
+      // Show toast notification
+      var pluginName = manifest.name || pluginId;
+      ToastService.showNotice(I18n.tr("settings.plugins.hot-reloaded", {
+                                        "name": pluginName
+                                      }), "");
+
+      Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
+    });
+
+    return true;
+  }
+
+  // Enable/disable hot reload for all loaded plugins
+  function setHotReloadEnabled(enabled) {
+    root.hotReloadEnabled = enabled;
+
+    if (enabled) {
+      // Set up watchers for all loaded plugins
+      for (var pluginId in root.loadedPlugins) {
+        setupPluginFileWatcher(pluginId);
+      }
+      Logger.i("PluginService", "Hot reload enabled for all plugins");
+    } else {
+      // Remove all watchers
+      for (var pluginId in root.pluginFileWatchers) {
+        removePluginFileWatcher(pluginId);
+      }
+      Logger.i("PluginService", "Hot reload disabled");
+    }
   }
 }

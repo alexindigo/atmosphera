@@ -2112,7 +2112,12 @@
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",
-      "updating": "Updating {plugin}..."
+      "updating": "Updating {plugin}...",
+      "hot-reload": {
+        "description": "Automatically reload plugins when their files change. Useful for plugin development.",
+        "label": "Hot reload (dev mode)"
+      },
+      "hot-reloaded": "Reloaded plugin: {name}"
     },
     "screen-recorder": {
       "audio": {

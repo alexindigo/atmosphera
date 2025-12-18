@@ -16,6 +16,18 @@ Variants {
   // Direct binding to registry's widgets property for reactivity
   readonly property var registeredWidgets: DesktopWidgetRegistry.widgets
 
+  // Force reload counter - incremented when plugin widget registry changes
+  property int pluginReloadCounter: 0
+
+  Connections {
+    target: DesktopWidgetRegistry
+
+    function onPluginWidgetRegistryUpdated() {
+      root.pluginReloadCounter++;
+      Logger.d("DesktopWidgets", "Plugin widget registry updated, reload counter:", root.pluginReloadCounter);
+    }
+  }
+
   delegate: Loader {
     id: screenLoader
     required property ShellScreen modelData
@@ -67,14 +79,15 @@ Variants {
 
           delegate: Loader {
             id: widgetLoader
-            // Bind to registeredWidgets to re-evaluate when plugins register/unregister
-            active: (modelData.id in root.registeredWidgets)
+            // Bind to registeredWidgets and pluginReloadCounter to re-evaluate when plugins register/unregister
+            active: (modelData.id in root.registeredWidgets) && (root.pluginReloadCounter >= 0)
 
             property var widgetData: modelData
             property int widgetIndex: index
 
             sourceComponent: {
-              // Access registeredWidgets to create reactive binding
+              // Access registeredWidgets and pluginReloadCounter to create reactive binding
+              var _ = root.pluginReloadCounter;
               var widgets = root.registeredWidgets;
               return widgets[modelData.id] || null;
             }

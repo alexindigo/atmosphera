@@ -51,12 +51,34 @@ Item {
     return root.widgetId !== "" && BarWidgetRegistry.hasWidget(root.widgetId);
   }
 
+  // Force reload counter - incremented when plugin widget registry changes
+  property int reloadCounter: 0
+
+  // Listen for plugin widget registry changes to force reload
+  Connections {
+    target: BarWidgetRegistry
+    enabled: BarWidgetRegistry.isPluginWidget(root.widgetId)
+
+    function onPluginWidgetRegistryUpdated() {
+      // Force the loader to reload by toggling active
+      if (BarWidgetRegistry.hasWidget(root.widgetId)) {
+        root.reloadCounter++;
+        Logger.d("BarWidgetLoader", "Plugin widget registry updated, reloading:", root.widgetId);
+      }
+    }
+  }
+
   Loader {
     id: loader
     anchors.fill: parent
     asynchronous: false
-    active: root.checkWidgetExists()
-    sourceComponent: root.checkWidgetExists() ? BarWidgetRegistry.getWidget(root.widgetId) : null
+    // Include reloadCounter in the binding to force re-evaluation
+    active: root.checkWidgetExists() && (root.reloadCounter >= 0)
+    sourceComponent: {
+      // Depend on reloadCounter to force re-fetch of component
+      var _ = root.reloadCounter;
+      return root.checkWidgetExists() ? BarWidgetRegistry.getWidget(root.widgetId) : null;
+    }
 
     onLoaded: {
       if (!item)
