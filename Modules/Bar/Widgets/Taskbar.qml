@@ -406,7 +406,7 @@ Rectangle {
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: hideMode !== "hidden" || hasWindow
-  opacity: (hideMode !== "transparent" || hasWindow) ? 1.0 : 0
+  opacity: ((hideMode !== "hidden" && hideMode !== "transparent") || hasWindow) ? 1.0 : 0.0
   Behavior on opacity {
     NumberAnimation {
       duration: Style.animationNormal

@@ -58,6 +58,7 @@ Item {
   implicitWidth: !shouldShow ? 0 : isVerticalBar ? Style.capsuleHeight : visualizerWidth
   implicitHeight: !shouldShow ? 0 : isVerticalBar ? visualizerWidth : Style.capsuleHeight
   visible: shouldShow
+  opacity: shouldShow ? 1.0 : 0.0
 
   Behavior on implicitWidth {
     NumberAnimation {
