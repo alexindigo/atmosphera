@@ -74,8 +74,48 @@ SmartPanel {
       return [];
     }
 
-    // Get source nodes from link groups (these are properly bound via PwNodeLinkTracker)
-    Logger.i("AudioPanel", "Processing", linkGroupsCount, "link group(s)...");
+    // Helper function to check if a node is connected to our sink (directly or through intermediate nodes)
+    function isConnectedToSink(node, visited, depth) {
+      if (!node || depth > 5) {
+        // Prevent infinite recursion, max 5 hops
+        return false;
+      }
+
+      var nodeId = node.id;
+      if (visited[nodeId]) {
+        return false; // Already visited
+      }
+      visited[nodeId] = true;
+
+      // Check if this node is directly connected to our sink
+      try {
+        if (Pipewire.links && Pipewire.links.values) {
+          var links = Pipewire.links.values;
+          for (var k = 0; k < links.length; k++) {
+            var link = links[k];
+            if (link && link.source && link.source.id === nodeId && link.target && link.target.id === defaultSinkId) {
+              Logger.i("AudioPanel", "Node", nodeId, "is directly connected to sink", defaultSinkId);
+              return true;
+            }
+            // Check if connected through intermediate nodes
+            if (link && link.source && link.source.id === nodeId && link.target) {
+              if (link.target.id === defaultSinkId || isConnectedToSink(link.target, visited, depth + 1)) {
+                return true;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        Logger.w("AudioPanel", "Error checking connections for node", nodeId, ":", e);
+      }
+
+      return false;
+    }
+
+    // First, try direct approach from link groups
+    Logger.i("AudioPanel", "Processing", linkGroupsCount, "link group(s) (direct approach)...");
+    var nodesToCheck = [];
+
     for (var i = 0; i < linkGroupsCount; i++) {
       var linkGroup;
       if (sinkLinkTracker.linkGroups.get) {
@@ -105,28 +145,52 @@ SmartPanel {
       Logger.i("AudioPanel", "Source node", sourceNode.id, "- isStream:", sourceNode.isStream, "isSink:", sourceNode.isSink, "audio:", !!sourceNode.audio);
       Logger.i("AudioPanel", "Source node", sourceNode.id, "- name:", sourceNode.name || "unknown");
 
-      // Include stream nodes (applications) - these can be virtual sinks created by apps
-      // Virtual sinks (isStream: true, isSink: true) are application-created nodes
-      // Hardware sinks (isStream: false, isSink: true) are actual audio devices
-      if (!sourceNode.isStream) {
-        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - not a stream (isStream:", sourceNode.isStream + ")");
-        continue;
+      // If it's a stream node, add it directly
+      if (sourceNode.isStream && sourceNode.audio) {
+        if (!connectedStreamIds[sourceNode.id]) {
+          connectedStreamIds[sourceNode.id] = true;
+          connectedStreams.push(sourceNode);
+          Logger.i("AudioPanel", "Added application stream (direct):", sourceNode.id, "- name:", sourceNode.name || "unknown");
+        }
+      } else {
+        // Not a stream - add to list to check for upstream streams
+        nodesToCheck.push(sourceNode);
       }
+    }
 
-      if (!sourceNode.audio) {
-        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - no audio property");
-        continue;
+    // If we found intermediate nodes, also check all stream nodes to see if they connect to our sink
+    if (nodesToCheck.length > 0 || connectedStreams.length === 0) {
+      Logger.i("AudioPanel", "Checking all stream nodes for connections to sink", defaultSinkId);
+      try {
+        if (Pipewire.nodes && Pipewire.nodes.values) {
+          var allNodes = Pipewire.nodes.values;
+          Logger.i("AudioPanel", "Total nodes in Pipewire:", allNodes.length);
+
+          for (var j = 0; j < allNodes.length; j++) {
+            var node = allNodes[j];
+            if (!node || !node.isStream || !node.audio) {
+              continue;
+            }
+
+            var streamId = node.id;
+            if (connectedStreamIds[streamId]) {
+              continue; // Already added
+            }
+
+            Logger.i("AudioPanel", "Checking stream node", streamId, "- name:", node.name || "unknown");
+
+            // Check if this stream is connected to our sink
+            var visited = {};
+            if (isConnectedToSink(node, visited, 0)) {
+              connectedStreamIds[streamId] = true;
+              connectedStreams.push(node);
+              Logger.i("AudioPanel", "Added application stream (via connection check):", streamId, "- name:", node.name || "unknown");
+            }
+          }
+        }
+      } catch (e) {
+        Logger.w("AudioPanel", "Error checking all stream nodes:", e);
       }
-
-      // Avoid duplicates
-      if (connectedStreamIds[sourceNode.id]) {
-        Logger.i("AudioPanel", "Source node", sourceNode.id, "skipped - already added");
-        continue;
-      }
-
-      connectedStreamIds[sourceNode.id] = true;
-      connectedStreams.push(sourceNode);
-      Logger.i("AudioPanel", "Added application stream:", sourceNode.id, "- name:", sourceNode.name || "unknown");
     }
 
     Logger.i("AudioPanel", "=== Found", connectedStreams.length, "audio application(s) ===");
