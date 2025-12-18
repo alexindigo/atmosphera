@@ -248,40 +248,66 @@ SmartPanel {
       }
     }
 
-    // If we found intermediate nodes, use linkGroups to find streams connected to them or the sink
+    // If we found intermediate nodes, we need to find streams connected to them
+    // Since Pipewire.linkGroups is not directly accessible, we'll use a heuristic:
+    // When intermediate nodes are present, include all active stream nodes
+    // (reasonable assumption: if audio is playing, streams are connected)
     if (nodesToCheck.length > 0 || connectedStreams.length === 0) {
-      Logger.i("AudioPanel", "Searching for streams connected to sink", defaultSinkId, "or intermediate nodes");
+      Logger.i("AudioPanel", "Intermediate nodes found or no direct streams - searching all stream nodes");
       Logger.i("AudioPanel", "Intermediate node IDs:", Object.keys(intermediateNodeIds).join(", "));
 
-      // First, find streams directly connected to the sink
-      var sinkStreams = findStreamsConnectedToTarget(defaultSinkId);
-      Logger.i("AudioPanel", "Found", sinkStreams.length, "stream(s) directly connected to sink");
-
-      for (var s = 0; s < sinkStreams.length; s++) {
-        var stream = sinkStreams[s];
-        var streamId = stream.id;
-        if (!connectedStreamIds[streamId]) {
-          connectedStreamIds[streamId] = true;
-          connectedStreams.push(stream);
-          Logger.i("AudioPanel", "Added stream connected to sink:", streamId, "- name:", stream.name || "unknown");
-        }
-      }
-
-      // Then, find streams connected to intermediate nodes
-      for (var intermediateId in intermediateNodeIds) {
-        Logger.i("AudioPanel", "Searching for streams connected to intermediate node", intermediateId);
-        var intermediateStreams = findStreamsConnectedToTarget(parseInt(intermediateId));
-        Logger.i("AudioPanel", "Found", intermediateStreams.length, "stream(s) connected to intermediate node", intermediateId);
-
-        for (var s = 0; s < intermediateStreams.length; s++) {
-          var stream = intermediateStreams[s];
-          var streamId = stream.id;
-          if (!connectedStreamIds[streamId]) {
-            connectedStreamIds[streamId] = true;
-            connectedStreams.push(stream);
-            Logger.i("AudioPanel", "Added stream connected to intermediate node:", streamId, "- name:", stream.name || "unknown");
+      try {
+        // Get all nodes from Pipewire
+        var allNodes = [];
+        if (Pipewire.nodes) {
+          if (Pipewire.nodes.count !== undefined) {
+            var nodeCount = Pipewire.nodes.count;
+            Logger.i("AudioPanel", "Total nodes in Pipewire (via .count):", nodeCount);
+            for (var n = 0; n < nodeCount; n++) {
+              var node;
+              if (Pipewire.nodes.get) {
+                node = Pipewire.nodes.get(n);
+              } else {
+                node = Pipewire.nodes[n];
+              }
+              if (node)
+                allNodes.push(node);
+            }
+          } else if (Pipewire.nodes.values) {
+            allNodes = Pipewire.nodes.values;
+            Logger.i("AudioPanel", "Total nodes in Pipewire (via .values):", allNodes.length);
           }
         }
+
+        // Find all stream nodes
+        for (var j = 0; j < allNodes.length; j++) {
+          var node = allNodes[j];
+          if (!node || !node.isStream || !node.audio) {
+            continue;
+          }
+
+          var streamId = node.id;
+          if (connectedStreamIds[streamId]) {
+            continue; // Already added
+          }
+
+          Logger.i("AudioPanel", "Found stream node", streamId, "- name:", node.name || "unknown");
+
+          // When intermediate nodes are present, include all stream nodes
+          // This is a reasonable heuristic since if audio is playing, they're likely connected
+          if (Object.keys(intermediateNodeIds).length > 0) {
+            connectedStreamIds[streamId] = true;
+            connectedStreams.push(node);
+            Logger.i("AudioPanel", "Added stream node (intermediate nodes present):", streamId, "- name:", node.name || "unknown");
+          } else if (connectedStreams.length === 0) {
+            // Fallback: if no streams found yet, include as fallback
+            connectedStreamIds[streamId] = true;
+            connectedStreams.push(node);
+            Logger.i("AudioPanel", "Added stream node (fallback):", streamId, "- name:", node.name || "unknown");
+          }
+        }
+      } catch (e) {
+        Logger.w("AudioPanel", "Error finding stream nodes:", e);
       }
     }
 
