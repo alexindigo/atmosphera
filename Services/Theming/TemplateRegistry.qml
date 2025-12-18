@@ -194,11 +194,11 @@ Singleton {
       "clients": [
         {
           "name": "code",
-          "path": "~/.vscode/extensions/undefined_publisher.noctaliatheme-0.0.1/themes/NoctaliaTheme-color-theme.json"
+          "path": "~/.vscode/extensions/noctalia.noctaliatheme-0.0.4/themes/NoctaliaTheme-color-theme.json"
         },
         {
           "name": "codium",
-          "path": "~/.vscode-oss/extensions/undefined_publisher.noctaliatheme-0.0.1/themes/NoctaliaTheme-color-theme.json"
+          "path": "~/.vscode-oss/extensions/noctalia.noctaliatheme-0.0.4/themes/NoctaliaTheme-color-theme.json"
         }
       ]
     },
