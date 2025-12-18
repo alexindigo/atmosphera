@@ -1146,7 +1146,11 @@
           "niri": {
             "description": "Write {filepath}. Requires niri v25.11+",
             "description-missing": "Requires {app} to be installed"
-          }
+          },
+           "mango": {
+             "description": "Write {filepath}. Requires mango",
+             "description-missing": "Requires {app} to be installed"
+           }
         },
         "misc": {
           "description": "Create your own templates",

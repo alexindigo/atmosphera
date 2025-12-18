@@ -1146,7 +1146,11 @@
           "niri": {
             "description": "Записать {filepath}. Требуется niri v25.11+",
             "description-missing": "Требуется установка {app}"
-          }
+          },
+           "mango": {
+             "description": "Записать {filepath}. Требуется mango",
+             "description-missing": "Требуется установка {app}"
+           }
         },
         "misc": {
           "description": "Создайте свои собственные шаблоны",

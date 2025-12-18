@@ -1146,7 +1146,11 @@
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",
             "description-missing": "{app} yüklü olmalıdır"
-          }
+          },
+           "mango": {
+             "description": "{filepath} dosyasına yaz. mango gerektirir",
+             "description-missing": "{app} yüklü olmalıdır"
+           }
         },
         "misc": {
           "description": "Kendi şablonlarınızı oluşturun",
