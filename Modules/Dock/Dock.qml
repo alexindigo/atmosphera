@@ -63,8 +63,8 @@ Loader {
       readonly property bool exclusive: displayMode === "exclusive"
       readonly property int hideDelay: 500
       readonly property int showDelay: 100
-      readonly property int hideAnimationDuration: Style.animationFast
-      readonly property int showAnimationDuration: Style.animationFast
+      readonly property int hideAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
+      readonly property int showAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
       readonly property int peekHeight: 1
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL

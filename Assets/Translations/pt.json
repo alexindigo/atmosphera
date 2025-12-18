@@ -1574,6 +1574,10 @@
           "description": "Ajustar o tamanho geral do Dock.",
           "label": "Tamanho do Dock"
         },
+        "hide-show-speed": {
+          "description": "Ajuste a velocidade da animação de ocultar/mostrar da dock.",
+          "label": "Velocidade de Ocultar/Mostrar"
+        },
         "inactive-indicators": {
           "description": "Exibir indicadores de pílula para todos os aplicativos, não apenas para o aplicativo ativo no momento.",
           "label": "Indicadores de execução"

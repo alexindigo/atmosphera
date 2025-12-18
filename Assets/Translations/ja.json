@@ -1574,6 +1574,10 @@
           "description": "ドック全体のサイズを調整します。",
           "label": "ドックのサイズ"
         },
+        "hide-show-speed": {
+          "description": "ドックの表示/非表示アニメーションの速度を調整します。",
+          "label": "表示/非表示の速度"
+        },
         "inactive-indicators": {
           "description": "現在アクティブなアプリだけでなく、すべてのアプリのインジケーターピルを表示する。",
           "label": "実行指標"

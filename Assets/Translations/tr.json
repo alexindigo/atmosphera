@@ -1574,6 +1574,10 @@
           "description": "Rıhtımın genel boyutunu ayarlayın.",
           "label": "Rıhtım boyutu"
         },
+        "hide-show-speed": {
+          "description": "Rıhtımın gizle/göster animasyonunun hızını ayarlayın.",
+          "label": "Gizle/Göster Hızı"
+        },
         "inactive-indicators": {
           "description": "Tüm uygulamalar için, sadece etkin olan için değil, gösterge haplarını göster.",
           "label": "Çalışan Göstergeler"

@@ -1574,6 +1574,10 @@
           "description": "调整 Dock 的整体大小。",
           "label": "Dock 大小"
         },
+        "hide-show-speed": {
+          "description": "调整 Dock 隐藏/显示动画的速度。",
+          "label": "隐藏/显示速度"
+        },
         "inactive-indicators": {
           "description": "为所有应用显示指示器小药丸，而不仅仅是当前活跃的应用。",
           "label": "运行指标"

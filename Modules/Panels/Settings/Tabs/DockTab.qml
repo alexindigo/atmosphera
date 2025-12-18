@@ -140,6 +140,25 @@ ColumnLayout {
     }
   }
 
+  ColumnLayout {
+    visible: Settings.data.dock.enabled && Settings.data.dock.displayMode === "auto_hide"
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+    NLabel {
+      label: I18n.tr("settings.dock.appearance.hide-show-speed.label")
+      description: I18n.tr("settings.dock.appearance.hide-show-speed.description")
+    }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0.1
+      to: 2.0
+      stepSize: 0.01
+      value: Settings.data.dock.animationSpeed
+      onMoved: value => Settings.data.dock.animationSpeed = value
+      text: (Settings.data.dock.animationSpeed * 100).toFixed(0) + "%"
+    }
+  }
+
   NToggle {
     visible: Settings.data.dock.enabled
     label: I18n.tr("settings.dock.appearance.inactive-indicators.label")

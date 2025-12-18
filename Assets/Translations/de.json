@@ -1574,6 +1574,10 @@
           "description": "Gesamtgröße des Docks anpassen.",
           "label": "Dock-Größe"
         },
+        "hide-show-speed": {
+          "description": "Geschwindigkeit der Ein-/Ausblend-Animation des Docks anpassen.",
+          "label": "Ein-/Ausblend-Geschwindigkeit"
+        },
         "inactive-indicators": {
           "description": "Anzeige von Indikator-Pillen für alle Apps, nicht nur für die aktuell aktive.",
           "label": "Laufende Indikatoren"

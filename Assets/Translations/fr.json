@@ -1574,6 +1574,10 @@
           "description": "Ajuster la taille globale du Dock.",
           "label": "Taille du Dock"
         },
+        "hide-show-speed": {
+          "description": "Ajustez la vitesse de l'animation d'affichage/masquage du dock.",
+          "label": "Vitesse d'affichage/masquage"
+        },
         "inactive-indicators": {
           "description": "Afficher les pastilles d'indicateur pour toutes les applications, pas seulement celle qui est active.",
           "label": "Indicateurs de fonctionnement"

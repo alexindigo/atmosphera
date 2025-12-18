@@ -1574,6 +1574,10 @@
           "description": "Pas de algehele grootte van de dock aan.",
           "label": "Grootte van de dock"
         },
+        "hide-show-speed": {
+          "description": "Pas de snelheid van de verberg/weergeef animatie van de dock aan.",
+          "label": "Verberg/Weergeef Snelheid"
+        },
         "inactive-indicators": {
           "description": "Toon indicatorpillen voor alle apps, niet alleen de actieve.",
           "label": "Lopende indicatoren"
