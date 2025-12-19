@@ -23,7 +23,7 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property string density: Settings.data.bar.density
-  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
+  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 1.0 : Style.capsuleHeight * 0.9
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -420,14 +420,14 @@ Rectangle {
     if (isVerticalBar)
       return Style.capsuleHeight;
 
-    var calculatedWidth = showTitle ? Math.round(taskbarLayout.implicitWidth) : Math.round(taskbarLayout.implicitWidth + Style.marginM * 2);
+    var calculatedWidth = showTitle ? taskbarLayout.implicitWidth : taskbarLayout.implicitWidth + Style.marginM * 2;
 
     // Apply maximum width constraint when smartWidth is enabled
     if (smartWidth && maxTaskbarWidth > 0) {
       return Math.min(calculatedWidth, maxTaskbarWidth);
     }
 
-    return calculatedWidth;
+    return Math.round(calculatedWidth);
   }
   implicitHeight: visible ? (isVerticalBar ? Math.round(taskbarLayout.implicitHeight + Style.marginM * 2) : Style.capsuleHeight) : 0
   radius: Style.radiusM
@@ -473,7 +473,7 @@ Rectangle {
         readonly property color titleBgColor: (isHovered || isFocused) ? Color.mHover : Style.capsuleColor
         readonly property color titleFgColor: (isHovered || isFocused) ? Color.mOnHover : Color.mOnSurface
 
-        Layout.preferredWidth: root.showTitle ? contentWidth + Style.marginM * 2 : contentWidth // Add margins for both pinned and running apps
+        Layout.preferredWidth: root.showTitle ? Math.round(contentWidth + Style.marginM * 2) : Math.round(contentWidth) // Add margins for both pinned and running apps
         Layout.preferredHeight: root.itemSize
         Layout.alignment: Qt.AlignCenter
 
@@ -517,7 +517,6 @@ Rectangle {
                 source: ThemeIcons.iconForAppId(taskbarItem.modelData.appId)
                 smooth: true
                 asynchronous: true
-                scale: taskbarItem.isFocused ? 1.0 : 0.8
 
                 // Apply dock shader to all taskbar icons
                 layer.enabled: widgetSettings.colorizeIcons !== false
