@@ -287,19 +287,58 @@ Popup {
         Layout.fillWidth: true
         Layout.minimumWidth: 200
         model: [
-          { "key": "", "name": I18n.tr("wallpaper.panel.ratios.any") },
-          { "key": "16x9", "name": "16x9" },
-          { "key": "16x10", "name": "16x10" },
-          { "key": "21x9", "name": "21x9" },
-          { "key": "32x9", "name": "32x9" },
-          { "key": "48x9", "name": "48x9" },
-          { "key": "9x16", "name": "9x16" },
-          { "key": "10x16", "name": "10x16" },
-          { "key": "9x18", "name": "9x18" },
-          { "key": "1x1", "name": "1x1" },
-          { "key": "3x2", "name": "3x2" },
-          { "key": "4x3", "name": "4x3" },
-          { "key": "5x4", "name": "5x4" }
+          {
+            "key": "",
+            "name": I18n.tr("wallpaper.panel.ratios.any")
+          },
+          {
+            "key": "16x9",
+            "name": "16x9"
+          },
+          {
+            "key": "16x10",
+            "name": "16x10"
+          },
+          {
+            "key": "21x9",
+            "name": "21x9"
+          },
+          {
+            "key": "32x9",
+            "name": "32x9"
+          },
+          {
+            "key": "48x9",
+            "name": "48x9"
+          },
+          {
+            "key": "9x16",
+            "name": "9x16"
+          },
+          {
+            "key": "10x16",
+            "name": "10x16"
+          },
+          {
+            "key": "9x18",
+            "name": "9x18"
+          },
+          {
+            "key": "1x1",
+            "name": "1x1"
+          },
+          {
+            "key": "3x2",
+            "name": "3x2"
+          },
+          {
+            "key": "4x3",
+            "name": "4x3"
+          },
+          {
+            "key": "5x4",
+            "name": "5x4"
+          }
         ]
         currentKey: Settings.data.wallpaper.wallhavenRatios || ""
         onSelected: key => {
