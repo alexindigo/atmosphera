@@ -107,15 +107,15 @@ in
         {
           templates = {
             neovim = {
-              inputPath = "~/.config/matugen/templates/template.lua";
-              outputPath = "~/.config/nvim/generated.lua";
-              postHook = "pkill -SIGUSR1 nvim";
+              input_path = "~/.config/matugen/templates/template.lua";
+              output_path = "~/.config/nvim/generated.lua";
+              post_hook = "pkill -SIGUSR1 nvim";
             };
           };
         }
       '';
       description = ''
-        Template definitions for Matugen.
+        Template definitions for Matugen, to be written to ~/.config/noctalia/user-templates.toml.
 
         This option accepts:
         - a Nix attrset (converted to TOML automatically)
@@ -135,7 +135,6 @@ in
 
   config =
     let
-      restart = "${pkgs.systemd}/bin/systemctl --user try-restart noctalia-shell.service 2>/dev/null || true";
       useApp2Unit = cfg.settings.appLauncher.useApp2Unit or false;
     in
     lib.mkIf cfg.enable {
@@ -169,11 +168,9 @@ in
 
       xdg.configFile = {
         "noctalia/settings.json" = lib.mkIf (cfg.settings != { }) {
-          onChange = lib.mkIf (!cfg.systemd.enable) restart;
           source = generateJson "settings" cfg.settings;
         };
         "noctalia/colors.json" = lib.mkIf (cfg.colors != { }) {
-          onChange = lib.mkIf (!cfg.systemd.enable) restart;
           source = generateJson "colors" cfg.colors;
         };
         "noctalia/user-templates.toml" = lib.mkIf (cfg.user-templates != { }) {
