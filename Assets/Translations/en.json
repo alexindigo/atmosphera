@@ -2730,6 +2730,10 @@
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
+      "ratios": {
+        "any": "Any",
+        "label": "Aspect Ratio"
+      },
       "resolution": {
         "atleast": "At least",
         "exact": "Exact",
