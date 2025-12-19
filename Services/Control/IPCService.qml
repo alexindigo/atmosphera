@@ -477,4 +477,17 @@ Item {
       }
     }
   }
+
+  IpcHandler {
+    target: "desktopWidgets"
+    function toggle() {
+      Settings.data.desktopWidgets.enabled = !Settings.data.desktopWidgets.enabled;
+    }
+    function disable() {
+      Settings.data.desktopWidgets.enabled = false;
+    }
+    function enable() {
+      Settings.data.desktopWidgets.enabled = true;
+    }
+  }
 }
