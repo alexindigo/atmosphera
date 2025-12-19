@@ -71,9 +71,21 @@ Rectangle {
   }
   readonly property bool showPinnedApps: (widgetSettings.showPinnedApps !== undefined) ? widgetSettings.showPinnedApps : widgetMetadata.showPinnedApps
 
-  // Context menu state
-  property var selectedWindow: null
-  property string selectedAppName: ""
+  // Context menu state - store ID instead of object reference to avoid stale references
+  property string selectedWindowId: ""
+  property string selectedAppId: ""
+
+  // Helper to get the current window object from ID
+  function getSelectedWindow() {
+    if (!selectedWindowId)
+      return null;
+    for (var i = 0; i < combinedModel.length; i++) {
+      if (combinedModel[i].id === selectedWindowId && combinedModel[i].window) {
+        return combinedModel[i].window;
+      }
+    }
+    return null;
+  }
   property int modelUpdateTrigger: 0  // Dummy property to force model re-evaluation
 
   // Hover state
@@ -300,27 +312,22 @@ Rectangle {
       const _ = root.modelUpdateTrigger;
 
       var items = [];
-      if (root.selectedWindow) {
+      if (root.selectedWindowId) {
         // Focus item (for running apps)
         items.push({
                      "label": I18n.tr("dock.menu.focus"),
                      "action": "focus",
                      "icon": "eye"
                    });
-      }
 
-      // Pin/Unpin item (always available when right-clicking an app)
-      if (root.selectedWindow) {
-        const appId = root.selectedWindow.appId;
-        const isPinned = root.isAppPinned(appId);
+        // Pin/Unpin item (always available when right-clicking an app)
+        const isPinned = root.isAppPinned(root.selectedAppId);
         items.push({
                      "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
                      "action": "pin",
                      "icon": !isPinned ? "pin" : "unpin"
                    });
-      }
 
-      if (root.selectedWindow) {
         // Close item (for running apps)
         items.push({
                      "label": I18n.tr("dock.menu.close"),
@@ -329,9 +336,8 @@ Rectangle {
                    });
 
         // Add desktop entry actions (like "New Window", "Private Window", etc.)
-        if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedWindow?.appId) {
-          const appId = root.selectedWindow.appId;
-          const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(appId) : DesktopEntries.byId(appId);
+        if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedAppId) {
+          const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(root.selectedAppId) : DesktopEntries.byId(root.selectedAppId);
           if (entry != null && entry.actions) {
             entry.actions.forEach(function (action) {
               items.push({
@@ -352,25 +358,28 @@ Rectangle {
       return items;
     }
     onTriggered: (action, item) => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.close();
                    }
 
+                   // Look up the window fresh each time to avoid stale references
+                   const selectedWindow = root.getSelectedWindow();
+
                    if (action === "focus" && selectedWindow) {
                      CompositorService.focusWindow(selectedWindow);
-                   } else if (action === "pin" && selectedWindow) {
-                     root.toggleAppPin(selectedWindow.appId);
+                   } else if (action === "pin" && root.selectedAppId) {
+                     root.toggleAppPin(root.selectedAppId);
                    } else if (action === "close" && selectedWindow) {
                      CompositorService.closeWindow(selectedWindow);
                    } else if (action === "widget-settings") {
-                     BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                     BarService.openWidgetSettings(root.screen, root.section, root.sectionWidgetIndex, root.widgetId, root.widgetSettings);
                    } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
                      // Execute desktop entry action
                      item.desktopAction.execute();
                    }
-                   selectedWindow = null;
-                   selectedAppName = "";
+                   root.selectedWindowId = "";
+                   root.selectedAppId = "";
                  }
   }
 
@@ -586,8 +595,8 @@ Rectangle {
               TooltipService.hide();
               // Only show context menu for running apps
               if (isRunning && modelData.window) {
-                root.selectedWindow = modelData.window;
-                root.selectedAppName = CompositorService.getCleanAppName(modelData.appId, modelData.title);
+                root.selectedWindowId = modelData.id;
+                root.selectedAppId = modelData.appId;
                 root.openTaskbarContextMenu(taskbarItem);
               }
             }
@@ -608,7 +617,7 @@ Rectangle {
   function openTaskbarContextMenu(item) {
     // Build menu model directly
     var items = [];
-    if (root.selectedWindow) {
+    if (root.selectedWindowId) {
       // Focus item (for running apps)
       items.push({
                    "label": I18n.tr("dock.menu.focus"),
@@ -617,8 +626,7 @@ Rectangle {
                  });
 
       // Pin/Unpin item
-      const appId = root.selectedWindow.appId;
-      const isPinned = root.isAppPinned(appId);
+      const isPinned = root.isAppPinned(root.selectedAppId);
       items.push({
                    "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
                    "action": "pin",
@@ -633,8 +641,8 @@ Rectangle {
                  });
 
       // Add desktop entry actions (like "New Window", "Private Window", etc.)
-      if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedWindow.appId) {
-        const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(appId) : DesktopEntries.byId(appId);
+      if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedAppId) {
+        const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(root.selectedAppId) : DesktopEntries.byId(root.selectedAppId);
         if (entry != null && entry.actions) {
           entry.actions.forEach(function (action) {
             items.push({
