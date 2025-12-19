@@ -274,7 +274,7 @@
     "pinnedStatic": false,
     "inactiveIndicators": false,
     "deadOpacity": 0.6,
-    "animationSpeed": 1.0
+    "animationSpeed": 1
   },
   "network": {
     "wifiEnabled": true
