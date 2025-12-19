@@ -171,6 +171,7 @@ Item {
     target: CompositorService
     function onWorkspacesChanged() {
       refreshWorkspaces();
+      root.triggerUnifiedWave();
     }
     function onWindowListChanged() {
       if (showApplications || showLabelsOnlyWhenOccupied) {
@@ -231,7 +232,6 @@ Item {
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
-        root.triggerUnifiedWave();
         root.workspaceChanged(ws.id, Color.mPrimary);
         break;
       }
