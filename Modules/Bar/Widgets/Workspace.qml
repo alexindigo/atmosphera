@@ -178,7 +178,7 @@ Item {
       }
     }
     function onActiveWindowChanged() {
-      if (showApplications || showLabelsOnlyWhenOccupied) {
+      if (showApplications) {
         refreshWorkspaces();
       }
     }
@@ -450,7 +450,6 @@ Item {
 
             return Qt.alpha(Color.mSecondary, 0.3);
           }
-          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
