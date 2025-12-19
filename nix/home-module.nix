@@ -95,40 +95,16 @@ in
     };
 
     user-templates = lib.mkOption {
-      type = lib.types.submodule {
-        options = {
-          config = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-            description = "General [config] section for Matugen’s TOML config file.";
-          };
-          templates = lib.mkOption {
-            default = { };
-            type = lib.types.attrsOf (
-              lib.types.submodule {
-                options = {
-                  inputPath = lib.mkOption {
-                    type = lib.types.path;
-                    description = "Template input path for Matugen";
-                  };
-                  outputPath = lib.mkOption {
-                    type = lib.types.path;
-                    description = "Output path where the generated file will be written";
-                  };
-                  postHook = lib.mkOption {
-                    type = lib.types.nullOr lib.types.str;
-                    default = null;
-                    description = "Command to run after file is generated";
-                  };
-                };
-              }
-            );
-          };
-        };
-      };
       default = { };
+      type =
+        with lib.types;
+        oneOf [
+          tomlFormat.type
+          str
+          path
+        ];
       example = lib.literalExpression ''
-        programs.noctalia-shell.user-templates = {
+        {
           templates = {
             neovim = {
               inputPath = "~/.config/matugen/templates/template.lua";
@@ -136,11 +112,15 @@ in
               postHook = "pkill -SIGUSR1 nvim";
             };
           };
-        };
+        }
       '';
       description = ''
-        Template definitions for Matugen. Each attribute corresponds to a template
-        such as "neovim", "kitty", "btop".
+        Template definitions for Matugen.
+
+        This option accepts:
+        - a Nix attrset (converted to TOML automatically)
+        - a string containing raw TOML
+        - a path to an existing TOML file
       '';
     };
 
@@ -167,7 +147,10 @@ in
           After = [ config.wayland.systemd.target ];
           X-Restart-Triggers =
             lib.optional (cfg.settings != { }) config.xdg.configFile."noctalia/settings.json".source
-            ++ lib.optional (cfg.colors != { }) config.xdg.configFile."noctalia/colors.json".source;
+            ++ lib.optional (cfg.colors != { }) config.xdg.configFile."noctalia/colors.json".source
+            ++ lib.optional (
+              cfg.user-templates != { }
+            ) config.xdg.configFile."noctalia/user-templates.toml".source;
         };
 
         Service = {
@@ -193,18 +176,15 @@ in
           onChange = lib.mkIf (!cfg.systemd.enable) restart;
           source = generateJson "colors" cfg.colors;
         };
-        "noctalia/user-templates.toml" = {
-          onChange = lib.mkIf (!cfg.systemd.enable) restart;
-          source = tomlFormat.generate "user-templates.toml" {
-            config = cfg.user-templates.config;
-            templates = lib.mapAttrs (_: t: {
-              input_path = t.inputPath;
-              output_path = t.outputPath;
-              post_hook = t.postHook;
-            }) cfg.user-templates.templates;
-          };
+        "noctalia/user-templates.toml" = lib.mkIf (cfg.user-templates != { }) {
+          source =
+            if lib.isString cfg.user-templates then
+              pkgs.writeText "noctalia-user-templates.toml" cfg.user-templates
+            else if builtins.isPath cfg.user-templates || lib.isStorePath cfg.user-templates then
+              cfg.user-templates
+            else
+              tomlFormat.generate "noctalia-user-templates.toml" cfg.user-templates;
         };
-
       };
 
       assertions = [
