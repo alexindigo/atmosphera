@@ -144,6 +144,8 @@ Item {
       readonly property string barPos: Settings.data.bar.position
       readonly property bool isFloating: Settings.data.bar.floating
 
+      readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
+
       // Calculate bar offsets for each edge separately
       readonly property int barOffsetTop: {
         if (barPos !== "top")
@@ -180,10 +182,10 @@ Item {
       anchors.right: isRight
 
       // Margins for PanelWindow - only apply bar offset for the specific edge where the bar is
-      margins.top: isTop ? barOffsetTop : 0
-      margins.bottom: isBottom ? barOffsetBottom : 0
-      margins.left: isLeft ? barOffsetLeft : 0
-      margins.right: isRight ? barOffsetRight : 0
+      margins.top: isTop ? barOffsetTop - shadowPadding + Style.marginM : 0
+      margins.bottom: isBottom ? barOffsetBottom - shadowPadding + Style.marginM : 0
+      margins.left: isLeft ? barOffsetLeft - shadowPadding + Style.marginM : 0
+      margins.right: isRight ? barOffsetRight - shadowPadding + Style.marginM : 0
 
       implicitWidth: Math.round(toastItem.width)
       implicitHeight: Math.round(toastItem.height)
