@@ -619,6 +619,8 @@ Singleton {
       property string darkModeChange: ""
       property string screenLock: ""
       property string screenUnlock: ""
+      property string performanceModeEnabled: ""
+      property string performanceModeDisabled: ""
     }
 
     // desktop widgets

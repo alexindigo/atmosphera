@@ -411,7 +411,9 @@
     "wallpaperChange": "",
     "darkModeChange": "",
     "screenLock": "",
-    "screenUnlock": ""
+    "screenUnlock": "",
+    "performanceModeEnabled": "",
+    "performanceModeDisabled": ""
   },
   "desktopWidgets": {
     "enabled": false,
