@@ -111,12 +111,7 @@ Singleton {
     const stderr = String(stderrText || "").toLowerCase();
     const combined = stdout + " " + stderr;
     // Check for various forms of cancellation messages (case-insensitive)
-    return combined.includes("canceled by") || 
-           combined.includes("cancelled by") ||
-           combined.includes("canceled by user") ||
-           combined.includes("cancelled by user") ||
-           combined.includes("canceled by the user") ||
-           combined.includes("cancelled by the user");
+    return combined.includes("canceled by") || combined.includes("cancelled by") || combined.includes("canceled by user") || combined.includes("cancelled by user") || combined.includes("canceled by the user") || combined.includes("cancelled by the user");
   }
 
   // Process to run and monitor gpu-screen-recorder
