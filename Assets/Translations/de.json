@@ -1378,10 +1378,6 @@
           "label": "Minimaler Modus"
         },
         "preview": "Vorschau",
-        "section": {
-          "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
-          "label": "Uhr-Widget"
-        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"
@@ -1418,7 +1414,7 @@
         "button": {
           "label": "Bearbeitungsmodus aktivieren"
         },
-        "controls-explanation": "Linke Maustaste: Widget verschieben\nRechte Maustaste: Widget Größe ändern",
+        "controls-explanation": "Linke Maustaste: Widget verschieben\nRechte Maustaste: Widget-Größe ändern",
         "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
         "exit-button": "Bearbeitungsmodus verlassen",
         "grid-snap": {
@@ -1445,10 +1441,6 @@
           "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
           "label": "Ausblendmodus"
         },
-        "section": {
-          "description": "Konfigurieren Sie das Erscheinungsbild des Media-Player-Widgets.",
-          "label": "Media Player Widget"
-        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
           "label": "Hintergrund anzeigen"
@@ -1468,19 +1460,9 @@
           "description": "Zeige ein Wetter-Widget auf dem Desktop an.",
           "label": "Wetter-Widget aktivieren"
         },
-        "section": {
-          "description": "Konfigurieren Sie das Erscheinungsbild des Wetter-Widgets.",
-          "label": "Wetter-Widget"
-        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Wetter-Widget an.",
           "label": "Hintergrund anzeigen"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Desktop-Widgets hinzufügen und konfigurieren",
-          "label": "Desktop-Widgets"
         }
       }
     },

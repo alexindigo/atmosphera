@@ -1378,10 +1378,6 @@
           "label": "Minimale modus"
         },
         "preview": "Voorbeeld",
-        "section": {
-          "description": "Configureer de weergave van de klokwidget.",
-          "label": "Klokwidget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
@@ -1445,10 +1441,6 @@
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
           "label": "Verbergmodus"
         },
-        "section": {
-          "description": "Configureer het uiterlijk van de mediapeler-widget.",
-          "label": "Mediaspeler-widget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
           "label": "Toon achtergrond"
@@ -1468,19 +1460,9 @@
           "description": "Toon een weerwidget op het bureaublad.",
           "label": "Weerwidget inschakelen"
         },
-        "section": {
-          "description": "Configureer de weergave van de weerwidget.",
-          "label": "Weerwidget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de weerwidget.",
           "label": "Toon achtergrond"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Desktopwidgets toevoegen en configureren",
-          "label": "Desktopwidgets"
         }
       }
     },

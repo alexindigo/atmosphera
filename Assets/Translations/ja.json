@@ -1378,10 +1378,6 @@
           "label": "ミニマルモード"
         },
         "preview": "プレビュー",
-        "section": {
-          "description": "時計ウィジェットの外観を設定します。",
-          "label": "時計ウィジェット"
-        },
         "show-background": {
           "description": "時計ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
@@ -1445,10 +1441,6 @@
           "description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
           "label": "非表示モード"
         },
-        "section": {
-          "description": "メディアプレーヤーウィジェットの外観を設定します。",
-          "label": "メディアプレーヤーウィジェット"
-        },
         "show-background": {
           "description": "メディアプレーヤーウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
@@ -1468,19 +1460,9 @@
           "description": "デスクトップに天気ウィジェットを表示する。",
           "label": "天気ウィジェットを有効にする"
         },
-        "section": {
-          "description": "天気ウィジェットの外観を設定します。",
-          "label": "天気ウィジェット"
-        },
         "show-background": {
           "description": "天気ウィジェットの背景コンテナを表示する。",
           "label": "背景を表示"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "デスクトップウィジェットを追加して設定する",
-          "label": "デスクトップウィジェット"
         }
       }
     },

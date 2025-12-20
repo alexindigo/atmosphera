@@ -1378,10 +1378,6 @@
           "label": "简约模式"
         },
         "preview": "预览",
-        "section": {
-          "description": "配置时钟小部件外观。",
-          "label": "时钟小部件"
-        },
         "show-background": {
           "description": "显示时钟小部件的背景容器。",
           "label": "显示背景"
@@ -1445,10 +1441,6 @@
           "description": "控制当没有媒体播放时小部件的行为。",
           "label": "隐藏模式"
         },
-        "section": {
-          "description": "配置媒体播放器小部件外观。",
-          "label": "媒体播放器小部件"
-        },
         "show-background": {
           "description": "显示媒体播放器小部件的背景容器。",
           "label": "显示背景"
@@ -1468,19 +1460,9 @@
           "description": "在桌面上显示天气小部件。",
           "label": "启用天气小部件"
         },
-        "section": {
-          "description": "配置天气小部件外观。",
-          "label": "天气小部件"
-        },
         "show-background": {
           "description": "显示天气小部件的背景容器。",
           "label": "显示背景"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "添加和配置桌面小部件",
-          "label": "桌面小部件"
         }
       }
     },

@@ -1378,10 +1378,6 @@
           "label": "Minimal mod"
         },
         "preview": "Önizleme",
-        "section": {
-          "description": "Saat aracı görünümünü yapılandırın.",
-          "label": "Saat Widget'ı"
-        },
         "show-background": {
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"
@@ -1445,10 +1441,6 @@
           "description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
           "label": "Gizleme modu"
         },
-        "section": {
-          "description": "Medya oynatıcı araç görünümünü yapılandırın.",
-          "label": "Medya Oynatıcı Aracı"
-        },
         "show-background": {
           "description": "Medya oynatıcı widget'ı için arka plan konteynerini göster.",
           "label": "Arka planı göster"
@@ -1468,19 +1460,9 @@
           "description": "Masaüstünde bir hava durumu aracı göster.",
           "label": "Hava durumu araç kutusunu etkinleştir"
         },
-        "section": {
-          "description": "Hava durumu widget'ının görünümünü yapılandırın.",
-          "label": "Hava Durumu Aracı"
-        },
         "show-background": {
           "description": "Hava durumu widget'ı için arka plan konteynerini göster.",
           "label": "Arka planı göster"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Masaüstü araçlarını ekle ve yapılandır",
-          "label": "Masaüstü Araçları"
         }
       }
     },
