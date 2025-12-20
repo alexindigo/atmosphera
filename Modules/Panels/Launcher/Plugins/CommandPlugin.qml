@@ -15,7 +15,8 @@ Item {
           {
             "name": ">cmd",
             "description": I18n.tr("plugins.command-description"),
-            "icon": "utilities-terminal",
+            "icon": "terminal",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               launcher.setSearchText(">cmd ");
@@ -33,7 +34,8 @@ Item {
           {
             "name": I18n.tr("plugins.command-name"),
             "description": I18n.tr("plugins.command-description"),
-            "icon": "utilities-terminal",
+            "icon": "terminal",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               launcher.close();

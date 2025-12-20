@@ -67,7 +67,8 @@ Item {
           {
             "name": ">emoji",
             "description": I18n.tr("plugins.emoji-search-description"),
-            "icon": "face-smile",
+            "icon": "mood-smile",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               launcher.setSearchText(">emoji ");
@@ -87,7 +88,8 @@ Item {
             {
               "name": I18n.tr("plugins.emoji-loading"),
               "description": I18n.tr("plugins.emoji-loading-description"),
-              "icon": "view-refresh",
+              "icon": "refresh",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
             }

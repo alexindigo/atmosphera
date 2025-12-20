@@ -70,7 +70,8 @@ Item {
           {
             "name": ">clip",
             "description": I18n.tr("plugins.clipboard-search-description"),
-            "icon": "text-x-generic",
+            "icon": "clipboard",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               launcher.setSearchText(">clip ");
@@ -79,7 +80,8 @@ Item {
           {
             "name": ">clip clear",
             "description": I18n.tr("plugins.clipboard-clear-description"),
-            "icon": "text-x-generic",
+            "icon": "trash",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               ClipboardService.wipeAll();
@@ -105,7 +107,8 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-history-disabled"),
               "description": I18n.tr("plugins.clipboard-history-disabled-description"),
-              "icon": "view-refresh",
+              "icon": "refresh",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
             }
@@ -118,7 +121,8 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-clear-history"),
               "description": I18n.tr("plugins.clipboard-clear-description-full"),
-              "icon": "delete_sweep",
+              "icon": "trash",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {
                 ClipboardService.wipeAll();
@@ -134,7 +138,8 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-loading"),
               "description": I18n.tr("plugins.clipboard-loading-description"),
-              "icon": "view-refresh",
+              "icon": "refresh",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
             }
@@ -152,7 +157,8 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-loading"),
               "description": I18n.tr("plugins.clipboard-loading-description"),
-              "icon": "view-refresh",
+              "icon": "refresh",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
             }
@@ -193,7 +199,8 @@ Item {
       results.push({
                      "name": searchTerm ? "No matching clipboard items" : "Clipboard is empty",
                      "description": searchTerm ? `No items containing "${query}"` : "Copy something to see it here",
-                     "icon": "text-x-generic",
+                     "icon": "clipboard",
+                     "isTablerIcon": true,
                      "isImage": false,
                      "onActivate": function () {// Do nothing
                      }
@@ -210,7 +217,8 @@ Item {
     return {
       "name": meta ? `Image ${meta.w}×${meta.h}` : "Image",
       "description": meta ? `${meta.fmt} • ${meta.size}` : item.mime || "Image data",
-      "icon": "image",
+      "icon": "photo",
+      "isTablerIcon": true,
       "isImage": true,
       "imageWidth": meta ? meta.w : 0,
       "imageHeight": meta ? meta.h : 0,
@@ -244,7 +252,8 @@ Item {
     return {
       "name": title,
       "description": description,
-      "icon": "text-x-generic",
+      "icon": "clipboard",
+      "isTablerIcon": true,
       "isImage": false,
       "clipboardId": item.id,
       "preview": preview
