@@ -9,6 +9,7 @@ Item {
   // Plugin metadata
   property string name: I18n.tr("plugins.clipboard")
   property var launcher: null
+  property string iconMode: Settings.data.appLauncher.iconMode
 
   // Plugin capabilities
   property bool handleSearch: false // Don't handle regular search
@@ -70,7 +71,7 @@ Item {
           {
             "name": ">clip",
             "description": I18n.tr("plugins.clipboard-search-description"),
-            "icon": "clipboard",
+            "icon": iconMode === "tabler" ? "clipboard" : "text-x-generic",
             "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
@@ -80,7 +81,7 @@ Item {
           {
             "name": ">clip clear",
             "description": I18n.tr("plugins.clipboard-clear-description"),
-            "icon": "trash",
+            "icon": iconMode === "tabler" ? "trash" : "delete_sweep",
             "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
@@ -107,7 +108,7 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-history-disabled"),
               "description": I18n.tr("plugins.clipboard-history-disabled-description"),
-              "icon": "refresh",
+              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
@@ -121,7 +122,7 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-clear-history"),
               "description": I18n.tr("plugins.clipboard-clear-description-full"),
-              "icon": "trash",
+              "icon": iconMode === "tabler" ? "trash" : "delete_sweep",
               "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {
@@ -138,7 +139,7 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-loading"),
               "description": I18n.tr("plugins.clipboard-loading-description"),
-              "icon": "refresh",
+              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
@@ -157,7 +158,7 @@ Item {
             {
               "name": I18n.tr("plugins.clipboard-loading"),
               "description": I18n.tr("plugins.clipboard-loading-description"),
-              "icon": "refresh",
+              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
@@ -199,7 +200,7 @@ Item {
       results.push({
                      "name": searchTerm ? "No matching clipboard items" : "Clipboard is empty",
                      "description": searchTerm ? `No items containing "${query}"` : "Copy something to see it here",
-                     "icon": "clipboard",
+                     "icon": iconMode === "tabler" ? "clipboard" : "text-x-generic",
                      "isTablerIcon": true,
                      "isImage": false,
                      "onActivate": function () {// Do nothing
@@ -217,7 +218,7 @@ Item {
     return {
       "name": meta ? `Image ${meta.w}×${meta.h}` : "Image",
       "description": meta ? `${meta.fmt} • ${meta.size}` : item.mime || "Image data",
-      "icon": "photo",
+      "icon": iconMode === "tabler" ? "photo" : "image",
       "isTablerIcon": true,
       "isImage": true,
       "imageWidth": meta ? meta.w : 0,
@@ -252,7 +253,7 @@ Item {
     return {
       "name": title,
       "description": description,
-      "icon": "clipboard",
+      "icon": iconMode === "tabler" ? "clipboard" : "text-x-generic",
       "isTablerIcon": true,
       "isImage": false,
       "clipboardId": item.id,

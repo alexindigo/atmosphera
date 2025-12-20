@@ -919,7 +919,7 @@ SmartPanel {
                       sourceComponent: Component {
                         Loader {
                           anchors.fill: parent
-                          sourceComponent: modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
                         }
                       }
 
@@ -1287,7 +1287,7 @@ SmartPanel {
                     sourceComponent: Component {
                       Loader {
                         anchors.fill: parent
-                        sourceComponent: modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
+                        sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
                       }
                     }
 

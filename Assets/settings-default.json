@@ -179,7 +179,8 @@
     "customLaunchPrefixEnabled": false,
     "customLaunchPrefix": "",
     "viewMode": "list",
-    "showCategories": true
+    "showCategories": true,
+    "iconMode": "tabler"
   },
   "controlCenter": {
     "position": "close_to_bar_button",

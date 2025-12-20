@@ -363,6 +363,8 @@ Singleton {
       // View mode: "list" or "grid"
       property string viewMode: "list"
       property bool showCategories: true
+      // Icon mode: "tabler" or "native"
+      property string iconMode: "tabler"
     }
 
     // control center

@@ -1774,6 +1774,10 @@
           "description": "When enabled, frequently launched apps appear first in the list.",
           "label": "Sort by most used"
         },
+        "icon-mode": {
+          "description": "Use native system icons instead of Tabler icons.",
+          "label": "Use native icons"
+        },
         "terminal-command": {
           "description": "Command to launch a terminal. E.g., 'kitty -e' or 'gnome-terminal --'.",
           "label": "Terminal command"
