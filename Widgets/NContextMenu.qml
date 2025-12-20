@@ -4,7 +4,31 @@ import QtQuick.Layouts
 import qs.Commons
 
 /*
-This component could probably be deleted and replaced by NPopupContextMenu
+* NContextMenu - Popup-based context menu for use inside panels and dialogs
+*
+* Use this component when you need a context menu inside:
+* - Settings panels
+* - Dialogs
+* - Repeater delegates
+* - Any nested component context
+*
+* For bar widgets and top-level window contexts, use NPopupContextMenu instead,
+* which provides better screen boundary handling and compositor integration.
+*
+* Usage:
+*   NContextMenu {
+*     id: contextMenu
+*     parent: Overlay.overlay
+*     model: [
+*       { "label": "Action 1", "action": "action1", "icon": "icon-name" },
+*       { "label": "Action 2", "action": "action2" }
+*     ]
+*     onTriggered: action => { console.log("Selected:", action) }
+*   }
+*
+*   MouseArea {
+*     onClicked: contextMenu.openAtItem(parent, mouse.x, mouse.y)
+*   }
 */
 Popup {
   id: root
