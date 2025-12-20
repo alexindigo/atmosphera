@@ -1736,6 +1736,10 @@
         "placeholder": "ex., notify-send \"Papel de parede\" \"Alterado\""
       }
     },
+    "indicator": {
+      "default-value": "Padrão: {value}",
+      "system-default": "Padrão do sistema"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Ativar gerenciamento de Bluetooth.",
         "label": "Ativar Bluetooth"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Rede",
       "wifi": {
+        "description": "Gerenciar redes sem fio (requer NetworkManager).",
         "label": "Ativar Wi-Fi"
       }
     },

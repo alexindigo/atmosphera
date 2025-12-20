@@ -1736,6 +1736,10 @@
         "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
       }
     },
+    "indicator": {
+      "default-value": "Varsayılan: {value}",
+      "system-default": "Sistem Varsayılanı"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth yönetimini etkinleştir.",
         "label": "Bluetooth'u Etkinleştir"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Ağ",
       "wifi": {
+        "description": "Kablosuz ağları yönet (NetworkManager gerektirir).",
         "label": "Kablosuz Bağlantıyı Etkinleştir"
       }
     },

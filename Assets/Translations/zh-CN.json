@@ -1736,6 +1736,10 @@
         "placeholder": "例如：notify-send \"壁纸\" \"已更改\""
       }
     },
+    "indicator": {
+      "default-value": "默认值：{value}",
+      "system-default": "系统默认"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "启用蓝牙管理。",
         "label": "启用蓝牙"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "网络",
       "wifi": {
+        "description": "管理无线网络（需要 NetworkManager）。",
         "label": "启用 Wi-Fi"
       }
     },

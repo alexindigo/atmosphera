@@ -1736,6 +1736,10 @@
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
       }
     },
+    "indicator": {
+      "default-value": "Standaard: {value}",
+      "system-default": "Systeemstandaard"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-beheer activeren.",
         "label": "Bluetooth inschakelen"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Netwerk",
       "wifi": {
+        "description": "Draadloze netwerken beheren (vereist NetworkManager).",
         "label": "Wi-Fi inschakelen"
       }
     },

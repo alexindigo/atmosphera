@@ -1736,6 +1736,10 @@
         "placeholder": "例: notify-send \"Wallpaper\" \"Changed\""
       }
     },
+    "indicator": {
+      "default-value": "デフォルト: {value}",
+      "system-default": "システムの既定"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth の管理を有効にする。",
         "label": "Bluetooth を有効化"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "ネットワーク",
       "wifi": {
+        "description": "ワイヤレスネットワークを管理します（NetworkManagerが必要です）。",
         "label": "Wi-Fi を有効化"
       }
     },

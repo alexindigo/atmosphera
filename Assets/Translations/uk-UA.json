@@ -1736,6 +1736,10 @@
         "placeholder": "напр., notify-send \"Шпалери\" \"Змінено\""
       }
     },
+    "indicator": {
+      "default-value": "За замовчуванням: {value}",
+      "system-default": "Системні налаштування за замовчуванням"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Активувати керування Bluetooth.",
         "label": "Увімкнути Bluetooth"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Мережа",
       "wifi": {
+        "description": "Керування бездротовими мережами (потребує NetworkManager).",
         "label": "Увімкнути Wi-Fi"
       }
     },

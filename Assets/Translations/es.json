@@ -1736,6 +1736,10 @@
         "placeholder": "ej., notify-send \"Fondo de pantalla\" \"Cambiado\""
       }
     },
+    "indicator": {
+      "default-value": "Predeterminado: {value}",
+      "system-default": "Predeterminado del sistema"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activar la gestión de Bluetooth.",
         "label": "Activar Bluetooth"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Red",
       "wifi": {
+        "description": "Administrar redes inalámbricas (requiere NetworkManager).",
         "label": "Activar Wi-Fi"
       }
     },

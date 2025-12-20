@@ -882,10 +882,6 @@
     "title": "Session Menu"
   },
   "settings": {
-    "indicator": {
-      "default-value": "Default: {value}",
-      "system-default": "System Default"
-    },
     "about": {
       "contributors": {
         "section": {
@@ -1740,6 +1736,10 @@
         "placeholder": "e.g., notify-send \"Wallpaper\" \"Changed\""
       }
     },
+    "indicator": {
+      "default-value": "Default: {value}",
+      "system-default": "System Default"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1887,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activate Bluetooth management.",
         "label": "Enable Bluetooth"
       },
       "section": {
@@ -1894,6 +1895,7 @@
       },
       "title": "Network",
       "wifi": {
+        "description": "Manage wireless networks (requires NetworkManager).",
         "label": "Enable Wi-Fi"
       }
     },

@@ -1736,6 +1736,10 @@
         "placeholder": "например, notify-send \"Wallpaper\" \"Changed\""
       }
     },
+    "indicator": {
+      "default-value": "По умолчанию: {value}",
+      "system-default": "По умолчанию"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1883,6 +1887,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Включить управление Bluetooth.",
         "label": "Включить Bluetooth"
       },
       "section": {
@@ -1890,6 +1895,7 @@
       },
       "title": "Сеть",
       "wifi": {
+        "description": "Управление беспроводными сетями (требуется NetworkManager).",
         "label": "Включить Wi-Fi"
       }
     },

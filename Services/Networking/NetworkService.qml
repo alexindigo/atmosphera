@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.System
 import qs.Services.UI
 
 Singleton {
@@ -68,8 +69,21 @@ Singleton {
 
   Component.onCompleted: {
     Logger.i("Network", "Service started");
-    syncWifiState();
-    scan();
+    if (ProgramCheckerService.nmcliAvailable) {
+      syncWifiState();
+      scan();
+    }
+  }
+
+  // Start initial checks when nmcli becomes available
+  Connections {
+    target: ProgramCheckerService
+    function onNmcliAvailableChanged() {
+      if (ProgramCheckerService.nmcliAvailable) {
+        syncWifiState();
+        scan();
+      }
+    }
   }
 
   // Save cache with debounce
@@ -91,37 +105,41 @@ Singleton {
   }
 
   // Ethernet check timer
-  // Always running every 30s
+  // Runs every 30s if nmcli is available
   Timer {
     id: ethernetCheckTimer
     interval: 30000
-    running: true
+    running: ProgramCheckerService.nmcliAvailable
     repeat: true
     onTriggered: ethernetStateProcess.running = true
   }
 
   // Internet connectivity check timer
-  // Always running every 15s
+  // Runs every 15s if nmcli is available
   Timer {
     id: connectivityCheckTimer
     interval: 15000
-    running: true
+    running: ProgramCheckerService.nmcliAvailable
     repeat: true
     onTriggered: connectivityCheckProcess.running = true
   }
 
   // Core functions
   function syncWifiState() {
+    if (!ProgramCheckerService.nmcliAvailable)
+      return;
     wifiStateProcess.running = true;
   }
 
   function setWifiEnabled(enabled) {
+    if (!ProgramCheckerService.nmcliAvailable)
+      return;
     Settings.data.network.wifiEnabled = enabled;
     wifiStateEnableProcess.running = true;
   }
 
   function scan() {
-    if (!Settings.data.network.wifiEnabled)
+    if (!ProgramCheckerService.nmcliAvailable || !Settings.data.network.wifiEnabled)
       return;
     if (scanning) {
       // Mark current scan results to be ignored and schedule a new scan
@@ -141,7 +159,7 @@ Singleton {
   }
 
   function connect(ssid, password = "") {
-    if (connecting)
+    if (!ProgramCheckerService.nmcliAvailable || connecting)
       return;
     connecting = true;
     connectingTo = ssid;
@@ -162,12 +180,16 @@ Singleton {
   }
 
   function disconnect(ssid) {
+    if (!ProgramCheckerService.nmcliAvailable)
+      return;
     disconnectingFrom = ssid;
     disconnectProcess.ssid = ssid;
     disconnectProcess.running = true;
   }
 
   function forget(ssid) {
+    if (!ProgramCheckerService.nmcliAvailable)
+      return;
     forgettingNetwork = ssid;
 
     // Remove from cache
@@ -239,7 +261,7 @@ Singleton {
   // Processes
   Process {
     id: ethernetStateProcess
-    running: true
+    running: ProgramCheckerService.nmcliAvailable
     command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"]
 
     stdout: StdioCollector {
