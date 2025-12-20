@@ -341,6 +341,10 @@
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen overeenkomende vensters zijn.",
           "label": "Verbergmodus"
         },
+        "icon-scale": {
+          "description": "Stelt de schaalfactor in voor taakbalkpictogrammen.",
+          "label": "Icoon schaling"
+        },
         "max-width": {
           "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
           "label": "Maximale breedte"

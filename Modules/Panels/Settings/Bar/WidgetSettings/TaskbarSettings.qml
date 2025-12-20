@@ -24,6 +24,7 @@ ColumnLayout {
   property int valueMaxTaskbarWidth: widgetData.maxTaskbarWidth !== undefined ? widgetData.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
   property int valueTitleWidth: widgetData.titleWidth !== undefined ? widgetData.titleWidth : widgetMetadata.titleWidth
   property bool valueShowPinnedApps: widgetData.showPinnedApps !== undefined ? widgetData.showPinnedApps : widgetMetadata.showPinnedApps
+  property real valueIconScale: widgetData.iconScale !== undefined ? widgetData.iconScale : widgetMetadata.iconScale
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -44,6 +45,7 @@ ColumnLayout {
     settings.maxTaskbarWidth = valueMaxTaskbarWidth;
     settings.titleWidth = parseInt(titleWidthInput.text) || widgetMetadata.titleWidth;
     settings.showPinnedApps = valueShowPinnedApps;
+    settings.iconScale = valueIconScale;
     return settings;
   }
 
@@ -99,6 +101,26 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.taskbar.show-pinned-apps.description")
     checked: root.valueShowPinnedApps
     onToggled: checked => root.valueShowPinnedApps = checked
+  }
+
+  ColumnLayout {
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+
+    NLabel {
+      label: I18n.tr("bar.widget-settings.taskbar.icon-scale.label")
+      description: I18n.tr("bar.widget-settings.taskbar.icon-scale.description")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0.5
+      to: 1
+      stepSize: 0.01
+      value: root.valueIconScale
+      onMoved: value => root.valueIconScale = value
+      text: Math.round(root.valueIconScale * 100) + "%"
+    }
   }
 
   NToggle {

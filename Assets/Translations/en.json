@@ -341,6 +341,10 @@
           "description": "Controls how the widget behaves when there are no matching windows.",
           "label": "Hiding mode"
         },
+        "icon-scale": {
+          "description": "Sets the scaling factor for taskbar icons.",
+          "label": "Icon scaling"
+        },
         "max-width": {
           "description": "Maximum width of the taskbar as a percentage of screen width.",
           "label": "Maximum width"

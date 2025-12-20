@@ -341,6 +341,10 @@
           "description": "Controla cómo se comporta el widget cuando no hay ventanas coincidentes.",
           "label": "Modo de ocultación"
         },
+        "icon-scale": {
+          "description": "Establece el factor de escala para los iconos de la barra de tareas.",
+          "label": "Escalado de iconos"
+        },
         "max-width": {
           "description": "Ancho máximo de la barra de tareas como porcentaje del ancho de la pantalla.",
           "label": "Ancho máximo"

@@ -341,6 +341,10 @@
           "description": "Controla como o widget se comporta quando não há janelas correspondentes.",
           "label": "Modo de ocultação"
         },
+        "icon-scale": {
+          "description": "Define o fator de escala para ícones da barra de tarefas.",
+          "label": "Escalonamento de ícones"
+        },
         "max-width": {
           "description": "Largura máxima da barra de tarefas como porcentagem da largura da tela.",
           "label": "Largura máxima"

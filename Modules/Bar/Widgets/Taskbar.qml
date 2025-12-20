@@ -23,7 +23,6 @@ Rectangle {
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
   readonly property string density: Settings.data.bar.density
-  readonly property int itemSize: Math.round((density === "compact") ? Style.capsuleHeight * 1.0 : Style.capsuleHeight * 0.9)
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -43,6 +42,8 @@ Rectangle {
   readonly property bool showTitle: isVerticalBar ? false : (widgetSettings.showTitle !== undefined) ? widgetSettings.showTitle : widgetMetadata.showTitle
   readonly property bool smartWidth: (widgetSettings.smartWidth !== undefined) ? widgetSettings.smartWidth : widgetMetadata.smartWidth
   readonly property int maxTaskbarWidthPercent: (widgetSettings.maxTaskbarWidth !== undefined) ? widgetSettings.maxTaskbarWidth : widgetMetadata.maxTaskbarWidth
+  readonly property real iconScale: (widgetSettings.iconScale !== undefined) ? widgetSettings.iconScale : widgetMetadata.iconScale
+  readonly property int itemSize: Math.round(((density === "compact") ? Style.capsuleHeight * 1.0 : Style.capsuleHeight * 0.9) * Math.max(0.1, iconScale))
 
   // Maximum width for the taskbar widget to prevent overlapping with other widgets
   readonly property real maxTaskbarWidth: {

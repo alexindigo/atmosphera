@@ -341,6 +341,10 @@
           "description": "Steuert das Verhalten des Widgets, wenn keine übereinstimmenden Fenster vorhanden sind.",
           "label": "Ausblendmodus"
         },
+        "icon-scale": {
+          "description": "Legt den Skalierungsfaktor für Taskleistensymbole fest.",
+          "label": "Symbolskalierung"
+        },
         "max-width": {
           "description": "Maximale Breite der Taskleiste als Prozentsatz der Bildschirmbreite.",
           "label": "Maximale Breite"

@@ -341,6 +341,10 @@
           "description": "Contrôle le comportement du widget lorsqu'il n'y a pas de fenêtres correspondantes.",
           "label": "Mode de masquage"
         },
+        "icon-scale": {
+          "description": "Définit le facteur d'échelle pour les icônes de la barre des tâches.",
+          "label": "Mise à l'échelle des icônes"
+        },
         "max-width": {
           "description": "Largeur maximale de la barre des tâches en pourcentage de la largeur de l'écran.",
           "label": "Largeur maximale"

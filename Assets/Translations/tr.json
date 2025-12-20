@@ -341,6 +341,10 @@
           "description": "Eşleşen pencere olmadığında araç takımının nasıl davrandığını kontrol eder.",
           "label": "Gizleme modu"
         },
+        "icon-scale": {
+          "description": "Görev çubuğu simgeleri için ölçeklendirme faktörünü ayarlar.",
+          "label": "Simge ölçeklendirme"
+        },
         "max-width": {
           "description": "Görev çubuğunun ekran genişliğine göre maksimum genişliği yüzdesi.",
           "label": "Maksimum genişlik"
