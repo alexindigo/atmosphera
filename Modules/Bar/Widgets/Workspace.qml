@@ -949,27 +949,8 @@ Item {
   function openGroupedContextMenu(item) {
     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
     if (popupMenuWindow) {
-      popupMenuWindow.open();
-
-      const globalPos = item.mapToItem(root, 0, 0);
-      let menuX, menuY;
-      if (root.barPosition === "top") {
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = Style.barHeight + Style.marginS;
-      } else if (root.barPosition === "bottom") {
-        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = -menuHeight - Style.marginS;
-      } else if (root.barPosition === "left") {
-        menuX = Style.barHeight + Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      } else {
-        menuX = -contextMenu.implicitWidth - Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      }
-
-      contextMenu.openAtItem(root, menuX, menuY);
-      popupMenuWindow.contentItem = contextMenu;
+      popupMenuWindow.showContextMenu(contextMenu);
+      contextMenu.openAtItem(item, screen);
     }
   }
 }
