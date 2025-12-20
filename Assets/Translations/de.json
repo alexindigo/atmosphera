@@ -519,7 +519,6 @@
     "save": "Speichern"
   },
   "context-menu": {
-    "activate-app": "{app} aktivieren",
     "clear-history": "Verlauf löschen",
     "close-app": "{app} schließen",
     "connect-vpn": "Mit {name} verbinden",
@@ -1570,13 +1569,13 @@
           "description": "Schwebeabstand vom Bildschirmrand anpassen.",
           "label": "Dock-Schwebeabstand"
         },
-        "icon-size": {
-          "description": "Gesamtgröße des Docks anpassen.",
-          "label": "Dock-Größe"
-        },
         "hide-show-speed": {
           "description": "Geschwindigkeit der Ein-/Ausblend-Animation des Docks anpassen.",
           "label": "Ein-/Ausblend-Geschwindigkeit"
+        },
+        "icon-size": {
+          "description": "Gesamtgröße des Docks anpassen.",
+          "label": "Dock-Größe"
         },
         "inactive-indicators": {
           "description": "Anzeige von Indikator-Pillen für alle Apps, nicht nur für die aktuell aktive.",
@@ -1691,6 +1690,16 @@
           "label": "Verfügbare Parameter"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
+        "label": "Leistungsmodus deaktiviert",
+        "placeholder": "z.B. notify-send \"Leistung\" \"Modus deaktiviert\""
+      },
+      "performance-mode-enabled": {
+        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus aktiviert wird.",
+        "label": "Leistungsmodus aktiviert",
+        "placeholder": "z.B. notify-send \"Leistung\" \"Modus aktiviert\""
+      },
       "screen-lock": {
         "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
         "label": "Bildschirm gesperrt",
@@ -1700,16 +1709,6 @@
         "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
         "label": "Bildschirm entsperrt",
         "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
-      },
-      "performance-mode-enabled": {
-        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus aktiviert wird.",
-        "label": "Leistungsmodus aktiviert",
-        "placeholder": "z.B. notify-send \"Leistung\" \"Modus aktiviert\""
-      },
-      "performance-mode-disabled": {
-        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
-        "label": "Leistungsmodus deaktiviert",
-        "placeholder": "z.B. notify-send \"Leistung\" \"Modus deaktiviert\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "Inhaltsfilter",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Irgendetwas",
+        "label": "Seitenverhältnis"
       },
       "resolution": {
         "atleast": "Mindestens",

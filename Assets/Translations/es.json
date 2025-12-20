@@ -519,7 +519,6 @@
     "save": "Guardar"
   },
   "context-menu": {
-    "activate-app": "Activar {app}",
     "clear-history": "Borrar historial",
     "close-app": "Cerrar {app}",
     "connect-vpn": "Conectarse a {name}",
@@ -1570,13 +1569,13 @@
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla.",
           "label": "Distancia de flotación del dock"
         },
-        "icon-size": {
-          "description": "Ajusta el tamaño general del Dock.",
-          "label": "Tamaño del Dock"
-        },
         "hide-show-speed": {
           "description": "Ajusta la velocidad de la animación de ocultar/mostrar del dock.",
           "label": "Velocidad de Ocultar/Mostrar"
+        },
+        "icon-size": {
+          "description": "Ajusta el tamaño general del Dock.",
+          "label": "Tamaño del Dock"
         },
         "inactive-indicators": {
           "description": "Mostrar indicadores en forma de pastillas para todas las aplicaciones, no solo para la que está activa actualmente.",
@@ -1691,6 +1690,16 @@
           "label": "Parámetros disponibles"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Comando a ejecutar cuando se deshabilita el Modo de Rendimiento de Noctalia.",
+        "label": "Modo de rendimiento deshabilitado",
+        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Deshabilitado\""
+      },
+      "performance-mode-enabled": {
+        "description": "Comando a ejecutar cuando se habilita el Modo de Rendimiento de Noctalia.",
+        "label": "Modo de rendimiento habilitado",
+        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Habilitado\""
+      },
       "screen-lock": {
         "description": "Comando a ejecutar cuando se bloquea la pantalla.",
         "label": "Pantalla bloqueada",
@@ -1700,16 +1709,6 @@
         "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
         "label": "Pantalla desbloqueada",
         "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
-      },
-      "performance-mode-enabled": {
-        "description": "Comando a ejecutar cuando se habilita el Modo de Rendimiento de Noctalia.",
-        "label": "Modo de rendimiento habilitado",
-        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Habilitado\""
-      },
-      "performance-mode-disabled": {
-        "description": "Comando a ejecutar cuando se deshabilita el Modo de Rendimiento de Noctalia.",
-        "label": "Modo de rendimiento deshabilitado",
-        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Deshabilitado\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "Filtro de contenido",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Cualquiera",
+        "label": "Relación de aspecto"
       },
       "resolution": {
         "atleast": "Al menos",

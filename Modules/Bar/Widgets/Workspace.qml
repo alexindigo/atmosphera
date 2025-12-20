@@ -58,9 +58,27 @@ Item {
 
   readonly property int itemSize: Math.round(Style.capsuleHeight * 0.8)
 
-  // Context menu state for grouped mode
-  property var selectedWindow: null
-  property string selectedAppName: ""
+  // Context menu state for grouped mode - store IDs instead of object references to avoid stale references
+  property string selectedWindowId: ""
+  property string selectedAppId: ""
+
+  // Helper to get the current window object from ID
+  function getSelectedWindow() {
+    if (!selectedWindowId)
+      return null;
+    for (var i = 0; i < localWorkspaces.count; i++) {
+      var ws = localWorkspaces.get(i);
+      if (ws && ws.windows) {
+        for (var j = 0; j < ws.windows.count; j++) {
+          var win = ws.windows.get(j);
+          if (win && (win.id === selectedWindowId || win.address === selectedWindowId)) {
+            return win;
+          }
+        }
+      }
+    }
+    return null;
+  }
 
   property bool isDestroying: false
   property bool hovered: false
@@ -154,6 +172,42 @@ Item {
     const ws = localWorkspaces.get(next);
     if (ws && ws.idx !== undefined)
       CompositorService.switchToWorkspace(ws);
+  }
+
+  // Helper function to normalize app IDs for case-insensitive matching
+  function normalizeAppId(appId) {
+    if (!appId || typeof appId !== 'string')
+      return "";
+    return appId.toLowerCase().trim();
+  }
+
+  // Helper function to check if an app is pinned
+  function isAppPinned(appId) {
+    if (!appId)
+      return false;
+    const pinnedApps = Settings.data.dock.pinnedApps || [];
+    const normalizedId = normalizeAppId(appId);
+    return pinnedApps.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+  }
+
+  // Helper function to toggle app pin/unpin
+  function toggleAppPin(appId) {
+    if (!appId)
+      return;
+
+    const normalizedId = normalizeAppId(appId);
+    let pinnedApps = (Settings.data.dock.pinnedApps || []).slice();
+
+    const existingIndex = pinnedApps.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+    const isPinned = existingIndex >= 0;
+
+    if (isPinned) {
+      pinnedApps.splice(existingIndex, 1);
+    } else {
+      pinnedApps.push(appId);
+    }
+
+    Settings.data.dock.pinnedApps = pinnedApps;
   }
 
   Component.onCompleted: {
@@ -270,21 +324,43 @@ Item {
 
     model: {
       var items = [];
-      if (root.selectedWindow) {
+      if (root.selectedWindowId) {
+        // Focus item
         items.push({
-                     "label": I18n.tr("context-menu.activate-app", {
-                                        "app": root.selectedAppName
-                                      }),
-                     "action": "activate",
-                     "icon": "focus"
+                     "label": I18n.tr("dock.menu.focus"),
+                     "action": "focus",
+                     "icon": "eye"
                    });
+
+        // Pin/Unpin item
+        const isPinned = root.isAppPinned(root.selectedAppId);
         items.push({
-                     "label": I18n.tr("context-menu.close-app", {
-                                        "app": root.selectedAppName
-                                      }),
+                     "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                     "action": "pin",
+                     "icon": !isPinned ? "pin" : "pinned-off"
+                   });
+
+        // Close item
+        items.push({
+                     "label": I18n.tr("dock.menu.close"),
                      "action": "close",
                      "icon": "x"
                    });
+
+        // Add desktop entry actions
+        if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedAppId) {
+          const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(root.selectedAppId) : DesktopEntries.byId(root.selectedAppId);
+          if (entry != null && entry.actions) {
+            entry.actions.forEach(function (action) {
+              items.push({
+                           "label": action.name,
+                           "action": "desktop-action-" + action.name,
+                           "icon": "chevron-right",
+                           "desktopAction": action
+                         });
+            });
+          }
+        }
       }
       items.push({
                    "label": I18n.tr("context-menu.widget-settings"),
@@ -294,21 +370,27 @@ Item {
       return items;
     }
 
-    onTriggered: action => {
+    onTriggered: (action, item) => {
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.close();
                    }
 
-                   if (action === "activate" && selectedWindow) {
+                   const selectedWindow = root.getSelectedWindow();
+
+                   if (action === "focus" && selectedWindow) {
                      CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "pin" && selectedAppId) {
+                     root.toggleAppPin(selectedAppId);
                    } else if (action === "close" && selectedWindow) {
                      CompositorService.closeWindow(selectedWindow);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
+                     item.desktopAction.execute();
                    }
-                   selectedWindow = null;
-                   selectedAppName = "";
+                   selectedWindowId = "";
+                   selectedAppId = "";
                  }
   }
 
@@ -788,8 +870,8 @@ Item {
                             if (mouse.button === Qt.RightButton) {
                               mouse.accepted = true;
                               TooltipService.hide();
-                              root.selectedWindow = model;
-                              root.selectedAppName = CompositorService.getCleanAppName(model.appId, model.title);
+                              root.selectedWindowId = model.id || model.address || "";
+                              root.selectedAppId = model.appId;
                               openGroupedContextMenu(groupedTaskbarItem);
                             }
                           }

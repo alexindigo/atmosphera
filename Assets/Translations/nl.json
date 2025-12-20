@@ -519,7 +519,6 @@
     "save": "Opslaan"
   },
   "context-menu": {
-    "activate-app": "Activeer {app}",
     "clear-history": "Geschiedenis wissen",
     "close-app": "Sluit {app}",
     "connect-vpn": "Verbinding maken met {name}",
@@ -1570,13 +1569,13 @@
           "description": "Stel de afstand in tussen de dock en de rand van het scherm.",
           "label": "Afstand zwevende dock"
         },
-        "icon-size": {
-          "description": "Pas de algehele grootte van de dock aan.",
-          "label": "Grootte van de dock"
-        },
         "hide-show-speed": {
           "description": "Pas de snelheid van de verberg/weergeef animatie van de dock aan.",
           "label": "Verberg/Weergeef Snelheid"
+        },
+        "icon-size": {
+          "description": "Pas de algehele grootte van de dock aan.",
+          "label": "Grootte van de dock"
         },
         "inactive-indicators": {
           "description": "Toon indicatorpillen voor alle apps, niet alleen de actieve.",
@@ -1691,6 +1690,16 @@
           "label": "Beschikbare parameters"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt uitgeschakeld.",
+        "label": "Prestatiemodus uitgeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Uitgeschakeld\""
+      },
+      "performance-mode-enabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt ingeschakeld.",
+        "label": "Prestatiemodus ingeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Ingeschakeld\""
+      },
       "screen-lock": {
         "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
         "label": "Scherm vergrendeld",
@@ -1700,16 +1709,6 @@
         "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
         "label": "Scherm ontgrendeld",
         "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
-      },
-      "performance-mode-enabled": {
-        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt ingeschakeld.",
-        "label": "Prestatiemodus ingeschakeld",
-        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Ingeschakeld\""
-      },
-      "performance-mode-disabled": {
-        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt uitgeschakeld.",
-        "label": "Prestatiemodus uitgeschakeld",
-        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Uitgeschakeld\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "Inhoudsfilter",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Elke",
+        "label": "Beeldverhouding"
       },
       "resolution": {
         "atleast": "Ten minste",

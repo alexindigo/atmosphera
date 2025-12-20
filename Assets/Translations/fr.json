@@ -519,7 +519,6 @@
     "save": "Enregistrer"
   },
   "context-menu": {
-    "activate-app": "Activer {app}",
     "clear-history": "Effacer l'historique",
     "close-app": "Fermer {app}",
     "connect-vpn": "Se connecter à {name}",
@@ -1570,13 +1569,13 @@
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran.",
           "label": "Distance de flottaison du dock"
         },
-        "icon-size": {
-          "description": "Ajuster la taille globale du Dock.",
-          "label": "Taille du Dock"
-        },
         "hide-show-speed": {
           "description": "Ajustez la vitesse de l'animation d'affichage/masquage du dock.",
           "label": "Vitesse d'affichage/masquage"
+        },
+        "icon-size": {
+          "description": "Ajuster la taille globale du Dock.",
+          "label": "Taille du Dock"
         },
         "inactive-indicators": {
           "description": "Afficher les pastilles d'indicateur pour toutes les applications, pas seulement celle qui est active.",
@@ -1691,6 +1690,16 @@
           "label": "Paramètres disponibles"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est désactivé.",
+        "label": "Mode performance désactivé",
+        "placeholder": "ex: notify-send \"Performance\" \"Mode Désactivé\""
+      },
+      "performance-mode-enabled": {
+        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est activé.",
+        "label": "Mode performance activé",
+        "placeholder": "ex: notify-send \"Performance\" \"Mode Activé\""
+      },
       "screen-lock": {
         "description": "Commande à exécuter lorsque l'écran est verrouillé.",
         "label": "Écran verrouillé",
@@ -1700,16 +1709,6 @@
         "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
         "label": "Écran déverrouillé",
         "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
-      },
-      "performance-mode-enabled": {
-        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est activé.",
-        "label": "Mode performance activé",
-        "placeholder": "ex: notify-send \"Performance\" \"Mode Activé\""
-      },
-      "performance-mode-disabled": {
-        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est désactivé.",
-        "label": "Mode performance désactivé",
-        "placeholder": "ex: notify-send \"Performance\" \"Mode Désactivé\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "Filtre de contenu",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "N'importe lequel/laquelle",
+        "label": "Format d'image"
       },
       "resolution": {
         "atleast": "Au moins",

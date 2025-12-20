@@ -519,7 +519,6 @@
     "save": "Salvar"
   },
   "context-menu": {
-    "activate-app": "Ativar {app}",
     "clear-history": "Limpar histórico",
     "close-app": "Fechar {app}",
     "connect-vpn": "Conectar-se a {name}",
@@ -1570,13 +1569,13 @@
           "description": "Ajuste a distância de flutuação da borda da tela.",
           "label": "Distância de flutuação da dock"
         },
-        "icon-size": {
-          "description": "Ajustar o tamanho geral do Dock.",
-          "label": "Tamanho do Dock"
-        },
         "hide-show-speed": {
           "description": "Ajuste a velocidade da animação de ocultar/mostrar da dock.",
           "label": "Velocidade de Ocultar/Mostrar"
+        },
+        "icon-size": {
+          "description": "Ajustar o tamanho geral do Dock.",
+          "label": "Tamanho do Dock"
         },
         "inactive-indicators": {
           "description": "Exibir indicadores de pílula para todos os aplicativos, não apenas para o aplicativo ativo no momento.",
@@ -1691,6 +1690,16 @@
           "label": "Parâmetros Disponíveis"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Comando a ser executado quando o Modo de Desempenho Noctalia é desabilitado.",
+        "label": "Modo de desempenho desabilitado",
+        "placeholder": "ex., notify-send \"Desempenho\" \"Modo Desabilitado\""
+      },
+      "performance-mode-enabled": {
+        "description": "Comando a ser executado quando o Modo de Desempenho Noctalia é habilitado.",
+        "label": "Modo de desempenho habilitado",
+        "placeholder": "ex., notify-send \"Desempenho\" \"Modo Habilitado\""
+      },
       "screen-lock": {
         "description": "Comando a ser executado quando a tela é bloqueada.",
         "label": "Tela bloqueada",
@@ -1700,16 +1709,6 @@
         "description": "Comando a ser executado quando a tela é desbloqueada.",
         "label": "Tela desbloqueada",
         "placeholder": "ex., notify-send \"Tela\" \"Desbloqueada\""
-      },
-      "performance-mode-enabled": {
-        "description": "Comando a ser executado quando o Modo de Desempenho Noctalia é habilitado.",
-        "label": "Modo de desempenho habilitado",
-        "placeholder": "ex., notify-send \"Desempenho\" \"Modo Habilitado\""
-      },
-      "performance-mode-disabled": {
-        "description": "Comando a ser executado quando o Modo de Desempenho Noctalia é desabilitado.",
-        "label": "Modo de desempenho desabilitado",
-        "placeholder": "ex., notify-send \"Desempenho\" \"Modo Desabilitado\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "Filtro de conteúdo",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Qualquer",
+        "label": "Proporção da tela"
       },
       "resolution": {
         "atleast": "Pelo menos",

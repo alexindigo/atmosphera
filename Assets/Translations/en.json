@@ -519,7 +519,6 @@
     "save": "Save"
   },
   "context-menu": {
-    "activate-app": "Activate {app}",
     "clear-history": "Clear history",
     "close-app": "Close {app}",
     "connect-vpn": "Connect to {name}",
@@ -1570,13 +1569,13 @@
           "description": "Set the distance between the dock and the edge of the screen.",
           "label": "Dock floating distance"
         },
-        "icon-size": {
-          "description": "Adjust the overall size of the dock.",
-          "label": "Dock size"
-        },
         "hide-show-speed": {
           "description": "Adjust the speed of the dock hide/show animation.",
           "label": "Hide/Show Speed"
+        },
+        "icon-size": {
+          "description": "Adjust the overall size of the dock.",
+          "label": "Dock size"
         },
         "inactive-indicators": {
           "description": "Display indicatator pills for all apps, not just the currently active one.",
@@ -1691,6 +1690,16 @@
           "label": "Available parameters"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Command to be executed when Noctalia Performance Mode is disabled.",
+        "label": "Performance mode disabled",
+        "placeholder": "e.g., notify-send \"Performance\" \"Mode Disabled\""
+      },
+      "performance-mode-enabled": {
+        "description": "Command to be executed when Noctalia Performance Mode is enabled.",
+        "label": "Performance mode enabled",
+        "placeholder": "e.g., notify-send \"Performance\" \"Mode Enabled\""
+      },
       "screen-lock": {
         "description": "Command to be executed when the screen is locked.",
         "label": "Screen locked",
@@ -1700,16 +1709,6 @@
         "description": "Command to be executed when the lock screen is unlocked.",
         "label": "Screen unlocked",
         "placeholder": "e.g., notify-send \"Screen\" \"Unlocked\""
-      },
-      "performance-mode-enabled": {
-        "description": "Command to be executed when Noctalia Performance Mode is enabled.",
-        "label": "Performance mode enabled",
-        "placeholder": "e.g., notify-send \"Performance\" \"Mode Enabled\""
-      },
-      "performance-mode-disabled": {
-        "description": "Command to be executed when Noctalia Performance Mode is disabled.",
-        "label": "Performance mode disabled",
-        "placeholder": "e.g., notify-send \"Performance\" \"Mode Disabled\""
       },
       "system-hooks": {
         "enable": {

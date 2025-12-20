@@ -519,7 +519,6 @@
     "save": "Kaydet"
   },
   "context-menu": {
-    "activate-app": "{app}'i etkinleştir",
     "clear-history": "Geçmişi temizle",
     "close-app": "{app}'i kapat",
     "connect-vpn": "{name} bağlantısına bağlan",
@@ -1570,13 +1569,13 @@
           "description": "Rıhtım ile ekran kenarı arasındaki mesafeyi ayarlayın.",
           "label": "Rıhtım yüzen mesafesi"
         },
-        "icon-size": {
-          "description": "Rıhtımın genel boyutunu ayarlayın.",
-          "label": "Rıhtım boyutu"
-        },
         "hide-show-speed": {
           "description": "Rıhtımın gizle/göster animasyonunun hızını ayarlayın.",
           "label": "Gizle/Göster Hızı"
+        },
+        "icon-size": {
+          "description": "Rıhtımın genel boyutunu ayarlayın.",
+          "label": "Rıhtım boyutu"
         },
         "inactive-indicators": {
           "description": "Tüm uygulamalar için, sadece etkin olan için değil, gösterge haplarını göster.",
@@ -1691,6 +1690,16 @@
           "label": "Kullanılabilir Parametreler"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Noctalia Performans Modu devre dışı bırakıldığında çalıştırılacak komut.",
+        "label": "Performans modu devre dışı bırakıldı",
+        "placeholder": "örn., notify-send \"Performans\" \"Mod Devre Dışı\""
+      },
+      "performance-mode-enabled": {
+        "description": "Noctalia Performans Modu etkinleştirildiğinde çalıştırılacak komut.",
+        "label": "Performans modu etkinleştirildi",
+        "placeholder": "örn., notify-send \"Performans\" \"Mod Etkin\""
+      },
       "screen-lock": {
         "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
         "label": "Ekran kilitlendi",
@@ -1700,16 +1709,6 @@
         "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
         "label": "Ekran kilidi açıldı",
         "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
-      },
-      "performance-mode-enabled": {
-        "description": "Noctalia Performans Modu etkinleştirildiğinde çalıştırılacak komut.",
-        "label": "Performans modu etkinleştirildi",
-        "placeholder": "örn., notify-send \"Performans\" \"Mod Etkin\""
-      },
-      "performance-mode-disabled": {
-        "description": "Noctalia Performans Modu devre dışı bırakıldığında çalıştırılacak komut.",
-        "label": "Performans modu devre dışı bırakıldı",
-        "placeholder": "örn., notify-send \"Performans\" \"Mod Devre Dışı\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "İçerik filtresi",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Herhangi",
+        "label": "En Boy Oranı"
       },
       "resolution": {
         "atleast": "En az",

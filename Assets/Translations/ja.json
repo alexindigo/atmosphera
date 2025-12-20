@@ -519,7 +519,6 @@
     "save": "保存"
   },
   "context-menu": {
-    "activate-app": "{app} をアクティブにする",
     "clear-history": "履歴を削除する",
     "close-app": "{app} を閉じる",
     "connect-vpn": "{name} に接続",
@@ -1570,13 +1569,13 @@
           "description": "画面端からドックまでの距離を設定します。",
           "label": "画面端からの距離"
         },
-        "icon-size": {
-          "description": "ドック全体のサイズを調整します。",
-          "label": "ドックのサイズ"
-        },
         "hide-show-speed": {
           "description": "ドックの表示/非表示アニメーションの速度を調整します。",
           "label": "表示/非表示の速度"
+        },
+        "icon-size": {
+          "description": "ドック全体のサイズを調整します。",
+          "label": "ドックのサイズ"
         },
         "inactive-indicators": {
           "description": "現在アクティブなアプリだけでなく、すべてのアプリのインジケーターピルを表示する。",
@@ -1691,6 +1690,16 @@
           "label": "利用可能なパラメータ（引数）"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Noctaliaパフォーマンスモードが無効になった際に実行されるコマンド。",
+        "label": "パフォーマンスモード無効時",
+        "placeholder": "例: notify-send \"Performance\" \"Mode Disabled\""
+      },
+      "performance-mode-enabled": {
+        "description": "Noctaliaパフォーマンスモードが有効になった際に実行されるコマンド。",
+        "label": "パフォーマンスモード有効時",
+        "placeholder": "例: notify-send \"Performance\" \"Mode Enabled\""
+      },
       "screen-lock": {
         "description": "画面がロックされた際に実行されるコマンド。",
         "label": "画面ロック時",
@@ -1700,16 +1709,6 @@
         "description": "ロック画面が解除された際に実行されるコマンド。",
         "label": "画面ロック解除時",
         "placeholder": "例: notify-send \"Screen\" \"Unlocked\""
-      },
-      "performance-mode-enabled": {
-        "description": "Noctaliaパフォーマンスモードが有効になった際に実行されるコマンド。",
-        "label": "パフォーマンスモード有効時",
-        "placeholder": "例: notify-send \"Performance\" \"Mode Enabled\""
-      },
-      "performance-mode-disabled": {
-        "description": "Noctaliaパフォーマンスモードが無効になった際に実行されるコマンド。",
-        "label": "パフォーマンスモード無効時",
-        "placeholder": "例: notify-send \"Performance\" \"Mode Disabled\""
       },
       "system-hooks": {
         "enable": {
@@ -2739,6 +2738,10 @@
         "label": "コンテンツフィルタ",
         "sfw": "SFW（全年齢）",
         "sketchy": "Sketchy（際どい）"
+      },
+      "ratios": {
+        "any": "どれか",
+        "label": "アスペクト比"
       },
       "resolution": {
         "atleast": "以上",
