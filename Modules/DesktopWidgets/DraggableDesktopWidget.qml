@@ -99,6 +99,8 @@ Item {
     property real lastScale: 1.0
     // Locks operation type to prevent switching between drag/scale mid-operation
     property string operationType: ""  // "drag" or "scale" or ""
+    property real previousWidth: 0
+    property real centerX: baseX + (previousWidth > 0 ? previousWidth / 2 : root.width / 2)
   }
 
   function snapToGrid(coord) {
@@ -138,6 +140,22 @@ Item {
   scale: widgetScale
   transformOrigin: Item.TopLeft
 
+  // Adjust position when width changes to maintain center position
+  onWidthChanged: {
+    if (!internal.isDragging && !internal.isScaling && internal.previousWidth > 0 && width > 0) {
+      var widthDelta = width - internal.previousWidth;
+      // Adjust baseX to keep center position constant
+      internal.baseX = internal.baseX - widthDelta / 2;
+      internal.centerX = internal.baseX + width / 2;
+    }
+    internal.previousWidth = width;
+  }
+
+  Component.onCompleted: {
+    internal.previousWidth = width;
+    internal.centerX = internal.baseX + width / 2;
+  }
+
   onWidgetDataChanged: {
     if (!internal.isDragging) {
       internal.baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : defaultX;
@@ -145,6 +163,9 @@ Item {
       if (widgetData && widgetData.scale !== undefined) {
         widgetScale = widgetData.scale;
       }
+      // Update centerX and previousWidth when widget data changes
+      internal.previousWidth = width;
+      internal.centerX = internal.baseX + width / 2;
     }
   }
 
@@ -296,6 +317,7 @@ Item {
 
                     internal.baseX = internal.dragOffsetX;
                     internal.baseY = internal.dragOffsetY;
+                    internal.centerX = internal.baseX + root.width / 2;
                     internal.isDragging = false;
                     internal.operationType = "";
                   } else if (internal.isScaling && internal.operationType === "scale") {
