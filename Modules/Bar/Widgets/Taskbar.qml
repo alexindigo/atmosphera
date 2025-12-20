@@ -687,7 +687,7 @@ Rectangle {
         menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
       }
       popupMenuWindow.showContextMenu(contextMenu);
-      contextMenu.openAtItem(root, menuX, menuY);
+      contextMenu.openAtItem(root, screen);
     }
   }
 }

@@ -3,6 +3,9 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
 
+/*
+This component could probably be deleted and replaced by NPopupContextMenu
+*/
 Popup {
   id: root
 
