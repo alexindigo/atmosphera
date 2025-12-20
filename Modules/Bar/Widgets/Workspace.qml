@@ -56,7 +56,7 @@ Item {
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
   readonly property bool enableScrollWheel: (widgetSettings.enableScrollWheel !== undefined) ? widgetSettings.enableScrollWheel : widgetMetadata.enableScrollWheel
 
-  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
+  readonly property int itemSize: Math.round(Style.capsuleHeight * 0.8)
 
   // Context menu state for grouped mode
   property var selectedWindow: null
@@ -83,12 +83,12 @@ Item {
   implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + Style.marginM * 2) : Style.barHeight) : (isVertical ? computeHeight() : Style.barHeight)
 
   function getWorkspaceWidth(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
     const factor = ws.isActive ? 2.2 : 1;
 
     // Don't calculate text width if labels are off
     if (labelMode === "none") {
-      return d * factor;
+      return Math.round(d * factor);
     }
 
     var displayText = ws.idx.toString();
@@ -103,13 +103,13 @@ Item {
 
     const textWidth = displayText.length * (d * 0.4); // Approximate width per character
     const padding = d * 0.6;
-    return Math.max(d * factor, textWidth + padding);
+    return Math.round(Math.max(d * factor, textWidth + padding));
   }
 
   function getWorkspaceHeight(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
     const factor = ws.isActive ? 2.2 : 1;
-    return d * factor;
+    return Math.round(d * factor);
   }
 
   function computeWidth() {
@@ -597,7 +597,6 @@ Item {
 
             return Color.mOutline;
           }
-          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -740,15 +739,6 @@ Item {
             width: root.itemSize
             height: root.itemSize
 
-            scale: itemHovered ? 1.1 : 1.0
-
-            Behavior on scale {
-              NumberAnimation {
-                duration: Style.animationNormal
-                easing.type: Easing.OutBack
-              }
-            }
-
             IconImage {
               id: groupedAppIcon
 
@@ -757,15 +747,7 @@ Item {
               source: ThemeIcons.iconForAppId(model.appId)
               smooth: true
               asynchronous: true
-              scale: model.isFocused ? 1.0 : 0.8
               layer.enabled: root.colorizeIcons && !model.isFocused
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationNormal
-                  easing.type: Easing.InOutCubic
-                }
-              }
 
               Rectangle {
                 id: groupedFocusIndicator

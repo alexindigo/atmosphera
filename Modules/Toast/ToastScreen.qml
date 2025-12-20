@@ -172,7 +172,7 @@ Item {
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
         return Style.barHeight + floatMarginH;
       }
-      
+
       readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
       // Anchoring
