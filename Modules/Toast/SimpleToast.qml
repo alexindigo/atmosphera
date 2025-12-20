@@ -99,8 +99,8 @@ Item {
     anchors.fill: background
     anchors.topMargin: Style.marginM
     anchors.bottomMargin: Style.marginM
-    anchors.leftMargin: Style.marginM * 3
-    anchors.rightMargin: Style.marginM * 3
+    anchors.leftMargin: Style.marginM * 2
+    anchors.rightMargin: Style.marginM * 2
     spacing: Style.marginL
 
     // Icon
