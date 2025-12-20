@@ -1774,6 +1774,10 @@
           "description": "Cuando está activado, las aplicaciones más utilizadas aparecen primero en la lista.",
           "label": "Ordenar por más usados"
         },
+        "icon-mode": {
+          "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
+          "label": "Usar iconos nativos"
+        },
         "terminal-command": {
           "description": "Comando para iniciar un terminal. Por ejemplo, 'kitty -e' o 'gnome-terminal --'.",
           "label": "Comando de terminal"

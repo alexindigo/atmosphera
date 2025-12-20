@@ -1774,6 +1774,10 @@
           "description": "有効にすると、よく使うアプリがリストの上位に表示されます。",
           "label": "使用頻度順に並べ替え"
         },
+        "icon-mode": {
+          "description": "Tablerアイコンではなく、ネイティブのシステムアイコンを使用します。",
+          "label": "ネイティブアイコンを使用"
+        },
         "terminal-command": {
           "description": "ターミナルを起動するためのコマンド（例: 'kitty -e' or 'gnome-terminal --'）。",
           "label": "ターミナル起動コマンド"

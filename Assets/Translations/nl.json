@@ -1774,6 +1774,10 @@
           "description": "Indien ingeschakeld, verschijnen vaak gestarte apps bovenaan in de lijst.",
           "label": "Sorteren op meest gebruikt"
         },
+        "icon-mode": {
+          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
+          "label": "Gebruik native iconen"
+        },
         "terminal-command": {
           "description": "Commando om een terminal te starten. Bijv. 'kitty -e' of 'gnome-terminal --'.",
           "label": "Terminalcommando"

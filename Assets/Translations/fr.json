@@ -1774,6 +1774,10 @@
           "description": "Lorsque cette option est activée, les applications fréquemment lancées apparaissent en premier dans la liste.",
           "label": "Trier par les plus utilisés"
         },
+        "icon-mode": {
+          "description": "Utiliser les icônes natives du système au lieu des icônes Tabler.",
+          "label": "Utiliser les icônes natives"
+        },
         "terminal-command": {
           "description": "Commande pour lancer un terminal. Ex: 'kitty -e' ou 'gnome-terminal --'.",
           "label": "Commande du terminal"

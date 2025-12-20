@@ -1774,6 +1774,10 @@
           "description": "Wenn aktiviert, erscheinen häufig gestartete Apps zuerst in der Liste.",
           "label": "Nach Häufigkeit sortieren"
         },
+        "icon-mode": {
+          "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
+          "label": "Native Icons verwenden"
+        },
         "terminal-command": {
           "description": "Befehl zum Starten eines Terminals. Z.B. 'kitty -e' oder 'gnome-terminal --'.",
           "label": "Terminalbefehl"
