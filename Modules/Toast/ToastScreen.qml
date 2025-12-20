@@ -172,6 +172,8 @@ Item {
         const floatMarginH = isFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
         return Style.barHeight + floatMarginH;
       }
+      
+      readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL
 
       // Anchoring
       anchors.top: isTop
@@ -180,10 +182,10 @@ Item {
       anchors.right: isRight
 
       // Margins for PanelWindow - only apply bar offset for the specific edge where the bar is
-      margins.top: isTop ? barOffsetTop : 0
-      margins.bottom: isBottom ? barOffsetBottom : 0
-      margins.left: isLeft ? barOffsetLeft : 0
-      margins.right: isRight ? barOffsetRight : 0
+      margins.top: isTop ? barOffsetTop - shadowPadding + Style.marginM : 0
+      margins.bottom: isBottom ? barOffsetBottom - shadowPadding + Style.marginM : 0
+      margins.left: isLeft ? barOffsetLeft - shadowPadding + Style.marginM : 0
+      margins.right: isRight ? barOffsetRight - shadowPadding + Style.marginM : 0
 
       implicitWidth: Math.round(toastItem.width)
       implicitHeight: Math.round(toastItem.height)
