@@ -662,7 +662,7 @@ Item {
                   if (model.isOccupied)
                     return Color.mOnSecondary;
 
-                  return Color.mOnSurface;
+                  return Color.mOnSecondary;
                 }
               }
             }
