@@ -151,6 +151,30 @@ Singleton {
     watchChanges: false
   }
 
+  // FileView to load default settings for comparison
+  FileView {
+    id: defaultSettingsFileView
+    path: Quickshell.shellDir + "/Assets/settings-default.json"
+    printErrors: false
+    watchChanges: false
+  }
+
+  // Cached default settings object
+  property var _defaultSettings: null
+
+  // Load default settings when file is loaded
+  Connections {
+    target: defaultSettingsFileView
+    function onLoaded() {
+      try {
+        root._defaultSettings = JSON.parse(defaultSettingsFileView.text());
+      } catch (e) {
+        Logger.w("Settings", "Failed to parse default settings file: " + e);
+        root._defaultSettings = null;
+      }
+    }
+  }
+
   JsonAdapter {
     id: adapter
 
@@ -649,6 +673,70 @@ Singleton {
     }
 
     return path;
+  }
+
+  // -----------------------------------------------------
+  // Get default value for a setting path (e.g., "general.scaleRatio" or "bar.position")
+  // Returns undefined if not found
+  function getDefaultValue(path) {
+    if (!root._defaultSettings) {
+      return undefined;
+    }
+
+    var parts = path.split(".");
+    var current = root._defaultSettings;
+
+    for (var i = 0; i < parts.length; i++) {
+      if (current === undefined || current === null) {
+        return undefined;
+      }
+      current = current[parts[i]];
+    }
+
+    return current;
+  }
+
+  // -----------------------------------------------------
+  // Compare current value with default value
+  // Returns true if values differ, false if they match or default is not found
+  function isValueChanged(path, currentValue) {
+    var defaultValue = getDefaultValue(path);
+    if (defaultValue === undefined) {
+      return false; // Can't compare if default not found
+    }
+
+    // Deep comparison for objects and arrays
+    if (typeof currentValue === "object" && typeof defaultValue === "object") {
+      return JSON.stringify(currentValue) !== JSON.stringify(defaultValue);
+    }
+
+    // Simple comparison for primitives
+    return currentValue !== defaultValue;
+  }
+
+  // -----------------------------------------------------
+  // Format default value for tooltip display
+  // Returns a human-readable string representation of the default value
+  function formatDefaultValueForTooltip(path) {
+    var defaultValue = getDefaultValue(path);
+    if (defaultValue === undefined) {
+      return "";
+    }
+
+    // Format based on type
+    if (typeof defaultValue === "boolean") {
+      return defaultValue ? "true" : "false";
+    } else if (typeof defaultValue === "number") {
+      return defaultValue.toString();
+    } else if (typeof defaultValue === "string") {
+      return defaultValue === "" ? "(empty)" : defaultValue;
+    } else if (Array.isArray(defaultValue)) {
+      return defaultValue.length === 0 ? "(empty)" : "[" + defaultValue.length + " items]";
+    } else if (typeof defaultValue === "object") {
+      return "(object)";
+    }
+
+    return String(defaultValue);
   }
 
   // -----------------------------------------------------

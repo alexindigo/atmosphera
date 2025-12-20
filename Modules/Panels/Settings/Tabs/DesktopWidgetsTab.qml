@@ -37,6 +37,8 @@ ColumnLayout {
     label: I18n.tr("settings.desktop-widgets.enabled.label")
     description: I18n.tr("settings.desktop-widgets.enabled.description")
     checked: Settings.data.desktopWidgets.enabled
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("desktopWidgets.enabled")
     onToggled: checked => Settings.data.desktopWidgets.enabled = checked
   }
 

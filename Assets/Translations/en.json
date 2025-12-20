@@ -882,6 +882,10 @@
     "title": "Session Menu"
   },
   "settings": {
+    "indicator": {
+      "default-value": "Default: {value}",
+      "system-default": "System Default"
+    },
     "about": {
       "contributors": {
         "section": {
