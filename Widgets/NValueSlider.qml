@@ -32,14 +32,15 @@ ColumnLayout {
 
   readonly property bool isValueChanged: isSettings && (value !== defaultValue)
   readonly property string indicatorTooltip: {
-    if (!isSettings) return "";
+    if (!isSettings)
+      return "";
     var defaultVal = defaultValue;
     if (typeof defaultVal === "number") {
       // If it's a decimal between 0 and 1, format as percentage
       if (defaultVal > 0 && defaultVal <= 1 && from >= 0 && from < 1) {
         return I18n.tr("settings.indicator.default-value", {
-                        "value": Math.floor(defaultVal * 100) + "%"
-                      });
+                         "value": Math.floor(defaultVal * 100) + "%"
+                       });
       }
       return I18n.tr("settings.indicator.default-value", {
                        "value": String(defaultVal)

@@ -31,7 +31,8 @@ RowLayout {
 
   readonly property bool isValueChanged: isSettings && (currentKey !== defaultValue)
   readonly property string indicatorTooltip: {
-    if (!isSettings) return "";
+    if (!isSettings)
+      return "";
     var displayValue = "";
     if (defaultValue === "") {
       // Try to find the display name for empty key in the model
@@ -387,5 +388,4 @@ RowLayout {
       }
     }
   }
-
 }

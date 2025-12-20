@@ -28,8 +28,8 @@ RowLayout {
 
   readonly property bool isValueChanged: isSettings && (checked !== defaultValue)
   readonly property string indicatorTooltip: isSettings ? I18n.tr("settings.indicator.default-value", {
-                                                                   "value": typeof defaultValue === "boolean" ? (defaultValue ? "true" : "false") : String(defaultValue)
-                                                                 }) : ""
+                                                                    "value": typeof defaultValue === "boolean" ? (defaultValue ? "true" : "false") : String(defaultValue)
+                                                                  }) : ""
 
   NLabel {
     label: root.label
@@ -107,5 +107,4 @@ RowLayout {
       }
     }
   }
-
 }
