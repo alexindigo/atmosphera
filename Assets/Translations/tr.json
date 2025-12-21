@@ -1770,6 +1770,10 @@
           "description": "Etkinleştirildiğinde, sıkça başlatılan uygulamalar listede ilk olarak görünür.",
           "label": "En çok kullanılana göre sırala"
         },
+        "icon-mode": {
+          "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
+          "label": "Yerel simgeleri kullan"
+        },
         "terminal-command": {
           "description": "Bir terminal başlatmak için komut. Örn., 'kitty -e' veya 'gnome-terminal --'.",
           "label": "Terminal komutu"

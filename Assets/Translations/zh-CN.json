@@ -1770,6 +1770,10 @@
           "description": "启用后，经常启动的应用程序将显示在列表首位。",
           "label": "按使用频率排序"
         },
+        "icon-mode": {
+          "description": "使用本地系统图标而不是 Tabler 图标。",
+          "label": "使用本地图标"
+        },
         "terminal-command": {
           "description": "启动终端的命令。例如，'kitty -e'或'gnome-terminal --'。",
           "label": "终端命令"
