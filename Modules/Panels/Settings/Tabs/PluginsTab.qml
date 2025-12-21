@@ -98,9 +98,10 @@ ColumnLayout {
         for (var i = 0; i < allIds.length; i++) {
           var manifest = PluginRegistry.getPluginManifest(allIds[i]);
           if (manifest) {
-            // Create a copy of manifest and include update info
+            // Create a copy of manifest and include update info and enabled state
             var pluginData = JSON.parse(JSON.stringify(manifest));
             pluginData._updateInfo = PluginService.pluginUpdates[allIds[i]];
+            pluginData._enabled = PluginRegistry.isPluginEnabled(allIds[i]);
             plugins.push(pluginData);
           }
         }
@@ -251,7 +252,7 @@ ColumnLayout {
           }
 
           NToggle {
-            checked: PluginRegistry.isPluginEnabled(modelData.id)
+            checked: modelData._enabled
             baseSize: Style.baseWidgetSize * 0.7
             onToggled: function (checked) {
               if (checked) {
