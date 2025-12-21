@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import qs.Commons
-import qs.Services.UI
 import qs.Services.Noctalia
+import qs.Services.UI
 import qs.Widgets
 
 Item {
@@ -190,6 +190,11 @@ Item {
       return;
     }
 
+    // Hide the dynamic context menu (popup window stays open for the dialog)
+    if (popupMenuWindow.hideDynamicMenu) {
+      popupMenuWindow.hideDynamicMenu();
+    }
+
     var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
 
     function instantiateAndOpen() {
@@ -210,7 +215,6 @@ Item {
                                 popupMenuWindow.close();
                                 dialog.destroy();
                               });
-        popupMenuWindow.open();
         dialog.open();
       } else {
         Logger.e("DraggableDesktopWidget", "Failed to create widget settings dialog");
@@ -223,12 +227,12 @@ Item {
       Logger.e("DraggableDesktopWidget", "Error loading settings dialog component:", component.errorString());
     } else {
       component.statusChanged.connect(() => {
-                                      if (component.status === Component.Ready) {
-                                        instantiateAndOpen();
-                                      } else if (component.status === Component.Error) {
-                                        Logger.e("DraggableDesktopWidget", "Error loading settings dialog component:", component.errorString());
-                                      }
-                                    });
+                                        if (component.status === Component.Ready) {
+                                          instantiateAndOpen();
+                                        } else if (component.status === Component.Error) {
+                                          Logger.e("DraggableDesktopWidget", "Error loading settings dialog component:", component.errorString());
+                                        }
+                                      });
     }
   }
 
@@ -309,53 +313,46 @@ Item {
     z: 1
   }
 
-  // Context menu for right-click
-  NPopupContextMenu {
-    id: contextMenu
-    visible: false
-
-    property bool hasSettings: {
-      if (!widgetData || !widgetData.id) {
-        return false;
-      }
+  // Context menu model and handler - menu is created dynamically in PopupMenuWindow
+  property var contextMenuModel: {
+    var hasSettings = false;
+    if (widgetData && widgetData.id) {
       var widgetId = widgetData.id;
       if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
         var pluginId = widgetId.replace("plugin:", "");
         var manifest = PluginRegistry.getPluginManifest(pluginId);
-        return manifest && manifest.entryPoints && manifest.entryPoints.settings;
+        hasSettings = manifest && manifest.entryPoints && manifest.entryPoints.settings;
+      } else {
+        hasSettings = DesktopWidgetRegistry.widgetSettingsMap[widgetId] !== undefined;
       }
-      return DesktopWidgetRegistry.widgetSettingsMap[widgetId] !== undefined;
     }
 
-    model: {
-      var items = [];
-      if (contextMenu.hasSettings) {
-        items.push({
-                     "label": I18n.tr("context-menu.widget-settings"),
-                     "action": "widget-settings",
-                     "icon": "settings"
-                   });
-      }
+    var items = [];
+    if (hasSettings) {
       items.push({
-                   "label": I18n.tr("context-menu.delete"),
-                   "action": "delete",
-                   "icon": "trash"
+                   "label": I18n.tr("context-menu.widget-settings"),
+                   "action": "widget-settings",
+                   "icon": "settings"
                  });
-      return items;
     }
+    items.push({
+                 "label": I18n.tr("context-menu.delete"),
+                 "action": "delete",
+                 "icon": "trash"
+               });
+    return items;
+  }
 
-    onTriggered: (action, item) => {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
-                   if (popupMenuWindow) {
-                     popupMenuWindow.close();
-                   }
-
-                   if (action === "widget-settings") {
-                     root.openWidgetSettings();
-                   } else if (action === "delete") {
-                     root.removeWidget();
-                   }
-                 }
+  function handleContextMenuAction(action) {
+    if (action === "widget-settings") {
+      // Don't close - openWidgetSettings will use the popup window for the dialog
+      root.openWidgetSettings();
+      return true; // Signal that we're handling close ourselves
+    } else if (action === "delete") {
+      root.removeWidget();
+      return false; // Let caller close the popup
+    }
+    return false;
   }
 
   // Drag MouseArea - handles dragging (left-click)
@@ -450,10 +447,13 @@ Item {
 
     onPressed: mouse => {
                  if (mouse.button === Qt.RightButton) {
-                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(root.screen);
                    if (popupMenuWindow) {
-                     popupMenuWindow.showContextMenu(contextMenu);
-                     contextMenu.openAtItem(root, screen);
+                     // Map click position to screen coordinates
+                     var globalPos = root.mapToItem(null, mouse.x, mouse.y);
+                     // Use dynamic context menu (created in PopupMenuWindow's Top layer)
+                     // This ensures input events work correctly for desktop widgets (Bottom layer)
+                     popupMenuWindow.showDynamicContextMenu(root.contextMenuModel, globalPos.x, globalPos.y, root.handleContextMenuAction);
                    }
                  }
                }
@@ -486,7 +486,8 @@ Item {
     }
 
     Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible) requestPaint()
+    onVisibleChanged: if (visible)
+                        requestPaint()
 
     MouseArea {
       anchors.fill: parent
@@ -512,19 +513,13 @@ Item {
                              // Calculate diagonal distance from opposite corner (bottom-right)
                              var oppositeCornerX = root.x + root.width * root.widgetScale;
                              var oppositeCornerY = root.y + root.height * root.widgetScale;
-                             var initialDistance = Math.sqrt(
-                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
-                               Math.pow(pressPos.y - oppositeCornerY, 2)
-                             );
-                             var currentDistance = Math.sqrt(
-                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
-                               Math.pow(currentPos.y - oppositeCornerY, 2)
-                             );
-                             
+                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
+                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+
                              if (initialDistance > 0) {
                                var scaleRatio = currentDistance / initialDistance;
                                var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-                               
+
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;
                                  internal.lastScale = newScale;
@@ -575,7 +570,8 @@ Item {
     }
 
     Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible) requestPaint()
+    onVisibleChanged: if (visible)
+                        requestPaint()
 
     MouseArea {
       anchors.fill: parent
@@ -601,19 +597,13 @@ Item {
                              // Calculate diagonal distance from opposite corner (bottom-left)
                              var oppositeCornerX = root.x;
                              var oppositeCornerY = root.y + root.height * root.widgetScale;
-                             var initialDistance = Math.sqrt(
-                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
-                               Math.pow(pressPos.y - oppositeCornerY, 2)
-                             );
-                             var currentDistance = Math.sqrt(
-                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
-                               Math.pow(currentPos.y - oppositeCornerY, 2)
-                             );
-                             
+                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
+                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+
                              if (initialDistance > 0) {
                                var scaleRatio = currentDistance / initialDistance;
                                var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-                               
+
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;
                                  internal.lastScale = newScale;
@@ -664,12 +654,19 @@ Item {
     }
 
     Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible) requestPaint()
+    onVisibleChanged: if (visible)
+                        requestPaint()
 
     Connections {
       target: root
-      function onWidthChanged() { if (bottomLeftHandle.visible) bottomLeftHandle.requestPaint() }
-      function onHeightChanged() { if (bottomLeftHandle.visible) bottomLeftHandle.requestPaint() }
+      function onWidthChanged() {
+        if (bottomLeftHandle.visible)
+          bottomLeftHandle.requestPaint();
+      }
+      function onHeightChanged() {
+        if (bottomLeftHandle.visible)
+          bottomLeftHandle.requestPaint();
+      }
     }
 
     MouseArea {
@@ -696,19 +693,13 @@ Item {
                              // Calculate diagonal distance from opposite corner (top-right)
                              var oppositeCornerX = root.x + root.width * root.widgetScale;
                              var oppositeCornerY = root.y;
-                             var initialDistance = Math.sqrt(
-                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
-                               Math.pow(pressPos.y - oppositeCornerY, 2)
-                             );
-                             var currentDistance = Math.sqrt(
-                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
-                               Math.pow(currentPos.y - oppositeCornerY, 2)
-                             );
-                             
+                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
+                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+
                              if (initialDistance > 0) {
                                var scaleRatio = currentDistance / initialDistance;
                                var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-                               
+
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;
                                  internal.lastScale = newScale;
@@ -759,12 +750,19 @@ Item {
     }
 
     Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible) requestPaint()
+    onVisibleChanged: if (visible)
+                        requestPaint()
 
     Connections {
       target: root
-      function onWidthChanged() { if (bottomRightHandle.visible) bottomRightHandle.requestPaint() }
-      function onHeightChanged() { if (bottomRightHandle.visible) bottomRightHandle.requestPaint() }
+      function onWidthChanged() {
+        if (bottomRightHandle.visible)
+          bottomRightHandle.requestPaint();
+      }
+      function onHeightChanged() {
+        if (bottomRightHandle.visible)
+          bottomRightHandle.requestPaint();
+      }
     }
 
     MouseArea {
@@ -791,19 +789,13 @@ Item {
                              // Calculate diagonal distance from opposite corner (top-left)
                              var oppositeCornerX = root.x;
                              var oppositeCornerY = root.y;
-                             var initialDistance = Math.sqrt(
-                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
-                               Math.pow(pressPos.y - oppositeCornerY, 2)
-                             );
-                             var currentDistance = Math.sqrt(
-                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
-                               Math.pow(currentPos.y - oppositeCornerY, 2)
-                             );
-                             
+                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
+                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+
                              if (initialDistance > 0) {
                                var scaleRatio = currentDistance / initialDistance;
                                var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-                               
+
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;
                                  internal.lastScale = newScale;
