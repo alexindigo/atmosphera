@@ -245,25 +245,25 @@ Variants {
           }
         }
 
-        // Background for edit mode controls
+        // Edit mode controls panel
         Rectangle {
-          id: editModeControlsBackground
+          id: editModeControlsPanel
           visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
 
           readonly property string barPos: Settings.data.bar.position || "top"
           readonly property bool barFloating: Settings.data.bar.floating || false
-          // Calculate offset from bar based on position and floating state
+
           readonly property int barOffsetTop: {
             if (barPos !== "top")
-              return Style.marginXL * Style.uiScaleRatio;
+              return Style.marginM;
             const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical * Style.marginXL) : 0;
-            return Style.barHeight + floatMarginV + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
+            return Style.barHeight + floatMarginV + Style.marginM;
           }
           readonly property int barOffsetRight: {
             if (barPos !== "right")
-              return Style.marginXL * Style.uiScaleRatio;
+              return Style.marginM;
             const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
-            return Style.barHeight + floatMarginH + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
+            return Style.barHeight + floatMarginH + Style.marginM;
           }
 
           anchors {
@@ -273,21 +273,8 @@ Variants {
             rightMargin: barOffsetRight
           }
 
-          // Calculate width to accommodate all controls
-          width: {
-            var buttonWidth = editModeButton.visible ? editModeButton.implicitWidth : 0;
-            var explanationWidth = controlsExplanation.visible ? controlsExplanation.width : 0;
-            var checkboxWidth = gridSnapCheckbox.visible ? gridSnapCheckbox.implicitWidth : 0;
-            return Math.max(buttonWidth, explanationWidth, checkboxWidth, 200) + (Style.marginXL * 2);
-          }
-
-          // Calculate height to cover all controls with spacing
-          height: {
-            var buttonHeight = editModeButton.visible ? editModeButton.height : 0;
-            var explanationHeight = controlsExplanation.visible ? controlsExplanation.height : 0;
-            var checkboxHeight = gridSnapCheckbox.visible ? gridSnapCheckbox.height : 0;
-            return buttonHeight + Style.marginXL + explanationHeight + Style.marginXL + checkboxHeight + (Style.marginXL * 2);
-          }
+          width: controlsLayout.implicitWidth + (Style.marginXL * 2)
+          height: controlsLayout.implicitHeight + (Style.marginXL * 2)
 
           color: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.85)
           radius: Style.radiusL
@@ -296,89 +283,50 @@ Variants {
             color: Qt.alpha(Color.mOutline, 0.2)
           }
           z: 9999
-        }
 
-        // Exit edit mode button
-        NButton {
-          id: editModeButton
-          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
+          ColumnLayout {
+            id: controlsLayout
+            anchors {
+              fill: parent
+              margins: Style.marginXL
+            }
+            spacing: Style.marginL
 
-          readonly property string barPos: Settings.data.bar.position || "top"
-          readonly property bool barFloating: Settings.data.bar.floating || false
-          // Calculate offset from bar based on position and floating state
-          readonly property int barOffsetTop: {
-            if (barPos !== "top")
-              return Style.marginXL * Style.uiScaleRatio;
-            const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical * Style.marginXL) : 0;
-            return Style.barHeight + floatMarginV + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
-          }
-          readonly property int barOffsetRight: {
-            if (barPos !== "right")
-              return Style.marginXL * Style.uiScaleRatio;
-            const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
-            return Style.barHeight + floatMarginH + Style.marginM + (Style.marginXL * Style.uiScaleRatio);
-          }
+            NButton {
+              Layout.alignment: Qt.AlignRight
+              text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
+              icon: "logout"
+              outlined: false
+              fontSize: Style.fontSizeM * 1.1
+              iconSize: Style.fontSizeL * 1.1
+              onClicked: Settings.data.desktopWidgets.editMode = false
+            }
 
-          anchors {
-            top: editModeControlsBackground.top
-            right: editModeControlsBackground.right
-            topMargin: Style.marginXL
-            rightMargin: Style.marginXL
-          }
-          text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
-          icon: "logout"
-          //backgroundColor: Color.mSurface
-          //textColor: Color.mOnSurface
-          //hoverColor: Color.mSurfaceVariant
-          outlined: false
-          fontSize: Style.fontSizeM * 1.1
-          iconSize: Style.fontSizeL * 1.1
-          z: 10000
-          onClicked: Settings.data.desktopWidgets.editMode = false
-        }
+            NText {
+              Layout.alignment: Qt.AlignRight
+              Layout.maximumWidth: 300 * Style.uiScaleRatio
+              text: I18n.tr("settings.desktop-widgets.edit-mode.controls-explanation")
+              pointSize: Style.fontSizeS
+              color: Color.mOnSurfaceVariant
+              horizontalAlignment: Text.AlignRight
+              wrapMode: Text.WordWrap
+            }
 
-        // Controls explanation text
-        NText {
-          id: controlsExplanation
-          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
-          anchors {
-            top: editModeButton.bottom
-            right: editModeControlsBackground.right
-            topMargin: Style.marginXL
-            rightMargin: Style.marginXL
-          }
-          text: I18n.tr("settings.desktop-widgets.edit-mode.controls-explanation")
-          pointSize: Style.fontSizeS
-          color: Color.mOnSurfaceVariant
-          horizontalAlignment: Text.AlignRight
-          wrapMode: Text.WordWrap
-          width: Math.min(implicitWidth, 300 * Style.uiScaleRatio)
-          z: 10000
-        }
+            RowLayout {
+              Layout.alignment: Qt.AlignRight
+              spacing: Style.marginS
 
-        // Grid snap checkbox
-        RowLayout {
-          id: gridSnapCheckbox
-          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
-          anchors {
-            top: controlsExplanation.bottom
-            right: editModeControlsBackground.right
-            topMargin: Style.marginXL
-            rightMargin: Style.marginXL
-          }
-          spacing: Style.marginS
-          z: 10000
+              NText {
+                text: I18n.tr("settings.desktop-widgets.edit-mode.grid-snap.label")
+                pointSize: Style.fontSizeS
+                color: Color.mOnSurfaceVariant
+              }
 
-          NText {
-            text: I18n.tr("settings.desktop-widgets.edit-mode.grid-snap.label")
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-            horizontalAlignment: Text.AlignRight
-          }
-
-          NCheckbox {
-            checked: Settings.data.desktopWidgets.gridSnap
-            onToggled: checked => Settings.data.desktopWidgets.gridSnap = checked
+              NCheckbox {
+                checked: Settings.data.desktopWidgets.gridSnap
+                onToggled: checked => Settings.data.desktopWidgets.gridSnap = checked
+              }
+            }
           }
         }
       }

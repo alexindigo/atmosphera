@@ -278,8 +278,8 @@ Item {
     anchors.margins: -Style.marginS
     color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : Color.transparent
     border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : Color.transparent
-    border.width: Settings.data.desktopWidgets.editMode ? 3 : (internal.isDragging ? 2 : 0)
-    radius: Style.radiusL + Style.marginS
+    border.width: Settings.data.desktopWidgets.editMode ? 3 : 0
+    radius: Style.radiusL
     z: -1
   }
 
@@ -459,64 +459,126 @@ Item {
                }
   }
 
-  // Corner handles for scaling
-  readonly property real cornerHandleSize: 12
+  // Corner handles for scaling - using Repeater to avoid code duplication
+  readonly property real cornerHandleSize: 8
   readonly property real outlineMargin: Style.marginS
+  readonly property color colorHandle: Color.mSecondary
 
-  // Top-left corner
-  Canvas {
-    id: topLeftHandle
-    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
-    x: -outlineMargin
-    y: -outlineMargin
-    width: cornerHandleSize
-    height: cornerHandleSize
-    z: 2000
-
-    onPaint: {
-      var ctx = getContext("2d");
-      ctx.reset();
-      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(cornerHandleSize, 0);
-      ctx.lineTo(0, cornerHandleSize);
-      ctx.closePath();
-      ctx.fill();
+  // Corner handle model: defines position, opposite corner, cursor, and triangle points for each corner
+  // xMult/yMult: multipliers for position (0 = left/top edge, 1 = right/bottom edge)
+  // oppXMult/oppYMult: multipliers for opposite corner calculation
+  // cursor: resize cursor type (FDiag for TL-BR diagonal, BDiag for TR-BL diagonal)
+  // points: triangle vertices as [x, y] pairs normalized to cornerHandleSize
+  readonly property var cornerHandleModel: [
+    {
+      xMult: 0,
+      yMult: 0,
+      oppXMult: 1,
+      oppYMult: 1,
+      cursor: Qt.SizeFDiagCursor,
+      points: [[0, 0], [1, 0], [0, 1]]
+    },
+    {
+      xMult: 1,
+      yMult: 0,
+      oppXMult: 0,
+      oppYMult: 1,
+      cursor: Qt.SizeBDiagCursor,
+      points: [[1, 0], [1, 1], [0, 0]]
+    },
+    {
+      xMult: 0,
+      yMult: 1,
+      oppXMult: 1,
+      oppYMult: 0,
+      cursor: Qt.SizeBDiagCursor,
+      points: [[0, 1], [0, 0], [1, 1]]
+    },
+    {
+      xMult: 1,
+      yMult: 1,
+      oppXMult: 0,
+      oppYMult: 0,
+      cursor: Qt.SizeFDiagCursor,
+      points: [[1, 1], [1, 0], [0, 1]]
     }
+  ]
 
-    Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible)
-                        requestPaint()
+  Repeater {
+    model: root.cornerHandleModel
 
-    MouseArea {
-      anchors.fill: parent
-      acceptedButtons: Qt.LeftButton
-      cursorShape: Qt.SizeFDiagCursor
-      property point pressPos: Qt.point(0, 0)
-      property real initialScale: 1.0
+    delegate: Canvas {
+      id: cornerHandle
+      required property var modelData
+      required property int index
 
-      onPressed: mouse => {
-                   if (internal.operationType !== "") {
-                     return;
+      visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+      x: modelData.xMult * (root.width + outlineMargin) - (modelData.xMult === 0 ? outlineMargin : cornerHandleSize)
+      y: modelData.yMult * (root.height + outlineMargin) - (modelData.yMult === 0 ? outlineMargin : cornerHandleSize)
+      width: cornerHandleSize
+      height: cornerHandleSize
+      z: 2000
+
+      onPaint: {
+        var ctx = getContext("2d");
+        ctx.reset();
+        ctx.fillStyle = colorHandle;
+        ctx.beginPath();
+        ctx.moveTo(modelData.points[0][0] * cornerHandleSize, modelData.points[0][1] * cornerHandleSize);
+        ctx.lineTo(modelData.points[1][0] * cornerHandleSize, modelData.points[1][1] * cornerHandleSize);
+        ctx.lineTo(modelData.points[2][0] * cornerHandleSize, modelData.points[2][1] * cornerHandleSize);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      Component.onCompleted: requestPaint()
+      onVisibleChanged: if (visible)
+                          requestPaint()
+
+      Connections {
+        target: root
+        function onWidthChanged() {
+          if (cornerHandle.visible)
+            cornerHandle.requestPaint();
+        }
+        function onHeightChanged() {
+          if (cornerHandle.visible)
+            cornerHandle.requestPaint();
+        }
+      }
+
+      MouseArea {
+        id: scaleMouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+        cursorShape: cornerHandle.modelData.cursor
+        property point pressPos: Qt.point(0, 0)
+        // Capture opposite corner at press time to avoid feedback loop during scaling
+        property real oppositeCornerX: 0
+        property real oppositeCornerY: 0
+        property real initialDistance: 0
+
+        onPressed: mouse => {
+                     if (internal.operationType !== "") {
+                       return;
+                     }
+                     pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+                     // Calculate and store opposite corner position using initial scale
+                     oppositeCornerX = root.x + cornerHandle.modelData.oppXMult * root.width * root.widgetScale;
+                     oppositeCornerY = root.y + cornerHandle.modelData.oppYMult * root.height * root.widgetScale;
+                     initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
+                     internal.operationType = "scale";
+                     internal.isScaling = true;
+                     internal.initialScale = root.widgetScale;
+                     internal.lastScale = root.widgetScale;
                    }
-                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                   internal.operationType = "scale";
-                   internal.isScaling = true;
-                   internal.initialScale = root.widgetScale;
-                   internal.lastScale = root.widgetScale;
-                 }
 
-      onPositionChanged: mouse => {
-                           if (internal.isScaling && pressed && internal.operationType === "scale") {
-                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                             // Calculate diagonal distance from opposite corner (bottom-right)
-                             var oppositeCornerX = root.x + root.width * root.widgetScale;
-                             var oppositeCornerY = root.y + root.height * root.widgetScale;
-                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
-                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+        onPositionChanged: mouse => {
+                             if (internal.isScaling && pressed && internal.operationType === "scale" && initialDistance > 0) {
+                               var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+                               // Use the fixed opposite corner position captured at press time
+                               var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
 
-                             if (initialDistance > 0) {
                                var scaleRatio = currentDistance / initialDistance;
                                var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
 
@@ -526,299 +588,23 @@ Item {
                                }
                              }
                            }
-                         }
 
-      onReleased: mouse => {
-                    if (internal.isScaling && internal.operationType === "scale") {
-                      root.updateWidgetData({
-                                              "scale": root.widgetScale
-                                            });
-                      internal.isScaling = false;
-                      internal.operationType = "";
-                      internal.lastScale = root.widgetScale;
+        onReleased: mouse => {
+                      if (internal.isScaling && internal.operationType === "scale") {
+                        root.updateWidgetData({
+                                                "scale": root.widgetScale
+                                              });
+                        internal.isScaling = false;
+                        internal.operationType = "";
+                        internal.lastScale = root.widgetScale;
+                      }
                     }
-                  }
 
-      onCanceled: {
-        internal.isScaling = false;
-        internal.operationType = "";
-        internal.lastScale = root.widgetScale;
-      }
-    }
-  }
-
-  // Top-right corner
-  Canvas {
-    id: topRightHandle
-    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
-    x: root.width + outlineMargin - cornerHandleSize
-    y: -outlineMargin
-    width: cornerHandleSize
-    height: cornerHandleSize
-    z: 2000
-
-    onPaint: {
-      var ctx = getContext("2d");
-      ctx.reset();
-      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
-      ctx.beginPath();
-      ctx.moveTo(cornerHandleSize, 0);
-      ctx.lineTo(cornerHandleSize, cornerHandleSize);
-      ctx.lineTo(0, 0);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible)
-                        requestPaint()
-
-    MouseArea {
-      anchors.fill: parent
-      acceptedButtons: Qt.LeftButton
-      cursorShape: Qt.SizeBDiagCursor
-      property point pressPos: Qt.point(0, 0)
-      property real initialScale: 1.0
-
-      onPressed: mouse => {
-                   if (internal.operationType !== "") {
-                     return;
-                   }
-                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                   internal.operationType = "scale";
-                   internal.isScaling = true;
-                   internal.initialScale = root.widgetScale;
-                   internal.lastScale = root.widgetScale;
-                 }
-
-      onPositionChanged: mouse => {
-                           if (internal.isScaling && pressed && internal.operationType === "scale") {
-                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                             // Calculate diagonal distance from opposite corner (bottom-left)
-                             var oppositeCornerX = root.x;
-                             var oppositeCornerY = root.y + root.height * root.widgetScale;
-                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
-                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
-
-                             if (initialDistance > 0) {
-                               var scaleRatio = currentDistance / initialDistance;
-                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-
-                               if (!isNaN(newScale) && newScale > 0) {
-                                 root.widgetScale = newScale;
-                                 internal.lastScale = newScale;
-                               }
-                             }
-                           }
-                         }
-
-      onReleased: mouse => {
-                    if (internal.isScaling && internal.operationType === "scale") {
-                      root.updateWidgetData({
-                                              "scale": root.widgetScale
-                                            });
-                      internal.isScaling = false;
-                      internal.operationType = "";
-                      internal.lastScale = root.widgetScale;
-                    }
-                  }
-
-      onCanceled: {
-        internal.isScaling = false;
-        internal.operationType = "";
-        internal.lastScale = root.widgetScale;
-      }
-    }
-  }
-
-  // Bottom-left corner
-  Canvas {
-    id: bottomLeftHandle
-    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
-    x: -outlineMargin
-    y: root.height + outlineMargin - cornerHandleSize
-    width: cornerHandleSize
-    height: cornerHandleSize
-    z: 2000
-
-    onPaint: {
-      var ctx = getContext("2d");
-      ctx.reset();
-      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
-      ctx.beginPath();
-      ctx.moveTo(0, cornerHandleSize);
-      ctx.lineTo(0, 0);
-      ctx.lineTo(cornerHandleSize, cornerHandleSize);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible)
-                        requestPaint()
-
-    Connections {
-      target: root
-      function onWidthChanged() {
-        if (bottomLeftHandle.visible)
-          bottomLeftHandle.requestPaint();
-      }
-      function onHeightChanged() {
-        if (bottomLeftHandle.visible)
-          bottomLeftHandle.requestPaint();
-      }
-    }
-
-    MouseArea {
-      anchors.fill: parent
-      acceptedButtons: Qt.LeftButton
-      cursorShape: Qt.SizeBDiagCursor
-      property point pressPos: Qt.point(0, 0)
-      property real initialScale: 1.0
-
-      onPressed: mouse => {
-                   if (internal.operationType !== "") {
-                     return;
-                   }
-                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                   internal.operationType = "scale";
-                   internal.isScaling = true;
-                   internal.initialScale = root.widgetScale;
-                   internal.lastScale = root.widgetScale;
-                 }
-
-      onPositionChanged: mouse => {
-                           if (internal.isScaling && pressed && internal.operationType === "scale") {
-                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                             // Calculate diagonal distance from opposite corner (top-right)
-                             var oppositeCornerX = root.x + root.width * root.widgetScale;
-                             var oppositeCornerY = root.y;
-                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
-                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
-
-                             if (initialDistance > 0) {
-                               var scaleRatio = currentDistance / initialDistance;
-                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-
-                               if (!isNaN(newScale) && newScale > 0) {
-                                 root.widgetScale = newScale;
-                                 internal.lastScale = newScale;
-                               }
-                             }
-                           }
-                         }
-
-      onReleased: mouse => {
-                    if (internal.isScaling && internal.operationType === "scale") {
-                      root.updateWidgetData({
-                                              "scale": root.widgetScale
-                                            });
-                      internal.isScaling = false;
-                      internal.operationType = "";
-                      internal.lastScale = root.widgetScale;
-                    }
-                  }
-
-      onCanceled: {
-        internal.isScaling = false;
-        internal.operationType = "";
-        internal.lastScale = root.widgetScale;
-      }
-    }
-  }
-
-  // Bottom-right corner
-  Canvas {
-    id: bottomRightHandle
-    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
-    x: root.width + outlineMargin - cornerHandleSize
-    y: root.height + outlineMargin - cornerHandleSize
-    width: cornerHandleSize
-    height: cornerHandleSize
-    z: 2000
-
-    onPaint: {
-      var ctx = getContext("2d");
-      ctx.reset();
-      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
-      ctx.beginPath();
-      ctx.moveTo(cornerHandleSize, cornerHandleSize);
-      ctx.lineTo(cornerHandleSize, 0);
-      ctx.lineTo(0, cornerHandleSize);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    Component.onCompleted: requestPaint()
-    onVisibleChanged: if (visible)
-                        requestPaint()
-
-    Connections {
-      target: root
-      function onWidthChanged() {
-        if (bottomRightHandle.visible)
-          bottomRightHandle.requestPaint();
-      }
-      function onHeightChanged() {
-        if (bottomRightHandle.visible)
-          bottomRightHandle.requestPaint();
-      }
-    }
-
-    MouseArea {
-      anchors.fill: parent
-      acceptedButtons: Qt.LeftButton
-      cursorShape: Qt.SizeFDiagCursor
-      property point pressPos: Qt.point(0, 0)
-      property real initialScale: 1.0
-
-      onPressed: mouse => {
-                   if (internal.operationType !== "") {
-                     return;
-                   }
-                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                   internal.operationType = "scale";
-                   internal.isScaling = true;
-                   internal.initialScale = root.widgetScale;
-                   internal.lastScale = root.widgetScale;
-                 }
-
-      onPositionChanged: mouse => {
-                           if (internal.isScaling && pressed && internal.operationType === "scale") {
-                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                             // Calculate diagonal distance from opposite corner (top-left)
-                             var oppositeCornerX = root.x;
-                             var oppositeCornerY = root.y;
-                             var initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
-                             var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
-
-                             if (initialDistance > 0) {
-                               var scaleRatio = currentDistance / initialDistance;
-                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
-
-                               if (!isNaN(newScale) && newScale > 0) {
-                                 root.widgetScale = newScale;
-                                 internal.lastScale = newScale;
-                               }
-                             }
-                           }
-                         }
-
-      onReleased: mouse => {
-                    if (internal.isScaling && internal.operationType === "scale") {
-                      root.updateWidgetData({
-                                              "scale": root.widgetScale
-                                            });
-                      internal.isScaling = false;
-                      internal.operationType = "";
-                      internal.lastScale = root.widgetScale;
-                    }
-                  }
-
-      onCanceled: {
-        internal.isScaling = false;
-        internal.operationType = "";
-        internal.lastScale = root.widgetScale;
+        onCanceled: {
+          internal.isScaling = false;
+          internal.operationType = "";
+          internal.lastScale = root.widgetScale;
+        }
       }
     }
   }
