@@ -9,6 +9,7 @@ Item {
   // Plugin metadata
   property string name: I18n.tr("plugins.emoji")
   property var launcher: null
+  property string iconMode: Settings.data.appLauncher.iconMode
   property bool handleSearch: false
 
   property string selectedCategory: "recent"
@@ -67,7 +68,8 @@ Item {
           {
             "name": ">emoji",
             "description": I18n.tr("plugins.emoji-search-description"),
-            "icon": "face-smile",
+            "icon": iconMode === "tabler" ? "mood-smile" : "face-smile",
+            "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
               launcher.setSearchText(">emoji ");
@@ -87,7 +89,8 @@ Item {
             {
               "name": I18n.tr("plugins.emoji-loading"),
               "description": I18n.tr("plugins.emoji-loading-description"),
-              "icon": "view-refresh",
+              "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
+              "isTablerIcon": true,
               "isImage": false,
               "onActivate": function () {}
             }
