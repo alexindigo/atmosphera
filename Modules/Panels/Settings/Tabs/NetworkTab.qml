@@ -20,6 +20,9 @@ ColumnLayout {
     onToggled: checked => NetworkService.setWifiEnabled(checked)
   }
 
+  NDivider { Layout.fillWidth: true }
+
+  // Bluetooth adapter toggle grouped with its panel settings
   NToggle {
     label: I18n.tr("settings.network.bluetooth.label")
     checked: BluetoothService.enabled

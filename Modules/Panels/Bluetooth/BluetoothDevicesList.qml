@@ -7,6 +7,7 @@ import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Networking
 import qs.Widgets
+import qs.Services.UI
 
 NBox {
   id: root
@@ -14,8 +15,15 @@ NBox {
   property string label: ""
   property string tooltipText: ""
   property var model: {}
+  // Header control mode: "layout" (default) shows grid/list toggle; "filter" shows unnamed-devices filter toggle
+  property string headerMode: "layout"
   // Per-list expanded details (by device key)
   property string expandedDeviceKey: ""
+  // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
+  // Persisted under Settings.data.ui.bluetoothDetailsViewMode
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothDetailsViewMode !== undefined)
+                             ? (Settings.data.ui.bluetoothDetailsViewMode === "grid")
+                             : true
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -27,14 +35,37 @@ NBox {
 
     spacing: Style.marginM
 
-    NText {
-      text: root.label
-      pointSize: Style.fontSizeS
-      color: Color.mSecondary
-      font.weight: Style.fontWeightBold
-      visible: root.model.length > 0
+    RowLayout {
       Layout.fillWidth: true
+      visible: root.model.length > 0
       Layout.leftMargin: Style.marginM
+      spacing: Style.marginS
+
+      NText {
+        text: root.label
+        pointSize: Style.fontSizeS
+        color: Color.mSecondary
+        font.weight: Style.fontWeightBold
+        Layout.fillWidth: true
+      }
+
+      // (moved) details view toggle is now inside the expanded info box
+
+      // Filter toggle (for Available devices): hide unnamed devices
+      NIconButton {
+        visible: root.headerMode === "filter"
+        // Option A: filter/filter-off
+        // Off (show all): filter; On (hide unnamed): filter-off
+        icon: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) ? "filter-off" : "filter"
+        tooltipText: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices)
+                     ? I18n.tr("tooltips.hide-unnamed-devices")
+                     : I18n.tr("tooltips.show-all-devices")
+        onClicked: {
+          if (Settings.data && Settings.data.ui) {
+            Settings.data.ui.bluetoothHideUnnamedDevices = !(Settings.data.ui.bluetoothHideUnnamedDevices);
+          }
+        }
+      }
     }
 
     Repeater {
@@ -52,8 +83,7 @@ NBox {
         readonly property bool isBusy: BluetoothService.isDeviceBusy(modelData)
         readonly property bool isExpanded: root.expandedDeviceKey === BluetoothService.deviceKey(modelData)
 
-        function getContentColor(defaultColor) {
-          if (defaultColor === undefined) defaultColor = Color.mOnSurface;
+        function getContentColor(defaultColor = Color.mOnSurface) {
           if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
             return Color.mPrimary;
           if (modelData.blocked)
@@ -149,72 +179,14 @@ NBox {
               }
             }
 
-            // Spacer to push connect button to the right
-            Item {
-              Layout.fillWidth: true
-            }
+            // Spacer to push actions to the right
+            Item { Layout.fillWidth: true }
 
-            // Call to action
-            NButton {
-              id: button
-              visible: (modelData.state !== BluetoothDeviceState.Connecting)
-              enabled: (canConnect || canDisconnect || canPair) && !isBusy
-              outlined: !button.hovered
-              fontSize: Style.fontSizeXS
-              fontWeight: Style.fontWeightMedium
-              backgroundColor: {
-                if (device.canDisconnect && !isBusy) {
-                  return Color.mError;
-                }
-                return Color.mPrimary;
-              }
-              tooltipText: root.tooltipText
-              text: {
-                if (modelData.pairing) {
-                  return I18n.tr("bluetooth.panel.pairing");
-                }
-                if (modelData.blocked) {
-                  return I18n.tr("bluetooth.panel.blocked");
-                }
-                if (modelData.connected) {
-                  return I18n.tr("bluetooth.panel.disconnect");
-                }
-                if (device.canPair) {
-                  return I18n.tr("bluetooth.panel.pair");
-                }
-                return I18n.tr("bluetooth.panel.connect");
-              }
-              icon: (isBusy ? "busy" : null)
-              onClicked: {
-                if (modelData.connected) {
-                  BluetoothService.disconnectDevice(modelData);
-                } else {
-                  if (device.canPair) {
-                    BluetoothService.pairDevice(modelData);
-                  } else {
-                    BluetoothService.connectDeviceWithTrust(modelData);
-                  }
-                }
-              }
-              onRightClicked: {
-                BluetoothService.forgetDevice(modelData);
-              }
-            }
-
-            // Extra actions
+            // Actions (Info on the left to match Wi‑Fi, then Unpair, then main CTA)
             RowLayout {
               spacing: Style.marginXS
 
-              // Unpair for saved devices when not connected
-              NIconButton {
-                visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
-                icon: "trash"
-                tooltipText: I18n.tr("bluetooth.panel.unpair")
-                baseSize: Style.baseWidgetSize * 0.8
-                onClicked: BluetoothService.unpairDevice(modelData)
-              }
-
-              // Info for connected device
+              // Info for connected device (placed before the CTA for consistency with Wi‑Fi)
               NIconButton {
                 visible: modelData.connected
                 icon: "info-circle"
@@ -225,6 +197,62 @@ NBox {
                   root.expandedDeviceKey = (root.expandedDeviceKey === key) ? "" : key;
                 }
               }
+
+              // Unpair for saved devices when not connected
+              NIconButton {
+                visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
+                icon: "trash"
+                tooltipText: I18n.tr("bluetooth.panel.unpair")
+                baseSize: Style.baseWidgetSize * 0.8
+                onClicked: BluetoothService.unpairDevice(modelData)
+              }
+
+              // Main Call to action
+              NButton {
+                id: button
+                visible: (modelData.state !== BluetoothDeviceState.Connecting)
+                enabled: (canConnect || canDisconnect || canPair) && !isBusy
+                outlined: !button.hovered
+                fontSize: Style.fontSizeXS
+                fontWeight: Style.fontWeightMedium
+                backgroundColor: {
+                  if (device.canDisconnect && !isBusy) {
+                    return Color.mError;
+                  }
+                  return Color.mPrimary;
+                }
+                tooltipText: root.tooltipText
+                text: {
+                  if (modelData.pairing) {
+                    return I18n.tr("bluetooth.panel.pairing");
+                  }
+                  if (modelData.blocked) {
+                    return I18n.tr("bluetooth.panel.blocked");
+                  }
+                  if (modelData.connected) {
+                    return I18n.tr("bluetooth.panel.disconnect");
+                  }
+                  if (device.canPair) {
+                    return I18n.tr("bluetooth.panel.pair");
+                  }
+                  return I18n.tr("bluetooth.panel.connect");
+                }
+                icon: (isBusy ? "busy" : null)
+                onClicked: {
+                  if (modelData.connected) {
+                    BluetoothService.disconnectDevice(modelData);
+                  } else {
+                    if (device.canPair) {
+                      BluetoothService.pairDevice(modelData);
+                    } else {
+                      BluetoothService.connectDeviceWithTrust(modelData);
+                    }
+                  }
+                }
+                onRightClicked: {
+                  BluetoothService.forgetDevice(modelData);
+                }
+              }
             }
           }
 
@@ -232,45 +260,186 @@ NBox {
           Rectangle {
             visible: device.isExpanded
             Layout.fillWidth: true
-            height: infoColumn.implicitHeight + Style.marginS * 2
+            implicitHeight: infoColumn.implicitHeight + Style.marginS * 2
             radius: Style.radiusS
             color: Color.mSurfaceVariant
             border.width: Style.borderS
             border.color: Color.mOutline
+            clip: true
+            onVisibleChanged: {
+              if (visible && infoColumn && infoColumn.forceLayout) {
+                Qt.callLater(function () { infoColumn.forceLayout(); });
+              }
+            }
 
-            ColumnLayout {
+            // Grid/List toggle moved here to the top-right corner of the info box
+            NIconButton {
+              id: detailsToggle
+              anchors.top: parent.top
+              anchors.right: parent.right
+              anchors.margins: Style.marginS
+              // Use Tabler layout icons; "grid" alone doesn't exist in our font
+              icon: root.detailsGrid ? "layout-list" : "layout-grid"
+              tooltipText: root.detailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              onClicked: {
+                root.detailsGrid = !root.detailsGrid;
+                if (Settings.data && Settings.data.ui) {
+                  Settings.data.ui.bluetoothDetailsViewMode = root.detailsGrid ? "grid" : "list";
+                }
+              }
+              z: 1
+            }
+
+            GridLayout {
               id: infoColumn
               anchors.fill: parent
               anchors.margins: Style.marginS
-              spacing: Style.marginXS
-
-              RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: BluetoothService.getSignalIcon(modelData); pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: BluetoothService.getSignalStrength(modelData); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
-                NText { visible: modelData.signalStrength > 0; text: (modelData.signalStrength || 0) + "%"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+              // Layout toggle based on local state
+              columns: root.detailsGrid ? 2 : 1
+              columnSpacing: Style.marginM
+              rowSpacing: Style.marginXS
+              // Ensure proper relayout when switching grid/list while open
+              onColumnsChanged: {
+                if (infoColumn.forceLayout) {
+                  Qt.callLater(function() { infoColumn.forceLayout(); });
+                }
               }
 
+              // Icons only; labels shown as tooltips on hover
+
+              // Row 1: Signal | Battery
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "hash"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("bluetooth.panel.device-address") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: modelData.address || "-"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: BluetoothService.getSignalIcon(modelData)
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.signal"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  // Extract value from helper (remove leading label if present)
+                  text: (function(){ var s = BluetoothService.getSignalStrength(modelData); var idx = s.indexOf(":"); return idx !== -1 ? s.substring(idx+1).trim() : s; })()
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  // Wrap only when needed to avoid extra spacing
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
+                }
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "battery"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.battery"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: modelData.batteryAvailable ? (function(){ var b = BluetoothService.getBattery(modelData); var i = b.indexOf(":"); return i !== -1 ? b.substring(i+1).trim() : b; })() : "-"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
+                }
               }
 
+              // Row 2: Paired | Trusted
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "shield-check"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("bluetooth.panel.paired") + ": " + (modelData.paired ? I18n.tr("common.yes") : I18n.tr("common.no")); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
-                NText { text: "•"; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: I18n.tr("bluetooth.panel.trusted") + ": " + (modelData.trusted ? I18n.tr("common.yes") : I18n.tr("common.no")); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "link"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.paired"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: modelData.paired ? I18n.tr("common.yes") : I18n.tr("common.no")
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 2
+                  clip: true
+                }
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "shield-check"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.trusted"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: modelData.trusted ? I18n.tr("common.yes") : I18n.tr("common.no")
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 2
+                  clip: true
+                }
               }
 
+              // Row 3: Address (single row; spans two columns when grid)
               RowLayout {
-                visible: modelData.batteryAvailable
-                spacing: Style.marginS
-                NIcon { icon: "battery"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: BluetoothService.getBattery(modelData); pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+                Layout.fillWidth: true
+                Layout.columnSpan: infoColumn.columns === 2 ? 2 : 1
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "hash"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.device-address"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: modelData.address || "-"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  // MAC addresses usually fit; wrap only if necessary
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 2
+                  clip: true
+                }
               }
             }
           }

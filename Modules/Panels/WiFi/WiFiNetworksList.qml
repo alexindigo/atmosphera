@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Services.Networking
 import qs.Widgets
+import qs.Services.UI
 
 NBox {
   id: root
@@ -15,6 +16,11 @@ NBox {
   property string expandedSsid: ""
   // Currently expanded info panel for a connected SSID
   property string infoSsid: ""
+  // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
+  // Persisted under Settings.data.ui.wifiDetailsViewMode
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined)
+                             ? (Settings.data.ui.wifiDetailsViewMode === "grid")
+                             : true
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -33,14 +39,21 @@ NBox {
     anchors.margins: Style.marginM
     spacing: Style.marginM
 
-    NText {
-      text: root.label
-      pointSize: Style.fontSizeS
-      color: Color.mSecondary
-      font.weight: Style.fontWeightBold
-      visible: root.model.length > 0
+    RowLayout {
       Layout.fillWidth: true
+      visible: root.model.length > 0
       Layout.leftMargin: Style.marginS
+      spacing: Style.marginS
+
+      NText {
+        text: root.label
+        pointSize: Style.fontSizeS
+        color: Color.mSecondary
+        font.weight: Style.fontWeightBold
+        Layout.fillWidth: true
+      }
+
+      // (moved) details view toggle is now inside the info box
     }
 
     Repeater {
@@ -259,7 +272,7 @@ NBox {
             }
           }
 
-          // Connection info details
+          // Connection info details (compact grid)
           Rectangle {
             visible: root.infoSsid === modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid
             Layout.fillWidth: true
@@ -267,81 +280,207 @@ NBox {
             radius: Style.radiusS
             border.width: Style.borderS
             border.color: Color.mOutline
-            height: infoColumn.implicitHeight + Style.marginS * 2
+            implicitHeight: infoGrid.implicitHeight + Style.marginS * 2
             clip: true
+            onVisibleChanged: {
+              if (visible && infoGrid && infoGrid.forceLayout) {
+                Qt.callLater(function () { infoGrid.forceLayout(); });
+              }
+            }
 
-            ColumnLayout {
-              id: infoColumn
+            // Grid/List toggle moved here to the top-right corner of the info box
+            NIconButton {
+              id: detailsToggle
+              anchors.top: parent.top
+              anchors.right: parent.right
+              anchors.margins: Style.marginS
+              // Use Tabler layout icons; "grid" alone doesn't exist in our font
+              icon: root.detailsGrid ? "layout-list" : "layout-grid"
+              tooltipText: root.detailsGrid ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              onClicked: {
+                root.detailsGrid = !root.detailsGrid;
+                if (Settings.data && Settings.data.ui) {
+                  Settings.data.ui.wifiDetailsViewMode = root.detailsGrid ? "grid" : "list";
+                }
+              }
+              z: 1
+            }
+
+            GridLayout {
+              id: infoGrid
               anchors.fill: parent
               anchors.margins: Style.marginS
-              spacing: Style.marginXS
-
-              RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "lock"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("wifi.panel.security") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText { text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"; pointSize: Style.fontSizeXS; color: Color.mOnSurface }
+              // Layout toggle: grid (2 columns) or rows (1 column)
+              columns: root.detailsGrid ? 2 : 1
+              columnSpacing: Style.marginM
+              rowSpacing: Style.marginXS
+              // Ensure proper relayout when switching grid/list while open
+              onColumnsChanged: {
+                if (infoGrid.forceLayout) {
+                  Qt.callLater(function () { infoGrid.forceLayout(); });
+                }
               }
 
+              // Icons only; values have labels as tooltips on hover
+
+              // Row 1: Security | Internet
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: NetworkService.internetConnectivity ? "world" : "world-off"; pointSize: Style.fontSizeM; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
-                NText { text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited"); pointSize: Style.fontSizeXS; color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError }
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: NetworkService.isSecured(modelData.security) ? "lock" : "lock-open"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  // Tooltip on hover when using icons-only mode
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.security"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
+                }
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: NetworkService.internetConnectivity ? "world" : "world-off"
+                  pointSize: Style.fontSizeXS
+                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.internet"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited")
+                  pointSize: Style.fontSizeXS
+                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
+                }
               }
 
+              // Row 2: Link Speed | IPv4
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "activity"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("wifi.panel.link-speed") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "gauge"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.link-speed"))
+                    onExited: TooltipService.hide()
+                  }
+                }
                 NText {
                   text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0)
                         ? NetworkService.activeWifiDetails.rateShort
-                        : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0)
-                            ? NetworkService.activeWifiDetails.rate
-                            : "-");
+                        : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0) ? NetworkService.activeWifiDetails.rate : "-")
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  elide: Text.ElideRight
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
+                }
+              }
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  // IPv4 address icon ("device-lan" doesn't exist in our font)
+                  icon: "network"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.ipv4"))
+                    onExited: TooltipService.hide()
+                  }
+                }
+                NText {
+                  text: NetworkService.activeWifiDetails.ipv4 || "-"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
                 }
               }
 
+              // Row 3: Gateway | DNS
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: "IPv4: "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                NIcon {
+                  icon: "router"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.gateway"))
+                    onExited: TooltipService.hide()
+                  }
+                }
                 NText {
-                  text: (NetworkService.activeWifiDetails.ipv4 || "-")
+                  text: NetworkService.activeWifiDetails.gateway4 || "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  elide: Text.ElideRight
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 4
+                  clip: true
                 }
               }
-
               RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "router"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("wifi.panel.gateway") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
-                NText {
-                  text: (NetworkService.activeWifiDetails.gateway4 || "-")
+                Layout.fillWidth: true
+                spacing: Style.marginXS
+                // DNS: allow wrapping when selected
+                NIcon {
+                  icon: "world"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
-                  Layout.fillWidth: true
-                  elide: Text.ElideRight
+                  MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.dns"))
+                    onExited: TooltipService.hide()
+                  }
                 }
-              }
-
-              RowLayout {
-                spacing: Style.marginS
-                NIcon { icon: "server"; pointSize: Style.fontSizeM; color: Color.mOnSurface }
-                NText { text: I18n.tr("wifi.panel.dns") + ": "; pointSize: Style.fontSizeXS; color: Color.mOnSurfaceVariant }
                 NText {
-                  text: (NetworkService.activeWifiDetails.dns || "-")
+                  text: NetworkService.activeWifiDetails.dns || "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  elide: Text.ElideRight
+                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                  elide: Text.ElideNone
+                  maximumLineCount: 6
+                  clip: true
                 }
               }
             }

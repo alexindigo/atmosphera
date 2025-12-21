@@ -464,7 +464,9 @@
       "device-address": "Device address",
       "paired": "Paired",
       "trusted": "Trusted",
-      "discoverable": "Discoverable"
+      "discoverable": "Discoverable",
+      "signal": "Signal",
+      "battery": "Battery"
     }
   },
   "calendar": {
@@ -2570,7 +2572,11 @@
       "state-change-failed": "Failed to change Bluetooth state",
       "discoverable-enabled": "Discoverable enabled",
       "discoverable-disabled": "Discoverable disabled",
-      "discoverable-change-failed": "Failed to change discoverable state"
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "confirm-code": "Confirm code {value} on the other device",
+      "display-code": "Enter code {value} on the other device",
+      "passkey-required": "Passkey required by the device",
+      "pincode-required": "PIN code required by the device"
     }
   },
   "tooltips": {
@@ -2629,6 +2635,8 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
+    "hide-unnamed-devices": "Hide unnamed devices",
+    "show-all-devices": "Show all devices",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",
@@ -2669,8 +2677,10 @@
       "internet-connected": "Internet connected",
       "internet-limited": "No internet",
       "link-speed": "Link speed",
+      "ipv4": "IPv4",
       "gateway": "Gateway",
-      "dns": "DNS"
+      "dns": "DNS",
+      "internet": "Internet"
     }
   },
   "wallpaper": {

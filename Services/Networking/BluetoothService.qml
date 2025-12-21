@@ -49,6 +49,156 @@ Singleton {
     Logger.i("Bluetooth", "Service started");
   }
 
+  // --- Bluetooth Agent ---
+  // Registers an authentication agent with BlueZ so pairing that requires
+  // user interaction (numeric comparison, passkey, etc.) can complete.
+  // Note: We keep the first implementation minimal to unblock common cases
+  // (numeric comparison). A richer UI prompt can be added later.
+  // The Quickshell Bluetooth module provides the Agent type and handlers.
+
+  // Pending request context (exposed for future UI prompts)
+  property var pendingPairDevice: null
+  property string pendingPairType: ""   // "confirmation" | "passkey" | "pincode"
+  property string pendingPairPasskey: ""
+
+  // Dynamically create agent if the type exists (older Quickshell builds may not provide BluetoothAgent)
+  property var btAgent: null
+  property bool btAgentRegistered: false
+  // Track if we attempted to start an external fallback agent
+  property bool fallbackAgentAttempted: false
+
+  // Start a fallback agent using bluetoothctl when Quickshell's BluetoothAgent
+  // type is unavailable. This registers a BlueZ agent with KeyboardDisplay
+  // capability so pairing can proceed.
+  function startFallbackAgent() {
+    if (fallbackAgentAttempted)
+      return;
+    fallbackAgentAttempted = true;
+    try {
+      Logger.i("Bluetooth", "Starting fallback bluetoothctl agent (KeyboardDisplay)");
+      fallbackBluetoothctlAgent.running = true;
+    } catch (e) {
+      Logger.w("Bluetooth", "Failed to start fallback bluetoothctl agent", e);
+    }
+  }
+
+  // Force-start the fallback agent shortly after startup to guarantee
+  // BlueZ has an agent even if the dynamic QML agent is unavailable or fails.
+  Timer {
+    id: fallbackForceTimer
+    interval: 500
+    running: true
+    repeat: false
+    onTriggered: startFallbackAgent()
+  }
+
+  Component.onCompleted: {
+    try {
+      const qml = `
+import QtQuick
+import Quickshell
+import Quickshell.Bluetooth
+import qs.Commons
+import qs.Services.UI
+
+BluetoothAgent {
+  id: dynAgent
+  capability: BluetoothAgentCapability.KeyboardDisplay
+
+  onRequestConfirmation: function(device, passkey, accept, reject) {
+    try {
+      Logger.i("Bluetooth", "Agent RequestConfirmation", passkey);
+      ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.confirm-code", { value: passkey }), "bluetooth");
+      accept();
+    } catch (e) {
+      Logger.w("Bluetooth", "Agent RequestConfirmation failed", e);
+      reject();
+    }
+  }
+
+  onRequestPasskey: function(device, accept, reject) {
+    try {
+      Logger.i("Bluetooth", "Agent RequestPasskey");
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.passkey-required"));
+    } catch (e) {
+      Logger.w("Bluetooth", "Agent RequestPasskey handler error", e);
+    } finally {
+      reject();
+    }
+  }
+
+  onRequestPinCode: function(device, accept, reject) {
+    try {
+      Logger.i("Bluetooth", "Agent RequestPinCode");
+      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.pincode-required"));
+    } catch (e) {
+      Logger.w("Bluetooth", "Agent RequestPinCode handler error", e);
+    } finally {
+      reject();
+    }
+  }
+
+  onDisplayPasskey: function(device, passkey) {
+    try {
+      Logger.i("Bluetooth", "Agent DisplayPasskey", passkey);
+      ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.display-code", { value: passkey }), "bluetooth");
+    } catch (e) {
+      Logger.w("Bluetooth", "Agent DisplayPasskey handler error", e);
+    }
+  }
+
+  onAuthorizeService: function(device, uuid, accept, reject) {
+    Logger.d("Bluetooth", "Agent AuthorizeService", uuid);
+    accept();
+  }
+
+  onCancel: function() {
+    Logger.d("Bluetooth", "Agent request canceled");
+  }
+}
+`;
+      btAgent = Qt.createQmlObject(qml, root, "DynamicBluetoothAgent");
+      // Attempt to register the agent from the outer scope so we can
+      // trigger a fallback if registration fails at runtime.
+      try {
+        Bluetooth.agent = btAgent;
+        if (btAgent.register) btAgent.register();
+        Logger.i("Bluetooth", "BluetoothAgent registered (dynamic)");
+        btAgentRegistered = true;
+      } catch (regErr) {
+        Logger.w("Bluetooth", "Failed to register BluetoothAgent (dynamic)", regErr);
+        btAgentRegistered = false;
+        startFallbackAgent();
+      }
+    } catch (e) {
+      Logger.i("Bluetooth", "BluetoothAgent type appears unavailable; starting fallback agent");
+      btAgentRegistered = false;
+      startFallbackAgent();
+    }
+  }
+
+  // External fallback agent process (bt-agent or bluetoothctl)
+  Process {
+    id: fallbackBluetoothctlAgent
+    // Prefer bt-agent (if available). Otherwise, fall back to bluetoothctl
+    // and register as the default agent, keeping the session alive.
+    command: [
+      "sh", "-c",
+      "(pkill -f '^bt-agent( |$)' 2>/dev/null || true; pkill -f '^bluetoothctl( |$)' 2>/dev/null || true; " +
+      "if command -v bt-agent >/dev/null 2>&1; then exec bt-agent -c DisplayYesNo; " +
+      "else (printf 'agent off\nagent on\nagent KeyboardDisplay\ndefault-agent\n'; while sleep 3600; do :; done) | bluetoothctl; fi)"
+    ]
+    running: false
+    stdout: StdioCollector {}
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Bluetooth", "bluetoothctl agent stderr:", text.trim());
+        }
+      }
+    }
+  }
+
   Timer {
     id: discoveryTimer
     interval: 1000
@@ -273,6 +423,11 @@ Singleton {
     if (!device)
       return;
     try {
+      // If the in-app agent is not registered/available, use bluetoothctl which manages its own agent
+      if (!btAgentRegistered) {
+        pairWithBluetoothctl(device);
+        return;
+      }
       if (typeof device.pair === 'function') {
         device.pair();
       } else {
@@ -283,14 +438,56 @@ Singleton {
     } catch (e) {
       Logger.w("Bluetooth", "pairDevice failed", e);
       ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.pair-failed"));
-      // Fallback to connect if pair not supported
+      // CLI fallback: use bluetoothctl to perform pairing with an internal agent
+      // This mirrors the manual pairing flow that works for the user.
       try {
-        device.trusted = true;
-        device.connect();
-      } catch (e2) {
-        Logger.w("Bluetooth", "pairDevice connect fallback failed", e2);
-        ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.connect-failed"));
+        pairWithBluetoothctl(device);
+      } catch (e3) {
+        Logger.w("Bluetooth", "pairWithBluetoothctl failed", e3);
+        // Fallback to connect if pair not supported
+        try {
+          device.trusted = true;
+          device.connect();
+        } catch (e2) {
+          Logger.w("Bluetooth", "pairDevice connect fallback failed", e2);
+          ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.connect-failed"));
+        }
       }
+    }
+  }
+
+  // Pair using bluetoothctl which registers its own BlueZ agent internally.
+  // Useful on systems where the QML BluetoothAgent type is unavailable.
+  function pairWithBluetoothctl(device) {
+    if (!device) return;
+    var addr = "";
+    try {
+      if (device.address && device.address.length > 0) {
+        addr = device.address;
+      } else if (device.nativePath && device.nativePath.indexOf("/dev_") !== -1) {
+        // Extract MAC from nativePath like /org/bluez/hci0/dev_XX_XX_...
+        addr = device.nativePath.split("dev_")[1].replaceAll("_", ":");
+      }
+    } catch (_) {}
+    if (!addr || addr.length < 7) {
+      Logger.w("Bluetooth", "pairWithBluetoothctl: no valid address for device");
+      return;
+    }
+
+    Logger.i("Bluetooth", "pairWithBluetoothctl", addr);
+    const script = `(
+      printf 'agent DisplayYesNo\n';
+      printf 'default-agent\n';
+      printf 'pair ${addr}\n';
+      printf 'yes\n';
+      printf 'trust ${addr}\n';
+      printf 'connect ${addr}\n';
+      printf 'quit\n';
+    ) | bluetoothctl`;
+    try {
+      Quickshell.execDetached(["sh", "-c", script]);
+    } catch (e) {
+      Logger.w("Bluetooth", "execDetached bluetoothctl failed", e);
     }
   }
 
