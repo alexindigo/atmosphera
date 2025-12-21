@@ -70,7 +70,7 @@ Item {
   readonly property string cavaComponentId: "bar:mediamini:" + root.screen.name + ":" + root.section + ":" + root.sectionWidgetIndex
   readonly property bool needsCava: root.showVisualizer && root.visualizerType !== "" && root.visualizerType !== "none"
 
-  onneedsCavaChanged: {
+  onNeedsCavaChanged: {
     if (root.needsCava) {
       CavaService.registerComponent(root.cavaComponentId);
     } else {

@@ -25,7 +25,7 @@ DraggableDesktopWidget {
   visible: !isHidden
 
   // CavaService registration for visualizer
-  readonly property string cavaComponentId: "desktopmediaplayer:" + (widgetData.id || "default")
+  readonly property string cavaComponentId: "desktopmediaplayer:" + (root.screen ? root.screen.name : "unknown")
 
   onShouldShowVisualizerChanged: {
     if (root.shouldShowVisualizer) {
