@@ -62,7 +62,8 @@ Singleton {
                                     "allowUserSettings": true,
                                     "showBackground": true,
                                     "visualizerType": "linear",
-                                    "hideMode": "visible"
+                                    "hideMode": "visible",
+                                    "showButtons": true
                                   },
                                   "Weather": {
                                     "allowUserSettings": true,

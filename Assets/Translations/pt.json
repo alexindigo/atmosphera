@@ -1445,6 +1445,10 @@
           "description": "Mostrar o contêiner de fundo para o widget do reprodutor de mídia.",
           "label": "Mostrar plano de fundo"
         },
+        "show-buttons": {
+          "description": "Mostrar botões de controle de mídia (reproduzir/pausar, anterior, próximo) no widget do reprodutor de mídia.",
+          "label": "Mostrar botões"
+        },
         "visualizer-type": {
           "description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
           "label": "Tipo de visualização"

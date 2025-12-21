@@ -1445,6 +1445,10 @@
           "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
           "label": "Toon achtergrond"
         },
+        "show-buttons": {
+          "description": "Toon mediabesturingsknoppen (afspelen/pauzeren, vorige, volgende) op de mediaspeler-widget.",
+          "label": "Knoppen weergeven"
+        },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
           "label": "Visualisatietype"

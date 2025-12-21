@@ -1445,6 +1445,10 @@
           "description": "Show the background container for the media player widget.",
           "label": "Show background"
         },
+        "show-buttons": {
+          "description": "Show media control buttons (play/pause, previous, next) on the media player widget.",
+          "label": "Show buttons"
+        },
         "visualizer-type": {
           "description": "Choose a visualization type for the desktop media player background.",
           "label": "Visualization type"

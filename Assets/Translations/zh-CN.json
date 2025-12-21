@@ -1445,6 +1445,10 @@
           "description": "显示媒体播放器小部件的背景容器。",
           "label": "显示背景"
         },
+        "show-buttons": {
+          "description": "在媒体播放器小部件上显示媒体控制按钮（播放/暂停、上一个、下一个）。",
+          "label": "显示按钮"
+        },
         "visualizer-type": {
           "description": "选择桌面媒体播放器的背景可视化类型。",
           "label": "可视化类型"

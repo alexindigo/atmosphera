@@ -1445,6 +1445,10 @@
           "description": "Medya oynatıcı widget'ı için arka plan konteynerini göster.",
           "label": "Arka planı göster"
         },
+        "show-buttons": {
+          "description": "Medya oynatıcı widget'ında medya kontrol düğmelerini (oynat/durdur, önceki, sonraki) göster.",
+          "label": "Düğmeleri göster"
+        },
         "visualizer-type": {
           "description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
           "label": "Görselleştirme türü"

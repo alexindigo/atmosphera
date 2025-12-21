@@ -1445,6 +1445,10 @@
           "description": "Mostrar el contenedor de fondo para el widget del reproductor multimedia.",
           "label": "Mostrar fondo"
         },
+        "show-buttons": {
+          "description": "Mostrar botones de control de medios (reproducir/pausar, anterior, siguiente) en el widget del reproductor multimedia.",
+          "label": "Mostrar botones"
+        },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para el fondo del reproductor multimedia de escritorio.",
           "label": "Tipo de visualización"

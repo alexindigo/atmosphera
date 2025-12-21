@@ -1445,6 +1445,10 @@
           "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
           "label": "Hintergrund anzeigen"
         },
+        "show-buttons": {
+          "description": "Mediensteuerungstasten (Wiedergabe/Pause, Zurück, Weiter) im Media-Player-Widget anzeigen.",
+          "label": "Tasten anzeigen"
+        },
         "visualizer-type": {
           "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
           "label": "Visualisierungsart"
