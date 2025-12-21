@@ -24,6 +24,27 @@ DraggableDesktopWidget {
   readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !Settings.data.desktopWidgets.editMode
   visible: !isHidden
 
+  // CavaService registration for visualizer
+  readonly property string cavaComponentId: "desktopmediaplayer:" + (widgetData.id || "default")
+
+  onShouldShowVisualizerChanged: {
+    if (root.shouldShowVisualizer) {
+      CavaService.registerComponent(root.cavaComponentId);
+    } else {
+      CavaService.unregisterComponent(root.cavaComponentId);
+    }
+  }
+
+  Component.onCompleted: {
+    if (root.shouldShowVisualizer) {
+      CavaService.registerComponent(root.cavaComponentId);
+    }
+  }
+
+  Component.onDestruction: {
+    CavaService.unregisterComponent(root.cavaComponentId);
+  }
+
   readonly property bool showPrev: hasPlayer && MediaService.canGoPrevious
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
   readonly property int visibleButtonCount: 1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)
