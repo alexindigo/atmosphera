@@ -29,6 +29,7 @@ Singleton {
   property real rxSpeed: 0
   property real txSpeed: 0
   property real zfsArcSizeKb: 0 // ZFS ARC cache size in KB
+  property real zfsArcCminKb: 0 // ZFS ARC minimum (non-reclaimable) size in KB
 
   // Internal state for CPU calculation
   property var prevCpuStats: null
@@ -216,8 +217,9 @@ Singleton {
     printErrors: false
     onLoaded: parseZfsArcStats(text())
     onLoadFailed: {
-      // File doesn't exist (non-ZFS system), set ARC size to 0
+      // File doesn't exist (non-ZFS system), set ARC values to 0
       root.zfsArcSizeKb = 0;
+      root.zfsArcCminKb = 0;
     }
   }
 
@@ -475,18 +477,39 @@ Singleton {
     const lines = text.split('\n');
 
     // The file format is: name type data
-    // We need to find the line with "size" and extract the value (third column)
+    // We need to find the lines with "size" and "c_min" and extract the values (third column)
+    let foundSize = false;
+    let foundCmin = false;
+
     for (const line of lines) {
       const parts = line.trim().split(/\s+/);
-      if (parts.length >= 3 && parts[0] === 'size') {
-        // The value is in bytes, convert to KB
-        const arcSizeBytes = parseInt(parts[2]) || 0;
-        root.zfsArcSizeKb = Math.floor(arcSizeBytes / 1024);
-        return;
+      if (parts.length >= 3) {
+        if (parts[0] === 'size') {
+          // The value is in bytes, convert to KB
+          const arcSizeBytes = parseInt(parts[2]) || 0;
+          root.zfsArcSizeKb = Math.floor(arcSizeBytes / 1024);
+          foundSize = true;
+        } else if (parts[0] === 'c_min') {
+          // The value is in bytes, convert to KB
+          const arcCminBytes = parseInt(parts[2]) || 0;
+          root.zfsArcCminKb = Math.floor(arcCminBytes / 1024);
+          foundCmin = true;
+        }
+
+        // If we found both, we can return early
+        if (foundSize && foundCmin) {
+          return;
+        }
       }
     }
-    // If size field not found, set to 0
-    root.zfsArcSizeKb = 0;
+
+    // If fields not found, set to 0
+    if (!foundSize) {
+      root.zfsArcSizeKb = 0;
+    }
+    if (!foundCmin) {
+      root.zfsArcCminKb = 0;
+    }
   }
 
   // -------------------------------------------------------
@@ -507,11 +530,10 @@ Singleton {
     }
 
     if (memTotal > 0) {
-      // Calculate usage, subtracting ZFS ARC cache if present
-      // ARC cache is still available for programs, so it shouldn't count as "used"
+      // Calculate usage, adjusting for ZFS ARC cache if present
       let usageKb = memTotal - memAvailable;
       if (root.zfsArcSizeKb > 0) {
-        usageKb = Math.max(0, usageKb - root.zfsArcSizeKb);
+        usageKb = Math.max(0, usageKb - root.zfsArcSizeKb + root.zfsArcCminKb);
       }
       root.memGb = (usageKb / 1048576).toFixed(1); // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100);
