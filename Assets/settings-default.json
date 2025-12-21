@@ -353,7 +353,6 @@
     "volumeOverdrive": false,
     "cavaFrameRate": 30,
     "visualizerType": "linear",
-    "visualizerQuality": "high",
     "mprisBlacklist": [],
     "preferredPlayer": "",
     "externalMixer": "pwvucontrol || pavucontrol"

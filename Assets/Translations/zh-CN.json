@@ -735,10 +735,6 @@
       "top_left": "左上",
       "top_right": "右上"
     },
-    "visualizer-quality": {
-      "high": "高",
-      "low": "低"
-    },
     "visualizer-types": {
       "linear": "线性",
       "mirrored": "镜像",
@@ -949,10 +945,6 @@
         "section": {
           "description": "设置您首选和要忽略的媒体应用程序。",
           "label": "媒体播放器"
-        },
-        "visualizer-quality": {
-          "description": "高质量使用更多 GPU 资源。",
-          "label": "可视化质量"
         },
         "visualizer-type": {
           "description": "选择媒体播放的可视化类型",

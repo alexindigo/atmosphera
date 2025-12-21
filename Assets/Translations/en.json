@@ -735,10 +735,6 @@
       "top_left": "Top left",
       "top_right": "Top right"
     },
-    "visualizer-quality": {
-      "high": "High",
-      "low": "Low"
-    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Mirrored",
@@ -949,10 +945,6 @@
         "section": {
           "description": "Set your preferred and ignored media applications.",
           "label": "Media players"
-        },
-        "visualizer-quality": {
-          "description": "High quality use more GPU ressources.",
-          "label": "Visualization quality"
         },
         "visualizer-type": {
           "description": "Choose a visualization type for media playback.",

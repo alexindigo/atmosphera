@@ -384,25 +384,6 @@ ColumnLayout {
     }
 
     NComboBox {
-      label: I18n.tr("settings.audio.media.visualizer-quality.label")
-      description: I18n.tr("settings.audio.media.visualizer-quality.description")
-      model: [
-        {
-          "key": "low",
-          "name": I18n.tr("options.visualizer-quality.low")
-        },
-        {
-          "key": "high",
-          "name": I18n.tr("options.visualizer-quality.high")
-        }
-      ]
-      currentKey: Settings.data.audio.visualizerQuality
-      isSettings: true
-      defaultValue: Settings.getDefaultValue("audio.visualizerQuality")
-      onSelected: key => Settings.data.audio.visualizerQuality = key
-    }
-
-    NComboBox {
       label: I18n.tr("settings.audio.media.frame-rate.label")
       description: I18n.tr("settings.audio.media.frame-rate.description")
       model: [

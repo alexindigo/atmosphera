@@ -735,10 +735,6 @@
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
     },
-    "visualizer-quality": {
-      "high": "Alto/Alta",
-      "low": "Bajo"
-    },
     "visualizer-types": {
       "linear": "Lineal",
       "mirrored": "Espejado",
@@ -949,10 +945,6 @@
         "section": {
           "description": "Establece tus aplicaciones multimedia preferidas e ignoradas.",
           "label": "Reproductores multimedia"
-        },
-        "visualizer-quality": {
-          "description": "Alta calidad usa más recursos de la GPU.",
-          "label": "Calidad de visualización"
         },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para la reproducción de medios.",

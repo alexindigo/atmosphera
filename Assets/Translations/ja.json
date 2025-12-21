@@ -735,10 +735,6 @@
       "top_left": "左上",
       "top_right": "右上"
     },
-    "visualizer-quality": {
-      "high": "高",
-      "low": "低"
-    },
     "visualizer-types": {
       "linear": "リニア",
       "mirrored": "ミラー",
@@ -949,10 +945,6 @@
         "section": {
           "description": "優先するメディアアプリや、除外設定を行います。",
           "label": "メディアプレーヤー"
-        },
-        "visualizer-quality": {
-          "description": "品質を高くすると、GPUリソースをより多く消費します。",
-          "label": "ビジュアライザーの品質"
         },
         "visualizer-type": {
           "description": "メディア再生時の視覚効果（ビジュアライザー）の種類を選択します。",

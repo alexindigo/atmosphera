@@ -735,10 +735,6 @@
       "top_left": "Linksboven",
       "top_right": "Rechtsboven"
     },
-    "visualizer-quality": {
-      "high": "Hoog",
-      "low": "Laag"
-    },
     "visualizer-types": {
       "linear": "Lineair",
       "mirrored": "Gespiegeld",
@@ -949,10 +945,6 @@
         "section": {
           "description": "Stel je favoriete en genegeerde media-applicaties in.",
           "label": "Mediaspelers"
-        },
-        "visualizer-quality": {
-          "description": "Een hogere kwaliteit gebruikt meer GPU-resources.",
-          "label": "Visualisatiekwaliteit"
         },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor mediaweergave.",
