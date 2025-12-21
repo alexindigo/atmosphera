@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import qs.Commons
+import qs.Services.UI
+import qs.Services.Noctalia
+import qs.Widgets
 
 Item {
   id: root
@@ -26,6 +29,7 @@ Item {
 
   readonly property real scaleSensitivity: 0.0015
   readonly property real scaleUpdateThreshold: 0.015
+  readonly property real cornerScaleSensitivity: 0.0003  // Much lower sensitivity for corner handles
 
   // Grid size ensures lines pass through screen center on both axes
   readonly property int gridSize: {
@@ -133,6 +137,101 @@ Item {
     }
   }
 
+  function removeWidget() {
+    if (widgetIndex < 0 || !screen || !screen.name) {
+      return;
+    }
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === screen.name) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        if (widgetIndex >= 0 && widgetIndex < widgets.length) {
+          widgets.splice(widgetIndex, 1);
+          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                 "widgets": widgets
+                                               });
+          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        }
+        break;
+      }
+    }
+  }
+
+  function openWidgetSettings() {
+    if (!widgetData || !widgetData.id || !screen) {
+      return;
+    }
+
+    var widgetId = widgetData.id;
+    var hasSettings = false;
+
+    // Check if widget has settings
+    if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
+      var pluginId = widgetId.replace("plugin:", "");
+      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      if (manifest && manifest.entryPoints && manifest.entryPoints.settings) {
+        hasSettings = true;
+      }
+    } else {
+      hasSettings = DesktopWidgetRegistry.widgetSettingsMap[widgetId] !== undefined;
+    }
+
+    if (!hasSettings) {
+      Logger.w("DraggableDesktopWidget", "Widget does not have settings:", widgetId);
+      return;
+    }
+
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (!popupMenuWindow) {
+      Logger.e("DraggableDesktopWidget", "No popup menu window found for screen");
+      return;
+    }
+
+    var component = Qt.createComponent(Quickshell.shellDir + "/Modules/Panels/Settings/DesktopWidgets/DesktopWidgetSettingsDialog.qml");
+
+    function instantiateAndOpen() {
+      var dialog = component.createObject(popupMenuWindow.dialogParent, {
+                                            "widgetIndex": widgetIndex,
+                                            "widgetData": widgetData,
+                                            "widgetId": widgetId,
+                                            "sectionId": screen.name
+                                          });
+
+      if (dialog) {
+        dialog.updateWidgetSettings.connect((sec, idx, settings) => {
+                                              root.updateWidgetData(settings);
+                                            });
+        popupMenuWindow.hasDialog = true;
+        dialog.closed.connect(() => {
+                                popupMenuWindow.hasDialog = false;
+                                popupMenuWindow.close();
+                                dialog.destroy();
+                              });
+        popupMenuWindow.open();
+        dialog.open();
+      } else {
+        Logger.e("DraggableDesktopWidget", "Failed to create widget settings dialog");
+      }
+    }
+
+    if (component.status === Component.Ready) {
+      instantiateAndOpen();
+    } else if (component.status === Component.Error) {
+      Logger.e("DraggableDesktopWidget", "Error loading settings dialog component:", component.errorString());
+    } else {
+      component.statusChanged.connect(() => {
+                                      if (component.status === Component.Ready) {
+                                        instantiateAndOpen();
+                                      } else if (component.status === Component.Error) {
+                                        Logger.e("DraggableDesktopWidget", "Error loading settings dialog component:", component.errorString());
+                                      }
+                                    });
+    }
+  }
+
   x: internal.isDragging ? internal.dragOffsetX : internal.baseX
   y: internal.isDragging ? internal.dragOffsetY : internal.baseY
 
@@ -210,26 +309,66 @@ Item {
     z: 1
   }
 
-  // Drag and Scale MouseArea - handles both dragging (left-click) and scaling (right-click)
+  // Context menu for right-click
+  NPopupContextMenu {
+    id: contextMenu
+    visible: false
+
+    property bool hasSettings: {
+      if (!widgetData || !widgetData.id) {
+        return false;
+      }
+      var widgetId = widgetData.id;
+      if (DesktopWidgetRegistry.isPluginWidget(widgetId)) {
+        var pluginId = widgetId.replace("plugin:", "");
+        var manifest = PluginRegistry.getPluginManifest(pluginId);
+        return manifest && manifest.entryPoints && manifest.entryPoints.settings;
+      }
+      return DesktopWidgetRegistry.widgetSettingsMap[widgetId] !== undefined;
+    }
+
+    model: {
+      var items = [];
+      if (contextMenu.hasSettings) {
+        items.push({
+                     "label": I18n.tr("context-menu.widget-settings"),
+                     "action": "widget-settings",
+                     "icon": "settings"
+                   });
+      }
+      items.push({
+                   "label": I18n.tr("context-menu.delete"),
+                   "action": "delete",
+                   "icon": "trash"
+                 });
+      return items;
+    }
+
+    onTriggered: (action, item) => {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.close();
+                   }
+
+                   if (action === "widget-settings") {
+                     root.openWidgetSettings();
+                   } else if (action === "delete") {
+                     root.removeWidget();
+                   }
+                 }
+  }
+
+  // Drag MouseArea - handles dragging (left-click)
   MouseArea {
-    id: interactionArea
+    id: dragArea
     anchors.fill: parent
     z: 1000
     visible: Settings.data.desktopWidgets.editMode
-    cursorShape: {
-      if (internal.isDragging)
-        return Qt.ClosedHandCursor;
-      if (internal.isScaling)
-        return Qt.SizeAllCursor;
-      // Change cursor based on which button user is likely to press
-      // Right mouse button for scaling, left for dragging
-      return Qt.OpenHandCursor;
-    }
+    cursorShape: internal.isDragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor
     hoverEnabled: true
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    acceptedButtons: Qt.LeftButton
 
     property point pressPos: Qt.point(0, 0)
-    property real initialScale: 1.0
 
     onPressed: mouse => {
                  // Prevent starting new operation if one is already in progress
@@ -238,21 +377,10 @@ Item {
                  }
 
                  pressPos = Qt.point(mouse.x, mouse.y);
-
-                 if (mouse.button === Qt.LeftButton) {
-                   internal.operationType = "drag";
-                   internal.dragOffsetX = root.x;
-                   internal.dragOffsetY = root.y;
-                   internal.isDragging = true;
-                 } else if (mouse.button === Qt.RightButton) {
-                   internal.operationType = "scale";
-                   internal.isScaling = true;
-                   internal.initialWidth = root.width;
-                   internal.initialHeight = root.height;
-                   internal.initialMousePos = Qt.point(mouse.x, mouse.y);
-                   internal.initialScale = root.widgetScale;
-                   internal.lastScale = root.widgetScale;
-                 }
+                 internal.operationType = "drag";
+                 internal.dragOffsetX = root.x;
+                 internal.dragOffsetY = root.y;
+                 internal.isDragging = true;
                }
 
     onPositionChanged: mouse => {
@@ -287,24 +415,6 @@ Item {
 
                            internal.dragOffsetX = newX;
                            internal.dragOffsetY = newY;
-                         } else if (internal.isScaling && pressed && internal.operationType === "scale") {
-                           var dx = mouse.x - internal.initialMousePos.x;
-                           var dy = mouse.y - internal.initialMousePos.y;
-
-                           // Use primary direction of movement to determine scale change
-                           var primaryMovement = (Math.abs(dx) > Math.abs(dy)) ? dx : dy;
-
-                           // Scale change relative to initial widget size ensures consistent behavior
-                           var scaleChange = primaryMovement * root.scaleSensitivity;
-
-                           // Add to last applied scale (not initial) to allow smooth continuous scaling
-                           var newScale = Math.max(minScale, Math.min(maxScale, internal.lastScale + scaleChange));
-
-                           // Apply smoothing threshold to prevent rapid changes
-                           if (Math.abs(root.widgetScale - newScale) > root.scaleUpdateThreshold && !isNaN(newScale) && newScale > 0) {
-                             root.widgetScale = newScale;
-                             internal.lastScale = newScale;
-                           }
                          }
                        }
 
@@ -320,23 +430,404 @@ Item {
                     internal.centerX = internal.baseX + root.width / 2;
                     internal.isDragging = false;
                     internal.operationType = "";
-                  } else if (internal.isScaling && internal.operationType === "scale") {
-                    root.updateWidgetData({
-                                            "scale": root.widgetScale
-                                          });
-
-                    internal.isScaling = false;
-                    internal.operationType = "";
-                    internal.lastScale = root.widgetScale;
                   }
                 }
 
     onCanceled: {
       internal.isDragging = false;
-      internal.isScaling = false;
       internal.operationType = "";
-      // Sync lastScale when operation is canceled to prevent drift
-      internal.lastScale = root.widgetScale;
+    }
+  }
+
+  // Right-click MouseArea for context menu
+  MouseArea {
+    id: contextMenuArea
+    anchors.fill: parent
+    z: 1001
+    visible: Settings.data.desktopWidgets.editMode
+    acceptedButtons: Qt.RightButton
+    hoverEnabled: true
+
+    onPressed: mouse => {
+                 if (mouse.button === Qt.RightButton) {
+                   var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+                   if (popupMenuWindow) {
+                     popupMenuWindow.showContextMenu(contextMenu);
+                     contextMenu.openAtItem(root, screen);
+                   }
+                 }
+               }
+  }
+
+  // Corner handles for scaling
+  readonly property real cornerHandleSize: 12
+  readonly property real outlineMargin: Style.marginS
+
+  // Top-left corner
+  Canvas {
+    id: topLeftHandle
+    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+    x: -outlineMargin
+    y: -outlineMargin
+    width: cornerHandleSize
+    height: cornerHandleSize
+    z: 2000
+
+    onPaint: {
+      var ctx = getContext("2d");
+      ctx.reset();
+      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(cornerHandleSize, 0);
+      ctx.lineTo(0, cornerHandleSize);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    Component.onCompleted: requestPaint()
+    onVisibleChanged: if (visible) requestPaint()
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.LeftButton
+      cursorShape: Qt.SizeFDiagCursor
+      property point pressPos: Qt.point(0, 0)
+      property real initialScale: 1.0
+
+      onPressed: mouse => {
+                   if (internal.operationType !== "") {
+                     return;
+                   }
+                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+                   internal.operationType = "scale";
+                   internal.isScaling = true;
+                   internal.initialScale = root.widgetScale;
+                   internal.lastScale = root.widgetScale;
+                 }
+
+      onPositionChanged: mouse => {
+                           if (internal.isScaling && pressed && internal.operationType === "scale") {
+                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+                             // Calculate diagonal distance from opposite corner (bottom-right)
+                             var oppositeCornerX = root.x + root.width * root.widgetScale;
+                             var oppositeCornerY = root.y + root.height * root.widgetScale;
+                             var initialDistance = Math.sqrt(
+                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
+                               Math.pow(pressPos.y - oppositeCornerY, 2)
+                             );
+                             var currentDistance = Math.sqrt(
+                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
+                               Math.pow(currentPos.y - oppositeCornerY, 2)
+                             );
+                             
+                             if (initialDistance > 0) {
+                               var scaleRatio = currentDistance / initialDistance;
+                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               
+                               if (!isNaN(newScale) && newScale > 0) {
+                                 root.widgetScale = newScale;
+                                 internal.lastScale = newScale;
+                               }
+                             }
+                           }
+                         }
+
+      onReleased: mouse => {
+                    if (internal.isScaling && internal.operationType === "scale") {
+                      root.updateWidgetData({
+                                              "scale": root.widgetScale
+                                            });
+                      internal.isScaling = false;
+                      internal.operationType = "";
+                      internal.lastScale = root.widgetScale;
+                    }
+                  }
+
+      onCanceled: {
+        internal.isScaling = false;
+        internal.operationType = "";
+        internal.lastScale = root.widgetScale;
+      }
+    }
+  }
+
+  // Top-right corner
+  Canvas {
+    id: topRightHandle
+    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+    x: root.width + outlineMargin - cornerHandleSize
+    y: -outlineMargin
+    width: cornerHandleSize
+    height: cornerHandleSize
+    z: 2000
+
+    onPaint: {
+      var ctx = getContext("2d");
+      ctx.reset();
+      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(cornerHandleSize, 0);
+      ctx.lineTo(cornerHandleSize, cornerHandleSize);
+      ctx.lineTo(0, 0);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    Component.onCompleted: requestPaint()
+    onVisibleChanged: if (visible) requestPaint()
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.LeftButton
+      cursorShape: Qt.SizeBDiagCursor
+      property point pressPos: Qt.point(0, 0)
+      property real initialScale: 1.0
+
+      onPressed: mouse => {
+                   if (internal.operationType !== "") {
+                     return;
+                   }
+                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+                   internal.operationType = "scale";
+                   internal.isScaling = true;
+                   internal.initialScale = root.widgetScale;
+                   internal.lastScale = root.widgetScale;
+                 }
+
+      onPositionChanged: mouse => {
+                           if (internal.isScaling && pressed && internal.operationType === "scale") {
+                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+                             // Calculate diagonal distance from opposite corner (bottom-left)
+                             var oppositeCornerX = root.x;
+                             var oppositeCornerY = root.y + root.height * root.widgetScale;
+                             var initialDistance = Math.sqrt(
+                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
+                               Math.pow(pressPos.y - oppositeCornerY, 2)
+                             );
+                             var currentDistance = Math.sqrt(
+                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
+                               Math.pow(currentPos.y - oppositeCornerY, 2)
+                             );
+                             
+                             if (initialDistance > 0) {
+                               var scaleRatio = currentDistance / initialDistance;
+                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               
+                               if (!isNaN(newScale) && newScale > 0) {
+                                 root.widgetScale = newScale;
+                                 internal.lastScale = newScale;
+                               }
+                             }
+                           }
+                         }
+
+      onReleased: mouse => {
+                    if (internal.isScaling && internal.operationType === "scale") {
+                      root.updateWidgetData({
+                                              "scale": root.widgetScale
+                                            });
+                      internal.isScaling = false;
+                      internal.operationType = "";
+                      internal.lastScale = root.widgetScale;
+                    }
+                  }
+
+      onCanceled: {
+        internal.isScaling = false;
+        internal.operationType = "";
+        internal.lastScale = root.widgetScale;
+      }
+    }
+  }
+
+  // Bottom-left corner
+  Canvas {
+    id: bottomLeftHandle
+    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+    x: -outlineMargin
+    y: root.height + outlineMargin - cornerHandleSize
+    width: cornerHandleSize
+    height: cornerHandleSize
+    z: 2000
+
+    onPaint: {
+      var ctx = getContext("2d");
+      ctx.reset();
+      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(0, cornerHandleSize);
+      ctx.lineTo(0, 0);
+      ctx.lineTo(cornerHandleSize, cornerHandleSize);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    Component.onCompleted: requestPaint()
+    onVisibleChanged: if (visible) requestPaint()
+
+    Connections {
+      target: root
+      function onWidthChanged() { if (bottomLeftHandle.visible) bottomLeftHandle.requestPaint() }
+      function onHeightChanged() { if (bottomLeftHandle.visible) bottomLeftHandle.requestPaint() }
+    }
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.LeftButton
+      cursorShape: Qt.SizeBDiagCursor
+      property point pressPos: Qt.point(0, 0)
+      property real initialScale: 1.0
+
+      onPressed: mouse => {
+                   if (internal.operationType !== "") {
+                     return;
+                   }
+                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+                   internal.operationType = "scale";
+                   internal.isScaling = true;
+                   internal.initialScale = root.widgetScale;
+                   internal.lastScale = root.widgetScale;
+                 }
+
+      onPositionChanged: mouse => {
+                           if (internal.isScaling && pressed && internal.operationType === "scale") {
+                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+                             // Calculate diagonal distance from opposite corner (top-right)
+                             var oppositeCornerX = root.x + root.width * root.widgetScale;
+                             var oppositeCornerY = root.y;
+                             var initialDistance = Math.sqrt(
+                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
+                               Math.pow(pressPos.y - oppositeCornerY, 2)
+                             );
+                             var currentDistance = Math.sqrt(
+                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
+                               Math.pow(currentPos.y - oppositeCornerY, 2)
+                             );
+                             
+                             if (initialDistance > 0) {
+                               var scaleRatio = currentDistance / initialDistance;
+                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               
+                               if (!isNaN(newScale) && newScale > 0) {
+                                 root.widgetScale = newScale;
+                                 internal.lastScale = newScale;
+                               }
+                             }
+                           }
+                         }
+
+      onReleased: mouse => {
+                    if (internal.isScaling && internal.operationType === "scale") {
+                      root.updateWidgetData({
+                                              "scale": root.widgetScale
+                                            });
+                      internal.isScaling = false;
+                      internal.operationType = "";
+                      internal.lastScale = root.widgetScale;
+                    }
+                  }
+
+      onCanceled: {
+        internal.isScaling = false;
+        internal.operationType = "";
+        internal.lastScale = root.widgetScale;
+      }
+    }
+  }
+
+  // Bottom-right corner
+  Canvas {
+    id: bottomRightHandle
+    visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+    x: root.width + outlineMargin - cornerHandleSize
+    y: root.height + outlineMargin - cornerHandleSize
+    width: cornerHandleSize
+    height: cornerHandleSize
+    z: 2000
+
+    onPaint: {
+      var ctx = getContext("2d");
+      ctx.reset();
+      ctx.fillStyle = Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.7);
+      ctx.beginPath();
+      ctx.moveTo(cornerHandleSize, cornerHandleSize);
+      ctx.lineTo(cornerHandleSize, 0);
+      ctx.lineTo(0, cornerHandleSize);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    Component.onCompleted: requestPaint()
+    onVisibleChanged: if (visible) requestPaint()
+
+    Connections {
+      target: root
+      function onWidthChanged() { if (bottomRightHandle.visible) bottomRightHandle.requestPaint() }
+      function onHeightChanged() { if (bottomRightHandle.visible) bottomRightHandle.requestPaint() }
+    }
+
+    MouseArea {
+      anchors.fill: parent
+      acceptedButtons: Qt.LeftButton
+      cursorShape: Qt.SizeFDiagCursor
+      property point pressPos: Qt.point(0, 0)
+      property real initialScale: 1.0
+
+      onPressed: mouse => {
+                   if (internal.operationType !== "") {
+                     return;
+                   }
+                   pressPos = mapToItem(root.parent, mouse.x, mouse.y);
+                   internal.operationType = "scale";
+                   internal.isScaling = true;
+                   internal.initialScale = root.widgetScale;
+                   internal.lastScale = root.widgetScale;
+                 }
+
+      onPositionChanged: mouse => {
+                           if (internal.isScaling && pressed && internal.operationType === "scale") {
+                             var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
+                             // Calculate diagonal distance from opposite corner (top-left)
+                             var oppositeCornerX = root.x;
+                             var oppositeCornerY = root.y;
+                             var initialDistance = Math.sqrt(
+                               Math.pow(pressPos.x - oppositeCornerX, 2) + 
+                               Math.pow(pressPos.y - oppositeCornerY, 2)
+                             );
+                             var currentDistance = Math.sqrt(
+                               Math.pow(currentPos.x - oppositeCornerX, 2) + 
+                               Math.pow(currentPos.y - oppositeCornerY, 2)
+                             );
+                             
+                             if (initialDistance > 0) {
+                               var scaleRatio = currentDistance / initialDistance;
+                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               
+                               if (!isNaN(newScale) && newScale > 0) {
+                                 root.widgetScale = newScale;
+                                 internal.lastScale = newScale;
+                               }
+                             }
+                           }
+                         }
+
+      onReleased: mouse => {
+                    if (internal.isScaling && internal.operationType === "scale") {
+                      root.updateWidgetData({
+                                              "scale": root.widgetScale
+                                            });
+                      internal.isScaling = false;
+                      internal.operationType = "";
+                      internal.lastScale = root.widgetScale;
+                    }
+                  }
+
+      onCanceled: {
+        internal.isScaling = false;
+        internal.operationType = "";
+        internal.lastScale = root.widgetScale;
+      }
     }
   }
 }

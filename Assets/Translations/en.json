@@ -527,6 +527,7 @@
     "close-app": "Close {app}",
     "connect-vpn": "Connect to {name}",
     "cycle-visualizer": "Cycle visualizer",
+    "delete": "Delete",
     "disable-bluetooth": "Disable Bluetooth",
     "disable-dnd": "Disable Do Not Disturb",
     "disable-wifi": "Disable Wi-Fi",
