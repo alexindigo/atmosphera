@@ -600,6 +600,7 @@ ColumnLayout {
   // Add source dialog
   Popup {
     id: addSourceDialog
+    parent: Overlay.overlay
     modal: true
     dim: false
     anchors.centerIn: parent
@@ -673,6 +674,7 @@ ColumnLayout {
   // Uninstall confirmation dialog
   Popup {
     id: uninstallDialog
+    parent: Overlay.overlay
     modal: true
     dim: false
     anchors.centerIn: parent
