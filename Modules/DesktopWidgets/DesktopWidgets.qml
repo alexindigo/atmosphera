@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Compositor
 import qs.Services.Noctalia
 import qs.Services.Power
@@ -266,12 +267,28 @@ Variants {
             return Style.barHeight + floatMarginH + Style.marginM;
           }
 
-          anchors {
-            top: parent.top
-            right: parent.right
-            topMargin: barOffsetTop
-            rightMargin: barOffsetRight
+          // Internal state for drag tracking (session-only, resets on restart)
+          QtObject {
+            id: panelInternal
+            property bool isDragging: false
+            property real dragOffsetX: 0
+            property real dragOffsetY: 0
+            // Default position: top-right corner accounting for bar
+            property real baseX: widgetsContainer.width - editModeControlsPanel.width - editModeControlsPanel.barOffsetRight
+            property real baseY: editModeControlsPanel.barOffsetTop
           }
+
+          // Reset position when bar position changes
+          Connections {
+            target: Settings.data.bar
+            function onPositionChanged() {
+              panelInternal.baseX = widgetsContainer.width - editModeControlsPanel.width - editModeControlsPanel.barOffsetRight;
+              panelInternal.baseY = editModeControlsPanel.barOffsetTop;
+            }
+          }
+
+          x: panelInternal.isDragging ? panelInternal.dragOffsetX : panelInternal.baseX
+          y: panelInternal.isDragging ? panelInternal.dragOffsetY : panelInternal.baseY
 
           width: controlsLayout.implicitWidth + (Style.marginXL * 2)
           height: controlsLayout.implicitHeight + (Style.marginXL * 2)
@@ -284,6 +301,52 @@ Variants {
           }
           z: 9999
 
+          // Drag area for relocating the panel
+          MouseArea {
+            id: dragArea
+            anchors.fill: parent
+            cursorShape: panelInternal.isDragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+
+            property point pressPos: Qt.point(0, 0)
+
+            onPressed: mouse => {
+                         pressPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
+                         panelInternal.dragOffsetX = editModeControlsPanel.x;
+                         panelInternal.dragOffsetY = editModeControlsPanel.y;
+                         panelInternal.isDragging = true;
+                       }
+
+            onPositionChanged: mouse => {
+                                 if (panelInternal.isDragging && pressed) {
+                                   var currentPos = mapToItem(widgetsContainer, mouse.x, mouse.y);
+                                   var deltaX = currentPos.x - pressPos.x;
+                                   var deltaY = currentPos.y - pressPos.y;
+
+                                   var newX = panelInternal.baseX + deltaX;
+                                   var newY = panelInternal.baseY + deltaY;
+
+                                   // Boundary clamping
+                                   newX = Math.max(0, Math.min(newX, widgetsContainer.width - editModeControlsPanel.width));
+                                   newY = Math.max(0, Math.min(newY, widgetsContainer.height - editModeControlsPanel.height));
+
+                                   panelInternal.dragOffsetX = newX;
+                                   panelInternal.dragOffsetY = newY;
+                                 }
+                               }
+
+            onReleased: {
+              if (panelInternal.isDragging) {
+                panelInternal.baseX = panelInternal.dragOffsetX;
+                panelInternal.baseY = panelInternal.dragOffsetY;
+                panelInternal.isDragging = false;
+              }
+            }
+
+            onCanceled: {
+              panelInternal.isDragging = false;
+            }
+          }
+
           ColumnLayout {
             id: controlsLayout
             anchors {
@@ -292,14 +355,34 @@ Variants {
             }
             spacing: Style.marginL
 
-            NButton {
+            RowLayout {
               Layout.alignment: Qt.AlignRight
-              text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
-              icon: "logout"
-              outlined: false
-              fontSize: Style.fontSizeM * 1.1
-              iconSize: Style.fontSizeL * 1.1
-              onClicked: Settings.data.desktopWidgets.editMode = false
+              spacing: Style.marginS
+
+              NIconButton {
+                icon: "settings"
+                tooltipText: I18n.tr("settings.desktop-widgets.edit-mode.open-settings")
+                onClicked: {
+                  if (Settings.data.ui.settingsPanelMode === "window") {
+                    SettingsPanelService.toggleWindow(SettingsPanel.Tab.DesktopWidgets);
+                  } else {
+                    var settingsPanel = PanelService.getPanel("settingsPanel", screenLoader.modelData);
+                    if (settingsPanel) {
+                      settingsPanel.requestedTab = SettingsPanel.Tab.DesktopWidgets;
+                      settingsPanel.toggle();
+                    }
+                  }
+                }
+              }
+
+              NButton {
+                text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
+                icon: "logout"
+                outlined: false
+                fontSize: Style.fontSizeM * 1.1
+                iconSize: Style.fontSizeL * 1.1
+                onClicked: Settings.data.desktopWidgets.editMode = false
+              }
             }
 
             NText {
