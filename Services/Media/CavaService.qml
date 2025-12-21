@@ -12,26 +12,26 @@ Singleton {
   // Register a component that needs audio data, call this when a visualizer becomes active.
   // Pass a unique identifier (e.g., "lockscreen", "controlcenter:screen1", "plugin:fancy-audiovisualizer")
   function registerComponent(componentId) {
-    root._registeredComponents[componentId] = true;
-    root._registeredComponents = Object.assign({}, root._registeredComponents);
+    root.registeredComponents[componentId] = true;
+    root.registeredComponents = Object.assign({}, root.registeredComponents);
     Logger.d("Cava", "Component registered:", componentId, "- total:", root.registeredCount);
   }
 
   // Unregister a component when it no longer needs audio data.
   function unregisterComponent(componentId) {
-    delete root._registeredComponents[componentId];
-    root._registeredComponents = Object.assign({}, root._registeredComponents);
+    delete root.registeredComponents[componentId];
+    root.registeredComponents = Object.assign({}, root.registeredComponents);
     Logger.d("Cava", "Component unregistered:", componentId, "- total:", root.registeredCount);
   }
 
   // Check if a component is registered
   function isRegistered(componentId) {
-    return root._registeredComponents[componentId] === true;
+    return root.registeredComponents[componentId] === true;
   }
 
   // Component registration - any component needing audio data registers here
-  property var _registeredComponents: ({})
-  readonly property int registeredCount: Object.keys(_registeredComponents).length
+  property var registeredComponents: ({})
+  readonly property int registeredCount: Object.keys(registeredComponents).length
   property bool shouldRun: registeredCount > 0
 
   property var values: []
