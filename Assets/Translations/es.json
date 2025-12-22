@@ -1381,10 +1381,6 @@
           "label": "Modo minimalista"
         },
         "preview": "Vista previa",
-        "section": {
-          "description": "Configurar la apariencia del widget de reloj.",
-          "label": "Widget de reloj"
-        },
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget de reloj.",
           "label": "Mostrar fondo"
@@ -1450,10 +1446,6 @@
           "description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
           "label": "Modo de ocultación"
         },
-        "section": {
-          "description": "Configurar la apariencia del widget del reproductor multimedia.",
-          "label": "Widget de reproductor multimedia"
-        },
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget del reproductor multimedia.",
           "label": "Mostrar fondo"
@@ -1477,19 +1469,9 @@
           "description": "Mostrar un widget del clima en el escritorio.",
           "label": "Activar widget del clima"
         },
-        "section": {
-          "description": "Configurar la apariencia del widget del clima.",
-          "label": "Widget del tiempo"
-        },
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget del clima.",
           "label": "Mostrar fondo"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Añadir y configurar widgets de escritorio",
-          "label": "Widgets de escritorio"
         }
       }
     },

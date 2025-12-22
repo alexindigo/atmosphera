@@ -1383,10 +1383,6 @@
           "label": "Minimal mode"
         },
         "preview": "Preview",
-        "section": {
-          "description": "Configure the clock widget appearance.",
-          "label": "Clock Widget"
-        },
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
@@ -1440,7 +1436,7 @@
       "general": {
         "section": {
           "description": "Configure widgets that appear on your desktop.",
-          "label": "Desktop Widgets"
+          "label": "Desktop widgets"
         }
       },
       "media-player": {
@@ -1451,10 +1447,6 @@
         "hide-mode": {
           "description": "Controls how the widget behaves when no media is playing.",
           "label": "Hiding mode"
-        },
-        "section": {
-          "description": "Configure the media player widget appearance.",
-          "label": "Media Player Widget"
         },
         "show-background": {
           "description": "Show the background container for the media player widget.",
@@ -1479,19 +1471,9 @@
           "description": "Show a weather widget on the desktop.",
           "label": "Enable weather widget"
         },
-        "section": {
-          "description": "Configure the weather widget appearance.",
-          "label": "Weather Widget"
-        },
         "show-background": {
           "description": "Show the background container for the weather widget.",
           "label": "Show background"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Add and configure desktop widgets",
-          "label": "Desktop Widgets"
         }
       }
     },

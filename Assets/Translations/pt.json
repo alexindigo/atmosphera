@@ -1381,10 +1381,6 @@
           "label": "Modo minimalista"
         },
         "preview": "Pré-visualização",
-        "section": {
-          "description": "Configurar a aparência do widget de relógio.",
-          "label": "Widget de Relógio"
-        },
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget de relógio.",
           "label": "Mostrar plano de fundo"
@@ -1450,10 +1446,6 @@
           "description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
           "label": "Modo de ocultação"
         },
-        "section": {
-          "description": "Configurar a aparência do widget do reprodutor de mídia.",
-          "label": "Widget do Reprodutor de Mídia"
-        },
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget do reprodutor de mídia.",
           "label": "Mostrar plano de fundo"
@@ -1477,19 +1469,9 @@
           "description": "Mostrar um widget de clima na área de trabalho.",
           "label": "Ativar widget de clima"
         },
-        "section": {
-          "description": "Configure a aparência do widget de clima.",
-          "label": "Widget do Clima"
-        },
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget de clima.",
           "label": "Mostrar plano de fundo"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Adicionar e configurar widgets da área de trabalho",
-          "label": "Widgets da Área de Trabalho"
         }
       }
     },
