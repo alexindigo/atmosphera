@@ -595,6 +595,18 @@ ColumnLayout {
       }
 
       NCheckbox {
+        label: "Hyprland"
+        description: I18n.tr("settings.color-scheme.templates.compositors.hyprland.description", {
+                               "filepath": "~/.config/hypr/noctalia/noctalia-colors.conf"
+                             })
+        checked: Settings.data.templates.hyprland
+        onToggled: checked => {
+                     Settings.data.templates.hyprland = checked;
+                     AppThemeService.generate();
+                   }
+      }
+
+      NCheckbox {
         label: "Mango"
         description: I18n.tr("settings.color-scheme.templates.compositors.mango.description", {
                                "filepath": "~/.config/mango/noctalia.conf"

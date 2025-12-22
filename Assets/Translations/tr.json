@@ -1167,6 +1167,9 @@
           },
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir"
+          },
+          "hyprland": {
+            "description": "{filepath} dosyasına yaz."
           }
         },
         "misc": {

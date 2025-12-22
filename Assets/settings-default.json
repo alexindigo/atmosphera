@@ -394,6 +394,7 @@
     "yazi": false,
     "emacs": false,
     "niri": false,
+    "hyprland": false,
     "mango": false,
     "zed": false,
     "enableUserTemplates": false
