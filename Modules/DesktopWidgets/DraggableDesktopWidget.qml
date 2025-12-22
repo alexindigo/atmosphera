@@ -103,8 +103,6 @@ Item {
     property real lastScale: 1.0
     // Locks operation type to prevent switching between drag/scale mid-operation
     property string operationType: ""  // "drag" or "scale" or ""
-    property real previousWidth: 0
-    property real centerX: baseX + (previousWidth > 0 ? previousWidth / 2 : root.width / 2)
   }
 
   function snapToGrid(coord) {
@@ -243,22 +241,6 @@ Item {
   scale: widgetScale
   transformOrigin: Item.TopLeft
 
-  // Adjust position when width changes to maintain center position
-  onWidthChanged: {
-    if (!internal.isDragging && !internal.isScaling && internal.previousWidth > 0 && width > 0) {
-      var widthDelta = width - internal.previousWidth;
-      // Adjust baseX to keep center position constant
-      internal.baseX = internal.baseX - widthDelta / 2;
-      internal.centerX = internal.baseX + width / 2;
-    }
-    internal.previousWidth = width;
-  }
-
-  Component.onCompleted: {
-    internal.previousWidth = width;
-    internal.centerX = internal.baseX + width / 2;
-  }
-
   onWidgetDataChanged: {
     if (!internal.isDragging) {
       internal.baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : defaultX;
@@ -266,9 +248,6 @@ Item {
       if (widgetData && widgetData.scale !== undefined) {
         widgetScale = widgetData.scale;
       }
-      // Update centerX and previousWidth when widget data changes
-      internal.previousWidth = width;
-      internal.centerX = internal.baseX + width / 2;
     }
   }
 
@@ -423,7 +402,6 @@ Item {
 
                     internal.baseX = internal.dragOffsetX;
                     internal.baseY = internal.dragOffsetY;
-                    internal.centerX = internal.baseX + root.width / 2;
                     internal.isDragging = false;
                     internal.operationType = "";
                   }
@@ -463,41 +441,41 @@ Item {
   readonly property real outlineMargin: Style.marginS
   readonly property color colorHandle: Color.mSecondary
 
-  // Corner handle model: defines position, opposite corner, cursor, and triangle points for each corner
+  // Corner handle model: defines position, direction, cursor, and triangle points for each corner
   // xMult/yMult: multipliers for position (0 = left/top edge, 1 = right/bottom edge)
-  // oppXMult/oppYMult: multipliers for opposite corner calculation
+  // xDir/yDir: direction multiplier for scaling (-1 = left/up increases, 1 = right/down increases)
   // cursor: resize cursor type (FDiag for TL-BR diagonal, BDiag for TR-BL diagonal)
   // points: triangle vertices as [x, y] pairs normalized to cornerHandleSize
   readonly property var cornerHandleModel: [
     {
       xMult: 0,
       yMult: 0,
-      oppXMult: 1,
-      oppYMult: 1,
+      xDir: -1,
+      yDir: -1,
       cursor: Qt.SizeFDiagCursor,
       points: [[0, 0], [1, 0], [0, 1]]
     },
     {
       xMult: 1,
       yMult: 0,
-      oppXMult: 0,
-      oppYMult: 1,
+      xDir: 1,
+      yDir: -1,
       cursor: Qt.SizeBDiagCursor,
       points: [[1, 0], [1, 1], [0, 0]]
     },
     {
       xMult: 0,
       yMult: 1,
-      oppXMult: 1,
-      oppYMult: 0,
+      xDir: -1,
+      yDir: 1,
       cursor: Qt.SizeBDiagCursor,
       points: [[0, 1], [0, 0], [1, 1]]
     },
     {
       xMult: 1,
       yMult: 1,
-      oppXMult: 0,
-      oppYMult: 0,
+      xDir: 1,
+      yDir: 1,
       cursor: Qt.SizeFDiagCursor,
       points: [[1, 1], [1, 0], [0, 1]]
     }
@@ -552,20 +530,12 @@ Item {
         acceptedButtons: Qt.LeftButton
         cursorShape: cornerHandle.modelData.cursor
         property point pressPos: Qt.point(0, 0)
-        // Capture opposite corner at press time to avoid feedback loop during scaling
-        property real oppositeCornerX: 0
-        property real oppositeCornerY: 0
-        property real initialDistance: 0
 
         onPressed: mouse => {
                      if (internal.operationType !== "") {
                        return;
                      }
                      pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                     // Calculate and store opposite corner position using initial scale
-                     oppositeCornerX = root.x + cornerHandle.modelData.oppXMult * root.width * root.widgetScale;
-                     oppositeCornerY = root.y + cornerHandle.modelData.oppYMult * root.height * root.widgetScale;
-                     initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
                      internal.operationType = "scale";
                      internal.isScaling = true;
                      internal.initialScale = root.widgetScale;
@@ -573,13 +543,19 @@ Item {
                    }
 
         onPositionChanged: mouse => {
-                             if (internal.isScaling && pressed && internal.operationType === "scale" && initialDistance > 0) {
+                             if (internal.isScaling && pressed && internal.operationType === "scale") {
                                var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                               // Use the fixed opposite corner position captured at press time
-                               var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+                               var deltaX = currentPos.x - pressPos.x;
+                               var deltaY = currentPos.y - pressPos.y;
 
-                               var scaleRatio = currentDistance / initialDistance;
-                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               // Project delta onto the diagonal direction for this corner
+                               // xDir/yDir indicate which direction increases scale
+                               var diagonalDelta = (deltaX * cornerHandle.modelData.xDir + deltaY * cornerHandle.modelData.yDir) / Math.sqrt(2);
+
+                               // Scale sensitivity: pixels of drag per 1.0 scale change
+                               var sensitivity = 150;
+                               var scaleDelta = diagonalDelta / sensitivity;
+                               var newScale = Math.max(root.minScale, Math.min(root.maxScale, internal.initialScale + scaleDelta));
 
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;
