@@ -267,7 +267,8 @@ Singleton {
 
   // Helper functions
   function signalIcon(signal, isConnected) {
-    if (isConnected === undefined) isConnected = false;
+    if (isConnected === undefined)
+      isConnected = false;
     if (isConnected && !root.internetConnectivity)
       return "world-off";
     if (signal >= 80)
@@ -378,9 +379,11 @@ Singleton {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line) continue;
+          if (!line)
+          continue;
           const idx = line.indexOf(":");
-          if (idx === -1) continue;
+          if (idx === -1)
+          continue;
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
           if (key.indexOf("IP4.ADDRESS") === 0) {
@@ -443,7 +446,8 @@ Singleton {
           var compact = [];
           for (var i = 0; i < parts.length; i++) {
             var p = parts[i];
-            if (p && p.length > 0) compact.push(p);
+            if (p && p.length > 0)
+            compact.push(p);
           }
           // Find a token that represents Mbit/s and use the previous number
           var unitIdx = -1;
@@ -589,7 +593,7 @@ Singleton {
     id: pingCheckProcess
     command: ["sh", "-c", "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " + "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " + "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"]
 
-    onExited: function(exitCode, exitStatus) {
+    onExited: function (exitCode, exitStatus) {
       if (exitCode === 0) {
         connectivityCheckProcess.failedChecks = 0;
       } else {
@@ -747,8 +751,12 @@ Singleton {
         // Logging
         const oldSSIDs = Object.keys(root.networks);
         const newSSIDs = Object.keys(networksMap);
-        const newNetworks = newSSIDs.filter(function(ssid) { return oldSSIDs.indexOf(ssid) === -1; });
-        const lostNetworks = oldSSIDs.filter(function(ssid) { return newSSIDs.indexOf(ssid) === -1; });
+        const newNetworks = newSSIDs.filter(function (ssid) {
+          return oldSSIDs.indexOf(ssid) === -1;
+        });
+        const lostNetworks = oldSSIDs.filter(function (ssid) {
+          return newSSIDs.indexOf(ssid) === -1;
+        });
 
         if (newNetworks.length > 0 || lostNetworks.length > 0) {
           if (newNetworks.length > 0) {

@@ -449,18 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Mevcut cihazlar",
+      "battery": "Pil",
       "blocked": "Engellendi",
       "connect": "Bağlan",
       "connected-devices": "Bağlı cihazlar",
       "connecting": "Bağlanılıyor…",
+      "device-address": "Cihaz adresi",
       "disabled": "Bluetooth devre dışı",
       "disconnect": "Bağlantıyı Kes",
+      "discoverable": "Keşfedilebilir",
       "enable-message": "Mevcut cihazları görmek için Bluetooth'u etkinleştirin.",
+      "info": "Bilgi",
       "known-devices": "Bilinen cihazlar",
+      "pair": "Çift",
+      "paired": "Eşleştirilmiş",
+      "paired-devices": "Eşleştirilmiş cihazlar",
       "pairing": "Eşleştiriliyor...",
       "pairing-mode": "Cihazınızın eşleştirme modunda olduğundan emin olun.",
       "scanning": "Cihazlar tarınıyor...",
-      "title": "Bluetooth"
+      "signal": "Sinyal",
+      "title": "Bluetooth",
+      "trusted": "Güvenilir",
+      "unpair": "Eşleştirmeyi kaldır"
     }
   },
   "calendar": {
@@ -520,7 +530,9 @@
     "cancel": "İptal",
     "check-settings": "Ayrıntılar için Ayarları Kontrol Et",
     "close": "Kapat",
-    "save": "Kaydet"
+    "no": "Hayır",
+    "save": "Kaydet",
+    "yes": "Evet"
   },
   "context-menu": {
     "clear-history": "Geçmişi temizle",
@@ -2540,8 +2552,20 @@
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
     },
     "bluetooth": {
+      "confirm-code": "Diğer cihazdaki {value} kodunu onayla",
+      "connect-failed": "Cihaza bağlanılamadı",
       "disabled": "Devre dışı",
-      "enabled": "Etkin"
+      "disconnect-failed": "Cihazla bağlantı kesilemedi",
+      "discoverable-change-failed": "Keşfedilebilir durum değiştirilemedi",
+      "discoverable-disabled": "Keşfedilebilir devre dışı",
+      "discoverable-enabled": "Keşfedilebilir etkinleştirildi",
+      "display-code": "Diğer cihazda {value} kodunu girin",
+      "enabled": "Etkin",
+      "forget-failed": "Cihazı unutma başarısız oldu",
+      "pair-failed": "Cihaz eşleştirilemedi",
+      "passkey-required": "Cihaz tarafından istenen geçiş anahtarı",
+      "pincode-required": "Cihaz tarafından PIN kodu gerekiyor.",
+      "state-change-failed": "Bluetooth durumu değiştirilemedi"
     },
     "clipboard": {
       "unavailable": "Panoya geçmişi kullanılamıyor",
@@ -2624,9 +2648,13 @@
     },
     "wifi": {
       "connected": "'{ssid}' ile bağlandı",
+      "connection-failed": "Bağlantı başarısız.",
+      "connection-timeout": "Bağlantı zaman aşımı",
       "disabled": "Devre dışı",
       "disconnected": "'{ssid}' bağlantısı kesildi",
-      "enabled": "Etkin"
+      "enabled": "Etkin",
+      "incorrect-password": "Yanlış şifre",
+      "network-not-found": "Ağ bulunamadı"
     }
   },
   "tooltips": {
@@ -2650,6 +2678,7 @@
     "grid-view": "Izgara görünümü",
     "hidden-files-hide": "Gizli dosyalar",
     "hidden-files-show": "Gizli dosyalar",
+    "hide-unnamed-devices": "Adsız cihazları gizle",
     "home": "Ana dizin",
     "input-muted": "Giriş sesini kapat/aç",
     "keep-awake": "Uyanık kal",
@@ -2692,6 +2721,7 @@
     "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
     "set-power-profile": "{profile} güç profili",
+    "show-all-devices": "Tüm cihazları göster",
     "start-screen-recording": "Ekran kaydedici",
     "stop-screen-recording": "Ekran kaydedici",
     "switch-to-dark-mode": "Koyu mod",
@@ -2884,17 +2914,26 @@
       "disabled": "Kablosuz Bağlantı devre dışı",
       "disconnect": "Bağlantıyı kes",
       "disconnecting": "Bağlantı kesiliyor...",
+      "dns": "DNS",
       "enable-message": "Mevcut ağları görmek için kablosuz bağlantıyı etkinleştirin.",
       "enter-password": "Parola girin...",
       "forget": "Unut",
       "forget-network": "Bu ağı unut?",
       "forgetting": "Unutuluyor...",
+      "gateway": "Geçit",
+      "info": "Bilgi",
+      "internet": "İnternet",
+      "internet-connected": "İnternete bağlı",
+      "internet-limited": "İnternet yok",
+      "ipv4": "IPv4",
       "known-networks": "Bilinen Ağlar",
+      "link-speed": "Bağlantı hızı",
       "no-networks": "Ağ bulunamadı",
       "password": "Parola",
       "saved": "Kaydedildi",
       "scan-again": "Yeniden tara",
       "searching": "Yakındaki ağlar aranıyor...",
+      "security": "Güvenlik",
       "title": "Kablosuz Bağlantı"
     }
   }

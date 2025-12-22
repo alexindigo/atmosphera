@@ -449,18 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "利用可能なデバイス",
+      "battery": "電池",
       "blocked": "ブロック中",
       "connect": "接続",
       "connected-devices": "接続済みデバイス",
       "connecting": "接続中...",
+      "device-address": "デバイスアドレス",
       "disabled": "Bluetooth は無効です",
       "disconnect": "切断",
+      "discoverable": "発見可能",
       "enable-message": "利用可能なデバイスを表示するには Bluetooth を有効にしてください。",
+      "info": "情報 (Jōhō)",
       "known-devices": "登録済みデバイス",
+      "pair": "ペア",
+      "paired": "ペアリング済み",
+      "paired-devices": "ペアリングされたデバイス",
       "pairing": "ペアリング中...",
       "pairing-mode": "デバイスがペアリングモードになっていることを確認してください。",
       "scanning": "デバイスをスキャン中...",
-      "title": "Bluetooth"
+      "signal": "信号 (shingō)",
+      "title": "Bluetooth",
+      "trusted": "信頼できる",
+      "unpair": "ペアリング解除"
     }
   },
   "calendar": {
@@ -520,7 +530,9 @@
     "cancel": "キャンセル",
     "check-settings": "詳細については設定を確認してください。",
     "close": "閉じる",
-    "save": "保存"
+    "no": "いいえ",
+    "save": "保存",
+    "yes": "はい"
   },
   "context-menu": {
     "clear-history": "履歴を削除する",
@@ -2540,8 +2552,20 @@
       "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください。"
     },
     "bluetooth": {
+      "confirm-code": "別のデバイスでコード{value}を確認してください。",
+      "connect-failed": "デバイスに接続できませんでした。",
       "disabled": "無効",
-      "enabled": "有効"
+      "disconnect-failed": "デバイスから切断できませんでした",
+      "discoverable-change-failed": "検出可能な状態の変更に失敗しました。",
+      "discoverable-disabled": "検出不能を無効にしました。",
+      "discoverable-enabled": "検出可能が有効",
+      "display-code": "別のデバイスに{value}のコードを入力してください。",
+      "enabled": "有効",
+      "forget-failed": "デバイスの削除に失敗しました",
+      "pair-failed": "デバイスのペアリングに失敗しました",
+      "passkey-required": "デバイスでパスキーが必要です",
+      "pincode-required": "デバイスがPINコードを要求しています",
+      "state-change-failed": "Bluetoothの状態変更に失敗しました"
     },
     "clipboard": {
       "unavailable": "クリップボード履歴を利用できません",
@@ -2624,9 +2648,13 @@
     },
     "wifi": {
       "connected": "{ssid} に接続しました",
+      "connection-failed": "接続に失敗しました",
+      "connection-timeout": "接続タイムアウト",
       "disabled": "無効",
       "disconnected": "{ssid} から切断しました",
-      "enabled": "有効"
+      "enabled": "有効",
+      "incorrect-password": "パスワードが違います。",
+      "network-not-found": "ネットワークが見つかりません。"
     }
   },
   "tooltips": {
@@ -2650,6 +2678,7 @@
     "grid-view": "グリッド表示",
     "hidden-files-hide": "隠しファイル",
     "hidden-files-show": "隠しファイル",
+    "hide-unnamed-devices": "名前のないデバイスを隠す",
     "home": "ホームディレクトリ",
     "input-muted": "入力ミュート切り替え",
     "keep-awake": "スリープ防止",
@@ -2692,6 +2721,7 @@
     "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
     "set-power-profile": "電源プロファイル: {profile}",
+    "show-all-devices": "すべてのデバイスを表示",
     "start-screen-recording": "画面録画",
     "stop-screen-recording": "画面録画",
     "switch-to-dark-mode": "ダークモード",
@@ -2884,17 +2914,26 @@
       "disabled": "Wi-Fi は無効です",
       "disconnect": "切断",
       "disconnecting": "切断中...",
+      "dns": "DNS",
       "enable-message": "利用可能なネットワークを表示するには Wi-Fi を有効にしてください。",
       "enter-password": "パスワードを入力...",
       "forget": "削除",
       "forget-network": "このネットワーク設定を削除しますか？",
       "forgetting": "削除中...",
+      "gateway": "ゲートウェイ",
+      "info": "情報 (Jōhō)",
+      "internet": "インターネット",
+      "internet-connected": "インターネット接続",
+      "internet-limited": "インターネットなし",
+      "ipv4": "IPv4",
       "known-networks": "保存済みネットワーク",
+      "link-speed": "リンク速度",
       "no-networks": "ネットワークが見つかりません",
       "password": "パスワード",
       "saved": "保存済み",
       "scan-again": "再スキャン",
       "searching": "近くのネットワークを検索中...",
+      "security": "セキュリティ",
       "title": "Wi-Fi"
     }
   }

@@ -449,26 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Beschikbare apparaten",
+      "battery": "Batterij",
       "blocked": "Geblokkeerd",
       "connect": "Verbinden",
       "connected-devices": "Verbonden apparaten",
       "connecting": "Verbinden...",
+      "device-address": "Apparaatadres",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
+      "discoverable": "Zichtbaar",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
+      "info": "Info",
       "known-devices": "Bekende apparaten",
+      "pair": "Koppelen",
+      "paired": "Gekoppeld",
       "paired-devices": "Gekoppelde apparaten",
       "pairing": "Koppelen...",
       "pairing-mode": "Zorg ervoor dat je apparaat in koppelmodus staat.",
       "scanning": "Zoeken naar apparaten...",
+      "signal": "Signaal",
       "title": "Bluetooth",
-      "pair": "Koppelen",
-      "unpair": "Ontkoppelen",
-      "info": "Info",
-      "device-address": "Apparaatadres",
-      "paired": "Gekoppeld",
       "trusted": "Vertrouwd",
-      "discoverable": "Zichtbaar"
+      "unpair": "Ontkoppelen"
     }
   },
   "calendar": {
@@ -528,9 +530,9 @@
     "cancel": "Annuleren",
     "check-settings": "Controleer Instellingen voor details.",
     "close": "Sluiten",
+    "no": "Nee",
     "save": "Opslaan",
-    "yes": "Ja",
-    "no": "Nee"
+    "yes": "Ja"
   },
   "context-menu": {
     "clear-history": "Geschiedenis wissen",
@@ -2550,16 +2552,20 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
-      "disabled": "Uitgeschakeld",
-      "enabled": "Ingeschakeld",
-      "pair-failed": "Apparaat koppelen mislukt",
+      "confirm-code": "Bevestig code {value} op het andere apparaat",
       "connect-failed": "Verbinding met apparaat mislukt",
+      "disabled": "Uitgeschakeld",
       "disconnect-failed": "Verbinding verbreken met apparaat mislukt",
-      "forget-failed": "Apparaat vergeten mislukt",
-      "state-change-failed": "Bluetooth‑status wijzigen mislukt",
-      "discoverable-enabled": "Zichtbaar ingeschakeld",
+      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt",
       "discoverable-disabled": "Zichtbaar uitgeschakeld",
-      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt"
+      "discoverable-enabled": "Zichtbaar ingeschakeld",
+      "display-code": "Voer code {value} in op het andere apparaat",
+      "enabled": "Ingeschakeld",
+      "forget-failed": "Apparaat vergeten mislukt",
+      "pair-failed": "Apparaat koppelen mislukt",
+      "passkey-required": "Passkey vereist door het apparaat",
+      "pincode-required": "PIN-code vereist door het apparaat",
+      "state-change-failed": "Bluetooth‑status wijzigen mislukt"
     },
     "clipboard": {
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
@@ -2642,13 +2648,13 @@
     },
     "wifi": {
       "connected": "Verbonden met '{ssid}'",
+      "connection-failed": "Verbinding mislukt",
+      "connection-timeout": "Time-out bij verbinding",
       "disabled": "Wi-Fi uitgeschakeld",
       "disconnected": "Verbinding met '{ssid}' verbroken",
       "enabled": "Wi-Fi ingeschakeld",
       "incorrect-password": "Onjuist wachtwoord",
-      "network-not-found": "Netwerk niet gevonden",
-      "connection-timeout": "Time-out bij verbinding",
-      "connection-failed": "Verbinding mislukt"
+      "network-not-found": "Netwerk niet gevonden"
     }
   },
   "tooltips": {
@@ -2672,6 +2678,7 @@
     "grid-view": "Rasterweergave",
     "hidden-files-hide": "Verborgen bestanden",
     "hidden-files-show": "Verborgen bestanden",
+    "hide-unnamed-devices": "Verberg naamloze apparaten",
     "home": "Home-map",
     "input-muted": "Ingang dempen/dempen opheffen",
     "keep-awake": "Wakker houden",
@@ -2714,6 +2721,7 @@
     "search-close": "Zoeken sluiten",
     "session-menu": "Sessiemenu",
     "set-power-profile": "{profile} energieprofiel",
+    "show-all-devices": "Toon alle apparaten",
     "start-screen-recording": "Schermrecorder",
     "stop-screen-recording": "Schermrecorder",
     "switch-to-dark-mode": "Donkere modus",
@@ -2906,17 +2914,26 @@
       "disabled": "Wi-Fi is uitgeschakeld",
       "disconnect": "Verbreken",
       "disconnecting": "Verbreken...",
+      "dns": "DNS",
       "enable-message": "Schakel Wi-Fi in om beschikbare netwerken te zien.",
       "enter-password": "Voer wachtwoord in...",
       "forget": "Vergeten",
       "forget-network": "Dit netwerk vergeten?",
       "forgetting": "Vergeten...",
+      "gateway": "Poort",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Verbonden met internet",
+      "internet-limited": "Geen internet",
+      "ipv4": "IPv4",
       "known-networks": "Bekende netwerken",
+      "link-speed": "Link snelheid",
       "no-networks": "Geen netwerken gevonden",
       "password": "Wachtwoord",
       "saved": "Opgeslagen",
       "scan-again": "Opnieuw scannen",
       "searching": "Zoeken naar netwerken in de buurt...",
+      "security": "Beveiliging",
       "title": "Wi-Fi"
     }
   }

@@ -6,8 +6,8 @@ import Quickshell.Bluetooth
 import Quickshell.Wayland
 import qs.Commons
 import qs.Services.Networking
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 NBox {
   id: root
@@ -21,9 +21,7 @@ NBox {
   property string expandedDeviceKey: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
   // Persisted under Settings.data.ui.bluetoothDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothDetailsViewMode !== undefined)
-                             ? (Settings.data.ui.bluetoothDetailsViewMode === "grid")
-                             : true
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothDetailsViewMode !== undefined) ? (Settings.data.ui.bluetoothDetailsViewMode === "grid") : true
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -57,9 +55,7 @@ NBox {
         // Option A: filter/filter-off
         // Off (show all): filter; On (hide unnamed): filter-off
         icon: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) ? "filter-off" : "filter"
-        tooltipText: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices)
-                     ? I18n.tr("tooltips.hide-unnamed-devices")
-                     : I18n.tr("tooltips.show-all-devices")
+        tooltipText: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) ? I18n.tr("tooltips.hide-unnamed-devices") : I18n.tr("tooltips.show-all-devices")
         onClicked: {
           if (Settings.data && Settings.data.ui) {
             Settings.data.ui.bluetoothHideUnnamedDevices = !(Settings.data.ui.bluetoothHideUnnamedDevices);
@@ -180,11 +176,13 @@ NBox {
             }
 
             // Spacer to push actions to the right
-            Item { Layout.fillWidth: true }
+            Item {
+              Layout.fillWidth: true
+            }
 
             // Actions (Info on the left to match Wi‑Fi, then Unpair, then main CTA)
             RowLayout {
-              spacing: Style.marginXS
+              spacing: Style.marginS
 
               // Info for connected device (placed before the CTA for consistency with Wi‑Fi)
               NIconButton {
@@ -268,7 +266,9 @@ NBox {
             clip: true
             onVisibleChanged: {
               if (visible && infoColumn && infoColumn.forceLayout) {
-                Qt.callLater(function () { infoColumn.forceLayout(); });
+                Qt.callLater(function () {
+                  infoColumn.forceLayout();
+                });
               }
             }
 
@@ -301,7 +301,9 @@ NBox {
               // Ensure proper relayout when switching grid/list while open
               onColumnsChanged: {
                 if (infoColumn.forceLayout) {
-                  Qt.callLater(function() { infoColumn.forceLayout(); });
+                  Qt.callLater(function () {
+                    infoColumn.forceLayout();
+                  });
                 }
               }
 
@@ -324,7 +326,11 @@ NBox {
                 }
                 NText {
                   // Extract value from helper (remove leading label if present)
-                  text: (function(){ var s = BluetoothService.getSignalStrength(modelData); var idx = s.indexOf(":"); return idx !== -1 ? s.substring(idx+1).trim() : s; })()
+                  text: (function () {
+                    var s = BluetoothService.getSignalStrength(modelData);
+                    var idx = s.indexOf(":");
+                    return idx !== -1 ? s.substring(idx + 1).trim() : s;
+                  })()
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -350,7 +356,11 @@ NBox {
                   }
                 }
                 NText {
-                  text: modelData.batteryAvailable ? (function(){ var b = BluetoothService.getBattery(modelData); var i = b.indexOf(":"); return i !== -1 ? b.substring(i+1).trim() : b; })() : "-"
+                  text: modelData.batteryAvailable ? (function () {
+                    var b = BluetoothService.getBattery(modelData);
+                    var i = b.indexOf(":");
+                    return i !== -1 ? b.substring(i + 1).trim() : b;
+                  })() : "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true

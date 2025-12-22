@@ -449,18 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "可用设备",
+      "battery": "电池",
       "blocked": "已阻止",
       "connect": "连接",
       "connected-devices": "已连接设备",
       "connecting": "正在连接…",
+      "device-address": "设备地址",
       "disabled": "蓝牙已禁用",
       "disconnect": "断开",
+      "discoverable": "可发现的",
       "enable-message": "启用蓝牙以查看可用设备。",
+      "info": "信息",
       "known-devices": "已知设备",
+      "pair": "一对",
+      "paired": "配对",
+      "paired-devices": "已配对的设备",
       "pairing": "配对...",
       "pairing-mode": "确保您的设备处于配对模式。",
       "scanning": "正在扫描设备...",
-      "title": "蓝牙"
+      "signal": "信号",
+      "title": "蓝牙",
+      "trusted": "可信赖的",
+      "unpair": "取消配对"
     }
   },
   "calendar": {
@@ -520,7 +530,9 @@
     "cancel": "取消",
     "check-settings": "查看设置了解详情",
     "close": "关闭",
-    "save": "保存"
+    "no": "否",
+    "save": "保存",
+    "yes": "是的"
   },
   "context-menu": {
     "clear-history": "清除历史记录",
@@ -2540,8 +2552,20 @@
       "low-desc": "电量为 {percent}%。请连接充电器。"
     },
     "bluetooth": {
+      "confirm-code": "在另一台设备上确认代码 {value}",
+      "connect-failed": "无法连接到设备",
       "disabled": "已禁用",
-      "enabled": "已启用"
+      "disconnect-failed": "无法断开与设备的连接",
+      "discoverable-change-failed": "无法更改可发现状态",
+      "discoverable-disabled": "可发现性已禁用",
+      "discoverable-enabled": "已启用可发现性",
+      "display-code": "在另一台设备上输入代码 {value}",
+      "enabled": "已启用",
+      "forget-failed": "无法忘记设备",
+      "pair-failed": "配对设备失败",
+      "passkey-required": "设备需要通行密钥",
+      "pincode-required": "设备需要PIN码",
+      "state-change-failed": "无法更改蓝牙状态"
     },
     "clipboard": {
       "unavailable": "剪贴板历史记录不可用",
@@ -2624,9 +2648,13 @@
     },
     "wifi": {
       "connected": "已连接到 '{ssid}'",
+      "connection-failed": "连接失败",
+      "connection-timeout": "连接超时",
       "disabled": "已禁用",
       "disconnected": "已断开与 '{ssid}' 的连接",
-      "enabled": "已启用"
+      "enabled": "已启用",
+      "incorrect-password": "密码错误",
+      "network-not-found": "未找到网络"
     }
   },
   "tooltips": {
@@ -2650,6 +2678,7 @@
     "grid-view": "网格视图",
     "hidden-files-hide": "隐藏文件",
     "hidden-files-show": "隐藏文件",
+    "hide-unnamed-devices": "隐藏未命名的设备",
     "home": "主目录",
     "input-muted": "切换输入静音",
     "keep-awake": "保持唤醒",
@@ -2692,6 +2721,7 @@
     "search-close": "关闭搜索",
     "session-menu": "会话菜单",
     "set-power-profile": "{profile} 电源模式",
+    "show-all-devices": "显示所有设备",
     "start-screen-recording": "屏幕录制器",
     "stop-screen-recording": "屏幕录制器",
     "switch-to-dark-mode": "深色模式",
@@ -2884,17 +2914,26 @@
       "disabled": "Wi-Fi 已禁用",
       "disconnect": "断开连接",
       "disconnecting": "正在断开连接...",
+      "dns": "域名系统",
       "enable-message": "启用 Wi-Fi 以查看可用网络。",
       "enter-password": "输入密码...",
       "forget": "忘记",
       "forget-network": "忘记此网络？",
       "forgetting": "正在忘记...",
+      "gateway": "网关",
+      "info": "信息",
+      "internet": "互联网",
+      "internet-connected": "已连接互联网",
+      "internet-limited": "无网络",
+      "ipv4": "IPv4",
       "known-networks": "已知网络",
+      "link-speed": "链路速度",
       "no-networks": "未找到网络",
       "password": "密码",
       "saved": "已保存",
       "scan-again": "重新扫描",
       "searching": "正在搜索附近网络...",
+      "security": "安全",
       "title": "Wi-Fi"
     }
   }

@@ -449,28 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Available devices",
+      "battery": "Battery",
       "blocked": "Blocked",
       "connect": "Connect",
       "connected-devices": "Connected devices",
       "connecting": "Connecting...",
+      "device-address": "Device address",
       "disabled": "Bluetooth is disabled",
       "disconnect": "Disconnect",
+      "discoverable": "Discoverable",
       "enable-message": "Enable Bluetooth to see available devices.",
+      "info": "Info",
       "known-devices": "Known devices",
+      "pair": "Pair",
+      "paired": "Paired",
       "paired-devices": "Paired devices",
       "pairing": "Pairing...",
       "pairing-mode": "Make sure your device is in pairing mode.",
       "scanning": "Scanning for devices...",
-      "title": "Bluetooth",
-      "pair": "Pair",
-      "unpair": "Unpair",
-      "info": "Info",
-      "device-address": "Device address",
-      "paired": "Paired",
-      "trusted": "Trusted",
-      "discoverable": "Discoverable",
       "signal": "Signal",
-      "battery": "Battery"
+      "title": "Bluetooth",
+      "trusted": "Trusted",
+      "unpair": "Unpair"
     }
   },
   "calendar": {
@@ -530,9 +530,9 @@
     "cancel": "Cancel",
     "check-settings": "Check Settings for details",
     "close": "Close",
+    "no": "No",
     "save": "Save",
-    "yes": "Yes",
-    "no": "No"
+    "yes": "Yes"
   },
   "context-menu": {
     "clear-history": "Clear history",
@@ -2552,8 +2552,20 @@
       "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
     "bluetooth": {
+      "confirm-code": "Confirm code {value} on the other device",
+      "connect-failed": "Failed to connect to device",
       "disabled": "Disabled",
-      "enabled": "Enabled"
+      "disconnect-failed": "Failed to disconnect from device",
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-enabled": "Discoverable enabled",
+      "display-code": "Enter code {value} on the other device",
+      "enabled": "Enabled",
+      "forget-failed": "Failed to forget device",
+      "pair-failed": "Failed to pair device",
+      "passkey-required": "Passkey required by the device",
+      "pincode-required": "PIN code required by the device",
+      "state-change-failed": "Failed to change Bluetooth state"
     },
     "clipboard": {
       "unavailable": "Clipboard history unavailable",
@@ -2636,29 +2648,13 @@
     },
     "wifi": {
       "connected": "Connected to '{ssid}'",
+      "connection-failed": "Connection failed",
+      "connection-timeout": "Connection timeout",
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
       "enabled": "Enabled",
       "incorrect-password": "Incorrect password",
-      "network-not-found": "Network not found",
-      "connection-timeout": "Connection timeout",
-      "connection-failed": "Connection failed"
-    },
-    "bluetooth": {
-      "enabled": "Enabled",
-      "disabled": "Disabled",
-      "pair-failed": "Failed to pair device",
-      "connect-failed": "Failed to connect to device",
-      "disconnect-failed": "Failed to disconnect from device",
-      "forget-failed": "Failed to forget device",
-      "state-change-failed": "Failed to change Bluetooth state",
-      "discoverable-enabled": "Discoverable enabled",
-      "discoverable-disabled": "Discoverable disabled",
-      "discoverable-change-failed": "Failed to change discoverable state",
-      "confirm-code": "Confirm code {value} on the other device",
-      "display-code": "Enter code {value} on the other device",
-      "passkey-required": "Passkey required by the device",
-      "pincode-required": "PIN code required by the device"
+      "network-not-found": "Network not found"
     }
   },
   "tooltips": {
@@ -2682,6 +2678,7 @@
     "grid-view": "Grid view",
     "hidden-files-hide": "Hidden files",
     "hidden-files-show": "Hidden files",
+    "hide-unnamed-devices": "Hide unnamed devices",
     "home": "Home directory",
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep Awake",
@@ -2718,14 +2715,13 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
-    "hide-unnamed-devices": "Hide unnamed devices",
-    "show-all-devices": "Show all devices",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",
     "search-close": "Close search",
     "session-menu": "Session menu",
     "set-power-profile": "{profile} power profile",
+    "show-all-devices": "Show all devices",
     "start-screen-recording": "Screen recorder",
     "stop-screen-recording": "Screen recorder",
     "switch-to-dark-mode": "Dark Mode",
@@ -2735,37 +2731,6 @@
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",
     "widget-settings": "Widget settings"
-  },
-  "wifi": {
-    "panel": {
-      "title": "Wi‑Fi",
-      "disabled": "Wi‑Fi is disabled",
-      "enable-message": "Enable Wi‑Fi to see available networks.",
-      "searching": "Searching for networks...",
-      "no-networks": "No Wi‑Fi networks found",
-      "scan-again": "Scan again",
-      "known-networks": "Known networks",
-      "available-networks": "Available networks",
-      "connect": "Connect",
-      "disconnect": "Disconnect",
-      "password": "Password",
-      "enter-password": "Enter Wi‑Fi password",
-      "connected": "Connected",
-      "disconnecting": "Disconnecting…",
-      "forgetting": "Forgetting…",
-      "saved": "Saved",
-      "forget-network": "Forget this network",
-      "forget": "Forget",
-      "info": "Info",
-      "security": "Security",
-      "internet-connected": "Internet connected",
-      "internet-limited": "No internet",
-      "link-speed": "Link speed",
-      "ipv4": "IPv4",
-      "gateway": "Gateway",
-      "dns": "DNS",
-      "internet": "Internet"
-    }
   },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",
@@ -2939,6 +2904,37 @@
     },
     "tooltip": {
       "placeholder": "Placeholder"
+    }
+  },
+  "wifi": {
+    "panel": {
+      "available-networks": "Available networks",
+      "connect": "Connect",
+      "connected": "Connected",
+      "disabled": "Wi‑Fi is disabled",
+      "disconnect": "Disconnect",
+      "disconnecting": "Disconnecting…",
+      "dns": "DNS",
+      "enable-message": "Enable Wi‑Fi to see available networks.",
+      "enter-password": "Enter Wi‑Fi password",
+      "forget": "Forget",
+      "forget-network": "Forget this network",
+      "forgetting": "Forgetting…",
+      "gateway": "Gateway",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Internet connected",
+      "internet-limited": "No internet",
+      "ipv4": "IPv4",
+      "known-networks": "Known networks",
+      "link-speed": "Link speed",
+      "no-networks": "No Wi‑Fi networks found",
+      "password": "Password",
+      "saved": "Saved",
+      "scan-again": "Scan again",
+      "searching": "Searching for networks...",
+      "security": "Security",
+      "title": "Wi‑Fi"
     }
   }
 }

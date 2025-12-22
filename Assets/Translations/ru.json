@@ -449,18 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Доступные устройства",
+      "battery": "Батарея",
       "blocked": "Заблокировано",
       "connect": "Подключить",
       "connected-devices": "Подключенные устройства",
       "connecting": "Подключение…",
+      "device-address": "Адрес устройства",
       "disabled": "Bluetooth отключен",
       "disconnect": "Отключить",
+      "discoverable": "Обнаруживаемый",
       "enable-message": "Включите Bluetooth, чтобы увидеть доступные устройства.",
+      "info": "Информация",
       "known-devices": "Известные устройства",
+      "pair": "Пара",
+      "paired": "Парный",
+      "paired-devices": "Сопряжённые устройства",
       "pairing": "Сопряжение...",
       "pairing-mode": "Убедитесь, что ваше устройство находится в режиме сопряжения.",
       "scanning": "Поиск устройств...",
-      "title": "Bluetooth"
+      "signal": "Сигнал",
+      "title": "Bluetooth",
+      "trusted": "Надёжный",
+      "unpair": "Разорвать пару"
     }
   },
   "calendar": {
@@ -520,7 +530,9 @@
     "cancel": "Отменить",
     "check-settings": "Проверьте настройки для получения подробной информации.",
     "close": "Закрыть",
-    "save": "Сохранить"
+    "no": "Нет",
+    "save": "Сохранить",
+    "yes": "Да"
   },
   "context-menu": {
     "clear-history": "Очистить историю",
@@ -2540,8 +2552,20 @@
       "low-desc": "Заряд батареи {percent}%. Пожалуйста, подключите зарядное устройство."
     },
     "bluetooth": {
+      "confirm-code": "Подтвердите код {value} на другом устройстве.",
+      "connect-failed": "Не удалось подключиться к устройству",
       "disabled": "Отключен",
-      "enabled": "Включен"
+      "disconnect-failed": "Не удалось отключиться от устройства",
+      "discoverable-change-failed": "Не удалось изменить состояние видимости",
+      "discoverable-disabled": "Обнаружение отключено",
+      "discoverable-enabled": "Обнаружение включено",
+      "display-code": "Введите код {value} на другом устройстве.",
+      "enabled": "Включен",
+      "forget-failed": "Не удалось удалить устройство",
+      "pair-failed": "Не удалось выполнить сопряжение устройства.",
+      "passkey-required": "Требуется ключ доступа устройства",
+      "pincode-required": "PIN-код, требуемый устройством",
+      "state-change-failed": "Не удалось изменить состояние Bluetooth."
     },
     "clipboard": {
       "unavailable": "История буфера обмена недоступна",
@@ -2624,9 +2648,13 @@
     },
     "wifi": {
       "connected": "Подключено к '{ssid}'",
+      "connection-failed": "Соединение не установлено.",
+      "connection-timeout": "Превышено время ожидания соединения",
       "disabled": "Отключен",
       "disconnected": "Отключено от '{ssid}'",
-      "enabled": "Включен"
+      "enabled": "Включен",
+      "incorrect-password": "Неверный пароль",
+      "network-not-found": "Сеть не найдена"
     }
   },
   "tooltips": {
@@ -2650,6 +2678,7 @@
     "grid-view": "Вид сеткой",
     "hidden-files-hide": "Скрытые файлы",
     "hidden-files-show": "Скрытые файлы",
+    "hide-unnamed-devices": "Скрыть безымянные устройства",
     "home": "Домашний каталог",
     "input-muted": "Включить/выключить отключение микрофона",
     "keep-awake": "Не засыпать",
@@ -2692,6 +2721,7 @@
     "search-close": "Закрыть поиск",
     "session-menu": "Меню сеанса",
     "set-power-profile": "{profile} профиль питания",
+    "show-all-devices": "Показать все устройства",
     "start-screen-recording": "Запись экрана",
     "stop-screen-recording": "Запись экрана",
     "switch-to-dark-mode": "Темный режим",
@@ -2884,17 +2914,26 @@
       "disabled": "Wi-Fi отключен",
       "disconnect": "Отключить",
       "disconnecting": "Отключение...",
+      "dns": "DNS",
       "enable-message": "Включите Wi-Fi, чтобы увидеть доступные сети.",
       "enter-password": "Введите пароль...",
       "forget": "Забыть",
       "forget-network": "Забыть эту сеть?",
       "forgetting": "Забывание...",
+      "gateway": "Шлюз",
+      "info": "Информация",
+      "internet": "Интернет",
+      "internet-connected": "Подключено к интернету",
+      "internet-limited": "Нет интернета",
+      "ipv4": "IPv4",
       "known-networks": "Известные сети",
+      "link-speed": "Скорость соединения",
       "no-networks": "Сети не найдены",
       "password": "Пароль",
       "saved": "Сохранено",
       "scan-again": "Сканировать снова",
       "searching": "Поиск ближайших сетей...",
+      "security": "Безопасность",
       "title": "Wi-Fi"
     }
   }

@@ -185,9 +185,9 @@ Singleton {
         // If there's a queued brightness change, process it now
         if (!isNaN(monitor.queuedBrightness)) {
           Qt.callLater(() => {
-            monitor.setBrightness(monitor.queuedBrightness);
-            monitor.queuedBrightness = NaN;
-          });
+                         monitor.setBrightness(monitor.queuedBrightness);
+                         monitor.queuedBrightness = NaN;
+                       });
         }
       }
     }

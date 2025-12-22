@@ -449,26 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Appareils disponibles",
+      "battery": "Batterie",
       "blocked": "Bloqué",
       "connect": "Connecter",
       "connected-devices": "Appareils connectés",
       "connecting": "Connexion en cours...",
+      "device-address": "Adresse de l’appareil",
       "disabled": "Le Bluetooth est désactivé",
       "disconnect": "Déconnecter",
+      "discoverable": "Détectable",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
+      "info": "Infos",
       "known-devices": "Appareils connus",
+      "pair": "Appairer",
+      "paired": "Appairé",
       "paired-devices": "Appareils appairés",
       "pairing": "Appairage en cours...",
       "pairing-mode": "Assurez-vous que votre appareil est en mode d'appairage.",
       "scanning": "Recherche d'appareils en cours...",
+      "signal": "Signal",
       "title": "Bluetooth",
-      "pair": "Appairer",
-      "unpair": "Désappairer",
-      "info": "Infos",
-      "device-address": "Adresse de l’appareil",
-      "paired": "Appairé",
       "trusted": "De confiance",
-      "discoverable": "Détectable"
+      "unpair": "Désappairer"
     }
   },
   "calendar": {
@@ -528,9 +530,9 @@
     "cancel": "Annuler",
     "check-settings": "Vérifier les paramètres pour plus de détails.",
     "close": "Fermer",
+    "no": "Non",
     "save": "Enregistrer",
-    "yes": "Oui",
-    "no": "Non"
+    "yes": "Oui"
   },
   "context-menu": {
     "clear-history": "Effacer l'historique",
@@ -2550,16 +2552,20 @@
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
     },
     "bluetooth": {
-      "disabled": "Désactivé",
-      "enabled": "Activé",
-      "pair-failed": "Échec de l’appairage de l’appareil",
+      "confirm-code": "Confirmer le code {value} sur l'autre appareil.",
       "connect-failed": "Échec de la connexion à l’appareil",
+      "disabled": "Désactivé",
       "disconnect-failed": "Échec de la déconnexion de l’appareil",
-      "forget-failed": "Échec de l’oubli de l’appareil",
-      "state-change-failed": "Échec du changement d’état du Bluetooth",
-      "discoverable-enabled": "Détectable activé",
+      "discoverable-change-failed": "Échec du changement d’état détectable",
       "discoverable-disabled": "Détectable désactivé",
-      "discoverable-change-failed": "Échec du changement d’état détectable"
+      "discoverable-enabled": "Détectable activé",
+      "display-code": "Entrez le code {value} sur l'autre appareil.",
+      "enabled": "Activé",
+      "forget-failed": "Échec de l’oubli de l’appareil",
+      "pair-failed": "Échec de l’appairage de l’appareil",
+      "passkey-required": "Clé d'identification requise par l'appareil",
+      "pincode-required": "Code PIN requis par l'appareil.",
+      "state-change-failed": "Échec du changement d’état du Bluetooth"
     },
     "clipboard": {
       "unavailable": "Historique du presse-papiers indisponible",
@@ -2642,13 +2648,13 @@
     },
     "wifi": {
       "connected": "Connecté à '{ssid}'",
+      "connection-failed": "Échec de la connexion",
+      "connection-timeout": "Délai de connexion dépassé",
       "disabled": "Désactivé",
       "disconnected": "Déconnecté de '{ssid}'",
       "enabled": "Activé",
       "incorrect-password": "Mot de passe incorrect",
-      "network-not-found": "Réseau introuvable",
-      "connection-timeout": "Délai de connexion dépassé",
-      "connection-failed": "Échec de la connexion"
+      "network-not-found": "Réseau introuvable"
     }
   },
   "tooltips": {
@@ -2672,6 +2678,7 @@
     "grid-view": "Vue en grille",
     "hidden-files-hide": "Fichiers cachés",
     "hidden-files-show": "Fichiers cachés",
+    "hide-unnamed-devices": "Masquer les appareils sans nom",
     "home": "Répertoire home",
     "input-muted": "Activer/désactiver la sourdine de l'entrée",
     "keep-awake": "Rester éveillé",
@@ -2714,6 +2721,7 @@
     "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
     "set-power-profile": "{profile} profil d'alimentation",
+    "show-all-devices": "Afficher tous les appareils",
     "start-screen-recording": "Enregistreur d'écran",
     "stop-screen-recording": "Enregistreur d'écran",
     "switch-to-dark-mode": "Mode sombre",
@@ -2906,17 +2914,26 @@
       "disabled": "Le Wi-Fi est désactivé",
       "disconnect": "Déconnecter",
       "disconnecting": "Déconnexion en cours...",
+      "dns": "DNS",
       "enable-message": "Activez le Wi-Fi pour voir les réseaux disponibles.",
       "enter-password": "Entrez le mot de passe...",
       "forget": "Oublier",
       "forget-network": "Oublier ce réseau ?",
       "forgetting": "Oubli en cours...",
+      "gateway": "Passerelle",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Connecté à Internet",
+      "internet-limited": "Pas d'internet",
+      "ipv4": "IPv4",
       "known-networks": "Réseaux connus",
+      "link-speed": "Vitesse de liaison",
       "no-networks": "Aucun réseau trouvé",
       "password": "Mot de passe",
       "saved": "Enregistré",
       "scan-again": "Analyser à nouveau",
       "searching": "Recherche de réseaux à proximité en cours...",
+      "security": "Sécurité",
       "title": "Wi-Fi"
     }
   }

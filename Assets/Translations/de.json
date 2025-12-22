@@ -449,26 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Verfügbare Geräte",
+      "battery": "Batterie",
       "blocked": "Blockiert",
       "connect": "Verbinden",
       "connected-devices": "Verbundene Geräte",
       "connecting": "Verbinden...",
+      "device-address": "Geräteadresse",
       "disabled": "Bluetooth ist deaktiviert",
       "disconnect": "Trennen",
+      "discoverable": "Sichtbar",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
+      "info": "Info",
       "known-devices": "Bekannte Geräte",
+      "pair": "Koppeln",
+      "paired": "Gekoppelt",
       "paired-devices": "Gekoppelte Geräte",
       "pairing": "Koppeln...",
       "pairing-mode": "Stellen Sie sicher, dass sich Ihr Gerät im Kopplungsmodus befindet.",
       "scanning": "Scannen nach Geräten...",
+      "signal": "Signal",
       "title": "Bluetooth",
-      "pair": "Koppeln",
-      "unpair": "Entkoppeln",
-      "info": "Info",
-      "device-address": "Geräteadresse",
-      "paired": "Gekoppelt",
       "trusted": "Vertrauenswürdig",
-      "discoverable": "Sichtbar"
+      "unpair": "Entkoppeln"
     }
   },
   "calendar": {
@@ -528,9 +530,9 @@
     "cancel": "Abbrechen",
     "check-settings": "Überprüfe die Einstellungen für Details.",
     "close": "Schließen",
+    "no": "Nein",
     "save": "Speichern",
-    "yes": "Ja",
-    "no": "Nein"
+    "yes": "Ja"
   },
   "context-menu": {
     "clear-history": "Verlauf löschen",
@@ -2550,16 +2552,20 @@
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
     },
     "bluetooth": {
-      "disabled": "Deaktiviert",
-      "enabled": "Aktiviert",
-      "pair-failed": "Koppeln des Geräts fehlgeschlagen",
+      "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
       "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
+      "disabled": "Deaktiviert",
       "disconnect-failed": "Trennen vom Gerät fehlgeschlagen",
-      "forget-failed": "Entfernen des Geräts fehlgeschlagen",
-      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen",
-      "discoverable-enabled": "Sichtbar aktiviert",
+      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen",
       "discoverable-disabled": "Sichtbar deaktiviert",
-      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen"
+      "discoverable-enabled": "Sichtbar aktiviert",
+      "display-code": "Gib den Code {value} auf dem anderen Gerät ein.",
+      "enabled": "Aktiviert",
+      "forget-failed": "Entfernen des Geräts fehlgeschlagen",
+      "pair-failed": "Koppeln des Geräts fehlgeschlagen",
+      "passkey-required": "Passwortschlüssel vom Gerät erforderlich",
+      "pincode-required": "PIN-Code vom Gerät erforderlich",
+      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen"
     },
     "clipboard": {
       "unavailable": "Zwischenablageverlauf nicht verfügbar",
@@ -2642,13 +2648,13 @@
     },
     "wifi": {
       "connected": "Verbunden mit '{ssid}'",
+      "connection-failed": "Verbindung fehlgeschlagen",
+      "connection-timeout": "Zeitüberschreitung bei der Verbindung",
       "disabled": "Deaktiviert",
       "disconnected": "Getrennt von '{ssid}'",
       "enabled": "Aktiviert",
       "incorrect-password": "Falsches Passwort",
-      "network-not-found": "Netzwerk nicht gefunden",
-      "connection-timeout": "Zeitüberschreitung bei der Verbindung",
-      "connection-failed": "Verbindung fehlgeschlagen"
+      "network-not-found": "Netzwerk nicht gefunden"
     }
   },
   "tooltips": {
@@ -2672,6 +2678,7 @@
     "grid-view": "Rasteransicht",
     "hidden-files-hide": "Versteckte Dateien",
     "hidden-files-show": "Versteckte Dateien",
+    "hide-unnamed-devices": "Unbenannte Geräte ausblenden",
     "home": "Home-Verzeichnis",
     "input-muted": "Eingangsstummschaltung umschalten",
     "keep-awake": "Wach halten",
@@ -2714,6 +2721,7 @@
     "search-close": "Suche schließen",
     "session-menu": "Sitzungsmenü",
     "set-power-profile": "{profile} Energieprofil",
+    "show-all-devices": "Alle Geräte anzeigen",
     "start-screen-recording": "Bildschirmrekorder",
     "stop-screen-recording": "Bildschirmrekorder",
     "switch-to-dark-mode": "Dunkler Modus",
@@ -2906,17 +2914,26 @@
       "disabled": "WLAN ist deaktiviert",
       "disconnect": "Trennen",
       "disconnecting": "Verbindung wird getrennt...",
+      "dns": "DNS",
       "enable-message": "Aktivieren Sie WLAN, um verfügbare Netzwerke zu sehen.",
       "enter-password": "Passwort eingeben...",
       "forget": "Vergessen",
       "forget-network": "Dieses Netzwerk vergessen?",
       "forgetting": "Wird vergessen...",
+      "gateway": "Gateway: Gateway",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Mit dem Internet verbunden",
+      "internet-limited": "Kein Internet",
+      "ipv4": "IPv4",
       "known-networks": "Bekannte Netzwerke",
+      "link-speed": "Verbindungsgeschwindigkeit",
       "no-networks": "Keine Netzwerke gefunden",
       "password": "Passwort",
       "saved": "Gespeichert",
       "scan-again": "Erneut scannen",
       "searching": "Suche nach nahegelegenen Netzwerken...",
+      "security": "Sicherheit",
       "title": "WLAN"
     }
   }

@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Networking
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 NBox {
   id: root
@@ -22,9 +22,7 @@ NBox {
   property string infoSsid: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
   // Persisted under Settings.data.ui.wifiDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined)
-                             ? (Settings.data.ui.wifiDetailsViewMode === "grid")
-                             : true
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -304,7 +302,9 @@ NBox {
             clip: true
             onVisibleChanged: {
               if (visible && infoGrid && infoGrid.forceLayout) {
-                Qt.callLater(function () { infoGrid.forceLayout(); });
+                Qt.callLater(function () {
+                  infoGrid.forceLayout();
+                });
               }
             }
 
@@ -337,7 +337,9 @@ NBox {
               // Ensure proper relayout when switching grid/list while open
               onColumnsChanged: {
                 if (infoGrid.forceLayout) {
-                  Qt.callLater(function () { infoGrid.forceLayout(); });
+                  Qt.callLater(function () {
+                    infoGrid.forceLayout();
+                  });
                 }
               }
 
@@ -412,9 +414,7 @@ NBox {
                   }
                 }
                 NText {
-                  text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0)
-                        ? NetworkService.activeWifiDetails.rateShort
-                        : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0) ? NetworkService.activeWifiDetails.rate : "-")
+                  text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0) ? NetworkService.activeWifiDetails.rateShort : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0) ? NetworkService.activeWifiDetails.rate : "-")
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
