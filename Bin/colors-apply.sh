@@ -286,6 +286,29 @@ niri)
     fi
     ;;
 
+hyprland)
+    echo "🎨 Applying 'noctalia' theme to Hyprland..."
+    CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
+    INCLUDE_LINE="source = ~/.config/hypr/noctalia/noctalia-colors.conf"
+
+    # Check if the config file exists.
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found, creating $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        echo "$INCLUDE_LINE" >"$CONFIG_FILE"
+        echo "Created new config file with noctalia theme."
+    else
+        # Check if include line already exists
+        if grep -qF "$INCLUDE_LINE" "$CONFIG_FILE"; then
+            echo "Theme already included, skipping modification."
+        else
+            # Add the include line to the end of the file
+            echo "$INCLUDE_LINE" >>"$CONFIG_FILE"
+            echo "✅ Added noctalia theme include to config."
+        fi
+    fi
+    ;;
+
 mango)
     echo "🎨 Applying 'noctalia' theme to mango..."
     CONFIG_DIR="$HOME/.config/mango"

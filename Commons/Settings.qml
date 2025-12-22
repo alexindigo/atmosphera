@@ -627,6 +627,7 @@ Singleton {
       property bool yazi: false
       property bool emacs: false
       property bool niri: false
+      property bool hyprland: false
       property bool mango: false
       property bool zed: false
       property bool enableUserTemplates: false

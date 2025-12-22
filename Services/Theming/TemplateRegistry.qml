@@ -288,6 +288,18 @@ Singleton {
       "postProcess": () => `${colorsApplyScript} niri`
     },
     {
+      "id": "hyprland",
+      "name": "Hyprland",
+      "category": "compositors",
+      "input": "hyprland.conf",
+      "outputs": [
+        {
+          "path": "~/.config/hypr/noctalia/noctalia-colors.conf"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} hyprland`
+    },
+    {
       "id": "mango",
       "name": "Mango",
       "category": "compositors",
