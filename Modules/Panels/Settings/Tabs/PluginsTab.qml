@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../../../../Helpers/FuzzySort.js" as Fuzzysort
 import qs.Commons
 import qs.Services.Noctalia
 import qs.Services.UI
@@ -209,6 +210,16 @@ ColumnLayout {
             }
           }
 
+          NIconButton {
+            icon: "trash"
+            tooltipText: I18n.tr("settings.plugins.uninstall")
+            baseSize: Style.baseWidgetSize * 0.7
+            onClicked: {
+              uninstallDialog.pluginToUninstall = modelData;
+              uninstallDialog.open();
+            }
+          }
+
           NButton {
             id: updateButton
             property string pluginId: modelData.id
@@ -379,6 +390,7 @@ ColumnLayout {
   RowLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
+    Layout.topMargin: Style.marginM
     Layout.bottomMargin: Style.marginM
 
     NTabBar {
@@ -429,25 +441,18 @@ ColumnLayout {
     }
   }
 
-  // Timer to check for updates after refresh starts
-  Timer {
-    id: checkUpdatesTimer
-    interval: 100
-    onTriggered: {
-      PluginService.checkForUpdates();
-    }
-  }
-
-  // Timer to recheck updates after available plugins are updated
-  Timer {
-    id: recheckUpdatesTimer
-    interval: 50
-    onTriggered: {
-      PluginService.checkForUpdates();
-    }
-  }
-
   property string pluginFilter: "all"
+  property string pluginSearchText: ""
+
+  // Search input
+  NTextInput {
+    placeholderText: I18n.tr("placeholders.search")
+    inputIconName: "search"
+    text: root.pluginSearchText
+    onTextChanged: root.pluginSearchText = text
+    Layout.fillWidth: true
+    Layout.bottomMargin: Style.marginL
+  }
 
   // Available plugins list
   ColumnLayout {
@@ -461,6 +466,7 @@ ColumnLayout {
         var all = PluginService.availablePlugins || [];
         var filtered = [];
 
+        // First apply download filter
         for (var i = 0; i < all.length; i++) {
           var plugin = all[i];
           var downloaded = plugin.downloaded || false;
@@ -474,105 +480,138 @@ ColumnLayout {
           }
         }
 
+        // Then apply fuzzy search if there's search text
+        var query = root.pluginSearchText.trim();
+        if (query !== "") {
+          var results = Fuzzysort.go(query, filtered, {
+                                       "keys": ["name", "description"],
+                                       "threshold": 0.35,
+                                       "limit": 50
+                                     });
+          filtered = [];
+          for (var j = 0; j < results.length; j++) {
+            filtered.push(results[j].obj);
+          }
+        } else {
+          // Sort by lastUpdated (most recent first) when not searching
+          filtered.sort(function (a, b) {
+            var dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+            var dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+            return dateB - dateA;
+          });
+        }
+
         return filtered;
       }
 
       delegate: NBox {
+        id: pluginBox
+        property bool isHovered: false
+
         Layout.fillWidth: true
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
-        implicitHeight: Math.round(contentRow.implicitHeight + Style.marginL * 2)
+        implicitHeight: Math.round(contentColumn.implicitHeight + Style.marginL * 2)
         color: Color.mSurface
 
-        RowLayout {
-          id: contentRow
+        Behavior on implicitHeight {
+          NumberAnimation {
+            duration: 150
+            easing.type: Easing.OutCubic
+          }
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          hoverEnabled: true
+          acceptedButtons: Qt.NoButton
+          onEntered: pluginBox.isHovered = true
+          onExited: pluginBox.isHovered = false
+        }
+
+        ColumnLayout {
+          id: contentColumn
           anchors.fill: parent
           anchors.margins: Style.marginL
-          spacing: Style.marginM
+          spacing: Style.marginS
 
-          NIcon {
-            icon: "plugin"
-            pointSize: Style.fontSizeXL
-            color: Color.mOnSurface
-          }
-
-          ColumnLayout {
-            spacing: 2
+          RowLayout {
+            spacing: Style.marginM
             Layout.fillWidth: true
+
+            NIcon {
+              icon: "plugin"
+              pointSize: Style.fontSizeL
+              color: Color.mOnSurface
+            }
 
             NText {
               text: modelData.name
-              font.weight: Font.Medium
               color: Color.mOnSurface
               elide: Text.ElideRight
               Layout.fillWidth: true
             }
 
+            // Downloaded indicator
+            NIcon {
+              icon: "circle-check"
+              pointSize: Style.fontSizeL
+              color: Color.mPrimary
+              visible: modelData.downloaded === true
+            }
+
+            // Install/Uninstall button
+            NIconButton {
+              icon: modelData.downloaded ? "trash" : "download"
+              baseSize: Style.baseWidgetSize * 0.7
+              tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
+              onClicked: {
+                if (modelData.downloaded) {
+                  uninstallDialog.pluginToUninstall = modelData;
+                  uninstallDialog.open();
+                } else {
+                  installPlugin(modelData);
+                }
+              }
+            }
+          }
+
+          // Description - visible on hover
+          NText {
+            visible: pluginBox.isHovered && modelData.description
+            text: modelData.description || ""
+            font.pointSize: Style.fontSizeXS
+            color: Color.mOnSurface
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+          }
+
+          // Details row - visible on hover
+          RowLayout {
+            visible: pluginBox.isHovered
+            spacing: Style.marginS
+            Layout.fillWidth: true
+
             NText {
-              text: modelData.description
+              text: "v" + modelData.version
               font.pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
-              wrapMode: Text.WordWrap
-              maximumLineCount: 2
-              elide: Text.ElideRight
+            }
+
+            NText {
+              text: "•"
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: stripAuthorEmail(modelData.author)
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            Item {
               Layout.fillWidth: true
-            }
-
-            RowLayout {
-              spacing: Style.marginS
-
-              NText {
-                text: "v" + modelData.version
-                font.pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
-              }
-
-              NText {
-                text: "•"
-                font.pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
-              }
-
-              NText {
-                text: stripAuthorEmail(modelData.author)
-                font.pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
-              }
-
-              NText {
-                text: "•"
-                font.pointSize: Style.fontSizeXXS
-                color: Color.mOnSurfaceVariant
-              }
-
-              NText {
-                text: modelData.source?.name || "Unknown"
-                font.pointSize: Style.fontSizeXS
-                color: Color.mOnSurfaceVariant
-              }
-            }
-          }
-
-          // Downloaded indicator
-          NIcon {
-            icon: "circle-check"
-            pointSize: Style.fontSizeXL
-            color: Color.mPrimary
-            visible: modelData.downloaded === true
-          }
-
-          // Install/Uninstall button
-          NIconButton {
-            icon: modelData.downloaded ? "trash" : "download"
-            baseSize: Style.baseWidgetSize * 0.7
-            tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
-            onClicked: {
-              if (modelData.downloaded) {
-                uninstallDialog.pluginToUninstall = modelData;
-                uninstallDialog.open();
-              } else {
-                installPlugin(modelData);
-              }
             }
           }
         }
@@ -736,6 +775,23 @@ ColumnLayout {
     showToastOnSave: true
   }
 
+  // Timer to check for updates after refresh starts
+  Timer {
+    id: checkUpdatesTimer
+    interval: 100
+    onTriggered: {
+      PluginService.checkForUpdates();
+    }
+  }
+
+  // Timer to recheck updates after available plugins are updated
+  Timer {
+    id: recheckUpdatesTimer
+    interval: 50
+    onTriggered: {
+      PluginService.checkForUpdates();
+    }
+  }
   // ------------------------------
   // Functions
   // ------------------------------
