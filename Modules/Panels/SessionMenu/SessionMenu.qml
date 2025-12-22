@@ -416,6 +416,15 @@ SmartPanel {
       visible: largeButtonsStyle
       anchors.centerIn: parent
 
+      Rectangle {
+        id: gridBackground
+        anchors.fill: parent
+        color: Color.mSurface
+        // anchors.margins: Style.marginM
+        // spacing: Style.marginM
+        z: -1
+        radius: Style.marginXL
+      }
       // Large buttons style layout (grid)
       GridLayout {
         id: largeButtonsGrid
