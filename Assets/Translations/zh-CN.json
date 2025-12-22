@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "当没有未读通知时隐藏通知徽章。",
-          "label": "空时隐藏徽章"
+        "hide-widget-when-zero": {
+          "description": "当没有未读通知时隐藏通知图标。",
+          "label": "空时隐藏图标"
         },
         "show-unread-badge": {
           "description": "显示一个用于展示未读通知数量的徽章。",

@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Verberg de meldingsbadge wanneer er geen ongelezen meldingen zijn.",
-          "label": "Badge verbergen bij nul"
+        "hide-widget-when-zero": {
+          "description": "Verberg het meldingspictogram wanneer er geen ongelezen meldingen zijn.",
+          "label": "Pictogram verbergen bij nul"
         },
         "show-unread-badge": {
           "description": "Toon een badge met het aantal ongelezen meldingen.",

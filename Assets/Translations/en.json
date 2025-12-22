@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Hide the notification badge when there are no unread notifications.",
-          "label": "Hide badge when zero"
+        "hide-widget-when-zero": {
+          "description": "Hide the notification icon when there are no unread notifications.",
+          "label": "Hide icon when zero"
         },
         "show-unread-badge": {
           "description": "Display a badge showing the number of unread notifications.",

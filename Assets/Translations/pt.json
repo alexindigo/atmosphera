@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Ocultar o distintivo de notificação quando não há notificações não lidas.",
-          "label": "Ocultar distintivo quando zero"
+        "hide-widget-when-zero": {
+          "description": "Ocultar o ícone de notificação quando não há notificações não lidas.",
+          "label": "Ocultar ícone quando zero"
         },
         "show-unread-badge": {
           "description": "Exibir um distintivo mostrando o número de notificações não lidas.",
