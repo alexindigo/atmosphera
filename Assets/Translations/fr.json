@@ -457,10 +457,18 @@
       "disconnect": "Déconnecter",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
       "known-devices": "Appareils connus",
+      "paired-devices": "Appareils appairés",
       "pairing": "Appairage en cours...",
       "pairing-mode": "Assurez-vous que votre appareil est en mode d'appairage.",
       "scanning": "Recherche d'appareils en cours...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Appairer",
+      "unpair": "Désappairer",
+      "info": "Infos",
+      "device-address": "Adresse de l’appareil",
+      "paired": "Appairé",
+      "trusted": "De confiance",
+      "discoverable": "Détectable"
     }
   },
   "calendar": {
@@ -520,7 +528,9 @@
     "cancel": "Annuler",
     "check-settings": "Vérifier les paramètres pour plus de détails.",
     "close": "Fermer",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "yes": "Oui",
+    "no": "Non"
   },
   "context-menu": {
     "clear-history": "Effacer l'historique",
@@ -2559,7 +2569,15 @@
     },
     "bluetooth": {
       "disabled": "Désactivé",
-      "enabled": "Activé"
+      "enabled": "Activé",
+      "pair-failed": "Échec de l’appairage de l’appareil",
+      "connect-failed": "Échec de la connexion à l’appareil",
+      "disconnect-failed": "Échec de la déconnexion de l’appareil",
+      "forget-failed": "Échec de l’oubli de l’appareil",
+      "state-change-failed": "Échec du changement d’état du Bluetooth",
+      "discoverable-enabled": "Détectable activé",
+      "discoverable-disabled": "Détectable désactivé",
+      "discoverable-change-failed": "Échec du changement d’état détectable"
     },
     "clipboard": {
       "unavailable": "Historique du presse-papiers indisponible",
@@ -2644,7 +2662,11 @@
       "connected": "Connecté à '{ssid}'",
       "disabled": "Désactivé",
       "disconnected": "Déconnecté de '{ssid}'",
-      "enabled": "Activé"
+      "enabled": "Activé",
+      "incorrect-password": "Mot de passe incorrect",
+      "network-not-found": "Réseau introuvable",
+      "connection-timeout": "Délai de connexion dépassé",
+      "connection-failed": "Échec de la connexion"
     }
   },
   "tooltips": {

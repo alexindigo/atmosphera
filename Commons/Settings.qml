@@ -290,6 +290,11 @@ Singleton {
       property real panelBackgroundOpacity: 0.85
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
+      // Details view mode persistence for panels
+      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
+      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
+      // Bluetooth available devices list: hide items without a name
+      property bool bluetoothHideUnnamedDevices: false
     }
 
     // location

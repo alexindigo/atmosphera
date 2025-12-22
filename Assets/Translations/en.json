@@ -457,10 +457,20 @@
       "disconnect": "Disconnect",
       "enable-message": "Enable Bluetooth to see available devices.",
       "known-devices": "Known devices",
+      "paired-devices": "Paired devices",
       "pairing": "Pairing...",
       "pairing-mode": "Make sure your device is in pairing mode.",
       "scanning": "Scanning for devices...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Pair",
+      "unpair": "Unpair",
+      "info": "Info",
+      "device-address": "Device address",
+      "paired": "Paired",
+      "trusted": "Trusted",
+      "discoverable": "Discoverable",
+      "signal": "Signal",
+      "battery": "Battery"
     }
   },
   "calendar": {
@@ -520,7 +530,9 @@
     "cancel": "Cancel",
     "check-settings": "Check Settings for details",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No"
   },
   "context-menu": {
     "clear-history": "Clear history",
@@ -2644,7 +2656,27 @@
       "connected": "Connected to '{ssid}'",
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "incorrect-password": "Incorrect password",
+      "network-not-found": "Network not found",
+      "connection-timeout": "Connection timeout",
+      "connection-failed": "Connection failed"
+    },
+    "bluetooth": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "pair-failed": "Failed to pair device",
+      "connect-failed": "Failed to connect to device",
+      "disconnect-failed": "Failed to disconnect from device",
+      "forget-failed": "Failed to forget device",
+      "state-change-failed": "Failed to change Bluetooth state",
+      "discoverable-enabled": "Discoverable enabled",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "confirm-code": "Confirm code {value} on the other device",
+      "display-code": "Enter code {value} on the other device",
+      "passkey-required": "Passkey required by the device",
+      "pincode-required": "PIN code required by the device"
     }
   },
   "tooltips": {
@@ -2704,6 +2736,8 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
+    "hide-unnamed-devices": "Hide unnamed devices",
+    "show-all-devices": "Show all devices",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",
@@ -2719,6 +2753,37 @@
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",
     "widget-settings": "Widget settings"
+  },
+  "wifi": {
+    "panel": {
+      "title": "Wi‑Fi",
+      "disabled": "Wi‑Fi is disabled",
+      "enable-message": "Enable Wi‑Fi to see available networks.",
+      "searching": "Searching for networks...",
+      "no-networks": "No Wi‑Fi networks found",
+      "scan-again": "Scan again",
+      "known-networks": "Known networks",
+      "available-networks": "Available networks",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "password": "Password",
+      "enter-password": "Enter Wi‑Fi password",
+      "connected": "Connected",
+      "disconnecting": "Disconnecting…",
+      "forgetting": "Forgetting…",
+      "saved": "Saved",
+      "forget-network": "Forget this network",
+      "forget": "Forget",
+      "info": "Info",
+      "security": "Security",
+      "internet-connected": "Internet connected",
+      "internet-limited": "No internet",
+      "link-speed": "Link speed",
+      "ipv4": "IPv4",
+      "gateway": "Gateway",
+      "dns": "DNS",
+      "internet": "Internet"
+    }
   },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",
@@ -2892,28 +2957,6 @@
     },
     "tooltip": {
       "placeholder": "Placeholder"
-    }
-  },
-  "wifi": {
-    "panel": {
-      "available-networks": "Available networks",
-      "connect": "Connect",
-      "connected": "Connected",
-      "disabled": "Wi-Fi is disabled",
-      "disconnect": "Disconnect",
-      "disconnecting": "Disconnecting...",
-      "enable-message": "Enable Wi-Fi to see available networks.",
-      "enter-password": "Enter password...",
-      "forget": "Forget",
-      "forget-network": "Forget this network?",
-      "forgetting": "Forgetting...",
-      "known-networks": "Known networks",
-      "no-networks": "No networks found",
-      "password": "Password",
-      "saved": "Saved",
-      "scan-again": "Scan again",
-      "searching": "Searching for nearby networks...",
-      "title": "Wi-Fi"
     }
   }
 }

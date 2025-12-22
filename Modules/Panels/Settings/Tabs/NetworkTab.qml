@@ -23,6 +23,9 @@ ColumnLayout {
     enabled: ProgramCheckerService.nmcliAvailable
   }
 
+  NDivider { Layout.fillWidth: true }
+
+  // Bluetooth adapter toggle grouped with its panel settings
   NToggle {
     label: I18n.tr("settings.network.bluetooth.label")
     description: I18n.tr("settings.network.bluetooth.description")

@@ -457,10 +457,18 @@
       "disconnect": "Verbreken",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
       "known-devices": "Bekende apparaten",
+      "paired-devices": "Gekoppelde apparaten",
       "pairing": "Koppelen...",
       "pairing-mode": "Zorg ervoor dat je apparaat in koppelmodus staat.",
       "scanning": "Zoeken naar apparaten...",
-      "title": "Bluetooth"
+      "title": "Bluetooth",
+      "pair": "Koppelen",
+      "unpair": "Ontkoppelen",
+      "info": "Info",
+      "device-address": "Apparaatadres",
+      "paired": "Gekoppeld",
+      "trusted": "Vertrouwd",
+      "discoverable": "Zichtbaar"
     }
   },
   "calendar": {
@@ -520,7 +528,9 @@
     "cancel": "Annuleren",
     "check-settings": "Controleer Instellingen voor details.",
     "close": "Sluiten",
-    "save": "Opslaan"
+    "save": "Opslaan",
+    "yes": "Ja",
+    "no": "Nee"
   },
   "context-menu": {
     "clear-history": "Geschiedenis wissen",
@@ -2559,7 +2569,15 @@
     },
     "bluetooth": {
       "disabled": "Uitgeschakeld",
-      "enabled": "Ingeschakeld"
+      "enabled": "Ingeschakeld",
+      "pair-failed": "Apparaat koppelen mislukt",
+      "connect-failed": "Verbinding met apparaat mislukt",
+      "disconnect-failed": "Verbinding verbreken met apparaat mislukt",
+      "forget-failed": "Apparaat vergeten mislukt",
+      "state-change-failed": "Bluetooth‑status wijzigen mislukt",
+      "discoverable-enabled": "Zichtbaar ingeschakeld",
+      "discoverable-disabled": "Zichtbaar uitgeschakeld",
+      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt"
     },
     "clipboard": {
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
@@ -2644,7 +2662,11 @@
       "connected": "Verbonden met '{ssid}'",
       "disabled": "Wi-Fi uitgeschakeld",
       "disconnected": "Verbinding met '{ssid}' verbroken",
-      "enabled": "Wi-Fi ingeschakeld"
+      "enabled": "Wi-Fi ingeschakeld",
+      "incorrect-password": "Onjuist wachtwoord",
+      "network-not-found": "Netwerk niet gevonden",
+      "connection-timeout": "Time-out bij verbinding",
+      "connection-failed": "Verbinding mislukt"
     }
   },
   "tooltips": {
