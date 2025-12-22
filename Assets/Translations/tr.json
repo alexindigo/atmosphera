@@ -527,6 +527,7 @@
     "close-app": "{app}'i kapat",
     "connect-vpn": "{name} bağlantısına bağlan",
     "cycle-visualizer": "Döngü görselleştirici",
+    "delete": "Sil",
     "disable-bluetooth": "Bluetooth'u kapat",
     "disable-dnd": "Rahatsız Etmeyin'i Kapat",
     "disable-wifi": "Kablosuz Bağlantıyı kapat",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Araç ekle",
         "button": {
           "label": "Düzenleme moduna gir"
         },
-        "controls-explanation": "Sol fare tuşu: Araç taşı\nSağ fare tuşu: Araç yeniden boyutlandır",
+        "controls-explanation": "Sol tıklayıp sürükleyin: Bileşeni taşıyın veya yeniden boyutlandırın.\nSağ tıklayın: Bağlam menüsü seçeneklerini açın.",
         "description": "Masaüstü araçlarını taşımak ve yeniden konumlandırmak için düzenleme modunu etkinleştirin. Etkinleştirildiğinde, araçlar bir sürükleme ana hattı gösterir ve yeniden konumlandırılabilir.",
         "exit-button": "Düzenleme modundan çık",
         "grid-snap": {
           "label": "Izgaraya hizala"
         },
-        "label": "Düzenleme modu"
+        "label": "Düzenleme modu",
+        "open-settings": "Ayarları aç"
       },
       "enabled": {
         "description": "Masaüstü araçlarını tamamen etkinleştir veya devre dışı bırak.",
@@ -1754,6 +1757,10 @@
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
           "label": "Izgara görünümü"
         },
+        "icon-mode": {
+          "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
+          "label": "Yerel simgeleri kullan"
+        },
         "position": {
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
           "label": "Konum"
@@ -1769,10 +1776,6 @@
         "sort-by-usage": {
           "description": "Etkinleştirildiğinde, sıkça başlatılan uygulamalar listede ilk olarak görünür.",
           "label": "En çok kullanılana göre sırala"
-        },
-        "icon-mode": {
-          "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
-          "label": "Yerel simgeleri kullan"
         },
         "terminal-command": {
           "description": "Bir terminal başlatmak için komut. Örn., 'kitty -e' veya 'gnome-terminal --'.",

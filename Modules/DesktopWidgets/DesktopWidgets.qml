@@ -71,6 +71,57 @@ Variants {
         Logger.d("DesktopWidgets", "Created panel window for", screen?.name);
       }
 
+      // Add a new widget to the current screen
+      function addWidgetToCurrentScreen(widgetId) {
+        var monitorName = window.screen.name;
+        var newWidget = {
+          "id": widgetId
+        };
+
+        // Load default metadata if available
+        var metadata = DesktopWidgetRegistry.widgetMetadata[widgetId];
+        if (metadata) {
+          Object.keys(metadata).forEach(function (key) {
+            if (key !== "allowUserSettings") {
+              newWidget[key] = metadata[key];
+            }
+          });
+        }
+
+        // Place at screen center
+        newWidget.x = (window.screen.width / 2) - 100;
+        newWidget.y = (window.screen.height / 2) - 100;
+        newWidget.scale = 1.0;
+
+        // Get current widgets and add new one
+        var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+        var newMonitorWidgets = monitorWidgets.slice();
+        var found = false;
+
+        for (var i = 0; i < newMonitorWidgets.length; i++) {
+          if (newMonitorWidgets[i].name === monitorName) {
+            var widgets = (newMonitorWidgets[i].widgets || []).slice();
+            widgets.push(newWidget);
+            newMonitorWidgets[i] = {
+              "name": monitorName,
+              "widgets": widgets
+            };
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          newMonitorWidgets.push({
+                                   "name": monitorName,
+                                   "widgets": [newWidget]
+                                 });
+        }
+
+        Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        Logger.i("DesktopWidgets", "Added widget", widgetId, "to", monitorName);
+      }
+
       Item {
         id: widgetsContainer
         anchors.fill: parent
@@ -79,7 +130,7 @@ Variants {
         // Using Loader to properly unload Canvas when not needed
         Loader {
           id: gridOverlayLoader
-          active: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled && Settings.data.desktopWidgets.gridSnap
+          active: DesktopWidgetRegistry.editMode && Settings.data.desktopWidgets.enabled && Settings.data.desktopWidgets.gridSnap
           anchors.fill: parent
           z: -1  // Behind widgets but above background
           asynchronous: false
@@ -198,6 +249,10 @@ Variants {
                   gridOverlay.requestPaint();
                 }
               }
+            }
+
+            Connections {
+              target: DesktopWidgetRegistry
               function onEditModeChanged() {
                 if (gridOverlayLoader.active) {
                   gridOverlay.requestPaint();
@@ -249,7 +304,7 @@ Variants {
         // Edit mode controls panel
         Rectangle {
           id: editModeControlsPanel
-          visible: Settings.data.desktopWidgets.editMode && Settings.data.desktopWidgets.enabled
+          visible: DesktopWidgetRegistry.editMode && Settings.data.desktopWidgets.enabled
 
           readonly property string barPos: Settings.data.bar.position || "top"
           readonly property bool barFloating: Settings.data.bar.floating || false
@@ -296,8 +351,8 @@ Variants {
           color: Qt.rgba(Color.mSurface.r, Color.mSurface.g, Color.mSurface.b, 0.85)
           radius: Style.radiusL
           border {
-            width: 1
-            color: Qt.alpha(Color.mOutline, 0.2)
+            width: Style.borderS
+            color: Color.mOutline
           }
           z: 9999
 
@@ -360,6 +415,40 @@ Variants {
               spacing: Style.marginS
 
               NIconButton {
+                id: addWidgetButton
+                icon: "layout-grid-add"
+                tooltipText: I18n.tr("settings.desktop-widgets.edit-mode.add-widget")
+                onClicked: {
+                  var popupMenuWindow = PanelService.getPopupMenuWindow(window.screen);
+                  if (popupMenuWindow) {
+                    // Build menu items from registry
+                    var items = [];
+                    var widgets = DesktopWidgetRegistry.widgets;
+                    for (var id in widgets) {
+                      items.push({
+                                   action: id,
+                                   text: DesktopWidgetRegistry.getWidgetDisplayName(id),
+                                   icon: "layout-grid-add"
+                                 });
+                    }
+                    var globalPos = addWidgetButton.mapToItem(null, 0, addWidgetButton.height + Style.marginS);
+                    popupMenuWindow.showDynamicContextMenu(items, globalPos.x, globalPos.y, function (widgetId) {
+                      addWidgetToCurrentScreen(widgetId);
+                      return false;
+                    });
+                  }
+                }
+              }
+
+              NIconButton {
+                icon: "grid-4x4"
+                tooltipText: I18n.tr("settings.desktop-widgets.edit-mode.grid-snap.label")
+                colorBg: Settings.data.desktopWidgets.gridSnap ? Color.mPrimary : Color.mSurfaceVariant
+                colorFg: Settings.data.desktopWidgets.gridSnap ? Color.mOnPrimary : Color.mPrimary
+                onClicked: Settings.data.desktopWidgets.gridSnap = !Settings.data.desktopWidgets.gridSnap
+              }
+
+              NIconButton {
                 icon: "settings"
                 tooltipText: I18n.tr("settings.desktop-widgets.edit-mode.open-settings")
                 onClicked: {
@@ -379,9 +468,9 @@ Variants {
                 text: I18n.tr("settings.desktop-widgets.edit-mode.exit-button")
                 icon: "logout"
                 outlined: false
-                fontSize: Style.fontSizeM * 1.1
-                iconSize: Style.fontSizeL * 1.1
-                onClicked: Settings.data.desktopWidgets.editMode = false
+                fontSize: Style.fontSizeS
+                iconSize: Style.fontSizeM
+                onClicked: DesktopWidgetRegistry.editMode = false
               }
             }
 
@@ -393,22 +482,6 @@ Variants {
               color: Color.mOnSurfaceVariant
               horizontalAlignment: Text.AlignRight
               wrapMode: Text.WordWrap
-            }
-
-            RowLayout {
-              Layout.alignment: Qt.AlignRight
-              spacing: Style.marginS
-
-              NText {
-                text: I18n.tr("settings.desktop-widgets.edit-mode.grid-snap.label")
-                pointSize: Style.fontSizeS
-                color: Color.mOnSurfaceVariant
-              }
-
-              NCheckbox {
-                checked: Settings.data.desktopWidgets.gridSnap
-                onToggled: checked => Settings.data.desktopWidgets.gridSnap = checked
-              }
             }
           }
         }

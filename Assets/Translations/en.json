@@ -1408,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Add widget",
         "button": {
           "label": "Enter edit mode"
         },
-        "controls-explanation": "Left Mouse Button: Move widget\nRight Mouse Button: Resize widget",
+        "controls-explanation": "Left-click & drag: Move or resize the widget.\nRight-click: Open the context menu options.",
         "description": "Enable edit mode to move and reposition desktop widgets. When enabled, widgets show a drag outline and can be repositioned.",
         "exit-button": "Exit edit mode",
         "grid-snap": {
           "label": "Grid snap"
         },
-        "label": "Edit mode"
+        "label": "Edit mode",
+        "open-settings": "Open settings"
       },
       "enabled": {
         "description": "Enable or disable desktop widgets entirely.",
@@ -1755,6 +1757,10 @@
           "description": "Display items in a grid layout instead of a list.",
           "label": "Grid view"
         },
+        "icon-mode": {
+          "description": "Use native system icons instead of Tabler icons.",
+          "label": "Use native icons"
+        },
         "position": {
           "description": "Choose where the launcher panel appears.",
           "label": "Position"
@@ -1770,10 +1776,6 @@
         "sort-by-usage": {
           "description": "When enabled, frequently launched apps appear first in the list.",
           "label": "Sort by most used"
-        },
-        "icon-mode": {
-          "description": "Use native system icons instead of Tabler icons.",
-          "label": "Use native icons"
         },
         "terminal-command": {
           "description": "Command to launch a terminal. E.g., 'kitty -e' or 'gnome-terminal --'.",

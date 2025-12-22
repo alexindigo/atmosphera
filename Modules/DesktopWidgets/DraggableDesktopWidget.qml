@@ -276,9 +276,9 @@ Item {
     id: decorationRect
     anchors.fill: parent
     anchors.margins: -Style.marginS
-    color: Settings.data.desktopWidgets.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : Color.transparent
-    border.color: (Settings.data.desktopWidgets.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : Color.transparent
-    border.width: Settings.data.desktopWidgets.editMode ? 3 : 0
+    color: DesktopWidgetRegistry.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : Color.transparent
+    border.color: (DesktopWidgetRegistry.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : Color.transparent
+    border.width: DesktopWidgetRegistry.editMode ? 3 : 0
     radius: Style.radiusL
     z: -1
   }
@@ -360,7 +360,7 @@ Item {
     id: dragArea
     anchors.fill: parent
     z: 1000
-    visible: Settings.data.desktopWidgets.editMode
+    visible: DesktopWidgetRegistry.editMode
     cursorShape: internal.isDragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor
     hoverEnabled: true
     acceptedButtons: Qt.LeftButton
@@ -388,7 +388,6 @@ Item {
                            var deltaX = globalCurrentPos.x - globalPressPos.x;
                            var deltaY = globalCurrentPos.y - globalPressPos.y;
 
-                           // Calculate new position based on original position when drag started
                            var newX = internal.dragOffsetX + deltaX;
                            var newY = internal.dragOffsetY + deltaY;
 
@@ -441,7 +440,7 @@ Item {
     id: contextMenuArea
     anchors.fill: parent
     z: 1001
-    visible: Settings.data.desktopWidgets.editMode
+    visible: DesktopWidgetRegistry.editMode
     acceptedButtons: Qt.RightButton
     hoverEnabled: true
 
@@ -512,7 +511,7 @@ Item {
       required property var modelData
       required property int index
 
-      visible: Settings.data.desktopWidgets.editMode && !internal.isDragging
+      visible: DesktopWidgetRegistry.editMode && !internal.isDragging
       x: modelData.xMult * (root.width + outlineMargin) - (modelData.xMult === 0 ? outlineMargin : cornerHandleSize)
       y: modelData.yMult * (root.height + outlineMargin) - (modelData.yMult === 0 ? outlineMargin : cornerHandleSize)
       width: cornerHandleSize

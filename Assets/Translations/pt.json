@@ -527,6 +527,7 @@
     "close-app": "Fechar {app}",
     "connect-vpn": "Conectar-se a {name}",
     "cycle-visualizer": "Visualizador de ciclo",
+    "delete": "Apagar",
     "disable-bluetooth": "Desativar Bluetooth",
     "disable-dnd": "Desativar o Não Perturbe",
     "disable-wifi": "Desativar Wi-Fi",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Adicionar widget",
         "button": {
           "label": "Entrar no modo de edição"
         },
-        "controls-explanation": "Botão esquerdo do mouse: Mover widget\nBotão direito do mouse: Redimensionar widget",
+        "controls-explanation": "Clique esquerdo e arraste: Mover ou redimensionar o widget.\nClique direito: Abrir as opções do menu de contexto.",
         "description": "Ative o modo de edição para mover e reposicionar widgets da área de trabalho. Quando ativado, os widgets exibem um contorno de arrastar e podem ser reposicionados.",
         "exit-button": "Sair do modo de edição",
         "grid-snap": {
           "label": "Alinhar à grade"
         },
-        "label": "Modo de edição"
+        "label": "Modo de edição",
+        "open-settings": "Abrir configurações"
       },
       "enabled": {
         "description": "Ativar ou desativar widgets da área de trabalho completamente.",
@@ -1754,6 +1757,10 @@
           "description": "Exibir itens em uma grade em vez de uma lista.",
           "label": "Visualização em grade"
         },
+        "icon-mode": {
+          "description": "Use ícones nativos do sistema em vez de ícones Tabler.",
+          "label": "Usar ícones nativos"
+        },
         "position": {
           "description": "Escolha onde o painel do lançador aparece.",
           "label": "Posição"
@@ -1769,10 +1776,6 @@
         "sort-by-usage": {
           "description": "Quando ativado, os aplicativos mais usados aparecem primeiro na lista.",
           "label": "Ordenar por mais usados"
-        },
-        "icon-mode": {
-          "description": "Use ícones nativos do sistema em vez de ícones Tabler.",
-          "label": "Usar ícones nativos"
         },
         "terminal-command": {
           "description": "Comando para iniciar um terminal. Ex: 'kitty -e' ou 'gnome-terminal --'.",
