@@ -506,7 +506,7 @@ ColumnLayout {
 
       delegate: NBox {
         id: pluginBox
-        property bool isHovered: false
+        property bool isHovered: hoverHandler.hovered
 
         Layout.fillWidth: true
         Layout.leftMargin: Style.borderS
@@ -521,12 +521,8 @@ ColumnLayout {
           }
         }
 
-        MouseArea {
-          anchors.fill: parent
-          hoverEnabled: true
-          acceptedButtons: Qt.NoButton
-          onEntered: pluginBox.isHovered = true
-          onExited: pluginBox.isHovered = false
+        HoverHandler {
+          id: hoverHandler
         }
 
         ColumnLayout {
