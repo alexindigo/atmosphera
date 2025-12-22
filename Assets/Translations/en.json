@@ -527,6 +527,7 @@
     "close-app": "Close {app}",
     "connect-vpn": "Connect to {name}",
     "cycle-visualizer": "Cycle visualizer",
+    "delete": "Delete",
     "disable-bluetooth": "Disable Bluetooth",
     "disable-dnd": "Disable Do Not Disturb",
     "disable-wifi": "Disable Wi-Fi",
@@ -735,10 +736,6 @@
       "top_left": "Top left",
       "top_right": "Top right"
     },
-    "visualizer-quality": {
-      "high": "High",
-      "low": "Low"
-    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Mirrored",
@@ -882,10 +879,6 @@
     "title": "Session Menu"
   },
   "settings": {
-    "indicator": {
-      "default-value": "Default: {value}",
-      "system-default": "System Default"
-    },
     "about": {
       "contributors": {
         "section": {
@@ -953,10 +946,6 @@
         "section": {
           "description": "Set your preferred and ignored media applications.",
           "label": "Media players"
-        },
-        "visualizer-quality": {
-          "description": "High quality use more GPU ressources.",
-          "label": "Visualization quality"
         },
         "visualizer-type": {
           "description": "Choose a visualization type for media playback.",
@@ -1415,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Add widget",
         "button": {
           "label": "Enter edit mode"
         },
-        "controls-explanation": "Left mouse button: Move widget\nRight mouse button: Resize widget",
+        "controls-explanation": "Left-click & drag: Move or resize the widget.\nRight-click: Open the context menu options.",
         "description": "Enable edit mode to move and reposition desktop widgets. When enabled, widgets show a drag outline and can be repositioned.",
         "exit-button": "Exit edit mode",
         "grid-snap": {
           "label": "Grid snap"
         },
-        "label": "Edit mode"
+        "label": "Edit mode",
+        "open-settings": "Open settings"
       },
       "enabled": {
         "description": "Enable or disable desktop widgets entirely.",
@@ -1448,6 +1439,10 @@
         "show-background": {
           "description": "Show the background container for the media player widget.",
           "label": "Show background"
+        },
+        "show-buttons": {
+          "description": "Show media control buttons (play/pause, previous, next) on the media player widget.",
+          "label": "Show buttons"
         },
         "visualizer-type": {
           "description": "Choose a visualization type for the desktop media player background.",
@@ -1722,6 +1717,10 @@
         "placeholder": "e.g., notify-send \"Wallpaper\" \"Changed\""
       }
     },
+    "indicator": {
+      "default-value": "Default: {value}",
+      "system-default": "System Default"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1743,6 +1742,10 @@
         "grid-view": {
           "description": "Display items in a grid layout instead of a list.",
           "label": "Grid view"
+        },
+        "icon-mode": {
+          "description": "Use native system icons instead of Tabler icons.",
+          "label": "Use native icons"
         },
         "position": {
           "description": "Choose where the launcher panel appears.",
@@ -1869,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activate Bluetooth management.",
         "label": "Enable Bluetooth"
       },
       "section": {
@@ -1876,6 +1880,7 @@
       },
       "title": "Network",
       "wifi": {
+        "description": "Manage wireless networks (requires NetworkManager).",
         "label": "Enable Wi-Fi"
       }
     },

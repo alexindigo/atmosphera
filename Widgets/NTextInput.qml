@@ -32,8 +32,8 @@ ColumnLayout {
 
   readonly property bool isValueChanged: isSettings && (text !== defaultValue)
   readonly property string indicatorTooltip: isSettings ? I18n.tr("settings.indicator.default-value", {
-                                                                   "value": defaultValue === "" ? "(empty)" : String(defaultValue)
-                                                                 }) : ""
+                                                                    "value": defaultValue === "" ? "(empty)" : String(defaultValue)
+                                                                  }) : ""
 
   NLabel {
     label: root.label
@@ -230,5 +230,4 @@ ColumnLayout {
       }
     }
   }
-
 }

@@ -527,6 +527,7 @@
     "close-app": "{app} schließen",
     "connect-vpn": "Mit {name} verbinden",
     "cycle-visualizer": "Zyklus-Visualisierer",
+    "delete": "Löschen",
     "disable-bluetooth": "Bluetooth deaktivieren",
     "disable-dnd": "'Nicht stören' deaktivieren",
     "disable-wifi": "WLAN deaktivieren",
@@ -734,10 +735,6 @@
       "top": "Oben",
       "top_left": "Oben links",
       "top_right": "Oben rechts"
-    },
-    "visualizer-quality": {
-      "high": "Hoch",
-      "low": "Niedrig"
     },
     "visualizer-types": {
       "linear": "Linear",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Bevorzugte und ignorierte Medienanwendungen festlegen.",
           "label": "Medienplayer"
-        },
-        "visualizer-quality": {
-          "description": "Hohe Qualität verbraucht mehr GPU-Ressourcen.",
-          "label": "Visualisierungsqualität"
         },
         "visualizer-type": {
           "description": "Visualisierungstyp für Medienwiedergabe wählen.",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Widget hinzufügen",
         "button": {
           "label": "Bearbeitungsmodus aktivieren"
         },
-        "controls-explanation": "Linke Maustaste: Widget verschieben\nRechte Maustaste: Widget-Größe ändern",
+        "controls-explanation": "Linksklick & Ziehen: Widget verschieben oder Größe ändern.\nRechtsklick: Kontextmenü-Optionen öffnen.",
         "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
         "exit-button": "Bearbeitungsmodus verlassen",
         "grid-snap": {
           "label": "Raster einrasten"
         },
-        "label": "Bearbeitungsmodus"
+        "label": "Bearbeitungsmodus",
+        "open-settings": "Einstellungen öffnen"
       },
       "enabled": {
         "description": "Desktop-Widgets vollständig aktivieren oder deaktivieren.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
           "label": "Hintergrund anzeigen"
+        },
+        "show-buttons": {
+          "description": "Mediensteuerungstasten (Wiedergabe/Pause, Zurück, Weiter) im Media-Player-Widget anzeigen.",
+          "label": "Tasten anzeigen"
         },
         "visualizer-type": {
           "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
@@ -1718,6 +1717,10 @@
         "placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
       }
     },
+    "indicator": {
+      "default-value": "Standard: {value}",
+      "system-default": "Systemstandard"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Elemente in einem Raster statt in einer Liste anzeigen.",
           "label": "Rasteransicht"
+        },
+        "icon-mode": {
+          "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
+          "label": "Native Icons verwenden"
         },
         "position": {
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-Verwaltung aktivieren.",
         "label": "Bluetooth aktivieren"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Netzwerk",
       "wifi": {
+        "description": "Drahtlosnetzwerke verwalten (erfordert NetworkManager).",
         "label": "WLAN aktivieren"
       }
     },

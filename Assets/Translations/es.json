@@ -527,6 +527,7 @@
     "close-app": "Cerrar {app}",
     "connect-vpn": "Conectarse a {name}",
     "cycle-visualizer": "Visualizador de ciclos",
+    "delete": "Borrar",
     "disable-bluetooth": "Desactivar Bluetooth",
     "disable-dnd": "Desactivar No molestar",
     "disable-wifi": "Desactivar Wi-Fi",
@@ -734,10 +735,6 @@
       "top": "Superior",
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
-    },
-    "visualizer-quality": {
-      "high": "Alto/Alta",
-      "low": "Bajo"
     },
     "visualizer-types": {
       "linear": "Lineal",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Establece tus aplicaciones multimedia preferidas e ignoradas.",
           "label": "Reproductores multimedia"
-        },
-        "visualizer-quality": {
-          "description": "Alta calidad usa más recursos de la GPU.",
-          "label": "Calidad de visualización"
         },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para la reproducción de medios.",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Añadir widget",
         "button": {
           "label": "Entrar en modo de edición"
         },
-        "controls-explanation": "Botón izquierdo del ratón: Mover widget\nBotón derecho del ratón: Redimensionar widget",
+        "controls-explanation": "Clic izquierdo y arrastrar: Mover o redimensionar el widget.\nClic derecho: Abrir las opciones del menú contextual.",
         "description": "Habilita el modo de edición para mover y cambiar la posición de los widgets del escritorio. Cuando está habilitado, los widgets muestran un contorno de arrastre y se pueden reposicionar.",
         "exit-button": "Salir del modo de edición",
         "grid-snap": {
           "label": "Ajustar a cuadrícula"
         },
-        "label": "Modo de edición"
+        "label": "Modo de edición",
+        "open-settings": "Abrir ajustes"
       },
       "enabled": {
         "description": "Activar o desactivar los widgets de escritorio por completo.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget del reproductor multimedia.",
           "label": "Mostrar fondo"
+        },
+        "show-buttons": {
+          "description": "Mostrar botones de control de medios (reproducir/pausar, anterior, siguiente) en el widget del reproductor multimedia.",
+          "label": "Mostrar botones"
         },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para el fondo del reproductor multimedia de escritorio.",
@@ -1718,6 +1717,10 @@
         "placeholder": "ej., notify-send \"Fondo de pantalla\" \"Cambiado\""
       }
     },
+    "indicator": {
+      "default-value": "Predeterminado: {value}",
+      "system-default": "Predeterminado del sistema"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
           "label": "Vista de cuadrícula"
+        },
+        "icon-mode": {
+          "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
+          "label": "Usar iconos nativos"
         },
         "position": {
           "description": "Elige dónde aparece el panel del lanzador.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activar la gestión de Bluetooth.",
         "label": "Activar Bluetooth"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Red",
       "wifi": {
+        "description": "Administrar redes inalámbricas (requiere NetworkManager).",
         "label": "Activar Wi-Fi"
       }
     },

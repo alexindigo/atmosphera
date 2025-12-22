@@ -527,6 +527,7 @@
     "close-app": "{app}'i kapat",
     "connect-vpn": "{name} bağlantısına bağlan",
     "cycle-visualizer": "Döngü görselleştirici",
+    "delete": "Sil",
     "disable-bluetooth": "Bluetooth'u kapat",
     "disable-dnd": "Rahatsız Etmeyin'i Kapat",
     "disable-wifi": "Kablosuz Bağlantıyı kapat",
@@ -734,10 +735,6 @@
       "top": "Üst",
       "top_left": "Sol üst",
       "top_right": "Sağ üst"
-    },
-    "visualizer-quality": {
-      "high": "Yüksek",
-      "low": "Düşük"
     },
     "visualizer-types": {
       "linear": "Doğrusal",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Tercih ettiğiniz ve yoksayacağınız ortam uygulamalarını ayarlayın.",
           "label": "Ortam oynatıcıları"
-        },
-        "visualizer-quality": {
-          "description": "Yüksek kalite ekran kartını daha fazla kullanır.",
-          "label": "Görselleştirme kalitesi"
         },
         "visualizer-type": {
           "description": "Ortam oynatımı için bir görselleştirme türü seçin",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Araç ekle",
         "button": {
           "label": "Düzenleme moduna gir"
         },
-        "controls-explanation": "Sol fare tuşu: Araç taşı\nSağ fare tuşu: Araç yeniden boyutlandır",
+        "controls-explanation": "Sol tıklayıp sürükleyin: Bileşeni taşıyın veya yeniden boyutlandırın.\nSağ tıklayın: Bağlam menüsü seçeneklerini açın.",
         "description": "Masaüstü araçlarını taşımak ve yeniden konumlandırmak için düzenleme modunu etkinleştirin. Etkinleştirildiğinde, araçlar bir sürükleme ana hattı gösterir ve yeniden konumlandırılabilir.",
         "exit-button": "Düzenleme modundan çık",
         "grid-snap": {
           "label": "Izgaraya hizala"
         },
-        "label": "Düzenleme modu"
+        "label": "Düzenleme modu",
+        "open-settings": "Ayarları aç"
       },
       "enabled": {
         "description": "Masaüstü araçlarını tamamen etkinleştir veya devre dışı bırak.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Medya oynatıcı widget'ı için arka plan konteynerini göster.",
           "label": "Arka planı göster"
+        },
+        "show-buttons": {
+          "description": "Medya oynatıcı widget'ında medya kontrol düğmelerini (oynat/durdur, önceki, sonraki) göster.",
+          "label": "Düğmeleri göster"
         },
         "visualizer-type": {
           "description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
@@ -1718,6 +1717,10 @@
         "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
       }
     },
+    "indicator": {
+      "default-value": "Varsayılan: {value}",
+      "system-default": "Sistem Varsayılanı"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
           "label": "Izgara görünümü"
+        },
+        "icon-mode": {
+          "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
+          "label": "Yerel simgeleri kullan"
         },
         "position": {
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth yönetimini etkinleştir.",
         "label": "Bluetooth'u Etkinleştir"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Ağ",
       "wifi": {
+        "description": "Kablosuz ağları yönet (NetworkManager gerektirir).",
         "label": "Kablosuz Bağlantıyı Etkinleştir"
       }
     },

@@ -527,6 +527,7 @@
     "close-app": "Fechar {app}",
     "connect-vpn": "Conectar-se a {name}",
     "cycle-visualizer": "Visualizador de ciclo",
+    "delete": "Apagar",
     "disable-bluetooth": "Desativar Bluetooth",
     "disable-dnd": "Desativar o Não Perturbe",
     "disable-wifi": "Desativar Wi-Fi",
@@ -734,10 +735,6 @@
       "top": "Superior",
       "top_left": "Superior esquerda",
       "top_right": "Superior direita"
-    },
-    "visualizer-quality": {
-      "high": "Alto(a)",
-      "low": "Baixo(a)"
     },
     "visualizer-types": {
       "linear": "Linear",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Defina seus aplicativos de mídia preferidos e ignorados.",
           "label": "Reprodutores de mídia"
-        },
-        "visualizer-quality": {
-          "description": "Alta qualidade usa mais recursos da GPU.",
-          "label": "Qualidade da visualização"
         },
         "visualizer-type": {
           "description": "Escolha um tipo de visualização para a reprodução de mídia",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Adicionar widget",
         "button": {
           "label": "Entrar no modo de edição"
         },
-        "controls-explanation": "Botão esquerdo do mouse: Mover widget\nBotão direito do mouse: Redimensionar widget",
+        "controls-explanation": "Clique esquerdo e arraste: Mover ou redimensionar o widget.\nClique direito: Abrir as opções do menu de contexto.",
         "description": "Ative o modo de edição para mover e reposicionar widgets da área de trabalho. Quando ativado, os widgets exibem um contorno de arrastar e podem ser reposicionados.",
         "exit-button": "Sair do modo de edição",
         "grid-snap": {
           "label": "Alinhar à grade"
         },
-        "label": "Modo de edição"
+        "label": "Modo de edição",
+        "open-settings": "Abrir configurações"
       },
       "enabled": {
         "description": "Ativar ou desativar widgets da área de trabalho completamente.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget do reprodutor de mídia.",
           "label": "Mostrar plano de fundo"
+        },
+        "show-buttons": {
+          "description": "Mostrar botões de controle de mídia (reproduzir/pausar, anterior, próximo) no widget do reprodutor de mídia.",
+          "label": "Mostrar botões"
         },
         "visualizer-type": {
           "description": "Escolha um tipo de visualização para o fundo do reprodutor de mídia na área de trabalho.",
@@ -1718,6 +1717,10 @@
         "placeholder": "ex., notify-send \"Papel de parede\" \"Alterado\""
       }
     },
+    "indicator": {
+      "default-value": "Padrão: {value}",
+      "system-default": "Padrão do sistema"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Exibir itens em uma grade em vez de uma lista.",
           "label": "Visualização em grade"
+        },
+        "icon-mode": {
+          "description": "Use ícones nativos do sistema em vez de ícones Tabler.",
+          "label": "Usar ícones nativos"
         },
         "position": {
           "description": "Escolha onde o painel do lançador aparece.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Ativar gerenciamento de Bluetooth.",
         "label": "Ativar Bluetooth"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Rede",
       "wifi": {
+        "description": "Gerenciar redes sem fio (requer NetworkManager).",
         "label": "Ativar Wi-Fi"
       }
     },

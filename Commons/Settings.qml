@@ -387,6 +387,8 @@ Singleton {
       // View mode: "list" or "grid"
       property string viewMode: "list"
       property bool showCategories: true
+      // Icon mode: "tabler" or "native"
+      property string iconMode: "tabler"
     }
 
     // control center
@@ -575,7 +577,6 @@ Singleton {
       property bool volumeOverdrive: false
       property int cavaFrameRate: 30
       property string visualizerType: "linear"
-      property string visualizerQuality: "high"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
       property string externalMixer: "pwvucontrol || pavucontrol"
@@ -651,7 +652,6 @@ Singleton {
     // desktop widgets
     property JsonObject desktopWidgets: JsonObject {
       property bool enabled: false
-      property bool editMode: false
       property bool gridSnap: false
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]

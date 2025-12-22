@@ -527,6 +527,7 @@
     "close-app": "Fermer {app}",
     "connect-vpn": "Se connecter à {name}",
     "cycle-visualizer": "Visualiseur de cycle",
+    "delete": "Supprimer",
     "disable-bluetooth": "Désactiver le Bluetooth",
     "disable-dnd": "Désactiver le mode Ne pas déranger",
     "disable-wifi": "Désactiver le Wi-Fi",
@@ -734,10 +735,6 @@
       "top": "En haut",
       "top_left": "En haut à gauche",
       "top_right": "En haut à droite"
-    },
-    "visualizer-quality": {
-      "high": "Haut/Haute",
-      "low": "Bas"
     },
     "visualizer-types": {
       "linear": "Linéaire",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Définissez vos applications multimédias préférées et ignorées.",
           "label": "Lecteurs multimédias"
-        },
-        "visualizer-quality": {
-          "description": "L'utilisation de haute qualité nécessite plus de ressources GPU.",
-          "label": "Qualité de la visualisation"
         },
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour la lecture multimédia.",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Ajouter un widget",
         "button": {
           "label": "Entrer en mode édition"
         },
-        "controls-explanation": "Bouton gauche de la souris : Déplacer le widget\nBouton droit de la souris : Redimensionner le widget",
+        "controls-explanation": "Clic gauche et glisser-déposer : Déplacer ou redimensionner le widget.\nClic droit : Ouvrir les options du menu contextuel.",
         "description": "Activer le mode édition pour déplacer et repositionner les widgets du bureau. Une fois activé, les widgets affichent un contour de glissement et peuvent être repositionnés.",
         "exit-button": "Quitter le mode édition",
         "grid-snap": {
           "label": "Aligner sur la grille"
         },
-        "label": "Mode édition"
+        "label": "Mode édition",
+        "open-settings": "Ouvrir les paramètres"
       },
       "enabled": {
         "description": "Activer ou désactiver complètement les widgets du bureau.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Afficher le conteneur d'arrière-plan pour le widget lecteur multimédia.",
           "label": "Afficher l'arrière-plan"
+        },
+        "show-buttons": {
+          "description": "Afficher les boutons de contrôle multimédia (lecture/pause, précédent, suivant) sur le widget lecteur multimédia.",
+          "label": "Afficher les boutons"
         },
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
@@ -1718,6 +1717,10 @@
         "placeholder": "ex: notify-send \"Fond d'écran\" \"Changé\""
       }
     },
+    "indicator": {
+      "default-value": "Par défaut : {value}",
+      "system-default": "Par défaut du système"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Afficher les éléments dans une grille au lieu d'une liste.",
           "label": "Vue grille"
+        },
+        "icon-mode": {
+          "description": "Utiliser les icônes natives du système au lieu des icônes Tabler.",
+          "label": "Utiliser les icônes natives"
         },
         "position": {
           "description": "Choisissez où le panneau du lanceur apparaît.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activer la gestion Bluetooth.",
         "label": "Activer le Bluetooth"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Réseau",
       "wifi": {
+        "description": "Gérer les réseaux sans fil (nécessite NetworkManager).",
         "label": "Activer le Wi-Fi"
       }
     },

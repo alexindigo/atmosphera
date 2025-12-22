@@ -527,6 +527,7 @@
     "close-app": "关闭 {app}",
     "connect-vpn": "连接 {name}",
     "cycle-visualizer": "切换可视化器样式",
+    "delete": "删除",
     "disable-bluetooth": "禁用蓝牙",
     "disable-dnd": "关闭勿扰模式",
     "disable-wifi": "禁用Wi-Fi",
@@ -734,10 +735,6 @@
       "top": "上方",
       "top_left": "左上",
       "top_right": "右上"
-    },
-    "visualizer-quality": {
-      "high": "高",
-      "low": "低"
     },
     "visualizer-types": {
       "linear": "线性",
@@ -949,10 +946,6 @@
         "section": {
           "description": "设置您首选和要忽略的媒体应用程序。",
           "label": "媒体播放器"
-        },
-        "visualizer-quality": {
-          "description": "高质量使用更多 GPU 资源。",
-          "label": "可视化质量"
         },
         "visualizer-type": {
           "description": "选择媒体播放的可视化类型",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "添加小部件",
         "button": {
           "label": "进入编辑模式"
         },
-        "controls-explanation": "鼠标左键：移动小组件\n鼠标右键：调整小组件大小",
+        "controls-explanation": "左键点击并拖动：移动或调整小部件大小。\n右键点击：打开上下文菜单选项。",
         "description": "启用编辑模式以移动和重新定位桌面小组件。启用后，小组件会显示拖动轮廓，并且可以重新定位。",
         "exit-button": "退出编辑模式",
         "grid-snap": {
           "label": "网格对齐"
         },
-        "label": "编辑模式"
+        "label": "编辑模式",
+        "open-settings": "打开设置"
       },
       "enabled": {
         "description": "完全启用或禁用桌面小部件。",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "显示媒体播放器小部件的背景容器。",
           "label": "显示背景"
+        },
+        "show-buttons": {
+          "description": "在媒体播放器小部件上显示媒体控制按钮（播放/暂停、上一个、下一个）。",
+          "label": "显示按钮"
         },
         "visualizer-type": {
           "description": "选择桌面媒体播放器的背景可视化类型。",
@@ -1718,6 +1717,10 @@
         "placeholder": "例如：notify-send \"壁纸\" \"已更改\""
       }
     },
+    "indicator": {
+      "default-value": "默认值：{value}",
+      "system-default": "系统默认"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "以网格布局而非列表显示项目。",
           "label": "网格视图"
+        },
+        "icon-mode": {
+          "description": "使用本地系统图标而不是 Tabler 图标。",
+          "label": "使用本地图标"
         },
         "position": {
           "description": "选择启动器面板出现的位置。",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "启用蓝牙管理。",
         "label": "启用蓝牙"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "网络",
       "wifi": {
+        "description": "管理无线网络（需要 NetworkManager）。",
         "label": "启用 Wi-Fi"
       }
     },

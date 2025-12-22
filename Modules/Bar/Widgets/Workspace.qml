@@ -632,7 +632,7 @@ Item {
           anchors.fill: parent
 
           Loader {
-            active: (labelMode !== "none") && (!root.showLabelsOnlyWhenOccupied || model.isOccupied)
+            active: (labelMode !== "none") && (!root.showLabelsOnlyWhenOccupied || model.isOccupied || model.isFocused)
             sourceComponent: Component {
               NText {
                 x: (pillVertical.width - width) / 2
@@ -662,7 +662,7 @@ Item {
                   if (model.isOccupied)
                     return Color.mOnSecondary;
 
-                  return Color.mOnSurface;
+                  return Color.mOnSecondary;
                 }
               }
             }
@@ -677,7 +677,7 @@ Item {
             if (model.isOccupied)
               return Color.mSecondary;
 
-            return Color.mOutline;
+            return Qt.alpha(Color.mSecondary, 0.3);
           }
           z: 0
 

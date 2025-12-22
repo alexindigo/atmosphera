@@ -363,11 +363,11 @@ ColumnLayout {
         Layout.preferredWidth: 30 * Style.uiScaleRatio
         Layout.preferredHeight: 30 * Style.uiScaleRatio
 
-          NIconButton {
-            icon: "restore"
-            baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("settings.notifications.duration.reset")
-            onClicked: Settings.data.notifications.lowUrgencyDuration = 3
+        NIconButton {
+          icon: "restore"
+          baseSize: Style.baseWidgetSize * 0.8
+          tooltipText: I18n.tr("settings.notifications.duration.reset")
+          onClicked: Settings.data.notifications.lowUrgencyDuration = 3
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
         }
@@ -398,11 +398,11 @@ ColumnLayout {
         Layout.preferredWidth: 30 * Style.uiScaleRatio
         Layout.preferredHeight: 30 * Style.uiScaleRatio
 
-          NIconButton {
-            icon: "restore"
-            baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("settings.notifications.duration.reset")
-            onClicked: Settings.data.notifications.normalUrgencyDuration = 8
+        NIconButton {
+          icon: "restore"
+          baseSize: Style.baseWidgetSize * 0.8
+          tooltipText: I18n.tr("settings.notifications.duration.reset")
+          onClicked: Settings.data.notifications.normalUrgencyDuration = 8
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
         }
@@ -432,11 +432,11 @@ ColumnLayout {
         Layout.preferredWidth: 30 * Style.uiScaleRatio
         Layout.preferredHeight: 30 * Style.uiScaleRatio
 
-          NIconButton {
-            icon: "restore"
-            baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("settings.notifications.duration.reset")
-            onClicked: Settings.data.notifications.criticalUrgencyDuration = 15
+        NIconButton {
+          icon: "restore"
+          baseSize: Style.baseWidgetSize * 0.8
+          tooltipText: I18n.tr("settings.notifications.duration.reset")
+          onClicked: Settings.data.notifications.criticalUrgencyDuration = 15
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter
         }

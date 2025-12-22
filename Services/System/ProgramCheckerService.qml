@@ -34,6 +34,7 @@ Singleton {
   property bool zedAvailable: false
   property bool niriAvailable: false
   property bool mangoAvailable: false
+  property bool nmcliAvailable: false
 
   // Discord client auto-detection
   property var availableDiscordClients: []
@@ -195,7 +196,8 @@ Singleton {
                                             "zedAvailable": ["which", "zeditor"],
                                             "emacsAvailable": ["sh", "-c", "test -d \"$HOME/.config/doom\" || test -d \"$HOME/.emacs.d\""],
                                             "niriAvailable": ["which", "niri"],
-                                            "mangoAvailable": ["which", "mmsg"]
+                                            "mangoAvailable": ["which", "mmsg"],
+                                            "nmcliAvailable": ["which", "nmcli"]
                                           })
 
   // Internal tracking

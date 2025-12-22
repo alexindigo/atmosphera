@@ -527,6 +527,7 @@
     "close-app": "Sluit {app}",
     "connect-vpn": "Verbinding maken met {name}",
     "cycle-visualizer": "Cyclusvisualisatie",
+    "delete": "Verwijderen",
     "disable-bluetooth": "Bluetooth uitschakelen",
     "disable-dnd": "Niet Storen uitschakelen",
     "disable-wifi": "Wi-Fi uitschakelen",
@@ -734,10 +735,6 @@
       "top": "Boven",
       "top_left": "Linksboven",
       "top_right": "Rechtsboven"
-    },
-    "visualizer-quality": {
-      "high": "Hoog",
-      "low": "Laag"
     },
     "visualizer-types": {
       "linear": "Lineair",
@@ -949,10 +946,6 @@
         "section": {
           "description": "Stel je favoriete en genegeerde media-applicaties in.",
           "label": "Mediaspelers"
-        },
-        "visualizer-quality": {
-          "description": "Een hogere kwaliteit gebruikt meer GPU-resources.",
-          "label": "Visualisatiekwaliteit"
         },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor mediaweergave.",
@@ -1411,16 +1404,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Widget toevoegen",
         "button": {
           "label": "Ga naar de bewerkingsmodus"
         },
-        "controls-explanation": "Linkermuisknop: Widget verplaatsen\nRechtermuisknop: Widget vergroten/verkleinen",
+        "controls-explanation": "Linksklikken en slepen: Widget verplaatsen of het formaat wijzigen.\nRechtermuisknop: Het contextmenu openen.",
         "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
         "exit-button": "Bewerkingsmodus verlaten",
         "grid-snap": {
           "label": "Raster uitlijnen"
         },
-        "label": "Bewerkingsmodus"
+        "label": "Bewerkingsmodus",
+        "open-settings": "Instellingen openen"
       },
       "enabled": {
         "description": "Desktopwidgets volledig in- of uitschakelen.",
@@ -1444,6 +1439,10 @@
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
           "label": "Toon achtergrond"
+        },
+        "show-buttons": {
+          "description": "Toon mediabesturingsknoppen (afspelen/pauzeren, vorige, volgende) op de mediaspeler-widget.",
+          "label": "Knoppen weergeven"
         },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
@@ -1718,6 +1717,10 @@
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
       }
     },
+    "indicator": {
+      "default-value": "Standaard: {value}",
+      "system-default": "Systeemstandaard"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1739,6 +1742,10 @@
         "grid-view": {
           "description": "Items in een raster weergeven in plaats van een lijst.",
           "label": "Rasterweergave"
+        },
+        "icon-mode": {
+          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
+          "label": "Gebruik native iconen"
         },
         "position": {
           "description": "Kies waar het launcher-paneel verschijnt.",
@@ -1865,6 +1872,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-beheer activeren.",
         "label": "Bluetooth inschakelen"
       },
       "section": {
@@ -1872,6 +1880,7 @@
       },
       "title": "Netwerk",
       "wifi": {
+        "description": "Draadloze netwerken beheren (vereist NetworkManager).",
         "label": "Wi-Fi inschakelen"
       }
     },

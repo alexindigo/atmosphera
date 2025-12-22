@@ -42,8 +42,8 @@ RowLayout {
 
   readonly property bool isValueChanged: isSettings && (value !== defaultValue)
   readonly property string indicatorTooltip: isSettings ? I18n.tr("settings.indicator.default-value", {
-                                                                   "value": String(defaultValue)
-                                                                 }) : ""
+                                                                    "value": String(defaultValue)
+                                                                  }) : ""
 
   Timer {
     id: repeatTimer
@@ -415,5 +415,4 @@ RowLayout {
       }
     }
   }
-
 }
