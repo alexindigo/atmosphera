@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Verberg de meldingsbadge wanneer er geen ongelezen meldingen zijn.",
-          "label": "Badge verbergen bij nul"
+        "hide-widget-when-zero": {
+          "description": "Verberg het meldingspictogram wanneer er geen ongelezen meldingen zijn.",
+          "label": "Pictogram verbergen bij nul"
         },
         "show-unread-badge": {
           "description": "Toon een badge met het aantal ongelezen meldingen.",
@@ -340,6 +340,10 @@
         "hide-mode": {
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen overeenkomende vensters zijn.",
           "label": "Verbergmodus"
+        },
+        "icon-scale": {
+          "description": "Stelt de schaalfactor in voor taakbalkpictogrammen.",
+          "label": "Icoon schaling"
         },
         "max-width": {
           "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
@@ -445,18 +449,28 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Beschikbare apparaten",
+      "battery": "Batterij",
       "blocked": "Geblokkeerd",
       "connect": "Verbinden",
       "connected-devices": "Verbonden apparaten",
       "connecting": "Verbinden...",
+      "device-address": "Apparaatadres",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
+      "discoverable": "Zichtbaar",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
+      "info": "Info",
       "known-devices": "Bekende apparaten",
+      "pair": "Koppelen",
+      "paired": "Gekoppeld",
+      "paired-devices": "Gekoppelde apparaten",
       "pairing": "Koppelen...",
       "pairing-mode": "Zorg ervoor dat je apparaat in koppelmodus staat.",
       "scanning": "Zoeken naar apparaten...",
-      "title": "Bluetooth"
+      "signal": "Signaal",
+      "title": "Bluetooth",
+      "trusted": "Vertrouwd",
+      "unpair": "Ontkoppelen"
     }
   },
   "calendar": {
@@ -516,14 +530,16 @@
     "cancel": "Annuleren",
     "check-settings": "Controleer Instellingen voor details.",
     "close": "Sluiten",
-    "save": "Opslaan"
+    "no": "Nee",
+    "save": "Opslaan",
+    "yes": "Ja"
   },
   "context-menu": {
-    "activate-app": "Activeer {app}",
     "clear-history": "Geschiedenis wissen",
     "close-app": "Sluit {app}",
     "connect-vpn": "Verbinding maken met {name}",
     "cycle-visualizer": "Cyclusvisualisatie",
+    "delete": "Verwijderen",
     "disable-bluetooth": "Bluetooth uitschakelen",
     "disable-dnd": "Niet Storen uitschakelen",
     "disable-wifi": "Wi-Fi uitschakelen",
@@ -732,15 +748,15 @@
       "top_left": "Linksboven",
       "top_right": "Rechtsboven"
     },
-    "visualizer-quality": {
-      "high": "Hoog",
-      "low": "Laag"
-    },
     "visualizer-types": {
       "linear": "Lineair",
       "mirrored": "Gespiegeld",
       "none": "Geen",
       "wave": "Golf"
+    },
+    "visualizer-visibility": {
+      "always": "Altijd zichtbaar",
+      "with-background": "Alleen met achtergrond"
     },
     "workspace-labels": {
       "index": "Index",
@@ -943,13 +959,20 @@
           "description": "Stel je favoriete en genegeerde media-applicaties in.",
           "label": "Mediaspelers"
         },
-        "visualizer-quality": {
-          "description": "Een hogere kwaliteit gebruikt meer GPU-resources.",
-          "label": "Visualisatiekwaliteit"
-        },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor mediaweergave.",
           "label": "Type visualisatie"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Er spelen momenteel geen applicaties audio af."
+        },
+        "input": "Invoer",
+        "output": "Uitvoer",
+        "tabs": {
+          "devices": "Apparaten",
+          "volumes": "Volumes"
         }
       },
       "title": "Audio",
@@ -1139,9 +1162,11 @@
         "compositors": {
           "description": "Theming van compositor.",
           "label": "Compositors",
+          "mango": {
+            "description": "Schrijf {filepath}. Vereist mango"
+          },
           "niri": {
-            "description": "Schrijf {filepath}. Vereist niri v25.11+",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath}. Vereist niri v25.11+"
           }
         },
         "misc": {
@@ -1154,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Schrijf {filepath}",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath}"
           },
           "code": {
-            "description": "Schrijf {filepath} — het HyprLuna-thema moet handmatig worden geïnstalleerd en geactiveerd",
-            "description-missing": "Geen Code-client gedetecteerd — installeer VSCode of VSCodium"
+            "description": "Schrijf {filepath} — het HyprLuna-thema moet handmatig worden geïnstalleerd en geactiveerd"
           },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
-            "description": "Schrijf {filepath} voor {client} — het HyprLuna-thema moet handmatig worden geactiveerd",
-            "description-missing": "Geen Discord-client gedetecteerd — installeer vencord, vesktop, webcord, armcord, equibop, lightcord of dorion"
+            "description": "Schrijf {filepath} voor {client} — het HyprLuna-thema moet handmatig worden geactiveerd"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standaard: ~/.emacs.d/themes/noctalia.el<br>Handmatig toepassen: (load-theme 'noctalia t)",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standaard: ~/.emacs.d/themes/noctalia.el<br>Handmatig toepassen: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "label": "Programma's",
           "pywalfox": {
-            "description": "Schrijf {filepath} en voer pywalfox update uit",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en voer pywalfox update uit"
           },
           "spicetify": {
-            "description": "Schrijf {filepath} — het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} — het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd"
           },
           "telegram": {
-            "description": "Schrijf {filepath}",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath}"
           },
           "vicinae": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "walker": {
-            "description": "Schrijf {filepath} en stel het thema in op noctalia",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en stel het thema in op noctalia"
           },
           "yazi": {
-            "description": "Schrijf {filepath} — flavor moet handmatig worden geactiveerd",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} — flavor moet handmatig worden geactiveerd"
           },
           "zed": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           }
         },
         "section": {
@@ -1210,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "description": "Thema's voor terminal-emulators.",
           "foot": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "ghostty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "kitty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           }
         },
         "ui": {
@@ -1356,10 +1364,6 @@
           "label": "Minimale modus"
         },
         "preview": "Voorbeeld",
-        "section": {
-          "description": "Configureer de weergave van de klokwidget.",
-          "label": "Klokwidget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"
@@ -1393,13 +1397,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Widget toevoegen",
         "button": {
           "label": "Ga naar de bewerkingsmodus"
         },
-        "controls-explanation": "Linkermuisknop: Widget verplaatsen\nRechtermuisknop: Widget vergroten/verkleinen",
+        "controls-explanation": "Linksklikken en slepen: Widget verplaatsen of het formaat wijzigen.\nRechtermuisknop: Het contextmenu openen.",
         "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
         "exit-button": "Bewerkingsmodus verlaten",
-        "label": "Bewerkingsmodus"
+        "grid-snap": {
+          "label": "Raster uitlijnen"
+        },
+        "label": "Bewerkingsmodus",
+        "open-settings": "Instellingen openen"
       },
       "enabled": {
         "description": "Desktopwidgets volledig in- of uitschakelen.",
@@ -1420,17 +1429,21 @@
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
           "label": "Verbergmodus"
         },
-        "section": {
-          "description": "Configureer het uiterlijk van de mediapeler-widget.",
-          "label": "Mediaspeler-widget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
           "label": "Toon achtergrond"
         },
+        "show-buttons": {
+          "description": "Toon mediabesturingsknoppen (afspelen/pauzeren, vorige, volgende) op de mediaspeler-widget.",
+          "label": "Knoppen weergeven"
+        },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
           "label": "Visualisatietype"
+        },
+        "visualizer-visibility": {
+          "description": "Bepaal wanneer de audiovisualizer zichtbaar is.",
+          "label": "Audiovisualizer zichtbaarheid"
         }
       },
       "title": "Desktopwidgets",
@@ -1439,19 +1452,9 @@
           "description": "Toon een weerwidget op het bureaublad.",
           "label": "Weerwidget inschakelen"
         },
-        "section": {
-          "description": "Configureer de weergave van de weerwidget.",
-          "label": "Weerwidget"
-        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de weerwidget.",
           "label": "Toon achtergrond"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Desktopwidgets toevoegen en configureren",
-          "label": "Desktopwidgets"
         }
       }
     },
@@ -1543,6 +1546,10 @@
         "floating-distance": {
           "description": "Stel de afstand in tussen de dock en de rand van het scherm.",
           "label": "Afstand zwevende dock"
+        },
+        "hide-show-speed": {
+          "description": "Pas de snelheid van de verberg/weergeef animatie van de dock aan.",
+          "label": "Verberg/Weergeef Snelheid"
         },
         "icon-size": {
           "description": "Pas de algehele grootte van de dock aan.",
@@ -1661,6 +1668,16 @@
           "label": "Beschikbare parameters"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt uitgeschakeld.",
+        "label": "Prestatiemodus uitgeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Uitgeschakeld\""
+      },
+      "performance-mode-enabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt ingeschakeld.",
+        "label": "Prestatiemodus ingeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Ingeschakeld\""
+      },
       "screen-lock": {
         "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
         "label": "Scherm vergrendeld",
@@ -1693,6 +1710,10 @@
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
       }
     },
+    "indicator": {
+      "default-value": "Standaard: {value}",
+      "system-default": "Systeemstandaard"
+    },
     "launcher": {
       "settings": {
         "clip-preview": {
@@ -1714,6 +1735,10 @@
         "grid-view": {
           "description": "Items in een raster weergeven in plaats van een lijst.",
           "label": "Rasterweergave"
+        },
+        "icon-mode": {
+          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
+          "label": "Gebruik native iconen"
         },
         "position": {
           "description": "Kies waar het launcher-paneel verschijnt.",
@@ -1840,6 +1865,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-beheer activeren.",
         "label": "Bluetooth inschakelen"
       },
       "section": {
@@ -1847,6 +1873,7 @@
       },
       "title": "Netwerk",
       "wifi": {
+        "description": "Draadloze netwerken beheren (vereist NetworkManager).",
         "label": "Wi-Fi inschakelen"
       }
     },
@@ -2057,6 +2084,11 @@
         "downloaded": "Gedownload",
         "not-downloaded": "Niet gedownload"
       },
+      "hot-reload": {
+        "description": "Laad plugins automatisch opnieuw wanneer hun bestanden veranderen. Handig voor plugin-ontwikkeling.",
+        "label": "Hot reload (ontwikkelmodus)"
+      },
+      "hot-reloaded": "Plugin opnieuw geladen: {name}",
       "install": "Installeren",
       "install-error": "Installatie mislukt: {error}",
       "install-success": "{plugin} succesvol geïnstalleerd",
@@ -2112,7 +2144,7 @@
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
       "update-success": "{plugin} is bijgewerkt naar v{version}",
       "update-version": "v{huidig} → v{nieuw}",
-      "updating": "{plugin} bijwerken..."
+      "updating": "Bezig met updaten..."
     },
     "screen-recorder": {
       "audio": {
@@ -2501,8 +2533,20 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
+      "confirm-code": "Bevestig code {value} op het andere apparaat",
+      "connect-failed": "Verbinding met apparaat mislukt",
       "disabled": "Uitgeschakeld",
-      "enabled": "Ingeschakeld"
+      "disconnect-failed": "Verbinding verbreken met apparaat mislukt",
+      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt",
+      "discoverable-disabled": "Zichtbaar uitgeschakeld",
+      "discoverable-enabled": "Zichtbaar ingeschakeld",
+      "display-code": "Voer code {value} in op het andere apparaat",
+      "enabled": "Ingeschakeld",
+      "forget-failed": "Apparaat vergeten mislukt",
+      "pair-failed": "Apparaat koppelen mislukt",
+      "passkey-required": "Passkey vereist door het apparaat",
+      "pincode-required": "PIN-code vereist door het apparaat",
+      "state-change-failed": "Bluetooth‑status wijzigen mislukt"
     },
     "clipboard": {
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
@@ -2585,9 +2629,13 @@
     },
     "wifi": {
       "connected": "Verbonden met '{ssid}'",
+      "connection-failed": "Verbinding mislukt",
+      "connection-timeout": "Time-out bij verbinding",
       "disabled": "Wi-Fi uitgeschakeld",
       "disconnected": "Verbinding met '{ssid}' verbroken",
-      "enabled": "Wi-Fi ingeschakeld"
+      "enabled": "Wi-Fi ingeschakeld",
+      "incorrect-password": "Onjuist wachtwoord",
+      "network-not-found": "Netwerk niet gevonden"
     }
   },
   "tooltips": {
@@ -2611,6 +2659,7 @@
     "grid-view": "Rasterweergave",
     "hidden-files-hide": "Verborgen bestanden",
     "hidden-files-show": "Verborgen bestanden",
+    "hide-unnamed-devices": "Verberg naamloze apparaten",
     "home": "Home-map",
     "input-muted": "Ingang dempen/dempen opheffen",
     "keep-awake": "Wakker houden",
@@ -2622,6 +2671,7 @@
     "move-to-center-section": "Middelste sectie",
     "move-to-left-section": "Linker sectie",
     "move-to-right-section": "Rechter sectie",
+    "mute": "Dempen",
     "next-media": "Volgende track",
     "next-month": "Volgende maand",
     "night-light-disabled": "Nachtlicht",
@@ -2652,10 +2702,12 @@
     "search-close": "Zoeken sluiten",
     "session-menu": "Sessiemenu",
     "set-power-profile": "{profile} energieprofiel",
+    "show-all-devices": "Toon alle apparaten",
     "start-screen-recording": "Schermrecorder",
     "stop-screen-recording": "Schermrecorder",
     "switch-to-dark-mode": "Donkere modus",
     "switch-to-light-mode": "Lichte modus",
+    "unmute": "Dempen opheffen",
     "up": "Bovenliggende map",
     "volume-at": "Uitvoervolume: {volume}%",
     "wallpaper-selector": "Achtergrondkiezer",
@@ -2692,6 +2744,10 @@
         "label": "Inhoudsfilter",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Elke",
+        "label": "Beeldverhouding"
       },
       "resolution": {
         "atleast": "Ten minste",
@@ -2839,17 +2895,26 @@
       "disabled": "Wi-Fi is uitgeschakeld",
       "disconnect": "Verbreken",
       "disconnecting": "Verbreken...",
+      "dns": "DNS",
       "enable-message": "Schakel Wi-Fi in om beschikbare netwerken te zien.",
       "enter-password": "Voer wachtwoord in...",
       "forget": "Vergeten",
       "forget-network": "Dit netwerk vergeten?",
       "forgetting": "Vergeten...",
+      "gateway": "Poort",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Verbonden met internet",
+      "internet-limited": "Geen internet",
+      "ipv4": "IPv4",
       "known-networks": "Bekende netwerken",
+      "link-speed": "Link snelheid",
       "no-networks": "Geen netwerken gevonden",
       "password": "Wachtwoord",
       "saved": "Opgeslagen",
       "scan-again": "Opnieuw scannen",
       "searching": "Zoeken naar netwerken in de buurt...",
+      "security": "Beveiliging",
       "title": "Wi-Fi"
     }
   }

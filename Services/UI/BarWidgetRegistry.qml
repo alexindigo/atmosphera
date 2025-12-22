@@ -179,7 +179,7 @@ Singleton {
                                   "NotificationHistory": {
                                     "allowUserSettings": true,
                                     "showUnreadBadge": true,
-                                    "hideWhenZero": true
+                                    "hideWhenZero": false
                                   },
                                   "SessionMenu": {
                                     "allowUserSettings": true,
@@ -211,7 +211,8 @@ Singleton {
                                     "titleWidth": 120,
                                     "showPinnedApps": true,
                                     "smartWidth": true,
-                                    "maxTaskbarWidth": 40
+                                    "maxTaskbarWidth": 40,
+                                    "iconScale": 1.0
                                   },
                                   "Tray": {
                                     "allowUserSettings": true,

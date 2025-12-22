@@ -917,6 +917,23 @@ SmartPanel {
                       active: visible
 
                       sourceComponent: Component {
+                        Loader {
+                          anchors.fill: parent
+                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+                        }
+                      }
+
+                      Component {
+                        id: tablerIconComponent
+                        NIcon {
+                          icon: modelData.icon
+                          pointSize: Style.fontSizeXXXL
+                          visible: modelData.icon && !modelData.emojiChar
+                        }
+                      }
+
+                      Component {
+                        id: systemIconComponent
                         IconImage {
                           anchors.fill: parent
                           source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
@@ -1268,6 +1285,23 @@ SmartPanel {
                     active: visible
 
                     sourceComponent: Component {
+                      Loader {
+                        anchors.fill: parent
+                        sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
+                      }
+                    }
+
+                    Component {
+                      id: gridTablerIconComponent
+                      NIcon {
+                        icon: modelData.icon
+                        pointSize: Style.fontSizeXXXL
+                        visible: modelData.icon && !modelData.emojiChar
+                      }
+                    }
+
+                    Component {
+                      id: gridSystemIconComponent
                       IconImage {
                         anchors.fill: parent
                         source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""

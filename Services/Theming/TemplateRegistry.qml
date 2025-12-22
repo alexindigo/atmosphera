@@ -194,24 +194,25 @@ Singleton {
       "clients": [
         {
           "name": "code",
-          "path": "~/.vscode/extensions/noctalia.noctaliatheme-0.0.4/themes/NoctaliaTheme-color-theme.json"
+          "path": "~/.vscode/extensions/noctalia.noctaliatheme-0.0.5/themes/NoctaliaTheme-color-theme.json"
         },
         {
           "name": "codium",
-          "path": "~/.vscode-oss/extensions/noctalia.noctaliatheme-0.0.4/themes/NoctaliaTheme-color-theme.json"
+          "path": "~/.vscode-oss/extensions/noctalia.noctaliatheme-0.0.5/themes/NoctaliaTheme-color-theme.json"
         }
       ]
     },
     {
       "id": "zed",
-      "name": "Zeditor",
+      "name": "Zed",
       "category": "applications",
       "input": "zed.json",
       "outputs": [
         {
           "path": "~/.config/zed/themes/noctalia.json"
         }
-      ]
+      ],
+      "dualMode": true // Template contains both dark and light theme patterns
     },
     {
       "id": "spicetify",
@@ -285,6 +286,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${colorsApplyScript} niri`
+    },
+    {
+      "id": "mango",
+      "name": "Mango",
+      "category": "compositors",
+      "input": "mango.conf",
+      "outputs": [
+        {
+          "path": "~/.config/mango/noctalia.conf"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} mango`
     }
   ]
 

@@ -163,6 +163,7 @@
     "wallhavenOrder": "desc",
     "wallhavenCategories": "111",
     "wallhavenPurity": "100",
+    "wallhavenRatios": "",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
     "wallhavenResolutionHeight": ""
@@ -178,7 +179,8 @@
     "customLaunchPrefixEnabled": false,
     "customLaunchPrefix": "",
     "viewMode": "list",
-    "showCategories": true
+    "showCategories": true,
+    "iconMode": "tabler"
   },
   "controlCenter": {
     "position": "close_to_bar_button",
@@ -273,7 +275,8 @@
     "colorizeIcons": false,
     "pinnedStatic": false,
     "inactiveIndicators": false,
-    "deadOpacity": 0.6
+    "deadOpacity": 0.6,
+    "animationSpeed": 1
   },
   "network": {
     "wifiEnabled": true
@@ -351,7 +354,6 @@
     "volumeOverdrive": false,
     "cavaFrameRate": 30,
     "visualizerType": "linear",
-    "visualizerQuality": "high",
     "mprisBlacklist": [],
     "preferredPlayer": "",
     "externalMixer": "pwvucontrol || pavucontrol"
@@ -392,6 +394,7 @@
     "yazi": false,
     "emacs": false,
     "niri": false,
+    "mango": false,
     "zed": false,
     "enableUserTemplates": false
   },
@@ -409,11 +412,13 @@
     "wallpaperChange": "",
     "darkModeChange": "",
     "screenLock": "",
-    "screenUnlock": ""
+    "screenUnlock": "",
+    "performanceModeEnabled": "",
+    "performanceModeDisabled": ""
   },
   "desktopWidgets": {
     "enabled": false,
-    "editMode": false,
+    "gridSnap": false,
     "monitorWidgets": []
   }
 }

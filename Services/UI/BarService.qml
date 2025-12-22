@@ -7,7 +7,6 @@ import qs.Commons
 Singleton {
   id: root
 
-  property bool hasAudioVisualizer: false
   property bool isVisible: true
   property var readyBars: ({})
 
@@ -17,33 +16,6 @@ Singleton {
 
   signal activeWidgetsChanged
   signal barReadyChanged(string screenName)
-
-  // onHasAudioVisualizerChanged: {
-  //   Logger.d("BarService", "hasAudioVisualizer", hasAudioVisualizer)
-  // }
-
-  // Simple timer that run once when the widget structure has changed
-  // and determine if any MediaMini widget has the visualizer on
-  Timer {
-    id: timerCheckVisualizer
-    interval: 100
-    repeat: false
-    onTriggered: {
-      hasAudioVisualizer = false;
-      if (getAllWidgetInstances("AudioVisualizer").length > 0) {
-        hasAudioVisualizer = true;
-        return;
-      }
-      const widgets = getAllWidgetInstances("MediaMini");
-      for (var i = 0; i < widgets.length; i++) {
-        const widget = widgets[i];
-        if (widget.showVisualizer) {
-          hasAudioVisualizer = true;
-          return;
-        }
-      }
-    }
-  }
 
   Component.onCompleted: {
     Logger.i("BarService", "Service started");
@@ -74,8 +46,6 @@ Singleton {
       "index": index,
       "instance": instance
     };
-
-    timerCheckVisualizer.restart();
 
     Logger.d("BarService", "Registered widget:", key);
     root.activeWidgetsChanged();
@@ -284,56 +254,6 @@ Singleton {
     default:
       return "bottom";
     }
-  }
-
-  // Calculate context menu position based on bar position
-  // Parameters:
-  //   anchorItem: The widget item to anchor the menu to
-  //   menuWidth: Width of the context menu (optional, defaults to 180)
-  //   menuHeight: Height of the context menu (optional, defaults to 100)
-  // Returns: { x: number, y: number }
-  // Note: Anchor position is top-left corner, so we calculate from center
-  function getContextMenuPosition(anchorItem, menuWidth, menuHeight) {
-    if (!anchorItem) {
-      Logger.w("BarService", "getContextMenuPosition: anchorItem is null");
-      return {
-        "x": 0,
-        "y": 0
-      };
-    }
-
-    const mWidth = menuWidth || 180;
-    const mHeight = menuHeight || 100;
-    const barPosition = Settings.data.bar.position;
-    let menuX = 0;
-    let menuY = 0;
-
-    // Calculate center-based positioning for consistent spacing
-    const anchorCenterX = anchorItem.width / 2;
-    const anchorCenterY = anchorItem.height / 2;
-
-    if (barPosition === "left") {
-      // For left bar: position menu to the right of anchor, vertically centered
-      menuX = anchorItem.width + Style.marginM;
-      menuY = anchorCenterY - (mHeight / 2);
-    } else if (barPosition === "right") {
-      // For right bar: position menu to the left of anchor, vertically centered
-      menuX = -mWidth - Style.marginM;
-      menuY = anchorCenterY - (mHeight / 2);
-    } else if (barPosition === "top") {
-      // For top bar: position menu below bar, horizontally centered
-      menuX = anchorCenterX - (mWidth / 2);
-      menuY = Style.barHeight;
-    } else {
-      // For bottom bar: position menu above, horizontally centered
-      menuX = anchorCenterX - (mWidth / 2);
-      menuY = -mHeight - Style.marginM;
-    }
-
-    return {
-      "x": menuX,
-      "y": menuY
-    };
   }
 
   // Open widget settings dialog for a bar widget

@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.DesktopWidgets
 import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
 
@@ -15,18 +16,40 @@ DraggableDesktopWidget {
 
   // Widget settings
   readonly property string hideMode: (widgetData.hideMode !== undefined) ? widgetData.hideMode : "visible"
+  readonly property bool showButtons: (widgetData.showButtons !== undefined) ? widgetData.showButtons : true
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
   readonly property bool isPlaying: MediaService.isPlaying
 
   // State
   readonly property bool shouldHideIdle: (hideMode === "idle") && !isPlaying
   readonly property bool shouldHideEmpty: !hasPlayer && hideMode === "hidden"
-  readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !Settings.data.desktopWidgets.editMode
+  readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !DesktopWidgetRegistry.editMode
   visible: !isHidden
+
+  // CavaService registration for visualizer
+  readonly property string cavaComponentId: "desktopmediaplayer:" + (root.screen ? root.screen.name : "unknown")
+
+  onShouldShowVisualizerChanged: {
+    if (root.shouldShowVisualizer) {
+      CavaService.registerComponent(root.cavaComponentId);
+    } else {
+      CavaService.unregisterComponent(root.cavaComponentId);
+    }
+  }
+
+  Component.onCompleted: {
+    if (root.shouldShowVisualizer) {
+      CavaService.registerComponent(root.cavaComponentId);
+    }
+  }
+
+  Component.onDestruction: {
+    CavaService.unregisterComponent(root.cavaComponentId);
+  }
 
   readonly property bool showPrev: hasPlayer && MediaService.canGoPrevious
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
-  readonly property int visibleButtonCount: 1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)
+  readonly property int visibleButtonCount: root.showButtons ? (1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)) : 0
   readonly property int baseWidth: 400 * Style.uiScaleRatio
   readonly property int buttonWidth: 32 * Style.uiScaleRatio
   readonly property int buttonSpacing: Style.marginXS
@@ -37,7 +60,7 @@ DraggableDesktopWidget {
   width: implicitWidth
   height: implicitHeight
 
-  // Visualizer overlay (needs to be inside container bounds with masking)
+  // Background container with masking (only visible when showBackground is true)
   Item {
     anchors.fill: parent
     anchors.margins: Style.marginXS
@@ -64,53 +87,69 @@ DraggableDesktopWidget {
         mipmap: true
       }
     }
+  }
 
-    Loader {
-      anchors.fill: parent
-      active: (widgetData && widgetData.visualizerType) && widgetData.visualizerType !== "" && widgetData.visualizerType !== "none"
+  // Visualizer visibility mode
+  readonly property string visualizerVisibility: (widgetData && widgetData.visualizerVisibility !== undefined) ? widgetData.visualizerVisibility : "always"
+  readonly property bool shouldShowVisualizer: {
+    if (!(widgetData && widgetData.visualizerType) || widgetData.visualizerType === "" || widgetData.visualizerType === "none")
+      return false;
+    if (visualizerVisibility === "always")
+      return true;
+    if (visualizerVisibility === "with-background")
+      return root.showBackground;
+    return true; // default to always visible
+  }
 
-      sourceComponent: {
-        var visualizerType = (widgetData && widgetData.visualizerType) ? widgetData.visualizerType : "";
-        switch (visualizerType) {
-        case "linear":
-          return linearComponent;
-        case "mirrored":
-          return mirroredComponent;
-        case "wave":
-          return waveComponent;
-        default:
-          return null;
-        }
+  // Visualizer overlay (visibility controlled by visualizerVisibility setting)
+  Loader {
+    anchors.fill: parent
+    anchors.margins: Style.marginXS
+    z: 0
+    clip: true
+    active: shouldShowVisualizer
+
+    sourceComponent: {
+      var visualizerType = (widgetData && widgetData.visualizerType) ? widgetData.visualizerType : "";
+      switch (visualizerType) {
+      case "linear":
+        return linearComponent;
+      case "mirrored":
+        return mirroredComponent;
+      case "wave":
+        return waveComponent;
+      default:
+        return null;
       }
+    }
 
-      Component {
-        id: linearComponent
-        NLinearSpectrum {
-          anchors.fill: parent
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.6
-        }
+    Component {
+      id: linearComponent
+      NLinearSpectrum {
+        anchors.fill: parent
+        values: CavaService.values
+        fillColor: Color.mPrimary
+        opacity: 0.6
       }
+    }
 
-      Component {
-        id: mirroredComponent
-        NMirroredSpectrum {
-          anchors.fill: parent
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.6
-        }
+    Component {
+      id: mirroredComponent
+      NMirroredSpectrum {
+        anchors.fill: parent
+        values: CavaService.values
+        fillColor: Color.mPrimary
+        opacity: 0.6
       }
+    }
 
-      Component {
-        id: waveComponent
-        NWaveSpectrum {
-          anchors.fill: parent
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.6
-        }
+    Component {
+      id: waveComponent
+      NWaveSpectrum {
+        anchors.fill: parent
+        values: CavaService.values
+        fillColor: Color.mPrimary
+        opacity: 0.6
       }
     }
   }
@@ -176,6 +215,7 @@ DraggableDesktopWidget {
       id: controlsRow
       spacing: Style.marginXS
       z: 10
+      visible: root.showButtons
 
       NIconButton {
         visible: showPrev

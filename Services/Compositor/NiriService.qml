@@ -285,9 +285,10 @@ Item {
     windows = toSortedWindowList(windowsList);
     windowListChanged();
 
+    // Find focused window index in the SORTED windows array
     focusedWindowIndex = -1;
-    for (var i = 0; i < windowsList.length; i++) {
-      if (windowsList[i].isFocused) {
+    for (var i = 0; i < windows.length; i++) {
+      if (windows[i].isFocused) {
         focusedWindowIndex = i;
         break;
       }
@@ -301,6 +302,9 @@ Item {
       const existingIndex = windows.findIndex(w => w.id === windowData.id);
       const newWindow = getWindowData(windowData);
 
+      // Find the previously focused window ID before any modifications
+      const previouslyFocusedId = focusedWindowIndex >= 0 && focusedWindowIndex < windows.length ? windows[focusedWindowIndex].id : null;
+
       if (existingIndex >= 0) {
         windows[existingIndex] = newWindow;
       } else {
@@ -309,15 +313,16 @@ Item {
       windows = toSortedWindowList(windows);
 
       if (newWindow.isFocused) {
-        const oldFocusedIndex = focusedWindowIndex;
         focusedWindowIndex = windows.findIndex(w => w.id === windowData.id);
 
-        if (oldFocusedIndex !== focusedWindowIndex) {
-          if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
-            windows[oldFocusedIndex].isFocused = false;
+        // Clear focus on the previously focused window by ID (not index, since list was re-sorted)
+        if (previouslyFocusedId !== null && previouslyFocusedId !== windowData.id) {
+          const oldFocusedWindow = windows.find(w => w.id === previouslyFocusedId);
+          if (oldFocusedWindow) {
+            oldFocusedWindow.isFocused = false;
           }
-          activeWindowChanged();
         }
+        activeWindowChanged();
       }
 
       windowListChanged();

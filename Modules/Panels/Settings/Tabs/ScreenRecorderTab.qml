@@ -156,30 +156,62 @@ ColumnLayout {
     NComboBox {
       label: I18n.tr("settings.screen-recorder.video.video-codec.label")
       description: I18n.tr("settings.screen-recorder.video.video-codec.description")
-      model: [
-        {
-          "key": "h264",
-          "name": "H264"
-        },
-        {
-          "key": "hevc",
-          "name": "HEVC"
-        },
-        {
-          "key": "av1",
-          "name": "AV1"
-        },
-        {
-          "key": "vp8",
-          "name": "VP8"
-        },
-        {
-          "key": "vp9",
-          "name": "VP9"
+      model: {
+        let options = [
+              {
+                "key": "h264",
+                "name": "H264"
+              },
+              {
+                "key": "hevc",
+                "name": "HEVC"
+              },
+              {
+                "key": "av1",
+                "name": "AV1"
+              },
+              {
+                "key": "vp8",
+                "name": "VP8"
+              },
+              {
+                "key": "vp9",
+                "name": "VP9"
+              }
+            ];
+        // Only add HDR options if source is 'screen'
+        if (Settings.data.screenRecorder.videoSource === "screen") {
+          options.push({
+                         "key": "hevc_hdr",
+                         "name": "HEVC HDR"
+                       });
+          options.push({
+                         "key": "av1_hdr",
+                         "name": "AV1 HDR"
+                       });
         }
-      ]
+        return options;
+      }
       currentKey: Settings.data.screenRecorder.videoCodec
-      onSelected: key => Settings.data.screenRecorder.videoCodec = key
+      onSelected: key => {
+                    Settings.data.screenRecorder.videoCodec = key;
+
+                    // If an HDR codec is selected, change the colorRange to full
+                    if (key.includes("_hdr")) {
+                      Settings.data.screenRecorder.colorRange = "full";
+                    }
+                  }
+      // If user switches source to portal while an HDR codec is selected, reset to h264
+      Connections {
+        target: Settings.data.screenRecorder
+        function onVideoSourceChanged() {
+          let source = Settings.data.screenRecorder.videoSource;
+          let codec = Settings.data.screenRecorder.videoCodec;
+          if (source !== "screen" && (codec === "av1_hdr" || codec === "hevc_hdr")) {
+            Settings.data.screenRecorder.videoCodec = "h264";
+          }
+        }
+      }
     }
 
     // Color Range

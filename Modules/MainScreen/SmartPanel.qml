@@ -151,9 +151,31 @@ Item {
 
     if (buttonItem) {
       root.buttonItem = buttonItem;
-      // Map button position to screen coordinates
-      var buttonPos = buttonItem.mapToItem(null, 0, 0);
-      root.buttonPosition = Qt.point(buttonPos.x, buttonPos.y);
+      // Map button position within its window
+      var buttonLocal = buttonItem.mapToItem(null, 0, 0);
+
+      // Calculate the bar window's position on screen based on bar settings
+      // The BarContentWindow uses anchors, so we need to compute its position
+      var barWindowX = 0;
+      var barWindowY = 0;
+      var screenWidth = root.screen?.width || 0;
+      var screenHeight = root.screen?.height || 0;
+
+      if (root.barPosition === "right") {
+        barWindowX = screenWidth - root.barMarginH - Style.barHeight;
+      } else if (root.barPosition === "left") {
+        barWindowX = root.barMarginH;
+      }
+      // For top/bottom bars, barWindowX stays 0 (full width window)
+
+      if (root.barPosition === "bottom") {
+        barWindowY = screenHeight - root.barMarginV - Style.barHeight;
+      } else if (root.barPosition === "top") {
+        barWindowY = root.barMarginV;
+      }
+      // For left/right bars, barWindowY stays 0 (full height window)
+
+      root.buttonPosition = Qt.point(barWindowX + buttonLocal.x, barWindowY + buttonLocal.y);
       root.buttonWidth = buttonItem.width;
       root.buttonHeight = buttonItem.height;
       root.useButtonPosition = true;

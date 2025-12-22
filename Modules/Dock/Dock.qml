@@ -63,8 +63,8 @@ Loader {
       readonly property bool exclusive: displayMode === "exclusive"
       readonly property int hideDelay: 500
       readonly property int showDelay: 100
-      readonly property int hideAnimationDuration: Style.animationFast
-      readonly property int showAnimationDuration: Style.animationFast
+      readonly property int hideAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
+      readonly property int showAnimationDuration: Math.max(0, Math.round(Style.animationFast / (Settings.data.dock.animationSpeed || 1.0)))
       readonly property int peekHeight: 1
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
@@ -679,8 +679,9 @@ Loader {
                                   const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
                                   const command = terminal.concat(app.command);
                                   Quickshell.execDetached(command);
+                                } else if (app.command && app.command.length > 0) {
+                                  Quickshell.execDetached(app.command);
                                 } else if (app.execute) {
-                                  // Default execution for GUI apps
                                   app.execute();
                                 } else {
                                   Logger.w("Dock", `Could not launch: ${app.name}. No valid launch method.`);

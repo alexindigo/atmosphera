@@ -151,6 +151,30 @@ Singleton {
     watchChanges: false
   }
 
+  // FileView to load default settings for comparison
+  FileView {
+    id: defaultSettingsFileView
+    path: Quickshell.shellDir + "/Assets/settings-default.json"
+    printErrors: false
+    watchChanges: false
+  }
+
+  // Cached default settings object
+  property var _defaultSettings: null
+
+  // Load default settings when file is loaded
+  Connections {
+    target: defaultSettingsFileView
+    function onLoaded() {
+      try {
+        root._defaultSettings = JSON.parse(defaultSettingsFileView.text());
+      } catch (e) {
+        Logger.w("Settings", "Failed to parse default settings file: " + e);
+        root._defaultSettings = null;
+      }
+    }
+  }
+
   JsonAdapter {
     id: adapter
 
@@ -266,6 +290,11 @@ Singleton {
       property real panelBackgroundOpacity: 0.85
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
+      // Details view mode persistence for panels
+      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
+      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
+      // Bluetooth available devices list: hide items without a name
+      property bool bluetoothHideUnnamedDevices: false
     }
 
     // location
@@ -342,6 +371,7 @@ Singleton {
       property string wallhavenOrder: "desc"
       property string wallhavenCategories: "111" // general,anime,people
       property string wallhavenPurity: "100" // sfw only
+      property string wallhavenRatios: ""
       property string wallhavenResolutionMode: "atleast" // "atleast" or "exact"
       property string wallhavenResolutionWidth: ""
       property string wallhavenResolutionHeight: ""
@@ -362,6 +392,8 @@ Singleton {
       // View mode: "list" or "grid"
       property string viewMode: "list"
       property bool showCategories: true
+      // Icon mode: "tabler" or "native"
+      property string iconMode: "tabler"
     }
 
     // control center
@@ -467,6 +499,7 @@ Singleton {
       property bool pinnedStatic: false
       property bool inactiveIndicators: false
       property double deadOpacity: 0.6
+      property real animationSpeed: 1.0 // Speed multiplier for hide/show animations (0.1 = slowest, 2.0 = fastest)
     }
 
     // network
@@ -549,7 +582,6 @@ Singleton {
       property bool volumeOverdrive: false
       property int cavaFrameRate: 30
       property string visualizerType: "linear"
-      property string visualizerQuality: "high"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
       property string externalMixer: "pwvucontrol || pavucontrol"
@@ -595,6 +627,7 @@ Singleton {
       property bool yazi: false
       property bool emacs: false
       property bool niri: false
+      property bool mango: false
       property bool zed: false
       property bool enableUserTemplates: false
     }
@@ -617,12 +650,14 @@ Singleton {
       property string darkModeChange: ""
       property string screenLock: ""
       property string screenUnlock: ""
+      property string performanceModeEnabled: ""
+      property string performanceModeDisabled: ""
     }
 
     // desktop widgets
     property JsonObject desktopWidgets: JsonObject {
       property bool enabled: false
-      property bool editMode: false
+      property bool gridSnap: false
       property list<var> monitorWidgets: []
       // Format: [{ "name": "DP-1", "widgets": [...] }, { "name": "HDMI-1", "widgets": [...] }]
     }
@@ -643,6 +678,70 @@ Singleton {
     }
 
     return path;
+  }
+
+  // -----------------------------------------------------
+  // Get default value for a setting path (e.g., "general.scaleRatio" or "bar.position")
+  // Returns undefined if not found
+  function getDefaultValue(path) {
+    if (!root._defaultSettings) {
+      return undefined;
+    }
+
+    var parts = path.split(".");
+    var current = root._defaultSettings;
+
+    for (var i = 0; i < parts.length; i++) {
+      if (current === undefined || current === null) {
+        return undefined;
+      }
+      current = current[parts[i]];
+    }
+
+    return current;
+  }
+
+  // -----------------------------------------------------
+  // Compare current value with default value
+  // Returns true if values differ, false if they match or default is not found
+  function isValueChanged(path, currentValue) {
+    var defaultValue = getDefaultValue(path);
+    if (defaultValue === undefined) {
+      return false; // Can't compare if default not found
+    }
+
+    // Deep comparison for objects and arrays
+    if (typeof currentValue === "object" && typeof defaultValue === "object") {
+      return JSON.stringify(currentValue) !== JSON.stringify(defaultValue);
+    }
+
+    // Simple comparison for primitives
+    return currentValue !== defaultValue;
+  }
+
+  // -----------------------------------------------------
+  // Format default value for tooltip display
+  // Returns a human-readable string representation of the default value
+  function formatDefaultValueForTooltip(path) {
+    var defaultValue = getDefaultValue(path);
+    if (defaultValue === undefined) {
+      return "";
+    }
+
+    // Format based on type
+    if (typeof defaultValue === "boolean") {
+      return defaultValue ? "true" : "false";
+    } else if (typeof defaultValue === "number") {
+      return defaultValue.toString();
+    } else if (typeof defaultValue === "string") {
+      return defaultValue === "" ? "(empty)" : defaultValue;
+    } else if (Array.isArray(defaultValue)) {
+      return defaultValue.length === 0 ? "(empty)" : "[" + defaultValue.length + " items]";
+    } else if (typeof defaultValue === "object") {
+      return "(object)";
+    }
+
+    return String(defaultValue);
   }
 
   // -----------------------------------------------------
@@ -779,7 +878,7 @@ Singleton {
     var pamConfigFile = pamConfigDir + "/password.conf";
 
     // Check if file already exists
-    fileCheckPamProcess.command = ["test", "-f", pamConfigFile];
+    fileCheckPamProcess.command = ["sh", "-c", `grep -q '^ID=nixos' /etc/os-release || test -f ${pamConfigFile}`];
     fileCheckPamProcess.running = true;
   }
 
@@ -814,7 +913,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         // File exists, skip creation
-        Logger.d("Settings", "PAM config file already exists, skipping creation");
+        Logger.d("Settings", "On NixOS or PAM config file already exists, skipping creation");
       } else {
         // File doesn't exist, create it
         doCreatePamConfig();
