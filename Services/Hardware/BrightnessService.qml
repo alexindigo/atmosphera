@@ -266,7 +266,7 @@ Singleton {
 
     // Timer for debouncing rapid changes
     readonly property Timer timer: Timer {
-      interval: 100
+      interval: 250
       onTriggered: {
         if (!isNaN(monitor.queuedBrightness)) {
           monitor.setBrightness(monitor.queuedBrightness);
@@ -315,7 +315,7 @@ Singleton {
         Quickshell.execDetached(["asdbctl", "set", rounded]);
       } else if (isDdc) {
         monitor.ignoreNextChange = true;
-        Quickshell.execDetached(["ddcutil", "-b", busNum, "setvcp", "10", rounded]);
+        Quickshell.execDetached(["ddcutil", "-b", busNum, "--sleep-multiplier=0.05", "setvcp", "10", rounded]);
       } else {
         monitor.ignoreNextChange = true;
         Quickshell.execDetached(["brightnessctl", "s", rounded + "%"]);
