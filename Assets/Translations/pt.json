@@ -1163,12 +1163,10 @@
           "description": "Tematização do compositor.",
           "label": "Compositores",
           "mango": {
-            "description": "Escrever {filepath}. Requer mango",
-            "description-missing": "Requer que o {app} esteja instalado."
+            "description": "Escrever {filepath}. Requer mango"
           },
           "niri": {
-            "description": "Escrever {filepath}. Requer Niri v25.11+",
-            "description-missing": "Requer que o {app} esteja instalado."
+            "description": "Escrever {filepath}. Requer Niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Escreva em {filepath}",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva em {filepath}"
           },
           "code": {
-            "description": "Escreva em {filepath} — o tema HyprLuna precisa ser instalado e ativado manualmente",
-            "description-missing": "Nenhum cliente Code detectado — instale VSCode ou VSCodium"
+            "description": "Escreva em {filepath} — o tema HyprLuna precisa ser instalado e ativado manualmente"
           },
           "description": "Tematização específica de aplicativos.",
           "discord": {
-            "description": "Escrever {filepath} para {client} — o tema HyprLuna precisa ser instalado e ativado manualmente",
-            "description-missing": "Nenhum cliente Discord detectado — instale vencord, vesktop, webcord, armcord, equibop, lightcord ou dorion"
+            "description": "Escrever {filepath} para {client} — o tema HyprLuna precisa ser instalado e ativado manualmente"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el<br>Aplicar manualmente: (load-theme 'noctalia t)",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el<br>Aplicar manualmente: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           },
           "label": "Programas",
           "pywalfox": {
-            "description": "Escrever {filepath} e executar pywalfox update",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e executar pywalfox update"
           },
           "spicetify": {
-            "description": "Escreva em {filepath} — o tema Comfy precisa ser instalado e ativado manualmente",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva em {filepath} — o tema Comfy precisa ser instalado e ativado manualmente"
           },
           "telegram": {
-            "description": "Escreva em {filepath}",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva em {filepath}"
           },
           "vicinae": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           },
           "walker": {
-            "description": "Escrever {filepath} e definir tema como noctalia",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e definir tema como noctalia"
           },
           "yazi": {
-            "description": "Escreva em {filepath} — o sabor precisa ser ativado manualmente",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva em {filepath} — o sabor precisa ser ativado manualmente"
           },
           "zed": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Escreva {filepath} e recarregue",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva {filepath} e recarregue"
           },
           "description": "Tematização do emulador de terminal.",
           "foot": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           },
           "ghostty": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           },
           "kitty": {
-            "description": "Escrever {filepath} e recarregar",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escrever {filepath} e recarregar"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Escreva {filepath} e recarregue",
-            "description-missing": "Requer que o {app} esteja instalado"
+            "description": "Escreva {filepath} e recarregue"
           }
         },
         "ui": {

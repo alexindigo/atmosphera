@@ -204,7 +204,7 @@ Singleton {
     },
     {
       "id": "zed",
-      "name": "Zeditor",
+      "name": "Zed",
       "category": "applications",
       "input": "zed.json",
       "outputs": [

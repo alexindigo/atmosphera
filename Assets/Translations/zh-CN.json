@@ -1163,12 +1163,10 @@
           "description": "合成器主题。",
           "label": "合成器",
           "mango": {
-            "description": "写入 {filepath}。需要芒果",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath}。需要芒果"
           },
           "niri": {
-            "description": "写入 {filepath}。需要 niri v25.11+",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath}。需要 niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "写入 {filepath}",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath}"
           },
           "code": {
-            "description": "写入 {filepath}，Hyprluna 主题需要手动安装和激活",
-            "description-missing": "未检测到 Code 客户端，请安装 VSCode 或 VSCodium"
+            "description": "写入 {filepath}，Hyprluna 主题需要手动安装和激活"
           },
           "description": "应用程序特定主题",
           "discord": {
-            "description": "为 {client} 写入 {filepath}，Hyprluna 主题需要手动安装和激活",
-            "description-missing": "未检测到 Discord 客户端，请安装 vencord、vesktop、webcord、armcord、equibop、lightcord 或 dorion"
+            "description": "为 {client} 写入 {filepath}，Hyprluna 主题需要手动安装和激活"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el<br>手动应用: (load-theme 'noctalia t)",
-            "description-missing": "需要安装{app}"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el<br>手动应用: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "label": "程序",
           "pywalfox": {
-            "description": "写入 {filepath} 并运行 pywalfox update",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并运行 pywalfox update"
           },
           "spicetify": {
-            "description": "写入 {filepath}，Comfy 主题需要手动安装和激活",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath}，Comfy 主题需要手动安装和激活"
           },
           "telegram": {
-            "description": "写入 {filepath}",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath}"
           },
           "vicinae": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "walker": {
-            "description": "写入 {filepath} 并将主题设置为 noctalia",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并将主题设置为 noctalia"
           },
           "yazi": {
-            "description": "写入 {filepath}，需要手动激活 flavor",
-            "description-missing": "需要安装{app}"
+            "description": "写入 {filepath}，需要手动激活 flavor"
           },
           "zed": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "description": "终端模拟器主题。",
           "foot": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "ghostty": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "kitty": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装 {app}"
+            "description": "写入 {filepath} 并重新加载"
           },
           "label": "终端",
           "wezterm": {
-            "description": "写入 {filepath} 并重新加载",
-            "description-missing": "需要安装{app}"
+            "description": "写入 {filepath} 并重新加载"
           }
         },
         "ui": {

@@ -1163,12 +1163,10 @@
           "description": "Theming van compositor.",
           "label": "Compositors",
           "mango": {
-            "description": "Schrijf {filepath}. Vereist mango",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath}. Vereist mango"
           },
           "niri": {
-            "description": "Schrijf {filepath}. Vereist niri v25.11+",
-            "description-missing": "Vereist dat {app} is geïnstalleerd."
+            "description": "Schrijf {filepath}. Vereist niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Schrijf {filepath}",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath}"
           },
           "code": {
-            "description": "Schrijf {filepath} — het HyprLuna-thema moet handmatig worden geïnstalleerd en geactiveerd",
-            "description-missing": "Geen Code-client gedetecteerd — installeer VSCode of VSCodium"
+            "description": "Schrijf {filepath} — het HyprLuna-thema moet handmatig worden geïnstalleerd en geactiveerd"
           },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
-            "description": "Schrijf {filepath} voor {client} — het HyprLuna-thema moet handmatig worden geactiveerd",
-            "description-missing": "Geen Discord-client gedetecteerd — installeer vencord, vesktop, webcord, armcord, equibop, lightcord of dorion"
+            "description": "Schrijf {filepath} voor {client} — het HyprLuna-thema moet handmatig worden geactiveerd"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standaard: ~/.emacs.d/themes/noctalia.el<br>Handmatig toepassen: (load-theme 'noctalia t)",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standaard: ~/.emacs.d/themes/noctalia.el<br>Handmatig toepassen: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "label": "Programma's",
           "pywalfox": {
-            "description": "Schrijf {filepath} en voer pywalfox update uit",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en voer pywalfox update uit"
           },
           "spicetify": {
-            "description": "Schrijf {filepath} — het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} — het Comfy-thema moet handmatig worden geïnstalleerd en geactiveerd"
           },
           "telegram": {
-            "description": "Schrijf {filepath}",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath}"
           },
           "vicinae": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "walker": {
-            "description": "Schrijf {filepath} en stel het thema in op noctalia",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en stel het thema in op noctalia"
           },
           "yazi": {
-            "description": "Schrijf {filepath} — flavor moet handmatig worden geactiveerd",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} — flavor moet handmatig worden geactiveerd"
           },
           "zed": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "description": "Thema's voor terminal-emulators.",
           "foot": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "ghostty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "kitty": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Schrijf {filepath} en herlaad",
-            "description-missing": "Vereist dat {app} is geïnstalleerd"
+            "description": "Schrijf {filepath} en herlaad"
           }
         },
         "ui": {

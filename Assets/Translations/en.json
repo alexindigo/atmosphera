@@ -1163,12 +1163,10 @@
           "description": "Compositor theming.",
           "label": "Compositors",
           "mango": {
-            "description": "Write {filepath}. Requires mango",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}."
           },
           "niri": {
-            "description": "Write {filepath}. Requires niri v25.11+",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}. Requires niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}"
           },
           "code": {
-            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually",
-            "description-missing": "No Code client detected — install VSCode or VSCodium"
+            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually",
-            "description-missing": "No Discord client detected — install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion"
+            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "label": "Programs",
           "pywalfox": {
-            "description": "Write {filepath} and run pywalfox update",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and run pywalfox update"
           },
           "spicetify": {
-            "description": "Write {filepath} — Comfy theme needs to be installed and activated manually",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — Comfy theme needs to be installed and activated manually"
           },
           "telegram": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}"
           },
           "vicinae": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "walker": {
-            "description": "Write {filepath} and set theme to noctalia",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and set theme to noctalia"
           },
           "yazi": {
-            "description": "Write {filepath} — flavor needs to be activated manually",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — flavor needs to be activated manually"
           },
           "zed": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "description": "Terminal emulator theming.",
           "foot": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "ghostty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "kitty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           }
         },
         "ui": {

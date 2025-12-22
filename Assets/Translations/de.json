@@ -1163,12 +1163,10 @@
           "description": "Compositor-Theming.",
           "label": "Compositor",
           "mango": {
-            "description": "Schreibe {filepath}. Benötigt mango",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath}. Benötigt mango"
           },
           "niri": {
-            "description": "Schreibe {filepath}. Benötigt niri v25.11+",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath}. Benötigt niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Schreibe {filepath}",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath}"
           },
           "code": {
-            "description": "Schreibe {Dateipfad} — das HyprLuna-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Kein Code-Client erkannt — installieren Sie VSCode oder VSCodium"
+            "description": "Schreibe {filepath} — das HyprLuna-Theme muss manuell installiert und aktiviert werden"
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
-            "description": "Schreibe {filepath} für {client} — das HyprLuna-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Kein Discord-Client erkannt — installieren Sie vencord, vesktop, webcord, armcord, equibop, lightcord oder dorion"
+            "description": "Schreibe {filepath} für {client} — das HyprLuna-Theme muss manuell installiert und aktiviert werden"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Manuell anwenden: (load-theme 'noctalia t)",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Manuell anwenden: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "label": "Programme",
           "pywalfox": {
-            "description": "Schreibe {filepath} und führe pywalfox update aus",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und führe pywalfox update aus"
           },
           "spicetify": {
-            "description": "Schreibe {filepath} — das Comfy-Theme muss manuell installiert und aktiviert werden",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath} — das Comfy-Theme muss manuell installiert und aktiviert werden"
           },
           "telegram": {
-            "description": "Schreibe {filepath}",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath}"
           },
           "vicinae": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "walker": {
-            "description": "Schreibe {filepath} und setzt das Theme auf noctalia",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und setzt das Theme auf noctalia"
           },
           "yazi": {
-            "description": "Schreibe {Dateipfad} — Flavor muss manuell aktiviert werden",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath} — Flavor muss manuell aktiviert werden"
           },
           "zed": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und lade neu"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Benötigt die Installation von {app}"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "description": "Terminal-Emulator-Theming.",
           "foot": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert {app} Terminal"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "ghostty": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert {app} Terminal"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "kitty": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert {app} Terminal"
+            "description": "Schreibe {filepath} und lade neu"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Schreibe {Dateipfad} und lade neu",
-            "description-missing": "Erfordert die Installation von {app}"
+            "description": "Schreibe {filepath} und lade neu"
           }
         },
         "ui": {

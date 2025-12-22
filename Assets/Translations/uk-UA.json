@@ -1163,12 +1163,10 @@
           "description": "Оформлення композитора.",
           "label": "Композитори",
           "mango": {
-            "description": "Записати {filepath}. Потребує mango",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath}. Потребує mango"
           },
           "niri": {
-            "description": "Записати {filepath}. Потребує niri v25.11+",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath}. Потребує niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1179,42 @@
         },
         "programs": {
           "cava": {
-            "description": "Записати {filepath}",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath}"
           },
           "code": {
-            "description": "Записати {filepath} — тему HyprLuna потрібно встановити та активувати вручну",
-            "description-missing": "Клієнт Code не виявлено — встановіть VSCode або VSCodium"
+            "description": "Записати {filepath} — тему HyprLuna потрібно встановити та активувати вручну"
           },
           "description": "Оформлення окремих застосункiв.",
           "discord": {
-            "description": "Записати {filepath} для {client} — тему HyprLuna потрібно активувати вручну",
-            "description-missing": "Клієнт Discord не виявлено — встановіть vencord, vesktop, webcord, armcord, equibop, lightcord або dorion"
+            "description": "Записати {filepath} для {client} — тему HyprLuna потрібно активувати вручну"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el<br>Застосувати вручну: (load-theme 'noctalia t)",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el<br>Застосувати вручну: (load-theme 'noctalia t)"
           },
           "fuzzel": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "label": "Застосунки",
           "pywalfox": {
-            "description": "Записати {filepath} та запустити pywalfox update",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та запустити pywalfox update"
           },
           "spicetify": {
-            "description": "Записати {filepath} — тему Comfy потрібно встановити та активувати вручну",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} — тему Comfy потрібно встановити та активувати вручну"
           },
           "telegram": {
-            "description": "Записати {filepath}",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath}"
           },
           "vicinae": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "walker": {
-            "description": "Записати {filepath} та встановити тему noctalia",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та встановити тему noctalia"
           },
           "yazi": {
-            "description": "Записати {filepath} — flavor потрібно активувати вручну",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} — flavor потрібно активувати вручну"
           },
           "zed": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           }
         },
         "section": {
@@ -1237,26 +1223,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "description": "Оформлення емулятора терміналу.",
           "foot": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "ghostty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "kitty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "label": "Термінал",
           "wezterm": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} та перезавантажити"
           }
         },
         "ui": {
