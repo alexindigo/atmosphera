@@ -527,6 +527,7 @@
     "close-app": "{app} schließen",
     "connect-vpn": "Mit {name} verbinden",
     "cycle-visualizer": "Zyklus-Visualisierer",
+    "delete": "Löschen",
     "disable-bluetooth": "Bluetooth deaktivieren",
     "disable-dnd": "'Nicht stören' deaktivieren",
     "disable-wifi": "WLAN deaktivieren",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Widget hinzufügen",
         "button": {
           "label": "Bearbeitungsmodus aktivieren"
         },
-        "controls-explanation": "Linke Maustaste: Widget verschieben\nRechte Maustaste: Widget Größe ändern",
+        "controls-explanation": "Linksklick & Ziehen: Widget verschieben oder Größe ändern.\nRechtsklick: Kontextmenü-Optionen öffnen.",
         "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
         "exit-button": "Bearbeitungsmodus verlassen",
         "grid-snap": {
           "label": "Raster einrasten"
         },
-        "label": "Bearbeitungsmodus"
+        "label": "Bearbeitungsmodus",
+        "open-settings": "Einstellungen öffnen"
       },
       "enabled": {
         "description": "Desktop-Widgets vollständig aktivieren oder deaktivieren.",
@@ -1758,6 +1761,10 @@
           "description": "Elemente in einem Raster statt in einer Liste anzeigen.",
           "label": "Rasteransicht"
         },
+        "icon-mode": {
+          "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
+          "label": "Native Icons verwenden"
+        },
         "position": {
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
           "label": "Position"
@@ -1773,10 +1780,6 @@
         "sort-by-usage": {
           "description": "Wenn aktiviert, erscheinen häufig gestartete Apps zuerst in der Liste.",
           "label": "Nach Häufigkeit sortieren"
-        },
-        "icon-mode": {
-          "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
-          "label": "Native Icons verwenden"
         },
         "terminal-command": {
           "description": "Befehl zum Starten eines Terminals. Z.B. 'kitty -e' oder 'gnome-terminal --'.",

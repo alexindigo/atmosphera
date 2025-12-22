@@ -527,6 +527,7 @@
     "close-app": "关闭 {app}",
     "connect-vpn": "连接 {name}",
     "cycle-visualizer": "切换可视化器样式",
+    "delete": "删除",
     "disable-bluetooth": "禁用蓝牙",
     "disable-dnd": "关闭勿扰模式",
     "disable-wifi": "禁用Wi-Fi",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "添加小部件",
         "button": {
           "label": "进入编辑模式"
         },
-        "controls-explanation": "鼠标左键：移动小组件\n鼠标右键：调整小组件大小",
+        "controls-explanation": "左键点击并拖动：移动或调整小部件大小。\n右键点击：打开上下文菜单选项。",
         "description": "启用编辑模式以移动和重新定位桌面小组件。启用后，小组件会显示拖动轮廓，并且可以重新定位。",
         "exit-button": "退出编辑模式",
         "grid-snap": {
           "label": "网格对齐"
         },
-        "label": "编辑模式"
+        "label": "编辑模式",
+        "open-settings": "打开设置"
       },
       "enabled": {
         "description": "完全启用或禁用桌面小部件。",
@@ -1758,6 +1761,10 @@
           "description": "以网格布局而非列表显示项目。",
           "label": "网格视图"
         },
+        "icon-mode": {
+          "description": "使用本地系统图标而不是 Tabler 图标。",
+          "label": "使用本地图标"
+        },
         "position": {
           "description": "选择启动器面板出现的位置。",
           "label": "位置"
@@ -1773,10 +1780,6 @@
         "sort-by-usage": {
           "description": "启用后，经常启动的应用程序将显示在列表首位。",
           "label": "按使用频率排序"
-        },
-        "icon-mode": {
-          "description": "使用本地系统图标而不是 Tabler 图标。",
-          "label": "使用本地图标"
         },
         "terminal-command": {
           "description": "启动终端的命令。例如，'kitty -e'或'gnome-terminal --'。",

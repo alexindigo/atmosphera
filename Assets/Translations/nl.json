@@ -527,6 +527,7 @@
     "close-app": "Sluit {app}",
     "connect-vpn": "Verbinding maken met {name}",
     "cycle-visualizer": "Cyclusvisualisatie",
+    "delete": "Verwijderen",
     "disable-bluetooth": "Bluetooth uitschakelen",
     "disable-dnd": "Niet Storen uitschakelen",
     "disable-wifi": "Wi-Fi uitschakelen",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Widget toevoegen",
         "button": {
           "label": "Ga naar de bewerkingsmodus"
         },
-        "controls-explanation": "Linkermuisknop: Widget verplaatsen\nRechtermuisknop: Widget vergroten/verkleinen",
+        "controls-explanation": "Linksklikken en slepen: Widget verplaatsen of het formaat wijzigen.\nRechtermuisknop: Het contextmenu openen.",
         "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
         "exit-button": "Bewerkingsmodus verlaten",
         "grid-snap": {
           "label": "Raster uitlijnen"
         },
-        "label": "Bewerkingsmodus"
+        "label": "Bewerkingsmodus",
+        "open-settings": "Instellingen openen"
       },
       "enabled": {
         "description": "Desktopwidgets volledig in- of uitschakelen.",
@@ -1758,6 +1761,10 @@
           "description": "Items in een raster weergeven in plaats van een lijst.",
           "label": "Rasterweergave"
         },
+        "icon-mode": {
+          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
+          "label": "Gebruik native iconen"
+        },
         "position": {
           "description": "Kies waar het launcher-paneel verschijnt.",
           "label": "Positie"
@@ -1773,10 +1780,6 @@
         "sort-by-usage": {
           "description": "Indien ingeschakeld, verschijnen vaak gestarte apps bovenaan in de lijst.",
           "label": "Sorteren op meest gebruikt"
-        },
-        "icon-mode": {
-          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
-          "label": "Gebruik native iconen"
         },
         "terminal-command": {
           "description": "Commando om een terminal te starten. Bijv. 'kitty -e' of 'gnome-terminal --'.",

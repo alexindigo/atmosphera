@@ -490,7 +490,7 @@ Item {
       Settings.data.desktopWidgets.enabled = true;
     }
     function edit() {
-      Settings.data.desktopWidgets.editMode = !Settings.data.desktopWidgets.editMode;
+      DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
     }
   }
 }

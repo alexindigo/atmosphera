@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.DesktopWidgets
 import qs.Services.Media
+import qs.Services.UI
 import qs.Widgets
 import qs.Widgets.AudioSpectrum
 
@@ -22,7 +23,7 @@ DraggableDesktopWidget {
   // State
   readonly property bool shouldHideIdle: (hideMode === "idle") && !isPlaying
   readonly property bool shouldHideEmpty: !hasPlayer && hideMode === "hidden"
-  readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !Settings.data.desktopWidgets.editMode
+  readonly property bool isHidden: (shouldHideIdle || shouldHideEmpty) && !DesktopWidgetRegistry.editMode
   visible: !isHidden
 
   // CavaService registration for visualizer

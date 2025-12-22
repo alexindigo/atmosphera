@@ -527,6 +527,7 @@
     "close-app": "{app} を閉じる",
     "connect-vpn": "{name} に接続",
     "cycle-visualizer": "ビジュアライザーを切り替える",
+    "delete": "削除 (Sakujo)",
     "disable-bluetooth": "Bluetooth を無効化",
     "disable-dnd": "おやすみモードを無効化",
     "disable-wifi": "Wi-Fi を無効化",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "ウィジェットを追加",
         "button": {
           "label": "編集モードに入る"
         },
-        "controls-explanation": "左クリック: ウィジェットを移動\n右クリック: ウィジェットのサイズを変更",
+        "controls-explanation": "左クリックでドラッグ：ウィジェットの移動またはサイズ変更。\n右クリック：コンテキストメニューオプションを開く。",
         "description": "編集モードを有効にして、デスクトップウィジェットの移動や配置変更を行います。有効にするとウィジェットに枠線が表示され、位置を変更できるようになります。",
         "exit-button": "編集モードを終了",
         "grid-snap": {
           "label": "グリッドにスナップ"
         },
-        "label": "編集モード"
+        "label": "編集モード",
+        "open-settings": "設定を開く"
       },
       "enabled": {
         "description": "デスクトップウィジェット全体を有効または無効にします。",
@@ -1758,6 +1761,10 @@
           "description": "リスト形式の代わりに、グリッド（格子状）レイアウトで項目を表示します。",
           "label": "グリッド表示"
         },
+        "icon-mode": {
+          "description": "Tablerアイコンではなく、ネイティブのシステムアイコンを使用します。",
+          "label": "ネイティブアイコンを使用"
+        },
         "position": {
           "description": "ランチャーパネルの表示位置を選択します。",
           "label": "表示位置"
@@ -1773,10 +1780,6 @@
         "sort-by-usage": {
           "description": "有効にすると、よく使うアプリがリストの上位に表示されます。",
           "label": "使用頻度順に並べ替え"
-        },
-        "icon-mode": {
-          "description": "Tablerアイコンではなく、ネイティブのシステムアイコンを使用します。",
-          "label": "ネイティブアイコンを使用"
         },
         "terminal-command": {
           "description": "ターミナルを起動するためのコマンド（例: 'kitty -e' or 'gnome-terminal --'）。",

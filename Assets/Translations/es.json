@@ -527,6 +527,7 @@
     "close-app": "Cerrar {app}",
     "connect-vpn": "Conectarse a {name}",
     "cycle-visualizer": "Visualizador de ciclos",
+    "delete": "Borrar",
     "disable-bluetooth": "Desactivar Bluetooth",
     "disable-dnd": "Desactivar No molestar",
     "disable-wifi": "Desactivar Wi-Fi",
@@ -1407,16 +1408,18 @@
         }
       },
       "edit-mode": {
+        "add-widget": "Añadir widget",
         "button": {
           "label": "Entrar en modo de edición"
         },
-        "controls-explanation": "Botón izquierdo del ratón: Mover widget\nBotón derecho del ratón: Redimensionar widget",
+        "controls-explanation": "Clic izquierdo y arrastrar: Mover o redimensionar el widget.\nClic derecho: Abrir las opciones del menú contextual.",
         "description": "Habilita el modo de edición para mover y cambiar la posición de los widgets del escritorio. Cuando está habilitado, los widgets muestran un contorno de arrastre y se pueden reposicionar.",
         "exit-button": "Salir del modo de edición",
         "grid-snap": {
           "label": "Ajustar a cuadrícula"
         },
-        "label": "Modo de edición"
+        "label": "Modo de edición",
+        "open-settings": "Abrir ajustes"
       },
       "enabled": {
         "description": "Activar o desactivar los widgets de escritorio por completo.",
@@ -1758,6 +1761,10 @@
           "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
           "label": "Vista de cuadrícula"
         },
+        "icon-mode": {
+          "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
+          "label": "Usar iconos nativos"
+        },
         "position": {
           "description": "Elige dónde aparece el panel del lanzador.",
           "label": "Posición"
@@ -1773,10 +1780,6 @@
         "sort-by-usage": {
           "description": "Cuando está activado, las aplicaciones más utilizadas aparecen primero en la lista.",
           "label": "Ordenar por más usados"
-        },
-        "icon-mode": {
-          "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
-          "label": "Usar iconos nativos"
         },
         "terminal-command": {
           "description": "Comando para iniciar un terminal. Por ejemplo, 'kitty -e' o 'gnome-terminal --'.",
