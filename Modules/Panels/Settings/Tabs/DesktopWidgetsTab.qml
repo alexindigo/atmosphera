@@ -37,17 +37,19 @@ ColumnLayout {
     label: I18n.tr("settings.desktop-widgets.enabled.label")
     description: I18n.tr("settings.desktop-widgets.enabled.description")
     checked: Settings.data.desktopWidgets.enabled
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("desktopWidgets.enabled")
     onToggled: checked => Settings.data.desktopWidgets.enabled = checked
   }
 
   NButton {
     visible: Settings.data.desktopWidgets.enabled
     Layout.fillWidth: true
-    text: Settings.data.desktopWidgets.editMode ? I18n.tr("settings.desktop-widgets.edit-mode.exit-button") : I18n.tr("settings.desktop-widgets.edit-mode.button.label")
+    text: DesktopWidgetRegistry.editMode ? I18n.tr("settings.desktop-widgets.edit-mode.exit-button") : I18n.tr("settings.desktop-widgets.edit-mode.button.label")
     icon: "edit"
     onClicked: {
-      Settings.data.desktopWidgets.editMode = !Settings.data.desktopWidgets.editMode;
-      if (Settings.data.desktopWidgets.editMode && Settings.data.ui.settingsPanelMode !== "window") {
+      DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
+      if (DesktopWidgetRegistry.editMode && Settings.data.ui.settingsPanelMode !== "window") {
         var item = root.parent;
         while (item) {
           if (item.closeRequested !== undefined) {
@@ -76,7 +78,9 @@ ColumnLayout {
       sectionName: modelData.name
       sectionSubtitle: {
         var compositorScale = CompositorService.getDisplayScale(modelData.name);
-        return "(" + modelData.width + "x" + modelData.height + " @ " + compositorScale + "x)";
+        // Format scale to 2 decimal places to prevent overly long text
+        var formattedScale = compositorScale.toFixed(2);
+        return "(" + modelData.width + "x" + modelData.height + " @ " + formattedScale + "x)";
       }
 
       sectionId: modelData.name
@@ -90,7 +94,15 @@ ColumnLayout {
       onAddWidget: (widgetId, section) => _addWidgetToMonitor(modelData.name, widgetId)
       onRemoveWidget: (section, index) => _removeWidgetFromMonitor(modelData.name, index)
       onUpdateWidgetSettings: (section, index, settings) => _updateWidgetSettingsForMonitor(modelData.name, index, settings)
+      onOpenPluginSettingsRequested: manifest => pluginSettingsDialog.openPluginSettings(manifest)
     }
+  }
+
+  // Shared Plugin Settings Popup
+  NPluginSettingsPopup {
+    id: pluginSettingsDialog
+    parent: Overlay.overlay
+    showToastOnSave: false
   }
 
   Component.onCompleted: {

@@ -24,8 +24,24 @@ Loader {
   id: root
   active: false
 
-  // Expose lockContext for hooks
-  readonly property var lockContext: item ? item.lockContext : null
+  // Track if the visualizer should be shown (lockscreen active + media playing + non-compact mode)
+  readonly property bool needsCava: root.active && !Settings.data.general.compactLockScreen && Settings.data.audio.visualizerType !== "" && Settings.data.audio.visualizerType !== "none"
+
+  onActiveChanged: {
+    if (root.active && root.needsCava) {
+      CavaService.registerComponent("lockscreen");
+    } else {
+      CavaService.unregisterComponent("lockscreen");
+    }
+  }
+
+  onNeedsCavaChanged: {
+    if (root.needsCava) {
+      CavaService.registerComponent("lockscreen");
+    } else {
+      CavaService.unregisterComponent("lockscreen");
+    }
+  }
 
   Component.onCompleted: {
     // Register with panel service

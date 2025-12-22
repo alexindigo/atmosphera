@@ -7,7 +7,6 @@ import qs.Commons
 Singleton {
   id: root
 
-  property bool hasAudioVisualizer: false
   property bool isVisible: true
   property var readyBars: ({})
 
@@ -17,33 +16,6 @@ Singleton {
 
   signal activeWidgetsChanged
   signal barReadyChanged(string screenName)
-
-  // onHasAudioVisualizerChanged: {
-  //   Logger.d("BarService", "hasAudioVisualizer", hasAudioVisualizer)
-  // }
-
-  // Simple timer that run once when the widget structure has changed
-  // and determine if any MediaMini widget has the visualizer on
-  Timer {
-    id: timerCheckVisualizer
-    interval: 100
-    repeat: false
-    onTriggered: {
-      hasAudioVisualizer = false;
-      if (getAllWidgetInstances("AudioVisualizer").length > 0) {
-        hasAudioVisualizer = true;
-        return;
-      }
-      const widgets = getAllWidgetInstances("MediaMini");
-      for (var i = 0; i < widgets.length; i++) {
-        const widget = widgets[i];
-        if (widget.showVisualizer) {
-          hasAudioVisualizer = true;
-          return;
-        }
-      }
-    }
-  }
 
   Component.onCompleted: {
     Logger.i("BarService", "Service started");
@@ -75,8 +47,6 @@ Singleton {
       "instance": instance
     };
 
-    timerCheckVisualizer.restart();
-
     Logger.d("BarService", "Registered widget:", key);
     root.activeWidgetsChanged();
   }
@@ -95,6 +65,8 @@ Singleton {
     if (screenName && section !== null) {
       for (var key in widgetInstances) {
         var widget = widgetInstances[key];
+        if (!widget)
+          continue;
         if (widget.widgetId === widgetId && widget.screenName === screenName && widget.section === section) {
           if (index === null) {
             return widget.instance;
@@ -108,6 +80,8 @@ Singleton {
     // Return first match if no specific screen/section specified
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
@@ -126,6 +100,8 @@ Singleton {
 
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
 
       var matches = true;
       if (widgetId && widget.widgetId !== widgetId)
@@ -147,6 +123,8 @@ Singleton {
   function getWidgetWithMetadata(widgetId, screenName = null, section = null) {
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (!screenName || widget.screenName === screenName) {
           if (section === null || widget.section === section) {
@@ -164,6 +142,8 @@ Singleton {
 
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.section === section) {
         if (!screenName || widget.screenName === screenName) {
           widgets.push(widget.instance);
@@ -185,12 +165,15 @@ Singleton {
   function getAllRegisteredWidgets() {
     var result = [];
     for (var key in widgetInstances) {
+      var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       result.push({
                     "key": key,
-                    "widgetId": widgetInstances[key].widgetId,
-                    "section": widgetInstances[key].section,
-                    "screenName": widgetInstances[key].screenName,
-                    "index": widgetInstances[key].index
+                    "widgetId": widget.widgetId,
+                    "section": widget.section,
+                    "screenName": widget.screenName,
+                    "index": widget.index
                   });
     }
     return result;
@@ -200,6 +183,8 @@ Singleton {
   function hasWidget(widgetId, section = null, screenName = null) {
     for (var key in widgetInstances) {
       var widget = widgetInstances[key];
+      if (!widget)
+        continue;
       if (widget.widgetId === widgetId) {
         if (section === null || widget.section === section) {
           if (!screenName || widget.screenName === screenName) {
@@ -209,6 +194,32 @@ Singleton {
       }
     }
     return false;
+  }
+
+  // Unregister all widget instances for a plugin (used during hot reload)
+  // Note: We don't destroy instances here - the Loader manages that when the component is unregistered
+  function destroyPluginWidgetInstances(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+    var keysToRemove = [];
+
+    // Find all instances of this plugin's widget
+    for (var key in widgetInstances) {
+      var widget = widgetInstances[key];
+      if (widget && widget.widgetId === widgetId) {
+        keysToRemove.push(key);
+        Logger.d("BarService", "Unregistering plugin widget instance:", key);
+      }
+    }
+
+    // Remove from registry
+    for (var i = 0; i < keysToRemove.length; i++) {
+      delete widgetInstances[keysToRemove[i]];
+    }
+
+    if (keysToRemove.length > 0) {
+      Logger.i("BarService", "Unregistered", keysToRemove.length, "instance(s) of plugin widget:", widgetId);
+      root.activeWidgetsChanged();
+    }
   }
 
   // Get pill direction for a widget instance
@@ -243,56 +254,6 @@ Singleton {
     default:
       return "bottom";
     }
-  }
-
-  // Calculate context menu position based on bar position
-  // Parameters:
-  //   anchorItem: The widget item to anchor the menu to
-  //   menuWidth: Width of the context menu (optional, defaults to 180)
-  //   menuHeight: Height of the context menu (optional, defaults to 100)
-  // Returns: { x: number, y: number }
-  // Note: Anchor position is top-left corner, so we calculate from center
-  function getContextMenuPosition(anchorItem, menuWidth, menuHeight) {
-    if (!anchorItem) {
-      Logger.w("BarService", "getContextMenuPosition: anchorItem is null");
-      return {
-        "x": 0,
-        "y": 0
-      };
-    }
-
-    const mWidth = menuWidth || 180;
-    const mHeight = menuHeight || 100;
-    const barPosition = Settings.data.bar.position;
-    let menuX = 0;
-    let menuY = 0;
-
-    // Calculate center-based positioning for consistent spacing
-    const anchorCenterX = anchorItem.width / 2;
-    const anchorCenterY = anchorItem.height / 2;
-
-    if (barPosition === "left") {
-      // For left bar: position menu to the right of anchor, vertically centered
-      menuX = anchorItem.width + Style.marginM;
-      menuY = anchorCenterY - (mHeight / 2);
-    } else if (barPosition === "right") {
-      // For right bar: position menu to the left of anchor, vertically centered
-      menuX = -mWidth - Style.marginM;
-      menuY = anchorCenterY - (mHeight / 2);
-    } else if (barPosition === "top") {
-      // For top bar: position menu below bar, horizontally centered
-      menuX = anchorCenterX - (mWidth / 2);
-      menuY = Style.barHeight;
-    } else {
-      // For bottom bar: position menu above, horizontally centered
-      menuX = anchorCenterX - (mWidth / 2);
-      menuY = -mHeight - Style.marginM;
-    }
-
-    return {
-      "x": menuX,
-      "y": menuY
-    };
   }
 
   // Open widget settings dialog for a bar widget

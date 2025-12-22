@@ -40,6 +40,49 @@ NBox {
     return duration === 86400 && isAtMidnight;
   }
 
+  // Navigation functions
+  function navigateToPreviousMonth() {
+    let newDate = new Date(root.calendarYear, root.calendarMonth - 1, 1);
+    root.calendarYear = newDate.getFullYear();
+    root.calendarMonth = newDate.getMonth();
+    const now = new Date();
+    const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
+    const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
+    const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
+    const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
+    CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
+  }
+
+  function navigateToNextMonth() {
+    let newDate = new Date(root.calendarYear, root.calendarMonth + 1, 1);
+    root.calendarYear = newDate.getFullYear();
+    root.calendarMonth = newDate.getMonth();
+    const now = new Date();
+    const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
+    const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
+    const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
+    const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
+    CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
+  }
+
+  // Wheel handler for month navigation
+  WheelHandler {
+    id: wheelHandler
+    target: root
+    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+    onWheel: function (event) {
+      if (event.angleDelta.y > 0) {
+        // Scroll up - go to previous month
+        root.navigateToPreviousMonth();
+        event.accepted = true;
+      } else if (event.angleDelta.y < 0) {
+        // Scroll down - go to next month
+        root.navigateToNextMonth();
+        event.accepted = true;
+      }
+    }
+  }
+
   ColumnLayout {
     id: calendarContent
     anchors.fill: parent
@@ -68,17 +111,7 @@ NBox {
 
       NIconButton {
         icon: "chevron-left"
-        onClicked: {
-          let newDate = new Date(root.calendarYear, root.calendarMonth - 1, 1);
-          root.calendarYear = newDate.getFullYear();
-          root.calendarMonth = newDate.getMonth();
-          const now = new Date();
-          const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
-          const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
-          const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
-          const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-          CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
-        }
+        onClicked: root.navigateToPreviousMonth()
       }
 
       NIconButton {
@@ -92,17 +125,7 @@ NBox {
 
       NIconButton {
         icon: "chevron-right"
-        onClicked: {
-          let newDate = new Date(root.calendarYear, root.calendarMonth + 1, 1);
-          root.calendarYear = newDate.getFullYear();
-          root.calendarMonth = newDate.getMonth();
-          const now = new Date();
-          const monthStart = new Date(root.calendarYear, root.calendarMonth, 1);
-          const monthEnd = new Date(root.calendarYear, root.calendarMonth + 1, 0);
-          const daysBehind = Math.max(0, Math.ceil((now - monthStart) / (24 * 60 * 60 * 1000)));
-          const daysAhead = Math.max(0, Math.ceil((monthEnd - now) / (24 * 60 * 60 * 1000)));
-          CalendarService.loadEvents(daysAhead + 30, daysBehind + 30);
-        }
+        onClicked: root.navigateToNextMonth()
       }
     }
 

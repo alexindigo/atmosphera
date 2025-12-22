@@ -341,6 +341,10 @@
           "description": "Steuert das Verhalten des Widgets, wenn keine übereinstimmenden Fenster vorhanden sind.",
           "label": "Ausblendmodus"
         },
+        "icon-scale": {
+          "description": "Legt den Skalierungsfaktor für Taskleistensymbole fest.",
+          "label": "Symbolskalierung"
+        },
         "max-width": {
           "description": "Maximale Breite der Taskleiste als Prozentsatz der Bildschirmbreite.",
           "label": "Maximale Breite"
@@ -529,11 +533,11 @@
     "no": "Nein"
   },
   "context-menu": {
-    "activate-app": "{app} aktivieren",
     "clear-history": "Verlauf löschen",
     "close-app": "{app} schließen",
     "connect-vpn": "Mit {name} verbinden",
     "cycle-visualizer": "Zyklus-Visualisierer",
+    "delete": "Löschen",
     "disable-bluetooth": "Bluetooth deaktivieren",
     "disable-dnd": "'Nicht stören' deaktivieren",
     "disable-wifi": "WLAN deaktivieren",
@@ -742,15 +746,15 @@
       "top_left": "Oben links",
       "top_right": "Oben rechts"
     },
-    "visualizer-quality": {
-      "high": "Hoch",
-      "low": "Niedrig"
-    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Gespiegelt",
       "none": "Keine",
       "wave": "Welle"
+    },
+    "visualizer-visibility": {
+      "always": "Immer sichtbar",
+      "with-background": "Nur mit Hintergrund"
     },
     "workspace-labels": {
       "index": "Index",
@@ -953,13 +957,20 @@
           "description": "Bevorzugte und ignorierte Medienanwendungen festlegen.",
           "label": "Medienplayer"
         },
-        "visualizer-quality": {
-          "description": "Hohe Qualität verbraucht mehr GPU-Ressourcen.",
-          "label": "Visualisierungsqualität"
-        },
         "visualizer-type": {
           "description": "Visualisierungstyp für Medienwiedergabe wählen.",
           "label": "Visualisierungstyp"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Derzeit geben keine Anwendungen Audio wieder."
+        },
+        "input": "Eingabe",
+        "output": "Ausgabe",
+        "tabs": {
+          "devices": "Geräte",
+          "volumes": "Lautstärken"
         }
       },
       "title": "Audio",
@@ -1149,6 +1160,10 @@
         "compositors": {
           "description": "Compositor-Theming.",
           "label": "Compositor",
+          "mango": {
+            "description": "Schreibe {filepath}. Benötigt mango",
+            "description-missing": "Benötigt die Installation von {app}"
+          },
           "niri": {
             "description": "Schreibe {filepath}. Benötigt niri v25.11+",
             "description-missing": "Benötigt die Installation von {app}"
@@ -1339,14 +1354,33 @@
     },
     "desktop-widgets": {
       "clock": {
+        "clock-display": {
+          "description": "Passen Sie die Anzeige Ihrer Uhr an, indem Sie Token aus der Liste unten hinzufügen. Um das 12-Stunden-Format zu verwenden, müssen Sie das 'AP'-Token einschließen.",
+          "label": "Uhrenanzeige"
+        },
+        "custom-font": {
+          "description": "Wählen Sie eine benutzerdefinierte Schriftart für die Uhrenanzeige aus.",
+          "label": "Benutzerdefinierte Schriftart",
+          "placeholder": "Benutzerdefinierte Schriftart auswählen...",
+          "search-placeholder": "Schriftarten suchen..."
+        },
         "enabled": {
           "description": "Eine Uhr als Widget auf dem Desktop anzeigen.",
           "label": "Uhr-Widget aktivieren"
+        },
+        "format": {
+          "description": "Tipp: Verwenden Sie \\n, um einen Zeilenumbruch zu erstellen.",
+          "label": "Format"
         },
         "height": {
           "description": "Höhe des Uhr-Widgets in Pixeln.",
           "label": "Höhe"
         },
+        "minimal-mode": {
+          "description": "Verwende eine minimale Uhr-Anzeige mit Zeit und Datum.",
+          "label": "Minimaler Modus"
+        },
+        "preview": "Vorschau",
         "section": {
           "description": "Das Erscheinungsbild des Uhr-Widgets konfigurieren.",
           "label": "Uhr-Widget"
@@ -1363,18 +1397,39 @@
           "description": "Sekunden in der Zeit anzeigen.",
           "label": "Sekunden anzeigen"
         },
+        "style": {
+          "analog": "Analog",
+          "description": "Wähle den Anzeigestil der Uhr.",
+          "digital": "Digital",
+          "label": "Uhrstil",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
+          "label": "Benutzerdefinierte Schriftart verwenden"
+        },
+        "use-primary-color": {
+          "description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung angewendet.",
+          "label": "Primärfarbe verwenden"
+        },
         "width": {
           "description": "Breite des Uhr-Widgets in Pixeln.",
           "label": "Breite"
         }
       },
       "edit-mode": {
+        "add-widget": "Widget hinzufügen",
         "button": {
           "label": "Bearbeitungsmodus aktivieren"
         },
+        "controls-explanation": "Linksklick & Ziehen: Widget verschieben oder Größe ändern.\nRechtsklick: Kontextmenü-Optionen öffnen.",
         "description": "Aktiviere den Bearbeitungsmodus, um Desktop-Widgets zu verschieben und neu zu positionieren. Im aktivierten Zustand zeigen Widgets eine Ziehumrandung und können neu positioniert werden.",
         "exit-button": "Bearbeitungsmodus verlassen",
-        "label": "Bearbeitungsmodus"
+        "grid-snap": {
+          "label": "Raster einrasten"
+        },
+        "label": "Bearbeitungsmodus",
+        "open-settings": "Einstellungen öffnen"
       },
       "enabled": {
         "description": "Desktop-Widgets vollständig aktivieren oder deaktivieren.",
@@ -1391,6 +1446,10 @@
           "description": "Zeige ein Media-Player-Widget auf dem Desktop an.",
           "label": "Medienplayer-Widget aktivieren"
         },
+        "hide-mode": {
+          "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
+          "label": "Ausblendmodus"
+        },
         "section": {
           "description": "Konfigurieren Sie das Erscheinungsbild des Media-Player-Widgets.",
           "label": "Media Player Widget"
@@ -1399,9 +1458,17 @@
           "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
           "label": "Hintergrund anzeigen"
         },
+        "show-buttons": {
+          "description": "Mediensteuerungstasten (Wiedergabe/Pause, Zurück, Weiter) im Media-Player-Widget anzeigen.",
+          "label": "Tasten anzeigen"
+        },
         "visualizer-type": {
           "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
           "label": "Visualisierungsart"
+        },
+        "visualizer-visibility": {
+          "description": "Steuern Sie, wann der Audio-Visualizer sichtbar ist.",
+          "label": "Audio-Visualizer-Sichtbarkeit"
         }
       },
       "title": "Desktop-Widgets",
@@ -1514,6 +1581,10 @@
         "floating-distance": {
           "description": "Schwebeabstand vom Bildschirmrand anpassen.",
           "label": "Dock-Schwebeabstand"
+        },
+        "hide-show-speed": {
+          "description": "Geschwindigkeit der Ein-/Ausblend-Animation des Docks anpassen.",
+          "label": "Ein-/Ausblend-Geschwindigkeit"
         },
         "icon-size": {
           "description": "Gesamtgröße des Docks anpassen.",
@@ -1632,6 +1703,26 @@
           "label": "Verfügbare Parameter"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
+        "label": "Leistungsmodus deaktiviert",
+        "placeholder": "z.B. notify-send \"Leistung\" \"Modus deaktiviert\""
+      },
+      "performance-mode-enabled": {
+        "description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus aktiviert wird.",
+        "label": "Leistungsmodus aktiviert",
+        "placeholder": "z.B. notify-send \"Leistung\" \"Modus aktiviert\""
+      },
+      "screen-lock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
+        "label": "Bildschirm gesperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Gesperrt\""
+      },
+      "screen-unlock": {
+        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
+        "label": "Bildschirm entsperrt",
+        "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Alle Hook-Befehle aktivieren oder deaktivieren.",
@@ -1652,17 +1743,11 @@
         "description": "Befehl, der ausgeführt wird, wenn sich das Hintergrundbild ändert.",
         "label": "Hintergrundbild geändert",
         "placeholder": "z.B. notify-send \"Hintergrundbild\" \"Geändert\""
-      },
-      "screen-lock": {
-        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm gesperrt wird.",
-        "label": "Bildschirm gesperrt",
-        "placeholder": "z.B. notify-send \"Bildschirm\" \"Gesperrt\""
-      },
-      "screen-unlock": {
-        "description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
-        "label": "Bildschirm entsperrt",
-        "placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\""
       }
+    },
+    "indicator": {
+      "default-value": "Standard: {value}",
+      "system-default": "Systemstandard"
     },
     "launcher": {
       "settings": {
@@ -1685,6 +1770,10 @@
         "grid-view": {
           "description": "Elemente in einem Raster statt in einer Liste anzeigen.",
           "label": "Rasteransicht"
+        },
+        "icon-mode": {
+          "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
+          "label": "Native Icons verwenden"
         },
         "position": {
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
@@ -1811,6 +1900,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-Verwaltung aktivieren.",
         "label": "Bluetooth aktivieren"
       },
       "section": {
@@ -1818,6 +1908,7 @@
       },
       "title": "Netzwerk",
       "wifi": {
+        "description": "Drahtlosnetzwerke verwalten (erfordert NetworkManager).",
         "label": "WLAN aktivieren"
       }
     },
@@ -2028,6 +2119,11 @@
         "downloaded": "Heruntergeladen",
         "not-downloaded": "Nicht heruntergeladen"
       },
+      "hot-reload": {
+        "description": "Plugins automatisch neu laden, wenn sich ihre Dateien ändern. Nützlich für die Plugin-Entwicklung.",
+        "label": "Heißes Neuladen (Entwicklermodus)"
+      },
+      "hot-reloaded": "Plugin neu geladen: {name}",
       "install": "Installieren",
       "install-error": "Installation fehlgeschlagen: {error}",
       "install-success": "{plugin} erfolgreich installiert",
@@ -2181,6 +2277,10 @@
           "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
           "label": "Allgemein"
         }
+      },
+      "large-buttons-style": {
+        "description": "Das Sitzungsmenü mit großen Schaltflächen in einem Rasterlayout anzeigen.",
+        "label": "Stil: Große Schaltflächen"
       },
       "position": {
         "description": "Wählen Sie, wo das Sitzungsmenü-Panel beim Öffnen erscheint.",
@@ -2601,6 +2701,7 @@
     "move-to-center-section": "Mittlere Sektion",
     "move-to-left-section": "Linke Sektion",
     "move-to-right-section": "Rechte Sektion",
+    "mute": "Stummschalten",
     "next-media": "Nächster Titel",
     "next-month": "Nächster Monat",
     "night-light-disabled": "Nachtlicht",
@@ -2635,6 +2736,7 @@
     "stop-screen-recording": "Bildschirmrekorder",
     "switch-to-dark-mode": "Dunkler Modus",
     "switch-to-light-mode": "Heller Modus",
+    "unmute": "Stummschaltung aufheben",
     "up": "Übergeordnetes Verzeichnis",
     "volume-at": "Lautstärke: {volume}%",
     "wallpaper-selector": "Hintergrundbild-Auswahl",
@@ -2671,6 +2773,10 @@
         "label": "Inhaltsfilter",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Irgendetwas",
+        "label": "Seitenverhältnis"
       },
       "resolution": {
         "atleast": "Mindestens",

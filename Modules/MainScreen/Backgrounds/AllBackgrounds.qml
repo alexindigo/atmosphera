@@ -132,7 +132,7 @@ Item {
       PanelBackground {
         panel: root.windowRoot.sessionMenuPanelPlaceholder
         shapeContainer: backgroundsShape
-        backgroundColor: panelBackgroundColor
+        backgroundColor: Settings.data.sessionMenu.largeButtonsStyle ? Color.transparent : panelBackgroundColor
       }
 
       // Settings

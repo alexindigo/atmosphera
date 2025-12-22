@@ -341,6 +341,10 @@
           "description": "Controla cómo se comporta el widget cuando no hay ventanas coincidentes.",
           "label": "Modo de ocultación"
         },
+        "icon-scale": {
+          "description": "Establece el factor de escala para los iconos de la barra de tareas.",
+          "label": "Escalado de iconos"
+        },
         "max-width": {
           "description": "Ancho máximo de la barra de tareas como porcentaje del ancho de la pantalla.",
           "label": "Ancho máximo"
@@ -529,11 +533,11 @@
     "no": "No"
   },
   "context-menu": {
-    "activate-app": "Activar {app}",
     "clear-history": "Borrar historial",
     "close-app": "Cerrar {app}",
     "connect-vpn": "Conectarse a {name}",
     "cycle-visualizer": "Visualizador de ciclos",
+    "delete": "Borrar",
     "disable-bluetooth": "Desactivar Bluetooth",
     "disable-dnd": "Desactivar No molestar",
     "disable-wifi": "Desactivar Wi-Fi",
@@ -742,15 +746,15 @@
       "top_left": "Superior izquierda",
       "top_right": "Superior derecha"
     },
-    "visualizer-quality": {
-      "high": "Alto/Alta",
-      "low": "Bajo"
-    },
     "visualizer-types": {
       "linear": "Lineal",
       "mirrored": "Espejado",
       "none": "Ninguno",
       "wave": "Onda"
+    },
+    "visualizer-visibility": {
+      "always": "Siempre visible",
+      "with-background": "Solo con fondo"
     },
     "workspace-labels": {
       "index": "Índice",
@@ -953,13 +957,20 @@
           "description": "Establece tus aplicaciones multimedia preferidas e ignoradas.",
           "label": "Reproductores multimedia"
         },
-        "visualizer-quality": {
-          "description": "Alta calidad usa más recursos de la GPU.",
-          "label": "Calidad de visualización"
-        },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para la reproducción de medios.",
           "label": "Tipo de visualización"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Actualmente no hay aplicaciones reproduciendo audio."
+        },
+        "input": "Entrada",
+        "output": "Salida",
+        "tabs": {
+          "devices": "Dispositivos",
+          "volumes": "Volúmenes"
         }
       },
       "title": "Audio",
@@ -1149,6 +1160,10 @@
         "compositors": {
           "description": "Tematización del compositor.",
           "label": "Compositores",
+          "mango": {
+            "description": "Escribir {filepath}. Requiere mango",
+            "description-missing": "Requiere que {app} esté instalada."
+          },
           "niri": {
             "description": "Escribir {filepath}. Requiere niri v25.11+",
             "description-missing": "Requiere que {app} esté instalada."
@@ -1339,14 +1354,33 @@
     },
     "desktop-widgets": {
       "clock": {
+        "clock-display": {
+          "description": "Personaliza la visualización de tu reloj añadiendo tokens de la lista de abajo. Para usar el formato de 12 horas, debes incluir el token 'AP'.",
+          "label": "Visualización del reloj"
+        },
+        "custom-font": {
+          "description": "Seleccionar una fuente personalizada para la visualización del reloj.",
+          "label": "Fuente personalizada",
+          "placeholder": "Seleccionar fuente personalizada...",
+          "search-placeholder": "Buscar fuentes..."
+        },
         "enabled": {
           "description": "Mostrar un widget de reloj en el escritorio.",
           "label": "Activar widget de reloj"
+        },
+        "format": {
+          "description": "Consejo: Usa \\n para crear un salto de línea.",
+          "label": "Formato"
         },
         "height": {
           "description": "Altura del widget de reloj en píxeles.",
           "label": "Altura"
         },
+        "minimal-mode": {
+          "description": "Usar una visualización de reloj minimalista con hora y fecha.",
+          "label": "Modo minimalista"
+        },
+        "preview": "Vista previa",
         "section": {
           "description": "Configurar la apariencia del widget de reloj.",
           "label": "Widget de reloj"
@@ -1363,18 +1397,39 @@
           "description": "Mostrar los segundos en la hora.",
           "label": "Mostrar segundos"
         },
+        "style": {
+          "analog": "Analógico",
+          "description": "Elige el estilo de visualización del reloj.",
+          "digital": "Digital",
+          "label": "Estilo de reloj",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Anular la selección de fuente predeterminada con una fuente personalizada para el reloj.",
+          "label": "Usar fuente personalizada"
+        },
+        "use-primary-color": {
+          "description": "Cuando está activado, se aplica el color primario para dar énfasis.",
+          "label": "Usar color primario"
+        },
         "width": {
           "description": "Ancho del widget de reloj en píxeles.",
           "label": "Ancho"
         }
       },
       "edit-mode": {
+        "add-widget": "Añadir widget",
         "button": {
           "label": "Entrar en modo de edición"
         },
+        "controls-explanation": "Clic izquierdo y arrastrar: Mover o redimensionar el widget.\nClic derecho: Abrir las opciones del menú contextual.",
         "description": "Habilita el modo de edición para mover y cambiar la posición de los widgets del escritorio. Cuando está habilitado, los widgets muestran un contorno de arrastre y se pueden reposicionar.",
         "exit-button": "Salir del modo de edición",
-        "label": "Modo de edición"
+        "grid-snap": {
+          "label": "Ajustar a cuadrícula"
+        },
+        "label": "Modo de edición",
+        "open-settings": "Abrir ajustes"
       },
       "enabled": {
         "description": "Activar o desactivar los widgets de escritorio por completo.",
@@ -1391,6 +1446,10 @@
           "description": "Mostrar un widget de reproductor multimedia en el escritorio.",
           "label": "Habilitar widget de reproductor multimedia"
         },
+        "hide-mode": {
+          "description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
+          "label": "Modo de ocultación"
+        },
         "section": {
           "description": "Configurar la apariencia del widget del reproductor multimedia.",
           "label": "Widget de reproductor multimedia"
@@ -1399,9 +1458,17 @@
           "description": "Mostrar el contenedor de fondo para el widget del reproductor multimedia.",
           "label": "Mostrar fondo"
         },
+        "show-buttons": {
+          "description": "Mostrar botones de control de medios (reproducir/pausar, anterior, siguiente) en el widget del reproductor multimedia.",
+          "label": "Mostrar botones"
+        },
         "visualizer-type": {
           "description": "Elige un tipo de visualización para el fondo del reproductor multimedia de escritorio.",
           "label": "Tipo de visualización"
+        },
+        "visualizer-visibility": {
+          "description": "Controla cuándo el visualizador de audio es visible.",
+          "label": "Visibilidad del visualizador de audio"
         }
       },
       "title": "Widgets de escritorio",
@@ -1514,6 +1581,10 @@
         "floating-distance": {
           "description": "Ajusta la distancia de flotación desde el borde de la pantalla.",
           "label": "Distancia de flotación del dock"
+        },
+        "hide-show-speed": {
+          "description": "Ajusta la velocidad de la animación de ocultar/mostrar del dock.",
+          "label": "Velocidad de Ocultar/Mostrar"
         },
         "icon-size": {
           "description": "Ajusta el tamaño general del Dock.",
@@ -1632,6 +1703,26 @@
           "label": "Parámetros disponibles"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Comando a ejecutar cuando se deshabilita el Modo de Rendimiento de Noctalia.",
+        "label": "Modo de rendimiento deshabilitado",
+        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Deshabilitado\""
+      },
+      "performance-mode-enabled": {
+        "description": "Comando a ejecutar cuando se habilita el Modo de Rendimiento de Noctalia.",
+        "label": "Modo de rendimiento habilitado",
+        "placeholder": "ej., notify-send \"Rendimiento\" \"Modo Habilitado\""
+      },
+      "screen-lock": {
+        "description": "Comando a ejecutar cuando se bloquea la pantalla.",
+        "label": "Pantalla bloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Bloqueada\""
+      },
+      "screen-unlock": {
+        "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
+        "label": "Pantalla desbloqueada",
+        "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Activa o desactiva todos los comandos de hooks.",
@@ -1652,17 +1743,11 @@
         "description": "Comando a ejecutar cuando cambia el fondo de pantalla.",
         "label": "Fondo de pantalla cambiado",
         "placeholder": "ej., notify-send \"Fondo de pantalla\" \"Cambiado\""
-      },
-      "screen-lock": {
-        "description": "Comando a ejecutar cuando se bloquea la pantalla.",
-        "label": "Pantalla bloqueada",
-        "placeholder": "ej., notify-send \"Pantalla\" \"Bloqueada\""
-      },
-      "screen-unlock": {
-        "description": "Comando a ejecutar cuando se desbloquea la pantalla.",
-        "label": "Pantalla desbloqueada",
-        "placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\""
       }
+    },
+    "indicator": {
+      "default-value": "Predeterminado: {value}",
+      "system-default": "Predeterminado del sistema"
     },
     "launcher": {
       "settings": {
@@ -1685,6 +1770,10 @@
         "grid-view": {
           "description": "Mostrar elementos en una cuadrícula en lugar de una lista.",
           "label": "Vista de cuadrícula"
+        },
+        "icon-mode": {
+          "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
+          "label": "Usar iconos nativos"
         },
         "position": {
           "description": "Elige dónde aparece el panel del lanzador.",
@@ -1811,6 +1900,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activar la gestión de Bluetooth.",
         "label": "Activar Bluetooth"
       },
       "section": {
@@ -1818,6 +1908,7 @@
       },
       "title": "Red",
       "wifi": {
+        "description": "Administrar redes inalámbricas (requiere NetworkManager).",
         "label": "Activar Wi-Fi"
       }
     },
@@ -2028,6 +2119,11 @@
         "downloaded": "Descargado",
         "not-downloaded": "No descargado"
       },
+      "hot-reload": {
+        "description": "Recarga automáticamente los plugins cuando sus archivos cambian. Útil para el desarrollo de plugins.",
+        "label": "Recarga en caliente (modo desarrollo)"
+      },
+      "hot-reloaded": "Plugin recargado: {name}",
       "install": "Instalar",
       "install-error": "Error al instalar: {error}",
       "install-success": "Se instaló {plugin} correctamente.",
@@ -2181,6 +2277,10 @@
           "description": "Configurar el comportamiento y la apariencia del panel del menú de sesión.",
           "label": "General"
         }
+      },
+      "large-buttons-style": {
+        "description": "Mostrar el menú de sesión con botones grandes en un diseño de cuadrícula.",
+        "label": "Estilo de botones grandes"
       },
       "position": {
         "description": "Elige dónde aparece el panel del Menú de sesión cuando se abre.",
@@ -2601,6 +2701,7 @@
     "move-to-center-section": "Sección central",
     "move-to-left-section": "Sección izquierda",
     "move-to-right-section": "Sección derecha",
+    "mute": "Silenciar",
     "next-media": "Siguiente pista",
     "next-month": "Mes siguiente",
     "night-light-disabled": "Luz nocturna",
@@ -2635,6 +2736,7 @@
     "stop-screen-recording": "Grabadora de pantalla",
     "switch-to-dark-mode": "Modo oscuro",
     "switch-to-light-mode": "Modo claro",
+    "unmute": "Activar el audio",
     "up": "Directorio superior",
     "volume-at": "Volumen de salida: {volume}%",
     "wallpaper-selector": "Selector de fondos de pantalla",
@@ -2671,6 +2773,10 @@
         "label": "Filtro de contenido",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Cualquiera",
+        "label": "Relación de aspecto"
       },
       "resolution": {
         "atleast": "Al menos",

@@ -118,20 +118,14 @@ Singleton {
                                             } else if (app.id === "code") {
                                               // Handle Code clients specially
                                               if (Settings.data.templates.code) {
+                                                const homeDir = Quickshell.env("HOME");
                                                 app.clients.forEach(client => {
                                                                       // Check if this specific client is detected
                                                                       if (isCodeClientEnabled(client.name)) {
                                                                         lines.push(`\n[templates.code_${client.name}]`);
                                                                         lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
-                                                                        lines.push(`output_path = "${client.path}"`);
-                                                                        var configDir = client.name === "code" ? "Code" : "VSCodium";
-                                                                        var settingsPath = `~/.config/${configDir}/User/settings.json`;
-                                                                        // install the vsix theme file only if grep returns null
-                                                                        var installVsix = `${client.name} --list-extensions | grep -q noctaliatheme || ${client.name} --install-extension '${Quickshell.shellDir}/Assets/MatugenTemplates/noctaliatheme-0.0.1.vsix'`;
-                                                                        // update the settings.json file to use the Noctalia theme
-                                                                        var updateSettingsJson = `if [ -f ${settingsPath} ]; then sed -i '/\\\"workbench.colorTheme\\\":/d' ${settingsPath} && sed -i '1,/{/s/{/{\\\\n    \\\"workbench.colorTheme\\\": \\\"NoctaliaTheme\\\",/' ${settingsPath}; fi`;
-                                                                        // do things :3
-                                                                        lines.push(`post_hook = "sh -c \\"${installVsix}; ${updateSettingsJson}\\""`);
+                                                                        const expandedPath = client.path.replace("~", homeDir);
+                                                                        lines.push(`output_path = "${expandedPath}"`);
                                                                       }
                                                                     });
                                               }

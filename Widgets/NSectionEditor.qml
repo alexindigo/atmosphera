@@ -109,12 +109,28 @@ NBox {
       ColumnLayout {
         spacing: Style.marginXXS
         Layout.alignment: Qt.AlignVCenter
+        Layout.fillWidth: false
+        Layout.maximumWidth: {
+          // Reserve space for other elements: count indicator, combo box (~200), button (~50), and margins
+          // Use a reasonable maximum that leaves room for controls on the right
+          // On smaller screens, use a smaller percentage to ensure controls fit
+          var rowLayout = parent;
+          if (rowLayout && rowLayout.width > 0) {
+            // Use smaller percentage on smaller screens, but ensure minimum space for text
+            var minWidth = 150 * Style.uiScaleRatio;
+            var maxWidth = rowLayout.width < 600 ? rowLayout.width * 0.35 : rowLayout.width * 0.4;
+            return Math.max(minWidth, maxWidth);
+          }
+          return 250 * Style.uiScaleRatio;
+        }
 
         NText {
           text: sectionName
           pointSize: Style.fontSizeL
           font.weight: Style.fontWeightBold
           color: Color.mOnSurface
+          elide: Text.ElideRight
+          Layout.fillWidth: true
         }
 
         NText {
@@ -122,6 +138,8 @@ NBox {
           text: sectionSubtitle
           pointSize: Style.fontSizeS
           color: Color.mOnSurfaceVariant
+          elide: Text.ElideRight
+          Layout.fillWidth: true
         }
       }
 

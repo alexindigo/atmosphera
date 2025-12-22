@@ -67,10 +67,8 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
-            // Update wallpaper display
-            // Set wallpaper immediately on startup
-            futureWallpaper = path;
-            debounceTimer.restart();
+            // Request preprocessed wallpaper from cache service
+            requestPreprocessedWallpaper(path);
           }
         }
       }
@@ -78,11 +76,14 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          // Recalculate image sizes without interrupting startup transition
+          // Re-request preprocessed wallpaper at new dimensions
           if (isStartupTransition) {
             return;
           }
-          recalculateImageSizes();
+          const currentPath = WallpaperService.getWallpaper(modelData.name);
+          if (currentPath) {
+            requestPreprocessedWallpaper(currentPath);
+          }
         }
       }
 
@@ -112,36 +113,22 @@ Variants {
       Image {
         id: currentWallpaper
 
-        property bool dimensionsCalculated: false
-
         source: ""
         smooth: true
         mipmap: false
         visible: false
         cache: false
         asynchronous: true
-        sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.w("Current wallpaper failed to load:", source);
-          } else if (status === Image.Ready && !dimensionsCalculated) {
-            dimensionsCalculated = true;
-            const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
-            if (optimalSize !== false) {
-              sourceSize = optimalSize;
-            }
           }
-        }
-        onSourceChanged: {
-          dimensionsCalculated = false;
-          sourceSize = undefined;
         }
       }
 
       Image {
         id: nextWallpaper
 
-        property bool dimensionsCalculated: false
         property bool pendingTransition: false
 
         source: ""
@@ -150,29 +137,17 @@ Variants {
         visible: false
         cache: false
         asynchronous: true
-        sourceSize: undefined
         onStatusChanged: {
           if (status === Image.Error) {
             Logger.w("Next wallpaper failed to load:", source);
             pendingTransition = false;
           } else if (status === Image.Ready) {
-            if (!dimensionsCalculated) {
-              dimensionsCalculated = true;
-              const optimalSize = calculateOptimalWallpaperSize(implicitWidth, implicitHeight);
-              if (optimalSize !== false) {
-                sourceSize = optimalSize;
-              }
-            }
             if (pendingTransition) {
               pendingTransition = false;
               currentWallpaper.asynchronous = false;
               transitionAnimation.start();
             }
           }
-        }
-        onSourceChanged: {
-          dimensionsCalculated = false;
-          sourceSize = undefined;
         }
       }
 
@@ -321,10 +296,9 @@ Variants {
           transitionProgress = 0.0;
 
           // Now clear nextWallpaper after currentWallpaper has the new source
-          // Force complete cleanup to free texture memory (~18-25MB per monitor)
+          // Force complete cleanup to free texture memory
           Qt.callLater(() => {
                          nextWallpaper.source = "";
-                         nextWallpaper.sourceSize = undefined;
                          Qt.callLater(() => {
                                         currentWallpaper.asynchronous = true;
                                       });
@@ -333,63 +307,47 @@ Variants {
       }
 
       // ------------------------------------------------------
-      function calculateOptimalWallpaperSize(wpWidth, wpHeight) {
-        const compositorScale = CompositorService.getDisplayScale(modelData.name);
-        const screenWidth = modelData.width * compositorScale;
-        const screenHeight = modelData.height * compositorScale;
-        if (wpWidth <= screenWidth || wpHeight <= screenHeight || wpWidth <= 0 || wpHeight <= 0) {
-          // Do not resize if wallpaper is smaller than one of the screen dimension
+      function setWallpaperInitial() {
+        // On startup, defer assigning wallpaper until the services are ready
+        if (!WallpaperService || !WallpaperService.isInitialized) {
+          Qt.callLater(setWallpaperInitial);
           return;
         }
-
-        const imageAspectRatio = wpWidth / wpHeight;
-        var dim = Qt.size(0, 0);
-        if (screenWidth >= screenHeight) {
-          const w = Math.min(screenWidth, wpWidth);
-          dim = Qt.size(Math.round(w), Math.round(w / imageAspectRatio));
-        } else {
-          const h = Math.min(screenHeight, wpHeight);
-          dim = Qt.size(Math.round(h * imageAspectRatio), Math.round(h));
-        }
-
-        Logger.d("Background", `Wallpaper resized on ${modelData.name} ${screenWidth}x${screenHeight} @ ${compositorScale}x`, "src:", wpWidth, wpHeight, "dst:", dim.width, dim.height);
-        return dim;
-      }
-
-      // ------------------------------------------------------
-      function recalculateImageSizes() {
-        // Re-evaluate and apply optimal sourceSize for both images when ready
-        if (currentWallpaper.status === Image.Ready) {
-          const optimal = calculateOptimalWallpaperSize(currentWallpaper.implicitWidth, currentWallpaper.implicitHeight);
-          if (optimal !== undefined && optimal !== false) {
-            currentWallpaper.sourceSize = optimal;
-          } else {
-            currentWallpaper.sourceSize = undefined;
-          }
-        }
-
-        if (nextWallpaper.status === Image.Ready) {
-          const optimal2 = calculateOptimalWallpaperSize(nextWallpaper.implicitWidth, nextWallpaper.implicitHeight);
-          if (optimal2 !== undefined && optimal2 !== false) {
-            nextWallpaper.sourceSize = optimal2;
-          } else {
-            nextWallpaper.sourceSize = undefined;
-          }
-        }
-      }
-
-      // ------------------------------------------------------
-      function setWallpaperInitial() {
-        // On startup, defer assigning wallpaper until the service cache is ready, retries every tick
-        if (!WallpaperService || !WallpaperService.isInitialized) {
+        if (!WallpaperCacheService || !WallpaperCacheService.initialized) {
           Qt.callLater(setWallpaperInitial);
           return;
         }
 
         const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
+        const compositorScale = CompositorService.getDisplayScale(modelData.name);
+        const targetWidth = Math.round(modelData.width * compositorScale);
+        const targetHeight = Math.round(modelData.height * compositorScale);
 
-        futureWallpaper = wallpaperPath;
-        performStartupTransition();
+        WallpaperCacheService.getPreprocessed(wallpaperPath, modelData.name, targetWidth, targetHeight, function (cachedPath, success) {
+          if (success) {
+            futureWallpaper = cachedPath;
+          } else {
+            // Fallback to original
+            futureWallpaper = wallpaperPath;
+          }
+          performStartupTransition();
+        });
+      }
+
+      // ------------------------------------------------------
+      function requestPreprocessedWallpaper(originalPath) {
+        const compositorScale = CompositorService.getDisplayScale(modelData.name);
+        const targetWidth = Math.round(modelData.width * compositorScale);
+        const targetHeight = Math.round(modelData.height * compositorScale);
+
+        WallpaperCacheService.getPreprocessed(originalPath, modelData.name, targetWidth, targetHeight, function (cachedPath, success) {
+          if (success) {
+            futureWallpaper = cachedPath;
+          } else {
+            futureWallpaper = originalPath;
+          }
+          debounceTimer.restart();
+        });
       }
 
       // ------------------------------------------------------

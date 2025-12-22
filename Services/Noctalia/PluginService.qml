@@ -14,6 +14,7 @@ Singleton {
   signal pluginUnloaded(string pluginId)
   signal pluginEnabled(string pluginId)
   signal pluginDisabled(string pluginId)
+  signal pluginReloaded(string pluginId)
   signal availablePluginsUpdated
   signal allPluginsLoaded
 
@@ -37,6 +38,16 @@ Singleton {
   // Plugin load errors: { pluginId: { error: string, entryPoint: string, timestamp: date } }
   property var pluginErrors: ({})
   signal pluginLoadError(string pluginId, string entryPoint, string error)
+
+  // Hot reload: file watchers for plugin directories
+  property var pluginFileWatchers: ({}) // { pluginId: FileView }
+  property bool hotReloadEnabled: Settings.isDebug
+
+  onHotReloadEnabledChanged: {
+    if (root.initialized) {
+      setHotReloadEnabled(root.hotReloadEnabled);
+    }
+  }
 
   // Track active fetches
   property var activeFetches: ({})
@@ -104,6 +115,9 @@ Singleton {
     }
   }
 
+  // Track pending plugin loads for init completion
+  property int _pendingPluginLoads: 0
+
   function init() {
     if (root.initialized) {
       Logger.d("PluginService", "Already initialized, skipping");
@@ -122,12 +136,12 @@ Singleton {
     var enabledIds = PluginRegistry.getEnabledPluginIds();
     Logger.i("PluginService", "Found", enabledIds.length, "enabled plugins:", JSON.stringify(enabledIds));
 
+    // Count plugins that need to be loaded
+    var pluginsToLoad = [];
     for (var i = 0; i < enabledIds.length; i++) {
-      Logger.d("PluginService", "Attempting to load plugin:", enabledIds[i]);
       var manifest = PluginRegistry.getPluginManifest(enabledIds[i]);
       if (manifest) {
-        Logger.d("PluginService", "Manifest found for", enabledIds[i]);
-        loadPlugin(enabledIds[i]);
+        pluginsToLoad.push(enabledIds[i]);
       } else {
         Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - cleaning up");
         // Plugin was deleted from disk but still marked as enabled
@@ -138,13 +152,38 @@ Singleton {
       }
     }
 
-    // Mark plugins as fully loaded
-    root.pluginsFullyLoaded = true;
-    Logger.i("PluginService", "All plugins loaded");
-    root.allPluginsLoaded();
+    // If no plugins to load, mark as complete immediately
+    if (pluginsToLoad.length === 0) {
+      root.pluginsFullyLoaded = true;
+      Logger.i("PluginService", "No plugins to load");
+      root.allPluginsLoaded();
+      refreshAvailablePlugins();
+      return;
+    }
 
-    // Fetch available plugins from all sources
-    refreshAvailablePlugins();
+    // Track pending loads
+    root._pendingPluginLoads = pluginsToLoad.length;
+
+    // Load all plugins (async - they will call _onPluginLoadComplete when done)
+    for (var j = 0; j < pluginsToLoad.length; j++) {
+      Logger.d("PluginService", "Attempting to load plugin:", pluginsToLoad[j]);
+      loadPlugin(pluginsToLoad[j]);
+    }
+  }
+
+  // Called when a plugin finishes loading (success or failure)
+  function _onPluginLoadComplete() {
+    root._pendingPluginLoads--;
+
+    if (root._pendingPluginLoads <= 0) {
+      // All plugins finished loading
+      root.pluginsFullyLoaded = true;
+      Logger.i("PluginService", "All plugins loaded");
+      root.allPluginsLoaded();
+
+      // Fetch available plugins from all sources
+      refreshAvailablePlugins();
+    }
   }
 
   // Refresh available plugins from all sources
@@ -212,13 +251,20 @@ Singleton {
           }
 
           Logger.i("PluginService", "Loaded", registry.plugins.length, "plugins from", source.name);
+
+          // Remove from active fetches BEFORE emitting signal so handler sees correct count
+          delete activeFetches[source.url];
+          fetchProcess.destroy();
+
           root.availablePluginsUpdated();
+          return;
         }
       } catch (e) {
         Logger.e("PluginService", "Failed to parse registry from", source.name, ":", e);
         Logger.e("PluginService", "Response was:", response ? response.substring(0, 200) : "null");
       }
 
+      // Clean up on error or empty response
       delete activeFetches[source.url];
       fetchProcess.destroy();
     });
@@ -476,6 +522,19 @@ Singleton {
     return changed;
   }
 
+  // Load plugin settings and translations before instantiating components
+  // This ensures pluginApi is fully populated before being passed to createObject()
+  function loadPluginData(pluginId, manifest, callback) {
+    // Load settings first
+    loadPluginSettings(pluginId, function (settings) {
+      // Then load translations
+      loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
+        // Both ready - call back with complete data
+        callback(settings, translations);
+      });
+    });
+  }
+
   // Load a plugin
   function loadPlugin(pluginId) {
     if (root.loadedPlugins[pluginId]) {
@@ -493,98 +552,103 @@ Singleton {
 
     Logger.i("PluginService", "Loading plugin:", pluginId);
 
-    // Create plugin API object
-    var pluginApi = createPluginAPI(pluginId, manifest);
+    // Load settings and translations FIRST, then create API and instantiate components
+    loadPluginData(pluginId, manifest, function (settings, translations) {
+      // Create plugin API object with pre-loaded data
+      var pluginApi = createPluginAPI(pluginId, manifest, settings, translations);
 
-    // Initialize plugin entry with API and manifest
-    root.loadedPlugins[pluginId] = {
-      barWidget: null,
-      desktopWidget: null,
-      mainInstance: null,
-      api: pluginApi,
-      manifest: manifest
-    };
+      // Initialize plugin entry with API and manifest
+      root.loadedPlugins[pluginId] = {
+        barWidget: null,
+        desktopWidget: null,
+        mainInstance: null,
+        api: pluginApi,
+        manifest: manifest
+      };
 
-    // Clear any previous errors for this plugin
-    root.clearPluginError(pluginId);
+      // Clear any previous errors for this plugin
+      root.clearPluginError(pluginId);
 
-    // Load Main.qml entry point if it exists
-    if (manifest.entryPoints && manifest.entryPoints.main) {
-      var mainPath = pluginDir + "/" + manifest.entryPoints.main;
-      var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
-      var mainComponent = Qt.createComponent("file://" + mainPath + "?v=" + loadVersion);
+      // Load Main.qml entry point if it exists
+      if (manifest.entryPoints && manifest.entryPoints.main) {
+        var mainPath = pluginDir + "/" + manifest.entryPoints.main;
+        var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var mainComponent = Qt.createComponent("file://" + mainPath + "?v=" + loadVersion);
 
-      if (mainComponent.status === Component.Ready) {
-        // Get the plugin container from shell.qml (must be in graphics scene)
-        if (!root.pluginContainer) {
-          Logger.e("PluginService", "Plugin container not set. Shell must set PluginService.pluginContainer.");
-          return;
-        }
-
-        // Instantiate Main.qml with container as parent (places it in graphics scene)
-        var mainInstance = mainComponent.createObject(root.pluginContainer);
-
-        if (mainInstance) {
-          // Set pluginApi property after creation
-          if (mainInstance.hasOwnProperty('pluginApi')) {
-            mainInstance.pluginApi = pluginApi;
-          } else {
-            Logger.w("PluginService", "Main.qml for", pluginId, "should declare 'property var pluginApi: null'");
+        if (mainComponent.status === Component.Ready) {
+          // Get the plugin container from shell.qml (must be in graphics scene)
+          if (!root.pluginContainer) {
+            Logger.e("PluginService", "Plugin container not set. Shell must set PluginService.pluginContainer.");
+            return;
           }
 
-          root.loadedPlugins[pluginId].mainInstance = mainInstance;
-          pluginApi.mainInstance = mainInstance;
-          Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
-        } else {
-          root.recordPluginError(pluginId, "main", "Failed to instantiate Main.qml");
+          // Instantiate Main.qml with pluginApi passed directly in createObject
+          var mainInstance = mainComponent.createObject(root.pluginContainer, {
+                                                          pluginApi: pluginApi
+                                                        });
+
+          if (mainInstance) {
+            root.loadedPlugins[pluginId].mainInstance = mainInstance;
+            pluginApi.mainInstance = mainInstance;
+            Logger.i("PluginService", "Loaded Main.qml for plugin:", pluginId);
+          } else {
+            root.recordPluginError(pluginId, "main", "Failed to instantiate Main.qml");
+          }
+        } else if (mainComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "main", mainComponent.errorString());
         }
-      } else if (mainComponent.status === Component.Error) {
-        root.recordPluginError(pluginId, "main", mainComponent.errorString());
       }
-    }
 
-    // Load bar widget component if provided (don't instantiate - BarWidgetRegistry will do that)
-    if (manifest.entryPoints && manifest.entryPoints.barWidget) {
-      var widgetPath = pluginDir + "/" + manifest.entryPoints.barWidget;
-      var widgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
-      var widgetComponent = Qt.createComponent("file://" + widgetPath + "?v=" + widgetLoadVersion);
+      // Load bar widget component if provided (don't instantiate - BarWidgetRegistry will do that)
+      if (manifest.entryPoints && manifest.entryPoints.barWidget) {
+        var widgetPath = pluginDir + "/" + manifest.entryPoints.barWidget;
+        var widgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var widgetComponent = Qt.createComponent("file://" + widgetPath + "?v=" + widgetLoadVersion);
 
-      if (widgetComponent.status === Component.Ready) {
-        root.loadedPlugins[pluginId].barWidget = widgetComponent;
-        pluginApi.barWidget = widgetComponent;
+        if (widgetComponent.status === Component.Ready) {
+          root.loadedPlugins[pluginId].barWidget = widgetComponent;
+          pluginApi.barWidget = widgetComponent;
 
-        // Register with BarWidgetRegistry
-        BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
-        Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
-      } else if (widgetComponent.status === Component.Error) {
-        root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
+          // Register with BarWidgetRegistry
+          BarWidgetRegistry.registerPluginWidget(pluginId, widgetComponent, manifest.metadata);
+          Logger.i("PluginService", "Loaded bar widget for plugin:", pluginId);
+        } else if (widgetComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "barWidget", widgetComponent.errorString());
+        }
       }
-    }
 
-    // Load desktop widget component if provided (don't instantiate - DesktopWidgetRegistry will do that)
-    if (manifest.entryPoints && manifest.entryPoints.desktopWidget) {
-      var desktopWidgetPath = pluginDir + "/" + manifest.entryPoints.desktopWidget;
-      var desktopWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
-      var desktopWidgetComponent = Qt.createComponent("file://" + desktopWidgetPath + "?v=" + desktopWidgetLoadVersion);
+      // Load desktop widget component if provided (don't instantiate - DesktopWidgetRegistry will do that)
+      if (manifest.entryPoints && manifest.entryPoints.desktopWidget) {
+        var desktopWidgetPath = pluginDir + "/" + manifest.entryPoints.desktopWidget;
+        var desktopWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var desktopWidgetComponent = Qt.createComponent("file://" + desktopWidgetPath + "?v=" + desktopWidgetLoadVersion);
 
-      if (desktopWidgetComponent.status === Component.Ready) {
-        root.loadedPlugins[pluginId].desktopWidget = desktopWidgetComponent;
-        pluginApi.desktopWidget = desktopWidgetComponent;
+        if (desktopWidgetComponent.status === Component.Ready) {
+          root.loadedPlugins[pluginId].desktopWidget = desktopWidgetComponent;
+          pluginApi.desktopWidget = desktopWidgetComponent;
 
-        // Register with DesktopWidgetRegistry
-        DesktopWidgetRegistry.registerPluginWidget(pluginId, desktopWidgetComponent, manifest.metadata);
-        Logger.i("PluginService", "Loaded desktop widget for plugin:", pluginId);
-      } else if (desktopWidgetComponent.status === Component.Error) {
-        root.recordPluginError(pluginId, "desktopWidget", desktopWidgetComponent.errorString());
+          // Register with DesktopWidgetRegistry
+          DesktopWidgetRegistry.registerPluginWidget(pluginId, desktopWidgetComponent, manifest.metadata);
+          Logger.i("PluginService", "Loaded desktop widget for plugin:", pluginId);
+        } else if (desktopWidgetComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "desktopWidget", desktopWidgetComponent.errorString());
+        }
       }
-    }
 
-    Logger.i("PluginService", "Plugin loaded:", pluginId);
-    root.pluginLoaded(pluginId);
+      Logger.i("PluginService", "Plugin loaded:", pluginId);
+      root.pluginLoaded(pluginId);
+
+      // Set up hot reload watcher if enabled
+      setupPluginFileWatcher(pluginId);
+
+      // Notify that this plugin finished loading (for init tracking)
+      root._onPluginLoadComplete();
+    });
   }
 
   // Unload a plugin
-  function unloadPlugin(pluginId) {
+  // preserveSettings: if true, don't remove desktop widget settings (used for hot reload)
+  function unloadPlugin(pluginId, preserveSettings) {
     var plugin = root.loadedPlugins[pluginId];
     if (!plugin) {
       Logger.w("PluginService", "Plugin not loaded:", pluginId);
@@ -593,14 +657,20 @@ Singleton {
 
     Logger.i("PluginService", "Unloading plugin:", pluginId);
 
+    // Remove hot reload watcher
+    removePluginFileWatcher(pluginId);
+
     // Unregister from BarWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.barWidget) {
       BarWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
-    // Unregister from DesktopWidgetRegistry and clean up saved widget instances
+    // Unregister from DesktopWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.desktopWidget) {
-      removePluginDesktopWidgetsFromSettings(pluginId);
+      // Only remove settings when uninstalling, not during hot reload
+      if (!preserveSettings) {
+        removePluginDesktopWidgetsFromSettings(pluginId);
+      }
       DesktopWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
@@ -614,10 +684,9 @@ Singleton {
     Logger.i("PluginService", "Unloaded plugin:", pluginId);
   }
 
-  // Create plugin API object
-  function createPluginAPI(pluginId, manifest) {
+  // Create plugin API object with pre-loaded settings and translations
+  function createPluginAPI(pluginId, manifest, settings, translations) {
     var pluginDir = PluginRegistry.getPluginDir(pluginId);
-    var settingsFile = PluginRegistry.getPluginSettingsFile(pluginId);
 
     var api = Qt.createQmlObject(`
       import QtQuick
@@ -658,15 +727,9 @@ Singleton {
     // Set current language (can't use binding in Qt.createQmlObject string)
     api.currentLanguage = I18n.langCode;
 
-    // Load plugin settings
-    loadPluginSettings(pluginId, function (settings) {
-      api.pluginSettings = settings;
-    });
-
-    // Load plugin translations for current language
-    loadPluginTranslationsAsync(pluginId, manifest, I18n.langCode, function (translations) {
-      api.pluginTranslations = translations;
-    });
+    // Set pre-loaded settings and translations (available immediately!)
+    api.pluginSettings = settings || {};
+    api.pluginTranslations = translations || {};
 
     // ----------------------------------------
     // Helper function to get nested property by dot notation
@@ -1210,5 +1273,189 @@ Singleton {
 
   function hasPluginError(pluginId) {
     return pluginId in root.pluginErrors;
+  }
+
+  // ----- Hot reload functions -----
+
+  // Set up file watcher for a plugin directory
+  function setupPluginFileWatcher(pluginId) {
+    if (!root.hotReloadEnabled) {
+      return;
+    }
+
+    // Don't create duplicate watchers
+    if (root.pluginFileWatchers[pluginId]) {
+      return;
+    }
+
+    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    if (!manifest) {
+      return;
+    }
+
+    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+
+    // Create a debounce timer for this plugin
+    var debounceTimer = Qt.createQmlObject(`
+      import QtQuick
+      Timer {
+        property string targetPluginId: ""
+        property var reloadCallback: null
+        interval: 500
+        repeat: false
+        onTriggered: {
+          if (reloadCallback) reloadCallback(targetPluginId);
+        }
+      }
+    `, root, "HotReloadDebounce_" + pluginId);
+
+    // Set properties after creation to pass the callback
+    debounceTimer.targetPluginId = pluginId;
+    debounceTimer.reloadCallback = root.reloadPlugin;
+
+    // Watch the manifest file - changes here indicate plugin updates
+    var manifestWatcher = Qt.createQmlObject(`
+      import Quickshell.Io
+      FileView {
+        path: "${pluginDir}/manifest.json"
+        watchChanges: true
+      }
+    `, root, "ManifestWatcher_" + pluginId);
+
+    var watchers = [manifestWatcher];
+
+    // Only watch entry points that actually exist in the manifest
+    var entryPoints = manifest.entryPoints || {};
+    var entryPointFiles = [];
+
+    if (entryPoints.main)
+      entryPointFiles.push(entryPoints.main);
+    if (entryPoints.barWidget)
+      entryPointFiles.push(entryPoints.barWidget);
+    if (entryPoints.desktopWidget)
+      entryPointFiles.push(entryPoints.desktopWidget);
+    if (entryPoints.panel)
+      entryPointFiles.push(entryPoints.panel);
+    if (entryPoints.settings)
+      entryPointFiles.push(entryPoints.settings);
+
+    for (var i = 0; i < entryPointFiles.length; i++) {
+      var entryPointFile = entryPointFiles[i];
+      var watcher = Qt.createQmlObject(`
+        import Quickshell.Io
+        FileView {
+          path: "${pluginDir}/${entryPointFile}"
+          watchChanges: true
+        }
+      `, root, "FileWatcher_" + pluginId + "_" + i);
+      watchers.push(watcher);
+    }
+
+    // Connect all watchers to the debounce timer
+    for (var j = 0; j < watchers.length; j++) {
+      watchers[j].fileChanged.connect(function () {
+        debounceTimer.restart();
+      });
+    }
+
+    root.pluginFileWatchers[pluginId] = {
+      watchers: watchers,
+      debounceTimer: debounceTimer
+    };
+
+    Logger.d("PluginService", "Set up hot reload watcher for plugin:", pluginId);
+  }
+
+  // Remove file watcher for a plugin
+  function removePluginFileWatcher(pluginId) {
+    var watcherData = root.pluginFileWatchers[pluginId];
+    if (!watcherData) {
+      return;
+    }
+
+    // Destroy all watchers
+    if (watcherData.watchers) {
+      for (var i = 0; i < watcherData.watchers.length; i++) {
+        if (watcherData.watchers[i]) {
+          watcherData.watchers[i].destroy();
+        }
+      }
+    }
+
+    // Destroy debounce timer
+    if (watcherData.debounceTimer) {
+      watcherData.debounceTimer.destroy();
+    }
+
+    delete root.pluginFileWatchers[pluginId];
+    Logger.d("PluginService", "Removed hot reload watcher for plugin:", pluginId);
+  }
+
+  // Reload a plugin (hot reload)
+  function reloadPlugin(pluginId) {
+    if (!root.loadedPlugins[pluginId]) {
+      Logger.w("PluginService", "Cannot reload: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    Logger.i("PluginService", "Hot reloading plugin:", pluginId);
+
+    var manifest = PluginRegistry.getPluginManifest(pluginId);
+    if (!manifest) {
+      Logger.e("PluginService", "Cannot reload: manifest not found for:", pluginId);
+      return false;
+    }
+
+    // Unregister widget instances from the bar
+    BarService.destroyPluginWidgetInstances(pluginId);
+
+    // Unload the plugin (destroys components and instances)
+    // Pass true to preserve desktop widget settings during hot reload
+    unloadPlugin(pluginId, true);
+
+    // Increment load version to invalidate Qt's component cache
+    PluginRegistry.incrementPluginLoadVersion(pluginId);
+
+    // Use Qt.callLater to ensure destruction is complete before reloading
+    // This prevents IPC handler conflicts and other timing issues
+    Qt.callLater(function () {
+      // Reload the plugin
+      loadPlugin(pluginId);
+
+      // Re-setup file watcher (it was destroyed during unload)
+      setupPluginFileWatcher(pluginId);
+
+      // Emit signal
+      root.pluginReloaded(pluginId);
+
+      // Show toast notification
+      var pluginName = manifest.name || pluginId;
+      ToastService.showNotice(I18n.tr("settings.plugins.hot-reloaded", {
+                                        "name": pluginName
+                                      }), "");
+
+      Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
+    });
+
+    return true;
+  }
+
+  // Enable/disable hot reload for all loaded plugins
+  function setHotReloadEnabled(enabled) {
+    root.hotReloadEnabled = enabled;
+
+    if (enabled) {
+      // Set up watchers for all loaded plugins
+      for (var pluginId in root.loadedPlugins) {
+        setupPluginFileWatcher(pluginId);
+      }
+      Logger.i("PluginService", "Hot reload enabled for all plugins");
+    } else {
+      // Remove all watchers
+      for (var pluginId in root.pluginFileWatchers) {
+        removePluginFileWatcher(pluginId);
+      }
+      Logger.i("PluginService", "Hot reload disabled");
+    }
   }
 }

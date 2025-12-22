@@ -102,11 +102,28 @@ Item {
   }
 
   function switchToWorkspace(workspace) {
-    Logger.w("LabwcService", "Workspace switching not supported via ToplevelManager");
+    try {
+      const workspaceNum = workspace.idx || workspace.id || 1;
+      // LabWC does not support direct IPC for workspace switching.
+      // Workspace switching is done through keybindings configured in rc.xml.
+      // As a workaround, we simulate Super+[number] keypress using ydotool or wtype.
+      // This assumes the user has configured GoToDesktop keybindings like:
+      // <keybind key="W-1"><action name="GoToDesktop" to="1" /></keybind>
+      const keyCode = workspaceNum + 1; // ydotool: 2=1, 3=2, etc.
+      Quickshell.execDetached(["sh", "-c", `ydotool key 125:1 ${keyCode}:1 ${keyCode}:0 125:0 2>/dev/null || wtype -M logo -P ${workspaceNum} -m logo 2>/dev/null`]);
+    } catch (e) {
+      Logger.e("LabwcService", "Failed to switch workspace:", e);
+      Logger.w("LabwcService", "Workspace switching requires ydotool or wtype and configured keybindings in rc.xml");
+    }
   }
 
   function logout() {
-    Logger.w("LabwcService", "Logout not directly supported");
+    try {
+      // Exit labwc by sending SIGTERM to $LABWC_PID or using --exit flag
+      Quickshell.execDetached(["sh", "-c", "labwc --exit || kill -s SIGTERM $LABWC_PID"]);
+    } catch (e) {
+      Logger.e("LabwcService", "Failed to logout:", e);
+    }
   }
 
   function queryDisplayScales() {

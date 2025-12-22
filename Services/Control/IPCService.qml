@@ -180,6 +180,24 @@ Item {
   }
 
   IpcHandler {
+    target: "nightLight"
+    function toggle() {
+      if (!ProgramCheckerService.wlsunsetAvailable) {
+        Logger.w("IPC", "wlsunset not available, cannot toggle night light");
+        return;
+      }
+
+      if (Settings.data.nightLight.forced) {
+        Settings.data.nightLight.enabled = false;
+        Settings.data.nightLight.forced = false;
+      } else {
+        Settings.data.nightLight.enabled = true;
+        Settings.data.nightLight.forced = true;
+      }
+    }
+  }
+
+  IpcHandler {
     target: "colorScheme"
     function set(schemeName: string) {
       ColorSchemeService.setPredefinedScheme(schemeName);
@@ -457,6 +475,22 @@ Item {
                                 "error": "Failed to serialize state: " + error
                               }, null, 2);
       }
+    }
+  }
+
+  IpcHandler {
+    target: "desktopWidgets"
+    function toggle() {
+      Settings.data.desktopWidgets.enabled = !Settings.data.desktopWidgets.enabled;
+    }
+    function disable() {
+      Settings.data.desktopWidgets.enabled = false;
+    }
+    function enable() {
+      Settings.data.desktopWidgets.enabled = true;
+    }
+    function edit() {
+      DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
     }
   }
 }

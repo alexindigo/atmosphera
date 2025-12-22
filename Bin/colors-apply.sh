@@ -281,6 +281,74 @@ niri)
     fi
     ;;
 
+mango)
+    echo "🎨 Applying 'noctalia' theme to mango..."
+    CONFIG_DIR="$HOME/.config/mango"
+    MAIN_CONFIG="$CONFIG_DIR/config.conf"
+    THEME_FILE="$CONFIG_DIR/noctalia.conf"
+    BACKUP_FILE="$CONFIG_DIR/theme.conf.bak"
+    # This sources the noctalia theme file
+    SOURCE_LINE="source = $THEME_FILE"
+
+    # Color variables that should be moved to theme file
+    COLOR_VARS="shadowscolor|rootcolor|bordercolor|focuscolor|maximizescreencolor|urgentcolor|scratchpadcolor|globalcolor|overlaycolor"
+
+    # Create config directory if it doesn't exist
+    mkdir -p "$CONFIG_DIR"
+
+    # Check if theme is already sourced in main config
+    if [ -f "$MAIN_CONFIG" ] && grep -qF "$SOURCE_LINE" "$MAIN_CONFIG"; then
+        echo "Theme already set to noctalia, skipping modification."
+    else
+        # First-time setup: backup and remove legacy color definitions
+        echo "Setting up noctalia theme for the first time..."
+        
+        # Scan all .conf files in config directory for legacy color variables
+        FOUND_LEGACY=false
+        for conf_file in "$CONFIG_DIR"/*.conf; do
+            # Skip if no .conf files exist or if it's the theme file itself
+            [ -e "$conf_file" ] || continue
+            [ "$conf_file" = "$THEME_FILE" ] && continue
+            
+            # Check if this file contains any color variable definitions
+            if grep -qE "^($COLOR_VARS)\s*=" "$conf_file"; then
+                FOUND_LEGACY=true
+                echo "Found legacy colors in $(basename "$conf_file"), backing up..."
+                
+                # Extract and append color definitions to backup file
+                grep -E "^($COLOR_VARS)\s*=" "$conf_file" >> "$BACKUP_FILE"
+                
+                # Remove color definitions from original file
+                sed -i -E "/^($COLOR_VARS)\s*=/d" "$conf_file"
+            fi
+        done
+        
+        if [ "$FOUND_LEGACY" = true ]; then
+            echo "✅ Legacy color definitions backed up to $(basename "$BACKUP_FILE")"
+        fi
+        
+         # Add source line to main config
+         if [ -f "$MAIN_CONFIG" ]; then
+             echo "" >> "$MAIN_CONFIG"
+             echo "# This sources the noctalia theme" >> "$MAIN_CONFIG"
+             echo "$SOURCE_LINE" >> "$MAIN_CONFIG"
+         else
+             echo "# This sources the noctalia theme" > "$MAIN_CONFIG"
+             echo "$SOURCE_LINE" >> "$MAIN_CONFIG"
+         fi
+        
+        echo "✅ Added noctalia theme to config."
+    fi
+
+    # Trigger live reload
+    if command -v mmsg >/dev/null 2>&1; then
+        mmsg -s -d reload_config
+        echo "✅ Configuration reloaded."
+    else
+        echo "Warning: mmsg command not found, manual restart may be needed." >&2
+    fi
+    ;;
+
 *)
     # Handle unknown application names.
     echo "Error: Unknown application '$APP_NAME'." >&2

@@ -11,7 +11,7 @@ ColumnLayout {
   property var widgetData: null
   property var widgetMetadata: null
 
-  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : (widgetMetadata ? widgetMetadata.showBackground : true)
+  property bool valueShowBackground: widgetData.showBackground !== undefined ? widgetData.showBackground : widgetMetadata.showBackground
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});

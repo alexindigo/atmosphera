@@ -170,6 +170,14 @@ ColumnLayout {
     description: I18n.tr("settings.session-menu.general.section.description")
   }
 
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.session-menu.large-buttons-style.label")
+    description: I18n.tr("settings.session-menu.large-buttons-style.description")
+    checked: Settings.data.sessionMenu.largeButtonsStyle
+    onToggled: checked => Settings.data.sessionMenu.largeButtonsStyle = checked
+  }
+
   NComboBox {
     label: I18n.tr("settings.session-menu.position.label")
     description: I18n.tr("settings.session-menu.position.description")
@@ -205,9 +213,8 @@ ColumnLayout {
       }
     ]
     currentKey: Settings.data.sessionMenu.position
-    onSelected: function (key) {
-      Settings.data.sessionMenu.position = key;
-    }
+    onSelected: key => Settings.data.sessionMenu.position = key
+    visible: !Settings.data.sessionMenu.largeButtonsStyle
   }
 
   NToggle {
@@ -216,6 +223,7 @@ ColumnLayout {
     description: I18n.tr("settings.session-menu.show-header.description")
     checked: Settings.data.sessionMenu.showHeader
     onToggled: checked => Settings.data.sessionMenu.showHeader = checked
+    visible: !Settings.data.sessionMenu.largeButtonsStyle
   }
 
   NToggle {

@@ -22,11 +22,15 @@ Item {
   signal windowListChanged
   signal displayScalesChanged
 
+  property var outputCache: ({})
+  property var workspaceCache: ({})
+
   function initialize() {
     niriEventStream.connected = true;
     niriCommandSocket.connected = true;
 
     startEventStream();
+    updateOutputs();
     updateWorkspaces();
     updateWindows();
     queryDisplayScales();
@@ -43,6 +47,10 @@ Item {
     sendSocketCommand(niriEventStream, "EventStream");
   }
 
+  function updateOutputs() {
+    sendSocketCommand(niriCommandSocket, "Outputs");
+  }
+
   function updateWorkspaces() {
     sendSocketCommand(niriCommandSocket, "Workspaces");
   }
@@ -57,6 +65,7 @@ Item {
 
   function recollectOutputs(outputsData) {
     const scales = {};
+    outputCache = {};
 
     for (const outputName in outputsData) {
       const output = outputsData[outputName];
@@ -66,7 +75,7 @@ Item {
         const modes = output.modes || [];
         const currentMode = modes[currentModeIdx] || {};
 
-        scales[output.name] = {
+        const outputData = {
           "name": output.name,
           "scale": logical.scale || 1.0,
           "width": logical.width || 0,
@@ -80,6 +89,9 @@ Item {
           "vrr_enabled": output.vrr_enabled || false,
           "transform": logical.transform || "Normal"
         };
+
+        scales[output.name] = outputData;
+        outputCache[output.name] = outputData;
       }
     }
 
@@ -90,18 +102,22 @@ Item {
 
   function recollectWorkspaces(workspacesData) {
     const workspacesList = [];
+    workspaceCache = {};
 
     for (const ws of workspacesData) {
-      workspacesList.push({
-                            "id": ws.id,
-                            "idx": ws.idx,
-                            "name": ws.name || "",
-                            "output": ws.output || "",
-                            "isFocused": ws.is_focused === true,
-                            "isActive": ws.is_active === true,
-                            "isUrgent": ws.is_urgent === true,
-                            "isOccupied": ws.active_window_id ? true : false
-                          });
+      const wsData = {
+        "id": ws.id,
+        "idx": ws.idx,
+        "name": ws.name || "",
+        "output": ws.output || "",
+        "isFocused": ws.is_focused === true,
+        "isActive": ws.is_active === true,
+        "isUrgent": ws.is_urgent === true,
+        "isOccupied": ws.active_window_id ? true : false
+      };
+
+      workspacesList.push(wsData);
+      workspaceCache[ws.id] = wsData;
     }
 
     workspacesList.sort((a, b) => {
@@ -226,14 +242,39 @@ Item {
     };
   }
 
-  function compareWindows(a, b) {
-    if (a.workspaceId !== b.workspaceId) {
-      return a.workspaceId - b.workspaceId;
-    }
-    if (a.position.x !== b.position.x) {
-      return a.position.x - b.position.x;
-    }
-    return a.position.y - b.position.y;
+  function toSortedWindowList(windowList) {
+    return windowList.map(win => {
+                            const workspace = workspaceCache[win.workspaceId];
+                            const output = (workspace && workspace.output) ? outputCache[workspace.output] : null;
+
+                            return {
+                              window: win,
+                              workspaceIdx: workspace ? workspace.idx : 0,
+                              outputX: output ? output.x : 0,
+                              outputY: output ? output.y : 0
+                            };
+                          }).sort((a, b) => {
+                                    // Sort by output position first
+                                    if (a.outputX !== b.outputX) {
+                                      return a.outputX - b.outputX;
+                                    }
+                                    if (a.outputY !== b.outputY) {
+                                      return a.outputY - b.outputY;
+                                    }
+                                    // Then by workspace index
+                                    if (a.workspaceIdx !== b.workspaceIdx) {
+                                      return a.workspaceIdx - b.workspaceIdx;
+                                    }
+                                    // Then by window position
+                                    if (a.window.position.x !== b.window.position.x) {
+                                      return a.window.position.x - b.window.position.x;
+                                    }
+                                    if (a.window.position.y !== b.window.position.y) {
+                                      return a.window.position.y - b.window.position.y;
+                                    }
+                                    // Finally by window ID to ensure consistent ordering
+                                    return a.window.id - b.window.id;
+                                  }).map(info => info.window);
   }
 
   function recollectWindows(windowsData) {
@@ -241,13 +282,13 @@ Item {
     for (const win of windowsData) {
       windowsList.push(getWindowData(win));
     }
-    windowsList.sort(compareWindows);
-    windows = windowsList;
+    windows = toSortedWindowList(windowsList);
     windowListChanged();
 
+    // Find focused window index in the SORTED windows array
     focusedWindowIndex = -1;
-    for (var i = 0; i < windowsList.length; i++) {
-      if (windowsList[i].isFocused) {
+    for (var i = 0; i < windows.length; i++) {
+      if (windows[i].isFocused) {
         focusedWindowIndex = i;
         break;
       }
@@ -261,23 +302,27 @@ Item {
       const existingIndex = windows.findIndex(w => w.id === windowData.id);
       const newWindow = getWindowData(windowData);
 
+      // Find the previously focused window ID before any modifications
+      const previouslyFocusedId = focusedWindowIndex >= 0 && focusedWindowIndex < windows.length ? windows[focusedWindowIndex].id : null;
+
       if (existingIndex >= 0) {
         windows[existingIndex] = newWindow;
       } else {
         windows.push(newWindow);
       }
-      windows.sort(compareWindows);
+      windows = toSortedWindowList(windows);
 
       if (newWindow.isFocused) {
-        const oldFocusedIndex = focusedWindowIndex;
         focusedWindowIndex = windows.findIndex(w => w.id === windowData.id);
 
-        if (oldFocusedIndex !== focusedWindowIndex) {
-          if (oldFocusedIndex >= 0 && oldFocusedIndex < windows.length) {
-            windows[oldFocusedIndex].isFocused = false;
+        // Clear focus on the previously focused window by ID (not index, since list was re-sorted)
+        if (previouslyFocusedId !== null && previouslyFocusedId !== windowData.id) {
+          const oldFocusedWindow = windows.find(w => w.id === previouslyFocusedId);
+          if (oldFocusedWindow) {
+            oldFocusedWindow.isFocused = false;
           }
-          activeWindowChanged();
         }
+        activeWindowChanged();
       }
 
       windowListChanged();
@@ -353,7 +398,7 @@ Item {
         }
       }
 
-      windows.sort(compareWindows);
+      windows = toSortedWindowList(windows);
 
       windowListChanged();
     } catch (e) {

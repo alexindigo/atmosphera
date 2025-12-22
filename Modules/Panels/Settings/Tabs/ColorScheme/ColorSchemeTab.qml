@@ -598,6 +598,23 @@ ColumnLayout {
                      }
                    }
       }
+
+      NCheckbox {
+        label: "Mango"
+        description: ProgramCheckerService.mangoAvailable ? I18n.tr("settings.color-scheme.templates.compositors.mango.description", {
+                                                                      "filepath": "~/.config/mango/noctalia.conf"
+                                                                    }) : I18n.tr("settings.color-scheme.templates.compositors.mango.description-missing", {
+                                                                                   "app": "Mango"
+                                                                                 })
+        checked: Settings.data.templates.mango
+        enabled: ProgramCheckerService.mangoAvailable
+        onToggled: checked => {
+                     if (ProgramCheckerService.mangoAvailable) {
+                       Settings.data.templates.mango = checked;
+                       AppThemeService.generate();
+                     }
+                   }
+      }
     }
 
     // Terminal Emulators
@@ -812,7 +829,7 @@ ColumnLayout {
               var clientName = client.name === "code" ? "VSCode" : "VSCodium";
               clientInfo.push(clientName);
             }
-            return "Detected: " + clientInfo.join(", ");
+            return "Applied to default profile. Detected: " + clientInfo.join(", ");
           }
         }
         Layout.fillWidth: true
@@ -823,6 +840,12 @@ ColumnLayout {
                      // Set unified code property
                      Settings.data.templates.code = checked;
                      if (ProgramCheckerService.availableCodeClients.length > 0) {
+                       if (!checked) {
+                         const homeDir = Quickshell.env("HOME");
+                         for (var i = 0; i < ProgramCheckerService.availableCodeClients.length; i++) {
+                           var client = ProgramCheckerService.availableCodeClients[i];
+                         }
+                       }
                        AppThemeService.generate();
                      }
                    }

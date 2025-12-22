@@ -341,6 +341,10 @@
           "description": "Eşleşen pencere olmadığında araç takımının nasıl davrandığını kontrol eder.",
           "label": "Gizleme modu"
         },
+        "icon-scale": {
+          "description": "Görev çubuğu simgeleri için ölçeklendirme faktörünü ayarlar.",
+          "label": "Simge ölçeklendirme"
+        },
         "max-width": {
           "description": "Görev çubuğunun ekran genişliğine göre maksimum genişliği yüzdesi.",
           "label": "Maksimum genişlik"
@@ -519,11 +523,11 @@
     "save": "Kaydet"
   },
   "context-menu": {
-    "activate-app": "{app}'i etkinleştir",
     "clear-history": "Geçmişi temizle",
     "close-app": "{app}'i kapat",
     "connect-vpn": "{name} bağlantısına bağlan",
     "cycle-visualizer": "Döngü görselleştirici",
+    "delete": "Sil",
     "disable-bluetooth": "Bluetooth'u kapat",
     "disable-dnd": "Rahatsız Etmeyin'i Kapat",
     "disable-wifi": "Kablosuz Bağlantıyı kapat",
@@ -732,15 +736,15 @@
       "top_left": "Sol üst",
       "top_right": "Sağ üst"
     },
-    "visualizer-quality": {
-      "high": "Yüksek",
-      "low": "Düşük"
-    },
     "visualizer-types": {
       "linear": "Doğrusal",
       "mirrored": "Yansıtılmış",
       "none": "Hiçbiri",
       "wave": "Dalga"
+    },
+    "visualizer-visibility": {
+      "always": "Her zaman görünür",
+      "with-background": "Sadece arka planla"
     },
     "workspace-labels": {
       "index": "İndeks",
@@ -943,13 +947,20 @@
           "description": "Tercih ettiğiniz ve yoksayacağınız ortam uygulamalarını ayarlayın.",
           "label": "Ortam oynatıcıları"
         },
-        "visualizer-quality": {
-          "description": "Yüksek kalite ekran kartını daha fazla kullanır.",
-          "label": "Görselleştirme kalitesi"
-        },
         "visualizer-type": {
           "description": "Ortam oynatımı için bir görselleştirme türü seçin",
           "label": "Görselleştirme türü"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Şu anda ses çalan uygulama yok."
+        },
+        "input": "Giriş",
+        "output": "Çıkış",
+        "tabs": {
+          "devices": "Cihazlar",
+          "volumes": "Ses"
         }
       },
       "title": "Ses",
@@ -1139,6 +1150,10 @@
         "compositors": {
           "description": "Birleştirici temalandırma.",
           "label": "Birleştiriciler",
+          "mango": {
+            "description": "{filepath} dosyasına yaz. mango gerektirir",
+            "description-missing": "{app} yüklü olmalıdır"
+          },
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir",
             "description-missing": "{app} yüklü olmalıdır"
@@ -1329,14 +1344,33 @@
     },
     "desktop-widgets": {
       "clock": {
+        "clock-display": {
+          "description": "Saatinizin görüntüsünü özelleştirmek için aşağıdaki listeden jetonları ekleyin. 12 saat formatını kullanmak için 'AP' jetonunu eklemelisiniz.",
+          "label": "Saat görüntüleme"
+        },
+        "custom-font": {
+          "description": "Saat görüntüleme için özel bir yazı tipi seçin.",
+          "label": "Özel yazı tipi",
+          "placeholder": "Özel yazı tipi seçin...",
+          "search-placeholder": "Yazı tiplerini ara..."
+        },
         "enabled": {
           "description": "Masaüstünde bir saat aracı göster.",
           "label": "Saat widget'ını etkinleştir"
+        },
+        "format": {
+          "description": "İpucu: Bir satır sonu oluşturmak için \\n kullanın.",
+          "label": "Biçim"
         },
         "height": {
           "description": "Saat aracı yüksekliği piksel cinsinden.",
           "label": "Yükseklik"
         },
+        "minimal-mode": {
+          "description": "Zaman ve tarih içeren minimal bir saat görüntüsü kullanın.",
+          "label": "Minimal mod"
+        },
+        "preview": "Önizleme",
         "section": {
           "description": "Saat aracı görünümünü yapılandırın.",
           "label": "Saat Widget'ı"
@@ -1353,18 +1387,39 @@
           "description": "Saniyeleri saatte göster.",
           "label": "Saniyeleri göster"
         },
+        "style": {
+          "analog": "Analog",
+          "description": "Saat görüntüleme stilini seçin.",
+          "digital": "Dijital",
+          "label": "Saat stili",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Saat için varsayılan yazı tipi seçimini özel bir yazı tipiyle geçersiz kılın.",
+          "label": "Özel yazı tipi kullan"
+        },
+        "use-primary-color": {
+          "description": "Etkinleştirildiğinde, bu vurgu için birincil rengi uygular.",
+          "label": "Birincil rengi kullan"
+        },
         "width": {
           "description": "Saat widget'ının piksel cinsinden genişliği.",
           "label": "Genişlik"
         }
       },
       "edit-mode": {
+        "add-widget": "Araç ekle",
         "button": {
           "label": "Düzenleme moduna gir"
         },
+        "controls-explanation": "Sol tıklayıp sürükleyin: Bileşeni taşıyın veya yeniden boyutlandırın.\nSağ tıklayın: Bağlam menüsü seçeneklerini açın.",
         "description": "Masaüstü araçlarını taşımak ve yeniden konumlandırmak için düzenleme modunu etkinleştirin. Etkinleştirildiğinde, araçlar bir sürükleme ana hattı gösterir ve yeniden konumlandırılabilir.",
         "exit-button": "Düzenleme modundan çık",
-        "label": "Düzenleme modu"
+        "grid-snap": {
+          "label": "Izgaraya hizala"
+        },
+        "label": "Düzenleme modu",
+        "open-settings": "Ayarları aç"
       },
       "enabled": {
         "description": "Masaüstü araçlarını tamamen etkinleştir veya devre dışı bırak.",
@@ -1381,6 +1436,10 @@
           "description": "Masaüstünde bir medya oynatıcı aracı göster.",
           "label": "Medya oynatıcı widget'ını etkinleştir."
         },
+        "hide-mode": {
+          "description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
+          "label": "Gizleme modu"
+        },
         "section": {
           "description": "Medya oynatıcı araç görünümünü yapılandırın.",
           "label": "Medya Oynatıcı Aracı"
@@ -1389,9 +1448,17 @@
           "description": "Medya oynatıcı widget'ı için arka plan konteynerini göster.",
           "label": "Arka planı göster"
         },
+        "show-buttons": {
+          "description": "Medya oynatıcı widget'ında medya kontrol düğmelerini (oynat/durdur, önceki, sonraki) göster.",
+          "label": "Düğmeleri göster"
+        },
         "visualizer-type": {
           "description": "Masaüstü medya oynatıcı arka planı için bir görselleştirme türü seçin.",
           "label": "Görselleştirme türü"
+        },
+        "visualizer-visibility": {
+          "description": "Ses görselleştiricisinin ne zaman görünür olduğunu kontrol edin.",
+          "label": "Ses görselleştirici görünürlüğü"
         }
       },
       "title": "Masaüstü Araçları",
@@ -1504,6 +1571,10 @@
         "floating-distance": {
           "description": "Rıhtım ile ekran kenarı arasındaki mesafeyi ayarlayın.",
           "label": "Rıhtım yüzen mesafesi"
+        },
+        "hide-show-speed": {
+          "description": "Rıhtımın gizle/göster animasyonunun hızını ayarlayın.",
+          "label": "Gizle/Göster Hızı"
         },
         "icon-size": {
           "description": "Rıhtımın genel boyutunu ayarlayın.",
@@ -1622,6 +1693,26 @@
           "label": "Kullanılabilir Parametreler"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Noctalia Performans Modu devre dışı bırakıldığında çalıştırılacak komut.",
+        "label": "Performans modu devre dışı bırakıldı",
+        "placeholder": "örn., notify-send \"Performans\" \"Mod Devre Dışı\""
+      },
+      "performance-mode-enabled": {
+        "description": "Noctalia Performans Modu etkinleştirildiğinde çalıştırılacak komut.",
+        "label": "Performans modu etkinleştirildi",
+        "placeholder": "örn., notify-send \"Performans\" \"Mod Etkin\""
+      },
+      "screen-lock": {
+        "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
+        "label": "Ekran kilitlendi",
+        "placeholder": "örn., notify-send \"Ekran\" \"Kilitlendi\""
+      },
+      "screen-unlock": {
+        "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
+        "label": "Ekran kilidi açıldı",
+        "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Tüm kanca komutlarını etkinleştirin veya devre dışı bırakın.",
@@ -1642,17 +1733,11 @@
         "description": "Duvar kâğıdı değiştiğinde çalıştırılacak komut.",
         "label": "Duvar kâğıdı değişti",
         "placeholder": "örn., notify-send \"Duvar Kâğıdı\" \"Değişti\""
-      },
-      "screen-lock": {
-        "description": "Ekran kilitlendiğinde çalıştırılacak komut.",
-        "label": "Ekran kilitlendi",
-        "placeholder": "örn., notify-send \"Ekran\" \"Kilitlendi\""
-      },
-      "screen-unlock": {
-        "description": "Ekran kilidi açıldığında çalıştırılacak komut.",
-        "label": "Ekran kilidi açıldı",
-        "placeholder": "örn., notify-send \"Ekran\" \"Açıldı\""
       }
+    },
+    "indicator": {
+      "default-value": "Varsayılan: {value}",
+      "system-default": "Sistem Varsayılanı"
     },
     "launcher": {
       "settings": {
@@ -1675,6 +1760,10 @@
         "grid-view": {
           "description": "Öğeleri liste yerine ızgara düzeninde görüntüle.",
           "label": "Izgara görünümü"
+        },
+        "icon-mode": {
+          "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
+          "label": "Yerel simgeleri kullan"
         },
         "position": {
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
@@ -1801,6 +1890,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth yönetimini etkinleştir.",
         "label": "Bluetooth'u Etkinleştir"
       },
       "section": {
@@ -1808,6 +1898,7 @@
       },
       "title": "Ağ",
       "wifi": {
+        "description": "Kablosuz ağları yönet (NetworkManager gerektirir).",
         "label": "Kablosuz Bağlantıyı Etkinleştir"
       }
     },
@@ -2018,6 +2109,11 @@
         "downloaded": "İndirildi",
         "not-downloaded": "İndirilmedi"
       },
+      "hot-reload": {
+        "description": "Eklenti dosyaları değiştiğinde eklentileri otomatik olarak yeniden yükle. Eklenti geliştirme için kullanışlıdır.",
+        "label": "Hızlı yeniden yükleme (geliştirme modu)"
+      },
+      "hot-reloaded": "Yeniden yüklenen eklenti: {name}",
       "install": "Yükle",
       "install-error": "Yükleme başarısız oldu: {error}",
       "install-success": "{plugin} başarıyla kuruldu",
@@ -2171,6 +2267,10 @@
           "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
           "label": "Genel"
         }
+      },
+      "large-buttons-style": {
+        "description": "Oturum menüsünü büyük butonlarla ızgara düzeninde görüntüle.",
+        "label": "Büyük düğme stili"
       },
       "position": {
         "description": "Oturum Menüsü panelinin açıldığında nerede görüneceğini seçin.",
@@ -2579,6 +2679,7 @@
     "move-to-center-section": "Orta bölüm",
     "move-to-left-section": "Sol bölüm",
     "move-to-right-section": "Sağ bölüm",
+    "mute": "Sessiz",
     "next-media": "Sonraki parça",
     "next-month": "Sonraki ay",
     "night-light-disabled": "Gece ışığı",
@@ -2613,6 +2714,7 @@
     "stop-screen-recording": "Ekran kaydedici",
     "switch-to-dark-mode": "Koyu mod",
     "switch-to-light-mode": "Açık mod",
+    "unmute": "Sessizliği aç",
     "up": "Üst dizin",
     "volume-at": "Çıkış sesi: %{volume}",
     "wallpaper-selector": "Duvar kâğıdı seçici",
@@ -2649,6 +2751,10 @@
         "label": "İçerik filtresi",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Herhangi",
+        "label": "En Boy Oranı"
       },
       "resolution": {
         "atleast": "En az",

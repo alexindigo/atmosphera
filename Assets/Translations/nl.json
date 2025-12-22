@@ -341,6 +341,10 @@
           "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen overeenkomende vensters zijn.",
           "label": "Verbergmodus"
         },
+        "icon-scale": {
+          "description": "Stelt de schaalfactor in voor taakbalkpictogrammen.",
+          "label": "Icoon schaling"
+        },
         "max-width": {
           "description": "Maximale breedte van de taakbalk als percentage van de schermbreedte.",
           "label": "Maximale breedte"
@@ -529,11 +533,11 @@
     "no": "Nee"
   },
   "context-menu": {
-    "activate-app": "Activeer {app}",
     "clear-history": "Geschiedenis wissen",
     "close-app": "Sluit {app}",
     "connect-vpn": "Verbinding maken met {name}",
     "cycle-visualizer": "Cyclusvisualisatie",
+    "delete": "Verwijderen",
     "disable-bluetooth": "Bluetooth uitschakelen",
     "disable-dnd": "Niet Storen uitschakelen",
     "disable-wifi": "Wi-Fi uitschakelen",
@@ -742,15 +746,15 @@
       "top_left": "Linksboven",
       "top_right": "Rechtsboven"
     },
-    "visualizer-quality": {
-      "high": "Hoog",
-      "low": "Laag"
-    },
     "visualizer-types": {
       "linear": "Lineair",
       "mirrored": "Gespiegeld",
       "none": "Geen",
       "wave": "Golf"
+    },
+    "visualizer-visibility": {
+      "always": "Altijd zichtbaar",
+      "with-background": "Alleen met achtergrond"
     },
     "workspace-labels": {
       "index": "Index",
@@ -953,13 +957,20 @@
           "description": "Stel je favoriete en genegeerde media-applicaties in.",
           "label": "Mediaspelers"
         },
-        "visualizer-quality": {
-          "description": "Een hogere kwaliteit gebruikt meer GPU-resources.",
-          "label": "Visualisatiekwaliteit"
-        },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor mediaweergave.",
           "label": "Type visualisatie"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Er spelen momenteel geen applicaties audio af."
+        },
+        "input": "Invoer",
+        "output": "Uitvoer",
+        "tabs": {
+          "devices": "Apparaten",
+          "volumes": "Volumes"
         }
       },
       "title": "Audio",
@@ -1149,6 +1160,10 @@
         "compositors": {
           "description": "Theming van compositor.",
           "label": "Compositors",
+          "mango": {
+            "description": "Schrijf {filepath}. Vereist mango",
+            "description-missing": "Vereist dat {app} is geïnstalleerd."
+          },
           "niri": {
             "description": "Schrijf {filepath}. Vereist niri v25.11+",
             "description-missing": "Vereist dat {app} is geïnstalleerd."
@@ -1339,14 +1354,33 @@
     },
     "desktop-widgets": {
       "clock": {
+        "clock-display": {
+          "description": "Pas de weergave van je klok aan door tokens uit onderstaande lijst toe te voegen. Om de 12-uursnotatie te gebruiken, moet je de 'AP'-token opnemen.",
+          "label": "Klokweergave"
+        },
+        "custom-font": {
+          "description": "Selecteer een aangepast lettertype voor de klokweergave.",
+          "label": "Aangepast lettertype",
+          "placeholder": "Selecteer aangepast lettertype...",
+          "search-placeholder": "Lettertypen zoeken..."
+        },
         "enabled": {
           "description": "Toon een klokwidget op het bureaublad.",
           "label": "Klokwidget inschakelen"
+        },
+        "format": {
+          "description": "Tip: gebruik \\n om een regeleinde te maken.",
+          "label": "Formaat"
         },
         "height": {
           "description": "Hoogte van de klokwidget in pixels.",
           "label": "Hoogte"
         },
+        "minimal-mode": {
+          "description": "Gebruik een minimale klokweergave met tijd en datum.",
+          "label": "Minimale modus"
+        },
+        "preview": "Voorbeeld",
         "section": {
           "description": "Configureer de weergave van de klokwidget.",
           "label": "Klokwidget"
@@ -1363,18 +1397,39 @@
           "description": "Toon seconden in de tijd.",
           "label": "Toon seconden"
         },
+        "style": {
+          "analog": "Analoog",
+          "description": "Kies de weergavestijl van de klok.",
+          "digital": "Digitaal",
+          "label": "Klokstijl",
+          "minimal": "Minimaal"
+        },
+        "use-custom-font": {
+          "description": "Overschrijf het standaardlettertype met een aangepast lettertype voor de klok.",
+          "label": "Aangepast lettertype gebruiken"
+        },
+        "use-primary-color": {
+          "description": "Indien ingeschakeld wordt de primaire kleur gebruikt voor nadruk.",
+          "label": "Primaire kleur gebruiken"
+        },
         "width": {
           "description": "Breedte van de klokwidget in pixels.",
           "label": "Breedte"
         }
       },
       "edit-mode": {
+        "add-widget": "Widget toevoegen",
         "button": {
           "label": "Ga naar de bewerkingsmodus"
         },
+        "controls-explanation": "Linksklikken en slepen: Widget verplaatsen of het formaat wijzigen.\nRechtermuisknop: Het contextmenu openen.",
         "description": "Schakel de bewerkingsmodus in om desktopwidgets te verplaatsen en te herpositioneren. In de ingeschakelde modus tonen widgets een sleepomtrek en kunnen ze worden verplaatst.",
         "exit-button": "Bewerkingsmodus verlaten",
-        "label": "Bewerkingsmodus"
+        "grid-snap": {
+          "label": "Raster uitlijnen"
+        },
+        "label": "Bewerkingsmodus",
+        "open-settings": "Instellingen openen"
       },
       "enabled": {
         "description": "Desktopwidgets volledig in- of uitschakelen.",
@@ -1391,6 +1446,10 @@
           "description": "Toon een mediaplayer-widget op het bureaublad.",
           "label": "Mediaspeler-widget inschakelen"
         },
+        "hide-mode": {
+          "description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
+          "label": "Verbergmodus"
+        },
         "section": {
           "description": "Configureer het uiterlijk van de mediapeler-widget.",
           "label": "Mediaspeler-widget"
@@ -1399,9 +1458,17 @@
           "description": "Toon de achtergrondcontainer voor de mediaspeler-widget.",
           "label": "Toon achtergrond"
         },
+        "show-buttons": {
+          "description": "Toon mediabesturingsknoppen (afspelen/pauzeren, vorige, volgende) op de mediaspeler-widget.",
+          "label": "Knoppen weergeven"
+        },
         "visualizer-type": {
           "description": "Kies een visualisatietype voor de achtergrond van de desktop mediaspeler.",
           "label": "Visualisatietype"
+        },
+        "visualizer-visibility": {
+          "description": "Bepaal wanneer de audiovisualizer zichtbaar is.",
+          "label": "Audiovisualizer zichtbaarheid"
         }
       },
       "title": "Desktopwidgets",
@@ -1514,6 +1581,10 @@
         "floating-distance": {
           "description": "Stel de afstand in tussen de dock en de rand van het scherm.",
           "label": "Afstand zwevende dock"
+        },
+        "hide-show-speed": {
+          "description": "Pas de snelheid van de verberg/weergeef animatie van de dock aan.",
+          "label": "Verberg/Weergeef Snelheid"
         },
         "icon-size": {
           "description": "Pas de algehele grootte van de dock aan.",
@@ -1632,6 +1703,26 @@
           "label": "Beschikbare parameters"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt uitgeschakeld.",
+        "label": "Prestatiemodus uitgeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Uitgeschakeld\""
+      },
+      "performance-mode-enabled": {
+        "description": "Commando dat wordt uitgevoerd wanneer de Noctalia Prestatiemodus wordt ingeschakeld.",
+        "label": "Prestatiemodus ingeschakeld",
+        "placeholder": "bijv. notify-send \"Prestatie\" \"Modus Ingeschakeld\""
+      },
+      "screen-lock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
+        "label": "Scherm vergrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Vergrendeld\""
+      },
+      "screen-unlock": {
+        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
+        "label": "Scherm ontgrendeld",
+        "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Schakel alle hook-commando's in of uit.",
@@ -1652,17 +1743,11 @@
         "description": "Commando dat wordt uitgevoerd wanneer de achtergrond verandert.",
         "label": "Achtergrond gewijzigd",
         "placeholder": "bijv. notify-send \"Achtergrond\" \"Gewijzigd\""
-      },
-      "screen-lock": {
-        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt vergrendeld.",
-        "label": "Scherm vergrendeld",
-        "placeholder": "bijv. notify-send \"Scherm\" \"Vergrendeld\""
-      },
-      "screen-unlock": {
-        "description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
-        "label": "Scherm ontgrendeld",
-        "placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\""
       }
+    },
+    "indicator": {
+      "default-value": "Standaard: {value}",
+      "system-default": "Systeemstandaard"
     },
     "launcher": {
       "settings": {
@@ -1685,6 +1770,10 @@
         "grid-view": {
           "description": "Items in een raster weergeven in plaats van een lijst.",
           "label": "Rasterweergave"
+        },
+        "icon-mode": {
+          "description": "Gebruik native systeemiconen in plaats van Tabler-iconen.",
+          "label": "Gebruik native iconen"
         },
         "position": {
           "description": "Kies waar het launcher-paneel verschijnt.",
@@ -1811,6 +1900,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Bluetooth-beheer activeren.",
         "label": "Bluetooth inschakelen"
       },
       "section": {
@@ -1818,6 +1908,7 @@
       },
       "title": "Netwerk",
       "wifi": {
+        "description": "Draadloze netwerken beheren (vereist NetworkManager).",
         "label": "Wi-Fi inschakelen"
       }
     },
@@ -2028,6 +2119,11 @@
         "downloaded": "Gedownload",
         "not-downloaded": "Niet gedownload"
       },
+      "hot-reload": {
+        "description": "Laad plugins automatisch opnieuw wanneer hun bestanden veranderen. Handig voor plugin-ontwikkeling.",
+        "label": "Hot reload (ontwikkelmodus)"
+      },
+      "hot-reloaded": "Plugin opnieuw geladen: {name}",
       "install": "Installeren",
       "install-error": "Installatie mislukt: {error}",
       "install-success": "{plugin} succesvol geïnstalleerd",
@@ -2181,6 +2277,10 @@
           "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
           "label": "Algemeen"
         }
+      },
+      "large-buttons-style": {
+        "description": "Toon het sessiemenu met grote knoppen in een rasterindeling.",
+        "label": "Stijl met grote knoppen"
       },
       "position": {
         "description": "Kies waar het Sessiemenu-paneel verschijnt wanneer het wordt geopend.",
@@ -2601,6 +2701,7 @@
     "move-to-center-section": "Middelste sectie",
     "move-to-left-section": "Linker sectie",
     "move-to-right-section": "Rechter sectie",
+    "mute": "Dempen",
     "next-media": "Volgende track",
     "next-month": "Volgende maand",
     "night-light-disabled": "Nachtlicht",
@@ -2635,6 +2736,7 @@
     "stop-screen-recording": "Schermrecorder",
     "switch-to-dark-mode": "Donkere modus",
     "switch-to-light-mode": "Lichte modus",
+    "unmute": "Dempen opheffen",
     "up": "Bovenliggende map",
     "volume-at": "Uitvoervolume: {volume}%",
     "wallpaper-selector": "Achtergrondkiezer",
@@ -2671,6 +2773,10 @@
         "label": "Inhoudsfilter",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "Elke",
+        "label": "Beeldverhouding"
       },
       "resolution": {
         "atleast": "Ten minste",

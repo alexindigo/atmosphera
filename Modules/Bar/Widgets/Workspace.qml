@@ -56,11 +56,29 @@ Item {
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
   readonly property bool enableScrollWheel: (widgetSettings.enableScrollWheel !== undefined) ? widgetSettings.enableScrollWheel : widgetMetadata.enableScrollWheel
 
-  readonly property real itemSize: (density === "compact") ? Style.capsuleHeight * 0.9 : Style.capsuleHeight * 0.8
+  readonly property int itemSize: Math.round(Style.capsuleHeight * 0.8)
 
-  // Context menu state for grouped mode
-  property var selectedWindow: null
-  property string selectedAppName: ""
+  // Context menu state for grouped mode - store IDs instead of object references to avoid stale references
+  property string selectedWindowId: ""
+  property string selectedAppId: ""
+
+  // Helper to get the current window object from ID
+  function getSelectedWindow() {
+    if (!selectedWindowId)
+      return null;
+    for (var i = 0; i < localWorkspaces.count; i++) {
+      var ws = localWorkspaces.get(i);
+      if (ws && ws.windows) {
+        for (var j = 0; j < ws.windows.count; j++) {
+          var win = ws.windows.get(j);
+          if (win && (win.id === selectedWindowId || win.address === selectedWindowId)) {
+            return win;
+          }
+        }
+      }
+    }
+    return null;
+  }
 
   property bool isDestroying: false
   property bool hovered: false
@@ -83,12 +101,12 @@ Item {
   implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + Style.marginM * 2) : Style.barHeight) : (isVertical ? computeHeight() : Style.barHeight)
 
   function getWorkspaceWidth(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
     const factor = ws.isActive ? 2.2 : 1;
 
     // Don't calculate text width if labels are off
     if (labelMode === "none") {
-      return d * factor;
+      return Math.round(d * factor);
     }
 
     var displayText = ws.idx.toString();
@@ -103,13 +121,13 @@ Item {
 
     const textWidth = displayText.length * (d * 0.4); // Approximate width per character
     const padding = d * 0.6;
-    return Math.max(d * factor, textWidth + padding);
+    return Math.round(Math.max(d * factor, textWidth + padding));
   }
 
   function getWorkspaceHeight(ws) {
-    const d = Style.capsuleHeight * root.baseDimensionRatio;
+    const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
     const factor = ws.isActive ? 2.2 : 1;
-    return d * factor;
+    return Math.round(d * factor);
   }
 
   function computeWidth() {
@@ -156,6 +174,42 @@ Item {
       CompositorService.switchToWorkspace(ws);
   }
 
+  // Helper function to normalize app IDs for case-insensitive matching
+  function normalizeAppId(appId) {
+    if (!appId || typeof appId !== 'string')
+      return "";
+    return appId.toLowerCase().trim();
+  }
+
+  // Helper function to check if an app is pinned
+  function isAppPinned(appId) {
+    if (!appId)
+      return false;
+    const pinnedApps = Settings.data.dock.pinnedApps || [];
+    const normalizedId = normalizeAppId(appId);
+    return pinnedApps.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+  }
+
+  // Helper function to toggle app pin/unpin
+  function toggleAppPin(appId) {
+    if (!appId)
+      return;
+
+    const normalizedId = normalizeAppId(appId);
+    let pinnedApps = (Settings.data.dock.pinnedApps || []).slice();
+
+    const existingIndex = pinnedApps.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+    const isPinned = existingIndex >= 0;
+
+    if (isPinned) {
+      pinnedApps.splice(existingIndex, 1);
+    } else {
+      pinnedApps.push(appId);
+    }
+
+    Settings.data.dock.pinnedApps = pinnedApps;
+  }
+
   Component.onCompleted: {
     refreshWorkspaces();
   }
@@ -171,6 +225,7 @@ Item {
     target: CompositorService
     function onWorkspacesChanged() {
       refreshWorkspaces();
+      root.triggerUnifiedWave();
     }
     function onWindowListChanged() {
       if (showApplications || showLabelsOnlyWhenOccupied) {
@@ -178,7 +233,7 @@ Item {
       }
     }
     function onActiveWindowChanged() {
-      if (showApplications || showLabelsOnlyWhenOccupied) {
+      if (showApplications) {
         refreshWorkspaces();
       }
     }
@@ -231,7 +286,6 @@ Item {
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
-        root.triggerUnifiedWave();
         root.workspaceChanged(ws.id, Color.mPrimary);
         break;
       }
@@ -270,21 +324,43 @@ Item {
 
     model: {
       var items = [];
-      if (root.selectedWindow) {
+      if (root.selectedWindowId) {
+        // Focus item
         items.push({
-                     "label": I18n.tr("context-menu.activate-app", {
-                                        "app": root.selectedAppName
-                                      }),
-                     "action": "activate",
-                     "icon": "focus"
+                     "label": I18n.tr("dock.menu.focus"),
+                     "action": "focus",
+                     "icon": "eye"
                    });
+
+        // Pin/Unpin item
+        const isPinned = root.isAppPinned(root.selectedAppId);
         items.push({
-                     "label": I18n.tr("context-menu.close-app", {
-                                        "app": root.selectedAppName
-                                      }),
+                     "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                     "action": "pin",
+                     "icon": !isPinned ? "pin" : "pinned-off"
+                   });
+
+        // Close item
+        items.push({
+                     "label": I18n.tr("dock.menu.close"),
                      "action": "close",
                      "icon": "x"
                    });
+
+        // Add desktop entry actions
+        if (typeof DesktopEntries !== 'undefined' && DesktopEntries.byId && root.selectedAppId) {
+          const entry = (DesktopEntries.heuristicLookup) ? DesktopEntries.heuristicLookup(root.selectedAppId) : DesktopEntries.byId(root.selectedAppId);
+          if (entry != null && entry.actions) {
+            entry.actions.forEach(function (action) {
+              items.push({
+                           "label": action.name,
+                           "action": "desktop-action-" + action.name,
+                           "icon": "chevron-right",
+                           "desktopAction": action
+                         });
+            });
+          }
+        }
       }
       items.push({
                    "label": I18n.tr("context-menu.widget-settings"),
@@ -294,21 +370,27 @@ Item {
       return items;
     }
 
-    onTriggered: action => {
+    onTriggered: (action, item) => {
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.close();
                    }
 
-                   if (action === "activate" && selectedWindow) {
+                   const selectedWindow = root.getSelectedWindow();
+
+                   if (action === "focus" && selectedWindow) {
                      CompositorService.focusWindow(selectedWindow);
+                   } else if (action === "pin" && selectedAppId) {
+                     root.toggleAppPin(selectedAppId);
                    } else if (action === "close" && selectedWindow) {
                      CompositorService.closeWindow(selectedWindow);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+                   } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
+                     item.desktopAction.execute();
                    }
-                   selectedWindow = null;
-                   selectedAppName = "";
+                   selectedWindowId = "";
+                   selectedAppId = "";
                  }
   }
 
@@ -333,8 +415,7 @@ Item {
                      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                      if (popupMenuWindow) {
                        popupMenuWindow.showContextMenu(contextMenu);
-                       const pos = BarService.getContextMenuPosition(workspaceBackground, contextMenu.implicitWidth, contextMenu.implicitHeight);
-                       contextMenu.openAtItem(workspaceBackground, pos.x, pos.y);
+                       contextMenu.openAtItem(workspaceBackground, screen);
                      }
                    }
                  }
@@ -450,7 +531,6 @@ Item {
 
             return Qt.alpha(Color.mSecondary, 0.3);
           }
-          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -552,7 +632,7 @@ Item {
           anchors.fill: parent
 
           Loader {
-            active: (labelMode !== "none") && (!root.showLabelsOnlyWhenOccupied || model.isOccupied)
+            active: (labelMode !== "none") && (!root.showLabelsOnlyWhenOccupied || model.isOccupied || model.isFocused)
             sourceComponent: Component {
               NText {
                 x: (pillVertical.width - width) / 2
@@ -582,7 +662,7 @@ Item {
                   if (model.isOccupied)
                     return Color.mOnSecondary;
 
-                  return Color.mOnSurface;
+                  return Color.mOnSecondary;
                 }
               }
             }
@@ -597,9 +677,8 @@ Item {
             if (model.isOccupied)
               return Color.mSecondary;
 
-            return Color.mOutline;
+            return Qt.alpha(Color.mSecondary, 0.3);
           }
-          scale: model.isActive ? 1.0 : 0.9
           z: 0
 
           MouseArea {
@@ -742,15 +821,6 @@ Item {
             width: root.itemSize
             height: root.itemSize
 
-            scale: itemHovered ? 1.1 : 1.0
-
-            Behavior on scale {
-              NumberAnimation {
-                duration: Style.animationNormal
-                easing.type: Easing.OutBack
-              }
-            }
-
             IconImage {
               id: groupedAppIcon
 
@@ -759,15 +829,7 @@ Item {
               source: ThemeIcons.iconForAppId(model.appId)
               smooth: true
               asynchronous: true
-              opacity: model.isFocused ? Style.opacityFull : 0.6
               layer.enabled: root.colorizeIcons && !model.isFocused
-
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationNormal
-                  easing.type: Easing.InOutCubic
-                }
-              }
 
               Rectangle {
                 id: groupedFocusIndicator
@@ -808,8 +870,8 @@ Item {
                             if (mouse.button === Qt.RightButton) {
                               mouse.accepted = true;
                               TooltipService.hide();
-                              root.selectedWindow = model;
-                              root.selectedAppName = CompositorService.getCleanAppName(model.appId, model.title);
+                              root.selectedWindowId = model.id || model.address || "";
+                              root.selectedAppId = model.appId;
                               openGroupedContextMenu(groupedTaskbarItem);
                             }
                           }
@@ -969,27 +1031,8 @@ Item {
   function openGroupedContextMenu(item) {
     var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
     if (popupMenuWindow) {
-      popupMenuWindow.open();
-
-      const globalPos = item.mapToItem(root, 0, 0);
-      let menuX, menuY;
-      if (root.barPosition === "top") {
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = Style.barHeight + Style.marginS;
-      } else if (root.barPosition === "bottom") {
-        const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
-        menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = -menuHeight - Style.marginS;
-      } else if (root.barPosition === "left") {
-        menuX = Style.barHeight + Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      } else {
-        menuX = -contextMenu.implicitWidth - Style.marginS;
-        menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
-      }
-
-      contextMenu.openAtItem(root, menuX, menuY);
-      popupMenuWindow.contentItem = contextMenu;
+      popupMenuWindow.showContextMenu(contextMenu);
+      contextMenu.openAtItem(item, screen);
     }
   }
 }

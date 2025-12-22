@@ -341,6 +341,10 @@
           "description": "Contrôle le comportement du widget lorsqu'il n'y a pas de fenêtres correspondantes.",
           "label": "Mode de masquage"
         },
+        "icon-scale": {
+          "description": "Définit le facteur d'échelle pour les icônes de la barre des tâches.",
+          "label": "Mise à l'échelle des icônes"
+        },
         "max-width": {
           "description": "Largeur maximale de la barre des tâches en pourcentage de la largeur de l'écran.",
           "label": "Largeur maximale"
@@ -529,11 +533,11 @@
     "no": "Non"
   },
   "context-menu": {
-    "activate-app": "Activer {app}",
     "clear-history": "Effacer l'historique",
     "close-app": "Fermer {app}",
     "connect-vpn": "Se connecter à {name}",
     "cycle-visualizer": "Visualiseur de cycle",
+    "delete": "Supprimer",
     "disable-bluetooth": "Désactiver le Bluetooth",
     "disable-dnd": "Désactiver le mode Ne pas déranger",
     "disable-wifi": "Désactiver le Wi-Fi",
@@ -742,15 +746,15 @@
       "top_left": "En haut à gauche",
       "top_right": "En haut à droite"
     },
-    "visualizer-quality": {
-      "high": "Haut/Haute",
-      "low": "Bas"
-    },
     "visualizer-types": {
       "linear": "Linéaire",
       "mirrored": "Miroir",
       "none": "Aucun",
       "wave": "Vague"
+    },
+    "visualizer-visibility": {
+      "always": "Toujours visible",
+      "with-background": "Avec fond uniquement"
     },
     "workspace-labels": {
       "index": "Index",
@@ -953,13 +957,20 @@
           "description": "Définissez vos applications multimédias préférées et ignorées.",
           "label": "Lecteurs multimédias"
         },
-        "visualizer-quality": {
-          "description": "L'utilisation de haute qualité nécessite plus de ressources GPU.",
-          "label": "Qualité de la visualisation"
-        },
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour la lecture multimédia.",
           "label": "Type de visualisation"
+        }
+      },
+      "panel": {
+        "applications": {
+          "empty": "Aucune application ne lit actuellement de l'audio."
+        },
+        "input": "Entrée",
+        "output": "Sortie",
+        "tabs": {
+          "devices": "Appareils",
+          "volumes": "Volumes"
         }
       },
       "title": "Audio",
@@ -1149,6 +1160,10 @@
         "compositors": {
           "description": "Thématisation du compositeur.",
           "label": "Compositeurs",
+          "mango": {
+            "description": "Écrire {filepath}. Requiert mango",
+            "description-missing": "Nécessite l'installation de {app}"
+          },
           "niri": {
             "description": "Écrire {filepath}. Requiert niri v25.11+",
             "description-missing": "Nécessite l'installation de {app}"
@@ -1339,14 +1354,33 @@
     },
     "desktop-widgets": {
       "clock": {
+        "clock-display": {
+          "description": "Personnalisez l'affichage de votre horloge en ajoutant des jetons de la liste ci-dessous. Pour utiliser le format 12 heures, vous devez inclure le jeton 'AP'.",
+          "label": "Affichage de l'horloge"
+        },
+        "custom-font": {
+          "description": "Sélectionner une police personnalisée pour l'affichage de l'horloge.",
+          "label": "Police personnalisée",
+          "placeholder": "Sélectionner une police personnalisée...",
+          "search-placeholder": "Rechercher des polices..."
+        },
         "enabled": {
           "description": "Afficher un widget d'horloge sur le bureau.",
           "label": "Activer le widget horloge"
+        },
+        "format": {
+          "description": "Astuce : Utilisez \\n pour créer un saut de ligne.",
+          "label": "Format"
         },
         "height": {
           "description": "Hauteur du widget horloge en pixels.",
           "label": "Taille"
         },
+        "minimal-mode": {
+          "description": "Utiliser un affichage d'horloge minimaliste avec l'heure et la date.",
+          "label": "Mode minimaliste"
+        },
+        "preview": "Aperçu",
         "section": {
           "description": "Configurer l'apparence du widget horloge.",
           "label": "Widget d'horloge"
@@ -1363,18 +1397,39 @@
           "description": "Afficher les secondes dans l'heure.",
           "label": "Afficher les secondes"
         },
+        "style": {
+          "analog": "Analogique",
+          "description": "Choisissez le style d'affichage de l'horloge.",
+          "digital": "Numérique",
+          "label": "Style d'horloge",
+          "minimal": "Minimal"
+        },
+        "use-custom-font": {
+          "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
+          "label": "Utiliser une police personnalisée."
+        },
+        "use-primary-color": {
+          "description": "Lorsque cette option est activée, la couleur principale est utilisée pour la mise en évidence.",
+          "label": "Utiliser la couleur principale"
+        },
         "width": {
           "description": "Largeur du widget horloge en pixels.",
           "label": "Largeur"
         }
       },
       "edit-mode": {
+        "add-widget": "Ajouter un widget",
         "button": {
           "label": "Entrer en mode édition"
         },
+        "controls-explanation": "Clic gauche et glisser-déposer : Déplacer ou redimensionner le widget.\nClic droit : Ouvrir les options du menu contextuel.",
         "description": "Activer le mode édition pour déplacer et repositionner les widgets du bureau. Une fois activé, les widgets affichent un contour de glissement et peuvent être repositionnés.",
         "exit-button": "Quitter le mode édition",
-        "label": "Mode édition"
+        "grid-snap": {
+          "label": "Aligner sur la grille"
+        },
+        "label": "Mode édition",
+        "open-settings": "Ouvrir les paramètres"
       },
       "enabled": {
         "description": "Activer ou désactiver complètement les widgets du bureau.",
@@ -1391,6 +1446,10 @@
           "description": "Afficher un widget de lecteur multimédia sur le bureau.",
           "label": "Activer le widget lecteur multimédia"
         },
+        "hide-mode": {
+          "description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
+          "label": "Mode de masquage"
+        },
         "section": {
           "description": "Configurer l'apparence du widget lecteur multimédia.",
           "label": "Widget lecteur multimédia"
@@ -1399,9 +1458,17 @@
           "description": "Afficher le conteneur d'arrière-plan pour le widget lecteur multimédia.",
           "label": "Afficher l'arrière-plan"
         },
+        "show-buttons": {
+          "description": "Afficher les boutons de contrôle multimédia (lecture/pause, précédent, suivant) sur le widget lecteur multimédia.",
+          "label": "Afficher les boutons"
+        },
         "visualizer-type": {
           "description": "Choisissez un type de visualisation pour l'arrière-plan du lecteur multimédia de bureau.",
           "label": "Type de visualisation"
+        },
+        "visualizer-visibility": {
+          "description": "Contrôler quand le visualiseur audio est visible.",
+          "label": "Visibilité du visualiseur audio"
         }
       },
       "title": "Widgets de bureau",
@@ -1514,6 +1581,10 @@
         "floating-distance": {
           "description": "Ajustez la distance de flottaison par rapport au bord de l'écran.",
           "label": "Distance de flottaison du dock"
+        },
+        "hide-show-speed": {
+          "description": "Ajustez la vitesse de l'animation d'affichage/masquage du dock.",
+          "label": "Vitesse d'affichage/masquage"
         },
         "icon-size": {
           "description": "Ajuster la taille globale du Dock.",
@@ -1632,6 +1703,26 @@
           "label": "Paramètres disponibles"
         }
       },
+      "performance-mode-disabled": {
+        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est désactivé.",
+        "label": "Mode performance désactivé",
+        "placeholder": "ex: notify-send \"Performance\" \"Mode Désactivé\""
+      },
+      "performance-mode-enabled": {
+        "description": "Commande à exécuter lorsque le Mode Performance Noctalia est activé.",
+        "label": "Mode performance activé",
+        "placeholder": "ex: notify-send \"Performance\" \"Mode Activé\""
+      },
+      "screen-lock": {
+        "description": "Commande à exécuter lorsque l'écran est verrouillé.",
+        "label": "Écran verrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Verrouillé\""
+      },
+      "screen-unlock": {
+        "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
+        "label": "Écran déverrouillé",
+        "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
+      },
       "system-hooks": {
         "enable": {
           "description": "Activer ou désactiver toutes les commandes de hook.",
@@ -1652,17 +1743,11 @@
         "description": "Commande à exécuter lorsque le fond d'écran change.",
         "label": "Fond d'écran changé",
         "placeholder": "ex: notify-send \"Fond d'écran\" \"Changé\""
-      },
-      "screen-lock": {
-        "description": "Commande à exécuter lorsque l'écran est verrouillé.",
-        "label": "Écran verrouillé",
-        "placeholder": "ex: notify-send \"Écran\" \"Verrouillé\""
-      },
-      "screen-unlock": {
-        "description": "Commande à exécuter lorsque l'écran est déverrouillé.",
-        "label": "Écran déverrouillé",
-        "placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\""
       }
+    },
+    "indicator": {
+      "default-value": "Par défaut : {value}",
+      "system-default": "Par défaut du système"
     },
     "launcher": {
       "settings": {
@@ -1685,6 +1770,10 @@
         "grid-view": {
           "description": "Afficher les éléments dans une grille au lieu d'une liste.",
           "label": "Vue grille"
+        },
+        "icon-mode": {
+          "description": "Utiliser les icônes natives du système au lieu des icônes Tabler.",
+          "label": "Utiliser les icônes natives"
         },
         "position": {
           "description": "Choisissez où le panneau du lanceur apparaît.",
@@ -1811,6 +1900,7 @@
     },
     "network": {
       "bluetooth": {
+        "description": "Activer la gestion Bluetooth.",
         "label": "Activer le Bluetooth"
       },
       "section": {
@@ -1818,6 +1908,7 @@
       },
       "title": "Réseau",
       "wifi": {
+        "description": "Gérer les réseaux sans fil (nécessite NetworkManager).",
         "label": "Activer le Wi-Fi"
       }
     },
@@ -2028,6 +2119,11 @@
         "downloaded": "Téléchargé",
         "not-downloaded": "Non téléchargé"
       },
+      "hot-reload": {
+        "description": "Recharger automatiquement les plugins lorsque leurs fichiers sont modifiés. Utile pour le développement de plugins.",
+        "label": "Rechargement à chaud (mode développement)"
+      },
+      "hot-reloaded": "Plugin rechargé : {name}",
       "install": "Installer",
       "install-error": "Échec de l'installation : {error}",
       "install-success": "Installation de {plugin} réussie.",
@@ -2181,6 +2277,10 @@
           "description": "Configurer le comportement et l'apparence du panneau du menu de session.",
           "label": "Général"
         }
+      },
+      "large-buttons-style": {
+        "description": "Afficher le menu de session avec de grands boutons dans une disposition en grille.",
+        "label": "Style boutons larges"
       },
       "position": {
         "description": "Choisissez où le panneau du Menu de session apparaît lorsqu'il est ouvert.",
@@ -2601,6 +2701,7 @@
     "move-to-center-section": "Section centrale",
     "move-to-left-section": "Section de gauche",
     "move-to-right-section": "Section de droite",
+    "mute": "Muet / Couper le son",
     "next-media": "Piste suivante",
     "next-month": "Mois suivant",
     "night-light-disabled": "Éclairage nocturne",
@@ -2635,6 +2736,7 @@
     "stop-screen-recording": "Enregistreur d'écran",
     "switch-to-dark-mode": "Mode sombre",
     "switch-to-light-mode": "Mode clair",
+    "unmute": "Réactiver le micro",
     "up": "Répertoire parent",
     "volume-at": "Volume de sortie : {volume}%",
     "wallpaper-selector": "Sélecteur de fond d'écran",
@@ -2671,6 +2773,10 @@
         "label": "Filtre de contenu",
         "sfw": "SFW",
         "sketchy": "Sketchy"
+      },
+      "ratios": {
+        "any": "N'importe lequel/laquelle",
+        "label": "Format d'image"
       },
       "resolution": {
         "atleast": "Au moins",
