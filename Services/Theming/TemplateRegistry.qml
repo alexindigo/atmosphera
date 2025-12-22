@@ -211,7 +211,8 @@ Singleton {
         {
           "path": "~/.config/zed/themes/noctalia.json"
         }
-      ]
+      ],
+      "dualMode": true // Template contains both dark and light theme patterns
     },
     {
       "id": "spicetify",
