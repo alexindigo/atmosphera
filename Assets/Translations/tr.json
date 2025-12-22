@@ -1161,15 +1161,15 @@
       "templates": {
         "compositors": {
           "description": "Birleştirici temalandırma.",
+          "hyprland": {
+            "description": "{filepath} dosyasına yaz."
+          },
           "label": "Birleştiriciler",
           "mango": {
             "description": "{filepath} dosyasına yaz. mango gerektirir"
           },
           "niri": {
             "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir"
-          },
-          "hyprland": {
-            "description": "{filepath} dosyasına yaz."
           }
         },
         "misc": {

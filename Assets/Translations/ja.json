@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "コンポジタのテーマ設定",
+          "hyprland": {
+            "description": "{filepath} を書き込んでください。"
+          },
           "label": "コンポジタ",
           "mango": {
             "description": "{filepath} を書き込みます。mango が必要です。"

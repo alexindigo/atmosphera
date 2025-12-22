@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "Compositor-Theming.",
+          "hyprland": {
+            "description": "Schreibe {Dateipfad}."
+          },
           "label": "Compositor",
           "mango": {
             "description": "Schreibe {filepath}. Benötigt mango"

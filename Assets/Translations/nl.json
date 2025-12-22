@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "Theming van compositor.",
+          "hyprland": {
+            "description": "Schrijf {filepath}."
+          },
           "label": "Compositors",
           "mango": {
             "description": "Schrijf {filepath}. Vereist mango"

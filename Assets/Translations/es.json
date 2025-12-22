@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "Tematización del compositor.",
+          "hyprland": {
+            "description": "Escribe {filepath}."
+          },
           "label": "Compositores",
           "mango": {
             "description": "Escribir {filepath}. Requiere mango"

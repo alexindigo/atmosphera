@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "Оформлення композитора.",
+          "hyprland": {
+            "description": "Записати {filepath}."
+          },
           "label": "Композитори",
           "mango": {
             "description": "Записати {filepath}. Потребує mango"

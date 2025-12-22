@@ -1161,6 +1161,9 @@
       "templates": {
         "compositors": {
           "description": "合成器主题。",
+          "hyprland": {
+            "description": "写入 {filepath}。"
+          },
           "label": "合成器",
           "mango": {
             "description": "写入 {filepath}。需要芒果"
