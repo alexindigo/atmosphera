@@ -629,6 +629,7 @@ Singleton {
       property bool niri: false
       property bool mango: false
       property bool zed: false
+      property bool helix: false
       property bool enableUserTemplates: false
     }
 
