@@ -12,6 +12,10 @@ NBox {
 
   property string label: ""
   property var model: []
+  // While a password prompt is open, we freeze the displayed model to avoid
+  // frequent scan updates recreating items and clearing the TextInput.
+  property var cachedModel: []
+  readonly property var displayModel: (passwordSsid && passwordSsid.length > 0) ? cachedModel : model
   property string passwordSsid: ""
   property string expandedSsid: ""
   // Currently expanded info panel for a connected SSID
@@ -28,6 +32,22 @@ NBox {
   signal forgetRequested(string ssid)
   signal forgetConfirmed(string ssid)
   signal forgetCancelled
+
+  onPasswordSsidChanged: {
+    if (passwordSsid && passwordSsid.length > 0) {
+      // Freeze current list ordering/content while entering password
+      try {
+        // Deep copy to decouple from live updates
+        cachedModel = JSON.parse(JSON.stringify(model));
+      } catch (e) {
+        // Fallback to shallow copy
+        cachedModel = model.slice ? model.slice() : model;
+      }
+    } else {
+      // Clear freeze when password box is closed
+      cachedModel = [];
+    }
+  }
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -57,7 +77,7 @@ NBox {
     }
 
     Repeater {
-      model: root.model
+      model: root.displayModel
 
       Rectangle {
         id: networkItem
@@ -524,7 +544,7 @@ NBox {
                   focus: visible
                   passwordCharacter: "●"
                   onVisibleChanged: if (visible) {
-                                      text = "";
+                                      // Keep any text already typed; only focus
                                       forceActiveFocus();
                                     }
                   onAccepted: {
