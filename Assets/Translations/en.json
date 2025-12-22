@@ -1169,7 +1169,7 @@
             "description": "Write {filepath}. Requires niri v25.11+"
           },
           "hyprland": {
-            "description": "Write {filepath} and apply"
+            "description": "Write {filepath}."
           }
         },
         "misc": {
