@@ -387,7 +387,11 @@ Item {
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    } else if (action.startsWith("desktop-action-") && item && item.desktopAction) {
-                     item.desktopAction.execute();
+                     if (item.desktopAction.command && item.desktopAction.command.length > 0) {
+                       Quickshell.execDetached(item.desktopAction.command);
+                     } else if (item.desktopAction.execute) {
+                       item.desktopAction.execute();
+                     }
                    }
                    selectedWindowId = "";
                    selectedAppId = "";
