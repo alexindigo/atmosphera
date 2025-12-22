@@ -225,9 +225,7 @@ ColumnLayout {
             property string pluginId: modelData.id
             property bool isUpdating: root.updatingPlugins[pluginId] === true
 
-            text: isUpdating ? I18n.tr("settings.plugins.updating", {
-                                         "plugin": modelData.name
-                                       }) : I18n.tr("settings.plugins.update")
+            text: isUpdating ? I18n.tr("settings.plugins.updating") : I18n.tr("settings.plugins.update")
             icon: isUpdating ? "" : "download"
             visible: modelData._updateInfo !== undefined
             enabled: !isUpdating

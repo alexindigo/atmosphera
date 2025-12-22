@@ -2169,7 +2169,7 @@
       "update-incompatible": "Nécessite Noctalia v{version} ou une version ultérieure.",
       "update-success": "Mise à jour du plugin {plugin} vers la version {version}.",
       "update-version": "v{actuel} → v{nouveau}",
-      "updating": "Mise à jour de {plugin}..."
+      "updating": "Mise à jour..."
     },
     "screen-recorder": {
       "audio": {

@@ -2169,7 +2169,7 @@
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
       "update-success": "已将 {plugin} 更新至 v{version}",
       "update-version": "v{当前} → v{新}",
-      "updating": "正在更新 {plugin}..."
+      "updating": "正在更新..."
     },
     "screen-recorder": {
       "audio": {
