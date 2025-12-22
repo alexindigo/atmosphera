@@ -545,6 +545,21 @@ ColumnLayout {
               text: modelData.name
               color: Color.mOnSurface
               elide: Text.ElideRight
+            }
+
+            // Description excerpt - visible when not hovered
+            NText {
+              visible: !pluginBox.isHovered && modelData.description
+              text: modelData.description || ""
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+              elide: Text.ElideRight
+              Layout.fillWidth: true
+            }
+
+            // Spacer when hovered or no description
+            Item {
+              visible: pluginBox.isHovered || !modelData.description
               Layout.fillWidth: true
             }
 
@@ -602,6 +617,18 @@ ColumnLayout {
 
             NText {
               text: stripAuthorEmail(modelData.author)
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: "•"
+              font.pointSize: Style.fontSizeXS
+              color: Color.mOnSurfaceVariant
+            }
+
+            NText {
+              text: modelData.source ? modelData.source.name : ""
               font.pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
             }
