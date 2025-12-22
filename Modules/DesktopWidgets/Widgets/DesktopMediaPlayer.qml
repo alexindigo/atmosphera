@@ -108,6 +108,26 @@ DraggableDesktopWidget {
     z: 0
     clip: true
     active: shouldShowVisualizer
+    layer.enabled: true
+    layer.smooth: true
+    layer.samples: 4
+    layer.effect: MultiEffect {
+      maskEnabled: true
+      maskThresholdMin: 0.95
+      maskSpreadAtMin: 0.0
+      maskSource: ShaderEffectSource {
+        sourceItem: Rectangle {
+          width: root.width - Style.marginXS * 2
+          height: root.height - Style.marginXS * 2
+          radius: Math.max(0, Style.radiusL - Style.marginXS)
+          color: "white"
+          antialiasing: true
+          smooth: true
+        }
+        smooth: true
+        mipmap: true
+      }
+    }
 
     sourceComponent: {
       var visualizerType = (widgetData && widgetData.visualizerType) ? widgetData.visualizerType : "";
