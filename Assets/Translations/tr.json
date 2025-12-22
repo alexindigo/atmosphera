@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Okunmamış bildirim olmadığında bildirim rozetini gizle.",
-          "label": "Sıfırken rozeti gizle"
+        "hide-widget-when-zero": {
+          "description": "Okunmamış bildirim olmadığında bildirim simgesini gizle.",
+          "label": "Sıfırken simgeyi gizle"
         },
         "show-unread-badge": {
           "description": "Okunmamış bildirim sayısını gösteren bir rozet göster.",

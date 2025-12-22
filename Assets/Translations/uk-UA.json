@@ -279,7 +279,7 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
+        "hide-widget-when-zero": {
           "description": "Приховувати значок сповіщень, коли немає непрочитаних сповіщень.",
           "label": "Приховувати значок при нулі"
         },

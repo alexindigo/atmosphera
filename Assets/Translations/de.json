@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Benachrichtigungs-Badge ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind.",
-          "label": "Badge ausblenden, wenn null"
+        "hide-widget-when-zero": {
+          "description": "Benachrichtigungssymbol ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind.",
+          "label": "Symbol ausblenden, wenn null"
         },
         "show-unread-badge": {
           "description": "Badge mit der Anzahl ungelesener Benachrichtigungen anzeigen.",

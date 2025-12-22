@@ -279,9 +279,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "未読通知がない場合、通知バッジを非表示にします。",
-          "label": "ゼロのときはバッジを隠す"
+        "hide-widget-when-zero": {
+          "description": "未読通知がない場合、通知アイコンを非表示にします。",
+          "label": "ゼロのときはアイコンを隠す"
         },
         "show-unread-badge": {
           "description": "未読通知の数を表示するバッジを表示します。",
