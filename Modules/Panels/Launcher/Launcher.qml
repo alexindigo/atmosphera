@@ -690,6 +690,7 @@ SmartPanel {
               required property string modelData
               required property int index
               icon: emojiPlugin.categoryIcons[modelData] || "star"
+              tooltipText: emojiPlugin.getCategoryName ? emojiPlugin.getCategoryName(modelData) : modelData
               tabIndex: index
               checked: emojiCategoryTabs.currentIndex === index
               onClicked: {

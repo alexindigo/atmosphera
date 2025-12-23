@@ -580,6 +580,18 @@
       "chat": "聊天",
       "development": "发展",
       "education": "教育",
+      "emoji": {
+        "activity": "活动",
+        "animals": "动物",
+        "flags": "旗帜",
+        "food": "食物和饮料",
+        "nature": "自然",
+        "objects": "物品",
+        "people": "人物和身体",
+        "recent": "最近使用",
+        "symbols": "符号",
+        "travel": "旅行和地点"
+      },
       "game": "游戏",
       "graphics": "图形",
       "misc": "杂项",

@@ -580,6 +580,18 @@
       "chat": "Chat",
       "development": "Ontwikkeling",
       "education": "Onderwijs",
+      "emoji": {
+        "activity": "Activiteit",
+        "animals": "Dieren",
+        "flags": "Vlaggen",
+        "food": "Eten en drinken",
+        "nature": "Natuur",
+        "objects": "Objecten",
+        "people": "Mensen en lichaam",
+        "recent": "Recent",
+        "symbols": "Symbolen",
+        "travel": "Reizen en plaatsen"
+      },
       "game": "Spellen",
       "graphics": "Grafische weergave",
       "misc": "Diversen",

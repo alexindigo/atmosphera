@@ -580,6 +580,18 @@
       "chat": "Sohbet",
       "development": "Geliştirme",
       "education": "Eğitim",
+      "emoji": {
+        "activity": "Aktivite",
+        "animals": "Hayvanlar",
+        "flags": "Bayraklar",
+        "food": "Yiyecek ve içecek",
+        "nature": "Doğa",
+        "objects": "Nesneler",
+        "people": "İnsanlar ve vücut",
+        "recent": "Son kullanılanlar",
+        "symbols": "Semboller",
+        "travel": "Seyahat ve yerler"
+      },
       "game": "Oyunlar",
       "graphics": "Grafikler",
       "misc": "Çeşitli",
