@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Festplattennutzung"
       },
-      "enable-nvidia-gpu": {
-        "description": "Warnung: Dies aktiviert Ihre NVIDIA-GPU, was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",
-        "label": "NVIDIA GPU-Überwachung aktivieren"
+      "enable-dgpu-monitoring": {
+        "description": "Warnung: Dies aktiviert Ihre dedizierte GPU (NVIDIA/AMD), was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",
+        "label": "Dedizierte GPU-Überwachung aktivieren"
       },
       "general": {
         "section": {
@@ -2930,6 +2930,7 @@
       "scan-again": "Erneut scannen",
       "searching": "Suche nach nahegelegenen Netzwerken...",
       "security": "Sicherheit",
+      "signal": "Signal",
       "title": "WLAN"
     }
   }

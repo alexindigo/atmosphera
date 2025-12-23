@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Uso do disco"
       },
-      "enable-nvidia-gpu": {
-        "description": "Atenção: Isto irá ativar sua GPU NVIDIA, o que pode impactar significativamente a duração da bateria em laptops com gráficos híbridos.",
-        "label": "Ativar o monitoramento da GPU NVIDIA"
+      "enable-dgpu-monitoring": {
+        "description": "Atenção: Isto irá ativar sua GPU dedicada (NVIDIA/AMD), o que pode impactar significativamente a duração da bateria em laptops com gráficos híbridos.",
+        "label": "Ativar o monitoramento da GPU dedicada"
       },
       "general": {
         "section": {
@@ -2930,6 +2930,7 @@
       "scan-again": "Escanear novamente",
       "searching": "Procurando redes próximas...",
       "security": "Segurança",
+      "signal": "Sinal",
       "title": "Wi-Fi"
     }
   }

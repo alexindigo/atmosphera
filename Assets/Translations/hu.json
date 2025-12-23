@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Lemezhasználat"
       },
-      "enable-nvidia-gpu": {
-        "description": "Figyelem: Ez felébreszti az NVIDIA GPU-t, ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",
-        "label": "NVIDIA GPU felügyelet engedélyezése"
+      "enable-dgpu-monitoring": {
+        "description": "Figyelem: Ez felébreszti a dedikált GPU-t (NVIDIA/AMD), ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",
+        "label": "Dedikált GPU felügyelet engedélyezése"
       },
       "general": {
         "section": {
@@ -2930,6 +2930,7 @@
       "scan-again": "Keresés újra",
       "searching": "Hálózatok keresése…",
       "security": "Biztonság",
+      "signal": "Jel",
       "title": "Wi‑Fi"
     }
   }

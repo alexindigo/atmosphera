@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Schijfgebruik"
       },
-      "enable-nvidia-gpu": {
-        "description": "Waarschuwing: Dit zal uw NVIDIA GPU activeren, wat een aanzienlijke impact kan hebben op de batterijduur van laptops met hybride grafische kaarten.",
-        "label": "NVIDIA GPU-monitoring inschakelen"
+      "enable-dgpu-monitoring": {
+        "description": "Waarschuwing: Dit zal uw dedicated GPU (NVIDIA/AMD) activeren, wat een aanzienlijke impact kan hebben op de batterijduur van laptops met hybride grafische kaarten.",
+        "label": "Dedicated GPU-monitoring inschakelen"
       },
       "general": {
         "section": {
@@ -2930,6 +2930,7 @@
       "scan-again": "Opnieuw scannen",
       "searching": "Zoeken naar netwerken in de buurt...",
       "security": "Beveiliging",
+      "signal": "Signaal",
       "title": "Wi-Fi"
     }
   }
