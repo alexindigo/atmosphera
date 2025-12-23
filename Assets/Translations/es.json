@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Uso de disco"
       },
-      "enable-nvidia-gpu": {
-        "description": "Advertencia: Esto activará tu GPU NVIDIA, lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
-        "label": "Habilitar la monitorización de la GPU NVIDIA"
+      "enable-dgpu-monitoring": {
+        "description": "Advertencia: Esto activará tu GPU dedicada (NVIDIA/AMD), lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
+        "label": "Habilitar la monitorización de la GPU dedicada"
       },
       "general": {
         "section": {

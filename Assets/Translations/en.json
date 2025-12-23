@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Disk usage"
       },
-      "enable-nvidia-gpu": {
-        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics.",
-        "label": "Enable NVIDIA GPU monitoring"
+      "enable-dgpu-monitoring": {
+        "description": "Warning: This will wake up your discrete GPU (NVIDIA/AMD), which may significantly impact battery life on laptops with hybrid graphics.",
+        "label": "Enable discrete GPU monitoring"
       },
       "general": {
         "section": {

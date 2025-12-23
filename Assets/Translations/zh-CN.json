@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "磁盘使用率"
       },
-      "enable-nvidia-gpu": {
-        "description": "警告：这将唤醒您的 NVIDIA GPU，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",
-        "label": "启用 NVIDIA GPU 监控"
+      "enable-dgpu-monitoring": {
+        "description": "警告：这将唤醒您的独立显卡 (NVIDIA/AMD)，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",
+        "label": "启用独立显卡监控"
       },
       "general": {
         "section": {

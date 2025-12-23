@@ -2285,9 +2285,9 @@
       "disk-section": {
         "label": "Disk Kullanımı"
       },
-      "enable-nvidia-gpu": {
-        "description": "Uyarı: Bu, NVIDIA GPU'nuzu uyandıracak ve bu da hibrit grafiklere sahip dizüstü bilgisayarlarda pil ömrünü önemli ölçüde etkileyebilir.",
-        "label": "NVIDIA GPU izlemeyi etkinleştir"
+      "enable-dgpu-monitoring": {
+        "description": "Uyarı: Bu, ayrık GPU'nuzu (NVIDIA/AMD) uyandıracak ve bu da hibrit grafiklere sahip dizüstü bilgisayarlarda pil ömrünü önemli ölçüde etkileyebilir.",
+        "label": "Ayrık GPU izlemeyi etkinleştir"
       },
       "general": {
         "section": {
