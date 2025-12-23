@@ -14,6 +14,7 @@ Singleton {
   id: root
 
   property bool isLoaded: false
+  property bool reloadSettings: false
   property bool directoriesCreated: false
   property bool shouldOpenSetupWizard: false
 
@@ -92,8 +93,12 @@ Singleton {
     path: directoriesCreated ? settingsFile : undefined
     printErrors: false
     watchChanges: true
-    onFileChanged: reload()
     onAdapterUpdated: saveTimer.start()
+
+    onFileChanged: {
+      reloadSettings = true;
+      reload();
+    }
 
     // Trigger initial load when path changes from empty to actual path
     onPathChanged: {
@@ -127,6 +132,10 @@ Singleton {
       }
     }
     onLoadFailed: function (error) {
+      if (reloadSettings) {
+        reloadSettings = false;
+        return;
+      }
       if (error.toString().includes("No such file") || error === 2) {
         // File doesn't exist, create it with default values
         writeAdapter();
