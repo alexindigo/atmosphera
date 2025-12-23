@@ -280,6 +280,54 @@ SmartPanel {
     }
   }
 
+  function getGridInfo() {
+    const columns = Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)));
+    const rows = Math.ceil(powerOptions.length / columns);
+    return {
+      columns,
+      rows,
+      currentRow: Math.floor(selectedIndex / columns),
+      currentCol: selectedIndex % columns,
+      itemsInRow: row => Math.min(columns, powerOptions.length - row * columns)
+    };
+  }
+
+  // Unified navigation function
+  function navigateGrid(direction) {
+    if (powerOptions.length === 0)
+      return;
+
+    const grid = getGridInfo();
+    let newRow = grid.currentRow;
+    let newCol = grid.currentCol;
+
+    switch (direction) {
+    case "left":
+      newCol = newCol - 1 < 0 ? grid.itemsInRow(newRow) - 1 : newCol - 1;
+      break;
+    case "right":
+      newCol = newCol + 1 >= grid.itemsInRow(newRow) ? 0 : newCol + 1;
+      break;
+    case "up":
+      newRow = newRow - 1 < 0 ? grid.rows - 1 : newRow - 1;
+      break;
+    case "down":
+      newRow = newRow + 1 >= grid.rows ? 0 : newRow + 1;
+      break;
+    }
+
+    // For vertical movement, clamp column if row has fewer items
+    if (direction === "up" || direction === "down") {
+      const itemsInNewRow = grid.itemsInRow(newRow);
+      newCol = Math.min(newCol, itemsInNewRow - 1);
+    }
+
+    const newIndex = newRow * grid.columns + newCol;
+    if (newIndex < powerOptions.length) {
+      selectedIndex = newIndex;
+    }
+  }
+
   function activate() {
     if (powerOptions.length > 0 && powerOptions[selectedIndex]) {
       const option = powerOptions[selectedIndex];
@@ -305,19 +353,35 @@ SmartPanel {
   }
 
   function onLeftPressed() {
-    selectPreviousWrapped();
+    if (largeButtonsStyle) {
+      navigateGrid("left");
+    } else {
+      selectPreviousWrapped();
+    }
   }
 
   function onRightPressed() {
-    selectNextWrapped();
+    if (largeButtonsStyle) {
+      navigateGrid("right");
+    } else {
+      selectNextWrapped();
+    }
   }
 
   function onUpPressed() {
-    selectPreviousWrapped();
+    if (largeButtonsStyle) {
+      navigateGrid("up");
+    } else {
+      selectPreviousWrapped();
+    }
   }
 
   function onDownPressed() {
-    selectNextWrapped();
+    if (largeButtonsStyle) {
+      navigateGrid("down");
+    } else {
+      selectNextWrapped();
+    }
   }
 
   function onReturnPressed() {
