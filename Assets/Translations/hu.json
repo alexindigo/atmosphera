@@ -55,6 +55,10 @@
           "description": "Válassza ki, hogyan szeretné, hogy ez az érték megjelenjen.",
           "label": "Megjelenítési mód"
         },
+        "hide-if-not-detected": {
+          "description": "Rejtse el a widgetet, ha a rendszer nem észlel akkumulátort.",
+          "label": "Rejtőzz, ha nem észleltek."
+        },
         "low-battery-threshold": {
           "description": "Figyelmeztetés megjelenítése, ha az akkumulátor töltöttsége e százalék alá esik.",
           "label": "Alacsony akkumulátor töltöttségi figyelmeztetési küszöb"

@@ -400,6 +400,7 @@
     "hyprland": false,
     "mango": false,
     "zed": false,
+    "helix": false,
     "enableUserTemplates": false
   },
   "nightLight": {

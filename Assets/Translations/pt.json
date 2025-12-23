@@ -55,6 +55,10 @@
           "description": "Escolha como você gostaria que este valor aparecesse.",
           "label": "Modo de exibição"
         },
+        "hide-if-not-detected": {
+          "description": "Oculte o widget quando nenhuma bateria for detectada no sistema.",
+          "label": "Ocultar se não detectado."
+        },
         "low-battery-threshold": {
           "description": "Mostrar um aviso quando a bateria cair abaixo desta porcentagem.",
           "label": "Limite de aviso de bateria fraca"

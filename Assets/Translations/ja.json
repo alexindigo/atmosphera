@@ -55,6 +55,10 @@
           "description": "値の表示方法を選択します。",
           "label": "表示モード"
         },
+        "hide-if-not-detected": {
+          "description": "システムでバッテリーが検出されない場合は、ウィジェットを非表示にします。",
+          "label": "検出されなければ隠れる"
+        },
         "low-battery-threshold": {
           "description": "バッテリー残量がこのパーセンテージを下回ると警告を表示します。",
           "label": "低バッテリー警告の閾値"

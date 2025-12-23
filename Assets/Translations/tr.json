@@ -55,6 +55,10 @@
           "description": "Bu değerin nasıl görünmesini istediğinizi seçin.",
           "label": "Görüntüleme modu"
         },
+        "hide-if-not-detected": {
+          "description": "Sistemde pil algılanmadığında araç çubuğunu gizle.",
+          "label": "Algılanmazsa gizle"
+        },
         "low-battery-threshold": {
           "description": "Batarya bu yüzdeye düştüğünde uyarı göster.",
           "label": "Düşük batarya eşiği"

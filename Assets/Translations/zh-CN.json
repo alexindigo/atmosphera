@@ -55,6 +55,10 @@
           "description": "选择您希望此值显示的方式。",
           "label": "显示模式"
         },
+        "hide-if-not-detected": {
+          "description": "当系统未检测到电池时，隐藏该小部件。",
+          "label": "如果未被发现，则隐藏。"
+        },
         "low-battery-threshold": {
           "description": "当电量低于此百分比时显示警告。",
           "label": "低电量警告阈值"

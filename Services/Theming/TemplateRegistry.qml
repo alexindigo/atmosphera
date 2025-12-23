@@ -223,7 +223,7 @@ Singleton {
         {
           "path": "~/.config/helix/themes/noctalia.toml"
         }
-      ],
+      ]
     },
     {
       "id": "spicetify",
