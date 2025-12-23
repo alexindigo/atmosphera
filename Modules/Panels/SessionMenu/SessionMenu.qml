@@ -340,6 +340,15 @@ SmartPanel {
     selectPreviousWrapped();
   }
 
+  function onNumberPressed(number) {
+    // Number is 1-based, convert to 0-based index
+    const index = number - 1;
+    if (index >= 0 && index < powerOptions.length) {
+      const option = powerOptions[index];
+      startTimer(option.action);
+    }
+  }
+
   // Countdown timer
   Timer {
     id: countdownTimer
@@ -356,10 +365,31 @@ SmartPanel {
   panelContent: Rectangle {
     id: ui
     color: Color.transparent
+    focus: true
 
     // For large buttons style, use full screen dimensions
     readonly property var contentPreferredWidth: largeButtonsStyle ? (root.screen?.width || root.width || 0) : undefined
     readonly property var contentPreferredHeight: largeButtonsStyle ? (root.screen?.height || root.height || 0) : undefined
+
+    // Focus management
+    Connections {
+      target: root
+      function onOpened() {
+        Qt.callLater(() => {
+                       ui.forceActiveFocus();
+                     });
+      }
+    }
+
+    // Handle number key presses
+    Keys.onPressed: event => {
+                      // Handle number keys 1-9
+                      if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
+                        const number = event.key - Qt.Key_0;
+                        root.onNumberPressed(number);
+                        event.accepted = true;
+                      }
+                    }
 
     // Navigation functions
     function selectFirst() {
@@ -435,6 +465,7 @@ SmartPanel {
             title: modelData.title
             isShutdown: modelData.isShutdown || false
             isSelected: index === selectedIndex
+            number: index + 1
             onClicked: {
               selectedIndex = index;
               startTimer(modelData.action);
@@ -514,6 +545,7 @@ SmartPanel {
               title: modelData.title
               isShutdown: modelData.isShutdown || false
               isSelected: index === selectedIndex
+              number: index + 1
               onClicked: {
                 selectedIndex = index;
                 startTimer(modelData.action);
@@ -553,6 +585,7 @@ SmartPanel {
     property bool pending: false
     property bool isShutdown: false
     property bool isSelected: false
+    property int number: 0
 
     signal clicked
 
@@ -613,10 +646,10 @@ SmartPanel {
       // Text content in the middle
       ColumnLayout {
         anchors.left: iconElement.right
-        anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
+        anchors.right: numberIndicator.visible ? numberIndicator.left : (pendingIndicator.visible ? pendingIndicator.left : parent.right)
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: Style.marginL
-        anchors.rightMargin: pendingIndicator.visible ? Style.marginM : 0
+        anchors.rightMargin: (pendingIndicator.visible || numberIndicator.visible) ? Style.marginM : 0
         spacing: 0
 
         NText {
@@ -628,6 +661,40 @@ SmartPanel {
               return Color.mPrimary;
             if (buttonRoot.isShutdown && !buttonRoot.isSelected && !mouseArea.containsMouse)
               return Color.mError;
+            if (buttonRoot.isSelected || mouseArea.containsMouse)
+              return Color.mOnHover;
+            return Color.mOnSurface;
+          }
+
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutCirc
+            }
+          }
+        }
+      }
+
+      // Number indicator on the right (when not pending)
+      Rectangle {
+        id: numberIndicator
+        anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.rightMargin: pendingIndicator.visible ? Style.marginXS : 0
+        width: 24
+        height: 24
+        radius: Math.min(Style.radiusM, width / 2)
+        color: Qt.alpha(Color.mSurfaceVariant, 0.5)
+        border.width: Style.borderS
+        border.color: Color.mOutline
+        visible: buttonRoot.number > 0 && !buttonRoot.pending
+
+        NText {
+          anchors.centerIn: parent
+          text: buttonRoot.number
+          pointSize: Style.fontSizeS
+          font.weight: Style.fontWeightBold
+          color: {
             if (buttonRoot.isSelected || mouseArea.containsMouse)
               return Color.mOnHover;
             return Color.mOnSurface;
@@ -682,6 +749,7 @@ SmartPanel {
     property bool pending: false
     property bool isShutdown: false
     property bool isSelected: false
+    property int number: 0
 
     signal clicked
 
@@ -803,6 +871,40 @@ SmartPanel {
             return Color.mOnPrimary;
           if (largeButtonRoot.isShutdown && !largeButtonRoot.isSelected && !mouseArea.containsMouse)
             return Color.mError;
+          if (largeButtonRoot.isSelected || mouseArea.containsMouse)
+            return Color.mOnPrimary;
+          return Color.mOnSurface;
+        }
+
+        Behavior on color {
+          ColorAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.OutCirc
+          }
+        }
+      }
+    }
+
+    // Number indicator in top-right corner
+    Rectangle {
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.margins: Style.marginM
+      width: 28
+      height: 28
+      radius: Math.min(Style.radiusM, width / 2)
+      color: Qt.alpha(Color.mSurfaceVariant, 0.7)
+      border.width: Style.borderS
+      border.color: Color.mOutline
+      visible: largeButtonRoot.number > 0 && !largeButtonRoot.pending
+      z: 10
+
+      NText {
+        anchors.centerIn: parent
+        text: largeButtonRoot.number
+        pointSize: Style.fontSizeM
+        font.weight: Style.fontWeightBold
+        color: {
           if (largeButtonRoot.isSelected || mouseArea.containsMouse)
             return Color.mOnPrimary;
           return Color.mOnSurface;
