@@ -580,6 +580,18 @@
       "chat": "Chat",
       "development": "Desarrollo",
       "education": "Educación",
+      "emoji": {
+        "activity": "Actividad",
+        "animals": "Animales",
+        "flags": "Banderas",
+        "food": "Comida y bebida",
+        "nature": "Naturaleza",
+        "objects": "Objetos",
+        "people": "Personas y cuerpo",
+        "recent": "Recientes",
+        "symbols": "Símbolos",
+        "travel": "Viajes y lugares"
+      },
       "game": "Juegos",
       "graphics": "Gráficos",
       "misc": "Varios",

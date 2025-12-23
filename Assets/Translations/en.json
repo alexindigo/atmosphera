@@ -580,6 +580,18 @@
       "chat": "Chat",
       "development": "Development",
       "education": "Education",
+      "emoji": {
+        "activity": "Activity",
+        "animals": "Animals",
+        "flags": "Flags",
+        "food": "Food & Drink",
+        "nature": "Nature",
+        "objects": "Objects",
+        "people": "People & Body",
+        "recent": "Recent",
+        "symbols": "Symbols",
+        "travel": "Travel & Places"
+      },
       "game": "Games",
       "graphics": "Graphics",
       "misc": "Misc",

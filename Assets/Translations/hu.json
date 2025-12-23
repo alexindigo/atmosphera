@@ -580,6 +580,18 @@
       "chat": "Csevegés",
       "development": "Fejlesztés",
       "education": "Oktatás",
+      "emoji": {
+        "activity": "Tevékenység",
+        "animals": "Állatok",
+        "flags": "Zászlók",
+        "food": "Étel és ital",
+        "nature": "Természet",
+        "objects": "Tárgyak",
+        "people": "Emberek és test",
+        "recent": "Legutóbbi",
+        "symbols": "Szimbólumok",
+        "travel": "Utazás és helyek"
+      },
       "game": "Játékok",
       "graphics": "Grafika",
       "misc": "Egyéb",
