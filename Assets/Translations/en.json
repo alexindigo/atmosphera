@@ -849,7 +849,7 @@
         "unavailable": "Power Profile"
       },
       "tooltip": {
-        "action": "Power profile",
+        "action": "Power Profile",
         "disabled": "Install power-profiles-daemon to use power profiles"
       }
     },
@@ -859,13 +859,13 @@
         "stopped": "Record"
       },
       "tooltip": {
-        "action": "Screen recorder"
+        "action": "Screen Recorder"
       }
     },
     "wallpaperSelector": {
       "label": "Wallpaper",
       "tooltip": {
-        "action": "Wallpaper selector"
+        "action": "Wallpaper Selector"
       }
     },
     "wifi": {
