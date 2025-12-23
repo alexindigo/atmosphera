@@ -62,6 +62,7 @@ NIconButton {
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
   visible: count > 0 || !hideWhenZero
+  opacity: (count > 0 || !hideWhenZero) ? 1.0 : 0.0
 
   NPopupContextMenu {
     id: contextMenu
