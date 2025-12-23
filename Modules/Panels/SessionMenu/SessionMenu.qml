@@ -445,16 +445,6 @@ SmartPanel {
       }
     }
 
-    // Handle number key presses
-    Keys.onPressed: event => {
-                      // Handle number keys 1-9
-                      if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
-                        const number = event.key - Qt.Key_0;
-                        root.onNumberPressed(number);
-                        event.accepted = true;
-                      }
-                    }
-
     // Navigation functions
     function selectFirst() {
       root.selectFirst();
@@ -745,17 +735,18 @@ SmartPanel {
         anchors.right: pendingIndicator.visible ? pendingIndicator.left : parent.right
         anchors.verticalCenter: parent.verticalCenter
         anchors.rightMargin: pendingIndicator.visible ? Style.marginXS : 0
-        width: 24
+        width: numberText.width + Style.marginM
         height: 24
-        radius: Math.min(Style.radiusM, width / 2)
+        radius: Math.min(Style.radiusM, height / 2)
         color: Qt.alpha(Color.mSurfaceVariant, 0.5)
         border.width: Style.borderS
         border.color: Color.mOutline
         visible: buttonRoot.number > 0 && !buttonRoot.pending
 
         NText {
+          id: numberText
           anchors.centerIn: parent
-          text: buttonRoot.number
+          text: "Shift+" + buttonRoot.number
           pointSize: Style.fontSizeS
           font.weight: Style.fontWeightBold
           color: {
@@ -954,9 +945,9 @@ SmartPanel {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: Style.marginM
-      width: 28
+      width: largeNumberText.width + Style.marginM
       height: 28
-      radius: Math.min(Style.radiusM, width / 2)
+      radius: Math.min(Style.radiusM, height / 2)
       color: Qt.alpha(Color.mSurfaceVariant, 0.7)
       border.width: Style.borderS
       border.color: Color.mOutline
@@ -964,8 +955,9 @@ SmartPanel {
       z: 10
 
       NText {
+        id: largeNumberText
         anchors.centerIn: parent
-        text: largeButtonRoot.number
+        text: "Shift+" + largeButtonRoot.number
         pointSize: Style.fontSizeM
         font.weight: Style.fontWeightBold
         color: {
