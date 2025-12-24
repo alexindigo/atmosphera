@@ -195,9 +195,9 @@ walker)
     ;;
 
 vicinae)
-    echo "🎨 Applying 'matugen' theme to vicinae..."
+    echo "🎨 Applying noctalia theme to vicinae..."
     # Apply the theme
-    vicinae theme set matugen
+    vicinae theme set noctalia
     ;;
 
 pywalfox)
