@@ -2935,6 +2935,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Verfügbare Netzwerke",
+      "action-required": "Aktion erforderlich",
       "connect": "Verbinden",
       "connected": "Verbunden",
       "disabled": "WLAN ist deaktiviert",
@@ -2946,6 +2947,7 @@
       "forget": "Vergessen",
       "forget-network": "Dieses Netzwerk vergessen?",
       "forgetting": "Wird vergessen...",
+      "frequency": "Frequenz",
       "gateway": "Gateway: Gateway",
       "info": "Info",
       "internet": "Internet",
@@ -2960,8 +2962,15 @@
       "scan-again": "Erneut scannen",
       "searching": "Suche nach nahegelegenen Netzwerken...",
       "security": "Sicherheit",
-      "signal": "Signal",
       "title": "WLAN"
+    },
+    "signal": {
+      "excellent": "Ausgezeichnet",
+      "very-good": "Sehr gut",
+      "good": "Gut",
+      "fair": "Mäßig",
+      "weak": "Schwach",
+      "poor": "Schlecht"
     }
   }
 }

@@ -2935,6 +2935,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Доступні мережі",
+      "action-required": "Вимагається дія",
       "connect": "Підключити",
       "connected": "Підключено",
       "disabled": "Wi-Fi вимкнено",
@@ -2946,6 +2947,7 @@
       "forget": "Забути",
       "forget-network": "Забути цю мережу?",
       "forgetting": "Забування...",
+      "frequency": "Частота",
       "gateway": "Шлюз",
       "info": "Інформація",
       "internet": "Інтернет",
@@ -2960,8 +2962,15 @@
       "scan-again": "Сканувати знову",
       "searching": "Пошук близьких мереж...",
       "security": "Безпека",
-      "signal": "Сигнал",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "Відмінний",
+      "very-good": "Дуже хороший",
+      "good": "Хороший",
+      "fair": "Середній",
+      "weak": "Слабкий",
+      "poor": "Поганий"
     }
   }
 }

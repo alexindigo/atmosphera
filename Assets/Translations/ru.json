@@ -2935,6 +2935,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Доступные сети",
+      "action-required": "Требуется действие",
       "connect": "Подключить",
       "connected": "Подключено",
       "disabled": "Wi-Fi отключен",
@@ -2946,6 +2947,7 @@
       "forget": "Забыть",
       "forget-network": "Забыть эту сеть?",
       "forgetting": "Забывание...",
+      "frequency": "Частота",
       "gateway": "Шлюз",
       "info": "Информация",
       "internet": "Интернет",
@@ -2960,8 +2962,15 @@
       "scan-again": "Сканировать снова",
       "searching": "Поиск ближайших сетей...",
       "security": "Безопасность",
-      "signal": "Сигнал",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "Отличный",
+      "very-good": "Очень хороший",
+      "good": "Хороший",
+      "fair": "Средний",
+      "weak": "Слабый",
+      "poor": "Плохой"
     }
   }
 }

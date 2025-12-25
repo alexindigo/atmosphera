@@ -2935,6 +2935,7 @@
   "wifi": {
     "panel": {
       "available-networks": "可用网络",
+      "action-required": "需要动作",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
@@ -2946,6 +2947,7 @@
       "forget": "忘记",
       "forget-network": "忘记此网络？",
       "forgetting": "正在忘记...",
+      "frequency": "频率",
       "gateway": "网关",
       "info": "信息",
       "internet": "互联网",
@@ -2960,8 +2962,15 @@
       "scan-again": "重新扫描",
       "searching": "正在搜索附近网络...",
       "security": "安全",
-      "signal": "信号",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "优秀",
+      "very-good": "非常好",
+      "good": "好",
+      "fair": "一般",
+      "weak": "弱",
+      "poor": "差"
     }
   }
 }

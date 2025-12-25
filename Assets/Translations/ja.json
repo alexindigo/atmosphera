@@ -2935,6 +2935,7 @@
   "wifi": {
     "panel": {
       "available-networks": "利用可能なネットワーク",
+      "action-required": "アクションが必要",
       "connect": "接続",
       "connected": "接続済み",
       "disabled": "Wi-Fi は無効です",
@@ -2946,6 +2947,7 @@
       "forget": "削除",
       "forget-network": "このネットワーク設定を削除しますか？",
       "forgetting": "削除中...",
+      "frequency": "周波数",
       "gateway": "ゲートウェイ",
       "info": "情報 (Jōhō)",
       "internet": "インターネット",
@@ -2960,8 +2962,15 @@
       "scan-again": "再スキャン",
       "searching": "近くのネットワークを検索中...",
       "security": "セキュリティ",
-      "signal": "信号 (Shingō)",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "優秀",
+      "very-good": "とても良い",
+      "good": "良い",
+      "fair": "普通",
+      "weak": "弱い",
+      "poor": "悪い"
     }
   }
 }
