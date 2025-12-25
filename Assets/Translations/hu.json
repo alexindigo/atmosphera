@@ -1201,14 +1201,18 @@
             "description": "{filepath} írása"
           },
           "code": {
-            "description": "{filepath} írása — A HyprLuna-témát kézileg kell telepíteni és aktiválni"
+            "description": "{filepath} írása",
+            "description-detected": "Alapértelmezett profilra alkalmazva. Észlelve: {clients}",
+            "description-missing": "Nem észlelt kódszerkesztő (VSCode vagy VSCodium)"
           },
           "description": "Alkalmazásspecifikus téma.",
           "discord": {
-            "description": "{filepath} írása a(z) {client} számára — A HyprLuna témát manuálisan kell aktiválni"
+            "description": "{filepath} írása a(z) {client} számára — A témát manuálisan kell aktiválni",
+            "description-detected": "Észlelve: {clients}",
+            "description-missing": "Nem észlelt Discord kliens"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Alkalmazás manuálisan: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "{filepath} írása és újratöltés."
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Szabályozza, hogy mely értesítések kerüljenek mentésre az előzményekbe a sürgősségi szintjük alapján.",
-          "label": "Előzmények"
+        "critical-urgency": {
+          "description": "Kritikus prioritású értesítések mentése az előzményekbe.",
+          "label": "Kritikus sürgősség mentése az előzményekbe"
         },
         "low-urgency": {
           "description": "Alacsony prioritású értesítések mentése az előzményekbe.",
@@ -1933,9 +1937,9 @@
           "description": "Normál prioritású értesítések mentése az előzményekbe.",
           "label": "Normál sürgősség mentése az előzményekbe"
         },
-        "critical-urgency": {
-          "description": "Kritikus prioritású értesítések mentése az előzményekbe.",
-          "label": "Kritikus sürgősség mentése az előzményekbe"
+        "section": {
+          "description": "Szabályozza, hogy mely értesítések kerüljenek mentésre az előzményekbe a sürgősségi szintjük alapján.",
+          "label": "Előzmények"
         }
       },
       "monitors": {
@@ -2291,6 +2295,10 @@
       "show-header": {
         "description": "A cím és a bezárás gomb megjelenítése a munkamenet menü tetején.",
         "label": "Fejléc megjelenítése"
+      },
+      "show-number-labels": {
+        "description": "Számcímkék (1-2-3-4...) megjelenítése a gombokon és számbillentyűk engedélyezése a gyors kiválasztáshoz.",
+        "label": "Számcímkék megjelenítése"
       },
       "title": "Munkamenet menü"
     },

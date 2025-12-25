@@ -1201,14 +1201,18 @@
             "description": "Écrire {filepath}"
           },
           "code": {
-            "description": "Écrire {filepath} — le thème HyprLuna doit être installé et activé manuellement"
+            "description": "Écrire {filepath}",
+            "description-detected": "Appliqué au profil par défaut. Détecté : {clients}",
+            "description-missing": "Aucun éditeur de code détecté (VSCode ou VSCodium)"
           },
           "description": "Thématisation spécifique aux applications.",
           "discord": {
-            "description": "Écrire {filepath} pour {client} — le thème HyprLuna doit être installé et activé manuellement"
+            "description": "Écrire {filepath} pour {client} — Le thème doit être activé manuellement",
+            "description-detected": "Détecté : {clients}",
+            "description-missing": "Aucun client Discord détecté"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Appliquer manuellement: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "Écrire {filepath} et recharger"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Contrôler quelles notifications sont enregistrées dans l'historique en fonction de leur niveau d'urgence.",
-          "label": "Historique"
+        "critical-urgency": {
+          "description": "Enregistrer les notifications de priorité critique dans l'historique.",
+          "label": "Enregistrer l'urgence critique dans l'historique"
         },
         "low-urgency": {
           "description": "Enregistrer les notifications de priorité faible dans l'historique.",
@@ -1933,9 +1937,9 @@
           "description": "Enregistrer les notifications de priorité normale dans l'historique.",
           "label": "Enregistrer l'urgence normale dans l'historique"
         },
-        "critical-urgency": {
-          "description": "Enregistrer les notifications de priorité critique dans l'historique.",
-          "label": "Enregistrer l'urgence critique dans l'historique"
+        "section": {
+          "description": "Contrôler quelles notifications sont enregistrées dans l'historique en fonction de leur niveau d'urgence.",
+          "label": "Historique"
         }
       },
       "monitors": {
@@ -2291,6 +2295,10 @@
       "show-header": {
         "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
         "label": "Afficher l'en-tête"
+      },
+      "show-number-labels": {
+        "description": "Afficher les numéros (1-2-3-4...) sur les boutons et activer les raccourcis clavier numériques pour une sélection rapide.",
+        "label": "Afficher les numéros"
       },
       "title": "Menu de session"
     },

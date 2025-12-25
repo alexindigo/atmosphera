@@ -290,6 +290,7 @@
     "position": "center",
     "showHeader": true,
     "largeButtonsStyle": false,
+    "showNumberLabels": true,
     "powerOptions": [
       {
         "action": "lock",

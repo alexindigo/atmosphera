@@ -1201,14 +1201,18 @@
             "description": "{filepath} dosyasına yaz"
           },
           "code": {
-            "description": "{filepath} dosyasına yaz — HyprLuna temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir"
+            "description": "{filepath} dosyasına yaz",
+            "description-detected": "Varsayılan profile uygulandı. Algılandı: {clients}",
+            "description-missing": "Kod editörü algılanmadı (VSCode veya VSCodium)"
           },
           "description": "Uygulamaya özel temalandırma.",
           "discord": {
-            "description": "{client} için {filepath} dosyasına yaz — HyprLuna temasının manuel olarak etkinleştirilmesi gerekir"
+            "description": "{client} için {filepath} dosyasına yaz — Temanın manuel olarak etkinleştirilmesi gerekir",
+            "description-detected": "Algılandı: {clients}",
+            "description-missing": "Discord istemcisi algılanmadı"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standart: ~/.emacs.d/themes/noctalia.el<br>Manuel olarak uygula: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standart: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "{filepath} dosyasına yaz ve yeniden yükle"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Aciliyet seviyelerine göre hangi bildirimlerin geçmişe kaydedileceğini kontrol edin.",
-          "label": "Geçmiş"
+        "critical-urgency": {
+          "description": "Kritik öncelikli bildirimleri geçmişe kaydet.",
+          "label": "Kritik aciliyeti geçmişe kaydet"
         },
         "low-urgency": {
           "description": "Düşük öncelikli bildirimleri geçmişe kaydet.",
@@ -1933,9 +1937,9 @@
           "description": "Normal öncelikli bildirimleri geçmişe kaydet.",
           "label": "Normal aciliyeti geçmişe kaydet"
         },
-        "critical-urgency": {
-          "description": "Kritik öncelikli bildirimleri geçmişe kaydet.",
-          "label": "Kritik aciliyeti geçmişe kaydet"
+        "section": {
+          "description": "Aciliyet seviyelerine göre hangi bildirimlerin geçmişe kaydedileceğini kontrol edin.",
+          "label": "Geçmiş"
         }
       },
       "monitors": {
@@ -2291,6 +2295,10 @@
       "show-header": {
         "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
         "label": "Başlığı göster"
+      },
+      "show-number-labels": {
+        "description": "Düğmelerde sayı etiketleri (1-2-3-4...) göster ve hızlı seçim için sayı tuş kısayollarını etkinleştir.",
+        "label": "Sayı etiketlerini göster"
       },
       "title": "Oturum Menüsü"
     },

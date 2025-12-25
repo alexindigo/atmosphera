@@ -523,6 +523,7 @@ Singleton {
       property string position: "center"
       property bool showHeader: true
       property bool largeButtonsStyle: false
+      property bool showNumberLabels: true
       property list<var> powerOptions: [
         {
           "action": "lock",

@@ -1201,14 +1201,18 @@
             "description": "{filepath} を書き込みます。"
           },
           "code": {
-            "description": "{filepath} を書き込みます。HyprLuna テーマを手動でインストールして有効化する必要があります。"
+            "description": "{filepath} を書き込みます。",
+            "description-detected": "デフォルトプロファイルに適用されました。検出: {clients}",
+            "description-missing": "コードエディタが検出されませんでした（VSCode または VSCodium）"
           },
           "description": "アプリケーションごとのテーマ設定",
           "discord": {
-            "description": "{client} 用に {filepath} を書き込みます。HyprLuna テーマを手動でインストールして有効化する必要があります。"
+            "description": "{client} 用に {filepath} を書き込みます。テーマを手動で有効化する必要があります。",
+            "description-detected": "検出: {clients}",
+            "description-missing": "Discord クライアントが検出されませんでした"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>標準: ~/.emacs.d/themes/noctalia.el<br>手動で適用: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>標準: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "{filepath} を書き込み、リロードします。"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "緊急度レベルに基づいて、履歴に保存する通知を制御します。",
-          "label": "履歴"
+        "critical-urgency": {
+          "description": "緊急優先度の通知を履歴に保存します。",
+          "label": "緊急度: 重大を履歴に保存"
         },
         "low-urgency": {
           "description": "低優先度の通知を履歴に保存します。",
@@ -1933,9 +1937,9 @@
           "description": "通常優先度の通知を履歴に保存します。",
           "label": "通常緊急度を履歴に保存"
         },
-        "critical-urgency": {
-          "description": "緊急優先度の通知を履歴に保存します。",
-          "label": "緊急度: 重大を履歴に保存"
+        "section": {
+          "description": "緊急度レベルに基づいて、履歴に保存する通知を制御します。",
+          "label": "履歴"
         }
       },
       "monitors": {
@@ -2291,6 +2295,10 @@
       "show-header": {
         "description": "セッションメニューの上部にタイトルと閉じるボタンを表示します。",
         "label": "ヘッダーを表示"
+      },
+      "show-number-labels": {
+        "description": "ボタンに数字ラベル（1-2-3-4...）を表示し、クイック選択用の数字キーバインドを有効にします。",
+        "label": "数字ラベルを表示"
       },
       "title": "セッションメニュー"
     },

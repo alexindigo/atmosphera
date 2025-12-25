@@ -1201,14 +1201,18 @@
             "description": "写入 {filepath}"
           },
           "code": {
-            "description": "写入 {filepath}，Hyprluna 主题需要手动安装和激活"
+            "description": "写入 {filepath}",
+            "description-detected": "已应用到默认配置文件。检测到: {clients}",
+            "description-missing": "未检测到代码编辑器（VSCode 或 VSCodium）"
           },
           "description": "应用程序特定主题",
           "discord": {
-            "description": "为 {client} 写入 {filepath}，Hyprluna 主题需要手动安装和激活"
+            "description": "为 {client} 写入 {filepath}，主题需要手动激活",
+            "description-detected": "检测到: {clients}",
+            "description-missing": "未检测到 Discord 客户端"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el<br>手动应用: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "写入 {filepath} 并重新加载"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "根据紧急级别控制哪些通知保存到历史记录。",
-          "label": "历史记录"
+        "critical-urgency": {
+          "description": "将关键优先级通知保存到历史记录。",
+          "label": "将高紧急度保存到历史记录"
         },
         "low-urgency": {
           "description": "将低优先级通知保存到历史记录。",
@@ -1933,9 +1937,9 @@
           "description": "将正常优先级通知保存到历史记录。",
           "label": "将正常紧急度保存到历史记录"
         },
-        "critical-urgency": {
-          "description": "将关键优先级通知保存到历史记录。",
-          "label": "将高紧急度保存到历史记录"
+        "section": {
+          "description": "根据紧急级别控制哪些通知保存到历史记录。",
+          "label": "历史记录"
         }
       },
       "monitors": {
@@ -2291,6 +2295,10 @@
       "show-header": {
         "description": "在会话菜单顶部显示标题和关闭按钮。",
         "label": "显示标题"
+      },
+      "show-number-labels": {
+        "description": "在按钮上显示数字标签（1-2-3-4...）并启用数字快捷键以快速选择。",
+        "label": "显示数字标签"
       },
       "title": "会话菜单"
     },

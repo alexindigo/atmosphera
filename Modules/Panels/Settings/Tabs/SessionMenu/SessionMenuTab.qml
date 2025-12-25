@@ -178,6 +178,16 @@ ColumnLayout {
     onToggled: checked => Settings.data.sessionMenu.largeButtonsStyle = checked
   }
 
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("settings.session-menu.show-number-labels.label")
+    description: I18n.tr("settings.session-menu.show-number-labels.description")
+    checked: Settings.data.sessionMenu.showNumberLabels !== false
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("sessionMenu.showNumberLabels") ?? true
+    onToggled: checked => Settings.data.sessionMenu.showNumberLabels = checked
+  }
+
   NComboBox {
     label: I18n.tr("settings.session-menu.position.label")
     description: I18n.tr("settings.session-menu.position.description")
