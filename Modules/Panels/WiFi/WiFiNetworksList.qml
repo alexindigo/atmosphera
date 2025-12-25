@@ -111,7 +111,7 @@ NBox {
             NIcon {
               icon: NetworkService.signalIcon(modelData.signal, modelData.connected)
               pointSize: Style.fontSizeXXL
-              color: modelData.connected ? Color.mPrimary : Color.mOnSurface
+              color: modelData.connected ? (NetworkService.internetConnectivity ? Color.mPrimary : Color.mError) : Color.mOnSurface
             }
 
             ColumnLayout {
@@ -150,7 +150,7 @@ NBox {
                 // Status badges
                 Rectangle {
                   visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-                  color: Color.mPrimary
+                  color: NetworkService.internetConnectivity ? Color.mPrimary : Color.mError
                   radius: height * 0.5
                   width: connectedText.implicitWidth + (Style.marginS * 2)
                   height: connectedText.implicitHeight + (Style.marginXXS * 2)
@@ -158,7 +158,7 @@ NBox {
                   NText {
                     id: connectedText
                     anchors.centerIn: parent
-                    text: I18n.tr("wifi.panel.connected")
+                    text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.connected") : I18n.tr("wifi.panel.internet-limited")
                     pointSize: Style.fontSizeXXS
                     color: Color.mOnPrimary
                   }
@@ -369,18 +369,18 @@ NBox {
                 Layout.fillWidth: true
                 spacing: Style.marginXS
                 NIcon {
-                  icon: NetworkService.internetConnectivity ? "world" : "world-off"
+                  icon: "router"
                   pointSize: Style.fontSizeXS
                   color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.internet"))
+                    onEntered: TooltipService.show(parent, NetworkService.activeWifiDetails.band)
                     onExited: TooltipService.hide()
                   }
                 }
                 NText {
-                  text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited")
+                  text: NetworkService.activeWifiDetails.band
                   pointSize: Style.fontSizeXS
                   color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   Layout.fillWidth: true
