@@ -131,7 +131,7 @@ NBox {
                 spacing: Style.marginXS
 
                 NText {
-                  text: I18n.tr("wifi.panel.signal") + ": " + modelData.signal + "%"
+                  text: NetworkService.getSignalStrengthLabel(modelData.signal) + " (" + modelData.signal + "%)"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                 }
@@ -375,7 +375,7 @@ NBox {
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, NetworkService.activeWifiDetails.band)
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.frequency"))
                     onExited: TooltipService.hide()
                   }
                 }
