@@ -16,8 +16,23 @@ Popup {
 
   signal updateWidgetSettings(string section, int index, var settings)
 
+  // Helper function to find screen from parent chain
+  function findScreen() {
+    var item = parent;
+    while (item) {
+      if (item.screen !== undefined) {
+        return item.screen;
+      }
+      item = item.parent;
+    }
+    return null;
+  }
+
+  readonly property var screen: findScreen()
+  readonly property real maxHeight: screen ? screen.height * 0.9 : (parent ? parent.height * 0.9 : 800)
+
   width: Math.max(content.implicitWidth + padding * 2, 500)
-  height: content.implicitHeight + padding * 2
+  height: Math.min(content.implicitHeight + padding * 2, maxHeight)
   padding: Style.marginXL
   modal: true
   anchors.centerIn: parent
@@ -37,12 +52,14 @@ Popup {
 
   contentItem: ColumnLayout {
     id: content
-    width: parent.width
+    anchors.fill: parent
     spacing: Style.marginM
 
     // Title
     RowLayout {
+      id: titleRow
       Layout.fillWidth: true
+      Layout.preferredHeight: implicitHeight
 
       NText {
         text: I18n.tr("system.widget-settings-title", {
@@ -63,20 +80,36 @@ Popup {
 
     // Separator
     Rectangle {
+      id: separator
       Layout.fillWidth: true
       Layout.preferredHeight: 1
       color: Color.mOutline
     }
 
-    Loader {
-      id: settingsLoader
+    // Scrollable settings area
+    NScrollView {
+      id: scrollView
       Layout.fillWidth: true
+      Layout.fillHeight: true
+      Layout.minimumHeight: 100
+
+      ColumnLayout {
+        width: scrollView.width
+        spacing: Style.marginM
+
+        Loader {
+          id: settingsLoader
+          Layout.fillWidth: true
+        }
+      }
     }
 
     // Action buttons
     RowLayout {
+      id: buttonRow
       Layout.fillWidth: true
       Layout.topMargin: Style.marginM
+      Layout.preferredHeight: implicitHeight
       spacing: Style.marginM
 
       Item {
