@@ -371,7 +371,6 @@ NBox {
                 NIcon {
                   icon: "router"
                   pointSize: Style.fontSizeXS
-                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -382,7 +381,6 @@ NBox {
                 NText {
                   text: NetworkService.activeWifiDetails.band
                   pointSize: Style.fontSizeXS
-                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   Layout.fillWidth: true
                   wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                   elide: Text.ElideNone
