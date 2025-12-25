@@ -158,7 +158,21 @@ NBox {
                   NText {
                     id: connectedText
                     anchors.centerIn: parent
-                    text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.connected") : I18n.tr("wifi.panel.internet-limited")
+                    text: {
+                      switch (NetworkService.networkConnectivity) {
+                      case "full":
+                        return I18n.tr("wifi.panel.connected");
+                      case "limited":
+                        return I18n.tr("wifi.panel.internet-limited");
+                      case "portal":  // Where Captive Portal is detected (User intervention needed)
+                        return I18n.tr("wifi.panel.action-required");
+                        // I assume unknown is for connecting/disconnecting state where connectivity hasn't been determined yet (Shouldn't be visible for long enough to matter)
+                        // and none is for no connectivity at all.
+                        // None and Unknown will return direct output of NetworkService.networkConnectivity
+                      default:
+                        return NetworkService.networkConnectivity;
+                      }
+                    }
                     pointSize: Style.fontSizeXXS
                     color: Color.mOnPrimary
                   }
@@ -337,8 +351,7 @@ NBox {
               }
 
               // Icons only; values have labels as tooltips on hover
-
-              // Row 1: Security | Internet
+              // Row 1: Security | Band
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginXS
