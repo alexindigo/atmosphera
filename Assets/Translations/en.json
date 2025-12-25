@@ -1201,14 +1201,18 @@
             "description": "Write {filepath}"
           },
           "code": {
-            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually"
+            "description": "Write {filepath}",
+            "description-detected": "Applied to default profile. Detected: {clients}",
+            "description-missing": "No Code editor detected (VSCode or VSCodium)"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually"
+            "description": "Write {filepath} for {client} — The theme needs to be activated manually",
+            "description-detected": "Detected: {clients}",
+            "description-missing": "No Discord client detected"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "Write {filepath} and reload."
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Control which notifications are saved to history based on their urgency level.",
-          "label": "History"
+        "critical-urgency": {
+          "description": "Save critical priority notifications to history.",
+          "label": "Save critical urgency to history"
         },
         "low-urgency": {
           "description": "Save low priority notifications to history.",
@@ -1933,9 +1937,9 @@
           "description": "Save normal priority notifications to history.",
           "label": "Save normal urgency to history"
         },
-        "critical-urgency": {
-          "description": "Save critical priority notifications to history.",
-          "label": "Save critical urgency to history"
+        "section": {
+          "description": "Control which notifications are saved to history based on their urgency level.",
+          "label": "History"
         }
       },
       "monitors": {

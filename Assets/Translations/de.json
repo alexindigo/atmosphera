@@ -1201,14 +1201,18 @@
             "description": "Schreibe {filepath}"
           },
           "code": {
-            "description": "Schreibe {filepath} — das HyprLuna-Theme muss manuell installiert und aktiviert werden"
+            "description": "Schreibe {filepath}",
+            "description-detected": "Auf Standardprofil angewendet. Erkannt: {clients}",
+            "description-missing": "Kein Code-Editor erkannt (VSCode oder VSCodium)"
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
-            "description": "Schreibe {filepath} für {client} — das HyprLuna-Theme muss manuell installiert und aktiviert werden"
+            "description": "Schreibe {filepath} für {client} — Das Theme muss manuell aktiviert werden",
+            "description-detected": "Erkannt: {clients}",
+            "description-missing": "Kein Discord-Client erkannt"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Manuell anwenden: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "Schreibe {filepath} und lade neu"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Steuern, welche Benachrichtigungen basierend auf ihrer Dringlichkeitsstufe im Verlauf gespeichert werden.",
-          "label": "Verlauf"
+        "critical-urgency": {
+          "description": "Kritische Prioritätsbenachrichtigungen im Verlauf speichern.",
+          "label": "Kritische Dringlichkeit im Verlauf speichern"
         },
         "low-urgency": {
           "description": "Niedrige Prioritätsbenachrichtigungen im Verlauf speichern.",
@@ -1933,9 +1937,9 @@
           "description": "Normale Prioritätsbenachrichtigungen im Verlauf speichern.",
           "label": "Normale Dringlichkeit im Verlauf speichern"
         },
-        "critical-urgency": {
-          "description": "Kritische Prioritätsbenachrichtigungen im Verlauf speichern.",
-          "label": "Kritische Dringlichkeit im Verlauf speichern"
+        "section": {
+          "description": "Steuern, welche Benachrichtigungen basierend auf ihrer Dringlichkeitsstufe im Verlauf gespeichert werden.",
+          "label": "Verlauf"
         }
       },
       "monitors": {

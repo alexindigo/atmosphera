@@ -1201,14 +1201,18 @@
             "description": "Записати {filepath}"
           },
           "code": {
-            "description": "Записати {filepath} — тему HyprLuna потрібно встановити та активувати вручну"
+            "description": "Записати {filepath}",
+            "description-detected": "Застосовано до профілю за замовчуванням. Виявлено: {clients}",
+            "description-missing": "Редактор коду не виявлено (VSCode або VSCodium)"
           },
           "description": "Оформлення окремих застосункiв.",
           "discord": {
-            "description": "Записати {filepath} для {client} — тему HyprLuna потрібно активувати вручну"
+            "description": "Записати {filepath} для {client} — тему потрібно активувати вручну",
+            "description-detected": "Виявлено: {clients}",
+            "description-missing": "Клієнт Discord не виявлено"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el<br>Застосувати вручну: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "Записати {filepath} та перезавантажити"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Керування тим, які сповіщення зберігаються в історії залежно від рівня терміновості.",
-          "label": "Історія"
+        "critical-urgency": {
+          "description": "Зберігати сповіщення з критичним пріоритетом в історії.",
+          "label": "Зберігати критичну терміновість в історії"
         },
         "low-urgency": {
           "description": "Зберігати сповіщення з низьким пріоритетом в історії.",
@@ -1933,9 +1937,9 @@
           "description": "Зберігати сповіщення з нормальним пріоритетом в історії.",
           "label": "Зберігати нормальну терміновість в історії"
         },
-        "critical-urgency": {
-          "description": "Зберігати сповіщення з критичним пріоритетом в історії.",
-          "label": "Зберігати критичну терміновість в історії"
+        "section": {
+          "description": "Керування тим, які сповіщення зберігаються в історії залежно від рівня терміновості.",
+          "label": "Історія"
         }
       },
       "monitors": {

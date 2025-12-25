@@ -1201,14 +1201,18 @@
             "description": "Escreva em {filepath}"
           },
           "code": {
-            "description": "Escreva em {filepath} — o tema HyprLuna precisa ser instalado e ativado manualmente"
+            "description": "Escreva em {filepath}",
+            "description-detected": "Aplicado ao perfil padrão. Detectado: {clients}",
+            "description-missing": "Nenhum editor de código detectado (VSCode ou VSCodium)"
           },
           "description": "Tematização específica de aplicativos.",
           "discord": {
-            "description": "Escrever {filepath} para {client} — o tema HyprLuna precisa ser instalado e ativado manualmente"
+            "description": "Escrever {filepath} para {client} — O tema precisa ser ativado manualmente",
+            "description-detected": "Detectado: {clients}",
+            "description-missing": "Nenhum cliente Discord detectado"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el<br>Aplicar manualmente: (load-theme 'noctalia t)"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
             "description": "Escrever {filepath} e recarregar"
@@ -1921,9 +1925,9 @@
         }
       },
       "history": {
-        "section": {
-          "description": "Controlar quais notificações são salvas no histórico com base no nível de urgência.",
-          "label": "Histórico"
+        "critical-urgency": {
+          "description": "Salvar notificações de prioridade crítica no histórico.",
+          "label": "Salvar urgência crítica no histórico"
         },
         "low-urgency": {
           "description": "Salvar notificações de prioridade baixa no histórico.",
@@ -1933,9 +1937,9 @@
           "description": "Salvar notificações de prioridade normal no histórico.",
           "label": "Salvar urgência normal no histórico"
         },
-        "critical-urgency": {
-          "description": "Salvar notificações de prioridade crítica no histórico.",
-          "label": "Salvar urgência crítica no histórico"
+        "section": {
+          "description": "Controlar quais notificações são salvas no histórico com base no nível de urgência.",
+          "label": "Histórico"
         }
       },
       "monitors": {

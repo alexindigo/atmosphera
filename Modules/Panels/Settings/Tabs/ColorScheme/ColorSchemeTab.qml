@@ -720,7 +720,9 @@ ColumnLayout {
               var client = ProgramCheckerService.availableDiscordClients[i];
               clientInfo.push(client.name.charAt(0).toUpperCase() + client.name.slice(1));
             }
-            return "Detected: " + clientInfo.join(", ");
+            return I18n.tr("settings.color-scheme.templates.programs.discord.description-detected", {
+                             "clients": clientInfo.join(", ")
+                           });
           }
         }
         Layout.fillWidth: true
@@ -786,7 +788,9 @@ ColumnLayout {
               var clientName = client.name === "code" ? "VSCode" : "VSCodium";
               clientInfo.push(clientName);
             }
-            return "Applied to default profile. Detected: " + clientInfo.join(", ");
+            return I18n.tr("settings.color-scheme.templates.programs.code.description-detected", {
+                             "clients": clientInfo.join(", ")
+                           });
           }
         }
         Layout.fillWidth: true
