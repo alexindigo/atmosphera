@@ -202,7 +202,7 @@ BluetoothAgent {
     id: discoveryTimer
     interval: 1000
     repeat: false
-    onTriggered: adapter.discovering = true
+    onTriggered: adapter?.discovering = true
   }
 
   Connections {
