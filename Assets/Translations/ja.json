@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "利用可能なネットワーク",
       "action-required": "アクションが必要",
+      "available-networks": "利用可能なネットワーク",
       "connect": "接続",
       "connected": "接続済み",
       "disabled": "Wi-Fi は無効です",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "優秀",
-      "very-good": "とても良い",
-      "good": "良い",
       "fair": "普通",
-      "weak": "弱い",
-      "poor": "悪い"
+      "good": "良い",
+      "poor": "悪い",
+      "very-good": "とても良い",
+      "weak": "弱い"
     }
   }
 }

@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Réseaux disponibles",
       "action-required": "Action requise",
+      "available-networks": "Réseaux disponibles",
       "connect": "Connecter",
       "connected": "Connecté",
       "disabled": "Le Wi-Fi est désactivé",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Excellent",
-      "very-good": "Very Good",
-      "good": "Good",
       "fair": "Fair",
-      "weak": "Weak",
-      "poor": "Poor"
+      "good": "Good",
+      "poor": "Poor",
+      "very-good": "Very Good",
+      "weak": "Weak"
     }
   }
 }

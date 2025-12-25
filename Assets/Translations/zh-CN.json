@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "可用网络",
       "action-required": "需要动作",
+      "available-networks": "可用网络",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "优秀",
-      "very-good": "非常好",
-      "good": "好",
       "fair": "一般",
-      "weak": "弱",
-      "poor": "差"
+      "good": "好",
+      "poor": "差",
+      "very-good": "非常好",
+      "weak": "弱"
     }
   }
 }

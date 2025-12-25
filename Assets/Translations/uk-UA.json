@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Доступні мережі",
       "action-required": "Вимагається дія",
+      "available-networks": "Доступні мережі",
       "connect": "Підключити",
       "connected": "Підключено",
       "disabled": "Wi-Fi вимкнено",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Відмінний",
-      "very-good": "Дуже хороший",
-      "good": "Хороший",
       "fair": "Середній",
-      "weak": "Слабкий",
-      "poor": "Поганий"
+      "good": "Хороший",
+      "poor": "Поганий",
+      "very-good": "Дуже хороший",
+      "weak": "Слабкий"
     }
   }
 }

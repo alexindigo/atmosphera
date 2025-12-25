@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Beschikbare netwerken",
       "action-required": "Actie vereist",
+      "available-networks": "Beschikbare netwerken",
       "connect": "Verbinden",
       "connected": "Verbonden",
       "disabled": "Wi-Fi is uitgeschakeld",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Uitstekend",
-      "very-good": "Erg goed",
-      "good": "Goed",
       "fair": "Redelijk",
-      "weak": "Zwak",
-      "poor": "Slecht"
+      "good": "Goed",
+      "poor": "Slecht",
+      "very-good": "Erg goed",
+      "weak": "Zwak"
     }
   }
 }

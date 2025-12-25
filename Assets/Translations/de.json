@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Verfügbare Netzwerke",
       "action-required": "Aktion erforderlich",
+      "available-networks": "Verfügbare Netzwerke",
       "connect": "Verbinden",
       "connected": "Verbunden",
       "disabled": "WLAN ist deaktiviert",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Ausgezeichnet",
-      "very-good": "Sehr gut",
-      "good": "Gut",
       "fair": "Mäßig",
-      "weak": "Schwach",
-      "poor": "Schlecht"
+      "good": "Gut",
+      "poor": "Schlecht",
+      "very-good": "Sehr gut",
+      "weak": "Schwach"
     }
   }
 }

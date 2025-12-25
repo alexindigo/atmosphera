@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Доступные сети",
       "action-required": "Требуется действие",
+      "available-networks": "Доступные сети",
       "connect": "Подключить",
       "connected": "Подключено",
       "disabled": "Wi-Fi отключен",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Отличный",
-      "very-good": "Очень хороший",
-      "good": "Хороший",
       "fair": "Средний",
-      "weak": "Слабый",
-      "poor": "Плохой"
+      "good": "Хороший",
+      "poor": "Плохой",
+      "very-good": "Очень хороший",
+      "weak": "Слабый"
     }
   }
 }

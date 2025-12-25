@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Elérhető hálózatok",
       "action-required": "Szukseges akció",
+      "available-networks": "Elérhető hálózatok",
       "connect": "Csatlakozás",
       "connected": "Csatlakozva",
       "disabled": "A Wi‑Fi ki van kapcsolva",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Kiválóság",
-      "very-good": "Nagyon jó",
-      "good": "Jó",
       "fair": "Közepes",
-      "weak": "Gyenge",
-      "poor": "Rossz"
+      "good": "Jó",
+      "poor": "Rossz",
+      "very-good": "Nagyon jó",
+      "weak": "Gyenge"
     }
   }
 }

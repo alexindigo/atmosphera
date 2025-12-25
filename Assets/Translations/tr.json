@@ -2945,8 +2945,8 @@
   },
   "wifi": {
     "panel": {
-      "available-networks": "Kullanılabilir Ağlar",
       "action-required": "Eylem gerekiyor",
+      "available-networks": "Kullanılabilir Ağlar",
       "connect": "Bağlan",
       "connected": "Bağlı",
       "disabled": "Kablosuz Bağlantı devre dışı",
@@ -2977,11 +2977,11 @@
     },
     "signal": {
       "excellent": "Mükemmel",
-      "very-good": "Çok İyi",
-      "good": "İyi",
       "fair": "Orta",
-      "weak": "Zayıf",
-      "poor": "Kötü"
+      "good": "İyi",
+      "poor": "Kötü",
+      "very-good": "Çok İyi",
+      "weak": "Zayıf"
     }
   }
 }

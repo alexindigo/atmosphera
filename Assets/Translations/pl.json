@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analogowy",
+          "binary": "Binarny",
           "description": "Wybierz styl wyświetlania zegara.",
           "digital": "Cyfrowy",
           "label": "Styl zegara",
@@ -2944,6 +2945,7 @@
   },
   "wifi": {
     "panel": {
+      "action-required": "Wymagane działanie.",
       "available-networks": "Dostępne sieci",
       "connect": "Połącz",
       "connected": "Połączono",
@@ -2956,6 +2958,7 @@
       "forget": "Zapomnij",
       "forget-network": "Zapomnieć tę sieć?",
       "forgetting": "Zapominanie...",
+      "frequency": "Częstotliwość",
       "gateway": "Brama",
       "info": "Informacje",
       "internet": "Internet",
@@ -2970,8 +2973,15 @@
       "scan-again": "Skanuj ponownie",
       "searching": "Szukanie pobliskich sieci...",
       "security": "Bezpieczeństwo",
-      "signal": "Sygnał",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "Doskonale.",
+      "fair": "uczciwy, sprawiedliwy, jasny, targi",
+      "good": "Dobrze.",
+      "poor": "Biedny",
+      "very-good": "Bardzo dobrze",
+      "weak": "Słaby"
     }
   }
 }
