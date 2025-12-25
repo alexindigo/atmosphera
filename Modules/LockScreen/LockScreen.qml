@@ -161,14 +161,15 @@ Loader {
               return;
             }
 
-            if (!WallpaperCacheService || !WallpaperCacheService.initialized) {
-              // Fallback to original if services not ready
-              resolvedWallpaperPath = WallpaperService.getWallpaper(screen.name)  || "";
+            const originalPath = WallpaperService.getWallpaper(screen.name) || "";
+            if (originalPath === "") {
+              resolvedWallpaperPath = "";
               return;
             }
 
-            resolvedWallpaperPath = WallpaperService.getWallpaper(screen.name)  || "";
-            if (resolvedWallpaperPath === "") {
+            if (!ImageCacheService || !ImageCacheService.initialized) {
+              // Fallback to original if services not ready
+              resolvedWallpaperPath = originalPath;
               return;
             }
 
@@ -179,9 +180,14 @@ Loader {
               return;
             }
 
-            WallpaperCacheService.getPreprocessed(resolvedWallpaperPath, screen.name, targetWidth, targetHeight, function (cachedPath, success) {
+            // Don't set resolvedWallpaperPath until cache is ready
+            // This prevents loading the original huge image
+            ImageCacheService.getFullscreen(originalPath, screen.name, targetWidth, targetHeight, function (cachedPath, success) {
               if (success) {
                 resolvedWallpaperPath = cachedPath;
+              } else {
+                // Only fall back to original if caching failed
+                resolvedWallpaperPath = originalPath;
               }
             });
 

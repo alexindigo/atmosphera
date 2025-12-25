@@ -5,6 +5,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.UI
 
 Singleton {
   id: root
@@ -551,7 +552,7 @@ Singleton {
       property string currentDirectory: root.getMonitorDirectory(screenName)
 
       folder: "file://" + currentDirectory
-      nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+      nameFilters: ImageCacheService.imageFilters
       showDirs: false
       sortField: FolderListModel.Name
 

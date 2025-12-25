@@ -58,7 +58,7 @@ Loader {
         if (!wallpaper)
           return;
         // Use 1280x720 for overview since it's heavily blurred anyway
-        WallpaperCacheService.getPreprocessed(wallpaper, modelData.name, 1280, 720, function (path, success) {
+        ImageCacheService.getFullscreen(wallpaper, modelData.name, 1280, 720, function (path, success) {
           cachedWallpaper = path;
         });
       }

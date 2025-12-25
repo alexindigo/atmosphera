@@ -29,9 +29,6 @@ Singleton {
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
   readonly property string cacheDir: Quickshell.env("NOCTALIA_CACHE_DIR") || (Quickshell.env("XDG_CACHE_HOME") || Quickshell.env("HOME") + "/.cache") + "/" + shellName + "/"
-  readonly property string cacheDirImages: cacheDir + "images/"
-  readonly property string cacheDirImagesWallpapers: cacheDir + "images/wallpapers/"
-  readonly property string cacheDirImagesNotifications: cacheDir + "images/notifications/"
   readonly property string settingsFile: Quickshell.env("NOCTALIA_SETTINGS_FILE") || (configDir + "settings.json")
   readonly property string defaultLocation: "Tokyo"
   readonly property string defaultAvatar: Quickshell.env("HOME") + "/.face"
@@ -49,9 +46,6 @@ Singleton {
     // ensure settings dir exists
     Quickshell.execDetached(["mkdir", "-p", configDir]);
     Quickshell.execDetached(["mkdir", "-p", cacheDir]);
-
-    Quickshell.execDetached(["mkdir", "-p", cacheDirImagesWallpapers]);
-    Quickshell.execDetached(["mkdir", "-p", cacheDirImagesNotifications]);
 
     // Ensure PAM config file exists in configDir (create once, never override)
     ensurePamConfig();

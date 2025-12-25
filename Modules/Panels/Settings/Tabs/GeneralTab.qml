@@ -53,7 +53,7 @@ ColumnLayout {
     title: I18n.tr("settings.general.profile.select-avatar")
     selectionMode: "files"
     initialPath: Settings.preprocessPath(Settings.data.general.avatarImage).substr(0, Settings.preprocessPath(Settings.data.general.avatarImage).lastIndexOf("/")) || Quickshell.env("HOME")
-    nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.pnm", "*.bmp"]
+    nameFilters: ImageCacheService.basicImageFilters
     onAccepted: paths => {
                   if (paths.length > 0) {
                     Settings.data.general.avatarImage = paths[0];
