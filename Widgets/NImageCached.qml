@@ -26,8 +26,9 @@ Image {
       return;
     }
 
-    ImageCacheService.getThumbnail(imagePath, function(cachedPath, success) {
-      if (!root) return; // Component was destroyed
+    ImageCacheService.getThumbnail(imagePath, function (cachedPath, success) {
+      if (!root)
+        return; // Component was destroyed
       if (success) {
         root.source = cachedPath;
       } else {

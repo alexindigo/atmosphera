@@ -394,7 +394,8 @@ Singleton {
       "timestamp": time,
       "progress": 1.0,
       "originalImage": image,
-      "cachedImage": image,  // Start with original, update when cached
+      "cachedImage": image  // Start with original, update when cached
+                     ,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
                                                                   "text": a.text || "Action",
                                                                   "identifier": a.identifier || ""
@@ -500,7 +501,7 @@ Singleton {
     if (!path || !path.startsWith("image://") || !notificationId)
       return;
 
-    ImageCacheService.getNotificationIcon(path, appName, summary, function(cachedPath, success) {
+    ImageCacheService.getNotificationIcon(path, appName, summary, function (cachedPath, success) {
       if (success && cachedPath) {
         updateImagePath(notificationId, "file://" + cachedPath);
       }

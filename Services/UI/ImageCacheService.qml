@@ -25,16 +25,7 @@ Singleton {
 
   // Supported image formats - extended list when ImageMagick is available
   readonly property var basicImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp"]
-  readonly property var extendedImageFilters: [
-    "*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp",
-    "*.webp", "*.avif", "*.heic", "*.heif",
-    "*.tiff", "*.tif", "*.pnm", "*.pgm", "*.ppm", "*.pbm",
-    "*.svg", "*.svgz",
-    "*.ico", "*.icns",
-    "*.jxl", "*.jp2", "*.j2k",
-    "*.exr", "*.hdr",
-    "*.dds", "*.tga"
-  ]
+  readonly property var extendedImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.avif", "*.heic", "*.heif", "*.tiff", "*.tif", "*.pnm", "*.pgm", "*.ppm", "*.pbm", "*.svg", "*.svgz", "*.ico", "*.icns", "*.jxl", "*.jp2", "*.j2k", "*.exr", "*.hdr", "*.dds", "*.tga"]
   readonly property var imageFilters: imageMagickAvailable ? extendedImageFilters : basicImageFilters
 
   // Check if a file format needs conversion (not natively supported by Qt)
@@ -83,11 +74,11 @@ Singleton {
       return;
     }
 
-    getMtime(sourcePath, function(mtime) {
+    getMtime(sourcePath, function (mtime) {
       const cacheKey = generateThumbnailKey(sourcePath, mtime);
       const cachedPath = wpThumbDir + cacheKey + ".jpg";
 
-      processRequest(cacheKey, cachedPath, sourcePath, callback, function() {
+      processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
         if (imageMagickAvailable) {
           startThumbnailProcessing(sourcePath, cachedPath, cacheKey);
         } else {
@@ -113,7 +104,7 @@ Singleton {
     }
 
     // Fast dimension check - skip processing if image fits screen AND format is Qt-native
-    getImageDimensions(sourcePath, function(imgWidth, imgHeight) {
+    getImageDimensions(sourcePath, function (imgWidth, imgHeight) {
       const fitsScreen = imgWidth > 0 && imgHeight > 0 && imgWidth <= width && imgHeight <= height;
 
       if (fitsScreen) {
@@ -130,11 +121,11 @@ Singleton {
       const targetWidth = fitsScreen ? imgWidth : width;
       const targetHeight = fitsScreen ? imgHeight : height;
 
-      getMtime(sourcePath, function(mtime) {
+      getMtime(sourcePath, function (mtime) {
         const cacheKey = generateLargeKey(sourcePath, screenName, width, height, mtime);
         const cachedPath = wpLargeDir + cacheKey + ".jpg";
 
-        processRequest(cacheKey, cachedPath, sourcePath, callback, function() {
+        processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
           startLargeProcessing(sourcePath, cachedPath, targetWidth, targetHeight, cacheKey);
         });
       });
@@ -159,7 +150,7 @@ Singleton {
     const cacheKey = generateNotificationKey(imageUri, appName, summary);
     const cachedPath = notificationsDir + cacheKey + ".png";
 
-    processRequest(cacheKey, cachedPath, imageUri, callback, function() {
+    processRequest(cacheKey, cachedPath, imageUri, callback, function () {
       // Notifications always use Qt fallback (image:// URIs can't be read by ImageMagick)
       queueFallbackProcessing(imageUri, cachedPath, cacheKey, 64);
     });
@@ -177,7 +168,7 @@ Singleton {
     const cacheKey = username;
     const cachedPath = contributorsDir + username + "_circular.png";
 
-    processRequest(cacheKey, cachedPath, url, callback, function() {
+    processRequest(cacheKey, cachedPath, url, callback, function () {
       if (imageMagickAvailable) {
         downloadAndProcessAvatar(url, username, cachedPath, cacheKey);
       } else {
@@ -220,7 +211,7 @@ Singleton {
     }
 
     // Check cache first
-    checkFileExists(cachedPath, function(exists) {
+    checkFileExists(cachedPath, function (exists) {
       if (exists) {
         Logger.d("ImageCache", "Cache hit:", cachedPath);
         callback(cachedPath, true);
@@ -249,7 +240,7 @@ Singleton {
   function notifyCallbacks(cacheKey, path, success) {
     const request = pendingRequests[cacheKey];
     if (request) {
-      request.callbacks.forEach(function(cb) {
+      request.callbacks.forEach(function (cb) {
         cb(path, success);
       });
       delete pendingRequests[cacheKey];
@@ -313,7 +304,7 @@ Singleton {
       const downloadProcess = Qt.createQmlObject(processString, root, "DownloadProcess_" + cacheKey);
       downloadProcess.command = ["bash", "-c", downloadCmd];
 
-      downloadProcess.exited.connect(function(exitCode) {
+      downloadProcess.exited.connect(function (exitCode) {
         downloadProcess.destroy();
 
         if (exitCode !== 0) {
@@ -354,7 +345,7 @@ Singleton {
       const processObj = Qt.createQmlObject(processString, root, "CircularProcess_" + cacheKey);
       processObj.command = ["bash", "-c", command];
 
-      processObj.exited.connect(function(exitCode) {
+      processObj.exited.connect(function (exitCode) {
         // Clean up temp file
         Quickshell.execDetached(["rm", "-f", inputPath]);
 
@@ -399,7 +390,7 @@ Singleton {
       processObj.cachedPath = outputPath;
       processObj.command = ["bash", "-c", command];
 
-      processObj.exited.connect(function(exitCode) {
+      processObj.exited.connect(function (exitCode) {
         if (exitCode !== 0) {
           const stderrText = processObj.stderr.text || "";
           Logger.e("ImageCache", "Processing failed:", stderrText);
@@ -447,10 +438,11 @@ Singleton {
       antialiasing: true
 
       onStatusChanged: {
-        if (!cacheKey) return;
+        if (!cacheKey)
+        return;
 
         if (status === Image.Ready) {
-          grabToImage(function(result) {
+          grabToImage(function (result) {
             if (result.saveToFile(destPath)) {
               Logger.d("ImageCache", "Fallback cache created:", destPath);
               root.notifyCallbacks(cacheKey, destPath, true);
@@ -487,11 +479,11 @@ Singleton {
 
   function queueFallbackProcessing(sourcePath, destPath, cacheKey, size) {
     fallbackQueue.push({
-      sourcePath: sourcePath,
-      destPath: destPath,
-      cacheKey: cacheKey,
-      size: size
-    });
+                         sourcePath: sourcePath,
+                         destPath: destPath,
+                         cacheKey: cacheKey,
+                         size: size
+                       });
 
     if (!fallbackProcessing) {
       fallbackProcessing = true;
@@ -521,7 +513,7 @@ Singleton {
     try {
       const processObj = Qt.createQmlObject(processString, root, "MtimeProcess");
 
-      processObj.exited.connect(function(exitCode) {
+      processObj.exited.connect(function (exitCode) {
         const mtime = exitCode === 0 ? processObj.stdout.text.trim() : "";
         processObj.destroy();
         callback(mtime);
@@ -549,7 +541,7 @@ Singleton {
     try {
       const processObj = Qt.createQmlObject(processString, root, "FileExistsProcess");
 
-      processObj.exited.connect(function(exitCode) {
+      processObj.exited.connect(function (exitCode) {
         processObj.destroy();
         callback(exitCode === 0);
       });
@@ -576,7 +568,7 @@ Singleton {
     try {
       const processObj = Qt.createQmlObject(processString, root, "IdentifyProcess");
 
-      processObj.exited.connect(function(exitCode) {
+      processObj.exited.connect(function (exitCode) {
         let width = 0, height = 0;
         if (exitCode === 0) {
           const parts = processObj.stdout.text.trim().split(" ");
@@ -667,7 +659,7 @@ Singleton {
     stdout: StdioCollector {}
     stderr: StdioCollector {}
 
-    onExited: function(exitCode) {
+    onExited: function (exitCode) {
       root.imageMagickAvailable = (exitCode === 0);
       root.initialized = true;
       if (root.imageMagickAvailable) {

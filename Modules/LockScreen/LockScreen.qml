@@ -190,7 +190,6 @@ Loader {
                 resolvedWallpaperPath = originalPath;
               }
             });
-
           }
 
           // Black backgound, in case image fails to load or takes a while

@@ -61,8 +61,10 @@ Item {
     anchors.fill: parent
 
     sourceComponent: {
-      if (root.clockStyle === "analog") return analogClockComponent;
-      if (root.clockStyle === "binary") return binaryClockComponent;
+      if (root.clockStyle === "analog")
+        return analogClockComponent;
+      if (root.clockStyle === "binary")
+        return binaryClockComponent;
       return digitalClockComponent;
     }
 
@@ -279,11 +281,11 @@ Item {
   // Binary Clock Component
   component NClockBinary: Item {
     property var now
-    property color backgroundColor 
+    property color backgroundColor
     property color clockColor: Color.mOnPrimary
-    
+
     anchors.fill: parent
-    
+
     readonly property int h: now.getHours()
     readonly property int m: now.getMinutes()
     readonly property int s: now.getSeconds()
@@ -300,61 +302,61 @@ Item {
     RowLayout {
       anchors.centerIn: parent
       spacing: parent.width * 0.05
-      
+
       // Hours
       RowLayout {
         spacing: parent.parent.width * 0.02
-        BinaryColumn { 
-            value: Math.floor(h / 10)
-            bits: 2 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: Math.floor(h / 10)
+          bits: 2
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
-        BinaryColumn { 
-            value: h % 10
-            bits: 4 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: h % 10
+          bits: 4
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
       }
-      
+
       // Minutes
       RowLayout {
         spacing: parent.parent.width * 0.02
-        BinaryColumn { 
-            value: Math.floor(m / 10)
-            bits: 3 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: Math.floor(m / 10)
+          bits: 3
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
-        BinaryColumn { 
-            value: m % 10
-            bits: 4 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: m % 10
+          bits: 4
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
       }
 
       // Seconds
       RowLayout {
         spacing: parent.parent.width * 0.02
-        BinaryColumn { 
-            value: Math.floor(s / 10)
-            bits: 3 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: Math.floor(s / 10)
+          bits: 3
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
-        BinaryColumn { 
-            value: s % 10
-            bits: 4 
-            dotSize: root.width * 0.08
-            activeColor: clockColor
-            Layout.alignment: Qt.AlignBottom
+        BinaryColumn {
+          value: s % 10
+          bits: 4
+          dotSize: root.width * 0.08
+          activeColor: clockColor
+          Layout.alignment: Qt.AlignBottom
         }
       }
     }
@@ -367,20 +369,24 @@ Item {
     property color activeColor: "white"
 
     spacing: dotSize * 0.4
-    
+
     Repeater {
       model: bits
-      
+
       Rectangle {
         property int bitIndex: (bits - 1) - index
         property bool isActive: (value >> bitIndex) & 1
-        
+
         width: dotSize
         height: dotSize
         radius: dotSize / 2
         color: isActive ? activeColor : Qt.alpha(activeColor, 0.2)
-        
-        Behavior on color { ColorAnimation { duration: 200 } }
+
+        Behavior on color {
+          ColorAnimation {
+            duration: 200
+          }
+        }
       }
     }
   }

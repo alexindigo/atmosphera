@@ -177,8 +177,8 @@ Singleton {
       var avatarUrl = contributor.avatar_url;
 
       // Use closure to capture username
-      (function(uname, url) {
-        ImageCacheService.getCircularAvatar(url, uname, function(cachedPath, success) {
+      (function (uname, url) {
+        ImageCacheService.getCircularAvatar(url, uname, function (cachedPath, success) {
           if (success) {
             cachedAvatars[uname] = "file://" + cachedPath;
             cachedAvatarsChanged();

@@ -157,8 +157,7 @@ Singleton {
             if (stderr.length > 0) {
               ToastService.showError(I18n.tr("toast.recording.failed-start"), stderr);
               Logger.e(stderr);
-            }
-            else {
+            } else {
               ToastService.showError(I18n.tr("toast.recording.failed-start"), I18n.tr("toast.recording.failed-general"));
             }
           }

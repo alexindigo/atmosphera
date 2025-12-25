@@ -24,4 +24,3 @@ QtObject {
     return true;
   }
 }
-
