@@ -2292,6 +2292,10 @@
         "description": "Toon de titel en sluitknop bovenaan het Sessiemenu.",
         "label": "Koptekst tonen"
       },
+      "show-number-labels": {
+        "description": "Nummerlabels (1-2-3-4...) op knoppen weergeven en nummertoetsen voor snelle selectie inschakelen.",
+        "label": "Nummerlabels tonen"
+      },
       "title": "Sessiemenu"
     },
     "system-monitor": {

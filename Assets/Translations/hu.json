@@ -2292,6 +2292,10 @@
         "description": "A cím és a bezárás gomb megjelenítése a munkamenet menü tetején.",
         "label": "Fejléc megjelenítése"
       },
+      "show-number-labels": {
+        "description": "Számcímkék (1-2-3-4...) megjelenítése a gombokon és számbillentyűk engedélyezése a gyors kiválasztáshoz.",
+        "label": "Számcímkék megjelenítése"
+      },
       "title": "Munkamenet menü"
     },
     "system-monitor": {

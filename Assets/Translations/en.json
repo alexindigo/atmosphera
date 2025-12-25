@@ -2292,6 +2292,10 @@
         "description": "Display the title and close button at the top of the session menu.",
         "label": "Show header"
       },
+      "show-number-labels": {
+        "description": "Display number labels (1-2-3-4...) on buttons and enable number keybinds for quick selection.",
+        "label": "Show number labels"
+      },
       "title": "Session Menu"
     },
     "system-monitor": {

@@ -2292,6 +2292,10 @@
         "description": "Exibir o título e o botão de fechar na parte superior do Menu de sessão.",
         "label": "Mostrar cabeçalho"
       },
+      "show-number-labels": {
+        "description": "Exibir rótulos numéricos (1-2-3-4...) nos botões e habilitar atalhos de teclado numéricos para seleção rápida.",
+        "label": "Mostrar rótulos numéricos"
+      },
       "title": "Menu de sessão"
     },
     "system-monitor": {

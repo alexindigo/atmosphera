@@ -2292,6 +2292,10 @@
         "description": "在会话菜单顶部显示标题和关闭按钮。",
         "label": "显示标题"
       },
+      "show-number-labels": {
+        "description": "在按钮上显示数字标签（1-2-3-4...）并启用数字快捷键以快速选择。",
+        "label": "显示数字标签"
+      },
       "title": "会话菜单"
     },
     "system-monitor": {

@@ -2292,6 +2292,10 @@
         "description": "Oturum Menüsünün üst kısmında başlığı ve kapat düğmesini göster.",
         "label": "Başlığı göster"
       },
+      "show-number-labels": {
+        "description": "Düğmelerde sayı etiketleri (1-2-3-4...) göster ve hızlı seçim için sayı tuş kısayollarını etkinleştir.",
+        "label": "Sayı etiketlerini göster"
+      },
       "title": "Oturum Menüsü"
     },
     "system-monitor": {

@@ -2292,6 +2292,10 @@
         "description": "Mostrar el título y el botón de cerrar en la parte superior del Menú de sesión.",
         "label": "Mostrar encabezado"
       },
+      "show-number-labels": {
+        "description": "Mostrar etiquetas numéricas (1-2-3-4...) en los botones y habilitar atajos de teclado numéricos para selección rápida.",
+        "label": "Mostrar etiquetas numéricas"
+      },
       "title": "Menú de sesión"
     },
     "system-monitor": {

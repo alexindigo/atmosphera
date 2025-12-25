@@ -2292,6 +2292,10 @@
         "description": "Zeige den Titel und die Schließen-Schaltfläche oben im Sitzungsmenü.",
         "label": "Kopfzeile anzeigen"
       },
+      "show-number-labels": {
+        "description": "Nummern-Labels (1-2-3-4...) auf Schaltflächen anzeigen und Nummern-Tastenkürzel für schnelle Auswahl aktivieren.",
+        "label": "Nummern-Labels anzeigen"
+      },
       "title": "Sitzungsmenü"
     },
     "system-monitor": {

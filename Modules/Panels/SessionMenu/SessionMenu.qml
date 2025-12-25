@@ -405,6 +405,9 @@ SmartPanel {
   }
 
   function onNumberPressed(number) {
+    if (!Settings.data.sessionMenu.showNumberLabels) {
+      return;
+    }
     // Number is 1-based, convert to 0-based index
     const index = number - 1;
     if (index >= 0 && index < powerOptions.length) {
@@ -741,7 +744,7 @@ SmartPanel {
         color: Qt.alpha(Color.mSurfaceVariant, 0.5)
         border.width: Style.borderS
         border.color: Color.mOutline
-        visible: buttonRoot.number > 0 && !buttonRoot.pending
+        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0 && !buttonRoot.pending
 
         NText {
           id: numberText
@@ -919,7 +922,7 @@ SmartPanel {
       color: Qt.alpha(Color.mSurfaceVariant, 0.7)
       border.width: Style.borderS
       border.color: Color.mOutline
-      visible: largeButtonRoot.number > 0 && !largeButtonRoot.pending
+      visible: Settings.data.sessionMenu.showNumberLabels && largeButtonRoot.number > 0 && !largeButtonRoot.pending
       z: 10
 
       NText {

@@ -2292,6 +2292,10 @@
         "description": "Afficher le titre et le bouton de fermeture en haut du Menu de session.",
         "label": "Afficher l'en-tête"
       },
+      "show-number-labels": {
+        "description": "Afficher les numéros (1-2-3-4...) sur les boutons et activer les raccourcis clavier numériques pour une sélection rapide.",
+        "label": "Afficher les numéros"
+      },
       "title": "Menu de session"
     },
     "system-monitor": {
