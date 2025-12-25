@@ -2920,6 +2920,7 @@
       "forget": "Vergeten",
       "forget-network": "Dit netwerk vergeten?",
       "forgetting": "Vergeten...",
+      "frequency": "Frequentie",
       "gateway": "Poort",
       "info": "Info",
       "internet": "Internet",
@@ -2934,8 +2935,15 @@
       "scan-again": "Opnieuw scannen",
       "searching": "Zoeken naar netwerken in de buurt...",
       "security": "Beveiliging",
-      "signal": "Signaal",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "Uitstekend",
+      "very-good": "Erg goed",
+      "good": "Goed",
+      "fair": "Redelijk",
+      "weak": "Zwak",
+      "poor": "Slecht"
     }
   }
 }

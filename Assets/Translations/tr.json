@@ -2920,6 +2920,7 @@
       "forget": "Unut",
       "forget-network": "Bu ağı unut?",
       "forgetting": "Unutuluyor...",
+      "frequency": "Frekans",
       "gateway": "Geçit",
       "info": "Bilgi",
       "internet": "İnternet",
@@ -2934,8 +2935,15 @@
       "scan-again": "Yeniden tara",
       "searching": "Yakındaki ağlar aranıyor...",
       "security": "Güvenlik",
-      "signal": "Sinyal",
       "title": "Kablosuz Bağlantı"
+    },
+    "signal": {
+      "excellent": "Mükemmel",
+      "very-good": "Çok İyi",
+      "good": "İyi",
+      "fair": "Orta",
+      "weak": "Zayıf",
+      "poor": "Kötü"
     }
   }
 }

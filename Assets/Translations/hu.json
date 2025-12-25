@@ -2920,6 +2920,7 @@
       "forget": "Elfelejtés",
       "forget-network": "Hálózat elfelejtése",
       "forgetting": "Elfelejtés…",
+      "frequency": "Frekvencia",
       "gateway": "Átjáró",
       "info": "Infó",
       "internet": "Internet",
@@ -2934,8 +2935,15 @@
       "scan-again": "Keresés újra",
       "searching": "Hálózatok keresése…",
       "security": "Biztonság",
-      "signal": "Jel",
       "title": "Wi‑Fi"
+    },
+    "signal": {
+      "excellent": "Kiválóság",
+      "very-good": "Nagyon jó",
+      "good": "Jó",
+      "fair": "Közepes",
+      "weak": "Gyenge",
+      "poor": "Rossz"
     }
   }
 }

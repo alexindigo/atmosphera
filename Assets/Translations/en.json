@@ -2920,6 +2920,7 @@
       "forget": "Forget",
       "forget-network": "Forget this network",
       "forgetting": "Forgetting…",
+      "frequency": "Frequency",
       "gateway": "Gateway",
       "info": "Info",
       "internet": "Internet",
@@ -2934,8 +2935,15 @@
       "scan-again": "Scan again",
       "searching": "Searching for networks...",
       "security": "Security",
-      "signal": "Signal",
       "title": "Wi‑Fi"
+    },
+    "signal": {
+      "excellent": "Excellent",
+      "very-good": "Very Good",
+      "good": "Good",
+      "fair": "Fair",
+      "weak": "Weak",
+      "poor": "Poor"
     }
   }
 }
