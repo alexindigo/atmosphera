@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analóg",
+          "binary": "Bináris",
           "description": "Válassza ki az óra kijelzési stílusát.",
           "digital": "Digitális",
           "label": "Óra stílus",

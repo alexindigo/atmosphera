@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "模拟",
+          "binary": "二进制",
           "description": "选择时钟显示样式。",
           "digital": "数字",
           "label": "时钟样式",

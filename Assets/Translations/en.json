@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analog",
+          "binary": "Binary",
           "description": "Choose the clock display style.",
           "digital": "Digital",
           "label": "Clock style",
