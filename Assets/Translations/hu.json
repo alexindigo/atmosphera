@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Elérhető hálózatok",
+      "action-required": "Szukseges akció",
       "connect": "Csatlakozás",
       "connected": "Csatlakozva",
       "disabled": "A Wi‑Fi ki van kapcsolva",

@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "利用可能なネットワーク",
+      "action-required": "アクションが必要",
       "connect": "接続",
       "connected": "接続済み",
       "disabled": "Wi-Fi は無効です",

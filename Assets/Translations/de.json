@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Verfügbare Netzwerke",
+      "action-required": "Aktion erforderlich",
       "connect": "Verbinden",
       "connected": "Verbunden",
       "disabled": "WLAN ist deaktiviert",

@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Доступные сети",
+      "action-required": "Требуется действие",
       "connect": "Подключить",
       "connected": "Подключено",
       "disabled": "Wi-Fi отключен",

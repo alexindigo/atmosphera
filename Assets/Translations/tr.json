@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "Kullanılabilir Ağlar",
+      "action-required": "Eylem gerekiyor",
       "connect": "Bağlan",
       "connected": "Bağlı",
       "disabled": "Kablosuz Bağlantı devre dışı",

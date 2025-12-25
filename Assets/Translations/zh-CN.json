@@ -2909,6 +2909,7 @@
   "wifi": {
     "panel": {
       "available-networks": "可用网络",
+      "action-required": "需要动作",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
