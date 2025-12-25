@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alphabetisch",
+          "description": "Wählen Sie, wie Hintergrundbilder bei automatischem Wechsel ausgewählt werden.",
+          "label": "Wechselmodus",
+          "random": "Zufällig"
+        },
         "custom-interval": {
           "description": "Zeit als HH:MM eingeben (z.B. 01:30).",
           "label": "Benutzerdefiniertes Intervall"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Zufällige Hintergrundbild-Wechsel in regelmäßigen Abständen planen.",
           "label": "Zufälliges Hintergrundbild"
+        },
+        "scheduled-change": {
+          "description": "Hintergrundbilder automatisch in regelmäßigen Abständen wechseln.",
+          "label": "Geplanter Wechsel"
         },
         "section": {
           "label": "Automatisierung"

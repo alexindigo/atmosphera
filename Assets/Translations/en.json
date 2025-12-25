@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alphabetical",
+          "description": "Choose how wallpapers are selected when changing automatically.",
+          "label": "Change mode",
+          "random": "Random"
+        },
         "custom-interval": {
           "description": "Enter time as HH:MM (e.g., 01:30).",
           "label": "Custom interval"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Schedule random wallpaper changes at regular intervals.",
           "label": "Random wallpaper"
+        },
+        "scheduled-change": {
+          "description": "Automatically change wallpapers at regular intervals.",
+          "label": "Scheduled change"
         },
         "section": {
           "label": "Automation"

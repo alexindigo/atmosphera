@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Ábécérend",
+          "description": "Válassza ki, hogyan választódnak ki a háttérképek automatikus váltáskor.",
+          "label": "Váltási mód",
+          "random": "Véletlenszerű"
+        },
         "custom-interval": {
           "description": "Adja meg az időt ÓÓ:PP formátumban (pl. 01:30).",
           "label": "Egyéni intervallum"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Ütemezze a véletlenszerű háttérképváltásokat rendszeres időközönként.",
           "label": "Véletlenszerű háttérkép"
+        },
+        "scheduled-change": {
+          "description": "Automatikusan változtassa a háttérképeket rendszeres időközönként.",
+          "label": "Ütemezett váltás"
         },
         "section": {
           "label": "Automatizálás"

@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "アルファベット順",
+          "description": "自動変更時に壁紙を選択する方法を選択します。",
+          "label": "変更モード",
+          "random": "ランダム"
+        },
         "custom-interval": {
           "description": "時間を HH:MM 形式で入力してください（例: 01:30）。",
           "label": "カスタム間隔"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "一定間隔でランダムに壁紙を変更します。",
           "label": "ランダム変更"
+        },
+        "scheduled-change": {
+          "description": "一定間隔で壁紙を自動的に変更します。",
+          "label": "スケジュール変更"
         },
         "section": {
           "label": "自動化"

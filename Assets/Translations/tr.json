@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alfabetik",
+          "description": "Otomatik değiştirirken duvar kâğıtlarının nasıl seçileceğini seçin.",
+          "label": "Değiştirme modu",
+          "random": "Rastgele"
+        },
         "custom-interval": {
           "description": "Zamanı SS:DD olarak girin (örn., 01:30).",
           "label": "Özel aralık"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Düzenli aralıklarla rastgele duvar kâğıdı değişiklikleri planlayın.",
           "label": "Rastgele duvar kâğıdı"
+        },
+        "scheduled-change": {
+          "description": "Düzenli aralıklarla duvar kâğıtlarını otomatik olarak değiştirin.",
+          "label": "Zamanlanmış değişiklik"
         },
         "section": {
           "label": "Otomasyon"

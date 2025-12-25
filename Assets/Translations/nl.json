@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alfabetisch",
+          "description": "Kies hoe achtergronden worden geselecteerd bij automatisch wisselen.",
+          "label": "Wisselmodus",
+          "random": "Willekeurig"
+        },
         "custom-interval": {
           "description": "Voer tijd in als UU:MM (bijv. 01:30).",
           "label": "Aangepast interval"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Plan willekeurige achtergrondwissels op vaste intervallen.",
           "label": "Willekeurige achtergrond"
+        },
+        "scheduled-change": {
+          "description": "Wissel automatisch achtergronden op vaste intervallen.",
+          "label": "Geplande wissel"
         },
         "section": {
           "label": "Automatisering"

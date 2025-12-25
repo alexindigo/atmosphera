@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alfabético",
+          "description": "Escolha como os papéis de parede são selecionados ao alterar automaticamente.",
+          "label": "Modo de alteração",
+          "random": "Aleatório"
+        },
         "custom-interval": {
           "description": "Digite o tempo como HH:MM (ex., 01:30).",
           "label": "Intervalo personalizado"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Agende mudanças aleatórias de papel de parede em intervalos regulares.",
           "label": "Papel de parede aleatório"
+        },
+        "scheduled-change": {
+          "description": "Alterar automaticamente os papéis de parede em intervalos regulares.",
+          "label": "Alteração agendada"
         },
         "section": {
           "label": "Automação"

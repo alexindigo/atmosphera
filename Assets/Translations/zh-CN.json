@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "按字母顺序",
+          "description": "选择自动更改时如何选择壁纸。",
+          "label": "更改模式",
+          "random": "随机"
+        },
         "custom-interval": {
           "description": "以 HH:MM 格式输入时间（例如：01:30）。",
           "label": "自定义间隔"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "按固定间隔调度随机壁纸更改。",
           "label": "随机壁纸"
+        },
+        "scheduled-change": {
+          "description": "按固定间隔自动更改壁纸。",
+          "label": "计划更改"
         },
         "section": {
           "label": "自动化"

@@ -2435,6 +2435,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alphabétique",
+          "description": "Choisissez comment les fonds d'écran sont sélectionnés lors du changement automatique.",
+          "label": "Mode de changement",
+          "random": "Aléatoire"
+        },
         "custom-interval": {
           "description": "Entrez l'heure au format HH:MM (ex: 01:30).",
           "label": "Intervalle personnalisé"
@@ -2446,6 +2452,10 @@
         "random-wallpaper": {
           "description": "Planifiez des changements de fond d'écran aléatoires à intervalles réguliers.",
           "label": "Fond d'écran aléatoire"
+        },
+        "scheduled-change": {
+          "description": "Changer automatiquement les fonds d'écran à intervalles réguliers.",
+          "label": "Changement programmé"
         },
         "section": {
           "label": "Automatisation"

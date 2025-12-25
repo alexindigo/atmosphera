@@ -2434,6 +2434,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alfabetyczny",
+          "description": "Wybierz, jak wybierane są tapety podczas automatycznej zmiany.",
+          "label": "Tryb zmiany",
+          "random": "Losowy"
+        },
         "custom-interval": {
           "description": "Wprowadź czas jako GG:MM (np. 01:30).",
           "label": "Niestandardowy interwał"
@@ -2445,6 +2451,10 @@
         "random-wallpaper": {
           "description": "Harmonogram losowych zmian tapet w regularnych odstępach czasu.",
           "label": "Losowa tapeta"
+        },
+        "scheduled-change": {
+          "description": "Automatycznie zmieniaj tapety w regularnych odstępach czasu.",
+          "label": "Zaplanowana zmiana"
         },
         "section": {
           "label": "Automatyzacja"
