@@ -112,23 +112,23 @@ Singleton {
       return;
     }
 
-    // Fast dimension check - skip processing if image is smaller than screen AND format is Qt-native
+    // Fast dimension check - skip processing if image fits screen AND format is Qt-native
     getImageDimensions(sourcePath, function(imgWidth, imgHeight) {
-      const isSmaller = imgWidth > 0 && imgHeight > 0 && imgWidth <= width && imgHeight <= height;
+      const fitsScreen = imgWidth > 0 && imgHeight > 0 && imgWidth <= width && imgHeight <= height;
 
-      if (isSmaller) {
+      if (fitsScreen) {
         // Only skip if format is natively supported by Qt
         if (!needsConversion(sourcePath)) {
-          Logger.d("ImageCache", `Image ${imgWidth}x${imgHeight} <= screen ${width}x${height}, using original`);
+          Logger.d("ImageCache", `Image ${imgWidth}x${imgHeight} fits screen ${width}x${height}, using original`);
           callback(sourcePath, false);
           return;
         }
-        Logger.d("ImageCache", `Image needs conversion despite being smaller than screen`);
+        Logger.d("ImageCache", `Image needs conversion despite fitting screen`);
       }
 
-      // Use actual image dimensions if smaller (convert without upscaling), otherwise use screen dimensions
-      const targetWidth = isSmaller ? imgWidth : width;
-      const targetHeight = isSmaller ? imgHeight : height;
+      // Use actual image dimensions if it fits (convert without upscaling), otherwise use screen dimensions
+      const targetWidth = fitsScreen ? imgWidth : width;
+      const targetHeight = fitsScreen ? imgHeight : height;
 
       getMtime(sourcePath, function(mtime) {
         const cacheKey = generateLargeKey(sourcePath, screenName, width, height, mtime);
