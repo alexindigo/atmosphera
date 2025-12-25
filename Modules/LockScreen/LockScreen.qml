@@ -115,7 +115,7 @@ Loader {
           }
 
           // Cached wallpaper path
-          property string cachedWallpaperPath: ""
+          property string resolvedWallpaperPath: ""
 
           // Request preprocessed wallpaper when lock screen becomes active or dimensions change
           Component.onCompleted: {
@@ -163,41 +163,42 @@ Loader {
 
             if (!WallpaperCacheService || !WallpaperCacheService.initialized) {
               // Fallback to original if services not ready
-              const wallpaperPath = WallpaperService.getWallpaper(screen.name);
-              cachedWallpaperPath = wallpaperPath || "";
+              resolvedWallpaperPath = WallpaperService.getWallpaper(screen.name)  || "";
               return;
             }
 
-            const wallpaperPath = WallpaperService.getWallpaper(screen.name);
-            if (!wallpaperPath) {
-              cachedWallpaperPath = "";
+            resolvedWallpaperPath = WallpaperService.getWallpaper(screen.name)  || "";
+            if (resolvedWallpaperPath === "") {
               return;
             }
 
             const compositorScale = CompositorService.getDisplayScale(screen.name);
             const targetWidth = Math.round(width * compositorScale);
             const targetHeight = Math.round(height * compositorScale);
-
             if (targetWidth <= 0 || targetHeight <= 0) {
-              cachedWallpaperPath = wallpaperPath;
               return;
             }
 
-            WallpaperCacheService.getPreprocessed(wallpaperPath, screen.name, targetWidth, targetHeight, function (cachedPath, success) {
+            WallpaperCacheService.getPreprocessed(resolvedWallpaperPath, screen.name, targetWidth, targetHeight, function (cachedPath, success) {
               if (success) {
-                cachedWallpaperPath = cachedPath;
-              } else {
-                // Fallback to original
-                cachedWallpaperPath = wallpaperPath;
+                resolvedWallpaperPath = cachedPath;
               }
             });
+
+          }
+
+          // Black backgound, in case image fails to load or takes a while
+          Rectangle {
+            anchors.fill: parent
+            color: "#000000"
           }
 
           Image {
             id: lockBgImage
+            visible: source !== ""
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
-            source: cachedWallpaperPath || (screen ? WallpaperService.getWallpaper(screen.name) : "")
+            source: resolvedWallpaperPath
             cache: true
             smooth: true
             mipmap: false

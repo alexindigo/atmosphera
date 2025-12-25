@@ -44,7 +44,7 @@ Singleton {
       return;
     }
 
-    // First check image dimensions - skip preprocessing if image is smaller than screen
+    // Fast dimension check using identify -ping (reads only header, not pixels)
     getImageDimensions(sourcePath, function (imgWidth, imgHeight) {
       if (imgWidth > 0 && imgHeight > 0 && imgWidth <= width && imgHeight <= height) {
         // Image is smaller than or equal to screen - no preprocessing needed
@@ -123,12 +123,15 @@ Singleton {
     const srcEsc = sourcePath.replace(/'/g, "'\\''");
     const dstEsc = outputPath.replace(/'/g, "'\\''");
 
-    // Resize to cover screen dimensions, preserve aspect ratio
+    // Use -define jpeg:size for faster JPEG loading (decoder hint)
+    // -thumbnail is faster than -resize (strips metadata, uses faster algorithms)
+    // The ^ ensures image covers target (smaller dimension fits exactly)
     // -auto-orient applies EXIF orientation before processing
-    // The ^ flag ensures the image covers the target (smaller dimension fits exactly)
-    // The > flag ensures we only shrink, never enlarge (prevents blurry upscaling)
+    // Small images are filtered out before this function is called
     // The shader will handle actual fill mode (crop/fit/center/stretch)
-    return `convert '${srcEsc}' -auto-orient -resize '${width}x${height}^>' -quality 95 '${dstEsc}'`;
+    const doubleWidth = width * 2;
+    const doubleHeight = height * 2;
+    return `convert -define jpeg:size=${doubleWidth}x${doubleHeight} '${srcEsc}' -auto-orient -thumbnail '${width}x${height}^' -quality 95 '${dstEsc}'`;
   }
 
   // -------------------------------------------------
@@ -258,14 +261,14 @@ Singleton {
   }
 
   // -------------------------------------------------
-  // Get image dimensions using ImageMagick identify
+  // Fast image dimension check using identify -ping (reads only header, not pixel data)
   function getImageDimensions(filePath, callback) {
     const pathEsc = filePath.replace(/'/g, "'\\''");
     const processString = `
       import QtQuick
       import Quickshell.Io
       Process {
-        command: ["identify", "-format", "%w %h", "${pathEsc}[0]"]
+        command: ["identify", "-ping", "-format", "%w %h", "${pathEsc}[0]"]
         stdout: StdioCollector {}
         stderr: StdioCollector {}
       }
