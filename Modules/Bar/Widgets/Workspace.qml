@@ -833,6 +833,7 @@ Item {
               source: ThemeIcons.iconForAppId(model.appId)
               smooth: true
               asynchronous: true
+              opacity: model.isFocused ? Style.opacityFull : 0.6
               layer.enabled: root.colorizeIcons && !model.isFocused
 
               Rectangle {
