@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analog",
+          "binary": "İkili",
           "description": "Saat görüntüleme stilini seçin.",
           "digital": "Dijital",
           "label": "Saat stili",

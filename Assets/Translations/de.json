@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analog",
+          "binary": "Binär",
           "description": "Wähle den Anzeigestil der Uhr.",
           "digital": "Digital",
           "label": "Uhrstil",

@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "アナログ",
+          "binary": "バイナリ",
           "description": "時計の表示スタイルを選択します。",
           "digital": "デジタル",
           "label": "時計のスタイル",

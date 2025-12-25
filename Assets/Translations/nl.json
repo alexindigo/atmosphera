@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analoog",
+          "binary": "Binair",
           "description": "Kies de weergavestijl van de klok.",
           "digital": "Digitaal",
           "label": "Klokstijl",

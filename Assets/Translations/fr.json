@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analogique",
+          "binary": "Binaire",
           "description": "Choisissez le style d'affichage de l'horloge.",
           "digital": "Numérique",
           "label": "Style d'horloge",

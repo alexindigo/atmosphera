@@ -1401,6 +1401,7 @@
         },
         "style": {
           "analog": "Analógico",
+          "binary": "Binário",
           "description": "Escolha o estilo de exibição do relógio.",
           "digital": "Digital",
           "label": "Estilo do relógio",
