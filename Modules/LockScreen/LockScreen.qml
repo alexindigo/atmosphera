@@ -199,7 +199,7 @@ Loader {
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
             source: resolvedWallpaperPath
-            cache: true
+            cache: false
             smooth: true
             mipmap: false
             antialiasing: true
