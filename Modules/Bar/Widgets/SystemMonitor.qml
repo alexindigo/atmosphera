@@ -67,6 +67,39 @@ Rectangle {
     return Math.min(100, Math.max(0, (Math.log10(kb) / 5) * 100));
   }
 
+  // Build comprehensive tooltip text with all stats
+  function buildTooltipText() {
+    let lines = [];
+
+    // CPU
+    lines.push(`CPU Usage: ${Math.round(SystemStatService.cpuUsage)}%`);
+    if (SystemStatService.cpuTemp > 0) {
+      lines.push(`CPU Temp: ${Math.round(SystemStatService.cpuTemp)}°C`);
+    }
+
+    // GPU (if available)
+    if (SystemStatService.gpuAvailable) {
+      lines.push(`GPU Temp: ${Math.round(SystemStatService.gpuTemp)}°C`);
+    }
+
+    // Memory
+    lines.push(`Memory: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb)})`);
+
+    // Network
+    lines.push(`Download Speed: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`);
+    lines.push(`Upload Speed: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`);
+
+    // Disk
+    const diskPercent = SystemStatService.diskPercents[diskPath];
+    if (diskPercent !== undefined) {
+      const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
+      const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
+      lines.push(`Disk: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G (${diskPercent}%)`);
+    }
+
+    return lines.join("\n");
+  }
+
   // Match Workspace widget pill sizing: base ratio depends on bar density
   readonly property real pillBaseRatio: (density === "compact") ? 0.85 : 0.65
   readonly property int pillHeight: Math.round(Style.capsuleHeight * pillBaseRatio)
@@ -133,8 +166,10 @@ Rectangle {
   }
 
   MouseArea {
+    id: tooltipArea
     anchors.fill: parent
     acceptedButtons: Qt.RightButton
+    hoverEnabled: true
     onClicked: mouse => {
                  if (mouse.button === Qt.RightButton) {
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
@@ -144,6 +179,25 @@ Rectangle {
                    }
                  }
                }
+    onEntered: {
+      TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection());
+      tooltipRefreshTimer.start();
+    }
+    onExited: {
+      tooltipRefreshTimer.stop();
+      TooltipService.hide();
+    }
+  }
+
+  Timer {
+    id: tooltipRefreshTimer
+    interval: 1000
+    repeat: true
+    onTriggered: {
+      if (tooltipArea.containsMouse) {
+        TooltipService.updateText(buildTooltipText());
+      }
+    }
   }
 
   // Status indicator component definition
@@ -795,17 +849,6 @@ Rectangle {
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.diskPercents[diskPath] ?? 0);
           }
-        }
-      }
-
-      MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: {
-          TooltipService.show(diskContent, diskPath, BarService.getTooltipDirection());
-        }
-        onExited: {
-          TooltipService.hide();
         }
       }
     }
