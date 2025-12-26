@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Disk alanı kullanım bilgilerini göster.",
           "label": "Depolama kullanımı"
+        },
+        "use-monospace-font": {
+          "description": "```\nTekdüze karakter genişliği için tek aralıklı yazı tipini kullanın.\n```",
+          "label": "Tek aralıklı yazı tipi"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Eşleşme bulunamadı.",
     "no-wallpaper": "Duvar kâğıdı bulunamadı.",
     "panel": {
+      "apikey": {
+        "help": "NSFW içeriğe erişmek için bir API anahtarı gereklidir.",
+        "label": "API Anahtarı",
+        "placeholder": "Wallhaven API Anahtarınızı girin"
+      },
       "apply-all-monitors": {
         "description": "Seçilen duvar kâğıdını tüm monitörlere aynı anda uygulayın.",
         "label": "Tüm monitörler için uygula"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Tümü",
         "label": "İçerik filtresi",
+        "nsfw": "Müstehcen",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

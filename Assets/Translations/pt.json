@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Mostrar informações de uso do espaço em disco.",
           "label": "Uso de armazenamento"
+        },
+        "use-monospace-font": {
+          "description": "```\nUse fonte monoespaçada para largura de caractere consistente.\n```",
+          "label": "Fonte monoespaçada"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Nenhuma correspondência encontrada.",
     "no-wallpaper": "Nenhum papel de parede encontrado.",
     "panel": {
+      "apikey": {
+        "help": "É necessária uma chave de API para acessar conteúdo NSFW.",
+        "label": "Chave de API",
+        "placeholder": "Insira sua chave da API Wallhaven"
+      },
       "apply-all-monitors": {
         "description": "Aplica o papel de parede selecionado a todos os monitores de uma só vez.",
         "label": "Aplicar a todos os monitores"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Tudo",
         "label": "Filtro de conteúdo",
+        "nsfw": "NSFW: Conteúdo adulto/impróprio para menores/NSFW",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

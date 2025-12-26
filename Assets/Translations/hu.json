@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Lemezterület-használati információk megjelenítése.",
           "label": "Tárhelyhasználat"
+        },
+        "use-monospace-font": {
+          "description": "```\nHasználj monospace betűtípust az egységes karakter-szélességhez.\n```",
+          "label": "Monospace betűtípus"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Nincs találat.",
     "no-wallpaper": "Nincs háttérkép találat.",
     "panel": {
+      "apikey": {
+        "help": "NSFW tartalom eléréséhez API kulcs szükséges.",
+        "label": "API kulcs",
+        "placeholder": "Add meg a Wallhaven API kulcsodat!"
+      },
       "apply-all-monitors": {
         "description": "A kiválasztott háttérkép alkalmazása minden monitorra.",
         "label": "Alkalmazás minden monitorra"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Mind",
         "label": "Tartalomszűrő",
+        "nsfw": "Tilos a kiskorúaknak / Nem biztonságos munkahelyen",
         "sfw": "SFW",
         "sketchy": "Vázlatos"
       },

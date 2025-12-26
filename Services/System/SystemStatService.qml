@@ -652,42 +652,20 @@ Singleton {
   // -------------------------------------------------------
   // Helper function to format network speeds
   function formatSpeed(bytesPerSecond) {
-    if (bytesPerSecond < 1024 * 1024) {
-      const kb = bytesPerSecond / 1024;
-      if (kb < 10) {
-        let formatted = kb.toFixed(1) + "KB";
-        if (formatted.length > 5) {
-          formatted = kb.toFixed(1) + "K";
-        }
-        return formatted;
-      } else {
-        let formatted = Math.round(kb) + "KB";
-        if (formatted.length > 5) {
-          formatted = Math.round(kb) + "K";
-        }
-        return formatted;
-      }
-    } else if (bytesPerSecond < 1024 * 1024 * 1024) {
-      const mb = bytesPerSecond / (1024 * 1024);
-      let formatted = mb.toFixed(1) + "MB";
-      if (formatted.length > 5) {
-        formatted = mb.toFixed(1) + "M";
-        if (formatted.length > 5) {
-          formatted = Math.round(mb) + "M";
-        }
-      }
-      return formatted;
-    } else {
-      const gb = bytesPerSecond / (1024 * 1024 * 1024);
-      let formatted = gb.toFixed(1) + "GB";
-      if (formatted.length > 5) {
-        formatted = gb.toFixed(1) + "G";
-        if (formatted.length > 5) {
-          formatted = Math.round(gb) + "G";
-        }
-      }
-      return formatted;
+    const units = ["KB", "MB", "GB"];
+    let value = bytesPerSecond / 1024;
+    let unitIndex = 0;
+
+    while (value >= 1024 && unitIndex < units.length - 1) {
+      value /= 1024;
+      unitIndex++;
     }
+
+    const unit = units[unitIndex];
+    const shortUnit = unit[0];
+    const numStr = value < 10 ? value.toFixed(1) : Math.round(value).toString();
+
+    return (numStr + unit).length > 5 ? numStr + shortUnit : numStr + unit;
   }
 
   // -------------------------------------------------------

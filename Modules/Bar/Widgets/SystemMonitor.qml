@@ -36,6 +36,7 @@ Rectangle {
   readonly property bool density: Settings.data.bar.density
 
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
+  readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
   readonly property bool showCpuTemp: (widgetSettings.showCpuTemp !== undefined) ? widgetSettings.showCpuTemp : widgetMetadata.showCpuTemp
   readonly property bool showGpuTemp: (widgetSettings.showGpuTemp !== undefined) ? widgetSettings.showGpuTemp : widgetMetadata.showGpuTemp
@@ -45,6 +46,7 @@ Rectangle {
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
 
+  readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
   readonly property real iconSize: textSize * 1.4
   readonly property real textSize: {
     var base = isVertical ? width * 0.82 : height;
@@ -59,9 +61,6 @@ Rectangle {
   readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary
   readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError
 
-  readonly property int percentTextWidth: Math.ceil(percentMetrics.boundingRect.width + 3)
-  readonly property int tempTextWidth: Math.ceil(tempMetrics.boundingRect.width + 3)
-  readonly property int memTextWidth: Math.ceil(memMetrics.boundingRect.width + 3)
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
   // Threshold settings from global configuration
@@ -87,30 +86,6 @@ Rectangle {
   readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
   readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskWarningThreshold
   readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskCriticalThreshold
-
-  TextMetrics {
-    id: percentMetrics
-    font.family: Settings.data.ui.fontFixed
-    font.weight: Style.fontWeightMedium
-    font.pointSize: textSize * Settings.data.ui.fontFixedScale
-    text: "99%" // Use the longest possible string for measurement
-  }
-
-  TextMetrics {
-    id: tempMetrics
-    font.family: Settings.data.ui.fontFixed
-    font.weight: Style.fontWeightMedium
-    font.pointSize: textSize * Settings.data.ui.fontFixedScale
-    text: "99°" // Use the longest possible string for measurement
-  }
-
-  TextMetrics {
-    id: memMetrics
-    font.family: Settings.data.ui.fontFixed
-    font.weight: Style.fontWeightMedium
-    font.pointSize: textSize * Settings.data.ui.fontFixedScale
-    text: "12.3G" // Representative of formatted memory/network values (smart formatting keeps most values to 5 chars or less)
-  }
 
   anchors.centerIn: parent
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
@@ -214,7 +189,9 @@ Rectangle {
     // CPU Usage Component
     Item {
       id: cpuUsageContainer
-      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
+      implicitWidth: cpuUsageContent.implicitWidth
+      implicitHeight: cpuUsageContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
@@ -240,7 +217,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -269,13 +246,12 @@ Rectangle {
               return usage;
             }
           }
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : percentTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when indicator active
           color: isVertical ? (cpuCritical ? criticalColor : (cpuWarning ? warningColor : textColor)) : ((cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor)
@@ -289,7 +265,9 @@ Rectangle {
     // CPU Temperature Component
     Item {
       id: cpuTempContainer
-      Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
+      implicitWidth: cpuTempContent.implicitWidth
+      implicitHeight: cpuTempContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
@@ -315,7 +293,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -337,13 +315,12 @@ Rectangle {
 
         NText {
           text: `${Math.round(SystemStatService.cpuTemp)}°`
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : tempTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when temp indicator active
           color: isVertical ? (tempCritical ? criticalColor : (tempWarning ? warningColor : textColor)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor)
@@ -357,7 +334,9 @@ Rectangle {
     // GPU Temperature Component
     Item {
       id: gpuTempContainer
-      Layout.preferredWidth: isVertical ? root.width : (iconSize + tempTextWidth) + (Style.marginXXS)
+      implicitWidth: gpuTempContent.implicitWidth
+      implicitHeight: gpuTempContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showGpuTemp && SystemStatService.gpuAvailable
@@ -383,7 +362,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -405,13 +384,12 @@ Rectangle {
 
         NText {
           text: `${Math.round(SystemStatService.gpuTemp)}°`
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : tempTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when GPU temp indicator active
           color: isVertical ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : textColor)) : ((gpuWarning || gpuCritical) ? Color.mSurfaceVariant : textColor)
@@ -425,7 +403,9 @@ Rectangle {
     // Memory Usage Component
     Item {
       id: memoryContainer
-      Layout.preferredWidth: isVertical ? root.width : iconSize + (showMemoryAsPercent ? percentTextWidth : memTextWidth) + (Style.marginXXS)
+      implicitWidth: memoryContent.implicitWidth
+      implicitHeight: memoryContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
@@ -451,7 +431,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -473,13 +453,12 @@ Rectangle {
 
         NText {
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : (showMemoryAsPercent ? percentTextWidth : memTextWidth)
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when memory indicator active
           color: isVertical ? (memCritical ? criticalColor : (memWarning ? warningColor : textColor)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : textColor)
@@ -492,7 +471,9 @@ Rectangle {
 
     // Network Download Speed Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
+      implicitWidth: downloadContent.implicitWidth
+      implicitHeight: downloadContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
@@ -504,7 +485,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -524,13 +505,12 @@ Rectangle {
 
         NText {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : memTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           color: textColor
           Layout.row: isVertical ? 0 : 0
@@ -542,7 +522,9 @@ Rectangle {
 
     // Network Upload Speed Component
     Item {
-      Layout.preferredWidth: isVertical ? root.width : iconSize + memTextWidth + (Style.marginXXS)
+      implicitWidth: uploadContent.implicitWidth
+      implicitHeight: uploadContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showNetworkStats
@@ -554,7 +536,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -574,13 +556,12 @@ Rectangle {
 
         NText {
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : memTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           color: textColor
           Layout.row: isVertical ? 0 : 0
@@ -593,7 +574,9 @@ Rectangle {
     // Disk Usage Component (primary drive)
     Item {
       id: diskContainer
-      Layout.preferredWidth: isVertical ? root.width : iconSize + percentTextWidth + (Style.marginXXS)
+      implicitWidth: diskContent.implicitWidth
+      implicitHeight: diskContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
@@ -619,7 +602,7 @@ Rectangle {
         rows: isVertical ? 2 : 1
         columns: isVertical ? 1 : 2
         rowSpacing: Style.marginXXS
-        columnSpacing: Style.marginXXS
+        columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
@@ -642,13 +625,12 @@ Rectangle {
         NText {
           id: toto
           text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
-          family: Settings.data.ui.fontFixed
+          family: fontFamily
           pointSize: textSize
           applyUiScale: false
           font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
-          Layout.preferredWidth: isVertical ? -1 : percentTextWidth
-          horizontalAlignment: isVertical ? Text.AlignHCenter : Text.AlignRight
+          horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
           // Use highlight colors in vertical bar; otherwise invert text color to bar background when disk indicator active
           color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : textColor)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor)

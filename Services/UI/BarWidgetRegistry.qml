@@ -193,6 +193,7 @@ Singleton {
                                   "SystemMonitor": {
                                     "allowUserSettings": true,
                                     "usePrimaryColor": false,
+                                    "useMonospaceFont": true,
                                     "showCpuUsage": true,
                                     "showCpuTemp": true,
                                     "showGpuTemp": false,

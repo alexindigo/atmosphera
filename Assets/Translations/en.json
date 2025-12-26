@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Show disk space usage information.",
           "label": "Storage usage"
+        },
+        "use-monospace-font": {
+          "description": "Use monospace font for consistent character width.",
+          "label": "Monospace font"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "No match found.",
     "no-wallpaper": "No wallpaper found.",
     "panel": {
+      "apikey": {
+        "help": "An API key is required to access NSFW content.",
+        "label": "API Key",
+        "placeholder": "Enter your Wallhaven API Key"
+      },
       "apply-all-monitors": {
         "description": "Apply the selected wallpaper to all monitors.",
         "label": "Apply to all monitors"
@@ -2798,14 +2807,9 @@
       "purity": {
         "all": "All",
         "label": "Content filter",
+        "nsfw": "NSFW",
         "sfw": "SFW",
-        "sketchy": "Sketchy",
-        "nsfw": "NSFW"
-      },
-      "apikey": {
-        "label": "API Key",
-        "placeholder": "Enter your Wallhaven API Key",
-        "help": "An API key is required to access NSFW content."
+        "sketchy": "Sketchy"
       },
       "ratios": {
         "any": "Any",

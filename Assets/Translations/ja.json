@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "ストレージの使用状況を表示します。",
           "label": "ストレージ使用量"
+        },
+        "use-monospace-font": {
+          "description": "```\nタイプライター体で翻訳します。\n\n```",
+          "label": "等幅フォント"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "一致する項目がありません。",
     "no-wallpaper": "壁紙が見つかりません。",
     "panel": {
+      "apikey": {
+        "help": "成人向けコンテンツにアクセスするには、APIキーが必要です。",
+        "label": "APIキー",
+        "placeholder": "Wallhaven APIキーを入力してください。"
+      },
       "apply-all-monitors": {
         "description": "選択した壁紙をすべてのディスプレイに適用します。",
         "label": "全ディスプレイに適用"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "すべて",
         "label": "コンテンツフィルタ",
+        "nsfw": "R-18",
         "sfw": "SFW（全年齢）",
         "sketchy": "Sketchy（際どい）"
       },

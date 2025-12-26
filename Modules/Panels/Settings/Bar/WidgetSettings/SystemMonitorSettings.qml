@@ -15,6 +15,7 @@ ColumnLayout {
 
   // Local, editable state for checkboxes
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
+  property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
   property bool valueShowCpuTemp: widgetData.showCpuTemp !== undefined ? widgetData.showCpuTemp : widgetMetadata.showCpuTemp
   property bool valueShowGpuTemp: widgetData.showGpuTemp !== undefined ? widgetData.showGpuTemp : widgetMetadata.showGpuTemp
@@ -27,6 +28,7 @@ ColumnLayout {
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
     settings.usePrimaryColor = valueUsePrimaryColor;
+    settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
     settings.showCpuTemp = valueShowCpuTemp;
     settings.showGpuTemp = valueShowGpuTemp;
@@ -45,6 +47,14 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
     checked: valueUsePrimaryColor
     onToggled: checked => valueUsePrimaryColor = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.system-monitor.use-monospace-font.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.use-monospace-font.description")
+    checked: valueUseMonospaceFont
+    onToggled: checked => valueUseMonospaceFont = checked
   }
 
   NToggle {

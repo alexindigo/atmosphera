@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
+        },
+        "use-monospace-font": {
+          "description": "请使用等宽字体以保持字符宽度一致。",
+          "label": "等宽字体"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "未找到匹配项。",
     "no-wallpaper": "未找到壁纸。",
     "panel": {
+      "apikey": {
+        "help": "访问 NSFW 内容需要 API 密钥。",
+        "label": "API 密钥",
+        "placeholder": "输入您的Wallhaven API密钥"
+      },
       "apply-all-monitors": {
         "description": "一次性将选定的壁纸应用到所有显示器。",
         "label": "应用到所有显示器"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "全部",
         "label": "内容过滤器",
+        "nsfw": "少儿不宜",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

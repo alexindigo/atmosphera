@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
           "label": "Speichernutzung"
+        },
+        "use-monospace-font": {
+          "description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
+          "label": "Schriftart mit fester Breite"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Keine Übereinstimmung gefunden.",
     "no-wallpaper": "Kein Hintergrundbild gefunden.",
     "panel": {
+      "apikey": {
+        "help": "Ein API-Schlüssel ist erforderlich, um auf NSFW-Inhalte zuzugreifen.",
+        "label": "API-Schlüssel",
+        "placeholder": "Gib deinen Wallhaven API-Schlüssel ein"
+      },
       "apply-all-monitors": {
         "description": "Ausgewähltes Hintergrundbild auf alle Monitore gleichzeitig anwenden.",
         "label": "Auf alle Monitore anwenden"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Alle",
         "label": "Inhaltsfilter",
+        "nsfw": "Nicht jugendfrei",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

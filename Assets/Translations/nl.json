@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Toon informatie over schijfruimtegebruik.",
           "label": "Opslaggebruik"
+        },
+        "use-monospace-font": {
+          "description": "Gebruik een monospace lettertype voor een consistente tekenbreedte.",
+          "label": "Lettertype met vaste breedte"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Geen resultaten gevonden.",
     "no-wallpaper": "Geen achtergrond gevonden.",
     "panel": {
+      "apikey": {
+        "help": "Een API-sleutel is vereist om toegang te krijgen tot NSFW-content.",
+        "label": "API-sleutel",
+        "placeholder": "Voer uw Wallhaven API-sleutel in"
+      },
       "apply-all-monitors": {
         "description": "Pas de geselecteerde achtergrond in één keer op alle monitoren toe.",
         "label": "Toepassen op alle monitoren"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Alles",
         "label": "Inhoudsfilter",
+        "nsfw": "Niet geschikt voor werk",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

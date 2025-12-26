@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Pokaż informacje o użyciu miejsca na dysku.",
           "label": "Użycie dysku"
+        },
+        "use-monospace-font": {
+          "description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
+          "label": "Czcionka o stałej szerokości znaków"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "Nie znaleziono dopasowania.",
     "no-wallpaper": "Nie znaleziono tapety.",
     "panel": {
+      "apikey": {
+        "help": "Do dostępu do treści NSFW wymagany jest klucz API.",
+        "label": "Klucz API",
+        "placeholder": "Wprowadź swój klucz API Wallhaven."
+      },
       "apply-all-monitors": {
         "description": "Zastosuj wybraną tapetę na wszystkich monitorach.",
         "label": "Zastosuj na wszystkich monitorach"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Wszystkie",
         "label": "Filtr treści",
+        "nsfw": "Niebezpieczne dla pracy.",
         "sfw": "Bezpieczne (SFW)",
         "sketchy": "Podejrzane (Sketchy)"
       },

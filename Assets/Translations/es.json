@@ -334,6 +334,10 @@
         "storage-usage": {
           "description": "Mostrar información del uso del espacio en disco.",
           "label": "Uso de almacenamiento"
+        },
+        "use-monospace-font": {
+          "description": "```\nUtilice fuente monoespaciada para un ancho de carácter consistente.\n```",
+          "label": "Fuente monoespaciada"
         }
       },
       "taskbar": {
@@ -2780,6 +2784,11 @@
     "no-match": "No se encontraron coincidencias.",
     "no-wallpaper": "No se encontraron fondos de pantalla.",
     "panel": {
+      "apikey": {
+        "help": "Se requiere una clave API para acceder a contenido NSFW.",
+        "label": "Clave API",
+        "placeholder": "Introduce tu clave API de Wallhaven"
+      },
       "apply-all-monitors": {
         "description": "Aplica el fondo de pantalla seleccionado a todos los monitores a la vez.",
         "label": "Aplicar a todos los monitores"
@@ -2798,6 +2807,7 @@
       "purity": {
         "all": "Todo",
         "label": "Filtro de contenido",
+        "nsfw": "NSFW",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
