@@ -36,46 +36,6 @@ import qs.Services.UI
 PanelWindow {
   id: root
 
-  // Expose panels as readonly property aliases
-  readonly property alias audioPanel: audioPanel
-  readonly property alias batteryPanel: batteryPanel
-  readonly property alias bluetoothPanel: bluetoothPanel
-  readonly property alias brightnessPanel: brightnessPanel
-  readonly property alias clockPanel: clockPanel
-  readonly property alias changelogPanel: changelogPanel
-  readonly property alias controlCenterPanel: controlCenterPanel
-  readonly property alias launcherPanel: launcherPanel
-  readonly property alias notificationHistoryPanel: notificationHistoryPanel
-  readonly property alias sessionMenuPanel: sessionMenuPanel
-  readonly property alias settingsPanel: settingsPanel
-  readonly property alias setupWizardPanel: setupWizardPanel
-  readonly property alias trayDrawerPanel: trayDrawerPanel
-  readonly property alias wallpaperPanel: wallpaperPanel
-  readonly property alias wifiPanel: wifiPanel
-  readonly property alias pluginPanel1: pluginPanel1
-  readonly property alias pluginPanel2: pluginPanel2
-  readonly property alias systemStatsPanel: systemStatsPanel
-
-  // Expose panel backgrounds for AllBackgrounds
-  readonly property var audioPanelPlaceholder: audioPanel.panelRegion
-  readonly property var batteryPanelPlaceholder: batteryPanel.panelRegion
-  readonly property var bluetoothPanelPlaceholder: bluetoothPanel.panelRegion
-  readonly property var brightnessPanelPlaceholder: brightnessPanel.panelRegion
-  readonly property var clockPanelPlaceholder: clockPanel.panelRegion
-  readonly property var changelogPanelPlaceholder: changelogPanel.panelRegion
-  readonly property var controlCenterPanelPlaceholder: controlCenterPanel.panelRegion
-  readonly property var launcherPanelPlaceholder: launcherPanel.panelRegion
-  readonly property var notificationHistoryPanelPlaceholder: notificationHistoryPanel.panelRegion
-  readonly property var sessionMenuPanelPlaceholder: sessionMenuPanel.panelRegion
-  readonly property var settingsPanelPlaceholder: settingsPanel.panelRegion
-  readonly property var setupWizardPanelPlaceholder: setupWizardPanel.panelRegion
-  readonly property var trayDrawerPanelPlaceholder: trayDrawerPanel.panelRegion
-  readonly property var wallpaperPanelPlaceholder: wallpaperPanel.panelRegion
-  readonly property var wifiPanelPlaceholder: wifiPanel.panelRegion
-  readonly property var pluginPanel1Placeholder: pluginPanel1.panelRegion
-  readonly property var pluginPanel2Placeholder: pluginPanel2.panelRegion
-  readonly property var systemStatsPanelPlaceholder: systemStatsPanel.panelRegion
-
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
   }
