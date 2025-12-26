@@ -19,6 +19,9 @@ Singleton {
   readonly property string envRealName: (Quickshell.env("NOCTALIA_REALNAME") || "")
   property string realName: ""
 
+  // Internal: pending logo name for fallback after probe fails
+  property string pendingLogoName: ""
+
   readonly property string displayName: {
     // Explicit override
     if (envRealName && envRealName.length > 0) {
@@ -89,29 +92,30 @@ Singleton {
     if (!n)
       return;
 
-    // First try Quickshell's icon lookup which respects the user's icon theme
+    // First try Quickshell's icon lookup for direct file paths
     try {
       const path = Quickshell.iconPath(n, "");
-      if (path && path !== "") {
-        // Check if it's an image:// URI which IconImage might not handle
-        if (path.startsWith("image://")) {
-          // Fall through to manual probe
-        } else {
-          // Ensure proper file:// prefix
-          const finalPath = path.startsWith("file://") ? path : "file://" + path;
-          root.osLogo = finalPath;
-          Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
-          return;
-        }
+      if (path && path !== "" && !path.startsWith("image://")) {
+        // Got a direct file path - use it
+        const finalPath = path.startsWith("file://") ? path : "file://" + path;
+        root.osLogo = finalPath;
+        Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
+        return;
       }
     } catch (e) {
-      Logger.d("HostService", "Icon theme lookup failed, trying fallback paths");
+      // Ignore and continue to manual probe
     }
 
-    // Fallback: probe common paths manually
+    // Try manual probing for hicolor/pixmaps paths
+    // Store name for fallback to image:// URI if probe fails
+    root.pendingLogoName = n;
     const all = buildCandidates(n);
-    if (all.length === 0)
+    if (all.length === 0) {
+      // No candidates, try image:// URI directly
+      root.osLogo = `image://icon/${n}`;
+      Logger.d("HostService", "Using theme icon URI:", root.osLogo);
       return;
+    }
     const script = all.map(p => `if [ -f "${p}" ]; then echo "${p}"; exit 0; fi`).join("; ") + "; exit 1";
     probe.command = ["sh", "-c", script];
     probe.running = true;
@@ -151,7 +155,13 @@ Singleton {
       const p = String(stdout.text || "").trim();
       if (code === 0 && p) {
         root.osLogo = `file://${p}`;
+        root.pendingLogoName = "";
         Logger.d("HostService", "Found", root.osLogo);
+      } else if (root.pendingLogoName) {
+        // Manual probe failed, fallback to image:// URI (theme icon)
+        root.osLogo = `image://icon/${root.pendingLogoName}`;
+        root.pendingLogoName = "";
+        Logger.d("HostService", "Using theme icon URI:", root.osLogo);
       } else {
         root.osLogo = "";
         Logger.w("HostService", "No distro logo found");
