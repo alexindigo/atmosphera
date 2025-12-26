@@ -1188,14 +1188,14 @@
         "compositors": {
           "description": "Compositor theming.",
           "hyprland": {
-            "description": "Write {filepath}."
+            "description": "Write {filepath}"
           },
           "label": "Compositors",
           "mango": {
-            "description": "Write {filepath}."
+            "description": "Write {filepath} — requires Mango"
           },
           "niri": {
-            "description": "Write {filepath}. Requires niri v25.11+"
+            "description": "Write {filepath} — requires Niri v25.11+"
           }
         },
         "misc": {
@@ -1212,12 +1212,12 @@
           },
           "code": {
             "description": "Write {filepath}",
-            "description-detected": "Applied to default profile. Detected: {clients}",
+            "description-detected": "Applied to default profile — detected: {clients}",
             "description-missing": "No Code editor detected (VSCode or VSCodium)"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client} — The theme needs to be activated manually",
+            "description": "Write {filepath} for {client} — the theme needs to be activated manually",
             "description-detected": "Detected: {clients}",
             "description-missing": "No Discord client detected"
           },
@@ -1225,7 +1225,7 @@
             "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "label": "Programs",
           "pywalfox": {
@@ -1238,7 +1238,7 @@
             "description": "Write {filepath}"
           },
           "vicinae": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "walker": {
             "description": "Write {filepath} and set theme to noctalia"
@@ -1247,7 +1247,7 @@
             "description": "Write {filepath} — flavor needs to be activated manually"
           },
           "zed": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           }
         },
         "section": {
@@ -1256,21 +1256,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "description": "Terminal emulator theming.",
           "foot": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "ghostty": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "kitty": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Write {filepath} and reload."
+            "description": "Write {filepath} and reload"
           }
         },
         "ui": {

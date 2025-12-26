@@ -1192,10 +1192,10 @@
           },
           "label": "コンポジタ",
           "mango": {
-            "description": "{filepath} を書き込みます。mango が必要です。"
+            "description": "{filepath} を書き込みます。Mango が必要です。"
           },
           "niri": {
-            "description": "{filepath} を書き込みます。niri v25.11+ が必要です。"
+            "description": "{filepath} を書き込みます。Niri v25.11+ が必要です。"
           }
         },
         "misc": {

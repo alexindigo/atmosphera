@@ -759,7 +759,7 @@
       "never": "Никогда не прокручивать"
     },
     "settings-panel-mode": {
-      "attached": "Панель, прикреплённая к перекладине",
+      "attached": "Панель прикреплена к панели",
       "centered": "Центрированная панель",
       "window": "Отдельное окно"
     },
@@ -1074,7 +1074,7 @@
           "label": "Показать контуры виджетов"
         },
         "transparent": {
-          "description": "Это предотвратит прикрепление панелей к планке.",
+          "description": "Это предотвратит прикрепление панелей к панели.",
           "label": "Прозрачный фон"
         }
       },
@@ -1188,14 +1188,14 @@
         "compositors": {
           "description": "Оформление композитора.",
           "hyprland": {
-            "description": "Записать {filepath}."
+            "description": "Записать {filepath}"
           },
           "label": "Компоновщики",
           "mango": {
-            "description": "Записать {filepath}. Требуется mango"
+            "description": "Записать {filepath} — требуется Mango"
           },
           "niri": {
-            "description": "Записать {filepath}. Требуется niri v25.11+"
+            "description": "Записать {filepath} — требуется Niri v25.11+"
           }
         },
         "misc": {
@@ -1212,7 +1212,7 @@
           },
           "code": {
             "description": "Записать {filepath}",
-            "description-detected": "Применено к профилю по умолчанию. Обнаружено: {clients}",
+            "description-detected": "Применено к профилю по умолчанию — обнаружено: {clients}",
             "description-missing": "Редактор кода не обнаружен (VSCode или VSCodium)"
           },
           "description": "Тематика для конкретных приложений.",

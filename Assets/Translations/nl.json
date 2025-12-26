@@ -759,7 +759,7 @@
       "never": "Nooit scrollen"
     },
     "settings-panel-mode": {
-      "attached": "Paneel bevestigd aan staaf",
+      "attached": "Paneel bevestigd aan de balk",
       "centered": "Gecentreerd paneel",
       "window": "Apart venster"
     },
@@ -1074,7 +1074,7 @@
           "label": "Toon widget-omtrekken"
         },
         "transparent": {
-          "description": "Dit voorkomt dat panelen aan de balk worden bevestigd.",
+          "description": "Dit voorkomt dat de panelen aan de balk worden bevestigd.",
           "label": "Transparante achtergrond"
         }
       },
@@ -1188,14 +1188,14 @@
         "compositors": {
           "description": "Theming van compositor.",
           "hyprland": {
-            "description": "Schrijf {filepath}."
+            "description": "Schrijf {filepath}"
           },
           "label": "Compositors",
           "mango": {
-            "description": "Schrijf {filepath}. Vereist mango"
+            "description": "Schrijf {filepath} — vereist Mango"
           },
           "niri": {
-            "description": "Schrijf {filepath}. Vereist niri v25.11+"
+            "description": "Schrijf {filepath} — vereist Niri v25.11+"
           }
         },
         "misc": {
@@ -1212,12 +1212,12 @@
           },
           "code": {
             "description": "Schrijf {filepath}",
-            "description-detected": "Toegepast op standaardprofiel. Gedetecteerd: {clients}",
+            "description-detected": "Toegepast op standaardprofiel — gedetecteerd: {clients}",
             "description-missing": "Geen code-editor gedetecteerd (VSCode of VSCodium)"
           },
           "description": "Toepassingsspecifieke theming.",
           "discord": {
-            "description": "Schrijf {filepath} voor {client} — Het theme moet handmatig worden geactiveerd",
+            "description": "Schrijf {filepath} voor {client} — het theme moet handmatig worden geactiveerd",
             "description-detected": "Gedetecteerd: {clients}",
             "description-missing": "Geen Discord-client gedetecteerd"
           },
