@@ -757,7 +757,7 @@
       "never": "Asla Kaydırma"
     },
     "settings-panel-mode": {
-      "attached": "Çubuğa bağlı panel",
+      "attached": "Panel çubuğa takılı",
       "centered": "Ortalanmış panel",
       "window": "Ayrı pencere"
     },
@@ -1072,7 +1072,7 @@
           "label": "Araç kutusu ana hatlarını göster"
         },
         "transparent": {
-          "description": "Bu, panellerin çubuğa takılmasını önleyecektir.",
+          "description": "Bu, panellerin çubuğa takılmasını engelleyecektir.",
           "label": "Şeffaf arka plan"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Birleştirici temalandırma.",
           "hyprland": {
-            "description": "{filepath} dosyasına yaz."
+            "description": "{filepath} dosyasına yaz"
           },
           "label": "Birleştiriciler",
           "mango": {
-            "description": "{filepath} dosyasına yaz. mango gerektirir"
+            "description": "{filepath} dosyasına yaz — Mango gerektirir"
           },
           "niri": {
-            "description": "{filepath} dosyasına yaz. niri v25.11+ gerektirir"
+            "description": "{filepath} dosyasına yaz — Niri v25.11+ gerektirir"
           }
         },
         "misc": {
@@ -1210,12 +1210,12 @@
           },
           "code": {
             "description": "{filepath} dosyasına yaz",
-            "description-detected": "Varsayılan profile uygulandı. Algılandı: {clients}",
+            "description-detected": "Varsayılan profile uygulandı — algılandı: {clients}",
             "description-missing": "Kod editörü algılanmadı (VSCode veya VSCodium)"
           },
           "description": "Uygulamaya özel temalandırma.",
           "discord": {
-            "description": "{client} için {filepath} dosyasına yaz — Temanın manuel olarak etkinleştirilmesi gerekir",
+            "description": "{client} için {filepath} dosyasına yaz — temanın manuel olarak etkinleştirilmesi gerekir",
             "description-detected": "Algılandı: {clients}",
             "description-missing": "Discord istemcisi algılanmadı"
           },

@@ -757,7 +757,7 @@
       "never": "Nigdy nie przewijaj"
     },
     "settings-panel-mode": {
-      "attached": "Panel przymocowany do paska",
+      "attached": "Panel przypięty do paska",
       "centered": "Panel wyśrodkowany",
       "window": "Oddzielne okno"
     },
@@ -1072,7 +1072,7 @@
           "label": "Pokaż obramowanie widżetów"
         },
         "transparent": {
-          "description": "To zapobiegnie przyczepianiu się paneli do paska.",
+          "description": "To zapobiegnie przypięciu się paneli do paska.",
           "label": "Przezroczyste tło"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Motywy kompozytora.",
           "hyprland": {
-            "description": "Zapisz {filepath}."
+            "description": "Zapisz {filepath}"
           },
           "label": "Kompozytory",
           "mango": {
-            "description": "Zapisz {filepath}. Wymaga mango"
+            "description": "Zapisz {filepath} — wymaga Mango"
           },
           "niri": {
-            "description": "Zapisz {filepath}. Wymaga niri v25.11+"
+            "description": "Zapisz {filepath} — wymaga Niri v25.11+"
           }
         },
         "misc": {
@@ -1210,7 +1210,7 @@
           },
           "code": {
             "description": "Zapisz {filepath} — motyw HyprLuna musi być zainstalowany i aktywowany ręcznie",
-            "description-detected": "Zastosowano do profilu domyślnego. Wykryto: {clients}",
+            "description-detected": "Zastosowano do profilu domyślnego — wykryto: {clients}",
             "description-missing": "Nie wykryto klienta Code — zainstaluj VSCode lub VSCodium"
           },
           "description": "Motywy specyficzne dla aplikacji.",
@@ -2407,7 +2407,7 @@
         "label": "Przezroczystość tła paneli"
       },
       "panels-attached-to-bar": {
-        "description": "Panele przyczepiają się do paska i krawędzi ekranu, tworząc spójny wygląd ze stylowymi odwróconymi narożnikami.",
+        "description": "Panele przypinają się do paska i krawędzi ekranu, tworząc spójny wygląd ze stylowymi odwróconymi narożnikami.",
         "label": "Przyciągaj panele do krawędzi"
       },
       "panels-overlay": {

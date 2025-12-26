@@ -1072,7 +1072,7 @@
           "label": "Mostrar contornos de widgets"
         },
         "transparent": {
-          "description": "Esto evitará que los paneles se adhieran a la barra.",
+          "description": "Esto evitará que los paneles se adjunten a la barra.",
           "label": "Fondo transparente"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Tematización del compositor.",
           "hyprland": {
-            "description": "Escribe {filepath}."
+            "description": "Escribir {filepath}"
           },
           "label": "Compositores",
           "mango": {
-            "description": "Escribir {filepath}. Requiere mango"
+            "description": "Escribir {filepath} — requiere Mango"
           },
           "niri": {
-            "description": "Escribir {filepath}. Requiere niri v25.11+"
+            "description": "Escribir {filepath} — requiere Niri v25.11+"
           }
         },
         "misc": {
@@ -1206,16 +1206,16 @@
         },
         "programs": {
           "cava": {
-            "description": "Escribe {filepath}"
+            "description": "Escribir {filepath}"
           },
           "code": {
-            "description": "Escribe {filepath}",
-            "description-detected": "Aplicado al perfil predeterminado. Detectado: {clients}",
+            "description": "Escribir {filepath}",
+            "description-detected": "Aplicado al perfil predeterminado — detectado: {clients}",
             "description-missing": "No se detectó ningún editor de código (VSCode o VSCodium)"
           },
           "description": "Tematización específica de aplicaciones.",
           "discord": {
-            "description": "Escribir {filepath} para {client} — El tema debe ser activado manualmente",
+            "description": "Escribir {filepath} para {client} — el tema debe ser activado manualmente",
             "description-detected": "Detectado: {clients}",
             "description-missing": "No se detectó ningún cliente de Discord"
           },
@@ -1230,10 +1230,10 @@
             "description": "Escribir {filepath} y ejecutar pywalfox update"
           },
           "spicetify": {
-            "description": "Escribe {filepath} — el tema Comfy debe ser instalado y activado manualmente"
+            "description": "Escribir {filepath} — el tema Comfy debe ser instalado y activado manualmente"
           },
           "telegram": {
-            "description": "Escribe {filepath}"
+            "description": "Escribir {filepath}"
           },
           "vicinae": {
             "description": "Escribir {filepath} y recargar"
@@ -1242,7 +1242,7 @@
             "description": "Escribir {filepath} y establecer tema a noctalia"
           },
           "yazi": {
-            "description": "Escriba en {filepath} — el sabor debe activarse manualmente"
+            "description": "Escribir {filepath} — el sabor debe activarse manualmente"
           },
           "zed": {
             "description": "Escribir {filepath} y recargar"
@@ -1254,7 +1254,7 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Escribe {filepath} y recarga"
+            "description": "Escribir {filepath} y recargar"
           },
           "description": "Tematización del emulador de terminal.",
           "foot": {
@@ -1268,7 +1268,7 @@
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Escribe {filepath} y recarga"
+            "description": "Escribir {filepath} y recargar"
           }
         },
         "ui": {
@@ -2425,7 +2425,7 @@
       },
       "settings-panel-mode": {
         "description": "Elegir diseño de configuración (puede requerir reapertura).",
-        "label": "Modo panel de configuración"
+        "label": "Modo del panel de configuración"
       },
       "shadows": {
         "description": "Habilita sombras paralelas debajo de las barras y los paneles.",

@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Tematização do compositor.",
           "hyprland": {
-            "description": "Escreva {filepath}."
+            "description": "Escrever {filepath}"
           },
           "label": "Compositores",
           "mango": {
-            "description": "Escrever {filepath}. Requer mango"
+            "description": "Escrever {filepath} — requer Mango"
           },
           "niri": {
-            "description": "Escrever {filepath}. Requer Niri v25.11+"
+            "description": "Escrever {filepath} — requer Niri v25.11+"
           }
         },
         "misc": {
@@ -1206,16 +1206,16 @@
         },
         "programs": {
           "cava": {
-            "description": "Escreva em {filepath}"
+            "description": "Escrever {filepath}"
           },
           "code": {
-            "description": "Escreva em {filepath}",
-            "description-detected": "Aplicado ao perfil padrão. Detectado: {clients}",
+            "description": "Escrever {filepath}",
+            "description-detected": "Aplicado ao perfil padrão — detectado: {clients}",
             "description-missing": "Nenhum editor de código detectado (VSCode ou VSCodium)"
           },
           "description": "Tematização específica de aplicativos.",
           "discord": {
-            "description": "Escrever {filepath} para {client} — O tema precisa ser ativado manualmente",
+            "description": "Escrever {filepath} para {client} — o tema precisa ser ativado manualmente",
             "description-detected": "Detectado: {clients}",
             "description-missing": "Nenhum cliente Discord detectado"
           },
@@ -1230,10 +1230,10 @@
             "description": "Escrever {filepath} e executar pywalfox update"
           },
           "spicetify": {
-            "description": "Escreva em {filepath} — o tema Comfy precisa ser instalado e ativado manualmente"
+            "description": "Escrever {filepath} — o tema Comfy precisa ser instalado e ativado manualmente"
           },
           "telegram": {
-            "description": "Escreva em {filepath}"
+            "description": "Escrever {filepath}"
           },
           "vicinae": {
             "description": "Escrever {filepath} e recarregar"
@@ -1242,7 +1242,7 @@
             "description": "Escrever {filepath} e definir tema como noctalia"
           },
           "yazi": {
-            "description": "Escreva em {filepath} — o sabor precisa ser ativado manualmente"
+            "description": "Escrever {filepath} — o sabor precisa ser ativado manualmente"
           },
           "zed": {
             "description": "Escrever {filepath} e recarregar"
@@ -1254,7 +1254,7 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Escreva {filepath} e recarregue"
+            "description": "Escrever {filepath} e recarregar"
           },
           "description": "Tematização do emulador de terminal.",
           "foot": {
@@ -1268,7 +1268,7 @@
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Escreva {filepath} e recarregue"
+            "description": "Escrever {filepath} e recarregar"
           }
         },
         "ui": {

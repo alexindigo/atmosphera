@@ -757,7 +757,7 @@
       "never": "Ніколи не прокручувати"
     },
     "settings-panel-mode": {
-      "attached": "Панель, прикріплена до стійки",
+      "attached": "Панель прикріплена до панелі",
       "centered": "Центрована панель",
       "window": "Окреме вікно"
     },
@@ -1072,7 +1072,7 @@
           "label": "Показувати контури віджетів"
         },
         "transparent": {
-          "description": "Це запобіжить прикріпленню панелей до планки.",
+          "description": "Це завадить панелям прикріплюватися до панелі.",
           "label": "Прозорий фон"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Оформлення композитора.",
           "hyprland": {
-            "description": "Записати {filepath}."
+            "description": "Записати {filepath}"
           },
           "label": "Композитори",
           "mango": {
-            "description": "Записати {filepath}. Потребує mango"
+            "description": "Записати {filepath} — потребує mango"
           },
           "niri": {
-            "description": "Записати {filepath}. Потребує niri v25.11+"
+            "description": "Записати {filepath} — потребує niri v25.11+"
           }
         },
         "misc": {
@@ -1210,7 +1210,7 @@
           },
           "code": {
             "description": "Записати {filepath}",
-            "description-detected": "Застосовано до профілю за замовчуванням. Виявлено: {clients}",
+            "description-detected": "Застосовано до профілю за замовчуванням — виявлено: {clients}",
             "description-missing": "Редактор коду не виявлено (VSCode або VSCodium)"
           },
           "description": "Оформлення окремих застосункiв.",

@@ -757,7 +757,7 @@
       "never": "Ne Jamais Défiler"
     },
     "settings-panel-mode": {
-      "attached": "Panneau fixé à une barre",
+      "attached": "Panneau attaché à la barre",
       "centered": "Panneau centré",
       "window": "Fenêtre séparée"
     },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Thématisation du compositeur.",
           "hyprland": {
-            "description": "Écris {filepath}."
+            "description": "Écrire {filepath}"
           },
           "label": "Compositeurs",
           "mango": {
-            "description": "Écrire {filepath}. Requiert mango"
+            "description": "Écrire {filepath} — requiert Mango"
           },
           "niri": {
-            "description": "Écrire {filepath}. Requiert niri v25.11+"
+            "description": "Écrire {filepath} — requiert Niri v25.11+"
           }
         },
         "misc": {
@@ -1210,12 +1210,12 @@
           },
           "code": {
             "description": "Écrire {filepath}",
-            "description-detected": "Appliqué au profil par défaut. Détecté : {clients}",
+            "description-detected": "Appliqué au profil par défaut — détecté : {clients}",
             "description-missing": "Aucun éditeur de code détecté (VSCode ou VSCodium)"
           },
           "description": "Thématisation spécifique aux applications.",
           "discord": {
-            "description": "Écrire {filepath} pour {client} — Le thème doit être activé manuellement",
+            "description": "Écrire {filepath} pour {client} — le thème doit être activé manuellement",
             "description-detected": "Détecté : {clients}",
             "description-missing": "Aucun client Discord détecté"
           },
@@ -1242,7 +1242,7 @@
             "description": "Écrire {filepath} et définir le thème sur noctalia"
           },
           "yazi": {
-            "description": "Écrire dans {filepath} — flavor doit être activée manuellement"
+            "description": "Écrire {filepath} — flavor doit être activée manuellement"
           },
           "zed": {
             "description": "Écrire {filepath} — le thème Comfy doit être installé et activé manuellement"
@@ -1268,7 +1268,7 @@
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Écrire {filepath} et recharger."
+            "description": "Écrire {filepath} et recharger"
           }
         },
         "ui": {
@@ -2425,7 +2425,7 @@
       },
       "settings-panel-mode": {
         "description": "Choisir la disposition des paramètres (peut nécessiter une réouverture).",
-        "label": "Mode du panneau de configuration"
+        "label": "Mode du panneau des paramètres"
       },
       "shadows": {
         "description": "Active les ombres portées sous les barres et les panneaux.",

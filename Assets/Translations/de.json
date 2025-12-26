@@ -33,7 +33,7 @@
       },
       "audio-visualizer": {
         "color-name": {
-          "description": "Wähle die Farbe für den Visualisierer aus.",
+          "description": "Wählen Sie die Farbe für den Visualisierer aus.",
           "label": "Füllfarbe"
         },
         "hide-when-idle": {
@@ -757,7 +757,7 @@
       "never": "Nie Scrollen"
     },
     "settings-panel-mode": {
-      "attached": "An Platte an einer Stange befestigt",
+      "attached": "Panel an der Leiste angeheftet",
       "centered": "Zentriertes Feld",
       "window": "Eigenes Fenster"
     },
@@ -1072,7 +1072,7 @@
           "label": "Widget-Umrisse anzeigen"
         },
         "transparent": {
-          "description": "Dies verhindert, dass Paneele an der Stange befestigt werden können.",
+          "description": "Dies verhindert, dass die Panels an der Leiste angeheftet werden können.",
           "label": "Transparenter Hintergrund"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "Compositor-Theming.",
           "hyprland": {
-            "description": "Schreibe {Dateipfad}."
+            "description": "Schreibe {filepath}"
           },
           "label": "Compositor",
           "mango": {
-            "description": "Schreibe {filepath}. Benötigt mango"
+            "description": "Schreibe {filepath} — benötigt mango"
           },
           "niri": {
-            "description": "Schreibe {filepath}. Benötigt niri v25.11+"
+            "description": "Schreibe {filepath} — benötigt niri v25.11+"
           }
         },
         "misc": {
@@ -1210,12 +1210,12 @@
           },
           "code": {
             "description": "Schreibe {filepath}",
-            "description-detected": "Auf Standardprofil angewendet. Erkannt: {clients}",
+            "description-detected": "Auf Standardprofil angewendet — erkannt: {clients}",
             "description-missing": "Kein Code-Editor erkannt (VSCode oder VSCodium)"
           },
           "description": "Anwendungsspezifisches Theming.",
           "discord": {
-            "description": "Schreibe {filepath} für {client} — Das Theme muss manuell aktiviert werden",
+            "description": "Schreibe {filepath} für {client} — das Theme muss manuell aktiviert werden",
             "description-detected": "Erkannt: {clients}",
             "description-missing": "Kein Discord-Client erkannt"
           },
@@ -1274,14 +1274,14 @@
         "ui": {
           "description": "Desktop-Umgebung und UI-Toolkit-Theming.",
           "gtk": {
-            "description": "Schreibt {filepath}"
+            "description": "Schreibe {filepath}"
           },
           "kcolorscheme": {
-            "description": "Schreibt {filepath}"
+            "description": "Schreibe {filepath}"
           },
           "label": "UI",
           "qt": {
-            "description": "Schreibt {filepath}"
+            "description": "Schreibe {filepath}"
           }
         }
       },
@@ -1410,7 +1410,7 @@
         "style": {
           "analog": "Analog",
           "binary": "Binär",
-          "description": "Wähle den Anzeigestil der Uhr.",
+          "description": "Wählen Sie den Anzeigestil der Uhr.",
           "digital": "Digital",
           "label": "Uhrstil",
           "minimal": "Minimal"
@@ -2424,8 +2424,8 @@
         "label": "Aussehen"
       },
       "settings-panel-mode": {
-        "description": "Wähle das Layout der Einstellungen (möglicherweise ist ein Neustart erforderlich).",
-        "label": "Einstellungsfeldmodus"
+        "description": "Wählen Sie das Layout der Einstellungen (möglicherweise ist ein Neustart erforderlich).",
+        "label": "Einstellungs-Panel-Modus"
       },
       "shadows": {
         "description": "Aktiviert Schlagschatten unter Balken und Panels.",

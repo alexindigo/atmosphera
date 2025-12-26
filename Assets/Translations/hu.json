@@ -757,7 +757,7 @@
       "never": "Soha ne görgessen"
     },
     "settings-panel-mode": {
-      "attached": "Sávhoz csatolt panel",
+      "attached": "Panel a sávhoz rögzítve",
       "centered": "Középre igazított panel",
       "window": "Külön ablak"
     },
@@ -1072,7 +1072,7 @@
           "label": "Widget körvonalak megjelenítése"
         },
         "transparent": {
-          "description": "Ez megakadályozza, hogy a panelek a sávhoz tapadjanak.",
+          "description": "Ez megakadályozza, hogy a panelek rögzüljenek a sávhoz",
           "label": "Átlátszó háttér"
         }
       },
@@ -1186,21 +1186,21 @@
         "compositors": {
           "description": "Kompozitor témázás.",
           "hyprland": {
-            "description": "{filepath} írása."
+            "description": "{filepath} írása"
           },
           "label": "Kompozitorok",
           "mango": {
-            "description": "{filepath} írása."
+            "description": "{filepath} írása — ehhez Mango szükséges"
           },
           "niri": {
-            "description": "{filepath} írása. Ehhez niri v25.11+ szükséges"
+            "description": "{filepath} írása — ehhez Niri v25.11+ szükséges"
           }
         },
         "misc": {
           "description": "Hozzon létre saját sablonokat",
           "label": "Haladó",
           "user-templates": {
-            "description": "Csak akkor engedélyezze, ha tudja, mit csinál – lásd az online dokumentációt",
+            "description": "Csak akkor engedélyezze, ha tudja, mit csinál — lásd az online dokumentációt",
             "label": "Felhasználói sablonok engedélyezése"
           }
         },
@@ -1210,12 +1210,12 @@
           },
           "code": {
             "description": "{filepath} írása",
-            "description-detected": "Alapértelmezett profilra alkalmazva. Észlelve: {clients}",
+            "description-detected": "Alapértelmezett profilra alkalmazva — észlelve: {clients}",
             "description-missing": "Nem észlelt kódszerkesztő (VSCode vagy VSCodium)"
           },
           "description": "Alkalmazásspecifikus téma.",
           "discord": {
-            "description": "{filepath} írása a(z) {client} számára — A témát manuálisan kell aktiválni",
+            "description": "{filepath} írása a(z) {client} számára — a témát manuálisan kell aktiválni",
             "description-detected": "Észlelve: {clients}",
             "description-missing": "Nem észlelt Discord kliens"
           },
@@ -1223,20 +1223,20 @@
             "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "label": "Programok",
           "pywalfox": {
             "description": "{filepath} írása és a pywalfox update futtatása"
           },
           "spicetify": {
-            "description": "{filepath} írása — A Comfy témát manuálisan kell telepíteni és aktiválni"
+            "description": "{filepath} írása — a Comfy témát manuálisan kell telepíteni és aktiválni"
           },
           "telegram": {
             "description": "{filepath} írása"
           },
           "vicinae": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "walker": {
             "description": "{filepath} írása és a téma beállítása noctalia-ra"
@@ -1245,7 +1245,7 @@
             "description": "{filepath} írása — a stílust kézzel kell aktiválni"
           },
           "zed": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           }
         },
         "section": {
@@ -1254,21 +1254,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "description": "Terminálemulátor témázás.",
           "foot": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "ghostty": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "kitty": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           },
           "label": "Terminál",
           "wezterm": {
-            "description": "{filepath} írása és újratöltés."
+            "description": "{filepath} írása és újratöltés"
           }
         },
         "ui": {

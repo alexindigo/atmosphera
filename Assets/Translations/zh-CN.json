@@ -757,7 +757,7 @@
       "never": "从不滚动"
     },
     "settings-panel-mode": {
-      "attached": "连接到杆的面板",
+      "attached": "面板附加到工具栏",
       "centered": "居中面板",
       "window": "分离窗口"
     },
@@ -1072,7 +1072,7 @@
           "label": "显示小部件轮廓"
         },
         "transparent": {
-          "description": "这将阻止面板连接到栏上。",
+          "description": "这将阻止面板附加到工具栏。",
           "label": "透明背景"
         }
       },
@@ -1186,14 +1186,14 @@
         "compositors": {
           "description": "合成器主题。",
           "hyprland": {
-            "description": "写入 {filepath}。"
+            "description": "写入 {filepath}"
           },
           "label": "合成器",
           "mango": {
-            "description": "写入 {filepath}。需要芒果"
+            "description": "写入 {filepath}，需要 Mango"
           },
           "niri": {
-            "description": "写入 {filepath}。需要 niri v25.11+"
+            "description": "写入 {filepath}，需要 Niri v25.11+"
           }
         },
         "misc": {
@@ -1210,7 +1210,7 @@
           },
           "code": {
             "description": "写入 {filepath}",
-            "description-detected": "已应用到默认配置文件。检测到: {clients}",
+            "description-detected": "已应用到默认配置文件，检测到: {clients}",
             "description-missing": "未检测到代码编辑器（VSCode 或 VSCodium）"
           },
           "description": "应用程序特定主题",
