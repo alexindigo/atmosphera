@@ -128,6 +128,7 @@ Singleton {
         const osId = (val("ID") || "").toLowerCase();
         root.isNixOS = osId === "nixos" || (root.osPretty || "").toLowerCase().includes("nixos");
         const logoName = val("LOGO");
+        Logger.i("HostService", "Looking for logo icon:", logoName);
         if (logoName) {
           resolveLogo(logoName);
         }
