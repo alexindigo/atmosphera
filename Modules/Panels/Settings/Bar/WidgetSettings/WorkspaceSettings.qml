@@ -21,7 +21,7 @@ ColumnLayout {
   property bool valueShowApplications: widgetData.showApplications !== undefined ? widgetData.showApplications : widgetMetadata.showApplications
   property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
-  property real valueOpacityUnfocusedIcons: widgetData.opacityUnfocusedIcons !== undefined ? widgetData.opacityUnfocusedIcons : widgetMetadata.opacityUnfocusedIcons
+  property real valueUnfocusedIconsOpacity: widgetData.unfocusedIconsOpacity !== undefined ? widgetData.unfocusedIconsOpacity : widgetMetadata.unfocusedIconsOpacity
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
 
   function saveSettings() {
@@ -33,7 +33,7 @@ ColumnLayout {
     settings.showApplications = valueShowApplications;
     settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
     settings.colorizeIcons = valueColorizeIcons;
-    settings.opacityUnfocusedIcons = valueOpacityUnfocusedIcons;
+    settings.unfocusedIconsOpacity = valueUnfocusedIconsOpacity;
     settings.enableScrollWheel = valueEnableScrollWheel;
     return settings;
   }
@@ -118,14 +118,14 @@ ColumnLayout {
     visible: valueShowApplications
   }
   NSpinBox {
-    label: I18n.tr("bar.widget-settings.workspace.opacity-unfocused-icons.label")
-    description: I18n.tr("bar.widget-settings.workspace.opacity-unfocused-icons.description")
-    value: valueOpacityUnfocusedIcons
+    label: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.label")
+    description: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.description")
+    value: valueUnfocusedIconsOpacity
     suffix: "%"
     minimum: 0
     maximum: 100
     stepSize: 10
-    onValueChanged: valueOpacityUnfocusedIcons = value
+    onValueChanged: valueUnfocusedIconsOpacity = value
     visible: valueShowApplications
   }
 }

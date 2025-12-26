@@ -240,7 +240,7 @@ Singleton {
                                     "showApplications": false,
                                     "showLabelsOnlyWhenOccupied": true,
                                     "colorizeIcons": false,
-                                    "opacityUnfocusedIcons": 100,
+                                    "unfocusedIconsOpacity": 100,
                                     "enableScrollWheel": true
                                   },
                                   "Volume": {
