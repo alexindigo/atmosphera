@@ -21,6 +21,7 @@ ColumnLayout {
   property bool valueShowApplications: widgetData.showApplications !== undefined ? widgetData.showApplications : widgetMetadata.showApplications
   property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
+  property real valueOpacityUnfocusedIcons: widgetData.opacityUnfocusedIcons !== undefined ? widgetData.opacityUnfocusedIcons : widgetMetadata.opacityUnfocusedIcons
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
 
   function saveSettings() {
@@ -32,6 +33,7 @@ ColumnLayout {
     settings.showApplications = valueShowApplications;
     settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
     settings.colorizeIcons = valueColorizeIcons;
+    settings.opacityUnfocusedIcons = valueOpacityUnfocusedIcons;
     settings.enableScrollWheel = valueEnableScrollWheel;
     return settings;
   }
@@ -113,6 +115,17 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.active-window.colorize-icons.description")
     checked: valueColorizeIcons
     onToggled: checked => valueColorizeIcons = checked
+    visible: valueShowApplications
+  }
+  NSpinBox {
+    label: I18n.tr("bar.widget-settings.workspace.opacity-unfocused-icons.label")
+    description: I18n.tr("bar.widget-settings.workspace.opacity-unfocused-icons.description")
+    value: valueOpacityUnfocusedIcons
+    suffix: "%"
+    minimum: 0
+    maximum: 100
+    stepSize: 10
+    onValueChanged: valueOpacityUnfocusedIcons = value
     visible: valueShowApplications
   }
 }

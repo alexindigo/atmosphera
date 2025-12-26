@@ -54,6 +54,7 @@ Item {
   readonly property bool showApplications: (widgetSettings.showApplications !== undefined) ? widgetSettings.showApplications : widgetMetadata.showApplications
   readonly property bool showLabelsOnlyWhenOccupied: (widgetSettings.showLabelsOnlyWhenOccupied !== undefined) ? widgetSettings.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   readonly property bool colorizeIcons: (widgetSettings.colorizeIcons !== undefined) ? widgetSettings.colorizeIcons : widgetMetadata.colorizeIcons
+  readonly property real opacityUnfocusedIcons: (widgetSettings.opacityUnfocusedIcons !== undefined) ? widgetSettings.opacityUnfocusedIcons / 100 : widgetMetadata.opacityUnfocusedIcons / 100
   readonly property bool enableScrollWheel: (widgetSettings.enableScrollWheel !== undefined) ? widgetSettings.enableScrollWheel : widgetMetadata.enableScrollWheel
 
   readonly property int itemSize: Math.round(Style.capsuleHeight * 0.8)
@@ -833,7 +834,7 @@ Item {
               source: ThemeIcons.iconForAppId(model.appId)
               smooth: true
               asynchronous: true
-              opacity: model.isFocused ? Style.opacityFull : 0.6
+              opacity: model.isFocused ? Style.opacityFull : opacityUnfocusedIcons
               layer.enabled: root.colorizeIcons && !model.isFocused
 
               Rectangle {
