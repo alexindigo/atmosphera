@@ -93,10 +93,16 @@ Singleton {
     try {
       const path = Quickshell.iconPath(n, "");
       if (path && path !== "") {
-        // iconPath returns a URI (image//icon/... or file://...), use as-is
-        root.osLogo = path;
-        Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
-        return;
+        // Check if it's an image:// URI which IconImage might not handle
+        if (path.startsWith("image://")) {
+          // Fall through to manual probe
+        } else {
+          // Ensure proper file:// prefix
+          const finalPath = path.startsWith("file://") ? path : "file://" + path;
+          root.osLogo = finalPath;
+          Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
+          return;
+        }
       }
     } catch (e) {
       Logger.d("HostService", "Icon theme lookup failed, trying fallback paths");
