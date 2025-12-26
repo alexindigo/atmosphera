@@ -1190,10 +1190,10 @@
           },
           "label": "Compositor",
           "mango": {
-            "description": "Schreibe {filepath} — benötigt mango"
+            "description": "Schreibe {filepath} — benötigt Mango"
           },
           "niri": {
-            "description": "Schreibe {filepath} — benötigt niri v25.11+"
+            "description": "Schreibe {filepath} — benötigt Niri v25.11+"
           }
         },
         "misc": {
