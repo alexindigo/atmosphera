@@ -2587,13 +2587,13 @@
     "widget-settings-title": "{widget} 设置"
   },
   "system-monitor": {
-    "cpu-temp": "CPU温度",
+    "cpu-temp": "CPU 温度",
     "cpu-usage": "CPU 使用率",
     "disk": "磁盘",
     "download": "下载",
     "download-speed": "下载速度",
     "gpu-temp": "GPU 温度",
-    "memory": "记忆",
+    "memory": "内存",
     "title": "系统监视器",
     "upload": "上传",
     "upload-speed": "上传速度"
