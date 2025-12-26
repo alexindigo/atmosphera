@@ -473,6 +473,7 @@
       "enable-message": "Włącz Bluetooth, aby zobaczyć dostępne urządzenia.",
       "info": "Informacje",
       "known-devices": "Znane urządzenia",
+      "no-devices": "Brak dostępnych urządzeń",
       "pair": "Para",
       "paired": "Sparowany",
       "paired-devices": "Sparowane urządzenia",
