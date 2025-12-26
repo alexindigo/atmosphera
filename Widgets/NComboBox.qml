@@ -28,7 +28,9 @@ RowLayout {
   Layout.fillWidth: true
   opacity: enabled ? 1.0 : 0.6
 
-  readonly property bool isValueChanged: isSettings && (currentKey !== defaultValue)
+  // Less strict comparison with != (instead of !==) so it can properly compare int vs string (ex for FPS: 30 and "30")
+  readonly property bool isValueChanged: isSettings && (currentKey != defaultValue)
+
   readonly property string indicatorTooltip: {
     if (!isSettings)
       return "";
