@@ -23,6 +23,7 @@ import qs.Modules.Panels.Plugins
 import qs.Modules.Panels.SessionMenu
 import qs.Modules.Panels.Settings
 import qs.Modules.Panels.SetupWizard
+import qs.Modules.Panels.SystemStats
 import qs.Modules.Panels.Tray
 import qs.Modules.Panels.Wallpaper
 import qs.Modules.Panels.WiFi
@@ -53,6 +54,7 @@ PanelWindow {
   readonly property alias wifiPanel: wifiPanel
   readonly property alias pluginPanel1: pluginPanel1
   readonly property alias pluginPanel2: pluginPanel2
+  readonly property alias systemStatsPanel: systemStatsPanel
 
   // Expose panel backgrounds for AllBackgrounds
   readonly property var audioPanelPlaceholder: audioPanel.panelRegion
@@ -72,6 +74,7 @@ PanelWindow {
   readonly property var wifiPanelPlaceholder: wifiPanel.panelRegion
   readonly property var pluginPanel1Placeholder: pluginPanel1.panelRegion
   readonly property var pluginPanel2Placeholder: pluginPanel2.panelRegion
+  readonly property var systemStatsPanelPlaceholder: systemStatsPanel.panelRegion
 
   Component.onCompleted: {
     Logger.d("MainScreen", "Initialized for screen:", screen?.name, "- Dimensions:", screen?.width, "x", screen?.height, "- Position:", screen?.x, ",", screen?.y);
@@ -290,6 +293,12 @@ PanelWindow {
     WiFiPanel {
       id: wifiPanel
       objectName: "wifiPanel-" + (root.screen?.name || "unknown")
+      screen: root.screen
+    }
+
+    SystemStatsPanel {
+      id: systemStatsPanel
+      objectName: "systemStatsPanel-" + (root.screen?.name || "unknown")
       screen: root.screen
     }
 

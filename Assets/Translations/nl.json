@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Statistieken weergeven als mini-staafdiagrammen in plaats van tekstwaarden. Voorkomt lay-outverschuiving.",
+          "label": "Compacte modus"
+        },
         "cpu-temperature": {
           "description": "Toon CPU-temperatuur indien beschikbaar.",
           "label": "CPU-temperatuur"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "Toon informatie over schijfruimtegebruik.",
           "label": "Opslaggebruik"
+        },
+        "use-monospace-font": {
+          "description": "Gebruik een monospace lettertype voor een consistente tekenbreedte.",
+          "label": "Lettertype met vaste breedte"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "Welkom terug,",
     "widget-settings-title": "Instellingen voor {widget}"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU-temperatuur",
+    "cpu-usage": "CPU-gebruik",
+    "disk": "Schijf",
+    "download": "Downloaden",
+    "download-speed": "Downloadsnelheid",
+    "gpu-temp": "GPU-temperatuur",
+    "memory": "Geheugen",
+    "title": "Systeemmonitor",
+    "upload": "Uploaden",
+    "upload-speed": "Uploadsnelheid"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Uitgeschakeld",
@@ -2780,6 +2800,11 @@
     "no-match": "Geen resultaten gevonden.",
     "no-wallpaper": "Geen achtergrond gevonden.",
     "panel": {
+      "apikey": {
+        "help": "Een API-sleutel is vereist om toegang te krijgen tot NSFW-content.",
+        "label": "API-sleutel",
+        "placeholder": "Voer uw Wallhaven API-sleutel in"
+      },
       "apply-all-monitors": {
         "description": "Pas de geselecteerde achtergrond in één keer op alle monitoren toe.",
         "label": "Toepassen op alle monitoren"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "Alles",
         "label": "Inhoudsfilter",
+        "nsfw": "Niet geschikt voor werk",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

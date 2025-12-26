@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Statistiken als Mini-Balkendiagramme anstelle von Textwerten anzeigen. Verhindert Layoutverschiebungen.",
+          "label": "Kompaktmodus"
+        },
         "cpu-temperature": {
           "description": "CPU-Temperaturwerte anzeigen, falls verfügbar.",
           "label": "CPU-Temperatur"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
           "label": "Speichernutzung"
+        },
+        "use-monospace-font": {
+          "description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
+          "label": "Schriftart mit fester Breite"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "Willkommen zurück,",
     "widget-settings-title": "{widget} Einstellungen"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU-Temperatur",
+    "cpu-usage": "CPU-Auslastung",
+    "disk": "Festplatte",
+    "download": "Herunterladen",
+    "download-speed": "Download-Geschwindigkeit",
+    "gpu-temp": "GPU-Temperatur",
+    "memory": "Gedächtnis",
+    "title": "Systemüberwachung",
+    "upload": "Hochladen",
+    "upload-speed": "Upload-Geschwindigkeit"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Deaktiviert",
@@ -2780,6 +2800,11 @@
     "no-match": "Keine Übereinstimmung gefunden.",
     "no-wallpaper": "Kein Hintergrundbild gefunden.",
     "panel": {
+      "apikey": {
+        "help": "Ein API-Schlüssel ist erforderlich, um auf NSFW-Inhalte zuzugreifen.",
+        "label": "API-Schlüssel",
+        "placeholder": "Gib deinen Wallhaven API-Schlüssel ein"
+      },
       "apply-all-monitors": {
         "description": "Ausgewähltes Hintergrundbild auf alle Monitore gleichzeitig anwenden.",
         "label": "Auf alle Monitore anwenden"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "Alle",
         "label": "Inhaltsfilter",
+        "nsfw": "Nicht jugendfrei",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

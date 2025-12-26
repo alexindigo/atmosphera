@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "将统计数据以迷你条形图而非文本值的形式显示。防止布局偏移。",
+          "label": "紧凑模式"
+        },
         "cpu-temperature": {
           "description": "如果可用，显示CPU温度读数。",
           "label": "CPU温度"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "显示磁盘空间使用信息。",
           "label": "存储使用率"
+        },
+        "use-monospace-font": {
+          "description": "请使用等宽字体以保持字符宽度一致。",
+          "label": "等宽字体"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "欢迎回来，",
     "widget-settings-title": "{widget} 设置"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU温度",
+    "cpu-usage": "CPU 使用率",
+    "disk": "磁盘",
+    "download": "下载",
+    "download-speed": "下载速度",
+    "gpu-temp": "GPU 温度",
+    "memory": "记忆",
+    "title": "系统监视器",
+    "upload": "上传",
+    "upload-speed": "上传速度"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "已禁用",
@@ -2780,6 +2800,11 @@
     "no-match": "未找到匹配项。",
     "no-wallpaper": "未找到壁纸。",
     "panel": {
+      "apikey": {
+        "help": "访问 NSFW 内容需要 API 密钥。",
+        "label": "API 密钥",
+        "placeholder": "输入您的Wallhaven API密钥"
+      },
       "apply-all-monitors": {
         "description": "一次性将选定的壁纸应用到所有显示器。",
         "label": "应用到所有显示器"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "全部",
         "label": "内容过滤器",
+        "nsfw": "少儿不宜",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

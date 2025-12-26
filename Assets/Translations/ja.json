@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "テキスト値の代わりに、ミニ棒グラフとして統計を表示します。レイアウトのずれを防ぎます。",
+          "label": "コンパクトモード"
+        },
         "cpu-temperature": {
           "description": "利用可能な場合、CPU 温度を表示します。",
           "label": "CPU 温度"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "ストレージの使用状況を表示します。",
           "label": "ストレージ使用量"
+        },
+        "use-monospace-font": {
+          "description": "```\nタイプライター体で翻訳します。\n\n```",
+          "label": "等幅フォント"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "おかえりなさい、",
     "widget-settings-title": "{widget} の設定"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU温度",
+    "cpu-usage": "CPU使用率",
+    "disk": "ディスク",
+    "download": "ダウンロード",
+    "download-speed": "ダウンロード速度 (Daunrōdo sokudo)",
+    "gpu-temp": "GPU温度",
+    "memory": "記憶",
+    "title": "システムモニター",
+    "upload": "アップロード",
+    "upload-speed": "アップロード速度"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "無効",
@@ -2780,6 +2800,11 @@
     "no-match": "一致する項目がありません。",
     "no-wallpaper": "壁紙が見つかりません。",
     "panel": {
+      "apikey": {
+        "help": "成人向けコンテンツにアクセスするには、APIキーが必要です。",
+        "label": "APIキー",
+        "placeholder": "Wallhaven APIキーを入力してください。"
+      },
       "apply-all-monitors": {
         "description": "選択した壁紙をすべてのディスプレイに適用します。",
         "label": "全ディスプレイに適用"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "すべて",
         "label": "コンテンツフィルタ",
+        "nsfw": "R-18",
         "sfw": "SFW（全年齢）",
         "sketchy": "Sketchy（際どい）"
       },

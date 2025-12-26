@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "A statisztikákat mini sávdiagramokként jelenítse meg a szöveges értékek helyett. Megakadályozza az elrendezés eltolódását.",
+          "label": "Kompakt mód"
+        },
         "cpu-temperature": {
           "description": "CPU hőmérséklet-adatok megjelenítése, ha elérhetőek.",
           "label": "CPU hőmérséklet"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "Lemezterület-használati információk megjelenítése.",
           "label": "Tárhelyhasználat"
+        },
+        "use-monospace-font": {
+          "description": "```\nHasználj monospace betűtípust az egységes karakter-szélességhez.\n```",
+          "label": "Monospace betűtípus"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "Üdvözöljük újra,",
     "widget-settings-title": "{widget} beállítások"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU hőmérséklet",
+    "cpu-usage": "CPU-használat",
+    "disk": "Lemez",
+    "download": "Letöltés",
+    "download-speed": "Letöltési sebesség",
+    "gpu-temp": "GPU hőmérséklet",
+    "memory": "Memória",
+    "title": "Rendszerfigyelő",
+    "upload": "Feltöltés",
+    "upload-speed": "Feltöltési sebesség"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Kikapcsolva",
@@ -2780,6 +2800,11 @@
     "no-match": "Nincs találat.",
     "no-wallpaper": "Nincs háttérkép találat.",
     "panel": {
+      "apikey": {
+        "help": "NSFW tartalom eléréséhez API kulcs szükséges.",
+        "label": "API kulcs",
+        "placeholder": "Add meg a Wallhaven API kulcsodat!"
+      },
       "apply-all-monitors": {
         "description": "A kiválasztott háttérkép alkalmazása minden monitorra.",
         "label": "Alkalmazás minden monitorra"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "Mind",
         "label": "Tartalomszűrő",
+        "nsfw": "Tilos a kiskorúaknak / Nem biztonságos munkahelyen",
         "sfw": "SFW",
         "sketchy": "Vázlatos"
       },

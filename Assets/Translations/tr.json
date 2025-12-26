@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "İstatistikleri metin değerleri yerine mini çubuk grafikler olarak görüntüleyin. Düzen kaymasını önler.",
+          "label": "Kompakt mod"
+        },
         "cpu-temperature": {
           "description": "Mevcut işlemci sıcaklık okumalarını gösterir.",
           "label": "İşlemci sıcaklığı"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "Disk alanı kullanım bilgilerini göster.",
           "label": "Depolama kullanımı"
+        },
+        "use-monospace-font": {
+          "description": "```\nTekdüze karakter genişliği için tek aralıklı yazı tipini kullanın.\n```",
+          "label": "Tek aralıklı yazı tipi"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "Hoş geldiniz,",
     "widget-settings-title": "{widget} Ayarları"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU Sıcaklığı",
+    "cpu-usage": "CPU Kullanımı",
+    "disk": "Disk",
+    "download": "İndir",
+    "download-speed": "İndirme Hızı",
+    "gpu-temp": "GPU Sıcaklığı",
+    "memory": "Hafıza",
+    "title": "Sistem İzleyici",
+    "upload": "Yükle",
+    "upload-speed": "Yükleme Hızı"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Devre dışı",
@@ -2780,6 +2800,11 @@
     "no-match": "Eşleşme bulunamadı.",
     "no-wallpaper": "Duvar kâğıdı bulunamadı.",
     "panel": {
+      "apikey": {
+        "help": "NSFW içeriğe erişmek için bir API anahtarı gereklidir.",
+        "label": "API Anahtarı",
+        "placeholder": "Wallhaven API Anahtarınızı girin"
+      },
       "apply-all-monitors": {
         "description": "Seçilen duvar kâğıdını tüm monitörlere aynı anda uygulayın.",
         "label": "Tüm monitörler için uygula"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "Tümü",
         "label": "İçerik filtresi",
+        "nsfw": "Müstehcen",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },

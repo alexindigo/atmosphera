@@ -183,6 +183,13 @@ Item {
         shapeContainer: backgroundsShape
         backgroundColor: panelBackgroundColor
       }
+
+      // System Stats
+      PanelBackground {
+        panel: root.windowRoot.systemStatsPanelPlaceholder
+        shapeContainer: backgroundsShape
+        backgroundColor: panelBackgroundColor
+      }
     }
 
     // Apply shadow to the cached layer

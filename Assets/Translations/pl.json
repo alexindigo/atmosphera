@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Wyświetlaj statystyki jako mini wykresy słupkowe zamiast wartości tekstowych. Zapobiega przesunięciom układu.",
+          "label": "Tryb kompaktowy"
+        },
         "cpu-temperature": {
           "description": "Pokaż odczyty temperatury procesora (jeśli dostępne).",
           "label": "Temperatura CPU"
@@ -334,6 +338,10 @@
         "storage-usage": {
           "description": "Pokaż informacje o użyciu miejsca na dysku.",
           "label": "Użycie dysku"
+        },
+        "use-monospace-font": {
+          "description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
+          "label": "Czcionka o stałej szerokości znaków"
         }
       },
       "taskbar": {
@@ -2578,6 +2586,18 @@
     "welcome-back": "Witaj z powrotem,",
     "widget-settings-title": "Ustawienia {widget}"
   },
+  "system-monitor": {
+    "cpu-temp": "Temperatura CPU",
+    "cpu-usage": "Użycie CPU",
+    "disk": "Dysk",
+    "download": "Pobierz",
+    "download-speed": "Prędkość pobierania",
+    "gpu-temp": "Temperatura GPU",
+    "memory": "Pamięć",
+    "title": "Monitor systemu",
+    "upload": "Prześlij",
+    "upload-speed": "Prędkość wysyłania"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Wyłączony",
@@ -2780,6 +2800,11 @@
     "no-match": "Nie znaleziono dopasowania.",
     "no-wallpaper": "Nie znaleziono tapety.",
     "panel": {
+      "apikey": {
+        "help": "Do dostępu do treści NSFW wymagany jest klucz API.",
+        "label": "Klucz API",
+        "placeholder": "Wprowadź swój klucz API Wallhaven."
+      },
       "apply-all-monitors": {
         "description": "Zastosuj wybraną tapetę na wszystkich monitorach.",
         "label": "Zastosuj na wszystkich monitorach"
@@ -2798,6 +2823,7 @@
       "purity": {
         "all": "Wszystkie",
         "label": "Filtr treści",
+        "nsfw": "Niebezpieczne dla pracy.",
         "sfw": "Bezpieczne (SFW)",
         "sketchy": "Podejrzane (Sketchy)"
       },
