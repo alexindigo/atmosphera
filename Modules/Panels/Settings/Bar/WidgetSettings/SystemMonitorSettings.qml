@@ -57,6 +57,7 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
     checked: valueUsePrimaryColor
     onToggled: checked => valueUsePrimaryColor = checked
+    visible: !valueCompactMode
   }
 
   NToggle {
