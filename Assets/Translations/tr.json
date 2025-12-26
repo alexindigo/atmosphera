@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "İstatistikleri metin değerleri yerine mini çubuk grafikler olarak görüntüleyin. Düzen kaymasını önler.",
+          "label": "Kompakt mod"
+        },
         "cpu-temperature": {
           "description": "Mevcut işlemci sıcaklık okumalarını gösterir.",
           "label": "İşlemci sıcaklığı"
@@ -2581,6 +2585,18 @@
     "user-requested": "Kullanıcı istedi",
     "welcome-back": "Hoş geldiniz,",
     "widget-settings-title": "{widget} Ayarları"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU Sıcaklığı",
+    "cpu-usage": "CPU Kullanımı",
+    "disk": "Disk",
+    "download": "İndir",
+    "download-speed": "İndirme Hızı",
+    "gpu-temp": "GPU Sıcaklığı",
+    "memory": "Hafıza",
+    "title": "Sistem İzleyici",
+    "upload": "Yükle",
+    "upload-speed": "Yükleme Hızı"
   },
   "toast": {
     "airplane-mode": {

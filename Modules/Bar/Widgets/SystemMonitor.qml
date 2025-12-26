@@ -72,29 +72,29 @@ Rectangle {
     let lines = [];
 
     // CPU
-    lines.push(`CPU Usage: ${Math.round(SystemStatService.cpuUsage)}%`);
+    lines.push(`${I18n.tr("system-monitor.cpu-usage")}: ${Math.round(SystemStatService.cpuUsage)}%`);
     if (SystemStatService.cpuTemp > 0) {
-      lines.push(`CPU Temp: ${Math.round(SystemStatService.cpuTemp)}°C`);
+      lines.push(`${I18n.tr("system-monitor.cpu-temp")}: ${Math.round(SystemStatService.cpuTemp)}°C`);
     }
 
     // GPU (if available)
     if (SystemStatService.gpuAvailable) {
-      lines.push(`GPU Temp: ${Math.round(SystemStatService.gpuTemp)}°C`);
+      lines.push(`${I18n.tr("system-monitor.gpu-temp")}: ${Math.round(SystemStatService.gpuTemp)}°C`);
     }
 
     // Memory
-    lines.push(`Memory: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb)})`);
+    lines.push(`${I18n.tr("system-monitor.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb)})`);
 
     // Network
-    lines.push(`Download Speed: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`);
-    lines.push(`Upload Speed: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`);
+    lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`);
+    lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`);
 
     // Disk
     const diskPercent = SystemStatService.diskPercents[diskPath];
     if (diskPercent !== undefined) {
       const usedGb = SystemStatService.diskUsedGb[diskPath] || 0;
       const sizeGb = SystemStatService.diskSizeGb[diskPath] || 0;
-      lines.push(`Disk: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G (${diskPercent}%)`);
+      lines.push(`${I18n.tr("system-monitor.disk")}: ${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G (${diskPercent}%)`);
     }
 
     return lines.join("\n");
@@ -168,10 +168,13 @@ Rectangle {
   MouseArea {
     id: tooltipArea
     anchors.fill: parent
-    acceptedButtons: Qt.RightButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: true
     onClicked: mouse => {
-                 if (mouse.button === Qt.RightButton) {
+                 if (mouse.button === Qt.LeftButton) {
+                   PanelService.getPanel("systemStatsPanel", screen)?.toggle(root);
+                   TooltipService.hide();
+                 } else if (mouse.button === Qt.RightButton) {
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.showContextMenu(contextMenu);
@@ -245,7 +248,7 @@ Rectangle {
     }
   }
 
-  // Mini gauge component for compact mode - vertical gauge that fills from bottom
+  // Mini gauge component for compact mode, vertical gauge that fills from bottom
   Component {
     id: miniGaugeComponent
 
@@ -363,7 +366,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode
@@ -448,7 +451,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode, mini gauge (to the right of icon)
         Loader {
           active: compactMode
           visible: compactMode
@@ -533,7 +536,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode
@@ -618,7 +621,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode
@@ -685,7 +688,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode
@@ -752,7 +755,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode
@@ -837,7 +840,7 @@ Rectangle {
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
-        // Compact mode - mini gauge (to the right of icon)
+        // Compact mode
         Loader {
           active: compactMode
           visible: compactMode

@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "テキスト値の代わりに、ミニ棒グラフとして統計を表示します。レイアウトのずれを防ぎます。",
+          "label": "コンパクトモード"
+        },
         "cpu-temperature": {
           "description": "利用可能な場合、CPU 温度を表示します。",
           "label": "CPU 温度"
@@ -2581,6 +2585,18 @@
     "user-requested": "ユーザーの要求",
     "welcome-back": "おかえりなさい、",
     "widget-settings-title": "{widget} の設定"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU温度",
+    "cpu-usage": "CPU使用率",
+    "disk": "ディスク",
+    "download": "ダウンロード",
+    "download-speed": "ダウンロード速度 (Daunrōdo sokudo)",
+    "gpu-temp": "GPU温度",
+    "memory": "記憶",
+    "title": "システムモニター",
+    "upload": "アップロード",
+    "upload-speed": "アップロード速度"
   },
   "toast": {
     "airplane-mode": {

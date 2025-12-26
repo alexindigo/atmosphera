@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Mostrar estadísticas como mini gráficos de barras en lugar de valores de texto. Evita el desplazamiento del diseño.",
+          "label": "Modo compacto"
+        },
         "cpu-temperature": {
           "description": "Mostrar lecturas de temperatura de CPU si están disponibles.",
           "label": "Temperatura de la CPU"
@@ -2581,6 +2585,18 @@
     "user-requested": "Solicitado por el usuario",
     "welcome-back": "¡Bienvenido de nuevo,",
     "widget-settings-title": "Configuración de {widget}"
+  },
+  "system-monitor": {
+    "cpu-temp": "Temperatura de la CPU",
+    "cpu-usage": "Uso de CPU",
+    "disk": "Disco",
+    "download": "Descargar",
+    "download-speed": "Velocidad de descarga",
+    "gpu-temp": "Temperatura de la GPU",
+    "memory": "Memoria",
+    "title": "Monitor del sistema",
+    "upload": "Subir",
+    "upload-speed": "Velocidad de subida"
   },
   "toast": {
     "airplane-mode": {

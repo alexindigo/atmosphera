@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Statistieken weergeven als mini-staafdiagrammen in plaats van tekstwaarden. Voorkomt lay-outverschuiving.",
+          "label": "Compacte modus"
+        },
         "cpu-temperature": {
           "description": "Toon CPU-temperatuur indien beschikbaar.",
           "label": "CPU-temperatuur"
@@ -2581,6 +2585,18 @@
     "user-requested": "Door gebruiker aangevraagd",
     "welcome-back": "Welkom terug,",
     "widget-settings-title": "Instellingen voor {widget}"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU-temperatuur",
+    "cpu-usage": "CPU-gebruik",
+    "disk": "Schijf",
+    "download": "Downloaden",
+    "download-speed": "Downloadsnelheid",
+    "gpu-temp": "GPU-temperatuur",
+    "memory": "Geheugen",
+    "title": "Systeemmonitor",
+    "upload": "Uploaden",
+    "upload-speed": "Uploadsnelheid"
   },
   "toast": {
     "airplane-mode": {

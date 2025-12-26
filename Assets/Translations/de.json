@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Statistiken als Mini-Balkendiagramme anstelle von Textwerten anzeigen. Verhindert Layoutverschiebungen.",
+          "label": "Kompaktmodus"
+        },
         "cpu-temperature": {
           "description": "CPU-Temperaturwerte anzeigen, falls verfügbar.",
           "label": "CPU-Temperatur"
@@ -2581,6 +2585,18 @@
     "user-requested": "Vom Benutzer angefordert",
     "welcome-back": "Willkommen zurück,",
     "widget-settings-title": "{widget} Einstellungen"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU-Temperatur",
+    "cpu-usage": "CPU-Auslastung",
+    "disk": "Festplatte",
+    "download": "Herunterladen",
+    "download-speed": "Download-Geschwindigkeit",
+    "gpu-temp": "GPU-Temperatur",
+    "memory": "Gedächtnis",
+    "title": "Systemüberwachung",
+    "upload": "Hochladen",
+    "upload-speed": "Upload-Geschwindigkeit"
   },
   "toast": {
     "airplane-mode": {

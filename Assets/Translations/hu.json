@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "A statisztikákat mini sávdiagramokként jelenítse meg a szöveges értékek helyett. Megakadályozza az elrendezés eltolódását.",
+          "label": "Kompakt mód"
+        },
         "cpu-temperature": {
           "description": "CPU hőmérséklet-adatok megjelenítése, ha elérhetőek.",
           "label": "CPU hőmérséklet"
@@ -2581,6 +2585,18 @@
     "user-requested": "Felhasználó kérte",
     "welcome-back": "Üdvözöljük újra,",
     "widget-settings-title": "{widget} beállítások"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU hőmérséklet",
+    "cpu-usage": "CPU-használat",
+    "disk": "Lemez",
+    "download": "Letöltés",
+    "download-speed": "Letöltési sebesség",
+    "gpu-temp": "GPU hőmérséklet",
+    "memory": "Memória",
+    "title": "Rendszerfigyelő",
+    "upload": "Feltöltés",
+    "upload-speed": "Feltöltési sebesség"
   },
   "toast": {
     "airplane-mode": {

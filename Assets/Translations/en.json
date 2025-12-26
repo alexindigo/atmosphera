@@ -303,6 +303,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Display stats as mini bar charts instead of text values. Prevents layout shifting.",
+          "label": "Compact mode"
+        },
         "cpu-temperature": {
           "description": "Show CPU temperature readings if available.",
           "label": "CPU temperature"
@@ -338,10 +342,6 @@
         "use-monospace-font": {
           "description": "Use monospace font for consistent character width.",
           "label": "Monospace font"
-        },
-        "compact-mode": {
-          "description": "Display stats as mini bar charts instead of text values. Prevents layout shifting.",
-          "label": "Compact mode"
         }
       },
       "taskbar": {
@@ -2585,6 +2585,18 @@
     "user-requested": "User requested",
     "welcome-back": "Welcome back,",
     "widget-settings-title": "{widget} Settings"
+  },
+  "system-monitor": {
+    "cpu-temp": "CPU Temp",
+    "cpu-usage": "CPU Usage",
+    "disk": "Disk",
+    "download": "Download",
+    "download-speed": "Download Speed",
+    "gpu-temp": "GPU Temp",
+    "memory": "Memory",
+    "title": "System Monitor",
+    "upload": "Upload",
+    "upload-speed": "Upload Speed"
   },
   "toast": {
     "airplane-mode": {
