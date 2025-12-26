@@ -318,6 +318,9 @@ ColumnLayout {
                   Settings.data.colorSchemes.matugenSchemeType = key;
                   AppThemeService.generate();
                 }
+
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("colorSchemes.matugenSchemeType")
   }
 
   NDivider {

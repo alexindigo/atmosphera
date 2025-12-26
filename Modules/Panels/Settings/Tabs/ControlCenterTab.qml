@@ -166,6 +166,8 @@ ColumnLayout {
       onSelected: function (key) {
         Settings.data.controlCenter.position = key;
       }
+      isSettings: true
+      defaultValue: Settings.getDefaultValue("controlCenter.position")
     }
   }
 
