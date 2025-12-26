@@ -89,7 +89,7 @@ Singleton {
     if (colors) {
       params.push("colors=" + colors);
     }
-    
+
     if (apiKey) {
       params.push("apikey=" + apiKey);
     }

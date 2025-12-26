@@ -154,11 +154,11 @@ Popup {
         Layout.fillWidth: true
         placeholderText: I18n.tr("wallpaper.panel.apikey.placeholder")
         text: Settings.data.wallpaper.wallhavenApiKey || ""
-        
+
         // Fix for password echo mode
         Component.onCompleted: {
           if (apiKeyInput.inputItem) {
-             apiKeyInput.inputItem.echoMode = TextInput.Password;
+            apiKeyInput.inputItem.echoMode = TextInput.Password;
           }
         }
 
@@ -166,7 +166,7 @@ Popup {
           Settings.data.wallpaper.wallhavenApiKey = text;
         }
       }
-      
+
       NText {
         text: I18n.tr("wallpaper.panel.apikey.help")
         color: Color.mOnSurfaceVariant
@@ -319,7 +319,7 @@ Popup {
           function onWallhavenApiKeyChanged() {
             // If API key is removed, disable NSFW
             if (!Settings.data.wallpaper.wallhavenApiKey && nsfwToggle.checked) {
-               nsfwToggle.toggled(false);
+              nsfwToggle.toggled(false);
             }
           }
         }
