@@ -85,7 +85,25 @@ Singleton {
   }
 
   function resolveLogo(name) {
-    const all = buildCandidates(name);
+    const n = (name || "").trim();
+    if (!n)
+      return;
+
+    // First try Quickshell's icon lookup which respects the user's icon theme
+    try {
+      const path = Quickshell.iconPath(n, "");
+      if (path && path !== "") {
+        // iconPath returns a URI (image//icon/... or file://...), use as-is
+        root.osLogo = path;
+        Logger.d("HostService", "Found logo via icon theme:", root.osLogo);
+        return;
+      }
+    } catch (e) {
+      Logger.d("HostService", "Icon theme lookup failed, trying fallback paths");
+    }
+
+    // Fallback: probe common paths manually
+    const all = buildCandidates(n);
     if (all.length === 0)
       return;
     const script = all.map(p => `if [ -f "${p}" ]; then echo "${p}"; exit 0; fi`).join("; ") + "; exit 1";
@@ -129,7 +147,7 @@ Singleton {
         Logger.d("HostService", "Found", root.osLogo);
       } else {
         root.osLogo = "";
-        Logger.w("HostService", "None logo found");
+        Logger.w("HostService", "No distro logo found");
       }
     }
     stdout: StdioCollector {}
