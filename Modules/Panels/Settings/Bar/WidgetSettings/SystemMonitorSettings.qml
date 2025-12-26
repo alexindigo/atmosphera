@@ -14,6 +14,7 @@ ColumnLayout {
   property var widgetMetadata: null
 
   // Local, editable state for checkboxes
+  property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseMonospaceFont: widgetData.useMonospaceFont !== undefined ? widgetData.useMonospaceFont : widgetMetadata.useMonospaceFont
   property bool valueShowCpuUsage: widgetData.showCpuUsage !== undefined ? widgetData.showCpuUsage : widgetMetadata.showCpuUsage
@@ -27,6 +28,7 @@ ColumnLayout {
 
   function saveSettings() {
     var settings = Object.assign({}, widgetData || {});
+    settings.compactMode = valueCompactMode;
     settings.usePrimaryColor = valueUsePrimaryColor;
     settings.useMonospaceFont = valueUseMonospaceFont;
     settings.showCpuUsage = valueShowCpuUsage;
@@ -43,6 +45,14 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
+    label: I18n.tr("bar.widget-settings.system-monitor.compact-mode.label")
+    description: I18n.tr("bar.widget-settings.system-monitor.compact-mode.description")
+    checked: valueCompactMode
+    onToggled: checked => valueCompactMode = checked
+  }
+
+  NToggle {
+    Layout.fillWidth: true
     label: I18n.tr("bar.widget-settings.clock.use-primary-color.label")
     description: I18n.tr("bar.widget-settings.clock.use-primary-color.description")
     checked: valueUsePrimaryColor
@@ -55,6 +65,7 @@ ColumnLayout {
     description: I18n.tr("bar.widget-settings.system-monitor.use-monospace-font.description")
     checked: valueUseMonospaceFont
     onToggled: checked => valueUseMonospaceFont = checked
+    visible: !valueCompactMode
   }
 
   NToggle {

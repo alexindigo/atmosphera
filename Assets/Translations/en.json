@@ -338,6 +338,10 @@
         "use-monospace-font": {
           "description": "Use monospace font for consistent character width.",
           "label": "Monospace font"
+        },
+        "compact-mode": {
+          "description": "Display stats as mini bar charts instead of text values. Prevents layout shifting.",
+          "label": "Compact mode"
         }
       },
       "taskbar": {

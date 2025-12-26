@@ -35,6 +35,7 @@ Rectangle {
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
 
+  readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
   readonly property bool useMonospaceFont: widgetSettings.useMonospaceFont !== undefined ? widgetSettings.useMonospaceFont : widgetMetadata.useMonospaceFont
   readonly property bool showCpuUsage: (widgetSettings.showCpuUsage !== undefined) ? widgetSettings.showCpuUsage : widgetMetadata.showCpuUsage
@@ -47,10 +48,31 @@ Rectangle {
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
 
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
-  readonly property real iconSize: textSize * 1.4
+  readonly property real iconSize: compactMode ? textSize * 1.2 : textSize * 1.4
   readonly property real textSize: {
     var base = isVertical ? width * 0.82 : height;
     return Math.max(1, (density === "compact") ? base * 0.43 : base * 0.33);
+  }
+
+  // Mini bar dimensions for compact mode
+  readonly property real miniBarWidth: Math.max(16, Math.round(iconSize * 1.8))
+  readonly property real miniBarHeight: Math.max(3, Math.round(iconSize * 0.25))
+
+  // Network speed threshold helpers for compact mode coloring
+  function getNetworkBarColor(bytesPerSecond) {
+    if (bytesPerSecond >= 10 * 1024 * 1024)
+      return Color.mPrimary; // >= 10 MB/s: high (primary)
+    if (bytesPerSecond >= 1 * 1024 * 1024)
+      return Color.mTertiary; // >= 1 MB/s: medium (tertiary)
+    return usePrimaryColor ? Color.mPrimary : Color.mOnSurface; // < 1 MB/s: normal
+  }
+
+  function getNetworkBarValue(bytesPerSecond) {
+    if (bytesPerSecond <= 0)
+      return 0;
+    // Log scale: 1KB=0%, 1MB=50%, 100MB=100%
+    const kb = bytesPerSecond / 1024;
+    return Math.min(100, Math.max(0, (Math.log10(kb) / 5) * 100));
   }
 
   // Match Workspace widget pill sizing: base ratio depends on bar density
@@ -177,6 +199,49 @@ Rectangle {
     }
   }
 
+  // Mini bar component for compact mode - fills from center
+  Component {
+    id: miniBarComponent
+
+    Rectangle {
+      id: miniBar
+      property real value: 0 // 0-100
+      property color barColor: Color.mPrimary
+
+      width: miniBarWidth
+      height: miniBarHeight
+      radius: height / 2
+      // Use mSurface when capsules are enabled for better contrast
+      color: Settings.data.bar.showCapsule ? Color.mSurface : Color.mSurfaceVariant
+
+      // Fill bar that expands from center
+      Rectangle {
+        property real fillWidth: parent.width * Math.min(1, Math.max(0, miniBar.value / 100))
+        width: fillWidth
+        height: parent.height
+        radius: parent.radius
+        color: miniBar.barColor
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Behavior on fillWidth {
+          enabled: !Settings.data.general.animationDisabled
+          NumberAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.OutCubic
+          }
+        }
+
+        Behavior on color {
+          enabled: !Settings.data.general.animationDisabled
+          ColorAnimation {
+            duration: Style.animationFast
+            easing.type: Easing.OutCubic
+          }
+        }
+      }
+    }
+  }
+
   GridLayout {
     id: mainGrid
     anchors.centerIn: parent
@@ -213,15 +278,15 @@ Rectangle {
       GridLayout {
         id: cpuUsageContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -237,7 +302,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: {
             let usage = Math.round(SystemStatService.cpuUsage);
             if (usage < 100) {
@@ -258,6 +325,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => SystemStatService.cpuUsage);
+            item.barColor = Qt.binding(() => cpuCritical ? criticalColor : (cpuWarning ? warningColor : (usePrimaryColor ? Color.mPrimary : Color.mOnSurface)));
+          }
         }
       }
     }
@@ -289,15 +372,15 @@ Rectangle {
       GridLayout {
         id: cpuTempContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -313,7 +396,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: `${Math.round(SystemStatService.cpuTemp)}°`
           family: fontFamily
           pointSize: textSize
@@ -327,6 +412,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => SystemStatService.cpuTemp);
+            item.barColor = Qt.binding(() => tempCritical ? criticalColor : (tempWarning ? warningColor : (usePrimaryColor ? Color.mPrimary : Color.mOnSurface)));
+          }
         }
       }
     }
@@ -358,15 +459,15 @@ Rectangle {
       GridLayout {
         id: gpuTempContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -382,7 +483,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: `${Math.round(SystemStatService.gpuTemp)}°`
           family: fontFamily
           pointSize: textSize
@@ -396,6 +499,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => SystemStatService.gpuTemp);
+            item.barColor = Qt.binding(() => gpuCritical ? criticalColor : (gpuWarning ? warningColor : (usePrimaryColor ? Color.mPrimary : Color.mOnSurface)));
+          }
         }
       }
     }
@@ -427,15 +546,15 @@ Rectangle {
       GridLayout {
         id: memoryContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -451,7 +570,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
           family: fontFamily
           pointSize: textSize
@@ -465,6 +586,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => SystemStatService.memPercent);
+            item.barColor = Qt.binding(() => memCritical ? criticalColor : (memWarning ? warningColor : (usePrimaryColor ? Color.mPrimary : Color.mOnSurface)));
+          }
         }
       }
     }
@@ -481,15 +618,15 @@ Rectangle {
       GridLayout {
         id: downloadContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -503,7 +640,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           family: fontFamily
           pointSize: textSize
@@ -516,6 +655,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => getNetworkBarValue(SystemStatService.rxSpeed));
+            item.barColor = Qt.binding(() => getNetworkBarColor(SystemStatService.rxSpeed));
+          }
         }
       }
     }
@@ -532,15 +687,15 @@ Rectangle {
       GridLayout {
         id: uploadContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -554,7 +709,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
+          visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           family: fontFamily
           pointSize: textSize
@@ -567,6 +724,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => getNetworkBarValue(SystemStatService.txSpeed));
+            item.barColor = Qt.binding(() => getNetworkBarColor(SystemStatService.txSpeed));
+          }
         }
       }
     }
@@ -598,15 +771,15 @@ Rectangle {
       GridLayout {
         id: diskContent
         anchors.centerIn: parent
-        flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rows: isVertical ? 2 : 1
-        columns: isVertical ? 1 : 2
-        rowSpacing: Style.marginXXS
+        flow: (isVertical || compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical || compactMode) ? 2 : 1
+        columns: (isVertical || compactMode) ? 1 : 2
+        rowSpacing: compactMode ? 2 : Style.marginXXS
         columnSpacing: Style.marginXS
 
         Item {
           Layout.alignment: Qt.AlignCenter
-          Layout.row: isVertical ? 1 : 0
+          Layout.row: (isVertical || compactMode) ? 1 : 0
           Layout.column: 0
           Layout.fillWidth: isVertical
           implicitWidth: iconSize
@@ -622,8 +795,9 @@ Rectangle {
           }
         }
 
+        // Text mode
         NText {
-          id: toto
+          visible: !compactMode
           text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: fontFamily
           pointSize: textSize
@@ -637,6 +811,22 @@ Rectangle {
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode - mini bar
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniBarComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 0
+          Layout.bottomMargin: 2
+
+          onLoaded: {
+            item.value = Qt.binding(() => SystemStatService.diskPercents[diskPath] ?? 0);
+            item.barColor = Qt.binding(() => diskCritical ? criticalColor : (diskWarning ? warningColor : (usePrimaryColor ? Color.mPrimary : Color.mOnSurface)));
+          }
         }
       }
 
