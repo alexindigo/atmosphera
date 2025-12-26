@@ -173,6 +173,7 @@ RowLayout {
 
     Layout.minimumWidth: root.minimumWidth
     Layout.preferredHeight: root.preferredHeight
+    implicitWidth: Layout.minimumWidth
     model: root.activeModel
     currentIndex: findIndexInActiveModel(currentKey)
     onActivated: {
