@@ -1304,6 +1304,10 @@
         "description": "Kontrol merkezi paneli açıldığında nerede görüneceğini seçin.",
         "label": "Konum"
       },
+      "system-monitor-disk-path": {
+        "description": "Kontrol merkezindeki sistem izleyici kartının izlemesi gereken disk bağlama noktasını seçin.",
+        "label": "Sistem izleyici disk yolu"
+      },
       "section": {
         "description": "Kontrol merkezi paneli konumunu ve davranışını yapılandırın.",
         "label": "Görünüm"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Disk Kullanımı"
+      },
+      "disk-path": {
+        "description": "Hangi disk bağlama noktasının izleneceğini seçin.",
+        "label": "Disk yolu"
       },
       "enable-dgpu-monitoring": {
         "description": "Uyarı: Bu, ayrık GPU'nuzu (NVIDIA/AMD) uyandıracak ve bu da hibrit grafiklere sahip dizüstü bilgisayarlarda pil ömrünü önemli ölçüde etkileyebilir.",

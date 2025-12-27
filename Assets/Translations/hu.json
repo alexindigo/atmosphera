@@ -1304,6 +1304,10 @@
         "description": "Válassza ki, hol jelenjen meg a vezérlőközpont panel megnyitáskor.",
         "label": "Pozíció"
       },
+      "system-monitor-disk-path": {
+        "description": "Válassza ki, hogy melyik lemez csatolási pontot kell figyelnie a rendszerfigyelő kártyának a vezérlőközpontban.",
+        "label": "Rendszerfigyelő lemez elérési útja"
+      },
       "section": {
         "description": "A vezérlőközpont panel pozicionálásának és viselkedésének konfigurálása.",
         "label": "Megjelenés"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Lemezhasználat"
+      },
+      "disk-path": {
+        "description": "Válassza ki, hogy melyik lemez csatolási pontot szeretné figyelni.",
+        "label": "Lemez elérési útja"
       },
       "enable-dgpu-monitoring": {
         "description": "Figyelem: Ez felébreszti a dedikált GPU-t (NVIDIA/AMD), ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",

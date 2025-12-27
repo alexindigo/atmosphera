@@ -486,6 +486,7 @@ Singleton {
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""
+      property string diskPath: "/"
     }
 
     // dock

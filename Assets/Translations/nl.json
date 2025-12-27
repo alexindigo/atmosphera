@@ -1304,6 +1304,10 @@
         "description": "Kies waar het Bedieningscentrum-paneel verschijnt wanneer het wordt geopend.",
         "label": "Positie"
       },
+      "system-monitor-disk-path": {
+        "description": "Selecteer welk schijf-mountpunt de systeemmonitor-kaart in het bedieningscentrum moet bewaken.",
+        "label": "Systeemmonitor schijfpad"
+      },
       "section": {
         "description": "Configureer de positie en het gedrag van het Bedieningscentrum-paneel.",
         "label": "Uiterlijk"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Schijfgebruik"
+      },
+      "disk-path": {
+        "description": "Selecteer welk schijf-mountpunt moet worden bewaakt.",
+        "label": "Schijfpad"
       },
       "enable-dgpu-monitoring": {
         "description": "Waarschuwing: Dit zal uw dedicated GPU (NVIDIA/AMD) activeren, wat een aanzienlijke impact kan hebben op de batterijduur van laptops met hybride grafische kaarten.",

@@ -1304,6 +1304,10 @@
         "description": "Wybierz, gdzie pojawia się panel centrum sterowania po otwarciu.",
         "label": "Pozycja"
       },
+      "system-monitor-disk-path": {
+        "description": "Wybierz, który punkt montowania dysku ma być monitorowany przez kartę monitora systemu w centrum sterowania.",
+        "label": "Ścieżka dysku monitora systemu"
+      },
       "section": {
         "description": "Konfiguruj pozycjonowanie i zachowanie panelu centrum sterowania.",
         "label": "Wygląd"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Użycie dysku"
+      },
+      "disk-path": {
+        "description": "Wybierz, który punkt montowania dysku ma być monitorowany.",
+        "label": "Ścieżka dysku"
       },
       "enable-dgpu-monitoring": {
         "description": "Ostrzeżenie: To obudzi twoją dedykowaną kartę graficzną (NVIDIA/AMD), co może znacząco wpłynąć na żywotność baterii w laptopach z hybrydową grafiką.",

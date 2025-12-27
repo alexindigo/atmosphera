@@ -1304,6 +1304,10 @@
         "description": "Escolha onde o painel da Central de Controle aparece quando aberto.",
         "label": "Posição"
       },
+      "system-monitor-disk-path": {
+        "description": "Selecione qual ponto de montagem do disco o cartão do monitor do sistema no centro de controle deve monitorar.",
+        "label": "Caminho do disco do monitor do sistema"
+      },
       "section": {
         "description": "Configurar o posicionamento e o comportamento do painel da Central de Controle.",
         "label": "Aparência"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Uso do disco"
+      },
+      "disk-path": {
+        "description": "Selecione qual ponto de montagem do disco monitorar.",
+        "label": "Caminho do disco"
       },
       "enable-dgpu-monitoring": {
         "description": "Atenção: Isto irá ativar sua GPU dedicada (NVIDIA/AMD), o que pode impactar significativamente a duração da bateria em laptops com gráficos híbridos.",

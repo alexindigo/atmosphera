@@ -266,7 +266,8 @@
     "networkPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
-    "criticalColor": ""
+    "criticalColor": "",
+    "diskPath": "/"
   },
   "dock": {
     "enabled": true,

@@ -1304,6 +1304,10 @@
         "description": "Choose where the control center panel appears when opened.",
         "label": "Position"
       },
+      "system-monitor-disk-path": {
+        "description": "Select which disk mount point the system monitor card in the control center should monitor.",
+        "label": "System monitor disk path"
+      },
       "section": {
         "description": "Configure the control center panel positioning and behavior.",
         "label": "Appearance"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Disk usage"
+      },
+      "disk-path": {
+        "description": "Select which disk mount point to monitor.",
+        "label": "Disk path"
       },
       "enable-dgpu-monitoring": {
         "description": "Warning: This will wake up your discrete GPU (NVIDIA/AMD), which may significantly impact battery life on laptops with hybrid graphics.",

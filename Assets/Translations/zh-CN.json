@@ -1304,6 +1304,10 @@
         "description": "选择打开控制中心时面板出现的位置。",
         "label": "位置"
       },
+      "system-monitor-disk-path": {
+        "description": "选择控制中心中的系统监视器卡片应监视的磁盘挂载点。",
+        "label": "系统监视器磁盘路径"
+      },
       "section": {
         "description": "配置控制中心面板的位置和行为。",
         "label": "外观"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "磁盘使用率"
+      },
+      "disk-path": {
+        "description": "选择要监视的磁盘挂载点。",
+        "label": "磁盘路径"
       },
       "enable-dgpu-monitoring": {
         "description": "警告：这将唤醒您的独立显卡 (NVIDIA/AMD)，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",

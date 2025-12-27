@@ -1304,6 +1304,10 @@
         "description": "Choisissez où le panneau du Centre de contrôle apparaît lorsqu'il est ouvert.",
         "label": "Position"
       },
+      "system-monitor-disk-path": {
+        "description": "Sélectionnez le point de montage du disque que la carte du moniteur système dans le centre de contrôle doit surveiller.",
+        "label": "Chemin du disque du moniteur système"
+      },
       "section": {
         "description": "Configurer le positionnement et le comportement du panneau du Centre de contrôle.",
         "label": "Apparence"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Utilisation disque"
+      },
+      "disk-path": {
+        "description": "Sélectionnez le point de montage du disque à surveiller.",
+        "label": "Chemin du disque"
       },
       "enable-dgpu-monitoring": {
         "description": "Attention : Ceci va activer votre GPU dédié (NVIDIA/AMD), ce qui peut avoir un impact significatif sur l'autonomie de la batterie des ordinateurs portables dotés de cartes graphiques hybrides.",

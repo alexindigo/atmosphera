@@ -1304,6 +1304,10 @@
         "description": "コントロールセンターを開いたときの表示位置を選択します。",
         "label": "表示位置"
       },
+      "system-monitor-disk-path": {
+        "description": "コントロールセンターのシステムモニターカードが監視するディスクのマウントポイントを選択します。",
+        "label": "システムモニターのディスクパス"
+      },
       "section": {
         "description": "コントロールセンターの位置や挙動を設定します。",
         "label": "外観"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "ストレージ使用量"
+      },
+      "disk-path": {
+        "description": "監視するディスクのマウントポイントを選択します。",
+        "label": "ディスクパス"
       },
       "enable-dgpu-monitoring": {
         "description": "警告: これにより外部GPU (NVIDIA/AMD) が起動状態になるため、ハイブリッドグラフィックス搭載のノート PC ではバッテリー駆動時間に大きな影響を与える可能性があります。",

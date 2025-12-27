@@ -1304,6 +1304,10 @@
         "description": "Elige dónde aparece el panel del Centro de control cuando se abre.",
         "label": "Posición"
       },
+      "system-monitor-disk-path": {
+        "description": "Selecciona qué punto de montaje de disco debe monitorear la tarjeta del monitor del sistema en el centro de control.",
+        "label": "Ruta del disco del monitor del sistema"
+      },
       "section": {
         "description": "Configurar el posicionamiento y el comportamiento del panel del Centro de control.",
         "label": "Apariencia"
@@ -2329,6 +2333,10 @@
       },
       "disk-section": {
         "label": "Uso de disco"
+      },
+      "disk-path": {
+        "description": "Selecciona qué punto de montaje de disco monitorear.",
+        "label": "Ruta del disco"
       },
       "enable-dgpu-monitoring": {
         "description": "Advertencia: Esto activará tu GPU dedicada (NVIDIA/AMD), lo que podría afectar significativamente la duración de la batería en portátiles con gráficos híbridos.",
