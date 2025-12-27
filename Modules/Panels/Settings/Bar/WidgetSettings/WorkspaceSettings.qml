@@ -117,15 +117,22 @@ ColumnLayout {
     onToggled: checked => valueColorizeIcons = checked
     visible: valueShowApplications
   }
-  NSpinBox {
-    label: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.label")
-    description: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.description")
-    value: valueUnfocusedIconsOpacity
-    suffix: "%"
-    minimum: 0
-    maximum: 100
-    stepSize: 10
-    onValueChanged: valueUnfocusedIconsOpacity = value
-    visible: valueShowApplications
+  RowLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+    NLabel {
+      label: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.label")
+      description: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.description")
+    }
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 0
+      to: 1
+      stepSize: 0.01
+      value: valueUnfocusedIconsOpacity
+      visible: valueShowApplications
+      onMoved: value => valueUnfocusedIconsOpacity = value
+      text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
+    }
   }
 }
