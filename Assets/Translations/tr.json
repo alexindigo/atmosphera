@@ -94,6 +94,10 @@
           "label": "Yatay çubuk"
         },
         "preview": "Önizleme",
+        "tooltip-format": {
+          "description": "Saat üzerine geldiğinizde gösterilen ipucu için format dizesi. Varsayılan ipucunu kullanmak için boş bırakın.",
+          "label": "İpucu formatı"
+        },
         "use-custom-font": {
           "description": "Saat için varsayılan yazı tipi seçimini özel bir yazı tipiyle geçersiz kılın.",
           "label": "Özel yazı tipi kullan"
@@ -536,7 +540,7 @@
     }
   },
   "clock": {
-    "tooltip": "Saat"
+    "tooltip": "Takvim"
   },
   "common": {
     "add": "Ekle",

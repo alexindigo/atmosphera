@@ -94,6 +94,10 @@
           "label": "Barra horizontal"
         },
         "preview": "Vista previa",
+        "tooltip-format": {
+          "description": "Cadena de formato para la información sobre herramientas que se muestra al pasar el cursor sobre el reloj. Déjelo vacío para usar la información sobre herramientas predeterminada.",
+          "label": "Formato de información sobre herramientas"
+        },
         "use-custom-font": {
           "description": "Anular la selección de fuente predeterminada con una fuente personalizada para el reloj.",
           "label": "Usar fuente personalizada"
@@ -536,7 +540,7 @@
     }
   },
   "clock": {
-    "tooltip": "Reloj"
+    "tooltip": "Calendario"
   },
   "common": {
     "add": "Añadir",
