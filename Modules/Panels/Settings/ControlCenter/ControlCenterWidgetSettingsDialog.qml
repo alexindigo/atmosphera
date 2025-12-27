@@ -113,8 +113,8 @@ Popup {
             if (item) {
               // Force width recalculation when content loads
               Qt.callLater(() => {
-                root.width = Math.max(root.settingsContentWidth + root.dialogPadding * 2, 500);
-              });
+                             root.width = Math.max(root.settingsContentWidth + root.dialogPadding * 2, 500);
+                           });
             }
           }
         }

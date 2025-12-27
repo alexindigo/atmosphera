@@ -17,10 +17,10 @@ ColumnLayout {
   // Local state
   property bool valueUsePrimaryColor: widgetData.usePrimaryColor !== undefined ? widgetData.usePrimaryColor : widgetMetadata.usePrimaryColor
   property bool valueUseCustomFont: widgetData.useCustomFont !== undefined ? widgetData.useCustomFont : widgetMetadata.useCustomFont
-  property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : widgetMetadata.customFont
-  property string valueFormatHorizontal: widgetData.formatHorizontal !== undefined ? widgetData.formatHorizontal : widgetMetadata.formatHorizontal
-  property string valueFormatVertical: widgetData.formatVertical !== undefined ? widgetData.formatVertical : widgetMetadata.formatVertical
-  property string valueTooltipFormat: widgetData.tooltipFormat !== undefined ? widgetData.tooltipFormat : widgetMetadata.tooltipFormat
+  property string valueCustomFont: widgetData.customFont !== undefined ? widgetData.customFont : (widgetMetadata.customFont !== undefined ? widgetMetadata.customFont : "")
+  property string valueFormatHorizontal: widgetData.formatHorizontal !== undefined ? widgetData.formatHorizontal : (widgetMetadata.formatHorizontal !== undefined ? widgetMetadata.formatHorizontal : "")
+  property string valueFormatVertical: widgetData.formatVertical !== undefined ? widgetData.formatVertical : (widgetMetadata.formatVertical !== undefined ? widgetMetadata.formatVertical : "")
+  property string valueTooltipFormat: widgetData.tooltipFormat !== undefined ? widgetData.tooltipFormat : (widgetMetadata.tooltipFormat !== undefined ? widgetMetadata.tooltipFormat : "")
 
   // Track the currently focused input field
   property var focusedInput: null
