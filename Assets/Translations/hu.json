@@ -94,10 +94,6 @@
           "label": "Vízszintes sáv"
         },
         "preview": "Előnézet",
-        "tooltip-format": {
-          "description": "Formátumsztring az óra fölé húzva megjelenő eszköztipphez. Hagyja üresen az alapértelmezett eszköztipp használatához.",
-          "label": "Eszköztipp formátum"
-        },
         "use-custom-font": {
           "description": "Felülbírálja az alapértelmezett betűtípus kiválasztását egy egyéni betűtípussal az órához.",
           "label": "Egyéni betűtípus használata"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Naptár"
+    "tooltip": "Óra"
   },
   "common": {
     "add": "Hozzáadás",

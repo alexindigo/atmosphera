@@ -94,10 +94,6 @@
           "label": "Horizontale balk"
         },
         "preview": "Voorbeeld",
-        "tooltip-format": {
-          "description": "Opmaakreeks voor de tooltip die wordt weergegeven bij het zweven over de klok. Laat leeg om de standaard tooltip te gebruiken.",
-          "label": "Tooltip-opmaak"
-        },
         "use-custom-font": {
           "description": "Overschrijf het standaardlettertype met een aangepast lettertype voor de klok.",
           "label": "Aangepast lettertype gebruiken"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Kalender"
+    "tooltip": "Klok"
   },
   "common": {
     "add": "Toevoegen",

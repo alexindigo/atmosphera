@@ -94,10 +94,6 @@
           "label": "Horizontale Statusleiste"
         },
         "preview": "Vorschau",
-        "tooltip-format": {
-          "description": "Formatzeichenfolge für den Tooltip, der beim Überfahren der Uhr angezeigt wird. Leer lassen, um den Standard-Tooltip zu verwenden.",
-          "label": "Tooltip-Format"
-        },
         "use-custom-font": {
           "description": "Überschreibt die Standard-Schriftart mit einer benutzerdefinierten Schriftart für die Uhr.",
           "label": "Benutzerdefinierte Schriftart verwenden"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Kalender"
+    "tooltip": "Uhr"
   },
   "common": {
     "add": "Hinzufügen",

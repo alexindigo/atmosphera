@@ -94,10 +94,6 @@
           "label": "Barre horizontale"
         },
         "preview": "Aperçu",
-        "tooltip-format": {
-          "description": "Chaîne de format pour l'info-bulle affichée lors du survol de l'horloge. Laissez vide pour utiliser l'info-bulle par défaut.",
-          "label": "Format de l'info-bulle"
-        },
         "use-custom-font": {
           "description": "Remplacez la police par défaut par une police personnalisée pour l'horloge.",
           "label": "Utiliser une police personnalisée."
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Calendrier"
+    "tooltip": "Horloge"
   },
   "common": {
     "add": "Ajouter",

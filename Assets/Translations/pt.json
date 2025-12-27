@@ -94,10 +94,6 @@
           "label": "Barra horizontal"
         },
         "preview": "Pré-visualização",
-        "tooltip-format": {
-          "description": "String de formato para a dica de ferramenta exibida ao passar o mouse sobre o relógio. Deixe vazio para usar a dica de ferramenta padrão.",
-          "label": "Formato da dica de ferramenta"
-        },
         "use-custom-font": {
           "description": "Substitua a fonte padrão por uma fonte personalizada para o relógio.",
           "label": "Usar fonte personalizada"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Calendário"
+    "tooltip": "Relógio"
   },
   "common": {
     "add": "Adicionar",

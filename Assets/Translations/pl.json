@@ -94,10 +94,6 @@
           "label": "Pasek poziomy"
         },
         "preview": "Podgląd",
-        "tooltip-format": {
-          "description": "Ciąg formatujący dla etykietki wyświetlanej po najechaniu na zegar. Pozostaw puste, aby użyć domyślnej etykietki.",
-          "label": "Format etykietki"
-        },
         "use-custom-font": {
           "description": "Zastąp domyślną czcionkę zegara czcionką niestandardową.",
           "label": "Użyj niestandardowej czcionki"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "Kalendarz"
+    "tooltip": "Zegar"
   },
   "common": {
     "add": "Dodaj",

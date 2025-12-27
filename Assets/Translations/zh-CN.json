@@ -94,10 +94,6 @@
           "label": "水平栏"
         },
         "preview": "预览",
-        "tooltip-format": {
-          "description": "悬停在时钟上时显示的工具提示的格式字符串。留空以使用默认工具提示。",
-          "label": "工具提示格式"
-        },
         "use-custom-font": {
           "description": "使用自定义字体覆盖时钟的默认字体选择。",
           "label": "使用自定义字体"
@@ -540,7 +536,7 @@
     }
   },
   "clock": {
-    "tooltip": "日历"
+    "tooltip": "时钟"
   },
   "common": {
     "add": "添加",
