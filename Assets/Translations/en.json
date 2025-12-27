@@ -94,6 +94,10 @@
           "label": "Horizontal bar"
         },
         "preview": "Preview",
+        "tooltip-format": {
+          "description": "Format string for the tooltip shown when hovering over the clock. Leave empty to use the default tooltip.",
+          "label": "Tooltip format"
+        },
         "use-custom-font": {
           "description": "Override the default font selection with a custom font for the clock.",
           "label": "Use custom font"
@@ -536,7 +540,7 @@
     }
   },
   "clock": {
-    "tooltip": "Clock"
+    "tooltip": "Calendar"
   },
   "common": {
     "add": "Add",
