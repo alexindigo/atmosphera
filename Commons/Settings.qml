@@ -58,6 +58,7 @@ Singleton {
     // default settings on every start
     if (isDebug) {
       generateDefaultSettings();
+      generateWidgetDefaultSettings();
     }
 
     // Patch-in the local default, resolved to user's home
@@ -791,6 +792,28 @@ Singleton {
   }
 
   // -----------------------------------------------------
+  // Generate default widget settings at the root of the repo
+  function generateWidgetDefaultSettings() {
+    try {
+      Logger.d("Settings", "Generating settings-widgets-default.json");
+
+      var output = {
+        "bar": QtObj2JS.qtObjectToPlainObject(BarWidgetRegistry.widgetMetadata),
+        "controlCenter": QtObj2JS.qtObjectToPlainObject(ControlCenterWidgetRegistry.widgetMetadata),
+        "desktop": QtObj2JS.qtObjectToPlainObject(DesktopWidgetRegistry.widgetMetadata)
+      };
+      var jsonData = JSON.stringify(output, null, 2);
+
+      var defaultPath = Quickshell.shellDir + "/Assets/settings-widgets-default.json";
+
+      var base64Data = Qt.btoa(jsonData);
+      Quickshell.execDetached(["sh", "-c", `echo "${base64Data}" | base64 -d > "${defaultPath}"`]);
+    } catch (error) {
+      Logger.e("Settings", "Failed to generate widget default settings file: " + error);
+    }
+  }
+
+  // -----------------------------------------------------
   // Run versioned migrations using MigrationRegistry
   // rawJson is the parsed JSON file content (before adapter filtering)
   function runVersionedMigrations(rawJson) {
@@ -874,8 +897,7 @@ Singleton {
         var widget = adapter.bar.widgets[sectionName][i];
 
         // Check if widget registry supports user settings, if it does not, then there is nothing to do
-        const reg = BarWidgetRegistry.widgetMetadata[widget.id];
-        if ((reg === undefined) || (reg.allowUserSettings === undefined) || !reg.allowUserSettings) {
+        if (BarWidgetRegistry.widgetMetadata[widget.id] === undefined) {
           continue;
         }
 
