@@ -772,7 +772,7 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Generate default settings at the root of the repo
+  // Generate default settings: for reference only, not used by the shell
   function generateDefaultSettings() {
     try {
       Logger.d("Settings", "Generating settings-default.json");
@@ -792,7 +792,7 @@ Singleton {
   }
 
   // -----------------------------------------------------
-  // Generate default widget settings at the root of the repo
+  // Generate default widget settings: for reference only, not used by the shell
   function generateWidgetDefaultSettings() {
     try {
       Logger.d("Settings", "Generating settings-widgets-default.json");
