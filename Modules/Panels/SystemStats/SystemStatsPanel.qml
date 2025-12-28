@@ -79,7 +79,7 @@ SmartPanel {
 
             // CPU Usage
             NCircleStat {
-              value: SystemStatService.cpuUsage
+              ratio: SystemStatService.cpuUsage / 100
               icon: "cpu-usage"
               suffix: "%"
               flat: true
@@ -89,7 +89,7 @@ SmartPanel {
 
             // CPU Temperature
             NCircleStat {
-              value: SystemStatService.cpuTemp
+              ratio: SystemStatService.cpuTemp / 100
               icon: "cpu-temperature"
               suffix: "\u00B0"
               flat: true
@@ -100,7 +100,7 @@ SmartPanel {
 
             // GPU Temperature
             NCircleStat {
-              value: SystemStatService.gpuTemp
+              ratio: SystemStatService.gpuTemp / 100
               icon: "gpu-temperature"
               suffix: "\u00B0"
               flat: true
@@ -111,7 +111,7 @@ SmartPanel {
 
             // Memory Usage
             NCircleStat {
-              value: SystemStatService.memPercent
+              ratio: SystemStatService.memPercent / 100
               icon: "memory"
               suffix: "%"
               flat: true
@@ -121,7 +121,7 @@ SmartPanel {
 
             // Disk Usage
             NCircleStat {
-              value: SystemStatService.diskPercents["/"] ?? 0
+              ratio: (SystemStatService.diskPercents["/"] ?? 0) / 100
               icon: "storage"
               suffix: "%"
               flat: true
@@ -143,7 +143,7 @@ SmartPanel {
 
             // Download gauge
             NCircleStat {
-              value: getNetworkPercent(SystemStatService.rxSpeed)
+              ratio: SystemStatService.rxRatio
               icon: "download-speed"
               suffix: "%"
               flat: true
@@ -153,7 +153,7 @@ SmartPanel {
 
             // Upload gauge
             NCircleStat {
-              value: getNetworkPercent(SystemStatService.txSpeed)
+              ratio: SystemStatService.txRatio
               icon: "upload-speed"
               suffix: "%"
               flat: true
@@ -279,14 +279,5 @@ SmartPanel {
         }
       }
     }
-  }
-
-  // Convert network speed to percentage (log scale)
-  function getNetworkPercent(bytesPerSecond) {
-    if (bytesPerSecond <= 0)
-      return 0;
-    // Log scale: 1KB=0%, 1MB=50%, 100MB=100%
-    const kb = bytesPerSecond / 1024;
-    return Math.min(100, Math.max(0, (Math.log10(kb) / 5) * 100));
   }
 }

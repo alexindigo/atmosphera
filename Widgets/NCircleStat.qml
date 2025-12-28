@@ -7,7 +7,7 @@ import qs.Widgets
 Rectangle {
   id: root
 
-  property real value: 0 // 0..100 (or any range visually mapped)
+  property real ratio: 0 // 0..1 range
   property string icon: ""
   property string suffix: "%"
   // When nested inside a parent group (NBox), you can make it flat
@@ -26,10 +26,10 @@ Rectangle {
   border.color: flat ? Color.transparent : Color.mSurfaceVariant
   border.width: flat ? 0 : Style.borderS
 
-  // Animated value for smooth transitions - reduces repaint frequency
-  property real animatedValue: value
+  // Animated ratio for smooth transitions - reduces repaint frequency
+  property real animatedRatio: ratio
 
-  Behavior on animatedValue {
+  Behavior on animatedRatio {
     enabled: !Settings.data.general.animationDisabled
     NumberAnimation {
       duration: Style.animationNormal
@@ -37,16 +37,26 @@ Rectangle {
     }
   }
 
-  // Repaint gauge when animated value changes (throttled by animation)
-  onAnimatedValueChanged: repaintTimer.restart()
-  onFillColorChanged: repaintTimer.restart()
+  // Repaint gauge when animated ratio changes (throttled by animation)
+  onAnimatedRatioChanged: {
+    if (!repaintTimer.running) {
+      repaintTimer.start();
+    }
+  }
+  onFillColorChanged: gauge.requestPaint()
 
-  // Debounce timer to limit repaint frequency during rapid value changes
+  // Throttle timer to limit repaint frequency during animation (~30 FPS)
   Timer {
     id: repaintTimer
-    interval: 33 // ~30 FPS max
-    repeat: false
-    onTriggered: gauge.requestPaint()
+    interval: 33
+    repeat: true
+    onTriggered: {
+      gauge.requestPaint();
+      // Stop repeating once animation settles
+      if (Math.abs(root.animatedRatio - root.ratio) < 0.001) {
+        stop();
+      }
+    }
   }
 
   ColumnLayout {
@@ -100,9 +110,9 @@ Rectangle {
           ctx.arc(cx, cy, r, start, endBg);
           ctx.stroke();
 
-          // Value arc with gradient starting at 25%
-          const ratio = Math.max(0, Math.min(1, root.animatedValue / 100));
-          const end = start + (endBg - start) * ratio;
+          // Value arc
+          const r2 = Math.max(0, Math.min(1, root.animatedRatio));
+          const end = start + (endBg - start) * r2;
 
           ctx.strokeStyle = root.fillColor;
           ctx.beginPath();
@@ -116,7 +126,7 @@ Rectangle {
         id: valueLabel
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4 * contentScale
-        text: `${Math.round(root.value)}${root.suffix}`
+        text: `${Math.round(root.ratio * 100)}${root.suffix}`
         pointSize: Style.fontSizeM * contentScale * 0.9
         font.weight: Style.fontWeightBold
         color: root.fillColor

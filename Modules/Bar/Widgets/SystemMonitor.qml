@@ -58,15 +58,6 @@ Rectangle {
   readonly property real miniBarWidth: Math.max(16, Math.round(iconSize * 1.8))
   readonly property real miniBarHeight: Math.max(3, Math.round(iconSize * 0.25))
 
-  // Network speed to bar value (log scale for compact mode)
-  function getNetworkBarValue(bytesPerSecond) {
-    if (bytesPerSecond <= 0)
-      return 0;
-    // Log scale: 1KB=0%, 1MB=50%, 100MB=100%
-    const kb = bytesPerSecond / 1024;
-    return Math.min(100, Math.max(0, (Math.log10(kb) / 5) * 100));
-  }
-
   // Build comprehensive tooltip text with all stats
   function buildTooltipText() {
     let lines = [];
@@ -193,7 +184,7 @@ Rectangle {
 
     Rectangle {
       id: miniGauge
-      property real value: 0 // 0-100
+      property real ratio: 0 // 0..1
       property color statColor: Color.mPrimary // Color based on warning/critical state
 
       width: miniBarHeight // Thin vertical gauge
@@ -203,7 +194,7 @@ Rectangle {
 
       // Fill that grows from bottom
       Rectangle {
-        property real fillHeight: parent.height * Math.min(1, Math.max(0, miniGauge.value / 100))
+        property real fillHeight: parent.height * Math.min(1, Math.max(0, miniGauge.ratio))
         width: parent.width
         height: fillHeight
         radius: parent.radius
@@ -213,7 +204,7 @@ Rectangle {
         Behavior on fillHeight {
           enabled: !Settings.data.general.animationDisabled
           NumberAnimation {
-            duration: Style.animationFast
+            duration: Style.animationNormal
             easing.type: Easing.OutCubic
           }
         }
@@ -307,7 +298,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => SystemStatService.cpuUsage);
+            item.ratio = Qt.binding(() => SystemStatService.cpuUsage / 100);
             item.statColor = Qt.binding(() => SystemStatService.cpuColor);
           }
         }
@@ -377,7 +368,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => SystemStatService.cpuTemp);
+            item.ratio = Qt.binding(() => SystemStatService.cpuTemp / 100);
             item.statColor = Qt.binding(() => SystemStatService.tempColor);
           }
         }
@@ -447,7 +438,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => SystemStatService.gpuTemp);
+            item.ratio = Qt.binding(() => SystemStatService.gpuTemp / 100);
             item.statColor = Qt.binding(() => SystemStatService.gpuColor);
           }
         }
@@ -517,7 +508,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => SystemStatService.memPercent);
+            item.ratio = Qt.binding(() => SystemStatService.memPercent / 100);
             item.statColor = Qt.binding(() => SystemStatService.memColor);
           }
         }
@@ -585,7 +576,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => getNetworkBarValue(SystemStatService.rxSpeed));
+            item.ratio = Qt.binding(() => SystemStatService.rxRatio);
           }
         }
       }
@@ -652,7 +643,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => getNetworkBarValue(SystemStatService.txSpeed));
+            item.ratio = Qt.binding(() => SystemStatService.txRatio);
           }
         }
       }
@@ -721,7 +712,7 @@ Rectangle {
           Layout.column: 1
 
           onLoaded: {
-            item.value = Qt.binding(() => SystemStatService.diskPercents[diskPath] ?? 0);
+            item.ratio = Qt.binding(() => (SystemStatService.diskPercents[diskPath] ?? 0) / 100);
             item.statColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath));
           }
         }
