@@ -516,7 +516,7 @@ NBox {
             color: Color.mSurfaceVariant
             border.color: Color.mOutline
             border.width: Style.borderS
-            radius: Style.radiusS
+            radius: Style.iRadiusXS
 
             RowLayout {
               id: passwordRow
@@ -527,7 +527,7 @@ NBox {
               Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                radius: Style.radiusXS
+                radius: Style.iRadiusXS
                 color: Color.mSurface
                 border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
                 border.width: Style.borderS
@@ -575,7 +575,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize * 0.8
+                baseSize: Style.baseWidgetSize
                 onClicked: root.passwordCancelled()
               }
             }
@@ -623,7 +623,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize * 0.8
+                baseSize: Style.baseWidgetSize
                 onClicked: root.forgetCancelled()
               }
             }
