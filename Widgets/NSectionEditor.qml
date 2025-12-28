@@ -105,11 +105,13 @@ NBox {
 
     RowLayout {
       Layout.fillWidth: true
+      Layout.rightMargin: Style.marginS
 
       ColumnLayout {
         spacing: Style.marginXXS
         Layout.alignment: Qt.AlignVCenter
         Layout.fillWidth: false
+        Layout.leftMargin: Style.marginS
         Layout.maximumWidth: {
           // Reserve space for other elements: count indicator, combo box (~200), button (~50), and margins
           // Use a reasonable maximum that leaves room for controls on the right
