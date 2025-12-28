@@ -17,6 +17,7 @@ Singleton {
   property bool reloadSettings: false
   property bool directoriesCreated: false
   property bool shouldOpenSetupWizard: false
+  property bool isFreshInstall: false
 
   /*
   Shell directories.
@@ -133,6 +134,7 @@ Singleton {
       }
       if (error.toString().includes("No such file") || error === 2) {
         // File doesn't exist, create it with default values
+        root.isFreshInstall = true;
         writeAdapter();
 
         // Also write to fallback if set
@@ -820,6 +822,12 @@ Singleton {
   // Run versioned migrations using MigrationRegistry
   // rawJson is the parsed JSON file content (before adapter filtering)
   function runVersionedMigrations(rawJson) {
+    // Skip migrations on fresh installs (no prior settings file)
+    if (!rawJson || root.isFreshInstall) {
+      Logger.i("Settings", "Fresh install detected, skipping migrations");
+      return;
+    }
+
     const currentVersion = adapter.settingsVersion;
     const migrations = MigrationRegistry.migrations;
 
