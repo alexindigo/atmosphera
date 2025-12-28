@@ -1304,10 +1304,6 @@
         "description": "Válassza ki, hol jelenjen meg a vezérlőközpont panel megnyitáskor.",
         "label": "Pozíció"
       },
-      "system-monitor-disk-path": {
-        "description": "Válassza ki, hogy melyik lemez csatolási pontot kell figyelnie a rendszerfigyelő kártyának a vezérlőközpontban.",
-        "label": "Rendszerfigyelő lemez elérési útja"
-      },
       "section": {
         "description": "A vezérlőközpont panel pozicionálásának és viselkedésének konfigurálása.",
         "label": "Megjelenés"
@@ -1373,6 +1369,10 @@
         },
         "sectionLeft": "Bal",
         "sectionRight": "Jobb"
+      },
+      "system-monitor-disk-path": {
+        "description": "Válassza ki, hogy melyik lemez csatolási pontot kell figyelnie a rendszerfigyelő kártyának a vezérlőközpontban.",
+        "label": "Rendszerfigyelő lemez elérési útja"
       },
       "title": "Vezérlőközpont"
     },
@@ -1471,6 +1471,14 @@
           "description": "Szabályozza a widget viselkedését, ha nincs lejátszva média.",
           "label": "Elrejtési mód"
         },
+        "rounded-corners": {
+          "description": "Engedélyezi a lekerekített sarkokat a widget szélein.",
+          "label": "Lekerekített sarkok"
+        },
+        "show-album-art": {
+          "description": "Mutasd az album borítóját és a számok adatait (cím és előadó).",
+          "label": "Album borító és cím megjelenítése"
+        },
         "show-background": {
           "description": "Jelenítse meg a média lejátszó widget háttérkonténerét.",
           "label": "Háttér megjelenítése"
@@ -1479,13 +1487,13 @@
           "description": "Médiavezérlő gombok (lejátszás/szünet, előző, következő) megjelenítése a média lejátszó widgeten.",
           "label": "Gombok megjelenítése"
         },
+        "show-visualizer": {
+          "description": "Audiovizuális megjelenítő fedvény megjelenítése.",
+          "label": "Vizualizáló megjelenítése"
+        },
         "visualizer-type": {
           "description": "Válasszon vizualizációs típust az asztali média lejátszó hátteréhez.",
           "label": "Vizualizációs típus"
-        },
-        "visualizer-visibility": {
-          "description": "Szabályozza, mikor látható a a hangvizualizátor.",
-          "label": "Hangvizualizátor láthatósága"
         }
       },
       "title": "Asztali Widgetek",
@@ -2222,6 +2230,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "A felvétel befejezése után másold a fájlt a vágólapra.",
+          "label": "Másolás a vágólapra"
+        },
         "output-folder": {
           "description": "Mappa, ahová a képernyőfelvételek mentésre kerülnek.",
           "label": "Kimeneti mappa",
@@ -2331,12 +2343,12 @@
       "custom-highlight-colors-title": {
         "label": "Egyéni kiemelőszínek"
       },
-      "disk-section": {
-        "label": "Lemezhasználat"
-      },
       "disk-path": {
         "description": "Válassza ki, hogy melyik lemez csatolási pontot szeretné figyelni.",
         "label": "Lemez elérési útja"
+      },
+      "disk-section": {
+        "label": "Lemezhasználat"
       },
       "enable-dgpu-monitoring": {
         "description": "Figyelem: Ez felébreszti a dedikált GPU-t (NVIDIA/AMD), ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",

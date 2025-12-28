@@ -1304,10 +1304,6 @@
         "description": "Wählen Sie aus, wo das Kontrollzentrum-Panel angezeigt wird, wenn es geöffnet wird.",
         "label": "Position"
       },
-      "system-monitor-disk-path": {
-        "description": "Wählen Sie, welchen Festplatten-Mountpunkt die Systemmonitor-Karte im Kontrollzentrum überwachen soll.",
-        "label": "Systemmonitor Festplattenpfad"
-      },
       "section": {
         "description": "Konfigurieren Sie die Positionierung und das Verhalten des Kontrollzentrum-Panels.",
         "label": "Aussehen"
@@ -1373,6 +1369,10 @@
         },
         "sectionLeft": "Links",
         "sectionRight": "Rechts"
+      },
+      "system-monitor-disk-path": {
+        "description": "Wählen Sie, welchen Festplatten-Mountpunkt die Systemmonitor-Karte im Kontrollzentrum überwachen soll.",
+        "label": "Systemmonitor Festplattenpfad"
       },
       "title": "Kontrollzentrum"
     },
@@ -1471,6 +1471,14 @@
           "description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
           "label": "Ausblendmodus"
         },
+        "rounded-corners": {
+          "description": "Aktiviere abgerundete Ecken an den Widget-Kanten.",
+          "label": "Abgerundete Ecken"
+        },
+        "show-album-art": {
+          "description": "Zeige das Albumcover und die Titelinformationen (Titel und Künstler).",
+          "label": "Albumcover & Titel anzeigen"
+        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Media-Player-Widget an.",
           "label": "Hintergrund anzeigen"
@@ -1479,13 +1487,13 @@
           "description": "Mediensteuerungstasten (Wiedergabe/Pause, Zurück, Weiter) im Media-Player-Widget anzeigen.",
           "label": "Tasten anzeigen"
         },
+        "show-visualizer": {
+          "description": "Audiovisualisierungs-Overlay anzeigen.",
+          "label": "Visualisierer anzeigen"
+        },
         "visualizer-type": {
           "description": "Wählen Sie einen Visualisierungstyp für den Hintergrund des Desktop-Mediaplayers.",
           "label": "Visualisierungsart"
-        },
-        "visualizer-visibility": {
-          "description": "Steuern Sie, wann der Audio-Visualizer sichtbar ist.",
-          "label": "Audio-Visualizer-Sichtbarkeit"
         }
       },
       "title": "Desktop-Widgets",
@@ -2222,6 +2230,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "Kopiere die Datei nach Beendigung der Aufnahme in die Zwischenablage.",
+          "label": "In die Zwischenablage kopieren"
+        },
         "output-folder": {
           "description": "Ordner, in dem Bildschirmaufnahmen gespeichert werden.",
           "label": "Ausgabe-Ordner",
@@ -2331,12 +2343,12 @@
       "custom-highlight-colors-title": {
         "label": "Benutzerdefinierte Hervorhebungsfarben"
       },
-      "disk-section": {
-        "label": "Festplattennutzung"
-      },
       "disk-path": {
         "description": "Wählen Sie, welchen Festplatten-Mountpunkt überwacht werden soll.",
         "label": "Festplattenpfad"
+      },
+      "disk-section": {
+        "label": "Festplattennutzung"
       },
       "enable-dgpu-monitoring": {
         "description": "Warnung: Dies aktiviert Ihre dedizierte GPU (NVIDIA/AMD), was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",

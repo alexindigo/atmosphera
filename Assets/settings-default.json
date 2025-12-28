@@ -140,6 +140,7 @@
     "quality": "very_high",
     "colorRange": "limited",
     "showCursor": true,
+    "copyToClipboard": false,
     "audioSource": "default_output",
     "videoSource": "portal"
   },

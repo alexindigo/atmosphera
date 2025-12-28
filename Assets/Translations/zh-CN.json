@@ -1304,10 +1304,6 @@
         "description": "选择打开控制中心时面板出现的位置。",
         "label": "位置"
       },
-      "system-monitor-disk-path": {
-        "description": "选择控制中心中的系统监视器卡片应监视的磁盘挂载点。",
-        "label": "系统监视器磁盘路径"
-      },
       "section": {
         "description": "配置控制中心面板的位置和行为。",
         "label": "外观"
@@ -1373,6 +1369,10 @@
         },
         "sectionLeft": "左",
         "sectionRight": "右"
+      },
+      "system-monitor-disk-path": {
+        "description": "选择控制中心中的系统监视器卡片应监视的磁盘挂载点。",
+        "label": "系统监视器磁盘路径"
       },
       "title": "控制中心"
     },
@@ -1471,6 +1471,14 @@
           "description": "控制当没有媒体播放时小部件的行为。",
           "label": "隐藏模式"
         },
+        "rounded-corners": {
+          "description": "启用小部件边缘的圆角。",
+          "label": "圆角"
+        },
+        "show-album-art": {
+          "description": "显示专辑封面和曲目信息（标题和艺术家）。",
+          "label": "显示专辑封面和标题"
+        },
         "show-background": {
           "description": "显示媒体播放器小部件的背景容器。",
           "label": "显示背景"
@@ -1479,13 +1487,13 @@
           "description": "在媒体播放器小部件上显示媒体控制按钮（播放/暂停、上一个、下一个）。",
           "label": "显示按钮"
         },
+        "show-visualizer": {
+          "description": "显示音频可视化叠加层。",
+          "label": "显示可视化工具"
+        },
         "visualizer-type": {
           "description": "选择桌面媒体播放器的背景可视化类型。",
           "label": "可视化类型"
-        },
-        "visualizer-visibility": {
-          "description": "控制音频可视化器的显示时机。",
-          "label": "音频可视化器可见性"
         }
       },
       "title": "桌面小部件",
@@ -2222,6 +2230,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "录制完成后将文件复制到剪贴板。",
+          "label": "复制到剪贴板"
+        },
         "output-folder": {
           "description": "屏幕录制将保存的文件夹。",
           "label": "输出文件夹",
@@ -2331,12 +2343,12 @@
       "custom-highlight-colors-title": {
         "label": "自定义高亮颜色"
       },
-      "disk-section": {
-        "label": "磁盘使用率"
-      },
       "disk-path": {
         "description": "选择要监视的磁盘挂载点。",
         "label": "磁盘路径"
+      },
+      "disk-section": {
+        "label": "磁盘使用率"
       },
       "enable-dgpu-monitoring": {
         "description": "警告：这将唤醒您的独立显卡 (NVIDIA/AMD)，这可能会显著影响配备混合显卡的笔记本电脑的电池续航时间。",
