@@ -22,7 +22,9 @@ Rectangle {
   readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
     var popupMenuUpdateTriggerRef = popupMenuUpdateTrigger;
-    return PanelService.getPopupMenuWindow(screen);
+    var window = PanelService.getPopupMenuWindow(screen);
+    console.log("[Tray] popupMenuWindow re-evaluated - window:", window, "trigger:", popupMenuUpdateTriggerRef);
+    return window;
   }
 
   readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
@@ -30,8 +32,10 @@ Rectangle {
   Connections {
     target: PanelService
     function onPopupMenuWindowRegistered(registeredScreen) {
+      console.log("[Tray] onPopupMenuWindowRegistered - registeredScreen:", registeredScreen, "this.screen:", screen);
       if (registeredScreen === screen) {
         root.popupMenuUpdateTrigger++;
+        console.log("[Tray] Trigger incremented to:", root.popupMenuUpdateTrigger);
       }
     }
   }
@@ -111,9 +115,11 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
+    console.log("[Tray] _performFilteredItemsUpdate called");
     let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values;
+      console.log("[Tray] Processing", trayItems.length, "tray items");
       for (var i = 0; i < trayItems.length; i++) {
         const item = trayItems[i];
         if (!item) {
@@ -189,9 +195,12 @@ Rectangle {
         dropdownItems = newItems;
       }
     }
+    console.log("[Tray] Update complete - filteredItems:", filteredItems.length, "dropdownItems:", dropdownItems.length);
+    console.log("[Tray] Widget visibility:", (filteredItems.length > 0 || dropdownItems.length > 0));
   }
 
   function updateFilteredItems() {
+    console.log("[Tray] updateFilteredItems called");
     updateDebounceTimer.restart();
   }
 
@@ -238,45 +247,22 @@ Rectangle {
   }
 
   function onLoaded() {
+    console.log("[Tray] onLoaded called - trayMenu:", trayMenu, "trayMenu.item:", trayMenu && trayMenu.item);
     // When the widget is fully initialized with its props set the screen for the trayMenu
     if (trayMenu && trayMenu.item) {
       trayMenu.item.screen = screen;
-    }
-  }
-
-  // Track when SystemTray.items becomes available
-  readonly property bool systemTrayAvailable: SystemTray.items !== null && SystemTray.items !== undefined
-
-  // Watch for SystemTray.items becoming available
-  onSystemTrayAvailableChanged: {
-    if (systemTrayAvailable) {
-      // SystemTray.items just became available, update immediately
-      Qt.callLater(root.updateFilteredItems);
+      console.log("[Tray] Set screen on trayMenu.item");
+    } else {
+      console.log("[Tray] WARNING: trayMenu or trayMenu.item not available in onLoaded");
     }
   }
 
   Connections {
-    id: systemTrayItemsConnections
     target: SystemTray.items
-    enabled: systemTrayAvailable
     function onValuesChanged() {
+      console.log("[Tray] SystemTray.items.onValuesChanged - items count:", SystemTray.items && SystemTray.items.values ? SystemTray.items.values.length : 0);
       root.updateFilteredItems();
       // Repeater will automatically update when items change
-    }
-  }
-
-  // Fallback timer to check if SystemTray.items becomes available
-  // This handles the case where SystemTray.items is null at startup
-  Timer {
-    id: systemTrayCheckTimer
-    interval: 500
-    running: !systemTrayAvailable
-    repeat: true
-    onTriggered: {
-      if (systemTrayAvailable) {
-        root.updateFilteredItems();
-        running = false;
-      }
     }
   }
 
@@ -293,12 +279,10 @@ Rectangle {
   }
 
   Component.onCompleted: {
-    // Initial update - will be called again when SystemTray.items becomes available
-    root.updateFilteredItems();
-    // Start checking for SystemTray.items availability if not available yet
-    if (!systemTrayAvailable) {
-      systemTrayCheckTimer.start();
-    }
+    console.log("[Tray] Component.onCompleted - widgetId:", widgetId, "screen:", screen);
+    console.log("[Tray] SystemTray.items available:", SystemTray.items !== null && SystemTray.items !== undefined);
+    console.log("[Tray] SystemTray.items.values:", SystemTray.items && SystemTray.items.values ? SystemTray.items.values.length : 0);
+    root.updateFilteredItems(); // Initial update
   }
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
@@ -308,6 +292,10 @@ Rectangle {
   border.width: Style.capsuleBorderWidth
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
+
+  onVisibleChanged: {
+    console.log("[Tray] Visibility changed - visible:", visible, "filteredItems:", filteredItems.length, "dropdownItems:", dropdownItems.length);
+  }
 
   Flow {
     id: trayFlow
