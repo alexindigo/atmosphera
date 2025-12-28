@@ -14,9 +14,6 @@ Rectangle {
   id: root
 
   property ShellScreen screen
-  onScreenChanged: {
-    console.log("[Tray] screen property changed - screen:", screen);
-  }
 
   // Trigger re-evaluation when window is registered
   property int popupMenuUpdateTrigger: 0
@@ -25,9 +22,7 @@ Rectangle {
   readonly property var popupMenuWindow: {
     // Reference trigger to force re-evaluation
     var popupMenuUpdateTriggerRef = popupMenuUpdateTrigger;
-    var window = PanelService.getPopupMenuWindow(screen);
-    console.log("[Tray] popupMenuWindow re-evaluated - window:", window, "trigger:", popupMenuUpdateTriggerRef);
-    return window;
+    return PanelService.getPopupMenuWindow(screen);
   }
 
   readonly property var trayMenu: popupMenuWindow ? popupMenuWindow.trayMenuLoader : null
@@ -35,33 +30,19 @@ Rectangle {
   Connections {
     target: PanelService
     function onPopupMenuWindowRegistered(registeredScreen) {
-      console.log("[Tray] onPopupMenuWindowRegistered - registeredScreen:", registeredScreen, "this.screen:", screen);
       if (registeredScreen === screen) {
         root.popupMenuUpdateTrigger++;
-        console.log("[Tray] Trigger incremented to:", root.popupMenuUpdateTrigger);
       }
     }
   }
 
   // Widget properties passed from Bar.qml for per-instance settings
   property string widgetId: ""
-  onWidgetIdChanged: {
-    console.log("[Tray] widgetId property changed - widgetId:", widgetId);
-  }
   property string section: ""
-  onSectionChanged: {
-    console.log("[Tray] section property changed - section:", section);
-  }
   property int sectionWidgetIndex: -1
-  onSectionWidgetIndexChanged: {
-    console.log("[Tray] sectionWidgetIndex property changed - sectionWidgetIndex:", sectionWidgetIndex);
-  }
   property int sectionWidgetsCount: 0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
-  onWidgetMetadataChanged: {
-    console.log("[Tray] widgetMetadata changed - metadata:", widgetMetadata);
-  }
   property var widgetSettings: {
     if (section && sectionWidgetIndex >= 0) {
       var widgets = Settings.data.bar.widgets[section];
@@ -70,9 +51,6 @@ Rectangle {
       }
     }
     return {};
-  }
-  onWidgetSettingsChanged: {
-    console.log("[Tray] widgetSettings changed - settings:", JSON.stringify(widgetSettings));
   }
 
   readonly property string barPosition: Settings.data.bar.position
@@ -133,11 +111,9 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
-    console.log("[Tray] _performFilteredItemsUpdate called");
     let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values;
-      console.log("[Tray] Processing", trayItems.length, "tray items");
       for (var i = 0; i < trayItems.length; i++) {
         const item = trayItems[i];
         if (!item) {
@@ -213,12 +189,9 @@ Rectangle {
         dropdownItems = newItems;
       }
     }
-    console.log("[Tray] Update complete - filteredItems:", filteredItems.length, "dropdownItems:", dropdownItems.length);
-    console.log("[Tray] Widget visibility:", (filteredItems.length > 0 || dropdownItems.length > 0));
   }
 
   function updateFilteredItems() {
-    console.log("[Tray] updateFilteredItems called");
     updateDebounceTimer.restart();
   }
 
@@ -265,20 +238,15 @@ Rectangle {
   }
 
   function onLoaded() {
-    console.log("[Tray] onLoaded called - trayMenu:", trayMenu, "trayMenu.item:", trayMenu && trayMenu.item);
     // When the widget is fully initialized with its props set the screen for the trayMenu
     if (trayMenu && trayMenu.item) {
       trayMenu.item.screen = screen;
-      console.log("[Tray] Set screen on trayMenu.item");
-    } else {
-      console.log("[Tray] WARNING: trayMenu or trayMenu.item not available in onLoaded");
     }
   }
 
   Connections {
     target: SystemTray.items
     function onValuesChanged() {
-      console.log("[Tray] SystemTray.items.onValuesChanged - items count:", SystemTray.items && SystemTray.items.values ? SystemTray.items.values.length : 0);
       root.updateFilteredItems();
       // Repeater will automatically update when items change
     }
@@ -297,11 +265,6 @@ Rectangle {
   }
 
   Component.onCompleted: {
-    console.log("[Tray] Component.onCompleted - widgetId:", widgetId, "screen:", screen, "section:", section, "sectionWidgetIndex:", sectionWidgetIndex);
-    console.log("[Tray] SystemTray.items available:", SystemTray.items !== null && SystemTray.items !== undefined);
-    console.log("[Tray] SystemTray.items.values:", SystemTray.items && SystemTray.items.values ? SystemTray.items.values.length : 0);
-    console.log("[Tray] widgetMetadata:", widgetMetadata);
-    console.log("[Tray] widgetSettings:", JSON.stringify(widgetSettings));
     root.updateFilteredItems(); // Initial update
   }
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
@@ -312,10 +275,6 @@ Rectangle {
   border.width: Style.capsuleBorderWidth
   visible: filteredItems.length > 0 || dropdownItems.length > 0
   opacity: (filteredItems.length > 0 || dropdownItems.length > 0) ? 1.0 : 0.0
-
-  onVisibleChanged: {
-    console.log("[Tray] Visibility changed - visible:", visible, "filteredItems:", filteredItems.length, "dropdownItems:", dropdownItems.length);
-  }
 
   Flow {
     id: trayFlow
