@@ -113,7 +113,6 @@ DraggableDesktopWidget {
     layer.enabled: true
     layer.smooth: true
     layer.samples: 8
-    layer.mipmap: true
     layer.textureSize: Qt.size(width * 2, height * 2)
     layer.effect: MultiEffect {
       maskEnabled: true
