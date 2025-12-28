@@ -303,6 +303,7 @@ Variants {
             active: (model.id in root.registeredWidgets) && (root.pluginReloadCounter >= 0)
 
             required property var model
+            required property int index
             property int widgetIndex: index
 
             sourceComponent: {
@@ -316,7 +317,9 @@ Variants {
               if (item) {
                 item.screen = window.screen;
                 item.parent = widgetsContainer;
-                item.widgetData = Qt.binding(function() { return widgetLoader.model; });
+                item.widgetData = Qt.binding(function () {
+                  return widgetLoader.model;
+                });
                 item.widgetIndex = widgetIndex;
 
                 // Inject plugin API for plugin widgets
