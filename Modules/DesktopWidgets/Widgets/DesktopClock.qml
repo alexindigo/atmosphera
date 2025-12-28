@@ -10,25 +10,7 @@ DraggableDesktopWidget {
   id: root
 
   readonly property var now: Time.now
-
-  // Direct access to settings like bar widgets do - this ensures reactivity
-  property var widgetSettings: {
-    if (screen && screen.name && widgetIndex >= 0) {
-      var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-      for (var i = 0; i < monitorWidgets.length; i++) {
-        if (monitorWidgets[i].name === screen.name) {
-          var widgets = monitorWidgets[i].widgets || [];
-          if (widgetIndex < widgets.length) {
-            return widgets[widgetIndex];
-          }
-          break;
-        }
-      }
-    }
-    return {};
-  }
-
-  property var widgetMetadata: DesktopWidgetRegistry.widgetMetadata["Clock"]
+  readonly property var widgetMetadata: DesktopWidgetRegistry.widgetMetadata["Clock"]
 
   readonly property color clockTextColor: {
     if (usePrimaryColor) {
@@ -41,14 +23,12 @@ DraggableDesktopWidget {
     var size = widgetData && widgetData.fontSize ? widgetData.fontSize : 0;
     return (size && size > 0) ? size : Style.fontSizeXXXL * 2.5;
   }
-  readonly property real widgetOpacity: (widgetSettings.opacity !== undefined) ? widgetSettings.opacity : 1.0
-  readonly property bool showSeconds: (widgetSettings.showSeconds !== undefined) ? widgetSettings.showSeconds : true
-  readonly property bool showDate: (widgetSettings.showDate !== undefined) ? widgetSettings.showDate : true
-  readonly property string clockStyle: (widgetSettings.clockStyle !== undefined) ? widgetSettings.clockStyle : (widgetMetadata.clockStyle !== undefined ? widgetMetadata.clockStyle : "digital")
-  readonly property bool usePrimaryColor: (widgetSettings.usePrimaryColor !== undefined) ? widgetSettings.usePrimaryColor : (widgetMetadata.usePrimaryColor !== undefined ? widgetMetadata.usePrimaryColor : false)
-  readonly property bool useCustomFont: (widgetSettings.useCustomFont !== undefined) ? widgetSettings.useCustomFont : (widgetMetadata.useCustomFont !== undefined ? widgetMetadata.useCustomFont : false)
-  readonly property string customFont: (widgetSettings.customFont !== undefined) ? widgetSettings.customFont : ""
-  readonly property string format: (widgetSettings.format !== undefined) ? widgetSettings.format : (widgetMetadata.format !== undefined ? widgetMetadata.format : "HH:mm\\nd MMMM yyyy")
+  readonly property real widgetOpacity: (widgetData && widgetData.opacity !== undefined) ? widgetData.opacity : 1.0
+  readonly property string clockStyle: (widgetData && widgetData.clockStyle !== undefined) ? widgetData.clockStyle : (widgetMetadata.clockStyle !== undefined ? widgetMetadata.clockStyle : "digital")
+  readonly property bool usePrimaryColor: (widgetData && widgetData.usePrimaryColor !== undefined) ? widgetData.usePrimaryColor : (widgetMetadata.usePrimaryColor !== undefined ? widgetMetadata.usePrimaryColor : false)
+  readonly property bool useCustomFont: (widgetData && widgetData.useCustomFont !== undefined) ? widgetData.useCustomFont : (widgetMetadata.useCustomFont !== undefined ? widgetMetadata.useCustomFont : false)
+  readonly property string customFont: (widgetData && widgetData.customFont !== undefined) ? widgetData.customFont : ""
+  readonly property string format: (widgetData && widgetData.format !== undefined) ? widgetData.format : (widgetMetadata.format !== undefined ? widgetMetadata.format : "HH:mm\\nd MMMM yyyy")
 
   readonly property real contentPadding: clockStyle === "minimal" ? Style.marginL : Style.marginXL
   implicitWidth: contentLoader.item ? (contentLoader.item.implicitWidth || contentLoader.item.width || 0) + contentPadding * 2 : 0

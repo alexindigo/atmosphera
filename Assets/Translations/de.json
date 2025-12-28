@@ -1417,6 +1417,10 @@
           "label": "Minimaler Modus"
         },
         "preview": "Vorschau",
+        "rounded-corners": {
+          "description": "Verwende abgerundete Ecken für den Widget-Hintergrund.",
+          "label": "Abgerundete Ecken"
+        },
         "show-background": {
           "description": "Zeige den Hintergrundcontainer für das Uhr-Widget an.",
           "label": "Hintergrund anzeigen"

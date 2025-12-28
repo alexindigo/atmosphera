@@ -1417,6 +1417,10 @@
           "label": "Minimális mód"
         },
         "preview": "Előnézet",
+        "rounded-corners": {
+          "description": "A widget háttere legyen lekerekített sarkú.",
+          "label": "Lekerekített sarkok"
+        },
         "show-background": {
           "description": "Jelenítse meg az óra widget háttérkonténerét.",
           "label": "Háttér megjelenítése"

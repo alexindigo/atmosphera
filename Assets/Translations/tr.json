@@ -1417,6 +1417,10 @@
           "label": "Minimal mod"
         },
         "preview": "Önizleme",
+        "rounded-corners": {
+          "description": "Widget arka planı için yuvarlatılmış köşeler kullanın.",
+          "label": "Yuvarlatılmış köşeler"
+        },
         "show-background": {
           "description": "Saat widget'ı için arka plan kabını göster.",
           "label": "Arka planı göster"

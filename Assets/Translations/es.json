@@ -1417,6 +1417,10 @@
           "label": "Modo minimalista"
         },
         "preview": "Vista previa",
+        "rounded-corners": {
+          "description": "Usa esquinas redondeadas para el fondo del widget.",
+          "label": "Esquinas redondeadas"
+        },
         "show-background": {
           "description": "Mostrar el contenedor de fondo para el widget de reloj.",
           "label": "Mostrar fondo"

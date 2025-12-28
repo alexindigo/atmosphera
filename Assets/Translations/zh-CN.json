@@ -1417,6 +1417,10 @@
           "label": "简约模式"
         },
         "preview": "预览",
+        "rounded-corners": {
+          "description": "使用圆角作为小部件背景。",
+          "label": "圆角"
+        },
         "show-background": {
           "description": "显示时钟小部件的背景容器。",
           "label": "显示背景"

@@ -1417,6 +1417,10 @@
           "label": "ミニマルモード"
         },
         "preview": "プレビュー",
+        "rounded-corners": {
+          "description": "ウィジェットの背景を角丸にしてください。",
+          "label": "角を丸くする"
+        },
         "show-background": {
           "description": "時計ウィジェットの背景コンテナを表示します。",
           "label": "背景を表示"

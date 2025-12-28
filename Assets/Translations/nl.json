@@ -1417,6 +1417,10 @@
           "label": "Minimale modus"
         },
         "preview": "Voorbeeld",
+        "rounded-corners": {
+          "description": "Gebruik afgeronde hoeken voor de widgetachtergrond.",
+          "label": "Afgeronde hoeken"
+        },
         "show-background": {
           "description": "Toon de achtergrondcontainer voor de klokwidget.",
           "label": "Achtergrond weergeven"

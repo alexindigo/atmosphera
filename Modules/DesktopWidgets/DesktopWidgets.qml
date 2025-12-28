@@ -34,53 +34,23 @@ Variants {
     id: screenLoader
     required property ShellScreen modelData
 
-    property ListModel screenWidgetsModel: ListModel {}
-
-    property var settingsWatcher: Settings.data.desktopWidgets.monitorWidgets
-    onSettingsWatcherChanged: Qt.callLater(updateModel)
-
-    Component.onCompleted: Qt.callLater(updateModel)
-
-    function updateModel() {
+    // Reactive property for widgets on this specific screen
+    // Returns a fresh array whenever Settings changes
+    property var screenWidgets: {
       if (!modelData || !modelData.name) {
-        screenWidgetsModel.clear();
-        return;
+        return [];
       }
-
       var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
-      var newWidgets = [];
       for (var i = 0; i < monitorWidgets.length; i++) {
         if (monitorWidgets[i].name === modelData.name) {
-          newWidgets = monitorWidgets[i].widgets || [];
-          break;
+          return monitorWidgets[i].widgets || [];
         }
       }
-
-      // Update in-place to preserve delegates
-      for (var j = 0; j < Math.min(newWidgets.length, screenWidgetsModel.count); j++) {
-        var item = screenWidgetsModel.get(j);
-        var newData = newWidgets[j];
-        // Update each property individually
-        for (var key in newData) {
-          if (item[key] !== newData[key]) {
-            item[key] = newData[key];
-          }
-        }
-      }
-
-      // Remove excess
-      while (screenWidgetsModel.count > newWidgets.length) {
-        screenWidgetsModel.remove(screenWidgetsModel.count - 1);
-      }
-
-      // Append new
-      for (var k = screenWidgetsModel.count; k < newWidgets.length; k++) {
-        screenWidgetsModel.append(newWidgets[k]);
-      }
+      return [];
     }
 
     // Only create PanelWindow if enabled AND screen has widgets
-    active: modelData && Settings.data.desktopWidgets.enabled && screenWidgetsModel.count > 0 && !PowerProfileService.noctaliaPerformanceMode
+    active: modelData && Settings.data.desktopWidgets.enabled && screenWidgets.length > 0 && !PowerProfileService.noctaliaPerformanceMode
 
     sourceComponent: PanelWindow {
       id: window
@@ -295,36 +265,33 @@ Variants {
 
         // Load widgets dynamically from per-monitor array
         Repeater {
-          model: screenLoader.screenWidgetsModel
+          model: screenLoader.screenWidgets
 
           delegate: Loader {
             id: widgetLoader
             // Bind to registeredWidgets and pluginReloadCounter to re-evaluate when plugins register/unregister
-            active: (model.id in root.registeredWidgets) && (root.pluginReloadCounter >= 0)
+            active: (modelData.id in root.registeredWidgets) && (root.pluginReloadCounter >= 0)
 
-            required property var model
+            required property var modelData
             required property int index
-            property int widgetIndex: index
 
             sourceComponent: {
               // Access registeredWidgets and pluginReloadCounter to create reactive binding
               var _ = root.pluginReloadCounter;
               var widgets = root.registeredWidgets;
-              return widgets[model.id] || null;
+              return widgets[modelData.id] || null;
             }
 
             onLoaded: {
               if (item) {
                 item.screen = window.screen;
                 item.parent = widgetsContainer;
-                item.widgetData = Qt.binding(function () {
-                  return widgetLoader.model;
-                });
-                item.widgetIndex = widgetIndex;
+                item.widgetData = modelData;
+                item.widgetIndex = index;
 
                 // Inject plugin API for plugin widgets
-                if (DesktopWidgetRegistry.isPluginWidget(model.id)) {
-                  var pluginId = model.id.replace("plugin:", "");
+                if (DesktopWidgetRegistry.isPluginWidget(modelData.id)) {
+                  var pluginId = modelData.id.replace("plugin:", "");
                   var api = PluginService.getPluginAPI(pluginId);
                   if (api && item.hasOwnProperty("pluginApi")) {
                     item.pluginApi = api;

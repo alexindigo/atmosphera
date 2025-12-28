@@ -1417,6 +1417,10 @@
           "label": "Mode minimaliste"
         },
         "preview": "Aperçu",
+        "rounded-corners": {
+          "description": "Utiliser des coins arrondis pour l'arrière-plan du widget.",
+          "label": "Coins arrondis."
+        },
         "show-background": {
           "description": "Afficher le conteneur d'arrière-plan pour le widget d'horloge.",
           "label": "Afficher l'arrière-plan"

@@ -1417,6 +1417,10 @@
           "label": "Tryb minimalistyczny"
         },
         "preview": "Podgląd",
+        "rounded-corners": {
+          "description": "Użyj zaokrąglonych rogów dla tła widżetu.",
+          "label": "Zaokrąglone rogi"
+        },
         "show-background": {
           "description": "Pokaż tło dla widżetu zegara.",
           "label": "Pokaż tło"

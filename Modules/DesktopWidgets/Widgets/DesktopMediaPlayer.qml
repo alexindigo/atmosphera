@@ -14,13 +14,13 @@ DraggableDesktopWidget {
 
   defaultY: 200
 
-  // Widget settings
-  readonly property string hideMode: (widgetData.hideMode !== undefined) ? widgetData.hideMode : "visible"
-  readonly property bool showButtons: (widgetData.showButtons !== undefined) ? widgetData.showButtons : true
-  readonly property bool showAlbumArt: (widgetData.showAlbumArt !== undefined) ? widgetData.showAlbumArt : true
-  readonly property bool showVisualizer: (widgetData.showVisualizer !== undefined) ? widgetData.showVisualizer : true
-  readonly property string visualizerType: (widgetData.visualizerType && widgetData.visualizerType !== "") ? widgetData.visualizerType : "linear"
-  readonly property bool roundedCorners: (widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
+  // Widget settings - check widgetData exists before accessing properties
+  readonly property string hideMode: (widgetData && widgetData.hideMode !== undefined) ? widgetData.hideMode : "visible"
+  readonly property bool showButtons: (widgetData && widgetData.showButtons !== undefined) ? widgetData.showButtons : true
+  readonly property bool showAlbumArt: (widgetData && widgetData.showAlbumArt !== undefined) ? widgetData.showAlbumArt : true
+  readonly property bool showVisualizer: (widgetData && widgetData.showVisualizer !== undefined) ? widgetData.showVisualizer : true
+  readonly property string visualizerType: (widgetData && widgetData.visualizerType && widgetData.visualizerType !== "") ? widgetData.visualizerType : "linear"
+  readonly property bool roundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
   readonly property bool isPlaying: MediaService.isPlaying
   readonly property bool hasActiveTrack: hasPlayer && (MediaService.trackTitle || MediaService.trackArtist)

@@ -1417,6 +1417,10 @@
           "label": "Modo minimalista"
         },
         "preview": "Pré-visualização",
+        "rounded-corners": {
+          "description": "Use cantos arredondados para o fundo do widget.",
+          "label": "Cantos arredondados"
+        },
         "show-background": {
           "description": "Mostrar o contêiner de fundo para o widget de relógio.",
           "label": "Mostrar plano de fundo"

@@ -1417,6 +1417,10 @@
           "label": "Minimal mode"
         },
         "preview": "Preview",
+        "rounded-corners": {
+          "description": "Use rounded corners for the widget background.",
+          "label": "Rounded corners"
+        },
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Show background"
