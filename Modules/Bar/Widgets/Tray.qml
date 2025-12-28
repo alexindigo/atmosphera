@@ -64,7 +64,6 @@ Rectangle {
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
   property var filteredItems: [] // Items to show inline (pinned)
   property var dropdownItems: [] // Items to show in drawer (unpinned)
-  property int filteredItemsVersion: 0 // Version counter to force Repeater refresh
 
   Timer {
     id: updateDebounceTimer
@@ -150,7 +149,6 @@ Rectangle {
     if (!root.drawerEnabled) {
       filteredItems = newItems;
       dropdownItems = [];
-      filteredItemsVersion++;
     } else {
       // Build inline (pinned) and drawer (unpinned) lists
       // If pinned list is empty, all items go to drawer (none inline)
@@ -169,7 +167,6 @@ Rectangle {
           }
         }
         filteredItems = pinnedItems;
-        filteredItemsVersion++;
 
         // Unpinned items go to drawer
         let unpinnedItems = [];
@@ -190,7 +187,6 @@ Rectangle {
         // No pinned items: all items go to drawer (none inline)
         filteredItems = [];
         dropdownItems = newItems;
-        filteredItemsVersion++;
       }
     }
   }
@@ -319,11 +315,7 @@ Rectangle {
     // Pinned items
     Repeater {
       id: repeater
-      model: {
-        // Reference filteredItemsVersion to force refresh when items change
-        var _ = root.filteredItemsVersion;
-        return root.filteredItems;
-      }
+      model: root.filteredItems
 
       delegate: Item {
         width: Style.capsuleHeight
@@ -357,18 +349,6 @@ Rectangle {
             return icon;
           }
           opacity: status === Image.Ready ? 1 : 0
-
-          onStatusChanged: {
-            // Handle error state gracefully
-            if (status === Image.Error) {
-              opacity = 0;
-            }
-          }
-
-          Component.onDestruction: {
-            // Cancel asynchronous image loading to prevent threading issues
-            source = "";
-          }
 
           layer.enabled: widgetSettings.colorizeIcons !== false
           layer.effect: ShaderEffect {
