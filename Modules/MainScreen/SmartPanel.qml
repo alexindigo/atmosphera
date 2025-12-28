@@ -747,7 +747,7 @@ Item {
       return Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar;
     }
     readonly property bool allowAttachToBar: {
-      if (!(Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar) || Settings.data.bar.transparent) {
+      if (!(Settings.data.ui.panelsAttachedToBar || root.forceAttachToBar)) {
         return false;
       }
 
