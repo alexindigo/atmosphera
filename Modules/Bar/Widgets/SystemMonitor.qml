@@ -190,7 +190,7 @@ Rectangle {
       width: miniBarHeight // Thin vertical gauge
       height: iconSize
       radius: width / 2
-      color: Qt.alpha(Color.mOnSurface, 0.3)
+      color: Color.mOutline
 
       // Fill that grows from bottom
       Rectangle {

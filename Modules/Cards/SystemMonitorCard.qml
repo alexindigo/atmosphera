@@ -33,7 +33,6 @@ NBox {
       NCircleStat {
         ratio: SystemStatService.cpuUsage / 100
         icon: "cpu-usage"
-        flat: true
         contentScale: 0.95
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
@@ -44,7 +43,6 @@ NBox {
         ratio: SystemStatService.cpuTemp / 100
         suffix: "°C"
         icon: "cpu-temperature"
-        flat: true
         contentScale: 0.95
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
@@ -54,7 +52,6 @@ NBox {
       NCircleStat {
         ratio: SystemStatService.memPercent / 100
         icon: "memory"
-        flat: true
         contentScale: 0.95
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
@@ -64,7 +61,6 @@ NBox {
       NCircleStat {
         ratio: (SystemStatService.diskPercents[root.diskPath] ?? 0) / 100
         icon: "storage"
-        flat: true
         contentScale: 0.95
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter

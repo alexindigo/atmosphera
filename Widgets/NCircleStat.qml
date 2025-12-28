@@ -5,30 +5,19 @@ import qs.Services.UI
 import qs.Widgets
 
 // Compact circular statistic display using Layout management
-Rectangle {
+Item {
   id: root
 
   property real ratio: 0 // 0..1 range
   property string icon: ""
   property string suffix: "%"
-  // When nested inside a parent group (NBox), you can make it flat
-  property bool flat: false
-  // Scales the internal content (labels, gauge, icon) without changing the
-  // outer width/height footprint of the component
   property real contentScale: 1.0
-
   property color fillColor: Color.mPrimary
-  property color textColor: Color.mOnSurface
-
   property string tooltipText: ""
   property string tooltipDirection: "top"
 
-  implicitWidth: 64 * contentScale
-  implicitHeight: 64 * contentScale
-  color: flat ? Color.transparent : Color.mSurface
-  radius: Style.iRadiusS
-  border.color: flat ? Color.transparent : Color.mSurfaceVariant
-  border.width: flat ? 0 : Style.borderS
+  implicitWidth: Math.round(64 * contentScale)
+  implicitHeight: Math.round(64 * contentScale)
 
   // Animated ratio for smooth transitions - reduces repaint frequency
   property real animatedRatio: ratio
@@ -99,21 +88,23 @@ Rectangle {
 
         ctx.reset();
         ctx.lineWidth = 6 * root.contentScale;
+        ctx.lineCap = Settings.data.general.iRadiusRatio > 0 ? "round" : "butt";
 
-        // Track uses surface for stronger contrast
-        ctx.strokeStyle = Color.mSurface;
+        // Track uses outline for contrast against surfaceVariant backgrounds
+        ctx.strokeStyle = Color.mOutline;
         ctx.beginPath();
         ctx.arc(cx, cy, r, start, endBg);
         ctx.stroke();
 
-        // Value arc
+        // Value arc - only draw if ratio is meaningful (> 0.5%)
         const r2 = Math.max(0, Math.min(1, root.animatedRatio));
-        const end = start + (endBg - start) * r2;
-
-        ctx.strokeStyle = root.fillColor;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, start, end);
-        ctx.stroke();
+        if (r2 > 0.005) {
+          const end = start + (endBg - start) * r2;
+          ctx.strokeStyle = root.fillColor;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, start, end);
+          ctx.stroke();
+        }
       }
     }
 
@@ -122,7 +113,7 @@ Rectangle {
       id: valueLabel
       anchors.centerIn: parent
       anchors.verticalCenterOffset: -4 * root.contentScale
-      text: `${Math.round(root.ratio * 100)}${root.suffix}`
+      text: `${Math.round(root.animatedRatio * 100)}${root.suffix}`
       pointSize: Style.fontSizeM * root.contentScale * 0.9
       font.weight: Style.fontWeightBold
       color: root.fillColor

@@ -93,7 +93,6 @@ SmartPanel {
               ratio: SystemStatService.cpuUsage / 100
               icon: "cpu-usage"
               suffix: "%"
-              flat: true
               fillColor: SystemStatService.cpuColor
               tooltipText: I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`
               Layout.fillWidth: true
@@ -104,7 +103,6 @@ SmartPanel {
               ratio: SystemStatService.cpuTemp / 100
               icon: "cpu-temperature"
               suffix: "\u00B0"
-              flat: true
               fillColor: SystemStatService.tempColor
               visible: SystemStatService.cpuTemp > 0
               tooltipText: I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`
@@ -116,7 +114,6 @@ SmartPanel {
               ratio: SystemStatService.gpuTemp / 100
               icon: "gpu-temperature"
               suffix: "\u00B0"
-              flat: true
               fillColor: SystemStatService.gpuColor
               visible: SystemStatService.gpuAvailable
               tooltipText: I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`
@@ -128,7 +125,6 @@ SmartPanel {
               ratio: SystemStatService.memPercent / 100
               icon: "memory"
               suffix: "%"
-              flat: true
               fillColor: SystemStatService.memColor
               tooltipText: I18n.tr("system-monitor.memory") + `: ${Math.round(SystemStatService.memPercent)}%`
               Layout.fillWidth: true
@@ -139,7 +135,6 @@ SmartPanel {
               ratio: (SystemStatService.diskPercents[content.diskPath] ?? 0) / 100
               icon: "storage"
               suffix: "%"
-              flat: true
               fillColor: SystemStatService.getDiskColor(content.diskPath)
               tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[content.diskPath] || 0}%\n${content.diskPath}`
               Layout.fillWidth: true
@@ -162,7 +157,6 @@ SmartPanel {
               ratio: SystemStatService.rxRatio
               icon: "download-speed"
               suffix: "%"
-              flat: true
               fillColor: Color.mPrimary
               tooltipText: I18n.tr("system-monitor.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`
               Layout.preferredWidth: Math.round(80 * Style.uiScaleRatio)
@@ -173,7 +167,6 @@ SmartPanel {
               ratio: SystemStatService.txRatio
               icon: "upload-speed"
               suffix: "%"
-              flat: true
               fillColor: Color.mPrimary
               tooltipText: I18n.tr("system-monitor.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`
               Layout.preferredWidth: Math.round(80 * Style.uiScaleRatio)
