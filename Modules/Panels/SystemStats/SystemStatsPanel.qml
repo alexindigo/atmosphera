@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.System
+import qs.Services.UI
 import qs.Widgets
 
 SmartPanel {
@@ -12,6 +13,26 @@ SmartPanel {
 
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(420 * Style.uiScaleRatio)
+
+  // Get diskPath from bar's SystemMonitor widget if available, otherwise use "/"
+  // Use a dummy dependency on activeWidgetsChanged to re-evaluate when widgets change
+  property int _widgetChangeCounter: 0
+  readonly property string diskPath: {
+    // Force re-evaluation when widgets change
+    void root._widgetChangeCounter;
+    const sysMonWidget = BarService.lookupWidget("SystemMonitor");
+    if (sysMonWidget && sysMonWidget.diskPath) {
+      return sysMonWidget.diskPath;
+    }
+    return "/";
+  }
+
+  Connections {
+    target: BarService
+    function onActiveWidgetsChanged() {
+      root._widgetChangeCounter++;
+    }
+  }
 
   panelContent: Item {
     property real contentPreferredHeight: mainColumn.implicitHeight + Style.marginL * 2
@@ -125,12 +146,12 @@ SmartPanel {
 
             // Disk Usage
             NCircleStat {
-              ratio: (SystemStatService.diskPercents["/"] ?? 0) / 100
+              ratio: (SystemStatService.diskPercents[root.diskPath] ?? 0) / 100
               icon: "storage"
               suffix: "%"
               flat: true
-              fillColor: SystemStatService.getDiskColor("/")
-              tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents["/"] || 0}%`
+              fillColor: SystemStatService.getDiskColor(root.diskPath)
+              tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`
               Layout.fillWidth: true
             }
           }

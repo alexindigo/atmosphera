@@ -3,11 +3,21 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.System
+import qs.Services.UI
 import qs.Widgets
 
 // Unified system card: monitors CPU, temp, memory, disk
 NBox {
   id: root
+
+  // Get diskPath from bar's SystemMonitor widget if available, otherwise use settings
+  readonly property string diskPath: {
+    const sysMonWidget = BarService.lookupWidget("SystemMonitor");
+    if (sysMonWidget && sysMonWidget.diskPath) {
+      return sysMonWidget.diskPath;
+    }
+    return Settings.data.systemMonitor.diskPath || "/";
+  }
 
   Item {
     id: content
@@ -52,15 +62,14 @@ NBox {
         tooltipText: I18n.tr("system-monitor.memory") + `: ${Math.round(SystemStatService.memPercent)}%`
       }
       NCircleStat {
-        readonly property string diskPath: Settings.data.systemMonitor.diskPath || "/"
-        ratio: (SystemStatService.diskPercents[diskPath] ?? 0) / 100
+        ratio: (SystemStatService.diskPercents[root.diskPath] ?? 0) / 100
         icon: "storage"
         flat: true
         contentScale: 0.95
         height: content.widgetHeight
         Layout.alignment: Qt.AlignHCenter
-        fillColor: SystemStatService.getDiskColor(diskPath)
-        tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[diskPath] || 0}%`
+        fillColor: SystemStatService.getDiskColor(root.diskPath)
+        tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`
       }
     }
   }
