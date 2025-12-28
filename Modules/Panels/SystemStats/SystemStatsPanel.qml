@@ -14,28 +14,18 @@ SmartPanel {
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(420 * Style.uiScaleRatio)
 
-  // Get diskPath from bar's SystemMonitor widget if available, otherwise use "/"
-  // Use a dummy dependency on activeWidgetsChanged to re-evaluate when widgets change
-  property int _widgetChangeCounter: 0
-  readonly property string diskPath: {
-    // Force re-evaluation when widgets change
-    void root._widgetChangeCounter;
-    const sysMonWidget = BarService.lookupWidget("SystemMonitor");
-    if (sysMonWidget && sysMonWidget.diskPath) {
-      return sysMonWidget.diskPath;
-    }
-    return "/";
-  }
-
-  Connections {
-    target: BarService
-    function onActiveWidgetsChanged() {
-      root._widgetChangeCounter++;
-    }
-  }
-
   panelContent: Item {
+    id: content
     property real contentPreferredHeight: mainColumn.implicitHeight + Style.marginL * 2
+
+    // Get diskPath from bar's SystemMonitor widget if available, otherwise use "/"
+    readonly property string diskPath: {
+      const sysMonWidget = BarService.lookupWidget("SystemMonitor");
+      if (sysMonWidget && sysMonWidget.diskPath) {
+        return sysMonWidget.diskPath;
+      }
+      return "/";
+    }
 
     ColumnLayout {
       id: mainColumn
@@ -146,12 +136,12 @@ SmartPanel {
 
             // Disk Usage
             NCircleStat {
-              ratio: (SystemStatService.diskPercents[root.diskPath] ?? 0) / 100
+              ratio: (SystemStatService.diskPercents[content.diskPath] ?? 0) / 100
               icon: "storage"
               suffix: "%"
               flat: true
-              fillColor: SystemStatService.getDiskColor(root.diskPath)
-              tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[root.diskPath] || 0}%\n${root.diskPath}`
+              fillColor: SystemStatService.getDiskColor(content.diskPath)
+              tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents[content.diskPath] || 0}%\n${content.diskPath}`
               Layout.fillWidth: true
             }
           }
@@ -292,8 +282,8 @@ SmartPanel {
 
                 NText {
                   text: {
-                    const usedGb = SystemStatService.diskUsedGb[root.diskPath] || 0;
-                    const sizeGb = SystemStatService.diskSizeGb[root.diskPath] || 0;
+                    const usedGb = SystemStatService.diskUsedGb[content.diskPath] || 0;
+                    const sizeGb = SystemStatService.diskSizeGb[content.diskPath] || 0;
                     return `${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G`;
                   }
                   pointSize: Style.fontSizeXS
