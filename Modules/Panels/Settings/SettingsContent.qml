@@ -631,6 +631,8 @@ Item {
           Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: -Style.marginM
+            Layout.rightMargin: -Style.marginL
             color: Color.transparent
 
             Repeater {
