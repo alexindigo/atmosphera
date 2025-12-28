@@ -395,7 +395,7 @@ Item {
 
                 NIcon {
                   icon: root.sidebarExpanded ? "layout-sidebar-right-expand" : "layout-sidebar-left-expand"
-                  color: Color.mOnSurface
+                  color: toggleMouseArea.containsMouse ? Color.mOnHover : Color.mOnSurface
                   pointSize: Style.fontSizeXL
                 }
               }
