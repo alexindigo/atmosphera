@@ -425,6 +425,10 @@
           "description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
           "label": "Suivre l'Écran Ciblé"
         },
+        "grouped-border-opacity": {
+          "description": "Définir le niveau d'opacité des bordures des conteneurs d'espace de travail.",
+          "label": "Opacité de la bordure"
+        },
         "hide-unoccupied": {
           "description": "Ne pas afficher les espaces de travail sans fenêtres.",
           "label": "Masquer les inoccupés"

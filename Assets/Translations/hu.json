@@ -425,6 +425,10 @@
           "description": "Munkaterületek megjelenítése az aktuálisan fókuszált képernyőről, nem arról a képernyőről, ahol a sáv található.",
           "label": "Fókuszált képernyő követése"
         },
+        "grouped-border-opacity": {
+          "description": "A munkaterület-konténerek szegélyeinek átlátszósági szintjének beállítása",
+          "label": "Szegély átlátszósága"
+        },
         "hide-unoccupied": {
           "description": "Ne jelenítse meg az ablak nélküli munkaterületeket.",
           "label": "Foglalatlan elrejtése"

@@ -425,6 +425,10 @@
           "description": "Exibir áreas de trabalho da tela atualmente em foco, em vez da tela onde a barra está localizada.",
           "label": "Seguir Tela em Foco"
         },
+        "grouped-border-opacity": {
+          "description": "Definir o nível de opacidade para as bordas do contêiner do espaço de trabalho.",
+          "label": "Opacidade da borda"
+        },
         "hide-unoccupied": {
           "description": "Não exibir áreas de trabalho sem janelas.",
           "label": "Ocultar desocupados"

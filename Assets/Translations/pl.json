@@ -425,6 +425,10 @@
           "description": "Wyświetl obszary robocze z aktualnie aktywnego ekranu, zamiast ekranu, na którym znajduje się pasek.",
           "label": "Podążaj za skupionym ekranem"
         },
+        "grouped-border-opacity": {
+          "description": "Ustaw poziom krycia dla obramowań kontenerów obszaru roboczego.",
+          "label": "Krycie obramowania"
+        },
         "hide-unoccupied": {
           "description": "Nie wyświetlaj obszarów roboczych bez okien.",
           "label": "Ukryj nieobsadzone"

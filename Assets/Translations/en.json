@@ -425,6 +425,10 @@
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow focused screen"
         },
+        "grouped-border-opacity": {
+          "description": "Set the opacity level for workspace container borders",
+          "label": "Border opacity"
+        },
         "hide-unoccupied": {
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"

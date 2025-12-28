@@ -223,6 +223,7 @@ Singleton {
                                     "showLabelsOnlyWhenOccupied": true,
                                     "colorizeIcons": false,
                                     "unfocusedIconsOpacity": 1.0,
+                                    "groupedBorderOpacity": 1.0,
                                     "enableScrollWheel": true
                                   },
                                   "Volume": {

@@ -22,6 +22,7 @@ ColumnLayout {
   property bool valueShowLabelsOnlyWhenOccupied: widgetData.showLabelsOnlyWhenOccupied !== undefined ? widgetData.showLabelsOnlyWhenOccupied : widgetMetadata.showLabelsOnlyWhenOccupied
   property bool valueColorizeIcons: widgetData.colorizeIcons !== undefined ? widgetData.colorizeIcons : widgetMetadata.colorizeIcons
   property real valueUnfocusedIconsOpacity: widgetData.unfocusedIconsOpacity !== undefined ? widgetData.unfocusedIconsOpacity : widgetMetadata.unfocusedIconsOpacity
+  property real valueGroupedBorderOpacity: widgetData.groupedBorderOpacity !== undefined ? widgetData.groupedBorderOpacity : widgetMetadata.groupedBorderOpacity
   property bool valueEnableScrollWheel: widgetData.enableScrollWheel !== undefined ? widgetData.enableScrollWheel : widgetMetadata.enableScrollWheel
 
   function saveSettings() {
@@ -34,6 +35,7 @@ ColumnLayout {
     settings.showLabelsOnlyWhenOccupied = valueShowLabelsOnlyWhenOccupied;
     settings.colorizeIcons = valueColorizeIcons;
     settings.unfocusedIconsOpacity = valueUnfocusedIconsOpacity;
+    settings.groupedBorderOpacity = valueGroupedBorderOpacity;
     settings.enableScrollWheel = valueEnableScrollWheel;
     return settings;
   }
@@ -103,6 +105,10 @@ ColumnLayout {
     onToggled: checked => valueEnableScrollWheel = checked
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   NToggle {
     label: I18n.tr("bar.widget-settings.workspace.show-applications.label")
     description: I18n.tr("bar.widget-settings.workspace.show-applications.description")
@@ -117,22 +123,28 @@ ColumnLayout {
     onToggled: checked => valueColorizeIcons = checked
     visible: valueShowApplications
   }
-  RowLayout {
-    spacing: Style.marginL
-    Layout.fillWidth: true
-    NLabel {
-      label: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.label")
-      description: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.description")
-    }
-    NValueSlider {
-      Layout.fillWidth: true
-      from: 0
-      to: 1
-      stepSize: 0.01
-      value: valueUnfocusedIconsOpacity
-      visible: valueShowApplications
-      onMoved: value => valueUnfocusedIconsOpacity = value
-      text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
-    }
+
+  NValueSlider {
+    label: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.label")
+    description: I18n.tr("bar.widget-settings.workspace.unfocused-icons-opacity.description")
+    from: 0
+    to: 1
+    stepSize: 0.01
+    value: valueUnfocusedIconsOpacity
+    onMoved: value => valueUnfocusedIconsOpacity = value
+    text: Math.floor(valueUnfocusedIconsOpacity * 100) + "%"
+    visible: valueShowApplications
+  }
+
+  NValueSlider {
+    label: I18n.tr("bar.widget-settings.workspace.grouped-border-opacity.label")
+    description: I18n.tr("bar.widget-settings.workspace.grouped-border-opacity.description")
+    from: 0
+    to: 1
+    stepSize: 0.01
+    value: valueGroupedBorderOpacity
+    onMoved: value => valueGroupedBorderOpacity = value
+    text: Math.floor(valueGroupedBorderOpacity * 100) + "%"
+    visible: valueShowApplications
   }
 }

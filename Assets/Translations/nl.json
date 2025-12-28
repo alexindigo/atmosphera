@@ -425,6 +425,10 @@
           "description": "Werkruimten weergeven van het momenteel gefocuste scherm, in plaats van het scherm waar de balk zich bevindt.",
           "label": "Gefocust Scherm Volgen"
         },
+        "grouped-border-opacity": {
+          "description": "Stel het dekkingsniveau in voor de randen van de werkruimtecontainer.",
+          "label": "Randdekking"
+        },
         "hide-unoccupied": {
           "description": "Werkruimten zonder vensters niet weergeven.",
           "label": "Ongebruikte verbergen"

@@ -425,6 +425,10 @@
           "description": "Zeigt Arbeitsbereiche vom aktuell fokussierten Bildschirm an, statt vom Bildschirm, auf dem sich die Leiste befindet.",
           "label": "Fokussiertem Bildschirm folgen"
         },
+        "grouped-border-opacity": {
+          "description": "Lege die Deckkraft für Workspace-Container-Rahmen fest.",
+          "label": "Rahmen-Deckkraft"
+        },
         "hide-unoccupied": {
           "description": "Arbeitsbereiche ohne Fenster nicht anzeigen.",
           "label": "Unbesetzte ausblenden"

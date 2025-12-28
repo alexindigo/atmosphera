@@ -425,6 +425,10 @@
           "description": "Mostrar espacios de trabajo de la pantalla actualmente enfocada, en lugar de la pantalla donde se encuentra la barra.",
           "label": "Seguir Pantalla Enfocada"
         },
+        "grouped-border-opacity": {
+          "description": "Establecer el nivel de opacidad para los bordes del contenedor del espacio de trabajo.",
+          "label": "Opacidad del borde"
+        },
         "hide-unoccupied": {
           "description": "No mostrar espacios de trabajo sin ventanas.",
           "label": "Ocultar desocupados"

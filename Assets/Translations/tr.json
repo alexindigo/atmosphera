@@ -425,6 +425,10 @@
           "description": "Çubuğun bulunduğu ekran yerine, şu anda odaklanmış ekrandaki çalışma alanlarını göster.",
           "label": "Odaklanmış Ekranı Takip Et"
         },
+        "grouped-border-opacity": {
+          "description": "Çalışma alanı kapsayıcı kenarlıklarının opaklık düzeyini ayarlayın",
+          "label": "Kenarlık opaklığı"
+        },
         "hide-unoccupied": {
           "description": "Penceresi olmayan çalışma alanlarını gösterme.",
           "label": "Dolu olmayanları gizle"
