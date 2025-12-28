@@ -292,8 +292,8 @@ SmartPanel {
 
                 NText {
                   text: {
-                    const usedGb = SystemStatService.diskUsedGb["/"] || 0;
-                    const sizeGb = SystemStatService.diskSizeGb["/"] || 0;
+                    const usedGb = SystemStatService.diskUsedGb[root.diskPath] || 0;
+                    const sizeGb = SystemStatService.diskSizeGb[root.diskPath] || 0;
                     return `${usedGb.toFixed(1)}G / ${sizeGb.toFixed(1)}G`;
                   }
                   pointSize: Style.fontSizeXS
