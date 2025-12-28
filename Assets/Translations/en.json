@@ -1472,20 +1472,28 @@
           "label": "Hiding mode"
         },
         "show-background": {
-          "description": "Show the background container for the media player widget.",
+          "description": "Show the background container.",
           "label": "Show background"
         },
+        "rounded-corners": {
+          "description": "Enable rounded corners on the widget edges.",
+          "label": "Rounded corners"
+        },
+        "show-album-art": {
+          "description": "Show the album artwork and track information (title and artist).",
+          "label": "Show album art & title"
+        },
         "show-buttons": {
-          "description": "Show media control buttons (play/pause, previous, next) on the media player widget.",
+          "description": "Show media control buttons (play/pause, previous, next).",
           "label": "Show buttons"
         },
-        "visualizer-type": {
-          "description": "Choose a visualization type for the desktop media player background.",
-          "label": "Visualization type"
+        "show-visualizer": {
+          "description": "Show the audio visualizer overlay.",
+          "label": "Show visualizer"
         },
-        "visualizer-visibility": {
-          "description": "Control when the audio visualizer is visible.",
-          "label": "Audio visualizer visibility"
+        "visualizer-type": {
+          "description": "Choose a visualization type.",
+          "label": "Visualization type"
         }
       },
       "title": "Desktop Widgets",
