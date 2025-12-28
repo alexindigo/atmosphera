@@ -12,7 +12,6 @@ QtObject {
                                        29: migration29Component,
                                        32: migration32Component,
                                        33: migration33Component,
-                                       34: migration34Component,
                                        35: migration35Component
                                      })
 
@@ -22,6 +21,5 @@ QtObject {
   property Component migration29Component: Migration29 {}
   property Component migration32Component: Migration32 {}
   property Component migration33Component: Migration33 {}
-  property Component migration34Component: Migration34 {}
   property Component migration35Component: Migration35 {}
 }
