@@ -5,7 +5,7 @@ QtObject {
 
   // Migrate bar.transparent to bar.backgroundOpacity + bar.useSeparateOpacity
   function migrate(adapter, logger, rawJson) {
-    logger.i("Settings", "Migrating settings to v34");
+    logger.i("Settings", "Migrating settings to v35");
 
     if (rawJson?.bar?.transparent !== undefined) {
       if (rawJson.bar.transparent === true) {
