@@ -246,7 +246,6 @@ NBox {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "info-circle"
                 tooltipText: I18n.tr("wifi.panel.info")
-                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   if (root.infoSsid === modelData.ssid) {
                     root.infoSsid = "";
@@ -261,7 +260,6 @@ NBox {
                 visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "trash"
                 tooltipText: I18n.tr("tooltips.forget-network")
-                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: root.forgetRequested(modelData.ssid)
               }
 
