@@ -33,6 +33,60 @@ Singleton {
   property real zfsArcSizeKb: 0 // ZFS ARC cache size in KB
   property real zfsArcCminKb: 0 // ZFS ARC minimum (non-reclaimable) size in KB
 
+  // Color resolution (respects useCustomColors setting)
+  readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary
+  readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError
+
+  // Threshold values from settings
+  readonly property int cpuWarningThreshold: Settings.data.systemMonitor.cpuWarningThreshold
+  readonly property int cpuCriticalThreshold: Settings.data.systemMonitor.cpuCriticalThreshold
+  readonly property int tempWarningThreshold: Settings.data.systemMonitor.tempWarningThreshold
+  readonly property int tempCriticalThreshold: Settings.data.systemMonitor.tempCriticalThreshold
+  readonly property int gpuWarningThreshold: Settings.data.systemMonitor.gpuWarningThreshold
+  readonly property int gpuCriticalThreshold: Settings.data.systemMonitor.gpuCriticalThreshold
+  readonly property int memWarningThreshold: Settings.data.systemMonitor.memWarningThreshold
+  readonly property int memCriticalThreshold: Settings.data.systemMonitor.memCriticalThreshold
+  readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
+  readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
+
+  // Computed warning/critical states (uses >= inclusive comparison)
+  readonly property bool cpuWarning: cpuUsage >= cpuWarningThreshold
+  readonly property bool cpuCritical: cpuUsage >= cpuCriticalThreshold
+  readonly property bool tempWarning: cpuTemp >= tempWarningThreshold
+  readonly property bool tempCritical: cpuTemp >= tempCriticalThreshold
+  readonly property bool gpuWarning: gpuAvailable && gpuTemp >= gpuWarningThreshold
+  readonly property bool gpuCritical: gpuAvailable && gpuTemp >= gpuCriticalThreshold
+  readonly property bool memWarning: memPercent >= memWarningThreshold
+  readonly property bool memCritical: memPercent >= memCriticalThreshold
+
+  // Helper functions for disk (disk path is dynamic)
+  function isDiskWarning(diskPath) {
+    return (diskPercents[diskPath] || 0) >= diskWarningThreshold;
+  }
+
+  function isDiskCritical(diskPath) {
+    return (diskPercents[diskPath] || 0) >= diskCriticalThreshold;
+  }
+
+  // Ready-to-use stat colors (for gauges, panels, icons)
+  readonly property color cpuColor: cpuCritical ? criticalColor : (cpuWarning ? warningColor : Color.mPrimary)
+  readonly property color tempColor: tempCritical ? criticalColor : (tempWarning ? warningColor : Color.mPrimary)
+  readonly property color gpuColor: gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mPrimary)
+  readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
+
+  function getDiskColor(diskPath) {
+    return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
+  }
+
+  // Helper function for color resolution based on value and thresholds
+  function getStatColor(value, warningThreshold, criticalThreshold) {
+    if (value >= criticalThreshold)
+      return criticalColor;
+    if (value >= warningThreshold)
+      return warningColor;
+    return Color.mPrimary;
+  }
+
   // Internal state for CPU calculation
   property var prevCpuStats: null
 

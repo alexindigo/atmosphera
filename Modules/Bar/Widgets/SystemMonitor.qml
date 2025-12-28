@@ -104,35 +104,19 @@ Rectangle {
   readonly property real pillBaseRatio: (density === "compact") ? 0.85 : 0.65
   readonly property int pillHeight: Math.round(Style.capsuleHeight * pillBaseRatio)
 
-  // Highlight colors
-  readonly property color warningColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.warningColor || Color.mTertiary) : Color.mTertiary
-  readonly property color criticalColor: Settings.data.systemMonitor.useCustomColors ? (Settings.data.systemMonitor.criticalColor || Color.mError) : Color.mError
-
   readonly property color textColor: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
 
-  // Threshold settings from global configuration
-  readonly property int cpuWarningThreshold: Settings.data.systemMonitor.cpuWarningThreshold
-  readonly property int cpuCriticalThreshold: Settings.data.systemMonitor.cpuCriticalThreshold
-  readonly property int tempWarningThreshold: Settings.data.systemMonitor.tempWarningThreshold
-  readonly property int tempCriticalThreshold: Settings.data.systemMonitor.tempCriticalThreshold
-  readonly property int gpuWarningThreshold: Settings.data.systemMonitor.gpuWarningThreshold
-  readonly property int gpuCriticalThreshold: Settings.data.systemMonitor.gpuCriticalThreshold
-  readonly property int memWarningThreshold: Settings.data.systemMonitor.memWarningThreshold
-  readonly property int memCriticalThreshold: Settings.data.systemMonitor.memCriticalThreshold
-  readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
-  readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
-
-  // Warning threshold calculation properties
-  readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuUsage > cpuWarningThreshold
-  readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuUsage > cpuCriticalThreshold
-  readonly property bool tempWarning: showCpuTemp && SystemStatService.cpuTemp > tempWarningThreshold
-  readonly property bool tempCritical: showCpuTemp && SystemStatService.cpuTemp > tempCriticalThreshold
-  readonly property bool gpuWarning: showGpuTemp && SystemStatService.gpuAvailable && SystemStatService.gpuTemp > gpuWarningThreshold
-  readonly property bool gpuCritical: showGpuTemp && SystemStatService.gpuAvailable && SystemStatService.gpuTemp > gpuCriticalThreshold
-  readonly property bool memWarning: showMemoryUsage && SystemStatService.memPercent > memWarningThreshold
-  readonly property bool memCritical: showMemoryUsage && SystemStatService.memPercent > memCriticalThreshold
-  readonly property bool diskWarning: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskWarningThreshold
-  readonly property bool diskCritical: showDiskUsage && SystemStatService.diskPercents[diskPath] > diskCriticalThreshold
+  // Visibility-aware warning/critical states (delegates to service)
+  readonly property bool cpuWarning: showCpuUsage && SystemStatService.cpuWarning
+  readonly property bool cpuCritical: showCpuUsage && SystemStatService.cpuCritical
+  readonly property bool tempWarning: showCpuTemp && SystemStatService.tempWarning
+  readonly property bool tempCritical: showCpuTemp && SystemStatService.tempCritical
+  readonly property bool gpuWarning: showGpuTemp && SystemStatService.gpuWarning
+  readonly property bool gpuCritical: showGpuTemp && SystemStatService.gpuCritical
+  readonly property bool memWarning: showMemoryUsage && SystemStatService.memWarning
+  readonly property bool memCritical: showMemoryUsage && SystemStatService.memCritical
+  readonly property bool diskWarning: showDiskUsage && SystemStatService.isDiskWarning(diskPath)
+  readonly property bool diskCritical: showDiskUsage && SystemStatService.isDiskCritical(diskPath)
 
   anchors.centerIn: parent
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(mainGrid.implicitWidth + Style.marginM * 2)
@@ -203,51 +187,6 @@ Rectangle {
     }
   }
 
-  // Status indicator component definition
-  Component {
-    id: statusIndicatorComponent
-
-    Rectangle {
-      id: statusIndicator
-      property bool warning: false
-      property bool critical: false
-      property int indicatorWidth: Style.capsuleHeight
-      property color warningColor: Color.mTertiary
-      property color criticalColor: Color.mError
-
-      width: isVertical ? Math.max(0, indicatorWidth - Style.marginS * 2) : Math.max(0, indicatorWidth + Style.marginXS * 2)
-      height: isVertical ? Math.max(0, Style.capsuleHeight + Style.marginXS * 2) : pillHeight
-      radius: Style.radiusM
-      // Hide the rectangular indicator when the bar is vertical; keep it available for horizontal layout
-      visible: !root.isVertical
-      color: critical ? criticalColor : warningColor
-      scale: (warning || critical) ? 1.0 : 0.0
-      opacity: (warning || critical) ? 1.0 : 0.0
-
-      // Smooth appearance/disappearance animation
-      Behavior on scale {
-        NumberAnimation {
-          duration: Style.animationNormal
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: Style.animationNormal
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on color {
-        ColorAnimation {
-          duration: Style.animationNormal
-          easing.type: Easing.OutCubic
-        }
-      }
-    }
-  }
-
   // Mini gauge component for compact mode, vertical gauge that fills from bottom
   Component {
     id: miniGaugeComponent
@@ -255,10 +194,7 @@ Rectangle {
     Rectangle {
       id: miniGauge
       property real value: 0 // 0-100
-      property bool warning: false
-      property bool critical: false
-      property color warningColor: Color.mTertiary
-      property color criticalColor: Color.mError
+      property color statColor: Color.mPrimary // Color based on warning/critical state
 
       width: miniBarHeight // Thin vertical gauge
       height: iconSize
@@ -271,7 +207,7 @@ Rectangle {
         width: parent.width
         height: fillHeight
         radius: parent.radius
-        color: miniGauge.critical ? miniGauge.criticalColor : (miniGauge.warning ? miniGauge.warningColor : Color.mPrimary)
+        color: miniGauge.statColor
         anchors.bottom: parent.bottom
 
         Behavior on fillHeight {
@@ -311,21 +247,6 @@ Rectangle {
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuUsage
 
-      // Status indicator covering the entire component (only for non-compact mode)
-      Loader {
-        sourceComponent: statusIndicatorComponent
-        anchors.centerIn: parent
-        visible: !compactMode
-
-        onLoaded: {
-          item.warning = Qt.binding(() => cpuWarning);
-          item.critical = Qt.binding(() => cpuCritical);
-          item.indicatorWidth = Qt.binding(() => cpuUsageContainer.width);
-          item.warningColor = Qt.binding(() => root.warningColor);
-          item.criticalColor = Qt.binding(() => root.criticalColor);
-        }
-      }
-
       GridLayout {
         id: cpuUsageContent
         anchors.centerIn: parent
@@ -348,8 +269,7 @@ Rectangle {
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
-            // In compact mode, use threshold colors for icon; otherwise use existing logic
-            color: compactMode ? (cpuCritical ? criticalColor : (cpuWarning ? warningColor : Color.mOnSurface)) : (isVertical ? (cpuCritical ? criticalColor : (cpuWarning ? warningColor : Color.mOnSurface)) : ((cpuWarning || cpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface))
+            color: (cpuWarning || cpuCritical) ? SystemStatService.cpuColor : Color.mOnSurface
           }
         }
 
@@ -371,8 +291,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
-          // Use highlight colors in vertical bar; otherwise invert text color to bar background when indicator active
-          color: isVertical ? (cpuCritical ? criticalColor : (cpuWarning ? warningColor : textColor)) : ((cpuWarning || cpuCritical) ? Color.mSurfaceVariant : textColor)
+          color: (cpuWarning || cpuCritical) ? SystemStatService.cpuColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -389,10 +308,7 @@ Rectangle {
 
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.cpuUsage);
-            item.warning = Qt.binding(() => cpuWarning);
-            item.critical = Qt.binding(() => cpuCritical);
-            item.warningColor = Qt.binding(() => root.warningColor);
-            item.criticalColor = Qt.binding(() => root.criticalColor);
+            item.statColor = Qt.binding(() => SystemStatService.cpuColor);
           }
         }
       }
@@ -407,21 +323,6 @@ Rectangle {
       Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showCpuTemp
-
-      // Status indicator covering the entire component (only for non-compact mode)
-      Loader {
-        sourceComponent: statusIndicatorComponent
-        anchors.centerIn: parent
-        visible: !compactMode
-
-        onLoaded: {
-          item.warning = Qt.binding(() => tempWarning);
-          item.critical = Qt.binding(() => tempCritical);
-          item.indicatorWidth = Qt.binding(() => cpuTempContainer.width);
-          item.warningColor = Qt.binding(() => root.warningColor);
-          item.criticalColor = Qt.binding(() => root.criticalColor);
-        }
-      }
 
       GridLayout {
         id: cpuTempContent
@@ -445,8 +346,7 @@ Rectangle {
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
-            // In compact mode, use threshold colors for icon; otherwise use existing logic
-            color: compactMode ? (tempCritical ? criticalColor : (tempWarning ? warningColor : Color.mOnSurface)) : (isVertical ? (tempCritical ? criticalColor : (tempWarning ? warningColor : Color.mOnSurface)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : Color.mOnSurface))
+            color: (tempWarning || tempCritical) ? SystemStatService.tempColor : Color.mOnSurface
           }
         }
 
@@ -461,8 +361,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
-          // Use highlight colors in vertical bar; otherwise invert text color to bar background when temp indicator active
-          color: isVertical ? (tempCritical ? criticalColor : (tempWarning ? warningColor : textColor)) : ((tempWarning || tempCritical) ? Color.mSurfaceVariant : textColor)
+          color: (tempWarning || tempCritical) ? SystemStatService.tempColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -479,10 +378,7 @@ Rectangle {
 
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.cpuTemp);
-            item.warning = Qt.binding(() => tempWarning);
-            item.critical = Qt.binding(() => tempCritical);
-            item.warningColor = Qt.binding(() => root.warningColor);
-            item.criticalColor = Qt.binding(() => root.criticalColor);
+            item.statColor = Qt.binding(() => SystemStatService.tempColor);
           }
         }
       }
@@ -497,21 +393,6 @@ Rectangle {
       Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showGpuTemp && SystemStatService.gpuAvailable
-
-      // Status indicator covering the entire component (only for non-compact mode)
-      Loader {
-        sourceComponent: statusIndicatorComponent
-        anchors.centerIn: parent
-        visible: !compactMode
-
-        onLoaded: {
-          item.warning = Qt.binding(() => gpuWarning);
-          item.critical = Qt.binding(() => gpuCritical);
-          item.indicatorWidth = Qt.binding(() => gpuTempContainer.width);
-          item.warningColor = Qt.binding(() => root.warningColor);
-          item.criticalColor = Qt.binding(() => root.criticalColor);
-        }
-      }
 
       GridLayout {
         id: gpuTempContent
@@ -535,8 +416,7 @@ Rectangle {
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
-            // In compact mode, use threshold colors for icon; otherwise use existing logic
-            color: compactMode ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mOnSurface)) : (isVertical ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mOnSurface)) : ((gpuWarning || gpuCritical) ? Color.mSurfaceVariant : Color.mOnSurface))
+            color: (gpuWarning || gpuCritical) ? SystemStatService.gpuColor : Color.mOnSurface
           }
         }
 
@@ -551,8 +431,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
-          // Use highlight colors in vertical bar; otherwise invert text color to bar background when GPU temp indicator active
-          color: isVertical ? (gpuCritical ? criticalColor : (gpuWarning ? warningColor : textColor)) : ((gpuWarning || gpuCritical) ? Color.mSurfaceVariant : textColor)
+          color: (gpuWarning || gpuCritical) ? SystemStatService.gpuColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -569,10 +448,7 @@ Rectangle {
 
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.gpuTemp);
-            item.warning = Qt.binding(() => gpuWarning);
-            item.critical = Qt.binding(() => gpuCritical);
-            item.warningColor = Qt.binding(() => root.warningColor);
-            item.criticalColor = Qt.binding(() => root.criticalColor);
+            item.statColor = Qt.binding(() => SystemStatService.gpuColor);
           }
         }
       }
@@ -587,21 +463,6 @@ Rectangle {
       Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showMemoryUsage
-
-      // Status indicator covering the entire component (only for non-compact mode)
-      Loader {
-        sourceComponent: statusIndicatorComponent
-        anchors.centerIn: parent
-        visible: !compactMode
-
-        onLoaded: {
-          item.warning = Qt.binding(() => memWarning);
-          item.critical = Qt.binding(() => memCritical);
-          item.indicatorWidth = Qt.binding(() => memoryContainer.width);
-          item.warningColor = Qt.binding(() => root.warningColor);
-          item.criticalColor = Qt.binding(() => root.criticalColor);
-        }
-      }
 
       GridLayout {
         id: memoryContent
@@ -625,8 +486,7 @@ Rectangle {
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
-            // In compact mode, use threshold colors for icon; otherwise use existing logic
-            color: compactMode ? (memCritical ? criticalColor : (memWarning ? warningColor : Color.mOnSurface)) : (isVertical ? (memCritical ? criticalColor : (memWarning ? warningColor : Color.mOnSurface)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : Color.mOnSurface))
+            color: (memWarning || memCritical) ? SystemStatService.memColor : Color.mOnSurface
           }
         }
 
@@ -641,8 +501,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
-          // Use highlight colors in vertical bar; otherwise invert text color to bar background when memory indicator active
-          color: isVertical ? (memCritical ? criticalColor : (memWarning ? warningColor : textColor)) : ((memWarning || memCritical) ? Color.mSurfaceVariant : textColor)
+          color: (memWarning || memCritical) ? SystemStatService.memColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -659,10 +518,7 @@ Rectangle {
 
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.memPercent);
-            item.warning = Qt.binding(() => memWarning);
-            item.critical = Qt.binding(() => memCritical);
-            item.warningColor = Qt.binding(() => root.warningColor);
-            item.criticalColor = Qt.binding(() => root.criticalColor);
+            item.statColor = Qt.binding(() => SystemStatService.memColor);
           }
         }
       }
@@ -812,21 +668,6 @@ Rectangle {
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
       visible: showDiskUsage
 
-      // Status indicator covering the entire component (only for non-compact mode)
-      Loader {
-        sourceComponent: statusIndicatorComponent
-        anchors.centerIn: parent
-        visible: !compactMode
-
-        onLoaded: {
-          item.warning = Qt.binding(() => diskWarning);
-          item.critical = Qt.binding(() => diskCritical);
-          item.indicatorWidth = Qt.binding(() => diskContainer.width);
-          item.warningColor = Qt.binding(() => root.warningColor);
-          item.criticalColor = Qt.binding(() => root.criticalColor);
-        }
-      }
-
       GridLayout {
         id: diskContent
         anchors.centerIn: parent
@@ -849,8 +690,7 @@ Rectangle {
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
-            // In compact mode, use threshold colors for icon; otherwise use existing logic
-            color: compactMode ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : (isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : Color.mOnSurface)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : Color.mOnSurface))
+            color: (diskWarning || diskCritical) ? SystemStatService.getDiskColor(diskPath) : Color.mOnSurface
           }
         }
 
@@ -865,8 +705,7 @@ Rectangle {
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
-          // Use highlight colors in vertical bar; otherwise invert text color to bar background when disk indicator active
-          color: isVertical ? (diskCritical ? criticalColor : (diskWarning ? warningColor : textColor)) : ((diskWarning || diskCritical) ? Color.mSurfaceVariant : textColor)
+          color: (diskWarning || diskCritical) ? SystemStatService.getDiskColor(diskPath) : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
           scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
@@ -883,10 +722,7 @@ Rectangle {
 
           onLoaded: {
             item.value = Qt.binding(() => SystemStatService.diskPercents[diskPath] ?? 0);
-            item.warning = Qt.binding(() => diskWarning);
-            item.critical = Qt.binding(() => diskCritical);
-            item.warningColor = Qt.binding(() => root.warningColor);
-            item.criticalColor = Qt.binding(() => root.criticalColor);
+            item.statColor = Qt.binding(() => SystemStatService.getDiskColor(diskPath));
           }
         }
       }

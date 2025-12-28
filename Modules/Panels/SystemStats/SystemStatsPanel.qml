@@ -83,7 +83,7 @@ SmartPanel {
               icon: "cpu-usage"
               suffix: "%"
               flat: true
-              fillColor: getStatColor(SystemStatService.cpuUsage, Settings.data.systemMonitor.cpuWarningThreshold, Settings.data.systemMonitor.cpuCriticalThreshold)
+              fillColor: SystemStatService.cpuColor
               Layout.fillWidth: true
             }
 
@@ -93,7 +93,7 @@ SmartPanel {
               icon: "cpu-temperature"
               suffix: "\u00B0"
               flat: true
-              fillColor: getStatColor(SystemStatService.cpuTemp, Settings.data.systemMonitor.tempWarningThreshold, Settings.data.systemMonitor.tempCriticalThreshold)
+              fillColor: SystemStatService.tempColor
               visible: SystemStatService.cpuTemp > 0
               Layout.fillWidth: true
             }
@@ -104,7 +104,7 @@ SmartPanel {
               icon: "gpu-temperature"
               suffix: "\u00B0"
               flat: true
-              fillColor: getStatColor(SystemStatService.gpuTemp, Settings.data.systemMonitor.gpuWarningThreshold, Settings.data.systemMonitor.gpuCriticalThreshold)
+              fillColor: SystemStatService.gpuColor
               visible: SystemStatService.gpuAvailable
               Layout.fillWidth: true
             }
@@ -115,7 +115,7 @@ SmartPanel {
               icon: "memory"
               suffix: "%"
               flat: true
-              fillColor: getStatColor(SystemStatService.memPercent, Settings.data.systemMonitor.memWarningThreshold, Settings.data.systemMonitor.memCriticalThreshold)
+              fillColor: SystemStatService.memColor
               Layout.fillWidth: true
             }
 
@@ -125,7 +125,7 @@ SmartPanel {
               icon: "storage"
               suffix: "%"
               flat: true
-              fillColor: getStatColor(SystemStatService.diskPercents["/"] ?? 0, Settings.data.systemMonitor.diskWarningThreshold, Settings.data.systemMonitor.diskCriticalThreshold)
+              fillColor: SystemStatService.getDiskColor("/")
               Layout.fillWidth: true
             }
           }
@@ -279,16 +279,6 @@ SmartPanel {
         }
       }
     }
-  }
-
-  // Helper function to get color based on thresholds
-  function getStatColor(value, warningThreshold, criticalThreshold) {
-    if (value >= criticalThreshold) {
-      return Color.mError;
-    } else if (value >= warningThreshold) {
-      return Color.mTertiary;
-    }
-    return Color.mPrimary;
   }
 
   // Convert network speed to percentage (log scale)
