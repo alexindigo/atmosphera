@@ -22,6 +22,7 @@ Item {
   readonly property bool isScaling: internal.isScaling
 
   property bool showBackground: (widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true
+  property bool roundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
 
   property real widgetScale: (widgetData && widgetData.scale !== undefined) ? widgetData.scale : 1.0
   property real minScale: 0.5
@@ -265,7 +266,7 @@ Item {
   Rectangle {
     id: container
     anchors.fill: parent
-    radius: Style.radiusL
+    radius: root.roundedCorners ? Style.radiusL : 0
     color: Color.mSurface
     border {
       width: 1
