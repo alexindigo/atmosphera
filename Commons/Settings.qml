@@ -188,10 +188,13 @@ Singleton {
       property string position: "top" // "top", "bottom", "left", or "right"
       property list<string> monitors: [] // holds bar visibility per monitor
       property string density: "default" // "compact", "default", "comfortable"
-      property bool transparent: false
       property bool showOutline: false
       property bool showCapsule: true
       property real capsuleOpacity: 1.0
+
+      // Bar background opacity settings
+      property real backgroundOpacity: 0.93
+      property bool useSeparateOpacity: false
 
       // Floating bar settings
       property bool floating: false
