@@ -181,6 +181,18 @@ SmartPanel {
               return icon;
             }
 
+            onStatusChanged: {
+              // Handle error state gracefully
+              if (status === Image.Error) {
+                opacity = 0;
+              }
+            }
+
+            Component.onDestruction: {
+              // Cancel asynchronous image loading to prevent threading issues
+              source = "";
+            }
+
             layer.enabled: root.widgetSettings.colorizeIcons !== false
             layer.effect: ShaderEffect {
               property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
