@@ -1077,9 +1077,13 @@
           "description": "在每个小部件周围显示可见边框。",
           "label": "显示小部件轮廓"
         },
-        "transparent": {
-          "description": "这将阻止面板附加到工具栏。",
-          "label": "透明背景"
+        "use-separate-opacity": {
+          "description": "启用后为任务栏背景使用单独的不透明度值。",
+          "label": "使用单独的任务栏不透明度"
+        },
+        "background-opacity": {
+          "description": "为任务栏设置背景不透明度。",
+          "label": "任务栏背景不透明度"
         }
       },
       "monitors": {

@@ -4,7 +4,8 @@
     "position": "top",
     "monitors": [],
     "density": "default",
-    "transparent": false,
+    "barBackgroundOpacity": 0.93,
+    "useSeparateBarOpacity": false,
     "showOutline": false,
     "showCapsule": true,
     "capsuleOpacity": 1,
@@ -354,12 +355,7 @@
     "autoHideMs": 2000,
     "overlayLayer": true,
     "backgroundOpacity": 1,
-    "enabledTypes": [
-      0,
-      1,
-      2,
-      4
-    ],
+    "enabledTypes": [0, 1, 2, 4],
     "monitors": []
   },
   "audio": {
