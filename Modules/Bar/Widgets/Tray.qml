@@ -244,11 +244,39 @@ Rectangle {
     }
   }
 
+  // Track when SystemTray.items becomes available
+  readonly property bool systemTrayAvailable: SystemTray.items !== null && SystemTray.items !== undefined
+
+  // Watch for SystemTray.items becoming available
+  onSystemTrayAvailableChanged: {
+    if (systemTrayAvailable) {
+      // SystemTray.items just became available, update immediately
+      Qt.callLater(root.updateFilteredItems);
+    }
+  }
+
   Connections {
+    id: systemTrayItemsConnections
     target: SystemTray.items
+    enabled: systemTrayAvailable
     function onValuesChanged() {
       root.updateFilteredItems();
       // Repeater will automatically update when items change
+    }
+  }
+
+  // Fallback timer to check if SystemTray.items becomes available
+  // This handles the case where SystemTray.items is null at startup
+  Timer {
+    id: systemTrayCheckTimer
+    interval: 500
+    running: !systemTrayAvailable
+    repeat: true
+    onTriggered: {
+      if (systemTrayAvailable) {
+        root.updateFilteredItems();
+        running = false;
+      }
     }
   }
 
@@ -265,7 +293,12 @@ Rectangle {
   }
 
   Component.onCompleted: {
-    root.updateFilteredItems(); // Initial update
+    // Initial update - will be called again when SystemTray.items becomes available
+    root.updateFilteredItems();
+    // Start checking for SystemTray.items availability if not available yet
+    if (!systemTrayAvailable) {
+      systemTrayCheckTimer.start();
+    }
   }
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
