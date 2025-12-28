@@ -244,11 +244,19 @@ Rectangle {
     }
   }
 
+  property var systemTrayItems: SystemTray.items
+
   Connections {
-    target: SystemTray.items
+    target: systemTrayItems
+    enabled: systemTrayItems !== null && systemTrayItems !== undefined
     function onValuesChanged() {
       root.updateFilteredItems();
-      // Repeater will automatically update when items change
+    }
+  }
+
+  onSystemTrayItemsChanged: {
+    if (systemTrayItems !== null && systemTrayItems !== undefined) {
+      Qt.callLater(root.updateFilteredItems);
     }
   }
 
@@ -259,13 +267,33 @@ Rectangle {
     }
   }
 
-  // Watch for hidePassive changes to update filtering immediately
   onHidePassiveChanged: {
     root.updateFilteredItems();
   }
 
   Component.onCompleted: {
-    root.updateFilteredItems(); // Initial update
+    root.updateFilteredItems();
+    if (!SystemTray.items) {
+      systemTrayCheckTimer.running = true;
+    }
+  }
+
+  Timer {
+    id: systemTrayCheckTimer
+    interval: 100
+    repeat: true
+    running: false
+    property int repeatCount: 0
+    onTriggered: {
+      repeatCount++;
+      if (SystemTray.items) {
+        root.updateFilteredItems();
+        running = false;
+      } else if (repeatCount > 50) {
+        running = false;
+        Logger.w("Tray", "SystemTray.items not available after 5 seconds");
+      }
+    }
   }
   implicitWidth: isVertical ? Style.capsuleHeight : Math.round(trayFlow.implicitWidth)
   implicitHeight: isVertical ? Math.round(trayFlow.implicitHeight) : Style.capsuleHeight
