@@ -149,38 +149,45 @@ Item {
       buttonItem = BarService.lookupWidget(buttonName, screen.name);
     }
 
-    if (buttonItem) {
-      root.buttonItem = buttonItem;
-      // Map button position within its window
-      var buttonLocal = buttonItem.mapToItem(null, 0, 0);
+    // Validate buttonItem is a valid QML Item with mapToItem function
+    if (buttonItem && typeof buttonItem.mapToItem === "function") {
+      try {
+        root.buttonItem = buttonItem;
+        // Map button position within its window
+        var buttonLocal = buttonItem.mapToItem(null, 0, 0);
 
-      // Calculate the bar window's position on screen based on bar settings
-      // The BarContentWindow uses anchors, so we need to compute its position
-      var barWindowX = 0;
-      var barWindowY = 0;
-      var screenWidth = root.screen?.width || 0;
-      var screenHeight = root.screen?.height || 0;
+        // Calculate the bar window's position on screen based on bar settings
+        // The BarContentWindow uses anchors, so we need to compute its position
+        var barWindowX = 0;
+        var barWindowY = 0;
+        var screenWidth = root.screen?.width || 0;
+        var screenHeight = root.screen?.height || 0;
 
-      if (root.barPosition === "right") {
-        barWindowX = screenWidth - root.barMarginH - Style.barHeight;
-      } else if (root.barPosition === "left") {
-        barWindowX = root.barMarginH;
+        if (root.barPosition === "right") {
+          barWindowX = screenWidth - root.barMarginH - Style.barHeight;
+        } else if (root.barPosition === "left") {
+          barWindowX = root.barMarginH;
+        }
+        // For top/bottom bars, barWindowX stays 0 (full width window)
+
+        if (root.barPosition === "bottom") {
+          barWindowY = screenHeight - root.barMarginV - Style.barHeight;
+        } else if (root.barPosition === "top") {
+          barWindowY = root.barMarginV;
+        }
+        // For left/right bars, barWindowY stays 0 (full height window)
+
+        root.buttonPosition = Qt.point(barWindowX + buttonLocal.x, barWindowY + buttonLocal.y);
+        root.buttonWidth = buttonItem.width;
+        root.buttonHeight = buttonItem.height;
+        root.useButtonPosition = true;
+      } catch (e) {
+        Logger.w("SmartPanel", "Failed to get button position, using default positioning:", e);
+        root.buttonItem = null;
+        root.useButtonPosition = false;
       }
-      // For top/bottom bars, barWindowX stays 0 (full width window)
-
-      if (root.barPosition === "bottom") {
-        barWindowY = screenHeight - root.barMarginV - Style.barHeight;
-      } else if (root.barPosition === "top") {
-        barWindowY = root.barMarginV;
-      }
-      // For left/right bars, barWindowY stays 0 (full height window)
-
-      root.buttonPosition = Qt.point(barWindowX + buttonLocal.x, barWindowY + buttonLocal.y);
-      root.buttonWidth = buttonItem.width;
-      root.buttonHeight = buttonItem.height;
-      root.useButtonPosition = true;
     } else {
-      // No button provided: reset button position mode
+      // No valid button provided: reset button position mode
       root.buttonItem = null;
       root.useButtonPosition = false;
     }
