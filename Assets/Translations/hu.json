@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "Csak akkor jelenítse meg a munkaterület címkéket, ha azok tartalmaznak ablakokat.",
           "label": "Címkék megjelenítése csak foglalt állapotban"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Állítsa be a nem fókuszált alkalmazásikonok átlátszóságának szintjét.",
+          "label": "Fókuszálatlan ikonok átlátszósága"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Állítsa be a sáv háttér átlátszóságát.",
+          "label": "Sáv háttér átlátszósága"
+        },
         "capsule-opacity": {
           "description": "Beállítja a widget hátterének átlátszósági szintjét, amikor a kapszula megjelenik.",
           "label": "Kapszula átlátszósága"
@@ -1077,9 +1085,9 @@
           "description": "Látható szegély megjelenítése minden widget körül.",
           "label": "Widget körvonalak megjelenítése"
         },
-        "transparent": {
-          "description": "Ez megakadályozza, hogy a panelek rögzüljenek a sávhoz",
-          "label": "Átlátszó háttér"
+        "use-separate-opacity": {
+          "description": "Lehetővé teszi egy külön átlátszatlansági érték használatát a sáv hátteréhez.",
+          "label": "Külön oszlop átlátszóság használata"
         }
       },
       "monitors": {

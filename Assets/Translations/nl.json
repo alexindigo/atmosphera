@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "Toon alleen werkruimtelabels wanneer ze vensters bevatten.",
           "label": "Toon labels alleen wanneer bezet."
+        },
+        "unfocused-icons-opacity": {
+          "description": "Stel het dekkingsniveau in voor app-pictogrammen die niet in focus zijn.",
+          "label": "Ondoorzichtige, niet-focusseerbare pictogrammen"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Stel de achtergronddoorzichtigheid specifiek in voor de balk.",
+          "label": "Balk achtergronddoorzichtigheid"
+        },
         "capsule-opacity": {
           "description": "Stel het doorzichtigheidsniveau in voor widget-achtergronden wanneer capsule wordt getoond.",
           "label": "Capsule-doorzichtigheid"
@@ -1077,9 +1085,9 @@
           "description": "Toont een zichtbare rand rondom elke widget.",
           "label": "Toon widget-omtrekken"
         },
-        "transparent": {
-          "description": "Dit voorkomt dat de panelen aan de balk worden bevestigd.",
-          "label": "Transparante achtergrond"
+        "use-separate-opacity": {
+          "description": "Maak het mogelijk om een aparte dekkingswaarde te gebruiken voor de achtergrond van de balk.",
+          "label": "Gebruik afzonderlijke balkdekking"
         }
       },
       "monitors": {

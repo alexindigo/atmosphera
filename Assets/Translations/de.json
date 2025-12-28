@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "Arbeitsbereichsbezeichnungen nur anzeigen, wenn sie Fenster enthalten.",
           "label": "Beschriftungen nur anzeigen, wenn belegt"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Transparenzgrad für nicht fokussierte App-Symbole festlegen",
+          "label": "Deckkraft unscharfer Symbole"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Lege die Hintergrundtransparenz speziell für die Leiste fest.",
+          "label": "Balken-Hintergrundtransparenz"
+        },
         "capsule-opacity": {
           "description": "Deckkraft der Widget-Hintergründe festlegen, wenn Kapsel angezeigt wird.",
           "label": "Kapsel-Deckkraft"
@@ -1077,9 +1085,9 @@
           "description": "Zeigt eine sichtbare Umrandung um jedes Widget an.",
           "label": "Widget-Umrisse anzeigen"
         },
-        "transparent": {
-          "description": "Dies verhindert, dass die Panels an der Leiste angeheftet werden können.",
-          "label": "Transparenter Hintergrund"
+        "use-separate-opacity": {
+          "description": "Ermöglicht die Verwendung eines separaten Deckkraftwerts für den Balkenhintergrund.",
+          "label": "Separate Balken-Deckkraft"
         }
       },
       "monitors": {

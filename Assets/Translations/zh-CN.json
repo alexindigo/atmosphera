@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "仅在工作区包含窗口时显示工作区标签。",
           "label": "仅在被占用时显示标签"
+        },
+        "unfocused-icons-opacity": {
+          "description": "设置未聚焦应用图标的不透明度级别",
+          "label": "未聚焦图标不透明度"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "为任务栏设置背景不透明度。",
+          "label": "任务栏背景不透明度"
+        },
         "capsule-opacity": {
           "description": "设置显示胶囊时小部件背景的不透明度。",
           "label": "胶囊不透明度"
@@ -1080,10 +1088,6 @@
         "use-separate-opacity": {
           "description": "启用后为任务栏背景使用单独的不透明度值。",
           "label": "使用单独的任务栏不透明度"
-        },
-        "background-opacity": {
-          "description": "为任务栏设置背景不透明度。",
-          "label": "任务栏背景不透明度"
         }
       },
       "monitors": {

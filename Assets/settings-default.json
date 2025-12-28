@@ -4,11 +4,11 @@
     "position": "top",
     "monitors": [],
     "density": "default",
-    "backgroundOpacity": 0.93,
-    "useSeparateOpacity": false,
     "showOutline": false,
     "showCapsule": true,
     "capsuleOpacity": 1,
+    "backgroundOpacity": 0.93,
+    "useSeparateOpacity": false,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
@@ -355,7 +355,12 @@
     "autoHideMs": 2000,
     "overlayLayer": true,
     "backgroundOpacity": 1,
-    "enabledTypes": [0, 1, 2, 4],
+    "enabledTypes": [
+      0,
+      1,
+      2,
+      4
+    ],
     "monitors": []
   },
   "audio": {

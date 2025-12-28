@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "Pokazuj etykiety obszarów roboczych tylko wtedy, gdy zawierają okna.",
           "label": "Pokaż etykiety tylko gdy obsadzone"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Ustaw poziom przezroczystości dla ikon nieaktywnych aplikacji.",
+          "label": "Krycie ikon bez ostrości"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Ustaw przezroczystość tła konkretnie dla paska.",
+          "label": "Krycie tła paska"
+        },
         "capsule-opacity": {
           "description": "Ustaw poziom przezroczystości tła widżetów, gdy kapsuła jest widoczna.",
           "label": "Przezroczystość kapsuły"
@@ -1077,9 +1085,9 @@
           "description": "Wyświetla widoczne obramowanie wokół każdego widżetu.",
           "label": "Pokaż obramowanie widżetów"
         },
-        "transparent": {
-          "description": "To zapobiegnie przypięciu się paneli do paska.",
-          "label": "Przezroczyste tło"
+        "use-separate-opacity": {
+          "description": "Umożliwia użycie oddzielnej wartości krycia dla tła paska.",
+          "label": "Użyj osobnej przezroczystości słupków."
         }
       },
       "monitors": {

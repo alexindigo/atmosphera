@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "ウィンドウが開いているワークスペースにのみラベルを表示します。",
           "label": "ウィンドウがある時のみラベルを表示"
+        },
+        "unfocused-icons-opacity": {
+          "description": "フォーカスされていないアプリのアイコンの不透明度を設定します。",
+          "label": "フォーカスされていないアイコンの不透明度"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "バーの背景の不透明度を特に設定します。",
+          "label": "バーの背景の不透明度"
+        },
         "capsule-opacity": {
           "description": "カプセル表示時のウィジェット背景の不透明度を設定します。",
           "label": "カプセルの不透明度"
@@ -1077,9 +1085,9 @@
           "description": "すべてのウィジェットの周囲に枠線を表示します。",
           "label": "ウィジェットの枠線を表示"
         },
-        "transparent": {
-          "description": "これを有効にすると、パネルはバーに吸着されなくなります。",
-          "label": "背景の透明化"
+        "use-separate-opacity": {
+          "description": "バーの背景に別の不透明度の値を使用できるようにする。",
+          "label": "バーの不透明度を個別に設定"
         }
       },
       "monitors": {

@@ -440,6 +440,10 @@
         "show-labels-only-when-occupied": {
           "description": "Mostrar rótulos de área de trabalho apenas quando contiverem janelas.",
           "label": "Mostrar rótulos apenas quando ocupado."
+        },
+        "unfocused-icons-opacity": {
+          "description": "Definir o nível de opacidade para ícones de aplicativos não focados.",
+          "label": "Opacidade dos ícones desfocados"
         }
       }
     }
@@ -1039,6 +1043,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Defina a opacidade do fundo especificamente para a barra.",
+          "label": "Opacidade do fundo da barra"
+        },
         "capsule-opacity": {
           "description": "Define o nível de opacidade para fundos dos widgets quando a cápsula é mostrada.",
           "label": "Opacidade da cápsula"
@@ -1077,9 +1085,9 @@
           "description": "Exibe uma borda visível ao redor de cada widget.",
           "label": "Mostrar contornos do widget"
         },
-        "transparent": {
-          "description": "Isto impedirá que os painéis se fixem à barra.",
-          "label": "Fundo transparente"
+        "use-separate-opacity": {
+          "description": "Permitir usar um valor de opacidade separado para o fundo da barra.",
+          "label": "Usar opacidade separada para as barras."
         }
       },
       "monitors": {
