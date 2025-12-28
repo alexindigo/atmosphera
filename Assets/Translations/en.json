@@ -433,6 +433,10 @@
           "description": "Choose how workspace labels are displayed.",
           "label": "Label mode"
         },
+        "unfocused-icons-opacity": {
+          "description": "Set the opacity level for unfocused app icons",
+          "label": "Unfocused icons opacity"
+        },
         "show-applications": {
           "description": "Display application icons inside each workspace.",
           "label": "Show applications"
@@ -1077,9 +1081,13 @@
           "description": "Displays a visible border around every widget.",
           "label": "Show widget outlines"
         },
-        "transparent": {
-          "description": "This will prevent the panels from attaching to the bar.",
-          "label": "Transparent background"
+        "use-separate-opacity": {
+          "description": "Enable to use a separate opacity value for the bar background.",
+          "label": "Use separate bar opacity"
+        },
+        "background-opacity": {
+          "description": "Set the background opacity specifically for the bar.",
+          "label": "Bar background opacity"
         }
       },
       "monitors": {
