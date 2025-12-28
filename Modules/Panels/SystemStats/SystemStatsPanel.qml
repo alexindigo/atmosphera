@@ -84,6 +84,7 @@ SmartPanel {
               suffix: "%"
               flat: true
               fillColor: SystemStatService.cpuColor
+              tooltipText: I18n.tr("system-monitor.cpu-usage") + `: ${Math.round(SystemStatService.cpuUsage)}%`
               Layout.fillWidth: true
             }
 
@@ -95,6 +96,7 @@ SmartPanel {
               flat: true
               fillColor: SystemStatService.tempColor
               visible: SystemStatService.cpuTemp > 0
+              tooltipText: I18n.tr("system-monitor.cpu-temp") + `: ${Math.round(SystemStatService.cpuTemp)}°C`
               Layout.fillWidth: true
             }
 
@@ -106,6 +108,7 @@ SmartPanel {
               flat: true
               fillColor: SystemStatService.gpuColor
               visible: SystemStatService.gpuAvailable
+              tooltipText: I18n.tr("system-monitor.gpu-temp") + `: ${Math.round(SystemStatService.gpuTemp)}°C`
               Layout.fillWidth: true
             }
 
@@ -116,6 +119,7 @@ SmartPanel {
               suffix: "%"
               flat: true
               fillColor: SystemStatService.memColor
+              tooltipText: I18n.tr("system-monitor.memory") + `: ${Math.round(SystemStatService.memPercent)}%`
               Layout.fillWidth: true
             }
 
@@ -126,6 +130,7 @@ SmartPanel {
               suffix: "%"
               flat: true
               fillColor: SystemStatService.getDiskColor("/")
+              tooltipText: I18n.tr("system-monitor.disk") + `: ${SystemStatService.diskPercents["/"] || 0}%`
               Layout.fillWidth: true
             }
           }
@@ -148,6 +153,7 @@ SmartPanel {
               suffix: "%"
               flat: true
               fillColor: Color.mPrimary
+              tooltipText: I18n.tr("system-monitor.download") + `: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`
               Layout.preferredWidth: Math.round(80 * Style.uiScaleRatio)
             }
 
@@ -158,6 +164,7 @@ SmartPanel {
               suffix: "%"
               flat: true
               fillColor: Color.mPrimary
+              tooltipText: I18n.tr("system-monitor.upload") + `: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`
               Layout.preferredWidth: Math.round(80 * Style.uiScaleRatio)
             }
 
