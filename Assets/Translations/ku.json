@@ -55,6 +55,10 @@
           "description": "Ka çawa dixwazî ev nirx xuya bibe hilbijêre.",
           "label": "Awaya nîşandanê"
         },
+        "hide-if-not-detected": {
+          "description": "Dema pîl li ser pergalê neyê dîtin, widgetê veşêre.",
+          "label": "Veşêre eger nehat dîtin"
+        },
         "low-battery-threshold": {
           "description": "Dema ku betarî ji vê rêjeyê kêmtir bibe, hişyariyekê nîşan bide.",
           "label": "Asta hişyariya betarî ya kêm"
@@ -90,6 +94,10 @@
           "label": "Darika asoyî"
         },
         "preview": "Pêşdîtin",
+        "tooltip-format": {
+          "description": "Derdê rêzika ji bo sernavê ku dema mirov li ser demjimêrê disekine tê nîşandan. Ji bo bikaranîna sernavê xwerû vala bihêle.",
+          "label": "Formata sernavê"
+        },
         "use-custom-font": {
           "description": "Hilbijartina cûrenivîsa berdest bi tîpeke kesane ji bo demjimêrê derbas bike.",
           "label": "Cûrenivîsa kesane bi kar bîne"
@@ -299,6 +307,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Statîstîkan wekî şîroveya barên piçûk nîşan bide li şûna nirxên nivîskî. Pêşî li guhertina layoutê digire.",
+          "label": "Rewşa Kompakt"
+        },
         "cpu-temperature": {
           "description": "Show CPU temperature readings if available.",
           "label": "CPU temperature"
@@ -330,6 +342,10 @@
         "storage-usage": {
           "description": "Show disk space usage information.",
           "label": "Storage usage"
+        },
+        "use-monospace-font": {
+          "description": "```\nBi kar tîne fonta monospace ji bo firehiya karakterê ya domdar.\n```",
+          "label": "Tîpa yek-firehî"
         }
       },
       "taskbar": {
@@ -409,6 +425,10 @@
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow focused screen"
         },
+        "grouped-border-opacity": {
+          "description": "Ayarê asta zelalbûna sînorên konteynerê cîhê kar.",
+          "label": "Rûdana sînor"
+        },
         "hide-unoccupied": {
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"
@@ -424,6 +444,10 @@
         "show-labels-only-when-occupied": {
           "description": "Only show workspace labels when they contain windows.",
           "label": "Show labels only when occupied"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Ayarê asta zelalbûna îkonên sepanên ne di fokusê de bike.",
+          "label": "Şefafiya îkonên ne baldar"
         }
       }
     }
@@ -461,11 +485,13 @@
       "enable-message": "Bo dîtina amûrên heyî Bluetooth çalak bike.",
       "info": "Zanyarî",
       "known-devices": "Amûrên naskirî",
+      "no-devices": "Amûr tune ne.",
       "pair": "Girê bide",
       "paired": "Girêdayî",
       "paired-devices": "ghhdhd",
       "pairing": "Tê girêdan...",
       "pairing-mode": "Make sure your device is in pairing mode.",
+      "refresh-devices": "Nûvekirina cîhazên",
       "scanning": "Scanning for devices...",
       "signal": "Nîşan",
       "title": "Bluetooth",
@@ -547,6 +573,7 @@
     "enable-bluetooth": "Bluetooth çalak bike",
     "enable-dnd": "Dengê dernexîne çalak bike",
     "enable-wifi": "Wi-Fi çalak bike",
+    "lower-to-bottom": "Daxistin bo binî",
     "next": "Pêş",
     "open-calendar": "Salnameyê veke",
     "open-display-settings": "Sazkariyên dîmenderê",
@@ -556,7 +583,9 @@
     "pause": "Rawestîne",
     "play": "Bilîzîne",
     "previous": "Paş",
+    "raise-to-top": "Serê jorîn bilind bike",
     "random-wallpaper": "Random wallpaper",
+    "reset": "Vegerandin",
     "toggle-mute": "Toggle mute",
     "widget-settings": "Sazkariyên alavê"
   },
@@ -580,6 +609,18 @@
       "chat": "Axaftin",
       "development": "Pêşveçûn",
       "education": "Perwerde",
+      "emoji": {
+        "activity": "Çalakî",
+        "animals": "Ajal",
+        "flags": "Ala",
+        "food": "Xwarin & Vexwarin",
+        "nature": "Xweza",
+        "objects": "Tişt",
+        "people": "Mirov & Beden",
+        "recent": "Dawî",
+        "symbols": "Sembolan",
+        "travel": "Gerr û Cih"
+      },
       "game": "Lîstik",
       "graphics": "Grafîk",
       "misc": "Ên din",
@@ -1009,6 +1050,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Şeffafiya paşxanê bi taybetî ji bo barî destnîşan bike.",
+          "label": "ڕوونیی پاشبنەمای بارەکە"
+        },
         "capsule-opacity": {
           "description": "Set the opacity level for widget backgrounds when capsule is shown.",
           "label": "Capsule opacity"
@@ -1047,9 +1092,9 @@
           "description": "Displays a visible border around every widget.",
           "label": "Show widget outlines"
         },
-        "transparent": {
-          "description": "This will prevent the panels from attaching to the bar.",
-          "label": "Transparent background"
+        "use-separate-opacity": {
+          "description": "Destûrê bide ku ji bo paşxaneya bar nirxek opakbûna cuda were bikaranîn.",
+          "label": "Şefafiya bara cuda bikar bîne"
         }
       },
       "monitors": {
@@ -1185,11 +1230,15 @@
             "description": "Write {filepath}"
           },
           "code": {
-            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually"
+            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually",
+            "description-detected": "Li ser profîla xwerû hate sepandin — hate dîtin: {clients}",
+            "description-missing": "Edîtorekî kodê nehatiye dîtin (VSCode an VSCodium)"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually"
+            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually",
+            "description-detected": "Hat dîtin: {clients}",
+            "description-missing": "Mu dîtina muşterîyê Discord tune."
           },
           "emacs": {
             "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)"
@@ -1336,6 +1385,10 @@
         "sectionLeft": "Çep",
         "sectionRight": "Rast"
       },
+      "system-monitor-disk-path": {
+        "description": "Hilbijêre kîjan xala çiyayê dîskê karta çavdêriya pergalê ya di navenda kontrolê de divê çavdêriyê bike.",
+        "label": "Rêya dîska çavdêriya pergalê"
+      },
       "title": "Navenda kontrolê "
     },
     "desktop-widgets": {
@@ -1367,6 +1420,10 @@
           "label": "Minimal mode"
         },
         "preview": "Pêşdîstin",
+        "rounded-corners": {
+          "description": "Goşeyên dor ji bo paşxaneya widgetê bikar bîne.",
+          "label": "Goşeyên giloverkirî"
+        },
         "show-background": {
           "description": "Show the background container for the clock widget.",
           "label": "Paşrûyê nîşan bide"
@@ -1381,6 +1438,7 @@
         },
         "style": {
           "analog": "Analog",
+          "binary": "Dûalî",
           "description": "Şêwaza nîşandana demjimêrê hilbijêre.",
           "digital": "Jimarî",
           "label": "Şêwaza demjimêrê",
@@ -1432,6 +1490,14 @@
           "description": "Controls how the widget behaves when no media is playing.",
           "label": "Hiding mode"
         },
+        "rounded-corners": {
+          "description": "Goşeyên çargoşeyî li keviyên widgetê çalak bike.",
+          "label": "Goşeyên giloverkirî"
+        },
+        "show-album-art": {
+          "description": "Wêneyê bergê albûmê û agahiyên stranê (nav û hunermend) nîşan bide.",
+          "label": "Wêneyê bergê û sernavê nîşan bide"
+        },
         "show-background": {
           "description": "Show the background container for the media player widget.",
           "label": "Paşrûyê nîşan bide"
@@ -1440,13 +1506,13 @@
           "description": "Bişkokên kontrola medyayê (lîstin/rawestandin, pêş, paş) li ser alavê lîstikvana medyayê nîşan bide.",
           "label": "Bişkokan nîşan bide"
         },
+        "show-visualizer": {
+          "description": "Vîdyoyê dîtbarîkerê dengî nîşan bide.",
+          "label": "Nîşan bide visualîzer"
+        },
         "visualizer-type": {
           "description": "Choose a visualization type for the desktop media player background.",
           "label": "Visualization type"
-        },
-        "visualizer-visibility": {
-          "description": "Control when the audio visualizer is visible.",
-          "label": "Audio visualizer visibility"
         }
       },
       "title": "Alavên sermaseyê",
@@ -1904,6 +1970,24 @@
           "label": "Dirêjahiya agahdariyê"
         }
       },
+      "history": {
+        "critical-urgency": {
+          "description": "Agahiyên girîng ên pêşîn li dîrokê tomar bike.",
+          "label": "Dema awarte ya krîtîk tomar bike."
+        },
+        "low-urgency": {
+          "description": "ڕاگەیاندنە گرنگی نزمەکان بۆ مێژوو هەڵبگرە.",
+          "label": "Dîroka lezgîniya kêm tomar bike"
+        },
+        "normal-urgency": {
+          "description": "Agahiyên pêşîniya normal di dîrokê de tomar bike.",
+          "label": "Dîroka lezgîniya normal tomar bike"
+        },
+        "section": {
+          "description": "Kontrol bike kaîdî notîfîkasyonên ku li gorî asta lezgîniya wan di dîrokê de têne hilanîn.",
+          "label": "Dîrok"
+        }
+      },
       "monitors": {
         "section": {
           "description": "Show notification on specific monitors. Defaults to all if none are chosen.",
@@ -2165,6 +2249,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "Piştî qedandina tomarkirinê pelê kopî bike clipboardê.",
+          "label": "Kopî bo clipboardê"
+        },
         "output-folder": {
           "description": "Folder where screen recordings will be saved.",
           "label": "Peldanka deranê",
@@ -2258,6 +2346,10 @@
         "description": "Display the title and close button at the top of the session menu.",
         "label": "Show header"
       },
+      "show-number-labels": {
+        "description": "Li ser bişkokan etîketên hejmaran (1-2-3-4...) nîşan bide û ji bo hilbijartina bilez kilîdên hejmaran çalak bike.",
+        "label": "Nîşanên hejmaran nîşan bide"
+      },
       "title": "Menuya danişînê"
     },
     "system-monitor": {
@@ -2270,12 +2362,16 @@
       "custom-highlight-colors-title": {
         "label": "Custom highlight colors"
       },
+      "disk-path": {
+        "description": "Hilbijêre kîjan xala çiyayê dîskê were şopandin.",
+        "label": "Rêya dîskê"
+      },
       "disk-section": {
         "label": "Bikaranîna dîskê"
       },
-      "enable-nvidia-gpu": {
-        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics.",
-        "label": "Enable NVIDIA GPU monitoring"
+      "enable-dgpu-monitoring": {
+        "description": "Hişyarî: Ev dê GPUya weya veqetandî (NVIDIA/AMD) hişyar bike, ku dibe ku bandorek girîng li ser jiyana pîlê li ser laptopên bi grafîkên hîbrîd bike.",
+        "label": "Çavdêriya GPU'ya veqetandî çalak bike"
       },
       "general": {
         "section": {
@@ -2392,6 +2488,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alfabetîk",
+          "description": "Dema ku dîwar otomatîk diguhere, hilbijêre ka dîwar çawa têne hilbijartin.",
+          "label": "Guherandin moda",
+          "random": "Bêserûber"
+        },
         "custom-interval": {
           "description": "Demê wekî HH:MM (b.m., 01:30) têxîne.",
           "label": "Custom interval"
@@ -2403,6 +2505,10 @@
         "random-wallpaper": {
           "description": "Schedule random wallpaper changes at regular intervals.",
           "label": "Random wallpaper"
+        },
+        "scheduled-change": {
+          "description": "Bi awayekî otomatîkî di navberên rêkûpêk de dîwêran biguherîne.",
+          "label": "Guherîna plansazkirî"
         },
         "section": {
           "label": "Automation"
@@ -2524,6 +2630,18 @@
     "user-requested": "User requested",
     "welcome-back": "Bi xêr hatî,",
     "widget-settings-title": "Sazkariyên{widget}"
+  },
+  "system-monitor": {
+    "cpu-temp": "Germa CPU",
+    "cpu-usage": "Bikaranîna CPU",
+    "disk": "Dîsk",
+    "download": "Dakêşin",
+    "download-speed": "Leza Daxistinê",
+    "gpu-temp": "Germa GPU",
+    "memory": "Bîr",
+    "title": "Çavdêriya Sîstemê",
+    "upload": "Barkirin",
+    "upload-speed": "Leza barkirinê"
   },
   "toast": {
     "airplane-mode": {
@@ -2678,7 +2796,6 @@
     "next-media": "Strana pêş",
     "next-month": "Next month",
     "night-light-disabled": "Night Light",
-    "night-light-enabled": "",
     "night-light-forced": "Night Light",
     "night-light-not-installed": "Night Light (not available)",
     "noctalia-performance-disabled": "Noctalia Performance Mode",
@@ -2727,6 +2844,11 @@
     "no-match": "Lihevhatin nehat dîtin.",
     "no-wallpaper": "Wêneyê dîwêr nehat dîtin.",
     "panel": {
+      "apikey": {
+        "help": "Pêdivî bi kilîta API heye ji bo gihîştina naveroka NSFW.",
+        "label": "Kilîta API",
+        "placeholder": "API Key-a Wallhavenê xwe binivîse"
+      },
       "apply-all-monitors": {
         "description": "Wêneyê dîwêrê ya hilbijartî li ser hemû dîmenderan bisepîne.",
         "label": "Li ser hemû dîmenderan bisepîne"
@@ -2745,6 +2867,7 @@
       "purity": {
         "all": "Hemû",
         "label": "Parzûna naverokê",
+        "nsfw": "Ne ewle.",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
@@ -2892,6 +3015,7 @@
   },
   "wifi": {
     "panel": {
+      "action-required": "Çalakî pêwîst e",
       "available-networks": "Torên heyî",
       "connect": "Girê bide",
       "connected": "Girdayî",
@@ -2904,6 +3028,7 @@
       "forget": "Ji bîr bike",
       "forget-network": "Vê torê ji bîr bike",
       "forgetting": "Tê jibîrkirin…",
+      "frequency": "Frekans",
       "gateway": "Dergeh",
       "info": "Zanyarî",
       "internet": "Înternet",
@@ -2919,6 +3044,14 @@
       "searching": "Ji bo toran bigere...",
       "security": "Parastin",
       "title": "Wi‑Fi"
+    },
+    "signal": {
+      "excellent": "Bawer be",
+      "fair": "Adil",
+      "good": "Baş",
+      "poor": "Belengaz",
+      "very-good": "Gelek baş",
+      "weak": "Lawaz"
     }
   }
 }
