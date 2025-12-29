@@ -63,15 +63,15 @@ DraggableDesktopWidget {
   height: implicitHeight
 
   // Background container with masking (only visible when showBackground is true)
+  // Masking is disabled during scaling to avoid expensive texture reallocations
   Item {
     anchors.fill: parent
     anchors.margins: Math.round(Style.marginXS * widgetScale)
     z: 0
     clip: true
     visible: root.showBackground
-    layer.enabled: true
+    layer.enabled: !root.isScaling
     layer.smooth: true
-    layer.samples: 4
     layer.effect: MultiEffect {
       maskEnabled: true
       maskThresholdMin: 0.95
@@ -82,11 +82,7 @@ DraggableDesktopWidget {
           height: root.height - Math.round(Style.marginXS * widgetScale) * 2
           radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
           color: "white"
-          antialiasing: true
-          smooth: true
         }
-        smooth: true
-        mipmap: true
       }
     }
   }
@@ -101,6 +97,7 @@ DraggableDesktopWidget {
   }
 
   // Visualizer overlay (visibility controlled by visualizerVisibility setting)
+  // Masking is disabled during scaling to avoid expensive texture reallocations
   Loader {
     anchors.fill: parent
     anchors.leftMargin: Math.round(Style.marginXS * widgetScale)
@@ -110,10 +107,8 @@ DraggableDesktopWidget {
     z: 0
     clip: true
     active: shouldShowVisualizer
-    layer.enabled: true
+    layer.enabled: !root.isScaling
     layer.smooth: true
-    layer.samples: 8
-    layer.textureSize: Qt.size(width * 2, height * 2)
     layer.effect: MultiEffect {
       maskEnabled: true
       maskThresholdMin: 0.95
@@ -124,11 +119,7 @@ DraggableDesktopWidget {
           height: root.height - Math.round(Style.marginXS * widgetScale)
           radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
           color: "white"
-          antialiasing: true
-          smooth: true
         }
-        smooth: true
-        mipmap: true
       }
     }
 
@@ -177,7 +168,9 @@ DraggableDesktopWidget {
   }
 
   // Drop shadow for text and controls readability over visualizer
+  // Disabled during scaling to avoid expensive recomputations
   NDropShadow {
+    visible: !root.isScaling
     anchors.fill: contentLayout
     source: contentLayout
     z: 1
@@ -288,6 +281,7 @@ DraggableDesktopWidget {
         enabled: hasPlayer && MediaService.canGoPrevious
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant
+        customRadius: Math.round(Style.radiusS * widgetScale)
         onClicked: {
           if (enabled)
             MediaService.previous();
@@ -302,6 +296,7 @@ DraggableDesktopWidget {
         colorFg: Color.mOnPrimary
         colorBgHover: Qt.lighter(Color.mPrimary, 1.1)
         colorFgHover: Color.mOnPrimary
+        customRadius: Math.round(Style.radiusS * widgetScale)
         onClicked: {
           if (enabled) {
             MediaService.playPause();
@@ -316,6 +311,7 @@ DraggableDesktopWidget {
         enabled: hasPlayer && MediaService.canGoNext
         colorBg: Color.mSurfaceVariant
         colorFg: enabled ? Color.mPrimary : Color.mOnSurfaceVariant
+        customRadius: Math.round(Style.radiusS * widgetScale)
         onClicked: {
           if (enabled)
             MediaService.next();
