@@ -573,6 +573,7 @@
     "enable-bluetooth": "Enable Bluetooth",
     "enable-dnd": "Enable Do Not Disturb",
     "enable-wifi": "Enable Wi-Fi",
+    "lower-to-bottom": "Lower to bottom",
     "next": "Next",
     "open-calendar": "Open calendar",
     "open-display-settings": "Display settings",
@@ -582,7 +583,9 @@
     "pause": "Pause",
     "play": "Play",
     "previous": "Previous",
+    "raise-to-top": "Raise to top",
     "random-wallpaper": "Random wallpaper",
+    "reset-scale": "Reset scale",
     "toggle-mute": "Toggle mute",
     "widget-settings": "Widget settings"
   },

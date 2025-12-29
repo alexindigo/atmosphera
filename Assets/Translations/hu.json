@@ -573,6 +573,7 @@
     "enable-bluetooth": "Bluetooth bekapcsolása",
     "enable-dnd": "Ne zavarjanak bekapcsolása",
     "enable-wifi": "Wi-Fi bekapcsolása",
+    "lower-to-bottom": "Engedd le a legaljára / Engedd le az aljára",
     "next": "Következő",
     "open-calendar": "Naptár megnyitása",
     "open-display-settings": "Kijelzőbeállítások",
@@ -582,7 +583,9 @@
     "pause": "Szünet",
     "play": "Lejátszás",
     "previous": "Előző",
+    "raise-to-top": "Felülre emelés",
     "random-wallpaper": "Véletlenszerű háttérkép",
+    "reset-scale": "Mérleg nullázása",
     "toggle-mute": "Némítás kapcsolása",
     "widget-settings": "Widget beállítások"
   },

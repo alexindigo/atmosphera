@@ -573,6 +573,7 @@
     "enable-bluetooth": "Включить Bluetooth",
     "enable-dnd": "Не беспокоить",
     "enable-wifi": "Включить Wi-Fi",
+    "lower-to-bottom": "Опустить до дна",
     "next": "Следующий",
     "open-calendar": "Открыть календарь",
     "open-display-settings": "Настройки экрана",
@@ -582,7 +583,9 @@
     "pause": "Пауза",
     "play": "Играть",
     "previous": "Предыдущий",
+    "raise-to-top": "Поднять наверх",
     "random-wallpaper": "Случайные обои",
+    "reset-scale": "Сбросить масштаб",
     "toggle-mute": "Включить/выключить звук",
     "widget-settings": "Настройки виджета"
   },

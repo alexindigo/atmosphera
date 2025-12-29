@@ -573,6 +573,7 @@
     "enable-bluetooth": "Activer le Bluetooth",
     "enable-dnd": "Activer le mode Ne pas déranger",
     "enable-wifi": "Activer le Wi-Fi",
+    "lower-to-bottom": "Abaisser au plus bas / Descendre au plus bas",
     "next": "Suivant",
     "open-calendar": "Ouvrir le calendrier",
     "open-display-settings": "Paramètres d'affichage",
@@ -582,7 +583,9 @@
     "pause": "Pause",
     "play": "Jouer",
     "previous": "Précédent",
+    "raise-to-top": "Remonter en haut",
     "random-wallpaper": "Fond d'écran aléatoire",
+    "reset-scale": "Réinitialiser l'échelle",
     "toggle-mute": "Activer/désactiver le mode muet",
     "widget-settings": "Paramètres du widget"
   },

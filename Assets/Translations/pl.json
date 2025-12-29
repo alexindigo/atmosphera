@@ -573,6 +573,7 @@
     "enable-bluetooth": "Włącz Bluetooth",
     "enable-dnd": "Włącz Nie przeszkadzać",
     "enable-wifi": "Włącz Wi-Fi",
+    "lower-to-bottom": "Opuść na dół.",
     "next": "Następny",
     "open-calendar": "Otwórz kalendarz",
     "open-display-settings": "Ustawienia ekranu",
@@ -582,7 +583,9 @@
     "pause": "Wstrzymaj",
     "play": "Odtwarzaj",
     "previous": "Poprzedni",
+    "raise-to-top": "Przenieś na górę",
     "random-wallpaper": "Losowa tapeta",
+    "reset-scale": "Zresetuj skalę",
     "toggle-mute": "Przełącz wyciszenie",
     "widget-settings": "Ustawienia widżetu"
   },

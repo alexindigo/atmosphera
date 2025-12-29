@@ -573,6 +573,7 @@
     "enable-bluetooth": "Bluetooth を有効化",
     "enable-dnd": "おやすみモードを有効化",
     "enable-wifi": "Wi-Fi を有効化",
+    "lower-to-bottom": "一番下まで下げてください。",
     "next": "次へ",
     "open-calendar": "カレンダーを開く",
     "open-display-settings": "ディスプレイ設定",
@@ -582,7 +583,9 @@
     "pause": "一時停止",
     "play": "再生",
     "previous": "前へ",
+    "raise-to-top": "一番上に移動",
     "random-wallpaper": "壁紙をランダムに変更",
+    "reset-scale": "スケールをリセット",
     "toggle-mute": "ミュート切り替え",
     "widget-settings": "ウィジェット設定"
   },

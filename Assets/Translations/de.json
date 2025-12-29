@@ -573,6 +573,7 @@
     "enable-bluetooth": "Bluetooth aktivieren",
     "enable-dnd": "'Nicht stören' aktivieren",
     "enable-wifi": "WLAN aktivieren",
+    "lower-to-bottom": "Senken bis zum Anschlag / Ganz nach unten senken",
     "next": "Nächste/r/s",
     "open-calendar": "Kalender öffnen",
     "open-display-settings": "Anzeigeeinstellungen",
@@ -582,7 +583,9 @@
     "pause": "Pause",
     "play": "Spielen",
     "previous": "Vorherige",
+    "raise-to-top": "Nach oben verschieben",
     "random-wallpaper": "Zufälliges Hintergrundbild",
+    "reset-scale": "Waage zurücksetzen",
     "toggle-mute": "Stummschaltung umschalten",
     "widget-settings": "Widget-Einstellungen"
   },

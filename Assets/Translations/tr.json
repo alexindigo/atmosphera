@@ -573,6 +573,7 @@
     "enable-bluetooth": "Bluetooth'u etkinleştir",
     "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
     "enable-wifi": "Kablosuz Bağlantıyı etkinleştir",
+    "lower-to-bottom": "Alta doğru alçalt",
     "next": "Sonraki",
     "open-calendar": "Takvimi aç",
     "open-display-settings": "Ekran ayarları",
@@ -582,7 +583,9 @@
     "pause": "Duraklat",
     "play": "Oynat",
     "previous": "Önceki",
+    "raise-to-top": "En üste taşı",
     "random-wallpaper": "Rastgele duvar kâğıdı",
+    "reset-scale": "Ölçeği sıfırla",
     "toggle-mute": "Sesi kapat/aç",
     "widget-settings": "Araç takımı ayarları"
   },

@@ -573,6 +573,7 @@
     "enable-bluetooth": "Увімкнути Bluetooth",
     "enable-dnd": "Увімкнути режим \"Не турбувати\"",
     "enable-wifi": "Увімкнути Wi-Fi",
+    "lower-to-bottom": "Опустити донизу",
     "next": "Наступний",
     "open-calendar": "Відкрити календар",
     "open-display-settings": "Параметри дисплея",
@@ -582,7 +583,9 @@
     "pause": "Пауза",
     "play": "Відтворити",
     "previous": "Попередній",
+    "raise-to-top": "Підняти вгору",
     "random-wallpaper": "Випадкові шпалери",
+    "reset-scale": "Скинути масштаб",
     "toggle-mute": "Увімкнути/вимкнути звук",
     "widget-settings": "Налаштування віджета"
   },

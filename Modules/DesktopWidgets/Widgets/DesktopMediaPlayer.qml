@@ -57,15 +57,15 @@ DraggableDesktopWidget {
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
   readonly property int visibleButtonCount: root.showButtons ? (1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)) : 0
 
-  implicitWidth: 400 * Style.uiScaleRatio
-  implicitHeight: 64 * Style.uiScaleRatio + Style.marginM * 2
+  implicitWidth: Math.round(400 * Style.uiScaleRatio * widgetScale)
+  implicitHeight: Math.round(64 * Style.uiScaleRatio * widgetScale + Style.marginM * widgetScale * 2)
   width: implicitWidth
   height: implicitHeight
 
   // Background container with masking (only visible when showBackground is true)
   Item {
     anchors.fill: parent
-    anchors.margins: Style.marginXS
+    anchors.margins: Math.round(Style.marginXS * widgetScale)
     z: 0
     clip: true
     visible: root.showBackground
@@ -78,9 +78,9 @@ DraggableDesktopWidget {
       maskSpreadAtMin: 0.0
       maskSource: ShaderEffectSource {
         sourceItem: Rectangle {
-          width: root.width - Style.marginXS * 2
-          height: root.height - Style.marginXS * 2
-          radius: root.roundedCorners ? Math.max(0, Style.radiusL - Style.marginXS) : 0
+          width: root.width - Math.round(Style.marginXS * widgetScale) * 2
+          height: root.height - Math.round(Style.marginXS * widgetScale) * 2
+          radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
           color: "white"
           antialiasing: true
           smooth: true
@@ -103,9 +103,9 @@ DraggableDesktopWidget {
   // Visualizer overlay (visibility controlled by visualizerVisibility setting)
   Loader {
     anchors.fill: parent
-    anchors.leftMargin: Style.marginXS
-    anchors.rightMargin: Style.marginXS
-    anchors.topMargin: Style.marginXS
+    anchors.leftMargin: Math.round(Style.marginXS * widgetScale)
+    anchors.rightMargin: Math.round(Style.marginXS * widgetScale)
+    anchors.topMargin: Math.round(Style.marginXS * widgetScale)
     anchors.bottomMargin: 0
     z: 0
     clip: true
@@ -120,9 +120,9 @@ DraggableDesktopWidget {
       maskSpreadAtMin: 0.0
       maskSource: ShaderEffectSource {
         sourceItem: Rectangle {
-          width: root.width - Style.marginXS * 2
-          height: root.height - Style.marginXS
-          radius: root.roundedCorners ? Math.max(0, Style.radiusL - Style.marginXS) : 0
+          width: root.width - Math.round(Style.marginXS * widgetScale) * 2
+          height: root.height - Math.round(Style.marginXS * widgetScale)
+          radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
           color: "white"
           antialiasing: true
           smooth: true
@@ -204,14 +204,14 @@ DraggableDesktopWidget {
         }
       }
     ]
-    anchors.margins: Style.marginM
-    spacing: Style.marginS
+    anchors.margins: Math.round(Style.marginM * widgetScale)
+    spacing: Math.round(Style.marginS * widgetScale)
     z: 2
 
     Item {
       visible: root.showAlbumArt
-      Layout.preferredWidth: 64 * Style.uiScaleRatio
-      Layout.preferredHeight: 64 * Style.uiScaleRatio
+      Layout.preferredWidth: Math.round(64 * Style.uiScaleRatio * widgetScale)
+      Layout.preferredHeight: Math.round(64 * Style.uiScaleRatio * widgetScale)
       Layout.alignment: Qt.AlignVCenter
 
       NImageRounded {
@@ -220,7 +220,7 @@ DraggableDesktopWidget {
         radius: width / 2
         imagePath: MediaService.trackArtUrl
         fallbackIcon: isPlaying ? "media-pause" : "media-play"
-        fallbackIconSize: 20 * Style.uiScaleRatio
+        fallbackIconSize: Math.round(20 * Style.uiScaleRatio * widgetScale)
         borderWidth: 0
       }
 
@@ -228,7 +228,7 @@ DraggableDesktopWidget {
         visible: !hasPlayer
         anchors.centerIn: parent
         icon: "disc"
-        pointSize: 24
+        pointSize: Math.round(24 * widgetScale)
         color: Color.mOnSurfaceVariant
       }
     }
@@ -242,7 +242,7 @@ DraggableDesktopWidget {
       NText {
         Layout.fillWidth: true
         text: hasPlayer ? (MediaService.trackTitle || "Unknown Track") : "No media playing"
-        pointSize: Style.fontSizeS
+        pointSize: Math.round(Style.fontSizeS * widgetScale)
         font.weight: Style.fontWeightSemiBold
         color: Color.mOnSurface
         elide: Text.ElideRight
@@ -253,7 +253,7 @@ DraggableDesktopWidget {
         visible: hasPlayer && MediaService.trackArtist
         Layout.fillWidth: true
         text: MediaService.trackArtist || ""
-        pointSize: Style.fontSizeXS
+        pointSize: Math.round(Style.fontSizeXS * widgetScale)
         font.weight: Style.fontWeightRegular
         color: Color.mOnSurfaceVariant
         elide: Text.ElideRight
@@ -263,14 +263,14 @@ DraggableDesktopWidget {
 
     RowLayout {
       id: controlsRow
-      spacing: Style.marginXS
+      spacing: Math.round(Style.marginXS * widgetScale)
       z: 10
       visible: root.showButtons
       Layout.alignment: root.showAlbumArt ? Qt.AlignVCenter : Qt.AlignCenter
 
       NIconButton {
         visible: showPrev
-        baseSize: 32
+        baseSize: Math.round(32 * widgetScale)
         icon: "media-prev"
         enabled: hasPlayer && MediaService.canGoPrevious
         colorBg: Color.mSurfaceVariant
@@ -282,7 +282,7 @@ DraggableDesktopWidget {
       }
 
       NIconButton {
-        baseSize: 36
+        baseSize: Math.round(36 * widgetScale)
         icon: isPlaying ? "media-pause" : "media-play"
         enabled: hasPlayer && (MediaService.canPlay || MediaService.canPause)
         colorBg: Color.mPrimary
@@ -298,7 +298,7 @@ DraggableDesktopWidget {
 
       NIconButton {
         visible: showNext
-        baseSize: 32
+        baseSize: Math.round(32 * widgetScale)
         icon: "media-next"
         enabled: hasPlayer && MediaService.canGoNext
         colorBg: Color.mSurfaceVariant

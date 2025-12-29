@@ -573,6 +573,7 @@
     "enable-bluetooth": "启用蓝牙",
     "enable-dnd": "启用勿扰模式",
     "enable-wifi": "启用 Wi-Fi",
+    "lower-to-bottom": "降至底部",
     "next": "下一首",
     "open-calendar": "打开日历",
     "open-display-settings": "显示设置",
@@ -582,7 +583,9 @@
     "pause": "暂停",
     "play": "播放",
     "previous": "上一首",
+    "raise-to-top": "置顶",
     "random-wallpaper": "随机壁纸",
+    "reset-scale": "重置比例",
     "toggle-mute": "切换静音",
     "widget-settings": "小部件设置"
   },

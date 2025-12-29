@@ -21,7 +21,8 @@ DraggableDesktopWidget {
   }
   readonly property real fontSize: {
     var size = widgetData && widgetData.fontSize ? widgetData.fontSize : 0;
-    return (size && size > 0) ? size : Style.fontSizeXXXL * 2.5;
+    var baseSize = (size && size > 0) ? size : Style.fontSizeXXXL * 2.5;
+    return Math.round(baseSize * widgetScale);
   }
   readonly property real widgetOpacity: (widgetData && widgetData.opacity !== undefined) ? widgetData.opacity : 1.0
   readonly property string clockStyle: (widgetData && widgetData.clockStyle !== undefined) ? widgetData.clockStyle : (widgetMetadata.clockStyle !== undefined ? widgetMetadata.clockStyle : "digital")
@@ -30,9 +31,9 @@ DraggableDesktopWidget {
   readonly property string customFont: (widgetData && widgetData.customFont !== undefined) ? widgetData.customFont : ""
   readonly property string format: (widgetData && widgetData.format !== undefined) ? widgetData.format : (widgetMetadata.format !== undefined ? widgetMetadata.format : "HH:mm\\nd MMMM yyyy")
 
-  readonly property real contentPadding: clockStyle === "minimal" ? Style.marginL : Style.marginXL
-  implicitWidth: contentLoader.item ? (contentLoader.item.implicitWidth || contentLoader.item.width || 0) + contentPadding * 2 : 0
-  implicitHeight: contentLoader.item ? (contentLoader.item.implicitHeight || contentLoader.item.height || 0) + contentPadding * 2 : 0
+  readonly property real contentPadding: Math.round((clockStyle === "minimal" ? Style.marginL : Style.marginXL) * widgetScale)
+  implicitWidth: contentLoader.item ? Math.round((contentLoader.item.implicitWidth || contentLoader.item.width || 0) + contentPadding * 2) : 0
+  implicitHeight: contentLoader.item ? Math.round((contentLoader.item.implicitHeight || contentLoader.item.height || 0) + contentPadding * 2) : 0
   width: implicitWidth
   height: implicitHeight
 
@@ -49,6 +50,7 @@ DraggableDesktopWidget {
       width: height
       hoursFontSize: fontSize * 0.6
       minutesFontSize: fontSize * 0.4
+      scaleRatio: root.widgetScale
     }
   }
 
@@ -66,9 +68,9 @@ DraggableDesktopWidget {
           family: root.useCustomFont && root.customFont ? root.customFont : Settings.data.ui.fontDefault
           pointSize: {
             if (model.length == 1) {
-              return Style.fontSizeXXL;
+              return Math.round(Style.fontSizeXXL * root.widgetScale);
             } else {
-              return (index == 0) ? Style.fontSizeXXL : Style.fontSizeM;
+              return Math.round((index == 0) ? Style.fontSizeXXL * root.widgetScale : Style.fontSizeM * root.widgetScale);
             }
           }
           font.weight: Style.fontWeightBold
