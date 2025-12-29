@@ -366,7 +366,7 @@
   "audio": {
     "volumeStep": 5,
     "volumeOverdrive": false,
-    "cavaFrameRate": 30,
+    "cavaFrameRate": 60,
     "visualizerType": "linear",
     "mprisBlacklist": [],
     "preferredPlayer": "",
