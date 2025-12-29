@@ -114,7 +114,7 @@ ColumnLayout {
   // Simple process to check if matugen exists
   Process {
     id: matugenCheck
-    command: ["whereis", "matugen"]
+    command: ["sh", "-c", "command -v matugen"]
     running: false
 
     onExited: function (exitCode) {

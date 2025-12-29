@@ -50,7 +50,7 @@ Singleton {
   function checkCliphistAvailability() {
     if (dependencyChecked)
       return;
-    dependencyCheckProcess.command = ["whereis", "cliphist"];
+    dependencyCheckProcess.command = ["sh", "-c", "command -v cliphist"];
     dependencyCheckProcess.running = true;
   }
 
