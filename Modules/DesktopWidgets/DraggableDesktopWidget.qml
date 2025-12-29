@@ -288,10 +288,15 @@ Item {
       // Don't close - openWidgetSettings will use the popup window for the dialog
       root.openWidgetSettings();
       return true; // Signal that we're handling close ourselves
-    } else if (action === "reset-scale") {
+    } else if (action === "reset") {
+      // Reset scale and position to defaults
       root.widgetScale = 1.0;
+      internal.baseX = root.defaultX;
+      internal.baseY = root.defaultY;
       root.updateWidgetData({
-                              "scale": 1.0
+                              "scale": 1.0,
+                              "x": Math.round(root.defaultX),
+                              "y": Math.round(root.defaultY)
                             });
       return false;
     } else if (action === "raise-to-top") {
@@ -398,9 +403,9 @@ Item {
                  });
     }
     items.push({
-                 "label": I18n.tr("context-menu.reset-scale"),
-                 "action": "reset-scale",
-                 "icon": "aspect-ratio"
+                 "label": I18n.tr("context-menu.reset"),
+                 "action": "reset",
+                 "icon": "restore"
                });
     items.push({
                  "label": I18n.tr("context-menu.raise-to-top"),
@@ -456,21 +461,26 @@ Item {
                            var newX = internal.dragOffsetX + deltaX;
                            var newY = internal.dragOffsetY + deltaY;
 
-                           // Boundary clamping - widget dimensions already include scale
+                           // Boundary clamping - allow widgets to go partially off-screen (75% can clip)
+                           // This gives users more control over positioning while keeping widgets accessible
                            var scaledWidth = root.width;
                            var scaledHeight = root.height;
                            if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                             newX = Math.max(0, Math.min(newX, root.parent.width - scaledWidth));
-                             newY = Math.max(0, Math.min(newY, root.parent.height - scaledHeight));
+                             var minVisibleX = scaledWidth * 0.25;
+                             var minVisibleY = scaledHeight * 0.25;
+                             newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+                             newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
                            }
 
                            if (Settings.data.desktopWidgets.gridSnap) {
                              newX = root.snapToGrid(newX);
                              newY = root.snapToGrid(newY);
-                             // Re-clamp after snapping to ensure widget stays within bounds
+                             // Re-clamp after snapping
                              if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                               newX = Math.max(0, Math.min(newX, root.parent.width - scaledWidth));
-                               newY = Math.max(0, Math.min(newY, root.parent.height - scaledHeight));
+                               var minVisibleX = scaledWidth * 0.25;
+                               var minVisibleY = scaledHeight * 0.25;
+                               newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+                               newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
                              }
                            }
 
