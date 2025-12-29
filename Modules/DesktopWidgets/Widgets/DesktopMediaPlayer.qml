@@ -57,8 +57,8 @@ DraggableDesktopWidget {
   readonly property bool showNext: hasPlayer && MediaService.canGoNext
   readonly property int visibleButtonCount: root.showButtons ? (1 + (showPrev ? 1 : 0) + (showNext ? 1 : 0)) : 0
 
-  implicitWidth: Math.round(400 * Style.uiScaleRatio * widgetScale)
-  implicitHeight: Math.round(64 * Style.uiScaleRatio * widgetScale + Style.marginM * widgetScale * 2)
+  implicitWidth: Math.round(400 * widgetScale)
+  implicitHeight: Math.round(64 * widgetScale + Style.marginM * widgetScale * 2)
   width: implicitWidth
   height: implicitHeight
 
@@ -176,6 +176,18 @@ DraggableDesktopWidget {
     }
   }
 
+  // Drop shadow for text and controls readability over visualizer
+  NDropShadow {
+    anchors.fill: contentLayout
+    source: contentLayout
+    z: 1
+    autoPaddingEnabled: true
+    shadowBlur: 1.0
+    shadowOpacity: 0.9
+    shadowHorizontalOffset: 0
+    shadowVerticalOffset: 0
+  }
+
   RowLayout {
     id: contentLayout
     states: [
@@ -210,17 +222,18 @@ DraggableDesktopWidget {
 
     Item {
       visible: root.showAlbumArt
-      Layout.preferredWidth: Math.round(64 * Style.uiScaleRatio * widgetScale)
-      Layout.preferredHeight: Math.round(64 * Style.uiScaleRatio * widgetScale)
+      Layout.preferredWidth: Math.round(48 * widgetScale)
+      Layout.preferredHeight: Math.round(48 * widgetScale)
       Layout.alignment: Qt.AlignVCenter
 
       NImageRounded {
         visible: hasPlayer
         anchors.fill: parent
-        radius: width / 2
+        radius: Math.round(Style.radiusM * widgetScale)
         imagePath: MediaService.trackArtUrl
+        imageFillMode: Image.PreserveAspectCrop
         fallbackIcon: isPlaying ? "media-pause" : "media-play"
-        fallbackIconSize: Math.round(20 * Style.uiScaleRatio * widgetScale)
+        fallbackIconSize: Math.round(20 * widgetScale)
         borderWidth: 0
       }
 

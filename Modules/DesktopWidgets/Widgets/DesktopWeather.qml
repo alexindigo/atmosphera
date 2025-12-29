@@ -44,8 +44,8 @@ DraggableDesktopWidget {
     return chunks[0];
   }
 
-  implicitWidth: Math.round(Math.max(240 * Style.uiScaleRatio * widgetScale, contentLayout.implicitWidth + Style.marginM * widgetScale * 2))
-  implicitHeight: Math.round(64 * Style.uiScaleRatio * widgetScale + Style.marginM * widgetScale * 2)
+  implicitWidth: Math.round(Math.max(240 * widgetScale, contentLayout.implicitWidth + Style.marginM * widgetScale * 2))
+  implicitHeight: Math.round(64 * widgetScale + Style.marginM * widgetScale * 2)
   width: implicitWidth
   height: implicitHeight
 
@@ -57,8 +57,8 @@ DraggableDesktopWidget {
     z: 2
 
     Item {
-      Layout.preferredWidth: Math.round(64 * Style.uiScaleRatio * widgetScale)
-      Layout.preferredHeight: Math.round(64 * Style.uiScaleRatio * widgetScale)
+      Layout.preferredWidth: Math.round(64 * widgetScale)
+      Layout.preferredHeight: Math.round(64 * widgetScale)
       Layout.alignment: Qt.AlignVCenter
 
       NIcon {
