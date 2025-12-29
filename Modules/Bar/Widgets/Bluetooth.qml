@@ -71,7 +71,11 @@ Item {
     screen: root.screen
     density: Settings.data.bar.density
     oppositeDirection: BarService.getPillDirection(root)
-    icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
+    icon: !BluetoothService.enabled
+          ? "bluetooth-off"
+          : ((BluetoothService.connectedDevices && BluetoothService.connectedDevices.length > 0)
+              ? "bluetooth-connected"
+              : "bluetooth")
     text: {
       if (BluetoothService.connectedDevices && BluetoothService.connectedDevices.length > 0) {
         const firstDevice = BluetoothService.connectedDevices[0];
