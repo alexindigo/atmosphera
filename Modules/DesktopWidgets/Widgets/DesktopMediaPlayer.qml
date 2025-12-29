@@ -236,7 +236,7 @@ DraggableDesktopWidget {
         text: MediaService.trackArtist || ""
         pointSize: Math.round(Style.fontSizeXS * widgetScale)
         font.weight: Style.fontWeightRegular
-        color: Color.mOnSurfaceVariant
+        color: Color.mSecondary
         elide: Text.ElideRight
         maximumLineCount: 1
       }
