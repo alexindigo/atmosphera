@@ -81,7 +81,7 @@ DraggableDesktopWidget {
     anchors.bottomMargin: 0
     z: 0
     clip: true
-    active: shouldShowVisualizer && !root.isScaling
+    active: shouldShowVisualizer
     layer.enabled: root.roundedCorners
     layer.smooth: true
     layer.effect: MultiEffect {
