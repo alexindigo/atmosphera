@@ -70,7 +70,7 @@ DraggableDesktopWidget {
     z: 0
     clip: true
     visible: root.showBackground
-    layer.enabled: !root.isScaling
+    layer.enabled: !root.isScaling && root.roundedCorners
     layer.smooth: true
     layer.effect: MultiEffect {
       maskEnabled: true
@@ -97,7 +97,7 @@ DraggableDesktopWidget {
   }
 
   // Visualizer overlay (visibility controlled by visualizerVisibility setting)
-  // Masking is disabled during scaling to avoid expensive texture reallocations
+  // Completely disabled during scaling to avoid expensive canvas redraws
   Loader {
     anchors.fill: parent
     anchors.leftMargin: Math.round(Style.marginXS * widgetScale)
@@ -106,8 +106,8 @@ DraggableDesktopWidget {
     anchors.bottomMargin: 0
     z: 0
     clip: true
-    active: shouldShowVisualizer
-    layer.enabled: !root.isScaling
+    active: shouldShowVisualizer && !root.isScaling
+    layer.enabled: root.roundedCorners
     layer.smooth: true
     layer.effect: MultiEffect {
       maskEnabled: true
