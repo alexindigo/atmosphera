@@ -50,7 +50,7 @@ Singleton {
   function checkCliphistAvailability() {
     if (dependencyChecked)
       return;
-    dependencyCheckProcess.command = ["which", "cliphist"];
+    dependencyCheckProcess.command = ["whereis", "cliphist"];
     dependencyCheckProcess.running = true;
   }
 

@@ -662,7 +662,7 @@ Singleton {
   // -------------------------------------------------
   Process {
     id: checkMagickProcess
-    command: ["which", "magick"]
+    command: ["whereis", "magick"]
     running: false
 
     stdout: StdioCollector {}

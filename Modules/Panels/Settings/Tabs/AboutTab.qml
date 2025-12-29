@@ -75,7 +75,7 @@ ColumnLayout {
 
   Process {
     id: whichPacmanProcess
-    command: ["which", "pacman"]
+    command: ["whereis", "pacman"]
     running: false
     onExited: function (exitCode) {
       if (exitCode === 0) {

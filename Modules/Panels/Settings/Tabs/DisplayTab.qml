@@ -34,7 +34,7 @@ ColumnLayout {
   // Check for wlsunset availability when enabling Night Light
   Process {
     id: wlsunsetCheck
-    command: ["which", "wlsunset"]
+    command: ["whereis", "wlsunset"]
     running: false
 
     onExited: function (exitCode) {
