@@ -62,31 +62,6 @@ DraggableDesktopWidget {
   width: implicitWidth
   height: implicitHeight
 
-  // Background container with masking (only visible when showBackground is true)
-  // Masking is disabled during scaling to avoid expensive texture reallocations
-  Item {
-    anchors.fill: parent
-    anchors.margins: Math.round(Style.marginXS * widgetScale)
-    z: 0
-    clip: true
-    visible: root.showBackground
-    layer.enabled: !root.isScaling && root.roundedCorners
-    layer.smooth: true
-    layer.effect: MultiEffect {
-      maskEnabled: true
-      maskThresholdMin: 0.95
-      maskSpreadAtMin: 0.0
-      maskSource: ShaderEffectSource {
-        sourceItem: Rectangle {
-          width: root.width - Math.round(Style.marginXS * widgetScale) * 2
-          height: root.height - Math.round(Style.marginXS * widgetScale) * 2
-          radius: root.roundedCorners ? Math.round(Math.max(0, (Style.radiusL - Style.marginXS) * widgetScale)) : 0
-          color: "white"
-        }
-      }
-    }
-  }
-
   // Visualizer visibility mode
   readonly property bool shouldShowVisualizer: {
     if (!root.showVisualizer)
