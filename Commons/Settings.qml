@@ -495,6 +495,7 @@ Singleton {
       property string warningColor: ""
       property string criticalColor: ""
       property string diskPath: "/"
+      property string externalMonitor: "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
     }
 
     // dock
