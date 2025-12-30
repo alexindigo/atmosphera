@@ -68,7 +68,8 @@ Item {
       if (ws && ws.windows) {
         for (var j = 0; j < ws.windows.count; j++) {
           var win = ws.windows.get(j);
-          if (win && (win.id === selectedWindowId || win.address === selectedWindowId)) {
+          // Using loose equality on purpose (==)
+          if (win && (win.id == selectedWindowId || win.address == selectedWindowId)) {
             return win;
           }
         }
@@ -797,8 +798,8 @@ Item {
                       if (mouse.button === Qt.RightButton) {
                         mouse.accepted = true;
                         TooltipService.hide();
-                        root.selectedWindow = null;
-                        root.selectedAppName = "";
+                        root.selectedWindowId = "";
+                        root.selectedAppId = "";
                         openGroupedContextMenu(groupedContainer);
                       }
                     }
