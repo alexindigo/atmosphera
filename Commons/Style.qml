@@ -99,13 +99,14 @@ Singleton {
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 39 : 37;
       break;
       case "spacious":
-      h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 53 : 51;
+      h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 49 : 47;
       break;
       default:
       case "default":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 33 : 31;
     }
-    return toOdd(h);
+    return h;
+    //return toOdd(h);
   }
   readonly property real capsuleHeight: {
     let h;
