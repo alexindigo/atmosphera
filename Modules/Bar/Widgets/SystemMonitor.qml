@@ -54,6 +54,10 @@ Rectangle {
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
   readonly property real textSize: Math.max(7, iconSize * barScaling * 0.6 * (isVertical ? 0.85 : 1.0))
 
+  function openExternalMonitor() {
+    Quickshell.execDetached(["sh", "-c", Settings.data.systemMonitor.externalMonitor]);
+  }
+
   // Build comprehensive tooltip text with all stats
   function buildTooltipText() {
     let lines = [];
@@ -143,12 +147,14 @@ Rectangle {
                    TooltipService.hide();
                  } else if (mouse.button === Qt.RightButton) {
                    TooltipService.hide();
-                   5;
                    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
                    if (popupMenuWindow) {
                      popupMenuWindow.showContextMenu(contextMenu);
                      contextMenu.openAtItem(root, screen);
                    }
+                 } else if (mouse.button === Qt.MiddleButton) {
+                   TooltipService.hide();
+                   openExternalMonitor();
                  }
                }
     onEntered: {
