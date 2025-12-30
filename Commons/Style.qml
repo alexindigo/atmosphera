@@ -90,7 +90,7 @@ Singleton {
     let h;
     switch (Settings.data.bar.density) {
       case "mini":
-      h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 22 : 20;
+      h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 23 : 21;
       break;
       case "compact":
       h = (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? 27 : 25;
@@ -135,5 +135,10 @@ Singleton {
   // Ensures a number is always odd (rounds down to nearest odd)
   function toOdd(n) {
     return Math.floor(n / 2) * 2 + 1;
+  }
+
+  // Ensures a number is always even (rounds down to nearest even)
+  function toEven(n) {
+    return Math.floor(n / 2) * 2;
   }
 }
