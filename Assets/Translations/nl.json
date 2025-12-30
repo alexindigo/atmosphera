@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Waarschuwingskleur"
+      },
+      "external-monitor": {
+        "description": "Voer de opdracht of applicatiepad in om te starten bij het activeren van de externe systeemmonitor applicatie.",
+        "label": "Externe systeemmonitor opdracht",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

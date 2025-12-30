@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Колір попередження"
+      },
+      "external-monitor": {
+        "description": "Введіть команду або шлях до програми для запуску при активації зовнішньої програми моніторингу системи.",
+        "label": "Команда зовнішнього монітора системи",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

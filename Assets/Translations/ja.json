@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "警告時の色"
+      },
+      "external-monitor": {
+        "description": "外部システムモニターアプリケーションを起動する際に実行するコマンドまたはアプリケーションパスを入力してください。",
+        "label": "外部システムモニターコマンド",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

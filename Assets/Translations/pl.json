@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Kolor ostrzegawczy"
+      },
+      "external-monitor": {
+        "description": "Wprowadź polecenie lub ścieżkę aplikacji do uruchomienia przy aktywacji zewnętrznej aplikacji monitora systemu.",
+        "label": "Polecenie zewnętrznego monitora systemu",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Warning color"
+      },
+      "external-monitor": {
+        "description": "Fermanî an rêya sepanê binivîse ku dema sepana monitora pergala derveyî çalak dike were xebitandin.",
+        "label": "Fermana monitora pergala derveyî",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

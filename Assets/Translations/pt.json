@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Cor de aviso"
+      },
+      "external-monitor": {
+        "description": "Digite o comando ou caminho da aplicação para executar ao ativar a aplicação externa de monitoramento do sistema.",
+        "label": "Comando do monitor do sistema externo",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

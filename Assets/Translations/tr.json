@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "Uyarı rengi"
+      },
+      "external-monitor": {
+        "description": "Harici sistem izleyici uygulamasını etkinleştirirken başlatılacak komut veya uygulama yolunu girin.",
+        "label": "Harici sistem izleyici komutu",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

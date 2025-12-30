@@ -2413,6 +2413,11 @@
       },
       "warning-color": {
         "label": "警告颜色"
+      },
+      "external-monitor": {
+        "description": "输入启动外部系统监视器应用程序时要执行的命令或应用程序路径。",
+        "label": "外部系统监视器命令",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {
