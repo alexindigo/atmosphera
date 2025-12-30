@@ -40,18 +40,18 @@ ColumnLayout {
       checked: Settings.data.systemMonitor.useCustomColors
       isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.useCustomColors")
-      onToggled: {
-        // If enabling custom colors and no custom color is saved, persist current theme colors
-        if (checked) {
-          if (!Settings.data.systemMonitor.warningColor || Settings.data.systemMonitor.warningColor === "") {
-            Settings.data.systemMonitor.warningColor = Color.mTertiary.toString();
-          }
-          if (!Settings.data.systemMonitor.criticalColor || Settings.data.systemMonitor.criticalColor === "") {
-            Settings.data.systemMonitor.criticalColor = Color.mError.toString();
-          }
-        }
-        Settings.data.systemMonitor.useCustomColors = checked;
-      }
+      onToggled: checked => {
+                   // If enabling custom colors and no custom color is saved, persist current theme colors
+                   if (checked) {
+                     if (!Settings.data.systemMonitor.warningColor || Settings.data.systemMonitor.warningColor === "") {
+                       Settings.data.systemMonitor.warningColor = Color.mTertiary.toString();
+                     }
+                     if (!Settings.data.systemMonitor.criticalColor || Settings.data.systemMonitor.criticalColor === "") {
+                       Settings.data.systemMonitor.criticalColor = Color.mError.toString();
+                     }
+                   }
+                   Settings.data.systemMonitor.useCustomColors = checked;
+                 }
     }
   }
 
