@@ -1810,6 +1810,10 @@
           "description": "Usa iconos nativos del sistema en lugar de iconos Tabler.",
           "label": "Usar iconos nativos"
         },
+        "ignore-mouse-input": {
+          "description": "Deshabilitar la interacción del ratón y la rueda de desplazamiento en el lanzador.",
+          "label": "Ignorar la entrada del ratón"
+        },
         "position": {
           "description": "Elige dónde aparece el panel del lanzador.",
           "label": "Posición"

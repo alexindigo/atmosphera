@@ -1810,6 +1810,10 @@
           "description": "Használjon natív rendszerikonokat a Tabler ikonok helyett.",
           "label": "Natív ikonok használata"
         },
+        "ignore-mouse-input": {
+          "description": "A launcherben tiltsd le az egérműveleteket és a görgőt.",
+          "label": "Egérbemenet figyelmen kívül hagyása"
+        },
         "position": {
           "description": "Hol jelenjen meg az indító panel.",
           "label": "Pozíció"

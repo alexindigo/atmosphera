@@ -1810,6 +1810,10 @@
           "description": "Use native system icons instead of Tabler icons.",
           "label": "Use native icons"
         },
+        "ignore-mouse-input": {
+          "description": "Di nav destpêkerê de, danûstandina mişkê û çerxa gerokê neçalak bike.",
+          "label": "Guherandina mişkê paşguh bike"
+        },
         "position": {
           "description": "Choose where the launcher panel appears.",
           "label": "Cih"

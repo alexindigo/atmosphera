@@ -1810,6 +1810,10 @@
           "description": "Verwende native System-Icons anstelle von Tabler-Icons.",
           "label": "Native Icons verwenden"
         },
+        "ignore-mouse-input": {
+          "description": "Deaktivieren Sie die Mausinteraktion und das Mausrad im Launcher.",
+          "label": "Maus-Eingabe ignorieren"
+        },
         "position": {
           "description": "Wählen Sie, wo das Starter-Panel erscheint.",
           "label": "Position"

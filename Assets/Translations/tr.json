@@ -1810,6 +1810,10 @@
           "description": "Tabler simgeleri yerine yerel sistem simgelerini kullanın.",
           "label": "Yerel simgeleri kullan"
         },
+        "ignore-mouse-input": {
+          "description": "Başlatıcıda fare etkileşimini ve kaydırma tekerleğini devre dışı bırak.",
+          "label": "Fare girişini yoksay."
+        },
         "position": {
           "description": "Başlatıcı panelinin nerede görüneceğini seçin.",
           "label": "Konum"

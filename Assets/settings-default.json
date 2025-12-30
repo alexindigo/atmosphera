@@ -187,7 +187,8 @@
     "customLaunchPrefix": "",
     "viewMode": "list",
     "showCategories": true,
-    "iconMode": "tabler"
+    "iconMode": "tabler",
+    "ignoreMouseInput": false
   },
   "controlCenter": {
     "position": "close_to_bar_button",

@@ -1810,6 +1810,10 @@
           "description": "使用本地系统图标而不是 Tabler 图标。",
           "label": "使用本地图标"
         },
+        "ignore-mouse-input": {
+          "description": "禁用启动器中的鼠标交互和滚轮。",
+          "label": "忽略鼠标输入"
+        },
         "position": {
           "description": "选择启动器面板出现的位置。",
           "label": "位置"

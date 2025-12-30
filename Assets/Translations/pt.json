@@ -1810,6 +1810,10 @@
           "description": "Use ícones nativos do sistema em vez de ícones Tabler.",
           "label": "Usar ícones nativos"
         },
+        "ignore-mouse-input": {
+          "description": "Desativar a interação do mouse e a roda de rolagem no iniciador.",
+          "label": "Ignorar entrada do mouse."
+        },
         "position": {
           "description": "Escolha onde o painel do lançador aparece.",
           "label": "Posição"

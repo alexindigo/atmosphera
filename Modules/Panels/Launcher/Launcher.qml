@@ -52,7 +52,7 @@ SmartPanel {
   property var plugins: []
   property var activePlugin: null
   property bool resultsReady: false
-  property bool ignoreMouseHover: false
+  property bool ignoreMouseHover: Settings.data.appLauncher.ignoreMouseInput
 
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
@@ -559,6 +559,7 @@ SmartPanel {
       hoverEnabled: true
       propagateComposedEvents: true
       acceptedButtons: Qt.NoButton
+      enabled: !Settings.data.appLauncher.ignoreMouseInput
 
       property real lastX: 0
       property real lastY: 0
@@ -797,6 +798,7 @@ SmartPanel {
             model: results
             currentIndex: selectedIndex
             cacheBuffer: resultsList.height * 2
+            interactive: !Settings.data.appLauncher.ignoreMouseInput
             onCurrentIndexChanged: {
               cancelFlick();
               if (currentIndex >= 0) {
@@ -1061,6 +1063,7 @@ SmartPanel {
                 z: -1
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                enabled: !Settings.data.appLauncher.ignoreMouseInput
                 onEntered: {
                   if (!root.ignoreMouseHover) {
                     selectedIndex = index;
@@ -1113,7 +1116,7 @@ SmartPanel {
             cacheBuffer: resultsGrid.height * 2
             keyNavigationEnabled: false
             focus: false
-            interactive: true
+            interactive: !Settings.data.appLauncher.ignoreMouseInput
 
             Component.onCompleted: {
               // Initialize gridColumns when grid view is created
@@ -1421,6 +1424,7 @@ SmartPanel {
                 z: -1
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                enabled: !Settings.data.appLauncher.ignoreMouseInput
                 onEntered: {
                   root.ignoreMouseHover = false;
                   selectedIndex = index;
