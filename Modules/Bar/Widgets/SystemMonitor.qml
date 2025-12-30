@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
@@ -139,7 +140,7 @@ Rectangle {
   MouseArea {
     id: tooltipArea
     anchors.fill: parent
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     hoverEnabled: true
     onClicked: mouse => {
                  if (mouse.button === Qt.LeftButton) {
