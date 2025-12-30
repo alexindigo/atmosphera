@@ -49,7 +49,7 @@ Item {
 
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
   readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
-  readonly property int textSize: Math.floor(root.iconSize * 0.53)
+  readonly property int textSize: Math.round(Style.capsuleHeight * 0.4 * barScaling)
 
   implicitHeight: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight) : 0
   implicitWidth: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
