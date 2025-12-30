@@ -568,8 +568,29 @@ Popup {
         ToastService.showError(I18n.tr("settings.color-scheme.download.error.title"), I18n.tr("settings.color-scheme.download.error.description", {
                                                                                                 "scheme": schemeName
                                                                                               }) + "\n" + errorDetails);
-        downloading = false;
-        downloadingScheme = "";
+        // Clean up the partially downloaded directory on failure
+        var cleanupScript = "rm -rf '" + targetDir + "'";
+        var cleanupProcess = Qt.createQmlObject(`
+                                                 import QtQuick
+                                                 import Quickshell.Io
+                                                 Process {
+                                                 id: cleanupProcess
+                                                 command: ["sh", "-c", ` + JSON.stringify(cleanupScript) + `]
+                                                 }
+                                                 `, root, "CleanupProcess_" + schemeName);
+
+        cleanupProcess.exited.connect(function (cleanupExitCode) {
+          if (cleanupExitCode === 0) {
+            Logger.d("ColorSchemeDownload", "Partially downloaded scheme directory cleaned up:", targetDir);
+          } else {
+            Logger.w("ColorSchemeDownload", "Failed to clean up partially downloaded scheme directory:", targetDir);
+          }
+          downloading = false;
+          downloadingScheme = "";
+          cleanupProcess.destroy();
+        });
+
+        cleanupProcess.running = true;
       }
       root.lastStderrOutput = "";
       downloadProcess.destroy();
