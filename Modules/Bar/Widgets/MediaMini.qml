@@ -50,7 +50,7 @@ Item {
   readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
   readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
-  readonly property int textSize: Style.toOdd(root.iconSize * 0.6)
+  readonly property int textSize: Math.floor(root.iconSize * 0.53)
 
   // State
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
