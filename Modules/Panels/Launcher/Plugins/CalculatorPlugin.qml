@@ -12,6 +12,39 @@ Item {
     return query.startsWith(">calc") || (query.startsWith(">") && query.length > 1 && isMathExpression(query.substring(1)));
   }
 
+  function getInlineResult(query) {
+    if (!Settings.data.appLauncher.inlineCalculator) {
+      return null;
+    }
+
+    if (query.startsWith(">")) {
+      return null;
+    }
+
+    if (!isMathExpression(query)) {
+      return null;
+    }
+
+
+    try {
+      let result = AdvancedMath.evaluate(query.trim());
+      return {
+        "name": AdvancedMath.formatResult(result),
+        "description": `${query} = ${result}`,
+        "icon": iconMode === "tabler" ? "calculator" : "accessories-calculator",
+        "isTablerIcon": true,
+        "isImage": false,
+        "isCalculatorResult": true,
+        "onActivate": function () {
+          // TODO: copy entry to clipboard via ClipHist
+          launcher.close();
+        }
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
   function commands() {
     return [
           {
@@ -81,38 +114,28 @@ Item {
     }
   }
 
-  function evaluateExpression(expr) {
-    // Sanitize input - only allow safe characters
-    const sanitized = expr.replace(/[^0-9\+\-\*\/\(\)\.\s\%]/g, '');
-    if (sanitized !== expr) {
-      throw new Error("Invalid characters in expression");
-    }
-
-    // Don't allow empty expressions
-    if (!sanitized.trim()) {
-      throw new Error("Empty expression");
-    }
-
-    try {
-      // Use Function constructor for safe evaluation
-      // This is safer than eval() but still evaluate math
-      const result = Function('"use strict"; return (' + sanitized + ')')();
-
-      // Check for valid result
-      if (!isFinite(result)) {
-        throw new Error("Result is not a finite number");
-      }
-
-      // Round to reasonable precision to avoid floating point issues
-      return Math.round(result * 1000000000) / 1000000000;
-    } catch (e) {
-      throw new Error("Invalid mathematical expression");
-    }
-  }
-
   function isMathExpression(expr) {
     // Check if string looks like a math expression
-    // Allow digits, operators, parentheses, decimal points, and whitespace
-    return /^[\d\s\+\-\*\/\(\)\.\%]+$/.test(expr);
+    // Allow: digits, operators, parentheses, decimal points, whitespace, letters (for functions), commas
+    if (!/^[\d\s\+\-\*\/\(\)\.\%\^a-zA-Z,]+$/.test(expr)) {
+      return false;
+    }
+
+    // Must contain at least one operator OR a function call (letter followed by parenthesis)
+    if (!/[+\-*/%\^]/.test(expr) && !/[a-zA-Z]\s*\(/.test(expr)) {
+      return false;
+    }
+    
+    // Reject if ends with an operator (incomplete expression)
+    if (/[+\-*/%\^]\s*$/.test(expr)) {
+      return false;
+    }
+    
+    // Reject if it's just letters (would match app names)
+    if (/^[a-zA-Z\s]+$/.test(expr)) {
+      return false;
+    }
+    
+    return true;
   }
 }

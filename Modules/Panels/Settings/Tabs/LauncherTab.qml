@@ -98,6 +98,15 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("settings.launcher.settings.inline-calculator.label")
+    description: I18n.tr("settings.launcher.settings.inline-calculator.description")
+    checked: Settings.data.appLauncher.inlineCalculator
+    onToggled: checked => Settings.data.appLauncher.inlineCalculator = checked
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("appLauncher.inlineCalculator")
+  }
+
+  NToggle {
     label: I18n.tr("settings.launcher.settings.sort-by-usage.label")
     description: I18n.tr("settings.launcher.settings.sort-by-usage.description")
     checked: Settings.data.appLauncher.sortByMostUsed

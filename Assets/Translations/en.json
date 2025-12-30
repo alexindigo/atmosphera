@@ -1789,6 +1789,10 @@
           "description": "Show a preview of the clipboard content when using the >clip command.",
           "label": "Enable clip preview"
         },
+        "inline-calculator": {
+          "description": "Show calculator results directly in search when typing math expressions (e.g., '17 * 6').",
+          "label": "Inline calculator"
+        },
         "clipboard-history": {
           "description": "Access previously copied items from the launcher.",
           "label": "Enable clipboard history"

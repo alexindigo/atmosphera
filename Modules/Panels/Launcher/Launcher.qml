@@ -268,6 +268,14 @@ SmartPanel {
           results = results.concat(pluginResults);
         }
       }
+
+      // Add inline calculator result at the end if available
+      if (searchText.trim() && calcPlugin.getInlineResult) {
+        const inlineResult = calcPlugin.getInlineResult(searchText);
+        if (inlineResult) {
+          results = results.concat([inlineResult]);
+        }
+      }
     }
 
     selectedIndex = 0;
