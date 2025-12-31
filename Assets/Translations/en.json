@@ -1626,7 +1626,7 @@
           "label": "Dock size"
         },
         "inactive-indicators": {
-          "description": "Display indicatator pills for all apps, not just the currently active one.",
+          "description": "Display indicator pills for all apps, not just the currently active one.",
           "label": "Running Indicators"
         },
         "pinned-static": {
