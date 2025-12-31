@@ -12,7 +12,7 @@ Popup {
   property ShellScreen screen
 
   width: Math.max(440, Math.round(contentColumn.implicitWidth + (Style.marginL * 2)))
-  height: contentColumn.implicitHeight + (Style.marginL * 2)
+  height: Math.round(contentColumn.implicitHeight + (Style.marginL * 2))
   padding: Style.marginL
   modal: true
   dim: false
