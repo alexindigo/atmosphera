@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Wybierz sposób wyświetlania tej wartości.",
           "label": "Tryb wyświetlania"
+        },
+        "show-icon": {
+          "description": "Wyświetl ikonę układu klawiatury.",
+          "label": "Pokaż ikonę"
         }
       },
       "lock-keys": {

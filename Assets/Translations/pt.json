@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Escolha como você gostaria que este valor aparecesse.",
           "label": "Modo de exibição"
+        },
+        "show-icon": {
+          "description": "Exibir o ícone do layout do teclado.",
+          "label": "Mostrar ícone"
         }
       },
       "lock-keys": {

@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "选择您希望此值显示的方式。",
           "label": "显示模式"
+        },
+        "show-icon": {
+          "description": "显示键盘布局图标。",
+          "label": "显示图标"
         }
       },
       "lock-keys": {

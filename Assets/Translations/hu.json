@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Válassza ki, hogyan jelenjen meg ez az érték.",
           "label": "Megjelenítési mód"
+        },
+        "show-icon": {
+          "description": "Billentse a billentyűzetkiosztás ikont.",
+          "label": "Ikon megjelenítése"
         }
       },
       "lock-keys": {

@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "値の表示方法を選択します。",
           "label": "表示モード"
+        },
+        "show-icon": {
+          "description": "キーボードレイアウトのアイコンを表示します。",
+          "label": "アイコンを表示 (Aikona o hyōji)"
         }
       },
       "lock-keys": {

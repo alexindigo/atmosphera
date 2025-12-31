@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Choose how you'd like this value to appear.",
           "label": "Display mode"
+        },
+        "show-icon": {
+          "description": "Display the keyboard layout icon.",
+          "label": "Show icon"
         }
       },
       "lock-keys": {

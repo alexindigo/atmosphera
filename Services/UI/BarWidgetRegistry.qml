@@ -141,7 +141,8 @@ Singleton {
                                     }
                                   },
                                   "KeyboardLayout": {
-                                    "displayMode": "onhover"
+                                    "displayMode": "onhover",
+                                    "showIcon": true
                                   },
                                   "LockKeys": {
                                     "showCapsLock": true,
