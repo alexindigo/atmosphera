@@ -2378,6 +2378,11 @@
         "description": "Внимание: Это разбудит ваш дискретный графический процессор (NVIDIA/AMD), что может значительно повлиять на время работы от аккумулятора на ноутбуках с гибридной графикой.",
         "label": "Включить мониторинг дискретного GPU"
       },
+      "external-monitor": {
+        "description": "Введите команду или путь к приложению для запуска при активации внешнего приложения мониторинга системы.",
+        "label": "Команда внешнего монитора системы",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "Настроить поведение и внешний вид системного монитора.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Цвет предупреждения"
-      },
-      "external-monitor": {
-        "description": "Введите команду или путь к приложению для запуска при активации внешнего приложения мониторинга системы.",
-        "label": "Команда внешнего монитора системы",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

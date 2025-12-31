@@ -2378,6 +2378,11 @@
         "description": "Warnung: Dies aktiviert Ihre dedizierte GPU (NVIDIA/AMD), was die Akkulaufzeit von Laptops mit Hybridgrafik erheblich beeinträchtigen kann.",
         "label": "Dedizierte GPU-Überwachung aktivieren"
       },
+      "external-monitor": {
+        "description": "Geben Sie den Befehl oder Anwendungspfad ein, um die externe Systemmonitor-Anwendung zu starten.",
+        "label": "Externer Systemmonitor-Befehl",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "Konfigurieren Sie das Verhalten und Aussehen des Systemmonitors.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Warnfarbe"
-      },
-      "external-monitor": {
-        "description": "Geben Sie den Befehl oder Anwendungspfad ein, um die externe Systemmonitor-Anwendung zu starten.",
-        "label": "Externer Systemmonitor-Befehl",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

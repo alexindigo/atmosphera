@@ -2378,6 +2378,11 @@
         "description": "警告: これにより外部GPU (NVIDIA/AMD) が起動状態になるため、ハイブリッドグラフィックス搭載のノート PC ではバッテリー駆動時間に大きな影響を与える可能性があります。",
         "label": "外部GPUモニタリングを有効にする"
       },
+      "external-monitor": {
+        "description": "外部システムモニターアプリケーションを起動する際に実行するコマンドまたはアプリケーションパスを入力してください。",
+        "label": "外部システムモニターコマンド",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "システムモニターの動作と外観を設定します。",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "警告時の色"
-      },
-      "external-monitor": {
-        "description": "外部システムモニターアプリケーションを起動する際に実行するコマンドまたはアプリケーションパスを入力してください。",
-        "label": "外部システムモニターコマンド",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

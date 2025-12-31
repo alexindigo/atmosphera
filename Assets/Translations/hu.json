@@ -2378,6 +2378,11 @@
         "description": "Figyelem: Ez felébreszti a dedikált GPU-t (NVIDIA/AMD), ami jelentősen befolyásolhatja az akkumulátor élettartamát a hibrid grafikával rendelkező laptopokon.",
         "label": "Dedikált GPU felügyelet engedélyezése"
       },
+      "external-monitor": {
+        "description": "Adja meg a parancsot vagy alkalmazás elérési útját a külső rendszermonitor alkalmazás indításához.",
+        "label": "Külső rendszermonitor parancs",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "A rendszerfigyelő viselkedésének és megjelenésének beállítása.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Figyelmeztetési szín"
-      },
-      "external-monitor": {
-        "description": "Adja meg a parancsot vagy alkalmazás elérési útját a külső rendszermonitor alkalmazás indításához.",
-        "label": "Külső rendszermonitor parancs",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

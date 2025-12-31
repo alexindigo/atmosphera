@@ -2378,6 +2378,11 @@
         "description": "Hişyarî: Ev dê GPUya weya veqetandî (NVIDIA/AMD) hişyar bike, ku dibe ku bandorek girîng li ser jiyana pîlê li ser laptopên bi grafîkên hîbrîd bike.",
         "label": "Çavdêriya GPU'ya veqetandî çalak bike"
       },
+      "external-monitor": {
+        "description": "Fermanî an rêya sepanê binivîse ku dema sepana monitora pergala derveyî çalak dike were xebitandin.",
+        "label": "Fermana monitora pergala derveyî",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "Configure the system monitor behavior and appearance.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Warning color"
-      },
-      "external-monitor": {
-        "description": "Fermanî an rêya sepanê binivîse ku dema sepana monitora pergala derveyî çalak dike were xebitandin.",
-        "label": "Fermana monitora pergala derveyî",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

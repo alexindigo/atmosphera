@@ -2378,6 +2378,11 @@
         "description": "Ostrzeżenie: To obudzi twoją dedykowaną kartę graficzną (NVIDIA/AMD), co może znacząco wpłynąć na żywotność baterii w laptopach z hybrydową grafiką.",
         "label": "Włącz monitorowanie dedykowanej karty graficznej."
       },
+      "external-monitor": {
+        "description": "Wprowadź polecenie lub ścieżkę aplikacji do uruchomienia przy aktywacji zewnętrznej aplikacji monitora systemu.",
+        "label": "Polecenie zewnętrznego monitora systemu",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "Konfiguruj zachowanie i wygląd monitora systemu.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Kolor ostrzegawczy"
-      },
-      "external-monitor": {
-        "description": "Wprowadź polecenie lub ścieżkę aplikacji do uruchomienia przy aktywacji zewnętrznej aplikacji monitora systemu.",
-        "label": "Polecenie zewnętrznego monitora systemu",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {

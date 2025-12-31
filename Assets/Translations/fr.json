@@ -2378,6 +2378,11 @@
         "description": "Attention : Ceci va activer votre GPU dédié (NVIDIA/AMD), ce qui peut avoir un impact significatif sur l'autonomie de la batterie des ordinateurs portables dotés de cartes graphiques hybrides.",
         "label": "Activer la surveillance du GPU dédié"
       },
+      "external-monitor": {
+        "description": "Entrez la commande ou le chemin de l'application à lancer lors de l'activation de l'application externe de surveillance du système.",
+        "label": "Commande du moniteur système externe",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
+      },
       "general": {
         "section": {
           "description": "Configurer le comportement et l'apparence du Moniteur Système.",
@@ -2417,11 +2422,6 @@
       },
       "warning-color": {
         "label": "Couleur d'avertissement"
-      },
-      "external-monitor": {
-        "description": "Entrez la commande ou le chemin de l'application à lancer lors de l'activation de l'application externe de surveillance du système.",
-        "label": "Commande du moniteur système externe",
-        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       }
     },
     "user-interface": {
