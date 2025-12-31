@@ -151,6 +151,15 @@ SmartPanel {
                 if (ethernetInfoExpanded) NetworkService.refreshActiveEthernetDetails();
               }
             }
+
+            // Close button (shown on Ethernet bar when Ethernet is available)
+            NIconButton {
+              visible: NetworkService.ethernetConnected
+              icon: "close"
+              tooltipText: I18n.tr("tooltips.close")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: root.close()
+            }
           }
 
           // Details container with grid/list view toggle
@@ -426,6 +435,8 @@ SmartPanel {
             icon: "close"
             tooltipText: I18n.tr("tooltips.close")
             baseSize: Style.baseWidgetSize * 0.8
+            // Hide this header close button when Ethernet is available; the close button moves to the Ethernet bar
+            visible: !NetworkService.ethernetConnected
             onClicked: root.close()
           }
         }
