@@ -412,7 +412,6 @@ Singleton {
     id: ethernetDeviceShowProcess
     property string ifname: ""
     running: false
-    // Note: Do NOT request GENERAL.SPEED here — it isn't supported on some nmcli versions
     // Speed is resolved via ethtool fallback below to avoid stderr warnings
     command: ["nmcli", "-t", "-f", "GENERAL.CONNECTION,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS", "device", "show", ifname]
 

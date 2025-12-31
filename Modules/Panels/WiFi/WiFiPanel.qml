@@ -108,7 +108,7 @@ SmartPanel {
       anchors.margins: Style.marginL
       spacing: Style.marginM
 
-      // Ethernet info (shown when Ethernet is connected) — placed above Wi‑Fi header per request
+      // Ethernet info (shown when Ethernet is connected)
       NBox {
         visible: NetworkService.ethernetConnected
         Layout.fillWidth: true
