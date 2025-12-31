@@ -88,9 +88,19 @@ SmartPanel {
 
     // Calculate content height based on header + networks list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
+    // Height of the Ethernet card when visible (placed above header)
+    property real ethernetHeight: NetworkService.ethernetConnected ? (ethColumn.implicitHeight + Style.marginM * 2 + Style.marginM) : 0
     property real networksHeight: networksList.implicitHeight
-    property real calculatedHeight: (networksHeight !== 0) ? (headerHeight + networksHeight + Style.marginL * 2 + Style.marginM) : (280 * Style.uiScaleRatio)
-    property real contentPreferredHeight: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0 ? Math.min(root.preferredHeight, calculatedHeight) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
+    // When there are networks, include their height; otherwise reserve a baseline block height.
+    property real stateBlockBaseline: 280 * Style.uiScaleRatio
+    property real calculatedHeight: {
+      const base = headerHeight + ethernetHeight + Style.marginL * 2 + Style.marginM;
+      if (Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0)
+        return base + networksHeight;
+      // Wi‑Fi disabled / scanning / empty states (non-scroll blocks). Use baseline but include Ethernet card height.
+      return base + stateBlockBaseline;
+    }
+    property real contentPreferredHeight: Math.min(root.preferredHeight, calculatedHeight)
 
     ColumnLayout {
       id: mainColumn
@@ -459,128 +469,9 @@ SmartPanel {
         }
       }
 
-      // WiFi disabled state
-      NBox {
-        visible: !Settings.data.network.wifiEnabled
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ColumnLayout {
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-
-          Item {
-            Layout.fillHeight: true
-          }
-
-          NIcon {
-            icon: "wifi-off"
-            pointSize: 48
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: I18n.tr("wifi.panel.disabled")
-            pointSize: Style.fontSizeL
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: I18n.tr("wifi.panel.enable-message")
-            pointSize: Style.fontSizeS
-            color: Color.mOnSurfaceVariant
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-          }
-
-          Item {
-            Layout.fillHeight: true
-          }
-        }
-      }
-
-      // Scanning state (show when no networks and we haven't had any yet)
-      NBox {
-        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && !root.hasHadNetworks
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ColumnLayout {
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          spacing: Style.marginL
-
-          Item {
-            Layout.fillHeight: true
-          }
-
-          NBusyIndicator {
-            running: true
-            color: Color.mPrimary
-            size: Style.baseWidgetSize
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: I18n.tr("wifi.panel.searching")
-            pointSize: Style.fontSizeM
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          Item {
-            Layout.fillHeight: true
-          }
-        }
-      }
-
-      // Empty state when no networks (only show after we've had networks before, meaning a real empty result)
-      NBox {
-        visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && root.hasHadNetworks
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ColumnLayout {
-          anchors.fill: parent
-          spacing: Style.marginL
-
-          Item {
-            Layout.fillHeight: true
-          }
-
-          NIcon {
-            icon: "search"
-            pointSize: 64
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NText {
-            text: I18n.tr("wifi.panel.no-networks")
-            pointSize: Style.fontSizeL
-            color: Color.mOnSurfaceVariant
-            Layout.alignment: Qt.AlignHCenter
-          }
-
-          NButton {
-            text: I18n.tr("wifi.panel.scan-again")
-            icon: "refresh"
-            Layout.alignment: Qt.AlignHCenter
-            onClicked: NetworkService.scan()
-          }
-
-          Item {
-            Layout.fillHeight: true
-          }
-        }
-      }
-
-      // Networks list container (no NBox wrapper)
+      // Unified scrollable content so elements scale and never spill out
       NScrollView {
-        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0
+        id: contentScroll
         Layout.fillWidth: true
         Layout.fillHeight: true
         horizontalPolicy: ScrollBar.AlwaysOff
@@ -588,52 +479,174 @@ SmartPanel {
         clip: true
 
         ColumnLayout {
-          id: networksList
+          id: contentColumn
           width: parent.width
           spacing: Style.marginM
 
-          WiFiNetworksList {
-            label: I18n.tr("wifi.panel.known-networks")
-            model: root.knownNetworks
-            passwordSsid: root.passwordSsid
-            expandedSsid: root.expandedSsid
-            onPasswordRequested: ssid => {
-                                   root.passwordSsid = ssid;
-                                   root.expandedSsid = "";
-                                 }
-            onPasswordSubmitted: (ssid, password) => {
-                                   NetworkService.connect(ssid, password);
-                                   root.passwordSsid = "";
-                                 }
-            onPasswordCancelled: root.passwordSsid = ""
-            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
-            onForgetConfirmed: ssid => {
-                                 NetworkService.forget(ssid);
-                                 root.expandedSsid = "";
-                               }
-            onForgetCancelled: root.expandedSsid = ""
+          // Wi‑Fi disabled state (moved inside the scroll)
+          NBox {
+            id: disabledBox
+            visible: !Settings.data.network.wifiEnabled
+            Layout.fillWidth: true
+            Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginM * 2
+
+            ColumnLayout {
+              id: disabledColumn
+              anchors.fill: parent
+              anchors.margins: Style.marginM
+
+              Item { Layout.fillHeight: true }
+
+              NIcon {
+                icon: "wifi-off"
+                pointSize: 48
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NText {
+                text: I18n.tr("wifi.panel.disabled")
+                pointSize: Style.fontSizeL
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NText {
+                text: I18n.tr("wifi.panel.enable-message")
+                pointSize: Style.fontSizeS
+                color: Color.mOnSurfaceVariant
+                horizontalAlignment: Text.AlignHCenter
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+              }
+
+              Item { Layout.fillHeight: true }
+            }
           }
 
-          WiFiNetworksList {
-            label: I18n.tr("wifi.panel.available-networks")
-            model: root.availableNetworks
-            passwordSsid: root.passwordSsid
-            expandedSsid: root.expandedSsid
-            onPasswordRequested: ssid => {
-                                   root.passwordSsid = ssid;
+          // Scanning state (show when no networks and we haven't had any yet)
+          NBox {
+            id: scanningBox
+            visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && !root.hasHadNetworks
+            Layout.fillWidth: true
+            Layout.preferredHeight: scanningColumn.implicitHeight + Style.marginM * 2
+
+            ColumnLayout {
+              id: scanningColumn
+              anchors.fill: parent
+              anchors.margins: Style.marginM
+              spacing: Style.marginL
+
+              Item { Layout.fillHeight: true }
+
+              NBusyIndicator {
+                running: true
+                color: Color.mPrimary
+                size: Style.baseWidgetSize
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NText {
+                text: I18n.tr("wifi.panel.searching")
+                pointSize: Style.fontSizeM
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              Item { Layout.fillHeight: true }
+            }
+          }
+
+          // Empty state when no networks (only show after we've had networks before, meaning a real empty result)
+          NBox {
+            id: emptyBox
+            visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && root.hasHadNetworks
+            Layout.fillWidth: true
+            Layout.preferredHeight: emptyColumn.implicitHeight + Style.marginM * 2
+
+            ColumnLayout {
+              id: emptyColumn
+              anchors.fill: parent
+              anchors.margins: Style.marginM
+              spacing: Style.marginL
+
+              Item { Layout.fillHeight: true }
+
+              NIcon {
+                icon: "search"
+                pointSize: 64
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NText {
+                text: I18n.tr("wifi.panel.no-networks")
+                pointSize: Style.fontSizeL
+                color: Color.mOnSurfaceVariant
+                Layout.alignment: Qt.AlignHCenter
+              }
+
+              NButton {
+                text: I18n.tr("wifi.panel.scan-again")
+                icon: "refresh"
+                Layout.alignment: Qt.AlignHCenter
+                onClicked: NetworkService.scan()
+              }
+
+              Item { Layout.fillHeight: true }
+            }
+          }
+
+          // Networks list container (moved into the scroll, keep id for height calc)
+          ColumnLayout {
+            id: networksList
+            visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length > 0
+            width: parent.width
+            spacing: Style.marginM
+
+            WiFiNetworksList {
+              label: I18n.tr("wifi.panel.known-networks")
+              model: root.knownNetworks
+              passwordSsid: root.passwordSsid
+              expandedSsid: root.expandedSsid
+              onPasswordRequested: ssid => {
+                                     root.passwordSsid = ssid;
+                                     root.expandedSsid = "";
+                                   }
+              onPasswordSubmitted: (ssid, password) => {
+                                     NetworkService.connect(ssid, password);
+                                     root.passwordSsid = "";
+                                   }
+              onPasswordCancelled: root.passwordSsid = ""
+              onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+              onForgetConfirmed: ssid => {
+                                   NetworkService.forget(ssid);
                                    root.expandedSsid = "";
                                  }
-            onPasswordSubmitted: (ssid, password) => {
-                                   NetworkService.connect(ssid, password);
-                                   root.passwordSsid = "";
+              onForgetCancelled: root.expandedSsid = ""
+            }
+
+            WiFiNetworksList {
+              label: I18n.tr("wifi.panel.available-networks")
+              model: root.availableNetworks
+              passwordSsid: root.passwordSsid
+              expandedSsid: root.expandedSsid
+              onPasswordRequested: ssid => {
+                                     root.passwordSsid = ssid;
+                                     root.expandedSsid = "";
+                                   }
+              onPasswordSubmitted: (ssid, password) => {
+                                     NetworkService.connect(ssid, password);
+                                     root.passwordSsid = "";
+                                   }
+              onPasswordCancelled: root.passwordSsid = ""
+              onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+              onForgetConfirmed: ssid => {
+                                   NetworkService.forget(ssid);
+                                   root.expandedSsid = "";
                                  }
-            onPasswordCancelled: root.passwordSsid = ""
-            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
-            onForgetConfirmed: ssid => {
-                                 NetworkService.forget(ssid);
-                                 root.expandedSsid = "";
-                               }
-            onForgetCancelled: root.expandedSsid = ""
+              onForgetCancelled: root.expandedSsid = ""
+            }
           }
         }
       }
