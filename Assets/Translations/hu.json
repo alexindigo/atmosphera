@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "Rendszerkimenet + mikrofonbemenet",
         "microphone-input": "Mikrofonbemenet",
+        "none": "No audio",
         "system-output": "Rendszerkimenet"
       },
       "color-range": {

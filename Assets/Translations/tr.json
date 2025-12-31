@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "Sistem çıktısı + mikrofon girişi",
         "microphone-input": "Mikrofon girişi",
+        "none": "Ses yok.",
         "system-output": "Sistem çıktısı"
       },
       "color-range": {

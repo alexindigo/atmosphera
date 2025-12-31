@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "Системний вихід + вхід мікрофона",
         "microphone-input": "Вхід мікрофона",
+        "none": "Немає аудіо",
         "system-output": "Системний вихід"
       },
       "color-range": {

@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "Derana pergalê + ketana mîkrofonê",
         "microphone-input": "Ketana mîkrofonê",
+        "none": "Bê deng.",
         "system-output": "Derana pergal"
       },
       "color-range": {

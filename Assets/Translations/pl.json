@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "Wyjście systemowe + mikrofon",
         "microphone-input": "Wejście mikrofonu",
+        "none": "Brak dźwięku.",
         "system-output": "Wyjście systemowe"
       },
       "color-range": {

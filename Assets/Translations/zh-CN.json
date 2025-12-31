@@ -756,6 +756,7 @@
       "audio-sources": {
         "both": "系统输出 + 麦克风输入",
         "microphone-input": "麦克风输入",
+        "none": "No audio",
         "system-output": "系统输出"
       },
       "color-range": {
