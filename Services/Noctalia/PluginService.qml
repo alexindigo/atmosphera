@@ -1126,6 +1126,10 @@ Singleton {
     };
     Logger.d("PluginService", "Backed up bar layout");
 
+    // Backup desktop widget settings (includes this plugin's widgets)
+    var desktopWidgetsBackup = JSON.parse(JSON.stringify(Settings.data.desktopWidgets.monitorWidgets || []));
+    Logger.d("PluginService", "Backed up desktop widget settings");
+
     // Close any open panels for this plugin before update
     for (var slotNum = 1; slotNum <= 2; slotNum++) {
       var panelName = "pluginPanel" + slotNum;
@@ -1162,6 +1166,10 @@ Singleton {
         Settings.data.bar.widgets.right = barBackup.right;
         Logger.d("PluginService", "Restored bar layout");
 
+        // Restore desktop widget settings
+        Settings.data.desktopWidgets.monitorWidgets = desktopWidgetsBackup;
+        Logger.d("PluginService", "Restored desktop widget settings");
+
         // Remove from updates list
         var updates = Object.assign({}, root.pluginUpdates);
         delete updates[pluginId];
@@ -1176,6 +1184,9 @@ Singleton {
         Settings.data.bar.widgets.left = barBackup.left;
         Settings.data.bar.widgets.center = barBackup.center;
         Settings.data.bar.widgets.right = barBackup.right;
+
+        // Restore desktop widget settings even on failure
+        Settings.data.desktopWidgets.monitorWidgets = desktopWidgetsBackup;
 
         if (callback)
           callback(false, error);

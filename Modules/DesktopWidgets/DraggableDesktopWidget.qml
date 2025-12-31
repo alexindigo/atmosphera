@@ -22,10 +22,11 @@ Item {
   readonly property bool isScaling: internal.isScaling
 
   property bool showBackground: (widgetData && widgetData.showBackground !== undefined) ? widgetData.showBackground : true
+  property bool roundedCorners: (widgetData && widgetData.roundedCorners !== undefined) ? widgetData.roundedCorners : true
 
-  property real widgetScale: (widgetData && widgetData.scale !== undefined) ? widgetData.scale : 1.0
+  property real widgetScale: 1.0
   property real minScale: 0.5
-  property real maxScale: 3.0
+  property real maxScale: 5.0
 
   readonly property real scaleSensitivity: 0.0015
   readonly property real scaleUpdateThreshold: 0.015
@@ -103,8 +104,6 @@ Item {
     property real lastScale: 1.0
     // Locks operation type to prevent switching between drag/scale mid-operation
     property string operationType: ""  // "drag" or "scale" or ""
-    property real previousWidth: 0
-    property real centerX: baseX + (previousWidth > 0 ? previousWidth / 2 : root.width / 2)
   }
 
   function snapToGrid(coord) {
@@ -150,6 +149,54 @@ Item {
         var widgets = (newMonitorWidgets[i].widgets || []).slice();
         if (widgetIndex >= 0 && widgetIndex < widgets.length) {
           widgets.splice(widgetIndex, 1);
+          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                 "widgets": widgets
+                                               });
+          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        }
+        break;
+      }
+    }
+  }
+
+  function raiseToTop() {
+    if (widgetIndex < 0 || !screen || !screen.name) {
+      return;
+    }
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === screen.name) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        if (widgetIndex < widgets.length && widgetIndex < widgets.length - 1) {
+          var widget = widgets.splice(widgetIndex, 1)[0];
+          widgets.push(widget);
+          newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
+                                                 "widgets": widgets
+                                               });
+          Settings.data.desktopWidgets.monitorWidgets = newMonitorWidgets;
+        }
+        break;
+      }
+    }
+  }
+
+  function lowerToBottom() {
+    if (widgetIndex < 0 || !screen || !screen.name) {
+      return;
+    }
+
+    var monitorWidgets = Settings.data.desktopWidgets.monitorWidgets || [];
+    var newMonitorWidgets = monitorWidgets.slice();
+
+    for (var i = 0; i < newMonitorWidgets.length; i++) {
+      if (newMonitorWidgets[i].name === screen.name) {
+        var widgets = (newMonitorWidgets[i].widgets || []).slice();
+        if (widgetIndex < widgets.length && widgetIndex > 0) {
+          var widget = widgets.splice(widgetIndex, 1)[0];
+          widgets.unshift(widget);
           newMonitorWidgets[i] = Object.assign({}, newMonitorWidgets[i], {
                                                  "widgets": widgets
                                                });
@@ -236,57 +283,77 @@ Item {
     }
   }
 
-  x: internal.isDragging ? internal.dragOffsetX : internal.baseX
-  y: internal.isDragging ? internal.dragOffsetY : internal.baseY
-
-  // Scale from top-left corner to prevent position drift
-  scale: widgetScale
-  transformOrigin: Item.TopLeft
-
-  // Adjust position when width changes to maintain center position
-  onWidthChanged: {
-    if (!internal.isDragging && !internal.isScaling && internal.previousWidth > 0 && width > 0) {
-      var widthDelta = width - internal.previousWidth;
-      // Adjust baseX to keep center position constant
-      internal.baseX = internal.baseX - widthDelta / 2;
-      internal.centerX = internal.baseX + width / 2;
+  function handleContextMenuAction(action) {
+    if (action === "widget-settings") {
+      // Don't close - openWidgetSettings will use the popup window for the dialog
+      root.openWidgetSettings();
+      return true; // Signal that we're handling close ourselves
+    } else if (action === "reset") {
+      // Reset scale and position to defaults
+      root.widgetScale = 1.0;
+      internal.baseX = root.defaultX;
+      internal.baseY = root.defaultY;
+      root.updateWidgetData({
+                              "scale": 1.0,
+                              "x": Math.round(root.defaultX),
+                              "y": Math.round(root.defaultY)
+                            });
+      return false;
+    } else if (action === "raise-to-top") {
+      root.raiseToTop();
+      return false;
+    } else if (action === "lower-to-bottom") {
+      root.lowerToBottom();
+      return false;
+    } else if (action === "delete") {
+      root.removeWidget();
+      return false; // Let caller close the popup
     }
-    internal.previousWidth = width;
+    return false;
   }
 
+  x: Math.round(internal.isDragging ? internal.dragOffsetX : internal.baseX)
+  y: Math.round(internal.isDragging ? internal.dragOffsetY : internal.baseY)
+
+  // Note: We no longer use transform-based scaling (scale property)
+  // Instead, child widgets multiply their dimensions by widgetScale
+  // This prevents blurry text at fractional scale values
+
   Component.onCompleted: {
-    internal.previousWidth = width;
-    internal.centerX = internal.baseX + width / 2;
+    // Initialize scale from widgetData when component is first created
+    if (widgetData && widgetData.scale !== undefined) {
+      widgetScale = widgetData.scale;
+    }
   }
 
   onWidgetDataChanged: {
-    if (!internal.isDragging) {
+    if (!internal.isDragging && !internal.isScaling) {
       internal.baseX = (widgetData && widgetData.x !== undefined) ? widgetData.x : defaultX;
       internal.baseY = (widgetData && widgetData.y !== undefined) ? widgetData.y : defaultY;
       if (widgetData && widgetData.scale !== undefined) {
         widgetScale = widgetData.scale;
+      } else if (widgetData) {
+        // If widgetData exists but scale is not set, default to 1.0
+        widgetScale = 1.0;
       }
-      // Update centerX and previousWidth when widget data changes
-      internal.previousWidth = width;
-      internal.centerX = internal.baseX + width / 2;
     }
   }
 
   Rectangle {
     id: decorationRect
     anchors.fill: parent
-    anchors.margins: -Style.marginS
+    anchors.margins: -outlineMargin
     color: DesktopWidgetRegistry.editMode ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.1) : Color.transparent
     border.color: (DesktopWidgetRegistry.editMode || internal.isDragging) ? (internal.isDragging ? Color.mOutline : Color.mPrimary) : Color.transparent
     border.width: DesktopWidgetRegistry.editMode ? 3 : 0
-    radius: Style.radiusL
+    radius: Math.round(Style.radiusL * root.widgetScale)
     z: -1
   }
 
   Rectangle {
     id: container
     anchors.fill: parent
-    radius: Style.radiusL
+    radius: root.roundedCorners ? Math.round(Style.radiusL * root.widgetScale) : 0
     color: Color.mSurface
     border {
       width: 1
@@ -336,23 +403,26 @@ Item {
                  });
     }
     items.push({
+                 "label": I18n.tr("context-menu.reset"),
+                 "action": "reset",
+                 "icon": "restore"
+               });
+    items.push({
+                 "label": I18n.tr("context-menu.raise-to-top"),
+                 "action": "raise-to-top",
+                 "icon": "stack-front"
+               });
+    items.push({
+                 "label": I18n.tr("context-menu.lower-to-bottom"),
+                 "action": "lower-to-bottom",
+                 "icon": "stack-back"
+               });
+    items.push({
                  "label": I18n.tr("context-menu.delete"),
                  "action": "delete",
                  "icon": "trash"
                });
     return items;
-  }
-
-  function handleContextMenuAction(action) {
-    if (action === "widget-settings") {
-      // Don't close - openWidgetSettings will use the popup window for the dialog
-      root.openWidgetSettings();
-      return true; // Signal that we're handling close ourselves
-    } else if (action === "delete") {
-      root.removeWidget();
-      return false; // Let caller close the popup
-    }
-    return false;
   }
 
   // Drag MouseArea - handles dragging (left-click)
@@ -391,21 +461,26 @@ Item {
                            var newX = internal.dragOffsetX + deltaX;
                            var newY = internal.dragOffsetY + deltaY;
 
-                           // Boundary clamping - must account for scaled widget size
-                           var scaledWidth = root.width * root.widgetScale;
-                           var scaledHeight = root.height * root.widgetScale;
+                           // Boundary clamping - allow widgets to go partially off-screen (75% can clip)
+                           // This gives users more control over positioning while keeping widgets accessible
+                           var scaledWidth = root.width;
+                           var scaledHeight = root.height;
                            if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                             newX = Math.max(0, Math.min(newX, root.parent.width - scaledWidth));
-                             newY = Math.max(0, Math.min(newY, root.parent.height - scaledHeight));
+                             var minVisibleX = scaledWidth * 0.25;
+                             var minVisibleY = scaledHeight * 0.25;
+                             newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+                             newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
                            }
 
                            if (Settings.data.desktopWidgets.gridSnap) {
                              newX = root.snapToGrid(newX);
                              newY = root.snapToGrid(newY);
-                             // Re-clamp after snapping to ensure widget stays within bounds
+                             // Re-clamp after snapping
                              if (root.parent && scaledWidth > 0 && scaledHeight > 0) {
-                               newX = Math.max(0, Math.min(newX, root.parent.width - scaledWidth));
-                               newY = Math.max(0, Math.min(newY, root.parent.height - scaledHeight));
+                               var minVisibleX = scaledWidth * 0.25;
+                               var minVisibleY = scaledHeight * 0.25;
+                               newX = Math.max(-scaledWidth + minVisibleX, Math.min(newX, root.parent.width - minVisibleX));
+                               newY = Math.max(-scaledHeight + minVisibleY, Math.min(newY, root.parent.height - minVisibleY));
                              }
                            }
 
@@ -416,14 +491,15 @@ Item {
 
     onReleased: mouse => {
                   if (internal.isDragging && internal.operationType === "drag" && widgetIndex >= 0 && screen && screen.name) {
+                    var roundedX = Math.round(internal.dragOffsetX);
+                    var roundedY = Math.round(internal.dragOffsetY);
                     root.updateWidgetData({
-                                            "x": internal.dragOffsetX,
-                                            "y": internal.dragOffsetY
+                                            "x": roundedX,
+                                            "y": roundedY
                                           });
 
-                    internal.baseX = internal.dragOffsetX;
-                    internal.baseY = internal.dragOffsetY;
-                    internal.centerX = internal.baseX + root.width / 2;
+                    internal.baseX = roundedX;
+                    internal.baseY = roundedY;
                     internal.isDragging = false;
                     internal.operationType = "";
                   }
@@ -459,45 +535,45 @@ Item {
   }
 
   // Corner handles for scaling - using Repeater to avoid code duplication
-  readonly property real cornerHandleSize: 8
-  readonly property real outlineMargin: Style.marginS
+  readonly property real cornerHandleSize: 8 * widgetScale
+  readonly property real outlineMargin: Style.marginS * widgetScale
   readonly property color colorHandle: Color.mSecondary
 
-  // Corner handle model: defines position, opposite corner, cursor, and triangle points for each corner
+  // Corner handle model: defines position, direction, cursor, and triangle points for each corner
   // xMult/yMult: multipliers for position (0 = left/top edge, 1 = right/bottom edge)
-  // oppXMult/oppYMult: multipliers for opposite corner calculation
+  // xDir/yDir: direction multiplier for scaling (-1 = left/up increases, 1 = right/down increases)
   // cursor: resize cursor type (FDiag for TL-BR diagonal, BDiag for TR-BL diagonal)
   // points: triangle vertices as [x, y] pairs normalized to cornerHandleSize
   readonly property var cornerHandleModel: [
     {
       xMult: 0,
       yMult: 0,
-      oppXMult: 1,
-      oppYMult: 1,
+      xDir: -1,
+      yDir: -1,
       cursor: Qt.SizeFDiagCursor,
       points: [[0, 0], [1, 0], [0, 1]]
     },
     {
       xMult: 1,
       yMult: 0,
-      oppXMult: 0,
-      oppYMult: 1,
+      xDir: 1,
+      yDir: -1,
       cursor: Qt.SizeBDiagCursor,
       points: [[1, 0], [1, 1], [0, 0]]
     },
     {
       xMult: 0,
       yMult: 1,
-      oppXMult: 1,
-      oppYMult: 0,
+      xDir: -1,
+      yDir: 1,
       cursor: Qt.SizeBDiagCursor,
       points: [[0, 1], [0, 0], [1, 1]]
     },
     {
       xMult: 1,
       yMult: 1,
-      oppXMult: 0,
-      oppYMult: 0,
+      xDir: 1,
+      yDir: 1,
       cursor: Qt.SizeFDiagCursor,
       points: [[1, 1], [1, 0], [0, 1]]
     }
@@ -512,8 +588,9 @@ Item {
       required property int index
 
       visible: DesktopWidgetRegistry.editMode && !internal.isDragging
-      x: modelData.xMult * (root.width + outlineMargin) - (modelData.xMult === 0 ? outlineMargin : cornerHandleSize)
-      y: modelData.yMult * (root.height + outlineMargin) - (modelData.yMult === 0 ? outlineMargin : cornerHandleSize)
+      // Position handles at corners of decoration rectangle (which extends by outlineMargin)
+      x: modelData.xMult === 0 ? -outlineMargin : (root.width + outlineMargin - cornerHandleSize)
+      y: modelData.yMult === 0 ? -outlineMargin : (root.height + outlineMargin - cornerHandleSize)
       width: cornerHandleSize
       height: cornerHandleSize
       z: 2000
@@ -552,20 +629,12 @@ Item {
         acceptedButtons: Qt.LeftButton
         cursorShape: cornerHandle.modelData.cursor
         property point pressPos: Qt.point(0, 0)
-        // Capture opposite corner at press time to avoid feedback loop during scaling
-        property real oppositeCornerX: 0
-        property real oppositeCornerY: 0
-        property real initialDistance: 0
 
         onPressed: mouse => {
                      if (internal.operationType !== "") {
                        return;
                      }
                      pressPos = mapToItem(root.parent, mouse.x, mouse.y);
-                     // Calculate and store opposite corner position using initial scale
-                     oppositeCornerX = root.x + cornerHandle.modelData.oppXMult * root.width * root.widgetScale;
-                     oppositeCornerY = root.y + cornerHandle.modelData.oppYMult * root.height * root.widgetScale;
-                     initialDistance = Math.sqrt(Math.pow(pressPos.x - oppositeCornerX, 2) + Math.pow(pressPos.y - oppositeCornerY, 2));
                      internal.operationType = "scale";
                      internal.isScaling = true;
                      internal.initialScale = root.widgetScale;
@@ -573,13 +642,19 @@ Item {
                    }
 
         onPositionChanged: mouse => {
-                             if (internal.isScaling && pressed && internal.operationType === "scale" && initialDistance > 0) {
+                             if (internal.isScaling && pressed && internal.operationType === "scale") {
                                var currentPos = mapToItem(root.parent, mouse.x, mouse.y);
-                               // Use the fixed opposite corner position captured at press time
-                               var currentDistance = Math.sqrt(Math.pow(currentPos.x - oppositeCornerX, 2) + Math.pow(currentPos.y - oppositeCornerY, 2));
+                               var deltaX = currentPos.x - pressPos.x;
+                               var deltaY = currentPos.y - pressPos.y;
 
-                               var scaleRatio = currentDistance / initialDistance;
-                               var newScale = Math.max(minScale, Math.min(maxScale, internal.initialScale * scaleRatio));
+                               // Project delta onto the diagonal direction for this corner
+                               // xDir/yDir indicate which direction increases scale
+                               var diagonalDelta = (deltaX * cornerHandle.modelData.xDir + deltaY * cornerHandle.modelData.yDir) / Math.sqrt(2);
+
+                               // Scale sensitivity: pixels of drag per 1.0 scale change
+                               var sensitivity = 150;
+                               var scaleDelta = diagonalDelta / sensitivity;
+                               var newScale = Math.max(root.minScale, Math.min(root.maxScale, internal.initialScale + scaleDelta));
 
                                if (!isNaN(newScale) && newScale > 0) {
                                  root.widgetScale = newScale;

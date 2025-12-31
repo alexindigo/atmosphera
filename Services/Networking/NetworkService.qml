@@ -301,7 +301,8 @@ Singleton {
 
   // Helper functions
   function signalIcon(signal, isConnected) {
-    if (isConnected === undefined) isConnected = false;
+    if (isConnected === undefined)
+      isConnected = false;
     if (isConnected && !root.internetConnectivity)
       return "world-off";
     if (signal >= 80)
@@ -315,6 +316,19 @@ Singleton {
 
   function isSecured(security) {
     return security && security !== "--" && security.trim() !== "";
+  }
+
+  function getSignalStrengthLabel(signal) {
+    switch (true) {
+    case (signal >= 80):
+      return I18n.tr("wifi.signal.excellent");
+    case (signal >= 50):
+      return I18n.tr("wifi.signal.good");
+    case (signal >= 20):
+      return I18n.tr("wifi.signal.fair");
+    default:
+      return I18n.tr("wifi.signal.poor");
+    }
   }
 
   // Processes
@@ -602,9 +616,11 @@ Singleton {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line) continue;
+          if (!line)
+          continue;
           const idx = line.indexOf(":");
-          if (idx === -1) continue;
+          if (idx === -1)
+          continue;
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
           if (key.indexOf("IP4.ADDRESS") === 0) {
@@ -650,15 +666,43 @@ Singleton {
       onStreamFinished: {
         const details = root.activeWifiDetails || ({});
         let rate = "";
+        let freq = "";
         const lines = text.split("\n");
         for (var k = 0; k < lines.length; k++) {
           var line2 = lines[k].trim();
           var low = line2.toLowerCase();
           if (low.indexOf("tx bitrate:") === 0) {
             rate = line2.substring(11).trim();
-            break;
+          } else if (low.indexOf("freq:") === 0) {
+            freq = line2.substring(5).trim();
           }
         }
+
+        // Determine band from frequency
+        // https://en.wikipedia.org/wiki/List_of_WLAN_channels
+        let band = "";
+        if (freq) {
+          const f = +freq;
+          if (f) {
+            switch (true) {
+              // https://en.wikipedia.org/wiki/List_of_WLAN_channels#6_GHz_(802.11ax_and_802.11be)
+              case (f >= 5925 && f < 7125):
+              band = "6 GHz";
+              break;
+              // https://en.wikipedia.org/wiki/List_of_WLAN_channels#5_GHz_(802.11a/h/n/ac/ax/be)
+              case (f >= 5150 && f < 5925):
+              band = "5 GHz";
+              break;
+              // https://en.wikipedia.org/wiki/List_of_WLAN_channels#2.4_GHz_(802.11b/g/n/ax/be)
+              case (f >= 2400 && f < 2500):
+              band = "2.4 GHz";
+              break;
+              default:
+              band = `${f} MHz`;
+            }
+          }
+        }
+
         // Shorten verbose bitrate strings like: "360.0 MBit/s VHT-MCS 8 40MHz short GI"
         let rateShort = "";
         if (rate) {
@@ -667,7 +711,8 @@ Singleton {
           var compact = [];
           for (var i = 0; i < parts.length; i++) {
             var p = parts[i];
-            if (p && p.length > 0) compact.push(p);
+            if (p && p.length > 0)
+            compact.push(p);
           }
           // Find a token that represents Mbit/s and use the previous number
           var unitIdx = -1;
@@ -693,6 +738,7 @@ Singleton {
         }
         details.rate = rate;
         details.rateShort = rateShort;
+        details.band = band;
         root.activeWifiDetails = details;
         root.activeWifiDetailsTimestamp = Date.now();
         root.detailsLoading = false;
@@ -813,7 +859,7 @@ Singleton {
     id: pingCheckProcess
     command: ["sh", "-c", "ping -c1 -W2 ping.archlinux.org >/dev/null 2>&1 || " + "ping -c1 -W2 1.1.1.1 >/dev/null 2>&1 || " + "curl -fsI --max-time 5 https://cloudflare.com/cdn-cgi/trace >/dev/null 2>&1"]
 
-    onExited: function(exitCode, exitStatus) {
+    onExited: function (exitCode, exitStatus) {
       if (exitCode === 0) {
         connectivityCheckProcess.failedChecks = 0;
       } else {
@@ -863,12 +909,12 @@ Singleton {
       onStreamFinished: {
         if (text && text.trim()) {
           Logger.w("Network", "Profile check stderr:", text.trim());
-        }
-        // Fail safe
-        if (root.scanning) {
-          root.scanning = false;
-          delayedScanTimer.interval = 5000;
-          delayedScanTimer.restart();
+          // Fail safe - only restart scan on actual error
+          if (root.scanning) {
+            root.scanning = false;
+            delayedScanTimer.interval = 5000;
+            delayedScanTimer.restart();
+          }
         }
       }
     }
@@ -971,8 +1017,12 @@ Singleton {
         // Logging
         const oldSSIDs = Object.keys(root.networks);
         const newSSIDs = Object.keys(networksMap);
-        const newNetworks = newSSIDs.filter(function(ssid) { return oldSSIDs.indexOf(ssid) === -1; });
-        const lostNetworks = oldSSIDs.filter(function(ssid) { return newSSIDs.indexOf(ssid) === -1; });
+        const newNetworks = newSSIDs.filter(function (ssid) {
+          return oldSSIDs.indexOf(ssid) === -1;
+        });
+        const lostNetworks = oldSSIDs.filter(function (ssid) {
+          return newSSIDs.indexOf(ssid) === -1;
+        });
 
         if (newNetworks.length > 0 || lostNetworks.length > 0) {
           if (newNetworks.length > 0) {

@@ -17,7 +17,7 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real scaling: 1.0
+  property real barScaling: 1.0
 
   // Settings
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -47,9 +47,10 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
 
   // Dimensions
-  readonly property int iconSize: Math.round(18 * scaling)
-  readonly property int artSize: Math.round(21 * scaling)
-  readonly property int verticalSize: Math.round((Style.baseWidgetSize - 5) * scaling)
+  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
+  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
+  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
+  readonly property int textSize: Math.round(Style.capsuleHeight * 0.4 * barScaling)
 
   // State
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
@@ -67,7 +68,7 @@ Item {
   }
 
   // CavaService registration for visualizer
-  readonly property string cavaComponentId: "bar:mediamini:" + root.screen.name + ":" + root.section + ":" + root.sectionWidgetIndex
+  readonly property string cavaComponentId: "bar:mediamini:" + root.screen?.name + ":" + root.section + ":" + root.sectionWidgetIndex
   readonly property bool needsCava: root.showVisualizer && root.visualizerType !== "" && root.visualizerType !== "none"
 
   onNeedsCavaChanged: {
@@ -115,10 +116,10 @@ Item {
     // Add spacing and text width
     var textWidth = 0;
     if (titleMetrics.contentWidth > 0) {
-      textWidth = Style.marginS * scaling + titleMetrics.contentWidth + Style.marginXXS * 2;
+      textWidth = Style.marginS * barScaling + titleMetrics.contentWidth + Style.marginXXS * 2;
     }
 
-    var margins = isVertical ? 0 : (Style.marginS * scaling * 2);
+    var margins = isVertical ? 0 : (Style.marginS * barScaling * 2);
     var total = iconWidth + textWidth + margins;
     return hasPlayer ? Math.min(total, maxWidth) : total;
   }
@@ -148,7 +149,7 @@ Item {
     visible: false
     text: title
     applyUiScale: false
-    pointSize: Style.fontSizeS * scaling
+    pointSize: root.textSize
     font.weight: Style.fontWeightMedium
   }
 
@@ -230,14 +231,14 @@ Item {
 
     Item {
       anchors.fill: parent
-      anchors.leftMargin: isVertical ? 0 : Style.marginS * scaling
-      anchors.rightMargin: isVertical ? 0 : Style.marginS * scaling
+      anchors.leftMargin: isVertical ? 0 : Style.marginS * barScaling
+      anchors.rightMargin: isVertical ? 0 : Style.marginS * barScaling
       clip: true
 
       // Visualizer
       Loader {
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
+        x: Style.pixelAlignCenter(parent.width, width)
+        y: Style.pixelAlignCenter(parent.height, height)
         width: parent.width
         height: parent.height
         active: showVisualizer
@@ -259,7 +260,7 @@ Item {
       RowLayout {
         anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * scaling
+        spacing: Style.marginS * barScaling
         visible: !isVertical
         z: 1
 
@@ -268,7 +269,7 @@ Item {
           visible: !hasPlayer || (!showAlbumArt && !showProgressRing)
           icon: hasPlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeL * scaling
+          pointSize: iconSize * 0.85
           Layout.preferredWidth: iconSize
           Layout.preferredHeight: iconSize
           Layout.alignment: Qt.AlignVCenter
@@ -286,17 +287,17 @@ Item {
             anchors.fill: parent
             visible: showProgressRing
             progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-            lineWidth: 2 * scaling
+            lineWidth: 2 * barScaling
           }
 
           Item {
             anchors.fill: parent
-            anchors.margins: showProgressRing ? (3 * scaling) : 0.5
+            anchors.margins: showProgressRing ? (3 * barScaling) : 0.5
 
             NImageRounded {
               visible: showAlbumArt && hasPlayer
               anchors.fill: parent
-              anchors.margins: showProgressRing ? 0 : -1 * scaling
+              anchors.margins: showProgressRing ? 0 : -1 * barScaling
               radius: width / 2
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
@@ -306,10 +307,11 @@ Item {
 
             NIcon {
               visible: !showAlbumArt && showProgressRing && hasPlayer
-              anchors.centerIn: parent
+              x: Style.pixelAlignCenter(parent.width, width)
+              y: Style.pixelAlignCenter(parent.height, contentHeight)
               icon: MediaService.isPlaying ? "media-pause" : "media-play"
               color: Color.mOnSurface
-              pointSize: 8 * scaling
+              pointSize: 8 * barScaling
             }
           }
         }
@@ -319,13 +321,13 @@ Item {
           id: titleContainer
           Layout.fillWidth: true
           Layout.alignment: Qt.AlignVCenter
-          Layout.preferredHeight: titleMetrics.height
+          Layout.preferredHeight: Style.capsuleHeight
 
           ScrollingText {
             anchors.fill: parent
             text: title
             textColor: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            fontSize: Style.fontSizeS * scaling
+            fontSize: root.textSize
             scrollMode: scrollingMode
             needsScroll: titleMetrics.contentWidth > parent.width
           }
@@ -334,38 +336,39 @@ Item {
 
       // Vertical layout
       Item {
+        id: verticalLayout
         visible: isVertical
-        anchors.centerIn: parent
-        width: showProgressRing ? (Style.baseWidgetSize * 0.5 * scaling) : (verticalSize - 4 * scaling)
+        width: verticalSize
         height: width
+        x: Style.pixelAlignCenter(parent.width, width)
+        y: Style.pixelAlignCenter(parent.height, height)
         z: 1
 
         ProgressRing {
           anchors.fill: parent
-          anchors.margins: -4
           visible: showProgressRing
           progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-          lineWidth: 2.5 * scaling
+          lineWidth: Style.toOdd(2 * barScaling)
         }
 
         NImageRounded {
           visible: showAlbumArt && hasPlayer
           anchors.fill: parent
+          anchors.margins: showProgressRing ? Style.toOdd(verticalSize * 0.2) : 0
           radius: width / 2
           imagePath: MediaService.trackArtUrl
           fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
-          fallbackIconSize: 12
+          fallbackIconSize: Style.toOdd(verticalSize * 0.65)
           borderWidth: 0
         }
 
         NIcon {
           visible: !showAlbumArt || !hasPlayer
-          anchors.centerIn: parent
-          width: parent.width
-          height: parent.height
+          x: Style.pixelAlignCenter(parent.width, contentWidth)
+          y: Style.pixelAlignCenter(parent.height, contentHeight)
           icon: hasPlayer ? (MediaService.isPlaying ? "media-pause" : "media-play") : "disc"
           color: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-          pointSize: Style.fontSizeM * scaling
+          pointSize: Style.toOdd(verticalSize * 0.5)
         }
       }
 
@@ -544,11 +547,12 @@ Item {
 
     Item {
       id: scrollContainer
-      height: parent.height
+      y: (parent.height - titleText.contentHeight) / 2
+      height: titleText.contentHeight
       property real scrollX: 0
       x: scrollX
 
-      RowLayout {
+      Row {
         spacing: 50
         NText {
           id: titleText

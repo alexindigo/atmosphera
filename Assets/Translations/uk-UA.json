@@ -55,6 +55,10 @@
           "description": "Виберіть, як ви хочете, щоб це значення відображалося.",
           "label": "Режим відображення"
         },
+        "hide-if-not-detected": {
+          "description": "Приховати віджет, коли в системі не виявлено акумулятор.",
+          "label": "Приховати, якщо не виявлено"
+        },
         "low-battery-threshold": {
           "description": "Показувати попередження, коли батарея падає нижче цього відсотка.",
           "label": "Поріг попередження про низький заряд батареї"
@@ -90,6 +94,10 @@
           "label": "Горизонтальна панель"
         },
         "preview": "Попередній перегляд",
+        "tooltip-format": {
+          "description": "Рядок формату для підказки, що відображається при наведенні на годинник. Залиште порожнім, щоб використовувати стандартну підказку.",
+          "label": "Формат підказки"
+        },
         "use-custom-font": {
           "description": "Замінити стандартний вибір шрифту власним шрифтом для годинника.",
           "label": "Використовувати власний шрифт"
@@ -279,7 +287,7 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
+        "hide-widget-when-zero": {
           "description": "Приховувати значок сповіщень, коли немає непрочитаних сповіщень.",
           "label": "Приховувати значок при нулі"
         },
@@ -299,6 +307,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Відображати статистику у вигляді міні-діаграм замість текстових значень. Запобігає зсуву макета.",
+          "label": "Компактний режим"
+        },
         "cpu-temperature": {
           "description": "Показувати показники температури ЦП, якщо доступно.",
           "label": "Температура ЦП"
@@ -330,6 +342,10 @@
         "storage-usage": {
           "description": "Показувати інформацію про використання дискового простору.",
           "label": "Використання сховища"
+        },
+        "use-monospace-font": {
+          "description": "Використовуйте моноширинний шрифт для забезпечення сталої ширини символів.",
+          "label": "Моноширинний шрифт"
         }
       },
       "taskbar": {
@@ -409,6 +425,10 @@
           "description": "Відображати робочі простори з поточного активного екрана, а не з екрана, на якому розташована панель.",
           "label": "Слідувати за активним eкраном"
         },
+        "grouped-border-opacity": {
+          "description": "Встановити рівень непрозорості для меж контейнерів робочої області.",
+          "label": "Прозорість межі"
+        },
         "hide-unoccupied": {
           "description": "Не відображати робочі простори без вікон.",
           "label": "Приховати незайняті"
@@ -424,6 +444,10 @@
         "show-labels-only-when-occupied": {
           "description": "Показувати мітки робочих просторів лише тоді, коли вони містять вікна.",
           "label": "Показувати мітки лише коли поле заповнене"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Встановити рівень непрозорості для неактивних іконок застосунків.",
+          "label": "Неактивні іконки, непрозорість"
         }
       }
     }
@@ -449,18 +473,30 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Доступні пристрої",
+      "battery": "Акумулятор",
       "blocked": "Заблоковано",
       "connect": "Підключити",
       "connected-devices": "Підключені пристрої",
       "connecting": "Підключення…",
+      "device-address": "Адреса пристрою",
       "disabled": "Bluetooth вимкнено",
       "disconnect": "Відключити",
+      "discoverable": "Виявний",
       "enable-message": "Увімкніть Bluetooth, щоб побачити доступні пристрої.",
+      "info": "Інформація",
       "known-devices": "Відомі пристрої",
+      "no-devices": "Пристрої недоступні",
+      "pair": "Пара",
+      "paired": "У парі",
+      "paired-devices": "З'єднані пристрої",
       "pairing": "Створення пари...",
       "pairing-mode": "Переконайтеся, що ваш пристрій у режимі з'єднання.",
+      "refresh-devices": "Оновити пристрої",
       "scanning": "Сканування пристроїв...",
-      "title": "Bluetooth"
+      "signal": "Сигнал",
+      "title": "Bluetooth",
+      "trusted": "Надійний",
+      "unpair": "Розірвати пару"
     }
   },
   "calendar": {
@@ -512,7 +548,7 @@
     }
   },
   "clock": {
-    "tooltip": "Годинник"
+    "tooltip": "Календар"
   },
   "common": {
     "add": "Додати",
@@ -520,7 +556,9 @@
     "cancel": "Скасувати",
     "check-settings": "Перевірте налаштування для деталей.",
     "close": "Закрити",
-    "save": "Зберегти"
+    "no": "Ні",
+    "save": "Зберегти",
+    "yes": "Так"
   },
   "context-menu": {
     "clear-history": "Очистити історію",
@@ -535,6 +573,7 @@
     "enable-bluetooth": "Увімкнути Bluetooth",
     "enable-dnd": "Увімкнути режим \"Не турбувати\"",
     "enable-wifi": "Увімкнути Wi-Fi",
+    "lower-to-bottom": "Опустити донизу",
     "next": "Наступний",
     "open-calendar": "Відкрити календар",
     "open-display-settings": "Параметри дисплея",
@@ -544,7 +583,9 @@
     "pause": "Пауза",
     "play": "Відтворити",
     "previous": "Попередній",
+    "raise-to-top": "Підняти вгору",
     "random-wallpaper": "Випадкові шпалери",
+    "reset": "Скинути",
     "toggle-mute": "Увімкнути/вимкнути звук",
     "widget-settings": "Налаштування віджета"
   },
@@ -568,6 +609,18 @@
       "chat": "Чат",
       "development": "Розвиток",
       "education": "Освіта",
+      "emoji": {
+        "activity": "Активність",
+        "animals": "Тварини",
+        "flags": "Прапори",
+        "food": "Їжа та напої",
+        "nature": "Природа",
+        "objects": "Об'єкти",
+        "people": "Люди та тіло",
+        "recent": "Нещодавні",
+        "symbols": "Символи",
+        "travel": "Подорожі та місця"
+      },
       "game": "Ігри",
       "graphics": "Графіка",
       "misc": "Різне",
@@ -619,7 +672,8 @@
         "comfortable": "Просторий",
         "compact": "Компактний",
         "default": "Стандартний",
-        "mini": "Міні"
+        "mini": "Міні",
+        "spacious": "Просторий"
       },
       "position": {
         "bottom": "Знизу",
@@ -673,10 +727,10 @@
         "bottom_center": "Знизу по центру",
         "bottom_left": "Знизу зліва",
         "bottom_right": "Знизу справа",
-        "center": "Центр (за замовчуванням)",
+        "center": "Центр",
         "center_left": "Зліва по центру",
         "center_right": "Справа по центру",
-        "follow_bar": "Слідувати за панеллю (за замовчуванням)",
+        "follow_bar": "Слідувати за панеллю",
         "top_center": "Зверху по центру",
         "top_left": "Зверху зліва",
         "top_right": "Зверху справа"
@@ -721,7 +775,7 @@
       "never": "Ніколи не прокручувати"
     },
     "settings-panel-mode": {
-      "attached": "Панель, прикріплена до стійки",
+      "attached": "Панель прикріплена до панелі",
       "centered": "Центрована панель",
       "window": "Окреме вікно"
     },
@@ -997,6 +1051,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Встановити прозорість фону спеціально для панелі.",
+          "label": "Прозорість фону панелі"
+        },
         "capsule-opacity": {
           "description": "Встановити рівень непрозорості для фону віджетів, коли показано капсулу.",
           "label": "Непрозорість капсули"
@@ -1035,9 +1093,9 @@
           "description": "Відображає видиму рамку навколо кожного віджета.",
           "label": "Показувати контури віджетів"
         },
-        "transparent": {
-          "description": "Це запобіжить прикріпленню панелей до планки.",
-          "label": "Прозорий фон"
+        "use-separate-opacity": {
+          "description": "Увімкнути використання окремого значення прозорості для фону панелі.",
+          "label": "Використовувати окрему прозорість стовпців"
         }
       },
       "monitors": {
@@ -1149,14 +1207,15 @@
       "templates": {
         "compositors": {
           "description": "Оформлення композитора.",
+          "hyprland": {
+            "description": "Записати {filepath}"
+          },
           "label": "Композитори",
           "mango": {
-            "description": "Записати {filepath}. Потребує mango",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} — потребує mango"
           },
           "niri": {
-            "description": "Записати {filepath}. Потребує niri v25.11+",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} — потребує niri v25.11+"
           }
         },
         "misc": {
@@ -1169,54 +1228,46 @@
         },
         "programs": {
           "cava": {
-            "description": "Записати {filepath}",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath}"
           },
           "code": {
-            "description": "Записати {filepath} — тему HyprLuna потрібно встановити та активувати вручну",
-            "description-missing": "Клієнт Code не виявлено — встановіть VSCode або VSCodium"
+            "description": "Записати {filepath}",
+            "description-detected": "Застосовано до профілю за замовчуванням — виявлено: {clients}",
+            "description-missing": "Редактор коду не виявлено (VSCode або VSCodium)"
           },
           "description": "Оформлення окремих застосункiв.",
           "discord": {
-            "description": "Записати {filepath} для {client} — тему HyprLuna потрібно активувати вручну",
-            "description-missing": "Клієнт Discord не виявлено — встановіть vencord, vesktop, webcord, armcord, equibop, lightcord або dorion"
+            "description": "Записати {filepath} для {client} — тему потрібно активувати вручну",
+            "description-detected": "Виявлено: {clients}",
+            "description-missing": "Клієнт Discord не виявлено"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el<br>Застосувати вручну: (load-theme 'noctalia t)",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "label": "Застосунки",
           "pywalfox": {
-            "description": "Записати {filepath} та запустити pywalfox update",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та запустити pywalfox update"
           },
           "spicetify": {
-            "description": "Записати {filepath} — тему Comfy потрібно встановити та активувати вручну",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} — тему Comfy потрібно встановити та активувати вручну"
           },
           "telegram": {
-            "description": "Записати {filepath}",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath}"
           },
           "vicinae": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "walker": {
-            "description": "Записати {filepath} та встановити тему noctalia",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та встановити тему noctalia"
           },
           "yazi": {
-            "description": "Записати {filepath} — flavor потрібно активувати вручну",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} — flavor потрібно активувати вручну"
           },
           "zed": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           }
         },
         "section": {
@@ -1225,26 +1276,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "description": "Оформлення емулятора терміналу.",
           "foot": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "ghostty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "kitty": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібна установка {app}"
+            "description": "Записати {filepath} та перезавантажити"
           },
           "label": "Термінал",
           "wezterm": {
-            "description": "Записати {filepath} та перезавантажити",
-            "description-missing": "Потрібно встановити {app}"
+            "description": "Записати {filepath} та перезавантажити"
           }
         },
         "ui": {
@@ -1340,6 +1386,10 @@
         "sectionLeft": "Лівий",
         "sectionRight": "Правий"
       },
+      "system-monitor-disk-path": {
+        "description": "Виберіть точку монтування диска, яку повинна відстежувати карта системного монітора в центрі керування.",
+        "label": "Шлях до диска системного монітора"
+      },
       "title": "Центр керування"
     },
     "desktop-widgets": {
@@ -1371,9 +1421,9 @@
           "label": "Мінімальний режим"
         },
         "preview": "Попередній перегляд",
-        "section": {
-          "description": "Налаштуйте вигляд віджета годинника.",
-          "label": "Віджет годинника"
+        "rounded-corners": {
+          "description": "Використовуйте заокруглені кути для фону віджета.",
+          "label": "Заокруглені кути"
         },
         "show-background": {
           "description": "Показати фоновий контейнер для віджета годинника.",
@@ -1389,6 +1439,7 @@
         },
         "style": {
           "analog": "Аналоговий",
+          "binary": "Двійковий",
           "description": "Виберіть стиль відображення годинника.",
           "digital": "Цифровий",
           "label": "Стиль годинника",
@@ -1440,9 +1491,13 @@
           "description": "Керує поведінкою віджета, коли медіа не відтворюється.",
           "label": "Режим приховування"
         },
-        "section": {
-          "description": "Налаштуйте вигляд віджета медіаплеєра.",
-          "label": "Віджет медіаплеєра"
+        "rounded-corners": {
+          "description": "Увімкнути заокруглені кути на краях віджета.",
+          "label": "Заокруглені кути"
+        },
+        "show-album-art": {
+          "description": "Показати обкладинку альбому та інформацію про треки (назва та виконавець).",
+          "label": "Показувати обкладинку альбому та назву"
         },
         "show-background": {
           "description": "Показати фоновий контейнер для віджета медіаплеєра.",
@@ -1452,13 +1507,13 @@
           "description": "Показати кнопки керування медіа (відтворення/пауза, попередній, наступний) на віджеті медіаплеєра.",
           "label": "Показати кнопки"
         },
+        "show-visualizer": {
+          "description": "Показати накладання аудіовізуалізатора.",
+          "label": "Показати візуалізатор"
+        },
         "visualizer-type": {
           "description": "Оберіть тип візуалізації для фону медіаплеєра на робочому столі.",
           "label": "Тип візуалізації"
-        },
-        "visualizer-visibility": {
-          "description": "Керувати видимістю аудіовізуалізатора.",
-          "label": "Видимість аудіовізуалізатора"
         }
       },
       "title": "Настільні віджети",
@@ -1467,19 +1522,9 @@
           "description": "Показувати погодний віджет на робочому столі.",
           "label": "Увімкнути віджет погоди"
         },
-        "section": {
-          "description": "Налаштуйте вигляд віджета погоди.",
-          "label": "Віджет погоди"
-        },
         "show-background": {
           "description": "Показати фоновий контейнер для погодного віджета.",
           "label": "Показати фон"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Додати та налаштувати віджети робочого столу",
-          "label": "Настільні віджети"
         }
       }
     },
@@ -1765,6 +1810,10 @@
           "description": "Використовувати нативні системні іконки замість іконок Tabler.",
           "label": "Використовувати нативні іконки"
         },
+        "ignore-mouse-input": {
+          "description": "Вимкнути взаємодію з мишею та коліщатко прокрутки в лаунчері.",
+          "label": "Ігнорувати введення миші"
+        },
         "position": {
           "description": "Виберіть, де з'являється панель лаунчера.",
           "label": "Положення"
@@ -1924,6 +1973,24 @@
         "section": {
           "description": "Налаштуйте, як довго сповіщення залишаються видимими залежно від рівня терміновості.",
           "label": "Тривалість сповіщень"
+        }
+      },
+      "history": {
+        "critical-urgency": {
+          "description": "Зберігати сповіщення з критичним пріоритетом в історії.",
+          "label": "Зберігати критичну терміновість в історії"
+        },
+        "low-urgency": {
+          "description": "Зберігати сповіщення з низьким пріоритетом в історії.",
+          "label": "Зберігати низьку терміновість в історії"
+        },
+        "normal-urgency": {
+          "description": "Зберігати сповіщення з нормальним пріоритетом в історії.",
+          "label": "Зберігати нормальну терміновість в історії"
+        },
+        "section": {
+          "description": "Керування тим, які сповіщення зберігаються в історії залежно від рівня терміновості.",
+          "label": "Історія"
         }
       },
       "monitors": {
@@ -2169,7 +2236,7 @@
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
       "update-success": "Оновлено {plugin} до версії {version}",
       "update-version": "v{current} → v{new}",
-      "updating": "Оновлення {plugin}..."
+      "updating": "Оновлення..."
     },
     "screen-recorder": {
       "audio": {
@@ -2187,6 +2254,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "Скопіювати файл у буфер обміну після завершення запису.",
+          "label": "Скопіювати в буфер обміну"
+        },
         "output-folder": {
           "description": "Тека, де зберігатимуться записи екрана.",
           "label": "Тека виведення",
@@ -2280,6 +2351,10 @@
         "description": "Відображати заголовок та кнопку закриття в верхній частині меню сеансу.",
         "label": "Показувати заголовок"
       },
+      "show-number-labels": {
+        "description": "Відображати числові мітки (1-2-3-4...) на кнопках і увімкнути числові гарячі клавіші для швидкого вибору.",
+        "label": "Показувати числові мітки"
+      },
       "title": "Меню сеансу"
     },
     "system-monitor": {
@@ -2292,12 +2367,21 @@
       "custom-highlight-colors-title": {
         "label": "Власні кольори підсвічування"
       },
+      "disk-path": {
+        "description": "Виберіть точку монтування диска для моніторингу.",
+        "label": "Шлях до диска"
+      },
       "disk-section": {
         "label": "Використання диска"
       },
-      "enable-nvidia-gpu": {
-        "description": "Увага: Це розбудить ваш графічний процесор NVIDIA, що може значно вплинути на час роботи акумулятора на ноутбуках з гібридною графікою.",
-        "label": "Увімкнути моніторинг GPU NVIDIA"
+      "enable-dgpu-monitoring": {
+        "description": "Увага: Це розбудить ваш дискретний графічний процесор (NVIDIA/AMD), що може значно вплинути на час роботи акумулятора на ноутбуках з гібридною графікою.",
+        "label": "Увімкнути моніторинг дискретного GPU"
+      },
+      "external-monitor": {
+        "description": "Введіть команду або шлях до програми для запуску при активації зовнішньої програми моніторингу системи.",
+        "label": "Команда зовнішнього монітора системи",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       },
       "general": {
         "section": {
@@ -2414,6 +2498,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Алфавітний",
+          "description": "Виберіть, як вибираються шпалери при автоматичній зміні.",
+          "label": "Режим зміни",
+          "random": "Випадковий"
+        },
         "custom-interval": {
           "description": "Введіть час як ГГ:ХХ (напр., 01:30).",
           "label": "Власний інтервал"
@@ -2425,6 +2515,10 @@
         "random-wallpaper": {
           "description": "Планувати випадкову зміну шпалер через регулярні інтервали.",
           "label": "Випадкові шпалери"
+        },
+        "scheduled-change": {
+          "description": "Автоматично змінювати шпалери через регулярні інтервали.",
+          "label": "Запланована зміна"
         },
         "section": {
           "label": "Автоматизація"
@@ -2547,6 +2641,18 @@
     "welcome-back": "З поверненням,",
     "widget-settings-title": "Налаштування {widget}"
   },
+  "system-monitor": {
+    "cpu-temp": "Температура ЦП",
+    "cpu-usage": "Використання ЦП",
+    "disk": "Диск",
+    "download": "Завантажити",
+    "download-speed": "Швидкість завантаження",
+    "gpu-temp": "Температура GPU",
+    "memory": "Пам'ять",
+    "title": "Системний монітор",
+    "upload": "Завантажити",
+    "upload-speed": "Швидкість завантаження"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Вимкнено",
@@ -2558,8 +2664,20 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
+      "confirm-code": "Підтвердьте код {value} на іншому пристрої",
+      "connect-failed": "Не вдалося під'єднатися до пристрою.",
       "disabled": "Вимкнено",
-      "enabled": "Увімкнено"
+      "disconnect-failed": "Не вдалося від'єднатися від пристрою",
+      "discoverable-change-failed": "Не вдалося змінити стан видимості",
+      "discoverable-disabled": "Виявлення вимкнено",
+      "discoverable-enabled": "Виявлення ввімкнено",
+      "display-code": "Введіть код {value} на іншому пристрої",
+      "enabled": "Увімкнено",
+      "forget-failed": "Не вдалося забути пристрій",
+      "pair-failed": "Не вдалося створити пару з пристроєм",
+      "passkey-required": "Потрібен ключ доступу, що зберігається на пристрої",
+      "pincode-required": "PIN-код, необхідний пристроєм",
+      "state-change-failed": "Не вдалося змінити стан Bluetooth"
     },
     "clipboard": {
       "unavailable": "Історія буфера обміну недоступна",
@@ -2642,9 +2760,13 @@
     },
     "wifi": {
       "connected": "Підключено до '{ssid}'",
+      "connection-failed": "З'єднання не вдалося",
+      "connection-timeout": "Час очікування з'єднання вичерпано.",
       "disabled": "Вимкнено",
       "disconnected": "Відключено від '{ssid}'",
-      "enabled": "Увімкнено"
+      "enabled": "Увімкнено",
+      "incorrect-password": "Неправильний пароль",
+      "network-not-found": "Мережу не знайдено"
     }
   },
   "tooltips": {
@@ -2668,6 +2790,7 @@
     "grid-view": "Мережевий вигляд",
     "hidden-files-hide": "Приховані файли",
     "hidden-files-show": "Приховані файли",
+    "hide-unnamed-devices": "Приховати пристрої без назви",
     "home": "Домашній каталог",
     "input-muted": "Увімкнути/вимкнути вимкнення звуку мікрофона",
     "keep-awake": "Заборона сну",
@@ -2710,6 +2833,7 @@
     "search-close": "Закрити пошук",
     "session-menu": "Меню сеансу",
     "set-power-profile": "{profile} профіль живлення",
+    "show-all-devices": "Показати всі пристрої",
     "start-screen-recording": "Запис екрана",
     "stop-screen-recording": "Запис екрана",
     "switch-to-dark-mode": "Темний режим",
@@ -2731,6 +2855,11 @@
     "no-match": "Збігів не знайдено.",
     "no-wallpaper": "Шпалери не знайдено.",
     "panel": {
+      "apikey": {
+        "help": "Для доступу до контенту NSFW потрібен ключ API.",
+        "label": "Ключ API",
+        "placeholder": "Введіть свій API-ключ Wallhaven"
+      },
       "apply-all-monitors": {
         "description": "Застосувати вибрані шпалери до всіх моніторів одночасно.",
         "label": "Застосувати до всіх моніторів"
@@ -2749,6 +2878,7 @@
       "purity": {
         "all": "Всі",
         "label": "Фільтр контенту",
+        "nsfw": "NSFW → Не для перегляду на роботі / 18+ / Контент для дорослих",
         "sfw": "SFW",
         "sketchy": "Сумнівний"
       },
@@ -2896,24 +3026,43 @@
   },
   "wifi": {
     "panel": {
+      "action-required": "Вимагається дія",
       "available-networks": "Доступні мережі",
       "connect": "Підключити",
       "connected": "Підключено",
       "disabled": "Wi-Fi вимкнено",
       "disconnect": "Відключити",
       "disconnecting": "Відключення...",
+      "dns": "DNS",
       "enable-message": "Увімкніть Wi-Fi, щоб побачити доступні мережі.",
       "enter-password": "Введіть пароль...",
       "forget": "Забути",
       "forget-network": "Забути цю мережу?",
       "forgetting": "Забування...",
+      "frequency": "Частота",
+      "gateway": "Шлюз",
+      "info": "Інформація",
+      "internet": "Інтернет",
+      "internet-connected": "Підключено до Інтернету",
+      "internet-limited": "Немає інтернету",
+      "ipv4": "IPv4",
       "known-networks": "Відомі мережі",
+      "link-speed": "Швидкість з'єднання",
       "no-networks": "Мереж не знайдено",
       "password": "Пароль",
       "saved": "Збережено",
       "scan-again": "Сканувати знову",
       "searching": "Пошук близьких мереж...",
+      "security": "Безпека",
       "title": "Wi-Fi"
+    },
+    "signal": {
+      "excellent": "Відмінний",
+      "fair": "Середній",
+      "good": "Хороший",
+      "poor": "Поганий",
+      "very-good": "Дуже хороший",
+      "weak": "Слабкий"
     }
   }
 }

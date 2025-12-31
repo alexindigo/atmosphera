@@ -224,6 +224,24 @@ Item {
     function muteInput() {
       AudioService.setInputMuted(!AudioService.inputMuted);
     }
+    function togglePanel() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("audioPanel", screen);
+                                              panel?.toggle();
+                                            });
+    }
+    function openPanel() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("audioPanel", screen);
+                                              panel?.open();
+                                            });
+    }
+    function closePanel() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("audioPanel", screen);
+                                              panel?.close();
+                                            });
+    }
   }
 
   IpcHandler {
@@ -491,6 +509,16 @@ Item {
     }
     function edit() {
       DesktopWidgetRegistry.editMode = !DesktopWidgetRegistry.editMode;
+    }
+  }
+
+  IpcHandler {
+    target: "location"
+    function get(): string {
+      return Settings.data.location.name;
+    }
+    function set(name: string) {
+      Settings.data.location.name = name;
     }
   }
 }

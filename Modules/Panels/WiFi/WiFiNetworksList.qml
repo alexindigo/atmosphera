@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Services.Networking
-import qs.Widgets
 import qs.Services.UI
+import qs.Widgets
 
 NBox {
   id: root
@@ -22,9 +22,7 @@ NBox {
   property string infoSsid: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
   // Persisted under Settings.data.ui.wifiDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined)
-                             ? (Settings.data.ui.wifiDetailsViewMode === "grid")
-                             : true
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -72,8 +70,6 @@ NBox {
         font.weight: Style.fontWeightBold
         Layout.fillWidth: true
       }
-
-      // (moved) details view toggle is now inside the info box
     }
 
     Repeater {
@@ -115,7 +111,7 @@ NBox {
             NIcon {
               icon: NetworkService.signalIcon(modelData.signal, modelData.connected)
               pointSize: Style.fontSizeXXL
-              color: modelData.connected ? Color.mPrimary : Color.mOnSurface
+              color: modelData.connected ? (NetworkService.internetConnectivity ? Color.mPrimary : Color.mError) : Color.mOnSurface
             }
 
             ColumnLayout {
@@ -135,21 +131,16 @@ NBox {
                 spacing: Style.marginXS
 
                 NText {
-                  text: "Signal: " + modelData.signal + "%"
+                  text: NetworkService.getSignalStrengthLabel(modelData.signal) + " (" + modelData.signal + "%)"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                 }
 
-                NText {
-                  text: "•"
+                NIcon {
+                  icon: "lock-off"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
-                }
-
-                NText {
-                  text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
-                  pointSize: Style.fontSizeXXS
-                  color: Color.mOnSurfaceVariant
+                  visible: !NetworkService.isSecured(modelData.security)
                 }
 
                 Item {
@@ -159,7 +150,7 @@ NBox {
                 // Status badges
                 Rectangle {
                   visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
-                  color: Color.mPrimary
+                  color: NetworkService.internetConnectivity ? Color.mPrimary : Color.mError
                   radius: height * 0.5
                   width: connectedText.implicitWidth + (Style.marginS * 2)
                   height: connectedText.implicitHeight + (Style.marginXXS * 2)
@@ -167,7 +158,21 @@ NBox {
                   NText {
                     id: connectedText
                     anchors.centerIn: parent
-                    text: I18n.tr("wifi.panel.connected")
+                    text: {
+                      switch (NetworkService.networkConnectivity) {
+                      case "full":
+                        return I18n.tr("wifi.panel.connected");
+                      case "limited":
+                        return I18n.tr("wifi.panel.internet-limited");
+                      case "portal":  // Where Captive Portal is detected (User intervention needed)
+                        return I18n.tr("wifi.panel.action-required");
+                        // I assume unknown is for connecting/disconnecting state where connectivity hasn't been determined yet (Shouldn't be visible for long enough to matter)
+                        // and none is for no connectivity at all.
+                        // None and Unknown will return direct output of NetworkService.networkConnectivity
+                      default:
+                        return NetworkService.networkConnectivity;
+                      }
+                    }
                     pointSize: Style.fontSizeXXS
                     color: Color.mOnPrimary
                   }
@@ -241,7 +246,6 @@ NBox {
                 visible: modelData.connected && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "info-circle"
                 tooltipText: I18n.tr("wifi.panel.info")
-                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: {
                   if (root.infoSsid === modelData.ssid) {
                     root.infoSsid = "";
@@ -256,7 +260,6 @@ NBox {
                 visible: (modelData.existing || modelData.cached) && !modelData.connected && NetworkService.connectingTo !== modelData.ssid && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
                 icon: "trash"
                 tooltipText: I18n.tr("tooltips.forget-network")
-                baseSize: Style.baseWidgetSize * 0.8
                 onClicked: root.forgetRequested(modelData.ssid)
               }
 
@@ -304,7 +307,9 @@ NBox {
             clip: true
             onVisibleChanged: {
               if (visible && infoGrid && infoGrid.forceLayout) {
-                Qt.callLater(function () { infoGrid.forceLayout(); });
+                Qt.callLater(function () {
+                  infoGrid.forceLayout();
+                });
               }
             }
 
@@ -337,13 +342,14 @@ NBox {
               // Ensure proper relayout when switching grid/list while open
               onColumnsChanged: {
                 if (infoGrid.forceLayout) {
-                  Qt.callLater(function () { infoGrid.forceLayout(); });
+                  Qt.callLater(function () {
+                    infoGrid.forceLayout();
+                  });
                 }
               }
 
               // Icons only; values have labels as tooltips on hover
-
-              // Row 1: Security | Internet
+              // Row 1: Security | Band
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginXS
@@ -376,21 +382,20 @@ NBox {
                 Layout.fillWidth: true
                 spacing: Style.marginXS
                 NIcon {
-                  icon: NetworkService.internetConnectivity ? "world" : "world-off"
+                  icon: "router"
                   pointSize: Style.fontSizeXS
                   color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.internet"))
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.frequency"))
                     onExited: TooltipService.hide()
                   }
                 }
                 NText {
-                  text: NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited")
+                  text: NetworkService.activeWifiDetails.band || "-"
                   pointSize: Style.fontSizeXS
-                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
                   Layout.fillWidth: true
                   Layout.alignment: Qt.AlignVCenter
                   wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
@@ -417,9 +422,7 @@ NBox {
                   }
                 }
                 NText {
-                  text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0)
-                        ? NetworkService.activeWifiDetails.rateShort
-                        : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0) ? NetworkService.activeWifiDetails.rate : "-")
+                  text: (NetworkService.activeWifiDetails.rateShort && NetworkService.activeWifiDetails.rateShort.length > 0) ? NetworkService.activeWifiDetails.rateShort : ((NetworkService.activeWifiDetails.rate && NetworkService.activeWifiDetails.rate.length > 0) ? NetworkService.activeWifiDetails.rate : "-")
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -526,7 +529,7 @@ NBox {
             color: Color.mSurfaceVariant
             border.color: Color.mOutline
             border.width: Style.borderS
-            radius: Style.radiusS
+            radius: Style.iRadiusXS
 
             RowLayout {
               id: passwordRow
@@ -537,7 +540,7 @@ NBox {
               Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                radius: Style.radiusXS
+                radius: Style.iRadiusXS
                 color: Color.mSurface
                 border.color: pwdInput.activeFocus ? Color.mSecondary : Color.mOutline
                 border.width: Style.borderS
@@ -585,7 +588,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize * 0.8
+                baseSize: Style.baseWidgetSize
                 onClicked: root.passwordCancelled()
               }
             }
@@ -633,7 +636,7 @@ NBox {
 
               NIconButton {
                 icon: "close"
-                baseSize: Style.baseWidgetSize * 0.8
+                baseSize: Style.baseWidgetSize
                 onClicked: root.forgetCancelled()
               }
             }

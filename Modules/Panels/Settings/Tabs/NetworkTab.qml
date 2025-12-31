@@ -23,7 +23,9 @@ ColumnLayout {
     enabled: ProgramCheckerService.nmcliAvailable
   }
 
-  NDivider { Layout.fillWidth: true }
+  NDivider {
+    Layout.fillWidth: true
+  }
 
   // Bluetooth adapter toggle grouped with its panel settings
   NToggle {

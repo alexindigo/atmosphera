@@ -55,6 +55,10 @@
           "description": "Choose how you'd like this value to appear.",
           "label": "Display mode"
         },
+        "hide-if-not-detected": {
+          "description": "Hide the widget when no battery is detected on the system.",
+          "label": "Hide if not detected"
+        },
         "low-battery-threshold": {
           "description": "Show a warning when battery falls below this percentage.",
           "label": "Low battery warning threshold"
@@ -90,6 +94,10 @@
           "label": "Horizontal bar"
         },
         "preview": "Preview",
+        "tooltip-format": {
+          "description": "Format string for the tooltip shown when hovering over the clock. Leave empty to use the default tooltip.",
+          "label": "Tooltip format"
+        },
         "use-custom-font": {
           "description": "Override the default font selection with a custom font for the clock.",
           "label": "Use custom font"
@@ -279,9 +287,9 @@
         }
       },
       "notification-history": {
-        "hide-badge-when-zero": {
-          "description": "Hide the notification badge when there are no unread notifications.",
-          "label": "Hide badge when zero"
+        "hide-widget-when-zero": {
+          "description": "Hide the notification icon when there are no unread notifications.",
+          "label": "Hide icon when zero"
         },
         "show-unread-badge": {
           "description": "Display a badge showing the number of unread notifications.",
@@ -299,6 +307,10 @@
         }
       },
       "system-monitor": {
+        "compact-mode": {
+          "description": "Display stats as mini bar charts instead of text values. Prevents layout shifting.",
+          "label": "Compact mode"
+        },
         "cpu-temperature": {
           "description": "Show CPU temperature readings if available.",
           "label": "CPU temperature"
@@ -330,6 +342,10 @@
         "storage-usage": {
           "description": "Show disk space usage information.",
           "label": "Storage usage"
+        },
+        "use-monospace-font": {
+          "description": "Use monospace font for consistent character width.",
+          "label": "Monospace font"
         }
       },
       "taskbar": {
@@ -409,6 +425,10 @@
           "description": "Display workspaces from the currently focused screen, rather than the screen where the bar is located.",
           "label": "Follow focused screen"
         },
+        "grouped-border-opacity": {
+          "description": "Set the opacity level for workspace container borders",
+          "label": "Border opacity"
+        },
         "hide-unoccupied": {
           "description": "Don't display workspaces without windows.",
           "label": "Hide unoccupied"
@@ -424,6 +444,10 @@
         "show-labels-only-when-occupied": {
           "description": "Only show workspace labels when they contain windows.",
           "label": "Show labels only when occupied"
+        },
+        "unfocused-icons-opacity": {
+          "description": "Set the opacity level for unfocused app icons",
+          "label": "Unfocused icons opacity"
         }
       }
     }
@@ -449,28 +473,30 @@
   "bluetooth": {
     "panel": {
       "available-devices": "Available devices",
+      "battery": "Battery",
       "blocked": "Blocked",
       "connect": "Connect",
       "connected-devices": "Connected devices",
       "connecting": "Connecting...",
+      "device-address": "Device address",
       "disabled": "Bluetooth is disabled",
       "disconnect": "Disconnect",
+      "discoverable": "Discoverable",
       "enable-message": "Enable Bluetooth to see available devices.",
+      "info": "Info",
       "known-devices": "Known devices",
+      "no-devices": "No devices available",
+      "pair": "Pair",
+      "paired": "Paired",
       "paired-devices": "Paired devices",
       "pairing": "Pairing...",
       "pairing-mode": "Make sure your device is in pairing mode.",
+      "refresh-devices": "Refresh devices",
       "scanning": "Scanning for devices...",
-      "title": "Bluetooth",
-      "pair": "Pair",
-      "unpair": "Unpair",
-      "info": "Info",
-      "device-address": "Device address",
-      "paired": "Paired",
-      "trusted": "Trusted",
-      "discoverable": "Discoverable",
       "signal": "Signal",
-      "battery": "Battery"
+      "title": "Bluetooth",
+      "trusted": "Trusted",
+      "unpair": "Unpair"
     }
   },
   "calendar": {
@@ -522,7 +548,7 @@
     }
   },
   "clock": {
-    "tooltip": "Clock"
+    "tooltip": "Calendar"
   },
   "common": {
     "add": "Add",
@@ -530,9 +556,9 @@
     "cancel": "Cancel",
     "check-settings": "Check Settings for details",
     "close": "Close",
+    "no": "No",
     "save": "Save",
-    "yes": "Yes",
-    "no": "No"
+    "yes": "Yes"
   },
   "context-menu": {
     "clear-history": "Clear history",
@@ -547,6 +573,7 @@
     "enable-bluetooth": "Enable Bluetooth",
     "enable-dnd": "Enable Do Not Disturb",
     "enable-wifi": "Enable Wi-Fi",
+    "lower-to-bottom": "Lower to bottom",
     "next": "Next",
     "open-calendar": "Open calendar",
     "open-display-settings": "Display settings",
@@ -556,7 +583,9 @@
     "pause": "Pause",
     "play": "Play",
     "previous": "Previous",
+    "raise-to-top": "Raise to top",
     "random-wallpaper": "Random wallpaper",
+    "reset": "Reset",
     "toggle-mute": "Toggle mute",
     "widget-settings": "Widget settings"
   },
@@ -580,6 +609,18 @@
       "chat": "Chat",
       "development": "Development",
       "education": "Education",
+      "emoji": {
+        "activity": "Activity",
+        "animals": "Animals",
+        "flags": "Flags",
+        "food": "Food & Drink",
+        "nature": "Nature",
+        "objects": "Objects",
+        "people": "People & Body",
+        "recent": "Recent",
+        "symbols": "Symbols",
+        "travel": "Travel & Places"
+      },
       "game": "Games",
       "graphics": "Graphics",
       "misc": "Misc",
@@ -631,7 +672,8 @@
         "comfortable": "Comfortable",
         "compact": "Compact",
         "default": "Default",
-        "mini": "Mini"
+        "mini": "Mini",
+        "spacious": "Spacious"
       },
       "position": {
         "bottom": "Bottom",
@@ -688,7 +730,7 @@
         "center": "Center",
         "center_left": "Left center",
         "center_right": "Right center",
-        "follow_bar": "Follow bar (default)",
+        "follow_bar": "Follow bar",
         "top_center": "Top center",
         "top_left": "Top left",
         "top_right": "Top right"
@@ -849,7 +891,7 @@
         "unavailable": "Power Profile"
       },
       "tooltip": {
-        "action": "Power profile",
+        "action": "Power Profile",
         "disabled": "Install power-profiles-daemon to use power profiles"
       }
     },
@@ -859,13 +901,13 @@
         "stopped": "Record"
       },
       "tooltip": {
-        "action": "Screen recorder"
+        "action": "Screen Recorder"
       }
     },
     "wallpaperSelector": {
       "label": "Wallpaper",
       "tooltip": {
-        "action": "Wallpaper selector"
+        "action": "Wallpaper Selector"
       }
     },
     "wifi": {
@@ -1009,6 +1051,10 @@
     },
     "bar": {
       "appearance": {
+        "background-opacity": {
+          "description": "Set the background opacity specifically for the bar.",
+          "label": "Bar background opacity"
+        },
         "capsule-opacity": {
           "description": "Set the opacity level for widget backgrounds when capsule is shown.",
           "label": "Capsule opacity"
@@ -1047,9 +1093,9 @@
           "description": "Displays a visible border around every widget.",
           "label": "Show widget outlines"
         },
-        "transparent": {
-          "description": "This will prevent the panels from attaching to the bar.",
-          "label": "Transparent background"
+        "use-separate-opacity": {
+          "description": "Enable to use a separate opacity value for the bar background.",
+          "label": "Use separate bar opacity"
         }
       },
       "monitors": {
@@ -1161,14 +1207,15 @@
       "templates": {
         "compositors": {
           "description": "Compositor theming.",
+          "hyprland": {
+            "description": "Write {filepath}"
+          },
           "label": "Compositors",
           "mango": {
-            "description": "Write {filepath}. Requires mango",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — requires Mango"
           },
           "niri": {
-            "description": "Write {filepath}. Requires niri v25.11+",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — requires Niri v25.11+"
           }
         },
         "misc": {
@@ -1181,54 +1228,46 @@
         },
         "programs": {
           "cava": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}"
           },
           "code": {
-            "description": "Write {filepath} — HyprLuna theme needs to be installed and activated manually",
-            "description-missing": "No Code client detected — install VSCode or VSCodium"
+            "description": "Write {filepath}",
+            "description-detected": "Applied to default profile — detected: {clients}",
+            "description-missing": "No Code editor detected (VSCode or VSCodium)"
           },
           "description": "Application-specific theming.",
           "discord": {
-            "description": "Write {filepath} for {client} — HyprLuna theme needs to be activated manually",
-            "description-missing": "No Discord client detected — install vencord, vesktop, webcord, armcord, equibop, lightcord, or dorion"
+            "description": "Write {filepath} for {client} — the theme needs to be activated manually",
+            "description-detected": "Detected: {clients}",
+            "description-missing": "No Discord client detected"
           },
           "emacs": {
-            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el"
           },
           "fuzzel": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "label": "Programs",
           "pywalfox": {
-            "description": "Write {filepath} and run pywalfox update",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and run pywalfox update"
           },
           "spicetify": {
-            "description": "Write {filepath} — Comfy theme needs to be installed and activated manually",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — Comfy theme needs to be installed and activated manually"
           },
           "telegram": {
-            "description": "Write {filepath}",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath}"
           },
           "vicinae": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "walker": {
-            "description": "Write {filepath} and set theme to noctalia",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and set theme to noctalia"
           },
           "yazi": {
-            "description": "Write {filepath} — flavor needs to be activated manually",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} — flavor needs to be activated manually"
           },
           "zed": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           }
         },
         "section": {
@@ -1237,26 +1276,21 @@
         },
         "terminal": {
           "alacritty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "description": "Terminal emulator theming.",
           "foot": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "ghostty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "kitty": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           },
           "label": "Terminal",
           "wezterm": {
-            "description": "Write {filepath} and reload",
-            "description-missing": "Requires {app} to be installed"
+            "description": "Write {filepath} and reload"
           }
         },
         "ui": {
@@ -1352,6 +1386,10 @@
         "sectionLeft": "Left",
         "sectionRight": "Right"
       },
+      "system-monitor-disk-path": {
+        "description": "Select which disk mount point the system monitor card in the control center should monitor.",
+        "label": "System monitor disk path"
+      },
       "title": "Control Center"
     },
     "desktop-widgets": {
@@ -1383,9 +1421,9 @@
           "label": "Minimal mode"
         },
         "preview": "Preview",
-        "section": {
-          "description": "Configure the clock widget appearance.",
-          "label": "Clock Widget"
+        "rounded-corners": {
+          "description": "Use rounded corners for the widget background.",
+          "label": "Rounded corners"
         },
         "show-background": {
           "description": "Show the background container for the clock widget.",
@@ -1401,6 +1439,7 @@
         },
         "style": {
           "analog": "Analog",
+          "binary": "Binary",
           "description": "Choose the clock display style.",
           "digital": "Digital",
           "label": "Clock style",
@@ -1440,7 +1479,7 @@
       "general": {
         "section": {
           "description": "Configure widgets that appear on your desktop.",
-          "label": "Desktop Widgets"
+          "label": "Desktop widgets"
         }
       },
       "media-player": {
@@ -1452,25 +1491,29 @@
           "description": "Controls how the widget behaves when no media is playing.",
           "label": "Hiding mode"
         },
-        "section": {
-          "description": "Configure the media player widget appearance.",
-          "label": "Media Player Widget"
+        "rounded-corners": {
+          "description": "Enable rounded corners on the widget edges.",
+          "label": "Rounded corners"
+        },
+        "show-album-art": {
+          "description": "Show the album artwork and track information (title and artist).",
+          "label": "Show album art & title"
         },
         "show-background": {
-          "description": "Show the background container for the media player widget.",
+          "description": "Show the background container.",
           "label": "Show background"
         },
         "show-buttons": {
-          "description": "Show media control buttons (play/pause, previous, next) on the media player widget.",
+          "description": "Show media control buttons (play/pause, previous, next).",
           "label": "Show buttons"
         },
-        "visualizer-type": {
-          "description": "Choose a visualization type for the desktop media player background.",
-          "label": "Visualization type"
+        "show-visualizer": {
+          "description": "Show the audio visualizer overlay.",
+          "label": "Show visualizer"
         },
-        "visualizer-visibility": {
-          "description": "Control when the audio visualizer is visible.",
-          "label": "Audio visualizer visibility"
+        "visualizer-type": {
+          "description": "Choose a visualization type.",
+          "label": "Visualization type"
         }
       },
       "title": "Desktop Widgets",
@@ -1479,19 +1522,9 @@
           "description": "Show a weather widget on the desktop.",
           "label": "Enable weather widget"
         },
-        "section": {
-          "description": "Configure the weather widget appearance.",
-          "label": "Weather Widget"
-        },
         "show-background": {
           "description": "Show the background container for the weather widget.",
           "label": "Show background"
-        }
-      },
-      "widgets": {
-        "section": {
-          "description": "Add and configure desktop widgets",
-          "label": "Desktop Widgets"
         }
       }
     },
@@ -1777,6 +1810,10 @@
           "description": "Use native system icons instead of Tabler icons.",
           "label": "Use native icons"
         },
+        "ignore-mouse-input": {
+          "description": "Disable mouse interaction and scrollwheel in the launcher.",
+          "label": "Ignore mouse input"
+        },
         "position": {
           "description": "Choose where the launcher panel appears.",
           "label": "Position"
@@ -1936,6 +1973,24 @@
         "section": {
           "description": "Configure how long notifications stay visible based on their urgency level.",
           "label": "Notification duration"
+        }
+      },
+      "history": {
+        "critical-urgency": {
+          "description": "Save critical priority notifications to history.",
+          "label": "Save critical urgency to history"
+        },
+        "low-urgency": {
+          "description": "Save low priority notifications to history.",
+          "label": "Save low urgency to history"
+        },
+        "normal-urgency": {
+          "description": "Save normal priority notifications to history.",
+          "label": "Save normal urgency to history"
+        },
+        "section": {
+          "description": "Control which notifications are saved to history based on their urgency level.",
+          "label": "History"
         }
       },
       "monitors": {
@@ -2181,7 +2236,7 @@
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",
-      "updating": "Updating {plugin}..."
+      "updating": "Updating..."
     },
     "screen-recorder": {
       "audio": {
@@ -2199,6 +2254,10 @@
         }
       },
       "general": {
+        "copy-to-clipboard": {
+          "description": "Copy the file to clipboard after recording finishes.",
+          "label": "Copy to clipboard"
+        },
         "output-folder": {
           "description": "Folder where screen recordings will be saved.",
           "label": "Output folder",
@@ -2292,6 +2351,10 @@
         "description": "Display the title and close button at the top of the session menu.",
         "label": "Show header"
       },
+      "show-number-labels": {
+        "description": "Display number labels (1-2-3-4...) on buttons and enable number keybinds for quick selection.",
+        "label": "Show number labels"
+      },
       "title": "Session Menu"
     },
     "system-monitor": {
@@ -2304,12 +2367,21 @@
       "custom-highlight-colors-title": {
         "label": "Custom highlight colors"
       },
+      "disk-path": {
+        "description": "Select which disk mount point to monitor.",
+        "label": "Disk path"
+      },
       "disk-section": {
         "label": "Disk usage"
       },
-      "enable-nvidia-gpu": {
-        "description": "Warning: This will wake up your NVIDIA GPU, which may significantly impact battery life on laptops with hybrid graphics.",
-        "label": "Enable NVIDIA GPU monitoring"
+      "enable-dgpu-monitoring": {
+        "description": "Warning: This will wake up your discrete GPU (NVIDIA/AMD), which may significantly impact battery life on laptops with hybrid graphics.",
+        "label": "Enable discrete GPU monitoring"
+      },
+      "external-monitor": {
+        "description": "Enter the command or application path to launch when activating the external system monitor application.",
+        "label": "External system monitor command",
+        "placeholder": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
       },
       "general": {
         "section": {
@@ -2426,6 +2498,12 @@
     },
     "wallpaper": {
       "automation": {
+        "change-mode": {
+          "alphabetical": "Alphabetical",
+          "description": "Choose how wallpapers are selected when changing automatically.",
+          "label": "Change mode",
+          "random": "Random"
+        },
         "custom-interval": {
           "description": "Enter time as HH:MM (e.g., 01:30).",
           "label": "Custom interval"
@@ -2437,6 +2515,10 @@
         "random-wallpaper": {
           "description": "Schedule random wallpaper changes at regular intervals.",
           "label": "Random wallpaper"
+        },
+        "scheduled-change": {
+          "description": "Automatically change wallpapers at regular intervals.",
+          "label": "Scheduled change"
         },
         "section": {
           "label": "Automation"
@@ -2559,6 +2641,18 @@
     "welcome-back": "Welcome back,",
     "widget-settings-title": "{widget} Settings"
   },
+  "system-monitor": {
+    "cpu-temp": "CPU Temp",
+    "cpu-usage": "CPU Usage",
+    "disk": "Disk",
+    "download": "Download",
+    "download-speed": "Download Speed",
+    "gpu-temp": "GPU Temp",
+    "memory": "Memory",
+    "title": "System Monitor",
+    "upload": "Upload",
+    "upload-speed": "Upload Speed"
+  },
   "toast": {
     "airplane-mode": {
       "disabled": "Disabled",
@@ -2570,8 +2664,20 @@
       "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
     "bluetooth": {
+      "confirm-code": "Confirm code {value} on the other device",
+      "connect-failed": "Failed to connect to device",
       "disabled": "Disabled",
-      "enabled": "Enabled"
+      "disconnect-failed": "Failed to disconnect from device",
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-enabled": "Discoverable enabled",
+      "display-code": "Enter code {value} on the other device",
+      "enabled": "Enabled",
+      "forget-failed": "Failed to forget device",
+      "pair-failed": "Failed to pair device",
+      "passkey-required": "Passkey required by the device",
+      "pincode-required": "PIN code required by the device",
+      "state-change-failed": "Failed to change Bluetooth state"
     },
     "clipboard": {
       "unavailable": "Clipboard history unavailable",
@@ -2654,29 +2760,13 @@
     },
     "wifi": {
       "connected": "Connected to '{ssid}'",
+      "connection-failed": "Connection failed",
+      "connection-timeout": "Connection timeout",
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
       "enabled": "Enabled",
       "incorrect-password": "Incorrect password",
-      "network-not-found": "Network not found",
-      "connection-timeout": "Connection timeout",
-      "connection-failed": "Connection failed"
-    },
-    "bluetooth": {
-      "enabled": "Enabled",
-      "disabled": "Disabled",
-      "pair-failed": "Failed to pair device",
-      "connect-failed": "Failed to connect to device",
-      "disconnect-failed": "Failed to disconnect from device",
-      "forget-failed": "Failed to forget device",
-      "state-change-failed": "Failed to change Bluetooth state",
-      "discoverable-enabled": "Discoverable enabled",
-      "discoverable-disabled": "Discoverable disabled",
-      "discoverable-change-failed": "Failed to change discoverable state",
-      "confirm-code": "Confirm code {value} on the other device",
-      "display-code": "Enter code {value} on the other device",
-      "passkey-required": "Passkey required by the device",
-      "pincode-required": "PIN code required by the device"
+      "network-not-found": "Network not found"
     }
   },
   "tooltips": {
@@ -2700,6 +2790,7 @@
     "grid-view": "Grid view",
     "hidden-files-hide": "Hidden files",
     "hidden-files-show": "Hidden files",
+    "hide-unnamed-devices": "Hide unnamed devices",
     "home": "Home directory",
     "input-muted": "Toggle input mute",
     "keep-awake": "Keep Awake",
@@ -2736,14 +2827,13 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
-    "hide-unnamed-devices": "Hide unnamed devices",
-    "show-all-devices": "Show all devices",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",
     "search-close": "Close search",
     "session-menu": "Session menu",
     "set-power-profile": "{profile} power profile",
+    "show-all-devices": "Show all devices",
     "start-screen-recording": "Screen recorder",
     "stop-screen-recording": "Screen recorder",
     "switch-to-dark-mode": "Dark Mode",
@@ -2797,6 +2887,11 @@
     "no-match": "No match found.",
     "no-wallpaper": "No wallpaper found.",
     "panel": {
+      "apikey": {
+        "help": "An API key is required to access NSFW content.",
+        "label": "API Key",
+        "placeholder": "Enter your Wallhaven API Key"
+      },
       "apply-all-monitors": {
         "description": "Apply the selected wallpaper to all monitors.",
         "label": "Apply to all monitors"
@@ -2815,6 +2910,7 @@
       "purity": {
         "all": "All",
         "label": "Content filter",
+        "nsfw": "NSFW",
         "sfw": "SFW",
         "sketchy": "Sketchy"
       },
@@ -2958,6 +3054,47 @@
     },
     "tooltip": {
       "placeholder": "Placeholder"
+    }
+  },
+  "wifi": {
+    "panel": {
+      "action-required": "Action required",
+      "available-networks": "Available networks",
+      "connect": "Connect",
+      "connected": "Connected",
+      "disabled": "Wi‑Fi is disabled",
+      "disconnect": "Disconnect",
+      "disconnecting": "Disconnecting…",
+      "dns": "DNS",
+      "enable-message": "Enable Wi‑Fi to see available networks.",
+      "enter-password": "Enter Wi‑Fi password",
+      "forget": "Forget",
+      "forget-network": "Forget this network",
+      "forgetting": "Forgetting…",
+      "frequency": "Frequency",
+      "gateway": "Gateway",
+      "info": "Info",
+      "internet": "Internet",
+      "internet-connected": "Internet connected",
+      "internet-limited": "No internet",
+      "ipv4": "IPv4",
+      "known-networks": "Known networks",
+      "link-speed": "Link speed",
+      "no-networks": "No Wi‑Fi networks found",
+      "password": "Password",
+      "saved": "Saved",
+      "scan-again": "Scan again",
+      "searching": "Searching for networks...",
+      "security": "Security",
+      "title": "Wi‑Fi"
+    },
+    "signal": {
+      "excellent": "Excellent",
+      "fair": "Fair",
+      "good": "Good",
+      "poor": "Poor",
+      "very-good": "Very Good",
+      "weak": "Weak"
     }
   }
 }

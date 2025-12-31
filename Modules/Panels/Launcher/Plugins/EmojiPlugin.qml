@@ -30,6 +30,22 @@ Item {
 
   property var categories: ["recent", "people", "animals", "nature", "food", "activity", "travel", "objects", "symbols", "flags"]
 
+  function getCategoryName(category) {
+    const names = {
+      "recent": I18n.tr("launcher.categories.emoji.recent"),
+      "people": I18n.tr("launcher.categories.emoji.people"),
+      "animals": I18n.tr("launcher.categories.emoji.animals"),
+      "nature": I18n.tr("launcher.categories.emoji.nature"),
+      "food": I18n.tr("launcher.categories.emoji.food"),
+      "activity": I18n.tr("launcher.categories.emoji.activity"),
+      "travel": I18n.tr("launcher.categories.emoji.travel"),
+      "objects": I18n.tr("launcher.categories.emoji.objects"),
+      "symbols": I18n.tr("launcher.categories.emoji.symbols"),
+      "flags": I18n.tr("launcher.categories.emoji.flags")
+    };
+    return names[category] || category;
+  }
+
   // Force update results when emoji service loads
   Connections {
     target: EmojiService

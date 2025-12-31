@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Media
 import qs.Services.System
 import qs.Services.UI
@@ -11,6 +12,13 @@ NIconButton {
   id: root
 
   property ShellScreen screen
+
+  // Widget properties passed from Bar.qml for per-instance settings
+  property string widgetId: ""
+  property string section: ""
+  property int sectionWidgetIndex: -1
+  property int sectionWidgetsCount: 0
+  property real barScaling: 1.0
 
   icon: ScreenRecorderService.isPending ? "" : "camera-video"
   tooltipText: ScreenRecorderService.isRecording ? I18n.tr("tooltips.click-to-stop-recording") : I18n.tr("tooltips.click-to-start-recording")
@@ -36,19 +44,18 @@ NIconButton {
 
   onClicked: handleClick()
 
+  onRightClicked: {
+    var settingsPanel = PanelService.getPanel("settingsPanel", screen);
+    settingsPanel.requestedTab = SettingsPanel.Tab.ScreenRecorder;
+    settingsPanel.open();
+  }
+
   // Custom spinner shown only during pending start
   NIcon {
     id: pendingSpinner
     icon: "loader-2"
     visible: ScreenRecorderService.isPending
-    pointSize: {
-      switch (root.density) {
-      case "compact":
-        return Math.max(1, root.width * 0.65);
-      default:
-        return Math.max(1, root.width * 0.48);
-      }
-    }
+    pointSize: Math.max(1, Style.toOdd(root.width * root.barScaling * 0.65))
     applyUiScale: root.applyUiScale
     color: root.enabled && root.hovering ? colorFgHover : colorFg
     anchors.centerIn: parent

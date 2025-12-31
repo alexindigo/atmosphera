@@ -9,7 +9,7 @@ import qs.Services.UI
 
 Singleton {
   id: root
-    
+
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
@@ -25,7 +25,7 @@ Singleton {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(function(dev) {
+    return adapter.devices.values.filter(function (dev) {
       return dev && (dev.paired || dev.trusted);
     });
   }
@@ -33,14 +33,16 @@ Singleton {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(function(dev) { return dev && dev.connected; });
+    return adapter.devices.values.filter(function (dev) {
+      return dev && dev.connected;
+    });
   }
 
   readonly property var allDevicesWithBattery: {
     if (!adapter || !adapter.devices) {
       return [];
     }
-    return adapter.devices.values.filter(function(dev) {
+    return adapter.devices.values.filter(function (dev) {
       return dev && dev.batteryAvailable && dev.battery > 0;
     });
   }
@@ -157,12 +159,14 @@ BluetoothAgent {
   }
 }
 `;
+
       btAgent = Qt.createQmlObject(qml, root, "DynamicBluetoothAgent");
       // Attempt to register the agent from the outer scope so we can
       // trigger a fallback if registration fails at runtime.
       try {
         Bluetooth.agent = btAgent;
-        if (btAgent.register) btAgent.register();
+        if (btAgent.register)
+        btAgent.register();
         Logger.i("Bluetooth", "BluetoothAgent registered (dynamic)");
         btAgentRegistered = true;
       } catch (regErr) {
@@ -182,12 +186,7 @@ BluetoothAgent {
     id: fallbackBluetoothctlAgent
     // Prefer bt-agent (if available). Otherwise, fall back to bluetoothctl
     // and register as the default agent, keeping the session alive.
-    command: [
-      "sh", "-c",
-      "(pkill -f '^bt-agent( |$)' 2>/dev/null || true; pkill -f '^bluetoothctl( |$)' 2>/dev/null || true; " +
-      "if command -v bt-agent >/dev/null 2>&1; then exec bt-agent -c DisplayYesNo; " +
-      "else (printf 'agent off\nagent on\nagent KeyboardDisplay\ndefault-agent\n'; while sleep 3600; do :; done) | bluetoothctl; fi)"
-    ]
+    command: ["sh", "-c", "pkill -f '^bt-agent( |$)' 2>/dev/null || true; pkill -f '^bluetoothctl( |$)' 2>/dev/null || true; " + "if command -v bt-agent >/dev/null 2>&1; then exec bt-agent -c DisplayYesNo; " + "else exec sh -c \"printf 'agent off\nagent on\nagent KeyboardDisplay\ndefault-agent\n'; cat - | bluetoothctl\"; fi"]
     running: false
     stdout: StdioCollector {}
     stderr: StdioCollector {
@@ -203,7 +202,10 @@ BluetoothAgent {
     id: discoveryTimer
     interval: 1000
     repeat: false
-    onTriggered: adapter.discovering = true
+    onTriggered: {
+      if (adapter)
+      adapter.discovering = true;
+    }
   }
 
   Connections {
@@ -232,7 +234,7 @@ BluetoothAgent {
   }
 
   function sortDevices(devices) {
-    return devices.sort(function(a, b) {
+    return devices.sort(function (a, b) {
       var aName = a.name || a.deviceName || "";
       var bName = b.name || b.deviceName || "";
 
@@ -459,7 +461,8 @@ BluetoothAgent {
   // Pair using bluetoothctl which registers its own BlueZ agent internally.
   // Useful on systems where the QML BluetoothAgent type is unavailable.
   function pairWithBluetoothctl(device) {
-    if (!device) return;
+    if (!device)
+      return;
     var addr = "";
     try {
       if (device.address && device.address.length > 0) {
@@ -479,11 +482,14 @@ BluetoothAgent {
       printf 'agent DisplayYesNo\n';
       printf 'default-agent\n';
       printf 'pair ${addr}\n';
+      sleep 2;
       printf 'yes\n';
       printf 'trust ${addr}\n';
+      sleep 1;
       printf 'connect ${addr}\n';
       printf 'quit\n';
     ) | bluetoothctl`;
+
     try {
       Quickshell.execDetached(["sh", "-c", script]);
     } catch (e) {

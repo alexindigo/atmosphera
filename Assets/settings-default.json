@@ -4,10 +4,11 @@
     "position": "top",
     "monitors": [],
     "density": "default",
-    "transparent": false,
     "showOutline": false,
     "showCapsule": true,
     "capsuleOpacity": 1,
+    "backgroundOpacity": 0.93,
+    "useSeparateOpacity": false,
     "floating": false,
     "marginVertical": 0.25,
     "marginHorizontal": 0.25,
@@ -93,9 +94,12 @@
     "fontDefaultScale": 1,
     "fontFixedScale": 1,
     "tooltipsEnabled": true,
-    "panelBackgroundOpacity": 0.85,
+    "panelBackgroundOpacity": 0.93,
     "panelsAttachedToBar": true,
-    "settingsPanelMode": "attached"
+    "settingsPanelMode": "attached",
+    "wifiDetailsViewMode": "grid",
+    "bluetoothDetailsViewMode": "grid",
+    "bluetoothHideUnnamedDevices": false
   },
   "location": {
     "name": "Tokyo",
@@ -137,6 +141,7 @@
     "quality": "very_high",
     "colorRange": "limited",
     "showCursor": true,
+    "copyToClipboard": false,
     "audioSource": "default_output",
     "videoSource": "portal"
   },
@@ -151,6 +156,7 @@
     "fillMode": "crop",
     "fillColor": "#000000",
     "randomEnabled": false,
+    "wallpaperChangeMode": "random",
     "randomIntervalSec": 300,
     "transitionDuration": 1500,
     "transitionType": "random",
@@ -164,6 +170,7 @@
     "wallhavenCategories": "111",
     "wallhavenPurity": "100",
     "wallhavenRatios": "",
+    "wallhavenApiKey": "",
     "wallhavenResolutionMode": "atleast",
     "wallhavenResolutionWidth": "",
     "wallhavenResolutionHeight": ""
@@ -180,7 +187,8 @@
     "customLaunchPrefix": "",
     "viewMode": "list",
     "showCategories": true,
-    "iconMode": "tabler"
+    "iconMode": "tabler",
+    "ignoreMouseInput": false
   },
   "controlCenter": {
     "position": "close_to_bar_button",
@@ -255,13 +263,15 @@
     "cpuPollingInterval": 3000,
     "tempPollingInterval": 3000,
     "gpuPollingInterval": 3000,
-    "enableNvidiaGpu": false,
+    "enableDgpuMonitoring": false,
     "memPollingInterval": 3000,
     "diskPollingInterval": 3000,
     "networkPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
-    "criticalColor": ""
+    "criticalColor": "",
+    "diskPath": "/",
+    "externalMonitor": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
   },
   "dock": {
     "enabled": true,
@@ -287,6 +297,7 @@
     "position": "center",
     "showHeader": true,
     "largeButtonsStyle": false,
+    "showNumberLabels": true,
     "powerOptions": [
       {
         "action": "lock",
@@ -325,6 +336,11 @@
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
     "enableKeyboardLayoutToast": true,
+    "saveToHistory": {
+      "low": true,
+      "normal": true,
+      "critical": true
+    },
     "sounds": {
       "enabled": false,
       "volume": 0.5,
@@ -394,8 +410,10 @@
     "yazi": false,
     "emacs": false,
     "niri": false,
+    "hyprland": false,
     "mango": false,
     "zed": false,
+    "helix": false,
     "enableUserTemplates": false
   },
   "nightLight": {
