@@ -98,56 +98,7 @@ SmartPanel {
       anchors.margins: Style.marginL
       spacing: Style.marginM
 
-      // Header
-      NBox {
-        Layout.fillWidth: true
-        Layout.preferredHeight: headerRow.implicitHeight + Style.marginM * 2
-
-        RowLayout {
-          id: headerRow
-          anchors.fill: parent
-          anchors.margins: Style.marginM
-          spacing: Style.marginM
-
-          NIcon {
-            icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
-            pointSize: Style.fontSizeXXL
-            color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
-          }
-
-          NText {
-            text: I18n.tr("wifi.panel.title")
-            pointSize: Style.fontSizeL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-            Layout.fillWidth: true
-          }
-
-          NToggle {
-            id: wifiSwitch
-            checked: Settings.data.network.wifiEnabled
-            onToggled: checked => NetworkService.setWifiEnabled(checked)
-            baseSize: Style.baseWidgetSize * 0.65
-          }
-
-          NIconButton {
-            icon: "refresh"
-            tooltipText: I18n.tr("tooltips.refresh")
-            baseSize: Style.baseWidgetSize * 0.8
-            enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
-            onClicked: NetworkService.scan()
-          }
-
-          NIconButton {
-            icon: "close"
-            tooltipText: I18n.tr("tooltips.close")
-            baseSize: Style.baseWidgetSize * 0.8
-            onClicked: root.close()
-          }
-        }
-      }
-
-      // Ethernet info (shown when Ethernet is connected)
+      // Ethernet info (shown when Ethernet is connected) — placed above Wi‑Fi header per request
       NBox {
         visible: NetworkService.ethernetConnected
         Layout.fillWidth: true
@@ -416,12 +367,60 @@ SmartPanel {
                   clip: true
                 }
               }
-
-              // (Interface moved to the top)
             }
           }
         }
       }
+
+      // Header
+      NBox {
+        Layout.fillWidth: true
+        Layout.preferredHeight: headerRow.implicitHeight + Style.marginM * 2
+
+        RowLayout {
+          id: headerRow
+          anchors.fill: parent
+          anchors.margins: Style.marginM
+          spacing: Style.marginM
+
+          NIcon {
+            icon: Settings.data.network.wifiEnabled ? "wifi" : "wifi-off"
+            pointSize: Style.fontSizeXXL
+            color: Settings.data.network.wifiEnabled ? Color.mPrimary : Color.mOnSurfaceVariant
+          }
+
+          NText {
+            text: I18n.tr("wifi.panel.title")
+            pointSize: Style.fontSizeL
+            font.weight: Style.fontWeightBold
+            color: Color.mOnSurface
+            Layout.fillWidth: true
+          }
+
+          NToggle {
+            id: wifiSwitch
+            checked: Settings.data.network.wifiEnabled
+            onToggled: checked => NetworkService.setWifiEnabled(checked)
+            baseSize: Style.baseWidgetSize * 0.65
+          }
+
+          NIconButton {
+            icon: "refresh"
+            tooltipText: I18n.tr("tooltips.refresh")
+            baseSize: Style.baseWidgetSize * 0.8
+            enabled: Settings.data.network.wifiEnabled && !NetworkService.scanning
+            onClicked: NetworkService.scan()
+          }
+
+          NIconButton {
+            icon: "close"
+            tooltipText: I18n.tr("tooltips.close")
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: root.close()
+          }
+        }
+      }
+
       // Error message
       Rectangle {
         visible: NetworkService.lastError.length > 0
