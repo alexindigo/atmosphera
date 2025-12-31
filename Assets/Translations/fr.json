@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Choisissez comment vous souhaitez que cette valeur apparaisse.",
           "label": "Mode d'affichage"
+        },
+        "show-icon": {
+          "description": "Afficher l'icône de disposition du clavier.",
+          "label": "Afficher l'icône"
         }
       },
       "lock-keys": {

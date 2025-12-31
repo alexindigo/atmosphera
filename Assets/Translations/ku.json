@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "ka tu dixwaz ev nirx çawa xuya bibe hilbijêre.",
           "label": "Awaya nîşandanê"
+        },
+        "show-icon": {
+          "description": "Nîşana şêweya klavyeyê nîşan bide.",
+          "label": "Nîşanê nîşan bide"
         }
       },
       "lock-keys": {

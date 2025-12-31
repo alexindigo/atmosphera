@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Wählen Sie, wie dieser Wert angezeigt werden soll.",
           "label": "Anzeigemodus"
+        },
+        "show-icon": {
+          "description": "Das Tastaturlayout-Symbol anzeigen.",
+          "label": "Symbol anzeigen"
         }
       },
       "lock-keys": {
