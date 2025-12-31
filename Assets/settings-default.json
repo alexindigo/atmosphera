@@ -178,7 +178,6 @@
   "appLauncher": {
     "enableClipboardHistory": false,
     "enableClipPreview": true,
-    "inlineCalculator": false,
     "position": "center",
     "pinnedExecs": [],
     "useApp2Unit": false,
