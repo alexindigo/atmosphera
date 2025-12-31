@@ -11,40 +11,24 @@ Popup {
 
   property ShellScreen screen
 
-  width: Math.max(440, contentColumn.implicitWidth + (Style.marginL * 2))
+  width: Math.max(440, Math.round(contentColumn.implicitWidth + (Style.marginL * 2)))
   height: contentColumn.implicitHeight + (Style.marginL * 2)
   padding: Style.marginL
   modal: true
   dim: false
   closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-  parent: Overlay.overlay
-
-  x: {
-    if (screen) {
-      return Math.round(screen.x + (screen.width - width) / 2);
-    }
-    return Math.round((parent.width - width) / 2);
-  }
-
-  y: {
-    if (screen) {
-      return Math.round(screen.y + (screen.height - height) / 2);
-    }
-    return Math.round((parent.height - height) / 2);
-  }
 
   function showAt(item) {
-    // Keep signature for callers but ignore anchor-based positioning;
-    // popup centers on the assigned `screen` instead.
     open();
-    Qt.callLater(() => {
-                   if (resolutionWidthInput.inputItem) {
-                     resolutionWidthInput.inputItem.forceActiveFocus();
-                   }
-                 });
   }
 
   onOpened: {
+    // Center on screen after popup is opened and parent position is known
+    if (screen && parent) {
+      var parentPos = parent.mapToItem(null, 0, 0);
+      x = Math.round((screen.width - width) / 2 - parentPos.x);
+      y = Math.round((screen.height - height) / 2 - parentPos.y);
+    }
     Qt.callLater(() => {
                    if (resolutionWidthInput.inputItem) {
                      resolutionWidthInput.inputItem.forceActiveFocus();
