@@ -10,7 +10,6 @@ Popup {
   id: root
 
   property ShellScreen screen
-  property Item anchorItem: null
 
   width: Math.max(440, contentColumn.implicitWidth + (Style.marginL * 2))
   height: contentColumn.implicitHeight + (Style.marginL * 2)
@@ -18,38 +17,27 @@ Popup {
   modal: true
   dim: false
   closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-  parent: anchorItem ? anchorItem.parent : Overlay.overlay
+  parent: Overlay.overlay
 
   x: {
-    if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0);
-      return itemPos.x - width + anchorItem.width;
+    if (screen) {
+      return Math.round(screen.x + (screen.width - width) / 2);
     }
-    return 0;
+    return Math.round((parent.width - width) / 2);
   }
 
   y: {
-    if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0);
-      var barPosition = Settings.data.bar.position || "top";
-      // Position above the anchor when bar is at bottom, otherwise position below
-      if (barPosition === "bottom") {
-        return itemPos.y - height - Style.marginS;
-      } else {
-        return itemPos.y + anchorItem.height + Style.marginS;
-      }
+    if (screen) {
+      return Math.round(screen.y + (screen.height - height) / 2);
     }
-    return 0;
+    return Math.round((parent.height - height) / 2);
   }
 
   function showAt(item) {
-    if (!item) {
-      return;
-    }
-    anchorItem = item;
+    // Keep signature for callers but ignore anchor-based positioning;
+    // popup centers on the assigned `screen` instead.
     open();
     Qt.callLater(() => {
-                   // Try to focus the first input if available
                    if (resolutionWidthInput.inputItem) {
                      resolutionWidthInput.inputItem.forceActiveFocus();
                    }
