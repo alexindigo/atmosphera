@@ -3,8 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import "../../../Helpers/FuzzySort.js" as Fuzzysort
 import "../../../Helpers/AdvancedMath.js" as AdvancedMath
+import "../../../Helpers/FuzzySort.js" as Fuzzysort
 
 import "Plugins"
 import qs.Commons
