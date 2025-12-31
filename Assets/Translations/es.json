@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "Aplicaciones",
     "calculator": "Calculadora",
+    "calculator-deprecated": "El comando >calc está obsoleto y será eliminado pronto. Por favor, escribe expresiones matemáticas directamente en la búsqueda en su lugar.",
     "calculator-description": "Calculadora — evalúa expresiones matemáticas",
     "calculator-enter-expression": "Ingresa una expresión matemática",
     "calculator-error": "Error",

@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "Застосунки",
     "calculator": "Калькулятор",
+    "calculator-deprecated": "Команда >calc застаріла і скоро буде видалена. Будь ласка, введіть математичні вирази безпосередньо в пошуку.",
     "calculator-description": "Калькулятор — обчислення математичних виразів",
     "calculator-enter-expression": "Введіть математичний вираз",
     "calculator-error": "Помилка",

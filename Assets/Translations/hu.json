@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "Alkalmazások",
     "calculator": "Számológép",
+    "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
     "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
     "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
     "calculator-error": "Hiba",

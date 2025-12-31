@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "应用程序",
     "calculator": "计算器",
+    "calculator-deprecated": ">calc 命令已弃用，即将移除。请直接在搜索中输入数学表达式。",
     "calculator-description": "计算器 — 计算数学表达式",
     "calculator-enter-expression": "输入数学表达式",
     "calculator-error": "错误",

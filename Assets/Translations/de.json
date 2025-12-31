@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "Anwendungen",
     "calculator": "Rechner",
+    "calculator-deprecated": "Der Befehl >calc ist veraltet und wird bald entfernt. Bitte geben Sie stattdessen mathematische Ausdrücke direkt in die Suche ein.",
     "calculator-description": "Rechner — mathematische Ausdrücke auswerten",
     "calculator-enter-expression": "Mathematischen Ausdruck eingeben",
     "calculator-error": "Fehler",

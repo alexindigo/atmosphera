@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "Aplikacje",
     "calculator": "Kalkulator",
+    "calculator-deprecated": "Polecenie >calc jest przestarzałe i wkrótce zostanie usunięte. Zamiast tego wpisuj wyrażenia matematyczne bezpośrednio w wyszukiwarce.",
     "calculator-description": "Kalkulator — obliczaj wyrażenia matematyczne",
     "calculator-enter-expression": "Wpisz wyrażenie matematyczne",
     "calculator-error": "Błąd",

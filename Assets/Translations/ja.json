@@ -830,6 +830,7 @@
   "plugins": {
     "applications": "アプリケーション",
     "calculator": "電卓",
+    "calculator-deprecated": ">calc コマンドは非推奨となり、まもなく削除されます。代わりに、検索で数式を直接入力してください。",
     "calculator-description": "電卓 — 数式を計算します",
     "calculator-enter-expression": "数式を入力",
     "calculator-error": "エラー",
