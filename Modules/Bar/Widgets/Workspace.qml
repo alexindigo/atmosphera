@@ -506,7 +506,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: Style.toOdd(workspacePillContainer.height * root.textRatio)
+                pointSize: workspacePillContainer.height * root.textRatio
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -654,7 +654,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: Style.toOdd(workspacePillContainerVertical.width * root.textRatio)
+                pointSize: workspacePillContainerVertical.width * root.textRatio
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
