@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Vérifiez les sources de vos plugins ou actualisez la liste.",
         "no-plugins-label": "Aucun plugin disponible."
       },
+      "collision": {
+        "already-installed": "Ce plugin est déjà installé.",
+        "custom-version-exists": "Une version personnalisée de \"{source}\" est déjà installée.",
+        "official-version-exists": "La version officielle de cette extension est déjà installée."
+      },
       "filter": {
         "all": "Tout",
         "downloaded": "Téléchargé",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin non chargé",
       "settings-saved": "Paramètres du plugin enregistrés",
+      "source": {
+        "custom": "Source personnalisée",
+        "official": "Officiel/Officielle"
+      },
       "sources": {
         "add-custom": "Ajouter un dépôt personnalisé",
         "add-dialog": {

@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Eklenti kaynaklarınızı kontrol edin veya listeyi yenileyin.",
         "no-plugins-label": "Kullanılabilir eklenti yok"
       },
+      "collision": {
+        "already-installed": "Bu eklenti zaten yüklü.",
+        "custom-version-exists": "\"{source}\" kaynağından özel bir sürüm zaten yüklü.",
+        "official-version-exists": "Bu eklentinin resmi sürümü zaten yüklü."
+      },
       "filter": {
         "all": "Tüm",
         "downloaded": "İndirildi",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Eklenti yüklenmedi",
       "settings-saved": "Eklenti ayarları kaydedildi.",
+      "source": {
+        "custom": "Özel kaynak",
+        "official": "Resmi"
+      },
       "sources": {
         "add-custom": "Özel depo ekle",
         "add-dialog": {

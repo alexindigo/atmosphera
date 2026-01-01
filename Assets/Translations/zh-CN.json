@@ -2177,6 +2177,11 @@
         "no-plugins-description": "检查你的插件源或刷新列表。",
         "no-plugins-label": "没有可用的插件"
       },
+      "collision": {
+        "already-installed": "此插件已安装",
+        "custom-version-exists": "来自“{source}”的自定义版本已安装",
+        "official-version-exists": "此插件的官方版本已安装。"
+      },
       "filter": {
         "all": "全部",
         "downloaded": "已下载",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "插件未加载",
       "settings-saved": "插件设置已保存",
+      "source": {
+        "custom": "自定义源",
+        "official": "官方"
+      },
       "sources": {
         "add-custom": "添加自定义存储库",
         "add-dialog": {

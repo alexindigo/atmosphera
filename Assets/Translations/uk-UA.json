@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Перевірте вихідні коди вашого плагіна або оновіть список.",
         "no-plugins-label": "Немає доступних плагінів"
       },
+      "collision": {
+        "already-installed": "Цей плагін вже встановлено.",
+        "custom-version-exists": "Вже встановлено власну версію з \"{source}\"",
+        "official-version-exists": "Офіційна версія цього плагіна вже встановлена."
+      },
       "filter": {
         "all": "Все",
         "downloaded": "Завантажено",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Плагін не завантажено",
       "settings-saved": "Налаштування плагіна збережено",
+      "source": {
+        "custom": "Власне джерело",
+        "official": "Офіційний"
+      },
       "sources": {
         "add-custom": "Додати власний репозиторій",
         "add-dialog": {

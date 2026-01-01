@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Überprüfen Sie Ihre Plugin-Quellen oder aktualisieren Sie die Liste.",
         "no-plugins-label": "Keine Plugins verfügbar"
       },
+      "collision": {
+        "already-installed": "Dieses Plugin ist bereits installiert.",
+        "custom-version-exists": "Eine benutzerdefinierte Version von \"{source}\" ist bereits installiert.",
+        "official-version-exists": "Die offizielle Version dieses Plugins ist bereits installiert."
+      },
       "filter": {
         "all": "Alle",
         "downloaded": "Heruntergeladen",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin nicht geladen",
       "settings-saved": "Plugin-Einstellungen gespeichert",
+      "source": {
+        "custom": "Benutzerdefinierte Quelle",
+        "official": "Offiziell"
+      },
       "sources": {
         "add-custom": "Benutzerdefiniertes Repository hinzufügen",
         "add-dialog": {

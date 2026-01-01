@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Ellenőrizze a bővítményforrásokat, vagy frissítse a listát.",
         "no-plugins-label": "Nincsenek elérhető bővítmények"
       },
+      "collision": {
+        "already-installed": "Ez a bővítmény már telepítve van.",
+        "custom-version-exists": "Egyéni verzió a következő helyről: \"{source}\" már telepítve van",
+        "official-version-exists": "A plugin hivatalos verziója már telepítve van."
+      },
       "filter": {
         "all": "Összes",
         "downloaded": "Letöltött",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Bővítmény nincs betöltve",
       "settings-saved": "Bővítmény beállításai mentve",
+      "source": {
+        "custom": "Egyéni forrás",
+        "official": "hivatalos"
+      },
       "sources": {
         "add-custom": "Egyéni adattár hozzáadása",
         "add-dialog": {

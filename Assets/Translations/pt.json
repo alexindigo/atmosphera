@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Verifique as fontes do seu plugin ou atualize a lista.",
         "no-plugins-label": "Nenhum plugin disponível."
       },
+      "collision": {
+        "already-installed": "Este plugin já está instalado.",
+        "custom-version-exists": "Uma versão personalizada de \"{source}\" já está instalada.",
+        "official-version-exists": "A versão oficial deste plugin já está instalada."
+      },
       "filter": {
         "all": "Tudo",
         "downloaded": "Baixado",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin não carregado",
       "settings-saved": "Configurações do plugin salvas.",
+      "source": {
+        "custom": "Fonte personalizada",
+        "official": "Oficial"
+      },
       "sources": {
         "add-custom": "Adicionar repositório personalizado",
         "add-dialog": {

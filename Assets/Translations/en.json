@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Check your plugin sources or refresh the list.",
         "no-plugins-label": "No plugins available"
       },
+      "collision": {
+        "already-installed": "This plugin is already installed",
+        "custom-version-exists": "A custom version from \"{source}\" is already installed",
+        "official-version-exists": "The official version of this plugin is already installed"
+      },
       "filter": {
         "all": "All",
         "downloaded": "Downloaded",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin not loaded",
       "settings-saved": "Plugin settings saved",
+      "source": {
+        "custom": "Custom source",
+        "official": "Official"
+      },
       "sources": {
         "add-custom": "Add custom repository",
         "add-dialog": {

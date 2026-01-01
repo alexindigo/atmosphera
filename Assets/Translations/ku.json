@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Check your plugin sources or refresh the list.",
         "no-plugins-label": "No plugins available"
       },
+      "collision": {
+        "already-installed": "Ev pêvek berê hatiye sazkirin.",
+        "custom-version-exists": "Guhertoyeke taybet a ji \"{source}\" berê hatiye sazkirin",
+        "official-version-exists": "Guhertoya fermî ya vê pêvekê berê hatiye sazkirin"
+      },
       "filter": {
         "all": "Hemû",
         "downloaded": "Daxistî",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin not loaded",
       "settings-saved": "Plugin settings saved",
+      "source": {
+        "custom": "Çavkaniya xwerû",
+        "official": "Fermî"
+      },
       "sources": {
         "add-custom": "Add custom repository",
         "add-dialog": {

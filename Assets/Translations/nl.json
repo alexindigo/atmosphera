@@ -2177,6 +2177,11 @@
         "no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
         "no-plugins-label": "Geen plug-ins beschikbaar"
       },
+      "collision": {
+        "already-installed": "Deze plugin is al geïnstalleerd.",
+        "custom-version-exists": "Er is al een aangepaste versie van \"{source}\" geïnstalleerd.",
+        "official-version-exists": "De officiële versie van deze plugin is al geïnstalleerd."
+      },
       "filter": {
         "all": "Alles",
         "downloaded": "Gedownload",
@@ -2207,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin niet geladen",
       "settings-saved": "Plugininstellingen opgeslagen",
+      "source": {
+        "custom": "Aangepaste bron",
+        "official": "Officieel"
+      },
       "sources": {
         "add-custom": "Aangepaste repository toevoegen",
         "add-dialog": {
