@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Noctalia
 import qs.Services.UI
 
@@ -1143,9 +1144,27 @@ Singleton {
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
-      ToastService.showNotice(I18n.tr("settings.plugins.update-available", {
-                                        "count": updateCount
-                                      }), I18n.tr("common.check-settings"));
+      ToastService.showNotice(I18n.trp("settings.plugins.update-available", updateCount, "{count} plugin update available", "{count} plugin updates available", {
+                                         "count": updateCount
+                                       }), "", "plugin", 5000, I18n.tr("settings.plugins.open-plugins-tab"), function () {
+                                         // Open settings panel to Plugins tab on the screen where the cursor is
+                                         if (root.screenDetector) {
+                                           root.screenDetector.withCurrentScreen(function (screen) {
+                                             var panel = PanelService.getPanel("settingsPanel", screen);
+                                             if (panel) {
+                                               panel.requestedTab = SettingsPanel.Tab.Plugins;
+                                               panel.open();
+                                             }
+                                           });
+                                         } else {
+                                           // Fallback to primary screen if screen detector is not available
+                                           var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+                                           if (panel) {
+                                             panel.requestedTab = SettingsPanel.Tab.Plugins;
+                                             panel.open();
+                                           }
+                                         }
+                                       });
     } else {
       Logger.i("PluginService", "All plugins are up to date");
     }

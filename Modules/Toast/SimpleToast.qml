@@ -12,6 +12,8 @@ Item {
   property string icon: ""
   property string type: "notice"
   property int duration: 3000
+  property string actionLabel: ""
+  property var actionCallback: null
   readonly property real initialScale: 0.7
 
   signal hidden
@@ -94,6 +96,14 @@ Item {
     hideAnimation.stop();
   }
 
+  // Click anywhere dismiss the toast (must be before content so action link can override)
+  MouseArea {
+    anchors.fill: background
+    acceptedButtons: Qt.LeftButton
+    onClicked: root.hide()
+    cursorShape: Qt.PointingHandCursor
+  }
+
   RowLayout {
     id: contentLayout
     anchors.fill: background
@@ -152,18 +162,23 @@ Item {
         wrapMode: Text.WordWrap
         visible: text.length > 0
       }
+
+      // Action button
+      NButton {
+        text: root.actionLabel
+        visible: root.actionLabel.length > 0 && root.actionCallback !== null
+        Layout.topMargin: Style.marginXS
+        onClicked: {
+          if (root.actionCallback) {
+            root.actionCallback();
+            root.hide();
+          }
+        }
+      }
     }
   }
 
-  // Click anywhere dismiss the toast
-  MouseArea {
-    anchors.fill: background
-    acceptedButtons: Qt.LeftButton
-    onClicked: root.hide()
-    cursorShape: Qt.PointingHandCursor
-  }
-
-  function show(msg, desc, msgIcon, msgType, msgDuration) {
+  function show(msg, desc, msgIcon, msgType, msgDuration, msgActionLabel, msgActionCallback) {
     // Stop all timers first
     hideTimer.stop();
     hideAnimation.stop();
@@ -173,6 +188,8 @@ Item {
     icon = msgIcon || "";
     type = msgType || "notice";
     duration = msgDuration || 3000;
+    actionLabel = msgActionLabel || "";
+    actionCallback = msgActionCallback || null;
 
     visible = true;
     opacity = 1;

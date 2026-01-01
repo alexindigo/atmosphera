@@ -20,13 +20,15 @@ Item {
   Connections {
     target: ToastService
 
-    function onNotify(message, description, icon, type, duration) {
+    function onNotify(message, description, icon, type, duration, actionLabel, actionCallback) {
       root.enqueueToast({
                           "message": message,
                           "description": description,
                           "icon": icon,
                           "type": type,
                           "duration": duration,
+                          "actionLabel": actionLabel || "",
+                          "actionCallback": actionCallback || null,
                           "timestamp": Date.now()
                         });
     }
@@ -121,7 +123,7 @@ Item {
     onStatusChanged: {
       // When loader becomes ready, show the pending toast
       if (status === Loader.Ready && pendingToast !== null) {
-        item.showToast(pendingToast.message, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration);
+        item.showToast(pendingToast.message, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration, pendingToast.actionLabel, pendingToast.actionCallback);
         pendingToast = null;
       }
     }
@@ -215,8 +217,8 @@ Item {
         }
       }
 
-      function showToast(message, description, icon, type, duration) {
-        toastItem.show(message, description, icon, type, duration);
+      function showToast(message, description, icon, type, duration, actionLabel, actionCallback) {
+        toastItem.show(message, description, icon, type, duration, actionLabel, actionCallback);
       }
 
       function hideToast() {
