@@ -331,6 +331,10 @@
           "description": "Germahiya GPUyê, eger hebe, nîşan bide.",
           "label": "Germahiya GPUyê"
         },
+        "load-average": {
+          "description": "Barkirina navîn a pergalê nîşan bide.",
+          "label": "Barkirina navîn"
+        },
         "memory-percentage": {
           "description": "Bîranînê wekî rêjeyekê nîşan bide, ne wekî nirxên mutleq.",
           "label": "Bîr wekî sedî"
@@ -2417,6 +2421,9 @@
       "gpu-section": {
         "label": "Germahiya GPU"
       },
+      "load-average-section": {
+        "label": "Barkirina navîn"
+      },
       "highlight-colors-section": {
         "label": "Rengên ronîkirinê"
       },
@@ -2673,6 +2680,7 @@
     "download": "Dakêşin",
     "download-speed": "Leza Daxistinê",
     "gpu-temp": "Germa GPU",
+    "load-average": "Barkirina navîn",
     "memory": "Bîr",
     "title": "Çavdêriya Sîstemê",
     "upload": "Barkirin",

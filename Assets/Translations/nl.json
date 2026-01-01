@@ -331,6 +331,10 @@
           "description": "Toon GPU-temperatuurmetingen indien beschikbaar.",
           "label": "GPU-temperatuur"
         },
+        "load-average": {
+          "description": "Systeembelasting gemiddelde weergeven.",
+          "label": "Gemiddelde belasting"
+        },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
           "label": "Geheugen als percentage"
@@ -2417,6 +2421,9 @@
       "gpu-section": {
         "label": "GPU-temperatuur"
       },
+      "load-average-section": {
+        "label": "Gemiddelde belasting"
+      },
       "highlight-colors-section": {
         "label": "Markeerkleuren"
       },
@@ -2673,6 +2680,7 @@
     "download": "Downloaden",
     "download-speed": "Downloadsnelheid",
     "gpu-temp": "GPU-temperatuur",
+    "load-average": "Gemiddelde belasting",
     "memory": "Geheugen",
     "title": "Systeemmonitor",
     "upload": "Uploaden",
