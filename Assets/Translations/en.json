@@ -779,6 +779,10 @@
       "hover": "Scroll on hover",
       "never": "Never scroll"
     },
+    "session-menu-grid-layout": {
+      "grid": "Grid",
+      "single-row": "Single Row"
+    },
     "settings-panel-mode": {
       "attached": "Panel attached to bar",
       "centered": "Centered panel",
@@ -2359,6 +2363,10 @@
       "large-buttons-style": {
         "description": "Display the session menu with large buttons in a grid layout.",
         "label": "Large buttons style"
+      },
+      "large-buttons-layout": {
+        "description": "Choose how session menu buttons are displayed.",
+        "label": "Large buttons layout"
       },
       "position": {
         "description": "Choose where the session menu panel appears when opened.",

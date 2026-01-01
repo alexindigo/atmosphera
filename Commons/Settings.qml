@@ -529,6 +529,7 @@ Singleton {
       property string position: "center"
       property bool showHeader: true
       property bool largeButtonsStyle: false
+      property string largeButtonsLayout: "grid"
       property bool showNumberLabels: true
       property list<var> powerOptions: [
         {
