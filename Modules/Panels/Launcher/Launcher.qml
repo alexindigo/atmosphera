@@ -855,7 +855,7 @@ SmartPanel {
           Layout.fillWidth: true
           Layout.fillHeight: true
           sourceComponent: root.isGridView ? gridViewComponent : listViewComponent
-          
+
           // Reset mouse tracking when loader switches components
           onLoaded: {
             root.ignoreMouseHover = true;
@@ -1517,36 +1517,36 @@ SmartPanel {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: !Settings.data.appLauncher.ignoreMouseInput
-                
+
                 property bool hasInitialPosition: false
                 property real initialX: 0
                 property real initialY: 0
-                
+
                 onPositionChanged: mouse => {
-                  if (!hasInitialPosition) {
-                    initialX = mouse.x;
-                    initialY = mouse.y;
-                    hasInitialPosition = true;
-                    return;
-                  }
-                  
-                  // Check if mouse has moved significantly from initial position
-                  const deltaX = Math.abs(mouse.x - initialX);
-                  const deltaY = Math.abs(mouse.y - initialY);
-                  if (deltaX > 5 || deltaY > 5) {
-                    root.ignoreMouseHover = false;
-                    if (containsMouse) {
-                      selectedIndex = index;
-                    }
-                  }
-                }
-                
+                                     if (!hasInitialPosition) {
+                                       initialX = mouse.x;
+                                       initialY = mouse.y;
+                                       hasInitialPosition = true;
+                                       return;
+                                     }
+
+                                     // Check if mouse has moved significantly from initial position
+                                     const deltaX = Math.abs(mouse.x - initialX);
+                                     const deltaY = Math.abs(mouse.y - initialY);
+                                     if (deltaX > 5 || deltaY > 5) {
+                                       root.ignoreMouseHover = false;
+                                       if (containsMouse) {
+                                         selectedIndex = index;
+                                       }
+                                     }
+                                   }
+
                 onContainsMouseChanged: {
                   if (containsMouse && !root.ignoreMouseHover) {
                     selectedIndex = index;
                   }
                 }
-                
+
                 Connections {
                   target: root
                   function onIgnoreMouseHoverChanged() {
@@ -1561,13 +1561,13 @@ SmartPanel {
                     gridMouseArea.hasInitialPosition = false;
                   }
                 }
-                
+
                 onEntered: {
                   if (!root.ignoreMouseHover) {
                     selectedIndex = index;
                   }
                 }
-                
+
                 onClicked: mouse => {
                              if (mouse.button === Qt.LeftButton) {
                                selectedIndex = index;

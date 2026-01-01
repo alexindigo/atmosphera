@@ -78,14 +78,14 @@ Singleton {
     outputPath = videoDir + filename;
 
     const audioFlags = (() => {
-      if (settings.audioSource === "none") {
-        return "";
-      }
-      if (settings.audioSource === "both") {
-        return `-ac ${settings.audioCodec} -a "default_output|default_input"`;
-      }
-      return `-ac ${settings.audioCodec} -a ${settings.audioSource}`;
-    })();
+                          if (settings.audioSource === "none") {
+                            return "";
+                          }
+                          if (settings.audioSource === "both") {
+                            return `-ac ${settings.audioCodec} -a "default_output|default_input"`;
+                          }
+                          return `-ac ${settings.audioCodec} -a ${settings.audioSource}`;
+                        })();
 
     var flags = `-w ${settings.videoSource} -f ${settings.frameRate} -k ${settings.videoCodec} ${audioFlags} -q ${settings.quality} -cursor ${settings.showCursor ? "yes" : "no"} -cr ${settings.colorRange} -o "${outputPath}"`;
     var command = `
