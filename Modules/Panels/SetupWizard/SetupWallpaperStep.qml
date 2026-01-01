@@ -24,7 +24,7 @@ ColumnLayout {
       return;
     }
     if (ImageCacheService.initialized) {
-      ImageCacheService.getFullscreen(selectedWallpaper, Screen.name, Screen.width, Screen.height, function (path, success) {
+      ImageCacheService.getLarge(selectedWallpaper, Screen.width, Screen.height, function (path, success) {
         if (root)
           root.previewCachedPath = success ? path : selectedWallpaper;
       });

@@ -182,7 +182,7 @@ Loader {
 
             // Don't set resolvedWallpaperPath until cache is ready
             // This prevents loading the original huge image
-            ImageCacheService.getFullscreen(originalPath, screen.name, targetWidth, targetHeight, function (cachedPath, success) {
+            ImageCacheService.getLarge(originalPath, targetWidth, targetHeight, function (cachedPath, success) {
               if (success) {
                 resolvedWallpaperPath = cachedPath;
               } else {

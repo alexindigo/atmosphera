@@ -40,6 +40,8 @@ Variants {
 
       // Used to debounce wallpaper changes
       property string futureWallpaper: ""
+      // Track the original wallpaper path being transitioned to (before caching)
+      property string transitioningToOriginalPath: ""
 
       // Fillmode default is "crop"
       property real fillMode: WallpaperService.getFillModeUniform()
@@ -67,6 +69,7 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
+            Logger.i("Background", "[TRANSITION] onWallpaperChanged for screen:", modelData.name, "path:", path);
             // Request preprocessed wallpaper from cache service
             requestPreprocessedWallpaper(path);
           }
@@ -76,12 +79,14 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
+          Logger.i("Background", "[TRANSITION] onDisplayScalesChanged for screen:", modelData.name, "isStartupTransition:", isStartupTransition);
           // Re-request preprocessed wallpaper at new dimensions
           if (isStartupTransition) {
             return;
           }
           const currentPath = WallpaperService.getWallpaper(modelData.name);
           if (currentPath) {
+            Logger.i("Background", "[TRANSITION] onDisplayScalesChanged triggering requestPreprocessedWallpaper");
             requestPreprocessedWallpaper(currentPath);
           }
         }
@@ -298,6 +303,8 @@ Variants {
         }
         onFinished: {
           Logger.i("Background", "[TRANSITION] Animation FINISHED normally");
+          // Clear the tracking of what we're transitioning to
+          transitioningToOriginalPath = "";
           // Assign new image to current BEFORE clearing to prevent flicker
           const tempSource = nextWallpaper.source;
           currentWallpaper.source = tempSource;
@@ -331,7 +338,7 @@ Variants {
         const targetWidth = Math.round(modelData.width * compositorScale);
         const targetHeight = Math.round(modelData.height * compositorScale);
 
-        ImageCacheService.getFullscreen(wallpaperPath, modelData.name, targetWidth, targetHeight, function (cachedPath, success) {
+        ImageCacheService.getLarge(wallpaperPath, targetWidth, targetHeight, function (cachedPath, success) {
           if (success) {
             futureWallpaper = cachedPath;
           } else {
@@ -344,11 +351,20 @@ Variants {
 
       // ------------------------------------------------------
       function requestPreprocessedWallpaper(originalPath) {
+        // If we're already transitioning to this exact wallpaper, skip the request
+        if (transitioning && originalPath === transitioningToOriginalPath) {
+          Logger.i("Background", "[TRANSITION] requestPreprocessedWallpaper SKIPPED - already transitioning to:", originalPath);
+          return;
+        }
+
         const compositorScale = CompositorService.getDisplayScale(modelData.name);
         const targetWidth = Math.round(modelData.width * compositorScale);
         const targetHeight = Math.round(modelData.height * compositorScale);
 
-        ImageCacheService.getFullscreen(originalPath, modelData.name, targetWidth, targetHeight, function (cachedPath, success) {
+        // Store the original path we're working towards
+        transitioningToOriginalPath = originalPath;
+
+        ImageCacheService.getLarge(originalPath, targetWidth, targetHeight, function (cachedPath, success) {
           if (success) {
             futureWallpaper = cachedPath;
           } else {
