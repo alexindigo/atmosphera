@@ -331,6 +331,10 @@
           "description": "GPU hőmérséklet-értékek megjelenítése, ha elérhetőek.",
           "label": "GPU hőmérséklet"
         },
+        "load-average": {
+          "description": "Rendszerterhelés átlagának megjelenítése.",
+          "label": "Átlagos terhelés"
+        },
         "memory-percentage": {
           "description": "A memória használatának megjelenítése százalékos értékben, abszolút értékek helyett.",
           "label": "Memória százalékban"
@@ -2407,6 +2411,9 @@
       "gpu-section": {
         "label": "GPU hőmérséklet"
       },
+      "load-average-section": {
+        "label": "Átlagos terhelés"
+      },
       "highlight-colors-section": {
         "label": "Kiemelőszínek"
       },
@@ -2663,6 +2670,7 @@
     "download": "Letöltés",
     "download-speed": "Letöltési sebesség",
     "gpu-temp": "GPU hőmérséklet",
+    "load-average": "Átlagos terhelés",
     "memory": "Memória",
     "title": "Rendszerfigyelő",
     "upload": "Feltöltés",

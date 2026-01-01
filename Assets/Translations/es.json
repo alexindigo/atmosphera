@@ -331,6 +331,10 @@
           "description": "Mostrar las lecturas de temperatura de la GPU si están disponibles.",
           "label": "Temperatura de la GPU"
         },
+        "load-average": {
+          "description": "Mostrar promedio de carga del sistema.",
+          "label": "Promedio de carga"
+        },
         "memory-percentage": {
           "description": "Mostrar el uso de memoria como porcentaje en lugar de valores absolutos.",
           "label": "Memoria como porcentaje"
@@ -2407,6 +2411,9 @@
       "gpu-section": {
         "label": "Temperatura de la GPU"
       },
+      "load-average-section": {
+        "label": "Promedio de carga"
+      },
       "highlight-colors-section": {
         "label": "Colores de resaltado"
       },
@@ -2663,6 +2670,7 @@
     "download": "Descargar",
     "download-speed": "Velocidad de descarga",
     "gpu-temp": "Temperatura de la GPU",
+    "load-average": "Promedio de carga",
     "memory": "Memoria",
     "title": "Monitor del sistema",
     "upload": "Subir",

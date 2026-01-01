@@ -331,6 +331,10 @@
           "description": "显示GPU温度读数（如果可用）。",
           "label": "GPU温度"
         },
+        "load-average": {
+          "description": "显示系统平均负载。",
+          "label": "平均负载"
+        },
         "memory-percentage": {
           "description": "以百分比而不是绝对值显示内存使用情况。",
           "label": "内存百分比"
@@ -2407,6 +2411,9 @@
       "gpu-section": {
         "label": "GPU温度"
       },
+      "load-average-section": {
+        "label": "平均负载"
+      },
       "highlight-colors-section": {
         "label": "高亮颜色"
       },
@@ -2663,6 +2670,7 @@
     "download": "下载",
     "download-speed": "下载速度",
     "gpu-temp": "GPU 温度",
+    "load-average": "平均负载",
     "memory": "内存",
     "title": "系统监视器",
     "upload": "上传",

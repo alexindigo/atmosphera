@@ -331,6 +331,10 @@
           "description": "GPU sıcaklık değerleri varsa göster.",
           "label": "GPU sıcaklığı"
         },
+        "load-average": {
+          "description": "Sistem ortalama yükünü göster.",
+          "label": "Ortalama yük"
+        },
         "memory-percentage": {
           "description": "Mutlak değerler yerine bellek kullanımını yüzde olarak göster.",
           "label": "Bellek yüzde olarak"
@@ -2407,6 +2411,9 @@
       "gpu-section": {
         "label": "GPU sıcaklığı"
       },
+      "load-average-section": {
+        "label": "Ortalama yük"
+      },
       "highlight-colors-section": {
         "label": "Vurgulama Renkleri"
       },
@@ -2663,6 +2670,7 @@
     "download": "İndir",
     "download-speed": "İndirme Hızı",
     "gpu-temp": "GPU Sıcaklığı",
+    "load-average": "Ortalama yük",
     "memory": "Hafıza",
     "title": "Sistem İzleyici",
     "upload": "Yükle",
