@@ -69,8 +69,6 @@ Variants {
         target: WallpaperService
         function onWallpaperChanged(screenName, path) {
           if (screenName === modelData.name) {
-            Logger.i("Background", "[TRANSITION] onWallpaperChanged for screen:", modelData.name, "path:", path);
-            // Request preprocessed wallpaper from cache service
             requestPreprocessedWallpaper(path);
           }
         }
@@ -79,14 +77,11 @@ Variants {
       Connections {
         target: CompositorService
         function onDisplayScalesChanged() {
-          Logger.i("Background", "[TRANSITION] onDisplayScalesChanged for screen:", modelData.name, "isStartupTransition:", isStartupTransition);
-          // Re-request preprocessed wallpaper at new dimensions
           if (isStartupTransition) {
             return;
           }
           const currentPath = WallpaperService.getWallpaper(modelData.name);
           if (currentPath) {
-            Logger.i("Background", "[TRANSITION] onDisplayScalesChanged triggering requestPreprocessedWallpaper");
             requestPreprocessedWallpaper(currentPath);
           }
         }
@@ -110,10 +105,7 @@ Variants {
         interval: 333
         running: false
         repeat: false
-        onTriggered: {
-          Logger.i("Background", "[TRANSITION] debounceTimer triggered, calling changeWallpaper");
-          changeWallpaper();
-        }
+        onTriggered: changeWallpaper()
       }
 
       Image {
@@ -295,14 +287,7 @@ Variants {
         // The stripes shader feels faster visually, we make it a bit slower here.
         duration: transitionType == "stripes" ? Settings.data.wallpaper.transitionDuration * 1.6 : Settings.data.wallpaper.transitionDuration
         easing.type: Easing.InOutCubic
-        onStarted: {
-          Logger.i("Background", "[TRANSITION] Animation STARTED, duration:", duration);
-        }
-        onStopped: {
-          Logger.i("Background", "[TRANSITION] Animation STOPPED at progress:", root.transitionProgress);
-        }
         onFinished: {
-          Logger.i("Background", "[TRANSITION] Animation FINISHED normally");
           // Clear the tracking of what we're transitioning to
           transitioningToOriginalPath = "";
           // Assign new image to current BEFORE clearing to prevent flicker
@@ -353,7 +338,6 @@ Variants {
       function requestPreprocessedWallpaper(originalPath) {
         // If we're already transitioning to this exact wallpaper, skip the request
         if (transitioning && originalPath === transitioningToOriginalPath) {
-          Logger.i("Background", "[TRANSITION] requestPreprocessedWallpaper SKIPPED - already transitioning to:", originalPath);
           return;
         }
 
@@ -392,26 +376,16 @@ Variants {
 
       // ------------------------------------------------------
       function setWallpaperWithTransition(source) {
-        Logger.i("Background", "[TRANSITION] setWallpaperWithTransition called");
-        Logger.i("Background", "  source:", source);
-        Logger.i("Background", "  currentWallpaper.source:", currentWallpaper.source);
-        Logger.i("Background", "  nextWallpaper.source:", nextWallpaper.source);
-        Logger.i("Background", "  transitioning:", transitioning);
-        Logger.i("Background", "  transitionProgress:", transitionProgress);
-
         if (source === currentWallpaper.source) {
-          Logger.i("Background", "  -> SKIP: same as current");
           return;
         }
 
         // If we're already transitioning to this same wallpaper, skip
         if (transitioning && source === nextWallpaper.source) {
-          Logger.i("Background", "  -> SKIP: already transitioning to this wallpaper");
           return;
         }
 
         if (transitioning) {
-          Logger.i("Background", "  -> INTERRUPTING existing transition");
           // We are interrupting a transition - handle cleanup properly
           transitionAnimation.stop();
           transitionProgress = 0;
