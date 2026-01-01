@@ -230,6 +230,33 @@ SmartPanel {
                 }
               }
 
+              // Load average
+              RowLayout {
+                Layout.fillWidth: true
+                spacing: Style.marginS
+                visible: SystemStatService.nproc > 0
+
+                NIcon {
+                  icon: "cpu-usage"
+                  pointSize: Style.fontSizeM
+                  color: Color.mOnSurfaceVariant
+                }
+
+                NText {
+                  text: I18n.tr("system-monitor.load-average") + ":"
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurfaceVariant
+                }
+
+                NText {
+                  text: `${SystemStatService.loadAvg1.toFixed(2)} ${SystemStatService.loadAvg5.toFixed(2)} ${SystemStatService.loadAvg15.toFixed(2)}`
+                  pointSize: Style.fontSizeXS
+                  color: Color.mOnSurface
+                  Layout.fillWidth: true
+                  horizontalAlignment: Text.AlignRight
+                }
+              }
+
               // Memory details
               RowLayout {
                 Layout.fillWidth: true
