@@ -460,7 +460,7 @@ Rectangle {
       Layout.preferredWidth: isVertical ? root.width : implicitWidth
       Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
       Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
-      visible: showLoadAverage && SystemStatService.nproc > 0
+      visible: showLoadAverage && SystemStatService.nproc > 0 && SystemStatService.loadAvg1 > 0
 
       GridLayout {
         id: loadAvgContent
@@ -480,7 +480,7 @@ Rectangle {
           implicitHeight: iconSize
 
           NIcon {
-            icon: "cpu-usage"
+            icon: "weight"
             pointSize: iconSize
             applyUiScale: false
             anchors.centerIn: parent
