@@ -886,9 +886,9 @@ SmartPanel {
                   wallpaperGridView.forceActiveFocus();
                   wallpaperGridView.currentIndex = index;
                   if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                    WallpaperService.changeWallpaper(wallpaperPath, undefined);
+                    WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, undefined);
                   } else {
-                    WallpaperService.changeWallpaper(wallpaperPath, targetScreen.name);
+                    WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, targetScreen.name);
                   }
                 }
               }
