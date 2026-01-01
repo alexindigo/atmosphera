@@ -253,15 +253,15 @@ SmartPanel {
           // Step 1: Wallpaper Setup
           SetupWallpaperStep {
             id: step1
-            selectedDirectory: root.selectedWallpaperDirectory
-            selectedWallpaper: root.selectedWallpaper
+            selectedDirectory: panelContent.selectedWallpaperDirectory
+            selectedWallpaper: panelContent.selectedWallpaper
             onDirectoryChanged: function (directory) {
-              root.selectedWallpaperDirectory = directory;
-              root.applyWallpaperSettings();
+              panelContent.selectedWallpaperDirectory = directory;
+              panelContent.applyWallpaperSettings();
             }
             onWallpaperChanged: function (wallpaper) {
-              root.selectedWallpaper = wallpaper;
-              root.applyWallpaperSettings();
+              panelContent.selectedWallpaper = wallpaper;
+              panelContent.applyWallpaperSettings();
             }
           }
 
@@ -273,15 +273,15 @@ SmartPanel {
           // Step 3: UI Configuration
           SetupCustomizeStep {
             id: step2
-            selectedScaleRatio: root.selectedScaleRatio
-            selectedBarPosition: root.selectedBarPosition
+            selectedScaleRatio: panelContent.selectedScaleRatio
+            selectedBarPosition: panelContent.selectedBarPosition
             onScaleRatioChanged: function (ratio) {
-              root.selectedScaleRatio = ratio;
-              root.applyUISettings();
+              panelContent.selectedScaleRatio = ratio;
+              panelContent.applyUISettings();
             }
             onBarPositionChanged: function (position) {
-              root.selectedBarPosition = position;
-              root.applyUISettings();
+              panelContent.selectedBarPosition = position;
+              panelContent.applyUISettings();
             }
           }
 
