@@ -847,7 +847,7 @@ ColumnLayout {
                                       "plugin": pluginMetadata.name
                                     }));
 
-    PluginService.installPlugin(pluginMetadata, function (success, error, registeredKey) {
+    PluginService.installPlugin(pluginMetadata, false, function (success, error, registeredKey) {
       if (success) {
         ToastService.showNotice(I18n.tr("settings.plugins.install-success", {
                                           "plugin": pluginMetadata.name

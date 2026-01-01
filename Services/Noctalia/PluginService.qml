@@ -333,18 +333,21 @@ Singleton {
   }
 
   // Download and install a plugin using git sparse-checkout
-  function installPlugin(pluginMetadata, callback) {
+  // skipCollisionCheck: set to true when updating an existing plugin
+  function installPlugin(pluginMetadata, skipCollisionCheck, callback) {
     var pluginId = pluginMetadata.id;
     var source = pluginMetadata.source;
 
-    // Check for collision first
-    var collision = checkPluginCollision(pluginMetadata);
-    if (collision.collision) {
-      Logger.w("PluginService", "Plugin collision detected:", collision.message);
-      ToastService.showError(collision.message);
-      if (callback)
-        callback(false, collision.message);
-      return;
+    // Check for collision first (skip when updating)
+    if (!skipCollisionCheck) {
+      var collision = checkPluginCollision(pluginMetadata);
+      if (collision.collision) {
+        Logger.w("PluginService", "Plugin collision detected:", collision.message);
+        ToastService.showError(collision.message);
+        if (callback)
+          callback(false, collision.message);
+        return;
+      }
     }
 
     // Generate composite key for the plugin folder
@@ -1219,8 +1222,8 @@ Singleton {
       disablePlugin(pluginId);
     }
 
-    // Now install the new version (reuse installPlugin logic)
-    installPlugin(availablePlugin, function (success, error) {
+    // Now install the new version (reuse installPlugin logic, skip collision check since we're updating)
+    installPlugin(availablePlugin, true, function (success, error) {
       if (success) {
         Logger.i("PluginService", "Plugin updated successfully:", pluginId);
 
