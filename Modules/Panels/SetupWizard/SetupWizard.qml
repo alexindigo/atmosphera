@@ -402,10 +402,9 @@ SmartPanel {
           NButton {
             text: "Skip Setup"
             outlined: true
-            visible: currentStep === 0
             Layout.preferredHeight: 44
             onClicked: {
-              root.completeSetup();
+              panelContent.completeSetup();
             }
           }
 
