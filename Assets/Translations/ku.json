@@ -2421,11 +2421,11 @@
       "gpu-section": {
         "label": "Germahiya GPU"
       },
-      "load-average-section": {
-        "label": "Barkirina navîn"
-      },
       "highlight-colors-section": {
         "label": "Rengên ronîkirinê"
+      },
+      "load-average-section": {
+        "label": "Barkirina navîn"
       },
       "memory-section": {
         "label": "Bikaranîna bîrdankê"

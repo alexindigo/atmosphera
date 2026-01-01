@@ -2421,11 +2421,11 @@
       "gpu-section": {
         "label": "GPU温度"
       },
-      "load-average-section": {
-        "label": "平均负载"
-      },
       "highlight-colors-section": {
         "label": "高亮颜色"
+      },
+      "load-average-section": {
+        "label": "平均负载"
       },
       "memory-section": {
         "label": "内存使用率"

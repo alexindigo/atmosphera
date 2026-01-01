@@ -2421,11 +2421,11 @@
       "gpu-section": {
         "label": "GPU hőmérséklet"
       },
-      "load-average-section": {
-        "label": "Átlagos terhelés"
-      },
       "highlight-colors-section": {
         "label": "Kiemelőszínek"
+      },
+      "load-average-section": {
+        "label": "Átlagos terhelés"
       },
       "memory-section": {
         "label": "Memóriahasználat"

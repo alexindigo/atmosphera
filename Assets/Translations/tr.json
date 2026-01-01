@@ -2421,11 +2421,11 @@
       "gpu-section": {
         "label": "GPU sıcaklığı"
       },
-      "load-average-section": {
-        "label": "Ortalama yük"
-      },
       "highlight-colors-section": {
         "label": "Vurgulama Renkleri"
+      },
+      "load-average-section": {
+        "label": "Ortalama yük"
       },
       "memory-section": {
         "label": "Bellek Kullanımı"

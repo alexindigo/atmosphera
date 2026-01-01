@@ -2421,11 +2421,11 @@
       "gpu-section": {
         "label": "GPU-temperatuur"
       },
-      "load-average-section": {
-        "label": "Gemiddelde belasting"
-      },
       "highlight-colors-section": {
         "label": "Markeerkleuren"
+      },
+      "load-average-section": {
+        "label": "Gemiddelde belasting"
       },
       "memory-section": {
         "label": "Geheugengebruik"
