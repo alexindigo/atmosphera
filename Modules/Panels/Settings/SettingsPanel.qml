@@ -220,6 +220,7 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
+    id: panelContent
     color: Color.transparent
 
     SettingsContent {

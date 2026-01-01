@@ -117,7 +117,7 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
-    id: wallpaperPanel
+    id: panelContent
 
     property int currentScreenIndex: {
       if (screen !== null) {
@@ -134,7 +134,7 @@ SmartPanel {
     property alias screenRepeater: screenRepeater
 
     Component.onCompleted: {
-      root.contentItem = wallpaperPanel;
+      root.contentItem = panelContent;
     }
 
     // Function to update Wallhaven resolution filter
@@ -189,7 +189,7 @@ SmartPanel {
       function onOpened() {
         // Ensure contentItem is set
         if (!root.contentItem) {
-          root.contentItem = wallpaperPanel;
+          root.contentItem = panelContent;
         }
         // Reset grid view selections
         for (var i = 0; i < screenRepeater.count; i++) {
@@ -215,7 +215,7 @@ SmartPanel {
       id: searchDebounceTimer
       interval: 150
       onTriggered: {
-        wallpaperPanel.filterText = searchInput.text;
+        panelContent.filterText = searchInput.text;
         // Trigger update on all screen views
         for (var i = 0; i < screenRepeater.count; i++) {
           let item = screenRepeater.itemAt(i);
@@ -360,7 +360,7 @@ SmartPanel {
                 if (Settings.data.wallpaper.useWallhaven) {
                   searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
                 } else {
-                  searchInput.text = wallpaperPanel.filterText || "";
+                  searchInput.text = panelContent.filterText || "";
                 }
                 // Give focus to search input
                 if (searchInput.inputItem && searchInput.inputItem.visible) {
@@ -379,7 +379,7 @@ SmartPanel {
                   if (Settings.data.wallpaper.useWallhaven) {
                     searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
                   } else {
-                    searchInput.text = wallpaperPanel.filterText || "";
+                    searchInput.text = panelContent.filterText || "";
                   }
                 }
               }
@@ -454,7 +454,7 @@ SmartPanel {
                             if (useWallhaven) {
                               searchInput.text = Settings.data.wallpaper.wallhavenQuery || "";
                             } else {
-                              searchInput.text = wallpaperPanel.filterText || "";
+                              searchInput.text = panelContent.filterText || "";
                             }
                             if (useWallhaven && typeof WallhavenService !== "undefined") {
                               // Update service properties when switching to Wallhaven
@@ -466,7 +466,7 @@ SmartPanel {
                               WallhavenService.order = Settings.data.wallpaper.wallhavenOrder;
 
                               // Update resolution settings
-                              wallpaperPanel.updateWallhavenResolution();
+                              panelContent.updateWallhavenResolution();
 
                               // If the view is already initialized, trigger a new search when switching to it
                               if (wallhavenView && wallhavenView.initialized && !WallhavenService.fetching) {
@@ -591,12 +591,12 @@ SmartPanel {
 
     // Expose updateFiltered as a proper function property
     function updateFiltered() {
-      if (!wallpaperPanel.filterText || wallpaperPanel.filterText.trim().length === 0) {
+      if (!panelContent.filterText || panelContent.filterText.trim().length === 0) {
         filteredWallpapers = wallpapersList;
         return;
       }
 
-      const results = FuzzySort.go(wallpaperPanel.filterText.trim(), wallpapersWithNames, {
+      const results = FuzzySort.go(panelContent.filterText.trim(), wallpapersWithNames, {
                                      "key": 'name',
                                      "limit": 200
                                    });
@@ -905,13 +905,13 @@ SmartPanel {
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
-            text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : I18n.tr("wallpaper.no-wallpaper")
+            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : I18n.tr("wallpaper.no-wallpaper")
             color: Color.mOnSurface
             font.weight: Style.fontWeightBold
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
-            text: (wallpaperPanel.filterText && wallpaperPanel.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : I18n.tr("wallpaper.configure-directory")
+            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : I18n.tr("wallpaper.configure-directory")
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter

@@ -16,6 +16,7 @@ SmartPanel {
   preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   panelContent: Rectangle {
+    id: panelContent
     color: Color.transparent
 
     // Calculate content height based on header + devices list (or minimum for empty states)

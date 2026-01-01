@@ -13,68 +13,71 @@ SmartPanel {
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
-  property string passwordSsid: ""
-  property string expandedSsid: ""
-  property bool hasHadNetworks: false
-
-  // Computed network lists
-  readonly property var knownNetworks: {
-    if (!Settings.data.network.wifiEnabled)
-      return [];
-
-    var nets = Object.values(NetworkService.networks);
-    var known = nets.filter(n => n.connected || n.existing || n.cached);
-
-    // Sort: connected first, then by signal strength
-    known.sort((a, b) => {
-                 if (a.connected !== b.connected)
-                 return b.connected - a.connected;
-                 return b.signal - a.signal;
-               });
-
-    return known;
-  }
-
-  readonly property var availableNetworks: {
-    if (!Settings.data.network.wifiEnabled)
-      return [];
-
-    var nets = Object.values(NetworkService.networks);
-    var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
-
-    // Sort by signal strength
-    available.sort((a, b) => b.signal - a.signal);
-
-    return available;
-  }
-
-  onOpened: {
-    hasHadNetworks = false;
-    NetworkService.scan();
-    // Preload active Wi‑Fi details so Info shows instantly
-    NetworkService.refreshActiveWifiDetails();
-  }
-
-  onKnownNetworksChanged: {
-    if (knownNetworks.length > 0)
-      hasHadNetworks = true;
-  }
-
-  onAvailableNetworksChanged: {
-    if (availableNetworks.length > 0)
-      hasHadNetworks = true;
-  }
-
-  Connections {
-    target: Settings.data.network
-    function onWifiEnabledChanged() {
-      if (!Settings.data.network.wifiEnabled)
-        root.hasHadNetworks = false;
-    }
-  }
-
   panelContent: Rectangle {
+    id: panelContent
     color: Color.transparent
+
+    // UI state properties (lazy-loaded with panelContent)
+    property string passwordSsid: ""
+    property string expandedSsid: ""
+    property bool hasHadNetworks: false
+
+    // Computed network lists (lazy-loaded with panelContent)
+    readonly property var knownNetworks: {
+      if (!Settings.data.network.wifiEnabled)
+        return [];
+
+      var nets = Object.values(NetworkService.networks);
+      var known = nets.filter(n => n.connected || n.existing || n.cached);
+
+      // Sort: connected first, then by signal strength
+      known.sort((a, b) => {
+                   if (a.connected !== b.connected)
+                   return b.connected - a.connected;
+                   return b.signal - a.signal;
+                 });
+
+      return known;
+    }
+
+    readonly property var availableNetworks: {
+      if (!Settings.data.network.wifiEnabled)
+        return [];
+
+      var nets = Object.values(NetworkService.networks);
+      var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+
+      // Sort by signal strength
+      available.sort((a, b) => b.signal - a.signal);
+
+      return available;
+    }
+
+    onKnownNetworksChanged: {
+      if (knownNetworks.length > 0)
+        hasHadNetworks = true;
+    }
+
+    onAvailableNetworksChanged: {
+      if (availableNetworks.length > 0)
+        hasHadNetworks = true;
+    }
+
+    // Trigger WiFi scan when panel content is loaded (replaces onOpened)
+    Component.onCompleted: {
+      hasHadNetworks = false;
+      NetworkService.scan();
+      // Preload active Wi‑Fi details so Info shows instantly
+      NetworkService.refreshActiveWifiDetails();
+    }
+
+    Connections {
+      target: Settings.data.network
+      function onWifiEnabledChanged() {
+        if (!Settings.data.network.wifiEnabled)
+          panelContent.hasHadNetworks = false;
+      }
+    }
 
     // Calculate content height based on header + networks list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
@@ -219,7 +222,7 @@ SmartPanel {
 
       // Scanning state (show when no networks and we haven't had any yet)
       NBox {
-        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && !root.hasHadNetworks
+        visible: Settings.data.network.wifiEnabled && Object.keys(NetworkService.networks).length === 0 && !hasHadNetworks
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -254,7 +257,7 @@ SmartPanel {
 
       // Empty state when no networks (only show after we've had networks before, meaning a real empty result)
       NBox {
-        visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && root.hasHadNetworks
+        visible: Settings.data.network.wifiEnabled && !NetworkService.scanning && Object.keys(NetworkService.networks).length === 0 && hasHadNetworks
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -309,46 +312,46 @@ SmartPanel {
 
           WiFiNetworksList {
             label: I18n.tr("wifi.panel.known-networks")
-            model: root.knownNetworks
-            passwordSsid: root.passwordSsid
-            expandedSsid: root.expandedSsid
+            model: panelContent.knownNetworks
+            passwordSsid: panelContent.passwordSsid
+            expandedSsid: panelContent.expandedSsid
             onPasswordRequested: ssid => {
-                                   root.passwordSsid = ssid;
-                                   root.expandedSsid = "";
+                                   panelContent.passwordSsid = ssid;
+                                   panelContent.expandedSsid = "";
                                  }
             onPasswordSubmitted: (ssid, password) => {
                                    NetworkService.connect(ssid, password);
-                                   root.passwordSsid = "";
+                                   panelContent.passwordSsid = "";
                                  }
-            onPasswordCancelled: root.passwordSsid = ""
-            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+            onPasswordCancelled: panelContent.passwordSsid = ""
+            onForgetRequested: ssid => panelContent.expandedSsid = panelContent.expandedSsid === ssid ? "" : ssid
             onForgetConfirmed: ssid => {
                                  NetworkService.forget(ssid);
-                                 root.expandedSsid = "";
+                                 panelContent.expandedSsid = "";
                                }
-            onForgetCancelled: root.expandedSsid = ""
+            onForgetCancelled: panelContent.expandedSsid = ""
           }
 
           WiFiNetworksList {
             label: I18n.tr("wifi.panel.available-networks")
-            model: root.availableNetworks
-            passwordSsid: root.passwordSsid
-            expandedSsid: root.expandedSsid
+            model: panelContent.availableNetworks
+            passwordSsid: panelContent.passwordSsid
+            expandedSsid: panelContent.expandedSsid
             onPasswordRequested: ssid => {
-                                   root.passwordSsid = ssid;
-                                   root.expandedSsid = "";
+                                   panelContent.passwordSsid = ssid;
+                                   panelContent.expandedSsid = "";
                                  }
             onPasswordSubmitted: (ssid, password) => {
                                    NetworkService.connect(ssid, password);
-                                   root.passwordSsid = "";
+                                   panelContent.passwordSsid = "";
                                  }
-            onPasswordCancelled: root.passwordSsid = ""
-            onForgetRequested: ssid => root.expandedSsid = root.expandedSsid === ssid ? "" : ssid
+            onPasswordCancelled: panelContent.passwordSsid = ""
+            onForgetRequested: ssid => panelContent.expandedSsid = panelContent.expandedSsid === ssid ? "" : ssid
             onForgetConfirmed: ssid => {
                                  NetworkService.forget(ssid);
-                                 root.expandedSsid = "";
+                                 panelContent.expandedSsid = "";
                                }
-            onForgetCancelled: root.expandedSsid = ""
+            onForgetCancelled: panelContent.expandedSsid = ""
           }
         }
       }
