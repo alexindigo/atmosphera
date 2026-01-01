@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Choose how you'd like this value to appear.",
           "label": "Display mode"
+        },
+        "show-icon": {
+          "description": "Display the keyboard layout icon.",
+          "label": "Show icon"
         }
       },
       "lock-keys": {
@@ -752,6 +756,7 @@
       "audio-sources": {
         "both": "System output + microphone input",
         "microphone-input": "Microphone input",
+        "none": "No audio",
         "system-output": "System output"
       },
       "color-range": {
@@ -826,6 +831,7 @@
   "plugins": {
     "applications": "Applications",
     "calculator": "Calculator",
+    "calculator-deprecated": "The >calc command is deprecated and will be removed soon. Please type math expressions directly in search instead.",
     "calculator-description": "Calculator — evaluate mathematical expressions",
     "calculator-enter-expression": "Enter a mathematical expression",
     "calculator-error": "Error",
@@ -2171,6 +2177,11 @@
         "no-plugins-description": "Check your plugin sources or refresh the list.",
         "no-plugins-label": "No plugins available"
       },
+      "collision": {
+        "already-installed": "This plugin is already installed",
+        "custom-version-exists": "A custom version from \"{source}\" is already installed",
+        "official-version-exists": "The official version of this plugin is already installed"
+      },
       "filter": {
         "all": "All",
         "downloaded": "Downloaded",
@@ -2201,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin not loaded",
       "settings-saved": "Plugin settings saved",
+      "source": {
+        "custom": "Custom source",
+        "official": "Official"
+      },
       "sources": {
         "add-custom": "Add custom repository",
         "add-dialog": {

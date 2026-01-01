@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Válassza ki, hogyan jelenjen meg ez az érték.",
           "label": "Megjelenítési mód"
+        },
+        "show-icon": {
+          "description": "Billentse a billentyűzetkiosztás ikont.",
+          "label": "Ikon megjelenítése"
         }
       },
       "lock-keys": {
@@ -752,6 +756,7 @@
       "audio-sources": {
         "both": "Rendszerkimenet + mikrofonbemenet",
         "microphone-input": "Mikrofonbemenet",
+        "none": "No audio",
         "system-output": "Rendszerkimenet"
       },
       "color-range": {
@@ -826,6 +831,7 @@
   "plugins": {
     "applications": "Alkalmazások",
     "calculator": "Számológép",
+    "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
     "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
     "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
     "calculator-error": "Hiba",
@@ -2171,6 +2177,11 @@
         "no-plugins-description": "Ellenőrizze a bővítményforrásokat, vagy frissítse a listát.",
         "no-plugins-label": "Nincsenek elérhető bővítmények"
       },
+      "collision": {
+        "already-installed": "Ez a bővítmény már telepítve van.",
+        "custom-version-exists": "Egyéni verzió a következő helyről: \"{source}\" már telepítve van",
+        "official-version-exists": "A plugin hivatalos verziója már telepítve van."
+      },
       "filter": {
         "all": "Összes",
         "downloaded": "Letöltött",
@@ -2201,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Bővítmény nincs betöltve",
       "settings-saved": "Bővítmény beállításai mentve",
+      "source": {
+        "custom": "Egyéni forrás",
+        "official": "hivatalos"
+      },
       "sources": {
         "add-custom": "Egyéni adattár hozzáadása",
         "add-dialog": {

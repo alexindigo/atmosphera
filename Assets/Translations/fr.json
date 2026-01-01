@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Choisissez comment vous souhaitez que cette valeur apparaisse.",
           "label": "Mode d'affichage"
+        },
+        "show-icon": {
+          "description": "Afficher l'icône de disposition du clavier.",
+          "label": "Afficher l'icône"
         }
       },
       "lock-keys": {
@@ -752,6 +756,7 @@
       "audio-sources": {
         "both": "Sortie système + entrée microphone",
         "microphone-input": "Entrée microphone",
+        "none": "Pas d'audio",
         "system-output": "Sortie système"
       },
       "color-range": {
@@ -826,6 +831,7 @@
   "plugins": {
     "applications": "Applications",
     "calculator": "Calculatrice",
+    "calculator-deprecated": "La commande >calc est obsolète et sera bientôt supprimée. Veuillez saisir les expressions mathématiques directement dans la recherche à la place.",
     "calculator-description": "Calculatrice — évaluez des expressions mathématiques",
     "calculator-enter-expression": "Entrez une expression mathématique",
     "calculator-error": "Erreur",
@@ -2171,6 +2177,11 @@
         "no-plugins-description": "Vérifiez les sources de vos plugins ou actualisez la liste.",
         "no-plugins-label": "Aucun plugin disponible."
       },
+      "collision": {
+        "already-installed": "Ce plugin est déjà installé.",
+        "custom-version-exists": "Une version personnalisée de \"{source}\" est déjà installée.",
+        "official-version-exists": "La version officielle de cette extension est déjà installée."
+      },
       "filter": {
         "all": "Tout",
         "downloaded": "Téléchargé",
@@ -2201,6 +2212,10 @@
       },
       "settings-error-not-loaded": "Plugin non chargé",
       "settings-saved": "Paramètres du plugin enregistrés",
+      "source": {
+        "custom": "Source personnalisée",
+        "official": "Officiel/Officielle"
+      },
       "sources": {
         "add-custom": "Ajouter un dépôt personnalisé",
         "add-dialog": {
