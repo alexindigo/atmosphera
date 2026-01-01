@@ -772,104 +772,140 @@ SmartPanel {
           }
         }
 
-        delegate: ColumnLayout {
-          id: wallpaperItem
+        delegate: Item {
+          id: wallpaperItemWrapper
+          width: wallpaperGridView.cellWidth
+          height: wallpaperGridView.cellHeight
 
-          property string wallpaperPath: modelData
-          property bool isSelected: (wallpaperPath === currentWallpaper)
-          property string filename: wallpaperPath.split('/').pop()
+          ColumnLayout {
+            id: wallpaperItem
+            anchors.fill: parent
+            anchors.margins: Style.marginXS
 
-          width: wallpaperGridView.itemSize
-          spacing: Style.marginXS
+            property string wallpaperPath: modelData
+            property bool isSelected: (wallpaperPath === currentWallpaper)
+            property string filename: wallpaperPath.split('/').pop()
+            property string cachedPath: ""
 
-          Rectangle {
-            id: imageContainer
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.round(wallpaperGridView.itemSize * 0.67)
-            color: Color.transparent
+            spacing: Style.marginXS
 
-            NImageCached {
-              id: img
-              imagePath: wallpaperPath
-              anchors.fill: parent
-            }
-
-            Rectangle {
-              anchors.fill: parent
-              color: Color.transparent
-              border.color: {
-                if (isSelected) {
-                  return Color.mSecondary;
-                }
-                if (wallpaperGridView.currentIndex === index) {
-                  return Color.mHover;
-                }
-                return Color.mSurface;
+            Component.onCompleted: {
+              if (ImageCacheService.initialized) {
+                ImageCacheService.getThumbnail(wallpaperPath, function (path, success) {
+                  if (wallpaperItem)
+                    wallpaperItem.cachedPath = success ? path : wallpaperPath;
+                });
+              } else {
+                cachedPath = wallpaperPath;
               }
-              border.width: Math.max(1, Style.borderL * 1.5)
             }
 
-            Rectangle {
-              anchors.top: parent.top
-              anchors.right: parent.right
-              anchors.margins: Style.marginS
-              width: 28
-              height: 28
-              radius: width / 2
-              color: Color.mSecondary
-              border.color: Color.mOutline
-              border.width: Style.borderS
-              visible: isSelected
+            Item {
+              id: imageContainer
+              Layout.fillWidth: true
+              Layout.preferredHeight: Math.round(wallpaperGridView.itemSize * 0.67)
 
-              NIcon {
-                icon: "check"
-                pointSize: Style.fontSizeM
-                color: Color.mOnSecondary
+              NImageRounded {
+                id: img
+                anchors.fill: parent
+                imagePath: wallpaperItem.cachedPath
+                radius: Style.radiusM
+                borderColor: {
+                  if (wallpaperItem.isSelected) {
+                    return Color.mSecondary;
+                  }
+                  if (wallpaperGridView.currentIndex === index) {
+                    return Color.mHover;
+                  }
+                  return Color.mSurface;
+                }
+                borderWidth: Math.max(1, Style.borderL * 1.5)
+                imageFillMode: Image.PreserveAspectCrop
+              }
+
+              // Loading/error state background
+              Rectangle {
+                anchors.fill: parent
+                color: Color.mSurfaceVariant
+                radius: Style.radiusM
+                visible: img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === ""
+
+                NIcon {
+                  icon: "image"
+                  pointSize: Style.fontSizeL
+                  color: Color.mOnSurfaceVariant
+                  anchors.centerIn: parent
+                }
+              }
+
+              NBusyIndicator {
                 anchors.centerIn: parent
+                visible: img.status === Image.Loading || wallpaperItem.cachedPath === ""
+                running: visible
+                size: 18
               }
-            }
 
-            Rectangle {
-              anchors.fill: parent
-              color: Color.mSurface
-              opacity: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
-              radius: parent.radius
-              Behavior on opacity {
-                NumberAnimation {
-                  duration: Style.animationFast
+              Rectangle {
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: Style.marginS
+                width: 28
+                height: 28
+                radius: width / 2
+                color: Color.mSecondary
+                border.color: Color.mOutline
+                border.width: Style.borderS
+                visible: wallpaperItem.isSelected
+
+                NIcon {
+                  icon: "check"
+                  pointSize: Style.fontSizeM
+                  color: Color.mOnSecondary
+                  anchors.centerIn: parent
+                }
+              }
+
+              Rectangle {
+                anchors.fill: parent
+                color: Color.mSurface
+                radius: Style.radiusM
+                opacity: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
+                Behavior on opacity {
+                  NumberAnimation {
+                    duration: Style.animationFast
+                  }
+                }
+              }
+
+              HoverHandler {
+                id: hoverHandler
+              }
+
+              TapHandler {
+                onTapped: {
+                  wallpaperGridView.forceActiveFocus();
+                  wallpaperGridView.currentIndex = index;
+                  if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                    WallpaperService.changeWallpaper(wallpaperPath, undefined);
+                  } else {
+                    WallpaperService.changeWallpaper(wallpaperPath, targetScreen.name);
+                  }
                 }
               }
             }
 
-            // More efficient hover handling
-            HoverHandler {
-              id: hoverHandler
+            NText {
+              text: wallpaperItem.filename
+              visible: !Settings.data.wallpaper.hideWallpaperFilenames
+              color: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
+              pointSize: Style.fontSizeXS
+              Layout.fillWidth: true
+              Layout.leftMargin: Style.marginS
+              Layout.rightMargin: Style.marginS
+              Layout.alignment: Qt.AlignHCenter
+              horizontalAlignment: Text.AlignHCenter
+              elide: Text.ElideRight
             }
-
-            TapHandler {
-              onTapped: {
-                wallpaperGridView.forceActiveFocus();
-                wallpaperGridView.currentIndex = index;
-                if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                  WallpaperService.changeWallpaper(wallpaperPath, undefined);
-                } else {
-                  WallpaperService.changeWallpaper(wallpaperPath, targetScreen.name);
-                }
-              }
-            }
-          }
-
-          NText {
-            text: filename
-            visible: !Settings.data.wallpaper.hideWallpaperFilenames
-            color: (hoverHandler.hovered || isSelected || wallpaperGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
-            pointSize: Style.fontSizeXS
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.marginS
-            Layout.rightMargin: Style.marginS
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
           }
         }
       }
