@@ -20,7 +20,7 @@ SmartPanel {
   // Get device selection from Battery widget settings (check right section first, then any Battery widget)
   function getBatteryDevicePath() {
     var widget = BarService.lookupWidget("Battery");
-    if (widget !== undefined) {
+    if (widget !== undefined && widget.deviceNativePath !== undefined) {
       return widget.deviceNativePath;
     }
     return "";
