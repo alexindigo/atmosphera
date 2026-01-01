@@ -56,6 +56,7 @@ Item {
   // Only for grouped mode / show apps
   readonly property int baseItemSize: Style.toOdd(Style.capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
+  readonly property real textRatio: 0.50
 
   // Context menu state for grouped mode - store IDs instead of object references to avoid stale references
   property string selectedWindowId: ""
@@ -505,7 +506,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainer.height * 0.55 : workspacePillContainer.height * 0.52
+                pointSize: Style.toOdd(workspacePillContainer.height * root.textRatio)
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -653,7 +654,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.55 : workspacePillContainerVertical.width * 0.52
+                pointSize: Style.toOdd(workspacePillContainerVertical.width * root.textRatio)
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
