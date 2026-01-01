@@ -505,7 +505,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                pointSize: model.isActive ? workspacePillContainer.height * 0.55 : workspacePillContainer.height * 0.52
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -653,7 +653,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.55 : workspacePillContainerVertical.width * 0.52
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
