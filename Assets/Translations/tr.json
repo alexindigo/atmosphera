@@ -779,6 +779,10 @@
       "hover": "Üzerine Gelince Kaydır",
       "never": "Asla Kaydırma"
     },
+    "session-menu-grid-layout": {
+      "grid": "Izgara",
+      "single-row": "Tek Sıra"
+    },
     "settings-panel-mode": {
       "attached": "Panel çubuğa takılı",
       "centered": "Ortalanmış panel",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Eklenti kurulu değil"
       },
       "installing": "{eklenti} kuruluyor...",
+      "open-plugins-tab": "Eklenti ayarlarına git",
       "plugin-settings-title": "{plugin} Ayarları",
       "refresh": {
         "refreshing": "Eklenti listesi yenileniyor...",
@@ -2247,6 +2252,7 @@
       "update-all": "Tümünü Güncelle ({count})",
       "update-all-success": "Tüm eklentiler başarıyla güncellendi.",
       "update-available": "{count} eklenti için güncelleme mevcut",
+      "update-available_plural": "{count} eklenti güncellemesi mevcut",
       "update-error": "Eklenti güncellenemedi: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} veya üzeri gerektirir.",
       "update-success": "{plugin} v{version} sürümüne güncellendi",
@@ -2353,6 +2359,10 @@
           "description": "Oturum menüsü panelinin davranışını ve görünümünü yapılandırın.",
           "label": "Genel"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Oturum menüsü düğmelerinin nasıl görüntüleneceğini seçin.",
+        "label": "Büyük düğme düzeni"
       },
       "large-buttons-style": {
         "description": "Oturum menüsünü büyük butonlarla ızgara düzeninde görüntüle.",

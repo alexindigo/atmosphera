@@ -779,6 +779,10 @@
       "hover": "Прокручивать при наведении",
       "never": "Никогда не прокручивать"
     },
+    "session-menu-grid-layout": {
+      "grid": "Сетка",
+      "single-row": "Один ряд"
+    },
     "settings-panel-mode": {
       "attached": "Панель прикреплена к панели",
       "centered": "Центрированная панель",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Нет установленных плагинов"
       },
       "installing": "Установка {plugin}...",
+      "open-plugins-tab": "Открыть настройки плагинов",
       "plugin-settings-title": "Настройки {plugin}",
       "refresh": {
         "refreshing": "Обновление списка плагинов...",
@@ -2247,6 +2252,7 @@
       "update-all": "Обновить все ({count})",
       "update-all-success": "Все плагины успешно обновлены.",
       "update-available": "Доступно {count} обновлений плагинов",
+      "update-available_plural": "Доступно {count} обновлений плагинов",
       "update-error": "Не удалось обновить плагин: {plugin}: {error}",
       "update-incompatible": "Требуется Noctalia v{version} или выше",
       "update-success": "Плагин {plugin} обновлён до версии {version}",
@@ -2353,6 +2359,10 @@
           "description": "Настройка поведения и внешнего вида панели меню сеанса.",
           "label": "Общие"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Выберите способ отображения кнопок меню сеанса.",
+        "label": "Крупная раскладка кнопок"
       },
       "large-buttons-style": {
         "description": "Отобразить меню сеанса с большими кнопками в виде сетки.",

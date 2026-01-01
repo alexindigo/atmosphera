@@ -779,6 +779,10 @@
       "hover": "ホバー時にスクロール",
       "never": "スクロールしない"
     },
+    "session-menu-grid-layout": {
+      "grid": "グリッド",
+      "single-row": "単一行"
+    },
     "settings-panel-mode": {
       "attached": "バーに吸着",
       "centered": "中央に配置",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "インストールされているプラグインはありません"
       },
       "installing": "{plugin} をインストール中...",
+      "open-plugins-tab": "プラグイン設定を開く",
       "plugin-settings-title": "{plugin} の設定",
       "refresh": {
         "refreshing": "プラグインリストを更新中...",
@@ -2247,6 +2252,7 @@
       "update-all": "すべてアップデート ({count})",
       "update-all-success": "すべてのプラグインをアップデートしました。",
       "update-available": "{count} 件のプラグインアップデートがあります",
+      "update-available_plural": "{count} 個のプラグインアップデートがあります",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
       "update-success": "{plugin} を v{version} にアップデートしました。",
@@ -2353,6 +2359,10 @@
           "description": "セッションメニューパネルの動作と外観を設定します。",
           "label": "一般"
         }
+      },
+      "large-buttons-layout": {
+        "description": "セッションメニューのボタンの表示方法を選択してください。",
+        "label": "大きなボタンのレイアウト"
       },
       "large-buttons-style": {
         "description": "セッションメニューを、グリッド配置の大きなボタンで表示します。",

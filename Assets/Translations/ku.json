@@ -779,6 +779,10 @@
       "hover": "Li ser gerandinê bigere",
       "never": "Qet negere."
     },
+    "session-menu-grid-layout": {
+      "grid": "Tor",
+      "single-row": "Yek Rêz"
+    },
     "settings-panel-mode": {
       "attached": "Panel bi bar ve girêdayî ye",
       "centered": "Panela navendîkirî",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Tu pêvek nehatine sazkirin"
       },
       "installing": "Sazkirina {plugin}...",
+      "open-plugins-tab": "Vekirina mîhengên pêvekê",
       "plugin-settings-title": "Sazkairyên {plugin}",
       "refresh": {
         "refreshing": "Lîsteya pêvekên nûvekirinê...",
@@ -2247,6 +2252,7 @@
       "update-all": "Hemûyan Nû bike ({count})",
       "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin",
       "update-available": "Rojanekirinê {count} pêvekan heye",
+      "update-available_plural": "{count} nûkirinên pêvekê hene",
       "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}",
       "update-incompatible": "Pêdivî ye Noctalia v{version} an bilindtir",
       "update-success": "{plugin} hate nûkirin bo v{version}.",
@@ -2353,6 +2359,10 @@
           "description": "Maneja reftar û xuyabûna panela menûya rûniştinê.",
           "label": "Giştî"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Çawa bişkokên menuya danişînê bên nîşandan hilbijêre.",
+        "label": "Rêzika bişkokên mezin"
       },
       "large-buttons-style": {
         "description": "Pêşeka danişînê bi bişkokên mezin di şêweya grîd de nîşan bide.",

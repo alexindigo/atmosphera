@@ -779,6 +779,10 @@
       "hover": "Rolar ao Passar o Mouse",
       "never": "Nunca Rolar"
     },
+    "session-menu-grid-layout": {
+      "grid": "Grade",
+      "single-row": "Linha Única"
+    },
     "settings-panel-mode": {
       "attached": "Painel anexado à barra",
       "centered": "Painel centralizado",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Nenhum plugin instalado"
       },
       "installing": "Instalando {plugin}...",
+      "open-plugins-tab": "Abrir configurações de plugins",
       "plugin-settings-title": "Configurações do {plugin}",
       "refresh": {
         "refreshing": "Atualizando a lista de plugins...",
@@ -2247,6 +2252,7 @@
       "update-all": "Atualizar Tudo ({count})",
       "update-all-success": "Todos os plugins foram atualizados com sucesso.",
       "update-available": "{count} atualização(ões) de plugin disponível(eis)",
+      "update-available_plural": "{count} atualizações de plugin disponíveis",
       "update-error": "Falha ao atualizar o plugin: {plugin}: {error}",
       "update-incompatible": "Requer Noctalia v{version} ou superior",
       "update-success": "{plugin} atualizado para a versão {version}",
@@ -2353,6 +2359,10 @@
           "description": "Configurar o comportamento e a aparência do painel do menu de sessão.",
           "label": "Geral"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Escolha como os botões do menu de sessão são exibidos.",
+        "label": "Layout de botões grandes"
       },
       "large-buttons-style": {
         "description": "Exibir o menu de sessão com botões grandes em um layout de grade.",

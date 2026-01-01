@@ -2206,6 +2206,7 @@
         "no-plugins-label": "No plugins installed"
       },
       "installing": "Installing {plugin}...",
+      "open-plugins-tab": "Open plugins settings",
       "plugin-settings-title": "{plugin} Settings",
       "refresh": {
         "refreshing": "Refreshing plugins list...",
@@ -2252,7 +2253,6 @@
       "update-all-success": "All plugins updated successfully",
       "update-available": "{count} plugin update available",
       "update-available_plural": "{count} plugin updates available",
-      "open-plugins-tab": "Open plugins settings",
       "update-error": "Failed to update plugin: {plugin}: {error}",
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
@@ -2360,13 +2360,13 @@
           "label": "General"
         }
       },
-      "large-buttons-style": {
-        "description": "Display the session menu with large buttons in a grid layout.",
-        "label": "Large buttons style"
-      },
       "large-buttons-layout": {
         "description": "Choose how session menu buttons are displayed.",
         "label": "Large buttons layout"
+      },
+      "large-buttons-style": {
+        "description": "Display the session menu with large buttons in a grid layout.",
+        "label": "Large buttons style"
       },
       "position": {
         "description": "Choose where the session menu panel appears when opened.",

@@ -779,6 +779,10 @@
       "hover": "Scrollen bij hover",
       "never": "Nooit scrollen"
     },
+    "session-menu-grid-layout": {
+      "grid": "Raster",
+      "single-row": "Enkele rij"
+    },
     "settings-panel-mode": {
       "attached": "Paneel bevestigd aan de balk",
       "centered": "Gecentreerd paneel",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Geen plugins geïnstalleerd"
       },
       "installing": "{plugin} installeren...",
+      "open-plugins-tab": "Open plugininstellingen",
       "plugin-settings-title": "{plugin} Instellingen",
       "refresh": {
         "refreshing": "Pluginlijst vernieuwen...",
@@ -2247,6 +2252,7 @@
       "update-all": "Alles bijwerken ({count})",
       "update-all-success": "Alle plugins succesvol bijgewerkt",
       "update-available": "{count} plugin(s) update(s) beschikbaar",
+      "update-available_plural": "{count} plugin updates beschikbaar",
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
       "update-success": "{plugin} is bijgewerkt naar v{version}",
@@ -2353,6 +2359,10 @@
           "description": "Configureer het gedrag en uiterlijk van het sessiemenu-paneel.",
           "label": "Algemeen"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Kies hoe sessiemenuknoppen worden weergegeven.",
+        "label": "Lay-out met grote knoppen"
       },
       "large-buttons-style": {
         "description": "Toon het sessiemenu met grote knoppen in een rasterindeling.",

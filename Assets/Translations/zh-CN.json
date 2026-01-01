@@ -779,6 +779,10 @@
       "hover": "悬停时滚动",
       "never": "从不滚动"
     },
+    "session-menu-grid-layout": {
+      "grid": "网格",
+      "single-row": "单行"
+    },
     "settings-panel-mode": {
       "attached": "面板附加到工具栏",
       "centered": "居中面板",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "未安装插件"
       },
       "installing": "正在安装 {plugin}...",
+      "open-plugins-tab": "打开插件设置",
       "plugin-settings-title": "{插件} 设置",
       "refresh": {
         "refreshing": "正在刷新插件列表...",
@@ -2247,6 +2252,7 @@
       "update-all": "全部更新（{count}）",
       "update-all-success": "所有插件已成功更新",
       "update-available": "有{count}个插件可更新",
+      "update-available_plural": "{count} 个插件有可用更新",
       "update-error": "更新插件失败：{plugin}：{error}",
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
       "update-success": "已将 {plugin} 更新至 v{version}",
@@ -2353,6 +2359,10 @@
           "description": "配置会话菜单面板的行为和外观。",
           "label": "常规"
         }
+      },
+      "large-buttons-layout": {
+        "description": "选择会话菜单按钮的显示方式。",
+        "label": "大按钮布局"
       },
       "large-buttons-style": {
         "description": "以网格布局显示带有大按钮的会话菜单。",

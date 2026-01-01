@@ -779,6 +779,10 @@
       "hover": "Beim Hover Scrollen",
       "never": "Nie Scrollen"
     },
+    "session-menu-grid-layout": {
+      "grid": "Raster",
+      "single-row": "Einzelne Reihe"
+    },
     "settings-panel-mode": {
       "attached": "Panel an der Leiste angeheftet",
       "centered": "Zentriertes Feld",
@@ -2202,6 +2206,7 @@
         "no-plugins-label": "Keine Plugins installiert"
       },
       "installing": "{Plugin} wird installiert...",
+      "open-plugins-tab": "Plugin-Einstellungen öffnen",
       "plugin-settings-title": "{plugin} Einstellungen",
       "refresh": {
         "refreshing": "Aktualisiere Plugin-Liste...",
@@ -2247,6 +2252,7 @@
       "update-all": "Alle aktualisieren ({count})",
       "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
       "update-available": "{count} Plugin-Update(s) verfügbar",
+      "update-available_plural": "{count} Plugin-Aktualisierungen verfügbar",
       "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
       "update-incompatible": "Benötigt Noctalia v{version} oder höher",
       "update-success": "{plugin} wurde auf v{version} aktualisiert",
@@ -2353,6 +2359,10 @@
           "description": "Konfigurieren Sie das Verhalten und Erscheinungsbild des Sitzungsmenü-Panels.",
           "label": "Allgemein"
         }
+      },
+      "large-buttons-layout": {
+        "description": "Wählen Sie, wie die Sitzungsmenü-Schaltflächen angezeigt werden.",
+        "label": "Layout mit großen Schaltflächen"
       },
       "large-buttons-style": {
         "description": "Das Sitzungsmenü mit großen Schaltflächen in einem Rasterlayout anzeigen.",
