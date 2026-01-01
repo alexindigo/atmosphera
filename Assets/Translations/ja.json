@@ -2731,7 +2731,8 @@
       "enabled": "有効"
     },
     "keyboard-layout": {
-      "changed": "キーボードレイアウトを {layout} に変更しました"
+      "changed": "キーボードレイアウトを {layout} に変更しました",
+      "title": "キーボード"
     },
     "kofi": {
       "opened": "ブラウザで Ko-fi ページを開きました"

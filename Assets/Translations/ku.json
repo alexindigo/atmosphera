@@ -2731,7 +2731,8 @@
       "enabled": "Çalakkirî"
     },
     "keyboard-layout": {
-      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin"
+      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin",
+      "title": "Klavyeya"
     },
     "kofi": {
       "opened": "Rûpela Ko-fi di geroka te de vebû."

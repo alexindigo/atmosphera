@@ -61,7 +61,7 @@ ColumnLayout {
       function updateNext() {
         if (currentIndex >= pluginIds.length) {
           isUpdating = false;
-          ToastService.showNotice(I18n.tr("settings.plugins.update-all-success"));
+          ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-all-success"));
           return;
         }
 
@@ -271,15 +271,15 @@ ColumnLayout {
                 rootRef.updatingPlugins = updates2;
 
                 if (success) {
-                  ToastService.showNotice(I18n.tr("settings.plugins.update-success", {
-                                                    "plugin": pname,
-                                                    "version": pversion
-                                                  }));
+                  ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-success", {
+                                                                                       "plugin": pname,
+                                                                                       "version": pversion
+                                                                                     }));
                 } else {
-                  ToastService.showError(I18n.tr("settings.plugins.update-error", {
-                                                   "plugin": pname,
-                                                   "error": error || "Unknown error"
-                                                 }));
+                  ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-error", {
+                                                                                      "plugin": pname,
+                                                                                      "error": error || "Unknown error"
+                                                                                    }));
                 }
               });
             }
@@ -387,7 +387,7 @@ ColumnLayout {
             onToggled: function (checked) {
               PluginRegistry.setSourceEnabled(modelData.url, checked);
               PluginService.refreshAvailablePlugins();
-              ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
+              ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
             }
           }
         }
@@ -459,7 +459,7 @@ ColumnLayout {
       onClicked: {
         PluginService.refreshAvailablePlugins();
         checkUpdatesTimer.restart();
-        ToastService.showNotice(I18n.tr("settings.plugins.refresh.refreshing"));
+        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
       }
     }
   }
@@ -742,13 +742,13 @@ ColumnLayout {
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
             if (PluginRegistry.addPluginSource(sourceNameInput.text, sourceUrlInput.text)) {
-              ToastService.showNotice(I18n.tr("settings.plugins.sources.add-dialog.success"));
+              ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.sources.add-dialog.success"));
               PluginService.refreshAvailablePlugins();
               addSourceDialog.close();
               sourceNameInput.text = "";
               sourceUrlInput.text = "";
             } else {
-              ToastService.showNotice(I18n.tr("settings.plugins.sources.add-dialog.error"));
+              ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.sources.add-dialog.error"));
             }
           }
         }
@@ -843,21 +843,21 @@ ColumnLayout {
   // ------------------------------
 
   function installPlugin(pluginMetadata) {
-    ToastService.showNotice(I18n.tr("settings.plugins.installing", {
-                                      "plugin": pluginMetadata.name
-                                    }));
+    ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.installing", {
+                                                                         "plugin": pluginMetadata.name
+                                                                       }));
 
     PluginService.installPlugin(pluginMetadata, false, function (success, error, registeredKey) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.install-success", {
-                                          "plugin": pluginMetadata.name
-                                        }));
+        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.install-success", {
+                                                                             "plugin": pluginMetadata.name
+                                                                           }));
         // Auto-enable the plugin after installation (use registered key which may be composite)
         PluginService.enablePlugin(registeredKey);
       } else {
-        ToastService.showNotice(I18n.tr("settings.plugins.install-error", {
-                                          "error": error || "Unknown error"
-                                        }));
+        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.install-error", {
+                                                                            "error": error || "Unknown error"
+                                                                          }));
       }
     });
   }
@@ -866,19 +866,19 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
-    ToastService.showNotice(I18n.tr("settings.plugins.uninstalling", {
-                                      "plugin": pluginName
-                                    }));
+    ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstalling", {
+                                                                         "plugin": pluginName
+                                                                       }));
 
     PluginService.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-success", {
-                                          "plugin": pluginName
-                                        }));
+        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-success", {
+                                                                             "plugin": pluginName
+                                                                           }));
       } else {
-        ToastService.showNotice(I18n.tr("settings.plugins.uninstall-error", {
-                                          "error": error || "Unknown error"
-                                        }));
+        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-error", {
+                                                                            "error": error || "Unknown error"
+                                                                          }));
       }
     });
   }

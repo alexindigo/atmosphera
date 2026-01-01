@@ -7,7 +7,7 @@ import qs.Widgets
 Item {
   id: root
 
-  property string message: ""
+  property string title: ""
   property string description: ""
   property string icon: ""
   property string type: "notice"
@@ -146,7 +146,7 @@ Item {
 
       NText {
         Layout.fillWidth: true
-        text: root.message
+        text: root.title
         color: Color.mOnSurface
         pointSize: Style.fontSizeL
         font.weight: Style.fontWeightBold
@@ -168,6 +168,12 @@ Item {
         text: root.actionLabel
         visible: root.actionLabel.length > 0 && root.actionCallback !== null
         Layout.topMargin: Style.marginXS
+        fontSize: Style.fontSizeS
+        backgroundColor: Color.mPrimary
+        textColor: hovered ? Color.mOnHover : Color.mOnPrimary
+        hoverColor: Color.mHover
+        outlined: false
+        implicitHeight: 24
         onClicked: {
           if (root.actionCallback) {
             root.actionCallback();
@@ -178,13 +184,13 @@ Item {
     }
   }
 
-  function show(msg, desc, msgIcon, msgType, msgDuration, msgActionLabel, msgActionCallback) {
+  function show(msgTitle, msgDescription, msgIcon, msgType, msgDuration, msgActionLabel, msgActionCallback) {
     // Stop all timers first
     hideTimer.stop();
     hideAnimation.stop();
 
-    message = msg;
-    description = desc || "";
+    title = msgTitle;
+    description = msgDescription || "";
     icon = msgIcon || "";
     type = msgType || "notice";
     duration = msgDuration || 3000;
@@ -192,7 +198,7 @@ Item {
     actionCallback = msgActionCallback || null;
 
     visible = true;
-    opacity = 1;
+    opacity = 1.0;
     scale = 1.0;
 
     hideTimer.restart();

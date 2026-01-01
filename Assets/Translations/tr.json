@@ -2731,7 +2731,8 @@
       "enabled": "Etkin"
     },
     "keyboard-layout": {
-      "changed": "Klavye düzeni {layout} olarak değiştirildi"
+      "changed": "Klavye düzeni {layout} olarak değiştirildi",
+      "title": "Klavye"
     },
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"

@@ -20,9 +20,9 @@ Item {
   Connections {
     target: ToastService
 
-    function onNotify(message, description, icon, type, duration, actionLabel, actionCallback) {
+    function onNotify(title, description, icon, type, duration, actionLabel, actionCallback) {
       root.enqueueToast({
-                          "message": message,
+                          "title": title,
                           "description": description,
                           "icon": icon,
                           "type": type,
@@ -45,7 +45,7 @@ Item {
   function enqueueToast(toastData) {
     // Safe logging - fix the substring bug
     var descPreview = (toastData.description || "").substring(0, 100).replace(/\n/g, " ");
-    Logger.d("ToastScreen", "Queuing", toastData.type, ":", toastData.message, descPreview);
+    Logger.d("ToastScreen", "Queuing", toastData.type, ":", toastData.title, descPreview);
 
     // Bounded queue to prevent unbounded memory growth
     if (messageQueue.length >= maxQueueSize) {
@@ -123,7 +123,7 @@ Item {
     onStatusChanged: {
       // When loader becomes ready, show the pending toast
       if (status === Loader.Ready && pendingToast !== null) {
-        item.showToast(pendingToast.message, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration, pendingToast.actionLabel, pendingToast.actionCallback);
+        item.showToast(pendingToast.title, pendingToast.description, pendingToast.icon, pendingToast.type, pendingToast.duration, pendingToast.actionLabel, pendingToast.actionCallback);
         pendingToast = null;
       }
     }
@@ -217,8 +217,8 @@ Item {
         }
       }
 
-      function showToast(message, description, icon, type, duration, actionLabel, actionCallback) {
-        toastItem.show(message, description, icon, type, duration, actionLabel, actionCallback);
+      function showToast(title, description, icon, type, duration, actionLabel, actionCallback) {
+        toastItem.show(title, description, icon, type, duration, actionLabel, actionCallback);
       }
 
       function hideToast() {

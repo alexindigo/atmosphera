@@ -2731,7 +2731,8 @@
       "enabled": "\"Wakker houden\" ingeschakeld"
     },
     "keyboard-layout": {
-      "changed": "Toetsenbordindeling gewijzigd naar {layout}"
+      "changed": "Toetsenbordindeling gewijzigd naar {layout}",
+      "title": "Toetsenbord"
     },
     "kofi": {
       "opened": "Ko-fi-pagina geopend in je browser"

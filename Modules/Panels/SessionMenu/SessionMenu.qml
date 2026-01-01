@@ -528,7 +528,7 @@ SmartPanel {
       GridLayout {
         id: largeButtonsGrid
         Layout.alignment: Qt.AlignHCenter
-        columns: Settings.data.sessionMenu.largeButtonsLayout === "single-row" ?  powerOptions.length : Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)))
+        columns: Settings.data.sessionMenu.largeButtonsLayout === "single-row" ? powerOptions.length : Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)))
         rowSpacing: Style.marginXL
         columnSpacing: Style.marginXL
         width: columns * 200 * Style.uiScaleRatio + (columns - 1) * Style.marginXL

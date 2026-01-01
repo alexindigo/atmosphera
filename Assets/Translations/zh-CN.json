@@ -2731,7 +2731,8 @@
       "enabled": "已启用"
     },
     "keyboard-layout": {
-      "changed": "键盘布局已更改为 {layout}"
+      "changed": "键盘布局已更改为 {layout}",
+      "title": "键盘"
     },
     "kofi": {
       "opened": "Ko-fi 页面已在您的浏览器中打开"
