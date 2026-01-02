@@ -93,7 +93,7 @@ NBox {
       id: bgImage
       readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       anchors.fill: parent
-      source: MediaService.trackArtUrl || root.cachedWallpaper
+      source: MediaService.trackArtUrl || (Settings.data.wallpaper.enabled ? root.cachedWallpaper : "")
       sourceSize: Qt.size(dim, dim)
       fillMode: Image.PreserveAspectCrop
       layer.enabled: true

@@ -192,7 +192,7 @@ Loader {
             });
           }
 
-          // Black backgound, in case image fails to load or takes a while
+          // Black backgound, in case no wallpaper or if its takes a while to load
           Rectangle {
             anchors.fill: parent
             color: "#000000"
@@ -200,7 +200,7 @@ Loader {
 
           Image {
             id: lockBgImage
-            visible: source !== ""
+            visible: source !== "" && Settings.data.wallpaper.enabled
             anchors.fill: parent
             fillMode: Image.PreserveAspectCrop
             source: resolvedWallpaperPath
