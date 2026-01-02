@@ -478,6 +478,7 @@
       "connect": "Connect",
       "connected-devices": "Connected devices",
       "connecting": "Connecting...",
+      "disconnecting": "Disconnecting...",
       "device-address": "Device address",
       "disabled": "Bluetooth is disabled",
       "disconnect": "Disconnect",
@@ -494,6 +495,14 @@
       "refresh-devices": "Refresh devices",
       "scanning": "Scanning for devices...",
       "signal": "Signal",
+      "signal-text": {
+        "unknown": "Signal: Unknown",
+        "excellent": "Signal: Excellent",
+        "good": "Signal: Good",
+        "fair": "Signal: Fair",
+        "poor": "Signal: Poor",
+        "very-poor": "Signal: Very poor"
+      },
       "title": "Bluetooth",
       "trusted": "Trusted",
       "unpair": "Unpair"
@@ -1940,7 +1949,11 @@
     "network": {
       "bluetooth": {
         "description": "Activate Bluetooth management.",
-        "label": "Enable Bluetooth"
+        "label": "Enable Bluetooth",
+        "rssi-polling": {
+          "label": "Bluetooth signal polling",
+          "description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled."
+        }
       },
       "section": {
         "description": "Manage Wi-Fi and Bluetooth connections."
@@ -2677,7 +2690,8 @@
       "pair-failed": "Failed to pair device",
       "passkey-required": "Passkey required by the device",
       "pincode-required": "PIN code required by the device",
-      "state-change-failed": "Failed to change Bluetooth state"
+      "state-change-failed": "Failed to change Bluetooth state",
+      "address-copied": "Address copied to clipboard"
     },
     "clipboard": {
       "unavailable": "Clipboard history unavailable",
@@ -2827,6 +2841,7 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
+    "copy-address": "Copy address",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",

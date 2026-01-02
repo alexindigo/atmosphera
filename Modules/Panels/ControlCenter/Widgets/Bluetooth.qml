@@ -10,6 +10,9 @@ NIconButtonHot {
 
   icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
   tooltipText: I18n.tr("quickSettings.bluetooth.tooltip.action")
-  onClicked: PanelService.getPanel("bluetoothPanel", screen)?.toggle(this)
+  onClicked: {
+    var p = PanelService.getPanel("bluetoothPanel", screen);
+    if (p) p.toggle(this);
+  }
   onRightClicked: BluetoothService.setBluetoothEnabled(!BluetoothService.enabled)
 }

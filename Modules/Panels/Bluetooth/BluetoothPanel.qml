@@ -75,14 +75,10 @@ SmartPanel {
 
           NIconButton {
             enabled: BluetoothService.enabled
-            icon: BluetoothService.adapter && BluetoothService.adapter.discovering ? "stop" : "refresh"
+            icon: BluetoothService.scanningActive ? "stop" : "refresh"
             tooltipText: I18n.tr("tooltips.refresh-devices")
             baseSize: Style.baseWidgetSize * 0.8
-            onClicked: {
-              if (BluetoothService.adapter) {
-                BluetoothService.adapter.discovering = !BluetoothService.adapter.discovering;
-              }
-            }
+            onClicked: BluetoothService.toggleDiscovery()
           }
 
           NIconButton {
@@ -272,7 +268,7 @@ SmartPanel {
           // Empty state when no devices
           NBox {
             visible: {
-              if (!BluetoothService.adapter || BluetoothService.adapter.discovering || !Bluetooth.devices)
+              if (!Bluetooth.devices || BluetoothService.scanningActive)
                 return false;
 
               var availableCount = Bluetooth.devices.values.filter(dev => {
@@ -310,9 +306,7 @@ SmartPanel {
                 icon: "refresh"
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
-                  if (BluetoothService.adapter) {
-                    BluetoothService.adapter.discovering = !BluetoothService.adapter.discovering;
-                  }
+                  BluetoothService.toggleDiscovery();
                 }
               }
 
@@ -327,7 +321,7 @@ SmartPanel {
             Layout.fillWidth: true
             Layout.preferredHeight: columnScanning.implicitHeight + Style.marginM * 2
             visible: {
-              if (!BluetoothService.adapter || !BluetoothService.adapter.discovering || !Bluetooth.devices) {
+              if (!Bluetooth.devices || !BluetoothService.scanningActive) {
                 return false;
               }
 
