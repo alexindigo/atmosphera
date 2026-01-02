@@ -19,9 +19,9 @@ SmartPanel {
   property bool hasHadNetworks: false
 
   // Ethernet details UI state (mirrors Wi‑Fi info behavior)
-  // Info panel collapsed by default, view mode persisted under Settings.data.ui.wifiDetailsViewMode
+  // Info panel collapsed by default, view mode persisted under Settings.data.network.wifiDetailsViewMode
   property bool ethernetInfoExpanded: false
-  property bool ethernetDetailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
+  property bool ethernetDetailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.wifiDetailsViewMode !== undefined) ? (Settings.data.network.wifiDetailsViewMode === "grid") : true
 
   // Computed network lists
   readonly property var knownNetworks: {
@@ -189,7 +189,7 @@ SmartPanel {
               onClicked: {
                 ethernetDetailsGrid = !ethernetDetailsGrid;
                 if (Settings.data && Settings.data.ui) {
-                  Settings.data.ui.wifiDetailsViewMode = ethernetDetailsGrid ? "grid" : "list";
+                  Settings.data.network.wifiDetailsViewMode = ethernetDetailsGrid ? "grid" : "list";
                 }
               }
               z: 1

@@ -21,8 +21,8 @@ NBox {
   // Currently expanded info panel for a connected SSID
   property string infoSsid: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
-  // Persisted under Settings.data.ui.wifiDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
+  // Persisted under Settings.data.network.wifiDetailsViewMode
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.wifiDetailsViewMode !== undefined) ? (Settings.data.network.wifiDetailsViewMode === "grid") : true
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -325,7 +325,7 @@ NBox {
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {
-                  Settings.data.ui.wifiDetailsViewMode = root.detailsGrid ? "grid" : "list";
+                  Settings.data.network.wifiDetailsViewMode = root.detailsGrid ? "grid" : "list";
                 }
               }
               z: 1

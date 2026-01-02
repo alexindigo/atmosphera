@@ -194,7 +194,7 @@ SmartPanel {
                 return [];
               var filtered = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
               // Optionally hide devices without a meaningful name when the filter is enabled
-              if (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) {
+              if (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) {
                 filtered = filtered.filter(function (dev) {
                   // Extract display name
                   var dn = "";

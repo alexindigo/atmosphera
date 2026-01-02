@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 36
+  readonly property int settingsVersion: 37
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -299,11 +299,7 @@ Singleton {
       property real panelBackgroundOpacity: 0.93
       property bool panelsAttachedToBar: true
       property string settingsPanelMode: "attached" // "centered", "attached", "window"
-      // Details view mode persistence for panels
-      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
-      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
-      // Bluetooth available devices list: hide items without a name
-      property bool bluetoothHideUnnamedDevices: false
+      property bool boxBorderEnabled: false
     }
 
     // location
@@ -523,10 +519,11 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
-      // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
-      property bool bluetoothRssiPollingEnabled: false
-      // Polling interval in milliseconds for RSSI queries
-      property int bluetoothRssiPollIntervalMs: 10000
+      property bool bluetoothRssiPollingEnabled: false  // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
+      property int bluetoothRssiPollIntervalMs: 10000 // Polling interval in milliseconds for RSSI queries
+      property string wifiDetailsViewMode: "grid"   // "grid" or "list"
+      property string bluetoothDetailsViewMode: "grid" // "grid" or "list"
+      property bool bluetoothHideUnnamedDevices: false
     }
 
     // session menu
