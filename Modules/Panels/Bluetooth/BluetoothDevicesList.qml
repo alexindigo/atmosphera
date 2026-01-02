@@ -132,46 +132,49 @@ NBox {
 
               // Status
               NText {
-                text: BluetoothService.getStatusString(modelData)
+                text: {
+                  const k = BluetoothService.getStatusKey(modelData);
+                  if (k === "pairing")
+                    return I18n.tr("bluetooth.panel.pairing");
+                  if (k === "blocked")
+                    return I18n.tr("bluetooth.panel.blocked");
+                  if (k === "connecting")
+                    return I18n.tr("bluetooth.panel.connecting");
+                  if (k === "disconnecting")
+                    return I18n.tr("bluetooth.panel.disconnecting");
+                  return "";
+                }
                 visible: text !== ""
                 pointSize: Style.fontSizeXS
                 color: getContentColor(Color.mOnSurfaceVariant)
               }
 
-              // Signal Strength
+              // Signal strength: show only in the expanded info panel (hidden in compact row)
               RowLayout {
-                visible: modelData.signalStrength !== undefined
+                visible: false
                 Layout.fillWidth: true
                 spacing: Style.marginXS
+              }
 
-                // Device signal strength - "Unknown" when not connected
+              // Battery (icon + percent)
+              RowLayout {
+                visible: modelData.batteryAvailable
+                spacing: Style.marginXS
+
+                NIcon {
+                  icon: "battery"
+                  pointSize: Style.fontSizeXS
+                  color: getContentColor(Color.mOnSurface)
+                }
+
                 NText {
-                  text: BluetoothService.getSignalStrength(modelData)
+                  text: {
+                    var b = BluetoothService.getBatteryPercent(modelData);
+                    return b === null ? "-" : (b + "%");
+                  }
                   pointSize: Style.fontSizeXS
                   color: getContentColor(Color.mOnSurfaceVariant)
                 }
-
-                NIcon {
-                  visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
-                  icon: BluetoothService.getSignalIcon(modelData)
-                  pointSize: Style.fontSizeXS
-                  color: getContentColor(Color.mOnSurface)
-                }
-
-                NText {
-                  visible: modelData.signalStrength > 0 && !modelData.pairing && !modelData.blocked
-                  text: (modelData.signalStrength !== undefined && modelData.signalStrength > 0) ? modelData.signalStrength + "%" : ""
-                  pointSize: Style.fontSizeXS
-                  color: getContentColor(Color.mOnSurface)
-                }
-              }
-
-              // Battery
-              NText {
-                visible: modelData.batteryAvailable
-                text: BluetoothService.getBattery(modelData)
-                pointSize: Style.fontSizeXS
-                color: getContentColor(Color.mOnSurfaceVariant)
               }
             }
 
@@ -322,12 +325,7 @@ NBox {
                   }
                 }
                 NText {
-                  // Extract value from helper (remove leading label if present)
-                  text: (function () {
-                    var s = BluetoothService.getSignalStrength(modelData);
-                    var idx = s.indexOf(":");
-                    return idx !== -1 ? s.substring(idx + 1).trim() : s;
-                  })()
+                  text: BluetoothService.getSignalStrength(modelData)
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -353,11 +351,10 @@ NBox {
                   }
                 }
                 NText {
-                  text: modelData.batteryAvailable ? (function () {
-                    var b = BluetoothService.getBattery(modelData);
-                    var i = b.indexOf(":");
-                    return i !== -1 ? b.substring(i + 1).trim() : b;
-                  })() : "-"
+                  text: {
+                    var b = BluetoothService.getBatteryPercent(modelData);
+                    return b === null ? "-" : (b + "%");
+                  }
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -437,6 +434,7 @@ NBox {
                   }
                 }
                 NText {
+                  id: macAddressText
                   text: modelData.address || "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
@@ -446,6 +444,24 @@ NBox {
                   elide: Text.ElideNone
                   maximumLineCount: 2
                   clip: true
+
+                  // Click-to-copy MAC address
+                  MouseArea {
+                    anchors.fill: parent
+                    enabled: (modelData.address && modelData.address.length > 0)
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: TooltipService.show(parent, I18n.tr("tooltips.copy-address"))
+                    onExited: TooltipService.hide()
+                    onClicked: {
+                      const addr = modelData.address || "";
+                      if (addr.length > 0) {
+                        // Copy to clipboard via wl-copy (runtime dependency)
+                        Quickshell.execDetached(["wl-copy", addr]);
+                        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "bluetooth");
+                      }
+                    }
+                  }
                 }
               }
             }

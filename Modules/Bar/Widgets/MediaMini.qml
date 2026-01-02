@@ -17,7 +17,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   // Settings
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -47,10 +46,9 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
 
   // Dimensions
-  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
-  readonly property int textSize: Math.round(Style.capsuleHeight * 0.4 * barScaling)
+  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75)
+  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
+  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
 
   // State
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
@@ -88,8 +86,8 @@ Item {
   readonly property string tooltipText: {
     var text = title;
     var controls = [];
-    if (MediaService.canGoNext)
-      controls.push("Right click for next.");
+    // Right click now opens options, including player selection
+    controls.push("Right click for options.");
     if (MediaService.canGoPrevious)
       controls.push("Middle click for previous.");
     return controls.length ? `${text}\n\n${controls.join("\n")}` : text;
@@ -116,10 +114,10 @@ Item {
     // Add spacing and text width
     var textWidth = 0;
     if (titleMetrics.contentWidth > 0) {
-      textWidth = Style.marginS * barScaling + titleMetrics.contentWidth + Style.marginXXS * 2;
+      textWidth = Style.marginS + titleMetrics.contentWidth + Style.marginXXS * 2;
     }
 
-    var margins = isVertical ? 0 : (Style.marginS * barScaling * 2);
+    var margins = isVertical ? 0 : (Style.marginS * 2);
     var total = iconWidth + textWidth + margins;
     return hasPlayer ? Math.min(total, maxWidth) : total;
   }
@@ -149,8 +147,7 @@ Item {
     visible: false
     text: title
     applyUiScale: false
-    pointSize: root.textSize
-    font.weight: Style.fontWeightMedium
+    pointSize: Style.barFontSize
   }
 
   // Context menu
@@ -179,6 +176,22 @@ Item {
                      "icon": "media-next"
                    });
       }
+
+      // Append available players (like in Control Center) so user can switch from the bar
+      var players = MediaService.getAvailablePlayers ? MediaService.getAvailablePlayers() : [];
+      if (players && players.length > 1) {
+        for (var i = 0; i < players.length; i++) {
+          var isCurrent = (i === MediaService.selectedPlayerIndex);
+          items.push({
+                       "label": players[i].identity,
+                       "action": "player-" + i,
+                       "icon": isCurrent ? "check" : "disc",
+                       "enabled": true,
+                       "visible": true
+                     });
+        }
+      }
+
       items.push({
                    "label": I18n.tr("context-menu.widget-settings"),
                    "action": "widget-settings",
@@ -198,7 +211,12 @@ Item {
                    MediaService.previous();
                    else if (action === "next")
                    MediaService.next();
-                   else if (action === "widget-settings") {
+                   else if (action && action.indexOf("player-") === 0) {
+                     var idx = parseInt(action.split("-")[1]);
+                     if (!isNaN(idx)) {
+                       MediaService.switchToPlayer(idx);
+                     }
+                   } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }
@@ -231,8 +249,8 @@ Item {
 
     Item {
       anchors.fill: parent
-      anchors.leftMargin: isVertical ? 0 : Style.marginS * barScaling
-      anchors.rightMargin: isVertical ? 0 : Style.marginS * barScaling
+      anchors.leftMargin: isVertical ? 0 : Style.marginS
+      anchors.rightMargin: isVertical ? 0 : Style.marginS
       clip: true
 
       // Visualizer
@@ -260,7 +278,7 @@ Item {
       RowLayout {
         anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * barScaling
+        spacing: Style.marginS
         visible: !isVertical
         z: 1
 
@@ -287,17 +305,17 @@ Item {
             anchors.fill: parent
             visible: showProgressRing
             progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-            lineWidth: 2 * barScaling
+            lineWidth: 2
           }
 
           Item {
             anchors.fill: parent
-            anchors.margins: showProgressRing ? (3 * barScaling) : 0.5
+            anchors.margins: showProgressRing ? (3) : 0.5
 
             NImageRounded {
               visible: showAlbumArt && hasPlayer
               anchors.fill: parent
-              anchors.margins: showProgressRing ? 0 : -1 * barScaling
+              anchors.margins: showProgressRing ? 0 : -1
               radius: width / 2
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
@@ -311,7 +329,7 @@ Item {
               y: Style.pixelAlignCenter(parent.height, contentHeight)
               icon: MediaService.isPlaying ? "media-pause" : "media-play"
               color: Color.mOnSurface
-              pointSize: 8 * barScaling
+              pointSize: Style.barFontSize
             }
           }
         }
@@ -327,7 +345,7 @@ Item {
             anchors.fill: parent
             text: title
             textColor: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            fontSize: root.textSize
+            fontSize: Style.barFontSize
             scrollMode: scrollingMode
             needsScroll: titleMetrics.contentWidth > parent.width
           }
@@ -348,7 +366,7 @@ Item {
           anchors.fill: parent
           visible: showProgressRing
           progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-          lineWidth: Style.toOdd(2 * barScaling)
+          lineWidth: Style.toOdd(2)
         }
 
         NImageRounded {
@@ -560,7 +578,6 @@ Item {
           color: textColor
           pointSize: fontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           onTextChanged: {
             scrollText.isScrolling = false;
             scrollText.isResetting = false;
@@ -574,7 +591,6 @@ Item {
           color: textColor
           pointSize: fontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           visible: scrollText.needsScroll && scrollText.isScrolling
         }
       }

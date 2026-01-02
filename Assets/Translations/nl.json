@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Kies hoe je wilt dat deze waarde wordt weergegeven.",
           "label": "Weergavemodus"
+        },
+        "show-icon": {
+          "description": "Toon het toetsenbordindeling-icoon.",
+          "label": "Icoon weergeven"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "Toon GPU-temperatuurmetingen indien beschikbaar.",
           "label": "GPU-temperatuur"
+        },
+        "load-average": {
+          "description": "Systeembelasting gemiddelde weergeven.",
+          "label": "Gemiddelde belasting"
         },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
@@ -481,6 +489,7 @@
       "device-address": "Apparaatadres",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
+      "disconnecting": "Verbinding verbroken...",
       "discoverable": "Zichtbaar",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
       "info": "Info",
@@ -494,6 +503,14 @@
       "refresh-devices": "Apparaten verversen",
       "scanning": "Zoeken naar apparaten...",
       "signal": "Signaal",
+      "signal-text": {
+        "excellent": "Signaal: Uitstekend",
+        "fair": "Signaal: Redelijk",
+        "good": "Signaal: Goed",
+        "poor": "Signaal: Zwak",
+        "unknown": "Signaal: Onbekend",
+        "very-poor": "Signaal: Zeer slecht"
+      },
       "title": "Bluetooth",
       "trusted": "Vertrouwd",
       "unpair": "Ontkoppelen"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "Systeemuitvoer + microfooninvoer",
         "microphone-input": "Microfooninvoer",
+        "none": "Geen audio",
         "system-output": "Systeemuitvoer"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "Altijd scrollen",
       "hover": "Scrollen bij hover",
       "never": "Nooit scrollen"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Raster",
+      "single-row": "Enkele rij"
     },
     "settings-panel-mode": {
       "attached": "Paneel bevestigd aan de balk",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "Applicaties",
     "calculator": "Rekenmachine",
+    "calculator-deprecated": "De >calc opdracht is verouderd en zal binnenkort verwijderd worden. Typ wiskundige uitdrukkingen in plaats daarvan direct in de zoekopdracht.",
     "calculator-description": "Rekenmachine — bereken wiskundige expressies",
     "calculator-enter-expression": "Voer een wiskundige expressie in",
     "calculator-error": "Fout",
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth-beheer activeren.",
-        "label": "Bluetooth inschakelen"
+        "label": "Bluetooth inschakelen",
+        "rssi-polling": {
+          "description": "Periodiek de RSSI bemonsteren voor verbonden apparaten via bluetoothctl. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale resources wanneer ingeschakeld.",
+          "label": "Bluetooth-signaalpolling"
+        }
       },
       "section": {
         "description": "Beheer Wi-Fi- en Bluetooth-verbindingen."
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
         "no-plugins-label": "Geen plug-ins beschikbaar"
       },
+      "collision": {
+        "already-installed": "Deze plugin is al geïnstalleerd.",
+        "custom-version-exists": "Er is al een aangepaste versie van \"{source}\" geïnstalleerd.",
+        "official-version-exists": "De officiële versie van deze plugin is al geïnstalleerd."
+      },
       "filter": {
         "all": "Alles",
         "downloaded": "Gedownload",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "Geen plugins geïnstalleerd"
       },
       "installing": "{plugin} installeren...",
+      "open-plugins-tab": "Open plugininstellingen",
       "plugin-settings-title": "{plugin} Instellingen",
       "refresh": {
         "refreshing": "Pluginlijst vernieuwen...",
@@ -2201,6 +2234,10 @@
       },
       "settings-error-not-loaded": "Plugin niet geladen",
       "settings-saved": "Plugininstellingen opgeslagen",
+      "source": {
+        "custom": "Aangepaste bron",
+        "official": "Officieel"
+      },
       "sources": {
         "add-custom": "Aangepaste repository toevoegen",
         "add-dialog": {
@@ -2232,6 +2269,7 @@
       "update-all": "Alles bijwerken ({count})",
       "update-all-success": "Alle plugins succesvol bijgewerkt",
       "update-available": "{count} plugin(s) update(s) beschikbaar",
+      "update-available_plural": "{count} plugin updates beschikbaar",
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
       "update-success": "{plugin} is bijgewerkt naar v{version}",
@@ -2339,6 +2377,10 @@
           "label": "Algemeen"
         }
       },
+      "large-buttons-layout": {
+        "description": "Kies hoe sessiemenuknoppen worden weergegeven.",
+        "label": "Lay-out met grote knoppen"
+      },
       "large-buttons-style": {
         "description": "Toon het sessiemenu met grote knoppen in een rasterindeling.",
         "label": "Stijl met grote knoppen"
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "Markeerkleuren"
+      },
+      "load-average-section": {
+        "label": "Gemiddelde belasting"
       },
       "memory-section": {
         "label": "Geheugengebruik"
@@ -2564,8 +2609,8 @@
           "tooltip": "Achtergrondmap"
         },
         "hide-wallpaper-filenames": {
-          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
-          "label": "Bestandsnamen verbergen"
+          "tooltip-hide": "Bestandsnamen verbergen",
+          "tooltip-show": "Bestandsnamen weergeven"
         },
         "monitor-specific": {
           "description": "Stel een andere achtergrondmap in voor elke monitor.",
@@ -2648,6 +2693,7 @@
     "download": "Downloaden",
     "download-speed": "Downloadsnelheid",
     "gpu-temp": "GPU-temperatuur",
+    "load-average": "Gemiddelde belasting",
     "memory": "Geheugen",
     "title": "Systeemmonitor",
     "upload": "Uploaden",
@@ -2664,6 +2710,7 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
+      "address-copied": "Adres gekopieerd naar klembord",
       "confirm-code": "Bevestig code {value} op het andere apparaat",
       "connect-failed": "Verbinding met apparaat mislukt",
       "disabled": "Uitgeschakeld",
@@ -2706,7 +2753,8 @@
       "enabled": "\"Wakker houden\" ingeschakeld"
     },
     "keyboard-layout": {
-      "changed": "Toetsenbordindeling gewijzigd naar {layout}"
+      "changed": "Toetsenbordindeling gewijzigd naar {layout}",
+      "title": "Toetsenbord"
     },
     "kofi": {
       "opened": "Ko-fi-pagina geopend in je browser"
@@ -2780,6 +2828,7 @@
     "close": "Sluiten",
     "collapse": "Zijbalk inklappen",
     "connect-disconnect-devices": "Bluetooth-apparaat",
+    "copy-address": "Adres kopiëren",
     "delete-notification": "Melding verwijderen",
     "disable-keep-awake": "Wakker houden",
     "do-not-disturb-disabled": "Niet storen",
@@ -2895,6 +2944,9 @@
         }
       },
       "search": "Zoeken:",
+      "solid-color": {
+        "tooltip": "Effen kleur achtergrond"
+      },
       "sorting": {
         "date_added": "Datum toegevoegd",
         "favorites": "Favorieten",

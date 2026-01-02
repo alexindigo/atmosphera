@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 35
+  readonly property int settingsVersion: 36
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -367,6 +367,8 @@ Singleton {
       property bool setWallpaperOnAllMonitors: true
       property string fillMode: "crop"
       property color fillColor: "#000000"
+      property bool useSolidColor: false
+      property color solidColor: "#1a1a2e"
       property bool randomEnabled: false // Deprecated: use wallpaperChangeMode instead
       property string wallpaperChangeMode: "random" // "random" or "alphabetical"
       property int randomIntervalSec: 300 // 5 min
@@ -413,6 +415,7 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
+      property string diskPath: "/"
       property JsonObject shortcuts
       shortcuts: JsonObject {
         property list<var> left: [
@@ -491,10 +494,10 @@ Singleton {
       property int memPollingInterval: 3000
       property int diskPollingInterval: 3000
       property int networkPollingInterval: 3000
+      property int loadAvgPollingInterval: 3000
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""
-      property string diskPath: "/"
       property string externalMonitor: "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
     }
 
@@ -520,6 +523,10 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
+      // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
+      property bool bluetoothRssiPollingEnabled: false
+      // Polling interval in milliseconds for RSSI queries
+      property int bluetoothRssiPollIntervalMs: 10000
     }
 
     // session menu
@@ -529,6 +536,7 @@ Singleton {
       property string position: "center"
       property bool showHeader: true
       property bool largeButtonsStyle: false
+      property string largeButtonsLayout: "grid"
       property bool showNumberLabels: true
       property list<var> powerOptions: [
         {

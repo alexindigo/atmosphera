@@ -32,6 +32,10 @@ Singleton {
   property real txSpeed: 0
   property real zfsArcSizeKb: 0 // ZFS ARC cache size in KB
   property real zfsArcCminKb: 0 // ZFS ARC minimum (non-reclaimable) size in KB
+  property real loadAvg1: 0
+  property real loadAvg5: 0
+  property real loadAvg15: 0
+  property int nproc: 0 // Number of cpu cores
 
   // Network max speed tracking (learned over time, cached for 7 days)
   readonly property real rxMaxSpeed: {
@@ -187,6 +191,12 @@ Singleton {
 
     // Check for ZFS ARC stats on startup
     zfsArcStatsFile.reload();
+
+    // Get nproc on startup
+    nprocProcess.running = true;
+
+    // Get initial load average
+    loadAvgFile.reload();
   }
 
   // Re-run GPU detection when dGPU opt-in setting changes
@@ -226,6 +236,21 @@ Singleton {
       }
     }
     onTriggered: cpuStatFile.reload()
+  }
+
+  // Timer for load average
+  Timer {
+    id: loadAvgTimer
+    interval: root.normalizeInterval(Settings.data.systemMonitor.loadAvgPollingInterval)
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onIntervalChanged: {
+      if (running) {
+        restart();
+      }
+    }
+    onTriggered: loadAvgFile.reload()
   }
 
   // Timer for CPU temperature
@@ -326,6 +351,12 @@ Singleton {
     onLoaded: calculateNetworkSpeed(text())
   }
 
+  FileView {
+    id: loadAvgFile
+    path: "/proc/loadavg"
+    onLoaded: parseLoadAverage(text())
+  }
+
   // ZFS ARC stats file (only exists on ZFS systems)
   FileView {
     id: zfsArcStatsFile
@@ -371,6 +402,18 @@ Singleton {
         root.diskPercents = newPercents;
         root.diskUsedGb = newUsedGb;
         root.diskSizeGb = newSizeGb;
+      }
+    }
+  }
+
+  // Process to get number of processors
+  Process {
+    id: nprocProcess
+    command: ["nproc"]
+    running: false
+    stdout: StdioCollector {
+      onStreamFinished: {
+        root.nproc = parseInt(text.trim());
       }
     }
   }
@@ -639,6 +682,19 @@ Singleton {
   }
 
   // -------------------------------------------------------
+  // Parse load average from /proc/loadavg
+  function parseLoadAverage(text) {
+    if (!text)
+      return;
+    const parts = text.trim().split(/\s+/);
+    if (parts.length >= 3) {
+      root.loadAvg1 = parseFloat(parts[0]);
+      root.loadAvg5 = parseFloat(parts[1]);
+      root.loadAvg15 = parseFloat(parts[2]);
+    }
+  }
+
+  // -------------------------------------------------------
   // Parse memory info from /proc/meminfo
   function parseMemoryInfo(text) {
     if (!text)
@@ -837,23 +893,16 @@ Singleton {
   }
 
   // -------------------------------------------------------
-  // Smart formatter for memory values (GB) that prevents elision
-  // Tries to keep within 5 chars when possible, rounds if needed
+  // Smart formatter for memory values (GB) - max 4 chars
+  // Uses decimal for < 10GB, integer otherwise
   function formatMemoryGb(memGb) {
-    // memGb is already a string from toFixed(1), convert to number
     const value = parseFloat(memGb);
     if (isNaN(value))
       return "0G";
 
-    // Try with 1 decimal and "G"
-    let formatted = value.toFixed(1) + "G";
-
-    // If longer than 5 chars (e.g., "123.4G"), round to integer
-    if (formatted.length > 5) {
-      formatted = Math.round(value) + "G";
-    }
-
-    return formatted;
+    if (value < 10)
+      return value.toFixed(1) + "G"; // "0.0G" to "9.9G"
+    return Math.round(value) + "G"; // "10G" to "999G"
   }
 
   // -------------------------------------------------------

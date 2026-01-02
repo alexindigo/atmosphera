@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Виберіть, як ви хочете, щоб це значення відображалося.",
           "label": "Режим відображення"
+        },
+        "show-icon": {
+          "description": "Показувати піктограму розкладки клавіатури.",
+          "label": "Показати значок"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "Показувати показники температури GPU, якщо доступні.",
           "label": "Температура GPU"
+        },
+        "load-average": {
+          "description": "Показати середнє навантаження системи.",
+          "label": "Середнє навантаження"
         },
         "memory-percentage": {
           "description": "Показувати використання пам'яті у відсотках замість абсолютних значень.",
@@ -481,6 +489,7 @@
       "device-address": "Адреса пристрою",
       "disabled": "Bluetooth вимкнено",
       "disconnect": "Відключити",
+      "disconnecting": "Відключення...",
       "discoverable": "Виявний",
       "enable-message": "Увімкніть Bluetooth, щоб побачити доступні пристрої.",
       "info": "Інформація",
@@ -494,6 +503,14 @@
       "refresh-devices": "Оновити пристрої",
       "scanning": "Сканування пристроїв...",
       "signal": "Сигнал",
+      "signal-text": {
+        "excellent": "Сигнал: Відмінний",
+        "fair": "Сигнал: Задовільний",
+        "good": "Сигнал: Добре",
+        "poor": "Сигнал: Поганий",
+        "unknown": "Сигнал: Невідомий",
+        "very-poor": "Сигнал: Дуже слабкий"
+      },
       "title": "Bluetooth",
       "trusted": "Надійний",
       "unpair": "Розірвати пару"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "Системний вихід + вхід мікрофона",
         "microphone-input": "Вхід мікрофона",
+        "none": "Немає аудіо",
         "system-output": "Системний вихід"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "Завжди прокручувати",
       "hover": "Прокручувати при наведенні",
       "never": "Ніколи не прокручувати"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Сітка",
+      "single-row": "Один рядок"
     },
     "settings-panel-mode": {
       "attached": "Панель прикріплена до панелі",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "Застосунки",
     "calculator": "Калькулятор",
+    "calculator-deprecated": "Команда >calc застаріла і скоро буде видалена. Будь ласка, введіть математичні вирази безпосередньо в пошуку.",
     "calculator-description": "Калькулятор — обчислення математичних виразів",
     "calculator-enter-expression": "Введіть математичний вираз",
     "calculator-error": "Помилка",
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Активувати керування Bluetooth.",
-        "label": "Увімкнути Bluetooth"
+        "label": "Увімкнути Bluetooth",
+        "rssi-polling": {
+          "description": "Періодично збирати дані RSSI для підключених пристроїв через bluetoothctl. Може бути недоступним для всіх пристроїв; використовує мінімум ресурсів, коли ввімкнено.",
+          "label": "Опитування сигналу Bluetooth"
+        }
       },
       "section": {
         "description": "Керувати підключеннями Wi-Fi та Bluetooth."
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "Перевірте вихідні коди вашого плагіна або оновіть список.",
         "no-plugins-label": "Немає доступних плагінів"
       },
+      "collision": {
+        "already-installed": "Цей плагін вже встановлено.",
+        "custom-version-exists": "Вже встановлено власну версію з \"{source}\"",
+        "official-version-exists": "Офіційна версія цього плагіна вже встановлена."
+      },
       "filter": {
         "all": "Все",
         "downloaded": "Завантажено",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "Немає встановлених плагінів"
       },
       "installing": "Встановлення {plugin}...",
+      "open-plugins-tab": "Відкрити налаштування плагінів",
       "plugin-settings-title": "Налаштування {plugin}",
       "refresh": {
         "refreshing": "Оновлення списку плагінів...",
@@ -2201,6 +2234,10 @@
       },
       "settings-error-not-loaded": "Плагін не завантажено",
       "settings-saved": "Налаштування плагіна збережено",
+      "source": {
+        "custom": "Власне джерело",
+        "official": "Офіційний"
+      },
       "sources": {
         "add-custom": "Додати власний репозиторій",
         "add-dialog": {
@@ -2232,6 +2269,7 @@
       "update-all": "Оновити все ({count})",
       "update-all-success": "Усі плагіни успішно оновлено.",
       "update-available": "Доступно оновлень для {count} плагінів",
+      "update-available_plural": "Доступно {count} оновлень плагінів",
       "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
       "update-success": "Оновлено {plugin} до версії {version}",
@@ -2339,6 +2377,10 @@
           "label": "Загальні"
         }
       },
+      "large-buttons-layout": {
+        "description": "Виберіть спосіб відображення кнопок меню сеансу.",
+        "label": "Розкладка з великими кнопками"
+      },
       "large-buttons-style": {
         "description": "Відобразити меню сеансу великими кнопками у вигляді сітки.",
         "label": "Стиль великих кнопок"
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "Кольори підсвічування"
+      },
+      "load-average-section": {
+        "label": "Середнє навантаження"
       },
       "memory-section": {
         "label": "Використання пам'яті"
@@ -2564,8 +2609,8 @@
           "tooltip": "Тека шпалер"
         },
         "hide-wallpaper-filenames": {
-          "description": "Приховати назви файлів шпалер у селекторі.",
-          "label": "Приховати назви файлів"
+          "tooltip-hide": "Приховати імена файлів",
+          "tooltip-show": "Відображати імена файлів"
         },
         "monitor-specific": {
           "description": "Встановити різні теки шпалер для кожного монітора.",
@@ -2648,6 +2693,7 @@
     "download": "Завантажити",
     "download-speed": "Швидкість завантаження",
     "gpu-temp": "Температура GPU",
+    "load-average": "Середнє навантаження",
     "memory": "Пам'ять",
     "title": "Системний монітор",
     "upload": "Завантажити",
@@ -2664,6 +2710,7 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
+      "address-copied": "Адресу скопійовано до буфера обміну",
       "confirm-code": "Підтвердьте код {value} на іншому пристрої",
       "connect-failed": "Не вдалося під'єднатися до пристрою.",
       "disabled": "Вимкнено",
@@ -2706,7 +2753,8 @@
       "enabled": "Увімкнено"
     },
     "keyboard-layout": {
-      "changed": "Розкладка клавіатури змінена на {layout}"
+      "changed": "Розкладка клавіатури змінена на {layout}",
+      "title": "Клавіатура"
     },
     "kofi": {
       "opened": "Сторінка Ko-fi відкрита у вашому браузері"
@@ -2780,6 +2828,7 @@
     "close": "Закрити",
     "collapse": "Згорнути бічну панель",
     "connect-disconnect-devices": "Пристрій Bluetooth",
+    "copy-address": "Копіювати адресу",
     "delete-notification": "Видалити сповіщення",
     "disable-keep-awake": "Заборона сну",
     "do-not-disturb-disabled": "Не турбувати",
@@ -2895,6 +2944,9 @@
         }
       },
       "search": "Пошук:",
+      "solid-color": {
+        "tooltip": "Однотонний фон"
+      },
       "sorting": {
         "date_added": "Дата додавання",
         "favorites": "Обране",

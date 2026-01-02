@@ -340,7 +340,7 @@ Item {
     const seen = new Map(); // Map of appId -> exec command
 
     entries = allApps.filter(app => {
-                               if (!app || app.noDisplay)
+                               if (!app || app.noDisplay || app.hidden)
                                return false;
 
                                const appId = app.id || app.name;

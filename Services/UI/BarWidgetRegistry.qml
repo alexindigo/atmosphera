@@ -141,7 +141,8 @@ Singleton {
                                     }
                                   },
                                   "KeyboardLayout": {
-                                    "displayMode": "onhover"
+                                    "displayMode": "onhover",
+                                    "showIcon": true
                                   },
                                   "LockKeys": {
                                     "showCapsLock": true,
@@ -183,6 +184,7 @@ Singleton {
                                     "showCpuUsage": true,
                                     "showCpuTemp": true,
                                     "showGpuTemp": false,
+                                    "showLoadAverage": false,
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
                                     "showNetworkStats": false,

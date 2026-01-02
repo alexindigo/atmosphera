@@ -43,18 +43,25 @@ SmartPanel {
     return known;
   }
 
-  readonly property var availableNetworks: {
-    if (!Settings.data.network.wifiEnabled)
-      return [];
+    // UI state properties (lazy-loaded with panelContent)
+    property string passwordSsid: ""
+    property string expandedSsid: ""
+    property bool hasHadNetworks: false
 
-    var nets = Object.values(NetworkService.networks);
-    var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+    // Computed network lists (lazy-loaded with panelContent)
+    readonly property var knownNetworks: {
+      if (!Settings.data.network.wifiEnabled)
+        return [];
 
-    // Sort by signal strength
-    available.sort((a, b) => b.signal - a.signal);
+      var nets = Object.values(NetworkService.networks);
+      var known = nets.filter(n => n.connected || n.existing || n.cached);
 
-    return available;
-  }
+      // Sort: connected first, then by signal strength
+      known.sort((a, b) => {
+                   if (a.connected !== b.connected)
+                   return b.connected - a.connected;
+                   return b.signal - a.signal;
+                 });
 
   onOpened: {
     hasHadNetworks = false;
@@ -65,26 +72,44 @@ SmartPanel {
     NetworkService.refreshActiveEthernetDetails();
   }
 
-  onKnownNetworksChanged: {
-    if (knownNetworks.length > 0)
-      hasHadNetworks = true;
-  }
-
-  onAvailableNetworksChanged: {
-    if (availableNetworks.length > 0)
-      hasHadNetworks = true;
-  }
-
-  Connections {
-    target: Settings.data.network
-    function onWifiEnabledChanged() {
+    readonly property var availableNetworks: {
       if (!Settings.data.network.wifiEnabled)
-        root.hasHadNetworks = false;
-    }
-  }
+        return [];
 
-  panelContent: Rectangle {
-    color: Color.transparent
+      var nets = Object.values(NetworkService.networks);
+      var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+
+      // Sort by signal strength
+      available.sort((a, b) => b.signal - a.signal);
+
+      return available;
+    }
+
+    onKnownNetworksChanged: {
+      if (knownNetworks.length > 0)
+        hasHadNetworks = true;
+    }
+
+    onAvailableNetworksChanged: {
+      if (availableNetworks.length > 0)
+        hasHadNetworks = true;
+    }
+
+    // Trigger WiFi scan when panel content is loaded (replaces onOpened)
+    Component.onCompleted: {
+      hasHadNetworks = false;
+      NetworkService.scan();
+      // Preload active Wi‑Fi details so Info shows instantly
+      NetworkService.refreshActiveWifiDetails();
+    }
+
+    Connections {
+      target: Settings.data.network
+      function onWifiEnabledChanged() {
+        if (!Settings.data.network.wifiEnabled)
+          panelContent.hasHadNetworks = false;
+      }
+    }
 
     // Calculate content height based on header + networks list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2

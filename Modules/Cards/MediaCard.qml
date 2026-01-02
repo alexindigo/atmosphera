@@ -52,6 +52,12 @@ NBox {
   }
 
   function updateCachedWallpaper() {
+    // Handle solid color mode - no wallpaper to cache
+    if (Settings.data.wallpaper.useSolidColor || WallpaperService.isSolidColorPath(wallpaper)) {
+      cachedWallpaper = "";
+      return;
+    }
+
     if (!wallpaper) {
       cachedWallpaper = "";
       return;
@@ -88,12 +94,19 @@ NBox {
       }
     }
 
+    // Solid color background (always present as base layer)
+    Rectangle {
+      anchors.fill: parent
+      color: Settings.data.wallpaper.useSolidColor ? Settings.data.wallpaper.solidColor : Color.mSurface
+    }
+
     // Background image that covers everything
     Image {
       id: bgImage
       readonly property int dim: Math.round(256 * Style.uiScaleRatio)
       anchors.fill: parent
-      source: MediaService.trackArtUrl || root.cachedWallpaper
+      visible: source.toString() !== ""
+      source: MediaService.trackArtUrl || (Settings.data.wallpaper.enabled && !Settings.data.wallpaper.useSolidColor ? root.cachedWallpaper : "")
       sourceSize: Qt.size(dim, dim)
       fillMode: Image.PreserveAspectCrop
       layer.enabled: true

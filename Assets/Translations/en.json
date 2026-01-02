@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Choose how you'd like this value to appear.",
           "label": "Display mode"
+        },
+        "show-icon": {
+          "description": "Display the keyboard layout icon.",
+          "label": "Show icon"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "Show GPU temperature readings if available.",
           "label": "GPU temperature"
+        },
+        "load-average": {
+          "description": "Display system load average.",
+          "label": "Load average"
         },
         "memory-percentage": {
           "description": "Show memory usage as a percentage instead of absolute values.",
@@ -481,6 +489,7 @@
       "device-address": "Device address",
       "disabled": "Bluetooth is disabled",
       "disconnect": "Disconnect",
+      "disconnecting": "Disconnecting...",
       "discoverable": "Discoverable",
       "enable-message": "Enable Bluetooth to see available devices.",
       "info": "Info",
@@ -494,6 +503,14 @@
       "refresh-devices": "Refresh devices",
       "scanning": "Scanning for devices...",
       "signal": "Signal",
+      "signal-text": {
+        "excellent": "Signal: Excellent",
+        "fair": "Signal: Fair",
+        "good": "Signal: Good",
+        "poor": "Signal: Poor",
+        "unknown": "Signal: Unknown",
+        "very-poor": "Signal: Very poor"
+      },
       "title": "Bluetooth",
       "trusted": "Trusted",
       "unpair": "Unpair"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "System output + microphone input",
         "microphone-input": "Microphone input",
+        "none": "No audio",
         "system-output": "System output"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "Scroll always",
       "hover": "Scroll on hover",
       "never": "Never scroll"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Grid",
+      "single-row": "Single Row"
     },
     "settings-panel-mode": {
       "attached": "Panel attached to bar",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "Applications",
     "calculator": "Calculator",
+    "calculator-deprecated": "The >calc command is deprecated and will be removed soon. Please type math expressions directly in search instead.",
     "calculator-description": "Calculator — evaluate mathematical expressions",
     "calculator-enter-expression": "Enter a mathematical expression",
     "calculator-error": "Error",
@@ -1626,7 +1649,7 @@
           "label": "Dock size"
         },
         "inactive-indicators": {
-          "description": "Display indicatator pills for all apps, not just the currently active one.",
+          "description": "Display indicator pills for all apps, not just the currently active one.",
           "label": "Running Indicators"
         },
         "pinned-static": {
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Activate Bluetooth management.",
-        "label": "Enable Bluetooth"
+        "label": "Enable Bluetooth",
+        "rssi-polling": {
+          "description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
+          "label": "Bluetooth signal polling"
+        }
       },
       "section": {
         "description": "Manage Wi-Fi and Bluetooth connections."
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "Check your plugin sources or refresh the list.",
         "no-plugins-label": "No plugins available"
       },
+      "collision": {
+        "already-installed": "This plugin is already installed",
+        "custom-version-exists": "A custom version from \"{source}\" is already installed",
+        "official-version-exists": "The official version of this plugin is already installed"
+      },
       "filter": {
         "all": "All",
         "downloaded": "Downloaded",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "No plugins installed"
       },
       "installing": "Installing {plugin}...",
+      "open-plugins-tab": "Open plugins settings",
       "plugin-settings-title": "{plugin} Settings",
       "refresh": {
         "refreshing": "Refreshing plugins list...",
@@ -2199,16 +2232,20 @@
       "settings": {
         "tooltip": "Plugin settings"
       },
-      "settings-error-not-loaded": "Plugin not loaded",
-      "settings-saved": "Plugin settings saved",
+      "settings-error-not-loaded": "Plugin not loaded.",
+      "settings-saved": "Plugin settings saved.",
+      "source": {
+        "custom": "Custom source",
+        "official": "Official"
+      },
       "sources": {
         "add-custom": "Add custom repository",
         "add-dialog": {
           "description": "Add a GitHub repository as a plugin source.",
-          "error": "Failed to add plugin source",
+          "error": "Failed to add plugin source.",
           "name": "Repository name",
           "name-placeholder": "My Custom Plugins",
-          "success": "Plugin source added successfully",
+          "success": "Plugin source added successfully.",
           "title": "Add plugin source",
           "url": "Repository URL"
         },
@@ -2230,8 +2267,9 @@
       "uninstalling": "Uninstalling {plugin}...",
       "update": "Update",
       "update-all": "Update All ({count})",
-      "update-all-success": "All plugins updated successfully",
-      "update-available": "{count} plugins update(s) available",
+      "update-all-success": "All plugins updated successfully.",
+      "update-available": "New plugin update available",
+      "update-available_plural": "New plugin updates available ({count})",
       "update-error": "Failed to update plugin: {plugin}: {error}",
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
@@ -2339,6 +2377,10 @@
           "label": "General"
         }
       },
+      "large-buttons-layout": {
+        "description": "Choose how session menu buttons are displayed.",
+        "label": "Large buttons layout"
+      },
       "large-buttons-style": {
         "description": "Display the session menu with large buttons in a grid layout.",
         "label": "Large buttons style"
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "Highlight colors"
+      },
+      "load-average-section": {
+        "label": "Load average"
       },
       "memory-section": {
         "label": "Memory usage"
@@ -2564,8 +2609,8 @@
           "tooltip": "Wallpaper folder"
         },
         "hide-wallpaper-filenames": {
-          "description": "Hide wallpaper filenames in the selector.",
-          "label": "Hide filenames"
+          "tooltip-hide": "Hide Filenames",
+          "tooltip-show": "Show Filenames"
         },
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",
@@ -2648,6 +2693,7 @@
     "download": "Download",
     "download-speed": "Download Speed",
     "gpu-temp": "GPU Temp",
+    "load-average": "Load Average",
     "memory": "Memory",
     "title": "System Monitor",
     "upload": "Upload",
@@ -2655,8 +2701,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Disabled",
-      "enabled": "Enabled",
+      "disabled": "Disabled.",
+      "enabled": "Enabled.",
       "title": "Airplane Mode"
     },
     "battery": {
@@ -2664,6 +2710,7 @@
       "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
     "bluetooth": {
+      "address-copied": "Address copied to clipboard",
       "confirm-code": "Confirm code {value} on the other device",
       "connect-failed": "Failed to connect to device",
       "disabled": "Disabled",
@@ -2685,7 +2732,7 @@
     },
     "dark-mode": {
       "dark-mode": "Dark Mode",
-      "enabled": "Enabled",
+      "enabled": "Enabled.",
       "light-mode": "Light Mode"
     },
     "do-not-disturb": {
@@ -2695,78 +2742,79 @@
       "enabled-desc": "You'll find these notifications in your history."
     },
     "internet": {
-      "limited": "Connected without internet"
+      "limited": "Connected without internet."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.",
       "sidepanel-deprecated": "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead."
     },
     "keep-awake": {
-      "disabled": "Disabled",
-      "enabled": "Enabled"
+      "disabled": "Disabled.",
+      "enabled": "Enabled."
     },
     "keyboard-layout": {
-      "changed": "Keyboard layout changed to {layout}"
+      "changed": "Keyboard layout changed to {layout}.",
+      "title": "Keyboard"
     },
     "kofi": {
-      "opened": "Ko-fi page opened in your browser"
+      "opened": "Ko-fi page opened in your browser."
     },
     "missing-control-center": {
       "description": "The control center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too.",
       "label": "Last control center widget removed"
     },
     "night-light": {
-      "disabled": "Disabled",
-      "enabled": "Enabled",
-      "forced": "Forced activation",
-      "normal": "Normal mode",
-      "not-installed": "wlsunset not installed"
+      "disabled": "Disabled.",
+      "enabled": "Enabled.",
+      "forced": "Forced activation.",
+      "normal": "Normal mode.",
+      "not-installed": "wlsunset not installed."
     },
     "noctalia-performance": {
-      "disabled": "Performance mode disabled",
-      "enabled": "Performance mode enabled",
+      "disabled": "Performance mode disabled.",
+      "enabled": "Performance mode enabled.",
       "label": "Noctalia Performance"
     },
     "power-profile": {
-      "changed": "Power profile changed",
+      "changed": "Power profile changed.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Recorder exited with an error",
-      "failed-gpu": "gpu-screen-recorder exited unexpectedly",
-      "failed-start": "Failed to start recording",
+      "failed-general": "Recorder exited with an error.",
+      "failed-gpu": "gpu-screen-recorder exited unexpectedly.",
+      "failed-start": "Failed to start recording.",
       "no-portals": "Desktop portals not running",
       "no-portals-desc": "Start xdg-desktop-portal and a compositor portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder not installed",
       "not-installed-desc": "Please install gpu-screen-recorder to use screen recording features.",
-      "saved": "Recording saved",
-      "started": "Recording started",
+      "saved": "Recording saved.",
+      "started": "Recording started.",
       "stopping": "Stopping recording…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Encountered an error while processing templates",
+      "desc-generic": "Encountered an error while processing templates.",
       "title-matugen": "Matugen templating processing failed",
-      "title-predefined": "Predefined color cheme processing failed"
+      "title-predefined": "Predefined color scheme processing failed"
     },
     "vpn": {
-      "connected": "Connected to '{name}'",
-      "disconnected": "Disconnected from '{name}'"
+      "connected": "Connected to '{name}'.",
+      "disconnected": "Disconnected from '{name}'."
     },
     "wallpaper-colors": {
-      "disabled": "Wallpaper colors disabled",
-      "enabled": "Wallpaper colors enabled",
+      "disabled": "Wallpaper colors disabled.",
+      "enabled": "Wallpaper colors enabled.",
       "label": "Wallpaper colors generation",
-      "not-installed": "Matugen not installed — required for wallpaper color extraction"
+      "not-installed": "Matugen not installed — required for wallpaper color extraction."
     },
     "wifi": {
-      "connected": "Connected to '{ssid}'",
-      "connection-failed": "Connection failed",
-      "connection-timeout": "Connection timeout",
-      "disabled": "Disabled",
-      "disconnected": "Disconnected from '{ssid}'",
-      "enabled": "Enabled",
-      "incorrect-password": "Incorrect password",
-      "network-not-found": "Network not found"
+      "connected": "Connected to '{ssid}'.",
+      "connection-failed": "Connection failed.",
+      "connection-timeout": "Connection timeout.",
+      "disabled": "Disabled.",
+      "disconnected": "Disconnected from '{ssid}'.",
+      "enabled": "Enabled.",
+      "incorrect-password": "Incorrect password.",
+      "network-not-found": "Network not found."
     }
   },
   "tooltips": {
@@ -2780,6 +2828,7 @@
     "close": "Close",
     "collapse": "Collapse sidebar",
     "connect-disconnect-devices": "Bluetooth device",
+    "copy-address": "Copy address",
     "delete-notification": "Delete notification",
     "disable-keep-awake": "Keep Awake",
     "do-not-disturb-disabled": "Do Not Disturb",
@@ -2927,6 +2976,9 @@
         }
       },
       "search": "Search",
+      "solid-color": {
+        "tooltip": "Solid color background"
+      },
       "sorting": {
         "date_added": "Date added",
         "favorites": "Favorites",

@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "选择您希望此值显示的方式。",
           "label": "显示模式"
+        },
+        "show-icon": {
+          "description": "显示键盘布局图标。",
+          "label": "显示图标"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "显示GPU温度读数（如果可用）。",
           "label": "GPU温度"
+        },
+        "load-average": {
+          "description": "显示系统平均负载。",
+          "label": "平均负载"
         },
         "memory-percentage": {
           "description": "以百分比而不是绝对值显示内存使用情况。",
@@ -481,6 +489,7 @@
       "device-address": "设备地址",
       "disabled": "蓝牙已禁用",
       "disconnect": "断开",
+      "disconnecting": "正在断开连接...",
       "discoverable": "可发现的",
       "enable-message": "启用蓝牙以查看可用设备。",
       "info": "信息",
@@ -494,6 +503,14 @@
       "refresh-devices": "刷新设备",
       "scanning": "正在扫描设备...",
       "signal": "信号",
+      "signal-text": {
+        "excellent": "信号：极佳",
+        "fair": "信号：良好",
+        "good": "信号：良好",
+        "poor": "信号：弱",
+        "unknown": "信号：未知",
+        "very-poor": "信号：非常差"
+      },
       "title": "蓝牙",
       "trusted": "可信赖的",
       "unpair": "取消配对"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "系统输出 + 麦克风输入",
         "microphone-input": "麦克风输入",
+        "none": "No audio",
         "system-output": "系统输出"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "始终滚动",
       "hover": "悬停时滚动",
       "never": "从不滚动"
+    },
+    "session-menu-grid-layout": {
+      "grid": "网格",
+      "single-row": "单行"
     },
     "settings-panel-mode": {
       "attached": "面板附加到工具栏",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "应用程序",
     "calculator": "计算器",
+    "calculator-deprecated": ">calc 命令已弃用，即将移除。请直接在搜索中输入数学表达式。",
     "calculator-description": "计算器 — 计算数学表达式",
     "calculator-enter-expression": "输入数学表达式",
     "calculator-error": "错误",
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "启用蓝牙管理。",
-        "label": "启用蓝牙"
+        "label": "启用蓝牙",
+        "rssi-polling": {
+          "description": "定期通过 bluetoothctl 采样已连接设备的 RSSI 值。可能并非适用于所有设备；启用后占用极少资源。",
+          "label": "蓝牙信号轮询"
+        }
       },
       "section": {
         "description": "管理 Wi-Fi 和蓝牙连接。"
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "检查你的插件源或刷新列表。",
         "no-plugins-label": "没有可用的插件"
       },
+      "collision": {
+        "already-installed": "此插件已安装",
+        "custom-version-exists": "来自“{source}”的自定义版本已安装",
+        "official-version-exists": "此插件的官方版本已安装。"
+      },
       "filter": {
         "all": "全部",
         "downloaded": "已下载",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "未安装插件"
       },
       "installing": "正在安装 {plugin}...",
+      "open-plugins-tab": "打开插件设置",
       "plugin-settings-title": "{插件} 设置",
       "refresh": {
         "refreshing": "正在刷新插件列表...",
@@ -2201,6 +2234,10 @@
       },
       "settings-error-not-loaded": "插件未加载",
       "settings-saved": "插件设置已保存",
+      "source": {
+        "custom": "自定义源",
+        "official": "官方"
+      },
       "sources": {
         "add-custom": "添加自定义存储库",
         "add-dialog": {
@@ -2232,6 +2269,7 @@
       "update-all": "全部更新（{count}）",
       "update-all-success": "所有插件已成功更新",
       "update-available": "有{count}个插件可更新",
+      "update-available_plural": "{count} 个插件有可用更新",
       "update-error": "更新插件失败：{plugin}：{error}",
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
       "update-success": "已将 {plugin} 更新至 v{version}",
@@ -2339,6 +2377,10 @@
           "label": "常规"
         }
       },
+      "large-buttons-layout": {
+        "description": "选择会话菜单按钮的显示方式。",
+        "label": "大按钮布局"
+      },
       "large-buttons-style": {
         "description": "以网格布局显示带有大按钮的会话菜单。",
         "label": "大按钮样式"
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "高亮颜色"
+      },
+      "load-average-section": {
+        "label": "平均负载"
       },
       "memory-section": {
         "label": "内存使用率"
@@ -2564,8 +2609,8 @@
           "tooltip": "壁纸文件夹"
         },
         "hide-wallpaper-filenames": {
-          "description": "在选择器中隐藏壁纸文件名。",
-          "label": "隐藏文件名。"
+          "tooltip-hide": "隐藏文件名",
+          "tooltip-show": "显示文件名"
         },
         "monitor-specific": {
           "description": "为每个显示器设置不同的壁纸文件夹。",
@@ -2648,6 +2693,7 @@
     "download": "下载",
     "download-speed": "下载速度",
     "gpu-temp": "GPU 温度",
+    "load-average": "平均负载",
     "memory": "内存",
     "title": "系统监视器",
     "upload": "上传",
@@ -2664,6 +2710,7 @@
       "low-desc": "电量为 {percent}%。请连接充电器。"
     },
     "bluetooth": {
+      "address-copied": "地址已复制到剪贴板",
       "confirm-code": "在另一台设备上确认代码 {value}",
       "connect-failed": "无法连接到设备",
       "disabled": "已禁用",
@@ -2706,7 +2753,8 @@
       "enabled": "已启用"
     },
     "keyboard-layout": {
-      "changed": "键盘布局已更改为 {layout}"
+      "changed": "键盘布局已更改为 {layout}",
+      "title": "键盘"
     },
     "kofi": {
       "opened": "Ko-fi 页面已在您的浏览器中打开"
@@ -2780,6 +2828,7 @@
     "close": "关闭",
     "collapse": "折叠侧边栏",
     "connect-disconnect-devices": "蓝牙设备",
+    "copy-address": "复制地址",
     "delete-notification": "删除通知",
     "disable-keep-awake": "保持唤醒",
     "do-not-disturb-disabled": "勿扰模式",
@@ -2895,6 +2944,9 @@
         }
       },
       "search": "搜索：",
+      "solid-color": {
+        "tooltip": "纯色背景"
+      },
       "sorting": {
         "date_added": "添加日期",
         "favorites": "收藏",

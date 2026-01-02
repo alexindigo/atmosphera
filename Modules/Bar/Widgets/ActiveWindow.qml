@@ -20,7 +20,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId] || {}
   property var widgetSettings: {
@@ -47,9 +46,8 @@ Item {
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
-  readonly property int textSize: Math.round(Style.capsuleHeight * 0.4 * barScaling)
+  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
+  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
 
   implicitHeight: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight) : 0
   implicitWidth: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
@@ -81,12 +79,12 @@ Item {
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0;
-    var margins = Style.marginS * barScaling * 2; // Left and right margins
+    var margins = Style.marginS * 2; // Left and right margins
 
     // Icon width (if visible)
     if (showIcon) {
       contentWidth += iconSize;
-      contentWidth += Style.marginS * barScaling; // Spacing after icon
+      contentWidth += Style.marginS; // Spacing after icon
     }
 
     // Text width (use the measured width)
@@ -163,9 +161,8 @@ Item {
     id: fullTitleMetrics
     visible: false
     text: windowTitle
-    pointSize: root.textSize
+    pointSize: Style.barFontSize
     applyUiScale: false
-    font.weight: Style.fontWeightMedium
   }
 
   NPopupContextMenu {
@@ -214,14 +211,14 @@ Item {
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * barScaling
-      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * barScaling
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         y: Style.pixelAlignCenter(parent.height, height)
-        spacing: Style.marginS * barScaling
+        spacing: Style.marginS
         visible: !isVerticalBar
         z: 1
 
@@ -343,9 +340,8 @@ Item {
               NText {
                 id: titleText
                 text: windowTitle
-                pointSize: root.textSize
+                pointSize: Style.barFontSize
                 applyUiScale: false
-                font.weight: Style.fontWeightMedium
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface
                 onTextChanged: {
@@ -362,7 +358,7 @@ Item {
               NText {
                 text: windowTitle
                 font: titleText.font
-                pointSize: Style.fontSizeS * barScaling
+                pointSize: Style.barFontSize
                 applyUiScale: false
                 verticalAlignment: Text.AlignVCenter
                 color: Color.mOnSurface

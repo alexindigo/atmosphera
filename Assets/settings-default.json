@@ -192,6 +192,7 @@
   },
   "controlCenter": {
     "position": "close_to_bar_button",
+    "diskPath": "/",
     "shortcuts": {
       "left": [
         {
@@ -267,10 +268,10 @@
     "memPollingInterval": 3000,
     "diskPollingInterval": 3000,
     "networkPollingInterval": 3000,
+    "loadAvgPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
     "criticalColor": "",
-    "diskPath": "/",
     "externalMonitor": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
   },
   "dock": {
@@ -289,7 +290,9 @@
     "animationSpeed": 1
   },
   "network": {
-    "wifiEnabled": true
+    "wifiEnabled": true,
+    "bluetoothRssiPollingEnabled": false,
+    "bluetoothRssiPollIntervalMs": 10000
   },
   "sessionMenu": {
     "enableCountdown": true,
@@ -297,6 +300,7 @@
     "position": "center",
     "showHeader": true,
     "largeButtonsStyle": false,
+    "largeButtonsLayout": "grid",
     "showNumberLabels": true,
     "powerOptions": [
       {

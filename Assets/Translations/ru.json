@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "Выберите, как это значение должно отображаться.",
           "label": "Режим отображения"
+        },
+        "show-icon": {
+          "description": "Отображать значок раскладки клавиатуры.",
+          "label": "Показать значок"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "Показать показания температуры GPU, если доступны.",
           "label": "Температура GPU"
+        },
+        "load-average": {
+          "description": "Показать среднюю нагрузку системы.",
+          "label": "Средняя нагрузка"
         },
         "memory-percentage": {
           "description": "Показывать использование памяти в процентах вместо абсолютных значений.",
@@ -481,6 +489,7 @@
       "device-address": "Адрес устройства",
       "disabled": "Bluetooth отключен",
       "disconnect": "Отключить",
+      "disconnecting": "Отключение...",
       "discoverable": "Обнаруживаемый",
       "enable-message": "Включите Bluetooth, чтобы увидеть доступные устройства.",
       "info": "Информация",
@@ -494,6 +503,14 @@
       "refresh-devices": "Обновить устройства",
       "scanning": "Поиск устройств...",
       "signal": "Сигнал",
+      "signal-text": {
+        "excellent": "Сигнал: Отличный",
+        "fair": "Сигнал: Средний",
+        "good": "Сигнал: Хороший",
+        "poor": "Сигнал: Плохой",
+        "unknown": "Сигнал: Неизвестен",
+        "very-poor": "Сигнал: Очень слабый"
+      },
       "title": "Bluetooth",
       "trusted": "Надёжный",
       "unpair": "Разорвать пару"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "Системный вывод + ввод с микрофона",
         "microphone-input": "Ввод с микрофона",
+        "none": "Нет звука",
         "system-output": "Системный вывод"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "Всегда прокручивать",
       "hover": "Прокручивать при наведении",
       "never": "Никогда не прокручивать"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Сетка",
+      "single-row": "Один ряд"
     },
     "settings-panel-mode": {
       "attached": "Панель прикреплена к панели",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "Приложения",
     "calculator": "Калькулятор",
+    "calculator-deprecated": "Команда >calc устарела и скоро будет удалена. Пожалуйста, вводите математические выражения прямо в поиск.",
     "calculator-description": "Калькулятор — вычисление математических выражений",
     "calculator-enter-expression": "Введите математическое выражение",
     "calculator-error": "Ошибка",
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Включить управление Bluetooth.",
-        "label": "Включить Bluetooth"
+        "label": "Включить Bluetooth",
+        "rssi-polling": {
+          "description": "Периодически опрашивать RSSI для подключенных устройств через bluetoothctl. Может быть недоступно для всех устройств; использует минимальные ресурсы при включении.",
+          "label": "Опрос сигнала Bluetooth"
+        }
       },
       "section": {
         "description": "Управление Wi-Fi и Bluetooth подключениями."
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "Проверьте исходники вашего плагина или обновите список.",
         "no-plugins-label": "Нет доступных плагинов."
       },
+      "collision": {
+        "already-installed": "Этот плагин уже установлен.",
+        "custom-version-exists": "Пользовательская версия из \"{source}\" уже установлена.",
+        "official-version-exists": "Официальная версия этого плагина уже установлена."
+      },
       "filter": {
         "all": "Всё",
         "downloaded": "Скачано",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "Нет установленных плагинов"
       },
       "installing": "Установка {plugin}...",
+      "open-plugins-tab": "Открыть настройки плагинов",
       "plugin-settings-title": "Настройки {plugin}",
       "refresh": {
         "refreshing": "Обновление списка плагинов...",
@@ -2201,6 +2234,10 @@
       },
       "settings-error-not-loaded": "Плагин не загружен",
       "settings-saved": "Настройки плагина сохранены",
+      "source": {
+        "custom": "Пользовательский источник",
+        "official": "Официальный"
+      },
       "sources": {
         "add-custom": "Добавить пользовательский репозиторий",
         "add-dialog": {
@@ -2232,6 +2269,7 @@
       "update-all": "Обновить все ({count})",
       "update-all-success": "Все плагины успешно обновлены.",
       "update-available": "Доступно {count} обновлений плагинов",
+      "update-available_plural": "Доступно {count} обновлений плагинов",
       "update-error": "Не удалось обновить плагин: {plugin}: {error}",
       "update-incompatible": "Требуется Noctalia v{version} или выше",
       "update-success": "Плагин {plugin} обновлён до версии {version}",
@@ -2339,6 +2377,10 @@
           "label": "Общие"
         }
       },
+      "large-buttons-layout": {
+        "description": "Выберите способ отображения кнопок меню сеанса.",
+        "label": "Крупная раскладка кнопок"
+      },
       "large-buttons-style": {
         "description": "Отобразить меню сеанса с большими кнопками в виде сетки.",
         "label": "Стиль \"крупные кнопки\""
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "Цвета выделения"
+      },
+      "load-average-section": {
+        "label": "Средняя нагрузка"
       },
       "memory-section": {
         "label": "Использование памяти"
@@ -2564,8 +2609,8 @@
           "tooltip": "Папка с обоями"
         },
         "hide-wallpaper-filenames": {
-          "description": "Скрыть имена файлов обоев в селекторе.",
-          "label": "Скрыть имена файлов"
+          "tooltip-hide": "Скрыть имена файлов",
+          "tooltip-show": "Показать имена файлов"
         },
         "monitor-specific": {
           "description": "Установить отдельную папку с обоями для каждого монитора.",
@@ -2648,6 +2693,7 @@
     "download": "Скачать",
     "download-speed": "Скорость загрузки",
     "gpu-temp": "Температура GPU",
+    "load-average": "Средняя нагрузка",
     "memory": "Память",
     "title": "Системный монитор",
     "upload": "Загрузить",
@@ -2664,6 +2710,7 @@
       "low-desc": "Заряд батареи {percent}%. Пожалуйста, подключите зарядное устройство."
     },
     "bluetooth": {
+      "address-copied": "Адрес скопирован в буфер обмена",
       "confirm-code": "Подтвердите код {value} на другом устройстве.",
       "connect-failed": "Не удалось подключиться к устройству",
       "disabled": "Отключен",
@@ -2706,7 +2753,8 @@
       "enabled": "Включен"
     },
     "keyboard-layout": {
-      "changed": "Раскладка клавиатуры изменена на {layout}"
+      "changed": "Раскладка клавиатуры изменена на {layout}",
+      "title": "Клавиатура"
     },
     "kofi": {
       "opened": "Страница Ko-fi открыта в вашем браузере"
@@ -2780,6 +2828,7 @@
     "close": "Закрыть",
     "collapse": "Свернуть боковую панель",
     "connect-disconnect-devices": "Устройство Bluetooth",
+    "copy-address": "Копировать адрес",
     "delete-notification": "Удалить уведомление",
     "disable-keep-awake": "Не засыпать",
     "do-not-disturb-disabled": "Не беспокоить",
@@ -2895,6 +2944,9 @@
         }
       },
       "search": "Поиск:",
+      "solid-color": {
+        "tooltip": "Однотонный фон"
+      },
       "sorting": {
         "date_added": "Дата добавления",
         "favorites": "Избранное",

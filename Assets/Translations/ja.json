@@ -224,6 +224,10 @@
         "display-mode": {
           "description": "値の表示方法を選択します。",
           "label": "表示モード"
+        },
+        "show-icon": {
+          "description": "キーボードレイアウトのアイコンを表示します。",
+          "label": "アイコンを表示 (Aikona o hyōji)"
         }
       },
       "lock-keys": {
@@ -326,6 +330,10 @@
         "gpu-temperature": {
           "description": "利用可能な場合、GPU 温度を表示します。",
           "label": "GPU 温度"
+        },
+        "load-average": {
+          "description": "システム負荷平均を表示します。",
+          "label": "負荷平均"
         },
         "memory-percentage": {
           "description": "メモリ使用量を絶対値ではなくパーセンテージで表示します。",
@@ -481,6 +489,7 @@
       "device-address": "デバイスアドレス",
       "disabled": "Bluetooth は無効です",
       "disconnect": "切断",
+      "disconnecting": "切断中...",
       "discoverable": "発見可能",
       "enable-message": "利用可能なデバイスを表示するには Bluetooth を有効にしてください。",
       "info": "情報 (Jōhō)",
@@ -494,6 +503,14 @@
       "refresh-devices": "デバイスを更新",
       "scanning": "デバイスをスキャン中...",
       "signal": "信号 (shingō)",
+      "signal-text": {
+        "excellent": "信号: 良好",
+        "fair": "合図：可",
+        "good": "信号: 良し",
+        "poor": "信号：弱い",
+        "unknown": "信号：不明",
+        "very-poor": "信号：非常に悪い"
+      },
       "title": "Bluetooth",
       "trusted": "信頼できる",
       "unpair": "ペアリング解除"
@@ -752,6 +769,7 @@
       "audio-sources": {
         "both": "システム出力 + マイク入力",
         "microphone-input": "マイク入力",
+        "none": "No audio",
         "system-output": "システム出力"
       },
       "color-range": {
@@ -773,6 +791,10 @@
       "always": "常にスクロール",
       "hover": "ホバー時にスクロール",
       "never": "スクロールしない"
+    },
+    "session-menu-grid-layout": {
+      "grid": "グリッド",
+      "single-row": "単一行"
     },
     "settings-panel-mode": {
       "attached": "バーに吸着",
@@ -826,6 +848,7 @@
   "plugins": {
     "applications": "アプリケーション",
     "calculator": "電卓",
+    "calculator-deprecated": ">calc コマンドは非推奨となり、まもなく削除されます。代わりに、検索で数式を直接入力してください。",
     "calculator-description": "電卓 — 数式を計算します",
     "calculator-enter-expression": "数式を入力",
     "calculator-error": "エラー",
@@ -1940,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth の管理を有効にします。",
-        "label": "Bluetooth を有効化"
+        "label": "Bluetooth を有効化",
+        "rssi-polling": {
+          "description": "bluetoothctl 経由で接続されたデバイスのRSSIを定期的にサンプリングします。 すべてのデバイスで利用できるとは限りません。 有効にすると、最小限のリソースを使用します。",
+          "label": "Bluetooth信号ポーリング"
+        }
       },
       "section": {
         "description": "Wi-Fi と Bluetooth 接続を管理します。"
@@ -2171,6 +2198,11 @@
         "no-plugins-description": "プラグインのソースを確認するか、リストを更新してください。",
         "no-plugins-label": "利用可能なプラグインはありません"
       },
+      "collision": {
+        "already-installed": "このプラグインはすでにインストールされています。",
+        "custom-version-exists": "\"{source}\" 発 の カスタム版 は 既に インストール されています。",
+        "official-version-exists": "このプラグインの公式バージョンはすでにインストールされています。"
+      },
       "filter": {
         "all": "すべて",
         "downloaded": "ダウンロード済み",
@@ -2191,6 +2223,7 @@
         "no-plugins-label": "インストールされているプラグインはありません"
       },
       "installing": "{plugin} をインストール中...",
+      "open-plugins-tab": "プラグイン設定を開く",
       "plugin-settings-title": "{plugin} の設定",
       "refresh": {
         "refreshing": "プラグインリストを更新中...",
@@ -2201,6 +2234,10 @@
       },
       "settings-error-not-loaded": "プラグインは読み込まれていません",
       "settings-saved": "プラグイン設定を保存しました",
+      "source": {
+        "custom": "カスタムソース",
+        "official": "公式 (kōshiki)"
+      },
       "sources": {
         "add-custom": "カスタムリポジトリを追加",
         "add-dialog": {
@@ -2232,6 +2269,7 @@
       "update-all": "すべてアップデート ({count})",
       "update-all-success": "すべてのプラグインをアップデートしました。",
       "update-available": "{count} 件のプラグインアップデートがあります",
+      "update-available_plural": "{count} 個のプラグインアップデートがあります",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
       "update-success": "{plugin} を v{version} にアップデートしました。",
@@ -2339,6 +2377,10 @@
           "label": "一般"
         }
       },
+      "large-buttons-layout": {
+        "description": "セッションメニューのボタンの表示方法を選択してください。",
+        "label": "大きなボタンのレイアウト"
+      },
       "large-buttons-style": {
         "description": "セッションメニューを、グリッド配置の大きなボタンで表示します。",
         "label": "大きなボタンのスタイル"
@@ -2394,6 +2436,9 @@
       },
       "highlight-colors-section": {
         "label": "ハイライト色"
+      },
+      "load-average-section": {
+        "label": "負荷平均"
       },
       "memory-section": {
         "label": "メモリ使用量"
@@ -2564,8 +2609,8 @@
           "tooltip": "壁紙フォルダ"
         },
         "hide-wallpaper-filenames": {
-          "description": "壁紙選択パネル内で、壁紙のファイル名を非表示にします。",
-          "label": "ファイル名を非表示"
+          "tooltip-hide": "ファイル名を隠す",
+          "tooltip-show": "ファイル名を表示"
         },
         "monitor-specific": {
           "description": "ディスプレイごとに異なる壁紙フォルダを設定します。",
@@ -2648,6 +2693,7 @@
     "download": "ダウンロード",
     "download-speed": "ダウンロード速度 (Daunrōdo sokudo)",
     "gpu-temp": "GPU温度",
+    "load-average": "負荷平均",
     "memory": "記憶",
     "title": "システムモニター",
     "upload": "アップロード",
@@ -2664,6 +2710,7 @@
       "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください。"
     },
     "bluetooth": {
+      "address-copied": "アドレスをクリップボードにコピーしました。",
       "confirm-code": "別のデバイスでコード{value}を確認してください。",
       "connect-failed": "デバイスに接続できませんでした。",
       "disabled": "無効",
@@ -2706,7 +2753,8 @@
       "enabled": "有効"
     },
     "keyboard-layout": {
-      "changed": "キーボードレイアウトを {layout} に変更しました"
+      "changed": "キーボードレイアウトを {layout} に変更しました",
+      "title": "キーボード"
     },
     "kofi": {
       "opened": "ブラウザで Ko-fi ページを開きました"
@@ -2780,6 +2828,7 @@
     "close": "閉じる",
     "collapse": "サイドバーを折りたたむ",
     "connect-disconnect-devices": "Bluetooth デバイス",
+    "copy-address": "アドレスをコピー",
     "delete-notification": "通知を削除",
     "disable-keep-awake": "スリープ防止",
     "do-not-disturb-disabled": "おやすみモード",
@@ -2895,6 +2944,9 @@
         }
       },
       "search": "検索",
+      "solid-color": {
+        "tooltip": "無地 (Muji)"
+      },
       "sorting": {
         "date_added": "追加日",
         "favorites": "お気に入り数",
