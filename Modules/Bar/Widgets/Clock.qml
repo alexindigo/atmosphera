@@ -103,9 +103,7 @@ Rectangle {
             visible: text !== ""
             text: modelData
             family: useCustomFont && customFont ? customFont : Settings.data.ui.fontDefault
-            Binding on pointSize {
-              value: Style.barFontSize
-            }
+            pointSize: Style.barFontSize
             applyUiScale: false
             color: usePrimaryColor ? Color.mPrimary : Color.mOnSurface
             wrapMode: Text.WordWrap

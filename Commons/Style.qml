@@ -132,7 +132,7 @@ Singleton {
   }
 
   // The base/default font size for all text in the bar. 33 is the "default" barHeight
-  readonly property real _barBaseFontSize: (Style.barHeight / 33) * Style.fontSizeS
+  readonly property real _barBaseFontSize: Math.max(1, (Style.barHeight / 33) * Style.fontSizeS)
   readonly property real barFontSize: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? _barBaseFontSize * 0.9 : _barBaseFontSize
 
   readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
