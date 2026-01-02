@@ -111,7 +111,8 @@ Item {
     forceClose: isBarVertical || root.displayMode === "alwaysHide" || text === ""
     onClicked: {
       var panel = PanelService.getPanel("wifiPanel", screen);
-      if (panel) panel.toggle(this);
+      if (panel)
+        panel.toggle(this);
     }
     onRightClicked: {
       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
@@ -125,10 +126,14 @@ Item {
         if (NetworkService.ethernetConnected) {
           const d = NetworkService.activeEthernetDetails || ({});
           let base = "";
-          if (d.ifname && d.ifname.length > 0) base = d.ifname;
-          else if (d.connectionName && d.connectionName.length > 0) base = d.connectionName;
-          else if (NetworkService.activeEthernetIf && NetworkService.activeEthernetIf.length > 0) base = NetworkService.activeEthernetIf;
-          else base = I18n.tr("quickSettings.wifi.label.ethernet");
+          if (d.ifname && d.ifname.length > 0)
+            base = d.ifname;
+          else if (d.connectionName && d.connectionName.length > 0)
+            base = d.connectionName;
+          else if (NetworkService.activeEthernetIf && NetworkService.activeEthernetIf.length > 0)
+            base = NetworkService.activeEthernetIf;
+          else
+            base = I18n.tr("quickSettings.wifi.label.ethernet");
           const speed = (d.speed && d.speed.length > 0) ? d.speed : "";
           return speed ? (base + " — " + speed) : base;
         }

@@ -21,9 +21,7 @@ SmartPanel {
   // Ethernet details UI state (mirrors Wi‑Fi info behavior)
   // Info panel collapsed by default, view mode persisted under Settings.data.ui.wifiDetailsViewMode
   property bool ethernetInfoExpanded: false
-  property bool ethernetDetailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined)
-                                     ? (Settings.data.ui.wifiDetailsViewMode === "grid")
-                                     : true
+  property bool ethernetDetailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
 
   // Computed network lists
   readonly property var knownNetworks: {
@@ -52,35 +50,35 @@ SmartPanel {
   }
 
   readonly property var availableNetworks: {
-      if (!Settings.data.network.wifiEnabled)
-        return [];
+    if (!Settings.data.network.wifiEnabled)
+      return [];
 
-      var nets = Object.values(NetworkService.networks);
-      var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
+    var nets = Object.values(NetworkService.networks);
+    var available = nets.filter(n => !n.connected && !n.existing && !n.cached);
 
-      // Sort by signal strength
-      available.sort((a, b) => b.signal - a.signal);
+    // Sort by signal strength
+    available.sort((a, b) => b.signal - a.signal);
 
-      return available;
-    }
+    return available;
+  }
 
   onKnownNetworksChanged: {
-      if (knownNetworks.length > 0)
-        hasHadNetworks = true;
-    }
+    if (knownNetworks.length > 0)
+      hasHadNetworks = true;
+  }
 
   onAvailableNetworksChanged: {
-      if (availableNetworks.length > 0)
-        hasHadNetworks = true;
-    }
+    if (availableNetworks.length > 0)
+      hasHadNetworks = true;
+  }
 
   Connections {
-      target: Settings.data.network
-      function onWifiEnabledChanged() {
-        if (!Settings.data.network.wifiEnabled)
-          root.hasHadNetworks = false;
-      }
+    target: Settings.data.network
+    function onWifiEnabledChanged() {
+      if (!Settings.data.network.wifiEnabled)
+        root.hasHadNetworks = false;
     }
+  }
 
   panelContent: Rectangle {
     color: Color.transparent
@@ -147,7 +145,8 @@ SmartPanel {
               baseSize: Style.baseWidgetSize * 0.8
               onClicked: {
                 ethernetInfoExpanded = !ethernetInfoExpanded;
-                if (ethernetInfoExpanded) NetworkService.refreshActiveEthernetDetails();
+                if (ethernetInfoExpanded)
+                  NetworkService.refreshActiveEthernetDetails();
               }
             }
 
@@ -174,7 +173,9 @@ SmartPanel {
             clip: true
             onVisibleChanged: {
               if (visible && ethInfoGrid && ethInfoGrid.forceLayout) {
-                Qt.callLater(function () { ethInfoGrid.forceLayout(); });
+                Qt.callLater(function () {
+                  ethInfoGrid.forceLayout();
+                });
               }
             }
 
@@ -204,7 +205,9 @@ SmartPanel {
               rowSpacing: Style.marginXS
               onColumnsChanged: {
                 if (ethInfoGrid.forceLayout) {
-                  Qt.callLater(function () { ethInfoGrid.forceLayout(); });
+                  Qt.callLater(function () {
+                    ethInfoGrid.forceLayout();
+                  });
                 }
               }
 
@@ -225,9 +228,7 @@ SmartPanel {
                   }
                 }
                 NText {
-                  text: (NetworkService.activeEthernetDetails.ifname && NetworkService.activeEthernetDetails.ifname.length > 0)
-                        ? NetworkService.activeEthernetDetails.ifname
-                        : (NetworkService.activeEthernetIf || "-")
+                  text: (NetworkService.activeEthernetDetails.ifname && NetworkService.activeEthernetDetails.ifname.length > 0) ? NetworkService.activeEthernetDetails.ifname : (NetworkService.activeEthernetIf || "-")
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -285,9 +286,7 @@ SmartPanel {
                   }
                 }
                 NText {
-                  text: (NetworkService.activeEthernetDetails.speed && NetworkService.activeEthernetDetails.speed.length > 0)
-                        ? NetworkService.activeEthernetDetails.speed
-                        : "-"
+                  text: (NetworkService.activeEthernetDetails.speed && NetworkService.activeEthernetDetails.speed.length > 0) ? NetworkService.activeEthernetDetails.speed : "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
@@ -505,7 +504,9 @@ SmartPanel {
               anchors.fill: parent
               anchors.margins: Style.marginM
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
 
               NIcon {
                 icon: "wifi-off"
@@ -530,7 +531,9 @@ SmartPanel {
                 wrapMode: Text.WordWrap
               }
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
             }
           }
 
@@ -547,7 +550,9 @@ SmartPanel {
               anchors.margins: Style.marginM
               spacing: Style.marginL
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
 
               NBusyIndicator {
                 running: true
@@ -563,7 +568,9 @@ SmartPanel {
                 Layout.alignment: Qt.AlignHCenter
               }
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
             }
           }
 
@@ -580,7 +587,9 @@ SmartPanel {
               anchors.margins: Style.marginM
               spacing: Style.marginL
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
 
               NIcon {
                 icon: "search"
@@ -603,7 +612,9 @@ SmartPanel {
                 onClicked: NetworkService.scan()
               }
 
-              Item { Layout.fillHeight: true }
+              Item {
+                Layout.fillHeight: true
+              }
             }
           }
 

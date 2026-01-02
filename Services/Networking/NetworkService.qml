@@ -439,9 +439,11 @@ Singleton {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line) continue;
+          if (!line)
+          continue;
           const idx = line.indexOf(":");
-          if (idx === -1) continue;
+          if (idx === -1)
+          continue;
           const key = line.substring(0, idx);
           const val = line.substring(idx + 1);
           if (key === "GENERAL.CONNECTION") {
@@ -451,7 +453,8 @@ Singleton {
           } else if (key === "IP4.GATEWAY") {
             gw4 = val;
           } else if (key.indexOf("IP4.DNS") === 0) {
-            if (val && dnsServers.indexOf(val) === -1) dnsServers.push(val);
+            if (val && dnsServers.indexOf(val) === -1)
+            dnsServers.push(val);
           }
         }
         details.ifname = ethernetDeviceShowProcess.ifname;
@@ -493,7 +496,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        const details = root.activeEthernetDetails || ({})
+        const details = root.activeEthernetDetails || ({});
         let speedText = "";
         const v = text.trim();
         // Expect a number like 1000
@@ -523,7 +526,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        const details = root.activeEthernetDetails || ({})
+        const details = root.activeEthernetDetails || ({});
         let speedText = "";
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
@@ -543,7 +546,8 @@ Singleton {
           details.speed = speedText;
           // Try to derive numeric value
           const m = speedText.match(/([0-9]+(?:\.[0-9]+)?)\s*Mbit\/s/i);
-          if (m) details.speedMbit = parseFloat(m[1]);
+          if (m)
+          details.speedMbit = parseFloat(m[1]);
           root.activeEthernetDetails = details;
         }
         root.activeEthernetDetailsTimestamp = Date.now();
