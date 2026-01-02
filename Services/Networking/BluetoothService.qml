@@ -9,7 +9,6 @@ import qs.Commons
 import qs.Services.UI
 import "."
 import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
-import "../../Helpers/BluetoothScripts.js" as BluetoothScripts
 
 QtObject {
   id: root
@@ -105,7 +104,21 @@ QtObject {
       restoreDiscoveryTimer.stop();
       root._discoveryWasRunning = false;
     } catch (_) {}
+
+    // Prefer Quickshell API if available, fall back to bluetoothctl
+    try {
+      if (adapter) {
+        if (active && adapter.startDiscovery !== undefined) {
+          adapter.startDiscovery();
+        } else if (!active && adapter.stopDiscovery !== undefined) {
+          adapter.stopDiscovery();
+        }
+      }
+    } catch (e1) {}
+
+    // Always issue bluetoothctl as a compatibility fallback
     btExec(["bluetoothctl", "scan", active ? "on" : "off"]);
+
     if (active && durationMs && durationMs > 0) {
       manualScanTimer.interval = durationMs;
       manualScanTimer.restart();
@@ -119,22 +132,22 @@ QtObject {
   function toggleDiscovery() {
     if (!adapter)
       return;
-    setScanActive(!root.ctlDiscovering, scanAutoStopMs);
+    setScanActive(!root.scanningActive, scanAutoStopMs);
     }
 
   // Auto-stop manual discovery after a short window
   property Timer manualScanTimer: Timer {
     repeat: false
     onTriggered: {
-      // Stop scan via bluetoothctl if currently active
-      if (root.ctlDiscovering) {
+      // Stop scan if currently active
+      if (root.scanningActive) {
         root.setScanActive(false, 0);
       }
     }
   }
 
-  // Exposed scanning flag for UI button state, driven by bluetoothctl state
-  readonly property bool scanningActive: (root.ctlDiscovering === true) || manualScanTimer.running
+  // Exposed scanning flag for UI button state; reflects adapter discovery when available
+  readonly property bool scanningActive: ((adapter && adapter.discovering) ? true : (root.ctlDiscovering === true)) || manualScanTimer.running
 
   function init() {
     Logger.i("Bluetooth", "Service started");
@@ -414,9 +427,10 @@ QtObject {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    // Auto-confirm pairing with bluetoothctl ("yes"). Build script via helper.
-    const script = BluetoothScripts.pairAndConnectScript(addr, pairWait, attempts, intervalSec);
-    btExec(["sh", "-c", script]);
+    // Prefer external dev script for pairing/connecting; executed detached
+    const scriptPath = Quickshell.shellDir + "/Bin/dev/BluetoothConnectionScript.sh";
+    // Use bash explicitly to avoid relying on executable bit in all environments
+    btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
   }
 
   // --- Helper to run bluetoothctl and scripts with consistent error logging ---
