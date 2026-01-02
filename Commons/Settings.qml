@@ -523,6 +523,10 @@ Singleton {
     // network
     property JsonObject network: JsonObject {
       property bool wifiEnabled: true
+      // Opt-in Bluetooth RSSI polling (uses bluetoothctl)
+      property bool bluetoothRssiPollingEnabled: false
+      // Polling interval in milliseconds for RSSI queries
+      property int bluetoothRssiPollIntervalMs: 10000
     }
 
     // session menu

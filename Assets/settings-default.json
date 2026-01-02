@@ -290,7 +290,9 @@
     "animationSpeed": 1
   },
   "network": {
-    "wifiEnabled": true
+    "wifiEnabled": true,
+    "bluetoothRssiPollingEnabled": false,
+    "bluetoothRssiPollIntervalMs": 10000
   },
   "sessionMenu": {
     "enableCountdown": true,
