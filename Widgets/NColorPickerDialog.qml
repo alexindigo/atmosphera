@@ -10,6 +10,7 @@ import qs.Widgets
 Popup {
   id: root
 
+  property var screen
   property color selectedColor: Color.black
 
   enum EditMode {
@@ -34,17 +35,19 @@ Popup {
   signal colorSelected(color color)
 
   width: 580
-  height: {
-    const h = scrollView.implicitHeight + padding * 2;
-    Math.min(h, screen?.height - Style.barHeight - Style.marginL * 2);
-  }
   padding: Style.marginXL
 
-  // Center popup in parent
-  x: (parent.width - width) * 0.5
-  y: (parent.height - height) * 0.5
-
   modal: true
+  closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+  onOpened: {
+    // Center on screen after popup is opened and parent position is known
+    if (screen && parent) {
+      var parentPos = parent.mapToItem(null, 0, 0);
+      x = Math.round((screen.width - width) / 2 - parentPos.x);
+      y = Math.round((screen.height - height) / 2 - parentPos.y);
+    }
+  }
 
   background: Rectangle {
     color: Color.mSurface
@@ -53,20 +56,13 @@ Popup {
     border.width: Style.borderM
   }
 
-  contentItem: NScrollView {
-    id: scrollView
-    width: parent.width
+  contentItem: ColumnLayout {
+    id: mainContent
+    spacing: Style.marginL
 
-    verticalPolicy: ScrollBar.AlwaysOff
-    horizontalPolicy: ScrollBar.AlwaysOff
-
-    ColumnLayout {
-      width: scrollView.availableWidth
-      spacing: Style.marginL
-
-      // Header
-      RowLayout {
-        Layout.fillWidth: true
+    // Header
+    RowLayout {
+      Layout.fillWidth: true
 
         RowLayout {
           spacing: Style.marginS
@@ -606,22 +602,26 @@ Popup {
             }
           }
 
-          NCollapsible {
-            id: paletteCollapsible
+          NLabel {
             label: I18n.tr("widgets.color-picker.palette.label")
-            description: I18n.tr("widgets.color-picker.palette.description")
-
             Layout.fillWidth: true
-            contentSpacing: Style.marginS
+          }
+
+          NScrollView {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(paletteGrid.implicitHeight, 200)
+            verticalPolicy: paletteGrid.implicitHeight > 200 ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
+            horizontalPolicy: ScrollBar.AlwaysOff
 
             GridLayout {
-              Layout.alignment: Qt.AlignHCenter
-              columns: 15
+              id: paletteGrid
+              width: parent.availableWidth
+              columns: 17
               columnSpacing: 6
               rowSpacing: 6
 
               NLabel {
-                Layout.columnSpan: 15
+                Layout.columnSpan: 17
                 Layout.fillWidth: true
                 description: I18n.tr("widgets.color-picker.palette.theme-colors")
               }
@@ -686,10 +686,16 @@ Popup {
               }
 
               NDivider {
-                Layout.columnSpan: 15
+                Layout.columnSpan: 17
                 Layout.fillWidth: true
                 Layout.topMargin: Style.marginXS
                 Layout.bottomMargin: 0
+              }
+
+              NLabel {
+                Layout.columnSpan: 17
+                Layout.fillWidth: true
+                description: I18n.tr("widgets.color-picker.palette.description")
               }
 
               Repeater {
@@ -750,10 +756,12 @@ Popup {
           icon: "check"
           onClicked: {
             root.colorSelected(root.selectedColor);
-            root.close();
+            // Delay close to prevent click propagation to elements behind the dialog
+            Qt.callLater(() => {
+              root.close();
+            });
           }
         }
       }
-    }
   }
 }

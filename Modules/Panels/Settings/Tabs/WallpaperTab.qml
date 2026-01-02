@@ -11,6 +11,7 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
+  property var screen
   property string specificFolderMonitorName: ""
 
   spacing: Style.marginL
@@ -233,6 +234,7 @@ ColumnLayout {
       }
 
       NColorPicker {
+        screen: root.screen
         selectedColor: Settings.data.wallpaper.fillColor
         onColorSelected: color => Settings.data.wallpaper.fillColor = color
       }

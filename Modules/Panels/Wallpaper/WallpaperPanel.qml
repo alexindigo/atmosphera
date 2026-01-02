@@ -186,6 +186,7 @@ SmartPanel {
     // Solid color picker dialog
     NColorPickerDialog {
       id: solidColorPicker
+      screen: root.screen
       selectedColor: Settings.data.wallpaper.solidColor
       onColorSelected: color => WallpaperService.setSolidColor(color.toString())
     }
