@@ -192,6 +192,7 @@
   },
   "controlCenter": {
     "position": "close_to_bar_button",
+    "diskPath": "/",
     "shortcuts": {
       "left": [
         {
@@ -271,7 +272,6 @@
     "useCustomColors": false,
     "warningColor": "",
     "criticalColor": "",
-    "diskPath": "/",
     "externalMonitor": "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
   },
   "dock": {
