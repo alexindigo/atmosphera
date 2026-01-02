@@ -415,6 +415,7 @@ Singleton {
     property JsonObject controlCenter: JsonObject {
       // Position: close_to_bar_button, center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "close_to_bar_button"
+      property string diskPath: "/"
       property JsonObject shortcuts
       shortcuts: JsonObject {
         property list<var> left: [
@@ -497,7 +498,6 @@ Singleton {
       property bool useCustomColors: false
       property string warningColor: ""
       property string criticalColor: ""
-      property string diskPath: "/"
       property string externalMonitor: "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor"
     }
 
