@@ -538,46 +538,49 @@ Item {
       "onActivate": function () {
         // Close the launcher/SmartPanel immediately without any animations.
         // Ensures we are not preventing the future focusing of the app
-        launcher.close();
+        launcher.closeImmediately();
 
-        Logger.d("ApplicationsPlugin", `Launching: ${app.name}`);
-        // Record usage and persist asynchronously
-        if (Settings.data.appLauncher.sortByMostUsed)
-          recordUsage(app);
-        if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
-          // Use custom launch prefix
-          const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
+        // Defer execution to next event loop iteration to ensure panel is fully closed
+        Qt.callLater(() => {
+                       Logger.d("ApplicationsPlugin", `Launching: ${app.name}`);
+                       // Record usage and persist asynchronously
+                       if (Settings.data.appLauncher.sortByMostUsed)
+                       recordUsage(app);
+                       if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
+                         // Use custom launch prefix
+                         const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
 
-          if (app.runInTerminal) {
-            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-            const command = prefix.concat(terminal.concat(app.command));
-            Quickshell.execDetached(command);
-          } else {
-            const command = prefix.concat(app.command);
-            Quickshell.execDetached(command);
-          }
-        } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
-          Logger.d("ApplicationsPlugin", `Using app2unit for: ${app.id}`);
-          if (app.runInTerminal)
-            Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
-          else
-            Quickshell.execDetached(["app2unit", "--"].concat(app.command));
-        } else {
-          // Fallback logic when app2unit is not used
-          if (app.runInTerminal) {
-            // If app.execute() fails for terminal apps, we handle it manually.
-            Logger.d("ApplicationsPlugin", "Executing terminal app manually: " + app.name);
-            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-            const command = terminal.concat(app.command);
-            Quickshell.execDetached(command);
-          } else if (app.command && app.command.length > 0) {
-            Quickshell.execDetached(app.command);
-          } else if (app.execute) {
-            app.execute();
-          } else {
-            Logger.w("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`);
-          }
-        }
+                         if (app.runInTerminal) {
+                           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                           const command = prefix.concat(terminal.concat(app.command));
+                           Quickshell.execDetached(command);
+                         } else {
+                           const command = prefix.concat(app.command);
+                           Quickshell.execDetached(command);
+                         }
+                       } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+                         Logger.d("ApplicationsPlugin", `Using app2unit for: ${app.id}`);
+                         if (app.runInTerminal)
+                         Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
+                         else
+                         Quickshell.execDetached(["app2unit", "--"].concat(app.command));
+                       } else {
+                         // Fallback logic when app2unit is not used
+                         if (app.runInTerminal) {
+                           // If app.execute() fails for terminal apps, we handle it manually.
+                           Logger.d("ApplicationsPlugin", "Executing terminal app manually: " + app.name);
+                           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                           const command = terminal.concat(app.command);
+                           Quickshell.execDetached(command);
+                         } else if (app.command && app.command.length > 0) {
+                           Quickshell.execDetached(app.command);
+                         } else if (app.execute) {
+                           app.execute();
+                         } else {
+                           Logger.w("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`);
+                         }
+                       }
+                     });
       }
     };
   }

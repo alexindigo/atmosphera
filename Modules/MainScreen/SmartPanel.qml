@@ -230,6 +230,32 @@ Item {
     Logger.d("SmartPanel", "Closing panel", objectName);
   }
 
+  function closeImmediately() {
+    // Close without any animation - useful for app launches to avoid focus issues
+    opacityTrigger.stop();
+    openWatchdogActive = false;
+    openWatchdogTimer.stop();
+    closeWatchdogActive = false;
+    closeWatchdogTimer.stop();
+
+    // Set opacity to 0 immediately
+    root.opacity = 0;
+
+    // Finalize close state
+    root.closeFinalized = true;
+    root.isPanelVisible = false;
+    root.isPanelOpen = false;
+    root.isClosing = false;
+    root.opacityFadeComplete = false;
+    root.sizeAnimationComplete = false;
+    panelBackground.dimensionsInitialized = false;
+
+    PanelService.closedPanel(root);
+    closed();
+
+    Logger.d("SmartPanel", "Panel closed immediately", objectName);
+  }
+
   function finalizeClose() {
     // Prevent double-finalization
     if (root.closeFinalized) {

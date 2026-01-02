@@ -39,8 +39,10 @@ Item {
             "isTablerIcon": true,
             "isImage": false,
             "onActivate": function () {
-              launcher.close();
-              Quickshell.execDetached(["sh", "-c", expression]);
+              launcher.closeImmediately();
+              Qt.callLater(() => {
+                             Quickshell.execDetached(["sh", "-c", expression]);
+                           });
             }
           }
         ];
