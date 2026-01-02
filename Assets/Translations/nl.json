@@ -2483,6 +2483,10 @@
         "label": "Animatiesnelheid",
         "reset": "Animatiesnelheid resetten"
       },
+      "box-border": {
+        "description": "Toont een omlijning rond inhoudsgebieden.",
+        "label": "Containeromtrek"
+      },
       "box-border-radius": {
         "description": "Past de hoekronding aan van belangrijke lay-outsecties, zoals zijbalken, kaarten en inhoudspanelen.",
         "label": "Container Radius",

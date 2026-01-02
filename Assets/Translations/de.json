@@ -2483,6 +2483,10 @@
         "label": "Animationsgeschwindigkeit",
         "reset": "Animationsgeschwindigkeit zurücksetzen"
       },
+      "box-border": {
+        "description": "Zeigt eine Umrandung um Inhaltsbereiche an.",
+        "label": "Containerumriss"
+      },
       "box-border-radius": {
         "description": "Passt die Eckenrundung wichtiger Layoutbereiche an, wie z. B. Seitenleisten, Karten und Inhaltsbereiche.",
         "label": "Behälterradius",

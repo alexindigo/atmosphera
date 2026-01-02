@@ -2483,6 +2483,10 @@
         "label": "Leza anîmasyonê",
         "reset": "Lezaaniya bilezîneka nû bike"
       },
+      "box-border": {
+        "description": "Xêzekê li dora deverên naverokê nîşan dide.",
+        "label": "Çarçoweya konteynerê"
+      },
       "box-border-radius": {
         "description": "Goşeya dorfirehiya beşên sereke yên layoutê, wekî barên kêlekê, kart, û panelên naverokê, eyar dike.",
         "label": "Radiusa Konteynirê",

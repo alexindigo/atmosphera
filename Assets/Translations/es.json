@@ -2483,6 +2483,10 @@
         "label": "Velocidad de animación",
         "reset": "Restablecer la velocidad de la animación"
       },
+      "box-border": {
+        "description": "Muestra un contorno alrededor de las áreas de contenido.",
+        "label": "Contorno del contenedor"
+      },
       "box-border-radius": {
         "description": "Ajusta la redondez de las esquinas de las secciones principales del diseño, como barras laterales, tarjetas y paneles de contenido.",
         "label": "Radio del contenedor",
