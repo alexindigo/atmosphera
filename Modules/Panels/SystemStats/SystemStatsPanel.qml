@@ -203,7 +203,7 @@ SmartPanel {
 
                 NText {
                   text: SystemStatService.formatSpeed(SystemStatService.rxSpeed) + "/s"
-                  pointSize: Style.fontSizeXS
+                  pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
                 }
@@ -231,7 +231,7 @@ SmartPanel {
 
                 NText {
                   text: SystemStatService.formatSpeed(SystemStatService.txSpeed) + "/s"
-                  pointSize: Style.fontSizeXS
+                  pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
                 }
