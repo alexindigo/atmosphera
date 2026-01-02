@@ -14,7 +14,6 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
-  property string density: ""
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false

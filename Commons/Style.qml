@@ -108,7 +108,7 @@ Singleton {
     return toOdd(h);
   }
 
-  // Capsule Height -
+  // Capsule Height
   readonly property real capsuleHeight: {
     let h;
     switch (Settings.data.bar.density) {
@@ -122,17 +122,17 @@ Singleton {
       h = Math.round(barHeight * 0.75);
       break;
       case "spacious":
-      h = Math.round(barHeight * 0.75);
+      h = Math.round(barHeight * 0.65);
       break;
       default:
-      case "default":
       h = Math.round(barHeight * 0.82);
+      break;
     }
     return toOdd(h);
   }
 
-  // The base/default font size for all text in the bar. 33 is the "default" barHeight
-  readonly property real _barBaseFontSize: Math.max(1, (Style.barHeight / 33) * Style.fontSizeS)
+  // The base/default font size for all texts in the bar
+  readonly property real _barBaseFontSize: Math.max(1, (Style.barHeight / Style.capsuleHeight) * Style.fontSizeXXS)
   readonly property real barFontSize: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? _barBaseFontSize * 0.9 : _barBaseFontSize
 
   readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
