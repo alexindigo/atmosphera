@@ -98,15 +98,6 @@ ColumnLayout {
       isSettings: true
       defaultValue: Settings.getDefaultValue("wallpaper.enableMultiMonitorDirectories")
     }
-    // Hide wallpaper filenames
-    NToggle {
-      label: I18n.tr("settings.wallpaper.settings.hide-wallpaper-filenames.label")
-      description: I18n.tr("settings.wallpaper.settings.hide-wallpaper-filenames.description")
-      checked: Settings.data.wallpaper.hideWallpaperFilenames
-      onToggled: checked => Settings.data.wallpaper.hideWallpaperFilenames = checked
-      isSettings: true
-      defaultValue: Settings.getDefaultValue("wallpaper.hideWallpaperFilenames")
-    }
 
     NBox {
       visible: Settings.data.wallpaper.enableMultiMonitorDirectories

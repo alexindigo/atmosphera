@@ -299,6 +299,13 @@ SmartPanel {
                 }
               }
             }
+            //Hide Wallpaper Filenames
+            NIconButton {
+              icon: Settings.data.wallpaper.hideWallpaperFilenames ? "eye-closed" : "eye"
+              tooltipText: Settings.data.wallpaper.hideWallpaperFilenames ? I18n.tr("settings.wallpaper.settings.hide-wallpaper-filenames.tooltip-show") : I18n.tr("settings.wallpaper.settings.hide-wallpaper-filenames.tooltip-hide")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: Settings.data.wallpaper.hideWallpaperFilenames = !Settings.data.wallpaper.hideWallpaperFilenames
+            }
 
             NIconButton {
               icon: "close"
