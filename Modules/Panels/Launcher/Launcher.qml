@@ -1273,7 +1273,7 @@ SmartPanel {
               id: resultsGrid
 
               horizontalPolicy: ScrollBar.AlwaysOff
-              verticalPolicy: ScrollBar.AsNeeded
+              verticalPolicy: ScrollBar.AlwaysOff
 
               width: parent.width
               height: parent.height
@@ -1301,7 +1301,8 @@ SmartPanel {
               cacheBuffer: resultsGrid.height * 2
               keyNavigationEnabled: false
               focus: false
-              interactive: !Settings.data.appLauncher.ignoreMouseInput
+              interactive: false
+              clip: true
 
               Component.onCompleted: {
                 // Initialize gridColumns when grid view is created
@@ -1407,7 +1408,7 @@ SmartPanel {
                 width: resultsGrid.cellWidth - Style.marginM
                 height: resultsGrid.cellHeight - Style.marginM
                 radius: Style.radiusM
-                color: gridEntry.isSelected ? Color.mHover : Color.mSurface
+                color: gridEntry.isSelected ? Color.mHover : "transparent"
 
                 Behavior on color {
                   ColorAnimation {
