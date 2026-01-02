@@ -87,7 +87,7 @@ DraggableDesktopWidget {
     layer.effect: MultiEffect {
       maskEnabled: true
       maskThresholdMin: 0.95
-      maskSpreadAtMin: 0.0
+      maskSpreadAtMin: 0.15
       maskSource: ShaderEffectSource {
         sourceItem: Rectangle {
           width: root.width - Math.round(Style.marginXS * widgetScale) * 2

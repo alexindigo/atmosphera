@@ -341,7 +341,7 @@ Item {
       spacing: Style.marginL
 
       // Sidebar
-      Rectangle {
+      NBox {
         id: sidebar
 
         readonly property bool panelVeryTransparent: Settings.data.ui.panelBackgroundOpacity <= 0.75
@@ -353,8 +353,7 @@ Item {
 
         radius: sidebar.panelVeryTransparent ? Style.radiusM : 0
         color: sidebar.panelVeryTransparent ? Color.mSurfaceVariant : Color.transparent
-        border.width: sidebar.panelVeryTransparent ? Style.borderS : 0
-        border.color: sidebar.panelVeryTransparent ? Color.mOutline : Color.transparent
+        border.color: sidebar.panelVeryTransparent ? Style.boxBorderColor : Color.transparent
 
         Behavior on Layout.preferredWidth {
           NumberAnimation {
@@ -581,15 +580,13 @@ Item {
       }
 
       // Content pane
-      Rectangle {
+      NBox {
         id: contentPane
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         radius: Style.radiusM
         color: Color.mSurfaceVariant
-        border.color: Color.mOutline
-        border.width: Style.borderS
 
         ColumnLayout {
           id: contentLayout

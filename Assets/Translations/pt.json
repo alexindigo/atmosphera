@@ -2483,6 +2483,10 @@
         "label": "Velocidade da animação",
         "reset": "Redefinir velocidade da animação"
       },
+      "box-border": {
+        "description": "Exibe um contorno ao redor das áreas de conteúdo.",
+        "label": "Contorno do recipiente"
+      },
       "box-border-radius": {
         "description": "Ajusta o arredondamento dos cantos das principais seções do layout, como barras laterais, cards e painéis de conteúdo.",
         "label": "Raio do Contêiner",

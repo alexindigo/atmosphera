@@ -2483,6 +2483,10 @@
         "label": "Vitesse d'animation",
         "reset": "Réinitialiser la vitesse de l'animation"
       },
+      "box-border": {
+        "description": "Affiche un contour autour des zones de contenu.",
+        "label": "Contour du conteneur"
+      },
       "box-border-radius": {
         "description": "Ajuste de l'arrondi des coins des principales sections de la mise en page, telles que les barres latérales, les cartes et les panneaux de contenu.",
         "label": "Rayon du conteneur",

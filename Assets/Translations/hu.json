@@ -2483,6 +2483,10 @@
         "label": "Animációs sebesség",
         "reset": "Animációs sebesség visszaállítása"
       },
+      "box-border": {
+        "description": "Tartalomterületek köré vázlatot jelenít meg.",
+        "label": "Konténer körvonal"
+      },
       "box-border-radius": {
         "description": "Beállítja a fő elrendezési szakaszok (például oldalsávok, kártyák és tartalompanelek) saroklekerekítését.",
         "label": "Tároló sugár",

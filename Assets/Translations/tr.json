@@ -2483,6 +2483,10 @@
         "label": "Animasyon hızı",
         "reset": "Animasyon hızını sıfırla"
       },
+      "box-border": {
+        "description": "İçerik alanlarının etrafında bir çerçeve görüntüler.",
+        "label": "Konteyner ana hattı"
+      },
       "box-border-radius": {
         "description": "Kenar çubukları, kartlar ve içerik panelleri gibi ana düzen bölümlerinin köşe yuvarlaklığını ayarlar.",
         "label": "Konteyner Yarıçapı",

@@ -2483,6 +2483,10 @@
         "label": "Prędkość animacji",
         "reset": "Resetuj prędkość animacji"
       },
+      "box-border": {
+        "description": "Wyświetla obrys wokół obszarów zawartości.",
+        "label": "Obrys kontenera"
+      },
       "box-border-radius": {
         "description": "Dostosowuje zaokrąglenie narożników głównych sekcji układu, takich jak paski boczne, karty i panele treści.",
         "label": "Promień kontenerów",
