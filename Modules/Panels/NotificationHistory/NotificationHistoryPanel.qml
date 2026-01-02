@@ -447,7 +447,6 @@ SmartPanel {
                         width: parent.width
                         text: model.summary || I18n.tr("general.no-summary")
                         pointSize: Style.fontSizeM
-                        font.weight: Font.Medium
                         color: Color.mOnSurface
                         textFormat: Text.PlainText
                         wrapMode: Text.Wrap
@@ -485,7 +484,6 @@ SmartPanel {
                           text: I18n.tr("notifications.panel.click-to-expand") || "Click to expand"
                           pointSize: Style.fontSizeXS
                           color: Color.mPrimary
-                          font.weight: Font.Medium
                         }
 
                         NIcon {

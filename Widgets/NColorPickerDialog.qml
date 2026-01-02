@@ -116,7 +116,7 @@ Popup {
             text: root.selectedColor.toString().toUpperCase()
             family: Settings.data.ui.fontFixed
             pointSize: Style.fontSizeL
-            font.weight: Font.Bold
+            font.weight: Style.fontWeightMedium
             color: root.selectedColor.r + root.selectedColor.g + root.selectedColor.b > 1.5 ? Color.black : Color.white
             Layout.alignment: Qt.AlignHCenter
           }
@@ -168,7 +168,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "R"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   checked: true
                   onClicked: root.editMode = NColorPickerDialog.EditMode.R
                   Layout.fillWidth: false
@@ -200,7 +200,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "G"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   onClicked: root.editMode = NColorPickerDialog.EditMode.G
                   Layout.fillWidth: false
                 }
@@ -231,7 +231,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "B"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   onClicked: root.editMode = NColorPickerDialog.EditMode.B
                   Layout.fillWidth: false
                 }
@@ -268,7 +268,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "H"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   checked: true
                   onClicked: root.editMode = NColorPickerDialog.EditMode.H
                   Layout.fillWidth: false
@@ -303,7 +303,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "S"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   onClicked: root.editMode = NColorPickerDialog.EditMode.S
                   Layout.fillWidth: false
                 }
@@ -333,7 +333,7 @@ Popup {
                 NRadioButton {
                   ButtonGroup.group: colorValues
                   text: "V"
-                  font.weight: Font.Bold
+                  font.weight: Style.fontWeightMedium
                   onClicked: root.editMode = NColorPickerDialog.EditMode.V
                   Layout.fillWidth: false
                 }

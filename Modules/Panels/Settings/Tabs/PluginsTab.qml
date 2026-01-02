@@ -144,7 +144,6 @@ ColumnLayout {
 
             NText {
               text: modelData.name
-              font.weight: Font.Medium
               color: Color.mOnSurface
               elide: Text.ElideRight
               Layout.fillWidth: true
@@ -353,7 +352,6 @@ ColumnLayout {
 
             NText {
               text: modelData.name
-              font.weight: Font.Medium
               color: Color.mOnSurface
               Layout.fillWidth: true
             }
