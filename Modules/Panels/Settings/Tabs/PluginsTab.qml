@@ -169,7 +169,7 @@ ColumnLayout {
                                                      }) : "v" + modelData.version
                 font.pointSize: Style.fontSizeXXS
                 color: modelData.updateInfo ? Color.mPrimary : Color.mOnSurfaceVariant
-                font.weight: modelData.updateInfo ? Font.Medium : Font.Normal
+                font.weight: modelData.updateInfo ? Style.fontWeightMedium : Style.fontWeightRegular
               }
 
               NText {
