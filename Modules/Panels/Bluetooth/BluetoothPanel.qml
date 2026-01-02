@@ -273,8 +273,8 @@ SmartPanel {
                 return false;
 
               var availableCount = BluetoothService.adapter.devices.values.filter(dev => {
-                                                                       return dev && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
-                                                                     }).length;
+                                                                                    return dev && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
+                                                                                  }).length;
               return (availableCount === 0);
             }
             Layout.fillWidth: true
@@ -327,8 +327,8 @@ SmartPanel {
               }
 
               var availableCount = BluetoothService.adapter.devices.values.filter(dev => {
-                                                                       return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
-                                                                     }).length;
+                                                                                    return dev && !dev.paired && !dev.pairing && !dev.blocked && (dev.signalStrength === undefined || dev.signalStrength > 0);
+                                                                                  }).length;
               return (availableCount === 0);
             }
 

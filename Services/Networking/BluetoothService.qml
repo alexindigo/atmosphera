@@ -1,14 +1,14 @@
 pragma Singleton
+import QtQml
 
 import QtQuick
-import QtQml
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
+import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
+import "."
 import qs.Commons
 import qs.Services.UI
-import "."
-import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
 
 QtObject {
   id: root
@@ -20,7 +20,7 @@ QtObject {
 
   property bool airplaneModeToggled: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
-  
+
   // Power/blocked state
   property bool enabled: false // driven by bluetoothctl
   property bool ctlPowered: false
@@ -123,7 +123,8 @@ QtObject {
       manualScanTimer.interval = durationMs;
       manualScanTimer.restart();
     } else {
-      if (manualScanTimer.running) manualScanTimer.stop();
+      if (manualScanTimer.running)
+        manualScanTimer.stop();
     }
     requestCtlPoll(ctlPollSoonMs);
   }
@@ -133,7 +134,7 @@ QtObject {
     if (!adapter)
       return;
     setScanActive(!root.scanningActive, scanAutoStopMs);
-    }
+  }
 
   // Auto-stop manual discovery after a short window
   property Timer manualScanTimer: Timer {
@@ -183,7 +184,9 @@ QtObject {
   property Process ctlShowProcess: Process {
     id: ctlProc
     running: false
-    stdout: StdioCollector { id: ctlStdout }
+    stdout: StdioCollector {
+      id: ctlStdout
+    }
     onExited: function (exitCode, exitStatus) {
       try {
         var text = ctlStdout.text || "";
@@ -341,13 +344,16 @@ QtObject {
     var p = getSignalPercent(device);
     if (p === null)
       return I18n.tr("bluetooth.panel.signal-text.unknown");
-    if (p >= 80) return I18n.tr("bluetooth.panel.signal-text.excellent");
-    if (p >= 60) return I18n.tr("bluetooth.panel.signal-text.good");
-    if (p >= 40) return I18n.tr("bluetooth.panel.signal-text.fair");
-    if (p >= 20) return I18n.tr("bluetooth.panel.signal-text.poor");
+    if (p >= 80)
+      return I18n.tr("bluetooth.panel.signal-text.excellent");
+    if (p >= 60)
+      return I18n.tr("bluetooth.panel.signal-text.good");
+    if (p >= 40)
+      return I18n.tr("bluetooth.panel.signal-text.fair");
+    if (p >= 20)
+      return I18n.tr("bluetooth.panel.signal-text.poor");
     return I18n.tr("bluetooth.panel.signal-text.very-poor");
   }
-
 
   // Numeric helpers for UI rendering
   function getSignalPercent(device) {
@@ -355,7 +361,6 @@ QtObject {
     var _v = rssi.version;
     return BluetoothUtils.signalPercent(device, rssi.cache, _v);
   }
-
 
   function getBatteryPercent(device) {
     return BluetoothUtils.batteryPercent(device);
@@ -428,7 +433,7 @@ QtObject {
     _pauseDiscoveryFor(totalPauseMs);
 
     // Prefer external dev script for pairing/connecting; executed detached
-    const scriptPath = Quickshell.shellDir + "/Bin/dev/BluetoothConnectionScript.sh";
+    const scriptPath = Quickshell.shellDir + "/Bin/bluetooth-connect.sh";
     // Use bash explicitly to avoid relying on executable bit in all environments
     btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
   }

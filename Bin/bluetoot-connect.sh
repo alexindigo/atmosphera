@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# BluetoothConnectionScript.sh
+# bluetooth-connect.sh
 # Pairs, trusts, and attempts to connect to a Bluetooth device using bluetoothctl.
-# Usage: BluetoothConnectionScript.sh <addr> <pairWaitSeconds> <attempts> <intervalSec>
+# Usage: bluetooth-connect.sh <addr> <pairWaitSeconds> <attempts> <intervalSec>
 
 set -euo pipefail
 

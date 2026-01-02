@@ -287,13 +287,13 @@ ColumnLayout {
           NToggle {
             checked: modelData.enabled
             baseSize: Style.baseWidgetSize * 0.7
-            onToggled: function (checked) {
-              if (checked) {
-                PluginService.enablePlugin(modelData.compositeKey);
-              } else {
-                PluginService.disablePlugin(modelData.compositeKey);
-              }
-            }
+            onToggled: checked => {
+                         if (checked) {
+                           PluginService.enablePlugin(modelData.compositeKey);
+                         } else {
+                           PluginService.disablePlugin(modelData.compositeKey);
+                         }
+                       }
           }
         }
       }
@@ -382,11 +382,11 @@ ColumnLayout {
           NToggle {
             checked: modelData.enabled !== false // Default to true if not set
             baseSize: Style.baseWidgetSize * 0.7
-            onToggled: function (checked) {
-              PluginRegistry.setSourceEnabled(modelData.url, checked);
-              PluginService.refreshAvailablePlugins();
-              ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
-            }
+            onToggled: checked => {
+                         PluginRegistry.setSourceEnabled(modelData.url, checked);
+                         PluginService.refreshAvailablePlugins();
+                         ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
+                       }
           }
         }
       }

@@ -216,8 +216,7 @@ Item {
                      if (!isNaN(idx)) {
                        MediaService.switchToPlayer(idx);
                      }
-                   }
-                   else if (action === "widget-settings") {
+                   } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
                  }

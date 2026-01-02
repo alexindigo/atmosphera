@@ -41,11 +41,7 @@ ColumnLayout {
     description: I18n.tr("settings.network.bluetooth.rssi-polling.description")
     checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
     enabled: BluetoothService.enabled
-    onToggled: function(checked) {
-      if (Settings.data && Settings.data.network) {
-        Settings.data.network.bluetoothRssiPollingEnabled = checked;
-      }
-    }
+    onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
   }
 
   NDivider {
