@@ -2596,8 +2596,8 @@
           "tooltip": "Achtergrondmap"
         },
         "hide-wallpaper-filenames": {
-          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
-          "label": "Bestandsnamen verbergen"
+          "tooltip-hide": "Bestandsnamen verbergen",
+          "tooltip-show": "Bestandsnamen weergeven"
         },
         "monitor-specific": {
           "description": "Stel een andere achtergrondmap in voor elke monitor.",

@@ -2596,8 +2596,8 @@
           "tooltip": "壁紙フォルダ"
         },
         "hide-wallpaper-filenames": {
-          "description": "壁紙選択パネル内で、壁紙のファイル名を非表示にします。",
-          "label": "ファイル名を非表示"
+          "tooltip-hide": "ファイル名を隠す",
+          "tooltip-show": "ファイル名を表示"
         },
         "monitor-specific": {
           "description": "ディスプレイごとに異なる壁紙フォルダを設定します。",

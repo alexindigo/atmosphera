@@ -2596,8 +2596,8 @@
           "tooltip": "Peldanka wêneyê dîwêr"
         },
         "hide-wallpaper-filenames": {
-          "description": "Navên pelên dîwêr di hilbijêr de veşêre.",
-          "label": "Navê pelan veşêre"
+          "tooltip-hide": "Navên pelan veşêre",
+          "tooltip-show": "Navên pelan nîşan bide"
         },
         "monitor-specific": {
           "description": "Peldankekî dîwarê cuda ji bo her monitorekî destnîşan bike.",

@@ -2596,8 +2596,8 @@
           "tooltip": "Wallpaper folder"
         },
         "hide-wallpaper-filenames": {
-          "description": "Hide wallpaper filenames in the selector.",
-          "label": "Hide filenames"
+          "tooltip-hide":"Hide Filenames",
+          "tooltip-show":"Show Filenames"
         },
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",

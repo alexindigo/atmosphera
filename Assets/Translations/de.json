@@ -2596,8 +2596,8 @@
           "tooltip": "Hintergrundbild-Ordner"
         },
         "hide-wallpaper-filenames": {
-          "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
-          "label": "Dateinamen ausblenden"
+          "tooltip-hide": "Dateinamen ausblenden",
+          "tooltip-show": "Dateinamen anzeigen"
         },
         "monitor-specific": {
           "description": "Unterschiedlichen Hintergrundbild-Ordner für jeden Monitor festlegen.",

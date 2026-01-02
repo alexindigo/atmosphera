@@ -2596,8 +2596,8 @@
           "tooltip": "Dossier des fonds d'écran"
         },
         "hide-wallpaper-filenames": {
-          "description": "Masquer les noms de fichiers des fonds d'écran dans le sélecteur.",
-          "label": "Masquer les noms de fichiers"
+          "tooltip-hide": "Masquer les noms de fichiers",
+          "tooltip-show": "Afficher les noms de fichiers"
         },
         "monitor-specific": {
           "description": "Définissez un dossier de fond d'écran différent pour chaque moniteur.",
