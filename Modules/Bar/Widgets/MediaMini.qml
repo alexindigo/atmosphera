@@ -86,8 +86,8 @@ Item {
   readonly property string tooltipText: {
     var text = title;
     var controls = [];
-    if (MediaService.canGoNext)
-      controls.push("Right click for next.");
+    // Right click now opens options, including player selection
+    controls.push("Right click for options.");
     if (MediaService.canGoPrevious)
       controls.push("Middle click for previous.");
     return controls.length ? `${text}\n\n${controls.join("\n")}` : text;
@@ -176,6 +176,22 @@ Item {
                      "icon": "media-next"
                    });
       }
+
+      // Append available players (like in Control Center) so user can switch from the bar
+      var players = MediaService.getAvailablePlayers ? MediaService.getAvailablePlayers() : [];
+      if (players && players.length > 1) {
+        for (var i = 0; i < players.length; i++) {
+          var isCurrent = (i === MediaService.selectedPlayerIndex);
+          items.push({
+                       "label": players[i].identity,
+                       "action": "player-" + i,
+                       "icon": isCurrent ? "check" : "disc",
+                       "enabled": true,
+                       "visible": true
+                     });
+        }
+      }
+
       items.push({
                    "label": I18n.tr("context-menu.widget-settings"),
                    "action": "widget-settings",
@@ -195,6 +211,12 @@ Item {
                    MediaService.previous();
                    else if (action === "next")
                    MediaService.next();
+                   else if (action && action.indexOf("player-") === 0) {
+                     var idx = parseInt(action.split("-")[1]);
+                     if (!isNaN(idx)) {
+                       MediaService.switchToPlayer(idx);
+                     }
+                   }
                    else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
