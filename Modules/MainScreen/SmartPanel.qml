@@ -231,23 +231,20 @@ Item {
   }
 
   function closeImmediately() {
-    // Close without any animation - useful for app launches to avoid focus issues
+    // Close without any animation, useful for app launches to avoid focus issues
     opacityTrigger.stop();
     openWatchdogActive = false;
     openWatchdogTimer.stop();
     closeWatchdogActive = false;
     closeWatchdogTimer.stop();
 
-    // Set opacity to 0 immediately
-    root.opacity = 0;
-
-    // Finalize close state
-    root.closeFinalized = true;
+    // Don't set opacity directly as it breaks the binding
     root.isPanelVisible = false;
-    root.isPanelOpen = false;
+    root.sizeAnimationComplete = false;
     root.isClosing = false;
     root.opacityFadeComplete = false;
-    root.sizeAnimationComplete = false;
+    root.closeFinalized = true;
+    root.isPanelOpen = false;
     panelBackground.dimensionsInitialized = false;
 
     PanelService.closedPanel(root);
