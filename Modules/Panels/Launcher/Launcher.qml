@@ -682,301 +682,773 @@ SmartPanel {
       }
     }
 
-    RowLayout {
+    ColumnLayout {
       anchors.fill: parent
-      anchors.margins: Style.marginL // Apply overall margins here
-      spacing: Style.marginM // Apply spacing between elements here
+      anchors.margins: Style.marginL
+      spacing: Style.marginM
 
-      // Left Pane
-      ColumnLayout {
-        id: leftPane
+      // Header
+      NBox {
+        Layout.fillWidth: true
+        Layout.preferredHeight: headerColumn.implicitHeight + Style.marginL * 2
+        color: Color.mSurfaceVariant
+
+        ColumnLayout {
+          id: headerColumn
+          anchors.fill: parent
+          anchors.margins: Style.marginL
+          spacing: Style.marginM
+
+          RowLayout {
+            Layout.fillWidth: true
+            spacing: Style.marginM
+
+            NIcon {
+              icon: "search"
+              pointSize: Style.fontSizeXXL
+              color: Color.mPrimary
+            }
+
+            NText {
+              text: I18n.tr("settings.launcher.title")
+              pointSize: Style.fontSizeL
+              font.weight: Style.fontWeightBold
+              color: Color.mOnSurface
+              Layout.fillWidth: true
+            }
+
+            NIconButton {
+              visible: root.activePlugin === null || root.activePlugin === appsPlugin
+              icon: Settings.data.appLauncher.viewMode === "grid" ? "layout-list" : "layout-grid"
+              tooltipText: Settings.data.appLauncher.viewMode === "grid" ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: {
+                Settings.data.appLauncher.viewMode = Settings.data.appLauncher.viewMode === "grid" ? "list" : "grid";
+              }
+            }
+
+            NIconButton {
+              icon: "close"
+              tooltipText: I18n.tr("tooltips.close")
+              baseSize: Style.baseWidgetSize * 0.8
+              onClicked: root.close()
+            }
+          }
+        }
+      }
+
+      // Content area
+      RowLayout {
+        Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.preferredWidth: root.listPanelWidth
         spacing: Style.marginM
 
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: Style.marginS
-
-          NTextInput {
-            id: searchInput
-            Layout.fillWidth: true
-
-            fontSize: Style.fontSizeL
-            fontWeight: Style.fontWeightSemiBold
-
-            text: searchText
-            placeholderText: I18n.tr("placeholders.search-launcher")
-
-            onTextChanged: searchText = text
-
-            Component.onCompleted: {
-              if (searchInput.inputItem) {
-                searchInput.inputItem.forceActiveFocus();
-                // Intercept keys before TextField handles them
-                searchInput.inputItem.Keys.onPressed.connect(function (event) {
-                  if (event.key === Qt.Key_Tab) {
-                    root.onTabPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Backtab) {
-                    root.onBackTabPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Left) {
-                    root.onLeftPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Right) {
-                    root.onRightPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Up) {
-                    root.onUpPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Down) {
-                    root.onDownPressed();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Enter) {
-                    root.activate();
-                    event.accepted = true;
-                  } else if (event.key === Qt.Key_Delete) {
-                    root.onDeletePressed();
-                    event.accepted = true;
-                  }
-                });
-              }
-            }
-          }
-
-          NIconButton {
-            visible: root.activePlugin === null || root.activePlugin === appsPlugin
-            icon: Settings.data.appLauncher.viewMode === "grid" ? "layout-list" : "layout-grid"
-            tooltipText: Settings.data.appLauncher.viewMode === "grid" ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
-            Layout.preferredWidth: searchInput.height
-            Layout.preferredHeight: searchInput.height
-            onClicked: {
-              Settings.data.appLauncher.viewMode = Settings.data.appLauncher.viewMode === "grid" ? "list" : "grid";
-            }
-          }
-        }
-
-        // Emoji category tabs (shown when in browsing mode)
-        NTabBar {
-          id: emojiCategoryTabs
-          visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
-          Layout.fillWidth: true
-          margins: Style.marginM
-          property int computedCurrentIndex: {
-            if (visible && emojiPlugin.categories) {
-              return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
-            }
-            return 0;
-          }
-          currentIndex: computedCurrentIndex
-
-          Repeater {
-            model: emojiPlugin.categories
-            NIconTabButton {
-              required property string modelData
-              required property int index
-              icon: emojiPlugin.categoryIcons[modelData] || "star"
-              tooltipText: emojiPlugin.getCategoryName ? emojiPlugin.getCategoryName(modelData) : modelData
-              tabIndex: index
-              checked: emojiCategoryTabs.currentIndex === index
-              onClicked: {
-                emojiPlugin.selectCategory(modelData);
-              }
-            }
-          }
-        }
-
-        Connections {
-          target: emojiPlugin
-          enabled: emojiCategoryTabs.visible
-          function onSelectedCategoryChanged() {
-            // Force update of currentIndex when selectedCategory changes
-            Qt.callLater(() => {
-                           if (emojiCategoryTabs.visible && emojiPlugin.categories) {
-                             const newIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
-                             if (newIndex >= 0 && emojiCategoryTabs.currentIndex !== newIndex) {
-                               emojiCategoryTabs.currentIndex = newIndex;
-                             }
-                           }
-                         });
-          }
-        }
-
-        // App category tabs (shown when browsing apps without search)
-        NTabBar {
-          id: appCategoryTabs
-          visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
-          Layout.fillWidth: true
-          margins: Style.marginM
-          property int computedCurrentIndex: {
-            if (visible && appsPlugin.availableCategories) {
-              return appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
-            }
-            return 0;
-          }
-          currentIndex: computedCurrentIndex
-
-          Repeater {
-            model: appsPlugin.availableCategories || []
-            NIconTabButton {
-              required property string modelData
-              required property int index
-              icon: appsPlugin.categoryIcons[modelData] || "apps"
-              tooltipText: appsPlugin.getCategoryName ? appsPlugin.getCategoryName(modelData) : modelData
-              tabIndex: index
-              checked: appCategoryTabs.currentIndex === index
-              onClicked: {
-                appsPlugin.selectCategory(modelData);
-              }
-            }
-          }
-        }
-
-        Connections {
-          target: appsPlugin
-          enabled: appCategoryTabs.visible
-          function onSelectedCategoryChanged() {
-            // Force update of currentIndex when selectedCategory changes
-            Qt.callLater(() => {
-                           if (appCategoryTabs.visible && appsPlugin.availableCategories) {
-                             const newIndex = appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
-                             if (newIndex >= 0 && appCategoryTabs.currentIndex !== newIndex) {
-                               appCategoryTabs.currentIndex = newIndex;
-                             }
-                           }
-                         });
-          }
-        }
-
-        Loader {
-          id: resultsViewLoader
-          Layout.fillWidth: true
+        // Left Pane
+        ColumnLayout {
+          id: leftPane
           Layout.fillHeight: true
-          sourceComponent: root.isGridView ? gridViewComponent : listViewComponent
+          Layout.preferredWidth: root.listPanelWidth
+          spacing: Style.marginM
 
-          // Reset mouse tracking when loader switches components
-          onLoaded: {
-            root.ignoreMouseHover = true;
-            mouseMovementDetector.initialized = false;
-          }
-        }
+          // Search and category tabs container
+          NBox {
+            Layout.fillWidth: true
+            implicitHeight: searchCategoryLayout.implicitHeight + Style.marginL * 2
+            color: Color.mSurfaceVariant
 
-        Component {
-          id: listViewComponent
-          NListView {
-            id: resultsList
+            ColumnLayout {
+              id: searchCategoryLayout
+              anchors.fill: parent
+              anchors.margins: Style.marginL
+              spacing: Style.marginM
 
-            horizontalPolicy: ScrollBar.AlwaysOff
-            verticalPolicy: ScrollBar.AsNeeded
+              NTextInput {
+                id: searchInput
+                Layout.fillWidth: true
 
-            width: parent.width
-            height: parent.height
-            spacing: Style.marginXXS
-            model: results
-            currentIndex: selectedIndex
-            cacheBuffer: resultsList.height * 2
-            interactive: !Settings.data.appLauncher.ignoreMouseInput
-            onCurrentIndexChanged: {
-              cancelFlick();
-              if (currentIndex >= 0) {
-                positionViewAtIndex(currentIndex, ListView.Contain);
+                fontSize: Style.fontSizeL
+                fontWeight: Style.fontWeightSemiBold
+
+                text: searchText
+                placeholderText: I18n.tr("placeholders.search-launcher")
+
+                onTextChanged: searchText = text
+
+                Component.onCompleted: {
+                  if (searchInput.inputItem) {
+                    searchInput.inputItem.forceActiveFocus();
+                    // Intercept keys before TextField handles them
+                    searchInput.inputItem.Keys.onPressed.connect(function (event) {
+                      if (event.key === Qt.Key_Tab) {
+                        root.onTabPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Backtab) {
+                        root.onBackTabPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Left) {
+                        root.onLeftPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Right) {
+                        root.onRightPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Up) {
+                        root.onUpPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Down) {
+                        root.onDownPressed();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Enter) {
+                        root.activate();
+                        event.accepted = true;
+                      } else if (event.key === Qt.Key_Delete) {
+                        root.onDeletePressed();
+                        event.accepted = true;
+                      }
+                    });
+                  }
+                }
               }
-              if (clipboardPreviewLoader.item) {
-                clipboardPreviewLoader.item.currentItem = results[currentIndex] || null;
+
+              // Emoji category tabs (shown when in browsing mode)
+              NTabBar {
+                id: emojiCategoryTabs
+                visible: root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode
+                Layout.fillWidth: true
+                margins: 0
+                property int computedCurrentIndex: {
+                  if (visible && emojiPlugin.categories) {
+                    return emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+                  }
+                  return 0;
+                }
+                currentIndex: computedCurrentIndex
+
+                Repeater {
+                  model: emojiPlugin.categories
+                  NIconTabButton {
+                    required property string modelData
+                    required property int index
+                    icon: emojiPlugin.categoryIcons[modelData] || "star"
+                    tooltipText: emojiPlugin.getCategoryName ? emojiPlugin.getCategoryName(modelData) : modelData
+                    tabIndex: index
+                    checked: emojiCategoryTabs.currentIndex === index
+                    onClicked: {
+                      emojiPlugin.selectCategory(modelData);
+                    }
+                  }
+                }
+              }
+
+              Connections {
+                target: emojiPlugin
+                enabled: emojiCategoryTabs.visible
+                function onSelectedCategoryChanged() {
+                  // Force update of currentIndex when selectedCategory changes
+                  Qt.callLater(() => {
+                                 if (emojiCategoryTabs.visible && emojiPlugin.categories) {
+                                   const newIndex = emojiPlugin.categories.indexOf(emojiPlugin.selectedCategory);
+                                   if (newIndex >= 0 && emojiCategoryTabs.currentIndex !== newIndex) {
+                                     emojiCategoryTabs.currentIndex = newIndex;
+                                   }
+                                 }
+                               });
+                }
+              }
+
+              // App category tabs (shown when browsing apps without search)
+              NTabBar {
+                id: appCategoryTabs
+                visible: (root.activePlugin === null || root.activePlugin === appsPlugin) && appsPlugin.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
+                Layout.fillWidth: true
+                margins: 0
+                property int computedCurrentIndex: {
+                  if (visible && appsPlugin.availableCategories) {
+                    return appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
+                  }
+                  return 0;
+                }
+                currentIndex: computedCurrentIndex
+
+                Repeater {
+                  model: appsPlugin.availableCategories || []
+                  NIconTabButton {
+                    required property string modelData
+                    required property int index
+                    icon: appsPlugin.categoryIcons[modelData] || "apps"
+                    tooltipText: appsPlugin.getCategoryName ? appsPlugin.getCategoryName(modelData) : modelData
+                    tabIndex: index
+                    checked: appCategoryTabs.currentIndex === index
+                    onClicked: {
+                      appsPlugin.selectCategory(modelData);
+                    }
+                  }
+                }
+              }
+
+              Connections {
+                target: appsPlugin
+                enabled: appCategoryTabs.visible
+                function onSelectedCategoryChanged() {
+                  // Force update of currentIndex when selectedCategory changes
+                  Qt.callLater(() => {
+                                 if (appCategoryTabs.visible && appsPlugin.availableCategories) {
+                                   const newIndex = appsPlugin.availableCategories.indexOf(appsPlugin.selectedCategory);
+                                   if (newIndex >= 0 && appCategoryTabs.currentIndex !== newIndex) {
+                                     appCategoryTabs.currentIndex = newIndex;
+                                   }
+                                 }
+                               });
+                }
               }
             }
-            onModelChanged: {}
+          }
 
-            delegate: Rectangle {
-              id: entry
+          // Results container
+          NBox {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: Color.mSurfaceVariant
 
-              property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
-              property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+            ColumnLayout {
+              anchors.fill: parent
+              anchors.margins: Style.marginM
+              spacing: Style.marginM
 
-              // Helper function to normalize app IDs for case-insensitive matching
-              function normalizeAppId(appId) {
-                if (!appId || typeof appId !== 'string')
-                  return "";
-                return appId.toLowerCase().trim();
-              }
+              Loader {
+                id: resultsViewLoader
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                sourceComponent: root.isGridView ? gridViewComponent : listViewComponent
 
-              // Pin helpers
-              function togglePin(appId) {
-                if (!appId)
-                  return;
-                const normalizedId = normalizeAppId(appId);
-                let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-                if (idx >= 0)
-                  arr.splice(idx, 1);
-                else
-                  arr.push(appId);
-                Settings.data.dock.pinnedApps = arr;
-              }
-
-              function isPinned(appId) {
-                if (!appId)
-                  return false;
-                const arr = Settings.data.dock.pinnedApps || [];
-                const normalizedId = normalizeAppId(appId);
-                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-              }
-
-              // Property to reliably track the current item's ID.
-              // This changes whenever the delegate is recycled for a new item.
-              property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
-
-              // When this delegate is assigned a new image item, trigger the decode.
-              onCurrentClipboardIdChanged: {
-                // Check if it's a valid ID and if the data isn't already cached.
-                if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
-                  ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
+                // Reset mouse tracking when loader switches components
+                onLoaded: {
+                  root.ignoreMouseHover = true;
+                  mouseMovementDetector.initialized = false;
                 }
               }
 
-              width: resultsList.width - Style.marginS
-              implicitHeight: entryHeight
-              radius: Style.radiusM
-              color: entry.isSelected ? Color.mHover : Color.mSurface
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.OutCirc
-                }
+              NDivider {
+                Layout.fillWidth: true
               }
 
-              ColumnLayout {
-                id: contentLayout
-                anchors.fill: parent
-                anchors.margins: Style.marginM
-                spacing: Style.marginM
+              NText {
+                Layout.fillWidth: true
+                text: {
+                  if (results.length === 0) {
+                    if (searchText) {
+                      return "No results";
+                    } else if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && emojiPlugin.selectedCategory === "recent") {
+                      return "No recently used emoji";
+                    }
+                    return "";
+                  }
+                  var prefix = activePlugin && activePlugin.name ? activePlugin.name + ": " : "";
+                  return prefix + results.length + " result" + (results.length !== 1 ? 's' : '');
+                }
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+                horizontalAlignment: Text.AlignCenter
+              }
+            }
+          }
 
-                // Top row - Main entry content with pin button
-                RowLayout {
-                  Layout.fillWidth: true
+          Component {
+            id: listViewComponent
+            NListView {
+              id: resultsList
+
+              horizontalPolicy: ScrollBar.AlwaysOff
+              verticalPolicy: ScrollBar.AsNeeded
+
+              width: parent.width
+              height: parent.height
+              spacing: Style.marginXXS
+              model: results
+              currentIndex: selectedIndex
+              cacheBuffer: resultsList.height * 2
+              interactive: !Settings.data.appLauncher.ignoreMouseInput
+              onCurrentIndexChanged: {
+                cancelFlick();
+                if (currentIndex >= 0) {
+                  positionViewAtIndex(currentIndex, ListView.Contain);
+                }
+                if (clipboardPreviewLoader.item) {
+                  clipboardPreviewLoader.item.currentItem = results[currentIndex] || null;
+                }
+              }
+              onModelChanged: {}
+
+              delegate: Rectangle {
+                id: entry
+
+                property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
+                property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+
+                // Helper function to normalize app IDs for case-insensitive matching
+                function normalizeAppId(appId) {
+                  if (!appId || typeof appId !== 'string')
+                    return "";
+                  return appId.toLowerCase().trim();
+                }
+
+                // Pin helpers
+                function togglePin(appId) {
+                  if (!appId)
+                    return;
+                  const normalizedId = normalizeAppId(appId);
+                  let arr = (Settings.data.dock.pinnedApps || []).slice();
+                  const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+                  if (idx >= 0)
+                    arr.splice(idx, 1);
+                  else
+                    arr.push(appId);
+                  Settings.data.dock.pinnedApps = arr;
+                }
+
+                function isPinned(appId) {
+                  if (!appId)
+                    return false;
+                  const arr = Settings.data.dock.pinnedApps || [];
+                  const normalizedId = normalizeAppId(appId);
+                  return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+                }
+
+                // Property to reliably track the current item's ID.
+                // This changes whenever the delegate is recycled for a new item.
+                property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
+
+                // When this delegate is assigned a new image item, trigger the decode.
+                onCurrentClipboardIdChanged: {
+                  // Check if it's a valid ID and if the data isn't already cached.
+                  if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
+                    ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
+                  }
+                }
+
+                width: resultsList.width - Style.marginS
+                implicitHeight: entryHeight
+                radius: Style.radiusM
+                color: entry.isSelected ? Color.mHover : Color.mSurface
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.OutCirc
+                  }
+                }
+
+                ColumnLayout {
+                  id: contentLayout
+                  anchors.fill: parent
+                  anchors.margins: Style.marginM
                   spacing: Style.marginM
+
+                  // Top row - Main entry content with pin button
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Style.marginM
+
+                    // Icon badge or Image preview or Emoji
+                    Rectangle {
+                      Layout.preferredWidth: badgeSize
+                      Layout.preferredHeight: badgeSize
+                      radius: Style.radiusM
+                      color: Color.mSurfaceVariant
+
+                      // Image preview for clipboard images
+                      NImageRounded {
+                        id: imagePreview
+                        anchors.fill: parent
+                        visible: modelData.isImage && !modelData.emojiChar
+                        radius: Style.radiusM
+
+                        // This property creates a dependency on the service's revision counter
+                        readonly property int _rev: ClipboardService.revision
+
+                        // Fetches from the service's cache.
+                        // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
+                        imagePath: {
+                          _rev;
+                          return ClipboardService.getImageData(modelData.clipboardId) || "";
+                        }
+
+                        Rectangle {
+                          anchors.fill: parent
+                          visible: parent.status === Image.Loading
+                          color: Color.mSurfaceVariant
+
+                          BusyIndicator {
+                            anchors.centerIn: parent
+                            running: true
+                            width: Style.baseWidgetSize * 0.5
+                            height: width
+                          }
+                        }
+
+                        onStatusChanged: status => {
+                                           if (status === Image.Error) {
+                                             iconLoader.visible = true;
+                                             imagePreview.visible = false;
+                                           }
+                                         }
+                      }
+
+                      Loader {
+                        id: iconLoader
+                        anchors.fill: parent
+                        anchors.margins: Style.marginXS
+
+                        visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && imagePreview.status === Image.Error)
+                        active: visible
+
+                        sourceComponent: Component {
+                          Loader {
+                            anchors.fill: parent
+                            sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+                          }
+                        }
+
+                        Component {
+                          id: tablerIconComponent
+                          NIcon {
+                            icon: modelData.icon
+                            pointSize: Style.fontSizeXXXL
+                            visible: modelData.icon && !modelData.emojiChar
+                          }
+                        }
+
+                        Component {
+                          id: systemIconComponent
+                          IconImage {
+                            anchors.fill: parent
+                            source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                            visible: modelData.icon && source !== "" && !modelData.emojiChar
+                            asynchronous: true
+                          }
+                        }
+                      }
+
+                      // Emoji display - takes precedence when emojiChar is present
+                      NText {
+                        id: emojiDisplay
+                        anchors.centerIn: parent
+                        visible: modelData.emojiChar || (!imagePreview.visible && !iconLoader.visible)
+                        text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
+                        pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
+                        font.weight: Style.fontWeightBold
+                        color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
+                      }
+
+                      // Image type indicator overlay
+                      Rectangle {
+                        visible: modelData.isImage && imagePreview.visible
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        anchors.margins: 2
+                        width: formatLabel.width + 6
+                        height: formatLabel.height + 2
+                        radius: Style.radiusM
+                        color: Color.mSurfaceVariant
+
+                        NText {
+                          id: formatLabel
+                          anchors.centerIn: parent
+                          text: {
+                            if (!modelData.isImage)
+                              return "";
+                            const desc = modelData.description || "";
+                            const parts = desc.split(" • ");
+                            return parts[0] || "IMG";
+                          }
+                          pointSize: Style.fontSizeXXS
+                          color: Color.mPrimary
+                        }
+                      }
+                    }
+
+                    // Text content
+                    ColumnLayout {
+                      Layout.fillWidth: true
+                      spacing: 0
+
+                      NText {
+                        text: modelData.name || "Unknown"
+                        pointSize: Style.fontSizeL
+                        font.weight: Style.fontWeightBold
+                        color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                      }
+
+                      NText {
+                        text: modelData.description || ""
+                        pointSize: Style.fontSizeS
+                        color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
+                        wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                        visible: text !== ""
+                      }
+                    }
+
+                    // Action buttons row
+                    RowLayout {
+                      Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                      spacing: Style.marginXS
+                      visible: (!!entry.appId && entry.isSelected) || (!!modelData.clipboardId && entry.isSelected)
+
+                      // Pin/Unpin action icon button
+                      NIconButton {
+                        visible: !!entry.appId && !modelData.isImage && entry.isSelected
+                        icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
+                        tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                        onClicked: entry.togglePin(entry.appId)
+                      }
+
+                      // Delete action icon button for clipboard entries
+                      NIconButton {
+                        visible: !!modelData.clipboardId && entry.isSelected
+                        icon: "trash"
+                        tooltipText: I18n.tr("plugins.clipboard-delete")
+                        z: 1
+                        onClicked: {
+                          if (modelData.clipboardId) {
+                            // Set plugin state before deletion so refresh works
+                            clipPlugin.gotResults = false;
+                            clipPlugin.isWaitingForData = true;
+                            clipPlugin.lastSearchText = root.searchText;
+                            // Delete the item - deleteById now uses Process and will refresh automatically
+                            ClipboardService.deleteById(String(modelData.clipboardId));
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                MouseArea {
+                  id: mouseArea
+                  anchors.fill: parent
+                  z: -1
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  enabled: !Settings.data.appLauncher.ignoreMouseInput
+                  onContainsMouseChanged: {
+                    if (containsMouse && !root.ignoreMouseHover) {
+                      selectedIndex = index;
+                    }
+                  }
+                  Connections {
+                    target: root
+                    function onIgnoreMouseHoverChanged() {
+                      if (!root.ignoreMouseHover && mouseArea.containsMouse) {
+                        selectedIndex = index;
+                      }
+                    }
+                  }
+                  onEntered: {
+                    if (!root.ignoreMouseHover) {
+                      selectedIndex = index;
+                    }
+                  }
+                  onClicked: mouse => {
+                               if (mouse.button === Qt.LeftButton) {
+                                 selectedIndex = index;
+                                 root.activate();
+                                 mouse.accepted = true;
+                               }
+                             }
+                  acceptedButtons: Qt.LeftButton
+                }
+              }
+            }
+          }
+
+          Component {
+            id: gridViewComponent
+            NGridView {
+              id: resultsGrid
+
+              horizontalPolicy: ScrollBar.AlwaysOff
+              verticalPolicy: ScrollBar.AsNeeded
+
+              width: parent.width
+              height: parent.height
+              cellWidth: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return parent.width / root.targetGridColumns;
+                }
+                // Make cells fit exactly like the tab bar
+                // Cell width scales automatically as parent.width scales with uiScaleRatio
+                return parent.width / root.targetGridColumns;
+              }
+              cellHeight: {
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  return (parent.width / root.targetGridColumns) * 1.2;
+                }
+                // Cell height scales automatically as parent.width scales with uiScaleRatio
+                // Content (badge, text) scales via badgeSize which now uses uiScaleRatio
+                return parent.width / root.targetGridColumns;
+              }
+              leftMargin: 0
+              rightMargin: 0
+              topMargin: 0
+              bottomMargin: 0
+              model: results
+              cacheBuffer: resultsGrid.height * 2
+              keyNavigationEnabled: false
+              focus: false
+              interactive: !Settings.data.appLauncher.ignoreMouseInput
+
+              Component.onCompleted: {
+                // Initialize gridColumns when grid view is created
+                updateGridColumns();
+              }
+
+              function updateGridColumns() {
+                // Update gridColumns based on actual GridView width
+                // This ensures navigation works correctly regardless of panel size
+                if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                  // Always 5 columns for emoji browsing mode
+                  root.gridColumns = 5;
+                } else {
+                  // Since cellWidth = width / targetGridColumns, the number of columns is always targetGridColumns
+                  // Just use targetGridColumns directly
+                  root.gridColumns = root.targetGridColumns;
+                }
+              }
+
+              onWidthChanged: {
+                updateGridColumns();
+              }
+
+              // Completely disable GridView key handling
+              Keys.enabled: false
+
+              // Don't sync selectedIndex to GridView's currentIndex
+              // The visual selection is handled by the delegate based on selectedIndex
+              // We only need to position the view to show the selected item
+
+              onModelChanged: {}
+
+              // Update gridColumns when entering/exiting emoji browsing mode
+              Connections {
+                target: emojiPlugin
+                function onIsBrowsingModeChanged() {
+                  if (emojiPlugin.isBrowsingMode) {
+                    root.gridColumns = 5;
+                  }
+                }
+              }
+
+              // Handle scrolling to show selected item when it changes
+              Connections {
+                target: root
+                enabled: root.isGridView
+                function onSelectedIndexChanged() {
+                  // Only process if we're still in grid view and component exists
+                  if (!root.isGridView || root.selectedIndex < 0 || !resultsGrid) {
+                    return;
+                  }
+
+                  Qt.callLater(() => {
+                                 // Double-check we're still in grid view mode
+                                 if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
+                                   resultsGrid.cancelFlick();
+                                   resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
+                                 }
+                               });
+
+                  // Update preview
+                  if (clipboardPreviewLoader.item && root.selectedIndex >= 0) {
+                    clipboardPreviewLoader.item.currentItem = results[root.selectedIndex] || null;
+                  }
+                }
+              }
+
+              delegate: Rectangle {
+                id: gridEntry
+
+                property bool isSelected: (!root.ignoreMouseHover && gridMouseArea.containsMouse) || (index === selectedIndex)
+                property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
+
+                // Helper function to normalize app IDs for case-insensitive matching
+                function normalizeAppId(appId) {
+                  if (!appId || typeof appId !== 'string')
+                    return "";
+                  return appId.toLowerCase().trim();
+                }
+
+                // Pin helpers
+                function togglePin(appId) {
+                  if (!appId)
+                    return;
+                  const normalizedId = normalizeAppId(appId);
+                  let arr = (Settings.data.dock.pinnedApps || []).slice();
+                  const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+                  if (idx >= 0)
+                    arr.splice(idx, 1);
+                  else
+                    arr.push(appId);
+                  Settings.data.dock.pinnedApps = arr;
+                }
+
+                function isPinned(appId) {
+                  if (!appId)
+                    return false;
+                  const arr = Settings.data.dock.pinnedApps || [];
+                  const normalizedId = normalizeAppId(appId);
+                  return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+                }
+
+                width: resultsGrid.cellWidth - Style.marginXXS
+                height: resultsGrid.cellHeight - Style.marginXXS
+                radius: Style.radiusM
+                color: gridEntry.isSelected ? Color.mHover : Color.mSurface
+
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.OutCirc
+                  }
+                }
+
+                ColumnLayout {
+                  anchors.fill: parent
+                  anchors.margins: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? 4 : Style.marginM
+                  anchors.bottomMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? Style.marginL : Style.marginM
+                  spacing: Style.marginS
 
                   // Icon badge or Image preview or Emoji
                   Rectangle {
-                    Layout.preferredWidth: badgeSize
-                    Layout.preferredHeight: badgeSize
+                    Layout.preferredWidth: {
+                      if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                        return gridEntry.width - 8;
+                      }
+                      // Scale badge relative to cell size for proper scaling on all resolutions
+                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                      return Math.round(gridEntry.width * 0.6);
+                    }
+                    Layout.preferredHeight: {
+                      if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                        return gridEntry.width - 8;
+                      }
+                      // Scale badge relative to cell size for proper scaling on all resolutions
+                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                      return Math.round(gridEntry.width * 0.6);
+                    }
+                    Layout.alignment: Qt.AlignHCenter
                     radius: Style.radiusM
                     color: Color.mSurfaceVariant
 
                     // Image preview for clipboard images
                     NImageRounded {
-                      id: imagePreview
+                      id: gridImagePreview
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.emojiChar
                       radius: Style.radiusM
 
-                      // This property creates a dependency on the service's revision counter
                       readonly property int _rev: ClipboardService.revision
 
-                      // Fetches from the service's cache.
-                      // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
                       imagePath: {
                         _rev;
                         return ClipboardService.getImageData(modelData.clipboardId) || "";
@@ -997,29 +1469,29 @@ SmartPanel {
 
                       onStatusChanged: status => {
                                          if (status === Image.Error) {
-                                           iconLoader.visible = true;
-                                           imagePreview.visible = false;
+                                           gridIconLoader.visible = true;
+                                           gridImagePreview.visible = false;
                                          }
                                        }
                     }
 
                     Loader {
-                      id: iconLoader
+                      id: gridIconLoader
                       anchors.fill: parent
                       anchors.margins: Style.marginXS
 
-                      visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && imagePreview.status === Image.Error)
+                      visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && gridImagePreview.status === Image.Error)
                       active: visible
 
                       sourceComponent: Component {
                         Loader {
                           anchors.fill: parent
-                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? tablerIconComponent : systemIconComponent
+                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
                         }
                       }
 
                       Component {
-                        id: tablerIconComponent
+                        id: gridTablerIconComponent
                         NIcon {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
@@ -1028,7 +1500,7 @@ SmartPanel {
                       }
 
                       Component {
-                        id: systemIconComponent
+                        id: gridSystemIconComponent
                         IconImage {
                           anchors.fill: parent
                           source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
@@ -1038,567 +1510,163 @@ SmartPanel {
                       }
                     }
 
-                    // Emoji display - takes precedence when emojiChar is present
+                    // Emoji display
                     NText {
-                      id: emojiDisplay
+                      id: gridEmojiDisplay
                       anchors.centerIn: parent
-                      visible: modelData.emojiChar || (!imagePreview.visible && !iconLoader.visible)
+                      visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
                       text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
-                      pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
-                      font.weight: Style.fontWeightBold
-                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
-                    }
-
-                    // Image type indicator overlay
-                    Rectangle {
-                      visible: modelData.isImage && imagePreview.visible
-                      anchors.bottom: parent.bottom
-                      anchors.right: parent.right
-                      anchors.margins: 2
-                      width: formatLabel.width + 6
-                      height: formatLabel.height + 2
-                      radius: Style.radiusM
-                      color: Color.mSurfaceVariant
-
-                      NText {
-                        id: formatLabel
-                        anchors.centerIn: parent
-                        text: {
-                          if (!modelData.isImage)
-                            return "";
-                          const desc = modelData.description || "";
-                          const parts = desc.split(" • ");
-                          return parts[0] || "IMG";
+                      pointSize: {
+                        if (modelData.emojiChar) {
+                          if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
+                            // Scale with cell width but cap at reasonable maximum
+                            const cellBasedSize = gridEntry.width * 0.4;
+                            const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                            return Math.min(cellBasedSize, maxSize);
+                          }
+                          return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
                         }
-                        pointSize: Style.fontSizeXXS
-                        color: Color.mPrimary
+                        // Scale font size relative to cell width for low res, but cap at maximum
+                        const cellBasedSize = gridEntry.width * 0.25;
+                        const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
+                        const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                        return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                       }
+                      font.weight: Style.fontWeightBold
+                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
                     }
                   }
 
                   // Text content
-                  ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    NText {
-                      text: modelData.name || "Unknown"
-                      pointSize: Style.fontSizeL
-                      font.weight: Style.fontWeightBold
-                      color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
-                    }
-
-                    NText {
-                      text: modelData.description || ""
-                      pointSize: Style.fontSizeS
-                      color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
-                      wrapMode: Text.WordWrap
-                      Layout.fillWidth: true
-                      visible: text !== ""
-                    }
-                  }
-
-                  // Action buttons row
-                  RowLayout {
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    spacing: Style.marginXS
-                    visible: (!!entry.appId && entry.isSelected) || (!!modelData.clipboardId && entry.isSelected)
-
-                    // Pin/Unpin action icon button
-                    NIconButton {
-                      visible: !!entry.appId && !modelData.isImage && entry.isSelected
-                      icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
-                      tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                      onClicked: entry.togglePin(entry.appId)
-                    }
-
-                    // Delete action icon button for clipboard entries
-                    NIconButton {
-                      visible: !!modelData.clipboardId && entry.isSelected
-                      icon: "trash"
-                      tooltipText: I18n.tr("plugins.clipboard-delete")
-                      z: 1
-                      onClicked: {
-                        if (modelData.clipboardId) {
-                          // Set plugin state before deletion so refresh works
-                          clipPlugin.gotResults = false;
-                          clipPlugin.isWaitingForData = true;
-                          clipPlugin.lastSearchText = root.searchText;
-                          // Delete the item - deleteById now uses Process and will refresh automatically
-                          ClipboardService.deleteById(String(modelData.clipboardId));
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-
-              MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                z: -1
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                enabled: !Settings.data.appLauncher.ignoreMouseInput
-                onContainsMouseChanged: {
-                  if (containsMouse && !root.ignoreMouseHover) {
-                    selectedIndex = index;
-                  }
-                }
-                Connections {
-                  target: root
-                  function onIgnoreMouseHoverChanged() {
-                    if (!root.ignoreMouseHover && mouseArea.containsMouse) {
-                      selectedIndex = index;
-                    }
-                  }
-                }
-                onEntered: {
-                  if (!root.ignoreMouseHover) {
-                    selectedIndex = index;
-                  }
-                }
-                onClicked: mouse => {
-                             if (mouse.button === Qt.LeftButton) {
-                               selectedIndex = index;
-                               root.activate();
-                               mouse.accepted = true;
-                             }
-                           }
-                acceptedButtons: Qt.LeftButton
-              }
-            }
-          }
-        }
-
-        Component {
-          id: gridViewComponent
-          NGridView {
-            id: resultsGrid
-
-            horizontalPolicy: ScrollBar.AlwaysOff
-            verticalPolicy: ScrollBar.AsNeeded
-
-            width: parent.width
-            height: parent.height
-            cellWidth: {
-              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return parent.width / root.targetGridColumns;
-              }
-              // Make cells fit exactly like the tab bar
-              // Cell width scales automatically as parent.width scales with uiScaleRatio
-              return parent.width / root.targetGridColumns;
-            }
-            cellHeight: {
-              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                return (parent.width / root.targetGridColumns) * 1.2;
-              }
-              // Cell height scales automatically as parent.width scales with uiScaleRatio
-              // Content (badge, text) scales via badgeSize which now uses uiScaleRatio
-              return parent.width / root.targetGridColumns;
-            }
-            leftMargin: 0
-            rightMargin: 0
-            topMargin: 0
-            bottomMargin: 0
-            model: results
-            cacheBuffer: resultsGrid.height * 2
-            keyNavigationEnabled: false
-            focus: false
-            interactive: !Settings.data.appLauncher.ignoreMouseInput
-
-            Component.onCompleted: {
-              // Initialize gridColumns when grid view is created
-              updateGridColumns();
-            }
-
-            function updateGridColumns() {
-              // Update gridColumns based on actual GridView width
-              // This ensures navigation works correctly regardless of panel size
-              if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                // Always 5 columns for emoji browsing mode
-                root.gridColumns = 5;
-              } else {
-                // Since cellWidth = width / targetGridColumns, the number of columns is always targetGridColumns
-                // Just use targetGridColumns directly
-                root.gridColumns = root.targetGridColumns;
-              }
-            }
-
-            onWidthChanged: {
-              updateGridColumns();
-            }
-
-            // Completely disable GridView key handling
-            Keys.enabled: false
-
-            // Don't sync selectedIndex to GridView's currentIndex
-            // The visual selection is handled by the delegate based on selectedIndex
-            // We only need to position the view to show the selected item
-
-            onModelChanged: {}
-
-            // Update gridColumns when entering/exiting emoji browsing mode
-            Connections {
-              target: emojiPlugin
-              function onIsBrowsingModeChanged() {
-                if (emojiPlugin.isBrowsingMode) {
-                  root.gridColumns = 5;
-                }
-              }
-            }
-
-            // Handle scrolling to show selected item when it changes
-            Connections {
-              target: root
-              enabled: root.isGridView
-              function onSelectedIndexChanged() {
-                // Only process if we're still in grid view and component exists
-                if (!root.isGridView || root.selectedIndex < 0 || !resultsGrid) {
-                  return;
-                }
-
-                Qt.callLater(() => {
-                               // Double-check we're still in grid view mode
-                               if (root.isGridView && resultsGrid && resultsGrid.cancelFlick) {
-                                 resultsGrid.cancelFlick();
-                                 resultsGrid.positionViewAtIndex(root.selectedIndex, GridView.Contain);
-                               }
-                             });
-
-                // Update preview
-                if (clipboardPreviewLoader.item && root.selectedIndex >= 0) {
-                  clipboardPreviewLoader.item.currentItem = results[root.selectedIndex] || null;
-                }
-              }
-            }
-
-            delegate: Rectangle {
-              id: gridEntry
-
-              property bool isSelected: (!root.ignoreMouseHover && gridMouseArea.containsMouse) || (index === selectedIndex)
-              property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
-
-              // Helper function to normalize app IDs for case-insensitive matching
-              function normalizeAppId(appId) {
-                if (!appId || typeof appId !== 'string')
-                  return "";
-                return appId.toLowerCase().trim();
-              }
-
-              // Pin helpers
-              function togglePin(appId) {
-                if (!appId)
-                  return;
-                const normalizedId = normalizeAppId(appId);
-                let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-                if (idx >= 0)
-                  arr.splice(idx, 1);
-                else
-                  arr.push(appId);
-                Settings.data.dock.pinnedApps = arr;
-              }
-
-              function isPinned(appId) {
-                if (!appId)
-                  return false;
-                const arr = Settings.data.dock.pinnedApps || [];
-                const normalizedId = normalizeAppId(appId);
-                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-              }
-
-              width: resultsGrid.cellWidth
-              height: resultsGrid.cellHeight
-              radius: Style.radiusM
-              color: gridEntry.isSelected ? Color.mHover : Color.mSurface
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.OutCirc
-                }
-              }
-
-              ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? 4 : Style.marginM
-                anchors.bottomMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) ? Style.marginL : Style.marginM
-                spacing: Style.marginS
-
-                // Icon badge or Image preview or Emoji
-                Rectangle {
-                  Layout.preferredWidth: {
-                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
-                      return gridEntry.width - 8;
-                    }
-                    // Scale badge relative to cell size for proper scaling on all resolutions
-                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                    return Math.round(gridEntry.width * 0.6);
-                  }
-                  Layout.preferredHeight: {
-                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
-                      return gridEntry.width - 8;
-                    }
-                    // Scale badge relative to cell size for proper scaling on all resolutions
-                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                    return Math.round(gridEntry.width * 0.6);
-                  }
-                  Layout.alignment: Qt.AlignHCenter
-                  radius: Style.radiusM
-                  color: Color.mSurfaceVariant
-
-                  // Image preview for clipboard images
-                  NImageRounded {
-                    id: gridImagePreview
-                    anchors.fill: parent
-                    visible: modelData.isImage && !modelData.emojiChar
-                    radius: Style.radiusM
-
-                    readonly property int _rev: ClipboardService.revision
-
-                    imagePath: {
-                      _rev;
-                      return ClipboardService.getImageData(modelData.clipboardId) || "";
-                    }
-
-                    Rectangle {
-                      anchors.fill: parent
-                      visible: parent.status === Image.Loading
-                      color: Color.mSurfaceVariant
-
-                      BusyIndicator {
-                        anchors.centerIn: parent
-                        running: true
-                        width: Style.baseWidgetSize * 0.5
-                        height: width
-                      }
-                    }
-
-                    onStatusChanged: status => {
-                                       if (status === Image.Error) {
-                                         gridIconLoader.visible = true;
-                                         gridImagePreview.visible = false;
-                                       }
-                                     }
-                  }
-
-                  Loader {
-                    id: gridIconLoader
-                    anchors.fill: parent
-                    anchors.margins: Style.marginXS
-
-                    visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && gridImagePreview.status === Image.Error)
-                    active: visible
-
-                    sourceComponent: Component {
-                      Loader {
-                        anchors.fill: parent
-                        sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
-                      }
-                    }
-
-                    Component {
-                      id: gridTablerIconComponent
-                      NIcon {
-                        icon: modelData.icon
-                        pointSize: Style.fontSizeXXXL
-                        visible: modelData.icon && !modelData.emojiChar
-                      }
-                    }
-
-                    Component {
-                      id: gridSystemIconComponent
-                      IconImage {
-                        anchors.fill: parent
-                        source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                        visible: modelData.icon && source !== "" && !modelData.emojiChar
-                        asynchronous: true
-                      }
-                    }
-                  }
-
-                  // Emoji display
                   NText {
-                    id: gridEmojiDisplay
-                    anchors.centerIn: parent
-                    visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
-                    text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
+                    text: modelData.name || "Unknown"
                     pointSize: {
-                      if (modelData.emojiChar) {
-                        if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode) {
-                          // Scale with cell width but cap at reasonable maximum
-                          const cellBasedSize = gridEntry.width * 0.4;
-                          const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
-                          return Math.min(cellBasedSize, maxSize);
-                        }
-                        return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
+                      if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
+                        return Style.fontSizeS * Style.uiScaleRatio;
                       }
                       // Scale font size relative to cell width for low res, but cap at maximum
-                      const cellBasedSize = gridEntry.width * 0.25;
-                      const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
-                      const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                      const cellBasedSize = gridEntry.width * 0.12;
+                      const baseSize = Style.fontSizeS * Style.uiScaleRatio;
+                      const maxSize = Style.fontSizeM * Style.uiScaleRatio;
                       return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                     }
-                    font.weight: Style.fontWeightBold
-                    color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
+                    font.weight: Style.fontWeightSemiBold
+                    color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: gridEntry.width - 8
+                    Layout.leftMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                    Layout.rightMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.NoWrap
+                    maximumLineCount: 1
                   }
                 }
 
-                // Text content
-                NText {
-                  text: modelData.name || "Unknown"
-                  pointSize: {
-                    if (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) {
-                      return Style.fontSizeS * Style.uiScaleRatio;
-                    }
-                    // Scale font size relative to cell width for low res, but cap at maximum
-                    const cellBasedSize = gridEntry.width * 0.12;
-                    const baseSize = Style.fontSizeS * Style.uiScaleRatio;
-                    const maxSize = Style.fontSizeM * Style.uiScaleRatio;
-                    return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                // Action buttons (overlay in top-right corner)
+                Row {
+                  visible: (!!gridEntry.appId && gridEntry.isSelected) || (!!modelData.clipboardId && gridEntry.isSelected)
+                  anchors.top: parent.top
+                  anchors.right: parent.right
+                  anchors.margins: Style.marginXS
+                  z: 10
+                  spacing: Style.marginXXS
+
+                  // Pin/Unpin action icon button
+                  NIconButton {
+                    visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected
+                    icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
+                    tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                    onClicked: gridEntry.togglePin(gridEntry.appId)
                   }
-                  font.weight: Style.fontWeightSemiBold
-                  color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
-                  elide: Text.ElideRight
-                  Layout.fillWidth: true
-                  Layout.maximumWidth: gridEntry.width - 8
-                  Layout.leftMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
-                  Layout.rightMargin: (root.activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
-                  horizontalAlignment: Text.AlignHCenter
-                  wrapMode: Text.NoWrap
-                  maximumLineCount: 1
-                }
-              }
 
-              // Action buttons (overlay in top-right corner)
-              Row {
-                visible: (!!gridEntry.appId && gridEntry.isSelected) || (!!modelData.clipboardId && gridEntry.isSelected)
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.margins: Style.marginXS
-                z: 10
-                spacing: Style.marginXXS
-
-                // Pin/Unpin action icon button
-                NIconButton {
-                  visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected
-                  icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
-                  tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                  onClicked: gridEntry.togglePin(gridEntry.appId)
-                }
-
-                // Delete action icon button for clipboard entries
-                NIconButton {
-                  visible: !!modelData.clipboardId && gridEntry.isSelected
-                  icon: "trash"
-                  tooltipText: I18n.tr("plugins.clipboard-delete")
-                  z: 11
-                  onClicked: {
-                    if (modelData.clipboardId) {
-                      // Set plugin state before deletion so refresh works
-                      clipPlugin.gotResults = false;
-                      clipPlugin.isWaitingForData = true;
-                      clipPlugin.lastSearchText = root.searchText;
-                      // Delete the item - deleteById now uses Process and will refresh automatically
-                      ClipboardService.deleteById(String(modelData.clipboardId));
+                  // Delete action icon button for clipboard entries
+                  NIconButton {
+                    visible: !!modelData.clipboardId && gridEntry.isSelected
+                    icon: "trash"
+                    tooltipText: I18n.tr("plugins.clipboard-delete")
+                    z: 11
+                    onClicked: {
+                      if (modelData.clipboardId) {
+                        // Set plugin state before deletion so refresh works
+                        clipPlugin.gotResults = false;
+                        clipPlugin.isWaitingForData = true;
+                        clipPlugin.lastSearchText = root.searchText;
+                        // Delete the item - deleteById now uses Process and will refresh automatically
+                        ClipboardService.deleteById(String(modelData.clipboardId));
+                      }
                     }
                   }
                 }
-              }
 
-              MouseArea {
-                id: gridMouseArea
-                anchors.fill: parent
-                z: -1
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                enabled: !Settings.data.appLauncher.ignoreMouseInput
+                MouseArea {
+                  id: gridMouseArea
+                  anchors.fill: parent
+                  z: -1
+                  hoverEnabled: true
+                  cursorShape: Qt.PointingHandCursor
+                  enabled: !Settings.data.appLauncher.ignoreMouseInput
 
-                property bool hasInitialPosition: false
-                property real initialX: 0
-                property real initialY: 0
+                  property bool hasInitialPosition: false
+                  property real initialX: 0
+                  property real initialY: 0
 
-                onPositionChanged: mouse => {
-                                     if (!hasInitialPosition) {
-                                       initialX = mouse.x;
-                                       initialY = mouse.y;
-                                       hasInitialPosition = true;
-                                       return;
-                                     }
+                  onPositionChanged: mouse => {
+                                       if (!hasInitialPosition) {
+                                         initialX = mouse.x;
+                                         initialY = mouse.y;
+                                         hasInitialPosition = true;
+                                         return;
+                                       }
 
-                                     const manhattanLength = Math.abs(mouse.x - initialX) + Math.abs(mouse.y - initialY);
-                                     if (manhattanLength > mouseMovementDetector.movementThreshold) {
-                                       root.ignoreMouseHover = false;
-                                       if (containsMouse) {
-                                         selectedIndex = index;
+                                       const manhattanLength = Math.abs(mouse.x - initialX) + Math.abs(mouse.y - initialY);
+                                       if (manhattanLength > mouseMovementDetector.movementThreshold) {
+                                         root.ignoreMouseHover = false;
+                                         if (containsMouse) {
+                                           selectedIndex = index;
+                                         }
                                        }
                                      }
-                                   }
 
-                onContainsMouseChanged: {
-                  if (containsMouse && !root.ignoreMouseHover) {
-                    selectedIndex = index;
-                  }
-                }
-
-                Connections {
-                  target: root
-                  function onIgnoreMouseHoverChanged() {
-                    if (!root.ignoreMouseHover && gridMouseArea.containsMouse) {
+                  onContainsMouseChanged: {
+                    if (containsMouse && !root.ignoreMouseHover) {
                       selectedIndex = index;
                     }
                   }
-                  function onOpened() {
-                    gridMouseArea.hasInitialPosition = false;
-                  }
-                  function onIsGridViewChanged() {
-                    gridMouseArea.hasInitialPosition = false;
-                  }
-                }
 
-                onEntered: {
-                  if (!root.ignoreMouseHover) {
-                    selectedIndex = index;
+                  Connections {
+                    target: root
+                    function onIgnoreMouseHoverChanged() {
+                      if (!root.ignoreMouseHover && gridMouseArea.containsMouse) {
+                        selectedIndex = index;
+                      }
+                    }
+                    function onOpened() {
+                      gridMouseArea.hasInitialPosition = false;
+                    }
+                    function onIsGridViewChanged() {
+                      gridMouseArea.hasInitialPosition = false;
+                    }
                   }
-                }
 
-                onClicked: mouse => {
-                             if (mouse.button === Qt.LeftButton) {
-                               selectedIndex = index;
-                               root.activate();
-                               mouse.accepted = true;
+                  onEntered: {
+                    if (!root.ignoreMouseHover) {
+                      selectedIndex = index;
+                    }
+                  }
+
+                  onClicked: mouse => {
+                               if (mouse.button === Qt.LeftButton) {
+                                 selectedIndex = index;
+                                 root.activate();
+                                 mouse.accepted = true;
+                               }
                              }
-                           }
-                acceptedButtons: Qt.LeftButton
+                  acceptedButtons: Qt.LeftButton
+                }
               }
             }
           }
-        }
-
-        NDivider {
-          Layout.fillWidth: true
-        }
-
-        NText {
-          Layout.fillWidth: true
-          text: {
-            if (results.length === 0) {
-              if (searchText) {
-                return "No results";
-              } else if (activePlugin === emojiPlugin && emojiPlugin.isBrowsingMode && emojiPlugin.selectedCategory === "recent") {
-                return "No recently used emoji";
-              }
-              return "";
-            }
-            var prefix = activePlugin && activePlugin.name ? activePlugin.name + ": " : "";
-            return prefix + results.length + " result" + (results.length !== 1 ? 's' : '');
-          }
-          pointSize: Style.fontSizeXS
-          color: Color.mOnSurfaceVariant
-          horizontalAlignment: Text.AlignCenter
         }
       }
     }
