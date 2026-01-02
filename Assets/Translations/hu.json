@@ -2596,8 +2596,8 @@
           "tooltip": "Háttérkép mappa"
         },
         "hide-wallpaper-filenames": {
-          "description": "Háttérkép fájlnevek elrejtése a választóban.",
-          "label": "Fájlnevek elrejtése"
+          "tooltip-hide": "Fájlnevek elrejtése",
+          "tooltip-show": "Fájlnevek megjelenítése"
         },
         "monitor-specific": {
           "description": "Külön háttérkép mappa beállítása minden monitorhoz.",

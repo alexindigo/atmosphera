@@ -2596,8 +2596,8 @@
           "tooltip": "Duvar kâğıdı klasörü"
         },
         "hide-wallpaper-filenames": {
-          "description": "Seçicide duvar kâğıdı dosya adlarını gizle.",
-          "label": "Dosya adlarını gizle"
+          "tooltip-hide": "Dosya adlarını gizleme",
+          "tooltip-show": "Dosya Adlarını Göster"
         },
         "monitor-specific": {
           "description": "Her ekran için farklı bir duvar kâğıdı klasörü ayarlayın.",

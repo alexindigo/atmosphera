@@ -2596,8 +2596,8 @@
           "tooltip": "Carpeta de fondos de pantalla"
         },
         "hide-wallpaper-filenames": {
-          "description": "Oculta los nombres de archivo del fondo de pantalla en el selector.",
-          "label": "Ocultar nombres de archivo"
+          "tooltip-hide": "Ocultar nombres de archivo",
+          "tooltip-show": "Mostrar nombres de archivo"
         },
         "monitor-specific": {
           "description": "Establece una carpeta de fondos de pantalla diferente para cada monitor.",

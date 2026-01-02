@@ -2596,8 +2596,8 @@
           "tooltip": "Folder tapet"
         },
         "hide-wallpaper-filenames": {
-          "description": "Ukryj nazwy plików tapet w selektorze.",
-          "label": "Ukryj nazwy plików"
+          "tooltip-hide": "Ukryj nazwy plików",
+          "tooltip-show": "Pokaż nazwy plików"
         },
         "monitor-specific": {
           "description": "Ustaw inny folder tapet dla każdego monitora.",

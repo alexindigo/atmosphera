@@ -2596,8 +2596,8 @@
           "tooltip": "Pasta de papéis de parede"
         },
         "hide-wallpaper-filenames": {
-          "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
-          "label": "Ocultar nomes de arquivos"
+          "tooltip-hide": "Ocultar nomes de arquivo",
+          "tooltip-show": "Mostrar nomes de arquivo"
         },
         "monitor-specific": {
           "description": "Defina uma pasta de papel de parede diferente para cada monitor.",

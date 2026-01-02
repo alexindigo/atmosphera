@@ -2596,8 +2596,8 @@
           "tooltip": "壁纸文件夹"
         },
         "hide-wallpaper-filenames": {
-          "description": "在选择器中隐藏壁纸文件名。",
-          "label": "隐藏文件名。"
+          "tooltip-hide": "隐藏文件名",
+          "tooltip-show": "显示文件名"
         },
         "monitor-specific": {
           "description": "为每个显示器设置不同的壁纸文件夹。",
