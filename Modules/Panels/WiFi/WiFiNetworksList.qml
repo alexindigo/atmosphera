@@ -357,6 +357,7 @@ NBox {
                   icon: NetworkService.isSecured(modelData.security) ? "lock" : "lock-open"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   // Tooltip on hover when using icons-only mode
                   MouseArea {
                     anchors.fill: parent
@@ -370,9 +371,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -382,6 +384,8 @@ NBox {
                 NIcon {
                   icon: "router"
                   pointSize: Style.fontSizeXS
+                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -393,9 +397,10 @@ NBox {
                   text: NetworkService.activeWifiDetails.band || "-"
                   pointSize: Style.fontSizeXS
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -408,6 +413,7 @@ NBox {
                   icon: "gauge"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -420,9 +426,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -434,6 +441,7 @@ NBox {
                   icon: "network"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -446,9 +454,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -461,6 +470,7 @@ NBox {
                   icon: "router"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -473,9 +483,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -487,6 +498,7 @@ NBox {
                   icon: "world"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -499,9 +511,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 6
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }

@@ -2893,6 +2893,38 @@
     "wallpaper-selector": "Wallpaper selector",
     "widget-settings": "Widget settings"
   },
+  "wifi": {
+    "panel": {
+      "title": "Wi‑Fi",
+      "disabled": "Wi‑Fi is disabled",
+      "enable-message": "Enable Wi‑Fi to see available networks.",
+      "searching": "Searching for networks...",
+      "no-networks": "No Wi‑Fi networks found",
+      "scan-again": "Scan again",
+      "known-networks": "Known networks",
+      "available-networks": "Available networks",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "password": "Password",
+      "enter-password": "Enter Wi‑Fi password",
+      "connected": "Connected",
+      "disconnecting": "Disconnecting…",
+      "forgetting": "Forgetting…",
+      "saved": "Saved",
+      "forget-network": "Forget this network",
+      "forget": "Forget",
+      "info": "Info",
+      "security": "Security",
+      "internet-connected": "Internet connected",
+      "internet-limited": "No internet",
+      "link-speed": "Link speed",
+      "interface": "Interface",
+      "ipv4": "IPv4",
+      "gateway": "Gateway",
+      "dns": "DNS",
+      "internet": "Internet"
+    }
+  },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",
     "fill-modes": {
