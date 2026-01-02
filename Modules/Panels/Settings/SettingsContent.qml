@@ -13,6 +13,9 @@ import qs.Widgets
 Item {
   id: root
 
+  // Screen reference for child components
+  property var screen
+
   // Input: which tab to show initially
   property int requestedTab: 0
 
@@ -669,6 +672,11 @@ Item {
                       active: true
                       sourceComponent: root.tabsModel[index]?.source
                       width: scrollView.availableWidth
+                      onLoaded: {
+                        if (item && item.hasOwnProperty("screen")) {
+                          item.screen = root.screen;
+                        }
+                      }
                     }
                   }
                 }

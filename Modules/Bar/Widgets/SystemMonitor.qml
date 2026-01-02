@@ -20,7 +20,6 @@ Rectangle {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -48,12 +47,12 @@ Rectangle {
   readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
+  readonly property bool showLoadAverage: (widgetSettings.showLoadAverage !== undefined) ? widgetSettings.showLoadAverage : widgetMetadata.showLoadAverage
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
 
-  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * root.barScaling * (root.barCompact ? 0.55 : 0.45))
+  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * Style.barScaling * (root.barCompact ? 0.55 : 0.45))
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
-  readonly property real textSize: Math.max(7, iconSize * barScaling * 0.6 * (isVertical ? 0.85 : 1.0))
 
   function openExternalMonitor() {
     Quickshell.execDetached(["sh", "-c", Settings.data.systemMonitor.externalMonitor]);
@@ -72,6 +71,11 @@ Rectangle {
     // GPU (if available)
     if (SystemStatService.gpuAvailable) {
       lines.push(`${I18n.tr("system-monitor.gpu-temp")}: ${Math.round(SystemStatService.gpuTemp)}°C`);
+    }
+
+    // Load Average
+    if (SystemStatService.loadAvg1 >= 0) {
+      lines.push(`${I18n.tr("system-monitor.load-average")}: ${SystemStatService.loadAvg1.toFixed(2)} ${SystemStatService.loadAvg5.toFixed(2)} ${SystemStatService.loadAvg15.toFixed(2)}`);
     }
 
     // Memory
@@ -277,9 +281,8 @@ Rectangle {
             }
           }
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -347,9 +350,8 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.cpuTemp)}°`
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -417,9 +419,8 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.gpuTemp)}°`
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -441,6 +442,75 @@ Rectangle {
           onLoaded: {
             item.ratio = Qt.binding(() => SystemStatService.gpuTemp / 100);
             item.statColor = Qt.binding(() => SystemStatService.gpuColor);
+          }
+        }
+      }
+    }
+
+    // Load Average Component
+    Item {
+      id: loadAvgContainer
+      implicitWidth: loadAvgContent.implicitWidth
+      implicitHeight: loadAvgContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
+      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
+      visible: showLoadAverage && SystemStatService.nproc > 0 && SystemStatService.loadAvg1 > 0
+
+      GridLayout {
+        id: loadAvgContent
+        anchors.centerIn: parent
+        flow: (isVertical && !compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical && !compactMode) ? 2 : 1
+        columns: (isVertical && !compactMode) ? 1 : 2
+        rowSpacing: Style.marginXXS
+        columnSpacing: compactMode ? 3 : Style.marginXS
+
+        Item {
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: (isVertical && !compactMode) ? 1 : 0
+          Layout.column: 0
+          Layout.fillWidth: isVertical
+          implicitWidth: iconSize
+          implicitHeight: iconSize
+
+          NIcon {
+            icon: "weight"
+            pointSize: iconSize
+            applyUiScale: false
+            anchors.centerIn: parent
+            color: Color.mOnSurface
+          }
+        }
+
+        // Text mode
+        NText {
+          visible: !compactMode
+          text: SystemStatService.loadAvg1.toFixed(1)
+          family: fontFamily
+          pointSize: Style.barFontSize
+          applyUiScale: false
+          Layout.alignment: Qt.AlignCenter
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+          color: textColor
+          Layout.row: isVertical ? 0 : 0
+          Layout.column: isVertical ? 0 : 1
+          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
+        }
+
+        // Compact mode
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniGaugeComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 1
+
+          onLoaded: {
+            item.ratio = Qt.binding(() => Math.min(1, SystemStatService.loadAvg1 / SystemStatService.nproc));
+            item.statColor = Qt.binding(() => Color.mPrimary);
           }
         }
       }
@@ -487,9 +557,8 @@ Rectangle {
           visible: !compactMode
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -555,9 +624,8 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -622,9 +690,8 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -691,9 +758,8 @@ Rectangle {
           visible: !compactMode
           text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter

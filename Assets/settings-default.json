@@ -267,6 +267,7 @@
     "memPollingInterval": 3000,
     "diskPollingInterval": 3000,
     "networkPollingInterval": 3000,
+    "loadAvgPollingInterval": 3000,
     "useCustomColors": false,
     "warningColor": "",
     "criticalColor": "",
@@ -299,6 +300,7 @@
     "position": "center",
     "showHeader": true,
     "largeButtonsStyle": false,
+    "largeButtonsLayout": "grid",
     "showNumberLabels": true,
     "powerOptions": [
       {
