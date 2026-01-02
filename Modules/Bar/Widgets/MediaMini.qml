@@ -17,7 +17,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   // Settings
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -47,10 +46,9 @@ Item {
   readonly property real maxWidth: (widgetSettings.maxWidth !== undefined) ? widgetSettings.maxWidth : Math.max(widgetMetadata.maxWidth, screen ? screen.width * 0.06 : 0)
 
   // Dimensions
-  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * barScaling)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * barScaling)
-  readonly property int textSize: Math.round(Style.capsuleHeight * 0.4 * barScaling)
+  readonly property int artSize: Style.toOdd(Style.capsuleHeight * 0.75 * Style.barScaling)
+  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * Style.barScaling)
+  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * Style.barScaling)
 
   // State
   readonly property bool hasPlayer: MediaService.currentPlayer !== null
@@ -116,10 +114,10 @@ Item {
     // Add spacing and text width
     var textWidth = 0;
     if (titleMetrics.contentWidth > 0) {
-      textWidth = Style.marginS * barScaling + titleMetrics.contentWidth + Style.marginXXS * 2;
+      textWidth = Style.marginS * Style.barScaling + titleMetrics.contentWidth + Style.marginXXS * 2;
     }
 
-    var margins = isVertical ? 0 : (Style.marginS * barScaling * 2);
+    var margins = isVertical ? 0 : (Style.marginS * Style.barScaling * 2);
     var total = iconWidth + textWidth + margins;
     return hasPlayer ? Math.min(total, maxWidth) : total;
   }
@@ -149,8 +147,7 @@ Item {
     visible: false
     text: title
     applyUiScale: false
-    pointSize: root.textSize
-    font.weight: Style.fontWeightMedium
+    pointSize: Style.barFontSize
   }
 
   // Context menu
@@ -231,8 +228,8 @@ Item {
 
     Item {
       anchors.fill: parent
-      anchors.leftMargin: isVertical ? 0 : Style.marginS * barScaling
-      anchors.rightMargin: isVertical ? 0 : Style.marginS * barScaling
+      anchors.leftMargin: isVertical ? 0 : Style.marginS * Style.barScaling
+      anchors.rightMargin: isVertical ? 0 : Style.marginS * Style.barScaling
       clip: true
 
       // Visualizer
@@ -260,7 +257,7 @@ Item {
       RowLayout {
         anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Style.marginS * barScaling
+        spacing: Style.marginS * Style.barScaling
         visible: !isVertical
         z: 1
 
@@ -287,17 +284,17 @@ Item {
             anchors.fill: parent
             visible: showProgressRing
             progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-            lineWidth: 2 * barScaling
+            lineWidth: 2 * Style.barScaling
           }
 
           Item {
             anchors.fill: parent
-            anchors.margins: showProgressRing ? (3 * barScaling) : 0.5
+            anchors.margins: showProgressRing ? (3 * Style.barScaling) : 0.5
 
             NImageRounded {
               visible: showAlbumArt && hasPlayer
               anchors.fill: parent
-              anchors.margins: showProgressRing ? 0 : -1 * barScaling
+              anchors.margins: showProgressRing ? 0 : -1 * Style.barScaling
               radius: width / 2
               imagePath: MediaService.trackArtUrl
               fallbackIcon: MediaService.isPlaying ? "media-pause" : "media-play"
@@ -311,7 +308,7 @@ Item {
               y: Style.pixelAlignCenter(parent.height, contentHeight)
               icon: MediaService.isPlaying ? "media-pause" : "media-play"
               color: Color.mOnSurface
-              pointSize: 8 * barScaling
+              pointSize: Style.barFontSize
             }
           }
         }
@@ -327,7 +324,7 @@ Item {
             anchors.fill: parent
             text: title
             textColor: hasPlayer ? Color.mOnSurface : Color.mOnSurfaceVariant
-            fontSize: root.textSize
+            fontSize: Style.barFontSize
             scrollMode: scrollingMode
             needsScroll: titleMetrics.contentWidth > parent.width
           }
@@ -348,7 +345,7 @@ Item {
           anchors.fill: parent
           visible: showProgressRing
           progress: MediaService.trackLength > 0 ? MediaService.currentPosition / MediaService.trackLength : 0
-          lineWidth: Style.toOdd(2 * barScaling)
+          lineWidth: Style.toOdd(2 * Style.barScaling)
         }
 
         NImageRounded {
@@ -560,7 +557,6 @@ Item {
           color: textColor
           pointSize: fontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           onTextChanged: {
             scrollText.isScrolling = false;
             scrollText.isResetting = false;
@@ -574,7 +570,6 @@ Item {
           color: textColor
           pointSize: fontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           visible: scrollText.needsScroll && scrollText.isScrolling
         }
       }

@@ -60,15 +60,6 @@ Item {
     }
   }
 
-  readonly property real textSize: {
-    switch (root.density) {
-    case "compact":
-      return Math.max(1, Math.round(pillHeight * 0.45));
-    default:
-      return Math.max(1, Math.round(pillHeight * 0.33));
-    }
-  }
-
   width: {
     if (collapseToIcon) {
       return hasIcon ? pillHeight : 0;
@@ -146,9 +137,8 @@ Item {
       }
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
-      pointSize: textSize
+      pointSize: Style.barFontSize
       applyUiScale: false
-      font.weight: Style.fontWeightBold
       color: root.fgColor
       visible: revealed
     }

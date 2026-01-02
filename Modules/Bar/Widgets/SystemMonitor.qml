@@ -20,7 +20,6 @@ Rectangle {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -52,9 +51,8 @@ Rectangle {
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
 
-  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * root.barScaling * (root.barCompact ? 0.55 : 0.45))
+  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * Style.barScaling * (root.barCompact ? 0.55 : 0.45))
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
-  readonly property real textSize: Math.max(7, iconSize * barScaling * 0.75 * (isVertical ? 0.85 : 1.0))
 
   function openExternalMonitor() {
     Quickshell.execDetached(["sh", "-c", Settings.data.systemMonitor.externalMonitor]);
@@ -283,9 +281,8 @@ Rectangle {
             }
           }
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -353,9 +350,8 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.cpuTemp)}°`
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -423,9 +419,8 @@ Rectangle {
           visible: !compactMode
           text: `${Math.round(SystemStatService.gpuTemp)}°`
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -493,9 +488,8 @@ Rectangle {
           visible: !compactMode
           text: SystemStatService.loadAvg1.toFixed(1)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -563,9 +557,8 @@ Rectangle {
           visible: !compactMode
           text: showMemoryAsPercent ? `${Math.round(SystemStatService.memPercent)}%` : SystemStatService.formatMemoryGb(SystemStatService.memGb)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -631,9 +624,8 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.rxSpeed) : SystemStatService.formatSpeed(SystemStatService.rxSpeed)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -698,9 +690,8 @@ Rectangle {
           visible: !compactMode
           text: isVertical ? SystemStatService.formatCompactSpeed(SystemStatService.txSpeed) : SystemStatService.formatSpeed(SystemStatService.txSpeed)
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -767,9 +758,8 @@ Rectangle {
           visible: !compactMode
           text: SystemStatService.diskPercents[diskPath] ? `${SystemStatService.diskPercents[diskPath]}%` : "n/a"
           family: fontFamily
-          pointSize: textSize
+          pointSize: Style.barFontSize
           applyUiScale: false
-          font.weight: Style.fontWeightMedium
           Layout.alignment: Qt.AlignCenter
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter

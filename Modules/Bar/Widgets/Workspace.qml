@@ -22,7 +22,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -37,7 +36,7 @@ Item {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real baseDimensionRatio: root.barScaling * 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
+  readonly property real baseDimensionRatio: Style.barScaling * 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
@@ -983,7 +982,7 @@ Item {
 
           family: Settings.data.ui.fontFixed
           font {
-            pointSize: Style.fontSizeXXS
+            pointSize: Style.barFontSize * 0.75
             weight: Style.fontWeightBold
             capitalization: Font.AllUppercase
           }
