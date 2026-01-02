@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Bigere",
+      "solid-color": {
+        "tooltip": "Zemînek bi rengê zexm"
+      },
       "sorting": {
         "date_added": "Dîroka tevlîkirinê",
         "favorites": "Bijarte",

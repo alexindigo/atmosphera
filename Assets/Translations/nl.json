@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Zoeken:",
+      "solid-color": {
+        "tooltip": "Effen kleur achtergrond"
+      },
       "sorting": {
         "date_added": "Datum toegevoegd",
         "favorites": "Favorieten",

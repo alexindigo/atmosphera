@@ -367,6 +367,8 @@ Singleton {
       property bool setWallpaperOnAllMonitors: true
       property string fillMode: "crop"
       property color fillColor: "#000000"
+      property bool useSolidColor: false
+      property color solidColor: "#1a1a2e"
       property bool randomEnabled: false // Deprecated: use wallpaperChangeMode instead
       property string wallpaperChangeMode: "random" // "random" or "alphabetical"
       property int randomIntervalSec: 300 // 5 min

@@ -47,6 +47,14 @@ Variants {
       property real fillMode: WallpaperService.getFillModeUniform()
       property vector4d fillColor: Qt.vector4d(Settings.data.wallpaper.fillColor.r, Settings.data.wallpaper.fillColor.g, Settings.data.wallpaper.fillColor.b, 1.0)
 
+      // Solid color mode - track whether current/next are solid colors
+      property bool isSolid1: false
+      property bool isSolid2: false
+      property color _solidColor1: Settings.data.wallpaper.solidColor
+      property color _solidColor2: Settings.data.wallpaper.solidColor
+      property vector4d solidColor1: Qt.vector4d(_solidColor1.r, _solidColor1.g, _solidColor1.b, 1.0)
+      property vector4d solidColor2: Qt.vector4d(_solidColor2.r, _solidColor2.g, _solidColor2.b, 1.0)
+
       Component.onCompleted: setWallpaperInitial()
 
       Component.onDestruction: {
@@ -191,6 +199,12 @@ Variants {
           property real screenWidth: width
           property real screenHeight: height
 
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
+
           fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_fade.frag.qsb")
         }
       }
@@ -216,6 +230,12 @@ Variants {
           property real imageHeight2: source2.sourceSize.height
           property real screenWidth: width
           property real screenHeight: height
+
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
 
           fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_wipe.frag.qsb")
         }
@@ -245,6 +265,12 @@ Variants {
           property real screenWidth: width
           property real screenHeight: height
 
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
+
           fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_disc.frag.qsb")
         }
       }
@@ -273,6 +299,12 @@ Variants {
           property real screenWidth: width
           property real screenHeight: height
 
+          // Solid color mode
+          property real isSolid1: root.isSolid1 ? 1.0 : 0.0
+          property real isSolid2: root.isSolid2 ? 1.0 : 0.0
+          property vector4d solidColor1: root.solidColor1
+          property vector4d solidColor2: root.solidColor2
+
           fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/wp_stripes.frag.qsb")
         }
       }
@@ -290,6 +322,11 @@ Variants {
         onFinished: {
           // Clear the tracking of what we're transitioning to
           transitioningToOriginalPath = "";
+
+          // Transfer solid color state from next to current
+          isSolid1 = isSolid2;
+          _solidColor1 = _solidColor2;
+
           // Assign new image to current BEFORE clearing to prevent flicker
           const tempSource = nextWallpaper.source;
           currentWallpaper.source = tempSource;
@@ -299,6 +336,7 @@ Variants {
           // Force complete cleanup to free texture memory
           Qt.callLater(() => {
                          nextWallpaper.source = "";
+                         isSolid2 = false;
                          Qt.callLater(() => {
                                         currentWallpaper.asynchronous = true;
                                       });
@@ -318,7 +356,23 @@ Variants {
           return;
         }
 
+        // Check if we're in solid color mode
+        if (Settings.data.wallpaper.useSolidColor) {
+          var solidPath = WallpaperService.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
+          futureWallpaper = solidPath;
+          performStartupTransition();
+          return;
+        }
+
         const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
+
+        // Check if the path is a solid color
+        if (WallpaperService.isSolidColorPath(wallpaperPath)) {
+          futureWallpaper = wallpaperPath;
+          performStartupTransition();
+          return;
+        }
+
         const compositorScale = CompositorService.getDisplayScale(modelData.name);
         const targetWidth = Math.round(modelData.width * compositorScale);
         const targetHeight = Math.round(modelData.height * compositorScale);
@@ -341,12 +395,19 @@ Variants {
           return;
         }
 
+        // Store the original path we're working towards
+        transitioningToOriginalPath = originalPath;
+
+        // Handle solid color paths - no preprocessing needed
+        if (WallpaperService.isSolidColorPath(originalPath)) {
+          futureWallpaper = originalPath;
+          debounceTimer.restart();
+          return;
+        }
+
         const compositorScale = CompositorService.getDisplayScale(modelData.name);
         const targetWidth = Math.round(modelData.width * compositorScale);
         const targetHeight = Math.round(modelData.height * compositorScale);
-
-        // Store the original path we're working towards
-        transitioningToOriginalPath = originalPath;
 
         ImageCacheService.getLarge(originalPath, targetWidth, targetHeight, function (cachedPath, success) {
           if (success) {
@@ -363,6 +424,20 @@ Variants {
         transitionAnimation.stop();
         transitionProgress = 0.0;
 
+        // Check if this is a solid color
+        var isSolidSource = WallpaperService.isSolidColorPath(source);
+        isSolid1 = isSolidSource;
+        isSolid2 = false;
+
+        if (isSolidSource) {
+          var colorStr = WallpaperService.getSolidColor(source);
+          _solidColor1 = colorStr;
+          // Clear image sources for memory efficiency
+          currentWallpaper.source = "";
+          nextWallpaper.source = "";
+          return;
+        }
+
         // Clear nextWallpaper completely to free texture memory
         nextWallpaper.source = "";
         nextWallpaper.sourceSize = undefined;
@@ -376,7 +451,19 @@ Variants {
 
       // ------------------------------------------------------
       function setWallpaperWithTransition(source) {
-        if (source === currentWallpaper.source) {
+        // Check if this is a solid color transition
+        var isSolidSource = WallpaperService.isSolidColorPath(source);
+
+        // For solid colors, check if we're already showing the same color
+        if (isSolidSource && isSolid1) {
+          var newColor = WallpaperService.getSolidColor(source);
+          if (newColor === _solidColor1.toString()) {
+            return;
+          }
+        }
+
+        // For images, check if source matches
+        if (!isSolidSource && source === currentWallpaper.source) {
           return;
         }
 
@@ -390,30 +477,47 @@ Variants {
           transitionAnimation.stop();
           transitionProgress = 0;
 
-          // Assign nextWallpaper to currentWallpaper BEFORE clearing to prevent flicker
+          // Transfer next state to current
+          isSolid1 = isSolid2;
+          _solidColor1 = _solidColor2;
           const newCurrentSource = nextWallpaper.source;
           currentWallpaper.source = newCurrentSource;
 
           // Now clear nextWallpaper after current has the new source
           Qt.callLater(() => {
                          nextWallpaper.source = "";
+                         isSolid2 = false;
 
                          // Now set the next wallpaper after a brief delay
                          Qt.callLater(() => {
-                                        nextWallpaper.source = source;
-                                        currentWallpaper.asynchronous = false;
-                                        transitionAnimation.start();
+                                        _startTransitionTo(source, isSolidSource);
                                       });
                        });
           return;
         }
 
-        nextWallpaper.source = source;
-        if (nextWallpaper.status === Image.Ready) {
+        _startTransitionTo(source, isSolidSource);
+      }
+
+      // Helper to start transition to a new source
+      function _startTransitionTo(source, isSolidSource) {
+        isSolid2 = isSolidSource;
+
+        if (isSolidSource) {
+          var colorStr = WallpaperService.getSolidColor(source);
+          _solidColor2 = colorStr;
+          // No image to load, start transition immediately
+          nextWallpaper.source = "";
           currentWallpaper.asynchronous = false;
           transitionAnimation.start();
         } else {
-          nextWallpaper.pendingTransition = true;
+          nextWallpaper.source = source;
+          if (nextWallpaper.status === Image.Ready) {
+            currentWallpaper.asynchronous = false;
+            transitionAnimation.start();
+          } else {
+            nextWallpaper.pendingTransition = true;
+          }
         }
       }
 

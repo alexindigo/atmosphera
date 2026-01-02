@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Keresés",
+      "solid-color": {
+        "tooltip": "Egyszínű háttér"
+      },
       "sorting": {
         "date_added": "Hozzáadás dátuma",
         "favorites": "Kedvencek",

@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Поиск:",
+      "solid-color": {
+        "tooltip": "Однотонный фон"
+      },
       "sorting": {
         "date_added": "Дата добавления",
         "favorites": "Избранное",

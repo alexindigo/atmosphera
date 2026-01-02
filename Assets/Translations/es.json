@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Buscar:",
+      "solid-color": {
+        "tooltip": "Fondo de color sólido"
+      },
       "sorting": {
         "date_added": "Fecha de adición",
         "favorites": "Favoritos",

@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Search",
+      "solid-color": {
+        "tooltip": "Solid color background"
+      },
       "sorting": {
         "date_added": "Date added",
         "favorites": "Favorites",

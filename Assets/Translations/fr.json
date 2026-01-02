@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Rechercher :",
+      "solid-color": {
+        "tooltip": "Fond uni."
+      },
       "sorting": {
         "date_added": "Date d'ajout",
         "favorites": "Favoris",

@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Szukaj",
+      "solid-color": {
+        "tooltip": "Jednolite tło kolorystyczne."
+      },
       "sorting": {
         "date_added": "Data dodania",
         "favorites": "Ulubione",

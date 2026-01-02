@@ -2929,6 +2929,9 @@
         }
       },
       "search": "Ara:",
+      "solid-color": {
+        "tooltip": "Düz renk arka plan"
+      },
       "sorting": {
         "date_added": "Eklenme tarihi",
         "favorites": "Favoriler",

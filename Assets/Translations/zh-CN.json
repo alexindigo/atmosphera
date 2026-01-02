@@ -2929,6 +2929,9 @@
         }
       },
       "search": "搜索：",
+      "solid-color": {
+        "tooltip": "纯色背景"
+      },
       "sorting": {
         "date_added": "添加日期",
         "favorites": "收藏",

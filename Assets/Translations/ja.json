@@ -2929,6 +2929,9 @@
         }
       },
       "search": "検索",
+      "solid-color": {
+        "tooltip": "無地 (Muji)"
+      },
       "sorting": {
         "date_added": "追加日",
         "favorites": "お気に入り数",
