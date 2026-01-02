@@ -489,6 +489,7 @@
       "device-address": "Адреса пристрою",
       "disabled": "Bluetooth вимкнено",
       "disconnect": "Відключити",
+      "disconnecting": "Відключення...",
       "discoverable": "Виявний",
       "enable-message": "Увімкніть Bluetooth, щоб побачити доступні пристрої.",
       "info": "Інформація",
@@ -502,6 +503,14 @@
       "refresh-devices": "Оновити пристрої",
       "scanning": "Сканування пристроїв...",
       "signal": "Сигнал",
+      "signal-text": {
+        "excellent": "Сигнал: Відмінний",
+        "fair": "Сигнал: Задовільний",
+        "good": "Сигнал: Добре",
+        "poor": "Сигнал: Поганий",
+        "unknown": "Сигнал: Невідомий",
+        "very-poor": "Сигнал: Дуже слабкий"
+      },
       "title": "Bluetooth",
       "trusted": "Надійний",
       "unpair": "Розірвати пару"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Активувати керування Bluetooth.",
-        "label": "Увімкнути Bluetooth"
+        "label": "Увімкнути Bluetooth",
+        "rssi-polling": {
+          "description": "Періодично збирати дані RSSI для підключених пристроїв через bluetoothctl. Може бути недоступним для всіх пристроїв; використовує мінімум ресурсів, коли ввімкнено.",
+          "label": "Опитування сигналу Bluetooth"
+        }
       },
       "section": {
         "description": "Керувати підключеннями Wi-Fi та Bluetooth."
@@ -2697,6 +2710,7 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
+      "address-copied": "Адресу скопійовано до буфера обміну",
       "confirm-code": "Підтвердьте код {value} на іншому пристрої",
       "connect-failed": "Не вдалося під'єднатися до пристрою.",
       "disabled": "Вимкнено",
@@ -2814,6 +2828,7 @@
     "close": "Закрити",
     "collapse": "Згорнути бічну панель",
     "connect-disconnect-devices": "Пристрій Bluetooth",
+    "copy-address": "Копіювати адресу",
     "delete-notification": "Видалити сповіщення",
     "disable-keep-awake": "Заборона сну",
     "do-not-disturb-disabled": "Не турбувати",

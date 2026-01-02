@@ -489,6 +489,7 @@
       "device-address": "设备地址",
       "disabled": "蓝牙已禁用",
       "disconnect": "断开",
+      "disconnecting": "正在断开连接...",
       "discoverable": "可发现的",
       "enable-message": "启用蓝牙以查看可用设备。",
       "info": "信息",
@@ -502,6 +503,14 @@
       "refresh-devices": "刷新设备",
       "scanning": "正在扫描设备...",
       "signal": "信号",
+      "signal-text": {
+        "excellent": "信号：极佳",
+        "fair": "信号：良好",
+        "good": "信号：良好",
+        "poor": "信号：弱",
+        "unknown": "信号：未知",
+        "very-poor": "信号：非常差"
+      },
       "title": "蓝牙",
       "trusted": "可信赖的",
       "unpair": "取消配对"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "启用蓝牙管理。",
-        "label": "启用蓝牙"
+        "label": "启用蓝牙",
+        "rssi-polling": {
+          "description": "定期通过 bluetoothctl 采样已连接设备的 RSSI 值。可能并非适用于所有设备；启用后占用极少资源。",
+          "label": "蓝牙信号轮询"
+        }
       },
       "section": {
         "description": "管理 Wi-Fi 和蓝牙连接。"
@@ -2697,6 +2710,7 @@
       "low-desc": "电量为 {percent}%。请连接充电器。"
     },
     "bluetooth": {
+      "address-copied": "地址已复制到剪贴板",
       "confirm-code": "在另一台设备上确认代码 {value}",
       "connect-failed": "无法连接到设备",
       "disabled": "已禁用",
@@ -2814,6 +2828,7 @@
     "close": "关闭",
     "collapse": "折叠侧边栏",
     "connect-disconnect-devices": "蓝牙设备",
+    "copy-address": "复制地址",
     "delete-notification": "删除通知",
     "disable-keep-awake": "保持唤醒",
     "do-not-disturb-disabled": "勿扰模式",

@@ -489,6 +489,7 @@
       "device-address": "デバイスアドレス",
       "disabled": "Bluetooth は無効です",
       "disconnect": "切断",
+      "disconnecting": "切断中...",
       "discoverable": "発見可能",
       "enable-message": "利用可能なデバイスを表示するには Bluetooth を有効にしてください。",
       "info": "情報 (Jōhō)",
@@ -502,6 +503,14 @@
       "refresh-devices": "デバイスを更新",
       "scanning": "デバイスをスキャン中...",
       "signal": "信号 (shingō)",
+      "signal-text": {
+        "excellent": "信号: 良好",
+        "fair": "合図：可",
+        "good": "信号: 良し",
+        "poor": "信号：弱い",
+        "unknown": "信号：不明",
+        "very-poor": "信号：非常に悪い"
+      },
       "title": "Bluetooth",
       "trusted": "信頼できる",
       "unpair": "ペアリング解除"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth の管理を有効にします。",
-        "label": "Bluetooth を有効化"
+        "label": "Bluetooth を有効化",
+        "rssi-polling": {
+          "description": "bluetoothctl 経由で接続されたデバイスのRSSIを定期的にサンプリングします。 すべてのデバイスで利用できるとは限りません。 有効にすると、最小限のリソースを使用します。",
+          "label": "Bluetooth信号ポーリング"
+        }
       },
       "section": {
         "description": "Wi-Fi と Bluetooth 接続を管理します。"
@@ -2697,6 +2710,7 @@
       "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください。"
     },
     "bluetooth": {
+      "address-copied": "アドレスをクリップボードにコピーしました。",
       "confirm-code": "別のデバイスでコード{value}を確認してください。",
       "connect-failed": "デバイスに接続できませんでした。",
       "disabled": "無効",
@@ -2814,6 +2828,7 @@
     "close": "閉じる",
     "collapse": "サイドバーを折りたたむ",
     "connect-disconnect-devices": "Bluetooth デバイス",
+    "copy-address": "アドレスをコピー",
     "delete-notification": "通知を削除",
     "disable-keep-awake": "スリープ防止",
     "do-not-disturb-disabled": "おやすみモード",

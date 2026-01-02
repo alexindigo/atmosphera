@@ -489,6 +489,7 @@
       "device-address": "Navnîşana amûrê",
       "disabled": "Bluetooth neçalak e",
       "disconnect": "Girêdanê qut bike",
+      "disconnecting": "Derdibirîna...",
       "discoverable": "Dîtbar",
       "enable-message": "Bo dîtina amûrên heyî Bluetooth çalak bike.",
       "info": "Zanyarî",
@@ -502,6 +503,14 @@
       "refresh-devices": "Nûvekirina cîhazên",
       "scanning": "Lêgerîna cîhazan...",
       "signal": "Nîşan",
+      "signal-text": {
+        "excellent": "Nîşan: Baş e gelek",
+        "fair": "Nîşan: Adil",
+        "good": "Nîşan: Baş e",
+        "poor": "Nîşan: Qels",
+        "unknown": "Nîşan: Nenas",
+        "very-poor": "Nîşan: Gelekî qels"
+      },
       "title": "Bluetooth",
       "trusted": "Pêbawer",
       "unpair": "Girêdanê qut bike"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Rêveberiya Bluetooth çalak bike.",
-        "label": "Bluetooth çalak bike"
+        "label": "Bluetooth çalak bike",
+        "rssi-polling": {
+          "description": "Demjimêr RSSI ji bo cîhazên girêdayî bi rêya bluetoothctl nimûne bike. Dibe ku ji bo hemû cîhazên berdest nebe; dema ku çalak be çavkaniyên hindik bikar tîne.",
+          "label": "Pirsgirêka sînyala Bluetoothê"
+        }
       },
       "section": {
         "description": "Girêdanên Wi-Fi û Bluetooth bi rê ve bibe."
@@ -2697,6 +2710,7 @@
       "low-desc": "Pîl li ser %{percent} e. Ji kerema xwe şarjê girêde."
     },
     "bluetooth": {
+      "address-copied": "Navnîşan li clipboardê hate kopîkirin",
       "confirm-code": "Koda {value} li ser amûra din piştrast bike",
       "connect-failed": "Têk çû girêdan bi cîhazê re",
       "disabled": "Neçalakkirî",
@@ -2814,6 +2828,7 @@
     "close": "Bigire",
     "collapse": "Sidebarê veşêre",
     "connect-disconnect-devices": "Amûra Bluetooth",
+    "copy-address": "Navnîşana kopî bike",
     "delete-notification": "Agahdariyê jê bibe",
     "disable-keep-awake": "Hişyar be",
     "do-not-disturb-disabled": "Dengê dernexîne",

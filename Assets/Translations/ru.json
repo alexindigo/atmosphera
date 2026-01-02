@@ -489,6 +489,7 @@
       "device-address": "Адрес устройства",
       "disabled": "Bluetooth отключен",
       "disconnect": "Отключить",
+      "disconnecting": "Отключение...",
       "discoverable": "Обнаруживаемый",
       "enable-message": "Включите Bluetooth, чтобы увидеть доступные устройства.",
       "info": "Информация",
@@ -502,6 +503,14 @@
       "refresh-devices": "Обновить устройства",
       "scanning": "Поиск устройств...",
       "signal": "Сигнал",
+      "signal-text": {
+        "excellent": "Сигнал: Отличный",
+        "fair": "Сигнал: Средний",
+        "good": "Сигнал: Хороший",
+        "poor": "Сигнал: Плохой",
+        "unknown": "Сигнал: Неизвестен",
+        "very-poor": "Сигнал: Очень слабый"
+      },
       "title": "Bluetooth",
       "trusted": "Надёжный",
       "unpair": "Разорвать пару"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Включить управление Bluetooth.",
-        "label": "Включить Bluetooth"
+        "label": "Включить Bluetooth",
+        "rssi-polling": {
+          "description": "Периодически опрашивать RSSI для подключенных устройств через bluetoothctl. Может быть недоступно для всех устройств; использует минимальные ресурсы при включении.",
+          "label": "Опрос сигнала Bluetooth"
+        }
       },
       "section": {
         "description": "Управление Wi-Fi и Bluetooth подключениями."
@@ -2697,6 +2710,7 @@
       "low-desc": "Заряд батареи {percent}%. Пожалуйста, подключите зарядное устройство."
     },
     "bluetooth": {
+      "address-copied": "Адрес скопирован в буфер обмена",
       "confirm-code": "Подтвердите код {value} на другом устройстве.",
       "connect-failed": "Не удалось подключиться к устройству",
       "disabled": "Отключен",
@@ -2814,6 +2828,7 @@
     "close": "Закрыть",
     "collapse": "Свернуть боковую панель",
     "connect-disconnect-devices": "Устройство Bluetooth",
+    "copy-address": "Копировать адрес",
     "delete-notification": "Удалить уведомление",
     "disable-keep-awake": "Не засыпать",
     "do-not-disturb-disabled": "Не беспокоить",

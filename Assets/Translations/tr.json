@@ -489,6 +489,7 @@
       "device-address": "Cihaz adresi",
       "disabled": "Bluetooth devre dışı",
       "disconnect": "Bağlantıyı Kes",
+      "disconnecting": "Bağlantı kesiliyor...",
       "discoverable": "Keşfedilebilir",
       "enable-message": "Mevcut cihazları görmek için Bluetooth'u etkinleştirin.",
       "info": "Bilgi",
@@ -502,6 +503,14 @@
       "refresh-devices": "Cihazları yenile",
       "scanning": "Cihazlar tarınıyor...",
       "signal": "Sinyal",
+      "signal-text": {
+        "excellent": "Sinyal: Mükemmel",
+        "fair": "Sinyal: Adil",
+        "good": "Sinyal: İyi",
+        "poor": "Sinyal: Zayıf",
+        "unknown": "Sinyal: Bilinmiyor",
+        "very-poor": "Sinyal: Çok zayıf"
+      },
       "title": "Bluetooth",
       "trusted": "Güvenilir",
       "unpair": "Eşleştirmeyi kaldır"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth yönetimini etkinleştir.",
-        "label": "Bluetooth'u Etkinleştir"
+        "label": "Bluetooth'u Etkinleştir",
+        "rssi-polling": {
+          "description": "Bağlı cihazlar için RSSI'yı bluetoothctl aracılığıyla periyodik olarak örnekleyin. Tüm cihazlar için mevcut olmayabilir; etkinleştirildiğinde minimum kaynak kullanır.",
+          "label": "Bluetooth sinyal yoklaması"
+        }
       },
       "section": {
         "description": "Kablosuz ve Bluetooth bağlantılarını yönetin."
@@ -2697,6 +2710,7 @@
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
     },
     "bluetooth": {
+      "address-copied": "Adres panoya kopyalandı",
       "confirm-code": "Diğer cihazdaki {value} kodunu onayla",
       "connect-failed": "Cihaza bağlanılamadı",
       "disabled": "Devre dışı",
@@ -2814,6 +2828,7 @@
     "close": "Kapat",
     "collapse": "Kenar çubuğunu daralt",
     "connect-disconnect-devices": "Bluetooth cihazı",
+    "copy-address": "Adresi kopyala",
     "delete-notification": "Bildiriyi sil",
     "disable-keep-awake": "Uyanık kal",
     "do-not-disturb-disabled": "Rahatsız etme",

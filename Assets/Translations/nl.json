@@ -489,6 +489,7 @@
       "device-address": "Apparaatadres",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
+      "disconnecting": "Verbinding verbroken...",
       "discoverable": "Zichtbaar",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
       "info": "Info",
@@ -502,6 +503,14 @@
       "refresh-devices": "Apparaten verversen",
       "scanning": "Zoeken naar apparaten...",
       "signal": "Signaal",
+      "signal-text": {
+        "excellent": "Signaal: Uitstekend",
+        "fair": "Signaal: Redelijk",
+        "good": "Signaal: Goed",
+        "poor": "Signaal: Zwak",
+        "unknown": "Signaal: Onbekend",
+        "very-poor": "Signaal: Zeer slecht"
+      },
       "title": "Bluetooth",
       "trusted": "Vertrouwd",
       "unpair": "Ontkoppelen"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth-beheer activeren.",
-        "label": "Bluetooth inschakelen"
+        "label": "Bluetooth inschakelen",
+        "rssi-polling": {
+          "description": "Periodiek de RSSI bemonsteren voor verbonden apparaten via bluetoothctl. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale resources wanneer ingeschakeld.",
+          "label": "Bluetooth-signaalpolling"
+        }
       },
       "section": {
         "description": "Beheer Wi-Fi- en Bluetooth-verbindingen."
@@ -2697,6 +2710,7 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
+      "address-copied": "Adres gekopieerd naar klembord",
       "confirm-code": "Bevestig code {value} op het andere apparaat",
       "connect-failed": "Verbinding met apparaat mislukt",
       "disabled": "Uitgeschakeld",
@@ -2814,6 +2828,7 @@
     "close": "Sluiten",
     "collapse": "Zijbalk inklappen",
     "connect-disconnect-devices": "Bluetooth-apparaat",
+    "copy-address": "Adres kopiëren",
     "delete-notification": "Melding verwijderen",
     "disable-keep-awake": "Wakker houden",
     "do-not-disturb-disabled": "Niet storen",

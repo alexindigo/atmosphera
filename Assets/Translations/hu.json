@@ -489,6 +489,7 @@
       "device-address": "Eszköz címe",
       "disabled": "A Bluetooth ki van kapcsolva",
       "disconnect": "Kapcsolat bontása",
+      "disconnecting": "A kapcsolat bontása...",
       "discoverable": "Felfedezhető",
       "enable-message": "Kapcsolja be a Bluetooth-t az elérhető eszközök megtekintéséhez.",
       "info": "Infó",
@@ -502,6 +503,14 @@
       "refresh-devices": "Eszközök frissítése",
       "scanning": "Eszközök keresése...",
       "signal": "Jel",
+      "signal-text": {
+        "excellent": "Jelerősség: Kiváló",
+        "fair": "Jelzés: Gyenge",
+        "good": "Jel: Jó",
+        "poor": "Jelerősség: Gyenge",
+        "unknown": "Jel: Ismeretlen",
+        "very-poor": "Jelerősség: Nagyon gyenge"
+      },
       "title": "Bluetooth",
       "trusted": "Megbízható",
       "unpair": "Párosítás megszüntetése"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "A Bluetooth kezelés aktiválása.",
-        "label": "Bluetooth bekapcsolása"
+        "label": "Bluetooth bekapcsolása",
+        "rssi-polling": {
+          "description": "Időnként mintavételezi a csatlakoztatott eszközök RSSI-értékét a bluetoothctl-en keresztül. Nem biztos, hogy minden eszközhöz elérhető; engedélyezve minimális erőforrásokat használ.",
+          "label": "Bluetooth jel lekérdezés"
+        }
       },
       "section": {
         "description": "Wi-Fi és Bluetooth kapcsolatok kezelése."
@@ -2697,6 +2710,7 @@
       "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt."
     },
     "bluetooth": {
+      "address-copied": "Cím a vágólapra másolva",
       "confirm-code": "Erősítse meg a {value} kódot a másik eszközön",
       "connect-failed": "Nem sikerült csatlakozni az eszközhöz",
       "disabled": "Kikapcsolva",
@@ -2814,6 +2828,7 @@
     "close": "Bezárás",
     "collapse": "Oldalsáv összecsukása",
     "connect-disconnect-devices": "Bluetooth eszköz",
+    "copy-address": "Cím másolása",
     "delete-notification": "Értesítés törlése",
     "disable-keep-awake": "Ébren tartás",
     "do-not-disturb-disabled": "Ne zavarjanak",

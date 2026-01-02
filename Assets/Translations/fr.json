@@ -489,6 +489,7 @@
       "device-address": "Adresse de l’appareil",
       "disabled": "Le Bluetooth est désactivé",
       "disconnect": "Déconnecter",
+      "disconnecting": "Déconnexion...",
       "discoverable": "Détectable",
       "enable-message": "Activez le Bluetooth pour voir les appareils disponibles.",
       "info": "Infos",
@@ -502,6 +503,14 @@
       "refresh-devices": "Actualiser les appareils",
       "scanning": "Recherche d'appareils en cours...",
       "signal": "Signal",
+      "signal-text": {
+        "excellent": "Signal : Excellent",
+        "fair": "Signal : Moyen",
+        "good": "Signal : Bon",
+        "poor": "Signal : Faible",
+        "unknown": "Signal : Inconnu",
+        "very-poor": "Signal : Très faible"
+      },
       "title": "Bluetooth",
       "trusted": "De confiance",
       "unpair": "Désappairer"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Activer la gestion Bluetooth.",
-        "label": "Activer le Bluetooth"
+        "label": "Activer le Bluetooth",
+        "rssi-polling": {
+          "description": "Échantillonner périodiquement le RSSI des appareils connectés via bluetoothctl. Peut ne pas être disponible pour tous les appareils ; utilise un minimum de ressources lorsqu'il est activé.",
+          "label": "Interrogation du signal Bluetooth"
+        }
       },
       "section": {
         "description": "Gérez les connexions Wi-Fi et Bluetooth."
@@ -2697,6 +2710,7 @@
       "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
     },
     "bluetooth": {
+      "address-copied": "Adresse copiée dans le presse-papiers",
       "confirm-code": "Confirmer le code {value} sur l'autre appareil.",
       "connect-failed": "Échec de la connexion à l’appareil",
       "disabled": "Désactivé",
@@ -2814,6 +2828,7 @@
     "close": "Fermer",
     "collapse": "Réduire la barre latérale",
     "connect-disconnect-devices": "Appareil Bluetooth",
+    "copy-address": "Copier l'adresse",
     "delete-notification": "Supprimer la notification",
     "disable-keep-awake": "Rester éveillé",
     "do-not-disturb-disabled": "Ne pas déranger",

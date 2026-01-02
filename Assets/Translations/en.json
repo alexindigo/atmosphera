@@ -486,10 +486,10 @@
       "connect": "Connect",
       "connected-devices": "Connected devices",
       "connecting": "Connecting...",
-      "disconnecting": "Disconnecting...",
       "device-address": "Device address",
       "disabled": "Bluetooth is disabled",
       "disconnect": "Disconnect",
+      "disconnecting": "Disconnecting...",
       "discoverable": "Discoverable",
       "enable-message": "Enable Bluetooth to see available devices.",
       "info": "Info",
@@ -504,11 +504,11 @@
       "scanning": "Scanning for devices...",
       "signal": "Signal",
       "signal-text": {
-        "unknown": "Signal: Unknown",
         "excellent": "Signal: Excellent",
-        "good": "Signal: Good",
         "fair": "Signal: Fair",
+        "good": "Signal: Good",
         "poor": "Signal: Poor",
+        "unknown": "Signal: Unknown",
         "very-poor": "Signal: Very poor"
       },
       "title": "Bluetooth",
@@ -1965,8 +1965,8 @@
         "description": "Activate Bluetooth management.",
         "label": "Enable Bluetooth",
         "rssi-polling": {
-          "label": "Bluetooth signal polling",
-          "description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled."
+          "description": "Periodically sample RSSI for connected devices via bluetoothctl. May not be available for all devices; uses minimal resources when enabled.",
+          "label": "Bluetooth signal polling"
         }
       },
       "section": {
@@ -2609,8 +2609,8 @@
           "tooltip": "Wallpaper folder"
         },
         "hide-wallpaper-filenames": {
-          "tooltip-hide":"Hide Filenames",
-          "tooltip-show":"Show Filenames"
+          "tooltip-hide": "Hide Filenames",
+          "tooltip-show": "Show Filenames"
         },
         "monitor-specific": {
           "description": "Set a different wallpaper folder for each monitor.",
@@ -2710,6 +2710,7 @@
       "low-desc": "Battery is at {percent}%. Please connect the charger."
     },
     "bluetooth": {
+      "address-copied": "Address copied to clipboard",
       "confirm-code": "Confirm code {value} on the other device",
       "connect-failed": "Failed to connect to device",
       "disabled": "Disabled",
@@ -2723,8 +2724,7 @@
       "pair-failed": "Failed to pair device",
       "passkey-required": "Passkey required by the device",
       "pincode-required": "PIN code required by the device",
-      "state-change-failed": "Failed to change Bluetooth state",
-      "address-copied": "Address copied to clipboard"
+      "state-change-failed": "Failed to change Bluetooth state"
     },
     "clipboard": {
       "unavailable": "Clipboard history unavailable",
@@ -2828,6 +2828,7 @@
     "close": "Close",
     "collapse": "Collapse sidebar",
     "connect-disconnect-devices": "Bluetooth device",
+    "copy-address": "Copy address",
     "delete-notification": "Delete notification",
     "disable-keep-awake": "Keep Awake",
     "do-not-disturb-disabled": "Do Not Disturb",
@@ -2875,7 +2876,6 @@
     "refresh-devices": "Refresh devices",
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
-    "copy-address": "Copy address",
     "remove-widget": "Remove widget",
     "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search": "Search",

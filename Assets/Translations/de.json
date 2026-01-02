@@ -489,6 +489,7 @@
       "device-address": "Geräteadresse",
       "disabled": "Bluetooth ist deaktiviert",
       "disconnect": "Trennen",
+      "disconnecting": "Verbindung wird getrennt...",
       "discoverable": "Sichtbar",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
       "info": "Info",
@@ -502,6 +503,14 @@
       "refresh-devices": "Geräte aktualisieren",
       "scanning": "Scannen nach Geräten...",
       "signal": "Signal",
+      "signal-text": {
+        "excellent": "Signal: Ausgezeichnet",
+        "fair": "Signal: Schwach",
+        "good": "Signal: Gut",
+        "poor": "Signal: Schlecht",
+        "unknown": "Signal: Unbekannt",
+        "very-poor": "Signal: Sehr schlecht"
+      },
       "title": "Bluetooth",
       "trusted": "Vertrauenswürdig",
       "unpair": "Entkoppeln"
@@ -1954,7 +1963,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth-Verwaltung aktivieren.",
-        "label": "Bluetooth aktivieren"
+        "label": "Bluetooth aktivieren",
+        "rssi-polling": {
+          "description": "Periodisch RSSI für verbundene Geräte über bluetoothctl abfragen. Ist möglicherweise nicht für alle Geräte verfügbar; verbraucht bei Aktivierung minimale Ressourcen.",
+          "label": "Bluetooth-Signalabfrage"
+        }
       },
       "section": {
         "description": "WLAN- und Bluetooth-Verbindungen verwalten."
@@ -2697,6 +2710,7 @@
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
     },
     "bluetooth": {
+      "address-copied": "Adresse in die Zwischenablage kopiert",
       "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
       "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
       "disabled": "Deaktiviert",
@@ -2814,6 +2828,7 @@
     "close": "Schließen",
     "collapse": "Seitenleiste einklappen",
     "connect-disconnect-devices": "Bluetooth-Gerät",
+    "copy-address": "Adresse kopieren",
     "delete-notification": "Benachrichtigung löschen",
     "disable-keep-awake": "Wach halten",
     "do-not-disturb-disabled": "Nicht stören",
