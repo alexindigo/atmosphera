@@ -759,7 +759,10 @@ SmartPanel {
             ColumnLayout {
               id: searchCategoryLayout
               anchors.fill: parent
-              anchors.margins: Style.marginL
+              anchors.leftMargin: Style.marginL + Style.marginXS
+              anchors.rightMargin: Style.marginL + Style.marginXS
+              anchors.topMargin: Style.marginL
+              anchors.bottomMargin: Style.marginL
               spacing: Style.marginM
 
               NTextInput {
@@ -911,7 +914,7 @@ SmartPanel {
 
             ColumnLayout {
               anchors.fill: parent
-              anchors.margins: Style.marginM
+              anchors.margins: Style.marginL
               spacing: Style.marginM
 
               Loader {
@@ -954,21 +957,23 @@ SmartPanel {
 
           Component {
             id: listViewComponent
-            NListView {
+            ListView {
               id: resultsList
-
-              horizontalPolicy: ScrollBar.AlwaysOff
-              verticalPolicy: ScrollBar.AsNeeded
 
               width: parent.width
               height: parent.height
               spacing: Style.marginXXS
+              leftMargin: Style.marginXS
+              rightMargin: Style.marginXS
+              topMargin: Style.marginXS
+              bottomMargin: Style.marginXS
+              clip: true
+              boundsBehavior: Flickable.StopAtBounds
               model: results
               currentIndex: selectedIndex
               cacheBuffer: resultsList.height * 2
               interactive: !Settings.data.appLauncher.ignoreMouseInput
               onCurrentIndexChanged: {
-                cancelFlick();
                 if (currentIndex >= 0) {
                   positionViewAtIndex(currentIndex, ListView.Contain);
                 }
@@ -1025,7 +1030,7 @@ SmartPanel {
                   }
                 }
 
-                width: resultsList.width - Style.marginS
+                width: resultsList.width - resultsList.leftMargin - resultsList.rightMargin
                 implicitHeight: entryHeight
                 radius: Style.radiusM
                 color: entry.isSelected ? Color.mHover : Color.mSurface
@@ -1052,8 +1057,7 @@ SmartPanel {
                     Rectangle {
                       Layout.preferredWidth: badgeSize
                       Layout.preferredHeight: badgeSize
-                      radius: Style.radiusM
-                      color: Color.mSurfaceVariant
+                      color: "transparent"
 
                       // Image preview for clipboard images
                       NImageRounded {
@@ -1400,8 +1404,8 @@ SmartPanel {
                   return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
                 }
 
-                width: resultsGrid.cellWidth - Style.marginXXS
-                height: resultsGrid.cellHeight - Style.marginXXS
+                width: resultsGrid.cellWidth - Style.marginM
+                height: resultsGrid.cellHeight - Style.marginM
                 radius: Style.radiusM
                 color: gridEntry.isSelected ? Color.mHover : Color.mSurface
 
@@ -1438,7 +1442,7 @@ SmartPanel {
                     }
                     Layout.alignment: Qt.AlignHCenter
                     radius: Style.radiusM
-                    color: Color.mSurfaceVariant
+                    color: "transparent"
 
                     // Image preview for clipboard images
                     NImageRounded {
