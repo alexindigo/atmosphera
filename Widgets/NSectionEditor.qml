@@ -524,7 +524,8 @@ NBox {
         acceptedButtons: Qt.LeftButton
         preventStealing: true // Always prevent stealing to ensure we get all events
         propagateComposedEvents: true // Allow events to propagate when not handled
-        hoverEnabled: true // Always track mouse for drag operations
+        hoverEnabled: potentialDrag || dragStarted // Only track hover during drag operations
+        cursorShape: dragStarted ? Qt.ClosedHandCursor : Qt.ArrowCursor
 
         property point startPos: Qt.point(0, 0)
         property bool dragStarted: false
