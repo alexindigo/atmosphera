@@ -46,8 +46,8 @@ Item {
   readonly property string windowTitle: CompositorService.getFocusedWindowTitle() || "No active window"
   readonly property string fallbackIcon: "user-desktop"
 
-  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75 * Style.barScaling)
-  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85 * Style.barScaling)
+  readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
+  readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
 
   implicitHeight: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight) : 0
   implicitWidth: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
@@ -79,12 +79,12 @@ Item {
   function calculateContentWidth() {
     // Calculate the actual content width based on visible elements
     var contentWidth = 0;
-    var margins = Style.marginS * Style.barScaling * 2; // Left and right margins
+    var margins = Style.marginS * 2; // Left and right margins
 
     // Icon width (if visible)
     if (showIcon) {
       contentWidth += iconSize;
-      contentWidth += Style.marginS * Style.barScaling; // Spacing after icon
+      contentWidth += Style.marginS; // Spacing after icon
     }
 
     // Text width (use the measured width)
@@ -211,14 +211,14 @@ Item {
     Item {
       id: mainContainer
       anchors.fill: parent
-      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS * Style.barScaling
-      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS * Style.barScaling
+      anchors.leftMargin: isVerticalBar ? 0 : Style.marginS
+      anchors.rightMargin: isVerticalBar ? 0 : Style.marginS
 
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
         y: Style.pixelAlignCenter(parent.height, height)
-        spacing: Style.marginS * Style.barScaling
+        spacing: Style.marginS
         visible: !isVerticalBar
         z: 1
 

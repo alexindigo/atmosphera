@@ -34,8 +34,6 @@ Rectangle {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property bool density: Settings.data.bar.density
-  readonly property bool barCompact: Settings.data.bar.density === "compact"
 
   readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
   readonly property bool usePrimaryColor: widgetSettings.usePrimaryColor !== undefined ? widgetSettings.usePrimaryColor : widgetMetadata.usePrimaryColor
@@ -51,7 +49,7 @@ Rectangle {
   readonly property string diskPath: (widgetSettings.diskPath !== undefined) ? widgetSettings.diskPath : widgetMetadata.diskPath
   readonly property string fontFamily: useMonospaceFont ? Settings.data.ui.fontFixed : Settings.data.ui.fontDefault
 
-  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * Style.barScaling * (root.barCompact ? 0.55 : 0.45))
+  readonly property real iconSize: Style.toOdd(Style.capsuleHeight * 0.55)
   readonly property real miniGaugeWidth: Math.max(3, Style.toOdd(root.iconSize * 0.25))
 
   function openExternalMonitor() {
@@ -289,7 +287,6 @@ Rectangle {
           color: (cpuWarning || cpuCritical) ? SystemStatService.cpuColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -358,7 +355,6 @@ Rectangle {
           color: (tempWarning || tempCritical) ? SystemStatService.tempColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode, mini gauge (to the right of icon)
@@ -427,7 +423,6 @@ Rectangle {
           color: (gpuWarning || gpuCritical) ? SystemStatService.gpuColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -496,7 +491,6 @@ Rectangle {
           color: textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -565,7 +559,6 @@ Rectangle {
           color: (memWarning || memCritical) ? SystemStatService.memColor : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -632,7 +625,6 @@ Rectangle {
           color: textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -698,7 +690,6 @@ Rectangle {
           color: textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode
@@ -766,7 +757,6 @@ Rectangle {
           color: (diskWarning || diskCritical) ? SystemStatService.getDiskColor(diskPath) : textColor
           Layout.row: isVertical ? 0 : 0
           Layout.column: isVertical ? 0 : 1
-          scale: isVertical ? Math.min(1.0, root.width / implicitWidth) : 1.0
         }
 
         // Compact mode

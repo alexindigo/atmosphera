@@ -131,10 +131,8 @@ Singleton {
     return toOdd(h);
   }
 
-  readonly property real barScaling: (Settings.data.bar.density === "mini" || Settings.data.bar.density === "compact") ? 0.9 : 1.0
-
   // The base/default font size for all text in the bar. 33 is the "default" barHeight
-  readonly property real _barBaseFontSize: (Style.barHeight / 33) * Style.barScaling * Style.fontSizeM
+  readonly property real _barBaseFontSize: (Style.barHeight / 33) * Style.fontSizeS
   readonly property real barFontSize: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? _barBaseFontSize * 0.9 : _barBaseFontSize
 
   readonly property color capsuleColor: Settings.data.bar.showCapsule ? Qt.alpha(Color.mSurfaceVariant, Settings.data.bar.capsuleOpacity) : Color.transparent
