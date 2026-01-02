@@ -335,8 +335,8 @@ SmartPanel {
   // Watch for view mode changes and reset mouse tracking
   onIsGridViewChanged: {
     // Reset mouse tracking when switching views
+    // Note: mouseMovementDetector reset is handled by Connections inside panelContent
     ignoreMouseHover = true;
-    mouseMovementDetector.initialized = false;
   }
 
   // Lifecycle
@@ -566,7 +566,7 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
-    id: ui
+    id: panelContent
     color: Color.transparent
     opacity: resultsReady ? 1.0 : 0.0
 
@@ -576,7 +576,7 @@ SmartPanel {
       visible: root.previewActive
       width: root.previewPanelWidth
       height: Math.round(400 * Style.uiScaleRatio)
-      x: ui.width + Style.marginM
+      x: panelContent.width + Style.marginM
       y: {
         if (!resultsViewLoader.item)
           return Style.marginL;
@@ -584,8 +584,8 @@ SmartPanel {
         const row = root.isGridView ? Math.floor(root.selectedIndex / root.gridColumns) : root.selectedIndex;
         const itemHeight = root.isGridView ? (root.gridCellSize + Style.marginXXS) : (root.entryHeight + view.spacing);
         const yPos = row * itemHeight - view.contentY;
-        const mapped = view.mapToItem(ui, 0, yPos);
-        return Math.max(Style.marginL, Math.min(mapped.y, ui.height - previewBox.height - Style.marginL));
+        const mapped = view.mapToItem(panelContent, 0, yPos);
+        return Math.max(Style.marginL, Math.min(mapped.y, panelContent.height - previewBox.height - Style.marginL));
       }
       z: -1 // Draw behind main panel content if it ever overlaps
 
@@ -628,7 +628,7 @@ SmartPanel {
       property real lastX: 0
       property real lastY: 0
       property bool initialized: false
-      property int movementThreshold: 5 // Increased threshold for more reliable detection
+      property int movementThreshold: 5
 
       onPositionChanged: mouse => {
                            if (!initialized) {
@@ -638,9 +638,8 @@ SmartPanel {
                              return;
                            }
 
-                           const deltaX = Math.abs(mouse.x - lastX);
-                           const deltaY = Math.abs(mouse.y - lastY);
-                           if (deltaX > movementThreshold || deltaY > movementThreshold) {
+                           const manhattanLength = Math.abs(mouse.x - lastX) + Math.abs(mouse.y - lastY);
+                           if (manhattanLength > movementThreshold) {
                              root.ignoreMouseHover = false;
                              lastX = mouse.x;
                              lastY = mouse.y;
@@ -1530,10 +1529,8 @@ SmartPanel {
                                        return;
                                      }
 
-                                     // Check if mouse has moved significantly from initial position
-                                     const deltaX = Math.abs(mouse.x - initialX);
-                                     const deltaY = Math.abs(mouse.y - initialY);
-                                     if (deltaX > 5 || deltaY > 5) {
+                                     const manhattanLength = Math.abs(mouse.x - initialX) + Math.abs(mouse.y - initialY);
+                                     if (manhattanLength > mouseMovementDetector.movementThreshold) {
                                        root.ignoreMouseHover = false;
                                        if (containsMouse) {
                                          selectedIndex = index;
