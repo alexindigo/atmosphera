@@ -238,6 +238,12 @@
           "label": "Show icon"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "When enabled, this applies the primary color for emphasis.",
+          "label": "Use primary color"
+        }
+      },
       "lock-keys": {
         "browse": "Browse",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Enable Bluetooth",
     "enable-dnd": "Enable Do Not Disturb",
     "enable-wifi": "Enable Wi-Fi",
+    "launcher-settings": "Launcher settings",
     "lower-to-bottom": "Lower to bottom",
     "next": "Next",
     "open-calendar": "Open calendar",

@@ -238,6 +238,12 @@
           "label": "Simgeyi göster"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Etkinleştirildiğinde, vurgu için birincil rengi uygular.",
+          "label": "Ana renk kullan."
+        }
+      },
       "lock-keys": {
         "browse": "Göz at",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Bluetooth'u etkinleştir",
     "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
     "enable-wifi": "Kablosuz Bağlantıyı etkinleştir",
+    "launcher-settings": "Başlatıcı ayarları",
     "lower-to-bottom": "Alta doğru alçalt",
     "next": "Sonraki",
     "open-calendar": "Takvimi aç",

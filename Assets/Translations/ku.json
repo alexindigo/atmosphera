@@ -238,6 +238,12 @@
           "label": "Nîşanê nîşan bide"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Dema ku hat çalak kirin, ev rengê sereke ji bo teqezkirinê bikar tîne.",
+          "label": "Rengê bingehîn bikar bîne"
+        }
+      },
       "lock-keys": {
         "browse": "Bigere",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Bluetooth çalak bike",
     "enable-dnd": "Dengê dernexîne çalak bike",
     "enable-wifi": "Wi-Fi çalak bike",
+    "launcher-settings": "Mîhengên destpêkerê",
     "lower-to-bottom": "Daxistin bo binî",
     "next": "Pêş",
     "open-calendar": "Salnameyê veke",

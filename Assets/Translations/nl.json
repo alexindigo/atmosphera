@@ -238,6 +238,12 @@
           "label": "Icoon weergeven"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Indien ingeschakeld, past dit de primaire kleur toe voor nadruk.",
+          "label": "Gebruik een primaire kleur"
+        }
+      },
       "lock-keys": {
         "browse": "Bladeren",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Bluetooth inschakelen",
     "enable-dnd": "Niet Storen inschakelen",
     "enable-wifi": "Wi-Fi inschakelen",
+    "launcher-settings": "Launcher instellingen",
     "lower-to-bottom": "Laagste naar beneden",
     "next": "Volgende",
     "open-calendar": "Open agenda",

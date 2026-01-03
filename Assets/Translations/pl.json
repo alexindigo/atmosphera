@@ -238,6 +238,12 @@
           "label": "Pokaż ikonę"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Po włączeniu, stosuje kolor podstawowy dla podkreślenia.",
+          "label": "Użyj koloru podstawowego."
+        }
+      },
       "lock-keys": {
         "browse": "Przeglądaj",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Włącz Bluetooth",
     "enable-dnd": "Włącz Nie przeszkadzać",
     "enable-wifi": "Włącz Wi-Fi",
+    "launcher-settings": "Ustawienia programu uruchamiającego",
     "lower-to-bottom": "Opuść na dół.",
     "next": "Następny",
     "open-calendar": "Otwórz kalendarz",

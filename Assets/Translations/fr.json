@@ -238,6 +238,12 @@
           "label": "Afficher l'icône"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Quand cette option est activée, elle applique la couleur principale pour mettre en évidence.",
+          "label": "Utiliser une couleur primaire."
+        }
+      },
       "lock-keys": {
         "browse": "Parcourir",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Activer le Bluetooth",
     "enable-dnd": "Activer le mode Ne pas déranger",
     "enable-wifi": "Activer le Wi-Fi",
+    "launcher-settings": "Paramètres du lanceur",
     "lower-to-bottom": "Abaisser au plus bas / Descendre au plus bas",
     "next": "Suivant",
     "open-calendar": "Ouvrir le calendrier",

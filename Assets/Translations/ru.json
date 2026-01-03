@@ -238,6 +238,12 @@
           "label": "Показать значок"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Если включено, использует основной цвет для выделения.",
+          "label": "Использовать основной цвет"
+        }
+      },
       "lock-keys": {
         "browse": "Обзор",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Включить Bluetooth",
     "enable-dnd": "Не беспокоить",
     "enable-wifi": "Включить Wi-Fi",
+    "launcher-settings": "Настройки лаунчера",
     "lower-to-bottom": "Опустить до дна",
     "next": "Следующий",
     "open-calendar": "Открыть календарь",
