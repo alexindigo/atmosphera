@@ -25,25 +25,11 @@ SmartPanel {
   readonly property real outerPadding: Style.marginM
   readonly property real innerSpacing: Style.marginM
 
-  // Tray values filtered (needed at root for sizing)
+  // All tray items from SystemTray
   readonly property var trayValuesAll: (SystemTray.items && SystemTray.items.values) ? SystemTray.items.values : []
-  readonly property var trayValues: {
-    // Reference panelContent properties for reactivity when panel is open
-    var hidePassiveRef = panelContent ? panelContent.hidePassive : true;
-    return trayValuesAll.filter(function (it) {
-      if (!it)
-        return false;
-      // Filter out passive items if hidePassive is enabled
-      if (hidePassiveRef && it.status !== undefined && (it.status === SystemTray.Passive || it.status === 0)) {
-        return false;
-      }
-      // Check if pinned using panelContent function when available
-      if (panelContent && panelContent.isPinned) {
-        return !panelContent.isPinned(it);
-      }
-      return true;
-    });
-  }
+  
+  // Filtered items - computed in panelContent where isPinned is available
+  property var trayValues: []
 
   readonly property int itemCount: trayValues.length
   readonly property int columns: Math.max(1, Math.min(maxColumns, itemCount))
@@ -56,6 +42,13 @@ SmartPanel {
   onTrayValuesChanged: {
     if (visible && trayValues.length === 0) {
       close();
+    }
+  }
+
+  // Force refresh panelContent settings when drawer opens
+  onOpened: {
+    if (panelContent && panelContent.settingsVersion !== undefined) {
+      panelContent.settingsVersion++;
     }
   }
 
@@ -81,6 +74,41 @@ SmartPanel {
 
     readonly property var pinnedList: widgetSettings.pinned || []
     readonly property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true
+
+    // Filter tray items - this runs in panelContent context where isPinned is available
+    function updateFilteredItems() {
+      var filtered = [];
+      for (var i = 0; i < root.trayValuesAll.length; i++) {
+        var item = root.trayValuesAll[i];
+        if (!item)
+          continue;
+        
+        // Filter out passive items if hidePassive is enabled
+        if (hidePassive && item.status !== undefined && (item.status === SystemTray.Passive || item.status === 0)) {
+          continue;
+        }
+        
+        // Filter out pinned items
+        if (isPinned(item)) {
+          continue;
+        }
+        
+        filtered.push(item);
+      }
+      root.trayValues = filtered;
+    }
+
+    // Update filtered items when dependencies change
+    Component.onCompleted: updateFilteredItems()
+    onPinnedListChanged: updateFilteredItems()
+    onHidePassiveChanged: updateFilteredItems()
+    
+    Connections {
+      target: root
+      function onTrayValuesAllChanged() {
+        panelContent.updateFilteredItems();
+      }
+    }
 
     // Helper functions (lazy-loaded with panelContent)
     function wildCardMatch(str, rule) {
