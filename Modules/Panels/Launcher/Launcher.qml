@@ -935,11 +935,9 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // Icon badge or Image preview or Emoji
-                  Rectangle {
+                  Item {
                     Layout.preferredWidth: badgeSize
                     Layout.preferredHeight: badgeSize
-                    radius: 0
-                    color: Color.mSurfaceVariant
 
                     // Image preview for clipboard images
                     NImageRounded {
@@ -1253,8 +1251,10 @@ SmartPanel {
               }
             }
 
-            delegate: Rectangle {
-              id: gridEntry
+            delegate: Item {
+              id: gridEntryContainer
+              width: resultsGrid.cellWidth
+              height: resultsGrid.cellHeight
 
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
               property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
@@ -1288,200 +1288,201 @@ SmartPanel {
                 return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
               }
 
-              width: resultsGrid.cellWidth
-              height: resultsGrid.cellHeight
-              radius: Style.radiusM
-              color: gridEntry.isSelected ? Color.mHover : Color.mSurface
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: Style.animationFast
-                  easing.type: Easing.OutCirc
-                }
-              }
-
-              ColumnLayout {
+              Rectangle {
+                id: gridEntry
                 anchors.fill: parent
-                anchors.margins: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? 4 : Style.marginM
-                anchors.bottomMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? Style.marginL : Style.marginM
-                spacing: Style.marginS
+                anchors.margins: Style.marginXXS
+                radius: Style.radiusM
+                color: gridEntryContainer.isSelected ? Color.mHover : Color.mSurface
 
-                // Icon badge or Image preview or Emoji
-                Rectangle {
-                  Layout.preferredWidth: {
-                    if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
-                      return gridEntry.width - 8;
-                    }
-                    // Scale badge relative to cell size for proper scaling on all resolutions
-                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                    return Math.round(gridEntry.width * 0.6);
+                Behavior on color {
+                  ColorAnimation {
+                    duration: Style.animationFast
+                    easing.type: Easing.OutCirc
                   }
-                  Layout.preferredHeight: {
-                    if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
-                      return gridEntry.width - 8;
+                }
+
+                ColumnLayout {
+                  anchors.fill: parent
+                  anchors.margins: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? 4 : Style.marginM
+                  anchors.bottomMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? Style.marginL : Style.marginM
+                  spacing: Style.marginS
+
+                  // Icon badge or Image preview or Emoji
+                  Item {
+                    Layout.preferredWidth: {
+                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                        return gridEntry.width - 8;
+                      }
+                      // Scale badge relative to cell size for proper scaling on all resolutions
+                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                      return Math.round(gridEntry.width * 0.6);
                     }
-                    // Scale badge relative to cell size for proper scaling on all resolutions
-                    // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                    return Math.round(gridEntry.width * 0.6);
-                  }
-                  Layout.alignment: Qt.AlignHCenter
-                  radius: Style.radiusM
-                  color: Color.mSurfaceVariant
-
-                  // Image preview for clipboard images
-                  NImageRounded {
-                    id: gridImagePreview
-                    anchors.fill: parent
-                    visible: modelData.isImage && !modelData.emojiChar
-                    radius: Style.radiusM
-
-                    readonly property int _rev: ClipboardService.revision
-
-                    imagePath: {
-                      _rev;
-                      return ClipboardService.getImageData(modelData.clipboardId) || "";
+                    Layout.preferredHeight: {
+                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                        return gridEntry.width - 8;
+                      }
+                      // Scale badge relative to cell size for proper scaling on all resolutions
+                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
+                      return Math.round(gridEntry.width * 0.6);
                     }
+                    Layout.alignment: Qt.AlignHCenter
 
-                    Rectangle {
+                    // Image preview for clipboard images
+                    NImageRounded {
+                      id: gridImagePreview
                       anchors.fill: parent
-                      visible: parent.status === Image.Loading
-                      color: Color.mSurfaceVariant
+                      visible: modelData.isImage && !modelData.emojiChar
+                      radius: Style.radiusM
 
-                      BusyIndicator {
-                        anchors.centerIn: parent
-                        running: true
-                        width: Style.baseWidgetSize * 0.5
-                        height: width
+                      readonly property int _rev: ClipboardService.revision
+
+                      imagePath: {
+                        _rev;
+                        return ClipboardService.getImageData(modelData.clipboardId) || "";
                       }
-                    }
 
-                    onStatusChanged: status => {
-                                       if (status === Image.Error) {
-                                         gridIconLoader.visible = true;
-                                         gridImagePreview.visible = false;
-                                       }
-                                     }
-                  }
-
-                  Loader {
-                    id: gridIconLoader
-                    anchors.fill: parent
-                    anchors.margins: Style.marginXS
-
-                    visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && gridImagePreview.status === Image.Error)
-                    active: visible
-
-                    sourceComponent: Component {
-                      Loader {
+                      Rectangle {
                         anchors.fill: parent
-                        sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
-                      }
-                    }
+                        visible: parent.status === Image.Loading
+                        color: Color.mSurfaceVariant
 
-                    Component {
-                      id: gridTablerIconComponent
-                      NIcon {
-                        icon: modelData.icon
-                        pointSize: Style.fontSizeXXXL
-                        visible: modelData.icon && !modelData.emojiChar
-                      }
-                    }
-
-                    Component {
-                      id: gridSystemIconComponent
-                      IconImage {
-                        anchors.fill: parent
-                        source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                        visible: modelData.icon && source !== "" && !modelData.emojiChar
-                        asynchronous: true
-                      }
-                    }
-                  }
-
-                  // Emoji display
-                  NText {
-                    id: gridEmojiDisplay
-                    anchors.centerIn: parent
-                    visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
-                    text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
-                    pointSize: {
-                      if (modelData.emojiChar) {
-                        if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
-                          // Scale with cell width but cap at reasonable maximum
-                          const cellBasedSize = gridEntry.width * 0.4;
-                          const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
-                          return Math.min(cellBasedSize, maxSize);
+                        BusyIndicator {
+                          anchors.centerIn: parent
+                          running: true
+                          width: Style.baseWidgetSize * 0.5
+                          height: width
                         }
-                        return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
+                      }
+
+                      onStatusChanged: status => {
+                                         if (status === Image.Error) {
+                                           gridIconLoader.visible = true;
+                                           gridImagePreview.visible = false;
+                                         }
+                                       }
+                    }
+
+                    Loader {
+                      id: gridIconLoader
+                      anchors.fill: parent
+                      anchors.margins: Style.marginXS
+
+                      visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && gridImagePreview.status === Image.Error)
+                      active: visible
+
+                      sourceComponent: Component {
+                        Loader {
+                          anchors.fill: parent
+                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
+                        }
+                      }
+
+                      Component {
+                        id: gridTablerIconComponent
+                        NIcon {
+                          icon: modelData.icon
+                          pointSize: Style.fontSizeXXXL
+                          visible: modelData.icon && !modelData.emojiChar
+                        }
+                      }
+
+                      Component {
+                        id: gridSystemIconComponent
+                        IconImage {
+                          anchors.fill: parent
+                          source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                          visible: modelData.icon && source !== "" && !modelData.emojiChar
+                          asynchronous: true
+                        }
+                      }
+                    }
+
+                    // Emoji display
+                    NText {
+                      id: gridEmojiDisplay
+                      anchors.centerIn: parent
+                      visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
+                      text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
+                      pointSize: {
+                        if (modelData.emojiChar) {
+                          if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
+                            // Scale with cell width but cap at reasonable maximum
+                            const cellBasedSize = gridEntry.width * 0.4;
+                            const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
+                            return Math.min(cellBasedSize, maxSize);
+                          }
+                          return Style.fontSizeXXL * 2 * Style.uiScaleRatio;
+                        }
+                        // Scale font size relative to cell width for low res, but cap at maximum
+                        const cellBasedSize = gridEntry.width * 0.25;
+                        const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
+                        const maxSize = Style.fontSizeXXL * Style.uiScaleRatio;
+                        return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                      }
+                      font.weight: Style.fontWeightBold
+                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
+                    }
+                  }
+
+                  // Text content
+                  NText {
+                    text: modelData.name || "Unknown"
+                    pointSize: {
+                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                        return Style.fontSizeS * Style.uiScaleRatio;
                       }
                       // Scale font size relative to cell width for low res, but cap at maximum
-                      const cellBasedSize = gridEntry.width * 0.25;
-                      const baseSize = Style.fontSizeXL * Style.uiScaleRatio;
-                      const maxSize = Style.fontSizeXXL * Style.uiScaleRatio;
+                      const cellBasedSize = gridEntry.width * 0.12;
+                      const baseSize = Style.fontSizeS * Style.uiScaleRatio;
+                      const maxSize = Style.fontSizeM * Style.uiScaleRatio;
                       return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                     }
-                    font.weight: Style.fontWeightBold
-                    color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
+                    font.weight: Style.fontWeightSemiBold
+                    color: gridEntryContainer.isSelected ? Color.mOnHover : Color.mOnSurface
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: gridEntry.width - 8
+                    Layout.leftMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                    Layout.rightMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.NoWrap
+                    maximumLineCount: 1
                   }
                 }
 
-                // Text content
-                NText {
-                  text: modelData.name || "Unknown"
-                  pointSize: {
-                    if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
-                      return Style.fontSizeS * Style.uiScaleRatio;
-                    }
-                    // Scale font size relative to cell width for low res, but cap at maximum
-                    const cellBasedSize = gridEntry.width * 0.12;
-                    const baseSize = Style.fontSizeS * Style.uiScaleRatio;
-                    const maxSize = Style.fontSizeM * Style.uiScaleRatio;
-                    return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
+                // Action buttons (overlay in top-right corner)
+                Row {
+                  visible: (!!gridEntryContainer.appId && gridEntryContainer.isSelected) || (!!modelData.clipboardId && gridEntryContainer.isSelected)
+                  anchors.top: parent.top
+                  anchors.right: parent.right
+                  anchors.margins: Style.marginXS
+                  z: 10
+                  spacing: Style.marginXXS
+
+                  // Pin/Unpin action icon button
+                  NIconButton {
+                    visible: !!gridEntryContainer.appId && !modelData.isImage && gridEntryContainer.isSelected
+                    icon: gridEntryContainer.isPinned(gridEntryContainer.appId) ? "unpin" : "pin"
+                    tooltipText: gridEntryContainer.isPinned(gridEntryContainer.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
+                    onClicked: gridEntryContainer.togglePin(gridEntryContainer.appId)
                   }
-                  font.weight: Style.fontWeightSemiBold
-                  color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
-                  elide: Text.ElideRight
-                  Layout.fillWidth: true
-                  Layout.maximumWidth: gridEntry.width - 8
-                  Layout.leftMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
-                  Layout.rightMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
-                  horizontalAlignment: Text.AlignHCenter
-                  wrapMode: Text.NoWrap
-                  maximumLineCount: 1
-                }
-              }
 
-              // Action buttons (overlay in top-right corner)
-              Row {
-                visible: (!!gridEntry.appId && gridEntry.isSelected) || (!!modelData.clipboardId && gridEntry.isSelected)
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.margins: Style.marginXS
-                z: 10
-                spacing: Style.marginXXS
-
-                // Pin/Unpin action icon button
-                NIconButton {
-                  visible: !!gridEntry.appId && !modelData.isImage && gridEntry.isSelected
-                  icon: gridEntry.isPinned(gridEntry.appId) ? "unpin" : "pin"
-                  tooltipText: gridEntry.isPinned(gridEntry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                  onClicked: gridEntry.togglePin(gridEntry.appId)
-                }
-
-                // Delete action icon button for clipboard entries
-                NIconButton {
-                  visible: !!modelData.clipboardId && gridEntry.isSelected
-                  icon: "trash"
-                  tooltipText: I18n.tr("launcher.providers.clipboard-delete")
-                  z: 11
-                  onClicked: {
-                    if (modelData.clipboardId) {
-                      // Set provider state before deletion so refresh works
-                      clipProvider.gotResults = false;
-                      clipProvider.isWaitingForData = true;
-                      clipProvider.lastSearchText = root.searchText;
-                      // Delete the item - deleteById now uses Process and will refresh automatically
-                      ClipboardService.deleteById(String(modelData.clipboardId));
+                  // Delete action icon button for clipboard entries
+                  NIconButton {
+                    visible: !!modelData.clipboardId && gridEntryContainer.isSelected
+                    icon: "trash"
+                    tooltipText: I18n.tr("launcher.providers.clipboard-delete")
+                    z: 11
+                    onClicked: {
+                      if (modelData.clipboardId) {
+                        // Set provider state before deletion so refresh works
+                        clipProvider.gotResults = false;
+                        clipProvider.isWaitingForData = true;
+                        clipProvider.lastSearchText = root.searchText;
+                        // Delete the item - deleteById now uses Process and will refresh automatically
+                        ClipboardService.deleteById(String(modelData.clipboardId));
+                      }
                     }
                   }
                 }
