@@ -142,12 +142,20 @@
           "description": "Ha a kimeneti szöveg megegyezik ezzel az értékkel, a gomb összecsukódik.",
           "label": "Összecsukási feltétel"
         },
+        "color-selection": {
+          "description": "Témák színeinek alkalmazása az ikonra és a szövegre.",
+          "label": "Szín kiválasztása"
+        },
         "display-command-output": {
           "description": "Adjon meg egy parancsot, amelyet rendszeres időközönként futtatni szeretne. A kimenetének első sora szövegként jelenik meg.",
           "label": "Parancs kimenetének megjelenítése",
           "stream-description": "Adjon meg egy parancsot, amelyet folyamatosan futtatni szeretne."
         },
         "dynamic-text": "Dinamikus szöveg",
+        "enable-colorization": {
+          "description": "Színezés engedélyezése az egyéni gomb ikonjához és szövegéhez, a téma színeinek alkalmazása.",
+          "label": "Színezés engedélyezése"
+        },
         "hide-mode": {
           "alwaysExpanded": "Mindig kibontva",
           "description": "Szabályozza a widget láthatóságát, ha a parancsnak nincs kimenete.",

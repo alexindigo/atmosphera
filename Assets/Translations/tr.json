@@ -142,12 +142,20 @@
           "description": "Çıktı metni bu değerle eşleşirse düğme daralacak.",
           "label": "Daralma durumu"
         },
+        "color-selection": {
+          "description": "Tema renklerini simgeye ve metne uygula.",
+          "label": "Renk seç"
+        },
         "display-command-output": {
           "description": "Düzenli aralıklarla çalıştırılacak bir komut girin. Çıktısının ilk satırı metin olarak gösterilecektir.",
           "label": "Komut Çıktısını Göster",
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Hareketli metin",
+        "enable-colorization": {
+          "description": "Özel düğme simgesi ve metni için renklendirmeyi etkinleştir, tema renklerini uygula.",
+          "label": "Renklendirmeyi etkinleştir"
+        },
         "hide-mode": {
           "alwaysExpanded": "Her zaman geniş",
           "description": "Komutun çıktı vermemesi durumunda gerecin görünürlüğünü kontrol eder.",

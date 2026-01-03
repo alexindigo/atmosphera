@@ -142,12 +142,20 @@
           "description": "Si le texte de sortie correspond à cette valeur, le bouton se repliera.",
           "label": "Condition d’effondrement"
         },
+        "color-selection": {
+          "description": "Appliquer les couleurs du thème à l'icône et au texte.",
+          "label": "Sélectionner la couleur"
+        },
         "display-command-output": {
           "description": "Entrez une commande à exécuter à intervalle régulier. La première ligne de sa sortie sera affichée sous forme de texte.",
           "label": "Afficher la sortie de la commande",
           "stream-description": "Entrez une commande à exécuter en continu."
         },
         "dynamic-text": "Texte dynamique",
+        "enable-colorization": {
+          "description": "Activer la colorisation pour l'icône et le texte du bouton personnalisé, en appliquant les couleurs du thème.",
+          "label": "Activer la colorisation"
+        },
         "hide-mode": {
           "alwaysExpanded": "Toujours étendu",
           "description": "Contrôle la visibilité du widget quand la commande n'a pas de sortie.",
