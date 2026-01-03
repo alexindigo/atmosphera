@@ -131,9 +131,7 @@ Popup {
         id: apiKeyInput
         Layout.fillWidth: true
         enabled: !WallhavenService.apiKeyManagedByEnv
-        placeholderText: WallhavenService.apiKeyManagedByEnv
-          ? I18n.tr("wallpaper.panel.apikey.managed-by-env")
-          : I18n.tr("wallpaper.panel.apikey.placeholder")
+        placeholderText: WallhavenService.apiKeyManagedByEnv ? I18n.tr("wallpaper.panel.apikey.managed-by-env") : I18n.tr("wallpaper.panel.apikey.placeholder")
         text: WallhavenService.apiKeyManagedByEnv ? "" : (Settings.data.wallpaper.wallhavenApiKey || "")
 
         // Fix for password echo mode
@@ -151,10 +149,8 @@ Popup {
       }
 
       NText {
-        text: WallhavenService.apiKeyManagedByEnv
-          ? I18n.tr("wallpaper.panel.apikey.env-active")
-          : I18n.tr("wallpaper.panel.apikey.help")
-        color: WallhavenService.apiKeyManagedByEnv ? Color.mPrimary : Color.mOnSurfaceVariant
+        text: I18n.tr("wallpaper.panel.apikey.help")
+        color: Color.mOnSurfaceVariant
         pointSize: Style.fontSizeS
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
