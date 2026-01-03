@@ -138,7 +138,9 @@ Singleton {
                                     "maxTextLength": {
                                       "horizontal": 10,
                                       "vertical": 10
-                                    }
+                                    },
+                                    "enableColorization": false,
+                                    "colorizeSystemIcon": "none"
                                   },
                                   "KeyboardLayout": {
                                     "displayMode": "onhover",

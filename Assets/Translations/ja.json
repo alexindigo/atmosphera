@@ -142,12 +142,20 @@
           "description": "出力テキストがこの値と一致する場合、ボタンを折りたたみます。",
           "label": "折りたたみ条件"
         },
+        "color-selection": {
+          "description": "テーマカラーをアイコンとテキストに適用します。",
+          "label": "色を選択"
+        },
         "display-command-output": {
           "description": "定期的に実行するコマンドを入力します。出力の最初の行がテキストとして表示されます。",
           "label": "コマンド出力を表示",
           "stream-description": "継続的に実行するコマンドを入力します。"
         },
         "dynamic-text": "動的テキスト",
+        "enable-colorization": {
+          "description": "カスタムボタンのアイコンとテキストのカラーリングを有効にし、テーマカラーを適用します。",
+          "label": "カラーリングを有効化"
+        },
         "hide-mode": {
           "alwaysExpanded": "常に展開",
           "description": "コマンドの出力がない場合のウィジェットの表示を制御します。",
