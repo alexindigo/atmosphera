@@ -2879,6 +2879,7 @@
     "move-to-center-section": "Center section",
     "move-to-left-section": "Left section",
     "move-to-right-section": "Right section",
+    "move-to-section": "Move to {section}",
     "mute": "Mute",
     "next-media": "Next track",
     "next-month": "Next month",
