@@ -238,6 +238,12 @@
           "label": "Mostrar icono"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Cuando está habilitado, esto aplica el color primario para dar énfasis.",
+          "label": "Usar color primario"
+        }
+      },
       "lock-keys": {
         "browse": "Navegar",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Activar Bluetooth",
     "enable-dnd": "Activar No molestar",
     "enable-wifi": "Activar Wi-Fi",
+    "launcher-settings": "Ajustes del lanzador",
     "lower-to-bottom": "Bajar hasta el fondo",
     "next": "Siguiente",
     "open-calendar": "Abrir calendario",

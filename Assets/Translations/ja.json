@@ -238,6 +238,12 @@
           "label": "アイコンを表示 (Aikona o hyōji)"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "有効にすると、強調のためにプライマリカラーが適用されます。",
+          "label": "原色を使用してください。"
+        }
+      },
       "lock-keys": {
         "browse": "参照",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Bluetooth を有効化",
     "enable-dnd": "おやすみモードを有効化",
     "enable-wifi": "Wi-Fi を有効化",
+    "launcher-settings": "ランチャー設定",
     "lower-to-bottom": "一番下まで下げてください。",
     "next": "次へ",
     "open-calendar": "カレンダーを開く",

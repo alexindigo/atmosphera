@@ -55,6 +55,7 @@ Singleton {
                                      "ControlCenter": "WidgetSettings/ControlCenterSettings.qml",
                                      "CustomButton": "WidgetSettings/CustomButtonSettings.qml",
                                      "KeyboardLayout": "WidgetSettings/KeyboardLayoutSettings.qml",
+                                     "Launcher": "WidgetSettings/LauncherSettings.qml",
                                      "LockKeys": "WidgetSettings/LockKeysSettings.qml",
                                      "MediaMini": "WidgetSettings/MediaMiniSettings.qml",
                                      "Microphone": "WidgetSettings/MicrophoneSettings.qml",
@@ -99,7 +100,7 @@ Singleton {
                                     "displayMode": "onhover"
                                   },
                                   "Clock": {
-                                    "usePrimaryColor": true,
+                                    "usePrimaryColor": false,
                                     "useCustomFont": false,
                                     "customFont": "",
                                     "formatHorizontal": "HH:mm ddd, MMM dd",
@@ -157,8 +158,7 @@ Singleton {
                                   },
                                   "Launcher": {
                                     "icon": "rocket",
-                                    "usePrimaryColor": true,
-                                    "allowUserSettings": false
+                                    "usePrimaryColor": false
                                   },
                                   "MediaMini": {
                                     "hideMode": "hidden",

@@ -238,6 +238,12 @@
           "label": "Ikon megjelenítése"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Ha engedélyezve van, akkor a hangsúlyozáshoz az elsődleges színt használja.",
+          "label": "Használj alapszínt."
+        }
+      },
       "lock-keys": {
         "browse": "Tallózás",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "Bluetooth bekapcsolása",
     "enable-dnd": "Ne zavarjanak bekapcsolása",
     "enable-wifi": "Wi-Fi bekapcsolása",
+    "launcher-settings": "Indító beállítások",
     "lower-to-bottom": "Engedd le a legaljára / Engedd le az aljára",
     "next": "Következő",
     "open-calendar": "Naptár megnyitása",

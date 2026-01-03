@@ -238,6 +238,12 @@
           "label": "显示图标"
         }
       },
+      "launcher": {
+        "use-primary-color": {
+          "description": "启用后，将应用主色来突出显示。",
+          "label": "使用原色"
+        }
+      },
       "lock-keys": {
         "browse": "浏览",
         "show-caps-lock": {
@@ -598,6 +604,7 @@
     "enable-bluetooth": "启用蓝牙",
     "enable-dnd": "启用勿扰模式",
     "enable-wifi": "启用 Wi-Fi",
+    "launcher-settings": "启动器设置",
     "lower-to-bottom": "降至底部",
     "next": "下一首",
     "open-calendar": "打开日历",

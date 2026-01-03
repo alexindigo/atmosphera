@@ -43,6 +43,45 @@ NIconButton {
   colorBorder: Style.capsuleBorderColor
   colorBorderHover: Style.capsuleBorderColor
 
+  NPopupContextMenu {
+    id: contextMenu
+
+    model: [
+      {
+        "label": I18n.tr("context-menu.launcher-settings"),
+        "action": "launcher-settings",
+        "icon": "adjustments"
+      },
+      {
+        "label": I18n.tr("context-menu.widget-settings"),
+        "action": "widget-settings",
+        "icon": "settings"
+      }
+    ]
+
+    onTriggered: action => {
+      var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+      if (popupMenuWindow) {
+        popupMenuWindow.close();
+      }
+
+      if (action === "launcher-settings") {
+        var panel = PanelService.getPanel("settingsPanel", screen);
+        panel.requestedTab = SettingsPanel.Tab.Launcher;
+        panel.toggle();
+      } else if (action === "widget-settings") {
+        BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
+      }
+    }
+  }
+
   onClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
   onMiddleClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
+  onRightClicked: {
+    var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
+    if (popupMenuWindow) {
+      popupMenuWindow.showContextMenu(contextMenu);
+      contextMenu.openAtItem(root, screen);
+    }
+  }
 }
