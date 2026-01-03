@@ -45,10 +45,17 @@ PanelWindow {
   WlrLayershell.namespace: "noctalia-background-" + (screen?.name || "unknown")
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone handles that
   WlrLayershell.keyboardFocus: {
-    if (!root.isPanelOpen) {
+    // No panel open anywhere: no keyboard focus needed
+    if (!root.isAnyPanelOpen) {
       return WlrKeyboardFocus.None;
     }
-    return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
+    // Panel open on THIS screen: use panel's preferred focus mode
+    // Exception: Hyprland's Exclusive captures all input globally, preventing
+    // click-to-close from working on other monitors, so always use OnDemand
+    if (root.isPanelOpen && !CompositorService.isHyprland) {
+      return PanelService.openedPanel.exclusiveKeyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand;
+    }
+    return WlrKeyboardFocus.OnDemand;
   }
 
   anchors {
@@ -62,6 +69,7 @@ PanelWindow {
   property real dimmerOpacity: Settings.data.general.dimmerOpacity ?? 0.8
   property bool isPanelOpen: (PanelService.openedPanel !== null) && (PanelService.openedPanel.screen === screen)
   property bool isPanelClosing: (PanelService.openedPanel !== null) && PanelService.openedPanel.isClosing
+  property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {
     if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
@@ -121,12 +129,13 @@ PanelWindow {
     }
 
     // Background region for click-to-close - reactive sizing
+    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel
     Region {
       id: backgroundMaskRegion
       x: 0
       y: 0
-      width: root.isPanelOpen && !isPanelClosing ? root.width : 0
-      height: root.isPanelOpen && !isPanelClosing ? root.height : 0
+      width: root.isAnyPanelOpen ? root.width : 0
+      height: root.isAnyPanelOpen ? root.height : 0
       intersection: Intersection.Subtract
     }
   }
@@ -150,10 +159,10 @@ PanelWindow {
     }
 
     // Background MouseArea for closing panels when clicking outside
-    // Active whenever a panel is open - the mask ensures it only receives clicks when panel is open
+    // Uses isAnyPanelOpen so clicking on any screen's background closes the panel
     MouseArea {
       anchors.fill: parent
-      enabled: root.isPanelOpen
+      enabled: root.isAnyPanelOpen
       acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
       onClicked: mouse => {
                    if (PanelService.openedPanel) {
