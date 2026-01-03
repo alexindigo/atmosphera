@@ -78,13 +78,12 @@ Item {
       height: width
     }
 
-    NImageRounded {
+    Image {
       anchors.fill: parent
       anchors.margins: Style.marginS
-      imagePath: imageDataUrl
+      source: imageDataUrl
       visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
-      radius: Style.radiusS
-      imageFillMode: Image.PreserveAspectFit
+      fillMode: Image.PreserveAspectFit
     }
 
     ScrollView {
