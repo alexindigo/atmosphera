@@ -25,6 +25,7 @@ Singleton {
                            "KeepAwake": keepAwakeComponent,
                            "KeyboardLayout": keyboardLayoutComponent,
                            "LockKeys": lockKeysComponent,
+                           "Launcher": launcherComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
                            "NightLight": nightLightComponent,
@@ -152,6 +153,11 @@ Singleton {
                                     "numLockIcon": "letter-n",
                                     "scrollLockIcon": "letter-s"
                                   },
+                                  "Launcher": {
+                                    "icon": "rocket",
+                                    "usePrimaryColor": true,
+                                    "allowUserSettings": false
+                                  },
                                   "MediaMini": {
                                     "hideMode": "hidden",
                                     "scrollingMode": "hover",
@@ -268,6 +274,9 @@ Singleton {
   property Component lockKeysComponent: Component {
     LockKeys {}
   }
+  property Component launcherComponent: Component {
+    Launcher {}
+  }
   property Component mediaMiniComponent: Component {
     MediaMini {}
   }
@@ -344,7 +353,13 @@ Singleton {
 
   // Helper function to check if widget has user settings
   function widgetHasUserSettings(id) {
-    return widgetMetadata[id] !== undefined;
+    var meta = widgetMetadata[id];
+    if (meta === undefined)
+      return false;
+    // allowUserSettings=false lets a widget opt out of the settings dialog
+    if (meta.allowUserSettings === false)
+      return false;
+    return true;
   }
 
   // ------------------------------
