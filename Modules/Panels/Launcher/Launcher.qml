@@ -1301,7 +1301,7 @@ SmartPanel {
               cacheBuffer: resultsGrid.height * 2
               keyNavigationEnabled: false
               focus: false
-              interactive: false
+              interactive: !Settings.data.appLauncher.ignoreMouseInput
               clip: true
 
               Component.onCompleted: {
