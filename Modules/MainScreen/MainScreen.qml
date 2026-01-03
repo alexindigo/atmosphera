@@ -79,9 +79,17 @@ PanelWindow {
   }
 
   Behavior on color {
+    enabled: !PanelService.closedImmediately
     ColorAnimation {
       duration: isPanelClosing ? Style.animationFaster : Style.animationNormal
       easing.type: Easing.OutQuad
+    }
+  }
+
+  // Reset closedImmediately flag after color change is applied
+  onColorChanged: {
+    if (PanelService.closedImmediately) {
+      PanelService.closedImmediately = false;
     }
   }
 
