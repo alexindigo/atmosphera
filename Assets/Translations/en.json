@@ -1875,6 +1875,11 @@
         "use-app2unit": {
           "description": "Uses an alternative launch method to better manage app processes and prevent issues.",
           "label": "Use App2Unit to launch applications"
+        },
+        "annotation-tool": {
+          "label": "Annotation tool",
+          "description": "Command to run when clicking the annotate button in clipboard history, The image will be piped to this command.",
+          "placeholder": "e.g. 'gradia', 'satty -f -'"
         }
       },
       "title": "Launcher"
@@ -2910,7 +2915,8 @@
     "up": "Parent directory",
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",
-    "widget-settings": "Widget settings"
+    "widget-settings": "Widget settings",
+    "open-annotation-tool": "Open with annotation tool"
   },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",
