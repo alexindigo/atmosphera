@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Comando para ejecutar al hacer clic en el botón de anotar en el historial del portapapeles. La imagen se enviará a este comando.",
+          "label": "Herramienta de anotación",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
           "label": "Activar vista previa del portapapeles"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Luz nocturna (no disponible)",
     "noctalia-performance-disabled": "Modo de rendimiento Noctalia",
     "noctalia-performance-enabled": "Modo de rendimiento Noctalia",
+    "open-annotation-tool": "Abrir con herramienta de anotación",
     "open-control-center": "Centro de control",
     "open-notification-history-disable-dnd": "Historial de notificaciones",
     "open-notification-history-enable-dnd": "Historial de notificaciones",

@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Fermana ku dema tikandina bişkoka şîrovekirinê di dîroka clipboardê de were xebitandin, Wêne dê ji vê fermanê re were şandin.",
+          "label": "Amûra şîrovekirinê",
+          "placeholder": "Ez ji te hez dikim."
+        },
         "clip-preview": {
           "description": "Dîmenek pêşdîtinê ya naveroka clipboardê nîşan bide dema ku emrê >clip tê bikaranîn.",
           "label": "Pêşdîtina klîpê çalak bike"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Ronahiya Şevê (tune)",
     "noctalia-performance-disabled": "Moda Performansa Noctalia",
     "noctalia-performance-enabled": "Noctalia Moda Performansê",
+    "open-annotation-tool": "Bi amûra şîrovekirinê veke",
     "open-control-center": "Navenda kontrolê",
     "open-notification-history-disable-dnd": "Dîroka agahdariyê",
     "open-notification-history-enable-dnd": "Dîroka agahdariyê",

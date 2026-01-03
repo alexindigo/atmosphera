@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Команда для запуску при натисканні кнопки анотування в історії буфера обміну, зображення буде передано в цю команду.",
+          "label": "Інструмент анотацій",
+          "placeholder": "градіа, сатті -ф -"
+        },
         "clip-preview": {
           "description": "Показувати попередній перегляд вмісту буфера обміну при використанні команди >clip.",
           "label": "Попередній перегляд буфера обміну"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Нічне світло (недоступне)",
     "noctalia-performance-disabled": "Режим продуктивності Noctalia",
     "noctalia-performance-enabled": "Режим продуктивності Noctalia",
+    "open-annotation-tool": "Відкрити за допомогою інструменту анотацій",
     "open-control-center": "Центр керування",
     "open-notification-history-disable-dnd": "Історія сповіщень",
     "open-notification-history-enable-dnd": "Історія сповіщень",

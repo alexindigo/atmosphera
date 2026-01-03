@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "クリップボード履歴のアノテーションボタンをクリックしたときに実行するコマンド。画像はこのコマンドにパイプされます。",
+          "label": "注釈ツール",
+          "placeholder": "グラディア、サッティ -f -"
+        },
         "clip-preview": {
           "description": ">clip コマンド使用時に、クリップボードの内容をプレビュー表示します。",
           "label": "クリップボードのプレビューを有効化"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "夜間モード（利用不可）",
     "noctalia-performance-disabled": "Noctalia パフォーマンスモード",
     "noctalia-performance-enabled": "Noctalia パフォーマンスモード",
+    "open-annotation-tool": "注釈ツールで開く",
     "open-control-center": "コントロールセンター",
     "open-notification-history-disable-dnd": "通知履歴",
     "open-notification-history-enable-dnd": "通知履歴",

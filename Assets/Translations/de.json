@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Befehl, der beim Klicken auf die Schaltfläche \"Annotieren\" im Zwischenablageverlauf ausgeführt wird. Das Bild wird an diesen Befehl weitergeleitet.",
+          "label": "Annotationstool",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Nachtlicht (nicht verfügbar)",
     "noctalia-performance-disabled": "Noctalia-Leistungsmodus",
     "noctalia-performance-enabled": "Noctalia-Leistungsmodus",
+    "open-annotation-tool": "Mit dem Anmerkungswerkzeug öffnen",
     "open-control-center": "Kontrollzentrum",
     "open-notification-history-disable-dnd": "Benachrichtigungsverlauf",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf",

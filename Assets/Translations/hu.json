@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Parancs, amely a jegyzetelés gombra kattintva fut a vágólap előzményeiben. A kép a parancsra lesz átirányítva.",
+          "label": "Annotációs eszköz",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Mutassa a vágólap tartalmának előnézetét a >clip parancs használatakor.",
           "label": "Vágólap előnézet engedélyezése"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Éjszakai fény (nem elérhető)",
     "noctalia-performance-disabled": "Noctalia teljesítmény mód",
     "noctalia-performance-enabled": "Noctalia teljesítmény mód",
+    "open-annotation-tool": "Megnyitás jegyzetelő eszközzel",
     "open-control-center": "Vezérlőközpont",
     "open-notification-history-disable-dnd": "Értesítési előzmények",
     "open-notification-history-enable-dnd": "Értesítési előzmények",

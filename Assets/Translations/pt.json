@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Comando para executar ao clicar no botão de anotação no histórico da área de transferência. A imagem será enviada para este comando.",
+          "label": "Ferramenta de anotação",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
           "label": "Ativar pré-visualização da área de transferência"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Luz noturna (não disponível)",
     "noctalia-performance-disabled": "Modo de desempenho Noctalia",
     "noctalia-performance-enabled": "Modo de desempenho Noctalia",
+    "open-annotation-tool": "Abrir com ferramenta de anotação",
     "open-control-center": "Central de controle",
     "open-notification-history-disable-dnd": "Histórico de notificações",
     "open-notification-history-enable-dnd": "Histórico de notificações",

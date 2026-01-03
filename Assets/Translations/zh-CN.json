@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "点击剪贴板历史记录中的注释按钮时要运行的命令。图像将被管道传输到此命令。",
+          "label": "标注工具",
+          "placeholder": "格拉迪亚，萨蒂 -f -"
+        },
         "clip-preview": {
           "description": "在使用 >clip 命令时显示剪贴板内容的预览。",
           "label": "启用剪贴板预览"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "夜间模式（不可用）",
     "noctalia-performance-disabled": "Noctalia 性能模式",
     "noctalia-performance-enabled": "Noctalia 性能模式",
+    "open-annotation-tool": "使用注释工具打开",
     "open-control-center": "控制中心",
     "open-notification-history-disable-dnd": "通知历史记录",
     "open-notification-history-enable-dnd": "通知历史记录",

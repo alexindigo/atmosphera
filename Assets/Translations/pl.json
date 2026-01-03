@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Komenda do uruchomienia po kliknięciu przycisku adnotacji w historii schowka. Obraz zostanie przekazany do tej komendy.",
+          "label": "Narzędzie do adnotacji",
+          "placeholder": "Przepraszam, nie rozumiem. Proszę podać tekst do przetłumaczenia."
+        },
         "clip-preview": {
           "description": "Pokaż podgląd zawartości schowka przy użyciu polecenia >clip.",
           "label": "Włącz podgląd schowka"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Podświetlenie nocne (niedostępne)",
     "noctalia-performance-disabled": "Tryb wydajności Noctalia",
     "noctalia-performance-enabled": "Tryb wydajności Noctalia",
+    "open-annotation-tool": "Otwórz za pomocą narzędzia do adnotacji.",
     "open-control-center": "Centrum sterowania",
     "open-notification-history-disable-dnd": "Historia powiadomień",
     "open-notification-history-enable-dnd": "Historia powiadomień",

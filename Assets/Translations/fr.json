@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Commande à exécuter lorsque l'on clique sur le bouton d'annotation dans l'historique du presse-papiers. L'image sera envoyée à cette commande.",
+          "label": "Outil d'annotation",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
           "label": "Activer l'aperçu du presse-papiers"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Éclairage nocturne (non disponible)",
     "noctalia-performance-disabled": "Mode performance Noctalia",
     "noctalia-performance-enabled": "Mode performance Noctalia",
+    "open-annotation-tool": "Ouvrir avec l'outil d'annotation",
     "open-control-center": "Centre de contrôle",
     "open-notification-history-disable-dnd": "Historique des notifications",
     "open-notification-history-enable-dnd": "Historique des notifications",

@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Commando dat wordt uitgevoerd bij het klikken op de annotatieknop in de klembordgeschiedenis. De afbeelding wordt naar dit commando gepiped.",
+          "label": "Annotatietool",
+          "placeholder": "e.g. 'gradia', 'satty -f -'"
+        },
         "clip-preview": {
           "description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
           "label": "Klembordvoorbeeld inschakelen"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Nachtlicht (niet beschikbaar)",
     "noctalia-performance-disabled": "Noctalia-prestatiemodus",
     "noctalia-performance-enabled": "Noctalia-prestatiemodus",
+    "open-annotation-tool": "Openen met annotatietool",
     "open-control-center": "Bedieningscentrum",
     "open-notification-history-disable-dnd": "Meldingsgeschiedenis",
     "open-notification-history-enable-dnd": "Meldingsgeschiedenis",

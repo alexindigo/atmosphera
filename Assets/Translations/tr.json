@@ -1824,6 +1824,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Panodaki geçmişte açıklama ekle düğmesine tıklandığında çalıştırılacak komut. Görüntü bu komuta yönlendirilecektir.",
+          "label": "Açıklama aracı",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
           "label": "Panoyu önizlemeyi etkinleştir"
@@ -2879,6 +2884,7 @@
     "night-light-not-installed": "Gece ışığı (mevcut değil)",
     "noctalia-performance-disabled": "Noctalia performans modu",
     "noctalia-performance-enabled": "Noctalia performans modu",
+    "open-annotation-tool": "Açıklama aracıyla aç",
     "open-control-center": "Kontrol merkezi",
     "open-notification-history-disable-dnd": "Bildirim geçmişi",
     "open-notification-history-enable-dnd": "Bildirim geçmişi",
