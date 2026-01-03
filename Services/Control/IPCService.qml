@@ -392,6 +392,10 @@ Item {
       PowerProfileService.cycleProfile();
     }
 
+    function cycleReverse() {
+      PowerProfileService.cycleProfileReverse();
+    }
+
     function set(mode: string) {
       switch (mode) {
       case "performance":
