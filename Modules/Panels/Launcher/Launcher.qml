@@ -1033,7 +1033,7 @@ SmartPanel {
                 width: resultsList.width - resultsList.leftMargin - resultsList.rightMargin
                 implicitHeight: entryHeight
                 radius: Style.radiusM
-                color: entry.isSelected ? Color.mHover : Color.mSurface
+                color: entry.isSelected ? Color.mPrimary : Color.mSurface
 
                 Behavior on color {
                   ColorAnimation {
@@ -1408,7 +1408,7 @@ SmartPanel {
                 width: resultsGrid.cellWidth - Style.marginM
                 height: resultsGrid.cellHeight - Style.marginM
                 radius: Style.radiusM
-                color: gridEntry.isSelected ? Color.mHover : "transparent"
+                color: gridEntry.isSelected ? Color.mPrimary : "transparent"
 
                 Behavior on color {
                   ColorAnimation {
