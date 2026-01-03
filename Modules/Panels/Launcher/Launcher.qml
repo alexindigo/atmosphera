@@ -1212,7 +1212,7 @@ SmartPanel {
                       NIconButton {
                         visible: !!modelData.clipboardId && entry.isSelected && modelData.isImage && Settings.data.appLauncher.screenshotAnnotationTool !== ""
                         icon: "pencil"
-                        tooltipText: I18n.tr("clipboard.annotate")
+                        tooltipText: I18n.tr("tooltips.open-annotation-tool")
                         z: 1
                         onClicked: {
                           var tool = Settings.data.appLauncher.screenshotAnnotationTool;

@@ -2900,7 +2900,8 @@
     "up": "Parent directory",
     "volume-at": "Output volume: {volume}%",
     "wallpaper-selector": "Wallpaper selector",
-    "widget-settings": "Widget settings"
+    "widget-settings": "Widget settings",
+    "open-annotation-tool": "Open with annotation tool"
   },
   "wallpaper": {
     "configure-directory": "Configure your wallpaper directory with images.",
