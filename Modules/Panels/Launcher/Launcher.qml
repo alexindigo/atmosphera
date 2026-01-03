@@ -1179,7 +1179,7 @@ SmartPanel {
                         text: modelData.name || "Unknown"
                         pointSize: Style.fontSizeL
                         font.weight: Style.fontWeightBold
-                        color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
+                        color: entry.isSelected ? Color.mOnPrimary : Color.mOnSurface
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                       }
@@ -1187,7 +1187,7 @@ SmartPanel {
                       NText {
                         text: modelData.description || ""
                         pointSize: Style.fontSizeS
-                        color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
+                        color: entry.isSelected ? Color.mOnPrimary : Color.mOnSurfaceVariant
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                         visible: text !== ""
@@ -1556,7 +1556,7 @@ SmartPanel {
                       return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                     }
                     font.weight: Style.fontWeightSemiBold
-                    color: gridEntry.isSelected ? Color.mOnHover : Color.mOnSurface
+                    color: gridEntry.isSelected ? Color.mOnPrimary : Color.mOnSurface
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                     Layout.maximumWidth: gridEntry.width - 8
