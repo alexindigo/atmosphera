@@ -142,10 +142,18 @@
           "description": "If the output text matches this value, the button will collapse.",
           "label": "Collapse condition"
         },
+        "color-selection": {
+          "description": "Apply theme colors to icon and text.",
+          "label": "Select Color"
+        },
         "display-command-output": {
           "description": "Enter a command to run at a regular interval. The first line of its output will be displayed as text.",
           "label": "Display command output",
           "stream-description": "Enter a command to run continuously."
+        },
+        "enable-colorization": {
+          "description": "Enable colorization for the custom button icon and text, applying theme colors.",
+          "label": "Enable Colorization"
         },
         "dynamic-text": "Dynamic text",
         "hide-mode": {
