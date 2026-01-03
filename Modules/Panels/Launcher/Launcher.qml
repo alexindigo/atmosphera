@@ -745,6 +745,9 @@ SmartPanel {
           visible: root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode
           Layout.fillWidth: true
           margins: Style.marginM
+          border.color: Style.boxBorderColor
+          border.width: Style.borderS
+
           property int computedCurrentIndex: {
             if (visible && emojiProvider.categories) {
               return emojiProvider.categories.indexOf(emojiProvider.selectedCategory);
@@ -791,6 +794,9 @@ SmartPanel {
           visible: (root.activeProvider === null || root.activeProvider === appsProvider) && appsProvider.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
           Layout.fillWidth: true
           margins: Style.marginM
+          border.color: Style.boxBorderColor
+          border.width: Style.borderS
+
           property int computedCurrentIndex: {
             if (visible && appsProvider.availableCategories) {
               return appsProvider.availableCategories.indexOf(appsProvider.selectedCategory);
@@ -848,7 +854,7 @@ SmartPanel {
 
             width: parent.width
             height: parent.height
-            spacing: Style.marginXXS
+            spacing: Style.marginXS
             model: results
             currentIndex: selectedIndex
             cacheBuffer: resultsList.height * 2
@@ -864,7 +870,7 @@ SmartPanel {
             }
             onModelChanged: {}
 
-            delegate: Rectangle {
+            delegate: NBox {
               id: entry
 
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
@@ -913,7 +919,6 @@ SmartPanel {
 
               width: resultsList.width - Style.marginS
               implicitHeight: entryHeight
-              radius: Style.radiusM
               color: entry.isSelected ? Color.mHover : Color.mSurface
 
               Behavior on color {
@@ -1288,11 +1293,10 @@ SmartPanel {
                 return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
               }
 
-              Rectangle {
+              NBox {
                 id: gridEntry
                 anchors.fill: parent
                 anchors.margins: Style.marginXXS
-                radius: Style.radiusM
                 color: gridEntryContainer.isSelected ? Color.mHover : Color.mSurface
 
                 Behavior on color {
