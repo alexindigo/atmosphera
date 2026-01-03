@@ -17,7 +17,7 @@ NIconButton {
   colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBorder: Color.transparent
-  colorBorderHover: Color.transphaarent
+  colorBorderHover: Color.transparent
   onClicked: Settings.data.colorSchemes.darkMode = !Settings.data.colorSchemes.darkMode
 
   border.color: Style.capsuleBorderColor
