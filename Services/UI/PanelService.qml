@@ -13,6 +13,7 @@ Singleton {
   property var registeredPanels: ({})
   property var openedPanel: null
   property var closingPanel: null
+  property bool closedImmediately: false
   signal willOpen
   signal didClose
 
