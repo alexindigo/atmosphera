@@ -130,8 +130,11 @@ Popup {
       NTextInput {
         id: apiKeyInput
         Layout.fillWidth: true
-        placeholderText: I18n.tr("wallpaper.panel.apikey.placeholder")
-        text: Settings.data.wallpaper.wallhavenApiKey || ""
+        enabled: !WallhavenService.apiKeyManagedByEnv
+        placeholderText: WallhavenService.apiKeyManagedByEnv
+          ? I18n.tr("wallpaper.panel.apikey.managed-by-env")
+          : I18n.tr("wallpaper.panel.apikey.placeholder")
+        text: WallhavenService.apiKeyManagedByEnv ? "" : (Settings.data.wallpaper.wallhavenApiKey || "")
 
         // Fix for password echo mode
         Component.onCompleted: {
@@ -141,13 +144,17 @@ Popup {
         }
 
         onEditingFinished: {
-          Settings.data.wallpaper.wallhavenApiKey = text;
+          if (!WallhavenService.apiKeyManagedByEnv) {
+            Settings.data.wallpaper.wallhavenApiKey = text;
+          }
         }
       }
 
       NText {
-        text: I18n.tr("wallpaper.panel.apikey.help")
-        color: Color.mOnSurfaceVariant
+        text: WallhavenService.apiKeyManagedByEnv
+          ? I18n.tr("wallpaper.panel.apikey.env-active")
+          : I18n.tr("wallpaper.panel.apikey.help")
+        color: WallhavenService.apiKeyManagedByEnv ? Color.mPrimary : Color.mOnSurfaceVariant
         pointSize: Style.fontSizeS
         wrapMode: Text.WordWrap
         Layout.fillWidth: true
@@ -295,8 +302,8 @@ Popup {
             nsfwToggle.checked = purityRow.getPurityValue(2);
           }
           function onWallhavenApiKeyChanged() {
-            // If API key is removed, disable NSFW
-            if (!Settings.data.wallpaper.wallhavenApiKey && nsfwToggle.checked) {
+            // If API key is removed (and no ENV key), disable NSFW
+            if (!WallhavenService.apiKey && nsfwToggle.checked) {
               nsfwToggle.toggled(false);
             }
           }
@@ -410,7 +417,7 @@ Popup {
         Item {
           Layout.preferredWidth: nsfwCheckboxRow.implicitWidth
           Layout.preferredHeight: nsfwCheckboxRow.implicitHeight
-          visible: Settings.data.wallpaper.wallhavenApiKey !== ""
+          visible: WallhavenService.apiKey !== ""
 
           RowLayout {
             id: nsfwCheckboxRow

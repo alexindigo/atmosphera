@@ -2934,8 +2934,10 @@
     "no-wallpaper": "No wallpaper found.",
     "panel": {
       "apikey": {
+        "env-active": "API key is managed by the NOCTALIA_WALLHAVEN_API_KEY environment variable.",
         "help": "An API key is required to access NSFW content.",
         "label": "API Key",
+        "managed-by-env": "Managed by environment variable",
         "placeholder": "Enter your Wallhaven API Key"
       },
       "apply-all-monitors": {
