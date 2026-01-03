@@ -854,7 +854,7 @@ SmartPanel {
             id: resultsList
 
             horizontalPolicy: ScrollBar.AlwaysOff
-            verticalPolicy: ScrollBar.AsNeeded
+            verticalPolicy: ScrollBar.AlwaysOff
 
             width: parent.width
             height: parent.height
@@ -921,7 +921,7 @@ SmartPanel {
                 }
               }
 
-              width: resultsList.width - Style.marginS
+              width: resultsList.width
               implicitHeight: entryHeight
               color: entry.isSelected ? Color.mHover : Color.mSurface
 
@@ -1172,7 +1172,7 @@ SmartPanel {
             id: resultsGrid
 
             horizontalPolicy: ScrollBar.AlwaysOff
-            verticalPolicy: ScrollBar.AsNeeded
+            verticalPolicy: ScrollBar.AlwaysOff
 
             width: parent.width
             height: parent.height
