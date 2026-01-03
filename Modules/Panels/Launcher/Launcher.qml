@@ -62,6 +62,10 @@ SmartPanel {
     if (searchText.startsWith(">clip") || searchText.startsWith(">calc")) {
       return false;
     }
+    // Force list view for inline calculator (pure math expressions)
+    if (isMathExpression(searchText.trim())) {
+      return false;
+    }
     if (activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
       return true;
     }
@@ -944,6 +948,14 @@ SmartPanel {
                     Layout.preferredWidth: badgeSize
                     Layout.preferredHeight: badgeSize
 
+                    // Icon background
+                    Rectangle {
+                      anchors.fill: parent
+                      radius: Style.radiusM
+                      color: Color.mSurfaceVariant
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.emojiChar
+                    }
+
                     // Image preview for clipboard images
                     NImageRounded {
                       id: imagePreview
@@ -1331,6 +1343,14 @@ SmartPanel {
                       return Math.round(gridEntry.width * 0.6);
                     }
                     Layout.alignment: Qt.AlignHCenter
+
+                    // Icon background
+                    Rectangle {
+                      anchors.fill: parent
+                      radius: Style.radiusM
+                      color: Color.mSurfaceVariant
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.emojiChar
+                    }
 
                     // Image preview for clipboard images
                     NImageRounded {
