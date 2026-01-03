@@ -126,12 +126,14 @@ Item {
     Loader {
       id: titleText
       sourceComponent: root.delegate
+      Layout.alignment: Qt.AlignVCenter
       onLoaded: this.item.text = root.text
     }
 
     Loader {
       id: loopingText
       sourceComponent: root.delegate
+      Layout.alignment: Qt.AlignVCenter
       visible: root.state !== NScrollText.ScrollState.None
       onLoaded: this.item.text = root.text
     }

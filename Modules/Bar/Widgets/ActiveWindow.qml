@@ -49,8 +49,10 @@ Item {
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.75)
   readonly property int verticalSize: Style.toOdd(Style.capsuleHeight * 0.85)
 
-  implicitHeight: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight) : 0
-  implicitWidth: visible ? (isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)) : 0
+  // For horizontal bars, height is always capsuleHeight (no animation needed)
+  // For vertical bars, collapse to 0 when hidden
+  implicitHeight: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : Style.capsuleHeight
+  implicitWidth: isVerticalBar ? (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : verticalSize) : (((!hasFocusedWindow) && hideMode === "hidden") ? 0 : dynamicWidth)
 
   // "visible": Always Visible, "hidden": Hide When Empty, "transparent": Transparent When Empty
   visible: (hideMode !== "hidden" || hasFocusedWindow) || opacity > 0
@@ -208,6 +210,7 @@ Item {
       // Horizontal layout for top/bottom bars
       RowLayout {
         id: rowLayout
+        height: iconSize
         y: Style.pixelAlignCenter(parent.height, height)
         spacing: Style.marginS
         visible: !isVerticalBar
@@ -242,6 +245,7 @@ Item {
         NScrollText {
           id: titleContainer
           text: windowTitle
+          Layout.alignment: Qt.AlignVCenter
           maxWidth: {
             // Calculate available width based on other elements
             var iconWidth = (showIcon && windowIcon.visible ? (iconSize + Style.marginS) : 0);
@@ -257,12 +261,10 @@ Item {
             return NScrollText.ScrollMode.Never;
           }
           NText {
-            id: titleText
             text: windowTitle
             pointSize: Style.barFontSize
             applyUiScale: false
             font.weight: Style.fontWeightMedium
-            verticalAlignment: Text.AlignVCenter
             color: Color.mOnSurface
           }
         }

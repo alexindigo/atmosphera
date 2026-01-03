@@ -94,8 +94,10 @@ Item {
   }
 
   // Layout
-  implicitWidth: visible ? (isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)) : 0
-  implicitHeight: visible ? (isVertical ? (isHidden ? 0 : verticalSize) : Style.capsuleHeight) : 0
+  // For horizontal bars, height is always capsuleHeight (no animation needed to prevent jitter)
+  // For vertical bars, collapse to 0 when hidden
+  implicitWidth: isVertical ? (isHidden ? 0 : verticalSize) : (isHidden ? 0 : contentWidth)
+  implicitHeight: isVertical ? (isHidden ? 0 : verticalSize) : Style.capsuleHeight
   visible: !shouldHideIdle && (hideMode !== "hidden" || opacity > 0)
   opacity: isHidden ? 0.0 : ((hideMode === "transparent" && !hasPlayer) ? 0.0 : 1.0)
 
