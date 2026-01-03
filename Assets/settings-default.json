@@ -86,6 +86,7 @@
     "shadowOffsetX": 2,
     "shadowOffsetY": 3,
     "language": "",
+    "screenshotAnnotationTool": "",
     "allowPanelsOnScreenWithoutBar": true
   },
   "ui": {

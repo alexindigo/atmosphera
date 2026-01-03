@@ -235,6 +235,32 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginL
   }
 
+  // Screenshots
+  ColumnLayout {
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    NHeader {
+      label: I18n.tr("settings.general.screenshots.section.label")
+      description: I18n.tr("settings.general.screenshots.section.description")
+    }
+
+    NTextInput {
+      label: I18n.tr("settings.general.screenshots.annotation-tool.label")
+      description: I18n.tr("settings.general.screenshots.annotation-tool.description")
+      text: Settings.data.general.screenshotAnnotationTool
+      placeholderText: I18n.tr("settings.general.screenshots.annotation-tool.placeholder")
+      onEditingFinished: Settings.data.general.screenshotAnnotationTool = text
+      isSettings: true
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginL
+    Layout.bottomMargin: Style.marginL
+  }
+
   NButton {
     visible: !HostService.isNixOS
     text: I18n.tr("settings.general.launch-setup-wizard")
