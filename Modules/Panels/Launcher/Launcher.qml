@@ -693,6 +693,7 @@ SmartPanel {
 
             text: searchText
             placeholderText: I18n.tr("placeholders.search-launcher")
+            fontSize: Style.fontSizeM
 
             onTextChanged: searchText = text
 
