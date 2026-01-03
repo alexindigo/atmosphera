@@ -11,7 +11,15 @@ Popup {
 
   property ShellScreen screen
 
-  width: Math.max(440, Math.round(contentColumn.implicitWidth + (Style.marginL * 2)))
+  // Measure the ENV placeholder text at current font settings
+  TextMetrics {
+    id: envPlaceholderMetrics
+    text: I18n.tr("wallpaper.panel.apikey.managed-by-env")
+    font.pointSize: Style.fontSizeM
+  }
+
+  // Dynamic width: use measured ENV placeholder width + input padding, or fallback to 440
+  width: Math.max(440, Math.round(envPlaceholderMetrics.width + (Style.marginL * 4)), Math.round(contentColumn.implicitWidth + (Style.marginL * 2)))
   height: Math.round(contentColumn.implicitHeight + (Style.marginL * 2))
   padding: Style.marginL
   modal: true
