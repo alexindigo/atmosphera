@@ -1117,6 +1117,7 @@ SmartPanel {
                           NIcon {
                             icon: modelData.icon
                             pointSize: Style.fontSizeXXXL
+                            color: entry.isSelected ? Color.mOnPrimary : Color.mOnSurface
                             visible: modelData.icon && !modelData.emojiChar
                           }
                         }
@@ -1140,7 +1141,7 @@ SmartPanel {
                         text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
                         pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
                         font.weight: Style.fontWeightBold
-                        color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
+                        color: entry.isSelected ? Color.mOnPrimary : (modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary)
                       }
 
                       // Image type indicator overlay
@@ -1500,6 +1501,7 @@ SmartPanel {
                         NIcon {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
+                          color: gridEntry.isSelected ? Color.mOnPrimary : Color.mOnSurface
                           visible: modelData.icon && !modelData.emojiChar
                         }
                       }
@@ -1538,7 +1540,7 @@ SmartPanel {
                         return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                       }
                       font.weight: Style.fontWeightBold
-                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
+                      color: gridEntry.isSelected ? Color.mOnPrimary : (modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary)
                     }
                   }
 
