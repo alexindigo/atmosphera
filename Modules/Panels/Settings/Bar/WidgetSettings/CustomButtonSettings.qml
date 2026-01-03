@@ -139,9 +139,7 @@ ColumnLayout {
           }
         ]
         currentKey: valueColorizeSystemIcon
-        onSelected: function (key) {
-          valueColorizeSystemIcon = key;
-        }
+        onSelected: key => valueColorizeSystemIcon = key
       }
 
       RowLayout {
