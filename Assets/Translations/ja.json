@@ -2299,6 +2299,7 @@
       "update-available_plural": "{count} 個のプラグインアップデートがあります",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
+      "update-pending": "v{current} → v{new} (Noctalia v{required} ga hitsuyou)",
       "update-success": "{plugin} を v{version} にアップデートしました。",
       "update-version": "v{current} → v{new}",
       "updating": "更新中..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "アクションが必要",
+      "available-interfaces": "利用可能なインターフェース",
       "available-networks": "利用可能なネットワーク",
       "connect": "接続",
       "connected": "接続済み",
       "disabled": "Wi-Fi は無効です",
       "disconnect": "切断",
+      "disconnected": "切断されました",
       "disconnecting": "切断中...",
       "dns": "DNS",
       "enable-message": "利用可能なネットワークを表示するには Wi-Fi を有効にしてください。",
@@ -3131,9 +3134,11 @@
       "internet": "インターネット",
       "internet-connected": "インターネット接続",
       "internet-limited": "インターネットなし",
+      "internet-status": "インターネット接続状況",
       "ipv4": "IPv4",
       "known-networks": "保存済みネットワーク",
       "link-speed": "リンク速度",
+      "no-ethernet-devices": "イーサネットデバイスが検出されませんでした。",
       "no-networks": "ネットワークが見つかりません",
       "password": "パスワード",
       "saved": "保存済み",

@@ -2299,6 +2299,7 @@
       "update-available_plural": "{count} mises à jour d'extensions disponibles",
       "update-error": "Échec de la mise à jour du plugin : {plugin} : {error}",
       "update-incompatible": "Nécessite Noctalia v{version} ou une version ultérieure.",
+      "update-pending": "v{current} → v{new} (nécessite Noctalia v{required})",
       "update-success": "Mise à jour du plugin {plugin} vers la version {version}.",
       "update-version": "v{actuel} → v{nouveau}",
       "updating": "Mise à jour..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Action requise",
+      "available-interfaces": "Interfaces disponibles",
       "available-networks": "Réseaux disponibles",
       "connect": "Connecter",
       "connected": "Connecté",
       "disabled": "Le Wi-Fi est désactivé",
       "disconnect": "Déconnecter",
+      "disconnected": "Déconnecté",
       "disconnecting": "Déconnexion en cours...",
       "dns": "DNS",
       "enable-message": "Activez le Wi-Fi pour voir les réseaux disponibles.",
@@ -3131,9 +3134,11 @@
       "internet": "Internet",
       "internet-connected": "Connecté à Internet",
       "internet-limited": "Pas d'internet",
+      "internet-status": "État de la connexion Internet",
       "ipv4": "IPv4",
       "known-networks": "Réseaux connus",
       "link-speed": "Vitesse de liaison",
+      "no-ethernet-devices": "Aucun périphérique Ethernet détecté.",
       "no-networks": "Aucun réseau trouvé",
       "password": "Mot de passe",
       "saved": "Enregistré",

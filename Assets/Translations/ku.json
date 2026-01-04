@@ -2299,6 +2299,7 @@
       "update-available_plural": "{count} nûkirinên pêvekê hene",
       "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}",
       "update-incompatible": "Pêdivî ye Noctalia v{version} an bilindtir",
+      "update-pending": "v{niha} → v{nu} (hewce dike Noctalia v{pêwîst})",
       "update-success": "{plugin} hate nûkirin bo v{version}.",
       "update-version": "v{niha} → v{nû}",
       "updating": "Tê rojanekirin..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Çalakî pêwîst e",
+      "available-interfaces": "Navên berdest",
       "available-networks": "Torên heyî",
       "connect": "Girê bide",
       "connected": "Girdayî",
       "disabled": "Wi‑Fi neçalak e",
       "disconnect": "Girêdanê qut bike",
+      "disconnected": "Qutbûyî",
       "disconnecting": "Tê qutkirin…",
       "dns": "DNS",
       "enable-message": "Wi‑Fi çalak bike da ku torên heyî bibîne.",
@@ -3131,9 +3134,11 @@
       "internet": "Înternet",
       "internet-connected": "Înternet hat girêdan",
       "internet-limited": "Înternet tune ye",
+      "internet-status": "Rewşa Înternetê",
       "ipv4": "IPv4",
       "known-networks": "Torên nas",
       "link-speed": "Lêza girêdanê",
+      "no-ethernet-devices": "Amûrên Ethernetê nehatin dîtin",
       "no-networks": "Torên Wi‑Fi nehatin dîtin",
       "password": "Borînpeyv",
       "saved": "Hat tomarkirin",

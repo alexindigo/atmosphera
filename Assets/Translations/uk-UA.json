@@ -2299,6 +2299,7 @@
       "update-available_plural": "Доступно {count} оновлень плагінів",
       "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
+      "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
       "update-success": "Оновлено {plugin} до версії {version}",
       "update-version": "v{current} → v{new}",
       "updating": "Оновлення..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Вимагається дія",
+      "available-interfaces": "Доступні інтерфейси",
       "available-networks": "Доступні мережі",
       "connect": "Підключити",
       "connected": "Підключено",
       "disabled": "Wi-Fi вимкнено",
       "disconnect": "Відключити",
+      "disconnected": "Відключено",
       "disconnecting": "Відключення...",
       "dns": "DNS",
       "enable-message": "Увімкніть Wi-Fi, щоб побачити доступні мережі.",
@@ -3131,9 +3134,11 @@
       "internet": "Інтернет",
       "internet-connected": "Підключено до Інтернету",
       "internet-limited": "Немає інтернету",
+      "internet-status": "Статус Інтернету",
       "ipv4": "IPv4",
       "known-networks": "Відомі мережі",
       "link-speed": "Швидкість з'єднання",
+      "no-ethernet-devices": "Не виявлено Ethernet-пристроїв.",
       "no-networks": "Мереж не знайдено",
       "password": "Пароль",
       "saved": "Збережено",
