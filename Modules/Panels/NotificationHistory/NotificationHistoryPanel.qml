@@ -122,7 +122,7 @@ SmartPanel {
 
     // Calculate content height based on header + tabs (if visible) + content
     property real headerHeight: headerBox.implicitHeight
-    property real tabsHeight: tabsBox.visible ? tabsBox.implicitHeight + Style.marginS : 0
+    property real tabsHeight: tabsBox.visible ? tabsBox.implicitHeight : 0
     property real contentHeight: {
       if (NotificationService.historyList.count === 0) {
         return emptyState.implicitHeight;
@@ -212,57 +212,50 @@ SmartPanel {
       }
 
       // Time range tabs ([All] / [Today] / [Yesterday] / [Earlier])
-      NBox {
+      NTabBar {
         id: tabsBox
         Layout.fillWidth: true
-        Layout.topMargin: Style.marginS
-        implicitHeight: timeTabs.implicitHeight + (Style.marginS * 2)
         visible: NotificationService.historyList.count > 0 && panelContent.groupByDate
+        currentIndex: panelContent.currentRange
+        tabHeight: Style.baseWidgetSize * 0.7
+        spacing: Style.marginXS
+        border.color: Style.boxBorderColor
+        border.width: Style.borderS
 
-        RowLayout {
-          id: timeTabs
-          spacing: Style.marginXS
-          anchors.fill: parent
-          anchors.margins: Style.marginS
-          visible: NotificationService.historyList.count > 0
+        NTabButton {
+          tabIndex: 0
+          text: I18n.tr("notifications.range.all") + " (" + panelContent.countForRange(0) + ")"
+          checked: tabsBox.currentIndex === 0
+          onClicked: panelContent.currentRange = 0
+          pointSize: Style.fontSizeXS
+          Layout.fillWidth: true
+        }
 
-          Repeater {
-            model: 4
+        NTabButton {
+          tabIndex: 1
+          text: I18n.tr("notifications.range.today") + " (" + panelContent.countForRange(1) + ")"
+          checked: tabsBox.currentIndex === 1
+          onClicked: panelContent.currentRange = 1
+          pointSize: Style.fontSizeXS
+          Layout.fillWidth: true
+        }
 
-            delegate: NButton {
-              readonly property int rangeId: index
-              readonly property bool isActive: panelContent.currentRange === rangeId
+        NTabButton {
+          tabIndex: 2
+          text: I18n.tr("notifications.range.yesterday") + " (" + panelContent.countForRange(2) + ")"
+          checked: tabsBox.currentIndex === 2
+          onClicked: panelContent.currentRange = 2
+          pointSize: Style.fontSizeXS
+          Layout.fillWidth: true
+        }
 
-              text: {
-                if (rangeId === 0)
-                  return I18n.tr("notifications.range.all") + " (" + panelContent.countForRange(rangeId) + ")";
-                else if (rangeId === 1)
-                  return I18n.tr("notifications.range.today") + " (" + panelContent.countForRange(rangeId) + ")";
-                else if (rangeId === 2)
-                  return I18n.tr("notifications.range.yesterday") + " (" + panelContent.countForRange(rangeId) + ")";
-                return I18n.tr("notifications.range.earlier") + " (" + panelContent.countForRange(rangeId) + ")";
-              }
-
-              Layout.fillWidth: true
-              Layout.preferredWidth: 1
-              implicitHeight: Style.baseWidgetSize * 0.7
-              fontSize: Style.fontSizeXS
-              outlined: false
-
-              backgroundColor: isActive ? Color.mPrimary : (hovered ? Color.mHover : "transparent")
-              textColor: isActive ? Color.mOnPrimary : (hovered ? Color.mOnHover : Color.mOnSurface)
-              hoverColor: backgroundColor
-
-              Behavior on backgroundColor {
-                enabled: !Settings.data.general.animationDisabled
-                ColorAnimation {
-                  duration: Style.animationFast
-                }
-              }
-
-              onClicked: panelContent.currentRange = rangeId
-            }
-          }
+        NTabButton {
+          tabIndex: 3
+          text: I18n.tr("notifications.range.earlier") + " (" + panelContent.countForRange(3) + ")"
+          checked: tabsBox.currentIndex === 3
+          onClicked: panelContent.currentRange = 3
+          pointSize: Style.fontSizeXS
+          Layout.fillWidth: true
         }
       }
 

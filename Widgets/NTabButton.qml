@@ -11,6 +11,7 @@ Rectangle {
   property string text: ""
   property bool checked: false
   property int tabIndex: 0
+  property real pointSize: Style.fontSizeM
 
   // Internal state
   property bool isHovered: false
@@ -19,8 +20,7 @@ Rectangle {
 
   // Sizing
   Layout.fillHeight: true
-  Layout.minimumWidth: 100
-  implicitWidth: tabText.implicitWidth + Style.marginXL * 2
+  implicitWidth: tabText.implicitWidth + Style.marginM * 2
 
   // Styling
   radius: Style.iRadiusM
@@ -43,8 +43,8 @@ Rectangle {
       rightMargin: Style.marginS
     }
     text: root.text
-    pointSize: Style.fontSizeM
-    font.weight: root.checked ? Style.fontWeightSemiBold : Style.fontWeightRegular
+    pointSize: root.pointSize
+    font.weight: Style.fontWeightSemiBold
     color: root.isHovered ? Color.mOnHover : (root.checked ? Color.mOnPrimary : Color.mOnSurface)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter

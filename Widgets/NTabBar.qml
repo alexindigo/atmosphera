@@ -11,11 +11,12 @@ Rectangle {
   property int currentIndex: 0
   property real spacing: Style.marginS
   property real margins: Style.marginXS
+  property real tabHeight: Style.baseWidgetSize
   default property alias content: tabRow.children
 
   // Styling
   implicitWidth: tabRow.implicitWidth + (margins * 2)
-  implicitHeight: Style.baseWidgetSize + (margins * 2)
+  implicitHeight: tabHeight + (margins * 2)
   color: Color.mSurfaceVariant
   radius: Style.iRadiusS
 
