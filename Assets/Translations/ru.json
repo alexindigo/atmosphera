@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Присоединиться к нашему Discord",
-        "dismiss": "Ок"
+        "dismiss": "Ок",
+        "feedback": "Оставьте отзыв"
       },
       "empty": "Примечания к выпуску пока недоступны.",
       "highlight-title": "Основные изменения",
@@ -663,6 +664,7 @@
       "webbrowser": "Веб-браузер"
     },
     "delete": "Удалить",
+    "no-results": "Ничего не найдено.",
     "pin": "Закрепить",
     "providers": {
       "applications": "Приложения",
@@ -688,6 +690,7 @@
       "emoji": "Выбор эмодзи",
       "emoji-loading": "Загрузка эмодзи...",
       "emoji-loading-description": "Пожалуйста, подождите",
+      "emoji-no-recent": "Недавних эмодзи пока нет.",
       "emoji-search-description": "Поиск и копирование эмодзи"
     },
     "unpin": "Открепить"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Выводит цвета, которые максимально соответствуют основному изображению.",
-            "scheme-expressive": "Яркая палитра с игривой насыщенностью.",
-            "scheme-fidelity": "Палитра высокой точности, сохраняющая исходные оттенки.",
-            "scheme-fruit-salad": "Красочное сочетание ярких контрастных акцентов.",
-            "scheme-monochrome": "Минимальная палитра, построенная вокруг одного оттенка.",
-            "scheme-neutral": "Приглушенная палитра сдержанных и успокаивающих тонов.",
-            "scheme-rainbow": "Разнообразная палитра, охватывающая весь спектр.",
-            "scheme-tonal-spot": "Сбалансированная палитра с сфокусированными акцентами."
-          },
+          "description": "Выберите метод генерации цветовой схемы, который Matugen будет использовать для создания цветов из ваших обоев.",
           "label": "Тип схемы Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Вид списком",
     "manage-vpn": "VPN-подключения",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Достигнуто максимальное количество виджетов.",
     "microphone-volume-at": "Громкость микрофона: {volume}%",
     "move-to-center-section": "Центральная секция",
     "move-to-left-section": "Левая секция",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Гроза",
     "unknown": "Неизвестно"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Выберите файл"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Применить",
@@ -3128,6 +3128,7 @@
       "frequency": "Частота",
       "gateway": "Шлюз",
       "info": "Информация",
+      "interface": "Сетевой интерфейс",
       "internet": "Интернет",
       "internet-connected": "Подключено к интернету",
       "internet-limited": "Нет интернета",

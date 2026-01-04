@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Entre no nosso Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Dar feedback"
       },
       "empty": "As notas da versão ainda não estão disponíveis.",
       "highlight-title": "Destaques",
@@ -663,6 +664,7 @@
       "webbrowser": "Navegador web"
     },
     "delete": "Apagar",
+    "no-results": "Nenhum resultado encontrado.",
     "pin": "Fixar",
     "providers": {
       "applications": "Aplicativos",
@@ -688,6 +690,7 @@
       "emoji": "Seletor de emojis",
       "emoji-loading": "Carregando emojis...",
       "emoji-loading-description": "Por favor, aguarde",
+      "emoji-no-recent": "Ainda não há emojis recentes.",
       "emoji-search-description": "Buscar e copiar emojis"
     },
     "unpin": "Desafixar"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Deriva cores que correspondem de perto à imagem subjacente.",
-            "scheme-expressive": "Paleta vibrante com saturação divertida.",
-            "scheme-fidelity": "Paleta de alta fidelidade que preserva as tonalidades originais.",
-            "scheme-fruit-salad": "Mistura colorida de detalhes contrastantes e vibrantes.",
-            "scheme-monochrome": "Paleta minimalista construída em torno de uma única tonalidade.",
-            "scheme-neutral": "Paleta de cores neutras com tons suaves e calmantes.",
-            "scheme-rainbow": "Paleta diversificada abrangendo todo o espectro.",
-            "scheme-tonal-spot": "Paleta equilibrada com toques focais."
-          },
+          "description": "Escolha o método de geração de esquema de cores que o Matugen usará para criar cores a partir do seu papel de parede.",
           "label": "Tipo de esquema Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Visualização em lista",
     "manage-vpn": "Conexões VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Número máximo de widgets atingido.",
     "microphone-volume-at": "Volume do microfone: {volume}%",
     "move-to-center-section": "Seção central",
     "move-to-left-section": "Seção esquerda",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Tempestade",
     "unknown": "Desconhecido"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Selecione um arquivo"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Aplicar",
@@ -3128,6 +3128,7 @@
       "frequency": "Frequência",
       "gateway": "Porta de entrada",
       "info": "Informação",
+      "interface": "Interface de rede",
       "internet": "Internet",
       "internet-connected": "Conectado à internet",
       "internet-limited": "Sem internet",

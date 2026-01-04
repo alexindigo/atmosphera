@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "加入我们的 Discord",
-        "dismiss": "确定"
+        "dismiss": "确定",
+        "feedback": "提供反馈"
       },
       "empty": "暂时没有可用的发行说明。",
       "highlight-title": "重点更新",
@@ -663,6 +664,7 @@
       "webbrowser": "网页浏览器"
     },
     "delete": "删除",
+    "no-results": "未找到结果",
     "pin": "固定",
     "providers": {
       "applications": "应用程序",
@@ -688,6 +690,7 @@
       "emoji": "表情符号选择器",
       "emoji-loading": "正在加载表情符号...",
       "emoji-loading-description": "请稍候",
+      "emoji-no-recent": "尚无最近使用的表情符号",
       "emoji-search-description": "搜索和复制表情符号"
     },
     "unpin": "取消固定"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "推导出与底层图像紧密匹配的颜色。",
-            "scheme-expressive": "充满活力的调色板，色彩饱和度高。",
-            "scheme-fidelity": "保留原始色调的高保真调色板。",
-            "scheme-fruit-salad": "鲜艳对比色的缤纷组合。",
-            "scheme-monochrome": "围绕单一色调构建的极简调色板。",
-            "scheme-neutral": "柔和的色调，沉稳平静。",
-            "scheme-rainbow": "涵盖整个光谱的多元调色板。",
-            "scheme-tonal-spot": "平衡的色调，重点突出。"
-          },
+          "description": "选择Matugen将使用哪种配色方案生成方法，从您的壁纸中创建颜色。",
           "label": "Matugen 配色方案类型"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "列表视图",
     "manage-vpn": "VPN 连接",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "已达到最大小部件数量",
     "microphone-volume-at": "麦克风音量：{volume}%",
     "move-to-center-section": "中央部分",
     "move-to-left-section": "左侧部分",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "雷暴",
     "unknown": "未知"
   },
+  "widget": {
+    "file-picker": {
+      "title": "选择文件"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "应用",
@@ -3128,6 +3128,7 @@
       "frequency": "频率",
       "gateway": "网关",
       "info": "信息",
+      "interface": "网络接口",
       "internet": "互联网",
       "internet-connected": "已连接互联网",
       "internet-limited": "无网络",

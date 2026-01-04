@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Word lid van onze Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Geef feedback"
       },
       "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
       "highlight-title": "Hoogtepunten",
@@ -663,6 +664,7 @@
       "webbrowser": "Webbrowser"
     },
     "delete": "Verwijderen",
+    "no-results": "Geen resultaten gevonden.",
     "pin": "Vastmaken",
     "providers": {
       "applications": "Applicaties",
@@ -688,6 +690,7 @@
       "emoji": "Emoji-kiezer",
       "emoji-loading": "Emoji's laden...",
       "emoji-loading-description": "Even geduld",
+      "emoji-no-recent": "Nog geen recente emoji's.",
       "emoji-search-description": "Zoek en kopieer emoji's"
     },
     "unpin": "Losmaken"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Leidt kleuren af die nauw aansluiten bij de onderliggende afbeelding.",
-            "scheme-expressive": "Levendig palet met speelse verzadiging.",
-            "scheme-fidelity": "Palet met hoge getrouwheid dat brontinten behoudt.",
-            "scheme-fruit-salad": "Kleurrijke mix van heldere contrasterende accenten.",
-            "scheme-monochrome": "Minimaal palet rond één enkele tint.",
-            "scheme-neutral": "Gedempt palet met rustige, verzachte tonen.",
-            "scheme-rainbow": "Gevarieerd palet dat het volledige spectrum bestrijkt.",
-            "scheme-tonal-spot": "Gebalanceerd palet met gefocuste accenten."
-          },
+          "description": "Kies de methode voor het genereren van kleurenschema's die Matugen zal gebruiken om kleuren te maken van je achtergrond.",
           "label": "Matugen-schema type"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Lijstweergave",
     "manage-vpn": "VPN-verbindingen",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Maximum aantal widgets bereikt.",
     "microphone-volume-at": "Microfoonvolume: {volume}%",
     "move-to-center-section": "Middelste sectie",
     "move-to-left-section": "Linker sectie",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Onweer",
     "unknown": "Onbekend"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Selecteer een bestand"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Toepassen",
@@ -3128,6 +3128,7 @@
       "frequency": "Frequentie",
       "gateway": "Poort",
       "info": "Info",
+      "interface": "Netwerkinterface",
       "internet": "Internet",
       "internet-connected": "Verbonden met internet",
       "internet-limited": "Geen internet",

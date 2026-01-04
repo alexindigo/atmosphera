@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Discord sunucumuza katıl",
-        "dismiss": "Tamam"
+        "dismiss": "Tamam",
+        "feedback": "Geri bildirim verin"
       },
       "empty": "Sürüm notları henüz hazır değil.",
       "highlight-title": "Öne çıkanlar",
@@ -663,6 +664,7 @@
       "webbrowser": "Tarayıcı"
     },
     "delete": "Sil",
+    "no-results": "Sonuç bulunamadı",
     "pin": "Sabitle",
     "providers": {
       "applications": "Uygulamalar",
@@ -688,6 +690,7 @@
       "emoji": "Emoji seçici",
       "emoji-loading": "Emojiler yükleniyor...",
       "emoji-loading-description": "Lütfen bekleyin",
+      "emoji-no-recent": "Henüz yeni emoji yok",
       "emoji-search-description": "Emoji arama ve kopyalama"
     },
     "unpin": "Sabitlemeyi kaldır"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Temel görüntüye yakın renkler türetir.",
-            "scheme-expressive": "Oyuncak doygunlukla canlı palet.",
-            "scheme-fidelity": "Kaynak tonlarını koruyan yüksek sadakatli palet.",
-            "scheme-fruit-salad": "Canlı kontrast aksanların renkli karışımı.",
-            "scheme-monochrome": "Tek bir ton etrafında inşa edilmiş minimal palet.",
-            "scheme-neutral": "Sakinleştirici ve bastırılmış tonlarla yumuşak palet.",
-            "scheme-rainbow": "Tam spektrumu kapsayan çeşitli palet.",
-            "scheme-tonal-spot": "Odaklanmış aksanlarla dengeli palet."
-          },
+          "description": "Matugen'in duvar kağıdınızdan renkler oluşturmak için kullanacağı renk şeması oluşturma yöntemini seçin.",
           "label": "Matugen şema türü"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Liste görünümü",
     "manage-vpn": "VPN bağlantıları",
     "manage-wifi": "Kablosuz Bağlantı",
+    "max-widgets-reached": "Maksimum araç sayısına ulaşıldı.",
     "microphone-volume-at": "Mikrofon sesi: %{volume}",
     "move-to-center-section": "Orta bölüm",
     "move-to-left-section": "Sol bölüm",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Fırtına",
     "unknown": "Bilinmiyor"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Bir dosya seçin"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Uygula",
@@ -3128,6 +3128,7 @@
       "frequency": "Frekans",
       "gateway": "Geçit",
       "info": "Bilgi",
+      "interface": "Ağ arayüzü",
       "internet": "İnternet",
       "internet-connected": "İnternete bağlı",
       "internet-limited": "İnternet yok",

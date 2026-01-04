@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Únete a nuestro Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Dar retroalimentación"
       },
       "empty": "Las notas de la versión aún no están disponibles.",
       "highlight-title": "Cambios destacados",
@@ -663,6 +664,7 @@
       "webbrowser": "Navegador web"
     },
     "delete": "Borrar",
+    "no-results": "No se encontraron resultados.",
     "pin": "Anclar",
     "providers": {
       "applications": "Aplicaciones",
@@ -688,6 +690,7 @@
       "emoji": "Selector de emojis",
       "emoji-loading": "Cargando emojis...",
       "emoji-loading-description": "Por favor espera",
+      "emoji-no-recent": "Aún no hay emojis recientes.",
       "emoji-search-description": "Buscar y copiar emojis"
     },
     "unpin": "Desanclar"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Deriva colores que coinciden estrechamente con la imagen subyacente.",
-            "scheme-expressive": "Paleta vibrante con saturación juguetona.",
-            "scheme-fidelity": "Paleta de alta fidelidad que preserva los tonos originales",
-            "scheme-fruit-salad": "Mezcla colorida de acentos brillantes y contrastantes.",
-            "scheme-monochrome": "Paleta minimalista construida en torno a un solo tono.",
-            "scheme-neutral": "Paleta apagada con tonos suaves y relajantes.",
-            "scheme-rainbow": "Paleta diversa que abarca todo el espectro.",
-            "scheme-tonal-spot": "Paleta equilibrada con acentos definidos."
-          },
+          "description": "Elige el método de generación de esquemas de color que Matugen usará para crear colores a partir de tu fondo de pantalla.",
           "label": "Tipo de esquema Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Vista de lista",
     "manage-vpn": "Conexiones VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Se ha alcanzado el número máximo de widgets.",
     "microphone-volume-at": "Volumen del micrófono: {volume}%",
     "move-to-center-section": "Sección central",
     "move-to-left-section": "Sección izquierda",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Tormenta",
     "unknown": "Desconocido"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Seleccionar un archivo"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Aplicar",
@@ -3128,6 +3128,7 @@
       "frequency": "Frecuencia",
       "gateway": "Puerta de enlace",
       "info": "Información",
+      "interface": "Interfaz de red",
       "internet": "Internet",
       "internet-connected": "Conectado a internet",
       "internet-limited": "Sin internet",

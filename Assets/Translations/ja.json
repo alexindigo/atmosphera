@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Discord に参加",
-        "dismiss": "OK"
+        "dismiss": "OK",
+        "feedback": "フィードバックをお願いします。"
       },
       "empty": "リリースノートはまだ利用できません。",
       "highlight-title": "ハイライト",
@@ -663,6 +664,7 @@
       "webbrowser": "ウェブブラウザ"
     },
     "delete": "削除",
+    "no-results": "結果が見つかりませんでした。",
     "pin": "ピン留め",
     "providers": {
       "applications": "アプリケーション",
@@ -688,6 +690,7 @@
       "emoji": "絵文字選択",
       "emoji-loading": "絵文字を読み込み中...",
       "emoji-loading-description": "お待ちください",
+      "emoji-no-recent": "まだ最近使った絵文字はありません。",
       "emoji-search-description": "絵文字を検索してコピー"
     },
     "unpin": "ピン留め解除"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "元画像に馴染む色を抽出します。",
-            "scheme-expressive": "彩度が高く、鮮やかで遊び心のあるパレット。",
-            "scheme-fidelity": "元の色相を保持した、忠実度の高いパレット。",
-            "scheme-fruit-salad": "明るく対照的なアクセントを混ぜたカラフルなパレット。",
-            "scheme-monochrome": "単一の色相で構成されたミニマルなパレット。",
-            "scheme-neutral": "彩度を抑えた、落ち着きのあるパレット。",
-            "scheme-rainbow": "スペクトル全体をカバーする多様なパレット。",
-            "scheme-tonal-spot": "アクセントを強調したバランスの良いパレット。"
-          },
+          "description": "Matugen が壁紙から色を作成するために使用する配色生成方法を選択してください。",
           "label": "Matugen のスキームタイプ"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "リスト表示",
     "manage-vpn": "VPN 接続",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "ウィジェットの最大数に達しました",
     "microphone-volume-at": "マイク音量: {volume}%",
     "move-to-center-section": "中央セクション",
     "move-to-left-section": "左セクション",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "雷雨",
     "unknown": "不明"
   },
+  "widget": {
+    "file-picker": {
+      "title": "ファイルを選択"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "適用",
@@ -3128,6 +3128,7 @@
       "frequency": "周波数",
       "gateway": "ゲートウェイ",
       "info": "情報",
+      "interface": "ネットワークインターフェース",
       "internet": "インターネット",
       "internet-connected": "インターネット接続",
       "internet-limited": "インターネットなし",

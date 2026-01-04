@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Têkeve Discorda me",
-        "dismiss": "Baş e"
+        "dismiss": "Baş e",
+        "feedback": "Nerînan bide"
       },
       "empty": "Nîşeyên weşanê hîn ne pêkan in.",
       "highlight-title": "Berbiroj",
@@ -663,6 +664,7 @@
       "webbrowser": "Geroka tevnê"
     },
     "delete": "Jê bibe",
+    "no-results": "Ti encamek nehat dîtin",
     "pin": "Bi dar bixe",
     "providers": {
       "applications": "Serlêdan",
@@ -688,6 +690,7 @@
       "emoji": "Hilbijêrê îmojî",
       "emoji-loading": "Îmojî tên barkriin...",
       "emoji-loading-description": "Tika raweste",
+      "emoji-no-recent": "Hîna emojiyên dawî tune ne",
       "emoji-search-description": "Lêgerîn û kopîkirina emojiyan"
     },
     "unpin": "Bi dar nexe"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Rengên ku bi nêzîkî wêneya bingehîn re têkildar in, derdixe.",
-            "scheme-expressive": "Paletekî geş bi têrbûna lîstikvan.",
-            "scheme-fidelity": "Paletekek bi dilsoziya bilind ku rengên çavkaniyê diparêze.",
-            "scheme-fruit-salad": "Tevlîheviyek rengîn a devokên geş ên dijber.",
-            "scheme-monochrome": "Paletekî mînîmal ku li dora rengê bingehîn hatiye avakirin.",
-            "scheme-neutral": "Paletekî bêdeng bi rengên nerm û aram.",
-            "scheme-rainbow": "ڕەنگدانەوەی جۆراوجۆر کە تەواوی ڕەنگەکان دەگرێتەوە.",
-            "scheme-tonal-spot": "Paletekî hevseng bi tekezên fokus."
-          },
+          "description": "Rêbazê hilberîna şema rengan hilbijêre ku Matugen dê bikar bîne da ku rengan ji dîwarê te biafirîne.",
           "label": "Şêweya şemaya Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Dîtina lîsteyê",
     "manage-vpn": "Girêdanên VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Hejmara herî zêde ya widgetan hate bidestxistin",
     "microphone-volume-at": "Hêjmara mîkrofonê: {volume}%",
     "move-to-center-section": "Navenda beşê",
     "move-to-left-section": "Beşa çepê",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Bahoza bruskî",
     "unknown": "Nenas e"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Pelê hilbijêre"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Bisepîne",
@@ -3128,6 +3128,7 @@
       "frequency": "Frekans",
       "gateway": "Dergeh",
       "info": "Zanyarî",
+      "interface": "Dîmendera torê",
       "internet": "Înternet",
       "internet-connected": "Înternet hat girêdan",
       "internet-limited": "Înternet tune ye",

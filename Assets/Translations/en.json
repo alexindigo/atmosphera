@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Join our Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Give feedback"
       },
       "empty": "Release notes are not available yet.",
       "highlight-title": "Highlights",
@@ -663,6 +664,7 @@
       "webbrowser": "Web Browser"
     },
     "delete": "Delete",
+    "no-results": "No results found",
     "pin": "Pin",
     "providers": {
       "applications": "Applications",
@@ -688,6 +690,7 @@
       "emoji": "Emoji picker",
       "emoji-loading": "Loading emojis...",
       "emoji-loading-description": "Please wait",
+      "emoji-no-recent": "No recent emojis yet",
       "emoji-search-description": "Search and copy emojis"
     },
     "unpin": "Unpin"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Derives colors that closely match the underlying image.",
-            "scheme-expressive": "Vibrant palette with playful saturation.",
-            "scheme-fidelity": "High-fidelity palette that preserves source hues.",
-            "scheme-fruit-salad": "Colorful mix of bright contrasting accents.",
-            "scheme-monochrome": "Minimal palette built around a single hue.",
-            "scheme-neutral": "Muted palette with subdued and calming tones.",
-            "scheme-rainbow": "Diverse palette spanning the full spectrum.",
-            "scheme-tonal-spot": "Balanced palette with focused accents."
-          },
+          "description": "Choose the color scheme generation method that Matugen will use to create colors from your wallpaper.",
           "label": "Matugen scheme type"
         },
         "section": {
@@ -2834,7 +2828,7 @@
     "wallpaper-colors": {
       "disabled": "Wallpaper colors disabled.",
       "enabled": "Wallpaper colors enabled.",
-      "label": "Wallpaper colors generation",
+      "label": "Wallpaper colors",
       "not-installed": "Matugen not installed — required for wallpaper color extraction."
     },
     "wifi": {
@@ -2878,6 +2872,7 @@
     "list-view": "List view",
     "manage-vpn": "VPN connections",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Maximum widgets reached",
     "microphone-volume-at": "Microphone volume: {volume}%",
     "move-to-center-section": "Center section",
     "move-to-left-section": "Left section",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Thunderstorm",
     "unknown": "Unknown"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Select a file"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Apply",
@@ -3128,6 +3128,7 @@
       "frequency": "Frequency",
       "gateway": "Gateway",
       "info": "Info",
+      "interface": "Network interface",
       "internet": "Internet",
       "internet-connected": "Internet connected",
       "internet-limited": "No internet",

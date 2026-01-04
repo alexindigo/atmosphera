@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Csatlakozzon a Discordunkhoz",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Adj visszajelzést"
       },
       "empty": "A kiadási jegyzetek még nem érhetők el.",
       "highlight-title": "Főbb újdonságok",
@@ -663,6 +664,7 @@
       "webbrowser": "Webböngésző"
     },
     "delete": "Törlés",
+    "no-results": "Nincs találat",
     "pin": "Rögzítés",
     "providers": {
       "applications": "Alkalmazások",
@@ -688,6 +690,7 @@
       "emoji": "Emoji választó",
       "emoji-loading": "Emojik betöltése...",
       "emoji-loading-description": "Kérjük, várjon",
+      "emoji-no-recent": "Nincsenek még legutóbbi emojik",
       "emoji-search-description": "Emojik keresése és másolása"
     },
     "unpin": "Rögzítés feloldása"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Az alapul szolgáló képhez szorosan illeszkedő színeket származtat.",
-            "scheme-expressive": "Élénk paletta játékos telítettséggel.",
-            "scheme-fidelity": "Nagy pontosságú paletta, amely megőrzi a forrás színtónusait.",
-            "scheme-fruit-salad": "Színes keveréke az élénk kontrasztos ékezeteknek.",
-            "scheme-monochrome": "Minimális paletta egyetlen színárnyalat köré építve.",
-            "scheme-neutral": "Tompa paletta visszafogott és nyugtató tónusokkal.",
-            "scheme-rainbow": "Változatos paletta, amely a teljes spektrumot lefedi.",
-            "scheme-tonal-spot": "Kiegyensúlyozott paletta fókuszált hangsúlyokkal."
-          },
+          "description": "Válassza ki a színséma-generálási módszert, amellyel a Matugen színeket fog létrehozni a háttérképéből.",
           "label": "Matugen séma típusa"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Lista nézet",
     "manage-vpn": "VPN-kapcsolatok",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Elérte a maximális widgetszámot.",
     "microphone-volume-at": "Mikrofon hangereje: {volume}%",
     "move-to-center-section": "Középső szakasz",
     "move-to-left-section": "Bal oldali szakasz",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Zivatar",
     "unknown": "Ismeretlen"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Fájl kiválasztása"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Alkalmazás",
@@ -3128,6 +3128,7 @@
       "frequency": "Frekvencia",
       "gateway": "Átjáró",
       "info": "Infó",
+      "interface": "Hálózati interfész",
       "internet": "Internet",
       "internet-connected": "Internet csatlakoztatva",
       "internet-limited": "Nincs internet",

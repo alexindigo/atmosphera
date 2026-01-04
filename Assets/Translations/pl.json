@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Dołącz do Discorda",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Przekaż opinię."
       },
       "empty": "Informacje o wydaniu nie są jeszcze dostępne.",
       "highlight-title": "Najważniejsze zmiany",
@@ -663,6 +664,7 @@
       "webbrowser": "Przeglądarka www"
     },
     "delete": "Usuń",
+    "no-results": "Nie znaleziono wyników.",
     "pin": "Przypnij",
     "providers": {
       "applications": "Aplikacje",
@@ -688,6 +690,7 @@
       "emoji": "Wybór Emoji",
       "emoji-loading": "Ładowanie emoji...",
       "emoji-loading-description": "Proszę czekać",
+      "emoji-no-recent": "Brak ostatnich emoji.",
       "emoji-search-description": "Szukaj i kopiuj emoji"
     },
     "unpin": "Odepnij"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Generuje kolory ściśle dopasowane do obrazu.",
-            "scheme-expressive": "Żywa paleta z radosnym nasyceniem.",
-            "scheme-fidelity": "Paleta o wysokiej wierności, zachowująca oryginalne odcienie.",
-            "scheme-fruit-salad": "Kolorowa mieszanka jasnych, kontrastujących akcentów.",
-            "scheme-monochrome": "Minimalistyczna paleta zbudowana wokół jednego odcienia.",
-            "scheme-neutral": "Stonowana paleta ze spokojnymi barwami.",
-            "scheme-rainbow": "Różnorodna paleta obejmująca pełne spektrum.",
-            "scheme-tonal-spot": "Zrównoważona paleta ze skupionymi akcentami."
-          },
+          "description": "Wybierz metodę generowania schematu kolorów, której Matugen użyje do tworzenia kolorów z Twojej tapety.",
           "label": "Typ schematu Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Widok listy",
     "manage-vpn": "Połączenia VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Osiągnięto maksymalną liczbę widżetów.",
     "microphone-volume-at": "Głośność mikrofonu: {volume}%",
     "move-to-center-section": "Sekcja środkowa",
     "move-to-left-section": "Sekcja lewa",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Burza",
     "unknown": "Nieznane"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Wybierz plik"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Zastosuj",
@@ -3128,6 +3128,7 @@
       "frequency": "Częstotliwość",
       "gateway": "Brama",
       "info": "Informacje",
+      "interface": "Interfejs sieciowy",
       "internet": "Internet",
       "internet-connected": "Połączony z internetem",
       "internet-limited": "Brak internetu",

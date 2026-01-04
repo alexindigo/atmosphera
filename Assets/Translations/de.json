@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Unserem Discord beitreten",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Feedback geben"
       },
       "empty": "Es sind noch keine Versionshinweise verfügbar.",
       "highlight-title": "Highlights",
@@ -663,6 +664,7 @@
       "webbrowser": "Webbrowser"
     },
     "delete": "Löschen",
+    "no-results": "Keine Ergebnisse gefunden",
     "pin": "Anheften",
     "providers": {
       "applications": "Anwendungen",
@@ -688,6 +690,7 @@
       "emoji": "Emoji-Auswahl",
       "emoji-loading": "Lade Emojis...",
       "emoji-loading-description": "Bitte warten",
+      "emoji-no-recent": "Noch keine kürzlich verwendeten Emojis.",
       "emoji-search-description": "Emojis suchen und kopieren"
     },
     "unpin": "Lösen"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Leitet Farben ab, die eng mit dem zugrunde liegenden Bild übereinstimmen.",
-            "scheme-expressive": "Lebendige Farbpalette mit verspielter Sättigung.",
-            "scheme-fidelity": "Farbtreue Palette, die die Originalfarbtöne beibehält.",
-            "scheme-fruit-salad": "Farbenfroher Mix aus leuchtenden, kontrastreichen Akzenten.",
-            "scheme-monochrome": "Minimale Farbpalette, die auf einem einzigen Farbton basiert.",
-            "scheme-neutral": "Gedämpfte Farbpalette mit dezenten und beruhigenden Tönen.",
-            "scheme-rainbow": "Vielfältige Palette, die das gesamte Spektrum abdeckt.",
-            "scheme-tonal-spot": "Ausgewogene Farbpalette mit gezielten Akzenten."
-          },
+          "description": "Wählen Sie die Farbschema-Generierungsmethode, die Matugen verwenden soll, um Farben aus Ihrem Hintergrundbild zu erstellen.",
           "label": "Matugen-Schema-Typ"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Listenansicht",
     "manage-vpn": "VPN-Verbindungen",
     "manage-wifi": "WLAN",
+    "max-widgets-reached": "Maximale Anzahl an Widgets erreicht",
     "microphone-volume-at": "Mikrofonlautstärke: {volume}%",
     "move-to-center-section": "Mittlere Sektion",
     "move-to-left-section": "Linke Sektion",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Gewitter",
     "unknown": "Unbekannt"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Datei auswählen"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Anwenden",
@@ -3128,6 +3128,7 @@
       "frequency": "Frequenz",
       "gateway": "Gateway: Gateway",
       "info": "Info",
+      "interface": "Netzwerkschnittstelle",
       "internet": "Internet",
       "internet-connected": "Mit dem Internet verbunden",
       "internet-limited": "Kein Internet",

@@ -123,7 +123,7 @@ ColumnLayout {
         AppThemeService.generate();
         ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"), "settings-color-scheme");
       } else {
-        ToastService.showWarning(I18n.tr("oast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
+        ToastService.showWarning(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
       }
     }
 

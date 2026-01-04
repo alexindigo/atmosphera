@@ -560,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Приєднатися до нашого Discord",
-        "dismiss": "Ок"
+        "dismiss": "Ок",
+        "feedback": "Надати відгук"
       },
       "empty": "Примітки до релізу ще недоступні.",
       "highlight-title": "Основні зміни",
@@ -663,6 +664,7 @@
       "webbrowser": "Веб-браузер"
     },
     "delete": "Видалити",
+    "no-results": "Результатів не знайдено",
     "pin": "Закріпити",
     "providers": {
       "applications": "Застосунки",
@@ -688,6 +690,7 @@
       "emoji": "Обрати емодзі",
       "emoji-loading": "Завантаження емодзі...",
       "emoji-loading-description": "Зачекайте, будь ласка",
+      "emoji-no-recent": "Немає нещодавніх емодзі",
       "emoji-search-description": "Пошук і копіювання емодзі"
     },
     "unpin": "Відкріпити"
@@ -1163,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Генерує кольори, що тісно збігаються з базовим зображенням.",
-            "scheme-expressive": "Яскрава палітра з грайливою насиченістю.",
-            "scheme-fidelity": "Високоточна палітра, що зберігає вихідні відтінки.",
-            "scheme-fruit-salad": "Барвистий мікс яскравих контрастних акцентів.",
-            "scheme-monochrome": "Мінімальна палітра на основі одного відтінку.",
-            "scheme-neutral": "Приглушена палітра з стриманими та заспокійливими тонами.",
-            "scheme-rainbow": "Різноманітна палітра, що охоплює весь спектр.",
-            "scheme-tonal-spot": "Збалансована палітра з фокусованими акцентами."
-          },
+          "description": "Виберіть метод генерації колірної схеми, який Matugen використовуватиме для створення кольорів з ваших шпалер.",
           "label": "Тип схеми Matugen"
         },
         "section": {
@@ -2878,6 +2872,7 @@
     "list-view": "Список",
     "manage-vpn": "Підключення VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Досягнуто максимальної кількості віджетів",
     "microphone-volume-at": "Гучність мікрофона: {volume}%",
     "move-to-center-section": "Центральна секція",
     "move-to-left-section": "Ліва секція",
@@ -3029,6 +3024,11 @@
     "thunderstorm": "Гроза",
     "unknown": "Невідомо"
   },
+  "widget": {
+    "file-picker": {
+      "title": "Виберіть файл"
+    }
+  },
   "widgets": {
     "color-picker": {
       "apply": "Застосувати",
@@ -3128,6 +3128,7 @@
       "frequency": "Частота",
       "gateway": "Шлюз",
       "info": "Інформація",
+      "interface": "Мережевий інтерфейс",
       "internet": "Інтернет",
       "internet-connected": "Підключено до Інтернету",
       "internet-limited": "Немає інтернету",
