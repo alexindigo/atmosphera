@@ -1984,4 +1984,4 @@
       "welcomePage.buttonHoverBackground": "{{colors.primary.default.hex}}20",
       "widget.shadow": "{{colors.background.default.hex}}5c"
     }
-  }
+}
