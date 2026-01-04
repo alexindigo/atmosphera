@@ -147,26 +147,6 @@ Item {
                                               }
                                             });
     }
-    function calculator() {
-      root.screenDetector.withCurrentScreen(screen => {
-                                              var launcherPanel = PanelService.getPanel("launcherPanel", screen);
-                                              if (!launcherPanel)
-                                              return;
-                                              var searchText = launcherPanel.searchText || "";
-                                              var isInCalcMode = searchText.startsWith(">calc");
-                                              if (!launcherPanel.isPanelOpen) {
-                                                // Closed -> open in calculator mode
-                                                launcherPanel.open();
-                                                launcherPanel.setSearchText(">calc ");
-                                              } else if (isInCalcMode) {
-                                                // Already in calculator mode -> close
-                                                launcherPanel.close();
-                                              } else {
-                                                // In another mode -> switch to calculator mode
-                                                launcherPanel.setSearchText(">calc ");
-                                              }
-                                            });
-    }
     function emoji() {
       root.screenDetector.withCurrentScreen(screen => {
                                               var launcherPanel = PanelService.getPanel("launcherPanel", screen);

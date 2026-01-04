@@ -11,6 +11,7 @@ Item {
   property var launcher: null
   property string iconMode: Settings.data.appLauncher.iconMode
   property bool handleSearch: false
+  property string supportedLayouts: "grid"  // Only grid layout for emoji
 
   property string selectedCategory: "recent"
   property bool isBrowsingMode: false
@@ -142,7 +143,7 @@ Item {
       "description": description,
       "icon": null,
       "isImage": false,
-      "emojiChar": emojiChar,
+      "displayString": emojiChar,
       "onActivate": function () {
         EmojiService.copy(emojiChar);
         launcher.close();

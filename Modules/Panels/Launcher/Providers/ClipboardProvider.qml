@@ -10,6 +10,7 @@ Item {
   property string name: I18n.tr("launcher.providers.clipboard")
   property var launcher: null
   property string iconMode: Settings.data.appLauncher.iconMode
+  property string supportedLayouts: "list"  // List view for clipboard content
 
   // Provider capabilities
   property bool handleSearch: false // Don't handle regular search

@@ -10,6 +10,8 @@ import "Providers"
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Keyboard
+import qs.Services.Noctalia
+import qs.Services.UI
 import qs.Widgets
 
 SmartPanel {
@@ -53,20 +55,83 @@ SmartPanel {
   property var providers: []
   property var activeProvider: null
   property bool resultsReady: false
+  property var pluginProviderInstances: ({}) // Track plugin provider instances
   property bool ignoreMouseHover: Settings.data.appLauncher.ignoreMouseInput
 
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
-  readonly property bool isGridView: {
-    // Always use list view for clipboard and calculator to better display content
-    if (searchText.startsWith(">clip") || searchText.startsWith(">calc")) {
+  // Generic provider browsing support
+  readonly property bool providerIsBrowsing: {
+    if (!activeProvider) {
+      // Default apps provider
+      return appsProvider.isBrowsingMode && !searchText.startsWith(">");
+    }
+    return activeProvider.isBrowsingMode === true;
+  }
+
+  // Get categories for the active provider (uses availableCategories if present, falls back to categories)
+  readonly property var providerCategories: {
+    var provider = activeProvider || appsProvider;
+    if (provider.availableCategories && provider.availableCategories.length > 0) {
+      return provider.availableCategories;
+    }
+    return provider.categories || [];
+  }
+
+  // Check if categories should be shown
+  readonly property bool showProviderCategories: {
+    if (!providerIsBrowsing || providerCategories.length === 0) {
       return false;
     }
-    // Force list view for inline calculator (pure math expressions)
+    // For apps provider (null activeProvider), respect the showCategories setting
+    if (!activeProvider || activeProvider === appsProvider) {
+      return Settings.data.appLauncher.showCategories;
+    }
+    return true;
+  }
+
+  // Check if results have displayString (emoji/kaomoji style)
+  readonly property bool providerHasDisplayString: {
+    return providerIsBrowsing && results.length > 0 && !!results[0].displayString;
+  }
+
+  // Get supported layouts for current provider ("grid", "list", or "both")
+  readonly property string providerSupportedLayouts: {
+    var provider = activeProvider || appsProvider;
+    if (provider && provider.supportedLayouts) {
+      return provider.supportedLayouts;
+    }
+    return "both"; // Default: both layouts supported
+  }
+
+  // Whether to show the layout toggle button
+  readonly property bool showLayoutToggle: {
+    // Hide toggle for inline calculator (no provider, just math expression)
     if (isMathExpression(searchText.trim())) {
       return false;
     }
-    if (activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
+    // Hide toggle when provider has displayString (forces grid)
+    if (providerHasDisplayString) {
+      return false;
+    }
+    // Only show toggle when provider supports both layouts
+    return providerSupportedLayouts === "both";
+  }
+
+  readonly property bool isGridView: {
+    // Force list view for inline calculator (no provider, just math expression)
+    if (isMathExpression(searchText.trim())) {
+      return false;
+    }
+    // Respect provider's layout preference
+    if (providerSupportedLayouts === "grid") {
+      return true;
+    }
+    if (providerSupportedLayouts === "list") {
+      return false;
+    }
+    // Provider supports both - use user preference or displayString hint
+    if (providerHasDisplayString) {
       return true;
     }
     return Settings.data.appLauncher.viewMode === "grid";
@@ -82,37 +147,73 @@ SmartPanel {
   // This gets updated dynamically by the GridView when its actual width is known
   property int gridColumns: 5
 
+  // Listen for plugin provider registry changes
+  Connections {
+    target: LauncherProviderRegistry
+    function onPluginProviderRegistryUpdated() {
+      root.syncPluginProviders();
+    }
+  }
+
+  onSearchTextChanged: updateResults()
+
+  // Lifecycle
+  onOpened: {
+    resultsReady = false;
+    ignoreMouseHover = true;
+
+    // Sync plugin providers first
+    syncPluginProviders();
+
+    // Notify providers and update results
+    // Use Qt.callLater to ensure providers are registered (Component.onCompleted runs first)
+    Qt.callLater(() => {
+                   for (let provider of providers) {
+                     if (provider.onOpened)
+                     provider.onOpened();
+                   }
+                   updateResults();
+                   resultsReady = true;
+                 });
+  }
+
+  onClosed: {
+    // Reset search text
+    searchText = "";
+    ignoreMouseHover = true;
+
+    // Notify providers
+    for (let provider of providers) {
+      if (provider.onClosed)
+        provider.onClosed();
+    }
+  }
+
   // Override keyboard handlers from SmartPanel for navigation.
   // Launcher specific: onTabPressed() and onBackTabPressed() are special here.
   // They are not coming from SmartPanelWindow as they are consumed by the search field before reaching the panel.
   // They are instead being forwared from the search field NTextInput below.
   function onTabPressed() {
-    // In emoji browsing mode, Tab navigates between categories
-    if (activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
-      var currentIndex = emojiProvider.categories.indexOf(emojiProvider.selectedCategory);
-      var nextIndex = (currentIndex + 1) % emojiProvider.categories.length;
-      emojiProvider.selectCategory(emojiProvider.categories[nextIndex]);
-    } else if ((activeProvider === null || activeProvider === appsProvider) && appsProvider.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories) {
-      // In apps browsing mode (no search), Tab navigates between categories
-      var availableCategories = appsProvider.availableCategories || ["all"];
-      var currentIndex = availableCategories.indexOf(appsProvider.selectedCategory);
-      var nextIndex = (currentIndex + 1) % availableCategories.length;
-      appsProvider.selectCategory(availableCategories[nextIndex]);
+    // In browsing mode with categories, Tab navigates between categories
+    if (showProviderCategories) {
+      var provider = activeProvider || appsProvider;
+      var categories = providerCategories;
+      var currentIndex = categories.indexOf(provider.selectedCategory);
+      var nextIndex = (currentIndex + 1) % categories.length;
+      provider.selectCategory(categories[nextIndex]);
     } else {
       selectNextWrapped();
     }
   }
 
   function onBackTabPressed() {
-    if (activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
-      var currentIndex = emojiProvider.categories.indexOf(emojiProvider.selectedCategory);
-      var previousIndex = ((currentIndex - 1) % emojiProvider.categories.length + emojiProvider.categories.length) % emojiProvider.categories.length;
-      emojiProvider.selectCategory(emojiProvider.categories[previousIndex]);
-    } else if ((activeProvider === null || activeProvider === appsProvider) && appsProvider.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories) {
-      var availableCategories = appsProvider.availableCategories || ["all"];
-      var currentIndex = availableCategories.indexOf(appsProvider.selectedCategory);
-      var previousIndex = ((currentIndex - 1) % availableCategories.length + availableCategories.length) % availableCategories.length;
-      appsProvider.selectCategory(availableCategories[previousIndex]);
+    // In browsing mode with categories, Shift+Tab navigates between categories
+    if (showProviderCategories) {
+      var provider = activeProvider || appsProvider;
+      var categories = providerCategories;
+      var currentIndex = categories.indexOf(provider.selectedCategory);
+      var previousIndex = ((currentIndex - 1) % categories.length + categories.length) % categories.length;
+      provider.selectCategory(categories[previousIndex]);
     } else {
       selectPreviousWrapped();
     }
@@ -210,6 +311,51 @@ SmartPanel {
     provider.launcher = root;
     if (provider.init)
       provider.init();
+  }
+
+  // Plugin provider sync - loads providers from LauncherProviderRegistry
+  function syncPluginProviders() {
+    var registeredIds = LauncherProviderRegistry.getPluginProviders();
+
+    // Remove providers that are no longer registered
+    for (var existingId in pluginProviderInstances) {
+      if (registeredIds.indexOf(existingId) === -1) {
+        // Unregister and destroy
+        var idx = providers.indexOf(pluginProviderInstances[existingId]);
+        if (idx >= 0) {
+          providers.splice(idx, 1);
+        }
+        pluginProviderInstances[existingId].destroy();
+        delete pluginProviderInstances[existingId];
+        Logger.d("Launcher", "Removed plugin provider:", existingId);
+      }
+    }
+
+    // Add new providers
+    for (var i = 0; i < registeredIds.length; i++) {
+      var providerId = registeredIds[i];
+      if (!pluginProviderInstances[providerId]) {
+        var component = LauncherProviderRegistry.getProviderComponent(providerId);
+        var pluginId = providerId.substring(7); // Remove "plugin:" prefix
+        var pluginApi = PluginService.getPluginAPI(pluginId);
+
+        if (component && pluginApi) {
+          var instance = component.createObject(root, {
+                                                  pluginApi: pluginApi
+                                                });
+          if (instance) {
+            pluginProviderInstances[providerId] = instance;
+            registerProvider(instance);
+            Logger.d("Launcher", "Registered plugin provider:", providerId);
+          }
+        }
+      }
+    }
+
+    // Update results if launcher is open
+    if (root.isPanelOpen) {
+      updateResults();
+    }
   }
 
   // Caclualtor handling
@@ -332,80 +478,6 @@ SmartPanel {
     }
 
     selectedIndex = 0;
-  }
-
-  onSearchTextChanged: updateResults()
-
-  // Lifecycle
-  onOpened: {
-    resultsReady = false;
-    ignoreMouseHover = true;
-
-    // Notify providers and update results
-    // Use Qt.callLater to ensure providers are registered (Component.onCompleted runs first)
-    Qt.callLater(() => {
-                   for (let provider of providers) {
-                     if (provider.onOpened)
-                     provider.onOpened();
-                   }
-                   updateResults();
-                   resultsReady = true;
-                 });
-  }
-
-  onClosed: {
-    // Reset search text
-    searchText = "";
-    ignoreMouseHover = true;
-
-    // Notify providers
-    for (let provider of providers) {
-      if (provider.onClosed)
-        provider.onClosed();
-    }
-  }
-
-  // Provider components - declared inline so imports work correctly
-  ApplicationsProvider {
-    id: appsProvider
-    Component.onCompleted: {
-      registerProvider(this);
-      Logger.d("Launcher", "Registered: ApplicationsProvider");
-    }
-  }
-
-  CalculatorProvider {
-    id: calcProvider
-    Component.onCompleted: {
-      registerProvider(this);
-      Logger.d("Launcher", "Registered: CalculatorProvider");
-    }
-  }
-
-  ClipboardProvider {
-    id: clipProvider
-    Component.onCompleted: {
-      if (Settings.data.appLauncher.enableClipboardHistory) {
-        registerProvider(this);
-        Logger.d("Launcher", "Registered: ClipboardProvider");
-      }
-    }
-  }
-
-  CommandProvider {
-    id: cmdProvider
-    Component.onCompleted: {
-      registerProvider(this);
-      Logger.d("Launcher", "Registered: CommandProvider");
-    }
-  }
-
-  EmojiProvider {
-    id: emojiProvider
-    Component.onCompleted: {
-      registerProvider(this);
-      Logger.d("Launcher", "Registered: EmojiProvider");
-    }
   }
 
   // Navigation functions
@@ -562,6 +634,44 @@ SmartPanel {
     }
   }
 
+  // -----------------------
+  // Provider components
+  // -----------------------
+  ApplicationsProvider {
+    id: appsProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: ApplicationsProvider");
+    }
+  }
+
+  ClipboardProvider {
+    id: clipProvider
+    Component.onCompleted: {
+      if (Settings.data.appLauncher.enableClipboardHistory) {
+        registerProvider(this);
+        Logger.d("Launcher", "Registered: ClipboardProvider");
+      }
+    }
+  }
+
+  CommandProvider {
+    id: cmdProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: CommandProvider");
+    }
+  }
+
+  EmojiProvider {
+    id: emojiProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: EmojiProvider");
+    }
+  }
+
+  // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui
     color: Color.transparent
@@ -733,7 +843,7 @@ SmartPanel {
           }
 
           NIconButton {
-            visible: root.activeProvider === null || root.activeProvider === appsProvider
+            visible: root.showLayoutToggle
             icon: Settings.data.appLauncher.viewMode === "grid" ? "layout-list" : "layout-grid"
             tooltipText: Settings.data.appLauncher.viewMode === "grid" ? I18n.tr("tooltips.list-view") : I18n.tr("tooltips.grid-view")
             Layout.preferredWidth: searchInput.height
@@ -744,101 +854,39 @@ SmartPanel {
           }
         }
 
-        // Emoji category tabs (shown when in browsing mode)
+        // Unified category tabs (works with any provider that has categories)
         NTabBar {
-          id: emojiCategoryTabs
-          visible: root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode
+          id: categoryTabs
+          visible: root.showProviderCategories
           Layout.fillWidth: true
           margins: Style.marginM
           border.color: Style.boxBorderColor
           border.width: Style.borderS
 
+          property var currentProvider: root.activeProvider || appsProvider
+
           property int computedCurrentIndex: {
-            if (visible && emojiProvider.categories) {
-              return emojiProvider.categories.indexOf(emojiProvider.selectedCategory);
+            if (visible && root.providerCategories.length > 0) {
+              return root.providerCategories.indexOf(currentProvider.selectedCategory);
             }
             return 0;
           }
           currentIndex: computedCurrentIndex
 
           Repeater {
-            model: emojiProvider.categories
+            model: root.providerCategories
             NIconTabButton {
               required property string modelData
               required property int index
-              icon: emojiProvider.categoryIcons[modelData] || "star"
-              tooltipText: emojiProvider.getCategoryName ? emojiProvider.getCategoryName(modelData) : modelData
+              property var provider: categoryTabs.currentProvider
+              icon: provider.categoryIcons ? (provider.categoryIcons[modelData] || "star") : "star"
+              tooltipText: provider.getCategoryName ? provider.getCategoryName(modelData) : modelData
               tabIndex: index
-              checked: emojiCategoryTabs.currentIndex === index
+              checked: categoryTabs.currentIndex === index
               onClicked: {
-                emojiProvider.selectCategory(modelData);
+                provider.selectCategory(modelData);
               }
             }
-          }
-        }
-
-        Connections {
-          target: emojiProvider
-          enabled: emojiCategoryTabs.visible
-          function onSelectedCategoryChanged() {
-            // Force update of currentIndex when selectedCategory changes
-            Qt.callLater(() => {
-                           if (emojiCategoryTabs.visible && emojiProvider.categories) {
-                             const newIndex = emojiProvider.categories.indexOf(emojiProvider.selectedCategory);
-                             if (newIndex >= 0 && emojiCategoryTabs.currentIndex !== newIndex) {
-                               emojiCategoryTabs.currentIndex = newIndex;
-                             }
-                           }
-                         });
-          }
-        }
-
-        // App category tabs (shown when browsing apps without search)
-        NTabBar {
-          id: appCategoryTabs
-          visible: (root.activeProvider === null || root.activeProvider === appsProvider) && appsProvider.isBrowsingMode && !root.searchText.startsWith(">") && Settings.data.appLauncher.showCategories
-          Layout.fillWidth: true
-          margins: Style.marginM
-          border.color: Style.boxBorderColor
-          border.width: Style.borderS
-
-          property int computedCurrentIndex: {
-            if (visible && appsProvider.availableCategories) {
-              return appsProvider.availableCategories.indexOf(appsProvider.selectedCategory);
-            }
-            return 0;
-          }
-          currentIndex: computedCurrentIndex
-
-          Repeater {
-            model: appsProvider.availableCategories || []
-            NIconTabButton {
-              required property string modelData
-              required property int index
-              icon: appsProvider.categoryIcons[modelData] || "apps"
-              tooltipText: appsProvider.getCategoryName ? appsProvider.getCategoryName(modelData) : modelData
-              tabIndex: index
-              checked: appCategoryTabs.currentIndex === index
-              onClicked: {
-                appsProvider.selectCategory(modelData);
-              }
-            }
-          }
-        }
-
-        Connections {
-          target: appsProvider
-          enabled: appCategoryTabs.visible
-          function onSelectedCategoryChanged() {
-            // Force update of currentIndex when selectedCategory changes
-            Qt.callLater(() => {
-                           if (appCategoryTabs.visible && appsProvider.availableCategories) {
-                             const newIndex = appsProvider.availableCategories.indexOf(appsProvider.selectedCategory);
-                             if (newIndex >= 0 && appCategoryTabs.currentIndex !== newIndex) {
-                               appCategoryTabs.currentIndex = newIndex;
-                             }
-                           }
-                         });
           }
         }
 
@@ -946,22 +994,23 @@ SmartPanel {
 
                   // Icon badge or Image preview or Emoji
                   Item {
-                    Layout.preferredWidth: badgeSize
-                    Layout.preferredHeight: badgeSize
+                    visible: !modelData.hideIcon
+                    Layout.preferredWidth: modelData.hideIcon ? 0 : badgeSize
+                    Layout.preferredHeight: modelData.hideIcon ? 0 : badgeSize
 
                     // Icon background
                     Rectangle {
                       anchors.fill: parent
                       radius: Style.radiusM
                       color: Color.mSurfaceVariant
-                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.emojiChar
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.displayString
                     }
 
                     // Image preview for clipboard images
                     NImageRounded {
                       id: imagePreview
                       anchors.fill: parent
-                      visible: modelData.isImage && !modelData.emojiChar
+                      visible: modelData.isImage && !modelData.displayString
                       radius: Style.radiusM
 
                       // This property creates a dependency on the service's revision counter
@@ -1000,7 +1049,7 @@ SmartPanel {
                       anchors.fill: parent
                       anchors.margins: Style.marginXS
 
-                      visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && imagePreview.status === Image.Error)
+                      visible: (!modelData.isImage && !modelData.displayString) || (modelData.isImage && imagePreview.status === Image.Error)
                       active: visible
 
                       sourceComponent: Component {
@@ -1015,7 +1064,7 @@ SmartPanel {
                         NIcon {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
-                          visible: modelData.icon && !modelData.emojiChar
+                          visible: modelData.icon && !modelData.displayString
                         }
                       }
 
@@ -1024,21 +1073,21 @@ SmartPanel {
                         IconImage {
                           anchors.fill: parent
                           source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                          visible: modelData.icon && source !== "" && !modelData.emojiChar
+                          visible: modelData.icon && source !== "" && !modelData.displayString
                           asynchronous: true
                         }
                       }
                     }
 
-                    // Emoji display - takes precedence when emojiChar is present
+                    // String display - takes precedence when displayString is present
                     NText {
-                      id: emojiDisplay
+                      id: stringDisplay
                       anchors.centerIn: parent
-                      visible: modelData.emojiChar || (!imagePreview.visible && !iconLoader.visible)
-                      text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
-                      pointSize: modelData.emojiChar ? Style.fontSizeXXXL : Style.fontSizeXXL  // Larger font for emojis
+                      visible: modelData.displayString || (!imagePreview.visible && !iconLoader.visible)
+                      text: modelData.displayString ? modelData.displayString : modelData.name.charAt(0).toUpperCase()
+                      pointSize: modelData.displayString ? (modelData.displayStringSize || Style.fontSizeXXXL) : Style.fontSizeXXL
                       font.weight: Style.fontWeightBold
-                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary  // Different color for emojis
+                      color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
                     }
 
                     // Image type indicator overlay
@@ -1079,6 +1128,9 @@ SmartPanel {
                       font.weight: Style.fontWeightBold
                       color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
                       elide: Text.ElideRight
+                      maximumLineCount: modelData.singleLine ? 1 : 100
+                      wrapMode: modelData.singleLine ? Text.NoWrap : Text.Wrap
+                      clip: modelData.singleLine || false
                       Layout.fillWidth: true
                     }
 
@@ -1177,16 +1229,9 @@ SmartPanel {
 
             width: parent.width
             height: parent.height
-            cellWidth: {
-              if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
-                return parent.width / root.targetGridColumns;
-              }
-              // Make cells fit exactly like the tab bar
-              // Cell width scales automatically as parent.width scales with uiScaleRatio
-              return parent.width / root.targetGridColumns;
-            }
+            cellWidth: parent.width / root.targetGridColumns
             cellHeight: {
-              if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
+              if (root.providerHasDisplayString) {
                 return (parent.width / root.targetGridColumns) * 1.2;
               }
               // Cell height scales automatically as parent.width scales with uiScaleRatio
@@ -1209,16 +1254,8 @@ SmartPanel {
             }
 
             function updateGridColumns() {
-              // Update gridColumns based on actual GridView width
-              // This ensures navigation works correctly regardless of panel size
-              if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
-                // Always 5 columns for emoji browsing mode
-                root.gridColumns = 5;
-              } else {
-                // Since cellWidth = width / targetGridColumns, the number of columns is always targetGridColumns
-                // Just use targetGridColumns directly
-                root.gridColumns = root.targetGridColumns;
-              }
+              // Since cellWidth = width / targetGridColumns, the number of columns is always targetGridColumns
+              root.gridColumns = root.targetGridColumns;
             }
 
             onWidthChanged: {
@@ -1233,16 +1270,6 @@ SmartPanel {
             // We only need to position the view to show the selected item
 
             onModelChanged: {}
-
-            // Update gridColumns when entering/exiting emoji browsing mode
-            Connections {
-              target: emojiProvider
-              function onIsBrowsingModeChanged() {
-                if (emojiProvider.isBrowsingMode) {
-                  root.gridColumns = 5;
-                }
-              }
-            }
 
             // Handle scrolling to show selected item when it changes
             Connections {
@@ -1321,14 +1348,14 @@ SmartPanel {
 
                 ColumnLayout {
                   anchors.fill: parent
-                  anchors.margins: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? 4 : Style.marginM
-                  anchors.bottomMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) ? Style.marginL : Style.marginM
+                  anchors.margins: (root.providerHasDisplayString) ? 4 : Style.marginM
+                  anchors.bottomMargin: (root.providerHasDisplayString) ? Style.marginL : Style.marginM
                   spacing: Style.marginS
 
                   // Icon badge or Image preview or Emoji
                   Item {
                     Layout.preferredWidth: {
-                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                      if (root.providerHasDisplayString && modelData.displayString) {
                         return gridEntry.width - 8;
                       }
                       // Scale badge relative to cell size for proper scaling on all resolutions
@@ -1336,7 +1363,7 @@ SmartPanel {
                       return Math.round(gridEntry.width * 0.6);
                     }
                     Layout.preferredHeight: {
-                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                      if (root.providerHasDisplayString && modelData.displayString) {
                         return gridEntry.width - 8;
                       }
                       // Scale badge relative to cell size for proper scaling on all resolutions
@@ -1350,14 +1377,14 @@ SmartPanel {
                       anchors.fill: parent
                       radius: Style.radiusM
                       color: Color.mSurfaceVariant
-                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.emojiChar
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.displayString
                     }
 
                     // Image preview for clipboard images
                     NImageRounded {
                       id: gridImagePreview
                       anchors.fill: parent
-                      visible: modelData.isImage && !modelData.emojiChar
+                      visible: modelData.isImage && !modelData.displayString
                       radius: Style.radiusM
 
                       readonly property int _rev: ClipboardService.revision
@@ -1393,7 +1420,7 @@ SmartPanel {
                       anchors.fill: parent
                       anchors.margins: Style.marginXS
 
-                      visible: !modelData.isImage && !modelData.emojiChar || (modelData.isImage && gridImagePreview.status === Image.Error)
+                      visible: (!modelData.isImage && !modelData.displayString) || (modelData.isImage && gridImagePreview.status === Image.Error)
                       active: visible
 
                       sourceComponent: Component {
@@ -1408,7 +1435,7 @@ SmartPanel {
                         NIcon {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
-                          visible: modelData.icon && !modelData.emojiChar
+                          visible: modelData.icon && !modelData.displayString
                         }
                       }
 
@@ -1417,21 +1444,25 @@ SmartPanel {
                         IconImage {
                           anchors.fill: parent
                           source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
-                          visible: modelData.icon && source !== "" && !modelData.emojiChar
+                          visible: modelData.icon && source !== "" && !modelData.displayString
                           asynchronous: true
                         }
                       }
                     }
 
-                    // Emoji display
+                    // String display
                     NText {
-                      id: gridEmojiDisplay
+                      id: gridStringDisplay
                       anchors.centerIn: parent
-                      visible: modelData.emojiChar || (!gridImagePreview.visible && !gridIconLoader.visible)
-                      text: modelData.emojiChar ? modelData.emojiChar : modelData.name.charAt(0).toUpperCase()
+                      visible: modelData.displayString || (!gridImagePreview.visible && !gridIconLoader.visible)
+                      text: modelData.displayString ? modelData.displayString : modelData.name.charAt(0).toUpperCase()
                       pointSize: {
-                        if (modelData.emojiChar) {
-                          if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode) {
+                        if (modelData.displayString) {
+                          // Use custom size if provided, otherwise default scaling
+                          if (modelData.displayStringSize) {
+                            return modelData.displayStringSize * Style.uiScaleRatio;
+                          }
+                          if (root.providerHasDisplayString) {
                             // Scale with cell width but cap at reasonable maximum
                             const cellBasedSize = gridEntry.width * 0.4;
                             const maxSize = Style.fontSizeXXXL * Style.uiScaleRatio;
@@ -1446,15 +1477,16 @@ SmartPanel {
                         return Math.min(Math.max(cellBasedSize, baseSize), maxSize);
                       }
                       font.weight: Style.fontWeightBold
-                      color: modelData.emojiChar ? Color.mOnSurface : Color.mOnPrimary
+                      color: modelData.displayString ? Color.mOnSurface : Color.mOnPrimary
                     }
                   }
 
-                  // Text content
+                  // Text content (hidden when hideLabel is true)
                   NText {
+                    visible: !modelData.hideLabel
                     text: modelData.name || "Unknown"
                     pointSize: {
-                      if (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) {
+                      if (root.providerHasDisplayString && modelData.displayString) {
                         return Style.fontSizeS * Style.uiScaleRatio;
                       }
                       // Scale font size relative to cell width for low res, but cap at maximum
@@ -1468,8 +1500,8 @@ SmartPanel {
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                     Layout.maximumWidth: gridEntry.width - 8
-                    Layout.leftMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
-                    Layout.rightMargin: (root.activeProvider === emojiProvider && emojiProvider.isBrowsingMode && modelData.emojiChar) ? Style.marginS : 0
+                    Layout.leftMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
+                    Layout.rightMargin: (root.providerHasDisplayString && modelData.displayString) ? Style.marginS : 0
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.NoWrap
                     maximumLineCount: 1
