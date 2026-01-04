@@ -352,8 +352,8 @@ Item {
         Layout.alignment: Qt.AlignTop
 
         radius: sidebar.panelVeryTransparent ? Style.radiusM : 0
-        color: sidebar.panelVeryTransparent ? Color.mSurfaceVariant : Color.transparent
-        border.color: sidebar.panelVeryTransparent ? Style.boxBorderColor : Color.transparent
+        color: sidebar.panelVeryTransparent ? Color.mSurfaceVariant : "transparent"
+        border.color: sidebar.panelVeryTransparent ? Style.boxBorderColor : "transparent"
 
         Behavior on Layout.preferredWidth {
           NumberAnimation {
@@ -380,7 +380,7 @@ Item {
               height: parent.height
               anchors.left: parent.left
               radius: Style.radiusS
-              color: toggleMouseArea.containsMouse ? Color.mHover : Color.transparent
+              color: toggleMouseArea.containsMouse ? Color.mHover : "transparent"
 
               Behavior on color {
                 ColorAnimation {
@@ -440,7 +440,7 @@ Item {
                 width: sidebarList.width - (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
                 radius: Style.radiusS
-                color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : Color.transparent)
+                color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : "transparent")
                 readonly property bool selected: index === root.currentTabIndex
                 property bool hovering: false
                 property color tabTextColor: selected ? Color.mOnPrimary : (tabItem.hovering ? Color.mOnHover : Color.mOnSurface)
@@ -551,7 +551,7 @@ Item {
           anchors.fill: parent
           anchors.margins: Style.borderS
           radius: Style.radiusM
-          color: Color.transparent
+          color: "transparent"
           visible: sidebarList.verticalScrollBarActive
           opacity: (sidebarList.contentY + sidebarList.height >= sidebarList.contentHeight - 10) ? 0 : 1
 
@@ -565,11 +565,11 @@ Item {
           gradient: Gradient {
             GradientStop {
               position: 0.0
-              color: Color.transparent
+              color: "transparent"
             }
             GradientStop {
               position: 0.95
-              color: Color.transparent
+              color: "transparent"
             }
             GradientStop {
               position: 1.0
@@ -633,7 +633,7 @@ Item {
             Layout.fillHeight: true
             Layout.leftMargin: -Style.marginM
             Layout.rightMargin: -Style.marginL
-            color: Color.transparent
+            color: "transparent"
 
             Repeater {
               model: root.tabsModel
@@ -683,7 +683,7 @@ Item {
             // Overlay gradient for content scrolling
             Rectangle {
               anchors.fill: parent
-              color: Color.transparent
+              color: "transparent"
               visible: root.activeScrollView && root.activeScrollView.ScrollBar.vertical && root.activeScrollView.ScrollBar.vertical.size < 1.0
               opacity: {
                 if (!root.activeScrollView)
@@ -702,11 +702,11 @@ Item {
               gradient: Gradient {
                 GradientStop {
                   position: 0.0
-                  color: Color.transparent
+                  color: "transparent"
                 }
                 GradientStop {
                   position: 0.95
-                  color: Color.transparent
+                  color: "transparent"
                 }
                 GradientStop {
                   position: 1.0

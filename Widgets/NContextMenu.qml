@@ -84,7 +84,7 @@ Popup {
       property var popup: root
 
       background: Rectangle {
-        color: menuItem.hovered && menuItem.enabled ? Color.mHover : Color.transparent
+        color: menuItem.hovered && menuItem.enabled ? Color.mHover : "transparent"
         radius: Style.iRadiusS
 
         Behavior on color {

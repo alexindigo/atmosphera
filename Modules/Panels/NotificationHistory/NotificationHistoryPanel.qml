@@ -22,7 +22,7 @@ SmartPanel {
 
   panelContent: Rectangle {
     id: panelContent
-    color: Color.transparent
+    color: "transparent"
 
     // State (lazy-loaded with panelContent)
     property var rangeCounts: [0, 0, 0, 0]
@@ -249,7 +249,7 @@ SmartPanel {
               fontSize: Style.fontSizeXS
               outlined: false
 
-              backgroundColor: isActive ? Color.mPrimary : (hovered ? Color.mHover : Color.transparent)
+              backgroundColor: isActive ? Color.mPrimary : (hovered ? Color.mHover : "transparent")
               textColor: isActive ? Color.mOnPrimary : (hovered ? Color.mOnHover : Color.mOnSurface)
               hoverColor: backgroundColor
 
@@ -392,7 +392,7 @@ SmartPanel {
                       height: Math.round(40 * Style.uiScaleRatio)
                       radius: Math.min(Style.radiusL, width / 2)
                       imagePath: model.cachedImage || model.originalImage || ""
-                      borderColor: Color.transparent
+                      borderColor: "transparent"
                       borderWidth: 0
                       fallbackIcon: "bell"
                       fallbackIconSize: 24
@@ -421,7 +421,7 @@ SmartPanel {
                             else if (model.urgency === 0)
                               return Color.mOnSurfaceVariant;
                             else
-                              return Color.transparent;
+                              return "transparent";
                           }
                         }
 
@@ -516,7 +516,7 @@ SmartPanel {
         // Overlay gradient to smooth the hard cut due to scrolling at the bottom (only visible when scrollable)
         Rectangle {
           anchors.fill: parent
-          color: Color.transparent
+          color: "transparent"
           visible: scrollView.ScrollBar.vertical && scrollView.ScrollBar.vertical.size < 1.0
           opacity: {
             const scrollBar = scrollView.ScrollBar.vertical;
@@ -533,11 +533,11 @@ SmartPanel {
           gradient: Gradient {
             GradientStop {
               position: 0.0
-              color: Color.transparent
+              color: "transparent"
             }
             GradientStop {
               position: 0.85
-              color: Color.transparent
+              color: "transparent"
             }
             GradientStop {
               position: 1.0

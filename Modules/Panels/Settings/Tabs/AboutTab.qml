@@ -232,7 +232,7 @@ ColumnLayout {
     width: supportRow.implicitWidth + Style.marginXL
     height: supportRow.implicitHeight + Style.marginM
     radius: Style.radiusS
-    color: supportArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.05) : Color.transparent
+    color: supportArea.containsMouse ? Qt.alpha(Color.mOnSurface, 0.05) : "transparent"
     border.width: 0
 
     Behavior on color {
@@ -304,7 +304,7 @@ ColumnLayout {
         width: Math.max(Math.round(topContributorsFlow.width / 2 - Style.marginM - 1), Math.round(Style.baseWidgetSize * 4))
         height: Math.round(Style.baseWidgetSize * 2.3)
         radius: Style.radiusM
-        color: contributorArea.containsMouse ? Color.mHover : Color.transparent
+        color: contributorArea.containsMouse ? Color.mHover : "transparent"
         border.width: 1
         border.color: contributorArea.containsMouse ? Color.mPrimary : Color.mOutline
 
@@ -382,7 +382,7 @@ ColumnLayout {
             Rectangle {
               visible: wrapper.isRounded
               anchors.fill: parent
-              color: Color.transparent
+              color: "transparent"
               radius: width * 0.5
               border.width: Style.borderM
               border.color: Color.mPrimary
@@ -468,7 +468,7 @@ ColumnLayout {
         width: nameText.implicitWidth + Style.marginM * 2
         height: nameText.implicitHeight + Style.marginS * 2
         radius: Style.radiusS
-        color: nameArea.containsMouse ? Color.mHover : Color.transparent
+        color: nameArea.containsMouse ? Color.mHover : "transparent"
         border.width: Style.borderS
         border.color: nameArea.containsMouse ? Color.mPrimary : Color.mOutline
 

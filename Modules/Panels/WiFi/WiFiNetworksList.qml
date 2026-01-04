@@ -209,7 +209,7 @@ NBox {
 
                 Rectangle {
                   visible: modelData.cached && !modelData.connected && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
-                  color: Color.transparent
+                  color: "transparent"
                   border.color: Color.mOutline
                   border.width: Style.borderS
                   radius: height * 0.5

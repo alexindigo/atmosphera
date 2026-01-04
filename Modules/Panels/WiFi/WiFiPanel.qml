@@ -81,7 +81,7 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
-    color: Color.transparent
+    color: "transparent"
 
     // Calculate content height based on header + networks list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
