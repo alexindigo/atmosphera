@@ -2937,6 +2937,7 @@
       "apikey": {
         "help": "An API key is required to access NSFW content.",
         "label": "API Key",
+        "managed-by-env": "Managed via NOCTALIA_WALLHAVEN_API_KEY environment variable.",
         "placeholder": "Enter your Wallhaven API Key"
       },
       "apply-all-monitors": {
