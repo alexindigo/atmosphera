@@ -1,14 +1,14 @@
 pragma Singleton
+import QtQml
 
 import QtQuick
-import QtQml
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Io
+import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
+import "."
 import qs.Commons
 import qs.Services.UI
-import "."
-import "../../Helpers/BluetoothUtils.js" as BluetoothUtils
 
 QtObject {
   id: root
@@ -20,7 +20,7 @@ QtObject {
 
   property bool airplaneModeToggled: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
-  
+
   // Power/blocked state
   property bool enabled: false // driven by bluetoothctl
   property bool ctlPowered: false
@@ -96,8 +96,17 @@ QtObject {
     } catch (_) {}
   }
 
+  // Persistent process for fallback scanning to keep the session alive
+  property Process fallbackScanProcess: Process {
+    id: fallbackProc
+    // Pipe scan on and a long sleep to bluetoothctl to keep it running
+    command: ["sh", "-c", "(echo 'scan on'; sleep 3600) | bluetoothctl"]
+    onExited: Logger.d("Bluetooth", "Fallback scan process exited")
+  }
+
   // Unify discovery controls and auto‑stop window
   function setScanActive(active, durationMs) {
+    // Logger.e("Bluetooth", "setScanActive called with active=" + active + ", durationMs=" + durationMs); // used for debugging
     // Cancel any scheduled resume so manual toggle wins
     try {
       root._discoveryResumeAtMs = 0;
@@ -106,42 +115,81 @@ QtObject {
     } catch (_) {}
 
     // Prefer Quickshell API if available, fall back to bluetoothctl
+    var nativeSuccess = false;
     try {
       if (adapter) {
         if (active && adapter.startDiscovery !== undefined) {
+          // Logger.e("Bluetooth", "Starting discovery with Quickshell API"); // used for debugging
           adapter.startDiscovery();
+          nativeSuccess = true;
         } else if (!active && adapter.stopDiscovery !== undefined) {
+          // Logger.e("Bluetooth", "Stopping discovery with Quickshell API"); // used for debugging
           adapter.stopDiscovery();
+          nativeSuccess = true;
         }
+      } else {
+        Logger.w("Bluetooth", "Adapter is null/undefined in setScanActive");
       }
-    } catch (e1) {}
+    } catch (e1) {
+      Logger.e("Bluetooth", "setScanActive failed with exception", e1);
+    }
 
-    // Always issue bluetoothctl as a compatibility fallback
-    btExec(["bluetoothctl", "scan", active ? "on" : "off"]);
+    Logger.d("Bluetooth", "nativeSuccess=" + nativeSuccess);
+
+    // Only issue bluetoothctl if we didn't use the adapter API
+    if (!nativeSuccess) {
+      if (active) {
+        // Logger.e("Bluetooth", "Starting fallback scan process");
+        fallbackScanProcess.running = true;
+      } else {
+        // Logger.e("Bluetooth", "Stopping fallback scan process");
+        fallbackScanProcess.running = false;
+        // Explicitly send scan off command as well to ensure state is cleared
+        btExec(["bluetoothctl", "scan", "off"]);
+      }
+    } else {
+      // Logger.e("Bluetooth", "Skipping bluetoothctl fallback as native API was used");
+      // Ensure fallback process is stopped if we switched to native
+      if (fallbackScanProcess.running) {
+        fallbackScanProcess.running = false;
+      }
+    }
 
     if (active && durationMs && durationMs > 0) {
       manualScanTimer.interval = durationMs;
+      // Logger.e("Bluetooth", "Restarting manualScanTimer with interval " + durationMs + "ms");
       manualScanTimer.restart();
     } else {
-      if (manualScanTimer.running) manualScanTimer.stop();
+      if (manualScanTimer.running) {
+        // Logger.e("Bluetooth", "Stopping manualScanTimer");
+        manualScanTimer.stop();
+      }
     }
     requestCtlPoll(ctlPollSoonMs);
   }
 
   // Explicit toggle that cancels any pending restore so UI button behaves predictably
   function toggleDiscovery() {
-    if (!adapter)
+    // Logger.e("Bluetooth", "toggleDiscovery called. Adapter present: " + (!!adapter));
+    if (!adapter) {
+      // Logger.e("Bluetooth", "toggleDiscovery aborting: no adapter");
       return;
-    setScanActive(!root.scanningActive, scanAutoStopMs);
     }
+    // Logger.e("Bluetooth", "toggleDiscovery calling setScanActive. Current scanningActive=" + root.scanningActive);
+    setScanActive(!root.scanningActive, scanAutoStopMs);
+  }
 
   // Auto-stop manual discovery after a short window
   property Timer manualScanTimer: Timer {
     repeat: false
     onTriggered: {
+      // Logger.e("Bluetooth", "manualScanTimer triggered");
       // Stop scan if currently active
       if (root.scanningActive) {
+        //  Logger.e("Bluetooth", "manualScanTimer calling setScanActive(false)");
         root.setScanActive(false, 0);
+      } else {
+        Logger.d("Bluetooth", "manualScanTimer triggered but scanningActive is false, doing nothing");
       }
     }
   }
@@ -170,10 +218,11 @@ QtObject {
     function onStateChanged() {
       if (!adapter)
         return;
-      if (adapter.state === BluetoothAdapterState.Enabled) {
+      Logger.d("Bluetooth", "Adapter state changed: " + adapter.state);
+      if (adapter.state === BluetoothAdapter.Enabled) {
         Logger.d("Bluetooth", "Adapter enabled");
         // Keep UI default to refresh icon; bluetoothctl polling will set ctlDiscovering accordingly.
-      } else if (adapter.state === BluetoothAdapterState.Disabled) {
+      } else if (adapter.state === BluetoothAdapter.Disabled) {
         Logger.d("Bluetooth", "Adapter disabled");
       }
     }
@@ -183,10 +232,13 @@ QtObject {
   property Process ctlShowProcess: Process {
     id: ctlProc
     running: false
-    stdout: StdioCollector { id: ctlStdout }
+    stdout: StdioCollector {
+      id: ctlStdout
+    }
     onExited: function (exitCode, exitStatus) {
       try {
         var text = ctlStdout.text || "";
+        // Logger.e("Bluetooth", "ctlShowProcess exited. Output length: " + text.length);
         // Parse Powered/Discoverable/Discovering lines
         var mp = text.match(/\bPowered:\s*(yes|no)\b/i);
         if (mp && mp.length > 1) {
@@ -199,7 +251,9 @@ QtObject {
         }
         var ms = text.match(/\bDiscovering:\s*(yes|no)\b/i);
         if (ms && ms.length > 1) {
-          root.ctlDiscovering = (ms[1].toLowerCase() === "yes");
+          var discovering = (ms[1].toLowerCase() === "yes");
+          //Logger.e("Bluetooth", "Parsed Discovering state from bluetoothctl: " + discovering + " (current ctlDiscovering: " + root.ctlDiscovering + ")");
+          root.ctlDiscovering = discovering;
         }
       } catch (e) {
         Logger.d("Bluetooth", "Failed to parse bluetoothctl show output", e);
@@ -220,7 +274,7 @@ QtObject {
   property Timer ctlPollTimer: Timer {
     interval: ctlPollMs
     repeat: true
-    running: true
+    running: root.enabled
     onTriggered: pollCtlState()
   }
 
@@ -244,14 +298,14 @@ QtObject {
       root.ctlPowered = !!state;
       root.enabled = root.ctlPowered;
       if (state) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
       } else {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
       }
       requestCtlPoll(ctlPollSoonMs);
     } catch (e) {
       Logger.w("Bluetooth", "Enable/Disable failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.state-change-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.state-change-failed"));
     }
   }
 
@@ -262,14 +316,14 @@ QtObject {
       root.ctlDiscoverable = !!state; // optimistic
       requestCtlPoll(ctlPollSoonMs);
       if (state) {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
+        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
       } else {
-        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
+        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
       }
       Logger.i("Bluetooth", "Discoverable state set to:", state);
     } catch (e) {
       Logger.w("Bluetooth", "Failed to change discoverable state", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.discoverable-change-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-change-failed"));
     }
   }
 
@@ -328,9 +382,9 @@ QtObject {
         return I18n.tr("bluetooth.panel.pairing");
       if (device.blocked)
         return I18n.tr("bluetooth.panel.blocked");
-      if (device.state === BluetoothDeviceState.Connecting)
+      if (device.state === BluetoothDevice.Connecting)
         return I18n.tr("bluetooth.panel.connecting");
-      if (device.state === BluetoothDeviceState.Disconnecting)
+      if (device.state === BluetoothDevice.Disconnecting)
         return I18n.tr("bluetooth.panel.disconnecting");
     } catch (_) {}
     return "";
@@ -341,13 +395,16 @@ QtObject {
     var p = getSignalPercent(device);
     if (p === null)
       return I18n.tr("bluetooth.panel.signal-text.unknown");
-    if (p >= 80) return I18n.tr("bluetooth.panel.signal-text.excellent");
-    if (p >= 60) return I18n.tr("bluetooth.panel.signal-text.good");
-    if (p >= 40) return I18n.tr("bluetooth.panel.signal-text.fair");
-    if (p >= 20) return I18n.tr("bluetooth.panel.signal-text.poor");
+    if (p >= 80)
+      return I18n.tr("bluetooth.panel.signal-text.excellent");
+    if (p >= 60)
+      return I18n.tr("bluetooth.panel.signal-text.good");
+    if (p >= 40)
+      return I18n.tr("bluetooth.panel.signal-text.fair");
+    if (p >= 20)
+      return I18n.tr("bluetooth.panel.signal-text.poor");
     return I18n.tr("bluetooth.panel.signal-text.very-poor");
   }
-
 
   // Numeric helpers for UI rendering
   function getSignalPercent(device) {
@@ -355,7 +412,6 @@ QtObject {
     var _v = rssi.version;
     return BluetoothUtils.signalPercent(device, rssi.cache, _v);
   }
-
 
   function getBatteryPercent(device) {
     return BluetoothUtils.batteryPercent(device);
@@ -371,7 +427,7 @@ QtObject {
       return false;
     }
 
-    return device.pairing || device.state === BluetoothDeviceState.Disconnecting || device.state === BluetoothDeviceState.Connecting;
+    return device.pairing || device.state === BluetoothDevice.Disconnecting || device.state === BluetoothDevice.Connecting;
   }
 
   // Return a stable unique key for a device (prefer MAC address)
@@ -395,13 +451,13 @@ QtObject {
   function pairDevice(device) {
     if (!device)
       return;
-    ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("bluetooth.panel.pairing"), "bluetooth");
+    ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("bluetooth.panel.pairing"), "bluetooth");
     // Delegate pairing to bluetoothctl which registers/uses its own agent
     try {
       pairWithBluetoothctl(device);
     } catch (e) {
       Logger.w("Bluetooth", "pairDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.pair-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.pair-failed"));
     }
   }
 
@@ -428,7 +484,7 @@ QtObject {
     _pauseDiscoveryFor(totalPauseMs);
 
     // Prefer external dev script for pairing/connecting; executed detached
-    const scriptPath = Quickshell.shellDir + "/Bin/dev/BluetoothConnectionScript.sh";
+    const scriptPath = Quickshell.shellDir + "/Bin/bluetooth-connect.sh";
     // Use bash explicitly to avoid relying on executable bit in all environments
     btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
   }
@@ -451,9 +507,9 @@ QtObject {
         return "pairing";
       if (device.blocked)
         return "blocked";
-      if (device.state === BluetoothDeviceState.Connecting)
+      if (device.state === BluetoothDevice.Connecting)
         return "connecting";
-      if (device.state === BluetoothDeviceState.Disconnecting)
+      if (device.state === BluetoothDevice.Disconnecting)
         return "disconnecting";
     } catch (_) {}
     return "";
@@ -473,7 +529,7 @@ QtObject {
       device.connect();
     } catch (e) {
       Logger.w("Bluetooth", "connectDeviceWithTrust failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.connect-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.connect-failed"));
     }
   }
 
@@ -485,7 +541,7 @@ QtObject {
       device.disconnect();
     } catch (e) {
       Logger.w("Bluetooth", "disconnectDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.disconnect-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.disconnect-failed"));
     }
   }
 
@@ -498,7 +554,7 @@ QtObject {
       device.forget();
     } catch (e) {
       Logger.w("Bluetooth", "forgetDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.forget-failed"));
+      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.forget-failed"));
     }
   }
 }
