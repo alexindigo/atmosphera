@@ -213,6 +213,7 @@ SmartPanel {
           id: modeTabBar
           Layout.fillWidth: true
           spacing: Style.marginM
+          distributeEvenly: true
           currentIndex: root.panelViewMode === "wifi" ? 0 : 1
           onCurrentIndexChanged: {
             if (currentIndex === 1 && !NetworkService.hasEthernet()) {
@@ -227,16 +228,12 @@ SmartPanel {
           }
 
           NTabButton {
-            Layout.fillWidth: true
-            Layout.preferredWidth: 0
             text: I18n.tr("quickSettings.wifi.label.wifi")
             tabIndex: 0
             checked: modeTabBar.currentIndex === 0
           }
 
           NTabButton {
-            Layout.fillWidth: true
-            Layout.preferredWidth: 0
             // Dim when no Ethernet devices are detected
             opacity: NetworkService.hasEthernet() ? 1.0 : 0.5
             text: I18n.tr("quickSettings.wifi.label.ethernet")

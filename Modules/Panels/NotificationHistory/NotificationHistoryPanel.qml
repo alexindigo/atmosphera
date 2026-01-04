@@ -219,6 +219,7 @@ SmartPanel {
         currentIndex: panelContent.currentRange
         tabHeight: Style.baseWidgetSize * 0.7
         spacing: Style.marginXS
+        distributeEvenly: true
         border.color: Style.boxBorderColor
         border.width: Style.borderS
 
@@ -228,7 +229,6 @@ SmartPanel {
           checked: tabsBox.currentIndex === 0
           onClicked: panelContent.currentRange = 0
           pointSize: Style.fontSizeXS
-          Layout.fillWidth: true
         }
 
         NTabButton {
@@ -237,7 +237,6 @@ SmartPanel {
           checked: tabsBox.currentIndex === 1
           onClicked: panelContent.currentRange = 1
           pointSize: Style.fontSizeXS
-          Layout.fillWidth: true
         }
 
         NTabButton {
@@ -246,7 +245,6 @@ SmartPanel {
           checked: tabsBox.currentIndex === 2
           onClicked: panelContent.currentRange = 2
           pointSize: Style.fontSizeXS
-          Layout.fillWidth: true
         }
 
         NTabButton {
@@ -255,7 +253,6 @@ SmartPanel {
           checked: tabsBox.currentIndex === 3
           onClicked: panelContent.currentRange = 3
           pointSize: Style.fontSizeXS
-          Layout.fillWidth: true
         }
       }
 

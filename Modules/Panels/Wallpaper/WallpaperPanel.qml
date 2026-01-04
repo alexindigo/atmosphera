@@ -352,13 +352,13 @@ SmartPanel {
             currentIndex: currentScreenIndex
             onCurrentIndexChanged: currentScreenIndex = currentIndex
             spacing: Style.marginM
+            distributeEvenly: true
 
             Repeater {
               model: Quickshell.screens
               NTabButton {
                 required property var modelData
                 required property int index
-                Layout.fillWidth: true
                 text: modelData.name || `Screen ${index + 1}`
                 tabIndex: index
                 checked: {
