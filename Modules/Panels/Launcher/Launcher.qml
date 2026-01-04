@@ -23,7 +23,7 @@ SmartPanel {
       return false;
     if (!Settings.data.appLauncher.enableClipPreview)
       return false;
-    return selectedIndex >= 0 && results && results[selectedIndex];
+    return selectedIndex >= 0 && results && !!results[selectedIndex];
   }
 
   // Panel configuration
