@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "View changelog",
       "contributors": {
         "section": {
           "description": "Shout-out to our {count} <b>awesome</b> contributor!",
@@ -2726,9 +2727,6 @@
     "upload-speed": "Upload Speed"
   },
   "toast": {
-    "Bluetooth": {
-      "enabled": "Enabled"
-    },
     "airplane-mode": {
       "disabled": "Disabled.",
       "enabled": "Enabled.",

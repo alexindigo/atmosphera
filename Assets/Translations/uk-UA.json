@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Переглянути журнал змін",
       "contributors": {
         "section": {
           "description": "Подяка нашому {count} <b>чудовому</b> учаснику!",

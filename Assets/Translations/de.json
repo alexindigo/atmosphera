@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Änderungsprotokoll anzeigen",
       "contributors": {
         "section": {
           "description": "Ein Dankeschön an unseren {count} <b>großartigen</b> Mitwirkenden!",

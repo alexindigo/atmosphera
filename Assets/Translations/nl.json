@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Bekijk wijzigingslogboek",
       "contributors": {
         "section": {
           "description": "Een shout-out naar onze {count} <b>geweldige</b> bijdrager!",

@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "查看更改日志",
       "contributors": {
         "section": {
           "description": "向我们 {count} 位<b>超棒的</b>贡献者致敬！",

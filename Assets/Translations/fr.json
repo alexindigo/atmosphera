@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Afficher le journal des modifications",
       "contributors": {
         "section": {
           "description": "Un grand merci à notre {count} <b>super</b> contributeur !",

@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Zobacz dziennik zmian",
       "contributors": {
         "section": {
           "description": "Podziękowania dla naszego {count} <b>niesamowitego</b> współtwórcy!",

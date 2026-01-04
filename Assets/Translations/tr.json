@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Değişiklik günlüğünü görüntüle",
       "contributors": {
         "section": {
           "description": "{count} <b>harika</b> katılımcımıza <b>teşekkürler</b>!",

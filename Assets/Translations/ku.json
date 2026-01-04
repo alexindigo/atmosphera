@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Dîroka guhertinan bibîne",
       "contributors": {
         "section": {
           "description": "Silav ji {count} beşkdarên me yên <b>gewre</b> re!",

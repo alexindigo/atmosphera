@@ -975,6 +975,7 @@
   },
   "settings": {
     "about": {
+      "changelog": "Ver histórico de alterações",
       "contributors": {
         "section": {
           "description": "Agradecimentos ao nosso <b>incrível</b> colaborador!",
