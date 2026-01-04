@@ -36,6 +36,9 @@ Singleton {
   // Plugin updates available: { pluginId: { currentVersion, availableVersion } }
   property var pluginUpdates: ({})
 
+  // Plugin updates that require a newer Noctalia version: { pluginId: { currentVersion, availableVersion, minNoctaliaVersion } }
+  property var pluginUpdatesPending: ({})
+
   // Plugin load errors: { pluginId: { error: string, entryPoint: string, timestamp: date } }
   property var pluginErrors: ({})
   signal pluginLoadError(string pluginId, string entryPoint, string error)
@@ -1136,6 +1139,7 @@ Singleton {
   // Perform the actual update check
   function performUpdateCheck() {
     var updates = {};
+    var pendingUpdates = {};
     var installedIds = PluginRegistry.getAllInstalledPluginIds();
 
     Logger.d("PluginService", "Checking", installedIds.length, "installed plugins against", root.availablePlugins.length, "available plugins");
@@ -1157,7 +1161,12 @@ Singleton {
           if (availablePlugin.minNoctaliaVersion) {
             var noctaliaVersion = UpdateService.baseVersion;
             if (compareVersions(availablePlugin.minNoctaliaVersion, noctaliaVersion) > 0) {
-              Logger.d("PluginService", "Skipping update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (current: v" + noctaliaVersion + ")");
+              Logger.d("PluginService", "Pending update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (current: v" + noctaliaVersion + ")");
+              pendingUpdates[pluginId] = {
+                currentVersion: currentVersion,
+                availableVersion: availableVersion,
+                minNoctaliaVersion: availablePlugin.minNoctaliaVersion
+              };
               continue;
             }
           }
@@ -1174,7 +1183,9 @@ Singleton {
     }
 
     root.pluginUpdates = updates;
+    root.pluginUpdatesPending = pendingUpdates;
     var updateCount = Object.keys(updates).length;
+    var pendingCount = Object.keys(pendingUpdates).length;
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
@@ -1199,6 +1210,8 @@ Singleton {
                                                                               }
                                                                             }
                                                                           });
+    } else if (pendingCount > 0) {
+      Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
       Logger.i("PluginService", "All plugins are up to date");
     }
