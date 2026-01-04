@@ -599,7 +599,10 @@ ColumnLayout {
               tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
               onClicked: {
                 if (modelData.downloaded) {
-                  uninstallDialog.pluginToUninstall = modelData;
+                  // Construct composite key for available plugins
+                  var pluginData = Object.assign({}, modelData);
+                  pluginData.compositeKey = PluginRegistry.generateCompositeKey(modelData.id, modelData.source?.url || "");
+                  uninstallDialog.pluginToUninstall = pluginData;
                   uninstallDialog.open();
                 } else {
                   installPlugin(modelData);

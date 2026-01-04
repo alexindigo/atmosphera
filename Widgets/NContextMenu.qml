@@ -23,7 +23,7 @@ import qs.Commons
 *       { "label": "Action 1", "action": "action1", "icon": "icon-name" },
 *       { "label": "Action 2", "action": "action2" }
 *     ]
-*     onTriggered: action => { console.log("Selected:", action) }
+*     onTriggered: action => { Logger.i("MyModule", "Selected:", action) }
 *   }
 *
 *   MouseArea {
