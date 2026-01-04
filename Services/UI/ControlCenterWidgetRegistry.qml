@@ -18,6 +18,7 @@ Singleton {
                            "Notifications": notificationsComponent,
                            "PowerProfile": powerProfileComponent,
                            "ScreenRecorder": screenRecorderComponent,
+                           "WiFi": networkComponent,
                            "Network": networkComponent,
                            "WallpaperSelector": wallpaperSelectorComponent
                          })
