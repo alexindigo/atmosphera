@@ -2293,6 +2293,7 @@
       "update-available_plural": "{count} eklenti güncellemesi mevcut",
       "update-error": "Eklenti güncellenemedi: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} veya üzeri gerektirir.",
+      "update-pending": "v{mevcut} → v{yeni} (Noctalia v{gerekli} gerektirir)",
       "update-success": "{plugin} v{version} sürümüne güncellendi",
       "update-version": "v{mevcut} → v{yeni}",
       "updating": "Güncelleniyor..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Eylem gerekiyor",
+      "available-interfaces": "Kullanılabilir arayüzler",
       "available-networks": "Kullanılabilir Ağlar",
       "connect": "Bağlan",
       "connected": "Bağlı",
       "disabled": "Kablosuz Bağlantı devre dışı",
       "disconnect": "Bağlantıyı kes",
+      "disconnected": "Bağlantı kesildi",
       "disconnecting": "Bağlantı kesiliyor...",
       "dns": "DNS",
       "enable-message": "Mevcut ağları görmek için kablosuz bağlantıyı etkinleştirin.",
@@ -3132,9 +3135,11 @@
       "internet": "İnternet",
       "internet-connected": "İnternete bağlı",
       "internet-limited": "İnternet yok",
+      "internet-status": "İnternet durumu",
       "ipv4": "IPv4",
       "known-networks": "Bilinen Ağlar",
       "link-speed": "Bağlantı hızı",
+      "no-ethernet-devices": "Ethernet aygıtı algılanmadı",
       "no-networks": "Ağ bulunamadı",
       "password": "Parola",
       "saved": "Kaydedildi",

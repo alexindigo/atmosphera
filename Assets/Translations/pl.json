@@ -2293,6 +2293,7 @@
       "update-available_plural": "Dostępne aktualizacje wtyczek: {count}",
       "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
       "update-incompatible": "Wymaga Noctalia v{version} lub nowszej",
+      "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",
       "update-success": "Zaktualizowano {plugin} do v{version}",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Wymagane działanie.",
+      "available-interfaces": "Dostępne interfejsy",
       "available-networks": "Dostępne sieci",
       "connect": "Połącz",
       "connected": "Połączono",
       "disabled": "Wi-Fi jest wyłączone",
       "disconnect": "Odłącz",
+      "disconnected": "Rozłączony",
       "disconnecting": "Rozłączanie...",
       "dns": "DNS",
       "enable-message": "Włącz Wi-Fi, aby zobaczyć dostępne sieci.",
@@ -3132,9 +3135,11 @@
       "internet": "Internet",
       "internet-connected": "Połączony z internetem",
       "internet-limited": "Brak internetu",
+      "internet-status": "Status internetu",
       "ipv4": "IPv4",
       "known-networks": "Znane sieci",
       "link-speed": "Prędkość łącza",
+      "no-ethernet-devices": "Nie wykryto żadnych urządzeń Ethernet.",
       "no-networks": "Nie znaleziono żadnych sieci",
       "password": "Hasło",
       "saved": "Zapisano",

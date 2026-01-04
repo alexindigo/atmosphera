@@ -2293,6 +2293,7 @@
       "update-available_plural": "{count} 个插件有可用更新",
       "update-error": "更新插件失败：{plugin}：{error}",
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
+      "update-pending": "v{当前} → v{新} (需要 Noctalia v{所需})",
       "update-success": "已将 {plugin} 更新至 v{version}",
       "update-version": "v{当前} → v{新}",
       "updating": "正在更新..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "需要动作",
+      "available-interfaces": "可用接口",
       "available-networks": "可用网络",
       "connect": "连接",
       "connected": "已连接",
       "disabled": "Wi-Fi 已禁用",
       "disconnect": "断开连接",
+      "disconnected": "已断开连接",
       "disconnecting": "正在断开连接...",
       "dns": "域名系统",
       "enable-message": "启用 Wi-Fi 以查看可用网络。",
@@ -3132,9 +3135,11 @@
       "internet": "互联网",
       "internet-connected": "已连接互联网",
       "internet-limited": "无网络",
+      "internet-status": "互联网状态",
       "ipv4": "IPv4",
       "known-networks": "已知网络",
       "link-speed": "链路速度",
+      "no-ethernet-devices": "未检测到以太网设备",
       "no-networks": "未找到网络",
       "password": "密码",
       "saved": "已保存",

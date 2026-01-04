@@ -2293,6 +2293,7 @@
       "update-available_plural": "{count} plugin updates beschikbaar",
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
+      "update-pending": "v{current} → v{new} (vereist Noctalia v{required})",
       "update-success": "{plugin} is bijgewerkt naar v{version}",
       "update-version": "v{huidig} → v{nieuw}",
       "updating": "Bezig met updaten..."
@@ -3113,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Actie vereist",
+      "available-interfaces": "Beschikbare interfaces",
       "available-networks": "Beschikbare netwerken",
       "connect": "Verbinden",
       "connected": "Verbonden",
       "disabled": "Wi-Fi is uitgeschakeld",
       "disconnect": "Verbreken",
+      "disconnected": "Verbinding verbroken",
       "disconnecting": "Verbreken...",
       "dns": "DNS",
       "enable-message": "Schakel Wi-Fi in om beschikbare netwerken te zien.",
@@ -3132,9 +3135,11 @@
       "internet": "Internet",
       "internet-connected": "Verbonden met internet",
       "internet-limited": "Geen internet",
+      "internet-status": "Internetstatus",
       "ipv4": "IPv4",
       "known-networks": "Bekende netwerken",
       "link-speed": "Link snelheid",
+      "no-ethernet-devices": "Geen Ethernet-apparaten gedetecteerd",
       "no-networks": "Geen netwerken gevonden",
       "password": "Wachtwoord",
       "saved": "Opgeslagen",
