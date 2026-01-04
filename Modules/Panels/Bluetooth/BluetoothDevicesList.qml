@@ -20,8 +20,8 @@ NBox {
   // Per-list expanded details (by device key)
   property string expandedDeviceKey: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
-  // Persisted under Settings.data.ui.bluetoothDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothDetailsViewMode !== undefined) ? (Settings.data.ui.bluetoothDetailsViewMode === "grid") : true
+  // Persisted under Settings.data.network.bluetoothDetailsViewMode
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothDetailsViewMode !== undefined) ? (Settings.data.network.bluetoothDetailsViewMode === "grid") : true
 
   Layout.fillWidth: true
   Layout.preferredHeight: column.implicitHeight + Style.marginM * 2
@@ -54,11 +54,11 @@ NBox {
         visible: root.headerMode === "filter"
         // Option A: filter/filter-off
         // Off (show all): filter; On (hide unnamed): filter-off
-        icon: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) ? "filter-off" : "filter"
-        tooltipText: (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) ? I18n.tr("tooltips.hide-unnamed-devices") : I18n.tr("tooltips.show-all-devices")
+        icon: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) ? "filter-off" : "filter"
+        tooltipText: (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) ? I18n.tr("tooltips.hide-unnamed-devices") : I18n.tr("tooltips.show-all-devices")
         onClicked: {
           if (Settings.data && Settings.data.ui) {
-            Settings.data.ui.bluetoothHideUnnamedDevices = !(Settings.data.ui.bluetoothHideUnnamedDevices);
+            Settings.data.network.bluetoothHideUnnamedDevices = !(Settings.data.network.bluetoothHideUnnamedDevices);
           }
         }
       }
@@ -70,7 +70,7 @@ NBox {
       model: root.model
       visible: BluetoothService.adapter && BluetoothService.adapter.enabled
 
-      Rectangle {
+      NBox {
         id: device
 
         readonly property bool canConnect: BluetoothService.canConnect(modelData)
@@ -90,10 +90,9 @@ NBox {
         Layout.fillWidth: true
         Layout.preferredHeight: deviceColumn.implicitHeight + (Style.marginM * 2)
         radius: Style.radiusM
-        color: Color.mSurface
-        border.width: Style.borderS
-        border.color: getContentColor(Color.mOutline)
         clip: true
+
+        color: modelData.connected ? Qt.alpha(getContentColor(), 0.08) : Color.mSurface
 
         // Content column so expanded details are laid out inside the card
         ColumnLayout {
@@ -284,7 +283,7 @@ NBox {
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {
-                  Settings.data.ui.bluetoothDetailsViewMode = root.detailsGrid ? "grid" : "list";
+                  Settings.data.network.bluetoothDetailsViewMode = root.detailsGrid ? "grid" : "list";
                 }
               }
               z: 1

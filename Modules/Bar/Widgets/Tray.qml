@@ -291,14 +291,13 @@ Rectangle {
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
       tooltipDirection: BarService.getTooltipDirection()
-      density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
-      colorBg: Color.transparent
+      colorBg: "transparent"
       colorFg: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mOnPrimary
-      colorBorder: Color.transparent
-      colorBorderHover: Color.transparent
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
       icon: {
         switch (barPosition) {
         case "bottom":
@@ -448,14 +447,13 @@ Rectangle {
       visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
       tooltipDirection: BarService.getTooltipDirection()
-      density: Settings.data.bar.density
       baseSize: Style.capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
-      colorBg: Color.transparent
+      colorBg: "transparent"
       colorFg: Color.mOnSurface
-      colorBorder: Color.transparent
-      colorBorderHover: Color.transparent
+      colorBorder: "transparent"
+      colorBorderHover: "transparent"
       icon: {
         switch (barPosition) {
         case "bottom":

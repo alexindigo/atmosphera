@@ -178,6 +178,27 @@ ColumnLayout {
     onToggled: checked => Settings.data.sessionMenu.largeButtonsStyle = checked
   }
 
+  NComboBox {
+    visible: Settings.data.sessionMenu.largeButtonsStyle
+    Layout.fillWidth: true
+    label: I18n.tr("settings.session-menu.large-buttons-layout.label")
+    description: I18n.tr("settings.session-menu.large-buttons-layout.description")
+    model: [
+      {
+        "key": "grid",
+        "name": I18n.tr("options.session-menu-grid-layout.grid")
+      },
+      {
+        "key": "single-row",
+        "name": I18n.tr("options.session-menu-grid-layout.single-row")
+      }
+    ]
+    currentKey: Settings.data.sessionMenu.largeButtonsLayout
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("sessionMenu.largeButtonsLayout")
+    onSelected: key => Settings.data.sessionMenu.largeButtonsLayout = key
+  }
+
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("settings.session-menu.show-number-labels.label")
@@ -318,8 +339,8 @@ ColumnLayout {
           Rectangle {
             anchors.fill: parent
             radius: Style.radiusM
-            color: delegateItem.dragging ? Color.mSurfaceVariant : Color.transparent
-            border.color: delegateItem.dragging ? Color.mOutline : Color.transparent
+            color: delegateItem.dragging ? Color.mSurfaceVariant : "transparent"
+            border.color: delegateItem.dragging ? Color.mOutline : "transparent"
             border.width: Style.borderS
 
             Behavior on color {
@@ -340,7 +361,7 @@ ColumnLayout {
               Layout.preferredHeight: Style.baseWidgetSize * 0.7
               Layout.alignment: Qt.AlignVCenter
               radius: Style.radiusXS
-              color: dragHandleMouseArea.containsMouse ? Color.mSurfaceVariant : Color.transparent
+              color: dragHandleMouseArea.containsMouse ? Color.mSurfaceVariant : "transparent"
 
               Behavior on color {
                 ColorAnimation {
@@ -472,11 +493,9 @@ ColumnLayout {
 
               NToggle {
                 checked: modelData.countdownEnabled !== undefined ? modelData.countdownEnabled : true
-                onToggled: function (checked) {
-                  root.updateEntry(delegateItem.index, {
-                                     "countdownEnabled": checked
-                                   });
-                }
+                onToggled: checked => root.updateEntry(delegateItem.index, {
+                                                         "countdownEnabled": checked
+                                                       })
               }
             }
 

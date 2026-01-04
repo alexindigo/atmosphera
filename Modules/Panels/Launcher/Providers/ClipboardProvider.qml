@@ -6,13 +6,21 @@ import qs.Services.Keyboard
 Item {
   id: root
 
-  // Plugin metadata
-  property string name: I18n.tr("plugins.clipboard")
+  // Provider metadata
+  property string name: I18n.tr("launcher.providers.clipboard")
   property var launcher: null
   property string iconMode: Settings.data.appLauncher.iconMode
+  property string supportedLayouts: "list" // List view for clipboard content
 
-  // Plugin capabilities
+  // Provider capabilities
   property bool handleSearch: false // Don't handle regular search
+
+  // Preview support
+  property bool hasPreview: true
+  property string previewComponentPath: "./ClipboardPreview.qml"
+
+  // Image handling - expose revision for reactive updates in delegates
+  readonly property int imageRevision: ClipboardService.revision
 
   // Internal state
   property bool isWaitingForData: false
@@ -39,9 +47,9 @@ Item {
     }
   }
 
-  // Initialize plugin
+  // Initialize provider
   function init() {
-    Logger.i("ClipboardPlugin", "Initialized");
+    Logger.i("ClipboardProvider", "Initialized");
     // Pre-load clipboard data if service is active
     if (ClipboardService.active) {
       ClipboardService.list(100);
@@ -60,7 +68,7 @@ Item {
     }
   }
 
-  // Check if this plugin handles the command
+  // Check if this provider handles the command
   function handleCommand(searchText) {
     return searchText.startsWith(">clip");
   }
@@ -70,7 +78,7 @@ Item {
     return [
           {
             "name": ">clip",
-            "description": I18n.tr("plugins.clipboard-search-description"),
+            "description": I18n.tr("launcher.providers.clipboard-search-description"),
             "icon": iconMode === "tabler" ? "clipboard" : "text-x-generic",
             "isTablerIcon": true,
             "isImage": false,
@@ -80,7 +88,7 @@ Item {
           },
           {
             "name": ">clip clear",
-            "description": I18n.tr("plugins.clipboard-clear-description"),
+            "description": I18n.tr("launcher.providers.clipboard-clear-description"),
             "icon": iconMode === "tabler" ? "trash" : "user-trash",
             "isTablerIcon": true,
             "isImage": false,
@@ -106,8 +114,8 @@ Item {
     if (!ClipboardService.active) {
       return [
             {
-              "name": I18n.tr("plugins.clipboard-history-disabled"),
-              "description": I18n.tr("plugins.clipboard-history-disabled-description"),
+              "name": I18n.tr("launcher.providers.clipboard-history-disabled"),
+              "description": I18n.tr("launcher.providers.clipboard-history-disabled-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
@@ -120,8 +128,8 @@ Item {
     if (query === "clear") {
       return [
             {
-              "name": I18n.tr("plugins.clipboard-clear-history"),
-              "description": I18n.tr("plugins.clipboard-clear-description-full"),
+              "name": I18n.tr("launcher.providers.clipboard-clear-history"),
+              "description": I18n.tr("launcher.providers.clipboard-clear-description-full"),
               "icon": iconMode === "tabler" ? "trash" : "delete_sweep",
               "isTablerIcon": true,
               "isImage": false,
@@ -137,8 +145,8 @@ Item {
     if (ClipboardService.loading || isWaitingForData) {
       return [
             {
-              "name": I18n.tr("plugins.clipboard-loading"),
-              "description": I18n.tr("plugins.clipboard-loading-description"),
+              "name": I18n.tr("launcher.providers.clipboard-loading"),
+              "description": I18n.tr("launcher.providers.clipboard-loading-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
@@ -156,8 +164,8 @@ Item {
       ClipboardService.list(100);
       return [
             {
-              "name": I18n.tr("plugins.clipboard-loading"),
-              "description": I18n.tr("plugins.clipboard-loading-description"),
+              "name": I18n.tr("launcher.providers.clipboard-loading"),
+              "description": I18n.tr("launcher.providers.clipboard-loading-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
@@ -225,7 +233,8 @@ Item {
       "imageHeight": meta ? meta.h : 0,
       "clipboardId": item.id,
       "mime": item.mime,
-      "preview": item.preview
+      "preview": item.preview,
+      "provider": root
     };
   }
 
@@ -257,7 +266,8 @@ Item {
       "isTablerIcon": true,
       "isImage": false,
       "clipboardId": item.id,
-      "preview": preview
+      "preview": preview,
+      "provider": root
     };
   }
 
@@ -279,5 +289,84 @@ Item {
 
   function getImageForItem(clipboardId) {
     return ClipboardService.getImageData ? ClipboardService.getImageData(clipboardId) : null;
+  }
+
+  // -------------------------
+  // Item actions for launcher delegate
+  function getItemActions(item) {
+    if (!item || !item.clipboardId)
+      return [];
+
+    var actions = [];
+
+    // Annotation tool for images
+    if (item.isImage && Settings.data.appLauncher.screenshotAnnotationTool !== "") {
+      actions.push({
+                     "icon": "pencil",
+                     "tooltip": I18n.tr("tooltips.open-annotation-tool"),
+                     "action": function () {
+                       var tool = Settings.data.appLauncher.screenshotAnnotationTool;
+                       Quickshell.execDetached(["sh", "-c", "cliphist decode " + item.clipboardId + " | " + tool]);
+                       if (launcher)
+                         launcher.close();
+                     }
+                   });
+    }
+
+    // Delete action
+    actions.push({
+                   "icon": "trash",
+                   "tooltip": I18n.tr("launcher.providers.clipboard-delete"),
+                   "action": function () {
+                     deleteItem(item);
+                   }
+                 });
+
+    return actions;
+  }
+
+  function canDeleteItem(item) {
+    return item && !!item.clipboardId;
+  }
+
+  function deleteItem(item) {
+    if (!item || !item.clipboardId)
+      return;
+
+    // Set provider state before deletion so refresh works
+    gotResults = false;
+    isWaitingForData = true;
+    lastSearchText = launcher ? launcher.searchText : "";
+
+    // Delete the item
+    ClipboardService.deleteById(String(item.clipboardId));
+  }
+
+  // Prepare item for display (handles image decoding)
+  function prepareItem(item) {
+    if (item && item.isImage && item.clipboardId) {
+      if (!ClipboardService.getImageData(item.clipboardId)) {
+        ClipboardService.decodeToDataUrl(item.clipboardId, item.mime, null);
+      }
+    }
+  }
+
+  // Get image URL for item (used by delegates)
+  function getImageUrl(item) {
+    if (!item || !item.clipboardId)
+      return "";
+    return ClipboardService.getImageData(item.clipboardId) || "";
+  }
+
+  // Get preview data for the preview panel
+  function getPreviewData(item) {
+    if (!item)
+      return null;
+    return {
+      "clipboardId": item.clipboardId,
+      "isImage": item.isImage,
+      "mime": item.mime,
+      "preview": item.preview
+    };
   }
 }

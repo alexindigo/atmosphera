@@ -16,7 +16,8 @@ SmartPanel {
   preferredHeight: Math.round(500 * Style.uiScaleRatio)
 
   panelContent: Rectangle {
-    color: Color.transparent
+    id: panelContent
+    color: "transparent"
 
     // Calculate content height based on header + devices list (or minimum for empty states)
     property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
@@ -193,7 +194,7 @@ SmartPanel {
                 return [];
               var filtered = BluetoothService.adapter.devices.values.filter(dev => dev && !dev.blocked && !dev.paired && !dev.trusted);
               // Optionally hide devices without a meaningful name when the filter is enabled
-              if (Settings.data && Settings.data.ui && Settings.data.ui.bluetoothHideUnnamedDevices) {
+              if (Settings.data && Settings.data.ui && Settings.data.network.bluetoothHideUnnamedDevices) {
                 filtered = filtered.filter(function (dev) {
                   // Extract display name
                   var dn = "";

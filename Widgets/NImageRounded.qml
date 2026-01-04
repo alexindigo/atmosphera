@@ -12,17 +12,16 @@ Item {
   property string fallbackIcon: ""
   property real fallbackIconSize: Style.fontSizeXXL
   property real borderWidth: 0
-  property color borderColor: Color.transparent
+  property color borderColor: "transparent"
   property int imageFillMode: Image.PreserveAspectFit
 
   readonly property bool showFallback: (fallbackIcon !== undefined && fallbackIcon !== "") && (imagePath === undefined || imagePath === "")
-
-  signal statusChanged(int status)
+  readonly property int status: imageSource.status
 
   Rectangle {
     anchors.fill: parent
     radius: root.radius
-    color: Color.transparent
+    color: "transparent"
     border.width: root.borderWidth
     border.color: root.borderColor
 
@@ -37,7 +36,6 @@ Item {
       asynchronous: true
       antialiasing: true
       fillMode: root.imageFillMode
-      onStatusChanged: root.statusChanged(status)
     }
 
     ShaderEffect {

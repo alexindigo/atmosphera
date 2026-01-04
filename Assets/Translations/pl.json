@@ -142,12 +142,20 @@
           "description": "Jeśli tekst wyjściowy pasuje do tej wartości, przycisk zostanie zwinięty.",
           "label": "Warunek zwinięcia"
         },
+        "color-selection": {
+          "description": "Zastosuj kolory motywu do ikony i tekstu.",
+          "label": "Wybierz kolor"
+        },
         "display-command-output": {
           "description": "Wpisz polecenie do uruchamiania w regularnych odstępach czasu. Pierwsza linia wyniku zostanie wyświetlona jako tekst.",
           "label": "Wyświetl wynik polecenia",
           "stream-description": "Wpisz polecenie do uruchamiania w trybie ciągłym."
         },
         "dynamic-text": "Dynamiczny tekst",
+        "enable-colorization": {
+          "description": "Włącz kolorowanie ikony i tekstu niestandardowego przycisku, stosując kolory motywu.",
+          "label": "Włącz kolorowanie"
+        },
         "hide-mode": {
           "alwaysExpanded": "Zawsze rozwinięty",
           "description": "Kontroluje widoczność widżetu, gdy polecenie nie zwraca wyniku.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Wybierz sposób wyświetlania tej wartości.",
           "label": "Tryb wyświetlania"
+        },
+        "show-icon": {
+          "description": "Wyświetl ikonę układu klawiatury.",
+          "label": "Pokaż ikonę"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Po włączeniu, stosuje kolor podstawowy dla podkreślenia.",
+          "label": "Użyj koloru podstawowego."
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "Pokaż odczyty temperatury GPU (jeśli dostępne).",
           "label": "Temperatura GPU"
+        },
+        "load-average": {
+          "description": "Wyświetl średnie obciążenie systemu.",
+          "label": "Średnie obciążenie"
         },
         "memory-percentage": {
           "description": "Pokaż użycie pamięci w procentach zamiast wartości bezwzględnych.",
@@ -481,6 +503,7 @@
       "device-address": "Adres urządzenia",
       "disabled": "Bluetooth jest wyłączony",
       "disconnect": "Odłącz",
+      "disconnecting": "Rozłączanie...",
       "discoverable": "Wykrywalny",
       "enable-message": "Włącz Bluetooth, aby zobaczyć dostępne urządzenia.",
       "info": "Informacje",
@@ -494,6 +517,14 @@
       "refresh-devices": "Odśwież urządzenia",
       "scanning": "Skanowanie urządzeń...",
       "signal": "Sygnał",
+      "signal-text": {
+        "excellent": "Sygnał: Doskonały",
+        "fair": "Sygnał: Dobry",
+        "good": "Sygnał: Dobry",
+        "poor": "Sygnał: Słaby",
+        "unknown": "Sygnał: Nieznany",
+        "very-poor": "Sygnał: Bardzo słaby"
+      },
       "title": "Bluetooth",
       "trusted": "Zaufany",
       "unpair": "Rozłącz"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Dołącz do Discorda",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Przekaż opinię."
       },
       "empty": "Informacje o wydaniu nie są jeszcze dostępne.",
       "highlight-title": "Najważniejsze zmiany",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Włącz Bluetooth",
     "enable-dnd": "Włącz Nie przeszkadzać",
     "enable-wifi": "Włącz Wi-Fi",
+    "launcher-settings": "Ustawienia programu uruchamiającego",
     "lower-to-bottom": "Opuść na dół.",
     "next": "Następny",
     "open-calendar": "Otwórz kalendarz",
@@ -631,7 +664,35 @@
       "webbrowser": "Przeglądarka www"
     },
     "delete": "Usuń",
+    "no-results": "Nie znaleziono wyników.",
     "pin": "Przypnij",
+    "providers": {
+      "applications": "Aplikacje",
+      "calculator": "Kalkulator",
+      "calculator-deprecated": "Polecenie >calc jest przestarzałe i wkrótce zostanie usunięte. Zamiast tego wpisuj wyrażenia matematyczne bezpośrednio w wyszukiwarce.",
+      "calculator-description": "Kalkulator — obliczaj wyrażenia matematyczne",
+      "calculator-enter-expression": "Wpisz wyrażenie matematyczne",
+      "calculator-error": "Błąd",
+      "calculator-name": "Kalkulator",
+      "clipboard": "Historia schowka",
+      "clipboard-clear-description": "Wyczyść całą historię schowka",
+      "clipboard-clear-description-full": "Usuń wszystkie elementy z historii schowka",
+      "clipboard-clear-history": "Wyczyść historię schowka",
+      "clipboard-delete": "Usuń wpis ze schowka",
+      "clipboard-history-disabled": "Historia schowka wyłączona",
+      "clipboard-history-disabled-description": "Włącz historię schowka w ustawieniach lub zainstaluj cliphist",
+      "clipboard-loading": "Ładowanie historii schowka...",
+      "clipboard-loading-description": "Proszę czekać",
+      "clipboard-search-description": "Szukaj w historii schowka",
+      "command": "Polecenie",
+      "command-description": "Uruchamiaj polecenia powłoki",
+      "command-name": "Polecenie",
+      "emoji": "Wybór Emoji",
+      "emoji-loading": "Ładowanie emoji...",
+      "emoji-loading-description": "Proszę czekać",
+      "emoji-no-recent": "Brak ostatnich emoji.",
+      "emoji-search-description": "Szukaj i kopiuj emoji"
+    },
     "unpin": "Odepnij"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Wyjście systemowe + mikrofon",
         "microphone-input": "Wejście mikrofonu",
+        "none": "Brak dźwięku.",
         "system-output": "Wyjście systemowe"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Zawsze przewijaj",
       "hover": "Przewijaj po najechaniu",
       "never": "Nigdy nie przewijaj"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Siatka",
+      "single-row": "Pojedynczy wiersz"
     },
     "settings-panel-mode": {
       "attached": "Panel przypięty do paska",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Wpisz, aby filtrować tapety...",
     "select": "Wybierz",
     "test": "Test"
-  },
-  "plugins": {
-    "applications": "Aplikacje",
-    "calculator": "Kalkulator",
-    "calculator-description": "Kalkulator — obliczaj wyrażenia matematyczne",
-    "calculator-enter-expression": "Wpisz wyrażenie matematyczne",
-    "calculator-error": "Błąd",
-    "calculator-name": "Kalkulator",
-    "clipboard": "Historia schowka",
-    "clipboard-clear-description": "Wyczyść całą historię schowka",
-    "clipboard-clear-description-full": "Usuń wszystkie elementy z historii schowka",
-    "clipboard-clear-history": "Wyczyść historię schowka",
-    "clipboard-delete": "Usuń wpis ze schowka",
-    "clipboard-history-disabled": "Historia schowka wyłączona",
-    "clipboard-history-disabled-description": "Włącz historię schowka w ustawieniach lub zainstaluj cliphist",
-    "clipboard-loading": "Ładowanie historii schowka...",
-    "clipboard-loading-description": "Proszę czekać",
-    "clipboard-search-description": "Szukaj w historii schowka",
-    "command": "Polecenie",
-    "command-description": "Uruchamiaj polecenia powłoki",
-    "command-name": "Polecenie",
-    "emoji": "Wybór Emoji",
-    "emoji-loading": "Ładowanie emoji...",
-    "emoji-loading-description": "Proszę czekać",
-    "emoji-search-description": "Szukaj i kopiuj emoji"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Generuje kolory ściśle dopasowane do obrazu.",
-            "scheme-expressive": "Żywa paleta z radosnym nasyceniem.",
-            "scheme-fidelity": "Paleta o wysokiej wierności, zachowująca oryginalne odcienie.",
-            "scheme-fruit-salad": "Kolorowa mieszanka jasnych, kontrastujących akcentów.",
-            "scheme-monochrome": "Minimalistyczna paleta zbudowana wokół jednego odcienia.",
-            "scheme-neutral": "Stonowana paleta ze spokojnymi barwami.",
-            "scheme-rainbow": "Różnorodna paleta obejmująca pełne spektrum.",
-            "scheme-tonal-spot": "Zrównoważona paleta ze skupionymi akcentami."
-          },
+          "description": "Wybierz metodę generowania schematu kolorów, której Matugen użyje do tworzenia kolorów z Twojej tapety.",
           "label": "Typ schematu Matugen"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "Zapisz {filepath} i przeładuj"
+          },
+          "zen-browser": {
+            "description": "Zapisz w {filepath}; skopiuj do chrome/userChrome.css w swoim profilu Zen."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Komenda do uruchomienia po kliknięciu przycisku adnotacji w historii schowka. Obraz zostanie przekazany do tej komendy.",
+          "label": "Narzędzie do adnotacji",
+          "placeholder": "Przepraszam, nie rozumiem. Proszę podać tekst do przetłumaczenia."
+        },
         "clip-preview": {
           "description": "Pokaż podgląd zawartości schowka przy użyciu polecenia >clip.",
           "label": "Włącz podgląd schowka"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Pokaż karty kategorii do filtrowania aplikacji.",
           "label": "Pokaż kategorie"
+        },
+        "show-icon-background": {
+          "description": "Pokaż zaokrąglone tło prostokątne za ikonami.",
+          "label": "Pokaż tło ikony"
         },
         "sort-by-usage": {
           "description": "Gdy włączone, najczęściej uruchamiane aplikacje pojawiają się na początku listy.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Włącz zarządzanie Bluetooth.",
-        "label": "Włącz Bluetooth"
+        "label": "Włącz Bluetooth",
+        "rssi-polling": {
+          "description": "Okresowo próbkuje RSSI dla podłączonych urządzeń przez bluetoothctl. Może nie być dostępne dla wszystkich urządzeń; zużywa minimalne zasoby, gdy jest włączone.",
+          "label": "Odpytywanie sygnału Bluetooth"
+        }
       },
       "section": {
         "description": "Zarządzaj połączeniami Wi-Fi i Bluetooth."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Sprawdź źródła wtyczek lub odśwież listę.",
         "no-plugins-label": "Brak dostępnych wtyczek"
       },
+      "collision": {
+        "already-installed": "Ta wtyczka jest już zainstalowana.",
+        "custom-version-exists": "Niestandardowa wersja z \"{source}\" jest już zainstalowana.",
+        "official-version-exists": "Oficjalna wersja tej wtyczki jest już zainstalowana."
+      },
       "filter": {
         "all": "Wszystkie",
         "downloaded": "Pobrane",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Brak zainstalowanych wtyczek"
       },
       "installing": "Instalowanie {plugin}...",
+      "open-plugins-tab": "Otwórz ustawienia wtyczek",
       "plugin-settings-title": "Ustawienia {plugin}",
       "refresh": {
         "refreshing": "Odświeżanie listy wtyczek...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Wtyczka nie została załadowana",
       "settings-saved": "Ustawienia wtyczki zapisane",
+      "source": {
+        "custom": "Źródło niestandardowe",
+        "official": "Oficjalny"
+      },
       "sources": {
         "add-custom": "Dodaj własne repozytorium",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Aktualizuj wszystkie ({count})",
       "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie",
       "update-available": "Dostępne aktualizacje dla {count} wtyczek",
+      "update-available_plural": "Dostępne aktualizacje wtyczek: {count}",
       "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
       "update-incompatible": "Wymaga Noctalia v{version} lub nowszej",
+      "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",
       "update-success": "Zaktualizowano {plugin} do v{version}",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."
@@ -2339,6 +2399,10 @@
           "label": "Ogólne"
         }
       },
+      "large-buttons-layout": {
+        "description": "Wybierz sposób wyświetlania przycisków menu sesji.",
+        "label": "Układ z dużymi przyciskami"
+      },
       "large-buttons-style": {
         "description": "Wyświetlaj menu sesji z dużymi przyciskami w układzie siatki.",
         "label": "Styl dużych przycisków"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Kolory podświetlenia"
       },
+      "load-average-section": {
+        "label": "Średnie obciążenie"
+      },
       "memory-section": {
         "label": "Użycie pamięci"
       },
@@ -2437,6 +2504,10 @@
         "description": "Dostosuj globalną prędkość animacji.",
         "label": "Prędkość animacji",
         "reset": "Resetuj prędkość animacji"
+      },
+      "box-border": {
+        "description": "Wyświetla obrys wokół obszarów zawartości.",
+        "label": "Obrys kontenera"
       },
       "box-border-radius": {
         "description": "Dostosowuje zaokrąglenie narożników głównych sekcji układu, takich jak paski boczne, karty i panele treści.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Folder tapet"
         },
         "hide-wallpaper-filenames": {
-          "description": "Ukryj nazwy plików tapet w selektorze.",
-          "label": "Ukryj nazwy plików"
+          "tooltip-hide": "Ukryj nazwy plików",
+          "tooltip-show": "Pokaż nazwy plików"
         },
         "monitor-specific": {
           "description": "Ustaw inny folder tapet dla każdego monitora.",
@@ -2648,6 +2719,7 @@
     "download": "Pobierz",
     "download-speed": "Prędkość pobierania",
     "gpu-temp": "Temperatura GPU",
+    "load-average": "Średnie obciążenie",
     "memory": "Pamięć",
     "title": "Monitor systemu",
     "upload": "Prześlij",
@@ -2664,6 +2736,7 @@
       "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę."
     },
     "bluetooth": {
+      "address-copied": "Adres skopiowany do schowka.",
       "confirm-code": "Potwierdź kod {value} na drugim urządzeniu.",
       "connect-failed": "Nie udało się połączyć z urządzeniem.",
       "disabled": "Wyłączony",
@@ -2706,7 +2779,8 @@
       "enabled": "Włączone"
     },
     "keyboard-layout": {
-      "changed": "Układ klawiatury zmieniony na {layout}"
+      "changed": "Układ klawiatury zmieniony na {layout}",
+      "title": "Klawiatura"
     },
     "kofi": {
       "opened": "Strona Ko-fi otwarta w przeglądarce"
@@ -2780,6 +2854,7 @@
     "close": "Zamknij",
     "collapse": "Zwiń pasek boczny",
     "connect-disconnect-devices": "Urządzenie Bluetooth",
+    "copy-address": "Kopiuj adres",
     "delete-notification": "Usuń powiadomienie",
     "disable-keep-awake": "Nie usypiaj",
     "do-not-disturb-disabled": "Nie przeszkadzać",
@@ -2798,10 +2873,12 @@
     "list-view": "Widok listy",
     "manage-vpn": "Połączenia VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Osiągnięto maksymalną liczbę widżetów.",
     "microphone-volume-at": "Głośność mikrofonu: {volume}%",
     "move-to-center-section": "Sekcja środkowa",
     "move-to-left-section": "Sekcja lewa",
     "move-to-right-section": "Sekcja prawa",
+    "move-to-section": "Przejdź do {sekcja}",
     "mute": "Wycisz",
     "next-media": "Następny utwór",
     "next-month": "Następny miesiąc",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Podświetlenie nocne (niedostępne)",
     "noctalia-performance-disabled": "Tryb wydajności Noctalia",
     "noctalia-performance-enabled": "Tryb wydajności Noctalia",
+    "open-annotation-tool": "Otwórz za pomocą narzędzia do adnotacji.",
     "open-control-center": "Centrum sterowania",
     "open-notification-history-disable-dnd": "Historia powiadomień",
     "open-notification-history-enable-dnd": "Historia powiadomień",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "Do dostępu do treści NSFW wymagany jest klucz API.",
         "label": "Klucz API",
+        "managed-by-env": "Zarządzane za pomocą zmiennej środowiskowej NOCTALIA_WALLHAVEN_API_KEY.",
         "placeholder": "Wprowadź swój klucz API Wallhaven."
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Szukaj",
+      "solid-color": {
+        "tooltip": "Jednolite tło kolorystyczne."
+      },
       "sorting": {
         "date_added": "Data dodania",
         "favorites": "Ulubione",
@@ -2942,6 +3024,11 @@
     "snow": "Śnieg",
     "thunderstorm": "Burza",
     "unknown": "Nieznane"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Wybierz plik"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Wymagane działanie.",
+      "available-interfaces": "Dostępne interfejsy",
       "available-networks": "Dostępne sieci",
       "connect": "Połącz",
       "connected": "Połączono",
       "disabled": "Wi-Fi jest wyłączone",
       "disconnect": "Odłącz",
+      "disconnected": "Rozłączony",
       "disconnecting": "Rozłączanie...",
       "dns": "DNS",
       "enable-message": "Włącz Wi-Fi, aby zobaczyć dostępne sieci.",
@@ -3042,12 +3131,15 @@
       "frequency": "Częstotliwość",
       "gateway": "Brama",
       "info": "Informacje",
+      "interface": "Interfejs sieciowy",
       "internet": "Internet",
       "internet-connected": "Połączony z internetem",
       "internet-limited": "Brak internetu",
+      "internet-status": "Status internetu",
       "ipv4": "IPv4",
       "known-networks": "Znane sieci",
       "link-speed": "Prędkość łącza",
+      "no-ethernet-devices": "Nie wykryto żadnych urządzeń Ethernet.",
       "no-networks": "Nie znaleziono żadnych sieci",
       "password": "Hasło",
       "saved": "Zapisano",

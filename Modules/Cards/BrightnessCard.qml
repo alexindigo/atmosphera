@@ -91,7 +91,7 @@ NBox {
           }
           baseSize: Style.baseWidgetSize * 0.5
           colorFg: Color.mOnSurface
-          colorBg: Color.transparent
+          colorBg: "transparent"
           colorBgHover: Color.mHover
           colorFgHover: Color.mOnHover
         }
@@ -100,7 +100,6 @@ NBox {
           text: brightnessMonitor ? I18n.tr("settings.display.monitors.brightness") : "No display"
           pointSize: Style.fontSizeXS
           color: Color.mOnSurfaceVariant
-          font.weight: Style.fontWeightMedium
           elide: Text.ElideRight
           Layout.fillWidth: true
           Layout.preferredWidth: 0

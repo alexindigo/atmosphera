@@ -8,13 +8,16 @@ Item {
   id: root
 
   property var launcher: null
-  property string name: I18n.tr("plugins.applications")
+  property string name: I18n.tr("launcher.providers.applications")
   property bool handleSearch: true
   property var entries: []
+  property string supportedLayouts: "both"
+  property bool isDefaultProvider: true // This provider handles empty search
+  property int preferredGridColumns: 5
 
   // Category support
   property string selectedCategory: "all"
-  property bool isBrowsingMode: false
+  property bool showsCategories: true // Default to showing categories
   property var categories: ["all", "Pinned", "AudioVideo", "Chat", "Development", "Education", "Game", "Graphics", "Network", "Office", "System", "Misc", "WebBrowser"]
   property var availableCategories: ["all"] // Reactive property for available categories
 
@@ -96,8 +99,8 @@ Item {
     loadApplications();
     // Reset to "all" category when opening
     selectedCategory = "all";
-    // Set browsing mode initially (will be updated when getResults is called)
-    isBrowsingMode = true;
+    // Set category mode initially (will be updated when getResults is called)
+    showsCategories = true;
   }
 
   function selectCategory(category) {
@@ -332,7 +335,7 @@ Item {
 
   function loadApplications() {
     if (typeof DesktopEntries === 'undefined') {
-      Logger.w("ApplicationsPlugin", "DesktopEntries service not available");
+      Logger.w("ApplicationsProvider", "DesktopEntries service not available");
       return;
     }
 
@@ -340,7 +343,7 @@ Item {
     const seen = new Map(); // Map of appId -> exec command
 
     entries = allApps.filter(app => {
-                               if (!app || app.noDisplay)
+                               if (!app || app.noDisplay || app.hidden)
                                return false;
 
                                const appId = app.id || app.name;
@@ -352,7 +355,7 @@ Item {
 
                                  // If exec is different, it's a legitimate different entry - keep it
                                  if (previousExec !== execCmd) {
-                                   Logger.d("ApplicationsPlugin", `Keeping variant of ${appId}: ${execCmd} (differs from ${previousExec})`);
+                                   Logger.d("ApplicationsProvider", `Keeping variant of ${appId}: ${execCmd} (differs from ${previousExec})`);
                                    // Add with modified ID to make it unique
                                    app.id = `${appId}_${execCmd}`;
                                    seen.set(app.id, execCmd);
@@ -360,7 +363,7 @@ Item {
                                  }
 
                                  // Same appId AND same exec = true duplicate, skip it
-                                 Logger.d("ApplicationsPlugin", `Skipping duplicate: ${appId}`);
+                                 Logger.d("ApplicationsProvider", `Skipping duplicate: ${appId}`);
                                  return false;
                                }
 
@@ -371,7 +374,7 @@ Item {
                                       return app;
                                     });
 
-    Logger.d("ApplicationsPlugin", `Loaded ${entries.length} applications`);
+    Logger.d("ApplicationsProvider", `Loaded ${entries.length} applications`);
     updateAvailableCategories();
   }
 
@@ -433,8 +436,8 @@ Item {
     if (!entries || entries.length === 0)
       return [];
 
-    // Set browsing mode based on whether there's a query
-    isBrowsingMode = !query || query.trim() === "";
+    // Set category mode based on whether there's a query
+    showsCategories = !query || query.trim() === "";
 
     // Filter by category first
     let filteredEntries = entries;
@@ -535,51 +538,90 @@ Item {
       "description": app.genericName || app.comment || "",
       "icon": app.icon || "application-x-executable",
       "isImage": false,
+      "provider": root,
       "onActivate": function () {
         // Close the launcher/SmartPanel immediately without any animations.
         // Ensures we are not preventing the future focusing of the app
-        launcher.close();
+        launcher.closeImmediately();
 
-        Logger.d("ApplicationsPlugin", `Launching: ${app.name}`);
-        // Record usage and persist asynchronously
-        if (Settings.data.appLauncher.sortByMostUsed)
-          recordUsage(app);
-        if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
-          // Use custom launch prefix
-          const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
+        // Defer execution to next event loop iteration to ensure panel is fully closed
+        Qt.callLater(() => {
+                       Logger.d("ApplicationsProvider", `Launching: ${app.name}`);
+                       // Record usage and persist asynchronously
+                       if (Settings.data.appLauncher.sortByMostUsed) {
+                         recordUsage(app);
+                       }
 
-          if (app.runInTerminal) {
-            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-            const command = prefix.concat(terminal.concat(app.command));
-            Quickshell.execDetached(command);
-          } else {
-            const command = prefix.concat(app.command);
-            Quickshell.execDetached(command);
-          }
-        } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
-          Logger.d("ApplicationsPlugin", `Using app2unit for: ${app.id}`);
-          if (app.runInTerminal)
-            Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
-          else
-            Quickshell.execDetached(["app2unit", "--"].concat(app.command));
-        } else {
-          // Fallback logic when app2unit is not used
-          if (app.runInTerminal) {
-            // If app.execute() fails for terminal apps, we handle it manually.
-            Logger.d("ApplicationsPlugin", "Executing terminal app manually: " + app.name);
-            const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
-            const command = terminal.concat(app.command);
-            Quickshell.execDetached(command);
-          } else if (app.command && app.command.length > 0) {
-            Quickshell.execDetached(app.command);
-          } else if (app.execute) {
-            app.execute();
-          } else {
-            Logger.w("ApplicationsPlugin", `Could not launch: ${app.name}. No valid launch method.`);
-          }
-        }
+                       if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
+                         // Use custom launch prefix
+                         const prefix = Settings.data.appLauncher.customLaunchPrefix.split(" ");
+
+                         if (app.runInTerminal) {
+                           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                           const command = prefix.concat(terminal.concat(app.command));
+                           Quickshell.execDetached(command);
+                         } else {
+                           const command = prefix.concat(app.command);
+                           Quickshell.execDetached(command);
+                         }
+                       } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+                         Logger.d("ApplicationsProvider", `Using app2unit for: ${app.id}`);
+                         if (app.runInTerminal)
+                         Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
+                         else
+                         Quickshell.execDetached(["app2unit", "--"].concat(app.command));
+                       } else {
+                         // Fallback logic when app2unit is not used
+                         if (app.runInTerminal) {
+                           // If app.execute() fails for terminal apps, we handle it manually.
+                           Logger.d("ApplicationsProvider", "Executing terminal app manually: " + app.name);
+                           const terminal = Settings.data.appLauncher.terminalCommand.split(" ");
+                           const command = terminal.concat(app.command);
+                           Quickshell.execDetached(command);
+                         } else if (app.command && app.command.length > 0) {
+                           Quickshell.execDetached(app.command);
+                         } else if (app.execute) {
+                           app.execute();
+                         } else {
+                           Logger.w("ApplicationsProvider", `Could not launch: ${app.name}. No valid launch method.`);
+                         }
+                       }
+                     });
       }
     };
+  }
+
+  // -------------------------
+  // Item actions for launcher delegate
+  function getItemActions(item) {
+    if (!item || !item.appId)
+      return [];
+    return [
+          {
+            "icon": isAppPinned({
+                                  "id": item.appId
+                                }) ? "unpin" : "pin",
+            "tooltip": isAppPinned({
+                                     "id": item.appId
+                                   }) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin"),
+            "action": function () {
+              togglePin(item.appId);
+            }
+          }
+        ];
+  }
+
+  function togglePin(appId) {
+    if (!appId)
+      return;
+    const normalizedId = normalizeAppId(appId);
+    let arr = (Settings.data.dock.pinnedApps || []).slice();
+    const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+    if (idx >= 0)
+      arr.splice(idx, 1);
+    else
+      arr.push(appId);
+    Settings.data.dock.pinnedApps = arr;
   }
 
   // -------------------------

@@ -142,12 +142,20 @@
           "description": "Якщо вихідний текст збігається з цим значенням, кнопка згорнеться.",
           "label": "Умова згортання"
         },
+        "color-selection": {
+          "description": "Застосувати кольори теми до значка та тексту.",
+          "label": "Вибрати колір"
+        },
         "display-command-output": {
           "description": "Введіть команду для запуску з регулярним інтервалом. Перший рядок її виведення відображатиметься як текст.",
           "label": "Відображати виведення команди",
           "stream-description": "Введіть команду для безперервного запуску."
         },
         "dynamic-text": "Динамічний текст",
+        "enable-colorization": {
+          "description": "Увімкнути розфарбовування для значка та тексту власної кнопки, застосовуючи кольори теми.",
+          "label": "Увімкнути розфарбовування"
+        },
         "hide-mode": {
           "alwaysExpanded": "Завжди розширено",
           "description": "Контролює видимість віджета, коли команда не має виведення.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Виберіть, як ви хочете, щоб це значення відображалося.",
           "label": "Режим відображення"
+        },
+        "show-icon": {
+          "description": "Показувати піктограму розкладки клавіатури.",
+          "label": "Показати значок"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Якщо ввімкнено, це застосовує основний колір для підкреслення.",
+          "label": "Використовуйте основний колір"
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "Показувати показники температури GPU, якщо доступні.",
           "label": "Температура GPU"
+        },
+        "load-average": {
+          "description": "Показати середнє навантаження системи.",
+          "label": "Середнє навантаження"
         },
         "memory-percentage": {
           "description": "Показувати використання пам'яті у відсотках замість абсолютних значень.",
@@ -481,6 +503,7 @@
       "device-address": "Адреса пристрою",
       "disabled": "Bluetooth вимкнено",
       "disconnect": "Відключити",
+      "disconnecting": "Відключення...",
       "discoverable": "Виявний",
       "enable-message": "Увімкніть Bluetooth, щоб побачити доступні пристрої.",
       "info": "Інформація",
@@ -494,6 +517,14 @@
       "refresh-devices": "Оновити пристрої",
       "scanning": "Сканування пристроїв...",
       "signal": "Сигнал",
+      "signal-text": {
+        "excellent": "Сигнал: Відмінний",
+        "fair": "Сигнал: Задовільний",
+        "good": "Сигнал: Добре",
+        "poor": "Сигнал: Поганий",
+        "unknown": "Сигнал: Невідомий",
+        "very-poor": "Сигнал: Дуже слабкий"
+      },
       "title": "Bluetooth",
       "trusted": "Надійний",
       "unpair": "Розірвати пару"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Приєднатися до нашого Discord",
-        "dismiss": "Ок"
+        "dismiss": "Ок",
+        "feedback": "Надати відгук"
       },
       "empty": "Примітки до релізу ще недоступні.",
       "highlight-title": "Основні зміни",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Увімкнути Bluetooth",
     "enable-dnd": "Увімкнути режим \"Не турбувати\"",
     "enable-wifi": "Увімкнути Wi-Fi",
+    "launcher-settings": "Налаштування панелі запуску",
     "lower-to-bottom": "Опустити донизу",
     "next": "Наступний",
     "open-calendar": "Відкрити календар",
@@ -631,7 +664,35 @@
       "webbrowser": "Веб-браузер"
     },
     "delete": "Видалити",
+    "no-results": "Результатів не знайдено",
     "pin": "Закріпити",
+    "providers": {
+      "applications": "Застосунки",
+      "calculator": "Калькулятор",
+      "calculator-deprecated": "Команда >calc застаріла і скоро буде видалена. Будь ласка, введіть математичні вирази безпосередньо в пошуку.",
+      "calculator-description": "Калькулятор — обчислення математичних виразів",
+      "calculator-enter-expression": "Введіть математичний вираз",
+      "calculator-error": "Помилка",
+      "calculator-name": "Калькулятор",
+      "clipboard": "Історія буфера обміну",
+      "clipboard-clear-description": "Очистити всю історію буфера обміну",
+      "clipboard-clear-description-full": "Видалити всі елементи з історії буфера обміну",
+      "clipboard-clear-history": "Очистити історію буфера обміну",
+      "clipboard-delete": "Видалити запис з буфера обміну",
+      "clipboard-history-disabled": "Історія буфера обміну вимкнена",
+      "clipboard-history-disabled-description": "Увімкніть історію буфера обміну в налаштуваннях або встановіть cliphist",
+      "clipboard-loading": "Завантаження історії буфера обміну...",
+      "clipboard-loading-description": "Зачекайте, будь ласка",
+      "clipboard-search-description": "Пошук в історії буфера обміну",
+      "command": "Команда",
+      "command-description": "Виконати команди оболонки",
+      "command-name": "Команда",
+      "emoji": "Обрати емодзі",
+      "emoji-loading": "Завантаження емодзі...",
+      "emoji-loading-description": "Зачекайте, будь ласка",
+      "emoji-no-recent": "Немає нещодавніх емодзі",
+      "emoji-search-description": "Пошук і копіювання емодзі"
+    },
     "unpin": "Відкріпити"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Системний вихід + вхід мікрофона",
         "microphone-input": "Вхід мікрофона",
+        "none": "Немає аудіо",
         "system-output": "Системний вихід"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Завжди прокручувати",
       "hover": "Прокручувати при наведенні",
       "never": "Ніколи не прокручувати"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Сітка",
+      "single-row": "Один рядок"
     },
     "settings-panel-mode": {
       "attached": "Панель прикріплена до панелі",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Введіть для фільтрації шпалер...",
     "select": "Вибрати",
     "test": "Тест"
-  },
-  "plugins": {
-    "applications": "Застосунки",
-    "calculator": "Калькулятор",
-    "calculator-description": "Калькулятор — обчислення математичних виразів",
-    "calculator-enter-expression": "Введіть математичний вираз",
-    "calculator-error": "Помилка",
-    "calculator-name": "Калькулятор",
-    "clipboard": "Історія буфера обміну",
-    "clipboard-clear-description": "Очистити всю історію буфера обміну",
-    "clipboard-clear-description-full": "Видалити всі елементи з історії буфера обміну",
-    "clipboard-clear-history": "Очистити історію буфера обміну",
-    "clipboard-delete": "Видалити запис з буфера обміну",
-    "clipboard-history-disabled": "Історія буфера обміну вимкнена",
-    "clipboard-history-disabled-description": "Увімкніть історію буфера обміну в налаштуваннях або встановіть cliphist",
-    "clipboard-loading": "Завантаження історії буфера обміну...",
-    "clipboard-loading-description": "Зачекайте, будь ласка",
-    "clipboard-search-description": "Пошук в історії буфера обміну",
-    "command": "Команда",
-    "command-description": "Виконати команди оболонки",
-    "command-name": "Команда",
-    "emoji": "Обрати емодзі",
-    "emoji-loading": "Завантаження емодзі...",
-    "emoji-loading-description": "Зачекайте, будь ласка",
-    "emoji-search-description": "Пошук і копіювання емодзі"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Генерує кольори, що тісно збігаються з базовим зображенням.",
-            "scheme-expressive": "Яскрава палітра з грайливою насиченістю.",
-            "scheme-fidelity": "Високоточна палітра, що зберігає вихідні відтінки.",
-            "scheme-fruit-salad": "Барвистий мікс яскравих контрастних акцентів.",
-            "scheme-monochrome": "Мінімальна палітра на основі одного відтінку.",
-            "scheme-neutral": "Приглушена палітра з стриманими та заспокійливими тонами.",
-            "scheme-rainbow": "Різноманітна палітра, що охоплює весь спектр.",
-            "scheme-tonal-spot": "Збалансована палітра з фокусованими акцентами."
-          },
+          "description": "Виберіть метод генерації колірної схеми, який Matugen використовуватиме для створення кольорів з ваших шпалер.",
           "label": "Тип схеми Matugen"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "Записати {filepath} та перезавантажити"
+          },
+          "zen-browser": {
+            "description": "Запишіть {filepath}; скопіюйте у chrome/userChrome.css вашого профілю Zen."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Команда для запуску при натисканні кнопки анотування в історії буфера обміну, зображення буде передано в цю команду.",
+          "label": "Інструмент анотацій",
+          "placeholder": "градіа, сатті -ф -"
+        },
         "clip-preview": {
           "description": "Показувати попередній перегляд вмісту буфера обміну при використанні команди >clip.",
           "label": "Попередній перегляд буфера обміну"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Показувати вкладки категорій для фільтрації додатків.",
           "label": "Показувати категорії"
+        },
+        "show-icon-background": {
+          "description": "Показувати заокруглений прямокутник як фон за іконками.",
+          "label": "Показати фон іконки"
         },
         "sort-by-usage": {
           "description": "Коли увімкнено, часто використовувані застосунки з'являються першими в списку.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Активувати керування Bluetooth.",
-        "label": "Увімкнути Bluetooth"
+        "label": "Увімкнути Bluetooth",
+        "rssi-polling": {
+          "description": "Періодично збирати дані RSSI для підключених пристроїв через bluetoothctl. Може бути недоступним для всіх пристроїв; використовує мінімум ресурсів, коли ввімкнено.",
+          "label": "Опитування сигналу Bluetooth"
+        }
       },
       "section": {
         "description": "Керувати підключеннями Wi-Fi та Bluetooth."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Перевірте вихідні коди вашого плагіна або оновіть список.",
         "no-plugins-label": "Немає доступних плагінів"
       },
+      "collision": {
+        "already-installed": "Цей плагін вже встановлено.",
+        "custom-version-exists": "Вже встановлено власну версію з \"{source}\"",
+        "official-version-exists": "Офіційна версія цього плагіна вже встановлена."
+      },
       "filter": {
         "all": "Все",
         "downloaded": "Завантажено",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Немає встановлених плагінів"
       },
       "installing": "Встановлення {plugin}...",
+      "open-plugins-tab": "Відкрити налаштування плагінів",
       "plugin-settings-title": "Налаштування {plugin}",
       "refresh": {
         "refreshing": "Оновлення списку плагінів...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Плагін не завантажено",
       "settings-saved": "Налаштування плагіна збережено",
+      "source": {
+        "custom": "Власне джерело",
+        "official": "Офіційний"
+      },
       "sources": {
         "add-custom": "Додати власний репозиторій",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Оновити все ({count})",
       "update-all-success": "Усі плагіни успішно оновлено.",
       "update-available": "Доступно оновлень для {count} плагінів",
+      "update-available_plural": "Доступно {count} оновлень плагінів",
       "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
+      "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
       "update-success": "Оновлено {plugin} до версії {version}",
       "update-version": "v{current} → v{new}",
       "updating": "Оновлення..."
@@ -2339,6 +2399,10 @@
           "label": "Загальні"
         }
       },
+      "large-buttons-layout": {
+        "description": "Виберіть спосіб відображення кнопок меню сеансу.",
+        "label": "Розкладка з великими кнопками"
+      },
       "large-buttons-style": {
         "description": "Відобразити меню сеансу великими кнопками у вигляді сітки.",
         "label": "Стиль великих кнопок"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Кольори підсвічування"
       },
+      "load-average-section": {
+        "label": "Середнє навантаження"
+      },
       "memory-section": {
         "label": "Використання пам'яті"
       },
@@ -2437,6 +2504,10 @@
         "description": "Налаштувати глобальну швидкість анімації.",
         "label": "Швидкість анімації",
         "reset": "Скинути швидкість анімації"
+      },
+      "box-border": {
+        "description": "Відображає контур навколо областей вмісту.",
+        "label": "Контур контейнера"
       },
       "box-border-radius": {
         "description": "Налаштовує заокруглення кутів основних розділів макета, таких як бічні панелі, картки та панелі контенту.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Тека шпалер"
         },
         "hide-wallpaper-filenames": {
-          "description": "Приховати назви файлів шпалер у селекторі.",
-          "label": "Приховати назви файлів"
+          "tooltip-hide": "Приховати імена файлів",
+          "tooltip-show": "Відображати імена файлів"
         },
         "monitor-specific": {
           "description": "Встановити різні теки шпалер для кожного монітора.",
@@ -2648,6 +2719,7 @@
     "download": "Завантажити",
     "download-speed": "Швидкість завантаження",
     "gpu-temp": "Температура GPU",
+    "load-average": "Середнє навантаження",
     "memory": "Пам'ять",
     "title": "Системний монітор",
     "upload": "Завантажити",
@@ -2664,6 +2736,7 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
+      "address-copied": "Адресу скопійовано до буфера обміну",
       "confirm-code": "Підтвердьте код {value} на іншому пристрої",
       "connect-failed": "Не вдалося під'єднатися до пристрою.",
       "disabled": "Вимкнено",
@@ -2706,7 +2779,8 @@
       "enabled": "Увімкнено"
     },
     "keyboard-layout": {
-      "changed": "Розкладка клавіатури змінена на {layout}"
+      "changed": "Розкладка клавіатури змінена на {layout}",
+      "title": "Клавіатура"
     },
     "kofi": {
       "opened": "Сторінка Ko-fi відкрита у вашому браузері"
@@ -2780,6 +2854,7 @@
     "close": "Закрити",
     "collapse": "Згорнути бічну панель",
     "connect-disconnect-devices": "Пристрій Bluetooth",
+    "copy-address": "Копіювати адресу",
     "delete-notification": "Видалити сповіщення",
     "disable-keep-awake": "Заборона сну",
     "do-not-disturb-disabled": "Не турбувати",
@@ -2798,10 +2873,12 @@
     "list-view": "Список",
     "manage-vpn": "Підключення VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Досягнуто максимальної кількості віджетів",
     "microphone-volume-at": "Гучність мікрофона: {volume}%",
     "move-to-center-section": "Центральна секція",
     "move-to-left-section": "Ліва секція",
     "move-to-right-section": "Права секція",
+    "move-to-section": "Перейти до {section}",
     "mute": "Вимкнути звук",
     "next-media": "Наступний трек",
     "next-month": "Наступний місяць",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Нічне світло (недоступне)",
     "noctalia-performance-disabled": "Режим продуктивності Noctalia",
     "noctalia-performance-enabled": "Режим продуктивності Noctalia",
+    "open-annotation-tool": "Відкрити за допомогою інструменту анотацій",
     "open-control-center": "Центр керування",
     "open-notification-history-disable-dnd": "Історія сповіщень",
     "open-notification-history-enable-dnd": "Історія сповіщень",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "Для доступу до контенту NSFW потрібен ключ API.",
         "label": "Ключ API",
+        "managed-by-env": "Керується через змінну середовища NOCTALIA_WALLHAVEN_API_KEY.",
         "placeholder": "Введіть свій API-ключ Wallhaven"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Пошук:",
+      "solid-color": {
+        "tooltip": "Однотонний фон"
+      },
       "sorting": {
         "date_added": "Дата додавання",
         "favorites": "Обране",
@@ -2942,6 +3024,11 @@
     "snow": "Сніг",
     "thunderstorm": "Гроза",
     "unknown": "Невідомо"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Виберіть файл"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Вимагається дія",
+      "available-interfaces": "Доступні інтерфейси",
       "available-networks": "Доступні мережі",
       "connect": "Підключити",
       "connected": "Підключено",
       "disabled": "Wi-Fi вимкнено",
       "disconnect": "Відключити",
+      "disconnected": "Відключено",
       "disconnecting": "Відключення...",
       "dns": "DNS",
       "enable-message": "Увімкніть Wi-Fi, щоб побачити доступні мережі.",
@@ -3042,12 +3131,15 @@
       "frequency": "Частота",
       "gateway": "Шлюз",
       "info": "Інформація",
+      "interface": "Мережевий інтерфейс",
       "internet": "Інтернет",
       "internet-connected": "Підключено до Інтернету",
       "internet-limited": "Немає інтернету",
+      "internet-status": "Статус Інтернету",
       "ipv4": "IPv4",
       "known-networks": "Відомі мережі",
       "link-speed": "Швидкість з'єднання",
+      "no-ethernet-devices": "Не виявлено Ethernet-пристроїв.",
       "no-networks": "Мереж не знайдено",
       "password": "Пароль",
       "saved": "Збережено",

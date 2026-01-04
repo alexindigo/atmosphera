@@ -10,53 +10,33 @@ Popup {
   id: root
 
   property ShellScreen screen
-  property Item anchorItem: null
 
-  width: Math.max(440, contentColumn.implicitWidth + (Style.marginL * 2))
-  height: contentColumn.implicitHeight + (Style.marginL * 2)
+  // Measure the ENV placeholder text at current font settings
+  TextMetrics {
+    id: envPlaceholderMetrics
+    text: I18n.tr("wallpaper.panel.apikey.managed-by-env")
+    font.pointSize: Style.fontSizeM
+  }
+
+  // Dynamic width: use measured ENV placeholder width + input padding, or fallback to 440
+  width: Math.max(440, Math.round(envPlaceholderMetrics.width + (Style.marginL * 4)), Math.round(contentColumn.implicitWidth + (Style.marginL * 2)))
+  height: Math.round(contentColumn.implicitHeight + (Style.marginL * 2))
   padding: Style.marginL
   modal: true
   dim: false
   closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-  parent: anchorItem ? anchorItem.parent : Overlay.overlay
-
-  x: {
-    if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0);
-      return itemPos.x - width + anchorItem.width;
-    }
-    return 0;
-  }
-
-  y: {
-    if (anchorItem) {
-      var itemPos = anchorItem.mapToItem(parent, 0, 0);
-      var barPosition = Settings.data.bar.position || "top";
-      // Position above the anchor when bar is at bottom, otherwise position below
-      if (barPosition === "bottom") {
-        return itemPos.y - height - Style.marginS;
-      } else {
-        return itemPos.y + anchorItem.height + Style.marginS;
-      }
-    }
-    return 0;
-  }
 
   function showAt(item) {
-    if (!item) {
-      return;
-    }
-    anchorItem = item;
     open();
-    Qt.callLater(() => {
-                   // Try to focus the first input if available
-                   if (resolutionWidthInput.inputItem) {
-                     resolutionWidthInput.inputItem.forceActiveFocus();
-                   }
-                 });
   }
 
   onOpened: {
+    // Center on screen after popup is opened and parent position is known
+    if (screen && parent) {
+      var parentPos = parent.mapToItem(null, 0, 0);
+      x = Math.round((screen.width - width) / 2 - parentPos.x);
+      y = Math.round((screen.height - height) / 2 - parentPos.y);
+    }
     Qt.callLater(() => {
                    if (resolutionWidthInput.inputItem) {
                      resolutionWidthInput.inputItem.forceActiveFocus();
@@ -158,8 +138,9 @@ Popup {
       NTextInput {
         id: apiKeyInput
         Layout.fillWidth: true
-        placeholderText: I18n.tr("wallpaper.panel.apikey.placeholder")
-        text: Settings.data.wallpaper.wallhavenApiKey || ""
+        enabled: !WallhavenService.apiKeyManagedByEnv
+        placeholderText: WallhavenService.apiKeyManagedByEnv ? I18n.tr("wallpaper.panel.apikey.managed-by-env") : I18n.tr("wallpaper.panel.apikey.placeholder")
+        text: WallhavenService.apiKeyManagedByEnv ? "" : (Settings.data.wallpaper.wallhavenApiKey || "")
 
         // Fix for password echo mode
         Component.onCompleted: {
@@ -169,7 +150,9 @@ Popup {
         }
 
         onEditingFinished: {
-          Settings.data.wallpaper.wallhavenApiKey = text;
+          if (!WallhavenService.apiKeyManagedByEnv) {
+            Settings.data.wallpaper.wallhavenApiKey = text;
+          }
         }
       }
 
@@ -323,8 +306,8 @@ Popup {
             nsfwToggle.checked = purityRow.getPurityValue(2);
           }
           function onWallhavenApiKeyChanged() {
-            // If API key is removed, disable NSFW
-            if (!Settings.data.wallpaper.wallhavenApiKey && nsfwToggle.checked) {
+            // If API key is removed (and no ENV key), disable NSFW
+            if (!WallhavenService.apiKey && nsfwToggle.checked) {
               nsfwToggle.toggled(false);
             }
           }
@@ -438,7 +421,7 @@ Popup {
         Item {
           Layout.preferredWidth: nsfwCheckboxRow.implicitWidth
           Layout.preferredHeight: nsfwCheckboxRow.implicitHeight
-          visible: Settings.data.wallpaper.wallhavenApiKey !== ""
+          visible: WallhavenService.apiKey !== ""
 
           RowLayout {
             id: nsfwCheckboxRow

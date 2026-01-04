@@ -220,11 +220,13 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
-    color: Color.transparent
+    id: panelContent
+    color: "transparent"
 
     SettingsContent {
       id: settingsContent
       anchors.fill: parent
+      screen: root.screen
       onCloseRequested: root.close()
       Component.onCompleted: {
         root._settingsContent = settingsContent;

@@ -6,14 +6,20 @@ import qs.Services.Keyboard
 Item {
   id: root
 
-  // Plugin metadata
-  property string name: I18n.tr("plugins.emoji")
+  // Provider metadata
+  property string name: I18n.tr("launcher.providers.emoji")
   property var launcher: null
   property string iconMode: Settings.data.appLauncher.iconMode
   property bool handleSearch: false
+  property string supportedLayouts: "grid" // Only grid layout for emoji
+  property int preferredGridColumns: 7 // More columns for compact emoji display
+  property real preferredGridCellRatio: 1.0 // Square cells like apps
 
   property string selectedCategory: "recent"
-  property bool isBrowsingMode: false
+  property bool showsCategories: true // Default to showing categories
+
+  // Empty state message for category view
+  readonly property string emptyBrowsingMessage: selectedCategory === "recent" ? I18n.tr("launcher.providers.emoji-no-recent") : ""
 
   property var categoryIcons: ({
                                  "recent": "clock",
@@ -56,9 +62,9 @@ Item {
     }
   }
 
-  // Initialize plugin
+  // Initialize provider
   function init() {
-    Logger.i("EmojiPlugin", "Initialized");
+    Logger.d("EmojiProvider", "Initialized");
   }
 
   function selectCategory(category) {
@@ -73,7 +79,7 @@ Item {
     selectedCategory = "recent";
   }
 
-  // Check if this plugin handles the command
+  // Check if this provider handles the command
   function handleCommand(searchText) {
     return searchText.startsWith(">emoji");
   }
@@ -83,7 +89,7 @@ Item {
     return [
           {
             "name": ">emoji",
-            "description": I18n.tr("plugins.emoji-search-description"),
+            "description": I18n.tr("launcher.providers.emoji-search-description"),
             "icon": iconMode === "tabler" ? "mood-smile" : "face-smile",
             "isTablerIcon": true,
             "isImage": false,
@@ -103,8 +109,8 @@ Item {
     if (!EmojiService.loaded) {
       return [
             {
-              "name": I18n.tr("plugins.emoji-loading"),
-              "description": I18n.tr("plugins.emoji-loading-description"),
+              "name": I18n.tr("launcher.providers.emoji-loading"),
+              "description": I18n.tr("launcher.providers.emoji-loading-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
@@ -116,11 +122,11 @@ Item {
     var query = searchText.slice(6).trim();
 
     if (query === "") {
-      isBrowsingMode = true;
+      showsCategories = true;
       var emojis = EmojiService.getEmojisByCategory(selectedCategory);
       return emojis.map(formatEmojiEntry);
     } else {
-      isBrowsingMode = false;
+      showsCategories = false;
       var emojis = EmojiService.search(query);
       return emojis.map(formatEmojiEntry);
     }
@@ -142,7 +148,8 @@ Item {
       "description": description,
       "icon": null,
       "isImage": false,
-      "emojiChar": emojiChar,
+      "displayString": emojiChar,
+      "provider": root,
       "onActivate": function () {
         EmojiService.copy(emojiChar);
         launcher.close();

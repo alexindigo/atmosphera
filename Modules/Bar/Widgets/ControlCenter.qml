@@ -85,14 +85,13 @@ NIconButton {
   tooltipDirection: BarService.getTooltipDirection()
   baseSize: Style.capsuleHeight
   applyUiScale: false
-  density: Settings.data.bar.density
   customRadius: Style.radiusL
   colorBg: Style.capsuleColor
   colorFg: iconColor
   colorBgHover: useDistroLogo ? Color.mSurfaceVariant : Color.mHover
   colorFgHover: iconHoverColor
-  colorBorder: Color.transparent
-  colorBorderHover: useDistroLogo ? Color.mHover : Color.transparent
+  colorBorder: "transparent"
+  colorBorderHover: useDistroLogo ? Color.mHover : "transparent"
 
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth

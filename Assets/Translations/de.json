@@ -142,12 +142,20 @@
           "description": "Wenn der Ausgabetext diesem Wert entspricht, wird die Schaltfläche eingeklappt.",
           "label": "Einklappbedingung"
         },
+        "color-selection": {
+          "description": "Designfarben auf Symbol und Text anwenden.",
+          "label": "Farbe auswählen"
+        },
         "display-command-output": {
           "description": "Befehl eingeben, der in regelmäßigen Abständen ausgeführt wird. Die erste Zeile seiner Ausgabe wird als Text angezeigt.",
           "label": "Befehlsausgabe anzeigen",
           "stream-description": "Geben Sie einen Befehl ein, der kontinuierlich ausgeführt werden soll."
         },
         "dynamic-text": "Dynamischer Text",
+        "enable-colorization": {
+          "description": "Färbung für das benutzerdefinierte Schaltflächensymbol und den Text aktivieren, Designfarben anwenden.",
+          "label": "Färbung aktivieren"
+        },
         "hide-mode": {
           "alwaysExpanded": "Immer erweitert",
           "description": "Steuert die Sichtbarkeit des Widgets, wenn der Befehl keine Ausgabe hat.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Wählen Sie, wie dieser Wert angezeigt werden soll.",
           "label": "Anzeigemodus"
+        },
+        "show-icon": {
+          "description": "Das Tastaturlayout-Symbol anzeigen.",
+          "label": "Symbol anzeigen"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Wenn aktiviert, wird die Primärfarbe zur Hervorhebung verwendet.",
+          "label": "Primärfarbe verwenden"
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "Zeige GPU-Temperaturwerte an, falls verfügbar.",
           "label": "GPU-Temperatur"
+        },
+        "load-average": {
+          "description": "Systemlastdurchschnitt anzeigen.",
+          "label": "Lastdurchschnitt"
         },
         "memory-percentage": {
           "description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen.",
@@ -481,6 +503,7 @@
       "device-address": "Geräteadresse",
       "disabled": "Bluetooth ist deaktiviert",
       "disconnect": "Trennen",
+      "disconnecting": "Verbindung wird getrennt...",
       "discoverable": "Sichtbar",
       "enable-message": "Aktivieren Sie Bluetooth, um verfügbare Geräte zu sehen.",
       "info": "Info",
@@ -494,6 +517,14 @@
       "refresh-devices": "Geräte aktualisieren",
       "scanning": "Scannen nach Geräten...",
       "signal": "Signal",
+      "signal-text": {
+        "excellent": "Signal: Ausgezeichnet",
+        "fair": "Signal: Schwach",
+        "good": "Signal: Gut",
+        "poor": "Signal: Schlecht",
+        "unknown": "Signal: Unbekannt",
+        "very-poor": "Signal: Sehr schlecht"
+      },
       "title": "Bluetooth",
       "trusted": "Vertrauenswürdig",
       "unpair": "Entkoppeln"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Unserem Discord beitreten",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Feedback geben"
       },
       "empty": "Es sind noch keine Versionshinweise verfügbar.",
       "highlight-title": "Highlights",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Bluetooth aktivieren",
     "enable-dnd": "'Nicht stören' aktivieren",
     "enable-wifi": "WLAN aktivieren",
+    "launcher-settings": "Launcher-Einstellungen",
     "lower-to-bottom": "Senken bis zum Anschlag / Ganz nach unten senken",
     "next": "Nächste/r/s",
     "open-calendar": "Kalender öffnen",
@@ -631,7 +664,35 @@
       "webbrowser": "Webbrowser"
     },
     "delete": "Löschen",
+    "no-results": "Keine Ergebnisse gefunden",
     "pin": "Anheften",
+    "providers": {
+      "applications": "Anwendungen",
+      "calculator": "Rechner",
+      "calculator-deprecated": "Der Befehl >calc ist veraltet und wird bald entfernt. Bitte geben Sie stattdessen mathematische Ausdrücke direkt in die Suche ein.",
+      "calculator-description": "Rechner — mathematische Ausdrücke auswerten",
+      "calculator-enter-expression": "Mathematischen Ausdruck eingeben",
+      "calculator-error": "Fehler",
+      "calculator-name": "Rechner",
+      "clipboard": "Zwischenablageverlauf",
+      "clipboard-clear-description": "Gesamten Zwischenablageverlauf löschen",
+      "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablageverlauf entfernen",
+      "clipboard-clear-history": "Zwischenablageverlauf löschen",
+      "clipboard-delete": "Zwischenablageeintrag löschen",
+      "clipboard-history-disabled": "Zwischenablageverlauf deaktiviert",
+      "clipboard-history-disabled-description": "Zwischenablageverlauf in den Einstellungen aktivieren oder cliphist installieren",
+      "clipboard-loading": "Lade Zwischenablageverlauf...",
+      "clipboard-loading-description": "Bitte warten",
+      "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
+      "command": "Befehl",
+      "command-description": "Shell-Befehle ausführen",
+      "command-name": "Befehl",
+      "emoji": "Emoji-Auswahl",
+      "emoji-loading": "Lade Emojis...",
+      "emoji-loading-description": "Bitte warten",
+      "emoji-no-recent": "Noch keine kürzlich verwendeten Emojis.",
+      "emoji-search-description": "Emojis suchen und kopieren"
+    },
     "unpin": "Lösen"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "System-Ausgabe + Mikrofon-Eingabe",
         "microphone-input": "Mikrofon-Eingabe",
+        "none": "Kein Audio",
         "system-output": "System-Ausgabe"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Immer Scrollen",
       "hover": "Beim Hover Scrollen",
       "never": "Nie Scrollen"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Raster",
+      "single-row": "Einzelne Reihe"
     },
     "settings-panel-mode": {
       "attached": "Panel an der Leiste angeheftet",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Zum Filtern von Hintergrundbildern eingeben...",
     "select": "Auswählen",
     "test": "Test"
-  },
-  "plugins": {
-    "applications": "Anwendungen",
-    "calculator": "Rechner",
-    "calculator-description": "Rechner — mathematische Ausdrücke auswerten",
-    "calculator-enter-expression": "Mathematischen Ausdruck eingeben",
-    "calculator-error": "Fehler",
-    "calculator-name": "Rechner",
-    "clipboard": "Zwischenablageverlauf",
-    "clipboard-clear-description": "Gesamten Zwischenablageverlauf löschen",
-    "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablageverlauf entfernen",
-    "clipboard-clear-history": "Zwischenablageverlauf löschen",
-    "clipboard-delete": "Zwischenablageeintrag löschen",
-    "clipboard-history-disabled": "Zwischenablageverlauf deaktiviert",
-    "clipboard-history-disabled-description": "Zwischenablageverlauf in den Einstellungen aktivieren oder cliphist installieren",
-    "clipboard-loading": "Lade Zwischenablageverlauf...",
-    "clipboard-loading-description": "Bitte warten",
-    "clipboard-search-description": "Zwischenablageverlauf durchsuchen",
-    "command": "Befehl",
-    "command-description": "Shell-Befehle ausführen",
-    "command-name": "Befehl",
-    "emoji": "Emoji-Auswahl",
-    "emoji-loading": "Lade Emojis...",
-    "emoji-loading-description": "Bitte warten",
-    "emoji-search-description": "Emojis suchen und kopieren"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Leitet Farben ab, die eng mit dem zugrunde liegenden Bild übereinstimmen.",
-            "scheme-expressive": "Lebendige Farbpalette mit verspielter Sättigung.",
-            "scheme-fidelity": "Farbtreue Palette, die die Originalfarbtöne beibehält.",
-            "scheme-fruit-salad": "Farbenfroher Mix aus leuchtenden, kontrastreichen Akzenten.",
-            "scheme-monochrome": "Minimale Farbpalette, die auf einem einzigen Farbton basiert.",
-            "scheme-neutral": "Gedämpfte Farbpalette mit dezenten und beruhigenden Tönen.",
-            "scheme-rainbow": "Vielfältige Palette, die das gesamte Spektrum abdeckt.",
-            "scheme-tonal-spot": "Ausgewogene Farbpalette mit gezielten Akzenten."
-          },
+          "description": "Wählen Sie die Farbschema-Generierungsmethode, die Matugen verwenden soll, um Farben aus Ihrem Hintergrundbild zu erstellen.",
           "label": "Matugen-Schema-Typ"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "Schreibe {filepath} und lade neu"
+          },
+          "zen-browser": {
+            "description": "Schreibe {Dateipfad}; kopiere in die chrome/userChrome.css deines Zen-Profils."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Befehl, der beim Klicken auf die Schaltfläche \"Annotieren\" im Zwischenablageverlauf ausgeführt wird. Das Bild wird an diesen Befehl weitergeleitet.",
+          "label": "Annotationstool",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Kategorienregisterkarten zum Filtern von Anwendungen anzeigen.",
           "label": "Kategorien anzeigen"
+        },
+        "show-icon-background": {
+          "description": "Zeige einen abgerundeten Rechteck-Hintergrund hinter Icons.",
+          "label": "Symbolhintergrund anzeigen"
         },
         "sort-by-usage": {
           "description": "Wenn aktiviert, erscheinen häufig gestartete Apps zuerst in der Liste.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth-Verwaltung aktivieren.",
-        "label": "Bluetooth aktivieren"
+        "label": "Bluetooth aktivieren",
+        "rssi-polling": {
+          "description": "Periodisch RSSI für verbundene Geräte über bluetoothctl abfragen. Ist möglicherweise nicht für alle Geräte verfügbar; verbraucht bei Aktivierung minimale Ressourcen.",
+          "label": "Bluetooth-Signalabfrage"
+        }
       },
       "section": {
         "description": "WLAN- und Bluetooth-Verbindungen verwalten."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Überprüfen Sie Ihre Plugin-Quellen oder aktualisieren Sie die Liste.",
         "no-plugins-label": "Keine Plugins verfügbar"
       },
+      "collision": {
+        "already-installed": "Dieses Plugin ist bereits installiert.",
+        "custom-version-exists": "Eine benutzerdefinierte Version von \"{source}\" ist bereits installiert.",
+        "official-version-exists": "Die offizielle Version dieses Plugins ist bereits installiert."
+      },
       "filter": {
         "all": "Alle",
         "downloaded": "Heruntergeladen",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Keine Plugins installiert"
       },
       "installing": "{Plugin} wird installiert...",
+      "open-plugins-tab": "Plugin-Einstellungen öffnen",
       "plugin-settings-title": "{plugin} Einstellungen",
       "refresh": {
         "refreshing": "Aktualisiere Plugin-Liste...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Plugin nicht geladen",
       "settings-saved": "Plugin-Einstellungen gespeichert",
+      "source": {
+        "custom": "Benutzerdefinierte Quelle",
+        "official": "Offiziell"
+      },
       "sources": {
         "add-custom": "Benutzerdefiniertes Repository hinzufügen",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Alle aktualisieren ({count})",
       "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
       "update-available": "{count} Plugin-Update(s) verfügbar",
+      "update-available_plural": "{count} Plugin-Aktualisierungen verfügbar",
       "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
       "update-incompatible": "Benötigt Noctalia v{version} oder höher",
+      "update-pending": "v{aktuell} → v{neu} (benötigt Noctalia v{erforderlich})",
       "update-success": "{plugin} wurde auf v{version} aktualisiert",
       "update-version": "v{aktuell} → v{neu}",
       "updating": "Aktualisierung läuft..."
@@ -2339,6 +2399,10 @@
           "label": "Allgemein"
         }
       },
+      "large-buttons-layout": {
+        "description": "Wählen Sie, wie die Sitzungsmenü-Schaltflächen angezeigt werden.",
+        "label": "Layout mit großen Schaltflächen"
+      },
       "large-buttons-style": {
         "description": "Das Sitzungsmenü mit großen Schaltflächen in einem Rasterlayout anzeigen.",
         "label": "Stil: Große Schaltflächen"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Hervorhebungsfarben"
       },
+      "load-average-section": {
+        "label": "Lastdurchschnitt"
+      },
       "memory-section": {
         "label": "Speicherverbrauch"
       },
@@ -2437,6 +2504,10 @@
         "description": "Globale Animationsgeschwindigkeit anpassen.",
         "label": "Animationsgeschwindigkeit",
         "reset": "Animationsgeschwindigkeit zurücksetzen"
+      },
+      "box-border": {
+        "description": "Zeigt eine Umrandung um Inhaltsbereiche an.",
+        "label": "Containerumriss"
       },
       "box-border-radius": {
         "description": "Passt die Eckenrundung wichtiger Layoutbereiche an, wie z. B. Seitenleisten, Karten und Inhaltsbereiche.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Hintergrundbild-Ordner"
         },
         "hide-wallpaper-filenames": {
-          "description": "Hintergrundbilddateinamen im Auswahlmenü ausblenden.",
-          "label": "Dateinamen ausblenden"
+          "tooltip-hide": "Dateinamen ausblenden",
+          "tooltip-show": "Dateinamen anzeigen"
         },
         "monitor-specific": {
           "description": "Unterschiedlichen Hintergrundbild-Ordner für jeden Monitor festlegen.",
@@ -2648,6 +2719,7 @@
     "download": "Herunterladen",
     "download-speed": "Download-Geschwindigkeit",
     "gpu-temp": "GPU-Temperatur",
+    "load-average": "Lastdurchschnitt",
     "memory": "Arbeitsspeicher",
     "title": "Systemüberwachung",
     "upload": "Hochladen",
@@ -2664,6 +2736,7 @@
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
     },
     "bluetooth": {
+      "address-copied": "Adresse in die Zwischenablage kopiert",
       "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
       "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
       "disabled": "Deaktiviert",
@@ -2706,7 +2779,8 @@
       "enabled": "Aktiviert"
     },
     "keyboard-layout": {
-      "changed": "Tastaturlayout geändert zu {layout}"
+      "changed": "Tastaturlayout geändert zu {layout}",
+      "title": "Tastatur"
     },
     "kofi": {
       "opened": "Ko-fi-Seite in Ihrem Browser geöffnet"
@@ -2780,6 +2854,7 @@
     "close": "Schließen",
     "collapse": "Seitenleiste einklappen",
     "connect-disconnect-devices": "Bluetooth-Gerät",
+    "copy-address": "Adresse kopieren",
     "delete-notification": "Benachrichtigung löschen",
     "disable-keep-awake": "Wach halten",
     "do-not-disturb-disabled": "Nicht stören",
@@ -2798,10 +2873,12 @@
     "list-view": "Listenansicht",
     "manage-vpn": "VPN-Verbindungen",
     "manage-wifi": "WLAN",
+    "max-widgets-reached": "Maximale Anzahl an Widgets erreicht",
     "microphone-volume-at": "Mikrofonlautstärke: {volume}%",
     "move-to-center-section": "Mittlere Sektion",
     "move-to-left-section": "Linke Sektion",
     "move-to-right-section": "Rechte Sektion",
+    "move-to-section": "Gehe zu {section}",
     "mute": "Stummschalten",
     "next-media": "Nächster Titel",
     "next-month": "Nächster Monat",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Nachtlicht (nicht verfügbar)",
     "noctalia-performance-disabled": "Noctalia-Leistungsmodus",
     "noctalia-performance-enabled": "Noctalia-Leistungsmodus",
+    "open-annotation-tool": "Mit dem Anmerkungswerkzeug öffnen",
     "open-control-center": "Kontrollzentrum",
     "open-notification-history-disable-dnd": "Benachrichtigungsverlauf",
     "open-notification-history-enable-dnd": "Benachrichtigungsverlauf",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "Ein API-Schlüssel ist erforderlich, um auf NSFW-Inhalte zuzugreifen.",
         "label": "API-Schlüssel",
+        "managed-by-env": "Verwaltet über die Umgebungsvariable NOCTALIA_WALLHAVEN_API_KEY.",
         "placeholder": "Gib deinen Wallhaven API-Schlüssel ein"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Suchen:",
+      "solid-color": {
+        "tooltip": "Einfarbiger Hintergrund"
+      },
       "sorting": {
         "date_added": "Hinzugefügt am",
         "favorites": "Favoriten",
@@ -2942,6 +3024,11 @@
     "snow": "Schnee",
     "thunderstorm": "Gewitter",
     "unknown": "Unbekannt"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Datei auswählen"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Aktion erforderlich",
+      "available-interfaces": "Verfügbare Schnittstellen",
       "available-networks": "Verfügbare Netzwerke",
       "connect": "Verbinden",
       "connected": "Verbunden",
       "disabled": "WLAN ist deaktiviert",
       "disconnect": "Trennen",
+      "disconnected": "Getrennt",
       "disconnecting": "Verbindung wird getrennt...",
       "dns": "DNS",
       "enable-message": "Aktivieren Sie WLAN, um verfügbare Netzwerke zu sehen.",
@@ -3042,12 +3131,15 @@
       "frequency": "Frequenz",
       "gateway": "Gateway: Gateway",
       "info": "Info",
+      "interface": "Netzwerkschnittstelle",
       "internet": "Internet",
       "internet-connected": "Mit dem Internet verbunden",
       "internet-limited": "Kein Internet",
+      "internet-status": "Internetstatus",
       "ipv4": "IPv4",
       "known-networks": "Bekannte Netzwerke",
       "link-speed": "Verbindungsgeschwindigkeit",
+      "no-ethernet-devices": "Keine Ethernet-Geräte erkannt",
       "no-networks": "Keine Netzwerke gefunden",
       "password": "Passwort",
       "saved": "Gespeichert",

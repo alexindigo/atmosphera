@@ -16,9 +16,10 @@ SmartPanel {
   id: root
 
   readonly property bool largeButtonsStyle: Settings.data.sessionMenu.largeButtonsStyle || false
+  readonly property bool largeButtonsLayout: Settings.data.sessionMenu.largeButtonsLayout || "grid"
 
   // Make panel background transparent for large buttons style
-  panelBackgroundColor: largeButtonsStyle ? Color.transparent : Color.mSurface
+  panelBackgroundColor: largeButtonsStyle ? "transparent" : Color.mSurface
 
   preferredWidth: largeButtonsStyle ? 0 : Math.round(440 * Style.uiScaleRatio)
   preferredWidthRatio: largeButtonsStyle ? 1.0 : 0
@@ -98,7 +99,11 @@ SmartPanel {
   }
 
   // Build powerOptions from settings, filtering enabled ones and adding metadata
+  // _powerOptionsVersion forces re-evaluation when settings change
+  property int _powerOptionsVersion: 0
   property var powerOptions: {
+    // Reference version to trigger re-evaluation
+    void (_powerOptionsVersion);
     var options = [];
     var settingsOptions = Settings.data.sessionMenu.powerOptions || [];
 
@@ -120,29 +125,10 @@ SmartPanel {
     return options;
   }
 
-  // Update powerOptions when settings change
   Connections {
     target: Settings.data.sessionMenu
     function onPowerOptionsChanged() {
-      var options = [];
-      var settingsOptions = Settings.data.sessionMenu.powerOptions || [];
-
-      for (var i = 0; i < settingsOptions.length; i++) {
-        var settingOption = settingsOptions[i];
-        if (settingOption.enabled && actionMetadata[settingOption.action]) {
-          var metadata = actionMetadata[settingOption.action];
-          options.push({
-                         "action": settingOption.action,
-                         "icon": metadata.icon,
-                         "title": metadata.title,
-                         "isShutdown": metadata.isShutdown,
-                         "countdownEnabled": settingOption.countdownEnabled !== undefined ? settingOption.countdownEnabled : true,
-                         "command": settingOption.command || ""
-                       });
-        }
-      }
-
-      root.powerOptions = options;
+      root._powerOptionsVersion++;
     }
   }
 
@@ -293,8 +279,15 @@ SmartPanel {
   }
 
   function getGridInfo() {
-    const columns = Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)));
-    const rows = Math.ceil(powerOptions.length / columns);
+    let columns, rows;
+    if (Settings.data.sessionMenu.largeButtonsLayout === "single-row") {
+      columns = powerOptions.length;
+      rows = 1;
+    } else {
+      columns = Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)));
+      rows = Math.ceil(powerOptions.length / columns);
+    }
+
     return {
       columns,
       rows,
@@ -444,8 +437,8 @@ SmartPanel {
   }
 
   panelContent: Rectangle {
-    id: ui
-    color: Color.transparent
+    id: panelContent
+    color: "transparent"
     focus: true
 
     // For large buttons style, use full screen dimensions
@@ -457,30 +450,9 @@ SmartPanel {
       target: root
       function onOpened() {
         Qt.callLater(() => {
-                       ui.forceActiveFocus();
+                       panelContent.forceActiveFocus();
                      });
       }
-    }
-
-    // Navigation functions
-    function selectFirst() {
-      root.selectFirst();
-    }
-
-    function selectLast() {
-      root.selectLast();
-    }
-
-    function selectNextWrapped() {
-      root.selectNextWrapped();
-    }
-
-    function selectPreviousWrapped() {
-      root.selectPreviousWrapped();
-    }
-
-    function activate() {
-      root.activate();
     }
 
     // Timer text for large buttons style (above buttons) - positioned absolutely with background
@@ -521,7 +493,7 @@ SmartPanel {
       GridLayout {
         id: largeButtonsGrid
         Layout.alignment: Qt.AlignHCenter
-        columns: Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)))
+        columns: Settings.data.sessionMenu.largeButtonsLayout === "single-row" ? powerOptions.length : Math.min(3, Math.ceil(Math.sqrt(powerOptions.length)))
         rowSpacing: Style.marginXL
         columnSpacing: Style.marginXL
         width: columns * 200 * Style.uiScaleRatio + (columns - 1) * Style.marginXL
@@ -585,7 +557,7 @@ SmartPanel {
             tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
             Layout.alignment: Qt.AlignVCenter
             baseSize: Style.baseWidgetSize * 0.7
-            colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : Color.transparent
+            colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : "transparent"
             colorFg: timerActive ? Color.mError : Color.mOnSurface
             onClicked: {
               if (timerActive) {
@@ -669,7 +641,7 @@ SmartPanel {
       if (isSelected || mouseArea.containsMouse) {
         return Color.mHover;
       }
-      return Color.transparent;
+      return "transparent";
     }
 
     border.width: pending ? Math.max(Style.borderM) : 0

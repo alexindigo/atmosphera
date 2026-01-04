@@ -142,12 +142,20 @@
           "description": "Als de uitvoer overeenkomt met deze waarde, wordt de knop samengevouwen.",
           "label": "Inklapvoorwaarde"
         },
+        "color-selection": {
+          "description": "Pas themakleuren toe op pictogram en tekst.",
+          "label": "Kleur selecteren"
+        },
         "display-command-output": {
           "description": "Voer een commando in dat regelmatig wordt uitgevoerd. De eerste regel van de uitvoer wordt als tekst weergegeven.",
           "label": "Commando-uitvoer weergeven",
           "stream-description": "Voer een commando in dat continu wordt uitgevoerd."
         },
         "dynamic-text": "Dynamische tekst",
+        "enable-colorization": {
+          "description": "Kleurtoepassing inschakelen voor het aangepaste knoppictogram en de tekst, met toepassing van themakleuren.",
+          "label": "Kleurtoepassing inschakelen"
+        },
         "hide-mode": {
           "alwaysExpanded": "Altijd uitgeklapt",
           "description": "Bepaalt de zichtbaarheid van de widget wanneer het commando geen uitvoer heeft.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Kies hoe je wilt dat deze waarde wordt weergegeven.",
           "label": "Weergavemodus"
+        },
+        "show-icon": {
+          "description": "Toon het toetsenbordindeling-icoon.",
+          "label": "Icoon weergeven"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Indien ingeschakeld, past dit de primaire kleur toe voor nadruk.",
+          "label": "Gebruik een primaire kleur"
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "Toon GPU-temperatuurmetingen indien beschikbaar.",
           "label": "GPU-temperatuur"
+        },
+        "load-average": {
+          "description": "Systeembelasting gemiddelde weergeven.",
+          "label": "Gemiddelde belasting"
         },
         "memory-percentage": {
           "description": "Toon geheugengebruik als percentage in plaats van absolute waarden.",
@@ -481,6 +503,7 @@
       "device-address": "Apparaatadres",
       "disabled": "Bluetooth is uitgeschakeld",
       "disconnect": "Verbreken",
+      "disconnecting": "Verbinding verbroken...",
       "discoverable": "Zichtbaar",
       "enable-message": "Schakel Bluetooth in om beschikbare apparaten te zien.",
       "info": "Info",
@@ -494,6 +517,14 @@
       "refresh-devices": "Apparaten verversen",
       "scanning": "Zoeken naar apparaten...",
       "signal": "Signaal",
+      "signal-text": {
+        "excellent": "Signaal: Uitstekend",
+        "fair": "Signaal: Redelijk",
+        "good": "Signaal: Goed",
+        "poor": "Signaal: Zwak",
+        "unknown": "Signaal: Onbekend",
+        "very-poor": "Signaal: Zeer slecht"
+      },
       "title": "Bluetooth",
       "trusted": "Vertrouwd",
       "unpair": "Ontkoppelen"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Word lid van onze Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Geef feedback"
       },
       "empty": "Er zijn nog geen release-opmerkingen beschikbaar.",
       "highlight-title": "Hoogtepunten",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Bluetooth inschakelen",
     "enable-dnd": "Niet Storen inschakelen",
     "enable-wifi": "Wi-Fi inschakelen",
+    "launcher-settings": "Launcher instellingen",
     "lower-to-bottom": "Laagste naar beneden",
     "next": "Volgende",
     "open-calendar": "Open agenda",
@@ -631,7 +664,35 @@
       "webbrowser": "Webbrowser"
     },
     "delete": "Verwijderen",
+    "no-results": "Geen resultaten gevonden.",
     "pin": "Vastmaken",
+    "providers": {
+      "applications": "Applicaties",
+      "calculator": "Rekenmachine",
+      "calculator-deprecated": "De >calc opdracht is verouderd en zal binnenkort verwijderd worden. Typ wiskundige uitdrukkingen in plaats daarvan direct in de zoekopdracht.",
+      "calculator-description": "Rekenmachine — bereken wiskundige expressies",
+      "calculator-enter-expression": "Voer een wiskundige expressie in",
+      "calculator-error": "Fout",
+      "calculator-name": "Rekenmachine",
+      "clipboard": "Klembordgeschiedenis",
+      "clipboard-clear-description": "Klembordgeschiedenis wissen",
+      "clipboard-clear-description-full": "Alle items uit de klembordgeschiedenis verwijderen",
+      "clipboard-clear-history": "Klembordgeschiedenis wissen",
+      "clipboard-delete": "Klemborditem verwijderen",
+      "clipboard-history-disabled": "Klembordgeschiedenis uitgeschakeld",
+      "clipboard-history-disabled-description": "Schakel klembordgeschiedenis in de instellingen in of installeer cliphist",
+      "clipboard-loading": "Klembordgeschiedenis laden...",
+      "clipboard-loading-description": "Even geduld",
+      "clipboard-search-description": "Zoek in klembordgeschiedenis",
+      "command": "Commando",
+      "command-description": "Shell-opdrachten uitvoeren",
+      "command-name": "Commando",
+      "emoji": "Emoji-kiezer",
+      "emoji-loading": "Emoji's laden...",
+      "emoji-loading-description": "Even geduld",
+      "emoji-no-recent": "Nog geen recente emoji's.",
+      "emoji-search-description": "Zoek en kopieer emoji's"
+    },
     "unpin": "Losmaken"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Systeemuitvoer + microfooninvoer",
         "microphone-input": "Microfooninvoer",
+        "none": "Geen audio",
         "system-output": "Systeemuitvoer"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Altijd scrollen",
       "hover": "Scrollen bij hover",
       "never": "Nooit scrollen"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Raster",
+      "single-row": "Enkele rij"
     },
     "settings-panel-mode": {
       "attached": "Paneel bevestigd aan de balk",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Typ om achtergronden te filteren...",
     "select": "Selecteren",
     "test": "Test"
-  },
-  "plugins": {
-    "applications": "Applicaties",
-    "calculator": "Rekenmachine",
-    "calculator-description": "Rekenmachine — bereken wiskundige expressies",
-    "calculator-enter-expression": "Voer een wiskundige expressie in",
-    "calculator-error": "Fout",
-    "calculator-name": "Rekenmachine",
-    "clipboard": "Klembordgeschiedenis",
-    "clipboard-clear-description": "Klembordgeschiedenis wissen",
-    "clipboard-clear-description-full": "Alle items uit de klembordgeschiedenis verwijderen",
-    "clipboard-clear-history": "Klembordgeschiedenis wissen",
-    "clipboard-delete": "Klemborditem verwijderen",
-    "clipboard-history-disabled": "Klembordgeschiedenis uitgeschakeld",
-    "clipboard-history-disabled-description": "Schakel klembordgeschiedenis in de instellingen in of installeer cliphist",
-    "clipboard-loading": "Klembordgeschiedenis laden...",
-    "clipboard-loading-description": "Even geduld",
-    "clipboard-search-description": "Zoek in klembordgeschiedenis",
-    "command": "Commando",
-    "command-description": "Shell-opdrachten uitvoeren",
-    "command-name": "Commando",
-    "emoji": "Emoji-kiezer",
-    "emoji-loading": "Emoji's laden...",
-    "emoji-loading-description": "Even geduld",
-    "emoji-search-description": "Zoek en kopieer emoji's"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Leidt kleuren af die nauw aansluiten bij de onderliggende afbeelding.",
-            "scheme-expressive": "Levendig palet met speelse verzadiging.",
-            "scheme-fidelity": "Palet met hoge getrouwheid dat brontinten behoudt.",
-            "scheme-fruit-salad": "Kleurrijke mix van heldere contrasterende accenten.",
-            "scheme-monochrome": "Minimaal palet rond één enkele tint.",
-            "scheme-neutral": "Gedempt palet met rustige, verzachte tonen.",
-            "scheme-rainbow": "Gevarieerd palet dat het volledige spectrum bestrijkt.",
-            "scheme-tonal-spot": "Gebalanceerd palet met gefocuste accenten."
-          },
+          "description": "Kies de methode voor het genereren van kleurenschema's die Matugen zal gebruiken om kleuren te maken van je achtergrond.",
           "label": "Matugen-schema type"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "Schrijf {filepath} en herlaad"
+          },
+          "zen-browser": {
+            "description": "Schrijf {filepath}; kopieer naar het chrome/userChrome.css bestand van je Zen profiel."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Commando dat wordt uitgevoerd bij het klikken op de annotatieknop in de klembordgeschiedenis. De afbeelding wordt naar dit commando gepiped.",
+          "label": "Annotatietool",
+          "placeholder": "e.g. 'gradia', 'satty -f -'"
+        },
         "clip-preview": {
           "description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
           "label": "Klembordvoorbeeld inschakelen"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Categorieën-tabbladen weergeven voor het filteren van applicaties.",
           "label": "Categorieën weergeven"
+        },
+        "show-icon-background": {
+          "description": "Toon een afgeronde rechthoek achtergrond achter pictogrammen.",
+          "label": "Toon pictogramachtergrond"
         },
         "sort-by-usage": {
           "description": "Indien ingeschakeld, verschijnen vaak gestarte apps bovenaan in de lijst.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth-beheer activeren.",
-        "label": "Bluetooth inschakelen"
+        "label": "Bluetooth inschakelen",
+        "rssi-polling": {
+          "description": "Periodiek de RSSI bemonsteren voor verbonden apparaten via bluetoothctl. Mogelijk niet beschikbaar voor alle apparaten; gebruikt minimale resources wanneer ingeschakeld.",
+          "label": "Bluetooth-signaalpolling"
+        }
       },
       "section": {
         "description": "Beheer Wi-Fi- en Bluetooth-verbindingen."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Controleer je plugin-bronnen of vernieuw de lijst.",
         "no-plugins-label": "Geen plug-ins beschikbaar"
       },
+      "collision": {
+        "already-installed": "Deze plugin is al geïnstalleerd.",
+        "custom-version-exists": "Er is al een aangepaste versie van \"{source}\" geïnstalleerd.",
+        "official-version-exists": "De officiële versie van deze plugin is al geïnstalleerd."
+      },
       "filter": {
         "all": "Alles",
         "downloaded": "Gedownload",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Geen plugins geïnstalleerd"
       },
       "installing": "{plugin} installeren...",
+      "open-plugins-tab": "Open plugininstellingen",
       "plugin-settings-title": "{plugin} Instellingen",
       "refresh": {
         "refreshing": "Pluginlijst vernieuwen...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Plugin niet geladen",
       "settings-saved": "Plugininstellingen opgeslagen",
+      "source": {
+        "custom": "Aangepaste bron",
+        "official": "Officieel"
+      },
       "sources": {
         "add-custom": "Aangepaste repository toevoegen",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Alles bijwerken ({count})",
       "update-all-success": "Alle plugins succesvol bijgewerkt",
       "update-available": "{count} plugin(s) update(s) beschikbaar",
+      "update-available_plural": "{count} plugin updates beschikbaar",
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
+      "update-pending": "v{current} → v{new} (vereist Noctalia v{required})",
       "update-success": "{plugin} is bijgewerkt naar v{version}",
       "update-version": "v{huidig} → v{nieuw}",
       "updating": "Bezig met updaten..."
@@ -2339,6 +2399,10 @@
           "label": "Algemeen"
         }
       },
+      "large-buttons-layout": {
+        "description": "Kies hoe sessiemenuknoppen worden weergegeven.",
+        "label": "Lay-out met grote knoppen"
+      },
       "large-buttons-style": {
         "description": "Toon het sessiemenu met grote knoppen in een rasterindeling.",
         "label": "Stijl met grote knoppen"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Markeerkleuren"
       },
+      "load-average-section": {
+        "label": "Gemiddelde belasting"
+      },
       "memory-section": {
         "label": "Geheugengebruik"
       },
@@ -2437,6 +2504,10 @@
         "description": "Pas de globale animatiesnelheid aan.",
         "label": "Animatiesnelheid",
         "reset": "Animatiesnelheid resetten"
+      },
+      "box-border": {
+        "description": "Toont een omlijning rond inhoudsgebieden.",
+        "label": "Containeromtrek"
       },
       "box-border-radius": {
         "description": "Past de hoekronding aan van belangrijke lay-outsecties, zoals zijbalken, kaarten en inhoudspanelen.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Achtergrondmap"
         },
         "hide-wallpaper-filenames": {
-          "description": "Verberg de bestandsnamen van de achtergrond in de selector.",
-          "label": "Bestandsnamen verbergen"
+          "tooltip-hide": "Bestandsnamen verbergen",
+          "tooltip-show": "Bestandsnamen weergeven"
         },
         "monitor-specific": {
           "description": "Stel een andere achtergrondmap in voor elke monitor.",
@@ -2648,6 +2719,7 @@
     "download": "Downloaden",
     "download-speed": "Downloadsnelheid",
     "gpu-temp": "GPU-temperatuur",
+    "load-average": "Gemiddelde belasting",
     "memory": "Geheugen",
     "title": "Systeemmonitor",
     "upload": "Uploaden",
@@ -2664,6 +2736,7 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
+      "address-copied": "Adres gekopieerd naar klembord",
       "confirm-code": "Bevestig code {value} op het andere apparaat",
       "connect-failed": "Verbinding met apparaat mislukt",
       "disabled": "Uitgeschakeld",
@@ -2706,7 +2779,8 @@
       "enabled": "\"Wakker houden\" ingeschakeld"
     },
     "keyboard-layout": {
-      "changed": "Toetsenbordindeling gewijzigd naar {layout}"
+      "changed": "Toetsenbordindeling gewijzigd naar {layout}",
+      "title": "Toetsenbord"
     },
     "kofi": {
       "opened": "Ko-fi-pagina geopend in je browser"
@@ -2780,6 +2854,7 @@
     "close": "Sluiten",
     "collapse": "Zijbalk inklappen",
     "connect-disconnect-devices": "Bluetooth-apparaat",
+    "copy-address": "Adres kopiëren",
     "delete-notification": "Melding verwijderen",
     "disable-keep-awake": "Wakker houden",
     "do-not-disturb-disabled": "Niet storen",
@@ -2798,10 +2873,12 @@
     "list-view": "Lijstweergave",
     "manage-vpn": "VPN-verbindingen",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Maximum aantal widgets bereikt.",
     "microphone-volume-at": "Microfoonvolume: {volume}%",
     "move-to-center-section": "Middelste sectie",
     "move-to-left-section": "Linker sectie",
     "move-to-right-section": "Rechter sectie",
+    "move-to-section": "Ga naar {section}",
     "mute": "Dempen",
     "next-media": "Volgende track",
     "next-month": "Volgende maand",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Nachtlicht (niet beschikbaar)",
     "noctalia-performance-disabled": "Noctalia-prestatiemodus",
     "noctalia-performance-enabled": "Noctalia-prestatiemodus",
+    "open-annotation-tool": "Openen met annotatietool",
     "open-control-center": "Bedieningscentrum",
     "open-notification-history-disable-dnd": "Meldingsgeschiedenis",
     "open-notification-history-enable-dnd": "Meldingsgeschiedenis",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "Een API-sleutel is vereist om toegang te krijgen tot NSFW-content.",
         "label": "API-sleutel",
+        "managed-by-env": "Beheerd via de NOCTALIA_WALLHAVEN_API_KEY omgevingsvariabele.",
         "placeholder": "Voer uw Wallhaven API-sleutel in"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Zoeken:",
+      "solid-color": {
+        "tooltip": "Effen kleur achtergrond"
+      },
       "sorting": {
         "date_added": "Datum toegevoegd",
         "favorites": "Favorieten",
@@ -2942,6 +3024,11 @@
     "snow": "Sneeuw",
     "thunderstorm": "Onweer",
     "unknown": "Onbekend"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Selecteer een bestand"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Actie vereist",
+      "available-interfaces": "Beschikbare interfaces",
       "available-networks": "Beschikbare netwerken",
       "connect": "Verbinden",
       "connected": "Verbonden",
       "disabled": "Wi-Fi is uitgeschakeld",
       "disconnect": "Verbreken",
+      "disconnected": "Verbinding verbroken",
       "disconnecting": "Verbreken...",
       "dns": "DNS",
       "enable-message": "Schakel Wi-Fi in om beschikbare netwerken te zien.",
@@ -3042,12 +3131,15 @@
       "frequency": "Frequentie",
       "gateway": "Poort",
       "info": "Info",
+      "interface": "Netwerkinterface",
       "internet": "Internet",
       "internet-connected": "Verbonden met internet",
       "internet-limited": "Geen internet",
+      "internet-status": "Internetstatus",
       "ipv4": "IPv4",
       "known-networks": "Bekende netwerken",
       "link-speed": "Link snelheid",
+      "no-ethernet-devices": "Geen Ethernet-apparaten gedetecteerd",
       "no-networks": "Geen netwerken gevonden",
       "password": "Wachtwoord",
       "saved": "Opgeslagen",

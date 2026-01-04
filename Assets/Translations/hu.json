@@ -142,12 +142,20 @@
           "description": "Ha a kimeneti szöveg megegyezik ezzel az értékkel, a gomb összecsukódik.",
           "label": "Összecsukási feltétel"
         },
+        "color-selection": {
+          "description": "Témák színeinek alkalmazása az ikonra és a szövegre.",
+          "label": "Szín kiválasztása"
+        },
         "display-command-output": {
           "description": "Adjon meg egy parancsot, amelyet rendszeres időközönként futtatni szeretne. A kimenetének első sora szövegként jelenik meg.",
           "label": "Parancs kimenetének megjelenítése",
           "stream-description": "Adjon meg egy parancsot, amelyet folyamatosan futtatni szeretne."
         },
         "dynamic-text": "Dinamikus szöveg",
+        "enable-colorization": {
+          "description": "Színezés engedélyezése az egyéni gomb ikonjához és szövegéhez, a téma színeinek alkalmazása.",
+          "label": "Színezés engedélyezése"
+        },
         "hide-mode": {
           "alwaysExpanded": "Mindig kibontva",
           "description": "Szabályozza a widget láthatóságát, ha a parancsnak nincs kimenete.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Válassza ki, hogyan jelenjen meg ez az érték.",
           "label": "Megjelenítési mód"
+        },
+        "show-icon": {
+          "description": "Billentse a billentyűzetkiosztás ikont.",
+          "label": "Ikon megjelenítése"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Ha engedélyezve van, akkor a hangsúlyozáshoz az elsődleges színt használja.",
+          "label": "Használj alapszínt."
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "GPU hőmérséklet-értékek megjelenítése, ha elérhetőek.",
           "label": "GPU hőmérséklet"
+        },
+        "load-average": {
+          "description": "Rendszerterhelés átlagának megjelenítése.",
+          "label": "Átlagos terhelés"
         },
         "memory-percentage": {
           "description": "A memória használatának megjelenítése százalékos értékben, abszolút értékek helyett.",
@@ -481,6 +503,7 @@
       "device-address": "Eszköz címe",
       "disabled": "A Bluetooth ki van kapcsolva",
       "disconnect": "Kapcsolat bontása",
+      "disconnecting": "A kapcsolat bontása...",
       "discoverable": "Felfedezhető",
       "enable-message": "Kapcsolja be a Bluetooth-t az elérhető eszközök megtekintéséhez.",
       "info": "Infó",
@@ -494,6 +517,14 @@
       "refresh-devices": "Eszközök frissítése",
       "scanning": "Eszközök keresése...",
       "signal": "Jel",
+      "signal-text": {
+        "excellent": "Jelerősség: Kiváló",
+        "fair": "Jelzés: Gyenge",
+        "good": "Jel: Jó",
+        "poor": "Jelerősség: Gyenge",
+        "unknown": "Jel: Ismeretlen",
+        "very-poor": "Jelerősség: Nagyon gyenge"
+      },
       "title": "Bluetooth",
       "trusted": "Megbízható",
       "unpair": "Párosítás megszüntetése"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Csatlakozzon a Discordunkhoz",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Adj visszajelzést"
       },
       "empty": "A kiadási jegyzetek még nem érhetők el.",
       "highlight-title": "Főbb újdonságok",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Bluetooth bekapcsolása",
     "enable-dnd": "Ne zavarjanak bekapcsolása",
     "enable-wifi": "Wi-Fi bekapcsolása",
+    "launcher-settings": "Indító beállítások",
     "lower-to-bottom": "Engedd le a legaljára / Engedd le az aljára",
     "next": "Következő",
     "open-calendar": "Naptár megnyitása",
@@ -631,7 +664,35 @@
       "webbrowser": "Webböngésző"
     },
     "delete": "Törlés",
+    "no-results": "Nincs találat",
     "pin": "Rögzítés",
+    "providers": {
+      "applications": "Alkalmazások",
+      "calculator": "Számológép",
+      "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
+      "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
+      "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
+      "calculator-error": "Hiba",
+      "calculator-name": "Számológép",
+      "clipboard": "Vágólapelőzmények",
+      "clipboard-clear-description": "Összes vágólapelőzmény törlése",
+      "clipboard-clear-description-full": "Az összes elem eltávolítása a vágólapelőzményekből",
+      "clipboard-clear-history": "Vágólapelőzmények törlése",
+      "clipboard-delete": "Vágólap bejegyzés törlése",
+      "clipboard-history-disabled": "Vágólapelőzmények kikapcsolva",
+      "clipboard-history-disabled-description": "Kapcsolja be a vágólapelőzményeket a beállításokban, vagy telepítse a cliphistet",
+      "clipboard-loading": "Vágólapelőzmények betöltése...",
+      "clipboard-loading-description": "Kérjük, várjon",
+      "clipboard-search-description": "Keresés a vágólapelőzményekben",
+      "command": "Parancs",
+      "command-description": "Shell parancsok futtatása",
+      "command-name": "Parancs",
+      "emoji": "Emoji választó",
+      "emoji-loading": "Emojik betöltése...",
+      "emoji-loading-description": "Kérjük, várjon",
+      "emoji-no-recent": "Nincsenek még legutóbbi emojik",
+      "emoji-search-description": "Emojik keresése és másolása"
+    },
     "unpin": "Rögzítés feloldása"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Rendszerkimenet + mikrofonbemenet",
         "microphone-input": "Mikrofonbemenet",
+        "none": "No audio",
         "system-output": "Rendszerkimenet"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Mindig görgetés",
       "hover": "Görgetés rámutatáskor",
       "never": "Soha ne görgessen"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Rács",
+      "single-row": "Egy sor"
     },
     "settings-panel-mode": {
       "attached": "Panel a sávhoz rögzítve",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Írja be a háttérképek szűréséhez...",
     "select": "Kiválasztás",
     "test": "Teszt"
-  },
-  "plugins": {
-    "applications": "Alkalmazások",
-    "calculator": "Számológép",
-    "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
-    "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
-    "calculator-error": "Hiba",
-    "calculator-name": "Számológép",
-    "clipboard": "Vágólapelőzmények",
-    "clipboard-clear-description": "Összes vágólapelőzmény törlése",
-    "clipboard-clear-description-full": "Az összes elem eltávolítása a vágólapelőzményekből",
-    "clipboard-clear-history": "Vágólapelőzmények törlése",
-    "clipboard-delete": "Vágólap bejegyzés törlése",
-    "clipboard-history-disabled": "Vágólapelőzmények kikapcsolva",
-    "clipboard-history-disabled-description": "Kapcsolja be a vágólapelőzményeket a beállításokban, vagy telepítse a cliphistet",
-    "clipboard-loading": "Vágólapelőzmények betöltése...",
-    "clipboard-loading-description": "Kérjük, várjon",
-    "clipboard-search-description": "Keresés a vágólapelőzményekben",
-    "command": "Parancs",
-    "command-description": "Shell parancsok futtatása",
-    "command-name": "Parancs",
-    "emoji": "Emoji választó",
-    "emoji-loading": "Emojik betöltése...",
-    "emoji-loading-description": "Kérjük, várjon",
-    "emoji-search-description": "Emojik keresése és másolása"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Az alapul szolgáló képhez szorosan illeszkedő színeket származtat.",
-            "scheme-expressive": "Élénk paletta játékos telítettséggel.",
-            "scheme-fidelity": "Nagy pontosságú paletta, amely megőrzi a forrás színtónusait.",
-            "scheme-fruit-salad": "Színes keveréke az élénk kontrasztos ékezeteknek.",
-            "scheme-monochrome": "Minimális paletta egyetlen színárnyalat köré építve.",
-            "scheme-neutral": "Tompa paletta visszafogott és nyugtató tónusokkal.",
-            "scheme-rainbow": "Változatos paletta, amely a teljes spektrumot lefedi.",
-            "scheme-tonal-spot": "Kiegyensúlyozott paletta fókuszált hangsúlyokkal."
-          },
+          "description": "Válassza ki a színséma-generálási módszert, amellyel a Matugen színeket fog létrehozni a háttérképéből.",
           "label": "Matugen séma típusa"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "{filepath} írása és újratöltés"
+          },
+          "zen-browser": {
+            "description": "Írd be ezt a fájlba: {filepath}; másold be a Zen profilod chrome/userChrome.css fájljába."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Parancs, amely a jegyzetelés gombra kattintva fut a vágólap előzményeiben. A kép a parancsra lesz átirányítva.",
+          "label": "Annotációs eszköz",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Mutassa a vágólap tartalmának előnézetét a >clip parancs használatakor.",
           "label": "Vágólap előnézet engedélyezése"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Kategóriafülek megjelenítése az alkalmazások szűréséhez.",
           "label": "Kategóriák megjelenítése"
+        },
+        "show-icon-background": {
+          "description": "Ikonok mögött lekerekített téglalap hátteret mutass.",
+          "label": "Ikon háttér megjelenítése"
         },
         "sort-by-usage": {
           "description": "Ha engedélyezve van, a gyakran indított alkalmazások jelennek meg először a listán.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "A Bluetooth kezelés aktiválása.",
-        "label": "Bluetooth bekapcsolása"
+        "label": "Bluetooth bekapcsolása",
+        "rssi-polling": {
+          "description": "Időnként mintavételezi a csatlakoztatott eszközök RSSI-értékét a bluetoothctl-en keresztül. Nem biztos, hogy minden eszközhöz elérhető; engedélyezve minimális erőforrásokat használ.",
+          "label": "Bluetooth jel lekérdezés"
+        }
       },
       "section": {
         "description": "Wi-Fi és Bluetooth kapcsolatok kezelése."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Ellenőrizze a bővítményforrásokat, vagy frissítse a listát.",
         "no-plugins-label": "Nincsenek elérhető bővítmények"
       },
+      "collision": {
+        "already-installed": "Ez a bővítmény már telepítve van.",
+        "custom-version-exists": "Egyéni verzió a következő helyről: \"{source}\" már telepítve van",
+        "official-version-exists": "A plugin hivatalos verziója már telepítve van."
+      },
       "filter": {
         "all": "Összes",
         "downloaded": "Letöltött",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Nincs telepített bővítmény"
       },
       "installing": "Telepítés: {plugin}...",
+      "open-plugins-tab": "Bővítmények beállításainak megnyitása",
       "plugin-settings-title": "{plugin} beállításai",
       "refresh": {
         "refreshing": "Bővítmények listájának frissítése...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Bővítmény nincs betöltve",
       "settings-saved": "Bővítmény beállításai mentve",
+      "source": {
+        "custom": "Egyéni forrás",
+        "official": "hivatalos"
+      },
       "sources": {
         "add-custom": "Egyéni adattár hozzáadása",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Összes frissítése ({count})",
       "update-all-success": "Minden bővítmény sikeresen frissítve",
       "update-available": "{count} frissítés érhető el a bővítményekhez",
+      "update-available_plural": "{count} bővítményfrissítés érhető el",
       "update-error": "Nem sikerült frissíteni a bővítményt: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} vagy újabb szükséges",
+      "update-pending": "v{current} → v{new} (szükséges Noctalia v{required})",
       "update-success": "A(z) {plugin} frissítve lett a v{version} verzióra",
       "update-version": "v{current} → v{new}",
       "updating": "Frissítés..."
@@ -2339,6 +2399,10 @@
           "label": "Általános"
         }
       },
+      "large-buttons-layout": {
+        "description": "Válaszd ki, hogyan jelenjenek meg a munkamenü menügombjai.",
+        "label": "Nagy gombok elrendezése"
+      },
       "large-buttons-style": {
         "description": "A munkamenet menü megjelenítése nagy gombokkal, rácsos elrendezésben.",
         "label": "Nagyméretű gombok stílusa"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Kiemelőszínek"
       },
+      "load-average-section": {
+        "label": "Átlagos terhelés"
+      },
       "memory-section": {
         "label": "Memóriahasználat"
       },
@@ -2437,6 +2504,10 @@
         "description": "Állítsa be a globális animációs sebességet.",
         "label": "Animációs sebesség",
         "reset": "Animációs sebesség visszaállítása"
+      },
+      "box-border": {
+        "description": "Tartalomterületek köré vázlatot jelenít meg.",
+        "label": "Konténer körvonal"
       },
       "box-border-radius": {
         "description": "Beállítja a fő elrendezési szakaszok (például oldalsávok, kártyák és tartalompanelek) saroklekerekítését.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Háttérkép mappa"
         },
         "hide-wallpaper-filenames": {
-          "description": "Háttérkép fájlnevek elrejtése a választóban.",
-          "label": "Fájlnevek elrejtése"
+          "tooltip-hide": "Fájlnevek elrejtése",
+          "tooltip-show": "Fájlnevek megjelenítése"
         },
         "monitor-specific": {
           "description": "Külön háttérkép mappa beállítása minden monitorhoz.",
@@ -2648,6 +2719,7 @@
     "download": "Letöltés",
     "download-speed": "Letöltési sebesség",
     "gpu-temp": "GPU hőmérséklet",
+    "load-average": "Átlagos terhelés",
     "memory": "Memória",
     "title": "Rendszerfigyelő",
     "upload": "Feltöltés",
@@ -2664,6 +2736,7 @@
       "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt."
     },
     "bluetooth": {
+      "address-copied": "Cím a vágólapra másolva",
       "confirm-code": "Erősítse meg a {value} kódot a másik eszközön",
       "connect-failed": "Nem sikerült csatlakozni az eszközhöz",
       "disabled": "Kikapcsolva",
@@ -2706,7 +2779,8 @@
       "enabled": "Bekapcsolva"
     },
     "keyboard-layout": {
-      "changed": "Billentyűzetkiosztás megváltozott: {layout}"
+      "changed": "Billentyűzetkiosztás megváltozott: {layout}",
+      "title": "Billentyűzet"
     },
     "kofi": {
       "opened": "A Ko-fi oldal megnyílt a böngészőjében"
@@ -2780,6 +2854,7 @@
     "close": "Bezárás",
     "collapse": "Oldalsáv összecsukása",
     "connect-disconnect-devices": "Bluetooth eszköz",
+    "copy-address": "Cím másolása",
     "delete-notification": "Értesítés törlése",
     "disable-keep-awake": "Ébren tartás",
     "do-not-disturb-disabled": "Ne zavarjanak",
@@ -2798,10 +2873,12 @@
     "list-view": "Lista nézet",
     "manage-vpn": "VPN-kapcsolatok",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Elérte a maximális widgetszámot.",
     "microphone-volume-at": "Mikrofon hangereje: {volume}%",
     "move-to-center-section": "Középső szakasz",
     "move-to-left-section": "Bal oldali szakasz",
     "move-to-right-section": "Jobb oldali szakasz",
+    "move-to-section": "Ugrás a(z) {section} szakaszhoz",
     "mute": "Némítás",
     "next-media": "Következő zene",
     "next-month": "Következő hónap",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Éjszakai fény (nem elérhető)",
     "noctalia-performance-disabled": "Noctalia teljesítmény mód",
     "noctalia-performance-enabled": "Noctalia teljesítmény mód",
+    "open-annotation-tool": "Megnyitás jegyzetelő eszközzel",
     "open-control-center": "Vezérlőközpont",
     "open-notification-history-disable-dnd": "Értesítési előzmények",
     "open-notification-history-enable-dnd": "Értesítési előzmények",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "NSFW tartalom eléréséhez API kulcs szükséges.",
         "label": "API kulcs",
+        "managed-by-env": "A NOCTALIA_WALLHAVEN_API_KEY környezeti változóval kezelhető.",
         "placeholder": "Add meg a Wallhaven API kulcsodat!"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Keresés",
+      "solid-color": {
+        "tooltip": "Egyszínű háttér"
+      },
       "sorting": {
         "date_added": "Hozzáadás dátuma",
         "favorites": "Kedvencek",
@@ -2942,6 +3024,11 @@
     "snow": "Hó",
     "thunderstorm": "Zivatar",
     "unknown": "Ismeretlen"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Fájl kiválasztása"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Szukseges akció",
+      "available-interfaces": "Elérhető interfészek",
       "available-networks": "Elérhető hálózatok",
       "connect": "Csatlakozás",
       "connected": "Csatlakozva",
       "disabled": "A Wi‑Fi ki van kapcsolva",
       "disconnect": "Leválasztás",
+      "disconnected": "Szétkapcsolva",
       "disconnecting": "Leválasztás…",
       "dns": "DNS",
       "enable-message": "Kapcsolja be a Wi‑Fi-t az elérhető hálózatok megtekintéséhez.",
@@ -3042,12 +3131,15 @@
       "frequency": "Frekvencia",
       "gateway": "Átjáró",
       "info": "Infó",
+      "interface": "Hálózati interfész",
       "internet": "Internet",
       "internet-connected": "Internet csatlakoztatva",
       "internet-limited": "Nincs internet",
+      "internet-status": "Internet állapota",
       "ipv4": "IPv4",
       "known-networks": "Ismert hálózatok",
       "link-speed": "Kapcsolati sebesség",
+      "no-ethernet-devices": "Nem található Ethernet eszköz.",
       "no-networks": "Nem található Wi‑Fi-hálózat",
       "password": "Jelszó",
       "saved": "Mentve",

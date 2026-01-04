@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Modules.Panels.Settings
 import qs.Services.Noctalia
 import qs.Services.UI
 
@@ -34,6 +35,9 @@ Singleton {
 
   // Plugin updates available: { pluginId: { currentVersion, availableVersion } }
   property var pluginUpdates: ({})
+
+  // Plugin updates that require a newer Noctalia version: { pluginId: { currentVersion, availableVersion, minNoctaliaVersion } }
+  property var pluginUpdatesPending: ({})
 
   // Plugin load errors: { pluginId: { error: string, entryPoint: string, timestamp: date } }
   property var pluginErrors: ({})
@@ -243,9 +247,10 @@ Singleton {
             var plugin = registry.plugins[i];
             plugin.source = source;
 
-            // Check if already downloaded
-            plugin.downloaded = PluginRegistry.isPluginDownloaded(plugin.id);
-            plugin.enabled = PluginRegistry.isPluginEnabled(plugin.id);
+            // Check if already downloaded - use composite key
+            var compositeKey = PluginRegistry.generateCompositeKey(plugin.id, source.url);
+            plugin.downloaded = PluginRegistry.isPluginDownloaded(compositeKey);
+            plugin.enabled = PluginRegistry.isPluginEnabled(compositeKey);
 
             root.availablePlugins.push(plugin);
           }
@@ -280,18 +285,85 @@ Singleton {
     fetchProcess.running = true;
   }
 
+  // Check for plugin ID collision before installation
+  function checkPluginCollision(pluginMetadata) {
+    var sourceUrl = pluginMetadata.source.url;
+    var compositeKey = PluginRegistry.generateCompositeKey(pluginMetadata.id, sourceUrl);
+
+    // Check if this exact composite key already exists
+    if (PluginRegistry.isPluginDownloaded(compositeKey)) {
+      return {
+        collision: true,
+        reason: "already_installed",
+        existingKey: compositeKey,
+        message: I18n.tr("settings.plugins.collision.already-installed")
+      };
+    }
+
+    // For official plugins, also check if any custom version with same base ID exists
+    if (PluginRegistry.isOfficialSource(sourceUrl)) {
+      var allInstalled = PluginRegistry.getAllInstalledPluginIds();
+      for (var i = 0; i < allInstalled.length; i++) {
+        var parsed = PluginRegistry.parseCompositeKey(allInstalled[i]);
+        if (parsed.pluginId === pluginMetadata.id && !parsed.isOfficial) {
+          var sourceName = PluginRegistry.getSourceNameByHash(parsed.sourceHash) || I18n.tr("settings.plugins.source.custom");
+          return {
+            collision: true,
+            reason: "custom_version_exists",
+            existingKey: allInstalled[i],
+            message: I18n.tr("settings.plugins.collision.custom-version-exists", {
+                               source: sourceName
+                             })
+          };
+        }
+      }
+    }
+
+    // For custom plugins, check if official version exists
+    if (!PluginRegistry.isOfficialSource(sourceUrl)) {
+      if (PluginRegistry.isPluginDownloaded(pluginMetadata.id)) {
+        return {
+          collision: true,
+          reason: "official_version_exists",
+          existingKey: pluginMetadata.id,
+          message: I18n.tr("settings.plugins.collision.official-version-exists")
+        };
+      }
+    }
+
+    return {
+      collision: false
+    };
+  }
+
   // Download and install a plugin using git sparse-checkout
-  function installPlugin(pluginMetadata, callback) {
+  // skipCollisionCheck: set to true when updating an existing plugin
+  function installPlugin(pluginMetadata, skipCollisionCheck, callback) {
     var pluginId = pluginMetadata.id;
     var source = pluginMetadata.source;
 
-    Logger.i("PluginService", "Installing plugin:", pluginId, "from", source.name);
+    // Check for collision first (skip when updating)
+    if (!skipCollisionCheck) {
+      var collision = checkPluginCollision(pluginMetadata);
+      if (collision.collision) {
+        Logger.w("PluginService", "Plugin collision detected:", collision.message);
+        ToastService.showError(I18n.tr("settings.plugins.title"), collision.message);
+        if (callback)
+          callback(false, collision.message);
+        return;
+      }
+    }
 
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    // Generate composite key for the plugin folder
+    var compositeKey = PluginRegistry.generateCompositeKey(pluginId, source.url);
+    Logger.i("PluginService", "Installing plugin:", compositeKey, "from", source.name);
+
+    var pluginDir = PluginRegistry.getPluginDir(compositeKey);
     var repoUrl = source.url;
 
     // Use git sparse-checkout to clone only the plugin subfolder
     // GIT_TERMINAL_PROMPT=0 prevents hanging on private repos that need auth
+    // Note: We download from the original pluginId folder in the repo, but save to compositeKey folder
     var downloadCmd = "temp_dir=$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse --depth=1 --quiet '" + repoUrl + "' \"$temp_dir\" 2>/dev/null && cd \"$temp_dir\" && git sparse-checkout set '" + pluginId + "' 2>/dev/null && mkdir -p '" + pluginDir + "' && cp -r \"$temp_dir/" + pluginId + "/.\" '" + pluginDir
         + "/'; exit_code=$?; rm -rf \"$temp_dir\"; exit $exit_code";
 
@@ -299,7 +371,7 @@ Singleton {
 
     downloadProcess.exited.connect(function (exitCode) {
       if (exitCode === 0) {
-        Logger.i("PluginService", "Downloaded plugin:", pluginId);
+        Logger.i("PluginService", "Downloaded plugin:", compositeKey);
 
         // Load and validate manifest
         var manifestPath = pluginDir + "/manifest.json";
@@ -307,9 +379,9 @@ Singleton {
           if (success) {
             var validation = PluginRegistry.validateManifest(manifest);
             if (validation.valid) {
-              // Register plugin
-              PluginRegistry.registerPlugin(manifest);
-              Logger.i("PluginService", "Installed plugin:", pluginId);
+              // Register plugin with source URL
+              var registeredKey = PluginRegistry.registerPlugin(manifest, source.url);
+              Logger.i("PluginService", "Installed plugin:", registeredKey);
 
               // Update available plugins list
               updatePluginInAvailable(pluginId, {
@@ -317,20 +389,20 @@ Singleton {
                                       });
 
               if (callback)
-                callback(true, null);
+                callback(true, null, registeredKey);
             } else {
               Logger.e("PluginService", "Invalid manifest:", validation.error);
               if (callback)
                 callback(false, "Invalid manifest: " + validation.error);
             }
           } else {
-            Logger.e("PluginService", "Failed to load manifest for:", pluginId);
+            Logger.e("PluginService", "Failed to load manifest for:", compositeKey);
             if (callback)
               callback(false, "Failed to load manifest");
           }
         });
       } else {
-        Logger.e("PluginService", "Failed to download plugin:", pluginId);
+        Logger.e("PluginService", "Failed to download plugin:", compositeKey);
         if (callback)
           callback(false, "Download failed");
       }
@@ -341,16 +413,16 @@ Singleton {
     downloadProcess.running = true;
   }
 
-  // Uninstall a plugin
-  function uninstallPlugin(pluginId, callback) {
-    Logger.i("PluginService", "Uninstalling plugin:", pluginId);
+  // Uninstall a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
+  function uninstallPlugin(compositeKey, callback) {
+    Logger.i("PluginService", "Uninstalling plugin:", compositeKey);
 
     // Disable and unload first
-    if (PluginRegistry.isPluginEnabled(pluginId)) {
-      disablePlugin(pluginId);
+    if (PluginRegistry.isPluginEnabled(compositeKey)) {
+      disablePlugin(compositeKey);
     }
 
-    var pluginDir = PluginRegistry.getPluginDir(pluginId);
+    var pluginDir = PluginRegistry.getPluginDir(compositeKey);
 
     var removeProcess = Qt.createQmlObject(`
       import QtQuick
@@ -358,15 +430,16 @@ Singleton {
       Process {
         command: ["rm", "-rf", "${pluginDir}"]
       }
-    `, root, "RemovePlugin_" + pluginId);
+    `, root, "RemovePlugin_" + compositeKey);
 
     removeProcess.exited.connect(function (exitCode) {
       if (exitCode === 0) {
-        PluginRegistry.unregisterPlugin(pluginId);
-        Logger.i("PluginService", "Uninstalled plugin:", pluginId);
+        PluginRegistry.unregisterPlugin(compositeKey);
+        Logger.i("PluginService", "Uninstalled plugin:", compositeKey);
 
-        // Update available plugins list
-        updatePluginInAvailable(pluginId, {
+        // Update available plugins list (use plain ID to match against availablePlugins)
+        var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+        updatePluginInAvailable(parsed.pluginId, {
                                   downloaded: false,
                                   enabled: false
                                 });
@@ -385,34 +458,36 @@ Singleton {
     removeProcess.running = true;
   }
 
-  // Enable a plugin
-  function enablePlugin(pluginId, skipAddToBar) {
-    if (PluginRegistry.isPluginEnabled(pluginId)) {
-      Logger.w("PluginService", "Plugin already enabled:", pluginId);
+  // Enable a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
+  function enablePlugin(compositeKey, skipAddToBar) {
+    if (PluginRegistry.isPluginEnabled(compositeKey)) {
+      Logger.w("PluginService", "Plugin already enabled:", compositeKey);
       return true;
     }
 
-    if (!PluginRegistry.isPluginDownloaded(pluginId)) {
-      Logger.e("PluginService", "Cannot enable: plugin not downloaded:", pluginId);
+    if (!PluginRegistry.isPluginDownloaded(compositeKey)) {
+      Logger.e("PluginService", "Cannot enable: plugin not downloaded:", compositeKey);
       return false;
     }
 
-    PluginRegistry.setPluginEnabled(pluginId, true);
-    loadPlugin(pluginId);
+    PluginRegistry.setPluginEnabled(compositeKey, true);
+    loadPlugin(compositeKey);
 
     // Add plugin widget to bar if it provides one (unless we're restoring from backup)
     if (!skipAddToBar) {
-      var manifest = PluginRegistry.getPluginManifest(pluginId);
+      var manifest = PluginRegistry.getPluginManifest(compositeKey);
       if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
-        var widgetId = "plugin:" + pluginId;
+        var widgetId = "plugin:" + compositeKey;
         addWidgetToBar(widgetId, "right"); // Default to right section
       }
     }
 
-    updatePluginInAvailable(pluginId, {
+    // Update available plugins list (use plain ID to match against availablePlugins)
+    var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+    updatePluginInAvailable(parsed.pluginId, {
                               enabled: true
                             });
-    root.pluginEnabled(pluginId);
+    root.pluginEnabled(compositeKey);
     return true;
   }
 
@@ -443,23 +518,26 @@ Singleton {
     return true;
   }
 
-  // Disable a plugin
-  function disablePlugin(pluginId) {
-    if (!PluginRegistry.isPluginEnabled(pluginId)) {
-      Logger.w("PluginService", "Plugin already disabled:", pluginId);
+  // Disable a plugin (compositeKey is the full key like "abc123:my-plugin" or plain "my-plugin")
+  function disablePlugin(compositeKey) {
+    if (!PluginRegistry.isPluginEnabled(compositeKey)) {
+      Logger.w("PluginService", "Plugin already disabled:", compositeKey);
       return true;
     }
 
     // Remove plugin widget from bar before unloading
-    var widgetId = "plugin:" + pluginId;
+    var widgetId = "plugin:" + compositeKey;
     removeWidgetFromBar(widgetId);
 
-    PluginRegistry.setPluginEnabled(pluginId, false);
-    unloadPlugin(pluginId);
-    updatePluginInAvailable(pluginId, {
+    PluginRegistry.setPluginEnabled(compositeKey, false);
+    unloadPlugin(compositeKey);
+
+    // Update available plugins list (use plain ID to match against availablePlugins)
+    var parsed = PluginRegistry.parseCompositeKey(compositeKey);
+    updatePluginInAvailable(parsed.pluginId, {
                               enabled: false
                             });
-    root.pluginDisabled(pluginId);
+    root.pluginDisabled(compositeKey);
     return true;
   }
 
@@ -561,6 +639,7 @@ Singleton {
       root.loadedPlugins[pluginId] = {
         barWidget: null,
         desktopWidget: null,
+        launcherProvider: null,
         mainInstance: null,
         api: pluginApi,
         manifest: manifest
@@ -635,6 +714,24 @@ Singleton {
         }
       }
 
+      // Load launcher provider component if provided (don't instantiate - Launcher will do that)
+      if (manifest.entryPoints && manifest.entryPoints.launcherProvider) {
+        var launcherProviderPath = pluginDir + "/" + manifest.entryPoints.launcherProvider;
+        var launcherProviderLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var launcherProviderComponent = Qt.createComponent("file://" + launcherProviderPath + "?v=" + launcherProviderLoadVersion);
+
+        if (launcherProviderComponent.status === Component.Ready) {
+          root.loadedPlugins[pluginId].launcherProvider = launcherProviderComponent;
+          pluginApi.launcherProvider = launcherProviderComponent;
+
+          // Register with LauncherProviderRegistry
+          LauncherProviderRegistry.registerPluginProvider(pluginId, launcherProviderComponent, manifest.metadata);
+          Logger.i("PluginService", "Loaded launcher provider for plugin:", pluginId);
+        } else if (launcherProviderComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "launcherProvider", launcherProviderComponent.errorString());
+        }
+      }
+
       Logger.i("PluginService", "Plugin loaded:", pluginId);
       root.pluginLoaded(pluginId);
 
@@ -674,6 +771,11 @@ Singleton {
       DesktopWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 
+    // Unregister from LauncherProviderRegistry
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.launcherProvider) {
+      LauncherProviderRegistry.unregisterPluginProvider(pluginId);
+    }
+
     // Destroy Main instance if any
     if (plugin.mainInstance) {
       plugin.mainInstance.destroy();
@@ -702,6 +804,7 @@ Singleton {
         property var mainInstance: null
         property var barWidget: null
         property var desktopWidget: null
+        property var launcherProvider: null
 
         // IPC handlers storage
         property var ipcHandlers: ({})
@@ -1036,6 +1139,7 @@ Singleton {
   // Perform the actual update check
   function performUpdateCheck() {
     var updates = {};
+    var pendingUpdates = {};
     var installedIds = PluginRegistry.getAllInstalledPluginIds();
 
     Logger.d("PluginService", "Checking", installedIds.length, "installed plugins against", root.availablePlugins.length, "available plugins");
@@ -1053,6 +1157,20 @@ Singleton {
 
         // Compare versions
         if (compareVersions(availableVersion, currentVersion) > 0) {
+          // Check if the available version requires a higher Noctalia version
+          if (availablePlugin.minNoctaliaVersion) {
+            var noctaliaVersion = UpdateService.baseVersion;
+            if (compareVersions(availablePlugin.minNoctaliaVersion, noctaliaVersion) > 0) {
+              Logger.d("PluginService", "Pending update for", pluginId + ": requires Noctalia v" + availablePlugin.minNoctaliaVersion + " (current: v" + noctaliaVersion + ")");
+              pendingUpdates[pluginId] = {
+                currentVersion: currentVersion,
+                availableVersion: availableVersion,
+                minNoctaliaVersion: availablePlugin.minNoctaliaVersion
+              };
+              continue;
+            }
+          }
+
           updates[pluginId] = {
             currentVersion: currentVersion,
             availableVersion: availableVersion
@@ -1065,13 +1183,35 @@ Singleton {
     }
 
     root.pluginUpdates = updates;
+    root.pluginUpdatesPending = pendingUpdates;
     var updateCount = Object.keys(updates).length;
+    var pendingCount = Object.keys(pendingUpdates).length;
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
-      ToastService.showNotice(I18n.tr("settings.plugins.update-available", {
-                                        "count": updateCount
-                                      }), I18n.tr("common.check-settings"));
+      ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.trp("settings.plugins.update-available", updateCount, "{count} plugin update available", "{count} plugin updates available", {
+                                                                            "count": updateCount
+                                                                          }), "plugin", 5000, I18n.tr("settings.plugins.open-plugins-tab"), function () {
+                                                                            // Open settings panel to Plugins tab on the screen where the cursor is
+                                                                            if (root.screenDetector) {
+                                                                              root.screenDetector.withCurrentScreen(function (screen) {
+                                                                                var panel = PanelService.getPanel("settingsPanel", screen);
+                                                                                if (panel) {
+                                                                                  panel.requestedTab = SettingsPanel.Tab.Plugins;
+                                                                                  panel.open();
+                                                                                }
+                                                                              });
+                                                                            } else {
+                                                                              // Fallback to primary screen if screen detector is not available
+                                                                              var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+                                                                              if (panel) {
+                                                                                panel.requestedTab = SettingsPanel.Tab.Plugins;
+                                                                                panel.open();
+                                                                              }
+                                                                            }
+                                                                          });
+    } else if (pendingCount > 0) {
+      Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
       Logger.i("PluginService", "All plugins are up to date");
     }
@@ -1148,8 +1288,8 @@ Singleton {
       disablePlugin(pluginId);
     }
 
-    // Now install the new version (reuse installPlugin logic)
-    installPlugin(availablePlugin, function (success, error) {
+    // Now install the new version (reuse installPlugin logic, skip collision check since we're updating)
+    installPlugin(availablePlugin, true, function (success, error) {
       if (success) {
         Logger.i("PluginService", "Plugin updated successfully:", pluginId);
 
@@ -1345,6 +1485,8 @@ Singleton {
       entryPointFiles.push(entryPoints.barWidget);
     if (entryPoints.desktopWidget)
       entryPointFiles.push(entryPoints.desktopWidget);
+    if (entryPoints.launcherProvider)
+      entryPointFiles.push(entryPoints.launcherProvider);
     if (entryPoints.panel)
       entryPointFiles.push(entryPoints.panel);
     if (entryPoints.settings)
@@ -1441,9 +1583,9 @@ Singleton {
 
       // Show toast notification
       var pluginName = manifest.name || pluginId;
-      ToastService.showNotice(I18n.tr("settings.plugins.hot-reloaded", {
-                                        "name": pluginName
-                                      }), "");
+      ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.hot-reloaded", {
+                                                                           "name": pluginName
+                                                                         }));
 
       Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
     });

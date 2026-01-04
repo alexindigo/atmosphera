@@ -142,12 +142,20 @@
           "description": "Çıktı metni bu değerle eşleşirse düğme daralacak.",
           "label": "Daralma durumu"
         },
+        "color-selection": {
+          "description": "Tema renklerini simgeye ve metne uygula.",
+          "label": "Renk seç"
+        },
         "display-command-output": {
           "description": "Düzenli aralıklarla çalıştırılacak bir komut girin. Çıktısının ilk satırı metin olarak gösterilecektir.",
           "label": "Komut Çıktısını Göster",
           "stream-description": "Sürekli çalıştırılacak bir komut girin."
         },
         "dynamic-text": "Hareketli metin",
+        "enable-colorization": {
+          "description": "Özel düğme simgesi ve metni için renklendirmeyi etkinleştir, tema renklerini uygula.",
+          "label": "Renklendirmeyi etkinleştir"
+        },
         "hide-mode": {
           "alwaysExpanded": "Her zaman geniş",
           "description": "Komutun çıktı vermemesi durumunda gerecin görünürlüğünü kontrol eder.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Bu değerin nasıl görünmesini istediğinizi seçin.",
           "label": "Görüntüleme modu"
+        },
+        "show-icon": {
+          "description": "Klavye düzeni simgesini görüntüle.",
+          "label": "Simgeyi göster"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Etkinleştirildiğinde, vurgu için birincil rengi uygular.",
+          "label": "Ana renk kullan."
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "GPU sıcaklık değerleri varsa göster.",
           "label": "GPU sıcaklığı"
+        },
+        "load-average": {
+          "description": "Sistem ortalama yükünü göster.",
+          "label": "Ortalama yük"
         },
         "memory-percentage": {
           "description": "Mutlak değerler yerine bellek kullanımını yüzde olarak göster.",
@@ -481,6 +503,7 @@
       "device-address": "Cihaz adresi",
       "disabled": "Bluetooth devre dışı",
       "disconnect": "Bağlantıyı Kes",
+      "disconnecting": "Bağlantı kesiliyor...",
       "discoverable": "Keşfedilebilir",
       "enable-message": "Mevcut cihazları görmek için Bluetooth'u etkinleştirin.",
       "info": "Bilgi",
@@ -494,6 +517,14 @@
       "refresh-devices": "Cihazları yenile",
       "scanning": "Cihazlar tarınıyor...",
       "signal": "Sinyal",
+      "signal-text": {
+        "excellent": "Sinyal: Mükemmel",
+        "fair": "Sinyal: Adil",
+        "good": "Sinyal: İyi",
+        "poor": "Sinyal: Zayıf",
+        "unknown": "Sinyal: Bilinmiyor",
+        "very-poor": "Sinyal: Çok zayıf"
+      },
       "title": "Bluetooth",
       "trusted": "Güvenilir",
       "unpair": "Eşleştirmeyi kaldır"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Discord sunucumuza katıl",
-        "dismiss": "Tamam"
+        "dismiss": "Tamam",
+        "feedback": "Geri bildirim verin"
       },
       "empty": "Sürüm notları henüz hazır değil.",
       "highlight-title": "Öne çıkanlar",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Bluetooth'u etkinleştir",
     "enable-dnd": "Rahatsız Etmeyin'i Etkinleştir",
     "enable-wifi": "Kablosuz Bağlantıyı etkinleştir",
+    "launcher-settings": "Başlatıcı ayarları",
     "lower-to-bottom": "Alta doğru alçalt",
     "next": "Sonraki",
     "open-calendar": "Takvimi aç",
@@ -631,7 +664,35 @@
       "webbrowser": "Tarayıcı"
     },
     "delete": "Sil",
+    "no-results": "Sonuç bulunamadı",
     "pin": "Sabitle",
+    "providers": {
+      "applications": "Uygulamalar",
+      "calculator": "Hesap makinesi",
+      "calculator-deprecated": ">calc komutu kullanımdan kaldırılmıştır ve yakında kaldırılacaktır. Lütfen matematiksel ifadeleri doğrudan aramaya yazın.",
+      "calculator-description": "Hesap makinesi — matematiksel ifadeleri hesapla",
+      "calculator-enter-expression": "Matematiksel bir ifade girin",
+      "calculator-error": "Hata",
+      "calculator-name": "Hesap makinesi",
+      "clipboard": "Panoya geçmiş",
+      "clipboard-clear-description": "Tüm panoya geçmişini temizle",
+      "clipboard-clear-description-full": "Tüm öğeleri panoya geçmişinden kaldır",
+      "clipboard-clear-history": "Panoya geçmişini temizle",
+      "clipboard-delete": "Panodaki öğeyi sil",
+      "clipboard-history-disabled": "Panoya geçmişi devre dışı",
+      "clipboard-history-disabled-description": "Panoya geçmişini ayarlarda etkinleştir veya cliphist kur",
+      "clipboard-loading": "Panoya geçmişi yükleniyor...",
+      "clipboard-loading-description": "Lütfen bekleyin",
+      "clipboard-search-description": "Panoya geçmişini ara",
+      "command": "Komut",
+      "command-description": "Kabuk komutlarını çalıştır",
+      "command-name": "Komut",
+      "emoji": "Emoji seçici",
+      "emoji-loading": "Emojiler yükleniyor...",
+      "emoji-loading-description": "Lütfen bekleyin",
+      "emoji-no-recent": "Henüz yeni emoji yok",
+      "emoji-search-description": "Emoji arama ve kopyalama"
+    },
     "unpin": "Sabitlemeyi kaldır"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Sistem çıktısı + mikrofon girişi",
         "microphone-input": "Mikrofon girişi",
+        "none": "Ses yok.",
         "system-output": "Sistem çıktısı"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Her Zaman Kaydır",
       "hover": "Üzerine Gelince Kaydır",
       "never": "Asla Kaydırma"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Izgara",
+      "single-row": "Tek Sıra"
     },
     "settings-panel-mode": {
       "attached": "Panel çubuğa takılı",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Duvar kâğıtlarını filtrelemek için yazın...",
     "select": "Seç",
     "test": "Test"
-  },
-  "plugins": {
-    "applications": "Uygulamalar",
-    "calculator": "Hesap makinesi",
-    "calculator-description": "Hesap makinesi — matematiksel ifadeleri hesapla",
-    "calculator-enter-expression": "Matematiksel bir ifade girin",
-    "calculator-error": "Hata",
-    "calculator-name": "Hesap makinesi",
-    "clipboard": "Panoya geçmiş",
-    "clipboard-clear-description": "Tüm panoya geçmişini temizle",
-    "clipboard-clear-description-full": "Tüm öğeleri panoya geçmişinden kaldır",
-    "clipboard-clear-history": "Panoya geçmişini temizle",
-    "clipboard-delete": "Panodaki öğeyi sil",
-    "clipboard-history-disabled": "Panoya geçmişi devre dışı",
-    "clipboard-history-disabled-description": "Panoya geçmişini ayarlarda etkinleştir veya cliphist kur",
-    "clipboard-loading": "Panoya geçmişi yükleniyor...",
-    "clipboard-loading-description": "Lütfen bekleyin",
-    "clipboard-search-description": "Panoya geçmişini ara",
-    "command": "Komut",
-    "command-description": "Kabuk komutlarını çalıştır",
-    "command-name": "Komut",
-    "emoji": "Emoji seçici",
-    "emoji-loading": "Emojiler yükleniyor...",
-    "emoji-loading-description": "Lütfen bekleyin",
-    "emoji-search-description": "Emoji arama ve kopyalama"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Temel görüntüye yakın renkler türetir.",
-            "scheme-expressive": "Oyuncak doygunlukla canlı palet.",
-            "scheme-fidelity": "Kaynak tonlarını koruyan yüksek sadakatli palet.",
-            "scheme-fruit-salad": "Canlı kontrast aksanların renkli karışımı.",
-            "scheme-monochrome": "Tek bir ton etrafında inşa edilmiş minimal palet.",
-            "scheme-neutral": "Sakinleştirici ve bastırılmış tonlarla yumuşak palet.",
-            "scheme-rainbow": "Tam spektrumu kapsayan çeşitli palet.",
-            "scheme-tonal-spot": "Odaklanmış aksanlarla dengeli palet."
-          },
+          "description": "Matugen'in duvar kağıdınızdan renkler oluşturmak için kullanacağı renk şeması oluşturma yöntemini seçin.",
           "label": "Matugen şema türü"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "{filepath} dosyasına yaz ve yeniden yükle"
+          },
+          "zen-browser": {
+            "description": "{dosya yolu} yazın; Zen profilinizin chrome/userChrome.css dosyasına kopyalayın."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Panodaki geçmişte açıklama ekle düğmesine tıklandığında çalıştırılacak komut. Görüntü bu komuta yönlendirilecektir.",
+          "label": "Açıklama aracı",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
           "label": "Panoyu önizlemeyi etkinleştir"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Uygulamaları filtrelemek için kategori sekmelerini göster.",
           "label": "Kategorileri göster"
+        },
+        "show-icon-background": {
+          "description": "Simgelerin arkasında yuvarlak köşeli dikdörtgen bir arka plan göster.",
+          "label": "Simge arka planını göster"
         },
         "sort-by-usage": {
           "description": "Etkinleştirildiğinde, sıkça başlatılan uygulamalar listede ilk olarak görünür.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Bluetooth yönetimini etkinleştir.",
-        "label": "Bluetooth'u Etkinleştir"
+        "label": "Bluetooth'u Etkinleştir",
+        "rssi-polling": {
+          "description": "Bağlı cihazlar için RSSI'yı bluetoothctl aracılığıyla periyodik olarak örnekleyin. Tüm cihazlar için mevcut olmayabilir; etkinleştirildiğinde minimum kaynak kullanır.",
+          "label": "Bluetooth sinyal yoklaması"
+        }
       },
       "section": {
         "description": "Kablosuz ve Bluetooth bağlantılarını yönetin."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Eklenti kaynaklarınızı kontrol edin veya listeyi yenileyin.",
         "no-plugins-label": "Kullanılabilir eklenti yok"
       },
+      "collision": {
+        "already-installed": "Bu eklenti zaten yüklü.",
+        "custom-version-exists": "\"{source}\" kaynağından özel bir sürüm zaten yüklü.",
+        "official-version-exists": "Bu eklentinin resmi sürümü zaten yüklü."
+      },
       "filter": {
         "all": "Tüm",
         "downloaded": "İndirildi",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Eklenti kurulu değil"
       },
       "installing": "{eklenti} kuruluyor...",
+      "open-plugins-tab": "Eklenti ayarlarına git",
       "plugin-settings-title": "{plugin} Ayarları",
       "refresh": {
         "refreshing": "Eklenti listesi yenileniyor...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Eklenti yüklenmedi",
       "settings-saved": "Eklenti ayarları kaydedildi.",
+      "source": {
+        "custom": "Özel kaynak",
+        "official": "Resmi"
+      },
       "sources": {
         "add-custom": "Özel depo ekle",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Tümünü Güncelle ({count})",
       "update-all-success": "Tüm eklentiler başarıyla güncellendi.",
       "update-available": "{count} eklenti için güncelleme mevcut",
+      "update-available_plural": "{count} eklenti güncellemesi mevcut",
       "update-error": "Eklenti güncellenemedi: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} veya üzeri gerektirir.",
+      "update-pending": "v{mevcut} → v{yeni} (Noctalia v{gerekli} gerektirir)",
       "update-success": "{plugin} v{version} sürümüne güncellendi",
       "update-version": "v{mevcut} → v{yeni}",
       "updating": "Güncelleniyor..."
@@ -2339,6 +2399,10 @@
           "label": "Genel"
         }
       },
+      "large-buttons-layout": {
+        "description": "Oturum menüsü düğmelerinin nasıl görüntüleneceğini seçin.",
+        "label": "Büyük düğme düzeni"
+      },
       "large-buttons-style": {
         "description": "Oturum menüsünü büyük butonlarla ızgara düzeninde görüntüle.",
         "label": "Büyük düğme stili"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Vurgulama Renkleri"
       },
+      "load-average-section": {
+        "label": "Ortalama yük"
+      },
       "memory-section": {
         "label": "Bellek Kullanımı"
       },
@@ -2437,6 +2504,10 @@
         "description": "Genel animasyon hızını ayarlar.",
         "label": "Animasyon hızı",
         "reset": "Animasyon hızını sıfırla"
+      },
+      "box-border": {
+        "description": "İçerik alanlarının etrafında bir çerçeve görüntüler.",
+        "label": "Konteyner ana hattı"
       },
       "box-border-radius": {
         "description": "Kenar çubukları, kartlar ve içerik panelleri gibi ana düzen bölümlerinin köşe yuvarlaklığını ayarlar.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Duvar kâğıdı klasörü"
         },
         "hide-wallpaper-filenames": {
-          "description": "Seçicide duvar kâğıdı dosya adlarını gizle.",
-          "label": "Dosya adlarını gizle"
+          "tooltip-hide": "Dosya adlarını gizleme",
+          "tooltip-show": "Dosya Adlarını Göster"
         },
         "monitor-specific": {
           "description": "Her ekran için farklı bir duvar kâğıdı klasörü ayarlayın.",
@@ -2648,6 +2719,7 @@
     "download": "İndir",
     "download-speed": "İndirme Hızı",
     "gpu-temp": "GPU Sıcaklığı",
+    "load-average": "Ortalama yük",
     "memory": "Hafıza",
     "title": "Sistem İzleyici",
     "upload": "Yükle",
@@ -2664,6 +2736,7 @@
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
     },
     "bluetooth": {
+      "address-copied": "Adres panoya kopyalandı",
       "confirm-code": "Diğer cihazdaki {value} kodunu onayla",
       "connect-failed": "Cihaza bağlanılamadı",
       "disabled": "Devre dışı",
@@ -2706,7 +2779,8 @@
       "enabled": "Etkin"
     },
     "keyboard-layout": {
-      "changed": "Klavye düzeni {layout} olarak değiştirildi"
+      "changed": "Klavye düzeni {layout} olarak değiştirildi",
+      "title": "Klavye"
     },
     "kofi": {
       "opened": "Ko-fi sayfası tarayıcınızda açıldı"
@@ -2780,6 +2854,7 @@
     "close": "Kapat",
     "collapse": "Kenar çubuğunu daralt",
     "connect-disconnect-devices": "Bluetooth cihazı",
+    "copy-address": "Adresi kopyala",
     "delete-notification": "Bildiriyi sil",
     "disable-keep-awake": "Uyanık kal",
     "do-not-disturb-disabled": "Rahatsız etme",
@@ -2798,10 +2873,12 @@
     "list-view": "Liste görünümü",
     "manage-vpn": "VPN bağlantıları",
     "manage-wifi": "Kablosuz Bağlantı",
+    "max-widgets-reached": "Maksimum araç sayısına ulaşıldı.",
     "microphone-volume-at": "Mikrofon sesi: %{volume}",
     "move-to-center-section": "Orta bölüm",
     "move-to-left-section": "Sol bölüm",
     "move-to-right-section": "Sağ bölüm",
+    "move-to-section": "{section} bölümüne git.",
     "mute": "Sessiz",
     "next-media": "Sonraki parça",
     "next-month": "Sonraki ay",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Gece ışığı (mevcut değil)",
     "noctalia-performance-disabled": "Noctalia performans modu",
     "noctalia-performance-enabled": "Noctalia performans modu",
+    "open-annotation-tool": "Açıklama aracıyla aç",
     "open-control-center": "Kontrol merkezi",
     "open-notification-history-disable-dnd": "Bildirim geçmişi",
     "open-notification-history-enable-dnd": "Bildirim geçmişi",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "NSFW içeriğe erişmek için bir API anahtarı gereklidir.",
         "label": "API Anahtarı",
+        "managed-by-env": "NOCTALIA_WALLHAVEN_API_KEY ortam değişkeni aracılığıyla yönetilir.",
         "placeholder": "Wallhaven API Anahtarınızı girin"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Ara:",
+      "solid-color": {
+        "tooltip": "Düz renk arka plan"
+      },
       "sorting": {
         "date_added": "Eklenme tarihi",
         "favorites": "Favoriler",
@@ -2942,6 +3024,11 @@
     "snow": "Karlı",
     "thunderstorm": "Fırtına",
     "unknown": "Bilinmiyor"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Bir dosya seçin"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Eylem gerekiyor",
+      "available-interfaces": "Kullanılabilir arayüzler",
       "available-networks": "Kullanılabilir Ağlar",
       "connect": "Bağlan",
       "connected": "Bağlı",
       "disabled": "Kablosuz Bağlantı devre dışı",
       "disconnect": "Bağlantıyı kes",
+      "disconnected": "Bağlantı kesildi",
       "disconnecting": "Bağlantı kesiliyor...",
       "dns": "DNS",
       "enable-message": "Mevcut ağları görmek için kablosuz bağlantıyı etkinleştirin.",
@@ -3042,12 +3131,15 @@
       "frequency": "Frekans",
       "gateway": "Geçit",
       "info": "Bilgi",
+      "interface": "Ağ arayüzü",
       "internet": "İnternet",
       "internet-connected": "İnternete bağlı",
       "internet-limited": "İnternet yok",
+      "internet-status": "İnternet durumu",
       "ipv4": "IPv4",
       "known-networks": "Bilinen Ağlar",
       "link-speed": "Bağlantı hızı",
+      "no-ethernet-devices": "Ethernet aygıtı algılanmadı",
       "no-networks": "Ağ bulunamadı",
       "password": "Parola",
       "saved": "Kaydedildi",

@@ -21,8 +21,8 @@ NBox {
   // Currently expanded info panel for a connected SSID
   property string infoSsid: ""
   // Local layout toggle for details: true = grid (2 cols), false = rows (1 col)
-  // Persisted under Settings.data.ui.wifiDetailsViewMode
-  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.ui.wifiDetailsViewMode !== undefined) ? (Settings.data.ui.wifiDetailsViewMode === "grid") : true
+  // Persisted under Settings.data.network.wifiDetailsViewMode
+  property bool detailsGrid: (Settings.data && Settings.data.ui && Settings.data.network.wifiDetailsViewMode !== undefined) ? (Settings.data.network.wifiDetailsViewMode === "grid") : true
 
   signal passwordRequested(string ssid)
   signal passwordSubmitted(string ssid, string password)
@@ -75,20 +75,17 @@ NBox {
     Repeater {
       model: root.displayModel
 
-      Rectangle {
+      NBox {
         id: networkItem
 
         Layout.fillWidth: true
         Layout.leftMargin: Style.marginXS
         Layout.rightMargin: Style.marginXS
         implicitHeight: netColumn.implicitHeight + (Style.marginM * 2)
-        radius: Style.radiusM
-        border.width: Style.borderS
-        border.color: modelData.connected ? Color.mPrimary : Color.mOutline
 
         opacity: (NetworkService.disconnectingFrom === modelData.ssid || NetworkService.forgettingNetwork === modelData.ssid) ? 0.6 : 1.0
 
-        color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.05) : Color.mSurface
+        color: modelData.connected ? Qt.rgba(Color.mPrimary.r, Color.mPrimary.g, Color.mPrimary.b, 0.08) : Color.mSurface
 
         Behavior on opacity {
           NumberAnimation {
@@ -141,6 +138,12 @@ NBox {
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                   visible: !NetworkService.isSecured(modelData.security)
+                }
+
+                NText {
+                  text: " • " + (NetworkService.isSecured(modelData.security) ? modelData.security : "Open")
+                  pointSize: Style.fontSizeXXS
+                  color: Color.mOnSurfaceVariant
                 }
 
                 Item {
@@ -212,7 +215,7 @@ NBox {
 
                 Rectangle {
                   visible: modelData.cached && !modelData.connected && NetworkService.forgettingNetwork !== modelData.ssid && NetworkService.disconnectingFrom !== modelData.ssid
-                  color: Color.transparent
+                  color: "transparent"
                   border.color: Color.mOutline
                   border.width: Style.borderS
                   radius: height * 0.5
@@ -325,7 +328,7 @@ NBox {
               onClicked: {
                 root.detailsGrid = !root.detailsGrid;
                 if (Settings.data && Settings.data.ui) {
-                  Settings.data.ui.wifiDetailsViewMode = root.detailsGrid ? "grid" : "list";
+                  Settings.data.network.wifiDetailsViewMode = root.detailsGrid ? "grid" : "list";
                 }
               }
               z: 1
@@ -349,31 +352,50 @@ NBox {
               }
 
               // Icons only; values have labels as tooltips on hover
-              // Row 1: Security | Band
+              // Row 1: Interface | Band
               RowLayout {
                 Layout.fillWidth: true
                 spacing: Style.marginXS
                 NIcon {
-                  icon: NetworkService.isSecured(modelData.security) ? "lock" : "lock-open"
+                  icon: "network"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   // Tooltip on hover when using icons-only mode
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.security"))
+                    onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.interface"))
                     onExited: TooltipService.hide()
                   }
                 }
                 NText {
-                  text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
+                  text: NetworkService.activeWifiIf || "-"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
+
+                  // Click-to-copy Wi‑Fi interface name
+                  MouseArea {
+                    anchors.fill: parent
+                    enabled: (NetworkService.activeWifiIf && NetworkService.activeWifiIf.length > 0)
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: TooltipService.show(parent, I18n.tr("tooltips.copy-address"))
+                    onExited: TooltipService.hide()
+                    onClicked: {
+                      const value = NetworkService.activeWifiIf || "";
+                      if (value.length > 0) {
+                        Quickshell.execDetached(["wl-copy", value]);
+                        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
+                      }
+                    }
+                  }
                 }
               }
               RowLayout {
@@ -382,6 +404,8 @@ NBox {
                 NIcon {
                   icon: "router"
                   pointSize: Style.fontSizeXS
+                  color: NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -393,9 +417,10 @@ NBox {
                   text: NetworkService.activeWifiDetails.band || "-"
                   pointSize: Style.fontSizeXS
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -408,6 +433,7 @@ NBox {
                   icon: "gauge"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -420,9 +446,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -434,6 +461,7 @@ NBox {
                   icon: "network"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -446,10 +474,28 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
+
+                  // Click-to-copy Wi‑Fi IPv4 address
+                  MouseArea {
+                    anchors.fill: parent
+                    enabled: (NetworkService.activeWifiDetails.ipv4 && NetworkService.activeWifiDetails.ipv4.length > 0)
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: TooltipService.show(parent, I18n.tr("tooltips.copy-address"))
+                    onExited: TooltipService.hide()
+                    onClicked: {
+                      const value = NetworkService.activeWifiDetails.ipv4 || "";
+                      if (value.length > 0) {
+                        Quickshell.execDetached(["wl-copy", value]);
+                        ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "wifi");
+                      }
+                    }
+                  }
                 }
               }
 
@@ -461,6 +507,7 @@ NBox {
                   icon: "router"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -473,9 +520,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 4
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }
@@ -487,6 +535,7 @@ NBox {
                   icon: "world"
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
+                  Layout.alignment: Qt.AlignVCenter
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
@@ -499,9 +548,10 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
-                  wrapMode: implicitWidth > width ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                  elide: Text.ElideNone
-                  maximumLineCount: 6
+                  Layout.alignment: Qt.AlignVCenter
+                  wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
+                  elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
+                  maximumLineCount: root.detailsGrid ? 1 : 6
                   clip: true
                 }
               }

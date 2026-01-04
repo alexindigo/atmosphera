@@ -14,14 +14,13 @@ NIconButton {
 
   property ShellScreen screen
 
-  density: Settings.data.bar.density
   baseSize: Style.capsuleHeight
   applyUiScale: false
   customRadius: Style.radiusL
   colorBg: Settings.data.nightLight.forced ? Color.mPrimary : Style.capsuleColor
   colorFg: Settings.data.nightLight.forced ? Color.mOnPrimary : Color.mOnSurface
-  colorBorder: Color.transparent
-  colorBorderHover: Color.transparent
+  colorBorder: "transparent"
+  colorBorderHover: "transparent"
   border.color: Style.capsuleBorderColor
   border.width: Style.capsuleBorderWidth
 

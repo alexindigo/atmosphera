@@ -22,7 +22,6 @@ Item {
   property string section: ""
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
-  property real barScaling: 1.0
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -37,7 +36,7 @@ Item {
 
   readonly property string barPosition: Settings.data.bar.position
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
-  readonly property real baseDimensionRatio: root.barScaling * 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
+  readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
   readonly property string labelMode: (widgetSettings.labelMode !== undefined) ? widgetSettings.labelMode : widgetMetadata.labelMode
   readonly property bool hideUnoccupied: (widgetSettings.hideUnoccupied !== undefined) ? widgetSettings.hideUnoccupied : widgetMetadata.hideUnoccupied
@@ -56,6 +55,7 @@ Item {
   // Only for grouped mode / show apps
   readonly property int baseItemSize: Style.toOdd(Style.capsuleHeight * 0.8)
   readonly property int iconSize: Style.toOdd(baseItemSize * iconScale)
+  readonly property real textRatio: 0.50
 
   // Context menu state for grouped mode - store IDs instead of object references to avoid stale references
   property string selectedWindowId: ""
@@ -505,7 +505,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainer.height * 0.45 : workspacePillContainer.height * 0.42
+                pointSize: workspacePillContainer.height * root.textRatio
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -604,7 +604,7 @@ Item {
           width: workspacePillContainer.width + 18 * root.masterProgress * scale
           height: workspacePillContainer.height + 18 * root.masterProgress * scale
           radius: width / 2
-          color: Color.transparent
+          color: "transparent"
           border.color: root.effectColor
           border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
@@ -653,7 +653,7 @@ Item {
                   return model.idx.toString();
                 }
                 family: Settings.data.ui.fontFixed
-                pointSize: model.isActive ? workspacePillContainerVertical.width * 0.45 : workspacePillContainerVertical.width * 0.42
+                pointSize: workspacePillContainerVertical.width * root.textRatio
                 applyUiScale: false
                 font.capitalization: Font.AllUppercase
                 font.weight: Style.fontWeightBold
@@ -752,7 +752,7 @@ Item {
           width: workspacePillContainerVertical.width + 18 * root.masterProgress * scale
           height: workspacePillContainerVertical.height + 18 * root.masterProgress * scale
           radius: width / 2
-          color: Color.transparent
+          color: "transparent"
           border.color: root.effectColor
           border.width: Math.max(1, Math.round((2 + 6 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && model.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
@@ -955,7 +955,7 @@ Item {
           width: groupedWorkspaceNumberContainer.width + 12 * root.masterProgress
           height: groupedWorkspaceNumberContainer.height + 12 * root.masterProgress
           radius: width / 2
-          color: Color.transparent
+          color: "transparent"
           border.color: root.effectColor
           border.width: Math.max(1, Math.round((2 + 4 * (1.0 - root.masterProgress))))
           opacity: root.effectsActive && groupedContainer.workspaceModel.isFocused ? (1.0 - root.masterProgress) * 0.7 : 0
@@ -982,7 +982,7 @@ Item {
 
           family: Settings.data.ui.fontFixed
           font {
-            pointSize: Style.fontSizeXXS
+            pointSize: Style.barFontSize * 0.75
             weight: Style.fontWeightBold
             capitalization: Font.AllUppercase
           }

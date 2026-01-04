@@ -123,7 +123,7 @@ ColumnLayout {
         AppThemeService.generate();
         ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"), "settings-color-scheme");
       } else {
-        ToastService.showWarning(I18n.tr("oast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
+        ToastService.showWarning(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
       }
     }
 
@@ -872,6 +872,18 @@ ColumnLayout {
         checked: Settings.data.templates.zed
         onToggled: checked => {
                      Settings.data.templates.zed = checked;
+                     AppThemeService.generate();
+                   }
+      }
+
+      NCheckbox {
+        label: "Zen Browser"
+        description: I18n.tr("settings.color-scheme.templates.programs.zen-browser.description", {
+                               "filepath": "~/.cache/noctalia/zen-browser/zen-userChrome.css"
+                             })
+        checked: Settings.data.templates.zenBrowser
+        onToggled: checked => {
+                     Settings.data.templates.zenBrowser = checked;
                      AppThemeService.generate();
                    }
       }

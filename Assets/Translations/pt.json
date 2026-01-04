@@ -142,12 +142,20 @@
           "description": "Se o texto de saída corresponder a este valor, o botão será recolhido.",
           "label": "Condição de recolhimento"
         },
+        "color-selection": {
+          "description": "Aplicar cores do tema ao ícone e ao texto.",
+          "label": "Selecionar cor"
+        },
         "display-command-output": {
           "description": "Digite um comando para ser executado em um intervalo regular. A primeira linha da sua saída será exibida como texto.",
           "label": "Exibir Saída de Comando",
           "stream-description": "Insira um comando para executar continuamente."
         },
         "dynamic-text": "Texto dinâmico",
+        "enable-colorization": {
+          "description": "Ativar colorização para o ícone e texto do botão personalizado, aplicando cores do tema.",
+          "label": "Ativar colorização"
+        },
         "hide-mode": {
           "alwaysExpanded": "Sempre expandido",
           "description": "Controla a visibilidade do widget quando o comando não tem saída.",
@@ -224,6 +232,16 @@
         "display-mode": {
           "description": "Escolha como você gostaria que este valor aparecesse.",
           "label": "Modo de exibição"
+        },
+        "show-icon": {
+          "description": "Exibir o ícone do layout do teclado.",
+          "label": "Mostrar ícone"
+        }
+      },
+      "launcher": {
+        "use-primary-color": {
+          "description": "Quando ativado, aplica a cor primária para ênfase.",
+          "label": "Use cores primárias"
         }
       },
       "lock-keys": {
@@ -326,6 +344,10 @@
         "gpu-temperature": {
           "description": "Mostrar as leituras de temperatura da GPU, se disponíveis.",
           "label": "Temperatura da GPU"
+        },
+        "load-average": {
+          "description": "Exibir média de carga do sistema.",
+          "label": "Média de carga"
         },
         "memory-percentage": {
           "description": "Mostrar o uso de memória como percentual em vez de valores absolutos.",
@@ -481,6 +503,7 @@
       "device-address": "Endereço do dispositivo",
       "disabled": "O Bluetooth está desativado",
       "disconnect": "Desconectar",
+      "disconnecting": "Desconectando...",
       "discoverable": "Visível",
       "enable-message": "Ative o Bluetooth para ver os dispositivos disponíveis.",
       "info": "Informações",
@@ -494,6 +517,14 @@
       "refresh-devices": "Atualizar dispositivos",
       "scanning": "Procurando por dispositivos...",
       "signal": "Sinal",
+      "signal-text": {
+        "excellent": "Sinal: Excelente",
+        "fair": "Sinal: Justo",
+        "good": "Sinal: Bom",
+        "poor": "Sinal: Fraco",
+        "unknown": "Sinal: Desconhecido",
+        "very-poor": "Sinal: Muito fraco"
+      },
       "title": "Bluetooth",
       "trusted": "Confiável",
       "unpair": "Desemparelhar"
@@ -529,7 +560,8 @@
     "panel": {
       "buttons": {
         "discord": "Entre no nosso Discord",
-        "dismiss": "Ok"
+        "dismiss": "Ok",
+        "feedback": "Dar feedback"
       },
       "empty": "As notas da versão ainda não estão disponíveis.",
       "highlight-title": "Destaques",
@@ -573,6 +605,7 @@
     "enable-bluetooth": "Ativar Bluetooth",
     "enable-dnd": "Ativar Não Perturbe",
     "enable-wifi": "Ativar Wi-Fi",
+    "launcher-settings": "Configurações do iniciador",
     "lower-to-bottom": "Abaixar para o fundo",
     "next": "Próximo(a)",
     "open-calendar": "Abrir calendário",
@@ -631,7 +664,35 @@
       "webbrowser": "Navegador web"
     },
     "delete": "Apagar",
+    "no-results": "Nenhum resultado encontrado.",
     "pin": "Fixar",
+    "providers": {
+      "applications": "Aplicativos",
+      "calculator": "Calculadora",
+      "calculator-deprecated": "O comando >calc está obsoleto e será removido em breve. Por favor, digite expressões matemáticas diretamente na pesquisa.",
+      "calculator-description": "Calculadora — avalie expressões matemáticas",
+      "calculator-enter-expression": "Digite uma expressão matemática",
+      "calculator-error": "Erro",
+      "calculator-name": "Calculadora",
+      "clipboard": "Histórico da área de transferência",
+      "clipboard-clear-description": "Limpar todo o histórico da área de transferência",
+      "clipboard-clear-description-full": "Remover todos os itens do histórico da área de transferência",
+      "clipboard-clear-history": "Limpar histórico da área de transferência",
+      "clipboard-delete": "Apagar entrada da área de transferência",
+      "clipboard-history-disabled": "Histórico da área de transferência desativado",
+      "clipboard-history-disabled-description": "Ative o histórico da área de transferência nas configurações ou instale o cliphist",
+      "clipboard-loading": "Carregando histórico da área de transferência...",
+      "clipboard-loading-description": "Por favor, aguarde",
+      "clipboard-search-description": "Pesquisar no histórico da área de transferência",
+      "command": "Comando",
+      "command-description": "Executar comandos shell",
+      "command-name": "Comando",
+      "emoji": "Seletor de emojis",
+      "emoji-loading": "Carregando emojis...",
+      "emoji-loading-description": "Por favor, aguarde",
+      "emoji-no-recent": "Ainda não há emojis recentes.",
+      "emoji-search-description": "Buscar e copiar emojis"
+    },
     "unpin": "Desafixar"
   },
   "lock-screen": {
@@ -752,6 +813,7 @@
       "audio-sources": {
         "both": "Saída do sistema + entrada do microfone",
         "microphone-input": "Entrada do microfone",
+        "none": "No audio",
         "system-output": "Saída do sistema"
       },
       "color-range": {
@@ -773,6 +835,10 @@
       "always": "Rolar Sempre",
       "hover": "Rolar ao Passar o Mouse",
       "never": "Nunca Rolar"
+    },
+    "session-menu-grid-layout": {
+      "grid": "Grade",
+      "single-row": "Linha Única"
     },
     "settings-panel-mode": {
       "attached": "Painel anexado à barra",
@@ -822,31 +888,6 @@
     "search-wallpapers": "Digite para filtrar papéis de parede...",
     "select": "Selecionar",
     "test": "Testar"
-  },
-  "plugins": {
-    "applications": "Aplicativos",
-    "calculator": "Calculadora",
-    "calculator-description": "Calculadora — avalie expressões matemáticas",
-    "calculator-enter-expression": "Digite uma expressão matemática",
-    "calculator-error": "Erro",
-    "calculator-name": "Calculadora",
-    "clipboard": "Histórico da área de transferência",
-    "clipboard-clear-description": "Limpar todo o histórico da área de transferência",
-    "clipboard-clear-description-full": "Remover todos os itens do histórico da área de transferência",
-    "clipboard-clear-history": "Limpar histórico da área de transferência",
-    "clipboard-delete": "Apagar entrada da área de transferência",
-    "clipboard-history-disabled": "Histórico da área de transferência desativado",
-    "clipboard-history-disabled-description": "Ative o histórico da área de transferência nas configurações ou instale o cliphist",
-    "clipboard-loading": "Carregando histórico da área de transferência...",
-    "clipboard-loading-description": "Por favor, aguarde",
-    "clipboard-search-description": "Pesquisar no histórico da área de transferência",
-    "command": "Comando",
-    "command-description": "Executar comandos shell",
-    "command-name": "Comando",
-    "emoji": "Seletor de emojis",
-    "emoji-loading": "Carregando emojis...",
-    "emoji-loading-description": "Por favor, aguarde",
-    "emoji-search-description": "Buscar e copiar emojis"
   },
   "quickSettings": {
     "bluetooth": {
@@ -1125,16 +1166,7 @@
     "color-scheme": {
       "color-source": {
         "matugen-scheme-type": {
-          "description": {
-            "scheme-content": "Deriva cores que correspondem de perto à imagem subjacente.",
-            "scheme-expressive": "Paleta vibrante com saturação divertida.",
-            "scheme-fidelity": "Paleta de alta fidelidade que preserva as tonalidades originais.",
-            "scheme-fruit-salad": "Mistura colorida de detalhes contrastantes e vibrantes.",
-            "scheme-monochrome": "Paleta minimalista construída em torno de uma única tonalidade.",
-            "scheme-neutral": "Paleta de cores neutras com tons suaves e calmantes.",
-            "scheme-rainbow": "Paleta diversificada abrangendo todo o espectro.",
-            "scheme-tonal-spot": "Paleta equilibrada com toques focais."
-          },
+          "description": "Escolha o método de geração de esquema de cores que o Matugen usará para criar cores a partir do seu papel de parede.",
           "label": "Tipo de esquema Matugen"
         },
         "section": {
@@ -1268,6 +1300,9 @@
           },
           "zed": {
             "description": "Escrever {filepath} e recarregar"
+          },
+          "zen-browser": {
+            "description": "Escreva em {filepath}; copie para o chrome/userChrome.css do seu perfil Zen."
           }
         },
         "section": {
@@ -1786,6 +1821,11 @@
     },
     "launcher": {
       "settings": {
+        "annotation-tool": {
+          "description": "Comando para executar ao clicar no botão de anotação no histórico da área de transferência. A imagem será enviada para este comando.",
+          "label": "Ferramenta de anotação",
+          "placeholder": "gradia, satty -f -"
+        },
         "clip-preview": {
           "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
           "label": "Ativar pré-visualização da área de transferência"
@@ -1825,6 +1865,10 @@
         "show-categories": {
           "description": "Mostrar abas de categorias para filtrar aplicativos.",
           "label": "Mostrar categorias"
+        },
+        "show-icon-background": {
+          "description": "Mostrar um fundo retangular arredondado atrás dos ícones.",
+          "label": "Mostrar fundo do ícone"
         },
         "sort-by-usage": {
           "description": "Quando ativado, os aplicativos mais usados aparecem primeiro na lista.",
@@ -1940,7 +1984,11 @@
     "network": {
       "bluetooth": {
         "description": "Ativar gerenciamento de Bluetooth.",
-        "label": "Ativar Bluetooth"
+        "label": "Ativar Bluetooth",
+        "rssi-polling": {
+          "description": "Amostre periodicamente o RSSI para dispositivos conectados via bluetoothctl. Pode não estar disponível para todos os dispositivos; usa recursos mínimos quando ativado.",
+          "label": "Sondagem de sinal Bluetooth"
+        }
       },
       "section": {
         "description": "Gerencie conexões Wi-Fi e Bluetooth."
@@ -2171,6 +2219,11 @@
         "no-plugins-description": "Verifique as fontes do seu plugin ou atualize a lista.",
         "no-plugins-label": "Nenhum plugin disponível."
       },
+      "collision": {
+        "already-installed": "Este plugin já está instalado.",
+        "custom-version-exists": "Uma versão personalizada de \"{source}\" já está instalada.",
+        "official-version-exists": "A versão oficial deste plugin já está instalada."
+      },
       "filter": {
         "all": "Tudo",
         "downloaded": "Baixado",
@@ -2191,6 +2244,7 @@
         "no-plugins-label": "Nenhum plugin instalado"
       },
       "installing": "Instalando {plugin}...",
+      "open-plugins-tab": "Abrir configurações de plugins",
       "plugin-settings-title": "Configurações do {plugin}",
       "refresh": {
         "refreshing": "Atualizando a lista de plugins...",
@@ -2201,6 +2255,10 @@
       },
       "settings-error-not-loaded": "Plugin não carregado",
       "settings-saved": "Configurações do plugin salvas.",
+      "source": {
+        "custom": "Fonte personalizada",
+        "official": "Oficial"
+      },
       "sources": {
         "add-custom": "Adicionar repositório personalizado",
         "add-dialog": {
@@ -2232,8 +2290,10 @@
       "update-all": "Atualizar Tudo ({count})",
       "update-all-success": "Todos os plugins foram atualizados com sucesso.",
       "update-available": "{count} atualização(ões) de plugin disponível(eis)",
+      "update-available_plural": "{count} atualizações de plugin disponíveis",
       "update-error": "Falha ao atualizar o plugin: {plugin}: {error}",
       "update-incompatible": "Requer Noctalia v{version} ou superior",
+      "update-pending": "v{atual} → v{novo} (requer Noctalia v{requerida})",
       "update-success": "{plugin} atualizado para a versão {version}",
       "update-version": "v{atual} → v{novo}",
       "updating": "Atualizando..."
@@ -2339,6 +2399,10 @@
           "label": "Geral"
         }
       },
+      "large-buttons-layout": {
+        "description": "Escolha como os botões do menu de sessão são exibidos.",
+        "label": "Layout de botões grandes"
+      },
       "large-buttons-style": {
         "description": "Exibir o menu de sessão com botões grandes em um layout de grade.",
         "label": "Estilo de botões grandes"
@@ -2395,6 +2459,9 @@
       "highlight-colors-section": {
         "label": "Cores de destaque"
       },
+      "load-average-section": {
+        "label": "Média de carga"
+      },
       "memory-section": {
         "label": "Uso de memória"
       },
@@ -2437,6 +2504,10 @@
         "description": "Ajustar a velocidade global da animação.",
         "label": "Velocidade da animação",
         "reset": "Redefinir velocidade da animação"
+      },
+      "box-border": {
+        "description": "Exibe um contorno ao redor das áreas de conteúdo.",
+        "label": "Contorno do recipiente"
       },
       "box-border-radius": {
         "description": "Ajusta o arredondamento dos cantos das principais seções do layout, como barras laterais, cards e painéis de conteúdo.",
@@ -2564,8 +2635,8 @@
           "tooltip": "Pasta de papéis de parede"
         },
         "hide-wallpaper-filenames": {
-          "description": "Ocultar nomes de arquivos de papel de parede no seletor.",
-          "label": "Ocultar nomes de arquivos"
+          "tooltip-hide": "Ocultar nomes de arquivo",
+          "tooltip-show": "Mostrar nomes de arquivo"
         },
         "monitor-specific": {
           "description": "Defina uma pasta de papel de parede diferente para cada monitor.",
@@ -2648,6 +2719,7 @@
     "download": "Baixar",
     "download-speed": "Velocidade de Download",
     "gpu-temp": "Temperatura da GPU",
+    "load-average": "Média de carga",
     "memory": "Memória",
     "title": "Monitor do Sistema",
     "upload": "Enviar",
@@ -2664,6 +2736,7 @@
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
     },
     "bluetooth": {
+      "address-copied": "Endereço copiado para a área de transferência",
       "confirm-code": "Confirme o código {value} no outro dispositivo.",
       "connect-failed": "Falha ao conectar ao dispositivo",
       "disabled": "Desativado",
@@ -2706,7 +2779,8 @@
       "enabled": "Ativado"
     },
     "keyboard-layout": {
-      "changed": "Layout de teclado alterado para {layout}"
+      "changed": "Layout de teclado alterado para {layout}",
+      "title": "Teclado"
     },
     "kofi": {
       "opened": "Página do Ko-fi aberta no seu navegador"
@@ -2780,6 +2854,7 @@
     "close": "Fechar",
     "collapse": "Recolher barra lateral",
     "connect-disconnect-devices": "Dispositivo Bluetooth",
+    "copy-address": "Copiar endereço",
     "delete-notification": "Excluir notificação",
     "disable-keep-awake": "Manter acordado",
     "do-not-disturb-disabled": "Não perturbe",
@@ -2798,10 +2873,12 @@
     "list-view": "Visualização em lista",
     "manage-vpn": "Conexões VPN",
     "manage-wifi": "Wi-Fi",
+    "max-widgets-reached": "Número máximo de widgets atingido.",
     "microphone-volume-at": "Volume do microfone: {volume}%",
     "move-to-center-section": "Seção central",
     "move-to-left-section": "Seção esquerda",
     "move-to-right-section": "Seção direita",
+    "move-to-section": "Mover para {section}",
     "mute": "Silenciar",
     "next-media": "Próxima faixa",
     "next-month": "Próximo mês",
@@ -2811,6 +2888,7 @@
     "night-light-not-installed": "Luz noturna (não disponível)",
     "noctalia-performance-disabled": "Modo de desempenho Noctalia",
     "noctalia-performance-enabled": "Modo de desempenho Noctalia",
+    "open-annotation-tool": "Abrir com ferramenta de anotação",
     "open-control-center": "Central de controle",
     "open-notification-history-disable-dnd": "Histórico de notificações",
     "open-notification-history-enable-dnd": "Histórico de notificações",
@@ -2858,6 +2936,7 @@
       "apikey": {
         "help": "É necessária uma chave de API para acessar conteúdo NSFW.",
         "label": "Chave de API",
+        "managed-by-env": "Gerenciado através da variável de ambiente NOCTALIA_WALLHAVEN_API_KEY.",
         "placeholder": "Insira sua chave da API Wallhaven"
       },
       "apply-all-monitors": {
@@ -2895,6 +2974,9 @@
         }
       },
       "search": "Pesquisar:",
+      "solid-color": {
+        "tooltip": "Fundo de cor sólida"
+      },
       "sorting": {
         "date_added": "Data de adição",
         "favorites": "Favoritos",
@@ -2942,6 +3024,11 @@
     "snow": "Neve",
     "thunderstorm": "Tempestade",
     "unknown": "Desconhecido"
+  },
+  "widget": {
+    "file-picker": {
+      "title": "Selecione um arquivo"
+    }
   },
   "widgets": {
     "color-picker": {
@@ -3027,11 +3114,13 @@
   "wifi": {
     "panel": {
       "action-required": "Ação Requerida",
+      "available-interfaces": "Interfaces disponíveis",
       "available-networks": "Redes Disponíveis",
       "connect": "Conectar",
       "connected": "Conectado",
       "disabled": "O Wi-Fi está desativado",
       "disconnect": "Desconectar",
+      "disconnected": "Desconectado(a)",
       "disconnecting": "Desconectando...",
       "dns": "DNS",
       "enable-message": "Ative o Wi-Fi para ver as redes disponíveis.",
@@ -3042,12 +3131,15 @@
       "frequency": "Frequência",
       "gateway": "Porta de entrada",
       "info": "Informação",
+      "interface": "Interface de rede",
       "internet": "Internet",
       "internet-connected": "Conectado à internet",
       "internet-limited": "Sem internet",
+      "internet-status": "Status da internet",
       "ipv4": "IPv4",
       "known-networks": "Redes Conhecidas",
       "link-speed": "Velocidade de ligação",
+      "no-ethernet-devices": "Nenhum dispositivo Ethernet detectado.",
       "no-networks": "Nenhuma rede encontrada",
       "password": "Senha",
       "saved": "Salva",

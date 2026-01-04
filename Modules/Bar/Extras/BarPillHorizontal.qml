@@ -14,14 +14,13 @@ Item {
   property string text: ""
   property string suffix: ""
   property string tooltipText: ""
-  property string density: ""
   property bool autoHide: false
   property bool forceOpen: false
   property bool forceClose: false
   property bool oppositeDirection: false
   property bool hovered: false
-  property color customBackgroundColor: Color.transparent
-  property color customTextIconColor: Color.transparent
+  property color customBackgroundColor: "transparent"
+  property color customTextIconColor: "transparent"
 
   readonly property bool collapseToIcon: forceClose && !forceOpen
 
@@ -51,23 +50,7 @@ Item {
   readonly property color bgColor: hovered ? Color.mHover : (customBackgroundColor.a > 0) ? customBackgroundColor : Style.capsuleColor
   readonly property color fgColor: hovered ? Color.mOnHover : (customTextIconColor.a > 0) ? customTextIconColor : Color.mOnSurface
 
-  readonly property real iconSize: {
-    switch (root.density) {
-    case "compact":
-      return Math.max(1, Math.round(pillHeight * 0.65));
-    default:
-      return Math.max(1, Math.round(pillHeight * 0.48));
-    }
-  }
-
-  readonly property real textSize: {
-    switch (root.density) {
-    case "compact":
-      return Math.max(1, Math.round(pillHeight * 0.45));
-    default:
-      return Math.max(1, Math.round(pillHeight * 0.33));
-    }
-  }
+  readonly property real iconSize: Style.toOdd(pillHeight * 0.48)
 
   width: {
     if (collapseToIcon) {
@@ -120,7 +103,7 @@ Item {
     }
 
     opacity: revealed ? Style.opacityFull : Style.opacityNone
-    color: Color.transparent // Make pill background transparent to avoid double opacity
+    color: "transparent" // Make pill background transparent to avoid double opacity
 
     topLeftRadius: oppositeDirection ? 0 : Style.radiusM
     bottomLeftRadius: oppositeDirection ? 0 : Style.radiusM
@@ -146,9 +129,8 @@ Item {
       }
       text: root.text + root.suffix
       family: Settings.data.ui.fontFixed
-      pointSize: textSize
+      pointSize: Style.barFontSize
       applyUiScale: false
-      font.weight: Style.fontWeightBold
       color: root.fgColor
       visible: revealed
     }
@@ -174,7 +156,7 @@ Item {
     width: hasIcon ? pillHeight : 0
     height: pillHeight
     radius: Math.min(Style.radiusL, width / 2)
-    color: Color.transparent // Make icon background transparent to avoid double opacity
+    color: "transparent" // Make icon background transparent to avoid double opacity
     anchors.verticalCenter: parent.verticalCenter
 
     x: oppositeDirection ? 0 : (parent.width - width)
