@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import "../../../Helpers/AdvancedMath.js" as AdvancedMath
 import "../../../Helpers/FuzzySort.js" as Fuzzysort
 
 import "Providers"
@@ -17,7 +16,15 @@ import qs.Widgets
 SmartPanel {
   id: root
 
-  readonly property bool previewActive: !!(searchText && searchText.startsWith(">clip") && Settings.data.appLauncher.enableClipPreview && ClipboardService.items && ClipboardService.items.length > 0 && selectedIndex >= 0 && results && results[selectedIndex] && results[selectedIndex].clipboardId)
+  // Generic preview support - active when current provider has preview and item is selected
+  readonly property bool previewActive: {
+    var provider = activeProvider;
+    if (!provider || !provider.hasPreview)
+      return false;
+    if (!Settings.data.appLauncher.enableClipPreview)
+      return false;
+    return selectedIndex >= 0 && results && results[selectedIndex];
+  }
 
   // Panel configuration
   readonly property int listPanelWidth: Math.round(500 * Style.uiScaleRatio)
@@ -58,33 +65,33 @@ SmartPanel {
   property var pluginProviderInstances: ({}) // Track plugin provider instances
   property bool ignoreMouseHover: Settings.data.appLauncher.ignoreMouseInput
 
+  // Default provider for regular search (applications)
+  readonly property var defaultProvider: appsProvider
+  // Current provider - either active command provider or default
+  readonly property var currentProvider: activeProvider || defaultProvider
+
   readonly property int badgeSize: Math.round(Style.baseWidgetSize * 1.6 * Style.uiScaleRatio)
   readonly property int entryHeight: Math.round(badgeSize + Style.marginM * 2)
-  // Generic provider browsing support
-  readonly property bool providerIsBrowsing: {
-    if (!activeProvider) {
-      // Default apps provider
-      return appsProvider.isBrowsingMode && !searchText.startsWith(">");
-    }
-    return activeProvider.isBrowsingMode === true;
+  // Whether current provider is showing categorized view (vs filtered search results)
+  readonly property bool providerShowsCategories: {
+    return currentProvider.showsCategories === true;
   }
 
-  // Get categories for the active provider (uses availableCategories if present, falls back to categories)
+  // Get categories for the current provider (uses availableCategories if present, falls back to categories)
   readonly property var providerCategories: {
-    var provider = activeProvider || appsProvider;
-    if (provider.availableCategories && provider.availableCategories.length > 0) {
-      return provider.availableCategories;
+    if (currentProvider.availableCategories && currentProvider.availableCategories.length > 0) {
+      return currentProvider.availableCategories;
     }
-    return provider.categories || [];
+    return currentProvider.categories || [];
   }
 
-  // Check if categories should be shown
+  // Check if category tabs should be shown
   readonly property bool showProviderCategories: {
-    if (!providerIsBrowsing || providerCategories.length === 0) {
+    if (!providerShowsCategories || providerCategories.length === 0) {
       return false;
     }
-    // For apps provider (null activeProvider), respect the showCategories setting
-    if (!activeProvider || activeProvider === appsProvider) {
+    // For default apps provider, respect the showCategories setting
+    if (currentProvider === defaultProvider) {
       return Settings.data.appLauncher.showCategories;
     }
     return true;
@@ -92,24 +99,28 @@ SmartPanel {
 
   // Check if results have displayString (emoji/kaomoji style)
   readonly property bool providerHasDisplayString: {
-    return providerIsBrowsing && results.length > 0 && !!results[0].displayString;
+    return results.length > 0 && !!results[0].displayString;
   }
 
-  // Get supported layouts for current provider ("grid", "list", or "both")
+  // Get supported layouts - check active provider first, then first result's provider
   readonly property string providerSupportedLayouts: {
-    var provider = activeProvider || appsProvider;
-    if (provider && provider.supportedLayouts) {
-      return provider.supportedLayouts;
+    // Active command provider takes priority
+    if (activeProvider && activeProvider.supportedLayouts) {
+      return activeProvider.supportedLayouts;
     }
-    return "both"; // Default: both layouts supported
+    // Check first result's provider (for mixed search results)
+    if (results.length > 0 && results[0].provider && results[0].provider.supportedLayouts) {
+      return results[0].provider.supportedLayouts;
+    }
+    // Fall back to default provider
+    if (defaultProvider && defaultProvider.supportedLayouts) {
+      return defaultProvider.supportedLayouts;
+    }
+    return "both";
   }
 
   // Whether to show the layout toggle button
   readonly property bool showLayoutToggle: {
-    // Hide toggle for inline calculator (no provider, just math expression)
-    if (isMathExpression(searchText.trim())) {
-      return false;
-    }
     // Hide toggle when provider has displayString (forces grid)
     if (providerHasDisplayString) {
       return false;
@@ -119,8 +130,8 @@ SmartPanel {
   }
 
   readonly property bool isGridView: {
-    // Force list view for inline calculator (no provider, just math expression)
-    if (isMathExpression(searchText.trim())) {
+    // Command picker always in list view
+    if (searchText === ">") {
       return false;
     }
     // Respect provider's layout preference
@@ -137,9 +148,13 @@ SmartPanel {
     return Settings.data.appLauncher.viewMode === "grid";
   }
 
-  // Target columns, but actual columns may vary based on available width
-  // Account for NTabBar margins to match category tabs width
-  readonly property int targetGridColumns: 5
+  // Target columns - use provider preference if available, otherwise default to 5
+  readonly property int targetGridColumns: {
+    if (currentProvider && currentProvider.preferredGridColumns) {
+      return currentProvider.preferredGridColumns;
+    }
+    return 5;
+  }
   readonly property int gridContentWidth: listPanelWidth - (2 * Style.marginXS)
   readonly property int gridCellSize: Math.floor((gridContentWidth - ((targetGridColumns - 1) * Style.marginS)) / targetGridColumns)
 
@@ -196,11 +211,10 @@ SmartPanel {
   function onTabPressed() {
     // In browsing mode with categories, Tab navigates between categories
     if (showProviderCategories) {
-      var provider = activeProvider || appsProvider;
       var categories = providerCategories;
-      var currentIndex = categories.indexOf(provider.selectedCategory);
-      var nextIndex = (currentIndex + 1) % categories.length;
-      provider.selectCategory(categories[nextIndex]);
+      var catIndex = categories.indexOf(currentProvider.selectedCategory);
+      var nextIndex = (catIndex + 1) % categories.length;
+      currentProvider.selectCategory(categories[nextIndex]);
     } else {
       selectNextWrapped();
     }
@@ -209,11 +223,10 @@ SmartPanel {
   function onBackTabPressed() {
     // In browsing mode with categories, Shift+Tab navigates between categories
     if (showProviderCategories) {
-      var provider = activeProvider || appsProvider;
       var categories = providerCategories;
-      var currentIndex = categories.indexOf(provider.selectedCategory);
-      var previousIndex = ((currentIndex - 1) % categories.length + categories.length) % categories.length;
-      provider.selectCategory(categories[previousIndex]);
+      var catIndex = categories.indexOf(currentProvider.selectedCategory);
+      var previousIndex = ((catIndex - 1) % categories.length + categories.length) % categories.length;
+      currentProvider.selectCategory(categories[previousIndex]);
     } else {
       selectPreviousWrapped();
     }
@@ -290,13 +303,15 @@ SmartPanel {
   }
 
   function onDeletePressed() {
-    // Delete clipboard entry if one is selected
-    if (selectedIndex >= 0 && results && results[selectedIndex] && results[selectedIndex].clipboardId) {
-      const clipboardId = results[selectedIndex].clipboardId;
-      clipProvider.gotResults = false;
-      clipProvider.isWaitingForData = true;
-      clipProvider.lastSearchText = root.searchText;
-      ClipboardService.deleteById(String(clipboardId));
+    // Generic delete handling - ask provider if item can be deleted
+    if (selectedIndex < 0 || !results || !results[selectedIndex])
+      return;
+
+    var item = results[selectedIndex];
+    var provider = item.provider || currentProvider;
+
+    if (provider && provider.canDeleteItem && provider.canDeleteItem(item)) {
+      provider.deleteItem(item);
     }
   }
 
@@ -355,56 +370,6 @@ SmartPanel {
     // Update results if launcher is open
     if (root.isPanelOpen) {
       updateResults();
-    }
-  }
-
-  // Caclualtor handling
-  function isMathExpression(expr) {
-    // Allow: digits, operators, parentheses, decimal points, whitespace, letters (for functions), commas
-    if (!/^[\d\s\+\-\*\/\(\)\.\%\^a-zA-Z,]+$/.test(expr)) {
-      return false;
-    }
-
-    // Must contain at least one operator OR a function call (letter followed by parenthesis)
-    if (!/[+\-*/%\^]/.test(expr) && !/[a-zA-Z]\s*\(/.test(expr)) {
-      return false;
-    }
-
-    // Reject if ends with an operator (incomplete expression)
-    if (/[+\-*/%\^]\s*$/.test(expr)) {
-      return false;
-    }
-
-    // Reject if it's just letters (would match app names)
-    if (/^[a-zA-Z\s]+$/.test(expr)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function getInlineCalculatorResult(query) {
-    const trimmed = query.trim();
-    if (!trimmed || !isMathExpression(trimmed)) {
-      return null;
-    }
-
-    try {
-      const result = AdvancedMath.evaluate(trimmed);
-      const iconMode = Settings.data.appLauncher.iconMode;
-      return {
-        "name": AdvancedMath.formatResult(result),
-        "description": `${trimmed} = ${result}`,
-        "icon": iconMode === "tabler" ? "calculator" : "accessories-calculator",
-        "isTablerIcon": true,
-        "isImage": false,
-        "onActivate": function () {
-          // TODO: copy entry to clipboard via ClipHist
-          root.close();
-        }
-      };
-    } catch (error) {
-      return null;
     }
   }
 
@@ -468,12 +433,6 @@ SmartPanel {
           const providerResults = provider.getResults(searchText);
           results = results.concat(providerResults);
         }
-      }
-
-      // Inline calculator - append result if query is a valid math expression
-      const inlineResult = getInlineCalculatorResult(searchText);
-      if (inlineResult) {
-        results = results.concat([inlineResult]);
       }
     }
 
@@ -671,13 +630,21 @@ SmartPanel {
     }
   }
 
+  CalculatorProvider {
+    id: calcProvider
+    Component.onCompleted: {
+      registerProvider(this);
+      Logger.d("Launcher", "Registered: CalculatorProvider");
+    }
+  }
+
   // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui
     color: Color.transparent
     opacity: resultsReady ? 1.0 : 0.0
 
-    // Preview Panel (external)
+    // Preview Panel (external) - uses provider's preview component
     NBox {
       id: previewBox
       visible: root.previewActive
@@ -704,19 +671,34 @@ SmartPanel {
       }
 
       Loader {
-        id: clipboardPreviewLoader
+        id: previewLoader
         anchors.fill: parent
         active: root.previewActive
-        source: active ? "./ClipboardPreview.qml" : ""
+        source: {
+          if (!active)
+            return "";
+          var provider = root.activeProvider;
+          if (provider && provider.previewComponentPath)
+            return provider.previewComponentPath;
+          return "";
+        }
 
         onLoaded: {
-          if (selectedIndex >= 0 && results[selectedIndex] && item) {
-            item.currentItem = results[selectedIndex];
-          }
+          updatePreviewItem();
         }
 
         onItemChanged: {
-          if (item && selectedIndex >= 0 && results[selectedIndex]) {
+          updatePreviewItem();
+        }
+
+        function updatePreviewItem() {
+          if (!item || selectedIndex < 0 || !results[selectedIndex])
+            return;
+
+          var provider = root.activeProvider;
+          if (provider && provider.getPreviewData) {
+            item.currentItem = provider.getPreviewData(results[selectedIndex]);
+          } else {
             item.currentItem = results[selectedIndex];
           }
         }
@@ -863,11 +845,9 @@ SmartPanel {
           border.color: Style.boxBorderColor
           border.width: Style.borderS
 
-          property var currentProvider: root.activeProvider || appsProvider
-
           property int computedCurrentIndex: {
             if (visible && root.providerCategories.length > 0) {
-              return root.providerCategories.indexOf(currentProvider.selectedCategory);
+              return root.providerCategories.indexOf(root.currentProvider.selectedCategory);
             }
             return 0;
           }
@@ -878,13 +858,12 @@ SmartPanel {
             NIconTabButton {
               required property string modelData
               required property int index
-              property var provider: categoryTabs.currentProvider
-              icon: provider.categoryIcons ? (provider.categoryIcons[modelData] || "star") : "star"
-              tooltipText: provider.getCategoryName ? provider.getCategoryName(modelData) : modelData
+              icon: root.currentProvider.categoryIcons ? (root.currentProvider.categoryIcons[modelData] || "star") : "star"
+              tooltipText: root.currentProvider.getCategoryName ? root.currentProvider.getCategoryName(modelData) : modelData
               tabIndex: index
               checked: categoryTabs.currentIndex === index
               onClicked: {
-                provider.selectCategory(modelData);
+                root.currentProvider.selectCategory(modelData);
               }
             }
           }
@@ -917,8 +896,8 @@ SmartPanel {
               if (currentIndex >= 0) {
                 positionViewAtIndex(currentIndex, ListView.Contain);
               }
-              if (clipboardPreviewLoader.item) {
-                clipboardPreviewLoader.item.currentItem = results[currentIndex] || null;
+              if (previewLoader.item) {
+                previewLoader.updatePreviewItem();
               }
             }
             onModelChanged: {}
@@ -927,46 +906,12 @@ SmartPanel {
               id: entry
 
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
-              property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
-              // Helper function to normalize app IDs for case-insensitive matching
-              function normalizeAppId(appId) {
-                if (!appId || typeof appId !== 'string')
-                  return "";
-                return appId.toLowerCase().trim();
-              }
-
-              // Pin helpers
-              function togglePin(appId) {
-                if (!appId)
-                  return;
-                const normalizedId = normalizeAppId(appId);
-                let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-                if (idx >= 0)
-                  arr.splice(idx, 1);
-                else
-                  arr.push(appId);
-                Settings.data.dock.pinnedApps = arr;
-              }
-
-              function isPinned(appId) {
-                if (!appId)
-                  return false;
-                const arr = Settings.data.dock.pinnedApps || [];
-                const normalizedId = normalizeAppId(appId);
-                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-              }
-
-              // Property to reliably track the current item's ID.
-              // This changes whenever the delegate is recycled for a new item.
-              property var currentClipboardId: modelData.isImage ? modelData.clipboardId : ""
-
-              // When this delegate is assigned a new image item, trigger the decode.
-              onCurrentClipboardIdChanged: {
-                // Check if it's a valid ID and if the data isn't already cached.
-                if (currentClipboardId && !ClipboardService.getImageData(currentClipboardId)) {
-                  ClipboardService.decodeToDataUrl(currentClipboardId, modelData.mime, null);
+              // Prepare item when it becomes visible (e.g., decode images)
+              Component.onCompleted: {
+                var provider = modelData.provider;
+                if (provider && provider.prepareItem) {
+                  provider.prepareItem(modelData);
                 }
               }
 
@@ -1003,24 +948,27 @@ SmartPanel {
                       anchors.fill: parent
                       radius: Style.radiusM
                       color: Color.mSurfaceVariant
-                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.displayString
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
                     }
 
-                    // Image preview for clipboard images
+                    // Image preview - uses provider's getImageUrl if available
                     NImageRounded {
                       id: imagePreview
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.displayString
                       radius: Style.radiusM
 
-                      // This property creates a dependency on the service's revision counter
-                      readonly property int _rev: ClipboardService.revision
+                      // Use provider's image revision for reactive updates
+                      readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
 
-                      // Fetches from the service's cache.
-                      // The dependency on `_rev` ensures this binding is re-evaluated when the cache is updated.
+                      // Get image URL from provider
                       imagePath: {
                         _rev;
-                        return ClipboardService.getImageData(modelData.clipboardId) || "";
+                        var provider = modelData.provider;
+                        if (provider && provider.getImageUrl) {
+                          return provider.getImageUrl(modelData);
+                        }
+                        return "";
                       }
 
                       Rectangle {
@@ -1138,55 +1086,39 @@ SmartPanel {
                       text: modelData.description || ""
                       pointSize: Style.fontSizeS
                       color: entry.isSelected ? Color.mOnHover : Color.mOnSurfaceVariant
-                      wrapMode: Text.WordWrap
+                      elide: Text.ElideRight
+                      maximumLineCount: 1
                       Layout.fillWidth: true
                       visible: text !== ""
                     }
                   }
 
-                  // Action buttons row
+                  // Action buttons row - dynamically populated from provider
                   RowLayout {
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     spacing: Style.marginXS
-                    visible: (!!entry.appId && entry.isSelected) || (!!modelData.clipboardId && entry.isSelected)
+                    visible: entry.isSelected && itemActions.length > 0
 
-                    // Pin/Unpin action icon button
-                    NIconButton {
-                      visible: !!entry.appId && !modelData.isImage && entry.isSelected
-                      icon: entry.isPinned(entry.appId) ? "unpin" : "pin"
-                      tooltipText: entry.isPinned(entry.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                      onClicked: entry.togglePin(entry.appId)
-                    }
-
-                    // open an annotation tool for images
-                    NIconButton {
-                      visible: !!modelData.clipboardId && entry.isSelected && modelData.isImage && Settings.data.appLauncher.screenshotAnnotationTool !== ""
-                      icon: "pencil"
-                      tooltipText: I18n.tr("tooltips.open-annotation-tool")
-                      z: 1
-                      onClicked: {
-                        var tool = Settings.data.appLauncher.screenshotAnnotationTool;
-                        if (modelData.clipboardId) {
-                          Quickshell.execDetached(["sh", "-c", "cliphist decode " + modelData.clipboardId + " | " + tool]);
-                          root.close();
-                        }
+                    property var itemActions: {
+                      if (!entry.isSelected)
+                        return [];
+                      var provider = modelData.provider || root.currentProvider;
+                      if (provider && provider.getItemActions) {
+                        return provider.getItemActions(modelData);
                       }
+                      return [];
                     }
 
-                    // Delete action icon button for clipboard entries
-                    NIconButton {
-                      visible: !!modelData.clipboardId && entry.isSelected
-                      icon: "trash"
-                      tooltipText: I18n.tr("launcher.providers.clipboard-delete")
-                      z: 1
-                      onClicked: {
-                        if (modelData.clipboardId) {
-                          // Set provider state before deletion so refresh works
-                          clipProvider.gotResults = false;
-                          clipProvider.isWaitingForData = true;
-                          clipProvider.lastSearchText = root.searchText;
-                          // Delete the item - deleteById now uses Process and will refresh automatically
-                          ClipboardService.deleteById(String(modelData.clipboardId));
+                    Repeater {
+                      model: parent.itemActions
+                      NIconButton {
+                        icon: modelData.icon
+                        tooltipText: modelData.tooltip
+                        z: 1
+                        onClicked: {
+                          if (modelData.action) {
+                            modelData.action();
+                          }
                         }
                       }
                     }
@@ -1231,12 +1163,12 @@ SmartPanel {
             height: parent.height
             cellWidth: parent.width / root.targetGridColumns
             cellHeight: {
-              if (root.providerHasDisplayString) {
-                return (parent.width / root.targetGridColumns) * 1.2;
+              var cellWidth = parent.width / root.targetGridColumns;
+              // Use provider's preferred ratio if available
+              if (root.currentProvider && root.currentProvider.preferredGridCellRatio) {
+                return cellWidth * root.currentProvider.preferredGridCellRatio;
               }
-              // Cell height scales automatically as parent.width scales with uiScaleRatio
-              // Content (badge, text) scales via badgeSize which now uses uiScaleRatio
-              return parent.width / root.targetGridColumns;
+              return cellWidth;
             }
             leftMargin: 0
             rightMargin: 0
@@ -1290,8 +1222,8 @@ SmartPanel {
                              });
 
                 // Update preview
-                if (clipboardPreviewLoader.item && root.selectedIndex >= 0) {
-                  clipboardPreviewLoader.item.currentItem = results[root.selectedIndex] || null;
+                if (previewLoader.item && root.selectedIndex >= 0) {
+                  previewLoader.updatePreviewItem();
                 }
               }
             }
@@ -1302,35 +1234,13 @@ SmartPanel {
               height: resultsGrid.cellHeight
 
               property bool isSelected: (!root.ignoreMouseHover && mouseArea.containsMouse) || (index === selectedIndex)
-              property string appId: (modelData && modelData.appId) ? String(modelData.appId) : ""
 
-              // Helper function to normalize app IDs for case-insensitive matching
-              function normalizeAppId(appId) {
-                if (!appId || typeof appId !== 'string')
-                  return "";
-                return appId.toLowerCase().trim();
-              }
-
-              // Pin helpers
-              function togglePin(appId) {
-                if (!appId)
-                  return;
-                const normalizedId = normalizeAppId(appId);
-                let arr = (Settings.data.dock.pinnedApps || []).slice();
-                const idx = arr.findIndex(pinnedId => normalizeAppId(pinnedId) === normalizedId);
-                if (idx >= 0)
-                  arr.splice(idx, 1);
-                else
-                  arr.push(appId);
-                Settings.data.dock.pinnedApps = arr;
-              }
-
-              function isPinned(appId) {
-                if (!appId)
-                  return false;
-                const arr = Settings.data.dock.pinnedApps || [];
-                const normalizedId = normalizeAppId(appId);
-                return arr.some(pinnedId => normalizeAppId(pinnedId) === normalizedId);
+              // Prepare item when it becomes visible (e.g., decode images)
+              Component.onCompleted: {
+                var provider = modelData.provider;
+                if (provider && provider.prepareItem) {
+                  provider.prepareItem(modelData);
+                }
               }
 
               NBox {
@@ -1348,28 +1258,15 @@ SmartPanel {
 
                 ColumnLayout {
                   anchors.fill: parent
-                  anchors.margins: (root.providerHasDisplayString) ? 4 : Style.marginM
-                  anchors.bottomMargin: (root.providerHasDisplayString) ? Style.marginL : Style.marginM
-                  spacing: Style.marginS
+                  anchors.margins: Style.marginS
+                  anchors.bottomMargin: Style.marginS
+                  spacing: Style.marginXXS
 
                   // Icon badge or Image preview or Emoji
                   Item {
-                    Layout.preferredWidth: {
-                      if (root.providerHasDisplayString && modelData.displayString) {
-                        return gridEntry.width - 8;
-                      }
-                      // Scale badge relative to cell size for proper scaling on all resolutions
-                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                      return Math.round(gridEntry.width * 0.6);
-                    }
-                    Layout.preferredHeight: {
-                      if (root.providerHasDisplayString && modelData.displayString) {
-                        return gridEntry.width - 8;
-                      }
-                      // Scale badge relative to cell size for proper scaling on all resolutions
-                      // Use 60% of cell width, ensuring it scales down on low res and up on high res
-                      return Math.round(gridEntry.width * 0.6);
-                    }
+                    // Use consistent 65% sizing for all items
+                    Layout.preferredWidth: Math.round(gridEntry.width * 0.65)
+                    Layout.preferredHeight: Math.round(gridEntry.width * 0.65)
                     Layout.alignment: Qt.AlignHCenter
 
                     // Icon background
@@ -1377,21 +1274,27 @@ SmartPanel {
                       anchors.fill: parent
                       radius: Style.radiusM
                       color: Color.mSurfaceVariant
-                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage && !modelData.displayString
+                      visible: Settings.data.appLauncher.showIconBackground && !modelData.isImage
                     }
 
-                    // Image preview for clipboard images
+                    // Image preview - uses provider's getImageUrl if available
                     NImageRounded {
                       id: gridImagePreview
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.displayString
                       radius: Style.radiusM
 
-                      readonly property int _rev: ClipboardService.revision
+                      // Use provider's image revision for reactive updates
+                      readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
 
+                      // Get image URL from provider
                       imagePath: {
                         _rev;
-                        return ClipboardService.getImageData(modelData.clipboardId) || "";
+                        var provider = modelData.provider;
+                        if (provider && provider.getImageUrl) {
+                          return provider.getImageUrl(modelData);
+                        }
+                        return "";
                       }
 
                       Rectangle {
@@ -1423,12 +1326,7 @@ SmartPanel {
                       visible: (!modelData.isImage && !modelData.displayString) || (modelData.isImage && gridImagePreview.status === Image.Error)
                       active: visible
 
-                      sourceComponent: Component {
-                        Loader {
-                          anchors.fill: parent
-                          sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
-                        }
-                      }
+                      sourceComponent: Settings.data.appLauncher.iconMode === "tabler" && modelData.isTablerIcon ? gridTablerIconComponent : gridSystemIconComponent
 
                       Component {
                         id: gridTablerIconComponent
@@ -1508,37 +1406,35 @@ SmartPanel {
                   }
                 }
 
-                // Action buttons (overlay in top-right corner)
+                // Action buttons (overlay in top-right corner) - dynamically populated from provider
                 Row {
-                  visible: (!!gridEntryContainer.appId && gridEntryContainer.isSelected) || (!!modelData.clipboardId && gridEntryContainer.isSelected)
+                  visible: gridEntryContainer.isSelected && gridItemActions.length > 0
                   anchors.top: parent.top
                   anchors.right: parent.right
                   anchors.margins: Style.marginXS
                   z: 10
                   spacing: Style.marginXXS
 
-                  // Pin/Unpin action icon button
-                  NIconButton {
-                    visible: !!gridEntryContainer.appId && !modelData.isImage && gridEntryContainer.isSelected
-                    icon: gridEntryContainer.isPinned(gridEntryContainer.appId) ? "unpin" : "pin"
-                    tooltipText: gridEntryContainer.isPinned(gridEntryContainer.appId) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin")
-                    onClicked: gridEntryContainer.togglePin(gridEntryContainer.appId)
+                  property var gridItemActions: {
+                    if (!gridEntryContainer.isSelected)
+                      return [];
+                    var provider = modelData.provider || root.currentProvider;
+                    if (provider && provider.getItemActions) {
+                      return provider.getItemActions(modelData);
+                    }
+                    return [];
                   }
 
-                  // Delete action icon button for clipboard entries
-                  NIconButton {
-                    visible: !!modelData.clipboardId && gridEntryContainer.isSelected
-                    icon: "trash"
-                    tooltipText: I18n.tr("launcher.providers.clipboard-delete")
-                    z: 11
-                    onClicked: {
-                      if (modelData.clipboardId) {
-                        // Set provider state before deletion so refresh works
-                        clipProvider.gotResults = false;
-                        clipProvider.isWaitingForData = true;
-                        clipProvider.lastSearchText = root.searchText;
-                        // Delete the item - deleteById now uses Process and will refresh automatically
-                        ClipboardService.deleteById(String(modelData.clipboardId));
+                  Repeater {
+                    model: parent.gridItemActions
+                    NIconButton {
+                      icon: modelData.icon
+                      tooltipText: modelData.tooltip
+                      z: 11
+                      onClicked: {
+                        if (modelData.action) {
+                          modelData.action();
+                        }
                       }
                     }
                   }
@@ -1578,9 +1474,12 @@ SmartPanel {
           text: {
             if (results.length === 0) {
               if (searchText) {
-                return "No results";
-              } else if (activeProvider === emojiProvider && emojiProvider.isBrowsingMode && emojiProvider.selectedCategory === "recent") {
-                return "No recently used emoji";
+                return I18n.tr("launcher.no-results");
+              }
+              // Use provider's empty browsing message if available
+              var provider = root.currentProvider;
+              if (provider && provider.emptyBrowsingMessage) {
+                return provider.emptyBrowsingMessage;
               }
               return "";
             }
