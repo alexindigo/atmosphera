@@ -917,6 +917,7 @@ SmartPanel {
 
               width: resultsList.width
               implicitHeight: entryHeight
+              clip: true
               color: entry.isSelected ? Color.mHover : Color.mSurface
 
               Behavior on color {
