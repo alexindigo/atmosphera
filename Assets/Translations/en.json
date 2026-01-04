@@ -2726,6 +2726,9 @@
     "upload-speed": "Upload Speed"
   },
   "toast": {
+    "Bluetooth": {
+      "enabled": "Enabled"
+    },
     "airplane-mode": {
       "disabled": "Disabled.",
       "enabled": "Enabled.",
