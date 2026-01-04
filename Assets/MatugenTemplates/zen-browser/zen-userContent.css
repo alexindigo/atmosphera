@@ -80,4 +80,8 @@
       background-color: {{colors.surface_container_high.default.hex}} !important;
     }
   }
+    /* Pane UI button visibility issue fix */
+  #PanelUI-menu-button[open] .toolbarbutton-icon {
+    fill: {{colors.primary.default.hex}} !important;
+  }
 }
