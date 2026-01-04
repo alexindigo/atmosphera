@@ -17,6 +17,8 @@ Singleton {
   property string connectingTo: ""
   property string lastError: ""
   property bool ethernetConnected: false
+  // Each item: { ifname: string, state: string, connected: bool }
+  property var ethernetInterfaces: ([])
   // Active Ethernet connection details
   property var activeEthernetDetails: ({})
   property string activeEthernetIf: ""
@@ -216,6 +218,19 @@ Singleton {
     Logger.d("Network", "Wi-Fi scan in progress...");
   }
 
+  // Returns true if we currently have any detectable Ethernet interfaces
+  function hasEthernet() {
+    return root.ethernetInterfaces && root.ethernetInterfaces.length > 0;
+  }
+
+  // Refresh only Ethernet state/details
+  function refreshEthernet() {
+    if (!ProgramCheckerService.nmcliAvailable)
+      return;
+    ethernetStateProcess.running = true;
+    refreshActiveEthernetDetails();
+  }
+
   function connect(ssid, password = "") {
     if (!ProgramCheckerService.nmcliAvailable || connecting)
       return;
@@ -342,14 +357,32 @@ Singleton {
         var connected = false;
         var devIf = "";
         var lines = text.split("\n");
+        var ethList = [];
         for (var i = 0; i < lines.length; i++) {
           var parts = lines[i].split(":");
-          if (parts.length >= 3 && parts[1] === "ethernet" && parts[2] === "connected") {
-            connected = true;
-            devIf = parts[0];
-            break;
+          if (parts.length >= 3 && parts[1] === "ethernet") {
+            var ifname = parts[0];
+            var state = parts[2];
+            var isConn = state === "connected";
+            ethList.push({
+                           ifname: ifname,
+                           state: state,
+                           connected: isConn
+                         });
+            if (isConn && !connected) {
+              connected = true;
+              devIf = ifname;
+            }
           }
         }
+        // Sort interfaces: connected first, then by name
+        ethList.sort(function (a, b) {
+          if (a.connected !== b.connected)
+            return a.connected ? -1 : 1;
+          return a.ifname.localeCompare(b.ifname);
+        });
+        root.ethernetInterfaces = ethList;
+
         if (root.ethernetConnected !== connected) {
           root.ethernetConnected = connected;
           Logger.d("Network", "Ethernet connected:", root.ethernetConnected);
@@ -386,6 +419,7 @@ Singleton {
       onStreamFinished: {
         let ifname = "";
         const lines = text.split("\n");
+        const ethList = [];
         for (let i = 0; i < lines.length; i++) {
           const parts = lines[i].trim().split(":");
           if (parts.length >= 3) {
@@ -394,10 +428,22 @@ Singleton {
             const state = parts[2];
             if (type === "ethernet" && state === "connected") {
               ifname = dev;
-              break;
+            }
+            if (type === "ethernet") {
+              ethList.push({
+                             ifname: dev,
+                             state: state,
+                             connected: state === "connected"
+                           });
             }
           }
         }
+        ethList.sort(function (a, b) {
+          if (a.connected !== b.connected)
+            return a.connected ? -1 : 1;
+          return a.ifname.localeCompare(b.ifname);
+        });
+        root.ethernetInterfaces = ethList;
         root.activeEthernetIf = ifname;
         if (ifname) {
           ethernetDeviceShowProcess.ifname = ifname;
