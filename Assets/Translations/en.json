@@ -3113,9 +3113,11 @@
   "wifi": {
     "panel": {
       "action-required": "Action required",
+      "available-interfaces": "Available interfaces",
       "available-networks": "Available networks",
       "connect": "Connect",
       "connected": "Connected",
+      "disconnected": "Disconnected",
       "disabled": "Wi‑Fi is disabled",
       "disconnect": "Disconnect",
       "disconnecting": "Disconnecting…",
@@ -3134,13 +3136,15 @@
       "ipv4": "IPv4",
       "known-networks": "Known networks",
       "link-speed": "Link speed",
+      "no-ethernet-devices": "No Ethernet devices detected",
       "no-networks": "No Wi‑Fi networks found",
       "password": "Password",
       "saved": "Saved",
       "scan-again": "Scan again",
       "searching": "Searching for networks...",
       "security": "Security",
-      "title": "Wi‑Fi"
+      "title": "Wi‑Fi",
+      "internet-status": "Internet status"
     },
     "signal": {
       "excellent": "Excellent",
