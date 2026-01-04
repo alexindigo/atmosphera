@@ -24,7 +24,7 @@ Rectangle {
 
   // Styling
   radius: Style.iRadiusM
-  color: root.checked ? Color.mPrimary : (root.isHovered ? Color.mHover : Color.mSurface)
+  color: root.isHovered ? Color.mHover : (root.checked ? Color.mPrimary : Color.mSurface)
 
   Behavior on color {
     ColorAnimation {
@@ -45,7 +45,7 @@ Rectangle {
     text: root.text
     pointSize: Style.fontSizeM
     font.weight: root.checked ? Style.fontWeightSemiBold : Style.fontWeightRegular
-    color: root.checked ? Color.mOnPrimary : root.isHovered ? Color.mOnHover : Color.mOnSurface
+    color: root.isHovered ? Color.mOnHover : (root.checked ? Color.mOnPrimary : Color.mOnSurface)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
 
