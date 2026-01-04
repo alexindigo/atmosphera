@@ -12,7 +12,8 @@ NIconButtonHot {
   tooltipText: I18n.tr("quickSettings.bluetooth.tooltip.action")
   onClicked: {
     var p = PanelService.getPanel("bluetoothPanel", screen);
-    if (p) p.toggle(this);
+    if (p)
+      p.toggle(this);
   }
   onRightClicked: BluetoothService.setBluetoothEnabled(!BluetoothService.enabled)
 }

@@ -134,10 +134,14 @@ NBox {
               NText {
                 text: {
                   const k = BluetoothService.getStatusKey(modelData);
-                  if (k === "pairing") return I18n.tr("bluetooth.panel.pairing");
-                  if (k === "blocked") return I18n.tr("bluetooth.panel.blocked");
-                  if (k === "connecting") return I18n.tr("bluetooth.panel.connecting");
-                  if (k === "disconnecting") return I18n.tr("bluetooth.panel.disconnecting");
+                  if (k === "pairing")
+                    return I18n.tr("bluetooth.panel.pairing");
+                  if (k === "blocked")
+                    return I18n.tr("bluetooth.panel.blocked");
+                  if (k === "connecting")
+                    return I18n.tr("bluetooth.panel.connecting");
+                  if (k === "disconnecting")
+                    return I18n.tr("bluetooth.panel.disconnecting");
                   return "";
                 }
                 visible: text !== ""

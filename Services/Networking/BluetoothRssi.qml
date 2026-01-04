@@ -23,7 +23,9 @@ QtObject {
   property Process rssiProcess: Process {
     id: proc
     running: false
-    stdout: StdioCollector { id: out }
+    stdout: StdioCollector {
+      id: out
+    }
     onExited: function (exitCode, exitStatus) {
       try {
         var text = out.text || "";
@@ -35,8 +37,7 @@ QtObject {
             root.version++;
           }
         }
-      } catch (e) {
-      } finally {
+      } catch (e) {} finally {
         root._currentAddr = "";
       }
     }
@@ -63,7 +64,9 @@ QtObject {
         return; // avoid overlap
       root._currentAddr = addr;
       proc.command = ["sh", "-c", `bluetoothctl info "${addr}"`];
-      try { proc.running = true; } catch (e) {}
+      try {
+        proc.running = true;
+      } catch (e) {}
     }
   }
 }
