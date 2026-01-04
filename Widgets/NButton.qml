@@ -14,6 +14,7 @@ Rectangle {
   property color backgroundColor: Color.mPrimary
   property color textColor: Color.mOnPrimary
   property color hoverColor: Color.mHover
+  property color textHoverColor: Color.mOnHover
   property bool enabled: true
   property real fontSize: Style.fontSizeM
   property int fontWeight: Style.fontWeightBold
@@ -31,6 +32,18 @@ Rectangle {
 
   // Internal properties
   property bool hovered: false
+  readonly property color contentColor: {
+    if (!root.enabled) {
+      return Color.mOnSurfaceVariant;
+    }
+    if (root.hovered) {
+      return root.textHoverColor;
+    }
+    if (root.outlined) {
+      return root.backgroundColor;
+    }
+    return root.textColor;
+  }
 
   // Dimensions
   implicitWidth: contentRow.implicitWidth + (Style.marginL * 2)
@@ -86,16 +99,7 @@ Rectangle {
       visible: root.icon !== ""
       icon: root.icon
       pointSize: root.iconSize
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant;
-        if (root.outlined) {
-          if (root.hovered)
-            return root.textColor;
-          return root.backgroundColor;
-        }
-        return root.textColor;
-      }
+      color: contentColor
 
       Behavior on color {
         ColorAnimation {
@@ -112,16 +116,7 @@ Rectangle {
       text: root.text
       pointSize: root.fontSize
       font.weight: root.fontWeight
-      color: {
-        if (!root.enabled)
-          return Color.mOnSurfaceVariant;
-        if (root.outlined) {
-          if (root.hovered)
-            return root.textColor;
-          return root.backgroundColor;
-        }
-        return root.textColor;
-      }
+      color: contentColor
 
       Behavior on color {
         ColorAnimation {
