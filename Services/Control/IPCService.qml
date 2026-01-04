@@ -374,10 +374,23 @@ Item {
     function disable() {
       NetworkService.setWifiEnabled(false);
     }
+
+    // TODO REMOVE IN FEB. 2026
+    function togglePanel() {
+      ToastService.showWarning("This IPC call will be deprecated soon, use 'network togglePanel' instead.");
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var networkPanel = PanelService.getPanel("networkPanel", screen);
+                                              networkPanel?.toggle(null, "WiFi");
+                                            });
+    }
+  }
+
+  IpcHandler {
+    target: "network"
     function togglePanel() {
       root.screenDetector.withCurrentScreen(screen => {
-                                              var wifiPanel = PanelService.getPanel("wifiPanel", screen);
-                                              wifiPanel?.toggle(null, "WiFi");
+                                              var networkPanel = PanelService.getPanel("networkPanel", screen);
+                                              networkPanel?.toggle(null, "WiFi");
                                             });
     }
   }
