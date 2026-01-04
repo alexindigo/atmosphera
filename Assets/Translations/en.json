@@ -2295,6 +2295,7 @@
       "update-incompatible": "Requires Noctalia v{version} or higher",
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",
+      "update-pending": "v{current} → v{new} (requires Noctalia v{required})",
       "updating": "Updating..."
     },
     "screen-recorder": {
@@ -3113,9 +3114,11 @@
   "wifi": {
     "panel": {
       "action-required": "Action required",
+      "available-interfaces": "Available interfaces",
       "available-networks": "Available networks",
       "connect": "Connect",
       "connected": "Connected",
+      "disconnected": "Disconnected",
       "disabled": "Wi‑Fi is disabled",
       "disconnect": "Disconnect",
       "disconnecting": "Disconnecting…",
@@ -3135,13 +3138,15 @@
       "ipv4": "IPv4",
       "known-networks": "Known networks",
       "link-speed": "Link speed",
+      "no-ethernet-devices": "No Ethernet devices detected",
       "no-networks": "No Wi‑Fi networks found",
       "password": "Password",
       "saved": "Saved",
       "scan-again": "Scan again",
       "searching": "Searching for networks...",
       "security": "Security",
-      "title": "Wi‑Fi"
+      "title": "Wi‑Fi",
+      "internet-status": "Internet status"
     },
     "signal": {
       "excellent": "Excellent",

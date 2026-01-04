@@ -434,7 +434,7 @@ NBox {
         Layout.fillWidth: true
         Layout.preferredWidth: 0
         implicitHeight: startButton.implicitHeight
-        color: Color.transparent
+        color: "transparent"
 
         NButton {
           id: startButton
@@ -456,7 +456,7 @@ NBox {
         Layout.fillWidth: true
         Layout.preferredWidth: 0
         implicitHeight: resetButton.implicitHeight
-        color: Color.transparent
+        color: "transparent"
 
         NButton {
           id: resetButton

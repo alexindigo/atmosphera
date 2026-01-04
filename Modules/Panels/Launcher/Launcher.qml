@@ -641,7 +641,7 @@ SmartPanel {
   // ---------------------------------------------------
   panelContent: Rectangle {
     id: ui
-    color: Color.transparent
+    color: "transparent"
     opacity: resultsReady ? 1.0 : 0.0
 
     // Preview Panel (external) - uses provider's preview component
