@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "Настройки плагина"
       },
-      "settings-error-not-loaded": "Плагин не загружен",
-      "settings-saved": "Настройки плагина сохранены",
+      "settings-error-not-loaded": "Плагин не загружен.",
+      "settings-saved": "Настройки плагина сохранены.",
       "source": {
         "custom": "Пользовательский источник",
         "official": "Официальный"
@@ -2305,7 +2305,7 @@
         "add-custom": "Добавить пользовательский репозиторий",
         "add-dialog": {
           "description": "Добавить репозиторий GitHub в качестве источника плагинов.",
-          "error": "Не удалось добавить источник плагина",
+          "error": "Не удалось добавить источник плагина.",
           "name": "Имя репозитория",
           "name-placeholder": "Мои пользовательские плагины",
           "success": "Источник плагина успешно добавлен.",
@@ -2331,8 +2331,8 @@
       "update": "Обновление",
       "update-all": "Обновить все ({count})",
       "update-all-success": "Все плагины успешно обновлены.",
-      "update-available": "Доступно {count} обновлений плагинов",
-      "update-available_plural": "Доступно {count} обновлений плагинов",
+      "update-available": "Доступно новое обновление плагина",
+      "update-available_plural": "Доступны новые обновления плагинов ({count})",
       "update-error": "Не удалось обновить плагин: {plugin}: {error}",
       "update-incompatible": "Требуется Noctalia v{version} или выше",
       "update-pending": "v{current} → v{new} (требуется Noctalia v{required})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Отключен",
-      "enabled": "Включен",
+      "disabled": "Отключен.",
+      "enabled": "Включен.",
       "title": "Режим полета"
     },
     "battery": {
@@ -2805,18 +2805,18 @@
     "bluetooth": {
       "address-copied": "Адрес скопирован в буфер обмена",
       "confirm-code": "Подтвердите код {value} на другом устройстве.",
-      "connect-failed": "Не удалось подключиться к устройству",
-      "disabled": "Отключен",
-      "disconnect-failed": "Не удалось отключиться от устройства",
-      "discoverable-change-failed": "Не удалось изменить состояние видимости",
-      "discoverable-disabled": "Обнаружение отключено",
-      "discoverable-enabled": "Обнаружение включено",
+      "connect-failed": "Не удалось подключиться к устройству.",
+      "disabled": "Отключен.",
+      "disconnect-failed": "Не удалось отключиться от устройства.",
+      "discoverable-change-failed": "Не удалось изменить состояние видимости.",
+      "discoverable-disabled": "Обнаружение отключено.",
+      "discoverable-enabled": "Обнаружение включено.",
       "display-code": "Введите код {value} на другом устройстве.",
-      "enabled": "Включен",
-      "forget-failed": "Не удалось удалить устройство",
+      "enabled": "Включен.",
+      "forget-failed": "Не удалось удалить устройство.",
       "pair-failed": "Не удалось выполнить сопряжение устройства.",
-      "passkey-required": "Требуется ключ доступа устройства",
-      "pincode-required": "PIN-код, требуемый устройством",
+      "passkey-required": "Требуется ключ доступа устройства.",
+      "pincode-required": "PIN-код, требуемый устройством.",
       "state-change-failed": "Не удалось изменить состояние Bluetooth."
     },
     "clipboard": {
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "Тёмный режим",
-      "enabled": "Включен",
+      "enabled": "Включен.",
       "light-mode": "Светлый режим"
     },
     "do-not-disturb": {
@@ -2835,79 +2835,79 @@
       "enabled-desc": "Вы найдете эти уведомления в своей истории."
     },
     "internet": {
-      "limited": "Подключено без доступа к интернету"
+      "limited": "Подключено без доступа к интернету."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel переименован в SessionMenu, этот IPC-вызов скоро будет устаревшим. Пожалуйста, используйте \"ipc call sessionMenu toggle\" вместо этого.",
       "sidepanel-deprecated": "SidePanel переименован в ControlCenter, этот IPC-вызов скоро будет устаревшим. Пожалуйста, используйте \"ipc call controlCenter toggle\" вместо этого."
     },
     "keep-awake": {
-      "disabled": "Отключен",
-      "enabled": "Включен"
+      "disabled": "Отключен.",
+      "enabled": "Включен."
     },
     "keyboard-layout": {
-      "changed": "Раскладка клавиатуры изменена на {layout}",
+      "changed": "Раскладка клавиатуры изменена на {layout}.",
       "title": "Клавиатура"
     },
     "kofi": {
-      "opened": "Страница Ko-fi открыта в вашем браузере"
+      "opened": "Страница Ko-fi открыта в вашем браузере."
     },
     "missing-control-center": {
       "description": "Виджет Центра управления был удален с панели. Чтобы снова получить к нему доступ с панели, вам нужно будет повторно добавить виджет. Вы также можете открыть его, нажав правой кнопкой мыши на панель.",
       "label": "Последний виджет Центра управления удален"
     },
     "night-light": {
-      "disabled": "Отключен",
-      "enabled": "Включен",
-      "forced": "Принудительная активация",
-      "normal": "Нормальный режим",
-      "not-installed": "wlsunset не установлен"
+      "disabled": "Отключен.",
+      "enabled": "Включен.",
+      "forced": "Принудительная активация.",
+      "normal": "Нормальный режим.",
+      "not-installed": "wlsunset не установлен."
     },
     "noctalia-performance": {
-      "disabled": "Режим производительности Noctalia отключен",
-      "enabled": "Режим производительности Noctalia включен",
+      "disabled": "Режим производительности Noctalia отключен.",
+      "enabled": "Режим производительности Noctalia включен.",
       "label": "Производительность Noctalia"
     },
     "power-profile": {
-      "changed": "Профиль питания изменен",
+      "changed": "Профиль питания изменен.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Рекордер завершил работу с ошибкой",
-      "failed-gpu": "gpu-screen-recorder неожиданно завершил работу",
-      "failed-start": "Не удалось начать запись",
+      "failed-general": "Рекордер завершил работу с ошибкой.",
+      "failed-gpu": "gpu-screen-recorder неожиданно завершил работу.",
+      "failed-start": "Не удалось начать запись.",
       "no-portals": "Десктоп-порталы не запущены",
       "no-portals-desc": "Запустите xdg-desktop-portal и портал композитора (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder не установлен",
       "not-installed-desc": "Пожалуйста, установите gpu-screen-recorder, чтобы использовать функции записи экрана.",
-      "saved": "Запись сохранена",
-      "started": "Запись начата",
+      "saved": "Запись сохранена.",
+      "started": "Запись начата.",
       "stopping": "Остановка записи…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Произошла ошибка при обработке шаблонов",
+      "desc-generic": "Произошла ошибка при обработке шаблонов.",
       "title-matugen": "Сбой обработки шаблонов Matugen",
       "title-predefined": "Сбой обработки предопределенной цветовой схемы"
     },
     "vpn": {
-      "connected": "Подключено к '{name}'",
-      "disconnected": "Отключено от '{name}'"
+      "connected": "Подключено к '{name}'.",
+      "disconnected": "Отключено от '{name}'."
     },
     "wallpaper-colors": {
-      "disabled": "Цвета обоев отключены",
-      "enabled": "Цвета обоев включены",
+      "disabled": "Цвета обоев отключены.",
+      "enabled": "Цвета обоев включены.",
       "label": "Генерация цветов обоев",
-      "not-installed": "Matugen не установлен — требуется для извлечения цветов обоев"
+      "not-installed": "Matugen не установлен — требуется для извлечения цветов обоев."
     },
     "wifi": {
-      "connected": "Подключено к '{ssid}'",
+      "connected": "Подключено к '{ssid}'.",
       "connection-failed": "Соединение не установлено.",
-      "connection-timeout": "Превышено время ожидания соединения",
-      "disabled": "Отключен",
-      "disconnected": "Отключено от '{ssid}'",
-      "enabled": "Включен",
-      "incorrect-password": "Неверный пароль",
-      "network-not-found": "Сеть не найдена"
+      "connection-timeout": "Превышено время ожидания соединения.",
+      "disabled": "Отключен.",
+      "disconnected": "Отключено от '{ssid}'.",
+      "enabled": "Включен.",
+      "incorrect-password": "Неверный пароль.",
+      "network-not-found": "Сеть не найдена."
     }
   },
   "tooltips": {

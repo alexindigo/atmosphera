@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "Ustawienia wtyczki"
       },
-      "settings-error-not-loaded": "Wtyczka nie została załadowana",
-      "settings-saved": "Ustawienia wtyczki zapisane",
+      "settings-error-not-loaded": "Wtyczka nie została załadowana.",
+      "settings-saved": "Ustawienia wtyczki zapisane.",
       "source": {
         "custom": "Źródło niestandardowe",
         "official": "Oficjalny"
@@ -2305,10 +2305,10 @@
         "add-custom": "Dodaj własne repozytorium",
         "add-dialog": {
           "description": "Dodaj repozytorium GitHub jako źródło wtyczek.",
-          "error": "Nie udało się dodać źródła wtyczek",
+          "error": "Nie udało się dodać źródła wtyczek.",
           "name": "Nazwa repozytorium",
           "name-placeholder": "Moje własne wtyczki",
-          "success": "Źródło wtyczek dodane pomyślnie",
+          "success": "Źródło wtyczek dodane pomyślnie.",
           "title": "Dodaj źródło wtyczek",
           "url": "Adres URL repozytorium"
         },
@@ -2330,9 +2330,9 @@
       "uninstalling": "Odinstalowywanie {plugin}...",
       "update": "Aktualizuj",
       "update-all": "Aktualizuj wszystkie ({count})",
-      "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie",
-      "update-available": "Dostępne aktualizacje dla {count} wtyczek",
-      "update-available_plural": "Dostępne aktualizacje wtyczek: {count}",
+      "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie.",
+      "update-available": "Dostępna nowa aktualizacja wtyczki",
+      "update-available_plural": "Dostępne nowe aktualizacje wtyczek ({count})",
       "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
       "update-incompatible": "Wymaga Noctalia v{version} lub nowszej",
       "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Wyłączony",
-      "enabled": "Włączony",
+      "disabled": "Wyłączony.",
+      "enabled": "Włączony.",
       "title": "Tryb samolotowy"
     },
     "battery": {
@@ -2806,13 +2806,13 @@
       "address-copied": "Adres skopiowany do schowka.",
       "confirm-code": "Potwierdź kod {value} na drugim urządzeniu.",
       "connect-failed": "Nie udało się połączyć z urządzeniem.",
-      "disabled": "Wyłączony",
+      "disabled": "Wyłączony.",
       "disconnect-failed": "Nie udało się rozłączyć z urządzeniem.",
       "discoverable-change-failed": "Nie udało się zmienić stanu wykrywalności.",
-      "discoverable-disabled": "Wykrywalność wyłączona",
-      "discoverable-enabled": "Wykrywalność włączona",
+      "discoverable-disabled": "Wykrywalność wyłączona.",
+      "discoverable-enabled": "Wykrywalność włączona.",
       "display-code": "Wprowadź kod {value} na drugim urządzeniu.",
-      "enabled": "Włączony",
+      "enabled": "Włączony.",
       "forget-failed": "Nie udało się zapomnieć urządzenia.",
       "pair-failed": "Nie udało się sparować urządzenia.",
       "passkey-required": "Wymagany klucz dostępu przez urządzenie.",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "Tryb ciemny",
-      "enabled": "Włączony",
+      "enabled": "Włączony.",
       "light-mode": "Tryb jasny"
     },
     "do-not-disturb": {
@@ -2835,77 +2835,77 @@
       "enabled-desc": "Powiadomienia znajdziesz w swojej historii."
     },
     "internet": {
-      "limited": "Połączono bez dostępu do internetu"
+      "limited": "Połączono bez dostępu do internetu."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel zmienił nazwę na SessionMenu, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel zmienił nazwę na ControlCenter, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call controlCenter toggle\"."
     },
     "keep-awake": {
-      "disabled": "Wyłączone",
-      "enabled": "Włączone"
+      "disabled": "Wyłączone.",
+      "enabled": "Włączone."
     },
     "keyboard-layout": {
-      "changed": "Układ klawiatury zmieniony na {layout}",
+      "changed": "Układ klawiatury zmieniony na {layout}.",
       "title": "Klawiatura"
     },
     "kofi": {
-      "opened": "Strona Ko-fi otwarta w przeglądarce"
+      "opened": "Strona Ko-fi otwarta w przeglądarce."
     },
     "missing-control-center": {
       "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek.",
       "label": "Ostatni widżet centrum sterowania usunięty"
     },
     "night-light": {
-      "disabled": "Wyłączone",
-      "enabled": "Włączone",
-      "forced": "Wymuszona aktywacja",
-      "normal": "Tryb normalny",
-      "not-installed": "wlsunset nie jest zainstalowany"
+      "disabled": "Wyłączone.",
+      "enabled": "Włączone.",
+      "forced": "Wymuszona aktywacja.",
+      "normal": "Tryb normalny.",
+      "not-installed": "wlsunset nie jest zainstalowany."
     },
     "noctalia-performance": {
-      "disabled": "Tryb wydajności wyłączony",
-      "enabled": "Tryb wydajności włączony",
+      "disabled": "Tryb wydajności wyłączony.",
+      "enabled": "Tryb wydajności włączony.",
       "label": "Wydajność Noctalia"
     },
     "power-profile": {
-      "changed": "Profil zasilania zmieniony",
+      "changed": "Profil zasilania zmieniony.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Nagrywanie zakończone błędem",
-      "failed-gpu": "gpu-screen-recorder zakończył działanie niespodziewanie",
-      "failed-start": "Nie udało się rozpocząć nagrywania",
+      "failed-general": "Nagrywanie zakończone błędem.",
+      "failed-gpu": "gpu-screen-recorder zakończył działanie niespodziewanie.",
+      "failed-start": "Nie udało się rozpocząć nagrywania.",
       "no-portals": "Desktop portals nie działają",
       "no-portals-desc": "Uruchom xdg-desktop-portal oraz portal kompozytora (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nie jest zainstalowany",
       "not-installed-desc": "Zainstaluj gpu-screen-recorder, aby korzystać z nagrywania ekranu.",
-      "saved": "Nagranie zapisane",
-      "started": "Nagrywanie rozpoczęte",
+      "saved": "Nagranie zapisane.",
+      "started": "Nagrywanie rozpoczęte.",
       "stopping": "Zatrzymywanie nagrywania…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów",
+      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów.",
       "title-matugen": "Błąd przetwarzania szablonów Matugen",
       "title-predefined": "Błąd przetwarzania predefiniowanego schematu kolorów"
     },
     "vpn": {
-      "connected": "Połączono z '{name}'",
-      "disconnected": "Rozłączono z '{name}'"
+      "connected": "Połączono z '{name}'.",
+      "disconnected": "Rozłączono z '{name}'."
     },
     "wallpaper-colors": {
-      "disabled": "Kolory tapety wyłączone",
-      "enabled": "Kolory tapety włączone",
+      "disabled": "Kolory tapety wyłączone.",
+      "enabled": "Kolory tapety włączone.",
       "label": "Generowanie kolorów tapety",
-      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów"
+      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów."
     },
     "wifi": {
-      "connected": "Połączono z '{ssid}'",
+      "connected": "Połączono z '{ssid}'.",
       "connection-failed": "Połączenie nieudane.",
-      "connection-timeout": "Przekroczenie czasu połączenia",
-      "disabled": "Wyłączone",
-      "disconnected": "Rozłączono z '{ssid}'",
-      "enabled": "Włączone",
+      "connection-timeout": "Przekroczenie czasu połączenia.",
+      "disabled": "Wyłączone.",
+      "disconnected": "Rozłączono z '{ssid}'.",
+      "enabled": "Włączone.",
       "incorrect-password": "Nieprawidłowe hasło.",
       "network-not-found": "Nie znaleziono sieci."
     }

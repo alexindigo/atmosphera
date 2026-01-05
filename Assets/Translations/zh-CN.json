@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "插件设置"
       },
-      "settings-error-not-loaded": "插件未加载",
-      "settings-saved": "插件设置已保存",
+      "settings-error-not-loaded": "插件未加载。",
+      "settings-saved": "插件设置已保存。",
       "source": {
         "custom": "自定义源",
         "official": "官方"
@@ -2305,10 +2305,10 @@
         "add-custom": "添加自定义存储库",
         "add-dialog": {
           "description": "添加一个 GitHub 仓库作为插件源。",
-          "error": "无法添加插件源",
+          "error": "无法添加插件源。",
           "name": "仓库名称",
           "name-placeholder": "我的自定义插件",
-          "success": "插件源添加成功",
+          "success": "插件源添加成功。",
           "title": "添加插件源",
           "url": "仓库 URL"
         },
@@ -2330,9 +2330,9 @@
       "uninstalling": "正在卸载 {plugin}...",
       "update": "更新",
       "update-all": "全部更新（{count}）",
-      "update-all-success": "所有插件已成功更新",
-      "update-available": "有{count}个插件可更新",
-      "update-available_plural": "{count} 个插件有可用更新",
+      "update-all-success": "所有插件已成功更新。",
+      "update-available": "新插件更新可用",
+      "update-available_plural": "新插件更新可用（{count}个）",
       "update-error": "更新插件失败：{plugin}：{error}",
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
       "update-pending": "v{当前} → v{新} (需要 Noctalia v{所需})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "已禁用",
-      "enabled": "已启用",
+      "disabled": "已禁用。",
+      "enabled": "已启用。",
       "title": "飞行模式"
     },
     "battery": {
@@ -2804,20 +2804,20 @@
     },
     "bluetooth": {
       "address-copied": "地址已复制到剪贴板",
-      "confirm-code": "在另一台设备上确认代码 {value}",
-      "connect-failed": "无法连接到设备",
-      "disabled": "已禁用",
-      "disconnect-failed": "无法断开与设备的连接",
-      "discoverable-change-failed": "无法更改可发现状态",
-      "discoverable-disabled": "可发现性已禁用",
-      "discoverable-enabled": "已启用可发现性",
-      "display-code": "在另一台设备上输入代码 {value}",
-      "enabled": "已启用",
-      "forget-failed": "无法忘记设备",
-      "pair-failed": "配对设备失败",
-      "passkey-required": "设备需要通行密钥",
-      "pincode-required": "设备需要PIN码",
-      "state-change-failed": "无法更改蓝牙状态"
+      "confirm-code": "在另一台设备上确认代码 {value}。",
+      "connect-failed": "无法连接到设备。",
+      "disabled": "已禁用。",
+      "disconnect-failed": "无法断开与设备的连接。",
+      "discoverable-change-failed": "无法更改可发现状态。",
+      "discoverable-disabled": "可发现性已禁用。",
+      "discoverable-enabled": "已启用可发现性。",
+      "display-code": "在另一台设备上输入代码 {value}。",
+      "enabled": "已启用。",
+      "forget-failed": "无法忘记设备。",
+      "pair-failed": "配对设备失败。",
+      "passkey-required": "设备需要通行密钥。",
+      "pincode-required": "设备需要PIN码。",
+      "state-change-failed": "无法更改蓝牙状态。"
     },
     "clipboard": {
       "unavailable": "剪贴板历史记录不可用",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "深色模式",
-      "enabled": "已启用",
+      "enabled": "已启用。",
       "light-mode": "浅色模式"
     },
     "do-not-disturb": {
@@ -2835,79 +2835,79 @@
       "enabled-desc": "您可以在历史记录中找到这些通知。"
     },
     "internet": {
-      "limited": "已连接但无互联网"
+      "limited": "已连接但无互联网。"
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel 已重命名为 SessionMenu，此 IPC 调用将很快弃用。请改用 \"ipc call sessionMenu toggle\"。",
       "sidepanel-deprecated": "SidePanel 已重命名为 ControlCenter，此 IPC 调用将很快弃用。请改用 \"ipc call controlCenter toggle\"。"
     },
     "keep-awake": {
-      "disabled": "已禁用",
-      "enabled": "已启用"
+      "disabled": "已禁用。",
+      "enabled": "已启用。"
     },
     "keyboard-layout": {
-      "changed": "键盘布局已更改为 {layout}",
+      "changed": "键盘布局已更改为 {layout}。",
       "title": "键盘"
     },
     "kofi": {
-      "opened": "Ko-fi 页面已在您的浏览器中打开"
+      "opened": "Ko-fi 页面已在您的浏览器中打开。"
     },
     "missing-control-center": {
       "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它。",
       "label": "最后一个控制中心小部件已移除"
     },
     "night-light": {
-      "disabled": "已禁用",
-      "enabled": "已启用",
-      "forced": "强制激活",
-      "normal": "正常模式",
-      "not-installed": "未安装 wlsunset"
+      "disabled": "已禁用。",
+      "enabled": "已启用。",
+      "forced": "强制激活。",
+      "normal": "正常模式。",
+      "not-installed": "未安装 wlsunset。"
     },
     "noctalia-performance": {
-      "disabled": "性能模式已禁用",
-      "enabled": "已启用性能模式",
+      "disabled": "性能模式已禁用。",
+      "enabled": "已启用性能模式。",
       "label": "Noctalia 性能"
     },
     "power-profile": {
-      "changed": "电源模式已更改",
+      "changed": "电源模式已更改。",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "录制器因错误退出",
-      "failed-gpu": "gpu-screen-recorder 意外退出",
-      "failed-start": "开始录制失败",
+      "failed-general": "录制器因错误退出。",
+      "failed-gpu": "gpu-screen-recorder 意外退出。",
+      "failed-start": "开始录制失败。",
       "no-portals": "桌面门户未运行",
       "no-portals-desc": "请启动 xdg-desktop-portal 和一个合成器门户 (wlr/hyprland/gnome/kde)。",
       "not-installed": "gpu-screen-recorder 未安装",
       "not-installed-desc": "请安装 gpu-screen-recorder 以使用屏幕录制功能。",
-      "saved": "录制已保存",
-      "started": "录制已开始",
+      "saved": "录制已保存。",
+      "started": "录制已开始。",
       "stopping": "正在停止录制…"
     },
     "theming-processor-failed": {
-      "desc-generic": "处理模板时遇到错误",
+      "desc-generic": "处理模板时遇到错误。",
       "title-matugen": "Matugen模板处理失败",
       "title-predefined": "预定义的颜色方案处理失败"
     },
     "vpn": {
-      "connected": "已连接到“{name}”",
-      "disconnected": "已断开与“{name}”的连接"
+      "connected": "已连接到“{name}”。",
+      "disconnected": "已断开与“{name}”的连接。"
     },
     "wallpaper-colors": {
-      "disabled": "壁纸颜色已禁用",
-      "enabled": "壁纸颜色已启用",
+      "disabled": "壁纸颜色已禁用。",
+      "enabled": "壁纸颜色已启用。",
       "label": "壁纸颜色生成",
-      "not-installed": "Matugen 未安装 — 壁纸颜色提取所需"
+      "not-installed": "Matugen 未安装 — 壁纸颜色提取所需。"
     },
     "wifi": {
-      "connected": "已连接到 '{ssid}'",
-      "connection-failed": "连接失败",
-      "connection-timeout": "连接超时",
-      "disabled": "已禁用",
-      "disconnected": "已断开与 '{ssid}' 的连接",
-      "enabled": "已启用",
-      "incorrect-password": "密码错误",
-      "network-not-found": "未找到网络"
+      "connected": "已连接到 '{ssid}'。",
+      "connection-failed": "连接失败。",
+      "connection-timeout": "连接超时。",
+      "disabled": "已禁用。",
+      "disconnected": "已断开与 '{ssid}' 的连接。",
+      "enabled": "已启用。",
+      "incorrect-password": "密码错误。",
+      "network-not-found": "未找到网络。"
     }
   },
   "tooltips": {

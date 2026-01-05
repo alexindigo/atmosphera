@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "プラグイン設定"
       },
-      "settings-error-not-loaded": "プラグインは読み込まれていません",
-      "settings-saved": "プラグイン設定を保存しました",
+      "settings-error-not-loaded": "プラグインは読み込まれていません。",
+      "settings-saved": "プラグイン設定を保存しました。",
       "source": {
         "custom": "カスタムソース",
         "official": "公式"
@@ -2305,10 +2305,10 @@
         "add-custom": "カスタムリポジトリを追加",
         "add-dialog": {
           "description": "プラグインソースとして GitHub リポジトリを追加します。",
-          "error": "プラグインソースの追加に失敗しました",
+          "error": "プラグインソースの追加に失敗しました。",
           "name": "リポジトリ名",
           "name-placeholder": "マイカスタムプラグイン",
-          "success": "プラグインソースを追加しました",
+          "success": "プラグインソースを追加しました。",
           "title": "プラグインソースを追加",
           "url": "リポジトリの URL"
         },
@@ -2331,8 +2331,8 @@
       "update": "アップデート",
       "update-all": "すべてアップデート ({count})",
       "update-all-success": "すべてのプラグインをアップデートしました。",
-      "update-available": "{count} 件のプラグインアップデートがあります",
-      "update-available_plural": "{count} 個のプラグインアップデートがあります",
+      "update-available": "新しいプラグインアップデートがあります",
+      "update-available_plural": "新しいプラグインアップデートがあります（{count}個）",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
       "update-pending": "v{current} → v{new} (Noctalia v{required} ga hitsuyou)",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "無効",
-      "enabled": "有効",
+      "disabled": "無効。",
+      "enabled": "有効。",
       "title": "機内モード"
     },
     "battery": {
@@ -2806,18 +2806,18 @@
       "address-copied": "アドレスをクリップボードにコピーしました。",
       "confirm-code": "別のデバイスでコード{value}を確認してください。",
       "connect-failed": "デバイスに接続できませんでした。",
-      "disabled": "無効",
-      "disconnect-failed": "デバイスから切断できませんでした",
+      "disabled": "無効。",
+      "disconnect-failed": "デバイスから切断できませんでした。",
       "discoverable-change-failed": "検出可能な状態の変更に失敗しました。",
       "discoverable-disabled": "検出不能を無効にしました。",
-      "discoverable-enabled": "検出可能が有効",
+      "discoverable-enabled": "検出可能が有効。",
       "display-code": "別のデバイスに{value}のコードを入力してください。",
-      "enabled": "有効",
-      "forget-failed": "デバイスの削除に失敗しました",
-      "pair-failed": "デバイスのペアリングに失敗しました",
-      "passkey-required": "デバイスでパスキーが必要です",
-      "pincode-required": "デバイスがPINコードを要求しています",
-      "state-change-failed": "Bluetoothの状態変更に失敗しました"
+      "enabled": "有効。",
+      "forget-failed": "デバイスの削除に失敗しました。",
+      "pair-failed": "デバイスのペアリングに失敗しました。",
+      "passkey-required": "デバイスでパスキーが必要です。",
+      "pincode-required": "デバイスがPINコードを要求しています。",
+      "state-change-failed": "Bluetoothの状態変更に失敗しました。"
     },
     "clipboard": {
       "unavailable": "クリップボード履歴を利用できません",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "ダークモード",
-      "enabled": "有効",
+      "enabled": "有効。",
       "light-mode": "ライトモード"
     },
     "do-not-disturb": {
@@ -2835,77 +2835,77 @@
       "enabled-desc": "通知は履歴に保存されます。"
     },
     "internet": {
-      "limited": "インターネット未接続"
+      "limited": "インターネット未接続。"
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel は SessionMenu に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call sessionMenu toggle\" を使用してください。",
       "sidepanel-deprecated": "SidePanel は ControlCenter に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call controlCenter toggle\" を使用してください。"
     },
     "keep-awake": {
-      "disabled": "無効",
-      "enabled": "有効"
+      "disabled": "無効。",
+      "enabled": "有効。"
     },
     "keyboard-layout": {
-      "changed": "キーボードレイアウトを {layout} に変更しました",
+      "changed": "キーボードレイアウトを {layout} に変更しました。",
       "title": "キーボード"
     },
     "kofi": {
-      "opened": "ブラウザで Ko-fi ページを開きました"
+      "opened": "ブラウザで Ko-fi ページを開きました。"
     },
     "missing-control-center": {
       "description": "コントロールセンターウィジェットがバーから削除されました。再度アクセスするには、ウィジェットを追加し直す必要があります。バーを右クリックして開くことも可能です。",
       "label": "最後のコントロールセンターが削除されました"
     },
     "night-light": {
-      "disabled": "無効",
-      "enabled": "有効",
-      "forced": "強制的に有効化",
-      "normal": "通常モード",
-      "not-installed": "wlsunset がインストールされていません"
+      "disabled": "無効。",
+      "enabled": "有効。",
+      "forced": "強制的に有効化。",
+      "normal": "通常モード。",
+      "not-installed": "wlsunset がインストールされていません。"
     },
     "noctalia-performance": {
-      "disabled": "パフォーマンスモード: 無効",
-      "enabled": "パフォーマンスモード: 有効",
+      "disabled": "パフォーマンスモード: 無効。",
+      "enabled": "パフォーマンスモード: 有効。",
       "label": "Noctalia パフォーマンス"
     },
     "power-profile": {
-      "changed": "電源プロファイルを変更しました",
+      "changed": "電源プロファイルを変更しました。",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "レコーダーがエラーで終了しました",
-      "failed-gpu": "gpu-screen-recorder が予期せず終了しました",
-      "failed-start": "録画を開始できませんでした",
+      "failed-general": "レコーダーがエラーで終了しました。",
+      "failed-gpu": "gpu-screen-recorder が予期せず終了しました。",
+      "failed-start": "録画を開始できませんでした。",
       "no-portals": "デスクトップポータルが実行されていません",
       "no-portals-desc": "xdg-desktop-portal およびコンポジタポータル (wlr/hyprland/gnome/kde) を起動してください。",
       "not-installed": "gpu-screen-recorder がインストールされていません",
       "not-installed-desc": "画面録画機能を使用するには gpu-screen-recorder をインストールしてください。",
-      "saved": "録画を保存しました",
-      "started": "録画を開始しました",
+      "saved": "録画を保存しました。",
+      "started": "録画を開始しました。",
       "stopping": "録画を停止中…"
     },
     "theming-processor-failed": {
-      "desc-generic": "テンプレートの処理中にエラーが発生しました",
+      "desc-generic": "テンプレートの処理中にエラーが発生しました。",
       "title-matugen": "Matugen テンプレート処理に失敗しました",
       "title-predefined": "プリセット配色の処理に失敗しました"
     },
     "vpn": {
-      "connected": "{name} に接続しました",
-      "disconnected": "{name} から切断しました"
+      "connected": "{name} に接続しました。",
+      "disconnected": "{name} から切断しました。"
     },
     "wallpaper-colors": {
-      "disabled": "壁紙配色の生成: 無効",
-      "enabled": "壁紙配色の生成: 有効",
+      "disabled": "壁紙配色の生成: 無効。",
+      "enabled": "壁紙配色の生成: 有効。",
       "label": "壁紙配色の生成",
-      "not-installed": "Matugen がインストールされていません（壁紙からの色抽出に必要です）"
+      "not-installed": "Matugen がインストールされていません（壁紙からの色抽出に必要です）。"
     },
     "wifi": {
-      "connected": "{ssid} に接続しました",
-      "connection-failed": "接続に失敗しました",
-      "connection-timeout": "接続タイムアウト",
-      "disabled": "無効",
-      "disconnected": "{ssid} から切断しました",
-      "enabled": "有効",
+      "connected": "{ssid} に接続しました。",
+      "connection-failed": "接続に失敗しました。",
+      "connection-timeout": "接続タイムアウト。",
+      "disabled": "無効。",
+      "disconnected": "{ssid} から切断しました。",
+      "enabled": "有効。",
       "incorrect-password": "パスワードが違います。",
       "network-not-found": "ネットワークが見つかりません。"
     }

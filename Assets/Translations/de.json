@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "Plugin-Einstellungen"
       },
-      "settings-error-not-loaded": "Plugin nicht geladen",
-      "settings-saved": "Plugin-Einstellungen gespeichert",
+      "settings-error-not-loaded": "Plugin nicht geladen.",
+      "settings-saved": "Plugin-Einstellungen gespeichert.",
       "source": {
         "custom": "Benutzerdefinierte Quelle",
         "official": "Offiziell"
@@ -2305,10 +2305,10 @@
         "add-custom": "Benutzerdefiniertes Repository hinzufügen",
         "add-dialog": {
           "description": "Ein GitHub-Repository als Plugin-Quelle hinzufügen.",
-          "error": "Fehler beim Hinzufügen der Plugin-Quelle",
+          "error": "Fehler beim Hinzufügen der Plugin-Quelle.",
           "name": "Repository-Name",
           "name-placeholder": "Meine benutzerdefinierten Plugins",
-          "success": "Plugin-Quelle erfolgreich hinzugefügt",
+          "success": "Plugin-Quelle erfolgreich hinzugefügt.",
           "title": "Plugin-Quelle hinzufügen",
           "url": "Repository-URL"
         },
@@ -2331,8 +2331,8 @@
       "update": "Aktualisierung",
       "update-all": "Alle aktualisieren ({count})",
       "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
-      "update-available": "{count} Plugin-Update(s) verfügbar",
-      "update-available_plural": "{count} Plugin-Aktualisierungen verfügbar",
+      "update-available": "Neues Plugin-Update verfügbar",
+      "update-available_plural": "Neue Plugin-Updates verfügbar ({count})",
       "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
       "update-incompatible": "Benötigt Noctalia v{version} oder höher",
       "update-pending": "v{aktuell} → v{neu} (benötigt Noctalia v{erforderlich})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Deaktiviert",
-      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert.",
+      "enabled": "Aktiviert.",
       "title": "Flugmodus"
     },
     "battery": {
@@ -2805,19 +2805,19 @@
     "bluetooth": {
       "address-copied": "Adresse in die Zwischenablage kopiert",
       "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
-      "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
-      "disabled": "Deaktiviert",
-      "disconnect-failed": "Trennen vom Gerät fehlgeschlagen",
-      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen",
-      "discoverable-disabled": "Sichtbar deaktiviert",
-      "discoverable-enabled": "Sichtbar aktiviert",
+      "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen.",
+      "disabled": "Deaktiviert.",
+      "disconnect-failed": "Trennen vom Gerät fehlgeschlagen.",
+      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen.",
+      "discoverable-disabled": "Sichtbar deaktiviert.",
+      "discoverable-enabled": "Sichtbar aktiviert.",
       "display-code": "Gib den Code {value} auf dem anderen Gerät ein.",
-      "enabled": "Aktiviert",
-      "forget-failed": "Entfernen des Geräts fehlgeschlagen",
-      "pair-failed": "Koppeln des Geräts fehlgeschlagen",
-      "passkey-required": "Passwortschlüssel vom Gerät erforderlich",
-      "pincode-required": "PIN-Code vom Gerät erforderlich",
-      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen"
+      "enabled": "Aktiviert.",
+      "forget-failed": "Entfernen des Geräts fehlgeschlagen.",
+      "pair-failed": "Koppeln des Geräts fehlgeschlagen.",
+      "passkey-required": "Passwortschlüssel vom Gerät erforderlich.",
+      "pincode-required": "PIN-Code vom Gerät erforderlich.",
+      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen."
     },
     "clipboard": {
       "unavailable": "Zwischenablageverlauf nicht verfügbar",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "Dunkler Modus",
-      "enabled": "Aktiviert",
+      "enabled": "Aktiviert.",
       "light-mode": "Heller Modus"
     },
     "do-not-disturb": {
@@ -2835,79 +2835,79 @@
       "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf."
     },
     "internet": {
-      "limited": "Verbunden ohne Internet"
+      "limited": "Verbunden ohne Internet."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel wurde in SessionMenu umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel wurde in ControlCenter umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call controlCenter toggle\"."
     },
     "keep-awake": {
-      "disabled": "Deaktiviert",
-      "enabled": "Aktiviert"
+      "disabled": "Deaktiviert.",
+      "enabled": "Aktiviert."
     },
     "keyboard-layout": {
-      "changed": "Tastaturlayout geändert zu {layout}",
+      "changed": "Tastaturlayout geändert zu {layout}.",
       "title": "Tastatur"
     },
     "kofi": {
-      "opened": "Ko-fi-Seite in Ihrem Browser geöffnet"
+      "opened": "Ko-fi-Seite in Ihrem Browser geöffnet."
     },
     "missing-control-center": {
       "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen.",
       "label": "Letztes Kontrollzentrum-Widget entfernt"
     },
     "night-light": {
-      "disabled": "Deaktiviert",
-      "enabled": "Aktiviert",
-      "forced": "Aktivierung erzwungen",
-      "normal": "Normaler Modus",
-      "not-installed": "wlsunset nicht installiert"
+      "disabled": "Deaktiviert.",
+      "enabled": "Aktiviert.",
+      "forced": "Aktivierung erzwungen.",
+      "normal": "Normaler Modus.",
+      "not-installed": "wlsunset nicht installiert."
     },
     "noctalia-performance": {
-      "disabled": "Leistungsmodus deaktiviert",
-      "enabled": "Leistungsmodus aktiviert",
+      "disabled": "Leistungsmodus deaktiviert.",
+      "enabled": "Leistungsmodus aktiviert.",
       "label": "Noctalia-Performance"
     },
     "power-profile": {
-      "changed": "Energieprofil geändert",
+      "changed": "Energieprofil geändert.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Rekorder wurde mit einem Fehler beendet",
-      "failed-gpu": "gpu-screen-recorder wurde unerwartet beendet",
-      "failed-start": "Aufnahme konnte nicht gestartet werden",
+      "failed-general": "Rekorder wurde mit einem Fehler beendet.",
+      "failed-gpu": "gpu-screen-recorder wurde unerwartet beendet.",
+      "failed-start": "Aufnahme konnte nicht gestartet werden.",
       "no-portals": "Desktop-Portale laufen nicht",
       "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nicht installiert",
       "not-installed-desc": "Bitte installieren Sie gpu-screen-recorder, um Bildschirmaufnahme-Funktionen zu nutzen.",
-      "saved": "Aufnahme gespeichert",
-      "started": "Aufnahme gestartet",
+      "saved": "Aufnahme gespeichert.",
+      "started": "Aufnahme gestartet.",
       "stopping": "Aufnahme wird gestoppt…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten",
+      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
       "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
       "title-predefined": "Die Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen"
     },
     "vpn": {
-      "connected": "Verbunden mit '{name}'",
-      "disconnected": "Verbindung zu '{name}' getrennt"
+      "connected": "Verbunden mit '{name}'.",
+      "disconnected": "Verbindung zu '{name}' getrennt."
     },
     "wallpaper-colors": {
-      "disabled": "Hintergrundbild-Farben deaktiviert",
-      "enabled": "Hintergrundbild-Farben aktiviert",
+      "disabled": "Hintergrundbild-Farben deaktiviert.",
+      "enabled": "Hintergrundbild-Farben aktiviert.",
       "label": "Hintergrundfarbengenerierung",
-      "not-installed": "Matugen nicht installiert — erforderlich für Hintergrundbild-Farbextraktion"
+      "not-installed": "Matugen nicht installiert — erforderlich für Hintergrundbild-Farbextraktion."
     },
     "wifi": {
-      "connected": "Verbunden mit '{ssid}'",
-      "connection-failed": "Verbindung fehlgeschlagen",
-      "connection-timeout": "Zeitüberschreitung bei der Verbindung",
-      "disabled": "Deaktiviert",
-      "disconnected": "Getrennt von '{ssid}'",
-      "enabled": "Aktiviert",
-      "incorrect-password": "Falsches Passwort",
-      "network-not-found": "Netzwerk nicht gefunden"
+      "connected": "Verbunden mit '{ssid}'.",
+      "connection-failed": "Verbindung fehlgeschlagen.",
+      "connection-timeout": "Zeitüberschreitung bei der Verbindung.",
+      "disabled": "Deaktiviert.",
+      "disconnected": "Getrennt von '{ssid}'.",
+      "enabled": "Aktiviert.",
+      "incorrect-password": "Falsches Passwort.",
+      "network-not-found": "Netzwerk nicht gefunden."
     }
   },
   "tooltips": {

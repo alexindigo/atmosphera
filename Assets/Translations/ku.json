@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "Mîhengên pêvekê"
       },
-      "settings-error-not-loaded": "Pêvek nehatiye barkirin",
-      "settings-saved": "Ayarlarê pluginê hatin tomarkirin",
+      "settings-error-not-loaded": "Pêvek nehatiye barkirin.",
+      "settings-saved": "Ayarlarê pluginê hatin tomarkirin.",
       "source": {
         "custom": "Çavkaniya xwerû",
         "official": "Fermî"
@@ -2305,10 +2305,10 @@
         "add-custom": "Lê zêde bike embarê xwerû",
         "add-dialog": {
           "description": "Depoyek GitHub wekî çavkaniyek plugin zêde bike.",
-          "error": "Çavkaniya pêvekê nehat zêdekirin",
+          "error": "Çavkaniya pêvekê nehat zêdekirin.",
           "name": "Navê embarê",
           "name-placeholder": "Pêvekên min ên Xweser",
-          "success": "Çavkaniya pêvekê bi serkeftî hate zêdekirin",
+          "success": "Çavkaniya pêvekê bi serkeftî hate zêdekirin.",
           "title": "Çavkaniya pêvekê zêde bike",
           "url": "Girêdanê depoyê"
         },
@@ -2330,9 +2330,9 @@
       "uninstalling": "Rakirina {plugin}...",
       "update": "Nûkirin",
       "update-all": "Hemûyan Nû bike ({count})",
-      "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin",
-      "update-available": "Rojanekirinê {count} pêvekan heye",
-      "update-available_plural": "{count} nûkirinên pêvekê hene",
+      "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin.",
+      "update-available": "Rojanekirina pêveka nû heye",
+      "update-available_plural": "Rojanekirinên pêvekên nû hene ({count})",
       "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}",
       "update-incompatible": "Pêdivî ye Noctalia v{version} an bilindtir",
       "update-pending": "v{niha} → v{nu} (hewce dike Noctalia v{pêwîst})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Neçalakkirî",
-      "enabled": "Çalakkirî",
+      "disabled": "Neçalakkirî.",
+      "enabled": "Çalakkirî.",
       "title": "Rewşa Balafirê"
     },
     "battery": {
@@ -2804,20 +2804,20 @@
     },
     "bluetooth": {
       "address-copied": "Navnîşan li clipboardê hate kopîkirin",
-      "confirm-code": "Koda {value} li ser amûra din piştrast bike",
-      "connect-failed": "Têk çû girêdan bi cîhazê re",
-      "disabled": "Neçalakkirî",
-      "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de",
+      "confirm-code": "Koda {value} li ser amûra din piştrast bike.",
+      "connect-failed": "Têk çû girêdan bi cîhazê re.",
+      "disabled": "Neçalakkirî.",
+      "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de.",
       "discoverable-change-failed": "ڕا گۆڕینی باری دۆزراوە نەکرا.",
-      "discoverable-disabled": "Dîtbar neçalak kirin",
-      "discoverable-enabled": "Hêzdar kirin",
+      "discoverable-disabled": "Dîtbar neçalak kirin.",
+      "discoverable-enabled": "Hêzdar kirin.",
       "display-code": "Koda {value} li ser amûra din binivîse.",
-      "enabled": "Çalakkirî",
-      "forget-failed": "Têk çû ku amûr were jibîrkirin",
-      "pair-failed": "Cîhaz bi hev ve nehat girêdan",
-      "passkey-required": "Pêdivî bi şîfreya amûrê heye",
-      "pincode-required": "Koda PIN ji hêla cîhazê ve tê xwestin",
-      "state-change-failed": "فشل گوهارتنا حاله‌تا بلوتوثێ"
+      "enabled": "Çalakkirî.",
+      "forget-failed": "Têk çû ku amûr were jibîrkirin.",
+      "pair-failed": "Cîhaz bi hev ve nehat girêdan.",
+      "passkey-required": "Pêdivî bi şîfreya amûrê heye.",
+      "pincode-required": "Koda PIN ji hêla cîhazê ve tê xwestin.",
+      "state-change-failed": "فشل گوهارتنا حاله‌تا بلوتوثێ."
     },
     "clipboard": {
       "unavailable": "Dîroka clipboardê tune ye",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "ڕەنگی تاریک",
-      "enabled": "Çalakkirî",
+      "enabled": "Çalakkirî.",
       "light-mode": "ڕووناک"
     },
     "do-not-disturb": {
@@ -2835,18 +2835,18 @@
       "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin."
     },
     "internet": {
-      "limited": "Pêwendîdar bê înternetê"
+      "limited": "Pêwendîdar bê înternetê."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel bo navê SessionMenu hate guhertin, ev bangewaziya IPC dê di demeke nêz de bê bikaranîn. Ji kerema xwe li şûna wê \"ipc call sessionMenu toggle\" bikar bînin.",
       "sidepanel-deprecated": "Panela Alîgir wekî Navenda Kontrolê hate guhertin, ev banga IPC dê di demek nêz de were betal kirin. Ji kerema xwe \"ipc call controlCenter toggle\" bikar bînin."
     },
     "keep-awake": {
-      "disabled": "Neçalakkirî",
-      "enabled": "Çalakkirî"
+      "disabled": "Neçalakkirî.",
+      "enabled": "Çalakkirî."
     },
     "keyboard-layout": {
-      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin",
+      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin.",
       "title": "Klavyeya"
     },
     "kofi": {
@@ -2857,19 +2857,19 @@
       "label": "Amûra dawî ya navenda kontrolê hate rakirin"
     },
     "night-light": {
-      "disabled": "Neçalakkirî",
-      "enabled": "Çalakkirî",
-      "forced": "Çalakdarkirina bi zorê",
-      "normal": "Moda normal",
-      "not-installed": "wlsunset nehatiye sazkirin"
+      "disabled": "Neçalakkirî.",
+      "enabled": "Çalakkirî.",
+      "forced": "Çalakdarkirina bi zorê.",
+      "normal": "Moda normal.",
+      "not-installed": "wlsunset nehatiye sazkirin."
     },
     "noctalia-performance": {
-      "disabled": "Rewşa performansê hat betalkirin",
+      "disabled": "Rewşa performansê hat betalkirin.",
       "enabled": "Rewşa performansê çalak bû.",
       "label": "Performansa Noctalîa"
     },
     "power-profile": {
-      "changed": "Profîla hêzê hate guhertin",
+      "changed": "Profîla hêzê hate guhertin.",
       "profile-name": "{profîl}"
     },
     "recording": {
@@ -2890,24 +2890,24 @@
       "title-predefined": "Pêvajoya şêma rengê ya pêşdiyarkirî têk çû"
     },
     "vpn": {
-      "connected": "Hat girêdan bi '{name}' re",
+      "connected": "Hat girêdan bi '{name}' re.",
       "disconnected": "Ji '{name}' qut bû."
     },
     "wallpaper-colors": {
       "disabled": "Rengên dîwêr hatine bêbandorkirin.",
-      "enabled": "Rengên dîwêr hatine çalak kirin",
+      "enabled": "Rengên dîwêr hatine çalak kirin.",
       "label": "Afirandina rengên dîwêr",
-      "not-installed": "Matugen nehatiye sazkirin — ji bo derxistina rengê dîwêr hewce ye"
+      "not-installed": "Matugen nehatiye sazkirin — ji bo derxistina rengê dîwêr hewce ye."
     },
     "wifi": {
-      "connected": "Bi '{ssid}' ve hat girêdan",
-      "connection-failed": "Girêdan têk çû",
-      "connection-timeout": "Demja girêdanê bi dawî bû",
-      "disabled": "Neçalakkirî",
+      "connected": "Bi '{ssid}' ve hat girêdan.",
+      "connection-failed": "Girêdan têk çû.",
+      "connection-timeout": "Demja girêdanê bi dawî bû.",
+      "disabled": "Neçalakkirî.",
       "disconnected": "Ji '{ssid}' qut bû.",
-      "enabled": "Çalakkirî",
-      "incorrect-password": "Borînpeyva şaş",
-      "network-not-found": "Tor nehat dîtin"
+      "enabled": "Çalakkirî.",
+      "incorrect-password": "Borînpeyva şaş.",
+      "network-not-found": "Tor nehat dîtin."
     }
   },
   "tooltips": {

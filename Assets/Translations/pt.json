@@ -2295,7 +2295,7 @@
       "settings": {
         "tooltip": "Configurações do plugin"
       },
-      "settings-error-not-loaded": "Plugin não carregado",
+      "settings-error-not-loaded": "Plugin não carregado.",
       "settings-saved": "Configurações do plugin salvas.",
       "source": {
         "custom": "Fonte personalizada",
@@ -2331,8 +2331,8 @@
       "update": "Atualização",
       "update-all": "Atualizar Tudo ({count})",
       "update-all-success": "Todos os plugins foram atualizados com sucesso.",
-      "update-available": "{count} atualização(ões) de plugin disponível(eis)",
-      "update-available_plural": "{count} atualizações de plugin disponíveis",
+      "update-available": "Nova atualização de plugin disponível",
+      "update-available_plural": "Novas atualizações de plugin disponíveis ({count})",
       "update-error": "Falha ao atualizar o plugin: {plugin}: {error}",
       "update-incompatible": "Requer Noctalia v{version} ou superior",
       "update-pending": "v{atual} → v{novo} (requer Noctalia v{requerida})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Desativado",
-      "enabled": "Ativado",
+      "disabled": "Desativado.",
+      "enabled": "Ativado.",
       "title": "Modo avião"
     },
     "battery": {
@@ -2805,19 +2805,19 @@
     "bluetooth": {
       "address-copied": "Endereço copiado para a área de transferência",
       "confirm-code": "Confirme o código {value} no outro dispositivo.",
-      "connect-failed": "Falha ao conectar ao dispositivo",
-      "disabled": "Desativado",
-      "disconnect-failed": "Falha ao desconectar do dispositivo",
-      "discoverable-change-failed": "Falha ao alterar o estado de visibilidade",
-      "discoverable-disabled": "Visível desativado",
-      "discoverable-enabled": "Visível ativado",
+      "connect-failed": "Falha ao conectar ao dispositivo.",
+      "disabled": "Desativado.",
+      "disconnect-failed": "Falha ao desconectar do dispositivo.",
+      "discoverable-change-failed": "Falha ao alterar o estado de visibilidade.",
+      "discoverable-disabled": "Visível desativado.",
+      "discoverable-enabled": "Visível ativado.",
       "display-code": "Insira o código {value} no outro dispositivo.",
-      "enabled": "Ativado",
-      "forget-failed": "Falha ao esquecer o dispositivo",
-      "pair-failed": "Falha ao emparelhar o dispositivo",
+      "enabled": "Ativado.",
+      "forget-failed": "Falha ao esquecer o dispositivo.",
+      "pair-failed": "Falha ao emparelhar o dispositivo.",
       "passkey-required": "Senha necessária pelo dispositivo.",
-      "pincode-required": "Código PIN exigido pelo dispositivo",
-      "state-change-failed": "Falha ao alterar o estado do Bluetooth"
+      "pincode-required": "Código PIN exigido pelo dispositivo.",
+      "state-change-failed": "Falha ao alterar o estado do Bluetooth."
     },
     "clipboard": {
       "unavailable": "Histórico da área de transferência indisponível",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "Modo escuro",
-      "enabled": "Ativado",
+      "enabled": "Ativado.",
       "light-mode": "Modo claro"
     },
     "do-not-disturb": {
@@ -2835,79 +2835,79 @@
       "enabled-desc": "Você encontrará essas notificações no seu histórico."
     },
     "internet": {
-      "limited": "Conectado sem Internet"
+      "limited": "Conectado sem Internet."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel foi renomeado para SessionMenu, esta chamada de IPC será descontinuada em breve. Por favor, use \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel foi renomeado para ControlCenter, esta chamada de IPC será descontinuada em breve. Por favor, use \"ipc call controlCenter toggle\"."
     },
     "keep-awake": {
-      "disabled": "Desativado",
-      "enabled": "Ativado"
+      "disabled": "Desativado.",
+      "enabled": "Ativado."
     },
     "keyboard-layout": {
-      "changed": "Layout de teclado alterado para {layout}",
+      "changed": "Layout de teclado alterado para {layout}.",
       "title": "Teclado"
     },
     "kofi": {
-      "opened": "Página do Ko-fi aberta no seu navegador"
+      "opened": "Página do Ko-fi aberta no seu navegador."
     },
     "missing-control-center": {
       "description": "O widget da Central de Controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra.",
       "label": "Último widget da Central de Controle removido"
     },
     "night-light": {
-      "disabled": "Desativada",
-      "enabled": "Ativada",
-      "forced": "Ativação forçada",
-      "normal": "Modo normal",
-      "not-installed": "wlsunset não está instalado"
+      "disabled": "Desativada.",
+      "enabled": "Ativada.",
+      "forced": "Ativação forçada.",
+      "normal": "Modo normal.",
+      "not-installed": "wlsunset não está instalado."
     },
     "noctalia-performance": {
-      "disabled": "Modo de desempenho desativado",
-      "enabled": "Modo de desempenho ativado",
+      "disabled": "Modo de desempenho desativado.",
+      "enabled": "Modo de desempenho ativado.",
       "label": "Noctalia Desempenho"
     },
     "power-profile": {
-      "changed": "Perfil de energia alterado",
+      "changed": "Perfil de energia alterado.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Gravador encerrou com um erro",
-      "failed-gpu": "gpu-screen-recorder encerrou inesperadamente",
-      "failed-start": "Falha ao iniciar a gravação",
+      "failed-general": "Gravador encerrou com um erro.",
+      "failed-gpu": "gpu-screen-recorder encerrou inesperadamente.",
+      "failed-start": "Falha ao iniciar a gravação.",
       "no-portals": "Portais de desktop não estão em execução",
       "no-portals-desc": "Inicie o xdg-desktop-portal e um portal de compositor (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder não instalado",
       "not-installed-desc": "Por favor instale o gpu-screen-recorder para usar as funcionalidades de gravação de tela.",
-      "saved": "Gravação salva",
-      "started": "Gravação iniciada",
+      "saved": "Gravação salva.",
+      "started": "Gravação iniciada.",
       "stopping": "Parando gravação…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Ocorreu um erro ao processar os templates",
+      "desc-generic": "Ocorreu um erro ao processar os templates.",
       "title-matugen": "Falha no processamento do template Matugen",
       "title-predefined": "O processamento do esquema de cores predefinido falhou"
     },
     "vpn": {
-      "connected": "Conectado a '{name}'",
-      "disconnected": "Desconectado de '{name}'"
+      "connected": "Conectado a '{name}'.",
+      "disconnected": "Desconectado de '{name}'."
     },
     "wallpaper-colors": {
-      "disabled": "Cores do papel de parede desativadas",
-      "enabled": "Cores do papel de parede ativadas",
+      "disabled": "Cores do papel de parede desativadas.",
+      "enabled": "Cores do papel de parede ativadas.",
       "label": "Geração de cores para papel de parede",
-      "not-installed": "Matugen não instalado — necessário para extração de cores do papel de parede"
+      "not-installed": "Matugen não instalado — necessário para extração de cores do papel de parede."
     },
     "wifi": {
-      "connected": "Conectado a '{ssid}'",
-      "connection-failed": "Falha na conexão",
-      "connection-timeout": "Tempo de conexão esgotado",
-      "disabled": "Desativado",
-      "disconnected": "Desconectado de '{ssid}'",
-      "enabled": "Ativado",
-      "incorrect-password": "Senha incorreta",
-      "network-not-found": "Rede não encontrada"
+      "connected": "Conectado a '{ssid}'.",
+      "connection-failed": "Falha na conexão.",
+      "connection-timeout": "Tempo de conexão esgotado.",
+      "disabled": "Desativado.",
+      "disconnected": "Desconectado de '{ssid}'.",
+      "enabled": "Ativado.",
+      "incorrect-password": "Senha incorreta.",
+      "network-not-found": "Rede não encontrada."
     }
   },
   "tooltips": {
