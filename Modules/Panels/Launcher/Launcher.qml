@@ -33,7 +33,7 @@ SmartPanel {
 
   preferredWidth: totalBaseWidth
   preferredHeight: Math.round(600 * Style.uiScaleRatio)
-  preferredWidthRatio: 0.3
+  preferredWidthRatio: 0.25
   preferredHeightRatio: 0.5
 
   // Positioning
