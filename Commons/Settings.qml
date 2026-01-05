@@ -284,6 +284,7 @@ Singleton {
       property int shadowOffsetY: 3
       property string language: ""
       property bool allowPanelsOnScreenWithoutBar: true
+      property bool showChangelogOnStartup: true
     }
 
     // ui

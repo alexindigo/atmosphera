@@ -83,7 +83,8 @@
     "shadowOffsetX": 2,
     "shadowOffsetY": 3,
     "language": "",
-    "allowPanelsOnScreenWithoutBar": true
+    "allowPanelsOnScreenWithoutBar": true,
+    "showChangelogOnStartup": true
   },
   "ui": {
     "fontDefault": "",
