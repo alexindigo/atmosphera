@@ -1980,6 +1980,14 @@
           "description": "気温を摂氏 (°C) ではなく華氏 (°F) で表示します。",
           "label": "華氏 (°F) で表示"
         },
+        "hide-city": {
+          "description": "インターフェース全体の天気表示から都市名を隠してください。",
+          "label": "都市名を隠す"
+        },
+        "hide-timezone": {
+          "description": "インターフェース全体の天気表示からタイムゾーンの略称を非表示にする。",
+          "label": "タイムゾーンを隠す"
+        },
         "section": {
           "description": "温度の単位などを選択します。",
           "label": "天気"
@@ -2012,9 +2020,6 @@
         "label": "電源操作"
       },
       "title": "ロック画面"
-    },
-    "region": {
-      "title": "地域"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} を v{version} にアップデートしました。",
       "update-version": "v{current} → v{new}",
       "updating": "更新中..."
+    },
+    "region": {
+      "title": "地域"
     },
     "screen-recorder": {
       "audio": {

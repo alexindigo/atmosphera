@@ -1980,6 +1980,14 @@
           "description": "Sıcaklığı santigrat yerine fahrenhayt cinsinden gösterin.",
           "label": "Sıcaklığı fahrenhayt (°F) cinsinden göster"
         },
+        "hide-city": {
+          "description": "Arayüzün tamamında hava durumu ekranlarında şehir adını gizle.",
+          "label": "Şehir adını gizle"
+        },
+        "hide-timezone": {
+          "description": "Arayüzün tamamındaki hava durumu ekranlarından saat dilimi kısaltmasını gizle.",
+          "label": "Saat dilimini gizle"
+        },
         "section": {
           "description": "Tercih ettiğiniz sıcaklık birimini seçin.",
           "label": "Hava durumu"
@@ -2012,9 +2020,6 @@
         "label": "Güç kontrolleri"
       },
       "title": "Ekran Kilit"
-    },
-    "region": {
-      "title": "Bölge"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} v{version} sürümüne güncellendi",
       "update-version": "v{mevcut} → v{yeni}",
       "updating": "Güncelleniyor..."
+    },
+    "region": {
+      "title": "Bölge"
     },
     "screen-recorder": {
       "audio": {

@@ -177,6 +177,22 @@ ColumnLayout {
       onToggled: checked => Settings.data.location.weatherShowEffects = checked
       enabled: Settings.data.location.weatherEnabled
     }
+
+    NToggle {
+      label: I18n.tr("settings.location.weather.hide-city.label")
+      description: I18n.tr("settings.location.weather.hide-city.description")
+      checked: Settings.data.location.hideWeatherCityName
+      onToggled: checked => Settings.data.location.hideWeatherCityName = checked
+      enabled: Settings.data.location.weatherEnabled
+    }
+
+    NToggle {
+      label: I18n.tr("settings.location.weather.hide-timezone.label")
+      description: I18n.tr("settings.location.weather.hide-timezone.description")
+      checked: Settings.data.location.hideWeatherTimezone
+      onToggled: checked => Settings.data.location.hideWeatherTimezone = checked
+      enabled: Settings.data.location.weatherEnabled
+    }
   }
 
   NDivider {

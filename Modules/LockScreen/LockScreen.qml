@@ -890,6 +890,7 @@ Loader {
                           text: Settings.data.location.name.split(",")[0]
                           pointSize: Style.fontSizeM
                           color: Color.mOnSurfaceVariant
+                          visible: !Settings.data.location.hideWeatherCityName
                         }
 
                         NText {

@@ -1980,6 +1980,14 @@
           "description": "Afficher la température en Fahrenheit au lieu de Celsius.",
           "label": "Afficher la température en Fahrenheit (°F)"
         },
+        "hide-city": {
+          "description": "Masquer le nom de la ville dans les affichages météo de toute l'interface.",
+          "label": "Cacher le nom de la ville"
+        },
+        "hide-timezone": {
+          "description": "Masquer l'abréviation du fuseau horaire des affichages météorologiques dans toute l'interface.",
+          "label": "Masquer le fuseau horaire"
+        },
         "section": {
           "description": "Choisissez votre unité de température préférée.",
           "label": "Météo"
@@ -2012,9 +2020,6 @@
         "label": "Commandes d'alimentation"
       },
       "title": "Écran de verrouillage"
-    },
-    "region": {
-      "title": "Région"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "Mise à jour du plugin {plugin} vers la version {version}.",
       "update-version": "v{actuel} → v{nouveau}",
       "updating": "Mise à jour..."
+    },
+    "region": {
+      "title": "Région"
     },
     "screen-recorder": {
       "audio": {

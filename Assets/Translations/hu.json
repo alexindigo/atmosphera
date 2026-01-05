@@ -1980,6 +1980,14 @@
           "description": "Hőmérséklet megjelenítése Fahrenheitben Celsius helyett.",
           "label": "Hőmérséklet megjelenítése Fahrenheitben (°F)"
         },
+        "hide-city": {
+          "description": "Rejtse el a városnevet az időjárás kijelzőkről a teljes felületen.",
+          "label": "Városnév elrejtése"
+        },
+        "hide-timezone": {
+          "description": "Rejtse el az időzóna rövidítését a felületen megjelenő összes időjárás-előrejelzésből.",
+          "label": "Időzóna elrejtése"
+        },
         "section": {
           "description": "A kívánt hőmérsékleti egység kiválasztása.",
           "label": "Időjárás"
@@ -2012,9 +2020,6 @@
         "label": "Energiakezelés"
       },
       "title": "Zárolási képernyő"
-    },
-    "region": {
-      "title": "Régió"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "A(z) {plugin} frissítve lett a v{version} verzióra",
       "update-version": "v{current} → v{new}",
       "updating": "Frissítés..."
+    },
+    "region": {
+      "title": "Régió"
     },
     "screen-recorder": {
       "audio": {

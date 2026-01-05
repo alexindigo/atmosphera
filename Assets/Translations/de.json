@@ -1980,6 +1980,14 @@
           "description": "Temperatur in Fahrenheit statt Celsius anzeigen.",
           "label": "Temperatur in Fahrenheit (°F) anzeigen"
         },
+        "hide-city": {
+          "description": "Verberge den Stadtnamen in Wetteranzeigen in der gesamten Benutzeroberfläche.",
+          "label": "Stadtname ausblenden"
+        },
+        "hide-timezone": {
+          "description": "Die Zeitzonenabkürzung in Wetteranzeigen in der gesamten Benutzeroberfläche ausblenden.",
+          "label": "Zeitzone ausblenden"
+        },
         "section": {
           "description": "Bevorzugte Temperatureinheit wählen.",
           "label": "Wetter"
@@ -2012,9 +2020,6 @@
         "label": "Leistungsregler"
       },
       "title": "Sperrbildschirm"
-    },
-    "region": {
-      "title": "Region"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} wurde auf v{version} aktualisiert",
       "update-version": "v{aktuell} → v{neu}",
       "updating": "Aktualisierung läuft..."
+    },
+    "region": {
+      "title": "Region"
     },
     "screen-recorder": {
       "audio": {

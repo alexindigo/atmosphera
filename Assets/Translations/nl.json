@@ -1980,6 +1980,14 @@
           "description": "Temperatuur in Fahrenheit weergeven in plaats van Celsius.",
           "label": "Temperatuur in Fahrenheit (°F) weergeven"
         },
+        "hide-city": {
+          "description": "Verberg de stadsnaam in weerweergaven in de hele interface.",
+          "label": "Verberg stadsnaam"
+        },
+        "hide-timezone": {
+          "description": "Verberg de tijdzone-afkorting in alle weerweergaves in de interface.",
+          "label": "Verberg tijdzone"
+        },
         "section": {
           "description": "Kies je voorkeurseenheid voor temperatuur.",
           "label": "Weer"
@@ -2012,9 +2020,6 @@
         "label": "Stroombediening"
       },
       "title": "Vergrendelscherm"
-    },
-    "region": {
-      "title": "Regio"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} is bijgewerkt naar v{version}",
       "update-version": "v{huidig} → v{nieuw}",
       "updating": "Bezig met updaten..."
+    },
+    "region": {
+      "title": "Regio"
     },
     "screen-recorder": {
       "audio": {

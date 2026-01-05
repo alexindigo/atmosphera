@@ -1980,6 +1980,14 @@
           "description": "Germahiya bi Fahrenheit nîşan bide, ne bi Celsius.",
           "label": "Pîvana germahiyê bi Fahrenheit (°F) nîşan bide"
         },
+        "hide-city": {
+          "description": "Navê bajarê ji dîmenên hewayê yên li seranserê navbeynê veşêre.",
+          "label": "Veşêre nameyê sûke"
+        },
+        "hide-timezone": {
+          "description": "Demjim kurtkirina herêma demjimêrê ji pêşandanên hewayê li seranserê navbeynê.",
+          "label": "Demjimêrê veşêre"
+        },
         "section": {
           "description": "Yekîneya germahiya xweya bijarte hilbijêrin.",
           "label": "Rewşa bayê"
@@ -2012,9 +2020,6 @@
         "label": "Kontrolên hêzê"
       },
       "title": "Dîmendera kilîtkirinê"
-    },
-    "region": {
-      "title": "Herêm"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} hate nûkirin bo v{version}.",
       "update-version": "v{niha} → v{nû}",
       "updating": "Tê rojanekirin..."
+    },
+    "region": {
+      "title": "Herêm"
     },
     "screen-recorder": {
       "audio": {

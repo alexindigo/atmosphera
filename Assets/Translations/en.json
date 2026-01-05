@@ -1980,6 +1980,14 @@
           "description": "Display temperature in Fahrenheit instead of Celsius.",
           "label": "Display temperature in Fahrenheit (°F)"
         },
+        "hide-city": {
+          "description": "Hide the city name from weather displays throughout the interface.",
+          "label": "Hide city name"
+        },
+        "hide-timezone": {
+          "description": "Hide the timezone abbreviation from weather displays throughout the interface.",
+          "label": "Hide timezone"
+        },
         "section": {
           "description": "Choose your preferred temperature unit.",
           "label": "Weather"
@@ -2012,9 +2020,6 @@
         "label": "Power controls"
       },
       "title": "Lock Screen"
-    },
-    "region": {
-      "title": "Region"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "Updated {plugin} to v{version}",
       "update-version": "v{current} → v{new}",
       "updating": "Updating..."
+    },
+    "region": {
+      "title": "Region"
     },
     "screen-recorder": {
       "audio": {

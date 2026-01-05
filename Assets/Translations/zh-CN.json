@@ -1980,6 +1980,14 @@
           "description": "以华氏度而非摄氏度显示温度。",
           "label": "以华氏度显示温度 (°F)"
         },
+        "hide-city": {
+          "description": "在整个界面中隐藏天气显示中的城市名称。",
+          "label": "隐藏城市名称"
+        },
+        "hide-timezone": {
+          "description": "在整个界面中，隐藏天气显示中的时区缩写。",
+          "label": "隐藏时区"
+        },
         "section": {
           "description": "选择您喜欢的温度单位。",
           "label": "天气"
@@ -2012,9 +2020,6 @@
         "label": "电源控制"
       },
       "title": "锁屏"
-    },
-    "region": {
-      "title": "地区"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "已将 {plugin} 更新至 v{version}",
       "update-version": "v{当前} → v{新}",
       "updating": "正在更新..."
+    },
+    "region": {
+      "title": "地区"
     },
     "screen-recorder": {
       "audio": {

@@ -1980,6 +1980,14 @@
           "description": "Wyświetlaj temperaturę w stopniach Fahrenheita zamiast Celsjusza.",
           "label": "Pokaż temperaturę w Fahrenheitach (°F)"
         },
+        "hide-city": {
+          "description": "Ukryj nazwę miasta na wyświetlaczach pogody w całym interfejsie.",
+          "label": "Ukryj nazwę miasta."
+        },
+        "hide-timezone": {
+          "description": "Ukryj skrót strefy czasowej na wyświetlaczach pogody w całym interfejsie.",
+          "label": "Ukryj strefę czasową"
+        },
         "section": {
           "description": "Wybierz preferowaną jednostkę temperatury.",
           "label": "Pogoda"
@@ -2012,9 +2020,6 @@
         "label": "Kontrolki zasilania"
       },
       "title": "Ekran blokady"
-    },
-    "region": {
-      "title": "Region"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "Zaktualizowano {plugin} do v{version}",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."
+    },
+    "region": {
+      "title": "Region"
     },
     "screen-recorder": {
       "audio": {

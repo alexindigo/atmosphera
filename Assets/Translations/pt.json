@@ -1980,6 +1980,14 @@
           "description": "Exibe a temperatura em Fahrenheit em vez de Celsius.",
           "label": "Exibir temperatura em Fahrenheit (°F)"
         },
+        "hide-city": {
+          "description": "Oculte o nome da cidade das exibições de clima em toda a interface.",
+          "label": "Ocultar nome da cidade"
+        },
+        "hide-timezone": {
+          "description": "Oculte a abreviação do fuso horário das exibições de clima em toda a interface.",
+          "label": "Ocultar fuso horário"
+        },
         "section": {
           "description": "Escolha sua unidade de temperatura preferida.",
           "label": "Clima"
@@ -2012,9 +2020,6 @@
         "label": "Controles de energia"
       },
       "title": "Tela de bloqueio"
-    },
-    "region": {
-      "title": "Região"
     },
     "network": {
       "bluetooth": {
@@ -2339,6 +2344,9 @@
       "update-success": "{plugin} atualizado para a versão {version}",
       "update-version": "v{atual} → v{novo}",
       "updating": "Atualizando..."
+    },
+    "region": {
+      "title": "Região"
     },
     "screen-recorder": {
       "audio": {
