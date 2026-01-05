@@ -10,11 +10,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.user-interface.section.label")
-    description: I18n.tr("settings.user-interface.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
     description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
@@ -32,30 +27,6 @@ ColumnLayout {
     isSettings: true
     defaultValue: Settings.getDefaultValue("general.allowPanelsOnScreenWithoutBar")
     onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
-  }
-
-  NComboBox {
-    label: I18n.tr("settings.user-interface.settings-panel-mode.label")
-    description: I18n.tr("settings.user-interface.settings-panel-mode.description")
-    Layout.fillWidth: true
-    model: [
-      {
-        "key": "attached",
-        "name": I18n.tr("options.settings-panel-mode.attached")
-      },
-      {
-        "key": "centered",
-        "name": I18n.tr("options.settings-panel-mode.centered")
-      },
-      {
-        "key": "window",
-        "name": I18n.tr("options.settings-panel-mode.window")
-      }
-    ]
-    currentKey: Settings.data.ui.settingsPanelMode
-    isSettings: true
-    defaultValue: Settings.getDefaultValue("ui.settingsPanelMode")
-    onSelected: key => Settings.data.ui.settingsPanelMode = key
   }
 
   NValueSlider {
@@ -84,5 +55,33 @@ ColumnLayout {
     defaultValue: Settings.getDefaultValue("general.dimmerOpacity")
     onMoved: value => Settings.data.general.dimmerOpacity = value
     text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NComboBox {
+    label: I18n.tr("settings.user-interface.settings-panel-mode.label")
+    description: I18n.tr("settings.user-interface.settings-panel-mode.description")
+    Layout.fillWidth: true
+    model: [
+      {
+        "key": "attached",
+        "name": I18n.tr("options.settings-panel-mode.attached")
+      },
+      {
+        "key": "centered",
+        "name": I18n.tr("options.settings-panel-mode.centered")
+      },
+      {
+        "key": "window",
+        "name": I18n.tr("options.settings-panel-mode.window")
+      }
+    ]
+    currentKey: Settings.data.ui.settingsPanelMode
+    isSettings: true
+    defaultValue: Settings.getDefaultValue("ui.settingsPanelMode")
+    onSelected: key => Settings.data.ui.settingsPanelMode = key
   }
 }

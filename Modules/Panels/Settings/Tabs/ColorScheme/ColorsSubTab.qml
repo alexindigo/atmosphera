@@ -18,7 +18,6 @@ ColumnLayout {
   property var schemeColorsCache: ({})
   property int cacheVersion: 0
 
-  signal checkMatugen
   signal openDownloadPopup
 
   function extractSchemeName(schemePath) {
@@ -106,11 +105,6 @@ ColumnLayout {
         }
       }
     }
-  }
-
-  NHeader {
-    label: I18n.tr("settings.color-scheme.color-source.section.label")
-    description: I18n.tr("settings.color-scheme.color-source.section.description")
   }
 
   NToggle {
@@ -203,12 +197,11 @@ ColumnLayout {
     enabled: ProgramCheckerService.matugenAvailable
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
+                 Settings.data.colorSchemes.useWallpaperColors = checked;
                  if (checked) {
-                   root.checkMatugen();
+                   AppThemeService.generate();
                  } else {
-                   Settings.data.colorSchemes.useWallpaperColors = false;
                    ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.disabled"), "settings-color-scheme");
-
                    if (Settings.data.colorSchemes.predefinedScheme) {
                      ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
                    }
@@ -284,13 +277,6 @@ ColumnLayout {
       label: I18n.tr("settings.color-scheme.predefined.section.label")
       description: I18n.tr("settings.color-scheme.predefined.section.description")
       Layout.fillWidth: true
-    }
-
-    NButton {
-      text: I18n.tr("settings.color-scheme.download.button")
-      icon: "download"
-      onClicked: root.openDownloadPopup()
-      Layout.alignment: Qt.AlignRight
     }
 
     GridLayout {
@@ -414,6 +400,14 @@ ColumnLayout {
           }
         }
       }
+    }
+
+    NButton {
+      text: I18n.tr("settings.color-scheme.download.button")
+      icon: "download"
+      onClicked: root.openDownloadPopup()
+      Layout.alignment: Qt.AlignRight
+      Layout.topMargin: Style.marginS
     }
   }
 }

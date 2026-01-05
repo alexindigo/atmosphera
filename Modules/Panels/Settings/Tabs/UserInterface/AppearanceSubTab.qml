@@ -9,11 +9,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.user-interface.appearance.section.label")
-    description: I18n.tr("settings.user-interface.appearance.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.user-interface.tooltips.label")
     description: I18n.tr("settings.user-interface.tooltips.description")

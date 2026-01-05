@@ -9,11 +9,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.general.screen-corners.section.label")
-    description: I18n.tr("settings.general.screen-corners.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.general.screen-corners.show-corners.label")
     description: I18n.tr("settings.general.screen-corners.show-corners.description")
