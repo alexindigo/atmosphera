@@ -352,6 +352,21 @@ Singleton {
           callback(false, collision.message);
         return;
       }
+
+      // Check Noctalia version compatibility (skip when updating - that's handled in performUpdateCheck)
+      if (pluginMetadata.minNoctaliaVersion) {
+        var noctaliaVersion = UpdateService.baseVersion;
+        if (compareVersions(pluginMetadata.minNoctaliaVersion, noctaliaVersion) > 0) {
+          var incompatibleMsg = I18n.tr("settings.plugins.install-incompatible", {
+                                          "plugin": pluginMetadata.name,
+                                          "version": pluginMetadata.minNoctaliaVersion
+                                        });
+          Logger.w("PluginService", "Plugin incompatible:", incompatibleMsg);
+          if (callback)
+            callback(false, incompatibleMsg);
+          return;
+        }
+      }
     }
 
     // Generate composite key for the plugin folder
