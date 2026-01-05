@@ -2295,8 +2295,8 @@
       "settings": {
         "tooltip": "Налаштування плагіна"
       },
-      "settings-error-not-loaded": "Плагін не завантажено",
-      "settings-saved": "Налаштування плагіна збережено",
+      "settings-error-not-loaded": "Плагін не завантажено.",
+      "settings-saved": "Налаштування плагіна збережено.",
       "source": {
         "custom": "Власне джерело",
         "official": "Офіційний"
@@ -2305,10 +2305,10 @@
         "add-custom": "Додати власний репозиторій",
         "add-dialog": {
           "description": "Додати репозиторій GitHub як джерело плагінів.",
-          "error": "Не вдалося додати джерело плагінів",
+          "error": "Не вдалося додати джерело плагінів.",
           "name": "Назва репозиторію",
           "name-placeholder": "Мої власні плагіни",
-          "success": "Джерело плагіна успішно додано",
+          "success": "Джерело плагіна успішно додано.",
           "title": "Додати джерело плагіна",
           "url": "URL репозиторію"
         },
@@ -2331,8 +2331,8 @@
       "update": "Оновлення",
       "update-all": "Оновити все ({count})",
       "update-all-success": "Усі плагіни успішно оновлено.",
-      "update-available": "Доступно оновлень для {count} плагінів",
-      "update-available_plural": "Доступно {count} оновлень плагінів",
+      "update-available": "Доступне нове оновлення плагіна",
+      "update-available_plural": "Доступні нові оновлення плагінів ({count})",
       "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
       "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
@@ -2794,8 +2794,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Вимкнено",
-      "enabled": "Увімкнено",
+      "disabled": "Вимкнено.",
+      "enabled": "Увімкнено.",
       "title": "Режим польоту"
     },
     "battery": {
@@ -2803,21 +2803,21 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
-      "address-copied": "Адресу скопійовано до буфера обміну",
-      "confirm-code": "Підтвердьте код {value} на іншому пристрої",
+      "address-copied": "Адресу скопійовано до буфера обміну.",
+      "confirm-code": "Підтвердьте код {value} на іншому пристрої.",
       "connect-failed": "Не вдалося під'єднатися до пристрою.",
-      "disabled": "Вимкнено",
-      "disconnect-failed": "Не вдалося від'єднатися від пристрою",
-      "discoverable-change-failed": "Не вдалося змінити стан видимості",
-      "discoverable-disabled": "Виявлення вимкнено",
-      "discoverable-enabled": "Виявлення ввімкнено",
-      "display-code": "Введіть код {value} на іншому пристрої",
-      "enabled": "Увімкнено",
-      "forget-failed": "Не вдалося забути пристрій",
-      "pair-failed": "Не вдалося створити пару з пристроєм",
-      "passkey-required": "Потрібен ключ доступу, що зберігається на пристрої",
-      "pincode-required": "PIN-код, необхідний пристроєм",
-      "state-change-failed": "Не вдалося змінити стан Bluetooth"
+      "disabled": "Вимкнено.",
+      "disconnect-failed": "Не вдалося від'єднатися від пристрою.",
+      "discoverable-change-failed": "Не вдалося змінити стан видимості.",
+      "discoverable-disabled": "Виявлення вимкнено.",
+      "discoverable-enabled": "Виявлення ввімкнено.",
+      "display-code": "Введіть код {value} на іншому пристрої.",
+      "enabled": "Увімкнено.",
+      "forget-failed": "Не вдалося забути пристрій.",
+      "pair-failed": "Не вдалося створити пару з пристроєм.",
+      "passkey-required": "Потрібен ключ доступу, що зберігається на пристрої.",
+      "pincode-required": "PIN-код, необхідний пристроєм.",
+      "state-change-failed": "Не вдалося змінити стан Bluetooth."
     },
     "clipboard": {
       "unavailable": "Історія буфера обміну недоступна",
@@ -2825,7 +2825,7 @@
     },
     "dark-mode": {
       "dark-mode": "Темний режим",
-      "enabled": "Увімкнено",
+      "enabled": "Увімкнено.",
       "light-mode": "Світлий режим"
     },
     "do-not-disturb": {
@@ -2835,33 +2835,33 @@
       "enabled-desc": "Ви знайдете ці сповіщення в своїй історії."
     },
     "internet": {
-      "limited": "Підключено без інтернету"
+      "limited": "Підключено без інтернету."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel перейменовано на SessionMenu, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call sessionMenu toggle\" замість цього.",
       "sidepanel-deprecated": "SidePanel перейменовано на ControlCenter, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call controlCenter toggle\" замість цього."
     },
     "keep-awake": {
-      "disabled": "Вимкнено",
-      "enabled": "Увімкнено"
+      "disabled": "Вимкнено.",
+      "enabled": "Увімкнено."
     },
     "keyboard-layout": {
-      "changed": "Розкладка клавіатури змінена на {layout}",
+      "changed": "Розкладка клавіатури змінена на {layout}.",
       "title": "Клавіатура"
     },
     "kofi": {
-      "opened": "Сторінка Ko-fi відкрита у вашому браузері"
+      "opened": "Сторінка Ko-fi відкрита у вашому браузері."
     },
     "missing-control-center": {
       "description": "Віджет Центру керування видалено з панелі. Щоб знову отримати до нього доступ з панелі, вам потрібно повторно додати віджет. Ви також можете відкрити його, клацнувши правою кнопкою миші на панелі.",
       "label": "Останній віджет Центру керування видалено"
     },
     "night-light": {
-      "disabled": "Вимкнено",
-      "enabled": "Увімкнено",
-      "forced": "Примусова активація",
-      "normal": "Звичайний режим",
-      "not-installed": "wlsunset не встановлено"
+      "disabled": "Вимкнено.",
+      "enabled": "Увімкнено.",
+      "forced": "Примусова активація.",
+      "normal": "Звичайний режим.",
+      "not-installed": "wlsunset не встановлено."
     },
     "noctalia-performance": {
       "disabled": "Режим продуктивності вимкнено.",
@@ -2869,45 +2869,45 @@
       "label": "Продуктивність Noctalia"
     },
     "power-profile": {
-      "changed": "Профіль живлення змінено",
+      "changed": "Профіль живлення змінено.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Засіб запису завершився з помилкою",
-      "failed-gpu": "gpu-screen-recorder несподівано завершився",
+      "failed-general": "Засіб запису завершився з помилкою.",
+      "failed-gpu": "gpu-screen-recorder несподівано завершився.",
       "failed-start": "Не вдалося розпочати запис",
       "no-portals": "Портали робочого столу не запущені",
       "no-portals-desc": "Запустіть xdg-desktop-portal та портал композитора (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder не встановлено",
       "not-installed-desc": "Будь ласка, встановіть gpu-screen-recorder для використання функцій запису екрана.",
-      "saved": "Запис збережено",
-      "started": "Запис розпочато",
+      "saved": "Запис збережено.",
+      "started": "Запис розпочато.",
       "stopping": "Зупинка запису…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Виникла помилка під час обробки шаблонів",
+      "desc-generic": "Виникла помилка під час обробки шаблонів.",
       "title-matugen": "Помилка обробки шаблонів Matugen",
       "title-predefined": "Помилка обробки попередньо визначеної колірної схеми"
     },
     "vpn": {
-      "connected": "Підключено до '{name}'",
-      "disconnected": "Відключено від '{name}'"
+      "connected": "Підключено до '{name}'.",
+      "disconnected": "Відключено від '{name}'."
     },
     "wallpaper-colors": {
-      "disabled": "Кольори шпалер вимкнено",
-      "enabled": "Кольори шпалер увімкнено",
+      "disabled": "Кольори шпалер вимкнено.",
+      "enabled": "Кольори шпалер увімкнено.",
       "label": "Генерація кольорів шпалер",
-      "not-installed": "Matugen не встановлено — потрібний для витягу кольорів зі шпалер"
+      "not-installed": "Matugen не встановлено — потрібний для витягу кольорів зі шпалер."
     },
     "wifi": {
-      "connected": "Підключено до '{ssid}'",
-      "connection-failed": "З'єднання не вдалося",
+      "connected": "Підключено до '{ssid}'.",
+      "connection-failed": "З'єднання не вдалося.",
       "connection-timeout": "Час очікування з'єднання вичерпано.",
-      "disabled": "Вимкнено",
-      "disconnected": "Відключено від '{ssid}'",
-      "enabled": "Увімкнено",
-      "incorrect-password": "Неправильний пароль",
-      "network-not-found": "Мережу не знайдено"
+      "disabled": "Вимкнено.",
+      "disconnected": "Відключено від '{ssid}'.",
+      "enabled": "Увімкнено.",
+      "incorrect-password": "Неправильний пароль.",
+      "network-not-found": "Мережу не знайдено."
     }
   },
   "tooltips": {
