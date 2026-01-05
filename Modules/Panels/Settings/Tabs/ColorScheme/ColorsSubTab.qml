@@ -415,19 +415,5 @@ ColumnLayout {
         }
       }
     }
-
-    NCheckbox {
-      Layout.fillWidth: true
-      label: I18n.tr("settings.color-scheme.predefined.generate-templates.label")
-      description: I18n.tr("settings.color-scheme.predefined.generate-templates.description")
-      checked: Settings.data.colorSchemes.generateTemplatesForPredefined
-      onToggled: checked => {
-                   Settings.data.colorSchemes.generateTemplatesForPredefined = checked;
-                   if (!Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.predefinedScheme) {
-                     ColorSchemeService.applyScheme(Settings.data.colorSchemes.predefinedScheme);
-                   }
-                 }
-      Layout.topMargin: Style.marginL
-    }
   }
 }
