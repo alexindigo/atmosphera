@@ -529,6 +529,47 @@ Loader {
               }
             }
 
+            // Info notification
+            Rectangle {
+              width: infoRowLayout.implicitWidth + Style.marginXL * 1.5
+              height: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 280 : 360) * Style.uiScaleRatio
+              radius: Style.radiusL
+              color: Color.mTertiary
+              border.color: Color.mTertiary
+              border.width: 1
+              visible: lockContext.showInfo && lockContext.infoMessage
+              opacity: visible ? 1.0 : 0.0
+
+              RowLayout {
+                id: infoRowLayout
+                anchors.centerIn: parent
+                spacing: 10
+
+                NIcon {
+                  icon: "circle-key"
+                  pointSize: Style.fontSizeXL
+                  color: Color.mOnTertiary
+                }
+
+                NText {
+                  text: lockContext.infoMessage
+                  color: Color.mOnTertiary
+                  pointSize: Style.fontSizeL
+                  horizontalAlignment: Text.AlignHCenter
+                }
+              }
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: 300
+                  easing.type: Easing.OutCubic
+                }
+              }
+            }
+
             // Error notification
             Rectangle {
               width: errorRowLayout.implicitWidth + Style.marginXL * 1.5
@@ -550,7 +591,7 @@ Loader {
 
                 NIcon {
                   icon: "alert-circle"
-                  pointSize: Style.fontSizeL
+                  pointSize: Style.fontSizeXL
                   color: Color.mOnError
                 }
 
@@ -1042,7 +1083,7 @@ Loader {
                         width: 0
                         height: 0
                         visible: false
-                        enabled: !lockContext.unlockInProgress
+                        enabled: !lockContext.unlockInProgress || lockContext.waitingForPassword
                         font.pointSize: Style.fontSizeM
                         color: Color.mPrimary
                         echoMode: parent.parent.passwordVisible ? TextInput.Normal : TextInput.Password
@@ -1197,7 +1238,7 @@ Loader {
                       color: submitButtonArea.containsMouse ? Color.mPrimary : "transparent"
                       border.color: Color.mPrimary
                       border.width: Style.borderS
-                      enabled: !lockContext.unlockInProgress
+                      enabled: !lockContext.unlockInProgress || lockContext.waitingForPassword
 
                       NIcon {
                         anchors.centerIn: parent
