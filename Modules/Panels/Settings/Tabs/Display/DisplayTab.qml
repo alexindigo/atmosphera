@@ -1,12 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
 import Quickshell.Io
-import "."
 import qs.Commons
-import qs.Services.System
-import qs.Services.Theming
+import qs.Services.Location
 import qs.Services.UI
 import qs.Widgets
 
@@ -33,51 +30,25 @@ ColumnLayout {
     }
   }
 
-  // Simple process to check if matugen exists
+  // Check for wlsunset availability when enabling Night Light
   Process {
-    id: matugenCheck
-    command: ["sh", "-c", "command -v matugen"]
+    id: wlsunsetCheck
+    command: ["sh", "-c", "command -v wlsunset"]
     running: false
 
     onExited: function (exitCode) {
       if (exitCode === 0) {
-        Settings.data.colorSchemes.useWallpaperColors = true;
-        AppThemeService.generate();
-        ToastService.showNotice(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.enabled"), "settings-color-scheme");
+        Settings.data.nightLight.enabled = true;
+        NightLightService.apply();
+        ToastService.showNotice(I18n.tr("settings.display.night-light.section.label"), I18n.tr("toast.night-light.enabled"), "nightlight-on");
       } else {
-        ToastService.showWarning(I18n.tr("toast.wallpaper-colors.label"), I18n.tr("toast.wallpaper-colors.not-installed"));
+        Settings.data.nightLight.enabled = false;
+        ToastService.showWarning(I18n.tr("settings.display.night-light.section.label"), I18n.tr("toast.night-light.not-installed"));
       }
     }
 
     stdout: StdioCollector {}
     stderr: StdioCollector {}
-  }
-
-  // Download popup
-  Loader {
-    id: downloadPopupLoader
-    active: false
-    sourceComponent: SchemeDownloader {
-      parent: Overlay.overlay
-    }
-
-    property bool pendingOpen: false
-
-    function open() {
-      pendingOpen = true;
-      active = true;
-      if (item) {
-        item.open();
-        pendingOpen = false;
-      }
-    }
-
-    onItemChanged: {
-      if (item && pendingOpen) {
-        item.open();
-        pendingOpen = false;
-      }
-    }
   }
 
   NTabBar {
@@ -87,12 +58,12 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.color-scheme.tabs.colors")
+      text: I18n.tr("settings.display.tabs.brightness")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.color-scheme.tabs.templates")
+      text: I18n.tr("settings.display.tabs.night-light")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
@@ -107,11 +78,10 @@ ColumnLayout {
     id: tabView
     currentIndex: subTabBar.currentIndex
 
-    ColorsSubTab {
+    BrightnessSubTab {}
+    NightLightSubTab {
       timeOptions: timeOptions
-      onCheckMatugen: matugenCheck.running = true
-      onOpenDownloadPopup: downloadPopupLoader.open()
+      onCheckWlsunset: wlsunsetCheck.running = true
     }
-    TemplatesSubTab {}
   }
 }

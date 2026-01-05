@@ -4,8 +4,16 @@ import QtQuick.Layouts
 import Quickshell
 import qs.Commons
 import qs.Modules.Panels.Settings.Tabs
+import qs.Modules.Panels.Settings.Tabs.Audio
+import qs.Modules.Panels.Settings.Tabs.Bar
 import qs.Modules.Panels.Settings.Tabs.ColorScheme
+import qs.Modules.Panels.Settings.Tabs.Display
+import qs.Modules.Panels.Settings.Tabs.Dock
+import qs.Modules.Panels.Settings.Tabs.Notifications
 import qs.Modules.Panels.Settings.Tabs.SessionMenu
+import qs.Modules.Panels.Settings.Tabs.SystemMonitor
+import qs.Modules.Panels.Settings.Tabs.UserInterface
+import qs.Modules.Panels.Settings.Tabs.Wallpaper
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
