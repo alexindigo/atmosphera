@@ -2301,8 +2301,8 @@
       "settings": {
         "tooltip": "Plugin instellingen"
       },
-      "settings-error-not-loaded": "Plugin niet geladen",
-      "settings-saved": "Plugininstellingen opgeslagen",
+      "settings-error-not-loaded": "Plugin niet geladen.",
+      "settings-saved": "Plugininstellingen opgeslagen.",
       "source": {
         "custom": "Aangepaste bron",
         "official": "Officieel"
@@ -2311,10 +2311,10 @@
         "add-custom": "Aangepaste repository toevoegen",
         "add-dialog": {
           "description": "Voeg een GitHub repository toe als een pluginbron.",
-          "error": "Pluginbron toevoegen mislukt",
+          "error": "Pluginbron toevoegen mislukt.",
           "name": "Repositorynaam",
           "name-placeholder": "Mijn Aangepaste Plugins",
-          "success": "Pluginbron succesvol toegevoegd",
+          "success": "Pluginbron succesvol toegevoegd.",
           "title": "Pluginbron toevoegen",
           "url": "Repository URL"
         },
@@ -2336,9 +2336,9 @@
       "uninstalling": "{plugin} verwijderen...",
       "update": "Update",
       "update-all": "Alles bijwerken ({count})",
-      "update-all-success": "Alle plugins succesvol bijgewerkt",
-      "update-available": "{count} plugin(s) update(s) beschikbaar",
-      "update-available_plural": "{count} plugin updates beschikbaar",
+      "update-all-success": "Alle plugins succesvol bijgewerkt.",
+      "update-available": "Nieuwe plugin update beschikbaar",
+      "update-available_plural": "Nieuwe plugin updates beschikbaar ({count})",
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
       "update-incompatible": "Vereist Noctalia v{version} of hoger",
       "update-pending": "v{current} → v{new} (vereist Noctalia v{required})",
@@ -2803,8 +2803,8 @@
   },
   "toast": {
     "airplane-mode": {
-      "disabled": "Uitgeschakeld",
-      "enabled": "Ingeschakeld",
+      "disabled": "Uitgeschakeld.",
+      "enabled": "Ingeschakeld.",
       "title": "Vliegtuigmodus"
     },
     "battery": {
@@ -2812,21 +2812,21 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
-      "address-copied": "Adres gekopieerd naar klembord",
-      "confirm-code": "Bevestig code {value} op het andere apparaat",
-      "connect-failed": "Verbinding met apparaat mislukt",
-      "disabled": "Uitgeschakeld",
-      "disconnect-failed": "Verbinding verbreken met apparaat mislukt",
-      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt",
-      "discoverable-disabled": "Zichtbaar uitgeschakeld",
-      "discoverable-enabled": "Zichtbaar ingeschakeld",
-      "display-code": "Voer code {value} in op het andere apparaat",
-      "enabled": "Ingeschakeld",
-      "forget-failed": "Apparaat vergeten mislukt",
-      "pair-failed": "Apparaat koppelen mislukt",
-      "passkey-required": "Passkey vereist door het apparaat",
-      "pincode-required": "PIN-code vereist door het apparaat",
-      "state-change-failed": "Bluetooth‑status wijzigen mislukt"
+      "address-copied": "Adres gekopieerd naar klembord.",
+      "confirm-code": "Bevestig code {value} op het andere apparaat.",
+      "connect-failed": "Verbinding met apparaat mislukt.",
+      "disabled": "Uitgeschakeld.",
+      "disconnect-failed": "Verbinding verbreken met apparaat mislukt.",
+      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt.",
+      "discoverable-disabled": "Zichtbaar uitgeschakeld.",
+      "discoverable-enabled": "Zichtbaar ingeschakeld.",
+      "display-code": "Voer code {value} in op het andere apparaat.",
+      "enabled": "Ingeschakeld.",
+      "forget-failed": "Apparaat vergeten mislukt.",
+      "pair-failed": "Apparaat koppelen mislukt.",
+      "passkey-required": "Passkey vereist door het apparaat.",
+      "pincode-required": "PIN-code vereist door het apparaat.",
+      "state-change-failed": "Bluetooth‑status wijzigen mislukt."
     },
     "clipboard": {
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
@@ -2834,7 +2834,7 @@
     },
     "dark-mode": {
       "dark-mode": "Donkere modus",
-      "enabled": "Ingeschakeld",
+      "enabled": "Ingeschakeld.",
       "light-mode": "Lichte modus"
     },
     "do-not-disturb": {
@@ -2844,79 +2844,79 @@
       "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis."
     },
     "internet": {
-      "limited": "Verbonden zonder internet"
+      "limited": "Verbonden zonder internet."
     },
     "ipc": {
       "powerpanel-deprecated": "PowerPanel is hernoemd naar SessionMenu, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel is hernoemd naar ControlCenter, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call controlCenter toggle\"."
     },
     "keep-awake": {
-      "disabled": "\"Wakker houden\" uitgeschakeld",
-      "enabled": "\"Wakker houden\" ingeschakeld"
+      "disabled": "\"Wakker houden\" uitgeschakeld.",
+      "enabled": "\"Wakker houden\" ingeschakeld."
     },
     "keyboard-layout": {
-      "changed": "Toetsenbordindeling gewijzigd naar {layout}",
+      "changed": "Toetsenbordindeling gewijzigd naar {layout}.",
       "title": "Toetsenbord"
     },
     "kofi": {
-      "opened": "Ko-fi-pagina geopend in je browser"
+      "opened": "Ko-fi-pagina geopend in je browser."
     },
     "missing-control-center": {
       "description": "De Bedieningscentrum-widget is uit de balk verwijderd. Om er vanuit de balk weer toegang toe te krijgen, moet je de widget opnieuw toevoegen. Je kunt het ook openen door met de rechtermuisknop op de balk te klikken.",
       "label": "Laatste Bedieningscentrum-widget verwijderd"
     },
     "night-light": {
-      "disabled": "Nachtlicht uitgeschakeld",
-      "enabled": "Nachtlicht ingeschakeld",
-      "forced": "Geforceerde activatie",
-      "normal": "Normale modus",
-      "not-installed": "wlsunset niet geïnstalleerd"
+      "disabled": "Nachtlicht uitgeschakeld.",
+      "enabled": "Nachtlicht ingeschakeld.",
+      "forced": "Geforceerde activatie.",
+      "normal": "Normale modus.",
+      "not-installed": "wlsunset niet geïnstalleerd."
     },
     "noctalia-performance": {
-      "disabled": "Prestatiemodus uitgeschakeld",
-      "enabled": "Prestatiemodus ingeschakeld",
+      "disabled": "Prestatiemodus uitgeschakeld.",
+      "enabled": "Prestatiemodus ingeschakeld.",
       "label": "Noctalia Performance"
     },
     "power-profile": {
-      "changed": "Energieprofiel gewijzigd",
+      "changed": "Energieprofiel gewijzigd.",
       "profile-name": "{profile}"
     },
     "recording": {
-      "failed-general": "Recorder is met een fout afgesloten",
-      "failed-gpu": "gpu-screen-recorder is onverwacht afgesloten",
+      "failed-general": "Recorder is met een fout afgesloten.",
+      "failed-gpu": "gpu-screen-recorder is onverwacht afgesloten.",
       "failed-start": "Starten van opname mislukt",
       "no-portals": "Desktop-portals worden niet uitgevoerd",
       "no-portals-desc": "Start xdg-desktop-portal en een compositor-portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder niet geïnstalleerd",
       "not-installed-desc": "Installeer gpu-screen-recorder om schermopnamefuncties te gebruiken.",
-      "saved": "Opname opgeslagen",
-      "started": "Opname gestart",
+      "saved": "Opname opgeslagen.",
+      "started": "Opname gestart.",
       "stopping": "Opname wordt gestopt…"
     },
     "theming-processor-failed": {
-      "desc-generic": "Er is een fout opgetreden tijdens het verwerken van sjablonen",
+      "desc-generic": "Er is een fout opgetreden tijdens het verwerken van sjablonen.",
       "title-matugen": "Matugen-sjabloonverwerking mislukt",
       "title-predefined": "Verwerken van vooraf gedefinieerd kleurenschema mislukt"
     },
     "vpn": {
-      "connected": "Verbonden met '{name}'",
-      "disconnected": "Verbinding met '{name}' verbroken"
+      "connected": "Verbonden met '{name}'.",
+      "disconnected": "Verbinding met '{name}' verbroken."
     },
     "wallpaper-colors": {
-      "disabled": "Achtergrondkleuren uitgeschakeld",
-      "enabled": "Achtergrondkleuren ingeschakeld",
+      "disabled": "Achtergrondkleuren uitgeschakeld.",
+      "enabled": "Achtergrondkleuren ingeschakeld.",
       "label": "Achtergrondkleuren genereren",
-      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren"
+      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren."
     },
     "wifi": {
-      "connected": "Verbonden met '{ssid}'",
-      "connection-failed": "Verbinding mislukt",
-      "connection-timeout": "Time-out bij verbinding",
-      "disabled": "Wi-Fi uitgeschakeld",
-      "disconnected": "Verbinding met '{ssid}' verbroken",
-      "enabled": "Wi-Fi ingeschakeld",
-      "incorrect-password": "Onjuist wachtwoord",
-      "network-not-found": "Netwerk niet gevonden"
+      "connected": "Verbonden met '{ssid}'.",
+      "connection-failed": "Verbinding mislukt.",
+      "connection-timeout": "Time-out bij verbinding.",
+      "disabled": "Wi-Fi uitgeschakeld.",
+      "disconnected": "Verbinding met '{ssid}' verbroken.",
+      "enabled": "Wi-Fi ingeschakeld.",
+      "incorrect-password": "Onjuist wachtwoord.",
+      "network-not-found": "Netwerk niet gevonden."
     }
   },
   "tooltips": {
