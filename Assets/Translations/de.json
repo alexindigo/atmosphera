@@ -123,7 +123,7 @@
           "label": "Farbauswahl"
         },
         "enable-colorization": {
-          "description": "Aktiviert die Farbgebung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
+          "description": "Farbgebung durch Themenfarben für das Kontrollzentrum-Symbol aktivieren.",
           "label": "Farbgebung aktivieren"
         },
         "icon": {
@@ -153,7 +153,7 @@
         },
         "dynamic-text": "Dynamischer Text",
         "enable-colorization": {
-          "description": "Farbgebung für das benutzerdefinierte Schaltflächensymbol und den Text aktivieren, Designfarben anwenden.",
+          "description": "Farbgebung durch Themenfarben für das benutzerdefinierte Schaltflächensymbol und den Text aktivieren.",
           "label": "Farbgebung aktivieren"
         },
         "hide-mode": {
