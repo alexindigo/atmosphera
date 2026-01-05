@@ -2841,6 +2841,7 @@
       "state-change-failed": "Failed to change Bluetooth state"
     },
     "clipboard": {
+      "long-text": "Long text",
       "unavailable": "Clipboard history unavailable",
       "unavailable-desc": "The 'cliphist' application is not installed. Please install it to use clipboard history features."
     },

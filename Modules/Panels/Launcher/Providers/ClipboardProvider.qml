@@ -261,9 +261,14 @@ Item {
         description = description.substring(0, 77) + "...";
       }
     } else {
-      const chars = preview.length;
-      const words = preview.split(/\s+/).length;
-      description = `${chars} characters, ${words} word${words !== 1 ? 's' : ''}`;
+      // Preview is truncated at ~100 chars, so we can't show exact count
+      if (preview.length >= 100) {
+        description = I18n.tr("toast.clipboard.long-text");
+      } else {
+        const chars = preview.length;
+        const words = preview.split(/\s+/).length;
+        description = `${chars} characters, ${words} word${words !== 1 ? 's' : ''}`;
+      }
     }
 
     return {
