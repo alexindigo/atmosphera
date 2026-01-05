@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Перезагружен плагин: {name}",
       "install": "Установить",
       "install-error": "Не удалось установить: {error}",
+      "install-incompatible": "{plugin} требует Noctalia версии {version} или выше.",
       "install-success": "Успешно установлен {plugin}",
       "installed": {
         "description": "Управляйте и настраивайте все локально установленные плагины.",

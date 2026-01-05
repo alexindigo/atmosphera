@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Yeniden yüklenen eklenti: {name}",
       "install": "Yükle",
       "install-error": "Yükleme başarısız oldu: {error}",
+      "install-incompatible": "{plugin} Noctalia v{version} veya daha üstünü gerektiriyor.",
       "install-success": "{plugin} başarıyla kuruldu",
       "installed": {
         "description": "Yerel olarak yüklenmiş tüm eklentileri yönetin ve yapılandırın.",

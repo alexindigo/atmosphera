@@ -2241,6 +2241,7 @@
       "hot-reloaded": "プラグインをリロードしました: {name}",
       "install": "インストール",
       "install-error": "インストールに失敗しました: {error}",
+      "install-incompatible": "{plugin} には Noctalia v{version} 以降が必要です。",
       "install-success": "{plugin} をインストールしました。",
       "installed": {
         "description": "ローカルにインストールされたすべてのプラグインを管理・設定します。",

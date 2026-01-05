@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Újratöltött bővítmény: {name}",
       "install": "Telepítés",
       "install-error": "Sikertelen telepítés: {error}",
+      "install-incompatible": "A {plugin} pluginhez Noctalia v{version} vagy újabb verzió szükséges.",
       "install-success": "Sikeresen telepítve: {plugin}",
       "installed": {
         "description": "Az összes helyileg telepített bővítmény kezelése és beállítása.",

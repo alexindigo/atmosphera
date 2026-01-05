@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Przeładowano wtyczkę: {name}",
       "install": "Zainstaluj",
       "install-error": "Błąd instalacji: {error}",
+      "install-incompatible": "{plugin} wymaga Noctalii w wersji v{version} lub wyższej.",
       "install-success": "Pomyślnie zainstalowano {plugin}",
       "installed": {
         "description": "Zarządzaj i konfiguruj lokalnie zainstalowane wtyczki.",

@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Plugin opnieuw geladen: {name}",
       "install": "Installeren",
       "install-error": "Installatie mislukt: {error}",
+      "install-incompatible": "{plugin} vereist Noctalia v{version} of hoger",
       "install-success": "{plugin} succesvol geïnstalleerd",
       "installed": {
         "description": "Beheer en configureer alle lokaal geïnstalleerde plugins.",

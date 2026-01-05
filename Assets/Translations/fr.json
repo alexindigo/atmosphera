@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Plugin rechargé : {name}",
       "install": "Installer",
       "install-error": "Échec de l'installation : {error}",
+      "install-incompatible": "{plugin} nécessite Noctalia v{version} ou une version ultérieure.",
       "install-success": "Installation de {plugin} réussie.",
       "installed": {
         "description": "Gérer et configurer tous les plugins installés localement.",

@@ -2241,6 +2241,7 @@
       "hot-reloaded": "Plugin ji nû ve hate barkirin: {name}",
       "install": "Saz bike",
       "install-error": "Sazkirin bi ser neket: {error}",
+      "install-incompatible": "{plugin} pêdivî bi Noctalia v{version} an bilindtir heye",
       "install-success": "Bi serkeftî {plugin} hate sazkirin.",
       "installed": {
         "description": "Birêvebir û hemû pêvekên ku herêmî hatine sazkirin mîheng bike.",
