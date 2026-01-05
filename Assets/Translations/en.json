@@ -2347,6 +2347,18 @@
       "updating": "Updating..."
     },
     "region": {
+      "clock-panel": {
+        "section": {
+          "description": "Customize the clock panel appearance.",
+          "label": "Clock panel"
+        }
+      },
+      "tabs": {
+        "clock-panel": "Clock Panel",
+        "date": "Date",
+        "language": "Language",
+        "location": "Location"
+      },
       "title": "Region"
     },
     "screen-recorder": {
