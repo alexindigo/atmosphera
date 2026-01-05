@@ -376,21 +376,21 @@ SmartPanel {
   // Search handling
   function updateResults() {
     results = [];
-    activeProvider = null;
+    var newActiveProvider = null;
 
     // Check for command mode
     if (searchText.startsWith(">")) {
       // Find provider that handles this command
       for (let provider of providers) {
         if (provider.handleCommand && provider.handleCommand(searchText)) {
-          activeProvider = provider;
+          newActiveProvider = provider;
           results = provider.getResults(searchText);
           break;
         }
       }
 
       // Show available commands if just ">" or filter commands if partial match
-      if (!activeProvider) {
+      if (!newActiveProvider) {
         // Collect all commands from all providers
         let allCommands = [];
         for (let provider of providers) {
@@ -436,6 +436,8 @@ SmartPanel {
       }
     }
 
+    // Update activeProvider only after computing new state to avoid UI flicker
+    activeProvider = newActiveProvider;
     selectedIndex = 0;
   }
 
@@ -587,6 +589,21 @@ SmartPanel {
   function activate() {
     if (results.length > 0 && results[selectedIndex]) {
       const item = results[selectedIndex];
+      const provider = item.provider || currentProvider;
+
+      // Check if auto-paste is enabled and provider/item supports it
+      if (Settings.data.appLauncher.autoPasteClipboard && provider && provider.supportsAutoPaste && item.autoPasteText) {
+        // Call optional pre-paste callback (e.g., to record usage)
+        if (item.onAutoPaste) {
+          item.onAutoPaste();
+        }
+        root.closeImmediately();
+        Qt.callLater(() => {
+                       ClipboardService.pasteText(item.autoPasteText);
+                     });
+        return;
+      }
+
       if (item.onActivate) {
         item.onActivate();
       }

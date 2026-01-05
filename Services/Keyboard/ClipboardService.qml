@@ -339,6 +339,17 @@ Singleton {
     pasteProc.running = true;
   }
 
+  // Paste plain text: copy to clipboard and simulate Ctrl+Shift+V
+  function pasteText(text) {
+    if (!text)
+      return;
+    // Escape single quotes for shell
+    const escaped = text.replace(/'/g, "'\\''");
+    const cmd = `printf '%s' '${escaped}' | wl-copy && wtype -M ctrl -M shift v`;
+    pasteProc.command = ["sh", "-lc", cmd];
+    pasteProc.running = true;
+  }
+
   function deleteById(id) {
     if (!root.cliphistAvailable) {
       return;

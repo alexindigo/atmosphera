@@ -14,6 +14,7 @@ Item {
   property string supportedLayouts: "grid" // Only grid layout for emoji
   property int preferredGridColumns: 7 // More columns for compact emoji display
   property real preferredGridCellRatio: 1.0 // Square cells like apps
+  property bool supportsAutoPaste: true // Emoji can be auto-pasted
 
   property string selectedCategory: "recent"
   property bool showsCategories: true // Default to showing categories
@@ -149,7 +150,11 @@ Item {
       "icon": null,
       "isImage": false,
       "displayString": emojiChar,
+      "autoPasteText": emojiChar,
       "provider": root,
+      "onAutoPaste": function () {
+        EmojiService.recordUsage(emojiChar);
+      },
       "onActivate": function () {
         EmojiService.copy(emojiChar);
         launcher.close();
