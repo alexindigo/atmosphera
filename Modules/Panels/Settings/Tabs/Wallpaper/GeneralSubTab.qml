@@ -23,7 +23,6 @@ ColumnLayout {
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
     Layout.bottomMargin: Style.marginL
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.enabled")
   }
 
@@ -34,7 +33,6 @@ ColumnLayout {
     checked: Settings.data.wallpaper.overviewEnabled
     onToggled: checked => Settings.data.wallpaper.overviewEnabled = checked
     Layout.bottomMargin: Style.marginL
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.overviewEnabled")
   }
 
@@ -74,7 +72,6 @@ ColumnLayout {
       description: I18n.tr("settings.wallpaper.settings.recursive-search.description")
       checked: Settings.data.wallpaper.recursiveSearch
       onToggled: checked => Settings.data.wallpaper.recursiveSearch = checked
-      isSettings: true
       defaultValue: Settings.getDefaultValue("wallpaper.recursiveSearch")
     }
 
@@ -83,7 +80,6 @@ ColumnLayout {
       description: I18n.tr("settings.wallpaper.settings.monitor-specific.description")
       checked: Settings.data.wallpaper.enableMultiMonitorDirectories
       onToggled: checked => Settings.data.wallpaper.enableMultiMonitorDirectories = checked
-      isSettings: true
       defaultValue: Settings.getDefaultValue("wallpaper.enableMultiMonitorDirectories")
     }
 
@@ -168,7 +164,6 @@ ColumnLayout {
       ]
       currentKey: Settings.data.wallpaper.panelPosition
       onSelected: key => Settings.data.wallpaper.panelPosition = key
-      isSettings: true
       defaultValue: Settings.getDefaultValue("wallpaper.panelPosition")
     }
   }

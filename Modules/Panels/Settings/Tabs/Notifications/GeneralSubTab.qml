@@ -25,7 +25,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.settings.enabled.description")
     checked: Settings.data.notifications.enabled !== false
     onToggled: checked => Settings.data.notifications.enabled = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.enabled")
   }
 
@@ -67,7 +66,6 @@ ColumnLayout {
     ]
     currentKey: Settings.data.notifications.location || "top_right"
     onSelected: key => Settings.data.notifications.location = key
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.location")
   }
 
@@ -76,7 +74,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.settings.always-on-top.description")
     checked: Settings.data.notifications.overlayLayer
     onToggled: checked => Settings.data.notifications.overlayLayer = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.overlayLayer")
   }
 
@@ -90,7 +87,6 @@ ColumnLayout {
     value: Settings.data.notifications.backgroundOpacity
     onMoved: value => Settings.data.notifications.backgroundOpacity = value
     text: Math.round(Settings.data.notifications.backgroundOpacity * 100) + "%"
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.backgroundOpacity")
   }
 

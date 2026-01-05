@@ -32,7 +32,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.cpuPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.cpuPollingInterval")
       onValueChanged: Settings.data.systemMonitor.cpuPollingInterval = value
       suffix: " ms"
@@ -55,7 +54,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.tempPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.tempPollingInterval")
       onValueChanged: Settings.data.systemMonitor.tempPollingInterval = value
       suffix: " ms"
@@ -79,7 +77,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.gpuPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.gpuPollingInterval")
       onValueChanged: Settings.data.systemMonitor.gpuPollingInterval = value
       suffix: " ms"
@@ -102,7 +99,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.loadAvgPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.loadAvgPollingInterval")
       onValueChanged: Settings.data.systemMonitor.loadAvgPollingInterval = value
       suffix: " ms"
@@ -125,7 +121,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.memPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.memPollingInterval")
       onValueChanged: Settings.data.systemMonitor.memPollingInterval = value
       suffix: " ms"
@@ -148,7 +143,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.diskPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.diskPollingInterval")
       onValueChanged: Settings.data.systemMonitor.diskPollingInterval = value
       suffix: " ms"
@@ -171,7 +165,6 @@ ColumnLayout {
       to: 10000
       stepSize: 250
       value: Settings.data.systemMonitor.networkPollingInterval
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.networkPollingInterval")
       onValueChanged: Settings.data.systemMonitor.networkPollingInterval = value
       suffix: " ms"
@@ -188,7 +181,6 @@ ColumnLayout {
     description: I18n.tr("settings.system-monitor.external-monitor.description")
     placeholderText: I18n.tr("settings.system-monitor.external-monitor.placeholder")
     text: Settings.data.systemMonitor.externalMonitor
-    isSettings: true
     defaultValue: Settings.getDefaultValue("systemMonitor.externalMonitor")
     onTextChanged: Settings.data.systemMonitor.externalMonitor = text
   }

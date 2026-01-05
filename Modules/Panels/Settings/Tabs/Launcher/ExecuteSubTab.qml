@@ -24,7 +24,6 @@ ColumnLayout {
                    }
                  }
                }
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.useApp2Unit")
   }
 
@@ -49,7 +48,6 @@ ColumnLayout {
                    Settings.data.appLauncher.useApp2Unit = false;
                  }
                }
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.customLaunchPrefixEnabled")
   }
 

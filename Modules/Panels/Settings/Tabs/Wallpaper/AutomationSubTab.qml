@@ -34,7 +34,6 @@ ColumnLayout {
     ]
     currentKey: Settings.data.wallpaper.wallpaperChangeMode || "random"
     onSelected: key => Settings.data.wallpaper.wallpaperChangeMode = key
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.transitionType")
   }
 

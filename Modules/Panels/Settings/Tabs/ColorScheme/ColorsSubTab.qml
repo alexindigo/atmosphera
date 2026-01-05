@@ -257,7 +257,6 @@ ColumnLayout {
                   AppThemeService.generate();
                 }
 
-    isSettings: true
     defaultValue: Settings.getDefaultValue("colorSchemes.matugenSchemeType")
   }
 

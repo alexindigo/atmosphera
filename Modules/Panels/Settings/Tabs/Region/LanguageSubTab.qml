@@ -18,7 +18,6 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.general.language.select.label")
     description: I18n.tr("settings.general.language.select.description")
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.language")
     model: [
       {

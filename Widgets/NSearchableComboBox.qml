@@ -18,8 +18,7 @@ RowLayout {
   property string placeholder: ""
   property string searchPlaceholder: I18n.tr("placeholders.search")
   property Component delegate: null
-  property bool isSettings: false
-  property var defaultValue: ""
+  property var defaultValue: undefined
   property string settingsPath: ""
 
   readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
@@ -29,9 +28,9 @@ RowLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  readonly property bool isValueChanged: isSettings && (currentKey !== defaultValue)
+  readonly property bool isValueChanged: (defaultValue !== undefined) && (currentKey !== defaultValue)
   readonly property string indicatorTooltip: {
-    if (!isSettings)
+    if (defaultValue === undefined)
       return "";
     var displayValue = "";
     if (defaultValue === "") {
@@ -160,7 +159,7 @@ RowLayout {
   NLabel {
     label: root.label
     description: root.description
-    showIndicator: root.isSettings && root.isValueChanged
+    showIndicator: root.isValueChanged
     indicatorTooltip: root.indicatorTooltip
   }
 

@@ -90,7 +90,6 @@ ColumnLayout {
         placeholder: I18n.tr("settings.general.fonts.default.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.default.search-placeholder")
         popupHeight: 420
-        isSettings: true
         defaultValue: Settings.getDefaultValue("ui.fontDefault")
         settingsPath: "ui.fontDefault"
         onSelected: key => Settings.data.ui.fontDefault = key
@@ -104,7 +103,6 @@ ColumnLayout {
         placeholder: I18n.tr("settings.general.fonts.monospace.placeholder")
         searchPlaceholder: I18n.tr("settings.general.fonts.monospace.search-placeholder")
         popupHeight: 320
-        isSettings: true
         defaultValue: Settings.getDefaultValue("ui.fontFixed")
         settingsPath: "ui.fontFixed"
         onSelected: key => Settings.data.ui.fontFixed = key
@@ -122,7 +120,6 @@ ColumnLayout {
           to: 1.25
           stepSize: 0.01
           value: Settings.data.ui.fontDefaultScale
-          isSettings: true
           defaultValue: Settings.getDefaultValue("ui.fontDefaultScale")
           onMoved: value => Settings.data.ui.fontDefaultScale = value
           text: Math.floor(Settings.data.ui.fontDefaultScale * 100) + "%"
@@ -156,7 +153,6 @@ ColumnLayout {
           to: 1.25
           stepSize: 0.01
           value: Settings.data.ui.fontFixedScale
-          isSettings: true
           defaultValue: Settings.getDefaultValue("ui.fontFixedScale")
           onMoved: value => Settings.data.ui.fontFixedScale = value
           text: Math.floor(Settings.data.ui.fontFixedScale * 100) + "%"

@@ -13,7 +13,6 @@ ColumnLayout {
     label: I18n.tr("settings.general.screen-corners.show-corners.label")
     description: I18n.tr("settings.general.screen-corners.show-corners.description")
     checked: Settings.data.general.showScreenCorners
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.showScreenCorners")
     onToggled: checked => Settings.data.general.showScreenCorners = checked
   }
@@ -22,7 +21,6 @@ ColumnLayout {
     label: I18n.tr("settings.general.screen-corners.solid-black.label")
     description: I18n.tr("settings.general.screen-corners.solid-black.description")
     checked: Settings.data.general.forceBlackScreenCorners
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.forceBlackScreenCorners")
     onToggled: checked => Settings.data.general.forceBlackScreenCorners = checked
   }
@@ -43,7 +41,6 @@ ColumnLayout {
         to: 2
         stepSize: 0.01
         value: Settings.data.general.screenRadiusRatio
-        isSettings: true
         defaultValue: Settings.getDefaultValue("general.screenRadiusRatio")
         onMoved: value => Settings.data.general.screenRadiusRatio = value
         text: Math.floor(Settings.data.general.screenRadiusRatio * 100) + "%"

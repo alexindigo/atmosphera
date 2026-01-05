@@ -19,7 +19,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.toast.keyboard.description")
     checked: Settings.data.notifications.enableKeyboardLayoutToast
     onToggled: checked => Settings.data.notifications.enableKeyboardLayoutToast = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.enableKeyboardLayoutToast")
   }
 }

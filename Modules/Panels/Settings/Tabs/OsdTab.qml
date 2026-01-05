@@ -77,7 +77,6 @@ ColumnLayout {
         }
       ]
       currentKey: Settings.data.osd.location || "top_right"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("osd.location")
       onSelected: key => Settings.data.osd.location = key
     }
@@ -103,7 +102,6 @@ ColumnLayout {
       label: I18n.tr("settings.osd.enabled.label")
       description: I18n.tr("settings.osd.enabled.description")
       checked: Settings.data.osd.enabled
-      isSettings: true
       defaultValue: Settings.getDefaultValue("osd.enabled")
       onToggled: checked => Settings.data.osd.enabled = checked
     }
@@ -112,7 +110,6 @@ ColumnLayout {
       label: I18n.tr("settings.osd.always-on-top.label")
       description: I18n.tr("settings.osd.always-on-top.description")
       checked: Settings.data.osd.overlayLayer
-      isSettings: true
       defaultValue: Settings.getDefaultValue("osd.overlayLayer")
       onToggled: checked => Settings.data.osd.overlayLayer = checked
     }
@@ -125,7 +122,6 @@ ColumnLayout {
       to: 100
       stepSize: 1
       value: Settings.data.osd.backgroundOpacity * 100
-      isSettings: true
       defaultValue: (Settings.getDefaultValue("osd.backgroundOpacity") || 1) * 100
       onMoved: value => Settings.data.osd.backgroundOpacity = value / 100
       text: Math.round(Settings.data.osd.backgroundOpacity * 100) + "%"
@@ -139,7 +135,6 @@ ColumnLayout {
       to: 5000
       stepSize: 100
       value: Settings.data.osd.autoHideMs
-      isSettings: true
       defaultValue: Settings.getDefaultValue("osd.autoHideMs")
       onMoved: value => Settings.data.osd.autoHideMs = value
       text: Math.round(Settings.data.osd.autoHideMs / 1000 * 10) / 10 + "s"

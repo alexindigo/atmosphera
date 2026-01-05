@@ -194,7 +194,6 @@ ColumnLayout {
       }
     ]
     currentKey: Settings.data.sessionMenu.largeButtonsLayout
-    isSettings: true
     defaultValue: Settings.getDefaultValue("sessionMenu.largeButtonsLayout")
     onSelected: key => Settings.data.sessionMenu.largeButtonsLayout = key
   }
@@ -204,7 +203,6 @@ ColumnLayout {
     label: I18n.tr("settings.session-menu.show-number-labels.label")
     description: I18n.tr("settings.session-menu.show-number-labels.description")
     checked: Settings.data.sessionMenu.showNumberLabels !== false
-    isSettings: true
     defaultValue: Settings.getDefaultValue("sessionMenu.showNumberLabels") ?? true
     onToggled: checked => Settings.data.sessionMenu.showNumberLabels = checked
   }
@@ -246,7 +244,6 @@ ColumnLayout {
     currentKey: Settings.data.sessionMenu.position
     onSelected: key => Settings.data.sessionMenu.position = key
     visible: !Settings.data.sessionMenu.largeButtonsStyle
-    isSettings: true
     defaultValue: Settings.getDefaultValue("sessionMenu.position")
   }
 
@@ -257,7 +254,6 @@ ColumnLayout {
     checked: Settings.data.sessionMenu.showHeader
     onToggled: checked => Settings.data.sessionMenu.showHeader = checked
     visible: !Settings.data.sessionMenu.largeButtonsStyle
-    isSettings: true
     defaultValue: Settings.getDefaultValue("sessionMenu.showHeader")
   }
 
@@ -267,7 +263,6 @@ ColumnLayout {
     description: I18n.tr("settings.session-menu.enable-countdown.description")
     checked: Settings.data.sessionMenu.enableCountdown
     onToggled: checked => Settings.data.sessionMenu.enableCountdown = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("sessionMenu.enableCountdown")
   }
 
@@ -289,7 +284,6 @@ ColumnLayout {
       value: Settings.data.sessionMenu.countdownDuration
       onMoved: value => Settings.data.sessionMenu.countdownDuration = value
       text: Math.round(Settings.data.sessionMenu.countdownDuration / 1000) + "s"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("sessionMenu.countdownDuration")
     }
   }

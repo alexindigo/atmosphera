@@ -23,7 +23,6 @@ ColumnLayout {
     label: I18n.tr("settings.system-monitor.enable-dgpu-monitoring.label")
     description: I18n.tr("settings.system-monitor.enable-dgpu-monitoring.description")
     checked: Settings.data.systemMonitor.enableDgpuMonitoring
-    isSettings: true
     defaultValue: Settings.getDefaultValue("systemMonitor.enableDgpuMonitoring")
     onToggled: checked => Settings.data.systemMonitor.enableDgpuMonitoring = checked
   }
@@ -37,7 +36,6 @@ ColumnLayout {
       label: I18n.tr("settings.system-monitor.use-custom-highlight-colors.label")
       description: I18n.tr("settings.system-monitor.use-custom-highlight-colors.description")
       checked: Settings.data.systemMonitor.useCustomColors
-      isSettings: true
       defaultValue: Settings.getDefaultValue("systemMonitor.useCustomColors")
       onToggled: checked => {
                    // If enabling custom colors and no custom color is saved, persist current theme colors

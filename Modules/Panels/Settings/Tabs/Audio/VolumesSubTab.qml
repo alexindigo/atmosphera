@@ -128,7 +128,6 @@ ColumnLayout {
       value: Settings.data.audio.volumeStep
       stepSize: 1
       suffix: "%"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("audio.volumeStep")
       onValueChanged: Settings.data.audio.volumeStep = value
     }
@@ -143,7 +142,6 @@ ColumnLayout {
       label: I18n.tr("settings.audio.volumes.volume-overdrive.label")
       description: I18n.tr("settings.audio.volumes.volume-overdrive.description")
       checked: Settings.data.audio.volumeOverdrive
-      isSettings: true
       defaultValue: Settings.getDefaultValue("audio.volumeOverdrive")
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
@@ -155,7 +153,6 @@ ColumnLayout {
     description: I18n.tr("settings.audio.external-mixer.description")
     placeholderText: I18n.tr("settings.audio.external-mixer.placeholder")
     text: Settings.data.audio.externalMixer
-    isSettings: true
     defaultValue: Settings.getDefaultValue("audio.externalMixer")
     onTextChanged: Settings.data.audio.externalMixer = text
   }

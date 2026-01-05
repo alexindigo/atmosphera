@@ -19,7 +19,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.duration.respect-expire.description")
     checked: Settings.data.notifications.respectExpireTimeout
     onToggled: checked => Settings.data.notifications.respectExpireTimeout = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.respectExpireTimeout")
   }
 
@@ -37,7 +36,6 @@ ColumnLayout {
       value: Settings.data.notifications.lowUrgencyDuration
       onMoved: value => Settings.data.notifications.lowUrgencyDuration = value
       text: Settings.data.notifications.lowUrgencyDuration + "s"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("notifications.lowUrgencyDuration")
     }
 
@@ -70,7 +68,6 @@ ColumnLayout {
       value: Settings.data.notifications.normalUrgencyDuration
       onMoved: value => Settings.data.notifications.normalUrgencyDuration = value
       text: Settings.data.notifications.normalUrgencyDuration + "s"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("notifications.normalUrgencyDuration")
     }
 
@@ -103,7 +100,6 @@ ColumnLayout {
       value: Settings.data.notifications.criticalUrgencyDuration
       onMoved: value => Settings.data.notifications.criticalUrgencyDuration = value
       text: Settings.data.notifications.criticalUrgencyDuration + "s"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("notifications.criticalUrgencyDuration")
     }
 
@@ -138,7 +134,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.history.low-urgency.description")
     checked: Settings.data.notifications?.saveToHistory?.low !== false
     onToggled: checked => Settings.data.notifications.saveToHistory.low = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.saveToHistory.low")
   }
 
@@ -147,7 +142,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.history.normal-urgency.description")
     checked: Settings.data.notifications?.saveToHistory?.normal !== false
     onToggled: checked => Settings.data.notifications.saveToHistory.normal = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.saveToHistory.normal")
   }
 
@@ -156,7 +150,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.history.critical-urgency.description")
     checked: Settings.data.notifications?.saveToHistory?.critical !== false
     onToggled: checked => Settings.data.notifications.saveToHistory.critical = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.saveToHistory.critical")
   }
 }

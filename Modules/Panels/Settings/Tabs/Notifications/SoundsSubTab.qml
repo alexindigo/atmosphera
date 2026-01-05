@@ -54,7 +54,6 @@ ColumnLayout {
     checked: Settings.data.notifications?.sounds?.enabled ?? false
     visible: SoundService.multimediaAvailable
     onToggled: checked => Settings.data.notifications.sounds.enabled = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.sounds.enabled")
   }
 
@@ -74,7 +73,6 @@ ColumnLayout {
       value: Settings.data.notifications?.sounds?.volume ?? 0.5
       onMoved: value => Settings.data.notifications.sounds.volume = value
       text: Math.round((Settings.data.notifications?.sounds?.volume ?? 0.5) * 100) + "%"
-      isSettings: true
       defaultValue: Settings.getDefaultValue("notifications.sounds.volume")
     }
   }
@@ -87,7 +85,6 @@ ColumnLayout {
     description: I18n.tr("settings.notifications.sounds.separate.description")
     checked: Settings.data.notifications?.sounds?.separateSounds ?? false
     onToggled: checked => Settings.data.notifications.sounds.separateSounds = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("notifications.sounds.separateSounds")
   }
 

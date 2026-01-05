@@ -14,7 +14,6 @@ ColumnLayout {
     label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
     description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
     checked: Settings.data.ui.panelsAttachedToBar
-    isSettings: true
     defaultValue: Settings.getDefaultValue("ui.panelsAttachedToBar")
     onToggled: checked => Settings.data.ui.panelsAttachedToBar = checked
   }
@@ -24,7 +23,6 @@ ColumnLayout {
     label: I18n.tr("settings.user-interface.allow-panels-without-bar.label")
     description: I18n.tr("settings.user-interface.allow-panels-without-bar.description")
     checked: Settings.data.general.allowPanelsOnScreenWithoutBar
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.allowPanelsOnScreenWithoutBar")
     onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
   }
@@ -37,7 +35,6 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: Settings.data.ui.panelBackgroundOpacity
-    isSettings: true
     defaultValue: Settings.getDefaultValue("ui.panelBackgroundOpacity")
     onMoved: value => Settings.data.ui.panelBackgroundOpacity = value
     text: Math.floor(Settings.data.ui.panelBackgroundOpacity * 100) + "%"
@@ -51,7 +48,6 @@ ColumnLayout {
     to: 1
     stepSize: 0.01
     value: Settings.data.general.dimmerOpacity
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.dimmerOpacity")
     onMoved: value => Settings.data.general.dimmerOpacity = value
     text: Math.floor(Settings.data.general.dimmerOpacity * 100) + "%"
@@ -80,7 +76,6 @@ ColumnLayout {
       }
     ]
     currentKey: Settings.data.ui.settingsPanelMode
-    isSettings: true
     defaultValue: Settings.getDefaultValue("ui.settingsPanelMode")
     onSelected: key => Settings.data.ui.settingsPanelMode = key
   }

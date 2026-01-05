@@ -13,7 +13,6 @@ ColumnLayout {
     label: I18n.tr("settings.user-interface.tooltips.label")
     description: I18n.tr("settings.user-interface.tooltips.description")
     checked: Settings.data.ui.tooltipsEnabled
-    isSettings: true
     defaultValue: Settings.getDefaultValue("ui.tooltipsEnabled")
     onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
   }
@@ -22,7 +21,6 @@ ColumnLayout {
     label: I18n.tr("settings.user-interface.box-border.label")
     description: I18n.tr("settings.user-interface.box-border.description")
     checked: Settings.data.ui.boxBorderEnabled
-    isSettings: true
     defaultValue: Settings.getDefaultValue("ui.boxBorderEnabled")
     onToggled: checked => Settings.data.ui.boxBorderEnabled = checked
   }
@@ -31,7 +29,6 @@ ColumnLayout {
     label: I18n.tr("settings.user-interface.shadows.label")
     description: I18n.tr("settings.user-interface.shadows.description")
     checked: Settings.data.general.enableShadows
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.enableShadows")
     onToggled: checked => Settings.data.general.enableShadows = checked
   }
@@ -89,7 +86,6 @@ ColumnLayout {
     })
 
     currentKey: Settings.data.general.shadowDirection
-    isSettings: true
     defaultValue: Settings.getDefaultValue("general.shadowDirection")
 
     onSelected: function (key) {
@@ -118,7 +114,6 @@ ColumnLayout {
       to: 1.2
       stepSize: 0.05
       value: Settings.data.general.scaleRatio
-      isSettings: true
       defaultValue: Settings.getDefaultValue("general.scaleRatio")
       onMoved: value => Settings.data.general.scaleRatio = value
       text: Math.floor(Settings.data.general.scaleRatio * 100) + "%"
@@ -155,7 +150,6 @@ ColumnLayout {
       to: 2
       stepSize: 0.01
       value: Settings.data.general.radiusRatio
-      isSettings: true
       defaultValue: Settings.getDefaultValue("general.radiusRatio")
       onMoved: value => Settings.data.general.radiusRatio = value
       text: Math.floor(Settings.data.general.radiusRatio * 100) + "%"
@@ -188,7 +182,6 @@ ColumnLayout {
       to: 2
       stepSize: 0.01
       value: Settings.data.general.iRadiusRatio
-      isSettings: true
       defaultValue: Settings.getDefaultValue("general.iRadiusRatio")
       onMoved: value => Settings.data.general.iRadiusRatio = value
       text: Math.floor(Settings.data.general.iRadiusRatio * 100) + "%"
@@ -221,7 +214,6 @@ ColumnLayout {
       label: I18n.tr("settings.user-interface.animation-disable.label")
       description: I18n.tr("settings.user-interface.animation-disable.description")
       checked: Settings.data.general.animationDisabled
-      isSettings: true
       defaultValue: Settings.getDefaultValue("general.animationDisabled")
       onToggled: checked => Settings.data.general.animationDisabled = checked
     }
@@ -243,7 +235,6 @@ ColumnLayout {
           to: 2.0
           stepSize: 0.01
           value: Settings.data.general.animationSpeed
-          isSettings: true
           defaultValue: Settings.getDefaultValue("general.animationSpeed")
           onMoved: value => Settings.data.general.animationSpeed = Math.max(value, 0.05)
           text: Math.round(Settings.data.general.animationSpeed * 100) + "%"

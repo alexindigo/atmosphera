@@ -60,7 +60,6 @@ ColumnLayout {
       onSelected: function (key) {
         Settings.data.controlCenter.position = key;
       }
-      isSettings: true
       defaultValue: Settings.getDefaultValue("controlCenter.position")
     }
 
@@ -79,7 +78,6 @@ ColumnLayout {
       }
       currentKey: Settings.data.controlCenter.diskPath || "/"
       onSelected: key => Settings.data.controlCenter.diskPath = key
-      isSettings: true
       defaultValue: Settings.getDefaultValue("controlCenter.diskPath") || "/"
     }
   }

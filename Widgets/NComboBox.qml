@@ -15,8 +15,7 @@ RowLayout {
   property var model
   property string currentKey: ""
   property string placeholder: ""
-  property bool isSettings: false
-  property var defaultValue: ""
+  property var defaultValue: undefined
   property string settingsPath: ""
 
   readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
@@ -29,10 +28,10 @@ RowLayout {
   opacity: enabled ? 1.0 : 0.6
 
   // Less strict comparison with != (instead of !==) so it can properly compare int vs string (ex for FPS: 30 and "30")
-  readonly property bool isValueChanged: isSettings && (currentKey != defaultValue)
+  readonly property bool isValueChanged: (defaultValue !== undefined) && (currentKey != defaultValue)
 
   readonly property string indicatorTooltip: {
-    if (!isSettings)
+    if (defaultValue === undefined)
       return "";
     var displayValue = "";
     if (defaultValue === "") {
@@ -128,7 +127,7 @@ RowLayout {
   NLabel {
     label: root.label
     description: root.description
-    showIndicator: root.isSettings && root.isValueChanged
+    showIndicator: root.isValueChanged
     indicatorTooltip: root.indicatorTooltip
   }
 

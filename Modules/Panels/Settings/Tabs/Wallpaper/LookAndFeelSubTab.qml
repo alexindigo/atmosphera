@@ -18,7 +18,6 @@ ColumnLayout {
     model: WallpaperService.fillModeModel
     currentKey: Settings.data.wallpaper.fillMode
     onSelected: key => Settings.data.wallpaper.fillMode = key
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.fillMode")
   }
 
@@ -42,7 +41,6 @@ ColumnLayout {
     model: WallpaperService.transitionsModel
     currentKey: Settings.data.wallpaper.transitionType
     onSelected: key => Settings.data.wallpaper.transitionType = key
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.transitionType")
   }
 
@@ -56,7 +54,6 @@ ColumnLayout {
     value: Settings.data.wallpaper.transitionDuration
     onMoved: value => Settings.data.wallpaper.transitionDuration = value
     text: (Settings.data.wallpaper.transitionDuration / 1000).toFixed(1) + "s"
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.transitionDuration")
   }
 
@@ -69,7 +66,6 @@ ColumnLayout {
     value: Settings.data.wallpaper.transitionEdgeSmoothness
     onMoved: value => Settings.data.wallpaper.transitionEdgeSmoothness = value
     text: Math.round(Settings.data.wallpaper.transitionEdgeSmoothness * 100) + "%"
-    isSettings: true
     defaultValue: Settings.getDefaultValue("wallpaper.transitionEdgeSmoothness")
   }
 }

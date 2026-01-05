@@ -14,7 +14,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.clipboard-history.description")
     checked: Settings.data.appLauncher.enableClipboardHistory
     onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.enableClipboardHistory")
   }
 
@@ -23,7 +22,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.clip-preview.description")
     checked: Settings.data.appLauncher.enableClipPreview
     onToggled: checked => Settings.data.appLauncher.enableClipPreview = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.enableClipPreview")
     visible: Settings.data.appLauncher.enableClipboardHistory
   }
@@ -33,7 +31,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.auto-paste.description")
     checked: Settings.data.appLauncher.autoPasteClipboard
     onToggled: checked => Settings.data.appLauncher.autoPasteClipboard = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.autoPasteClipboard")
     visible: Settings.data.appLauncher.enableClipboardHistory
     enabled: ProgramCheckerService.wtypeAvailable

@@ -52,7 +52,6 @@ ColumnLayout {
       Settings.data.appLauncher.position = key;
     }
 
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.position")
   }
 
@@ -61,7 +60,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.grid-view.description")
     checked: Settings.data.appLauncher.viewMode === "grid"
     onToggled: checked => Settings.data.appLauncher.viewMode = checked ? "grid" : "list"
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.viewMode")
   }
 
@@ -70,7 +68,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.show-categories.description")
     checked: Settings.data.appLauncher.showCategories
     onToggled: checked => Settings.data.appLauncher.showCategories = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.showCategories")
   }
 
@@ -79,7 +76,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.sort-by-usage.description")
     checked: Settings.data.appLauncher.sortByMostUsed
     onToggled: checked => Settings.data.appLauncher.sortByMostUsed = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.sortByMostUsed")
   }
 
@@ -88,7 +84,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.icon-mode.description")
     checked: Settings.data.appLauncher.iconMode === "native"
     onToggled: checked => Settings.data.appLauncher.iconMode = checked ? "native" : "tabler"
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.iconMode")
   }
 
@@ -97,7 +92,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.show-icon-background.description")
     checked: Settings.data.appLauncher.showIconBackground
     onToggled: checked => Settings.data.appLauncher.showIconBackground = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.showIconBackground")
   }
 
@@ -106,7 +100,6 @@ ColumnLayout {
     description: I18n.tr("settings.launcher.settings.ignore-mouse-input.description")
     checked: Settings.data.appLauncher.ignoreMouseInput
     onToggled: checked => Settings.data.appLauncher.ignoreMouseInput = checked
-    isSettings: true
     defaultValue: Settings.getDefaultValue("appLauncher.ignoreMouseInput")
   }
 }

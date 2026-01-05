@@ -45,7 +45,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.cpuWarningThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.cpuWarningThreshold")
         onValueChanged: {
           Settings.data.systemMonitor.cpuWarningThreshold = value;
@@ -74,7 +73,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.cpuCriticalThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.cpuCriticalThreshold")
         onValueChanged: Settings.data.systemMonitor.cpuCriticalThreshold = value
         suffix: "%"
@@ -111,7 +109,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.tempWarningThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.tempWarningThreshold")
         onValueChanged: {
           Settings.data.systemMonitor.tempWarningThreshold = value;
@@ -140,7 +137,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.tempCriticalThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.tempCriticalThreshold")
         onValueChanged: Settings.data.systemMonitor.tempCriticalThreshold = value
         suffix: "°C"
@@ -179,7 +175,6 @@ ColumnLayout {
         to: 120
         stepSize: 5
         value: Settings.data.systemMonitor.gpuWarningThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.gpuWarningThreshold")
         onValueChanged: {
           Settings.data.systemMonitor.gpuWarningThreshold = value;
@@ -208,7 +203,6 @@ ColumnLayout {
         to: 120
         stepSize: 5
         value: Settings.data.systemMonitor.gpuCriticalThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.gpuCriticalThreshold")
         onValueChanged: Settings.data.systemMonitor.gpuCriticalThreshold = value
         suffix: "°C"
@@ -245,7 +239,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.memWarningThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.memWarningThreshold")
         onValueChanged: {
           Settings.data.systemMonitor.memWarningThreshold = value;
@@ -274,7 +267,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.memCriticalThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.memCriticalThreshold")
         onValueChanged: Settings.data.systemMonitor.memCriticalThreshold = value
         suffix: "%"
@@ -311,7 +303,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.diskWarningThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.diskWarningThreshold")
         onValueChanged: {
           Settings.data.systemMonitor.diskWarningThreshold = value;
@@ -340,7 +331,6 @@ ColumnLayout {
         to: 100
         stepSize: 5
         value: Settings.data.systemMonitor.diskCriticalThreshold
-        isSettings: true
         defaultValue: Settings.getDefaultValue("systemMonitor.diskCriticalThreshold")
         onValueChanged: Settings.data.systemMonitor.diskCriticalThreshold = value
         suffix: "%"

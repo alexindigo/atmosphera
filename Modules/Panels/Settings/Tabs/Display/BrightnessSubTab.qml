@@ -129,7 +129,6 @@ ColumnLayout {
       stepSize: 1
       suffix: "%"
       onValueChanged: Settings.data.brightness.brightnessStep = value
-      isSettings: true
       defaultValue: Settings.getDefaultValue("brightness.brightnessStep")
     }
 
@@ -139,7 +138,6 @@ ColumnLayout {
       description: I18n.tr("settings.display.monitors.enforce-minimum.description")
       checked: Settings.data.brightness.enforceMinimum
       onToggled: checked => Settings.data.brightness.enforceMinimum = checked
-      isSettings: true
       defaultValue: Settings.getDefaultValue("brightness.enforceMinimum")
     }
 
@@ -151,7 +149,6 @@ ColumnLayout {
       onToggled: checked => {
                    Settings.data.brightness.enableDdcSupport = checked;
                  }
-      isSettings: true
       defaultValue: Settings.getDefaultValue("brightness.enableDdcSupport")
     }
   }

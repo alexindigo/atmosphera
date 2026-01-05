@@ -20,8 +20,7 @@ ColumnLayout {
   property real customHeightRatio: -1
   property string label: ""
   property string description: ""
-  property bool isSettings: false
-  property var defaultValue: 0
+  property var defaultValue: undefined
 
   // Signals
   signal moved(real value)
@@ -30,9 +29,9 @@ ColumnLayout {
   spacing: Style.marginS
   Layout.fillWidth: true
 
-  readonly property bool isValueChanged: isSettings && (value !== defaultValue)
+  readonly property bool isValueChanged: defaultValue !== undefined && (value !== defaultValue)
   readonly property string indicatorTooltip: {
-    if (!isSettings)
+    if (defaultValue === undefined)
       return "";
     var defaultVal = defaultValue;
     if (typeof defaultVal === "number") {
@@ -55,7 +54,7 @@ ColumnLayout {
     label: root.label
     description: root.description
     visible: root.label !== "" || root.description !== ""
-    showIndicator: root.isSettings && root.isValueChanged
+    showIndicator: root.isValueChanged
     indicatorTooltip: root.indicatorTooltip
     opacity: root.enabled ? 1.0 : 0.6
     Layout.fillWidth: true

@@ -21,7 +21,6 @@ ColumnLayout {
     description: I18n.tr("settings.audio.media.primary-player.description")
     placeholderText: I18n.tr("settings.audio.media.primary-player.placeholder")
     text: Settings.data.audio.preferredPlayer
-    isSettings: true
     defaultValue: Settings.getDefaultValue("audio.preferredPlayer")
     onTextChanged: {
       Settings.data.audio.preferredPlayer = text;
@@ -131,7 +130,6 @@ ColumnLayout {
       }
     ]
     currentKey: Settings.data.audio.visualizerType
-    isSettings: true
     defaultValue: Settings.getDefaultValue("audio.visualizerType")
     onSelected: key => Settings.data.audio.visualizerType = key
   }
@@ -184,7 +182,6 @@ ColumnLayout {
       }
     ]
     currentKey: Settings.data.audio.cavaFrameRate
-    isSettings: true
     defaultValue: Settings.getDefaultValue("audio.cavaFrameRate")
     onSelected: key => Settings.data.audio.cavaFrameRate = key
   }

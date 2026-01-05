@@ -14,7 +14,6 @@ ColumnLayout {
     label: I18n.tr("settings.dock.enabled.label")
     description: I18n.tr("settings.dock.enabled.description")
     checked: Settings.data.dock.enabled
-    isSettings: true
     defaultValue: Settings.getDefaultValue("dock.enabled")
     onToggled: checked => Settings.data.dock.enabled = checked
   }
@@ -42,7 +41,6 @@ ColumnLayout {
         }
       ]
       currentKey: Settings.data.dock.displayMode
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.displayMode")
       onSelected: key => {
                     Settings.data.dock.displayMode = key;
@@ -57,7 +55,6 @@ ColumnLayout {
       to: 1
       stepSize: 0.01
       value: Settings.data.dock.backgroundOpacity
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.backgroundOpacity")
       onMoved: value => Settings.data.dock.backgroundOpacity = value
       text: Math.floor(Settings.data.dock.backgroundOpacity * 100) + "%"
@@ -71,7 +68,6 @@ ColumnLayout {
       to: 1
       stepSize: 0.01
       value: Settings.data.dock.deadOpacity
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.deadOpacity")
       onMoved: value => Settings.data.dock.deadOpacity = value
       text: Math.floor(Settings.data.dock.deadOpacity * 100) + "%"
@@ -85,7 +81,6 @@ ColumnLayout {
       to: 4
       stepSize: 0.01
       value: Settings.data.dock.floatingRatio
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.floatingRatio")
       onMoved: value => Settings.data.dock.floatingRatio = value
       text: Math.floor(Settings.data.dock.floatingRatio * 100) + "%"
@@ -99,7 +94,6 @@ ColumnLayout {
       to: 2
       stepSize: 0.01
       value: Settings.data.dock.size
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.size")
       onMoved: value => Settings.data.dock.size = value
       text: Math.floor(Settings.data.dock.size * 100) + "%"
@@ -114,7 +108,6 @@ ColumnLayout {
       to: 2.0
       stepSize: 0.01
       value: Settings.data.dock.animationSpeed
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.animationSpeed")
       onMoved: value => Settings.data.dock.animationSpeed = value
       text: (Settings.data.dock.animationSpeed * 100).toFixed(0) + "%"
@@ -124,7 +117,6 @@ ColumnLayout {
       label: I18n.tr("settings.dock.appearance.inactive-indicators.label")
       description: I18n.tr("settings.dock.appearance.inactive-indicators.description")
       checked: Settings.data.dock.inactiveIndicators
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.inactiveIndicators")
       onToggled: checked => Settings.data.dock.inactiveIndicators = checked
     }
@@ -133,7 +125,6 @@ ColumnLayout {
       label: I18n.tr("settings.dock.appearance.pinned-static.label")
       description: I18n.tr("settings.dock.appearance.pinned-static.description")
       checked: Settings.data.dock.pinnedStatic
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.pinnedStatic")
       onToggled: checked => Settings.data.dock.pinnedStatic = checked
     }
@@ -142,7 +133,6 @@ ColumnLayout {
       label: I18n.tr("settings.dock.monitors.only-same-monitor.label")
       description: I18n.tr("settings.dock.monitors.only-same-monitor.description")
       checked: Settings.data.dock.onlySameOutput
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.onlySameOutput")
       onToggled: checked => Settings.data.dock.onlySameOutput = checked
     }
@@ -152,7 +142,6 @@ ColumnLayout {
       label: I18n.tr("settings.dock.appearance.colorize-icons.label")
       description: I18n.tr("settings.dock.appearance.colorize-icons.description")
       checked: Settings.data.dock.colorizeIcons
-      isSettings: true
       defaultValue: Settings.getDefaultValue("dock.colorizeIcons")
       onToggled: checked => Settings.data.dock.colorizeIcons = checked
     }

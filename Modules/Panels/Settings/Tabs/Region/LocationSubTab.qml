@@ -76,7 +76,6 @@ ColumnLayout {
       description: I18n.tr("settings.location.weather.enabled.description")
       checked: Settings.data.location.weatherEnabled
       onToggled: checked => Settings.data.location.weatherEnabled = checked
-      isSettings: true
       defaultValue: Settings.getDefaultValue("location.weatherEnabled")
     }
 
