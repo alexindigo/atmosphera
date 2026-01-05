@@ -1059,6 +1059,11 @@
           "volumes": "Volumes"
         }
       },
+      "tabs": {
+        "devices": "Devices",
+        "media": "Media",
+        "volumes": "Volumes"
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Show bar on specific monitors. Defaults to all if none are chosen.",
           "label": "Monitors display"
         }
+      },
+      "tabs": {
+        "appearance": "Appearance",
+        "monitors": "Monitors",
+        "widgets": "Widgets"
       },
       "title": "Bar",
       "tray": {
@@ -1342,6 +1352,10 @@
             "description": "Write {filepath}"
           }
         }
+      },
+      "tabs": {
+        "colors": "Colors",
+        "templates": "Templates"
       },
       "title": "Color Scheme"
     },
@@ -1622,6 +1636,10 @@
           "night-description": "Controls the temperature during nighttime."
         }
       },
+      "tabs": {
+        "brightness": "Brightness",
+        "night-light": "Night Light"
+      },
       "title": "Display"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Show dock on specific monitors. Defaults to all if none are chosen.",
           "label": "Monitor display"
         }
+      },
+      "tabs": {
+        "appearance": "Appearance",
+        "monitors": "Monitors"
       },
       "title": "Dock"
     },
@@ -2137,6 +2159,12 @@
           "label": "Sound volume"
         }
       },
+      "tabs": {
+        "general": "General",
+        "history": "History",
+        "sounds": "Sounds",
+        "toast": "Toast"
+      },
       "title": "Notifications",
       "toast": {
         "keyboard": {
@@ -2485,8 +2513,17 @@
         "warning": "Warning threshold"
       },
       "thresholds-section": {
-        "description": "Adjust warning/critical thresholds and polling intervals for each system metric.",
+        "description": "Adjust warning/critical thresholds for each system metric.",
         "label": "Thresholds"
+      },
+      "polling-section": {
+        "description": "Configure how often each system metric is updated.",
+        "label": "Polling intervals"
+      },
+      "tabs": {
+        "general": "General",
+        "polling": "Polling",
+        "thresholds": "Thresholds"
       },
       "title": "System Monitor",
       "use-custom-highlight-colors": {
@@ -2567,10 +2604,21 @@
         },
         "label": "Drop shadows"
       },
+      "tabs": {
+        "appearance": "Appearance",
+        "panels": "Panels",
+        "screen-corners": "Screen Corners"
+      },
       "title": "User Interface",
       "tooltips": {
         "description": "Enable or disable tooltips throughout the interface.",
         "label": "Show tooltips"
+      },
+      "appearance": {
+        "section": {
+          "description": "Customize visual elements like tooltips, borders, and shadows.",
+          "label": "Appearance"
+        }
       }
     },
     "wallpaper": {
@@ -2668,6 +2716,11 @@
           "description": "Choose where the wallpaper selector panel appears.",
           "label": "Position"
         }
+      },
+      "tabs": {
+        "automation": "Automation",
+        "look-feel": "Look & feel",
+        "settings": "Settings"
       },
       "title": "Wallpaper"
     }
