@@ -15,12 +15,12 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.user-interface.tabs.panels")
+      text: I18n.tr("settings.user-interface.tabs.appearance")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.user-interface.tabs.appearance")
+      text: I18n.tr("settings.user-interface.tabs.panels")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
@@ -40,8 +40,8 @@ ColumnLayout {
     id: tabView
     currentIndex: subTabBar.currentIndex
 
-    PanelsSubTab {}
     AppearanceSubTab {}
+    PanelsSubTab {}
     ScreenCornersSubTab {}
   }
 }

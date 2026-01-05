@@ -109,46 +109,43 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
   }
 
-  ColumnLayout {
-    spacing: Style.marginXXS
+  RowLayout {
+    spacing: Style.marginL
     Layout.fillWidth: true
 
-    RowLayout {
-      spacing: Style.marginL
+    NValueSlider {
       Layout.fillWidth: true
+      label: I18n.tr("settings.user-interface.scaling.label")
+      description: I18n.tr("settings.user-interface.scaling.description")
+      from: 0.8
+      to: 1.2
+      stepSize: 0.05
+      value: Settings.data.general.scaleRatio
+      isSettings: true
+      defaultValue: Settings.getDefaultValue("general.scaleRatio")
+      onMoved: value => Settings.data.general.scaleRatio = value
+      text: Math.floor(Settings.data.general.scaleRatio * 100) + "%"
+    }
 
-      NValueSlider {
-        Layout.fillWidth: true
-        label: I18n.tr("settings.user-interface.scaling.label")
-        description: I18n.tr("settings.user-interface.scaling.description")
-        from: 0.8
-        to: 1.2
-        stepSize: 0.05
-        value: Settings.data.general.scaleRatio
-        isSettings: true
-        defaultValue: Settings.getDefaultValue("general.scaleRatio")
-        onMoved: value => Settings.data.general.scaleRatio = value
-        text: Math.floor(Settings.data.general.scaleRatio * 100) + "%"
-      }
+    Item {
+      Layout.preferredWidth: 30 * Style.uiScaleRatio
+      Layout.preferredHeight: 30 * Style.uiScaleRatio
 
-      Item {
-        Layout.preferredWidth: 30 * Style.uiScaleRatio
-        Layout.preferredHeight: 30 * Style.uiScaleRatio
-
-        NIconButton {
-          icon: "restore"
-          baseSize: Style.baseWidgetSize * 0.8
-          tooltipText: I18n.tr("settings.user-interface.scaling.reset-scaling")
-          onClicked: Settings.data.general.scaleRatio = 1.0
-          anchors.right: parent.right
-          anchors.verticalCenter: parent.verticalCenter
-        }
+      NIconButton {
+        icon: "restore"
+        baseSize: Style.baseWidgetSize * 0.8
+        tooltipText: I18n.tr("settings.user-interface.scaling.reset-scaling")
+        onClicked: Settings.data.general.scaleRatio = 1.0
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
       }
     }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
   }
 
   RowLayout {
@@ -217,9 +214,22 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   ColumnLayout {
     spacing: Style.marginL
     Layout.fillWidth: true
+
+    NToggle {
+      label: I18n.tr("settings.user-interface.animation-disable.label")
+      description: I18n.tr("settings.user-interface.animation-disable.description")
+      checked: Settings.data.general.animationDisabled
+      isSettings: true
+      defaultValue: Settings.getDefaultValue("general.animationDisabled")
+      onToggled: checked => Settings.data.general.animationDisabled = checked
+    }
 
     ColumnLayout {
       spacing: Style.marginXXS
@@ -258,15 +268,6 @@ ColumnLayout {
           }
         }
       }
-    }
-
-    NToggle {
-      label: I18n.tr("settings.user-interface.animation-disable.label")
-      description: I18n.tr("settings.user-interface.animation-disable.description")
-      checked: Settings.data.general.animationDisabled
-      isSettings: true
-      defaultValue: Settings.getDefaultValue("general.animationDisabled")
-      onToggled: checked => Settings.data.general.animationDisabled = checked
     }
   }
 }
