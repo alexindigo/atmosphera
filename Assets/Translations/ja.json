@@ -528,7 +528,8 @@
       "title": "Bluetooth",
       "trusted": "信頼できる",
       "unpair": "ペアリング解除"
-    }
+    },
+    "title": "ブルートゥース"
   },
   "calendar": {
     "panel": {

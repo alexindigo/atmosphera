@@ -528,7 +528,8 @@
       "title": "蓝牙",
       "trusted": "可信赖的",
       "unpair": "取消配对"
-    }
+    },
+    "title": "蓝牙"
   },
   "calendar": {
     "panel": {

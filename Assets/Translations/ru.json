@@ -528,7 +528,8 @@
       "title": "Bluetooth",
       "trusted": "Надёжный",
       "unpair": "Разорвать пару"
-    }
+    },
+    "title": "Bluetooth"
   },
   "calendar": {
     "panel": {
