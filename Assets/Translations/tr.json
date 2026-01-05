@@ -1965,7 +1965,7 @@
           "label": "Konumunuz"
         }
       },
-      "title": "Konum",
+      "title": "Bölge",
       "weather": {
         "enabled": {
           "description": "Arayüz boyunca hava durumu bilgilerini gösterin ve hava durumu verileri alın. Devre dışı bırakıldığında, tüm hava durumu öğeleri gizlenecek ve ağ istekleri yapılmayacaktır.",
@@ -2007,6 +2007,9 @@
         "label": "Güç kontrolleri"
       },
       "title": "Ekran Kilit"
+    },
+    "region": {
+      "title": "Bölge"
     },
     "network": {
       "bluetooth": {

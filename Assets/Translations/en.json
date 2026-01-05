@@ -1965,7 +1965,7 @@
           "label": "Your location"
         }
       },
-      "title": "Location",
+      "title": "Region",
       "weather": {
         "enabled": {
           "description": "Show weather information throughout the interface and fetch weather data. When disabled, all weather elements will be hidden and no network requests will be made.",
@@ -2007,6 +2007,9 @@
         "label": "Power controls"
       },
       "title": "Lock Screen"
+    },
+    "region": {
+      "title": "Region"
     },
     "network": {
       "bluetooth": {

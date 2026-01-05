@@ -2008,6 +2008,9 @@
       },
       "title": "ロック画面"
     },
+    "region": {
+      "title": "地域"
+    },
     "network": {
       "bluetooth": {
         "description": "Bluetooth の管理を有効にします。",

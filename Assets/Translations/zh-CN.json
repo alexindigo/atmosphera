@@ -1965,7 +1965,7 @@
           "label": "您的位置"
         }
       },
-      "title": "位置",
+      "title": "地区",
       "weather": {
         "enabled": {
           "description": "在整个界面中显示天气信息并获取天气数据。禁用后，所有天气元素将被隐藏，不会进行网络请求。",
@@ -2007,6 +2007,9 @@
         "label": "电源控制"
       },
       "title": "锁屏"
+    },
+    "region": {
+      "title": "地区"
     },
     "network": {
       "bluetooth": {

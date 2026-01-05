@@ -1965,7 +1965,7 @@
           "label": "Sua localização"
         }
       },
-      "title": "Localização",
+      "title": "Região",
       "weather": {
         "enabled": {
           "description": "Mostrar informações meteorológicas em toda a interface e buscar dados do clima. Quando desativado, todos os elementos do clima serão ocultados e nenhuma solicitação de rede será feita.",
@@ -2007,6 +2007,9 @@
         "label": "Controles de energia"
       },
       "title": "Tela de bloqueio"
+    },
+    "region": {
+      "title": "Região"
     },
     "network": {
       "bluetooth": {

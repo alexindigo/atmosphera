@@ -1965,7 +1965,7 @@
           "label": "Cihê te"
         }
       },
-      "title": "Cih",
+      "title": "Herêm",
       "weather": {
         "enabled": {
           "description": "Agahiyên hewayê li seranserê navbeynê nîşan bide û daneyên hewayê bîne. Dema ku neçalak be, dê hemû hêmanên hewayê werin veşartin û dê tu daxwazên torê neyên kirin.",
@@ -2007,6 +2007,9 @@
         "label": "Kontrolên hêzê"
       },
       "title": "Dîmendera kilîtkirinê"
+    },
+    "region": {
+      "title": "Herêm"
     },
     "network": {
       "bluetooth": {

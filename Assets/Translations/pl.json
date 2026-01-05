@@ -1965,7 +1965,7 @@
           "label": "Twoja lokalizacja"
         }
       },
-      "title": "Lokalizacja",
+      "title": "Region",
       "weather": {
         "enabled": {
           "description": "Włącz pobieranie danych pogodowych i ich wyświetlanie. Gdy wyłączone, wszystkie elementy pogody zostaną ukryte i nie będą wysyłane zapytania sieciowe.",
@@ -2007,6 +2007,9 @@
         "label": "Kontrolki zasilania"
       },
       "title": "Ekran blokady"
+    },
+    "region": {
+      "title": "Region"
     },
     "network": {
       "bluetooth": {

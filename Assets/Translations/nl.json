@@ -1965,7 +1965,7 @@
           "label": "Je locatie"
         }
       },
-      "title": "Locatie",
+      "title": "Regio",
       "weather": {
         "enabled": {
           "description": "Toon weerinformatie in de interface en haal weergegevens op. Wanneer uitgeschakeld, worden alle weerelementen verborgen en worden er geen netwerkverzoeken gedaan.",
@@ -2007,6 +2007,9 @@
         "label": "Stroombediening"
       },
       "title": "Vergrendelscherm"
+    },
+    "region": {
+      "title": "Regio"
     },
     "network": {
       "bluetooth": {

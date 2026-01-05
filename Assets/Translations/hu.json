@@ -1965,7 +1965,7 @@
           "label": "Az Ön helye"
         }
       },
-      "title": "Hely",
+      "title": "Régió",
       "weather": {
         "enabled": {
           "description": "Az időjárási információk mutatása a felületen, és időjárási adatok bekérése. Ha ki van kapcsolva, minden időjárási elem el lesz rejtve, és nem történik hálózati kérés.",
@@ -2007,6 +2007,9 @@
         "label": "Energiakezelés"
       },
       "title": "Zárolási képernyő"
+    },
+    "region": {
+      "title": "Régió"
     },
     "network": {
       "bluetooth": {

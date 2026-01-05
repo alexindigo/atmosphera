@@ -1965,7 +1965,7 @@
           "label": "Ihr Standort"
         }
       },
-      "title": "Standort",
+      "title": "Region",
       "weather": {
         "enabled": {
           "description": "Wetterinformationen in der gesamten Benutzeroberfläche anzeigen und Wetterdaten abrufen. Wenn deaktiviert, werden alle Wetterelemente ausgeblendet und es werden keine Netzwerkanfragen gestellt.",
@@ -2007,6 +2007,9 @@
         "label": "Leistungsregler"
       },
       "title": "Sperrbildschirm"
+    },
+    "region": {
+      "title": "Region"
     },
     "network": {
       "bluetooth": {

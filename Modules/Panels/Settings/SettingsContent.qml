@@ -76,8 +76,8 @@ Item {
     NetworkTab {}
   }
   Component {
-    id: locationTab
-    LocationTab {}
+    id: regionTab
+    RegionTab {}
   }
   Component {
     id: colorSchemeTab
@@ -236,9 +236,9 @@ Item {
           },
           {
             "id": SettingsPanel.Tab.Location,
-            "label": "settings.location.title",
+            "label": "settings.region.title",
             "icon": "settings-location",
-            "source": locationTab
+            "source": regionTab
           },
           {
             "id": SettingsPanel.Tab.ScreenRecorder,

@@ -1965,7 +1965,7 @@
           "label": "Tu ubicación"
         }
       },
-      "title": "Ubicación",
+      "title": "Región",
       "weather": {
         "enabled": {
           "description": "Mostrar información del clima en toda la interfaz y obtener datos meteorológicos. Cuando está desactivado, todos los elementos del clima estarán ocultos y no se realizarán solicitudes de red.",
@@ -2007,6 +2007,9 @@
         "label": "Controles de energía"
       },
       "title": "Pantalla de bloqueo"
+    },
+    "region": {
+      "title": "Región"
     },
     "network": {
       "bluetooth": {

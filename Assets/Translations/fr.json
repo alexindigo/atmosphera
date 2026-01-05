@@ -1965,7 +1965,7 @@
           "label": "Votre emplacement"
         }
       },
-      "title": "Emplacement",
+      "title": "Région",
       "weather": {
         "enabled": {
           "description": "Afficher les informations météorologiques dans toute l'interface et récupérer les données météo. Lorsque désactivé, tous les éléments météo seront masqués et aucune requête réseau ne sera effectuée.",
@@ -2007,6 +2007,9 @@
         "label": "Commandes d'alimentation"
       },
       "title": "Écran de verrouillage"
+    },
+    "region": {
+      "title": "Région"
     },
     "network": {
       "bluetooth": {
