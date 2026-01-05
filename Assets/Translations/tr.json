@@ -1440,6 +1440,11 @@
         "description": "Kontrol merkezindeki sistem izleyici kartının izlemesi gereken disk bağlama noktasını seçin.",
         "label": "Sistem izleyici disk yolu"
       },
+      "tabs": {
+        "appearance": "Görünüm",
+        "cards": "Kartlar",
+        "control-widgets": "Kontrol Widget'ları"
+      },
       "title": "Kontrol Merkezi"
     },
     "desktop-widgets": {

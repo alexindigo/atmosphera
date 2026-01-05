@@ -1440,6 +1440,11 @@
         "description": "Válassza ki, hogy melyik lemez csatolási pontot kell figyelnie a rendszerfigyelő kártyának a vezérlőközpontban.",
         "label": "Rendszerfigyelő lemez elérési útja"
       },
+      "tabs": {
+        "appearance": "Megjelenés",
+        "cards": "Kártyák",
+        "control-widgets": "Vezérlő widgetek"
+      },
       "title": "Vezérlőközpont"
     },
     "desktop-widgets": {

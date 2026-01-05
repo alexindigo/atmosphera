@@ -1440,6 +1440,11 @@
         "description": "Hilbijêre kîjan xala çiyayê dîskê karta çavdêriya pergalê ya di navenda kontrolê de divê çavdêriyê bike.",
         "label": "Rêya dîska çavdêriya pergalê"
       },
+      "tabs": {
+        "appearance": "Dîmenderî",
+        "cards": "Kartên",
+        "control-widgets": "Widgetên Kontrolê"
+      },
       "title": "Navenda kontrolê "
     },
     "desktop-widgets": {

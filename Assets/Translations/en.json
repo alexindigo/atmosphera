@@ -1440,6 +1440,11 @@
         "description": "Select which disk mount point the system monitor card in the control center should monitor.",
         "label": "System monitor disk path"
       },
+      "tabs": {
+        "appearance": "Appearance",
+        "cards": "Cards",
+        "control-widgets": "Control Widgets"
+      },
       "title": "Control Center"
     },
     "desktop-widgets": {

@@ -1440,6 +1440,11 @@
         "description": "Selecione qual ponto de montagem do disco o cartão do monitor do sistema no centro de controle deve monitorar.",
         "label": "Caminho do disco do monitor do sistema"
       },
+      "tabs": {
+        "appearance": "Aparência",
+        "cards": "Cartões",
+        "control-widgets": "Widgets de controle"
+      },
       "title": "Central de Controle"
     },
     "desktop-widgets": {

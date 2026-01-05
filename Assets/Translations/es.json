@@ -1440,6 +1440,11 @@
         "description": "Selecciona qué punto de montaje de disco debe monitorear la tarjeta del monitor del sistema en el centro de control.",
         "label": "Ruta del disco del monitor del sistema"
       },
+      "tabs": {
+        "appearance": "Apariencia",
+        "cards": "Tarjetas",
+        "control-widgets": "Widgets de control"
+      },
       "title": "Centro de control"
     },
     "desktop-widgets": {

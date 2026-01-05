@@ -1440,6 +1440,11 @@
         "description": "Wybierz, który punkt montowania dysku ma być monitorowany przez kartę monitora systemu w centrum sterowania.",
         "label": "Ścieżka dysku monitora systemu"
       },
+      "tabs": {
+        "appearance": "Wygląd",
+        "cards": "Karty",
+        "control-widgets": "Widgety sterowania"
+      },
       "title": "Centrum sterowania"
     },
     "desktop-widgets": {

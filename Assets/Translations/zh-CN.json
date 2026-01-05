@@ -1440,6 +1440,11 @@
         "description": "选择控制中心中的系统监视器卡片应监视的磁盘挂载点。",
         "label": "系统监视器磁盘路径"
       },
+      "tabs": {
+        "appearance": "外观",
+        "cards": "卡片",
+        "control-widgets": "控制小组件"
+      },
       "title": "控制中心"
     },
     "desktop-widgets": {

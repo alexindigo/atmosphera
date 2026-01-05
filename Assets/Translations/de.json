@@ -1440,6 +1440,11 @@
         "description": "Wählen Sie, welchen Festplatten-Mountpunkt die Systemmonitor-Karte im Kontrollzentrum überwachen soll.",
         "label": "Systemmonitor Festplattenpfad"
       },
+      "tabs": {
+        "appearance": "Erscheinungsbild",
+        "cards": "Karten",
+        "control-widgets": "Kontroll-Widgets"
+      },
       "title": "Kontrollzentrum"
     },
     "desktop-widgets": {

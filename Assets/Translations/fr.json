@@ -1440,6 +1440,11 @@
         "description": "Sélectionnez le point de montage du disque que la carte du moniteur système dans le centre de contrôle doit surveiller.",
         "label": "Chemin du disque du moniteur système"
       },
+      "tabs": {
+        "appearance": "Apparence",
+        "cards": "Cartes",
+        "control-widgets": "Widgets de contrôle"
+      },
       "title": "Centre de contrôle"
     },
     "desktop-widgets": {

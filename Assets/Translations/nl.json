@@ -1440,6 +1440,11 @@
         "description": "Selecteer welk schijf-mountpunt de systeemmonitor-kaart in het bedieningscentrum moet bewaken.",
         "label": "Systeemmonitor schijfpad"
       },
+      "tabs": {
+        "appearance": "Uiterlijk",
+        "cards": "Kaarten",
+        "control-widgets": "Controlewidgets"
+      },
       "title": "Bedieningscentrum"
     },
     "desktop-widgets": {
