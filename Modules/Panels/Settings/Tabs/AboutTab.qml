@@ -32,8 +32,8 @@ ColumnLayout {
   spacing: Style.marginL
 
   Component.onCompleted: {
-    Logger.d("AboutTab", "Component.onCompleted - Current version:", root.currentVersion);
-    Logger.d("AboutTab", "Component.onCompleted - Is git version:", root.isGitVersion);
+    Logger.d("AboutTab", "Current version:", root.currentVersion);
+    Logger.d("AboutTab", "Is git version:", root.isGitVersion);
     // Only fetch commit info for -git versions
     if (root.isGitVersion) {
       // On NixOS, extract commit hash from the store path first
@@ -241,6 +241,31 @@ ColumnLayout {
       onClicked: {
         var screen = PanelService.openedPanel?.screen || Quickshell.screens[0];
         UpdateService.viewChangelog(screen);
+      }
+    }
+
+    NButton {
+      visible: !HostService.isNixOS
+      icon: "wand"
+      text: I18n.tr("settings.general.launch-setup-wizard")
+      fontSize: Style.fontSizeXS
+      iconSize: Style.fontSizeS
+      outlined: true
+      onClicked: {
+        var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
+        if (!targetScreen) {
+          return;
+        }
+        var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
+        if (setupPanel) {
+          setupPanel.open();
+        } else {
+          Qt.callLater(() => {
+                         var sp = PanelService.getPanel("setupWizardPanel", targetScreen);
+                         if (sp)
+                         sp.open();
+                       });
+        }
       }
     }
 

@@ -1757,7 +1757,7 @@
           "label": "Application language"
         }
       },
-      "launch-setup-wizard": "Launch the setup wizard",
+      "launch-setup-wizard": "Setup wizard",
       "profile": {
         "picture": {
           "description": "Your profile picture that appears throughout the interface.",
