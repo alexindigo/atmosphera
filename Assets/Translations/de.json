@@ -1059,6 +1059,11 @@
           "volumes": "Lautstärken"
         }
       },
+      "tabs": {
+        "devices": "Geräte",
+        "media": "Medien",
+        "volumes": "Volumina"
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Statusleiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen.",
           "label": "Monitor-Anzeige"
         }
+      },
+      "tabs": {
+        "appearance": "Aussehen",
+        "monitors": "Monitore",
+        "widgets": "Widgets"
       },
       "title": "Statusleiste",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata.",
           "label": "Vordefinierte Farbschemata"
         }
+      },
+      "tabs": {
+        "colors": "Farben",
+        "templates": "Vorlagen"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Steuert die Farbtemperatur nachts."
         }
       },
+      "tabs": {
+        "brightness": "Helligkeit",
+        "night-light": "Nachtlicht"
+      },
       "title": "Anzeige"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Dock auf bestimmten Monitoren anzeigen. Standardmäßig werden alle angezeigt, wenn keine ausgewählt wurden.",
           "label": "Monitor-Anzeige"
         }
+      },
+      "tabs": {
+        "appearance": "Aussehen",
+        "monitors": "Monitore"
       },
       "title": "Dock"
     },
@@ -2137,6 +2159,12 @@
           "label": "Sound-Lautstärke"
         }
       },
+      "tabs": {
+        "general": "Allgemein",
+        "history": "Geschichte",
+        "sounds": "Geräusche",
+        "toast": "Toast"
+      },
       "title": "Benachrichtigungen",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Abfrageintervall"
       },
+      "polling-section": {
+        "description": "Konfigurieren Sie, wie oft jede Systemmetrik aktualisiert wird.",
+        "label": "Abfrageintervalle"
+      },
+      "tabs": {
+        "general": "Allgemein",
+        "polling": "Meinungsumfrage",
+        "thresholds": "Schwellenwerte"
+      },
       "temperature-section": {
         "label": "CPU-Temperatur"
       },
@@ -2510,6 +2547,12 @@
         "description": "Globale Animationsgeschwindigkeit anpassen.",
         "label": "Animationsgeschwindigkeit",
         "reset": "Animationsgeschwindigkeit zurücksetzen"
+      },
+      "appearance": {
+        "section": {
+          "description": "Visuelle Elemente wie Tooltips, Rahmen und Schatten anpassen.",
+          "label": "Aussehen"
+        }
       },
       "box-border": {
         "description": "Zeigt eine Umrandung um Inhaltsbereiche an.",
@@ -2566,6 +2609,11 @@
           "label": "Schattenrichtung"
         },
         "label": "Schlagschatten"
+      },
+      "tabs": {
+        "appearance": "Aussehen",
+        "panels": "Paneele",
+        "screen-corners": "Bildschirmecken"
       },
       "title": "Benutzeroberfläche",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
           "label": "Position"
         }
+      },
+      "tabs": {
+        "automation": "Automatisierung",
+        "look-feel": "Erscheinungsbild",
+        "settings": "Einstellungen"
       },
       "title": "Hintergrundbild"
     }

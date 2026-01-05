@@ -1059,6 +1059,11 @@
           "volumes": "Berg"
         }
       },
+      "tabs": {
+        "devices": "Amûr",
+        "media": "Medya",
+        "volumes": "Cild"
+      },
       "title": "Deng",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Nîşan bide bar li ser monitorên taybet. Eger tu kes neyê hilbijartin, ew ê bi awayekî xwerû hemûyan nîşan bide.",
           "label": "Dîmender"
         }
+      },
+      "tabs": {
+        "appearance": "Xuyanî",
+        "monitors": "Çavdêr",
+        "widgets": "Amûr"
       },
       "title": "Darik",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Ji berhevokek şemayên rengan ên pêşdiyarkirî hilbijêrin.",
           "label": "Şemayên rengan ên pêşdiyarkirî"
         }
+      },
+      "tabs": {
+        "colors": "Rengan",
+        "templates": "Şablonan"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Germahiya di dema şevê de kontrol dike."
         }
       },
+      "tabs": {
+        "brightness": "Ronahî",
+        "night-light": "Ronahiya şevê"
+      },
       "title": "Dîmender"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Nîşan bide dock li ser çavdêrên taybet. Eger tu neyê hilbijartin, ew bi awayekî xwerû li ser hemûyan e.",
           "label": "Pêşangeha çavdêriyê"
         }
+      },
+      "tabs": {
+        "appearance": "Xuyan",
+        "monitors": "Çavdêr"
       },
       "title": "Dok"
     },
@@ -2137,6 +2159,12 @@
           "label": "Hêjmara deng"
         }
       },
+      "tabs": {
+        "general": "Giştî",
+        "history": "Dîrok",
+        "sounds": "Deng",
+        "toast": "Tost"
+      },
       "title": "Agahdarî",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Navbera anketê"
       },
+      "polling-section": {
+        "description": "Mîheng bike ku her pîvana pergalê çiqas caran were nûkirin.",
+        "label": "Navberên anketê"
+      },
+      "tabs": {
+        "general": "Giştî",
+        "polling": "Anket",
+        "thresholds": "Asteyan"
+      },
       "temperature-section": {
         "label": "Germahiya CPU"
       },
@@ -2510,6 +2547,12 @@
         "description": "Lezaaniya lezgîniya gerdûnî sererast bike.",
         "label": "Leza anîmasyonê",
         "reset": "Lezaaniya bilezîneka nû bike"
+      },
+      "appearance": {
+        "section": {
+          "description": "Xwerûkirina hêmanên dîtbarî yên wekî serişteyên amûran, sînor û siya.",
+          "label": "Xuyabûn"
+        }
       },
       "box-border": {
         "description": "Xêzekê li dora deverên naverokê nîşan dide.",
@@ -2566,6 +2609,11 @@
           "label": "Arasteya siya"
         },
         "label": "Siyeyên ketî"
+      },
+      "tabs": {
+        "appearance": "Xuyanî",
+        "panels": "Panelan",
+        "screen-corners": "Kişekanên Dîmenderê"
       },
       "title": "Navrûya bikarhêner",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Cihê ku panela hilbijêra dîwêr lê xuya dike hilbijêre.",
           "label": "Helwest"
         }
+      },
+      "tabs": {
+        "automation": "Xweserî",
+        "look-feel": "Dîtin û hest",
+        "settings": "Settings"
       },
       "title": "Wêneyê dîwêr"
     }

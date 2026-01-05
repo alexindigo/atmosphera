@@ -1247,6 +1247,10 @@
           "label": "Predefined color schemes"
         }
       },
+      "tabs": {
+        "colors": "Colors",
+        "templates": "Templates"
+      },
       "templates": {
         "compositors": {
           "description": "Compositor theming.",
@@ -1352,10 +1356,6 @@
             "description": "Write {filepath}"
           }
         }
-      },
-      "tabs": {
-        "colors": "Colors",
-        "templates": "Templates"
       },
       "title": "Color Scheme"
     },
@@ -2505,6 +2505,15 @@
       "polling-interval": {
         "label": "Polling interval"
       },
+      "polling-section": {
+        "description": "Configure how often each system metric is updated.",
+        "label": "Polling intervals"
+      },
+      "tabs": {
+        "general": "General",
+        "polling": "Polling",
+        "thresholds": "Thresholds"
+      },
       "temperature-section": {
         "label": "CPU temperature"
       },
@@ -2515,15 +2524,6 @@
       "thresholds-section": {
         "description": "Adjust warning/critical thresholds for each system metric.",
         "label": "Thresholds"
-      },
-      "polling-section": {
-        "description": "Configure how often each system metric is updated.",
-        "label": "Polling intervals"
-      },
-      "tabs": {
-        "general": "General",
-        "polling": "Polling",
-        "thresholds": "Thresholds"
       },
       "title": "System Monitor",
       "use-custom-highlight-colors": {
@@ -2547,6 +2547,12 @@
         "description": "Adjust global animation speed.",
         "label": "Animation speed",
         "reset": "Reset animation speed"
+      },
+      "appearance": {
+        "section": {
+          "description": "Customize visual elements like tooltips, borders, and shadows.",
+          "label": "Appearance"
+        }
       },
       "box-border": {
         "description": "Displays an outline around content areas.",
@@ -2613,12 +2619,6 @@
       "tooltips": {
         "description": "Enable or disable tooltips throughout the interface.",
         "label": "Show tooltips"
-      },
-      "appearance": {
-        "section": {
-          "description": "Customize visual elements like tooltips, borders, and shadows.",
-          "label": "Appearance"
-        }
       }
     },
     "wallpaper": {

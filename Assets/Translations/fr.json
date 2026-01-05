@@ -1059,6 +1059,11 @@
           "volumes": "Volumes"
         }
       },
+      "tabs": {
+        "devices": "Appareils",
+        "media": "Médias",
+        "volumes": "Volumes"
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Afficher la barre sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi.",
           "label": "Affichage sur les moniteurs"
         }
+      },
+      "tabs": {
+        "appearance": "Apparence",
+        "monitors": "Écrans",
+        "widgets": "Widgets"
       },
       "title": "Barre",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Choisissez parmi une collection de jeux de couleurs prédéfinis.",
           "label": "Jeux de couleurs prédéfinis"
         }
+      },
+      "tabs": {
+        "colors": "Couleurs",
+        "templates": "Modèles"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Contrôle la température pendant la nuit."
         }
       },
+      "tabs": {
+        "brightness": "Luminosité",
+        "night-light": "Veilleuse"
+      },
       "title": "Affichage"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Afficher le dock sur des écrans spécifiques. Par défaut, il s'affiche sur tous les écrans si aucun n'est sélectionné.",
           "label": "Affichage sur les moniteur"
         }
+      },
+      "tabs": {
+        "appearance": "Apparence",
+        "monitors": "Écrans"
       },
       "title": "Dock"
     },
@@ -2137,6 +2159,12 @@
           "label": "Volume sonore"
         }
       },
+      "tabs": {
+        "general": "Général",
+        "history": "Histoire",
+        "sounds": "Sons",
+        "toast": "Pain grillé"
+      },
       "title": "Notifications",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Intervalle d'interrogation"
       },
+      "polling-section": {
+        "description": "Configurer la fréquence de mise à jour de chaque métrique système.",
+        "label": "Intervalles d'interrogation"
+      },
+      "tabs": {
+        "general": "Général",
+        "polling": "Sondage",
+        "thresholds": "Seuils"
+      },
       "temperature-section": {
         "label": "Température CPU"
       },
@@ -2510,6 +2547,12 @@
         "description": "Ajuster la vitesse globale de l'animation.",
         "label": "Vitesse d'animation",
         "reset": "Réinitialiser la vitesse de l'animation"
+      },
+      "appearance": {
+        "section": {
+          "description": "Personnaliser les éléments visuels tels que les info-bulles, les bordures et les ombres.",
+          "label": "Apparence"
+        }
       },
       "box-border": {
         "description": "Affiche un contour autour des zones de contenu.",
@@ -2566,6 +2609,11 @@
           "label": "Direction de l’ombre"
         },
         "label": "Ombres portées"
+      },
+      "tabs": {
+        "appearance": "Apparence",
+        "panels": "Panneaux",
+        "screen-corners": "Coins d'écran"
       },
       "title": "Interface utilisateur",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Choisissez l'emplacement d'affichage du panneau de sélection du fond d'écran.",
           "label": "Position"
         }
+      },
+      "tabs": {
+        "automation": "Automatisation",
+        "look-feel": "Aspect et convivialité",
+        "settings": "Paramètres"
       },
       "title": "Fond d'écran"
     }

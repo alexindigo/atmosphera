@@ -1059,6 +1059,11 @@
           "volumes": "Volumes"
         }
       },
+      "tabs": {
+        "devices": "Apparaten",
+        "media": "Media",
+        "volumes": "Volumes"
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Balk op specifieke monitoren weergeven. Standaard op alle als er geen zijn gekozen.",
           "label": "Monitorweergave"
         }
+      },
+      "tabs": {
+        "appearance": "Uiterlijk",
+        "monitors": "Monitoren",
+        "widgets": "Widgets"
       },
       "title": "Balk",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Kies uit een verzameling vooraf gedefinieerde kleurenschema's.",
           "label": "Vooraf gedefinieerde kleurenschema's"
         }
+      },
+      "tabs": {
+        "colors": "Kleuren",
+        "templates": "Sjablonen"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Regelt de kleurtemperatuur 's nachts."
         }
       },
+      "tabs": {
+        "brightness": "Helderheid",
+        "night-light": "Nachtlampje"
+      },
       "title": "Beeldscherm"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Dock op specifieke monitoren weergeven. Standaard op alle als er geen zijn gekozen.",
           "label": "Monitorweergave"
         }
+      },
+      "tabs": {
+        "appearance": "Uiterlijk",
+        "monitors": "Monitoren"
       },
       "title": "Dock"
     },
@@ -2137,6 +2159,12 @@
           "label": "Geluidsvolume"
         }
       },
+      "tabs": {
+        "general": "Algemeen",
+        "history": "Geschiedenis",
+        "sounds": "Geluiden",
+        "toast": "Toast"
+      },
       "title": "Meldingen",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Peilingsinterval"
       },
+      "polling-section": {
+        "description": "Configureer hoe vaak elke systeemmetriek wordt bijgewerkt.",
+        "label": "Peilingsintervallen"
+      },
+      "tabs": {
+        "general": "Algemeen",
+        "polling": "Peilingen",
+        "thresholds": "Drempels"
+      },
       "temperature-section": {
         "label": "CPU-temperatuur"
       },
@@ -2510,6 +2547,12 @@
         "description": "Pas de globale animatiesnelheid aan.",
         "label": "Animatiesnelheid",
         "reset": "Animatiesnelheid resetten"
+      },
+      "appearance": {
+        "section": {
+          "description": "Pas visuele elementen aan, zoals tooltips, randen en schaduwen.",
+          "label": "Uiterlijk"
+        }
       },
       "box-border": {
         "description": "Toont een omlijning rond inhoudsgebieden.",
@@ -2566,6 +2609,11 @@
           "label": "Richting van schaduw"
         },
         "label": "Slagschaduwen"
+      },
+      "tabs": {
+        "appearance": "Uiterlijk",
+        "panels": "Panelen",
+        "screen-corners": "Schermhoeken"
       },
       "title": "Gebruikersinterface",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Kies waar het achtergrondselectiepaneel verschijnt.",
           "label": "Positie"
         }
+      },
+      "tabs": {
+        "automation": "Automatisering",
+        "look-feel": "Uiterlijk en gevoel",
+        "settings": "Instellingen"
       },
       "title": "Achtergrond"
     }

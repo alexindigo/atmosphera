@@ -1059,6 +1059,11 @@
           "volumes": "Głośność"
         }
       },
+      "tabs": {
+        "devices": "Urządzenia",
+        "media": "Media",
+        "volumes": "Tomy"
+      },
       "title": "Audio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Pokaż pasek na konkretnych monitorach. Domyślnie na wszystkich, jeśli żaden nie zostanie wybrany.",
           "label": "Wyświetlanie na monitorach"
         }
+      },
+      "tabs": {
+        "appearance": "Wygląd",
+        "monitors": "Monitory",
+        "widgets": "Widżety"
       },
       "title": "Pasek",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Wybierz z kolekcji predefiniowanych schematów kolorów.",
           "label": "Predefiniowane schematy kolorów"
         }
+      },
+      "tabs": {
+        "colors": "Kolory",
+        "templates": "Szablony"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Kontroluje temperaturę barwową w nocy."
         }
       },
+      "tabs": {
+        "brightness": "Jasność",
+        "night-light": "Lampka nocna"
+      },
       "title": "Ekran"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Pokaż dok na konkretnych monitorach. Domyślnie na wszystkich, jeśli żaden nie zostanie wybrany.",
           "label": "Wyświetlanie na monitorach"
         }
+      },
+      "tabs": {
+        "appearance": "Wygląd",
+        "monitors": "Monitory"
       },
       "title": "Dok"
     },
@@ -2137,6 +2159,12 @@
           "label": "Głośność dźwięku"
         }
       },
+      "tabs": {
+        "general": "Ogólne",
+        "history": "Historia",
+        "sounds": "Dźwięki",
+        "toast": "Tost"
+      },
       "title": "Powiadomienia",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Interwał odświeżania"
       },
+      "polling-section": {
+        "description": "Skonfiguruj, jak często każda metryka systemowa jest aktualizowana.",
+        "label": "Interwały odpytywania"
+      },
+      "tabs": {
+        "general": "Ogólne",
+        "polling": "Sondaż",
+        "thresholds": "Progi"
+      },
       "temperature-section": {
         "label": "Temperatura CPU"
       },
@@ -2510,6 +2547,12 @@
         "description": "Dostosuj globalną prędkość animacji.",
         "label": "Prędkość animacji",
         "reset": "Resetuj prędkość animacji"
+      },
+      "appearance": {
+        "section": {
+          "description": "Dostosuj elementy wizualne, takie jak podpowiedzi, obramowania i cienie.",
+          "label": "Wygląd"
+        }
       },
       "box-border": {
         "description": "Wyświetla obrys wokół obszarów zawartości.",
@@ -2566,6 +2609,11 @@
           "label": "Kierunek cienia"
         },
         "label": "Cienie"
+      },
+      "tabs": {
+        "appearance": "Wygląd",
+        "panels": "Panele",
+        "screen-corners": "Narożniki ekranu"
       },
       "title": "Interfejs użytkownika",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Wybierz, gdzie pojawia się panel wyboru tapety.",
           "label": "Pozycja"
         }
+      },
+      "tabs": {
+        "automation": "Automatyzacja",
+        "look-feel": "Wygląd i styl",
+        "settings": "Ustawienia"
       },
       "title": "Tapeta"
     }

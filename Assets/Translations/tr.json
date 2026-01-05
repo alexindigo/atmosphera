@@ -1059,6 +1059,11 @@
           "volumes": "Ses"
         }
       },
+      "tabs": {
+        "devices": "Cihazlar",
+        "media": "Medya",
+        "volumes": "Hacimler"
+      },
       "title": "Ses",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Araç çubuğunu belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",
           "label": "Ekran görüntüsü"
         }
+      },
+      "tabs": {
+        "appearance": "Görünüş",
+        "monitors": "Monitörler",
+        "widgets": "Araçlar"
       },
       "title": "Araç Çubuğu",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Önceden tanımlanmış renk şemaları koleksiyonundan seçim yapın.",
           "label": "Önceden tanımlanmış renk şemaları"
         }
+      },
+      "tabs": {
+        "colors": "Renkler",
+        "templates": "Şablonlar"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Gece saatlerindeki renk sıcaklığını kontrol eder."
         }
       },
+      "tabs": {
+        "brightness": "Parlaklık",
+        "night-light": "Gece Lambası"
+      },
       "title": "Görüntü"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Rıhtımı belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",
           "label": "Ekran görüntüsü"
         }
+      },
+      "tabs": {
+        "appearance": "Görünüm",
+        "monitors": "Monitörler"
       },
       "title": "Rıhtım"
     },
@@ -2137,6 +2159,12 @@
           "label": "Ses seviyesi"
         }
       },
+      "tabs": {
+        "general": "Genel",
+        "history": "Tarih",
+        "sounds": "Sesler",
+        "toast": "Tost"
+      },
       "title": "Bildirimler",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Yoklama aralığı"
       },
+      "polling-section": {
+        "description": "Her bir sistem metriğinin ne sıklıkta güncelleneceğini yapılandırın.",
+        "label": "Yoklama aralıkları"
+      },
+      "tabs": {
+        "general": "Genel",
+        "polling": "Anket",
+        "thresholds": "Eşikler"
+      },
       "temperature-section": {
         "label": "İşlemci Sıcaklığı"
       },
@@ -2510,6 +2547,12 @@
         "description": "Genel animasyon hızını ayarlar.",
         "label": "Animasyon hızı",
         "reset": "Animasyon hızını sıfırla"
+      },
+      "appearance": {
+        "section": {
+          "description": "Araç ipuçları, kenarlıklar ve gölgeler gibi görsel öğeleri özelleştirin.",
+          "label": "Görünüm"
+        }
       },
       "box-border": {
         "description": "İçerik alanlarının etrafında bir çerçeve görüntüler.",
@@ -2566,6 +2609,11 @@
           "label": "Gölge yönü"
         },
         "label": "Gölge efektleri"
+      },
+      "tabs": {
+        "appearance": "Görünüm",
+        "panels": "Paneller",
+        "screen-corners": "Ekran Köşeleri"
       },
       "title": "Kullanıcı arayüzü",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Duvar kâğıdı seçici panelinin nerede görüneceğini seçin.",
           "label": "Pozisyon"
         }
+      },
+      "tabs": {
+        "automation": "Otomasyon",
+        "look-feel": "Görünüm ve his",
+        "settings": "Ayarlar"
       },
       "title": "Duvar kâğıdı"
     }

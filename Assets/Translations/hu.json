@@ -1059,6 +1059,11 @@
           "volumes": "Hangerők"
         }
       },
+      "tabs": {
+        "devices": "Eszközök",
+        "media": "Média",
+        "volumes": "Kötetek"
+      },
       "title": "Hang",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Sáv megjelenítése meghatározott monitorokon. Alapértelmezetten minden monitoron, ha nincs kiválasztva.",
           "label": "Monitorok megjelenítése"
         }
+      },
+      "tabs": {
+        "appearance": "Megjelenés",
+        "monitors": "Monitorok",
+        "widgets": "Widgetek"
       },
       "title": "Sáv",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Válasszon az előre definiált színsémák gyűjteményéből.",
           "label": "Előre definiált színsémák"
         }
+      },
+      "tabs": {
+        "colors": "Színek",
+        "templates": "Sablonok"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Szabályozza a hőmérsékletet éjszaka."
         }
       },
+      "tabs": {
+        "brightness": "Fényerő",
+        "night-light": "Éjszakai fény"
+      },
       "title": "Megjelenés"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Dokk megjelenítése meghatározott monitorokon. Alapértelmezés szerint mindegyiken, ha nincs kiválasztva.",
           "label": "Monitor megjelenítés"
         }
+      },
+      "tabs": {
+        "appearance": "Megjelenés",
+        "monitors": "Monitorok"
       },
       "title": "Dokk"
     },
@@ -2137,6 +2159,12 @@
           "label": "Hangerő"
         }
       },
+      "tabs": {
+        "general": "Általános",
+        "history": "Történelem",
+        "sounds": "Hangok",
+        "toast": "Pirítós"
+      },
       "title": "Értesítések",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Lekérdezési intervallum"
       },
+      "polling-section": {
+        "description": "Állítsa be, hogy milyen gyakran frissüljenek az egyes rendszer metrikák.",
+        "label": "Lekérdezési időközök"
+      },
+      "tabs": {
+        "general": "Általános",
+        "polling": "Szavazás",
+        "thresholds": "Küszöbértékek"
+      },
       "temperature-section": {
         "label": "CPU hőmérséklet"
       },
@@ -2510,6 +2547,12 @@
         "description": "Állítsa be a globális animációs sebességet.",
         "label": "Animációs sebesség",
         "reset": "Animációs sebesség visszaállítása"
+      },
+      "appearance": {
+        "section": {
+          "description": "Testreszabhatja a vizuális elemeket, például az eszköztippeket, a szegélyeket és az árnyékokat.",
+          "label": "Megjelenés"
+        }
       },
       "box-border": {
         "description": "Tartalomterületek köré vázlatot jelenít meg.",
@@ -2566,6 +2609,11 @@
           "label": "Árnyék iránya"
         },
         "label": "Árnyékok"
+      },
+      "tabs": {
+        "appearance": "Megjelenés",
+        "panels": "Panelek",
+        "screen-corners": "Képernyő sarkok"
       },
       "title": "Felhasználói felület",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Válassza ki, hol jelenjen meg a háttérkép választó panel.",
           "label": "Pozíció"
         }
+      },
+      "tabs": {
+        "automation": "Automatizálás",
+        "look-feel": "Megjelenés és érzet",
+        "settings": "Beállítások"
       },
       "title": "Háttérkép"
     }

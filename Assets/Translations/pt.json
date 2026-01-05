@@ -1059,6 +1059,11 @@
           "volumes": "Volumes"
         }
       },
+      "tabs": {
+        "devices": "Dispositivos",
+        "media": "Mídia",
+        "volumes": "Volumes"
+      },
       "title": "Áudio",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "Mostra a barra em monitores específicos. O padrão é todos, se nenhum for escolhido.",
           "label": "Exibição nos monitores"
         }
+      },
+      "tabs": {
+        "appearance": "Aparência",
+        "monitors": "Monitores",
+        "widgets": "Widgets"
       },
       "title": "Barra",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "Escolha entre uma coleção de esquemas de cores predefinidos.",
           "label": "Esquemas de cores predefinidos"
         }
+      },
+      "tabs": {
+        "colors": "Cores",
+        "templates": "Modelos"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "Controla a temperatura durante a noite."
         }
       },
+      "tabs": {
+        "brightness": "Brilho",
+        "night-light": "Luz Noturna"
+      },
       "title": "Tela"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "Mostrar dock em monitores específicos. O padrão é todos se nenhum for escolhido.",
           "label": "Exibição no monitor"
         }
+      },
+      "tabs": {
+        "appearance": "Aparência",
+        "monitors": "Monitores"
       },
       "title": "Dock"
     },
@@ -2137,6 +2159,12 @@
           "label": "Volume do som"
         }
       },
+      "tabs": {
+        "general": "Geral",
+        "history": "História",
+        "sounds": "Sons",
+        "toast": "Torrada"
+      },
       "title": "Notificações",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "Intervalo de pesquisa"
       },
+      "polling-section": {
+        "description": "Configure a frequência com que cada métrica do sistema é atualizada.",
+        "label": "Intervalos de pesquisa"
+      },
+      "tabs": {
+        "general": "Geral",
+        "polling": "Pesquisa de opinião",
+        "thresholds": "Limiares"
+      },
       "temperature-section": {
         "label": "Temperatura da CPU"
       },
@@ -2510,6 +2547,12 @@
         "description": "Ajustar a velocidade global da animação.",
         "label": "Velocidade da animação",
         "reset": "Redefinir velocidade da animação"
+      },
+      "appearance": {
+        "section": {
+          "description": "Personalize elementos visuais como dicas de ferramentas, bordas e sombras.",
+          "label": "Aparência"
+        }
       },
       "box-border": {
         "description": "Exibe um contorno ao redor das áreas de conteúdo.",
@@ -2566,6 +2609,11 @@
           "label": "Direção da sombra"
         },
         "label": "Sombras projetadas"
+      },
+      "tabs": {
+        "appearance": "Aparência",
+        "panels": "Painéis",
+        "screen-corners": "Cantos da tela"
       },
       "title": "Interface do usuário",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "Escolha onde o painel do seletor de papel de parede aparece.",
           "label": "Posição"
         }
+      },
+      "tabs": {
+        "automation": "Automação",
+        "look-feel": "Aparência e sensação",
+        "settings": "Configurações"
       },
       "title": "Papel de parede"
     }

@@ -1059,6 +1059,11 @@
           "volumes": "音量"
         }
       },
+      "tabs": {
+        "devices": "デバイス",
+        "media": "メディア",
+        "volumes": "ボリューム"
+      },
       "title": "サウンド",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "バーを表示するディスプレイを選択します。未選択の場合は全てに表示されます。",
           "label": "表示するディスプレイ"
         }
+      },
+      "tabs": {
+        "appearance": "外観",
+        "monitors": "モニター",
+        "widgets": "ウィジェット"
       },
       "title": "バー",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "あらかじめ用意された配色から選択します。",
           "label": "プリセット配色"
         }
+      },
+      "tabs": {
+        "colors": "色",
+        "templates": "テンプレート"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "夜間の色温度を調整します。"
         }
       },
+      "tabs": {
+        "brightness": "明るさ",
+        "night-light": "ナイトライト"
+      },
       "title": "ディスプレイ"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "ドックを表示するディスプレイを選択します。未選択の場合は全てに表示されます。",
           "label": "表示するディスプレイ"
         }
+      },
+      "tabs": {
+        "appearance": "外観",
+        "monitors": "モニタ"
       },
       "title": "ドック"
     },
@@ -2137,6 +2159,12 @@
           "label": "通知音量"
         }
       },
+      "tabs": {
+        "general": "一般",
+        "history": "歴史 (Rekishi)",
+        "sounds": "音",
+        "toast": "トースト"
+      },
       "title": "通知",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "ポーリング間隔"
       },
+      "polling-section": {
+        "description": "各システムメトリクスの更新頻度を設定します。",
+        "label": "ポーリング間隔"
+      },
+      "tabs": {
+        "general": "一般",
+        "polling": "ポーリング",
+        "thresholds": "閾値"
+      },
       "temperature-section": {
         "label": "CPU 温度"
       },
@@ -2510,6 +2547,12 @@
         "description": "全体のアニメーション速度を調整します。",
         "label": "アニメーション速度",
         "reset": "アニメーション速度をリセット"
+      },
+      "appearance": {
+        "section": {
+          "description": "ツールチップ、境界線、影などの視覚要素をカスタマイズします。",
+          "label": "外観"
+        }
       },
       "box-border": {
         "description": "コンテンツ領域の周りにアウトラインを表示します。",
@@ -2566,6 +2609,11 @@
           "label": "影の方向"
         },
         "label": "ドロップシャドウ"
+      },
+      "tabs": {
+        "appearance": "外観",
+        "panels": "パネル",
+        "screen-corners": "画面の隅"
       },
       "title": "ユーザーインターフェース",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "壁紙選択パネルの表示位置を選択します。",
           "label": "表示位置"
         }
+      },
+      "tabs": {
+        "automation": "自動化",
+        "look-feel": "見た目と雰囲気",
+        "settings": "設定"
       },
       "title": "壁紙"
     }

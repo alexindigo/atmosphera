@@ -1059,6 +1059,11 @@
           "volumes": "音量"
         }
       },
+      "tabs": {
+        "devices": "设备",
+        "media": "媒体",
+        "volumes": "卷"
+      },
       "title": "音频",
       "volumes": {
         "input-volume": {
@@ -1145,6 +1150,11 @@
           "description": "在特定显示器上显示状态栏。如果未选择，则默认为全部。",
           "label": "显示器显示"
         }
+      },
+      "tabs": {
+        "appearance": "外观",
+        "monitors": "监视器",
+        "widgets": "小部件"
       },
       "title": "状态栏",
       "tray": {
@@ -1236,6 +1246,10 @@
           "description": "从预定义配色方案集合中选择。",
           "label": "预定义配色方案"
         }
+      },
+      "tabs": {
+        "colors": "颜色",
+        "templates": "模板"
       },
       "templates": {
         "compositors": {
@@ -1622,6 +1636,10 @@
           "night-description": "控制夜间的色温。"
         }
       },
+      "tabs": {
+        "brightness": "亮度",
+        "night-light": "夜灯"
+      },
       "title": "显示"
     },
     "dock": {
@@ -1687,6 +1705,10 @@
           "description": "在特定显示器上显示停靠栏。如果未选择任何显示器，则默认为全部。",
           "label": "显示器显示"
         }
+      },
+      "tabs": {
+        "appearance": "外观",
+        "monitors": "显示器"
       },
       "title": "停靠栏"
     },
@@ -2137,6 +2159,12 @@
           "label": "声音音量"
         }
       },
+      "tabs": {
+        "general": "通用",
+        "history": "历史",
+        "sounds": "声音",
+        "toast": "吐司"
+      },
       "title": "通知",
       "toast": {
         "keyboard": {
@@ -2477,6 +2505,15 @@
       "polling-interval": {
         "label": "轮询间隔"
       },
+      "polling-section": {
+        "description": "配置每个系统指标的更新频率。",
+        "label": "轮询间隔"
+      },
+      "tabs": {
+        "general": "通用",
+        "polling": "民意调查",
+        "thresholds": "阈值"
+      },
       "temperature-section": {
         "label": "CPU 温度"
       },
@@ -2510,6 +2547,12 @@
         "description": "调整全局动画速度。",
         "label": "动画速度",
         "reset": "重置动画速度"
+      },
+      "appearance": {
+        "section": {
+          "description": "自定义视觉元素，如工具提示、边框和阴影。",
+          "label": "外观"
+        }
       },
       "box-border": {
         "description": "显示内容区域周围的轮廓。",
@@ -2566,6 +2609,11 @@
           "label": "阴影方向"
         },
         "label": "阴影"
+      },
+      "tabs": {
+        "appearance": "外观",
+        "panels": "面板",
+        "screen-corners": "屏幕边角"
       },
       "title": "用户界面",
       "tooltips": {
@@ -2668,6 +2716,11 @@
           "description": "选择壁纸选择面板的显示位置。",
           "label": "选择器位置"
         }
+      },
+      "tabs": {
+        "automation": "自动化",
+        "look-feel": "外观和感觉",
+        "settings": "设置"
       },
       "title": "壁纸"
     }
