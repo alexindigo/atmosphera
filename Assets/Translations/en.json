@@ -1916,6 +1916,23 @@
           "label": "Use App2Unit to launch applications"
         }
       },
+      "tabs": {
+        "general": "General",
+        "clipboard": "Clipboard",
+        "execute": "Execute"
+      },
+      "clipboard": {
+        "section": {
+          "label": "Clipboard",
+          "description": "Access and manage your clipboard history from the launcher."
+        }
+      },
+      "execute": {
+        "section": {
+          "label": "Execution",
+          "description": "Configure how applications are launched."
+        }
+      },
       "title": "Launcher"
     },
     "location": {
