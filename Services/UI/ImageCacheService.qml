@@ -24,8 +24,9 @@ Singleton {
   readonly property string contributorsDir: baseDir + "contributors/"
 
   // Supported image formats - extended list when ImageMagick is available
-  readonly property var basicImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp"]
-  readonly property var extendedImageFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.avif", "*.heic", "*.heif", "*.tiff", "*.tif", "*.pnm", "*.pgm", "*.ppm", "*.pbm", "*.svg", "*.svgz", "*.ico", "*.icns", "*.jxl", "*.jp2", "*.j2k", "*.exr", "*.hdr", "*.dds", "*.tga"]
+  readonly property var basicImageFilters: ["*.jpg", "*.JPG", "*.jpeg", "*.JPEG", "*.png", "*.PNG", "*.gif", "*.GIF", "*.bmp", "*.BMP"]
+  readonly property var extendedImageFilters: ["*.jpg", "*.JPG", "*.jpeg", "*.JPEG", "*.png", "*.PNG", "*.gif", "*.GIF", "*.bmp", "*.BMP", "*.webp", "*.WEBP", "*.avif", "*.AVIF", "*.heic", "*.HEIC", "*.heif", "*.HEIF", "*.tiff", "*.TIFF", "*.tif", "*.TIF", "*.pnm", "*.PNM", "*.pgm", "*.PGM", "*.ppm", "*.PPM", "*.pbm", "*.PBM", "*.svg", "*.SVG", "*.svgz", "*.SVGZ",
+    "*.ico", "*.ICO", "*.icns", "*.ICNS", "*.jxl", "*.JXL", "*.jp2", "*.JP2", "*.j2k", "*.J2K", "*.exr", "*.EXR", "*.hdr", "*.HDR", "*.dds", "*.DDS", "*.tga", "*.TGA"]
   readonly property var imageFilters: imageMagickAvailable ? extendedImageFilters : basicImageFilters
 
   // Check if a file format needs conversion (not natively supported by Qt)
