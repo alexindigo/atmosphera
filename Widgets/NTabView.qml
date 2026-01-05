@@ -62,6 +62,20 @@ Item {
   }
 
   function _animateTransition(fromIdx, toIdx) {
+    // Stop any running animations
+    fromXAnim.stop();
+    fromOpacityAnim.stop();
+    toXAnim.stop();
+    toOpacityAnim.stop();
+
+    // Reset all items to clean state (except target)
+    for (let i = 0; i < contentItems.length; i++) {
+      if (i !== toIdx) {
+        contentItems[i].visible = false;
+        contentItems[i].opacity = 1.0;
+      }
+    }
+
     const fromItem = contentItems[fromIdx];
     const toItem = contentItems[toIdx];
     const slideLeft = toIdx > fromIdx;
@@ -72,42 +86,71 @@ Item {
     animatingHeight = Math.max(fromHeight, toHeight);
     animating = true;
 
-    // Position incoming item off-screen (with gap)
+    // Position outgoing item and make visible for animation
+    if (fromItem) {
+      fromItem.visible = true;
+      fromItem.x = 0;
+      fromItem.opacity = 1.0;
+    }
+
+    // Position incoming item off-screen (with gap) and set initial opacity
     if (toItem) {
       toItem.visible = true;
       toItem.x = slideLeft ? root.width + transitionGap : -root.width - transitionGap;
+      toItem.opacity = 0.0;
     }
 
     // Animate both items together (with gap)
     if (fromItem) {
-      fromAnim.target = fromItem;
-      fromAnim.to = slideLeft ? -root.width - transitionGap : root.width + transitionGap;
-      fromAnim.start();
+      fromXAnim.target = fromItem;
+      fromXAnim.to = slideLeft ? -root.width - transitionGap : root.width + transitionGap;
+      fromOpacityAnim.target = fromItem;
+      fromXAnim.start();
+      fromOpacityAnim.start();
     }
 
     if (toItem) {
-      toAnim.target = toItem;
-      toAnim.start();
+      toXAnim.target = toItem;
+      toOpacityAnim.target = toItem;
+      toXAnim.start();
+      toOpacityAnim.start();
     }
   }
 
   NumberAnimation {
-    id: fromAnim
+    id: fromXAnim
     property: "x"
     duration: root.transitionTime
     easing.type: Easing.OutCubic
     onFinished: {
       if (target && target !== contentItems[currentIndex]) {
         target.visible = false;
+        target.opacity = 1.0;
       }
       animating = false;
     }
   }
 
   NumberAnimation {
-    id: toAnim
+    id: fromOpacityAnim
+    property: "opacity"
+    to: 0.25
+    duration: root.transitionTime
+    easing.type: Easing.OutCubic
+  }
+
+  NumberAnimation {
+    id: toXAnim
     property: "x"
     to: 0
+    duration: root.transitionTime
+    easing.type: Easing.OutCubic
+  }
+
+  NumberAnimation {
+    id: toOpacityAnim
+    property: "opacity"
+    to: 1.0
     duration: root.transitionTime
     easing.type: Easing.OutCubic
   }
