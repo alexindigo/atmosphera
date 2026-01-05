@@ -1094,9 +1094,9 @@ SmartPanel {
                       font.weight: Style.fontWeightBold
                       color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
                       elide: Text.ElideRight
-                      maximumLineCount: modelData.singleLine ? 1 : 100
-                      wrapMode: modelData.singleLine ? Text.NoWrap : Text.Wrap
-                      clip: modelData.singleLine || false
+                      maximumLineCount: 1
+                      wrapMode: Text.Wrap
+                      clip: true
                       Layout.fillWidth: true
                     }
 
