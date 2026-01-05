@@ -1827,6 +1827,10 @@
           "label": "注釈ツール",
           "placeholder": "グラディア、サッティ -f -"
         },
+        "auto-paste": {
+          "description": "選択されたクリップボードの項目を自動的に貼り付けます。wtypeが必要です。",
+          "label": "自動貼り付け"
+        },
         "clip-preview": {
           "description": ">clip コマンド使用時に、クリップボードの内容をプレビュー表示します。",
           "label": "クリップボードのプレビューを有効化"

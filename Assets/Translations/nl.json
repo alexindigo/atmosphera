@@ -1827,6 +1827,10 @@
           "label": "Annotatietool",
           "placeholder": "e.g. 'gradia', 'satty -f -'"
         },
+        "auto-paste": {
+          "description": "Plak automatisch het geselecteerde klemborditem. Vereist wtype.",
+          "label": "Automatisch plakken"
+        },
         "clip-preview": {
           "description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
           "label": "Klembordvoorbeeld inschakelen"

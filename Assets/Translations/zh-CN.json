@@ -1827,6 +1827,10 @@
           "label": "标注工具",
           "placeholder": "格拉迪亚，萨蒂 -f -"
         },
+        "auto-paste": {
+          "description": "自动粘贴选定的剪贴板项目。需要 wtype。",
+          "label": "自动粘贴"
+        },
         "clip-preview": {
           "description": "在使用 >clip 命令时显示剪贴板内容的预览。",
           "label": "启用剪贴板预览"

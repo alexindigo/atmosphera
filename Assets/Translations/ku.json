@@ -1827,6 +1827,10 @@
           "label": "Amûra şîrovekirinê",
           "placeholder": "Ez ji te hez dikim."
         },
+        "auto-paste": {
+          "description": "Bi otomatîkî tişta clipboardê ya hilbijartî bişîne. Wtype hewce dike.",
+          "label": "Otomatîkî bixwe ve zeliqandin"
+        },
         "clip-preview": {
           "description": "Dîmenek pêşdîtinê ya naveroka clipboardê nîşan bide dema ku emrê >clip tê bikaranîn.",
           "label": "Pêşdîtina klîpê çalak bike"

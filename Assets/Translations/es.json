@@ -1827,6 +1827,10 @@
           "label": "Herramienta de anotación",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Pegar automáticamente el elemento seleccionado del portapapeles. Requiere wtype.",
+          "label": "Pegado automático"
+        },
         "clip-preview": {
           "description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
           "label": "Activar vista previa del portapapeles"

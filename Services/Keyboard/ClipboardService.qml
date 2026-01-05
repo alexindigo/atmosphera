@@ -172,6 +172,11 @@ Singleton {
   }
 
   Process {
+    id: pasteProc
+    stdout: StdioCollector {}
+  }
+
+  Process {
     id: deleteProc
     stdout: StdioCollector {}
     onExited: (exitCode, exitStatus) => {
@@ -318,6 +323,16 @@ Singleton {
     // decode and pipe to wl-copy; implement via shell to preserve binary
     copyProc.command = ["sh", "-lc", `cliphist decode ${id} | wl-copy`];
     copyProc.running = true;
+  }
+
+  function pasteFromClipboard(id) {
+    if (!root.cliphistAvailable) {
+      return;
+    }
+    // Copy to clipboard and then simulate Ctrl+V paste using wtype
+    // Uses sleep to ensure clipboard is updated before paste
+    pasteProc.command = ["sh", "-lc", `cliphist decode ${id} | wl-copy && wtype -M ctrl -M shift v`];
+    pasteProc.running = true;
   }
 
   function deleteById(id) {

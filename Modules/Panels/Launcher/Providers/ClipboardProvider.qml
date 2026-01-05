@@ -196,8 +196,15 @@ Item {
 
       // Add activation handler
       entry.onActivate = function () {
-        ClipboardService.copyToClipboard(item.id);
-        launcher.close();
+        if (Settings.data.appLauncher.autoPasteClipboard) {
+          launcher.closeImmediately();
+          Qt.callLater(() => {
+                         ClipboardService.pasteFromClipboard(item.id);
+                       });
+        } else {
+          ClipboardService.copyToClipboard(item.id);
+          launcher.close();
+        }
       };
 
       results.push(entry);

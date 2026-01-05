@@ -1827,6 +1827,10 @@
           "label": "Ferramenta de anotação",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Colar automaticamente o item selecionado da área de transferência. Requer wtype.",
+          "label": "Colar automaticamente"
+        },
         "clip-preview": {
           "description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
           "label": "Ativar pré-visualização da área de transferência"

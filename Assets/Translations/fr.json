@@ -1827,6 +1827,10 @@
           "label": "Outil d'annotation",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Coller automatiquement l'élément sélectionné du presse-papiers. Nécessite wtype.",
+          "label": "Collage automatique"
+        },
         "clip-preview": {
           "description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
           "label": "Activer l'aperçu du presse-papiers"

@@ -1827,6 +1827,10 @@
           "label": "Annotationstool",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Automatisches Einfügen des ausgewählten Zwischenablageinhalts. Benötigt wtype.",
+          "label": "Automatisches Einfügen"
+        },
         "clip-preview": {
           "description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
           "label": "Clip-Vorschau aktivieren"

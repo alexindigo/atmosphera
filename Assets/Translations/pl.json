@@ -1827,6 +1827,10 @@
           "label": "Narzędzie do adnotacji",
           "placeholder": "Przepraszam, nie rozumiem. Proszę podać tekst do przetłumaczenia."
         },
+        "auto-paste": {
+          "description": "Automatyczne wklejanie wybranego elementu ze schowka. Wymaga wtype.",
+          "label": "Automatyczne wklejanie"
+        },
         "clip-preview": {
           "description": "Pokaż podgląd zawartości schowka przy użyciu polecenia >clip.",
           "label": "Włącz podgląd schowka"

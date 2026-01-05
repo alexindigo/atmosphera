@@ -94,6 +94,10 @@
     "panelBackgroundOpacity": 0.93,
     "panelsAttachedToBar": true,
     "settingsPanelMode": "attached",
+    "wifiDetailsViewMode": "grid",
+    "bluetoothDetailsViewMode": "grid",
+    "networkPanelView": "wifi",
+    "bluetoothHideUnnamedDevices": false,
     "boxBorderEnabled": false
   },
   "location": {
@@ -174,6 +178,7 @@
   },
   "appLauncher": {
     "enableClipboardHistory": false,
+    "autoPasteClipboard": false,
     "enableClipPreview": true,
     "position": "center",
     "pinnedExecs": [],
@@ -195,7 +200,7 @@
     "shortcuts": {
       "left": [
         {
-          "id": "WiFi"
+          "id": "Network"
         },
         {
           "id": "Bluetooth"

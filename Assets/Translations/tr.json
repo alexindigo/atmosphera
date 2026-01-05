@@ -1827,6 +1827,10 @@
           "label": "Açıklama aracı",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Seçili panodaki öğeyi otomatik olarak yapıştır. Wtype gerektirir.",
+          "label": "Otomatik yapıştırma"
+        },
         "clip-preview": {
           "description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
           "label": "Panoyu önizlemeyi etkinleştir"

@@ -1827,6 +1827,10 @@
           "label": "Annotációs eszköz",
           "placeholder": "gradia, satty -f -"
         },
+        "auto-paste": {
+          "description": "Automatikusan beilleszti a kiválasztott vágólap elemet. Wtype szükséges hozzá.",
+          "label": "Automatikus beillesztés"
+        },
         "clip-preview": {
           "description": "Mutassa a vágólap tartalmának előnézetét a >clip parancs használatakor.",
           "label": "Vágólap előnézet engedélyezése"

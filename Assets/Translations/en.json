@@ -1827,6 +1827,10 @@
           "label": "Annotation tool",
           "placeholder": "e.g. 'gradia', 'satty -f -'"
         },
+        "auto-paste": {
+          "description": "Automatically paste the selected clipboard item. Requires wtype.",
+          "label": "Auto paste"
+        },
         "clip-preview": {
           "description": "Show a preview of the clipboard content when using the >clip command.",
           "label": "Enable clip preview"
