@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "レコーダーがエラーで終了しました。",
       "failed-gpu": "gpu-screen-recorder が予期せず終了しました。",
-      "failed-start": "録画を開始できませんでした。",
+      "failed-start": "録画を開始できませんでした",
       "no-portals": "デスクトップポータルが実行されていません",
       "no-portals-desc": "xdg-desktop-portal およびコンポジタポータル (wlr/hyprland/gnome/kde) を起動してください。",
       "not-installed": "gpu-screen-recorder がインストールされていません",

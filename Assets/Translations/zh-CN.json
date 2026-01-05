@@ -2803,7 +2803,7 @@
       "low-desc": "电量为 {percent}%。请连接充电器。"
     },
     "bluetooth": {
-      "address-copied": "地址已复制到剪贴板",
+      "address-copied": "地址已复制到剪贴板。",
       "confirm-code": "在另一台设备上确认代码 {value}。",
       "connect-failed": "无法连接到设备。",
       "disabled": "已禁用。",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "录制器因错误退出。",
       "failed-gpu": "gpu-screen-recorder 意外退出。",
-      "failed-start": "开始录制失败。",
+      "failed-start": "开始录制失败",
       "no-portals": "桌面门户未运行",
       "no-portals-desc": "请启动 xdg-desktop-portal 和一个合成器门户 (wlr/hyprland/gnome/kde)。",
       "not-installed": "gpu-screen-recorder 未安装",

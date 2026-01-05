@@ -2803,7 +2803,7 @@
       "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
     },
     "bluetooth": {
-      "address-copied": "Adres gekopieerd naar klembord",
+      "address-copied": "Adres gekopieerd naar klembord.",
       "confirm-code": "Bevestig code {value} op het andere apparaat.",
       "connect-failed": "Verbinding met apparaat mislukt.",
       "disabled": "Uitgeschakeld.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Recorder is met een fout afgesloten.",
       "failed-gpu": "gpu-screen-recorder is onverwacht afgesloten.",
-      "failed-start": "Starten van opname mislukt.",
+      "failed-start": "Starten van opname mislukt",
       "no-portals": "Desktop-portals worden niet uitgevoerd",
       "no-portals-desc": "Start xdg-desktop-portal en een compositor-portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder niet geïnstalleerd",

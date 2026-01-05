@@ -123,8 +123,8 @@
           "label": "Farbauswahl"
         },
         "enable-colorization": {
-          "description": "Aktiviert die Färbung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
-          "label": "Färbung aktivieren"
+          "description": "Aktiviert die Farbgebung für das Kontrollzentrum-Symbol und wendet Themenfarben an.",
+          "label": "Farbgebung aktivieren"
         },
         "icon": {
           "description": "Symbol aus der Bibliothek oder eine benutzerdefinierte Datei auswählen.",
@@ -153,8 +153,8 @@
         },
         "dynamic-text": "Dynamischer Text",
         "enable-colorization": {
-          "description": "Färbung für das benutzerdefinierte Schaltflächensymbol und den Text aktivieren, Designfarben anwenden.",
-          "label": "Färbung aktivieren"
+          "description": "Farbgebung für das benutzerdefinierte Schaltflächensymbol und den Text aktivieren, Designfarben anwenden.",
+          "label": "Farbgebung aktivieren"
         },
         "hide-mode": {
           "alwaysExpanded": "Immer erweitert",
@@ -2803,7 +2803,7 @@
       "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
     },
     "bluetooth": {
-      "address-copied": "Adresse in die Zwischenablage kopiert",
+      "address-copied": "Adresse in die Zwischenablage kopiert.",
       "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
       "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen.",
       "disabled": "Deaktiviert.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Rekorder wurde mit einem Fehler beendet.",
       "failed-gpu": "gpu-screen-recorder wurde unerwartet beendet.",
-      "failed-start": "Aufnahme konnte nicht gestartet werden.",
+      "failed-start": "Aufnahme konnte nicht gestartet werden",
       "no-portals": "Desktop-Portale laufen nicht",
       "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nicht installiert",

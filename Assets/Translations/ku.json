@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Tomarîner bi xeletî derket.",
       "failed-gpu": "Tomarê dîmenderê ya GPU bi awayekî neçaverêkirî derket.",
-      "failed-start": "شانۆ دەست پێکردن تۆمارکردن سەرنەکەوت.",
+      "failed-start": "Destpêkirina tomarê serneket",
       "no-portals": "Portalên sermaseyê naxebitin",
       "no-portals-desc": "Destpêka xdg-desktop-portal û portaleke kompozîtor (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nehatiye sazkirin",

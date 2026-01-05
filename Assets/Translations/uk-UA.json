@@ -2803,7 +2803,7 @@
       "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
     },
     "bluetooth": {
-      "address-copied": "Адресу скопійовано до буфера обміну",
+      "address-copied": "Адресу скопійовано до буфера обміну.",
       "confirm-code": "Підтвердьте код {value} на іншому пристрої.",
       "connect-failed": "Не вдалося під'єднатися до пристрою.",
       "disabled": "Вимкнено.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Засіб запису завершився з помилкою.",
       "failed-gpu": "gpu-screen-recorder несподівано завершився.",
-      "failed-start": "Не вдалося розпочати запис.",
+      "failed-start": "Не вдалося розпочати запис",
       "no-portals": "Портали робочого столу не запущені",
       "no-portals-desc": "Запустіть xdg-desktop-portal та портал композитора (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder не встановлено",

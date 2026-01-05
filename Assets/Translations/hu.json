@@ -2803,7 +2803,7 @@
       "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt."
     },
     "bluetooth": {
-      "address-copied": "Cím a vágólapra másolva",
+      "address-copied": "Cím a vágólapra másolva.",
       "confirm-code": "Erősítse meg a {value} kódot a másik eszközön.",
       "connect-failed": "Nem sikerült csatlakozni az eszközhöz.",
       "disabled": "Kikapcsolva.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "A felvevő hibával lépett ki.",
       "failed-gpu": "a gpu-screen-recorder váratlanul bezárult.",
-      "failed-start": "Nem sikerült elindítani a felvételt.",
+      "failed-start": "Nem sikerült elindítani a felvételt",
       "no-portals": "Az asztali portálok nem futnak",
       "no-portals-desc": "Indítsa el az xdg-desktop-portal-t és egy kompozitor portált (wlr/hyprland/gnome/kde).",
       "not-installed": "A gpu-screen-recorder nincs telepítve",

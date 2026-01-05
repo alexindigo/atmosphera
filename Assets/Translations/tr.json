@@ -2803,7 +2803,7 @@
       "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
     },
     "bluetooth": {
-      "address-copied": "Adres panoya kopyalandı",
+      "address-copied": "Adres panoya kopyalandı.",
       "confirm-code": "Diğer cihazdaki {value} kodunu onayla.",
       "connect-failed": "Cihaza bağlanılamadı.",
       "disabled": "Devre dışı.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Kayıtçı bir hata nedeniyle kapandı.",
       "failed-gpu": "gpu-screen-recorder beklenmedik şekilde kapandı.",
-      "failed-start": "Kayıt başlatma başarısız oldu.",
+      "failed-start": "Kayıt başlatılamadı",
       "no-portals": "Masaüstü portal çalışmıyor",
       "no-portals-desc": "xdg-desktop-portal ve bir kompozitör portalı (wlr/hyprland/gnome/kde) başlatın.",
       "not-installed": "gpu-screen-recorder kurulu değil",

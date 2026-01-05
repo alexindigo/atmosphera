@@ -2803,7 +2803,7 @@
       "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
     },
     "bluetooth": {
-      "address-copied": "Endereço copiado para a área de transferência",
+      "address-copied": "Endereço copiado para a área de transferência.",
       "confirm-code": "Confirme o código {value} no outro dispositivo.",
       "connect-failed": "Falha ao conectar ao dispositivo.",
       "disabled": "Desativado.",
@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Gravador encerrou com um erro.",
       "failed-gpu": "gpu-screen-recorder encerrou inesperadamente.",
-      "failed-start": "Falha ao iniciar a gravação.",
+      "failed-start": "Falha ao iniciar a gravação",
       "no-portals": "Portais de desktop não estão em execução",
       "no-portals-desc": "Inicie o xdg-desktop-portal e um portal de compositor (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder não instalado",

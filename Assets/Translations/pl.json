@@ -2875,7 +2875,7 @@
     "recording": {
       "failed-general": "Nagrywanie zakończone błędem.",
       "failed-gpu": "gpu-screen-recorder zakończył działanie niespodziewanie.",
-      "failed-start": "Nie udało się rozpocząć nagrywania.",
+      "failed-start": "Nie udało się rozpocząć nagrywania",
       "no-portals": "Desktop portals nie działają",
       "no-portals-desc": "Uruchom xdg-desktop-portal oraz portal kompozytora (wlr/hyprland/gnome/kde).",
       "not-installed": "gpu-screen-recorder nie jest zainstalowany",
