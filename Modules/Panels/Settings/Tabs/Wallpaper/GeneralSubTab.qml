@@ -17,11 +17,6 @@ ColumnLayout {
   signal openMainFolderPicker
   signal openMonitorFolderPicker(string monitorName)
 
-  NHeader {
-    label: I18n.tr("settings.wallpaper.settings.section.label")
-    description: I18n.tr("settings.wallpaper.settings.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.wallpaper.settings.enable-management.label")
     description: I18n.tr("settings.wallpaper.settings.enable-management.description")

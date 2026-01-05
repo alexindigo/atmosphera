@@ -14,11 +14,6 @@ ColumnLayout {
   property var addMonitor
   property var removeMonitor
 
-  NHeader {
-    label: I18n.tr("settings.bar.monitors.section.label")
-    description: I18n.tr("settings.bar.monitors.section.description")
-  }
-
   Repeater {
     model: Quickshell.screens || []
     delegate: NCheckbox {
@@ -42,5 +37,9 @@ ColumnLayout {
                    }
                  }
     }
+  }
+
+  NLabel {
+    description: I18n.tr("settings.bar.monitors.section.description")
   }
 }

@@ -1444,7 +1444,7 @@
       "tabs": {
         "appearance": "Appearance",
         "cards": "Cards",
-        "control-widgets": "Control Widgets"
+        "shortcuts": "Shortcuts"
       },
       "title": "Control Center"
     },
@@ -2749,7 +2749,7 @@
       "tabs": {
         "automation": "Automation",
         "look-feel": "Look & feel",
-        "settings": "Settings"
+        "general": "General"
       },
       "title": "Wallpaper"
     }

@@ -10,10 +10,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.wallpaper.automation.section.label")
-  }
-
   NToggle {
     label: I18n.tr("settings.wallpaper.automation.scheduled-change.label")
     description: I18n.tr("settings.wallpaper.automation.scheduled-change.description")

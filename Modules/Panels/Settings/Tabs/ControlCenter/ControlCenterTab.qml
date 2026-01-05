@@ -120,7 +120,7 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
-      text: I18n.tr("settings.control-center.tabs.control-widgets")
+      text: I18n.tr("settings.control-center.tabs.shortcuts")
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
     }
@@ -144,7 +144,7 @@ ColumnLayout {
       cardsDefault: root.cardsDefault
     }
 
-    ControlWidgetsSubTab {
+    ShortcutsSubTab {
       availableWidgets: availableWidgets
       onAddWidgetToSection: (widgetId, section) => _addWidgetToSection(widgetId, section)
       onRemoveWidgetFromSection: (section, index) => _removeWidgetFromSection(section, index)

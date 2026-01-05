@@ -30,7 +30,7 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.wallpaper.tabs.settings")
+      text: I18n.tr("settings.wallpaper.tabs.general")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
@@ -38,11 +38,13 @@ ColumnLayout {
       text: I18n.tr("settings.wallpaper.tabs.look-feel")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
+      visible: Settings.data.wallpaper.enabled
     }
     NTabButton {
       text: I18n.tr("settings.wallpaper.tabs.automation")
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
+      visible: Settings.data.wallpaper.enabled
     }
   }
 
@@ -55,7 +57,7 @@ ColumnLayout {
     id: tabView
     currentIndex: subTabBar.currentIndex
 
-    SettingsSubTab {
+    GeneralSubTab {
       screen: root.screen
       onOpenMainFolderPicker: root.openMainFolderPicker()
       onOpenMonitorFolderPicker: monitorName => root.openMonitorFolderPicker(monitorName)

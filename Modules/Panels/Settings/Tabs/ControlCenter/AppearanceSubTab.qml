@@ -17,11 +17,6 @@ ColumnLayout {
     spacing: Style.marginL
     Layout.fillWidth: true
 
-    NHeader {
-      label: I18n.tr("settings.control-center.section.label")
-      description: I18n.tr("settings.control-center.section.description")
-    }
-
     NComboBox {
       id: controlCenterPosition
       label: I18n.tr("settings.control-center.position.label")

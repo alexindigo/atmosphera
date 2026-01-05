@@ -31,11 +31,6 @@ ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
 
-      NHeader {
-        label: I18n.tr("settings.control-center.cards.section.label")
-        description: I18n.tr("settings.control-center.cards.section.description")
-      }
-
       Connections {
         target: Settings.data.location
         function onWeatherEnabledChanged() {
@@ -76,7 +71,7 @@ ColumnLayout {
       }
     }
 
-    Rectangle {
-      Layout.fillHeight: true
+    NLabel {
+      description: I18n.tr("settings.control-center.cards.section.description")
     }
   }

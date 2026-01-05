@@ -27,11 +27,6 @@ ColumnLayout {
     spacing: Style.marginXXS
     Layout.fillWidth: true
 
-    NHeader {
-      label: I18n.tr("settings.control-center.shortcuts.section.label")
-      description: I18n.tr("settings.control-center.shortcuts.section.description")
-    }
-
     // Sections
     ColumnLayout {
       Layout.fillWidth: true

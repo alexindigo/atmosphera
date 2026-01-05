@@ -20,14 +20,6 @@ ColumnLayout {
 
   signal openPluginSettings(var manifest)
 
-  NHeader {
-    label: I18n.tr("settings.bar.widgets.section.label")
-  }
-
-  NLabel {
-    description: I18n.tr("settings.bar.widgets.section.description")
-  }
-
   ColumnLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -80,6 +72,10 @@ ColumnLayout {
       onUpdateWidgetSettings: (section, index, settings) => root.updateWidgetSettingsInSection(section, index, settings)
       onMoveWidget: (fromSection, index, toSection) => root.moveWidgetBetweenSections(fromSection, index, toSection)
       onOpenPluginSettingsRequested: manifest => root.openPluginSettings(manifest)
+    }
+
+    NLabel {
+      description: I18n.tr("settings.bar.widgets.section.description")
     }
   }
 }

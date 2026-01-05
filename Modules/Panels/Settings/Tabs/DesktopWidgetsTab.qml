@@ -27,11 +27,6 @@ ColumnLayout {
     }
   }
 
-  NHeader {
-    label: I18n.tr("settings.desktop-widgets.general.section.label")
-    description: I18n.tr("settings.desktop-widgets.general.section.description")
-  }
-
   NToggle {
     Layout.fillWidth: true
     label: I18n.tr("settings.desktop-widgets.enabled.label")

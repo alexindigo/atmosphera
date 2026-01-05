@@ -9,11 +9,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.bar.appearance.section.label")
-    description: I18n.tr("settings.bar.appearance.section.description")
-  }
-
   NComboBox {
     Layout.fillWidth: true
     label: I18n.tr("settings.bar.appearance.position.label")

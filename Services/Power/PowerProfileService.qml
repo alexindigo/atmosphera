@@ -103,7 +103,9 @@ Singleton {
       // Only show toast if we have a valid profile name (not "Unknown")
       const profileName = root.getName();
       if (profileName !== "Unknown") {
-        ToastService.showNotice(I18n.tr("toast.power-profile.profile-name", {"profile": profileName}), I18n.tr("toast.power-profile.changed"), profileName.toLowerCase().replace(" ", ""));
+        ToastService.showNotice(I18n.tr("toast.power-profile.profile-name", {
+                                          "profile": profileName
+                                        }), I18n.tr("toast.power-profile.changed"), profileName.toLowerCase().replace(" ", ""));
       }
     }
   }

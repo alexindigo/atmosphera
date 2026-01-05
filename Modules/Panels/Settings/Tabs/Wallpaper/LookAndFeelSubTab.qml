@@ -12,10 +12,6 @@ ColumnLayout {
 
   property var screen
 
-  NHeader {
-    label: I18n.tr("settings.wallpaper.look-feel.section.label")
-  }
-
   NComboBox {
     label: I18n.tr("settings.wallpaper.look-feel.fill-mode.label")
     description: I18n.tr("settings.wallpaper.look-feel.fill-mode.description")
