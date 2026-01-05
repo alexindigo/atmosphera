@@ -325,13 +325,17 @@ Singleton {
     copyProc.running = true;
   }
 
-  function pasteFromClipboard(id) {
+  function pasteFromClipboard(id, mime) {
     if (!root.cliphistAvailable) {
       return;
     }
-    // Copy to clipboard and then simulate Ctrl+V paste using wtype
-    // Uses sleep to ensure clipboard is updated before paste
-    pasteProc.command = ["sh", "-lc", `cliphist decode ${id} | wl-copy && wtype -M ctrl -M shift v`];
+    // Copy to clipboard and then simulate paste using wtype
+    // For images, use Ctrl+V (Ctrl+Shift+V is "paste as text" which doesn't work for images)
+    const isImage = mime && mime.startsWith("image/");
+    const typeArg = isImage ? ` --type ${mime}` : "";
+    const pasteKeys = isImage ? "wtype -M ctrl -k v" : "wtype -M ctrl -M shift v";
+    const cmd = `cliphist decode ${id} | wl-copy${typeArg} && ${pasteKeys}`;
+    pasteProc.command = ["sh", "-lc", cmd];
     pasteProc.running = true;
   }
 
