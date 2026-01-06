@@ -14,6 +14,19 @@ ColumnLayout {
 
   property string pluginFilter: "all"
   property string pluginSearchText: ""
+  property string selectedTag: ""
+
+  readonly property var availableTags: {
+    var tags = {};
+    var plugins = PluginService.availablePlugins || [];
+    for (var i = 0; i < plugins.length; i++) {
+      var pluginTags = plugins[i].tags || [];
+      for (var j = 0; j < pluginTags.length; j++) {
+        tags[pluginTags[j]] = true;
+      }
+    }
+    return Object.keys(tags).sort();
+  }
 
   function stripAuthorEmail(author) {
     if (!author)
@@ -87,6 +100,63 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
+  // Tag filter chips - centered wrapped layout
+  ColumnLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginXS
+    visible: root.availableTags.length > 0
+
+    Repeater {
+      id: tagRowsRepeater
+      model: {
+        var allTags = [""].concat(root.availableTags);
+        var rows = [];
+        var currentRow = [];
+        var currentWidth = 0;
+        var availableWidth = root.width - Style.marginL * 2;
+        var spacingWidth = Style.marginXS;
+
+        for (var i = 0; i < allTags.length; i++) {
+          var tag = allTags[i];
+          var buttonWidth = tag === "" ? 40 : (tag.length * 7 + 24);
+
+          if (currentRow.length > 0 && currentWidth + spacingWidth + buttonWidth > availableWidth) {
+            rows.push(currentRow);
+            currentRow = [tag];
+            currentWidth = buttonWidth;
+          } else {
+            currentRow.push(tag);
+            currentWidth += (currentRow.length > 1 ? spacingWidth : 0) + buttonWidth;
+          }
+        }
+        if (currentRow.length > 0) {
+          rows.push(currentRow);
+        }
+        return rows;
+      }
+
+      delegate: Row {
+        Layout.alignment: Qt.AlignHCenter
+        spacing: Style.marginXS
+
+        Repeater {
+          model: modelData
+
+          delegate: NButton {
+            text: modelData === "" ? I18n.tr("launcher.categories.all") : modelData
+            backgroundColor: (modelData === "" ? root.selectedTag === "" : root.selectedTag === modelData) ? Color.mPrimary : Color.mSurfaceVariant
+            textColor: (modelData === "" ? root.selectedTag === "" : root.selectedTag === modelData) ? Color.mOnPrimary : Color.mOnSurfaceVariant
+            onClicked: root.selectedTag = modelData
+            fontSize: Style.fontSizeXS
+            iconSize: Style.fontSizeS
+            fontWeight: Style.fontWeightSemiBold
+            buttonRadius: Style.iRadiusM
+          }
+        }
+      }
+    }
+  }
+
   // Available plugins list
   ColumnLayout {
     spacing: Style.marginM
@@ -113,6 +183,18 @@ ColumnLayout {
           }
         }
 
+        // Apply tag filter if a tag is selected
+        if (root.selectedTag !== "") {
+          var tagFiltered = [];
+          for (var k = 0; k < filtered.length; k++) {
+            var pluginTags = filtered[k].tags || [];
+            if (pluginTags.indexOf(root.selectedTag) >= 0) {
+              tagFiltered.push(filtered[k]);
+            }
+          }
+          filtered = tagFiltered;
+        }
+
         // Then apply fuzzy search if there's search text
         var query = root.pluginSearchText.trim();
         if (query !== "") {
@@ -132,6 +214,19 @@ ColumnLayout {
             var dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
             return dateB - dateA;
           });
+        }
+
+        // Move hello-world plugin to the end
+        var helloWorldIndex = -1;
+        for (var h = 0; h < filtered.length; h++) {
+          if (filtered[h].id === "hello-world") {
+            helloWorldIndex = h;
+            break;
+          }
+        }
+        if (helloWorldIndex >= 0) {
+          var helloWorld = filtered.splice(helloWorldIndex, 1)[0];
+          filtered.push(helloWorld);
         }
 
         return filtered;
@@ -159,12 +254,12 @@ ColumnLayout {
             NIcon {
               icon: "plugin"
               pointSize: Style.fontSizeL
-              color: Color.mOnSurface
+              color: Color.mPrimary
             }
 
             NText {
               text: modelData.name
-              color: Color.mOnSurface
+              color: Color.mPrimary
               elide: Text.ElideRight
             }
 
@@ -400,6 +495,31 @@ ColumnLayout {
             } else if (root.pluginFilter === "notDownloaded" && !downloaded) {
               filtered.push(plugin);
             }
+          }
+
+          // Apply tag filter if a tag is selected
+          if (root.selectedTag !== "") {
+            var tagFiltered = [];
+            for (var k = 0; k < filtered.length; k++) {
+              var pluginTags = filtered[k].tags || [];
+              if (pluginTags.indexOf(root.selectedTag) >= 0) {
+                tagFiltered.push(filtered[k]);
+              }
+            }
+            filtered = tagFiltered;
+          }
+
+          // Move hello-world plugin to the end
+          var helloWorldIndex = -1;
+          for (var h = 0; h < filtered.length; h++) {
+            if (filtered[h].id === "hello-world") {
+              helloWorldIndex = h;
+              break;
+            }
+          }
+          if (helloWorldIndex >= 0) {
+            var helloWorld = filtered.splice(helloWorldIndex, 1)[0];
+            filtered.push(helloWorld);
           }
 
           return filtered;
