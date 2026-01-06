@@ -435,7 +435,8 @@ Singleton {
     const idStr = String(id).trim();
     // Remove from cache
     delete root.contentCache[idStr];
-    deleteProc.command = ["sh", "-lc", `cliphist delete ${idStr}`];
+    // cliphist delete reads entries from stdin in the same format as cliphist list
+    deleteProc.command = ["sh", "-lc", `cliphist list | grep "^${idStr}\\s" | cliphist delete`];
     deleteProc.running = true;
   }
 

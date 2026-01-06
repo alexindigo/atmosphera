@@ -137,7 +137,7 @@ Item {
         color: Color.mOnSurfaceVariant
       }
 
-      ScrollView {
+      NScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
         clip: true
