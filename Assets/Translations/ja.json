@@ -513,6 +513,7 @@
       "calculator-deprecated": ">calc コマンドは非推奨となり、まもなく削除されます。代わりに、検索で数式を直接入力してください。",
       "calculator-description": "電卓 — 数式を計算します",
       "calculator-enter-expression": "数式を入力",
+      "calculator-press-enter-to-copy": "結果をコピーするにはEnterキーを押してください。",
       "clipboard": "クリップボード履歴",
       "clipboard-clear-description": "クリップボード履歴をすべて消去",
       "clipboard-clear-description-full": "クリップボード履歴からすべての項目を削除します",

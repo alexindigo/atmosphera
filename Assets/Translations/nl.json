@@ -513,6 +513,7 @@
       "calculator-deprecated": "De >calc opdracht is verouderd en zal binnenkort verwijderd worden. Typ wiskundige uitdrukkingen in plaats daarvan direct in de zoekopdracht.",
       "calculator-description": "Rekenmachine — bereken wiskundige expressies",
       "calculator-enter-expression": "Voer een wiskundige expressie in",
+      "calculator-press-enter-to-copy": "Druk op Enter om het resultaat te kopiëren.",
       "clipboard": "Klembordgeschiedenis",
       "clipboard-clear-description": "Klembordgeschiedenis wissen",
       "clipboard-clear-description-full": "Alle items uit de klembordgeschiedenis verwijderen",

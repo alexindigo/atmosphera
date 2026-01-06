@@ -513,6 +513,7 @@
       "calculator-deprecated": "Der Befehl >calc ist veraltet und wird bald entfernt. Bitte geben Sie stattdessen mathematische Ausdrücke direkt in die Suche ein.",
       "calculator-description": "Rechner — mathematische Ausdrücke auswerten",
       "calculator-enter-expression": "Mathematischen Ausdruck eingeben",
+      "calculator-press-enter-to-copy": "Drücken Sie die Eingabetaste, um das Ergebnis zu kopieren.",
       "clipboard": "Zwischenablageverlauf",
       "clipboard-clear-description": "Gesamten Zwischenablageverlauf löschen",
       "clipboard-clear-description-full": "Alle Elemente aus dem Zwischenablageverlauf entfernen",

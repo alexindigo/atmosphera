@@ -513,6 +513,7 @@
       "calculator-deprecated": "La commande >calc est obsolète et sera bientôt supprimée. Veuillez saisir les expressions mathématiques directement dans la recherche à la place.",
       "calculator-description": "Calculatrice — évaluez des expressions mathématiques",
       "calculator-enter-expression": "Entrez une expression mathématique",
+      "calculator-press-enter-to-copy": "Appuyez sur Entrée pour copier le résultat.",
       "clipboard": "Historique du presse-papiers",
       "clipboard-clear-description": "Effacer tout l'historique du presse-papiers",
       "clipboard-clear-description-full": "Supprimer tous les éléments de l'historique du presse-papiers",

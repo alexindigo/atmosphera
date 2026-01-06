@@ -513,6 +513,7 @@
       "calculator-deprecated": "Polecenie >calc jest przestarzałe i wkrótce zostanie usunięte. Zamiast tego wpisuj wyrażenia matematyczne bezpośrednio w wyszukiwarce.",
       "calculator-description": "Kalkulator — obliczaj wyrażenia matematyczne",
       "calculator-enter-expression": "Wpisz wyrażenie matematyczne",
+      "calculator-press-enter-to-copy": "Naciśnij Enter, aby skopiować wynik.",
       "clipboard": "Historia schowka",
       "clipboard-clear-description": "Wyczyść całą historię schowka",
       "clipboard-clear-description-full": "Usuń wszystkie elementy z historii schowka",

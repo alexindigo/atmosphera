@@ -513,6 +513,7 @@
       "calculator-deprecated": ">calc 命令已弃用，即将移除。请直接在搜索中输入数学表达式。",
       "calculator-description": "计算器 — 计算数学表达式",
       "calculator-enter-expression": "输入数学表达式",
+      "calculator-press-enter-to-copy": "按 Enter 键复制结果",
       "clipboard": "剪贴板历史记录",
       "clipboard-clear-description": "清除所有剪贴板历史记录",
       "clipboard-clear-description-full": "从剪贴板历史记录中移除所有项目",

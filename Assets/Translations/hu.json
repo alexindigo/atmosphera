@@ -513,6 +513,7 @@
       "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
       "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
       "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
+      "calculator-press-enter-to-copy": "Nyomja meg az Entert az eredmény másolásához",
       "clipboard": "Vágólapelőzmények",
       "clipboard-clear-description": "Összes vágólapelőzmény törlése",
       "clipboard-clear-description-full": "Az összes elem eltávolítása a vágólapelőzményekből",

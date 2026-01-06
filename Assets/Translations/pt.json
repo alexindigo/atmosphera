@@ -513,6 +513,7 @@
       "calculator-deprecated": "O comando >calc está obsoleto e será removido em breve. Por favor, digite expressões matemáticas diretamente na pesquisa.",
       "calculator-description": "Calculadora — avalie expressões matemáticas",
       "calculator-enter-expression": "Digite uma expressão matemática",
+      "calculator-press-enter-to-copy": "Pressione Enter para copiar o resultado.",
       "clipboard": "Histórico da área de transferência",
       "clipboard-clear-description": "Limpar todo o histórico da área de transferência",
       "clipboard-clear-description-full": "Remover todos os itens do histórico da área de transferência",

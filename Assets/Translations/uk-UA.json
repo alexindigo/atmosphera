@@ -513,6 +513,7 @@
       "calculator-deprecated": "Команда >calc застаріла і скоро буде видалена. Будь ласка, введіть математичні вирази безпосередньо в пошуку.",
       "calculator-description": "Калькулятор — обчислення математичних виразів",
       "calculator-enter-expression": "Введіть математичний вираз",
+      "calculator-press-enter-to-copy": "Натисніть Enter, щоб скопіювати результат.",
       "clipboard": "Історія буфера обміну",
       "clipboard-clear-description": "Очистити всю історію буфера обміну",
       "clipboard-clear-description-full": "Видалити всі елементи з історії буфера обміну",

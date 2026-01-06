@@ -513,6 +513,7 @@
       "calculator-deprecated": "El comando >calc está obsoleto y será eliminado pronto. Por favor, escribe expresiones matemáticas directamente en la búsqueda en su lugar.",
       "calculator-description": "Calculadora — evalúa expresiones matemáticas",
       "calculator-enter-expression": "Ingresa una expresión matemática",
+      "calculator-press-enter-to-copy": "Presione Enter para copiar el resultado",
       "clipboard": "Historial del portapapeles",
       "clipboard-clear-description": "Limpiar todo el historial del portapapeles",
       "clipboard-clear-description-full": "Eliminar todos los elementos del historial del portapapeles",

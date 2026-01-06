@@ -513,6 +513,7 @@
       "calculator-deprecated": ">calc komutu kullanımdan kaldırılmıştır ve yakında kaldırılacaktır. Lütfen matematiksel ifadeleri doğrudan aramaya yazın.",
       "calculator-description": "Hesap makinesi — matematiksel ifadeleri hesapla",
       "calculator-enter-expression": "Matematiksel bir ifade girin",
+      "calculator-press-enter-to-copy": "Sonucu kopyalamak için Enter'a basın",
       "clipboard": "Panoya geçmiş",
       "clipboard-clear-description": "Tüm panoya geçmişini temizle",
       "clipboard-clear-description-full": "Tüm öğeleri panoya geçmişinden kaldır",
