@@ -35,7 +35,7 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.wallpaper.tabs.look-feel")
+      text: I18n.tr("settings.wallpaper.tabs.look")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
       visible: Settings.data.wallpaper.enabled

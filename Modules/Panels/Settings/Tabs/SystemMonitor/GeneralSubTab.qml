@@ -11,12 +11,6 @@ ColumnLayout {
 
   property var screen
 
-  NHeader {
-    Layout.fillWidth: true
-    label: I18n.tr("settings.system-monitor.general.section.label")
-    description: I18n.tr("settings.system-monitor.general.section.description")
-  }
-
   NToggle {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
@@ -94,5 +88,18 @@ ColumnLayout {
         onColorSelected: color => Settings.data.systemMonitor.criticalColor = color
       }
     }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  NTextInput {
+    label: I18n.tr("settings.system-monitor.external-monitor.label")
+    description: I18n.tr("settings.system-monitor.external-monitor.description")
+    placeholderText: I18n.tr("settings.system-monitor.external-monitor.placeholder")
+    text: Settings.data.systemMonitor.externalMonitor
+    defaultValue: Settings.getDefaultValue("systemMonitor.externalMonitor")
+    onTextChanged: Settings.data.systemMonitor.externalMonitor = text
   }
 }

@@ -12,23 +12,15 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.display.monitors.section.label")
-    description: I18n.tr("settings.display.monitors.section.description")
-  }
-
   ColumnLayout {
     spacing: Style.marginL
 
     Repeater {
       model: Quickshell.screens || []
-      delegate: Rectangle {
+      delegate: NBox {
         Layout.fillWidth: true
         implicitHeight: contentCol.implicitHeight + Style.marginL * 2
-        radius: Style.radiusM
-        color: Color.mSurfaceVariant
-        border.color: Color.mOutline
-        border.width: Style.borderS
+        color: Color.mSurface
 
         property var brightnessMonitor: BrightnessService.getMonitorForScreen(modelData)
 
@@ -39,16 +31,33 @@ ColumnLayout {
           y: Style.marginL
           spacing: Style.marginXXS
 
-          NLabel {
-            label: modelData.name || "Unknown"
-            description: {
-              const compositorScale = CompositorService.getDisplayScale(modelData.name);
-              I18n.tr("system.monitor-description", {
-                        "model": modelData.model,
-                        "width": modelData.width * compositorScale,
-                        "height": modelData.height * compositorScale,
-                        "scale": compositorScale
-                      });
+          RowLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignBottom
+
+            NText {
+              text: modelData.name || "Unknown"
+              pointSize: Style.fontSizeL
+              font.weight: Style.fontWeightSemiBold
+              Layout.alignment: Qt.AlignBottom
+            }
+
+            NText {
+              Layout.fillWidth: true
+              text: {
+                const compositorScale = CompositorService.getDisplayScale(modelData.name);
+                I18n.tr("system.monitor-description", {
+                          "model": modelData.model,
+                          "width": modelData.width * compositorScale,
+                          "height": modelData.height * compositorScale,
+                          "scale": compositorScale
+                        });
+              }
+              pointSize: Style.fontSizeS
+              color: Color.mOnSurfaceVariant
+              wrapMode: Text.WordWrap
+              horizontalAlignment: Text.AlignRight
+              Layout.alignment: Qt.AlignBottom
             }
           }
 
@@ -100,7 +109,8 @@ ColumnLayout {
                 Layout.fillHeight: true
                 NIcon {
                   icon: brightnessMonitor && brightnessMonitor.method == "internal" ? "device-laptop" : "device-desktop"
-                  anchors.centerIn: parent
+                  anchors.right: parent.right
+                  anchors.verticalCenter: parent.verticalCenter
                   opacity: brightnessMonitor && !brightnessMonitor.brightnessControlAvailable ? 0.5 : 1.0
                 }
               }

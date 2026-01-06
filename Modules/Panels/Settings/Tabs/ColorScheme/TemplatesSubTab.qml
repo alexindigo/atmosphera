@@ -12,16 +12,15 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.color-scheme.templates.section.label")
-    description: I18n.tr("settings.color-scheme.templates.section.description")
+  NLabel {
+    label: I18n.tr("settings.color-scheme.templates.section.description")
   }
 
   NCollapsible {
     Layout.fillWidth: true
     label: I18n.tr("settings.color-scheme.templates.ui.label")
     description: I18n.tr("settings.color-scheme.templates.ui.description")
-    defaultExpanded: false
+    expanded: true
 
     NCheckbox {
       label: "GTK"
@@ -64,7 +63,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.color-scheme.templates.compositors.label")
     description: I18n.tr("settings.color-scheme.templates.compositors.description")
-    defaultExpanded: false
+    expanded: true
 
     NCheckbox {
       label: "Niri"
@@ -107,7 +106,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.color-scheme.templates.terminal.label")
     description: I18n.tr("settings.color-scheme.templates.terminal.description")
-    defaultExpanded: false
+    expanded: true
 
     NCheckbox {
       label: "Alacritty"
@@ -174,7 +173,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.color-scheme.templates.programs.label")
     description: I18n.tr("settings.color-scheme.templates.programs.description")
-    defaultExpanded: false
+    expanded: true
 
     NCheckbox {
       label: "Fuzzel"
@@ -370,7 +369,7 @@ ColumnLayout {
     Layout.fillWidth: true
     label: I18n.tr("settings.color-scheme.templates.misc.label")
     description: I18n.tr("settings.color-scheme.templates.misc.description")
-    defaultExpanded: false
+    expanded: false
 
     NCheckbox {
       label: I18n.tr("settings.color-scheme.templates.misc.user-templates.label")

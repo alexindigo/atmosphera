@@ -20,7 +20,7 @@ ColumnLayout {
 
   ColumnLayout {
     spacing: Style.marginL
-    visible: Settings.data.dock.enabled
+    enabled: Settings.data.dock.enabled
 
     NComboBox {
       Layout.fillWidth: true

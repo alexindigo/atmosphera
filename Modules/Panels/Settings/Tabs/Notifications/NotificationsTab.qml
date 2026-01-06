@@ -48,7 +48,7 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.notifications.tabs.sounds")
+      text: I18n.tr("settings.notifications.tabs.duration")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
@@ -58,9 +58,14 @@ ColumnLayout {
       checked: subTabBar.currentIndex === 2
     }
     NTabButton {
-      text: I18n.tr("settings.notifications.tabs.toast")
+      text: I18n.tr("settings.notifications.tabs.sound")
       tabIndex: 3
       checked: subTabBar.currentIndex === 3
+    }
+    NTabButton {
+      text: I18n.tr("settings.notifications.tabs.toast")
+      tabIndex: 4
+      checked: subTabBar.currentIndex === 4
     }
   }
 
@@ -77,13 +82,14 @@ ColumnLayout {
       addMonitor: root.addMonitor
       removeMonitor: root.removeMonitor
     }
-    SoundsSubTab {
+    DurationSubTab {}
+    HistorySubTab {}
+    SoundSubTab {
       onOpenUnifiedPicker: root.openUnifiedSoundPicker()
       onOpenLowPicker: root.openLowSoundPicker()
       onOpenNormalPicker: root.openNormalSoundPicker()
       onOpenCriticalPicker: root.openCriticalSoundPicker()
     }
-    HistorySubTab {}
     ToastSubTab {}
   }
 

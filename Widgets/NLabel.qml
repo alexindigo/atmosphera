@@ -13,6 +13,8 @@ ColumnLayout {
   property bool showIndicator: false
   property string indicatorTooltip: ""
 
+  opacity: enabled ? 1.0 : 0.6
+
   spacing: Style.marginXXS
   Layout.fillWidth: true
 

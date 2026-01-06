@@ -10,11 +10,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.location.location.section.label")
-    description: I18n.tr("settings.location.location.section.description")
-  }
-
   // Location section
   RowLayout {
     Layout.fillWidth: true
@@ -55,21 +50,9 @@ ColumnLayout {
     }
   }
 
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
-  }
-
-  // Weather section
   ColumnLayout {
-    spacing: Style.marginM
+    spacing: Style.marginL
     Layout.fillWidth: true
-
-    NHeader {
-      label: I18n.tr("settings.location.weather.section.label")
-      description: I18n.tr("settings.location.weather.section.description")
-    }
 
     NToggle {
       label: I18n.tr("settings.location.weather.enabled.label")

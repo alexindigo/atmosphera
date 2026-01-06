@@ -22,7 +22,6 @@ ColumnLayout {
     description: I18n.tr("settings.wallpaper.settings.enable-management.description")
     checked: Settings.data.wallpaper.enabled
     onToggled: checked => Settings.data.wallpaper.enabled = checked
-    Layout.bottomMargin: Style.marginL
     defaultValue: Settings.getDefaultValue("wallpaper.enabled")
   }
 
@@ -32,7 +31,6 @@ ColumnLayout {
     description: I18n.tr("settings.wallpaper.settings.enable-overview.description")
     checked: Settings.data.wallpaper.overviewEnabled
     onToggled: checked => Settings.data.wallpaper.overviewEnabled = checked
-    Layout.bottomMargin: Style.marginL
     defaultValue: Settings.getDefaultValue("wallpaper.overviewEnabled")
   }
 

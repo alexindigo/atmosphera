@@ -10,12 +10,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    Layout.fillWidth: true
-    label: I18n.tr("settings.system-monitor.thresholds-section.label")
-    description: I18n.tr("settings.system-monitor.thresholds-section.description")
-  }
-
   // CPU Usage
   NText {
     Layout.fillWidth: true
@@ -37,6 +31,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.warning")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -65,6 +60,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.critical")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -101,6 +97,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.warning")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -129,6 +126,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.critical")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -167,6 +165,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.warning")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -195,6 +194,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.critical")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -231,6 +231,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.warning")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -259,6 +260,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.critical")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -295,6 +297,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.warning")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -323,6 +326,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: I18n.tr("settings.system-monitor.threshold.critical")
         pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
 
       NSpinBox {
@@ -336,5 +340,9 @@ ColumnLayout {
         suffix: "%"
       }
     }
+  }
+  NLabel {
+    Layout.fillWidth: true
+    description: I18n.tr("settings.system-monitor.thresholds-section.description")
   }
 }

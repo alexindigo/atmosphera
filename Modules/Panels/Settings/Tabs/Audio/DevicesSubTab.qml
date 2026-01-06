@@ -11,11 +11,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.audio.devices.section.label")
-    description: I18n.tr("settings.audio.devices.section.description")
-  }
-
   // Output Devices
   ButtonGroup {
     id: sinks

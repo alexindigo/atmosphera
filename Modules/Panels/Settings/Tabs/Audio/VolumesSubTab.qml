@@ -29,11 +29,6 @@ ColumnLayout {
     }
   }
 
-  NHeader {
-    label: I18n.tr("settings.audio.volumes.section.label")
-    description: I18n.tr("settings.audio.volumes.section.description")
-  }
-
   // Master Volume
   ColumnLayout {
     spacing: Style.marginXXS
@@ -145,6 +140,10 @@ ColumnLayout {
       defaultValue: Settings.getDefaultValue("audio.volumeOverdrive")
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
     }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
   }
 
   // External mixer command

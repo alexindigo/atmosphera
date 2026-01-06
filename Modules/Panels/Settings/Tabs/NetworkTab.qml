@@ -11,10 +11,6 @@ ColumnLayout {
   id: root
   spacing: Style.marginL
 
-  NHeader {
-    description: I18n.tr("settings.network.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.network.wifi.label")
     description: I18n.tr("settings.network.wifi.description")
@@ -42,11 +38,5 @@ ColumnLayout {
     checked: Settings.data && Settings.data.network && Settings.data.network.bluetoothRssiPollingEnabled
     enabled: BluetoothService.enabled
     onToggled: checked => Settings.data.network.bluetoothRssiPollingEnabled = checked
-  }
-
-  NDivider {
-    Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
   }
 }

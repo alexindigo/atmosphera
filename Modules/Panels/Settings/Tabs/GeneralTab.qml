@@ -10,11 +10,6 @@ import qs.Widgets
 ColumnLayout {
   id: root
 
-  NHeader {
-    label: I18n.tr("settings.general.profile.section.label")
-    description: I18n.tr("settings.general.profile.section.description")
-  }
-
   // Profile section
   RowLayout {
     Layout.fillWidth: true
@@ -63,19 +58,14 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
   }
 
   // Fonts
   ColumnLayout {
     spacing: Style.marginL
     Layout.fillWidth: true
-
-    NHeader {
-      label: I18n.tr("settings.general.fonts.section.label")
-      description: I18n.tr("settings.general.fonts.section.description")
-    }
 
     // Font configuration section
     ColumnLayout {
@@ -178,7 +168,30 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
+    Layout.topMargin: Style.marginM
+    Layout.bottomMargin: Style.marginM
+  }
+
+  NButton {
+    visible: !HostService.isNixOS
+    icon: "wand"
+    text: I18n.tr("settings.general.launch-setup-wizard")
+    outlined: true
+    onClicked: {
+      var targetScreen = PanelService.openedPanel ? PanelService.openedPanel.screen : (Quickshell.screens.length > 0 ? Quickshell.screens[0] : null);
+      if (!targetScreen) {
+        return;
+      }
+      var setupPanel = PanelService.getPanel("setupWizardPanel", targetScreen);
+      if (setupPanel) {
+        setupPanel.open();
+      } else {
+        Qt.callLater(() => {
+                       var sp = PanelService.getPanel("setupWizardPanel", targetScreen);
+                       if (sp)
+                       sp.open();
+                     });
+      }
+    }
   }
 }

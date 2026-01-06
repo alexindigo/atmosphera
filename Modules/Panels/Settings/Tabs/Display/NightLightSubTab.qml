@@ -15,11 +15,6 @@ ColumnLayout {
 
   signal checkWlsunset
 
-  NHeader {
-    label: I18n.tr("settings.display.night-light.section.label")
-    description: I18n.tr("settings.display.night-light.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.display.night-light.enable.label")
     description: I18n.tr("settings.display.night-light.enable.description")
@@ -37,8 +32,8 @@ ColumnLayout {
   }
 
   ColumnLayout {
-    visible: Settings.data.nightLight.enabled
-    spacing: Style.marginM
+    enabled: Settings.data.nightLight.enabled
+    spacing: Style.marginL
     Layout.fillWidth: true
 
     NLabel {
@@ -146,81 +141,79 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
       }
     }
-  }
 
-  NToggle {
-    label: I18n.tr("settings.display.night-light.auto-schedule.label")
-    description: I18n.tr("settings.display.night-light.auto-schedule.description", {
-                           "location": LocationService.stableName
-                         })
-    checked: Settings.data.nightLight.autoSchedule
-    onToggled: checked => Settings.data.nightLight.autoSchedule = checked
-    visible: Settings.data.nightLight.enabled
-  }
-
-  ColumnLayout {
-    spacing: Style.marginS
-    Layout.fillWidth: true
-    visible: Settings.data.nightLight.enabled && !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
-
-    NLabel {
-      label: I18n.tr("settings.display.night-light.manual-schedule.label")
-      description: I18n.tr("settings.display.night-light.manual-schedule.description")
+    NToggle {
+      label: I18n.tr("settings.display.night-light.auto-schedule.label")
+      description: I18n.tr("settings.display.night-light.auto-schedule.description", {
+                             "location": LocationService.stableName
+                           })
+      checked: Settings.data.nightLight.autoSchedule
+      onToggled: checked => Settings.data.nightLight.autoSchedule = checked
     }
 
-    RowLayout {
-      Layout.fillWidth: true
+    ColumnLayout {
       spacing: Style.marginS
-
-      NText {
-        text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
-        pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignVCenter
-      }
-
-      NComboBox {
-        model: root.timeOptions
-        currentKey: Settings.data.nightLight.manualSunrise
-        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
-        onSelected: key => Settings.data.nightLight.manualSunrise = key
-        Layout.fillWidth: true
-      }
-    }
-
-    RowLayout {
       Layout.fillWidth: true
-      spacing: Style.marginS
+      visible: !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
-      NText {
-        text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
-        pointSize: Style.fontSizeM
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignVCenter
+      NLabel {
+        label: I18n.tr("settings.display.night-light.manual-schedule.label")
+        description: I18n.tr("settings.display.night-light.manual-schedule.description")
       }
 
-      NComboBox {
-        model: root.timeOptions
-        currentKey: Settings.data.nightLight.manualSunset
-        placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
-        onSelected: key => Settings.data.nightLight.manualSunset = key
+      RowLayout {
         Layout.fillWidth: true
+        spacing: Style.marginS
+
+        NText {
+          text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
+          pointSize: Style.fontSizeM
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        NComboBox {
+          model: root.timeOptions
+          currentKey: Settings.data.nightLight.manualSunrise
+          placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
+          onSelected: key => Settings.data.nightLight.manualSunrise = key
+          Layout.fillWidth: true
+        }
+      }
+
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginS
+
+        NText {
+          text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
+          pointSize: Style.fontSizeM
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignVCenter
+        }
+
+        NComboBox {
+          model: root.timeOptions
+          currentKey: Settings.data.nightLight.manualSunset
+          placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
+          onSelected: key => Settings.data.nightLight.manualSunset = key
+          Layout.fillWidth: true
+        }
       }
     }
-  }
 
-  NToggle {
-    label: I18n.tr("settings.display.night-light.force-activation.label")
-    description: I18n.tr("settings.display.night-light.force-activation.description")
-    checked: Settings.data.nightLight.forced
-    onToggled: checked => {
-                 Settings.data.nightLight.forced = checked;
-                 if (checked && !Settings.data.nightLight.enabled) {
-                   root.checkWlsunset();
-                 } else {
-                   NightLightService.apply();
+    NToggle {
+      label: I18n.tr("settings.display.night-light.force-activation.label")
+      description: I18n.tr("settings.display.night-light.force-activation.description")
+      checked: Settings.data.nightLight.forced
+      onToggled: checked => {
+                   Settings.data.nightLight.forced = checked;
+                   if (checked && !Settings.data.nightLight.enabled) {
+                     root.checkWlsunset();
+                   } else {
+                     NightLightService.apply();
+                   }
                  }
-               }
-    visible: Settings.data.nightLight.enabled
+    }
   }
 }

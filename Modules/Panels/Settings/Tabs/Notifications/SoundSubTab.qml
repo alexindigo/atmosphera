@@ -16,11 +16,6 @@ ColumnLayout {
   signal openNormalPicker
   signal openCriticalPicker
 
-  NHeader {
-    label: I18n.tr("settings.notifications.sounds.section.label")
-    description: I18n.tr("settings.notifications.sounds.section.description")
-  }
-
   // QtMultimedia unavailable message
   NBox {
     Layout.fillWidth: true

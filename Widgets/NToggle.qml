@@ -9,7 +9,6 @@ RowLayout {
 
   property string label: ""
   property string description: ""
-  property bool enabled: true
   property bool checked: false
   property bool hovering: false
   property int baseSize: Math.round(Style.baseWidgetSize * 0.8 * Style.uiScaleRatio)

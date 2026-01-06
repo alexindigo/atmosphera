@@ -15,24 +15,14 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.region.tabs.language")
+      text: I18n.tr("settings.about.tabs.version")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.region.tabs.location")
+      text: I18n.tr("settings.about.tabs.contributors")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
-    }
-    NTabButton {
-      text: I18n.tr("settings.region.tabs.date")
-      tabIndex: 2
-      checked: subTabBar.currentIndex === 2
-    }
-    NTabButton {
-      text: I18n.tr("settings.region.tabs.clock-panel")
-      tabIndex: 3
-      checked: subTabBar.currentIndex === 3
     }
   }
 
@@ -45,9 +35,7 @@ ColumnLayout {
     id: tabView
     currentIndex: subTabBar.currentIndex
 
-    LanguageSubTab {}
-    LocationSubTab {}
-    DateSubTab {}
-    ClockPanelSubTab {}
+    VersionSubTab {}
+    ContributorsSubTab {}
   }
 }

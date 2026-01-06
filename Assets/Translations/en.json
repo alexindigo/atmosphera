@@ -995,6 +995,10 @@
         }
       },
       "support": "Support us",
+      "tabs": {
+        "contributors": "Contributors",
+        "version": "Version"
+      },
       "title": "About"
     },
     "audio": {
@@ -1063,9 +1067,20 @@
       "tabs": {
         "devices": "Devices",
         "media": "Media",
+        "visualizer": "Visualizer",
         "volumes": "Volumes"
       },
       "title": "Audio",
+      "visualizer": {
+        "frame-rate": {
+          "description": "Higher rates are smoother but use more resources.",
+          "label": "Frame rate"
+        },
+        "type": {
+          "description": "Choose a visualization type for media playback.",
+          "label": "Visualization type"
+        }
+      },
       "volumes": {
         "input-volume": {
           "description": "Microphone input volume level.",
@@ -2191,9 +2206,10 @@
         }
       },
       "tabs": {
-        "general": "General",
+        "general": "Appearance",
+        "duration": "Duration",
         "history": "History",
-        "sounds": "Sounds",
+        "sound": "Sound",
         "toast": "Toast"
       },
       "title": "Notifications",
@@ -2242,10 +2258,20 @@
           "label": "Monitors display"
         }
       },
-      "section": {
-        "general": {
+      "tabs": {
+        "general": "General",
+        "events": "Events"
+      },
+      "general": {
+        "section": {
           "description": "Configure visibility and behavior of OSD.",
           "label": "General"
+        }
+      },
+      "events": {
+        "section": {
+          "description": "Select which events trigger the on-screen display.",
+          "label": "Events"
         }
       },
       "title": "On-Screen Display",
@@ -2341,6 +2367,11 @@
         "remove": {
           "tooltip": "Remove plugin source"
         }
+      },
+      "tabs": {
+        "available": "Available",
+        "installed": "Installed",
+        "sources": "Sources"
       },
       "title": "Plugins",
       "uninstall": "Uninstall",
@@ -2498,6 +2529,10 @@
       "show-number-labels": {
         "description": "Display number labels (1-2-3-4...) on buttons and enable number keybinds for quick selection.",
         "label": "Show number labels"
+      },
+      "tabs": {
+        "general": "General",
+        "actions": "Actions"
       },
       "title": "Session Menu"
     },
@@ -2765,7 +2800,7 @@
       },
       "tabs": {
         "automation": "Automation",
-        "look-feel": "Look & feel",
+        "look": "Look",
         "general": "General"
       },
       "title": "Wallpaper"

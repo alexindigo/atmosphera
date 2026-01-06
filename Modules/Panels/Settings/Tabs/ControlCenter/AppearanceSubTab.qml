@@ -66,7 +66,6 @@ ColumnLayout {
     NComboBox {
       id: diskPathComboBox
       Layout.fillWidth: true
-      Layout.topMargin: Style.marginM
       label: I18n.tr("settings.control-center.system-monitor-disk-path.label")
       description: I18n.tr("settings.control-center.system-monitor-disk-path.description")
       model: {

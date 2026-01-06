@@ -97,11 +97,6 @@ ColumnLayout {
     spacing: Style.marginM
     Layout.fillWidth: true
 
-    NHeader {
-      label: I18n.tr("settings.region.clock-panel.section.label")
-      description: I18n.tr("settings.region.clock-panel.section.description")
-    }
-
     NToggle {
       label: I18n.tr("settings.location.date-time.use-analog.label")
       description: I18n.tr("settings.location.date-time.use-analog.description")
@@ -126,19 +121,12 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
   }
 
   // Calendar Cards Management Section
   ColumnLayout {
     spacing: Style.marginXXS
     Layout.fillWidth: true
-
-    NHeader {
-      label: I18n.tr("settings.location.calendar.cards.section.label")
-      description: I18n.tr("settings.location.calendar.cards.section.description")
-    }
 
     Connections {
       target: Settings.data.location

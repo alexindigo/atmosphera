@@ -10,12 +10,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    Layout.fillWidth: true
-    label: I18n.tr("settings.system-monitor.polling-section.label")
-    description: I18n.tr("settings.system-monitor.polling-section.description")
-  }
-
   // CPU Polling
   RowLayout {
     Layout.fillWidth: true
@@ -171,17 +165,8 @@ ColumnLayout {
     }
   }
 
-  NDivider {
+  NLabel {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM
-  }
-
-  NTextInput {
-    label: I18n.tr("settings.system-monitor.external-monitor.label")
-    description: I18n.tr("settings.system-monitor.external-monitor.description")
-    placeholderText: I18n.tr("settings.system-monitor.external-monitor.placeholder")
-    text: Settings.data.systemMonitor.externalMonitor
-    defaultValue: Settings.getDefaultValue("systemMonitor.externalMonitor")
-    onTextChanged: Settings.data.systemMonitor.externalMonitor = text
+    description: I18n.tr("settings.system-monitor.polling-section.description")
   }
 }

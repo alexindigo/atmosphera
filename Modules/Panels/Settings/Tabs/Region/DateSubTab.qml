@@ -9,11 +9,6 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  NHeader {
-    label: I18n.tr("settings.location.date-time.section.label")
-    description: I18n.tr("settings.location.date-time.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.location.date-time.12hour-format.label")
     description: I18n.tr("settings.location.date-time.12hour-format.description")

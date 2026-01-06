@@ -15,11 +15,6 @@ ColumnLayout {
   property var addMonitor
   property var removeMonitor
 
-  NHeader {
-    label: I18n.tr("settings.notifications.settings.section.label")
-    description: I18n.tr("settings.notifications.settings.section.description")
-  }
-
   NToggle {
     label: I18n.tr("settings.notifications.settings.enabled.label")
     description: I18n.tr("settings.notifications.settings.enabled.description")
@@ -92,8 +87,6 @@ ColumnLayout {
 
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginL
-    Layout.bottomMargin: Style.marginL
   }
 
   NHeader {
