@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "Telepítsen bővítményeket az alábbi Elérhető bővítmények szakaszból.",
       "installed-no-plugins-label": "Nincs telepített bővítmény",
       "installing": "Telepítés: {plugin}...",
+      "open-plugin-page": "Plugin oldal megnyitása",
       "open-plugins-tab": "Bővítmények beállításainak megnyitása",
       "plugin-settings-title": "{plugin} beállításai",
       "refresh-refreshing": "Bővítmények listájának frissítése...",

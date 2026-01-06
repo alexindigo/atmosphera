@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "Instale os plugins da seção Plugins Disponíveis abaixo.",
       "installed-no-plugins-label": "Nenhum plugin instalado",
       "installing": "Instalando {plugin}...",
+      "open-plugin-page": "Abrir página do plugin",
       "open-plugins-tab": "Abrir configurações de plugins",
       "plugin-settings-title": "Configurações do {plugin}",
       "refresh-refreshing": "Atualizando a lista de plugins...",

@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "Aşağıdaki Mevcut Eklentiler bölümünden eklentileri kurun.",
       "installed-no-plugins-label": "Eklenti kurulu değil",
       "installing": "{eklenti} kuruluyor...",
+      "open-plugin-page": "Eklenti sayfasını aç",
       "open-plugins-tab": "Eklenti ayarlarına git",
       "plugin-settings-title": "{plugin} Ayarları",
       "refresh-refreshing": "Eklenti listesi yenileniyor...",

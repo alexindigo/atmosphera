@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "从下方“可用插件”部分安装插件。",
       "installed-no-plugins-label": "未安装插件",
       "installing": "正在安装 {plugin}...",
+      "open-plugin-page": "打开插件页面",
       "open-plugins-tab": "打开插件设置",
       "plugin-settings-title": "{插件} 设置",
       "refresh-refreshing": "正在刷新插件列表...",

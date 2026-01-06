@@ -139,24 +139,12 @@ ColumnLayout {
 
       delegate: NBox {
         id: pluginBox
-        property bool isHovered: hoverHandler.hovered
 
         Layout.fillWidth: true
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
         implicitHeight: Math.round(contentColumn.implicitHeight + Style.marginL * 2)
         color: Color.mSurface
-
-        Behavior on implicitHeight {
-          NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutCubic
-          }
-        }
-
-        HoverHandler {
-          id: hoverHandler
-        }
 
         ColumnLayout {
           id: contentColumn
@@ -180,28 +168,25 @@ ColumnLayout {
               elide: Text.ElideRight
             }
 
-            // Description excerpt - visible when not hovered
-            NText {
-              visible: !pluginBox.isHovered && modelData.description
-              text: modelData.description || ""
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-              elide: Text.ElideRight
-              Layout.fillWidth: true
-            }
-
-            // Spacer when hovered or no description
+            // Spacer
             Item {
-              visible: pluginBox.isHovered || !modelData.description
               Layout.fillWidth: true
             }
 
             // Downloaded indicator
             NIcon {
               icon: "circle-check"
-              pointSize: Style.fontSizeL
+              pointSize: Style.baseWidgetSize * 0.5
               color: Color.mPrimary
               visible: modelData.downloaded === true
+            }
+
+            // Open plugin page button
+            NIconButton {
+              icon: "external-link"
+              baseSize: Style.baseWidgetSize * 0.7
+              tooltipText: I18n.tr("panels.plugins.open-plugin-page")
+              onClicked: Qt.openUrlExternally("https://noctalia.dev/plugins/" + modelData.id + "/")
             }
 
             // Install/Uninstall button
@@ -223,9 +208,9 @@ ColumnLayout {
             }
           }
 
-          // Description - visible on hover
+          // Description
           NText {
-            visible: pluginBox.isHovered && modelData.description
+            visible: modelData.description
             text: modelData.description || ""
             font.pointSize: Style.fontSizeXS
             color: Color.mOnSurface
@@ -233,9 +218,8 @@ ColumnLayout {
             Layout.fillWidth: true
           }
 
-          // Details row - visible on hover
+          // Details row
           RowLayout {
-            visible: pluginBox.isHovered
             spacing: Style.marginS
             Layout.fillWidth: true
 

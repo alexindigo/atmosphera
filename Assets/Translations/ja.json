@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "下の「利用可能なプラグイン」セクションからプラグインをインストールしてください。",
       "installed-no-plugins-label": "インストールされているプラグインはありません",
       "installing": "{plugin} をインストール中...",
+      "open-plugin-page": "プラグインページを開く",
       "open-plugins-tab": "プラグイン設定を開く",
       "plugin-settings-title": "{plugin} の設定",
       "refresh-refreshing": "プラグインリストを更新中...",

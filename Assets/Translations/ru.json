@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "Установите плагины из раздела \"Доступные плагины\" ниже.",
       "installed-no-plugins-label": "Нет установленных плагинов",
       "installing": "Установка {plugin}...",
+      "open-plugin-page": "Открыть страницу плагина",
       "open-plugins-tab": "Открыть настройки плагинов",
       "plugin-settings-title": "Настройки {plugin}",
       "refresh-refreshing": "Обновление списка плагинов...",

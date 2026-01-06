@@ -1179,6 +1179,7 @@
       "installed-no-plugins-description": "Installeer plugins uit de sectie Beschikbare plugins hieronder.",
       "installed-no-plugins-label": "Geen plugins geïnstalleerd",
       "installing": "{plugin} installeren...",
+      "open-plugin-page": "Open plug-in pagina",
       "open-plugins-tab": "Open plugininstellingen",
       "plugin-settings-title": "{plugin} Instellingen",
       "refresh-refreshing": "Pluginlijst vernieuwen...",
