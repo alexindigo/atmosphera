@@ -68,32 +68,32 @@ SmartPanel {
   readonly property var actionMetadata: {
     "lock": {
       "icon": "lock",
-      "title": I18n.tr("session-menu.lock"),
+      "title": I18n.tr("common.lock"),
       "isShutdown": false
     },
     "suspend": {
       "icon": "suspend",
-      "title": I18n.tr("session-menu.suspend"),
+      "title": I18n.tr("common.suspend"),
       "isShutdown": false
     },
     "hibernate": {
       "icon": "hibernate",
-      "title": I18n.tr("session-menu.hibernate"),
+      "title": I18n.tr("common.hibernate"),
       "isShutdown": false
     },
     "reboot": {
       "icon": "reboot",
-      "title": I18n.tr("session-menu.reboot"),
+      "title": I18n.tr("common.reboot"),
       "isShutdown": false
     },
     "logout": {
       "icon": "logout",
-      "title": I18n.tr("session-menu.logout"),
+      "title": I18n.tr("common.logout"),
       "isShutdown": false
     },
     "shutdown": {
       "icon": "shutdown",
-      "title": I18n.tr("session-menu.shutdown"),
+      "title": I18n.tr("common.shutdown"),
       "isShutdown": true
     }
   }
@@ -554,7 +554,7 @@ SmartPanel {
 
           NIconButton {
             icon: timerActive ? "stop" : "close"
-            tooltipText: timerActive ? I18n.tr("tooltips.cancel-timer") : I18n.tr("tooltips.close")
+            tooltipText: timerActive ? I18n.tr("common.timer") : I18n.tr("common.close")
             Layout.alignment: Qt.AlignVCenter
             baseSize: Style.baseWidgetSize * 0.7
             colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : "transparent"

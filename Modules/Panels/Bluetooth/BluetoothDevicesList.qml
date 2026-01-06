@@ -134,13 +134,13 @@ NBox {
                 text: {
                   const k = BluetoothService.getStatusKey(modelData);
                   if (k === "pairing")
-                    return I18n.tr("bluetooth.panel.pairing");
+                    return I18n.tr("common.pairing");
                   if (k === "blocked")
                     return I18n.tr("bluetooth.panel.blocked");
                   if (k === "connecting")
-                    return I18n.tr("bluetooth.panel.connecting");
+                    return I18n.tr("common.connecting");
                   if (k === "disconnecting")
-                    return I18n.tr("bluetooth.panel.disconnecting");
+                    return I18n.tr("common.disconnecting");
                   return "";
                 }
                 visible: text !== ""
@@ -190,7 +190,7 @@ NBox {
               NIconButton {
                 visible: modelData.connected
                 icon: "info-circle"
-                tooltipText: I18n.tr("bluetooth.panel.info")
+                tooltipText: I18n.tr("common.info")
                 baseSize: Style.baseWidgetSize
                 onClicked: {
                   const key = BluetoothService.deviceKey(modelData);
@@ -202,7 +202,7 @@ NBox {
               NIconButton {
                 visible: (modelData.paired || modelData.trusted) && !modelData.connected && !isBusy && !modelData.blocked
                 icon: "trash"
-                tooltipText: I18n.tr("bluetooth.panel.unpair")
+                tooltipText: I18n.tr("common.unpair")
                 baseSize: Style.baseWidgetSize
                 onClicked: BluetoothService.unpairDevice(modelData)
               }
@@ -224,18 +224,18 @@ NBox {
                 tooltipText: root.tooltipText
                 text: {
                   if (modelData.pairing) {
-                    return I18n.tr("bluetooth.panel.pairing");
+                    return I18n.tr("common.pairing");
                   }
                   if (modelData.blocked) {
                     return I18n.tr("bluetooth.panel.blocked");
                   }
                   if (modelData.connected) {
-                    return I18n.tr("bluetooth.panel.disconnect");
+                    return I18n.tr("common.disconnect");
                   }
                   if (device.canPair) {
-                    return I18n.tr("bluetooth.panel.pair");
+                    return I18n.tr("common.pair");
                   }
-                  return I18n.tr("bluetooth.panel.connect");
+                  return I18n.tr("common.connect");
                 }
                 icon: (isBusy ? "busy" : null)
                 onClicked: {
@@ -319,7 +319,7 @@ NBox {
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.signal"))
+                    onEntered: TooltipService.show(parent, I18n.tr("common.signal"))
                     onExited: TooltipService.hide()
                   }
                 }
@@ -345,7 +345,7 @@ NBox {
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.battery"))
+                    onEntered: TooltipService.show(parent, I18n.tr("common.battery"))
                     onExited: TooltipService.hide()
                   }
                 }
@@ -375,7 +375,7 @@ NBox {
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.paired"))
+                    onEntered: TooltipService.show(parent, I18n.tr("common.paired"))
                     onExited: TooltipService.hide()
                   }
                 }
@@ -400,7 +400,7 @@ NBox {
                   MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: TooltipService.show(parent, I18n.tr("bluetooth.panel.trusted"))
+                    onEntered: TooltipService.show(parent, I18n.tr("common.trusted"))
                     onExited: TooltipService.hide()
                   }
                 }
@@ -457,7 +457,7 @@ NBox {
                       if (addr.length > 0) {
                         // Copy to clipboard via wl-copy (runtime dependency)
                         Quickshell.execDetached(["wl-copy", addr]);
-                        ToastService.showNotice(I18n.tr("bluetooth.panel.title"), I18n.tr("toast.bluetooth.address-copied"), "bluetooth");
+                        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.address-copied"), "bluetooth");
                       }
                     }
                   }

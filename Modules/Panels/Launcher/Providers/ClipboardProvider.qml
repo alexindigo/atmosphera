@@ -146,7 +146,7 @@ Item {
       return [
             {
               "name": I18n.tr("launcher.providers.clipboard-loading"),
-              "description": I18n.tr("launcher.providers.clipboard-loading-description"),
+              "description": I18n.tr("launcher.providers.emoji-loading-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,
@@ -165,7 +165,7 @@ Item {
       return [
             {
               "name": I18n.tr("launcher.providers.clipboard-loading"),
-              "description": I18n.tr("launcher.providers.clipboard-loading-description"),
+              "description": I18n.tr("launcher.providers.emoji-loading-description"),
               "icon": iconMode === "tabler" ? "refresh" : "view-refresh",
               "isTablerIcon": true,
               "isImage": false,

@@ -14,7 +14,7 @@ ColumnLayout {
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
-    text: I18n.tr("settings.system-monitor.cpu-section.label")
+    text: I18n.tr("bar.system-monitor.cpu-usage-label")
     pointSize: Style.fontSizeM
   }
 
@@ -29,7 +29,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.warning")
+        text: I18n.tr("panels.system-monitor.threshold-warning")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -58,7 +58,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.critical")
+        text: I18n.tr("panels.system-monitor.threshold-critical")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -80,7 +80,7 @@ ColumnLayout {
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
-    text: I18n.tr("settings.system-monitor.temperature-section.label")
+    text: I18n.tr("bar.system-monitor.cpu-temperature-label")
     pointSize: Style.fontSizeM
   }
 
@@ -95,7 +95,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.warning")
+        text: I18n.tr("panels.system-monitor.threshold-warning")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -124,7 +124,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.critical")
+        text: I18n.tr("panels.system-monitor.threshold-critical")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -146,7 +146,7 @@ ColumnLayout {
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
-    text: I18n.tr("settings.system-monitor.gpu-section.label")
+    text: I18n.tr("panels.system-monitor.gpu-section-label")
     pointSize: Style.fontSizeM
     visible: SystemStatService.gpuAvailable
   }
@@ -163,7 +163,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.warning")
+        text: I18n.tr("panels.system-monitor.threshold-warning")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -192,7 +192,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.critical")
+        text: I18n.tr("panels.system-monitor.threshold-critical")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -214,7 +214,7 @@ ColumnLayout {
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
-    text: I18n.tr("settings.system-monitor.memory-section.label")
+    text: I18n.tr("bar.system-monitor.memory-usage-label")
     pointSize: Style.fontSizeM
   }
 
@@ -229,7 +229,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.warning")
+        text: I18n.tr("panels.system-monitor.threshold-warning")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -258,7 +258,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.critical")
+        text: I18n.tr("panels.system-monitor.threshold-critical")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -280,7 +280,7 @@ ColumnLayout {
   NText {
     Layout.fillWidth: true
     Layout.topMargin: Style.marginM
-    text: I18n.tr("settings.system-monitor.disk-section.label")
+    text: I18n.tr("panels.system-monitor.disk-section-label")
     pointSize: Style.fontSizeM
   }
 
@@ -295,7 +295,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.warning")
+        text: I18n.tr("panels.system-monitor.threshold-warning")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -324,7 +324,7 @@ ColumnLayout {
       NText {
         Layout.alignment: Qt.AlignHCenter
         horizontalAlignment: Text.AlignHCenter
-        text: I18n.tr("settings.system-monitor.threshold.critical")
+        text: I18n.tr("panels.system-monitor.threshold-critical")
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
@@ -343,6 +343,6 @@ ColumnLayout {
   }
   NLabel {
     Layout.fillWidth: true
-    description: I18n.tr("settings.system-monitor.thresholds-section.description")
+    description: I18n.tr("panels.system-monitor.thresholds-section-description")
   }
 }

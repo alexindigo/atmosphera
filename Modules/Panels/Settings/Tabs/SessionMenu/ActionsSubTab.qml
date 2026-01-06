@@ -206,7 +206,7 @@ ColumnLayout {
           // Settings button (cogwheel)
           NIconButton {
             icon: "settings"
-            tooltipText: I18n.tr("settings.session-menu.entry-settings.tooltip")
+            tooltipText: I18n.tr("panels.session-menu.entry-settings-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
             Layout.alignment: Qt.AlignVCenter
             onClicked: {

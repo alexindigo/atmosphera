@@ -24,6 +24,12 @@ ColumnLayout {
     });
   }
 
+  NText {
+    text: I18n.tr("panels.dock.monitors-desc")
+    wrapMode: Text.WordWrap
+    Layout.fillWidth: true
+  }
+
   Repeater {
     model: Quickshell.screens || []
     delegate: NCheckbox {
@@ -47,9 +53,5 @@ ColumnLayout {
                    }
                  }
     }
-  }
-
-  NLabel {
-    description: I18n.tr("settings.dock.monitors.section.description")
   }
 }

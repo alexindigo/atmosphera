@@ -109,17 +109,17 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.control-center.tabs.appearance")
+      text: I18n.tr("common.appearance")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.control-center.tabs.cards")
+      text: I18n.tr("common.cards")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
-      text: I18n.tr("settings.control-center.tabs.shortcuts")
+      text: I18n.tr("common.shortcuts")
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
     }

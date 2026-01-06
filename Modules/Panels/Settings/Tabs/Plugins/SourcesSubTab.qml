@@ -57,7 +57,7 @@ ColumnLayout {
 
           NIconButton {
             icon: "trash"
-            tooltipText: I18n.tr("settings.plugins.sources.remove.tooltip")
+            tooltipText: I18n.tr("panels.plugins.sources-remove-tooltip")
             visible: index !== 0 // Cannot remove official source
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
@@ -72,7 +72,7 @@ ColumnLayout {
             onToggled: checked => {
                          PluginRegistry.setSourceEnabled(modelData.url, checked);
                          PluginService.refreshAvailablePlugins();
-                         ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
+                         ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
                        }
           }
         }
@@ -82,7 +82,7 @@ ColumnLayout {
 
   // Add custom repository
   NButton {
-    text: I18n.tr("settings.plugins.sources.add-custom")
+    text: I18n.tr("panels.plugins.sources-add-custom")
     icon: "plus"
     onClicked: {
       addSourceDialog.open();
@@ -112,20 +112,20 @@ ColumnLayout {
       spacing: Style.marginL
 
       NHeader {
-        label: I18n.tr("settings.plugins.sources.add-dialog.title")
-        description: I18n.tr("settings.plugins.sources.add-dialog.description")
+        label: I18n.tr("panels.plugins.sources-add-dialog-title")
+        description: I18n.tr("panels.plugins.sources-add-dialog-description")
       }
 
       NTextInput {
         id: sourceNameInput
-        label: I18n.tr("settings.plugins.sources.add-dialog.name")
-        placeholderText: I18n.tr("settings.plugins.sources.add-dialog.name-placeholder")
+        label: I18n.tr("panels.plugins.sources-add-dialog-name")
+        placeholderText: I18n.tr("panels.plugins.sources-add-dialog-name-placeholder")
         Layout.fillWidth: true
       }
 
       NTextInput {
         id: sourceUrlInput
-        label: I18n.tr("settings.plugins.sources.add-dialog.url")
+        label: I18n.tr("panels.plugins.sources-add-dialog-url")
         placeholderText: "https://github.com/user/repo"
         Layout.fillWidth: true
       }
@@ -150,13 +150,13 @@ ColumnLayout {
           enabled: sourceNameInput.text.length > 0 && sourceUrlInput.text.length > 0
           onClicked: {
             if (PluginRegistry.addPluginSource(sourceNameInput.text, sourceUrlInput.text)) {
-              ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.sources.add-dialog.success"));
+              ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.sources-add-dialog-success"));
               PluginService.refreshAvailablePlugins();
               addSourceDialog.close();
               sourceNameInput.text = "";
               sourceUrlInput.text = "";
             } else {
-              ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.sources.add-dialog.error"));
+              ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.sources-add-dialog-error"));
             }
           }
         }

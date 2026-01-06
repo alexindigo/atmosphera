@@ -49,7 +49,7 @@ Item {
       "Education": I18n.tr("launcher.categories.education"),
       "Game": I18n.tr("launcher.categories.game"),
       "Graphics": I18n.tr("launcher.categories.graphics"),
-      "Network": I18n.tr("launcher.categories.network"),
+      "Network": I18n.tr("common.network"),
       "Office": I18n.tr("launcher.categories.office"),
       "System": I18n.tr("launcher.categories.system"),
       "Misc": I18n.tr("launcher.categories.misc"),
@@ -603,7 +603,7 @@ Item {
                                 }) ? "unpin" : "pin",
             "tooltip": isAppPinned({
                                      "id": item.appId
-                                   }) ? I18n.tr("launcher.unpin") : I18n.tr("launcher.pin"),
+                                   }) ? I18n.tr("common.unpin") : I18n.tr("common.pin"),
             "action": function () {
               togglePin(item.appId);
             }

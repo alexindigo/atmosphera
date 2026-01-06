@@ -158,13 +158,13 @@ SmartPanel {
                   panelViewMode = "wifi";
                 }
               }
-              onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("quickSettings.wifi.label.ethernet") : I18n.tr("wifi.panel.title"))
+              onEntered: TooltipService.show(parent, panelViewMode === "wifi" ? I18n.tr("control-center.wifi.label-ethernet") : I18n.tr("wifi.panel.title"))
               onExited: TooltipService.hide()
             }
           }
 
           NText {
-            text: panelViewMode === "wifi" ? I18n.tr("wifi.panel.title") : I18n.tr("quickSettings.wifi.label.ethernet")
+            text: panelViewMode === "wifi" ? I18n.tr("wifi.panel.title") : I18n.tr("control-center.wifi.label-ethernet")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
@@ -181,7 +181,7 @@ SmartPanel {
 
           NIconButton {
             icon: "refresh"
-            tooltipText: I18n.tr("tooltips.refresh")
+            tooltipText: I18n.tr("common.refresh")
             baseSize: Style.baseWidgetSize * 0.8
             enabled: panelViewMode === "wifi" ? (Settings.data.network.wifiEnabled && !NetworkService.scanning) : true
             onClicked: {
@@ -194,7 +194,7 @@ SmartPanel {
 
           NIconButton {
             icon: "close"
-            tooltipText: I18n.tr("tooltips.close")
+            tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: root.close()
           }
@@ -228,7 +228,7 @@ SmartPanel {
           }
 
           NTabButton {
-            text: I18n.tr("quickSettings.wifi.label.wifi")
+            text: I18n.tr("tooltips.manage-wifi")
             tabIndex: 0
             checked: modeTabBar.currentIndex === 0
           }
@@ -236,7 +236,7 @@ SmartPanel {
           NTabButton {
             // Dim when no Ethernet devices are detected
             opacity: NetworkService.hasEthernet() ? 1.0 : 0.5
-            text: I18n.tr("quickSettings.wifi.label.ethernet")
+            text: I18n.tr("control-center.wifi.label-ethernet")
             tabIndex: 1
             checked: modeTabBar.currentIndex === 1
           }
@@ -586,7 +586,7 @@ SmartPanel {
                               NText {
                                 id: ethConnectedText
                                 anchors.centerIn: parent
-                                text: I18n.tr("wifi.panel.connected")
+                                text: I18n.tr("common.connected")
                                 pointSize: Style.fontSizeXXS
                                 color: Color.mOnPrimary
                               }
@@ -598,7 +598,7 @@ SmartPanel {
                         NIconButton {
                           icon: "info-circle"
                           baseSize: Style.baseWidgetSize * 0.7
-                          tooltipText: I18n.tr("wifi.panel.info")
+                          tooltipText: I18n.tr("common.info")
                           enabled: true
                           onClicked: {
                             if (NetworkService.activeEthernetIf === modelData.ifname && ethernetInfoExpanded) {
@@ -717,7 +717,7 @@ SmartPanel {
                                   const value = (NetworkService.activeEthernetDetails.ifname && NetworkService.activeEthernetDetails.ifname.length > 0) ? NetworkService.activeEthernetDetails.ifname : (NetworkService.activeEthernetIf || "");
                                   if (value.length > 0) {
                                     Quickshell.execDetached(["wl-copy", value]);
-                                    ToastService.showNotice(I18n.tr("quickSettings.wifi.label.ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
+                                    ToastService.showNotice(I18n.tr("control-center.wifi.label-ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
                                   }
                                 }
                               }
@@ -743,7 +743,7 @@ SmartPanel {
                             }
                             NText {
                               // Show "Disconnected" when the interface itself is down
-                              text: modelData.connected ? (NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited")) : I18n.tr("wifi.panel.disconnected")
+                              text: modelData.connected ? (NetworkService.internetConnectivity ? I18n.tr("wifi.panel.internet-connected") : I18n.tr("wifi.panel.internet-limited")) : I18n.tr("common.disconnected")
                               pointSize: Style.fontSizeXS
                               color: modelData.connected ? (NetworkService.internetConnectivity ? Color.mOnSurface : Color.mError) : Color.mError
                               Layout.fillWidth: true
@@ -824,7 +824,7 @@ SmartPanel {
                                   const value = NetworkService.activeEthernetDetails.ipv4 || "";
                                   if (value.length > 0) {
                                     Quickshell.execDetached(["wl-copy", value]);
-                                    ToastService.showNotice(I18n.tr("quickSettings.wifi.label.ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
+                                    ToastService.showNotice(I18n.tr("control-center.wifi.label-ethernet"), I18n.tr("toast.bluetooth.address-copied"), "ethernet");
                                   }
                                 }
                               }
@@ -843,7 +843,7 @@ SmartPanel {
                               MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                onEntered: TooltipService.show(parent, I18n.tr("wifi.panel.gateway"))
+                                onEntered: TooltipService.show(parent, I18n.tr("common.gateway"))
                                 onExited: TooltipService.hide()
                               }
                             }

@@ -17,30 +17,30 @@ ColumnLayout {
     model: [
       {
         type: OSD.Type.Volume,
-        key: "volume"
+        key: "types-volume"
       },
       {
         type: OSD.Type.InputVolume,
-        key: "input-volume"
+        key: "types-input-volume"
       },
       {
         type: OSD.Type.Brightness,
-        key: "brightness"
+        key: "types-brightness"
       },
       {
         type: OSD.Type.LockKey,
-        key: "lockkey"
+        key: "types-lockkey"
       },
       {
         type: OSD.Type.CustomText,
-        key: "custom-text"
+        key: "types-custom-text"
       }
     ]
     delegate: NCheckbox {
       required property var modelData
       Layout.fillWidth: true
-      label: I18n.tr("settings.osd.types." + modelData.key + ".label")
-      description: I18n.tr("settings.osd.types." + modelData.key + ".description")
+      label: I18n.tr("panels.osd." + modelData.key + "-label")
+      description: I18n.tr("panels.osd." + modelData.key + "-description")
       checked: (Settings.data.osd.enabledTypes || []).includes(modelData.type)
       onToggled: checked => {
                    if (checked) {

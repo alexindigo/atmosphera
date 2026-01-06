@@ -11,8 +11,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("settings.session-menu.large-buttons-style.label")
-    description: I18n.tr("settings.session-menu.large-buttons-style.description")
+    label: I18n.tr("panels.session-menu.large-buttons-style-label")
+    description: I18n.tr("panels.session-menu.large-buttons-style-description")
     checked: Settings.data.sessionMenu.largeButtonsStyle
     onToggled: checked => Settings.data.sessionMenu.largeButtonsStyle = checked
   }
@@ -20,8 +20,8 @@ ColumnLayout {
   NComboBox {
     visible: Settings.data.sessionMenu.largeButtonsStyle
     Layout.fillWidth: true
-    label: I18n.tr("settings.session-menu.large-buttons-layout.label")
-    description: I18n.tr("settings.session-menu.large-buttons-layout.description")
+    label: I18n.tr("panels.session-menu.large-buttons-layout-label")
+    description: I18n.tr("panels.session-menu.large-buttons-layout-description")
     model: [
       {
         "key": "grid",
@@ -39,45 +39,45 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("settings.session-menu.show-number-labels.label")
-    description: I18n.tr("settings.session-menu.show-number-labels.description")
+    label: I18n.tr("panels.session-menu.show-number-labels-label")
+    description: I18n.tr("panels.session-menu.show-number-labels-description")
     checked: Settings.data.sessionMenu.showNumberLabels !== false
     defaultValue: Settings.getDefaultValue("sessionMenu.showNumberLabels") ?? true
     onToggled: checked => Settings.data.sessionMenu.showNumberLabels = checked
   }
 
   NComboBox {
-    label: I18n.tr("settings.session-menu.position.label")
-    description: I18n.tr("settings.session-menu.position.description")
+    label: I18n.tr("common.position")
+    description: I18n.tr("panels.session-menu.position-description")
     Layout.fillWidth: true
     model: [
       {
         "key": "center",
-        "name": I18n.tr("options.control-center.position.center")
+        "name": I18n.tr("positions.center")
       },
       {
         "key": "top_center",
-        "name": I18n.tr("options.control-center.position.top_center")
+        "name": I18n.tr("positions.top-center")
       },
       {
         "key": "top_left",
-        "name": I18n.tr("options.control-center.position.top_left")
+        "name": I18n.tr("positions.top-left")
       },
       {
         "key": "top_right",
-        "name": I18n.tr("options.control-center.position.top_right")
+        "name": I18n.tr("positions.top-right")
       },
       {
         "key": "bottom_center",
-        "name": I18n.tr("options.control-center.position.bottom_center")
+        "name": I18n.tr("positions.bottom-center")
       },
       {
         "key": "bottom_left",
-        "name": I18n.tr("options.control-center.position.bottom_left")
+        "name": I18n.tr("positions.bottom-left")
       },
       {
         "key": "bottom_right",
-        "name": I18n.tr("options.control-center.position.bottom_right")
+        "name": I18n.tr("positions.bottom-right")
       }
     ]
     currentKey: Settings.data.sessionMenu.position
@@ -88,8 +88,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("settings.session-menu.show-header.label")
-    description: I18n.tr("settings.session-menu.show-header.description")
+    label: I18n.tr("panels.session-menu.show-header-label")
+    description: I18n.tr("panels.session-menu.show-header-description")
     checked: Settings.data.sessionMenu.showHeader
     onToggled: checked => Settings.data.sessionMenu.showHeader = checked
     visible: !Settings.data.sessionMenu.largeButtonsStyle
@@ -98,8 +98,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("settings.session-menu.enable-countdown.label")
-    description: I18n.tr("settings.session-menu.enable-countdown.description")
+    label: I18n.tr("panels.session-menu.enable-countdown-label")
+    description: I18n.tr("panels.session-menu.enable-countdown-description")
     checked: Settings.data.sessionMenu.enableCountdown
     onToggled: checked => Settings.data.sessionMenu.enableCountdown = checked
     defaultValue: Settings.getDefaultValue("sessionMenu.enableCountdown")
@@ -111,8 +111,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: I18n.tr("settings.session-menu.countdown-duration.label")
-      description: I18n.tr("settings.session-menu.countdown-duration.description")
+      label: I18n.tr("panels.session-menu.countdown-duration-label")
+      description: I18n.tr("panels.session-menu.countdown-duration-description")
     }
 
     NValueSlider {

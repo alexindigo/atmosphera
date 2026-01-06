@@ -13,7 +13,7 @@ NIconButtonHot {
   enabled: ProgramCheckerService.gpuScreenRecorderAvailable
   icon: "camera-video"
   hot: ScreenRecorderService.isRecording
-  tooltipText: I18n.tr("quickSettings.screenRecorder.tooltip.action")
+  tooltipText: I18n.tr("panels.screen-recorder.title")
   onClicked: {
     ScreenRecorderService.toggleRecording();
     if (!ScreenRecorderService.isRecording) {

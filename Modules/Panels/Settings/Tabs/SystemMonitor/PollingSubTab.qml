@@ -17,7 +17,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.cpu-section.label")
+      text: I18n.tr("bar.system-monitor.cpu-usage-label")
       pointSize: Style.fontSizeM
     }
 
@@ -39,7 +39,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.temperature-section.label")
+      text: I18n.tr("bar.system-monitor.cpu-temperature-label")
       pointSize: Style.fontSizeM
     }
 
@@ -62,7 +62,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.gpu-section.label")
+      text: I18n.tr("panels.system-monitor.gpu-section-label")
       pointSize: Style.fontSizeM
     }
 
@@ -84,7 +84,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.load-average-section.label")
+      text: I18n.tr("bar.system-monitor.load-average-label")
       pointSize: Style.fontSizeM
     }
 
@@ -106,7 +106,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.memory-section.label")
+      text: I18n.tr("bar.system-monitor.memory-usage-label")
       pointSize: Style.fontSizeM
     }
 
@@ -128,7 +128,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.disk-section.label")
+      text: I18n.tr("panels.system-monitor.disk-section-label")
       pointSize: Style.fontSizeM
     }
 
@@ -150,7 +150,7 @@ ColumnLayout {
 
     NText {
       Layout.fillWidth: true
-      text: I18n.tr("settings.system-monitor.network-section.label")
+      text: I18n.tr("common.network")
       pointSize: Style.fontSizeM
     }
 
@@ -167,6 +167,6 @@ ColumnLayout {
 
   NLabel {
     Layout.fillWidth: true
-    description: I18n.tr("settings.system-monitor.polling-section.description")
+    description: I18n.tr("panels.system-monitor.polling-section-description")
   }
 }

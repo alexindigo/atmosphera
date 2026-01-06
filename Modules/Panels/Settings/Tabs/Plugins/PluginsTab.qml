@@ -15,17 +15,17 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.plugins.tabs.installed")
+      text: I18n.tr("common.installed")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.plugins.tabs.available")
+      text: I18n.tr("common.available")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
     NTabButton {
-      text: I18n.tr("settings.plugins.tabs.sources")
+      text: I18n.tr("common.sources")
       tabIndex: 2
       checked: subTabBar.currentIndex === 2
     }

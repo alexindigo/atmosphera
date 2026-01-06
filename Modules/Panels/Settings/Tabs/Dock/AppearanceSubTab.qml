@@ -11,8 +11,8 @@ ColumnLayout {
 
   NToggle {
     Layout.fillWidth: true
-    label: I18n.tr("settings.dock.enabled.label")
-    description: I18n.tr("settings.dock.enabled.description")
+    label: I18n.tr("panels.dock.enabled-label")
+    description: I18n.tr("panels.dock.enabled-description")
     checked: Settings.data.dock.enabled
     defaultValue: Settings.getDefaultValue("dock.enabled")
     onToggled: checked => Settings.data.dock.enabled = checked
@@ -24,20 +24,20 @@ ColumnLayout {
 
     NComboBox {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.display.label")
-      description: I18n.tr("settings.dock.appearance.display.description")
+      label: I18n.tr("panels.display.title")
+      description: I18n.tr("panels.dock.appearance-display-description")
       model: [
         {
           "key": "always_visible",
-          "name": I18n.tr("settings.dock.appearance.display.always-visible")
+          "name": I18n.tr("hide-modes.visible")
         },
         {
           "key": "auto_hide",
-          "name": I18n.tr("settings.dock.appearance.display.auto-hide")
+          "name": I18n.tr("panels.dock.appearance-display-auto-hide")
         },
         {
           "key": "exclusive",
-          "name": I18n.tr("settings.dock.appearance.display.exclusive")
+          "name": I18n.tr("panels.dock.appearance-display-exclusive")
         }
       ]
       currentKey: Settings.data.dock.displayMode
@@ -49,8 +49,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.background-opacity.label")
-      description: I18n.tr("settings.dock.appearance.background-opacity.description")
+      label: I18n.tr("panels.osd.background-opacity-label")
+      description: I18n.tr("panels.dock.appearance-background-opacity-description")
       from: 0
       to: 1
       stepSize: 0.01
@@ -62,8 +62,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.dead-opacity.label")
-      description: I18n.tr("settings.dock.appearance.dead-opacity.description")
+      label: I18n.tr("panels.dock.appearance-dead-opacity-label")
+      description: I18n.tr("panels.dock.appearance-dead-opacity-description")
       from: 0
       to: 1
       stepSize: 0.01
@@ -75,8 +75,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.floating-distance.label")
-      description: I18n.tr("settings.dock.appearance.floating-distance.description")
+      label: I18n.tr("panels.dock.appearance-floating-distance-label")
+      description: I18n.tr("panels.dock.appearance-floating-distance-description")
       from: 0
       to: 4
       stepSize: 0.01
@@ -88,8 +88,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.icon-size.label")
-      description: I18n.tr("settings.dock.appearance.icon-size.description")
+      label: I18n.tr("panels.dock.appearance-icon-size-label")
+      description: I18n.tr("panels.dock.appearance-icon-size-description")
       from: 0
       to: 2
       stepSize: 0.01
@@ -102,8 +102,8 @@ ColumnLayout {
     NValueSlider {
       visible: Settings.data.dock.displayMode === "auto_hide"
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.hide-show-speed.label")
-      description: I18n.tr("settings.dock.appearance.hide-show-speed.description")
+      label: I18n.tr("panels.dock.appearance-hide-show-speed-label")
+      description: I18n.tr("panels.dock.appearance-hide-show-speed-description")
       from: 0.1
       to: 2.0
       stepSize: 0.01
@@ -114,24 +114,24 @@ ColumnLayout {
     }
 
     NToggle {
-      label: I18n.tr("settings.dock.appearance.inactive-indicators.label")
-      description: I18n.tr("settings.dock.appearance.inactive-indicators.description")
+      label: I18n.tr("panels.dock.appearance-inactive-indicators-label")
+      description: I18n.tr("panels.dock.appearance-inactive-indicators-description")
       checked: Settings.data.dock.inactiveIndicators
       defaultValue: Settings.getDefaultValue("dock.inactiveIndicators")
       onToggled: checked => Settings.data.dock.inactiveIndicators = checked
     }
 
     NToggle {
-      label: I18n.tr("settings.dock.appearance.pinned-static.label")
-      description: I18n.tr("settings.dock.appearance.pinned-static.description")
+      label: I18n.tr("panels.dock.appearance-pinned-static-label")
+      description: I18n.tr("panels.dock.appearance-pinned-static-description")
       checked: Settings.data.dock.pinnedStatic
       defaultValue: Settings.getDefaultValue("dock.pinnedStatic")
       onToggled: checked => Settings.data.dock.pinnedStatic = checked
     }
 
     NToggle {
-      label: I18n.tr("settings.dock.monitors.only-same-monitor.label")
-      description: I18n.tr("settings.dock.monitors.only-same-monitor.description")
+      label: I18n.tr("panels.dock.monitors-only-same-monitor-label")
+      description: I18n.tr("panels.dock.monitors-only-same-monitor-description")
       checked: Settings.data.dock.onlySameOutput
       defaultValue: Settings.getDefaultValue("dock.onlySameOutput")
       onToggled: checked => Settings.data.dock.onlySameOutput = checked
@@ -139,8 +139,8 @@ ColumnLayout {
 
     NToggle {
       Layout.fillWidth: true
-      label: I18n.tr("settings.dock.appearance.colorize-icons.label")
-      description: I18n.tr("settings.dock.appearance.colorize-icons.description")
+      label: I18n.tr("panels.dock.appearance-colorize-icons-label")
+      description: I18n.tr("panels.dock.appearance-colorize-icons-description")
       checked: Settings.data.dock.colorizeIcons
       defaultValue: Settings.getDefaultValue("dock.colorizeIcons")
       onToggled: checked => Settings.data.dock.colorizeIcons = checked

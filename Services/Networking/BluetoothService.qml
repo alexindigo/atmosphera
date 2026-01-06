@@ -298,14 +298,14 @@ QtObject {
       root.ctlPowered = !!state;
       root.enabled = root.ctlPowered;
       if (state) {
-        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
       } else {
-        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
       }
       requestCtlPoll(ctlPollSoonMs);
     } catch (e) {
       Logger.w("Bluetooth", "Enable/Disable failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.state-change-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.state-change-failed"));
     }
   }
 
@@ -316,14 +316,14 @@ QtObject {
       root.ctlDiscoverable = !!state; // optimistic
       requestCtlPoll(ctlPollSoonMs);
       if (state) {
-        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.discoverable-enabled"), "broadcast");
       } else {
-        ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.discoverable-disabled"), "broadcast-off");
       }
       Logger.i("Bluetooth", "Discoverable state set to:", state);
     } catch (e) {
       Logger.w("Bluetooth", "Failed to change discoverable state", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.discoverable-change-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.discoverable-change-failed"));
     }
   }
 
@@ -379,13 +379,13 @@ QtObject {
       return "";
     try {
       if (device.pairing)
-        return I18n.tr("bluetooth.panel.pairing");
+        return I18n.tr("common.pairing");
       if (device.blocked)
         return I18n.tr("bluetooth.panel.blocked");
       if (device.state === BluetoothDevice.Connecting)
-        return I18n.tr("bluetooth.panel.connecting");
+        return I18n.tr("common.connecting");
       if (device.state === BluetoothDevice.Disconnecting)
-        return I18n.tr("bluetooth.panel.disconnecting");
+        return I18n.tr("common.disconnecting");
     } catch (_) {}
     return "";
   }
@@ -394,16 +394,16 @@ QtObject {
   function getSignalStrength(device) {
     var p = getSignalPercent(device);
     if (p === null)
-      return I18n.tr("bluetooth.panel.signal-text.unknown");
+      return I18n.tr("bluetooth.panel.signal-text-unknown");
     if (p >= 80)
-      return I18n.tr("bluetooth.panel.signal-text.excellent");
+      return I18n.tr("bluetooth.panel.signal-text-excellent");
     if (p >= 60)
-      return I18n.tr("bluetooth.panel.signal-text.good");
+      return I18n.tr("bluetooth.panel.signal-text-good");
     if (p >= 40)
-      return I18n.tr("bluetooth.panel.signal-text.fair");
+      return I18n.tr("bluetooth.panel.signal-text-fair");
     if (p >= 20)
-      return I18n.tr("bluetooth.panel.signal-text.poor");
-    return I18n.tr("bluetooth.panel.signal-text.very-poor");
+      return I18n.tr("bluetooth.panel.signal-text-poor");
+    return I18n.tr("bluetooth.panel.signal-text-very-poor");
   }
 
   // Numeric helpers for UI rendering
@@ -451,13 +451,13 @@ QtObject {
   function pairDevice(device) {
     if (!device)
       return;
-    ToastService.showNotice(I18n.tr("bluetooth.title"), I18n.tr("bluetooth.panel.pairing"), "bluetooth");
+    ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.pairing"), "bluetooth");
     // Delegate pairing to bluetoothctl which registers/uses its own agent
     try {
       pairWithBluetoothctl(device);
     } catch (e) {
       Logger.w("Bluetooth", "pairDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.pair-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.pair-failed"));
     }
   }
 
@@ -529,7 +529,7 @@ QtObject {
       device.connect();
     } catch (e) {
       Logger.w("Bluetooth", "connectDeviceWithTrust failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.connect-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.connect-failed"));
     }
   }
 
@@ -541,7 +541,7 @@ QtObject {
       device.disconnect();
     } catch (e) {
       Logger.w("Bluetooth", "disconnectDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.disconnect-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.disconnect-failed"));
     }
   }
 
@@ -554,7 +554,7 @@ QtObject {
       device.forget();
     } catch (e) {
       Logger.w("Bluetooth", "forgetDevice failed", e);
-      ToastService.showWarning(I18n.tr("bluetooth.title"), I18n.tr("toast.bluetooth.forget-failed"));
+      ToastService.showWarning(I18n.tr("common.bluetooth"), I18n.tr("toast.bluetooth.forget-failed"));
     }
   }
 }

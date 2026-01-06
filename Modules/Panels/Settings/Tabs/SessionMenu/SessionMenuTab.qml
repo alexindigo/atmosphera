@@ -14,37 +14,37 @@ ColumnLayout {
   property list<var> entriesDefault: [
     {
       "id": "lock",
-      "text": I18n.tr("session-menu.lock"),
+      "text": I18n.tr("common.lock"),
       "enabled": true,
       "required": false
     },
     {
       "id": "suspend",
-      "text": I18n.tr("session-menu.suspend"),
+      "text": I18n.tr("common.suspend"),
       "enabled": true,
       "required": false
     },
     {
       "id": "hibernate",
-      "text": I18n.tr("session-menu.hibernate"),
+      "text": I18n.tr("common.hibernate"),
       "enabled": true,
       "required": false
     },
     {
       "id": "reboot",
-      "text": I18n.tr("session-menu.reboot"),
+      "text": I18n.tr("common.reboot"),
       "enabled": true,
       "required": false
     },
     {
       "id": "logout",
-      "text": I18n.tr("session-menu.logout"),
+      "text": I18n.tr("common.logout"),
       "enabled": true,
       "required": false
     },
     {
       "id": "shutdown",
-      "text": I18n.tr("session-menu.shutdown"),
+      "text": I18n.tr("common.shutdown"),
       "enabled": true,
       "required": false
     }
@@ -171,12 +171,12 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.session-menu.tabs.general")
+      text: I18n.tr("common.general")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.session-menu.tabs.actions")
+      text: I18n.tr("common.actions")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }

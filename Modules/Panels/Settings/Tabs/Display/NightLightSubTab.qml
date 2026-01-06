@@ -16,8 +16,8 @@ ColumnLayout {
   signal checkWlsunset
 
   NToggle {
-    label: I18n.tr("settings.display.night-light.enable.label")
-    description: I18n.tr("settings.display.night-light.enable.description")
+    label: I18n.tr("panels.display.night-light-enable-label")
+    description: I18n.tr("panels.display.night-light-enable-description")
     checked: Settings.data.nightLight.enabled
     onToggled: checked => {
                  if (checked) {
@@ -26,7 +26,7 @@ ColumnLayout {
                    Settings.data.nightLight.enabled = false;
                    Settings.data.nightLight.forced = false;
                    NightLightService.apply();
-                   ToastService.showNotice(I18n.tr("settings.display.night-light.section.label"), I18n.tr("toast.night-light.disabled"), "nightlight-off");
+                   ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("toast.wifi.disabled"), "nightlight-off");
                  }
                }
   }
@@ -37,8 +37,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: I18n.tr("settings.display.night-light.temperature.night")
-      description: I18n.tr("settings.display.night-light.temperature.night-description")
+      label: I18n.tr("panels.display.night-light-temperature-night")
+      description: I18n.tr("panels.display.night-light-temperature-night-description")
       Layout.fillWidth: true
     }
 
@@ -90,8 +90,8 @@ ColumnLayout {
     }
 
     NLabel {
-      label: I18n.tr("settings.display.night-light.temperature.day")
-      description: I18n.tr("settings.display.night-light.temperature.day-description")
+      label: I18n.tr("panels.display.night-light-temperature-day")
+      description: I18n.tr("panels.display.night-light-temperature-day-description")
       Layout.fillWidth: true
     }
 
@@ -143,8 +143,8 @@ ColumnLayout {
     }
 
     NToggle {
-      label: I18n.tr("settings.display.night-light.auto-schedule.label")
-      description: I18n.tr("settings.display.night-light.auto-schedule.description", {
+      label: I18n.tr("panels.display.night-light-auto-schedule-label")
+      description: I18n.tr("panels.display.night-light-auto-schedule-description", {
                              "location": LocationService.stableName
                            })
       checked: Settings.data.nightLight.autoSchedule
@@ -157,8 +157,8 @@ ColumnLayout {
       visible: !Settings.data.nightLight.autoSchedule && !Settings.data.nightLight.forced
 
       NLabel {
-        label: I18n.tr("settings.display.night-light.manual-schedule.label")
-        description: I18n.tr("settings.display.night-light.manual-schedule.description")
+        label: I18n.tr("panels.display.night-light-manual-schedule-label")
+        description: I18n.tr("panels.display.night-light-manual-schedule-description")
       }
 
       RowLayout {
@@ -166,7 +166,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NText {
-          text: I18n.tr("settings.display.night-light.manual-schedule.sunrise")
+          text: I18n.tr("panels.display.night-light-manual-schedule-sunrise")
           pointSize: Style.fontSizeM
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
@@ -175,7 +175,7 @@ ColumnLayout {
         NComboBox {
           model: root.timeOptions
           currentKey: Settings.data.nightLight.manualSunrise
-          placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-start")
+          placeholder: I18n.tr("panels.display.night-light-manual-schedule-select-start")
           onSelected: key => Settings.data.nightLight.manualSunrise = key
           Layout.fillWidth: true
         }
@@ -186,7 +186,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NText {
-          text: I18n.tr("settings.display.night-light.manual-schedule.sunset")
+          text: I18n.tr("panels.display.night-light-manual-schedule-sunset")
           pointSize: Style.fontSizeM
           color: Color.mOnSurfaceVariant
           Layout.alignment: Qt.AlignVCenter
@@ -195,7 +195,7 @@ ColumnLayout {
         NComboBox {
           model: root.timeOptions
           currentKey: Settings.data.nightLight.manualSunset
-          placeholder: I18n.tr("settings.display.night-light.manual-schedule.select-stop")
+          placeholder: I18n.tr("panels.display.night-light-manual-schedule-select-stop")
           onSelected: key => Settings.data.nightLight.manualSunset = key
           Layout.fillWidth: true
         }
@@ -203,8 +203,8 @@ ColumnLayout {
     }
 
     NToggle {
-      label: I18n.tr("settings.display.night-light.force-activation.label")
-      description: I18n.tr("settings.display.night-light.force-activation.description")
+      label: I18n.tr("panels.display.night-light-force-activation-label")
+      description: I18n.tr("panels.display.night-light-force-activation-description")
       checked: Settings.data.nightLight.forced
       onToggled: checked => {
                    Settings.data.nightLight.forced = checked;

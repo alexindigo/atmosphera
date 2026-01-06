@@ -162,8 +162,8 @@ ColumnLayout {
   }
 
   NHeader {
-    label: I18n.tr("settings.about.noctalia.section.label")
-    description: I18n.tr("settings.about.noctalia.section.description")
+    label: I18n.tr("panels.about.noctalia-title")
+    description: I18n.tr("panels.about.noctalia-desc")
   }
 
   RowLayout {
@@ -176,7 +176,7 @@ ColumnLayout {
       columnSpacing: Style.marginS
 
       NText {
-        text: I18n.tr("settings.about.noctalia.latest-version")
+        text: I18n.tr("panels.about.noctalia-latest-version")
         color: Color.mOnSurface
       }
 
@@ -187,7 +187,7 @@ ColumnLayout {
       }
 
       NText {
-        text: I18n.tr("settings.about.noctalia.installed-version")
+        text: I18n.tr("panels.about.noctalia-installed-version")
         color: Color.mOnSurface
       }
 
@@ -199,13 +199,13 @@ ColumnLayout {
 
       NText {
         visible: root.isGitVersion
-        text: I18n.tr("settings.about.noctalia.git-commit")
+        text: I18n.tr("panels.about.noctalia-git-commit")
         color: Color.mOnSurface
       }
 
       NText {
         visible: root.isGitVersion
-        text: root.commitInfo || I18n.tr("settings.about.noctalia.git-commit-loading")
+        text: root.commitInfo || I18n.tr("common.loading")
         color: Color.mOnSurface
         font.weight: Style.fontWeightBold
         font.family: root.commitInfo ? "monospace" : ""
@@ -223,7 +223,7 @@ ColumnLayout {
 
     NButton {
       icon: "sparkles"
-      text: I18n.tr("settings.about.changelog")
+      text: I18n.tr("panels.about.changelog")
       fontSize: Style.fontSizeXS
       iconSize: Style.fontSizeS
       outlined: true
@@ -235,13 +235,13 @@ ColumnLayout {
 
     NButton {
       icon: "heart"
-      text: I18n.tr("settings.about.support")
+      text: I18n.tr("panels.about.support")
       fontSize: Style.fontSizeXS
       iconSize: Style.fontSizeS
       outlined: true
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"]);
-        ToastService.showNotice(I18n.tr("settings.about.support"), I18n.tr("toast.kofi.opened"));
+        ToastService.showNotice(I18n.tr("panels.about.support"), I18n.tr("toast.kofi-opened"));
       }
     }
   }

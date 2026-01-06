@@ -49,7 +49,7 @@ SmartPanel {
           }
 
           NText {
-            text: I18n.tr("bluetooth.panel.title")
+            text: I18n.tr("common.bluetooth")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
@@ -84,7 +84,7 @@ SmartPanel {
 
           NIconButton {
             icon: "close"
-            tooltipText: I18n.tr("tooltips.close")
+            tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               root.close();
@@ -303,7 +303,7 @@ SmartPanel {
               }
 
               NButton {
-                text: I18n.tr("bluetooth.panel.refresh-devices")
+                text: I18n.tr("tooltips.refresh-devices")
                 icon: "refresh"
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {

@@ -14,6 +14,12 @@ ColumnLayout {
   property var addMonitor
   property var removeMonitor
 
+  NText {
+    text: I18n.tr("panels.bar.monitors-desc")
+    wrapMode: Text.WordWrap
+    Layout.fillWidth: true
+  }
+
   Repeater {
     model: Quickshell.screens || []
     delegate: NCheckbox {
@@ -37,9 +43,5 @@ ColumnLayout {
                    }
                  }
     }
-  }
-
-  NLabel {
-    description: I18n.tr("settings.bar.monitors.section.description")
   }
 }

@@ -177,7 +177,7 @@ SmartPanel {
           }
 
           NText {
-            text: I18n.tr("notifications.panel.title")
+            text: I18n.tr("common.notifications")
             pointSize: Style.fontSizeL
             font.weight: Style.fontWeightBold
             color: Color.mOnSurface
@@ -186,14 +186,14 @@ SmartPanel {
 
           NIconButton {
             icon: NotificationService.doNotDisturb ? "bell-off" : "bell"
-            tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-disabled")
+            tooltipText: NotificationService.doNotDisturb ? I18n.tr("tooltips.do-not-disturb-enabled") : I18n.tr("tooltips.do-not-disturb-enabled")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: NotificationService.doNotDisturb = !NotificationService.doNotDisturb
           }
 
           NIconButton {
             icon: "trash"
-            tooltipText: I18n.tr("tooltips.clear-history")
+            tooltipText: I18n.tr("actions.clear-history")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: {
               NotificationService.clearHistory();
@@ -204,7 +204,7 @@ SmartPanel {
 
           NIconButton {
             icon: "close"
-            tooltipText: I18n.tr("tooltips.close")
+            tooltipText: I18n.tr("common.close")
             baseSize: Style.baseWidgetSize * 0.8
             onClicked: root.close()
           }
@@ -225,7 +225,7 @@ SmartPanel {
 
         NTabButton {
           tabIndex: 0
-          text: I18n.tr("notifications.range.all") + " (" + panelContent.countForRange(0) + ")"
+          text: I18n.tr("launcher.categories.all") + " (" + panelContent.countForRange(0) + ")"
           checked: tabsBox.currentIndex === 0
           onClicked: panelContent.currentRange = 0
           pointSize: Style.fontSizeXS
