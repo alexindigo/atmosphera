@@ -37,7 +37,7 @@ ColumnLayout {
     property int updateCount: Object.keys(PluginService.pluginUpdates).length
     property bool isUpdating: false
 
-    text: I18n.tr("settings.plugins.update-all", {
+    text: I18n.tr("panels.plugins.update-all", {
                     "count": updateCount
                   })
     icon: "download"
@@ -54,7 +54,7 @@ ColumnLayout {
       function updateNext() {
         if (currentIndex >= pluginIds.length) {
           isUpdating = false;
-          ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-all-success"));
+          ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.update-all-success"));
           return;
         }
 
@@ -157,12 +157,12 @@ ColumnLayout {
               NText {
                 text: {
                   if (modelData.updateInfo) {
-                    return I18n.tr("settings.plugins.update-version", {
+                    return I18n.tr("panels.plugins.update-version", {
                                      "current": modelData.version,
                                      "new": modelData.updateInfo.availableVersion
                                    });
                   } else if (modelData.pendingUpdateInfo) {
-                    return I18n.tr("settings.plugins.update-pending", {
+                    return I18n.tr("panels.plugins.update-pending", {
                                      "current": modelData.version,
                                      "new": modelData.pendingUpdateInfo.availableVersion,
                                      "required": modelData.pendingUpdateInfo.minNoctaliaVersion
@@ -197,7 +197,7 @@ ColumnLayout {
 
               NText {
                 visible: !modelData.isOfficial
-                text: modelData.sourceName || I18n.tr("settings.plugins.source.custom")
+                text: modelData.sourceName || I18n.tr("panels.plugins.source-custom")
                 font.pointSize: Style.fontSizeXXS
                 color: Color.mTertiary
               }
@@ -229,7 +229,7 @@ ColumnLayout {
 
           NIconButton {
             icon: "settings"
-            tooltipText: I18n.tr("settings.plugins.settings.tooltip")
+            tooltipText: I18n.tr("panels.plugins.settings-tooltip")
             baseSize: Style.baseWidgetSize * 0.7
             visible: modelData.entryPoints?.settings !== undefined
             onClicked: {
@@ -239,7 +239,7 @@ ColumnLayout {
 
           NIconButton {
             icon: "trash"
-            tooltipText: I18n.tr("settings.plugins.uninstall")
+            tooltipText: I18n.tr("common.uninstall")
             baseSize: Style.baseWidgetSize * 0.7
             onClicked: {
               uninstallDialog.pluginToUninstall = modelData;
@@ -252,7 +252,7 @@ ColumnLayout {
             property string pluginId: modelData.compositeKey
             property bool isUpdating: root.updatingPlugins[pluginId] === true
 
-            text: isUpdating ? I18n.tr("settings.plugins.updating") : I18n.tr("settings.plugins.update")
+            text: isUpdating ? I18n.tr("panels.plugins.updating") : I18n.tr("common.update")
             icon: isUpdating ? "" : "download"
             visible: modelData.updateInfo !== undefined
             enabled: !isUpdating
@@ -273,15 +273,15 @@ ColumnLayout {
                 rootRef.updatingPlugins = updates2;
 
                 if (success) {
-                  ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-success", {
-                                                                                       "plugin": pname,
-                                                                                       "version": pversion
-                                                                                     }));
+                  ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.update-success", {
+                                                                                     "plugin": pname,
+                                                                                     "version": pversion
+                                                                                   }));
                 } else {
-                  ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.update-error", {
-                                                                                      "plugin": pname,
-                                                                                      "error": error || "Unknown error"
-                                                                                    }));
+                  ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.update-error", {
+                                                                                    "plugin": pname,
+                                                                                    "error": error || "Unknown error"
+                                                                                  }));
                 }
               });
             }
@@ -304,8 +304,8 @@ ColumnLayout {
 
     NLabel {
       visible: PluginRegistry.getAllInstalledPluginIds().length === 0
-      label: I18n.tr("settings.plugins.installed.no-plugins-label")
-      description: I18n.tr("settings.plugins.installed.no-plugins-description")
+      label: I18n.tr("panels.plugins.installed-no-plugins-label")
+      description: I18n.tr("panels.plugins.installed-no-plugins-description")
       Layout.fillWidth: true
     }
   }
@@ -334,8 +334,8 @@ ColumnLayout {
       spacing: Style.marginL
 
       NHeader {
-        label: I18n.tr("settings.plugins.uninstall-dialog.title")
-        description: I18n.tr("settings.plugins.uninstall-dialog.description", {
+        label: I18n.tr("panels.plugins.uninstall-dialog-title")
+        description: I18n.tr("panels.plugins.uninstall-dialog-description", {
                                "plugin": uninstallDialog.pluginToUninstall?.name || ""
                              })
       }
@@ -354,7 +354,7 @@ ColumnLayout {
         }
 
         NButton {
-          text: I18n.tr("settings.plugins.uninstall")
+          text: I18n.tr("common.uninstall")
           backgroundColor: Color.mPrimary
           textColor: Color.mOnPrimary
           onClicked: {
@@ -379,19 +379,19 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
-    ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstalling", {
-                                                                         "plugin": pluginName
-                                                                       }));
+    ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstalling", {
+                                                                       "plugin": pluginName
+                                                                     }));
 
     PluginService.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-success", {
-                                                                             "plugin": pluginName
-                                                                           }));
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstall-success", {
+                                                                           "plugin": pluginName
+                                                                         }));
       } else {
-        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-error", {
-                                                                            "error": error || "Unknown error"
-                                                                          }));
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstall-error", {
+                                                                          "error": error || "Unknown error"
+                                                                        }));
       }
     });
   }

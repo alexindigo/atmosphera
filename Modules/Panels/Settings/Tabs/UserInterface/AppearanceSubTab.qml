@@ -10,24 +10,24 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.user-interface.tooltips.label")
-    description: I18n.tr("settings.user-interface.tooltips.description")
+    label: I18n.tr("panels.user-interface.tooltips-label")
+    description: I18n.tr("panels.user-interface.tooltips-description")
     checked: Settings.data.ui.tooltipsEnabled
     defaultValue: Settings.getDefaultValue("ui.tooltipsEnabled")
     onToggled: checked => Settings.data.ui.tooltipsEnabled = checked
   }
 
   NToggle {
-    label: I18n.tr("settings.user-interface.box-border.label")
-    description: I18n.tr("settings.user-interface.box-border.description")
+    label: I18n.tr("panels.user-interface.box-border-label")
+    description: I18n.tr("panels.user-interface.box-border-description")
     checked: Settings.data.ui.boxBorderEnabled
     defaultValue: Settings.getDefaultValue("ui.boxBorderEnabled")
     onToggled: checked => Settings.data.ui.boxBorderEnabled = checked
   }
 
   NToggle {
-    label: I18n.tr("settings.user-interface.shadows.label")
-    description: I18n.tr("settings.user-interface.shadows.description")
+    label: I18n.tr("panels.user-interface.shadows-label")
+    description: I18n.tr("panels.user-interface.shadows-description")
     checked: Settings.data.general.enableShadows
     defaultValue: Settings.getDefaultValue("general.enableShadows")
     onToggled: checked => Settings.data.general.enableShadows = checked
@@ -35,13 +35,13 @@ ColumnLayout {
 
   NComboBox {
     visible: Settings.data.general.enableShadows
-    label: I18n.tr("settings.user-interface.shadows.direction.label")
-    description: I18n.tr("settings.user-interface.shadows.direction.description")
+    label: I18n.tr("panels.user-interface.shadows-direction-label")
+    description: I18n.tr("panels.user-interface.shadows-direction-description")
     Layout.fillWidth: true
 
     readonly property var shadowOptionsMap: ({
                                                "top_left": {
-                                                 "name": I18n.tr("options.shadow-direction.top_left"),
+                                                 "name": I18n.tr("positions.top-left"),
                                                  "p": Qt.point(-2, -2)
                                                },
                                                "top": {
@@ -49,11 +49,11 @@ ColumnLayout {
                                                  "p": Qt.point(0, -3)
                                                },
                                                "top_right": {
-                                                 "name": I18n.tr("options.shadow-direction.top_right"),
+                                                 "name": I18n.tr("positions.top-right"),
                                                  "p": Qt.point(2, -2)
                                                },
                                                "left": {
-                                                 "name": I18n.tr("options.shadow-direction.left"),
+                                                 "name": I18n.tr("positions.left"),
                                                  "p": Qt.point(-3, 0)
                                                },
                                                "center": {
@@ -61,11 +61,11 @@ ColumnLayout {
                                                  "p": Qt.point(0, 0)
                                                },
                                                "right": {
-                                                 "name": I18n.tr("options.shadow-direction.right"),
+                                                 "name": I18n.tr("positions.right"),
                                                  "p": Qt.point(3, 0)
                                                },
                                                "bottom_left": {
-                                                 "name": I18n.tr("options.shadow-direction.bottom_left"),
+                                                 "name": I18n.tr("positions.bottom-left"),
                                                  "p": Qt.point(-2, 2)
                                                },
                                                "bottom": {
@@ -73,7 +73,7 @@ ColumnLayout {
                                                  "p": Qt.point(0, 3)
                                                },
                                                "bottom_right": {
-                                                 "name": I18n.tr("options.shadow-direction.bottom_right"),
+                                                 "name": I18n.tr("positions.bottom-right"),
                                                  "p": Qt.point(2, 3)
                                                }
                                              })
@@ -108,8 +108,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.user-interface.scaling.label")
-      description: I18n.tr("settings.user-interface.scaling.description")
+      label: I18n.tr("panels.user-interface.scaling-label")
+      description: I18n.tr("panels.user-interface.scaling-description")
       from: 0.8
       to: 1.2
       stepSize: 0.05
@@ -126,7 +126,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.user-interface.scaling.reset-scaling")
+        tooltipText: I18n.tr("panels.user-interface.scaling-reset-scaling")
         onClicked: Settings.data.general.scaleRatio = 1.0
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -144,8 +144,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.user-interface.box-border-radius.label")
-      description: I18n.tr("settings.user-interface.box-border-radius.description")
+      label: I18n.tr("panels.user-interface.box-border-radius-label")
+      description: I18n.tr("panels.user-interface.box-border-radius-description")
       from: 0
       to: 2
       stepSize: 0.01
@@ -162,7 +162,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.user-interface.box-border-radius.reset")
+        tooltipText: I18n.tr("panels.user-interface.box-border-radius-reset")
         onClicked: Settings.data.general.radiusRatio = 1.0
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -176,8 +176,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.user-interface.control-border-radius.label")
-      description: I18n.tr("settings.user-interface.control-border-radius.description")
+      label: I18n.tr("panels.user-interface.control-border-radius-label")
+      description: I18n.tr("panels.user-interface.control-border-radius-description")
       from: 0
       to: 2
       stepSize: 0.01
@@ -194,7 +194,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.user-interface.control-border-radius.reset")
+        tooltipText: I18n.tr("panels.user-interface.control-border-radius-reset")
         onClicked: Settings.data.general.iRadiusRatio = 1.0
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -211,8 +211,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: I18n.tr("settings.user-interface.animation-disable.label")
-      description: I18n.tr("settings.user-interface.animation-disable.description")
+      label: I18n.tr("panels.user-interface.animation-disable-label")
+      description: I18n.tr("panels.user-interface.animation-disable-description")
       checked: Settings.data.general.animationDisabled
       defaultValue: Settings.getDefaultValue("general.animationDisabled")
       onToggled: checked => Settings.data.general.animationDisabled = checked
@@ -229,8 +229,8 @@ ColumnLayout {
 
         NValueSlider {
           Layout.fillWidth: true
-          label: I18n.tr("settings.user-interface.animation-speed.label")
-          description: I18n.tr("settings.user-interface.animation-speed.description")
+          label: I18n.tr("panels.user-interface.animation-speed-label")
+          description: I18n.tr("panels.user-interface.animation-speed-description")
           from: 0
           to: 2.0
           stepSize: 0.01
@@ -247,7 +247,7 @@ ColumnLayout {
           NIconButton {
             icon: "restore"
             baseSize: Style.baseWidgetSize * 0.8
-            tooltipText: I18n.tr("settings.user-interface.animation-speed.reset")
+            tooltipText: I18n.tr("panels.user-interface.animation-speed-reset")
             onClicked: Settings.data.general.animationSpeed = 1.0
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter

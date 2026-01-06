@@ -27,6 +27,12 @@ ColumnLayout {
     Settings.data.controlCenter.cards = toSave;
   }
 
+    NText {
+      text: I18n.tr("panels.control-center.cards-desc")
+      wrapMode: Text.WordWrap
+      Layout.fillWidth: true
+    }
+
     ColumnLayout {
       spacing: Style.marginXXS
       Layout.fillWidth: true
@@ -69,9 +75,5 @@ ColumnLayout {
           saveCards();
         }
       }
-    }
-
-    NLabel {
-      description: I18n.tr("settings.control-center.cards.section.description")
     }
   }

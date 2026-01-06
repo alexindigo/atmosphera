@@ -480,7 +480,7 @@ Loader {
 
                   // Welcome back + Username on one line
                   NText {
-                    text: I18n.tr("lock-screen.welcome-back") + " " + HostService.displayName + "!"
+                    text: I18n.tr("system.welcome-back") + " " + HostService.displayName + "!"
                     pointSize: Style.fontSizeXXL
                     color: Color.mOnSurface
                     horizontalAlignment: Text.AlignLeft
@@ -709,27 +709,27 @@ Loader {
                 // Measure all button text widths
                 NText {
                   id: logoutText
-                  text: I18n.tr("session-menu.logout")
+                  text: I18n.tr("common.logout")
                   font.pointSize: buttonRowTextMeasurer.fontSize
                 }
                 NText {
                   id: suspendText
-                  text: I18n.tr("session-menu.suspend")
+                  text: I18n.tr("common.suspend")
                   font.pointSize: buttonRowTextMeasurer.fontSize
                 }
                 NText {
                   id: hibernateText
-                  text: Settings.data.general.showHibernateOnLockScreen ? I18n.tr("session-menu.hibernate") : ""
+                  text: Settings.data.general.showHibernateOnLockScreen ? I18n.tr("common.hibernate") : ""
                   font.pointSize: buttonRowTextMeasurer.fontSize
                 }
                 NText {
                   id: rebootText
-                  text: I18n.tr("session-menu.reboot")
+                  text: I18n.tr("common.reboot")
                   font.pointSize: buttonRowTextMeasurer.fontSize
                 }
                 NText {
                   id: shutdownText
-                  text: I18n.tr("session-menu.shutdown")
+                  text: I18n.tr("common.shutdown")
                   font.pointSize: buttonRowTextMeasurer.fontSize
                 }
 
@@ -1298,7 +1298,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     icon: "logout"
-                    text: I18n.tr("session-menu.logout")
+                    text: I18n.tr("common.logout")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
                     textColor: Color.mOnPrimary
@@ -1319,7 +1319,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     icon: "suspend"
-                    text: I18n.tr("session-menu.suspend")
+                    text: I18n.tr("common.suspend")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
                     textColor: Color.mOnPrimary
@@ -1341,7 +1341,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     icon: "hibernate"
-                    text: I18n.tr("session-menu.hibernate")
+                    text: I18n.tr("common.hibernate")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
                     textColor: Color.mOnPrimary
@@ -1363,7 +1363,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     icon: "reboot"
-                    text: I18n.tr("session-menu.reboot")
+                    text: I18n.tr("common.reboot")
                     outlined: true
                     backgroundColor: Color.mOnSurfaceVariant
                     textColor: Color.mOnPrimary
@@ -1384,7 +1384,7 @@ Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: Settings.data.general.compactLockScreen ? 36 : 48
                     icon: "shutdown"
-                    text: I18n.tr("session-menu.shutdown")
+                    text: I18n.tr("common.shutdown")
                     outlined: true
                     backgroundColor: Color.mError
                     textColor: Color.mOnError

@@ -10,8 +10,8 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.notifications.toast.keyboard.label")
-    description: I18n.tr("settings.notifications.toast.keyboard.description")
+    label: I18n.tr("panels.notifications.toast-keyboard-label")
+    description: I18n.tr("panels.notifications.toast-keyboard-description")
     checked: Settings.data.notifications.enableKeyboardLayoutToast
     onToggled: checked => Settings.data.notifications.enableKeyboardLayoutToast = checked
     defaultValue: Settings.getDefaultValue("notifications.enableKeyboardLayoutToast")

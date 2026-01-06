@@ -11,16 +11,16 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.launcher.settings.clipboard-history.label")
-    description: I18n.tr("settings.launcher.settings.clipboard-history.description")
+    label: I18n.tr("panels.launcher.settings-clipboard-history-label")
+    description: I18n.tr("panels.launcher.settings-clipboard-history-description")
     checked: Settings.data.appLauncher.enableClipboardHistory
     onToggled: checked => Settings.data.appLauncher.enableClipboardHistory = checked
     defaultValue: Settings.getDefaultValue("appLauncher.enableClipboardHistory")
   }
 
   NToggle {
-    label: I18n.tr("settings.launcher.settings.clip-preview.label")
-    description: I18n.tr("settings.launcher.settings.clip-preview.description")
+    label: I18n.tr("panels.launcher.settings-clip-preview-label")
+    description: I18n.tr("panels.launcher.settings-clip-preview-description")
     checked: Settings.data.appLauncher.enableClipPreview
     onToggled: checked => Settings.data.appLauncher.enableClipPreview = checked
     defaultValue: Settings.getDefaultValue("appLauncher.enableClipPreview")
@@ -28,8 +28,8 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("settings.launcher.settings.auto-paste.label")
-    description: I18n.tr("settings.launcher.settings.auto-paste.description")
+    label: I18n.tr("panels.launcher.settings-auto-paste-label")
+    description: I18n.tr("panels.launcher.settings-auto-paste-description")
     checked: Settings.data.appLauncher.autoPasteClipboard
     onToggled: checked => Settings.data.appLauncher.autoPasteClipboard = checked
     defaultValue: Settings.getDefaultValue("appLauncher.autoPasteClipboard")

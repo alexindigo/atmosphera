@@ -918,7 +918,7 @@ Singleton {
       } else {
         root.internetConnectivity = false;
         Logger.i("Network", "No internet connectivity");
-        ToastService.showWarning(root.cachedLastConnected, I18n.tr("toast.internet.limited"));
+        ToastService.showWarning(root.cachedLastConnected, I18n.tr("toast.internet-limited"));
         connectivityCheckProcess.failedChecks = 0;
       }
       root.scan();

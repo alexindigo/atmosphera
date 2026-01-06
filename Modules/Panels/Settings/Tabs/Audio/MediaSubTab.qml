@@ -12,9 +12,9 @@ ColumnLayout {
 
   // Preferred player
   NTextInput {
-    label: I18n.tr("settings.audio.media.primary-player.label")
-    description: I18n.tr("settings.audio.media.primary-player.description")
-    placeholderText: I18n.tr("settings.audio.media.primary-player.placeholder")
+    label: I18n.tr("panels.audio.media-primary-player-label")
+    description: I18n.tr("panels.audio.media-primary-player-description")
+    placeholderText: I18n.tr("panels.audio.media-primary-player-placeholder")
     text: Settings.data.audio.preferredPlayer
     defaultValue: Settings.getDefaultValue("audio.preferredPlayer")
     onTextChanged: {
@@ -30,9 +30,9 @@ ColumnLayout {
 
     NTextInputButton {
       id: blacklistInput
-      label: I18n.tr("settings.audio.media.excluded-player.label")
-      description: I18n.tr("settings.audio.media.excluded-player.description")
-      placeholderText: I18n.tr("settings.audio.media.excluded-player.placeholder")
+      label: I18n.tr("panels.audio.media-excluded-player-label")
+      description: I18n.tr("panels.audio.media-excluded-player-description")
+      placeholderText: I18n.tr("panels.audio.media-excluded-player-placeholder")
       buttonIcon: "add"
       Layout.fillWidth: true
       onButtonClicked: {

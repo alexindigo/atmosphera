@@ -11,8 +11,8 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.user-interface.panels-attached-to-bar.label")
-    description: I18n.tr("settings.user-interface.panels-attached-to-bar.description")
+    label: I18n.tr("panels.user-interface.panels-attached-to-bar-label")
+    description: I18n.tr("panels.user-interface.panels-attached-to-bar-description")
     checked: Settings.data.ui.panelsAttachedToBar
     defaultValue: Settings.getDefaultValue("ui.panelsAttachedToBar")
     onToggled: checked => Settings.data.ui.panelsAttachedToBar = checked
@@ -20,8 +20,8 @@ ColumnLayout {
 
   NToggle {
     visible: (Quickshell.screens.length > 1)
-    label: I18n.tr("settings.user-interface.allow-panels-without-bar.label")
-    description: I18n.tr("settings.user-interface.allow-panels-without-bar.description")
+    label: I18n.tr("panels.user-interface.allow-panels-without-bar-label")
+    description: I18n.tr("panels.user-interface.allow-panels-without-bar-description")
     checked: Settings.data.general.allowPanelsOnScreenWithoutBar
     defaultValue: Settings.getDefaultValue("general.allowPanelsOnScreenWithoutBar")
     onToggled: checked => Settings.data.general.allowPanelsOnScreenWithoutBar = checked
@@ -29,8 +29,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: I18n.tr("settings.user-interface.panel-background-opacity.label")
-    description: I18n.tr("settings.user-interface.panel-background-opacity.description")
+    label: I18n.tr("panels.user-interface.panel-background-opacity-label")
+    description: I18n.tr("panels.user-interface.panel-background-opacity-description")
     from: 0.4
     to: 1
     stepSize: 0.01
@@ -42,8 +42,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: I18n.tr("settings.user-interface.dimmer-opacity.label")
-    description: I18n.tr("settings.user-interface.dimmer-opacity.description")
+    label: I18n.tr("panels.user-interface.dimmer-opacity-label")
+    description: I18n.tr("panels.user-interface.dimmer-opacity-description")
     from: 0
     to: 1
     stepSize: 0.01
@@ -58,8 +58,8 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: I18n.tr("settings.user-interface.settings-panel-mode.label")
-    description: I18n.tr("settings.user-interface.settings-panel-mode.description")
+    label: I18n.tr("panels.user-interface.settings-panel-mode-label")
+    description: I18n.tr("panels.user-interface.settings-panel-mode-description")
     Layout.fillWidth: true
     model: [
       {

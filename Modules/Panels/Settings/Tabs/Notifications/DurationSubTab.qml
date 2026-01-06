@@ -10,8 +10,8 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.notifications.duration.respect-expire.label")
-    description: I18n.tr("settings.notifications.duration.respect-expire.description")
+    label: I18n.tr("panels.notifications.duration-respect-expire-label")
+    description: I18n.tr("panels.notifications.duration-respect-expire-description")
     checked: Settings.data.notifications.respectExpireTimeout
     onToggled: checked => Settings.data.notifications.respectExpireTimeout = checked
     defaultValue: Settings.getDefaultValue("notifications.respectExpireTimeout")
@@ -23,8 +23,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.notifications.duration.low-urgency.label")
-      description: I18n.tr("settings.notifications.duration.low-urgency.description")
+      label: I18n.tr("panels.notifications.duration-low-urgency-label")
+      description: I18n.tr("panels.notifications.duration-low-urgency-description")
       from: 1
       to: 30
       stepSize: 1
@@ -41,7 +41,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.notifications.duration.reset")
+        tooltipText: I18n.tr("panels.notifications.duration-reset")
         onClicked: Settings.data.notifications.lowUrgencyDuration = 3
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -55,8 +55,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.notifications.duration.normal-urgency.label")
-      description: I18n.tr("settings.notifications.duration.normal-urgency.description")
+      label: I18n.tr("panels.notifications.duration-normal-urgency-label")
+      description: I18n.tr("panels.notifications.duration-normal-urgency-description")
       from: 1
       to: 30
       stepSize: 1
@@ -73,7 +73,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.notifications.duration.reset")
+        tooltipText: I18n.tr("panels.notifications.duration-reset")
         onClicked: Settings.data.notifications.normalUrgencyDuration = 8
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -87,8 +87,8 @@ ColumnLayout {
 
     NValueSlider {
       Layout.fillWidth: true
-      label: I18n.tr("settings.notifications.duration.critical-urgency.label")
-      description: I18n.tr("settings.notifications.duration.critical-urgency.description")
+      label: I18n.tr("panels.notifications.duration-critical-urgency-label")
+      description: I18n.tr("panels.notifications.duration-critical-urgency-description")
       from: 1
       to: 30
       stepSize: 1
@@ -105,7 +105,7 @@ ColumnLayout {
       NIconButton {
         icon: "restore"
         baseSize: Style.baseWidgetSize * 0.8
-        tooltipText: I18n.tr("settings.notifications.duration.reset")
+        tooltipText: I18n.tr("panels.notifications.duration-reset")
         onClicked: Settings.data.notifications.criticalUrgencyDuration = 15
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter

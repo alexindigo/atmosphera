@@ -10,16 +10,16 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.general.screen-corners.show-corners.label")
-    description: I18n.tr("settings.general.screen-corners.show-corners.description")
+    label: I18n.tr("panels.general.screen-corners-show-corners-label")
+    description: I18n.tr("panels.general.screen-corners-show-corners-description")
     checked: Settings.data.general.showScreenCorners
     defaultValue: Settings.getDefaultValue("general.showScreenCorners")
     onToggled: checked => Settings.data.general.showScreenCorners = checked
   }
 
   NToggle {
-    label: I18n.tr("settings.general.screen-corners.solid-black.label")
-    description: I18n.tr("settings.general.screen-corners.solid-black.description")
+    label: I18n.tr("panels.general.screen-corners-solid-black-label")
+    description: I18n.tr("panels.general.screen-corners-solid-black-description")
     checked: Settings.data.general.forceBlackScreenCorners
     defaultValue: Settings.getDefaultValue("general.forceBlackScreenCorners")
     onToggled: checked => Settings.data.general.forceBlackScreenCorners = checked
@@ -35,8 +35,8 @@ ColumnLayout {
 
       NValueSlider {
         Layout.fillWidth: true
-        label: I18n.tr("settings.general.screen-corners.radius.label")
-        description: I18n.tr("settings.general.screen-corners.radius.description")
+        label: I18n.tr("panels.general.screen-corners-radius-label")
+        description: I18n.tr("panels.general.screen-corners-radius-description")
         from: 0
         to: 2
         stepSize: 0.01
@@ -53,7 +53,7 @@ ColumnLayout {
         NIconButton {
           icon: "restore"
           baseSize: Style.baseWidgetSize * 0.8
-          tooltipText: I18n.tr("settings.general.screen-corners.radius.reset")
+          tooltipText: I18n.tr("panels.general.screen-corners-radius-reset")
           onClicked: Settings.data.general.screenRadiusRatio = 1.0
           anchors.right: parent.right
           anchors.verticalCenter: parent.verticalCenter

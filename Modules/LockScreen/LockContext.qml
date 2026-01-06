@@ -134,7 +134,7 @@ Scope {
                    } else {
                      Logger.i("LockContext", "Authentication failed");
                      root.currentText = "";
-                     errorMessage = I18n.tr("lock-screen.authentication-failed");
+                     errorMessage = I18n.tr("authentication.failed");
                      showFailure = true;
                      root.failed();
                    }

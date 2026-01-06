@@ -11,8 +11,8 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.launcher.settings.use-app2unit.label")
-    description: I18n.tr("settings.launcher.settings.use-app2unit.description")
+    label: I18n.tr("panels.launcher.settings-use-app2unit-label")
+    description: I18n.tr("panels.launcher.settings-use-app2unit-description")
     checked: Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable
     enabled: ProgramCheckerService.app2unitAvailable && !Settings.data.appLauncher.customLaunchPrefixEnabled
     opacity: ProgramCheckerService.app2unitAvailable ? 1.0 : 0.6
@@ -28,8 +28,8 @@ ColumnLayout {
   }
 
   NTextInput {
-    label: I18n.tr("settings.launcher.settings.terminal-command.label")
-    description: I18n.tr("settings.launcher.settings.terminal-command.description")
+    label: I18n.tr("panels.launcher.settings-terminal-command-label")
+    description: I18n.tr("panels.launcher.settings-terminal-command-description")
     Layout.fillWidth: true
     text: Settings.data.appLauncher.terminalCommand
     onEditingFinished: {
@@ -38,8 +38,8 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("settings.launcher.settings.custom-launch-prefix-enabled.label")
-    description: I18n.tr("settings.launcher.settings.custom-launch-prefix-enabled.description")
+    label: I18n.tr("panels.launcher.settings-custom-launch-prefix-enabled-label")
+    description: I18n.tr("panels.launcher.settings-custom-launch-prefix-enabled-description")
     checked: Settings.data.appLauncher.customLaunchPrefixEnabled
     enabled: !Settings.data.appLauncher.useApp2Unit
     onToggled: checked => {
@@ -52,8 +52,8 @@ ColumnLayout {
   }
 
   NTextInput {
-    label: I18n.tr("settings.launcher.settings.custom-launch-prefix.label")
-    description: I18n.tr("settings.launcher.settings.custom-launch-prefix.description")
+    label: I18n.tr("panels.launcher.settings-custom-launch-prefix-label")
+    description: I18n.tr("panels.launcher.settings-custom-launch-prefix-description")
     Layout.fillWidth: true
     text: Settings.data.appLauncher.customLaunchPrefix
     enabled: Settings.data.appLauncher.customLaunchPrefixEnabled
@@ -62,11 +62,11 @@ ColumnLayout {
   }
 
   NTextInput {
-    label: I18n.tr("settings.launcher.settings.annotation-tool.label")
-    description: I18n.tr("settings.launcher.settings.annotation-tool.description")
+    label: I18n.tr("panels.launcher.settings-annotation-tool-label")
+    description: I18n.tr("panels.launcher.settings-annotation-tool-description")
     Layout.fillWidth: true
     text: Settings.data.appLauncher.screenshotAnnotationTool
-    placeholderText: I18n.tr("settings.launcher.settings.annotation-tool.placeholder")
+    placeholderText: I18n.tr("panels.launcher.settings-annotation-tool-placeholder")
     onEditingFinished: Settings.data.appLauncher.screenshotAnnotationTool = text
   }
 }

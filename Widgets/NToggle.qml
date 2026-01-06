@@ -25,7 +25,7 @@ RowLayout {
   spacing: Style.marginM
 
   readonly property bool isValueChanged: (defaultValue !== undefined) && (checked !== defaultValue)
-  readonly property string indicatorTooltip: defaultValue !== undefined ? I18n.tr("settings.indicator.default-value", {
+  readonly property string indicatorTooltip: defaultValue !== undefined ? I18n.tr("panels.indicator.default-value", {
                                                                                     "value": typeof defaultValue === "boolean" ? (defaultValue ? "true" : "false") : String(defaultValue)
                                                                                   }) : ""
 

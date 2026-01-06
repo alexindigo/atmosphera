@@ -48,24 +48,24 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.media-mini.hide-mode.label")
-    description: I18n.tr("bar.widget-settings.media-mini.hide-mode.description")
+    label: I18n.tr("bar.taskbar.hide-mode-label")
+    description: I18n.tr("bar.media-mini.hide-mode-description")
     model: [
       {
         "key": "visible",
-        "name": I18n.tr("options.hide-modes.visible")
+        "name": I18n.tr("hide-modes.visible")
       },
       {
         "key": "hidden",
-        "name": I18n.tr("options.hide-modes.hidden")
+        "name": I18n.tr("hide-modes.hidden")
       },
       {
         "key": "transparent",
-        "name": I18n.tr("options.hide-modes.transparent")
+        "name": I18n.tr("hide-modes.transparent")
       },
       {
         "key": "idle",
-        "name": I18n.tr("options.hide-modes.idle")
+        "name": I18n.tr("hide-modes.idle")
       }
     ]
     currentKey: root.valueHideMode
@@ -73,30 +73,30 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-album-art.label")
-    description: I18n.tr("bar.widget-settings.media-mini.show-album-art.description")
+    label: I18n.tr("bar.media-mini.show-album-art-label")
+    description: I18n.tr("bar.media-mini.show-album-art-description")
     checked: valueShowAlbumArt
     onToggled: checked => valueShowAlbumArt = checked
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-artist-first.label")
-    description: I18n.tr("bar.widget-settings.media-mini.show-artist-first.description")
+    label: I18n.tr("bar.media-mini.show-artist-first-label")
+    description: I18n.tr("bar.media-mini.show-artist-first-description")
     checked: valueShowArtistFirst
     onToggled: checked => valueShowArtistFirst = checked
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-visualizer.label")
-    description: I18n.tr("bar.widget-settings.media-mini.show-visualizer.description")
+    label: I18n.tr("bar.media-mini.show-visualizer-label")
+    description: I18n.tr("bar.media-mini.show-visualizer-description")
     checked: valueShowVisualizer
     onToggled: checked => valueShowVisualizer = checked
   }
 
   NComboBox {
     visible: valueShowVisualizer
-    label: I18n.tr("bar.widget-settings.media-mini.visualizer-type.label")
-    description: I18n.tr("bar.widget-settings.media-mini.visualizer-type.description")
+    label: I18n.tr("bar.media-mini.visualizer-type-label")
+    description: I18n.tr("bar.media-mini.visualizer-type-description")
     model: [
       {
         "key": "linear",
@@ -119,29 +119,29 @@ ColumnLayout {
   NTextInput {
     id: widthInput
     Layout.fillWidth: true
-    label: I18n.tr("bar.widget-settings.media-mini.max-width.label")
-    description: I18n.tr("bar.widget-settings.media-mini.max-width.description")
+    label: I18n.tr("bar.taskbar.max-width-label")
+    description: I18n.tr("bar.media-mini.max-width-description")
     placeholderText: widgetMetadata.maxWidth
     text: valueMaxWidth
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.use-fixed-width.label")
-    description: I18n.tr("bar.widget-settings.media-mini.use-fixed-width.description")
+    label: I18n.tr("bar.media-mini.use-fixed-width-label")
+    description: I18n.tr("bar.media-mini.use-fixed-width-description")
     checked: valueUseFixedWidth
     onToggled: checked => valueUseFixedWidth = checked
   }
 
   NToggle {
-    label: I18n.tr("bar.widget-settings.media-mini.show-progress-ring.label")
-    description: I18n.tr("bar.widget-settings.media-mini.show-progress-ring.description")
+    label: I18n.tr("bar.media-mini.show-progress-ring-label")
+    description: I18n.tr("bar.media-mini.show-progress-ring-description")
     checked: valueShowProgressRing
     onToggled: checked => valueShowProgressRing = checked
   }
 
   NComboBox {
-    label: I18n.tr("bar.widget-settings.media-mini.scrolling-mode.label")
-    description: I18n.tr("bar.widget-settings.media-mini.scrolling-mode.description")
+    label: I18n.tr("bar.media-mini.scrolling-mode-label")
+    description: I18n.tr("bar.media-mini.scrolling-mode-description")
     model: [
       {
         "key": "always",

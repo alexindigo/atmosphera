@@ -15,40 +15,40 @@ ColumnLayout {
   property var removeMonitor
 
   NComboBox {
-    label: I18n.tr("settings.osd.location.label")
-    description: I18n.tr("settings.osd.location.description")
+    label: I18n.tr("common.location")
+    description: I18n.tr("panels.osd.location-description")
     model: [
       {
         "key": "top",
-        "name": I18n.tr("options.osd.position.top_center")
+        "name": I18n.tr("positions.top-center")
       },
       {
         "key": "top_left",
-        "name": I18n.tr("options.osd.position.top_left")
+        "name": I18n.tr("positions.top-left")
       },
       {
         "key": "top_right",
-        "name": I18n.tr("options.osd.position.top_right")
+        "name": I18n.tr("positions.top-right")
       },
       {
         "key": "bottom",
-        "name": I18n.tr("options.osd.position.bottom_center")
+        "name": I18n.tr("positions.bottom-center")
       },
       {
         "key": "bottom_left",
-        "name": I18n.tr("options.osd.position.bottom_left")
+        "name": I18n.tr("positions.bottom-left")
       },
       {
         "key": "bottom_right",
-        "name": I18n.tr("options.osd.position.bottom_right")
+        "name": I18n.tr("positions.bottom-right")
       },
       {
         "key": "left",
-        "name": I18n.tr("options.osd.position.center_left")
+        "name": I18n.tr("positions.center-left")
       },
       {
         "key": "right",
-        "name": I18n.tr("options.osd.position.center_right")
+        "name": I18n.tr("positions.center-right")
       }
     ]
     currentKey: Settings.data.osd.location || "top_right"
@@ -57,16 +57,16 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("settings.osd.enabled.label")
-    description: I18n.tr("settings.osd.enabled.description")
+    label: I18n.tr("panels.osd.enabled-label")
+    description: I18n.tr("panels.osd.enabled-description")
     checked: Settings.data.osd.enabled
     defaultValue: Settings.getDefaultValue("osd.enabled")
     onToggled: checked => Settings.data.osd.enabled = checked
   }
 
   NToggle {
-    label: I18n.tr("settings.osd.always-on-top.label")
-    description: I18n.tr("settings.osd.always-on-top.description")
+    label: I18n.tr("panels.osd.always-on-top-label")
+    description: I18n.tr("panels.osd.always-on-top-description")
     checked: Settings.data.osd.overlayLayer
     defaultValue: Settings.getDefaultValue("osd.overlayLayer")
     onToggled: checked => Settings.data.osd.overlayLayer = checked
@@ -74,8 +74,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: I18n.tr("settings.osd.background-opacity.label")
-    description: I18n.tr("settings.osd.background-opacity.description")
+    label: I18n.tr("panels.osd.background-opacity-label")
+    description: I18n.tr("panels.osd.background-opacity-description")
     from: 0
     to: 100
     stepSize: 1
@@ -87,8 +87,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: I18n.tr("settings.osd.duration.auto-hide.label")
-    description: I18n.tr("settings.osd.duration.auto-hide.description")
+    label: I18n.tr("panels.osd.duration-auto-hide-label")
+    description: I18n.tr("panels.osd.duration-auto-hide-description")
     from: 500
     to: 5000
     stepSize: 100
@@ -103,14 +103,14 @@ ColumnLayout {
   }
 
   NLabel {
-    label: I18n.tr("settings.osd.monitors.section.description")
+    label: I18n.tr("panels.osd.monitors-desc")
   }
 
   Repeater {
     model: Quickshell.screens || []
     delegate: NCheckbox {
       Layout.fillWidth: true
-      label: modelData.name || I18n.tr("system.unknown")
+      label: modelData.name || I18n.tr("common.unknown")
       description: {
         const compositorScale = CompositorService.getDisplayScale(modelData.name);
         I18n.tr("system.monitor-description", {

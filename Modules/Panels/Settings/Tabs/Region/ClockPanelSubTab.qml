@@ -13,25 +13,25 @@ ColumnLayout {
   property list<var> cardsDefault: [
     {
       "id": "calendar-header-card",
-      "text": I18n.tr("settings.location.calendar.header.label"),
+      "text": I18n.tr("panels.location.calendar-header-label"),
       "enabled": true,
       "required": true
     },
     {
       "id": "calendar-month-card",
-      "text": I18n.tr("settings.location.calendar.month.label"),
+      "text": I18n.tr("panels.location.calendar-month-label"),
       "enabled": true,
       "required": false
     },
     {
       "id": "timer-card",
-      "text": I18n.tr("calendar.timer.title"),
+      "text": I18n.tr("common.timer"),
       "enabled": true,
       "required": false
     },
     {
       "id": "weather-card",
-      "text": I18n.tr("settings.location.weather.section.label"),
+      "text": I18n.tr("common.weather"),
       "enabled": true,
       "required": false
     }
@@ -98,22 +98,22 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NToggle {
-      label: I18n.tr("settings.location.date-time.use-analog.label")
-      description: I18n.tr("settings.location.date-time.use-analog.description")
+      label: I18n.tr("panels.location.date-time-use-analog-label")
+      description: I18n.tr("panels.location.date-time-use-analog-description")
       checked: Settings.data.location.analogClockInCalendar
       onToggled: checked => Settings.data.location.analogClockInCalendar = checked
     }
 
     NToggle {
-      label: I18n.tr("settings.location.date-time.week-numbers.label")
-      description: I18n.tr("settings.location.date-time.week-numbers.description")
+      label: I18n.tr("panels.location.date-time-week-numbers-label")
+      description: I18n.tr("panels.location.date-time-week-numbers-description")
       checked: Settings.data.location.showWeekNumberInCalendar
       onToggled: checked => Settings.data.location.showWeekNumberInCalendar = checked
     }
 
     NToggle {
-      label: I18n.tr("settings.location.date-time.show-events.label")
-      description: I18n.tr("settings.location.date-time.show-events.description")
+      label: I18n.tr("panels.location.date-time-show-events-label")
+      description: I18n.tr("panels.location.date-time-show-events-description")
       checked: Settings.data.location.showCalendarEvents
       onToggled: checked => Settings.data.location.showCalendarEvents = checked
     }

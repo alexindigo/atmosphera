@@ -71,7 +71,7 @@ ColumnLayout {
               spacing: Style.marginL
 
               NText {
-                text: I18n.tr("settings.display.monitors.brightness")
+                text: I18n.tr("common.brightness")
                 Layout.preferredWidth: 90
                 Layout.alignment: Qt.AlignVCenter
               }
@@ -118,7 +118,7 @@ ColumnLayout {
 
             NText {
               visible: brightnessMonitor && !brightnessMonitor.brightnessControlAvailable
-              text: !Settings.data.brightness.enableDdcSupport ? I18n.tr("settings.display.monitors.brightness-unavailable.ddc-disabled") : I18n.tr("settings.display.monitors.brightness-unavailable.generic")
+              text: !Settings.data.brightness.enableDdcSupport ? I18n.tr("panels.display.monitors-brightness-unavailable-ddc-disabled") : I18n.tr("panels.display.monitors-brightness-unavailable-generic")
               pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
               Layout.fillWidth: true
@@ -131,8 +131,8 @@ ColumnLayout {
 
     NSpinBox {
       Layout.fillWidth: true
-      label: I18n.tr("settings.display.monitors.brightness-step.label")
-      description: I18n.tr("settings.display.monitors.brightness-step.description")
+      label: I18n.tr("panels.display.monitors-brightness-step-label")
+      description: I18n.tr("panels.display.monitors-brightness-step-description")
       minimum: 1
       maximum: 50
       value: Settings.data.brightness.brightnessStep
@@ -144,8 +144,8 @@ ColumnLayout {
 
     NToggle {
       Layout.fillWidth: true
-      label: I18n.tr("settings.display.monitors.enforce-minimum.label")
-      description: I18n.tr("settings.display.monitors.enforce-minimum.description")
+      label: I18n.tr("panels.display.monitors-enforce-minimum-label")
+      description: I18n.tr("panels.display.monitors-enforce-minimum-description")
       checked: Settings.data.brightness.enforceMinimum
       onToggled: checked => Settings.data.brightness.enforceMinimum = checked
       defaultValue: Settings.getDefaultValue("brightness.enforceMinimum")
@@ -153,8 +153,8 @@ ColumnLayout {
 
     NToggle {
       Layout.fillWidth: true
-      label: I18n.tr("settings.display.monitors.external-brightness.label")
-      description: I18n.tr("settings.display.monitors.external-brightness.description")
+      label: I18n.tr("panels.display.monitors-external-brightness-label")
+      description: I18n.tr("panels.display.monitors-external-brightness-description")
       checked: Settings.data.brightness.enableDdcSupport
       onToggled: checked => {
                    Settings.data.brightness.enableDdcSupport = checked;

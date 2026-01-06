@@ -42,7 +42,7 @@ RowLayout {
           for (var i = 0; i < root.model.length; i++) {
             var item = root.model[i];
             if (item && item.key === "") {
-              displayValue = item.name || I18n.tr("settings.indicator.system-default");
+              displayValue = item.name || I18n.tr("panels.indicator.system-default");
               found = true;
               break;
             }
@@ -51,7 +51,7 @@ RowLayout {
           for (var i = 0; i < root.itemCount(); i++) {
             var item = root.getItem(i);
             if (item && item.key === "") {
-              displayValue = item.name || I18n.tr("settings.indicator.system-default");
+              displayValue = item.name || I18n.tr("panels.indicator.system-default");
               found = true;
               break;
             }
@@ -60,7 +60,7 @@ RowLayout {
       }
       // If not found in model, show "System Default" instead of "(empty)"
       if (!found) {
-        displayValue = I18n.tr("settings.indicator.system-default");
+        displayValue = I18n.tr("panels.indicator.system-default");
       }
     } else {
       // Try to find the display name for the default key in the model
@@ -90,7 +90,7 @@ RowLayout {
         displayValue = String(defaultValue);
       }
     }
-    return I18n.tr("settings.indicator.default-value", {
+    return I18n.tr("panels.indicator.default-value", {
                      "value": displayValue
                    });
   }

@@ -83,12 +83,12 @@ Item {
 
     model: [
       {
-        "label": I18n.tr("context-menu.open-display-settings"),
+        "label": I18n.tr("actions.open-display-settings"),
         "action": "open-display-settings",
         "icon": "sun"
       },
       {
-        "label": I18n.tr("context-menu.widget-settings"),
+        "label": I18n.tr("actions.widget-settings"),
         "action": "widget-settings",
         "icon": "settings"
       },

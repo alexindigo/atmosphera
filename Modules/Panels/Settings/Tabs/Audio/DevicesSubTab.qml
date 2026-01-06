@@ -22,8 +22,8 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginL
 
     NLabel {
-      label: I18n.tr("settings.audio.devices.output-device.label")
-      description: I18n.tr("settings.audio.devices.output-device.description")
+      label: I18n.tr("panels.audio.devices-output-device-label")
+      description: I18n.tr("panels.audio.devices-output-device-description")
     }
 
     Repeater {
@@ -51,8 +51,8 @@ ColumnLayout {
     Layout.fillWidth: true
 
     NLabel {
-      label: I18n.tr("settings.audio.devices.input-device.label")
-      description: I18n.tr("settings.audio.devices.input-device.description")
+      label: I18n.tr("panels.audio.devices-input-device-label")
+      description: I18n.tr("panels.audio.devices-input-device-description")
     }
 
     Repeater {

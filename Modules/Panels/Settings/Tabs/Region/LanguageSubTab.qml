@@ -11,13 +11,13 @@ ColumnLayout {
 
   NComboBox {
     Layout.fillWidth: true
-    label: I18n.tr("settings.general.language.select.label")
-    description: I18n.tr("settings.general.language.select.description")
+    label: I18n.tr("panels.general.language-select-label")
+    description: I18n.tr("panels.general.language-select-description")
     defaultValue: Settings.getDefaultValue("general.language")
     model: [
       {
         "key": "",
-        "name": I18n.tr("settings.general.language.select.auto-detect") + " (" + I18n.systemDetectedLangCode + ")"
+        "name": I18n.tr("panels.general.language-select-auto-detect") + " (" + I18n.systemDetectedLangCode + ")"
       }
     ].concat(I18n.availableLanguages.map(function (langCode) {
       return {

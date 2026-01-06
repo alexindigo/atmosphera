@@ -11,8 +11,8 @@ ColumnLayout {
   Layout.fillWidth: true
 
   NToggle {
-    label: I18n.tr("settings.wallpaper.automation.scheduled-change.label")
-    description: I18n.tr("settings.wallpaper.automation.scheduled-change.description")
+    label: I18n.tr("panels.wallpaper.automation-scheduled-change-label")
+    description: I18n.tr("panels.wallpaper.automation-scheduled-change-description")
     checked: Settings.data.wallpaper.randomEnabled
     onToggled: checked => Settings.data.wallpaper.randomEnabled = checked
   }
@@ -24,17 +24,17 @@ ColumnLayout {
 
     NComboBox {
 
-      label: I18n.tr("settings.wallpaper.automation.change-mode.label")
-      description: I18n.tr("settings.wallpaper.automation.change-mode.description")
+      label: I18n.tr("panels.wallpaper.automation-change-mode-label")
+      description: I18n.tr("panels.wallpaper.automation-change-mode-description")
       Layout.fillWidth: true
       model: [
         {
           "key": "random",
-          "name": I18n.tr("settings.wallpaper.automation.change-mode.random")
+          "name": I18n.tr("common.random")
         },
         {
           "key": "alphabetical",
-          "name": I18n.tr("settings.wallpaper.automation.change-mode.alphabetical")
+          "name": I18n.tr("panels.wallpaper.automation-change-mode-alphabetical")
         }
       ]
       currentKey: Settings.data.wallpaper.wallpaperChangeMode || "random"
@@ -44,8 +44,8 @@ ColumnLayout {
 
     RowLayout {
       NLabel {
-        label: I18n.tr("settings.wallpaper.automation.interval.label")
-        description: I18n.tr("settings.wallpaper.automation.interval.description")
+        label: I18n.tr("panels.wallpaper.automation-interval-label")
+        description: I18n.tr("panels.wallpaper.automation-interval-description")
         Layout.fillWidth: true
       }
 
@@ -81,7 +81,7 @@ ColumnLayout {
         delegate: IntervalPresetChip {
           seconds: modelData
           label: Time.formatVagueHumanReadableDuration(modelData)
-          selected: presetRow.isSelected(modelData)
+          selected: presetRow.isSelected(modelData) && !customRow.visible
           onClicked: presetRow.setIntervalSeconds(modelData)
         }
       }
@@ -102,8 +102,8 @@ ColumnLayout {
       Layout.topMargin: Style.marginS
 
       NTextInput {
-        label: I18n.tr("settings.wallpaper.automation.custom-interval.label")
-        description: I18n.tr("settings.wallpaper.automation.custom-interval.description")
+        label: I18n.tr("panels.wallpaper.automation-custom-interval-label")
+        description: I18n.tr("panels.wallpaper.automation-custom-interval-description")
         text: {
           const s = Settings.data.wallpaper.randomIntervalSec;
           const h = Math.floor(s / 3600);

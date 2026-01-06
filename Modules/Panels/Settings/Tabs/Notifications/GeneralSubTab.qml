@@ -16,47 +16,47 @@ ColumnLayout {
   property var removeMonitor
 
   NToggle {
-    label: I18n.tr("settings.notifications.settings.enabled.label")
-    description: I18n.tr("settings.notifications.settings.enabled.description")
+    label: I18n.tr("panels.notifications.settings-enabled-label")
+    description: I18n.tr("panels.notifications.settings-enabled-description")
     checked: Settings.data.notifications.enabled !== false
     onToggled: checked => Settings.data.notifications.enabled = checked
     defaultValue: Settings.getDefaultValue("notifications.enabled")
   }
 
   NToggle {
-    label: I18n.tr("settings.notifications.settings.do-not-disturb.label")
-    description: I18n.tr("settings.notifications.settings.do-not-disturb.description")
+    label: I18n.tr("tooltips.do-not-disturb-enabled")
+    description: I18n.tr("panels.notifications.settings-do-not-disturb-description")
     checked: NotificationService.doNotDisturb
     onToggled: checked => NotificationService.doNotDisturb = checked
   }
 
   NComboBox {
-    label: I18n.tr("settings.notifications.settings.location.label")
-    description: I18n.tr("settings.notifications.settings.location.description")
+    label: I18n.tr("common.location")
+    description: I18n.tr("panels.notifications.settings-location-description")
     model: [
       {
         "key": "top",
-        "name": I18n.tr("options.launcher.position.top_center")
+        "name": I18n.tr("positions.top-center")
       },
       {
         "key": "top_left",
-        "name": I18n.tr("options.launcher.position.top_left")
+        "name": I18n.tr("positions.top-left")
       },
       {
         "key": "top_right",
-        "name": I18n.tr("options.launcher.position.top_right")
+        "name": I18n.tr("positions.top-right")
       },
       {
         "key": "bottom",
-        "name": I18n.tr("options.launcher.position.bottom_center")
+        "name": I18n.tr("positions.bottom-center")
       },
       {
         "key": "bottom_left",
-        "name": I18n.tr("options.launcher.position.bottom_left")
+        "name": I18n.tr("positions.bottom-left")
       },
       {
         "key": "bottom_right",
-        "name": I18n.tr("options.launcher.position.bottom_right")
+        "name": I18n.tr("positions.bottom-right")
       }
     ]
     currentKey: Settings.data.notifications.location || "top_right"
@@ -65,8 +65,8 @@ ColumnLayout {
   }
 
   NToggle {
-    label: I18n.tr("settings.notifications.settings.always-on-top.label")
-    description: I18n.tr("settings.notifications.settings.always-on-top.description")
+    label: I18n.tr("panels.osd.always-on-top-label")
+    description: I18n.tr("panels.notifications.settings-always-on-top-description")
     checked: Settings.data.notifications.overlayLayer
     onToggled: checked => Settings.data.notifications.overlayLayer = checked
     defaultValue: Settings.getDefaultValue("notifications.overlayLayer")
@@ -74,8 +74,8 @@ ColumnLayout {
 
   NValueSlider {
     Layout.fillWidth: true
-    label: I18n.tr("settings.notifications.settings.background-opacity.label")
-    description: I18n.tr("settings.notifications.settings.background-opacity.description")
+    label: I18n.tr("panels.osd.background-opacity-label")
+    description: I18n.tr("panels.notifications.settings-background-opacity-description")
     from: 0
     to: 1
     stepSize: 0.01
@@ -89,16 +89,15 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  NHeader {
-    label: I18n.tr("settings.notifications.monitors.section.label")
-    description: I18n.tr("settings.notifications.monitors.section.description")
+  NLabel {
+    label: I18n.tr("panels.notifications.monitors-desc")
   }
 
   Repeater {
     model: Quickshell.screens || []
     delegate: NCheckbox {
       Layout.fillWidth: true
-      label: modelData.name || I18n.tr("system.unknown")
+      label: modelData.name || I18n.tr("common.unknown")
       description: {
         const compositorScale = CompositorService.getDisplayScale(modelData.name);
         I18n.tr("system.monitor-description", {

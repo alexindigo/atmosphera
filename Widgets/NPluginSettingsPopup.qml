@@ -39,7 +39,7 @@ Popup {
         Layout.fillWidth: true
 
         NText {
-          text: I18n.tr("settings.plugins.plugin-settings-title", {
+          text: I18n.tr("panels.plugins.plugin-settings-title", {
                           "plugin": root.currentPlugin?.name || ""
                         })
           pointSize: Style.fontSizeL
@@ -50,7 +50,7 @@ Popup {
 
         NIconButton {
           icon: "close"
-          tooltipText: I18n.tr("tooltips.close")
+          tooltipText: I18n.tr("common.close")
           onClicked: root.close()
         }
       }
@@ -92,7 +92,7 @@ Popup {
               settingsLoader.item.saveSettings();
               root.close();
               if (root.showToastOnSave) {
-                ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.settings-saved"));
+                ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-saved"));
               }
             }
           }
@@ -115,7 +115,7 @@ Popup {
     if (!currentPluginApi) {
       Logger.e("NPluginSettingsPopup", "Cannot open settings: plugin not loaded:", pluginManifest.id);
       if (showToastOnSave) {
-        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.settings-error-not-loaded"));
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.settings-error-not-loaded"));
       }
       return;
     }

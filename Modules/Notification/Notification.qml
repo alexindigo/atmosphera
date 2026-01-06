@@ -545,7 +545,7 @@ Variants {
             // Close button
             NIconButton {
               icon: "close"
-              tooltipText: I18n.tr("tooltips.close")
+              tooltipText: I18n.tr("common.close")
               baseSize: Style.baseWidgetSize * 0.6
               anchors.top: cardBackground.top
               anchors.topMargin: Style.marginM

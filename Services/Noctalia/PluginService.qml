@@ -296,7 +296,7 @@ Singleton {
         collision: true,
         reason: "already_installed",
         existingKey: compositeKey,
-        message: I18n.tr("settings.plugins.collision.already-installed")
+        message: I18n.tr("panels.plugins.collision-already-installed")
       };
     }
 
@@ -306,12 +306,12 @@ Singleton {
       for (var i = 0; i < allInstalled.length; i++) {
         var parsed = PluginRegistry.parseCompositeKey(allInstalled[i]);
         if (parsed.pluginId === pluginMetadata.id && !parsed.isOfficial) {
-          var sourceName = PluginRegistry.getSourceNameByHash(parsed.sourceHash) || I18n.tr("settings.plugins.source.custom");
+          var sourceName = PluginRegistry.getSourceNameByHash(parsed.sourceHash) || I18n.tr("panels.plugins.source-custom");
           return {
             collision: true,
             reason: "custom_version_exists",
             existingKey: allInstalled[i],
-            message: I18n.tr("settings.plugins.collision.custom-version-exists", {
+            message: I18n.tr("panels.plugins.collision-custom-version-exists", {
                                source: sourceName
                              })
           };
@@ -326,7 +326,7 @@ Singleton {
           collision: true,
           reason: "official_version_exists",
           existingKey: pluginMetadata.id,
-          message: I18n.tr("settings.plugins.collision.official-version-exists")
+          message: I18n.tr("panels.plugins.collision-official-version-exists")
         };
       }
     }
@@ -347,7 +347,7 @@ Singleton {
       var collision = checkPluginCollision(pluginMetadata);
       if (collision.collision) {
         Logger.w("PluginService", "Plugin collision detected:", collision.message);
-        ToastService.showError(I18n.tr("settings.plugins.title"), collision.message);
+        ToastService.showError(I18n.tr("panels.plugins.title"), collision.message);
         if (callback)
           callback(false, collision.message);
         return;
@@ -357,7 +357,7 @@ Singleton {
       if (pluginMetadata.minNoctaliaVersion) {
         var noctaliaVersion = UpdateService.baseVersion;
         if (compareVersions(pluginMetadata.minNoctaliaVersion, noctaliaVersion) > 0) {
-          var incompatibleMsg = I18n.tr("settings.plugins.install-incompatible", {
+          var incompatibleMsg = I18n.tr("panels.plugins.install-incompatible", {
                                           "plugin": pluginMetadata.name,
                                           "version": pluginMetadata.minNoctaliaVersion
                                         });
@@ -1204,27 +1204,27 @@ Singleton {
 
     if (updateCount > 0) {
       Logger.i("PluginService", updateCount, "plugin update(s) available");
-      ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.trp("settings.plugins.update-available", updateCount, "{count} plugin update available", "{count} plugin updates available", {
-                                                                            "count": updateCount
-                                                                          }), "plugin", 5000, I18n.tr("settings.plugins.open-plugins-tab"), function () {
-                                                                            // Open settings panel to Plugins tab on the screen where the cursor is
-                                                                            if (root.screenDetector) {
-                                                                              root.screenDetector.withCurrentScreen(function (screen) {
-                                                                                var panel = PanelService.getPanel("settingsPanel", screen);
-                                                                                if (panel) {
-                                                                                  panel.requestedTab = SettingsPanel.Tab.Plugins;
-                                                                                  panel.open();
-                                                                                }
-                                                                              });
-                                                                            } else {
-                                                                              // Fallback to primary screen if screen detector is not available
-                                                                              var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.trp("panels.plugins.update-available", updateCount, "{count} plugin update available", "{count} plugin updates available", {
+                                                                          "count": updateCount
+                                                                        }), "plugin", 5000, I18n.tr("panels.plugins.open-plugins-tab"), function () {
+                                                                          // Open settings panel to Plugins tab on the screen where the cursor is
+                                                                          if (root.screenDetector) {
+                                                                            root.screenDetector.withCurrentScreen(function (screen) {
+                                                                              var panel = PanelService.getPanel("settingsPanel", screen);
                                                                               if (panel) {
                                                                                 panel.requestedTab = SettingsPanel.Tab.Plugins;
                                                                                 panel.open();
                                                                               }
+                                                                            });
+                                                                          } else {
+                                                                            // Fallback to primary screen if screen detector is not available
+                                                                            var panel = PanelService.getPanel("settingsPanel", Quickshell.screens[0]);
+                                                                            if (panel) {
+                                                                              panel.requestedTab = SettingsPanel.Tab.Plugins;
+                                                                              panel.open();
                                                                             }
-                                                                          });
+                                                                          }
+                                                                        });
     } else if (pendingCount > 0) {
       Logger.i("PluginService", pendingCount, "plugin update(s) pending (require newer Noctalia)");
     } else {
@@ -1598,9 +1598,9 @@ Singleton {
 
       // Show toast notification
       var pluginName = manifest.name || pluginId;
-      ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.hot-reloaded", {
-                                                                           "name": pluginName
-                                                                         }));
+      ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.hot-reloaded", {
+                                                                         "name": pluginName
+                                                                       }));
 
       Logger.i("PluginService", "Hot reload complete for plugin:", pluginId);
     });

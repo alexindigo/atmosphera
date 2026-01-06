@@ -46,21 +46,21 @@ ColumnLayout {
 
       NTabButton {
         Layout.fillWidth: true
-        text: I18n.tr("settings.plugins.filter.all")
+        text: I18n.tr("launcher.categories.all")
         tabIndex: 0
         checked: root.pluginFilter === "all"
       }
 
       NTabButton {
         Layout.fillWidth: true
-        text: I18n.tr("settings.plugins.filter.downloaded")
+        text: I18n.tr("panels.plugins.filter-downloaded")
         tabIndex: 1
         checked: root.pluginFilter === "downloaded"
       }
 
       NTabButton {
         Layout.fillWidth: true
-        text: I18n.tr("settings.plugins.filter.not-downloaded")
+        text: I18n.tr("panels.plugins.filter-not-downloaded")
         tabIndex: 2
         checked: root.pluginFilter === "notDownloaded"
       }
@@ -68,12 +68,12 @@ ColumnLayout {
 
     NIconButton {
       icon: "refresh"
-      tooltipText: I18n.tr("settings.plugins.refresh.tooltip")
+      tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
       baseSize: Style.baseWidgetSize * 0.9
       onClicked: {
         PluginService.refreshAvailablePlugins();
         checkUpdatesTimer.restart();
-        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.refresh.refreshing"));
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
       }
     }
   }
@@ -208,7 +208,7 @@ ColumnLayout {
             NIconButton {
               icon: modelData.downloaded ? "trash" : "download"
               baseSize: Style.baseWidgetSize * 0.7
-              tooltipText: modelData.downloaded ? I18n.tr("settings.plugins.uninstall") : I18n.tr("settings.plugins.install")
+              tooltipText: modelData.downloaded ? I18n.tr("common.uninstall") : I18n.tr("common.install")
               onClicked: {
                 if (modelData.downloaded) {
                   // Construct composite key for available plugins
@@ -279,8 +279,8 @@ ColumnLayout {
 
     NLabel {
       visible: availablePluginsRepeater.count === 0
-      label: I18n.tr("settings.plugins.available.no-plugins-label")
-      description: I18n.tr("settings.plugins.available.no-plugins-description")
+      label: I18n.tr("panels.plugins.available-no-plugins-label")
+      description: I18n.tr("panels.plugins.available-no-plugins-description")
       Layout.fillWidth: true
     }
   }
@@ -309,8 +309,8 @@ ColumnLayout {
       spacing: Style.marginL
 
       NHeader {
-        label: I18n.tr("settings.plugins.uninstall-dialog.title")
-        description: I18n.tr("settings.plugins.uninstall-dialog.description", {
+        label: I18n.tr("panels.plugins.uninstall-dialog-title")
+        description: I18n.tr("panels.plugins.uninstall-dialog-description", {
                                "plugin": uninstallDialog.pluginToUninstall?.name || ""
                              })
       }
@@ -329,7 +329,7 @@ ColumnLayout {
         }
 
         NButton {
-          text: I18n.tr("settings.plugins.uninstall")
+          text: I18n.tr("common.uninstall")
           backgroundColor: Color.mPrimary
           textColor: Color.mOnPrimary
           onClicked: {
@@ -353,21 +353,21 @@ ColumnLayout {
   }
 
   function installPlugin(pluginMetadata) {
-    ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.installing", {
-                                                                         "plugin": pluginMetadata.name
-                                                                       }));
+    ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.installing", {
+                                                                       "plugin": pluginMetadata.name
+                                                                     }));
 
     PluginService.installPlugin(pluginMetadata, false, function (success, error, registeredKey) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.install-success", {
-                                                                             "plugin": pluginMetadata.name
-                                                                           }));
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-success", {
+                                                                           "plugin": pluginMetadata.name
+                                                                         }));
         // Auto-enable the plugin after installation (use registered key which may be composite)
         PluginService.enablePlugin(registeredKey);
       } else {
-        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.install-error", {
-                                                                            "error": error || "Unknown error"
-                                                                          }));
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
+                                                                          "error": error || "Unknown error"
+                                                                        }));
       }
     });
   }
@@ -376,19 +376,19 @@ ColumnLayout {
     var manifest = PluginRegistry.getPluginManifest(pluginId);
     var pluginName = manifest?.name || pluginId;
 
-    ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstalling", {
-                                                                         "plugin": pluginName
-                                                                       }));
+    ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstalling", {
+                                                                       "plugin": pluginName
+                                                                     }));
 
     PluginService.uninstallPlugin(pluginId, function (success, error) {
       if (success) {
-        ToastService.showNotice(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-success", {
-                                                                             "plugin": pluginName
-                                                                           }));
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstall-success", {
+                                                                           "plugin": pluginName
+                                                                         }));
       } else {
-        ToastService.showError(I18n.tr("settings.plugins.title"), I18n.tr("settings.plugins.uninstall-error", {
-                                                                            "error": error || "Unknown error"
-                                                                          }));
+        ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.uninstall-error", {
+                                                                          "error": error || "Unknown error"
+                                                                        }));
       }
     });
   }

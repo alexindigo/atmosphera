@@ -39,12 +39,12 @@ ColumnLayout {
     currentIndex: tabView.currentIndex
 
     NTabButton {
-      text: I18n.tr("settings.osd.tabs.general")
+      text: I18n.tr("common.general")
       tabIndex: 0
       checked: subTabBar.currentIndex === 0
     }
     NTabButton {
-      text: I18n.tr("settings.osd.tabs.events")
+      text: I18n.tr("common.events")
       tabIndex: 1
       checked: subTabBar.currentIndex === 1
     }
