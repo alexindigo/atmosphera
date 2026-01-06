@@ -119,7 +119,7 @@ ColumnLayout {
             NText {
               visible: brightnessMonitor && !brightnessMonitor.brightnessControlAvailable
               text: !Settings.data.brightness.enableDdcSupport ? I18n.tr("settings.display.monitors.brightness-unavailable.ddc-disabled") : I18n.tr("settings.display.monitors.brightness-unavailable.generic")
-              pointSize: Style.fontSizeS
+              pointSize: Style.fontSizeXS
               color: Color.mOnSurfaceVariant
               Layout.fillWidth: true
               wrapMode: Text.WordWrap
