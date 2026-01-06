@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "Guhertoya fermî ya vê pêvekê berê hatiye sazkirin",
       "filter-downloaded": "Daxistî",
       "filter-not-downloaded": "Nehatiye Dakêşandin",
+      "filter-tags-description": "Parzûna pêvekên bi kategoriya an rewşa daxistinê.",
+      "filter-tags-label": "Tagan",
       "hot-reload-description": "Bi guhertina pelên wan, bixweber pêvekên xwe ji nû ve bar bike. Ji bo pêşxistina pêvekan bikêr e.",
       "hot-reload-label": "Nûbarkirina germ (moda pêşvebirinê)",
       "hot-reloaded": "Plugin ji nû ve hate barkirin: {name}",

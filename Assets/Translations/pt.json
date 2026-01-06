@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "A versão oficial deste plugin já está instalada.",
       "filter-downloaded": "Baixado",
       "filter-not-downloaded": "Não Baixado",
+      "filter-tags-description": "Filtrar plugins por categoria ou estado de download",
+      "filter-tags-label": "Etiquetas",
       "hot-reload-description": "Recarrega automaticamente os plugins quando seus arquivos são alterados. Útil para o desenvolvimento de plugins.",
       "hot-reload-label": "Recarga a quente (modo de desenvolvimento)",
       "hot-reloaded": "Plugin recarregado: {name}",

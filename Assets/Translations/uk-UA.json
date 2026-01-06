@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "Офіційна версія цього плагіна вже встановлена.",
       "filter-downloaded": "Завантажено",
       "filter-not-downloaded": "Не завантажено",
+      "filter-tags-description": "Фільтрувати плагіни за категорією або статусом завантаження",
+      "filter-tags-label": "Теги",
       "hot-reload-description": "Автоматично перезавантажувати плагіни при зміні їхніх файлів. Корисно для розробки плагінів.",
       "hot-reload-label": "Гаряче перезавантаження (режим розробки)",
       "hot-reloaded": "Перезавантажено плагін: {name}",

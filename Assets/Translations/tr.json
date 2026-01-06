@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "Bu eklentinin resmi sürümü zaten yüklü.",
       "filter-downloaded": "İndirildi",
       "filter-not-downloaded": "İndirilmedi",
+      "filter-tags-description": "Eklentileri kategoriye veya indirme durumuna göre filtrele",
+      "filter-tags-label": "Etiketler",
       "hot-reload-description": "Eklenti dosyaları değiştiğinde eklentileri otomatik olarak yeniden yükle. Eklenti geliştirme için kullanışlıdır.",
       "hot-reload-label": "Hızlı yeniden yükleme (geliştirme modu)",
       "hot-reloaded": "Yeniden yüklenen eklenti: {name}",

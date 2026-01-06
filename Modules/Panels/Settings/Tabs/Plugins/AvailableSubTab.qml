@@ -12,11 +12,16 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  property string pluginFilter: "all"
   property string pluginSearchText: ""
   property string selectedTag: ""
+  property int tagsRefreshCounter: 0
+
+  // Pseudo tags for filtering by download status
+  readonly property var pseudoTags: ["", "downloaded", "notDownloaded"]
 
   readonly property var availableTags: {
+    // Reference counter to force re-evaluation
+    void (root.tagsRefreshCounter);
     var tags = {};
     var plugins = PluginService.availablePlugins || [];
     for (var i = 0; i < plugins.length; i++) {
@@ -38,87 +43,37 @@ ColumnLayout {
     return author;
   }
 
-  // Filter controls
-  RowLayout {
-    spacing: Style.marginM
+  // Tag filter chips in collapsible
+  NCollapsible {
     Layout.fillWidth: true
-
-    NTabBar {
-      id: filterTabBar
-      Layout.fillWidth: true
-      spacing: Style.marginM
-      currentIndex: 0
-      onCurrentIndexChanged: {
-        if (currentIndex === 0)
-          root.pluginFilter = "all";
-        else if (currentIndex === 1)
-          root.pluginFilter = "downloaded";
-        else if (currentIndex === 2)
-          root.pluginFilter = "notDownloaded";
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("launcher.categories.all")
-        tabIndex: 0
-        checked: root.pluginFilter === "all"
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("panels.plugins.filter-downloaded")
-        tabIndex: 1
-        checked: root.pluginFilter === "downloaded"
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("panels.plugins.filter-not-downloaded")
-        tabIndex: 2
-        checked: root.pluginFilter === "notDownloaded"
-      }
-    }
-
-    NIconButton {
-      icon: "refresh"
-      tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
-      baseSize: Style.baseWidgetSize * 0.9
-      onClicked: {
-        PluginService.refreshAvailablePlugins();
-        checkUpdatesTimer.restart();
-        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
-      }
-    }
-  }
-
-  // Search input
-  NTextInput {
-    placeholderText: I18n.tr("placeholders.search")
-    inputIconName: "search"
-    text: root.pluginSearchText
-    onTextChanged: root.pluginSearchText = text
-    Layout.fillWidth: true
-  }
-
-  // Tag filter chips - centered wrapped layout
-  ColumnLayout {
-    Layout.fillWidth: true
-    spacing: Style.marginXS
-    visible: root.availableTags.length > 0
+    label: I18n.tr("panels.plugins.filter-tags-label")
+    description: I18n.tr("panels.plugins.filter-tags-description")
+    expanded: true
+    contentSpacing: Style.marginXS
 
     Repeater {
       id: tagRowsRepeater
       model: {
-        var allTags = [""].concat(root.availableTags);
+        // Combine pseudo tags with actual tags
+        var allTags = root.pseudoTags.concat(root.availableTags);
         var rows = [];
         var currentRow = [];
         var currentWidth = 0;
-        var availableWidth = root.width - Style.marginL * 2;
+        var availableWidth = root.width - Style.marginL * 6;
         var spacingWidth = Style.marginXS;
 
         for (var i = 0; i < allTags.length; i++) {
           var tag = allTags[i];
-          var buttonWidth = tag === "" ? 40 : (tag.length * 7 + 24);
+          // Estimate button width based on tag
+          var buttonWidth;
+          if (tag === "")
+            buttonWidth = 40;
+          else if (tag === "downloaded")
+            buttonWidth = 90;
+          else if (tag === "notDownloaded")
+            buttonWidth = 110;
+          else
+            buttonWidth = tag.length * 7 + 24;
 
           if (currentRow.length > 0 && currentWidth + spacingWidth + buttonWidth > availableWidth) {
             rows.push(currentRow);
@@ -143,9 +98,17 @@ ColumnLayout {
           model: modelData
 
           delegate: NButton {
-            text: modelData === "" ? I18n.tr("launcher.categories.all") : modelData
-            backgroundColor: (modelData === "" ? root.selectedTag === "" : root.selectedTag === modelData) ? Color.mPrimary : Color.mSurfaceVariant
-            textColor: (modelData === "" ? root.selectedTag === "" : root.selectedTag === modelData) ? Color.mOnPrimary : Color.mOnSurfaceVariant
+            text: {
+              if (modelData === "")
+                return I18n.tr("launcher.categories.all");
+              if (modelData === "downloaded")
+                return I18n.tr("panels.plugins.filter-downloaded");
+              if (modelData === "notDownloaded")
+                return I18n.tr("panels.plugins.filter-not-downloaded");
+              return modelData;
+            }
+            backgroundColor: root.selectedTag === modelData ? Color.mPrimary : Color.mSurfaceVariant
+            textColor: root.selectedTag === modelData ? Color.mOnPrimary : Color.mOnSurfaceVariant
             onClicked: root.selectedTag = modelData
             fontSize: Style.fontSizeXS
             iconSize: Style.fontSizeS
@@ -153,6 +116,31 @@ ColumnLayout {
             buttonRadius: Style.iRadiusM
           }
         }
+      }
+    }
+  }
+
+  // Search input with refresh button
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+
+    NTextInput {
+      placeholderText: I18n.tr("placeholders.search")
+      inputIconName: "search"
+      text: root.pluginSearchText
+      onTextChanged: root.pluginSearchText = text
+      Layout.fillWidth: true
+    }
+
+    NIconButton {
+      icon: "refresh"
+      tooltipText: I18n.tr("panels.plugins.refresh-tooltip")
+      baseSize: Style.baseWidgetSize * 0.9
+      onClicked: {
+        PluginService.refreshAvailablePlugins();
+        checkUpdatesTimer.restart();
+        ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.refresh-refreshing"));
       }
     }
   }
@@ -169,30 +157,29 @@ ColumnLayout {
         var all = PluginService.availablePlugins || [];
         var filtered = [];
 
-        // First apply download filter
+        // Apply filter based on selectedTag
         for (var i = 0; i < all.length; i++) {
           var plugin = all[i];
           var downloaded = plugin.downloaded || false;
+          var pluginTags = plugin.tags || [];
 
-          if (root.pluginFilter === "all") {
+          if (root.selectedTag === "") {
+            // "All" - no filter
             filtered.push(plugin);
-          } else if (root.pluginFilter === "downloaded" && downloaded) {
-            filtered.push(plugin);
-          } else if (root.pluginFilter === "notDownloaded" && !downloaded) {
-            filtered.push(plugin);
-          }
-        }
-
-        // Apply tag filter if a tag is selected
-        if (root.selectedTag !== "") {
-          var tagFiltered = [];
-          for (var k = 0; k < filtered.length; k++) {
-            var pluginTags = filtered[k].tags || [];
+          } else if (root.selectedTag === "downloaded") {
+            // Downloaded pseudo tag
+            if (downloaded)
+              filtered.push(plugin);
+          } else if (root.selectedTag === "notDownloaded") {
+            // Not Downloaded pseudo tag
+            if (!downloaded)
+              filtered.push(plugin);
+          } else {
+            // Actual category tag
             if (pluginTags.indexOf(root.selectedTag) >= 0) {
-              tagFiltered.push(filtered[k]);
+              filtered.push(plugin);
             }
           }
-          filtered = tagFiltered;
         }
 
         // Then apply fuzzy search if there's search text
@@ -477,6 +464,9 @@ ColumnLayout {
     target: PluginService
 
     function onAvailablePluginsUpdated() {
+      // Force tags to re-evaluate
+      root.tagsRefreshCounter++;
+
       // Force model refresh for available plugins
       availablePluginsRepeater.model = undefined;
       Qt.callLater(function () {
@@ -484,29 +474,25 @@ ColumnLayout {
           var all = PluginService.availablePlugins || [];
           var filtered = [];
 
+          // Apply filter based on selectedTag
           for (var i = 0; i < all.length; i++) {
             var plugin = all[i];
             var downloaded = plugin.downloaded || false;
+            var pluginTags = plugin.tags || [];
 
-            if (root.pluginFilter === "all") {
+            if (root.selectedTag === "") {
               filtered.push(plugin);
-            } else if (root.pluginFilter === "downloaded" && downloaded) {
-              filtered.push(plugin);
-            } else if (root.pluginFilter === "notDownloaded" && !downloaded) {
-              filtered.push(plugin);
-            }
-          }
-
-          // Apply tag filter if a tag is selected
-          if (root.selectedTag !== "") {
-            var tagFiltered = [];
-            for (var k = 0; k < filtered.length; k++) {
-              var pluginTags = filtered[k].tags || [];
+            } else if (root.selectedTag === "downloaded") {
+              if (downloaded)
+                filtered.push(plugin);
+            } else if (root.selectedTag === "notDownloaded") {
+              if (!downloaded)
+                filtered.push(plugin);
+            } else {
               if (pluginTags.indexOf(root.selectedTag) >= 0) {
-                tagFiltered.push(filtered[k]);
+                filtered.push(plugin);
               }
             }
-            filtered = tagFiltered;
           }
 
           // Move hello-world plugin to the end

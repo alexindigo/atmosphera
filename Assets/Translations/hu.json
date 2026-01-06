@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "A plugin hivatalos verziója már telepítve van.",
       "filter-downloaded": "Letöltött",
       "filter-not-downloaded": "Nincs letöltve",
+      "filter-tags-description": "Bővítmények szűrése kategória vagy letöltési állapot szerint",
+      "filter-tags-label": "Címkék",
       "hot-reload-description": "Automatikusan újratölti a bővítményeket, amikor a fájljaik megváltoznak. Hasznos a bővítményfejlesztéshez.",
       "hot-reload-label": "Gyors újratöltés (fejlesztői mód)",
       "hot-reloaded": "Újratöltött bővítmény: {name}",

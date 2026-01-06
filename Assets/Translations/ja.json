@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "このプラグインの公式バージョンはすでにインストールされています。",
       "filter-downloaded": "ダウンロード済み",
       "filter-not-downloaded": "未ダウンロード",
+      "filter-tags-description": "カテゴリーまたはダウンロード状況でプラグインを絞り込む",
+      "filter-tags-label": "タグ",
       "hot-reload-description": "ファイルの変更時にプラグインを自動的にリロードします。プラグイン開発に便利です。",
       "hot-reload-label": "ホットリロード（開発モード）",
       "hot-reloaded": "プラグインをリロードしました: {name}",

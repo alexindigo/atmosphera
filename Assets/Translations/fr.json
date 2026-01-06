@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "La version officielle de cette extension est déjà installée.",
       "filter-downloaded": "Téléchargé",
       "filter-not-downloaded": "Non téléchargé",
+      "filter-tags-description": "Filtrer les extensions par catégorie ou état de téléchargement.",
+      "filter-tags-label": "Mots-clés",
       "hot-reload-description": "Recharger automatiquement les plugins lorsque leurs fichiers sont modifiés. Utile pour le développement de plugins.",
       "hot-reload-label": "Rechargement à chaud (mode développement)",
       "hot-reloaded": "Plugin rechargé : {name}",

@@ -1168,6 +1168,8 @@
       "collision-official-version-exists": "此插件的官方版本已安装。",
       "filter-downloaded": "已下载",
       "filter-not-downloaded": "未下载",
+      "filter-tags-description": "按类别或下载状态筛选插件",
+      "filter-tags-label": "标签",
       "hot-reload-description": "当插件文件发生更改时自动重新加载插件。对插件开发很有用。",
       "hot-reload-label": "热重载（开发模式）",
       "hot-reloaded": "已重新加载插件：{name}",
