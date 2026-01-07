@@ -1212,6 +1212,7 @@
       "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
       "update-available": "Neues Plugin-Update verfügbar",
       "update-available-plural": "Neue Plugin-Updates verfügbar ({count})",
+      "update-available_plural": "Plugin-Updates verfügbar ({count})",
       "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
       "update-incompatible": "Benötigt Noctalia v{version} oder höher",
       "update-pending": "v{aktuell} → v{neu} (benötigt Noctalia v{erforderlich})",

@@ -1212,6 +1212,7 @@
       "update-all-success": "所有插件已成功更新。",
       "update-available": "新插件更新可用",
       "update-available-plural": "新插件更新可用（{count}个）",
+      "update-available_plural": "有插件更新可用 ({count})",
       "update-error": "更新插件失败：{plugin}：{error}",
       "update-incompatible": "需要 Noctalia v{version} 或更高版本",
       "update-pending": "v{当前} → v{新} (需要 Noctalia v{所需})",

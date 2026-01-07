@@ -1212,6 +1212,7 @@
       "update-all-success": "Все плагины успешно обновлены.",
       "update-available": "Доступно новое обновление плагина",
       "update-available-plural": "Доступны новые обновления плагинов ({count})",
+      "update-available_plural": "Доступны обновления плагинов ({count})",
       "update-error": "Не удалось обновить плагин: {plugin}: {error}",
       "update-incompatible": "Требуется Noctalia v{version} или выше",
       "update-pending": "v{current} → v{new} (требуется Noctalia v{required})",

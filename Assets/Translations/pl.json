@@ -1212,6 +1212,7 @@
       "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie.",
       "update-available": "Dostępna nowa aktualizacja wtyczki",
       "update-available-plural": "Dostępne nowe aktualizacje wtyczek ({count})",
+      "update-available_plural": "Dostępne aktualizacje wtyczek ({count})",
       "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
       "update-incompatible": "Wymaga Noctalia v{version} lub nowszej",
       "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",

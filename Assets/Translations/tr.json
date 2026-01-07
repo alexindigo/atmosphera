@@ -1212,6 +1212,7 @@
       "update-all-success": "Tüm eklentiler başarıyla güncellendi.",
       "update-available": "Yeni eklenti güncellemesi mevcut",
       "update-available-plural": "Yeni eklenti güncellemeleri mevcut ({count})",
+      "update-available_plural": "Eklenti güncellemeleri mevcut ({count})",
       "update-error": "Eklenti güncellenemedi: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} veya üzeri gerektirir.",
       "update-pending": "v{mevcut} → v{yeni} (Noctalia v{gerekli} gerektirir)",

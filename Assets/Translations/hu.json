@@ -1212,6 +1212,7 @@
       "update-all-success": "Minden bővítmény sikeresen frissítve.",
       "update-available": "Új bővítményfrissítés elérhető",
       "update-available-plural": "Új bővítményfrissítések elérhetők ({count})",
+      "update-available_plural": "Bővítményfrissítések érhetők el ({count})",
       "update-error": "Nem sikerült frissíteni a bővítményt: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} vagy újabb szükséges",
       "update-pending": "v{current} → v{new} (szükséges Noctalia v{required})",
