@@ -149,17 +149,31 @@ Singleton {
       } else {
         Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - install");
         var sourceUrl = PluginRegistry.getPluginSourceUrl(enabledIds[i]);
-        root.installPlugin({id: enabledIds[i], source: {url: sourceUrl}}, false, function (success, error, registeredKey) {
-          if (success) {
-            ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-success", {
-                                                                               "plugin": registeredKey
-                                                                             }));
-          } else {
-            ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
-                                                                              "error": error || "Unknown error"
-                                                                            }));
-          }
-        });
+        root.installPlugin({
+                             id: enabledIds[i],
+                             source: {
+                               url: sourceUrl
+                             }
+                           }, false, function (success, error, registeredKey) {
+                             if (success) {
+                               ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-success", {
+                                                                                                  "plugin": registeredKey
+                                                                                                }));
+                               // Load the plugin since it was already enabled (state persisted but files were missing)
+                               loadPlugin(registeredKey);
+
+                               // Add plugin widget to bar if it provides one
+                               var manifest = PluginRegistry.getPluginManifest(registeredKey);
+                               if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
+                                 var widgetId = "plugin:" + registeredKey;
+                                 addWidgetToBar(widgetId, "right");
+                               }
+                             } else {
+                               ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
+                                                                                                 "error": error || "Unknown error"
+                                                                                               }));
+                             }
+                           });
       }
     }
 
