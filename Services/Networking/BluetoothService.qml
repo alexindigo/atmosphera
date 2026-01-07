@@ -251,7 +251,7 @@ Singleton {
         var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
         Logger.d("Network", "Wi-Fi adapter was detected as blocked:", wifiBlocked);
         // Check if airplane mode has been toggled
-        if (wifiBlocked) {
+        if (wifiBlocked && root.blocked) {
           root.airplaneModeToggled = true;
           root.lastWifiBlocked = true;
           NetworkService.setWifiEnabled(false);
