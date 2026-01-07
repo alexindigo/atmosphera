@@ -321,7 +321,7 @@ Rectangle {
       if (root.selectedWindowId) {
         // Focus item (for running apps)
         items.push({
-                     "label": I18n.tr("dock.menu.focus"),
+                     "label": I18n.tr("common.focus"),
                      "action": "focus",
                      "icon": "eye"
                    });
@@ -329,14 +329,14 @@ Rectangle {
         // Pin/Unpin item (always available when right-clicking an app)
         const isPinned = root.isAppPinned(root.selectedAppId);
         items.push({
-                     "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                     "label": !isPinned ? I18n.tr("common.pin") : I18n.tr("common.unpin"),
                      "action": "pin",
                      "icon": !isPinned ? "pin" : "unpin"
                    });
 
         // Close item (for running apps)
         items.push({
-                     "label": I18n.tr("dock.menu.close"),
+                     "label": I18n.tr("common.close"),
                      "action": "close",
                      "icon": "x"
                    });
@@ -689,7 +689,7 @@ Rectangle {
     if (root.selectedWindowId) {
       // Focus item (for running apps)
       items.push({
-                   "label": I18n.tr("dock.menu.focus"),
+                   "label": I18n.tr("common.focus"),
                    "action": "focus",
                    "icon": "eye"
                  });
@@ -697,14 +697,14 @@ Rectangle {
       // Pin/Unpin item
       const isPinned = root.isAppPinned(root.selectedAppId);
       items.push({
-                   "label": !isPinned ? I18n.tr("dock.menu.pin") : I18n.tr("dock.menu.unpin"),
+                   "label": !isPinned ? I18n.tr("common.pin") : I18n.tr("common.unpin"),
                    "action": "pin",
                    "icon": !isPinned ? "pin" : "unpin"
                  });
 
       // Close item
       items.push({
-                   "label": I18n.tr("dock.menu.close"),
+                   "label": I18n.tr("common.close"),
                    "action": "close",
                    "icon": "x"
                  });
