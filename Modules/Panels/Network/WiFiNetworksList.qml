@@ -357,6 +357,7 @@ NBox {
               // Row 1: Interface | Band
               RowLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
                 spacing: Style.marginXS
                 NIcon {
                   icon: "network"
@@ -376,6 +377,7 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
+                  Layout.preferredWidth: 1
                   Layout.alignment: Qt.AlignVCenter
                   wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
                   elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone
