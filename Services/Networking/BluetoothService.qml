@@ -19,6 +19,7 @@ Singleton {
 
   property bool airplaneModeToggled: false
   property bool lastBluetoothBlocked: false
+  property bool lastWifiBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
 
   // Power/blocked state
@@ -90,8 +91,9 @@ Singleton {
       if (ms && ms > 0) {
         const now = Date.now();
         const resumeAt = now + ms;
-        if (resumeAt > root._discoveryResumeAtMs)
+        if (resumeAt > root._discoveryResumeAtMs) {
           root._discoveryResumeAtMs = resumeAt;
+        }
         restoreDiscoveryTimer.interval = Math.max(100, root._discoveryResumeAtMs - now);
         restoreDiscoveryTimer.restart();
       }
@@ -219,8 +221,9 @@ Singleton {
   Connections {
     target: adapter
     function onStateChanged() {
-      if (!adapter)
+      if (!adapter) {
         return;
+      }
       if (adapter.state === BluetoothAdapter.Enabling || adapter.state === BluetoothAdapter.Disabling) {
         return;
       }
@@ -248,12 +251,14 @@ Singleton {
         var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
         Logger.d("Network", "Wi-Fi adapter was detected as blocked:", wifiBlocked);
         // Check if airplane mode has been toggled
-        if (wifiBlocked && wifiBlocked === root.blocked) {
+        if (wifiBlocked) {
           root.airplaneModeToggled = true;
+          root.lastWifiBlocked = true;
           NetworkService.setWifiEnabled(false);
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.enabled"), "plane");
-        } else if (!wifiBlocked && wifiBlocked === root.blocked) {
+        } else if (!wifiBlocked && lastWifiBlocked) {
           root.airplaneModeToggled = true;
+          root.lastWifiBlocked = false;
           NetworkService.setWifiEnabled(true);
           ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.disabled"), "plane-off");
         } else if (adapter.enabled) {
@@ -308,8 +313,9 @@ Singleton {
   }
 
   function pollCtlState() {
-    if (ctlShowProcess.running)
+    if (ctlShowProcess.running) {
       return;
+    }
     try {
       ctlShowProcess.command = ["bluetoothctl", "show"];
       ctlShowProcess.running = true;
@@ -377,10 +383,12 @@ Singleton {
       var aHasRealName = aName.indexOf(" ") !== -1 && aName.length > 3;
       var bHasRealName = bName.indexOf(" ") !== -1 && bName.length > 3;
 
-      if (aHasRealName && !bHasRealName)
+      if (aHasRealName && !bHasRealName) {
         return -1;
-      if (!aHasRealName && bHasRealName)
+      }
+      if (!aHasRealName && bHasRealName) {
         return 1;
+      }
 
       var aSignal = (a.signalStrength !== undefined && a.signalStrength > 0) ? a.signalStrength : 0;
       var bSignal = (b.signalStrength !== undefined && b.signalStrength > 0) ? b.signalStrength : 0;
@@ -396,8 +404,9 @@ Singleton {
   }
 
   function canConnect(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
 
     /*
     Paired
@@ -411,14 +420,16 @@ Singleton {
   }
 
   function canDisconnect(device) {
-    if (!device)
+    if (!device) {
       return false;
+    ]
     return device.connected && !device.pairing && !device.blocked;
   }
   // Status string for a device (translated)
   function getStatusString(device) {
-    if (!device)
+    if (!device) {
       return "";
+    }
     try {
       if (device.pairing)
         return I18n.tr("common.pairing");
@@ -484,15 +495,17 @@ Singleton {
 
   // Separate capability helpers
   function canPair(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
     return !device.connected && !device.paired && !device.trusted && !device.pairing && !device.blocked;
   }
 
   // Pairing and unpairing helpers
   function pairDevice(device) {
-    if (!device)
+    if (!device) {
       return;
+    }
     ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.pairing"), "bluetooth");
     // Delegate pairing to bluetoothctl which registers/uses its own agent
     try {
@@ -505,8 +518,9 @@ Singleton {
 
   // Pair using bluetoothctl which registers its own BlueZ agent internally.
   function pairWithBluetoothctl(device) {
-    if (!device)
+    if (!device) {
       return;
+    }
     var addr = BluetoothUtils.macFromDevice(device);
     if (!addr || addr.length < 7) {
       Logger.w("Bluetooth", "pairWithBluetoothctl: no valid address for device");
@@ -542,8 +556,9 @@ Singleton {
 
   // Status key for a device (untranslated)
   function getStatusKey(device) {
-    if (!device)
+    if (!device) {
       return "";
+    }
     try {
       if (device.pairing)
         return "pairing";
