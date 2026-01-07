@@ -467,15 +467,16 @@ Item {
     }
   }
 
+  // TODO REMOVE IN FEB. 2026
   IpcHandler {
     target: "osd"
 
     function showText(text: string) {
-      OSDService.showCustomText(text, "");
+      ToastService.showNotice(text, "This IPC call will be deprecated soon, use 'toast send' instead.");
     }
 
     function showTextWithIcon(text: string, icon: string) {
-      OSDService.showCustomText(text, icon);
+      ToastService.showNotice(text, "This IPC call will be deprecated soon, use 'toast send' instead.", icon);
     }
   }
 
