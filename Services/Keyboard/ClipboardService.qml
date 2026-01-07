@@ -468,4 +468,18 @@ Singleton {
     revision++;
     Qt.callLater(() => list());
   }
+
+  // Parse image metadata from cliphist preview string
+  function parseImageMeta(preview) {
+    const re = /\[\[\s*binary data\s+([\d\.]+\s*(?:KiB|MiB|GiB|B))\s+(\w+)\s+(\d+)x(\d+)\s*\]\]/i;
+    const match = (preview || "").match(re);
+    if (!match)
+      return null;
+    return {
+      "size": match[1],
+      "fmt": (match[2] || "").toUpperCase(),
+      "w": Number(match[3]),
+      "h": Number(match[4])
+    };
+  }
 }

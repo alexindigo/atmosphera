@@ -110,32 +110,47 @@ Item {
       height: width
     }
 
-    Image {
-      anchors.fill: parent
-      anchors.margins: Style.marginS
-      source: imageDataUrl
-      visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
-      fillMode: Image.PreserveAspectFit
-    }
-
+    // Preview for image entry
     ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginS
-      spacing: Style.marginXS
-      visible: !isImageContent && !loadingFullContent
+      spacing: Style.marginS
+      visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
+
+      Image {
+        id: previewImage
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        source: imageDataUrl
+        fillMode: Image.PreserveAspectFit
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginS
+      }
 
       NText {
         Layout.fillWidth: true
-        visible: fullContent.length > 0
         text: {
-          const chars = fullContent.length;
-          const words = fullContent.split(/\s+/).filter(w => w.length > 0).length;
-          const lines = fullContent.split('\n').length;
-          return `${chars} chars, ${words} words, ${lines} lines`;
+          const meta = ClipboardService.parseImageMeta(currentItem?.preview);
+          if (meta)
+            return `${meta.fmt} • ${meta.w}×${meta.h} • ${meta.size}`;
+          // Fallback to basic info
+          const format = (currentItem?.mime || "image").split("/")[1]?.toUpperCase() || "Image";
+          return `${format} • ${previewImage.implicitWidth}×${previewImage.implicitHeight}`;
         }
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
       }
+    }
+
+    // Preview for text entry
+    ColumnLayout {
+      anchors.fill: parent
+      anchors.margins: Style.marginS
+      spacing: Style.marginS
+      visible: !isImageContent && !loadingFullContent
 
       NScrollView {
         Layout.fillWidth: true
@@ -151,6 +166,24 @@ Item {
           font.family: Settings.data.ui.fontFixed
           color: Color.mOnSurface
         }
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginS
+      }
+
+      NText {
+        Layout.fillWidth: true
+        visible: fullContent.length > 0
+        text: {
+          const chars = fullContent.length;
+          const words = fullContent.split(/\s+/).filter(w => w.length > 0).length;
+          const lines = fullContent.split('\n').length;
+          return `${chars} chars, ${words} words, ${lines} lines`;
+        }
+        pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
       }
     }
   }
