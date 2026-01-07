@@ -687,6 +687,13 @@ SmartPanel {
         }
       }
 
+      Behavior on y {
+        NumberAnimation {
+          duration: Style.animationFast
+          easing.type: Easing.OutCubic
+        }
+      }
+
       Loader {
         id: previewLoader
         anchors.fill: parent
