@@ -86,7 +86,7 @@ Item {
   readonly property string tooltipText: {
     var text = title;
     var controls = [];
-    // Right click now opens options, including player selection
+    controls.push("Left click to open player.");
     controls.push("Right click for options.");
     if (MediaService.canGoPrevious)
       controls.push("Middle click for previous.");
@@ -401,12 +401,12 @@ Item {
       MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: hasPlayer ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
         onClicked: mouse => {
-                     if (mouse.button === Qt.LeftButton && hasPlayer && MediaService.canPlay) {
-                       MediaService.playPause();
+                     if (mouse.button === Qt.LeftButton) {
+                       PanelService.getPanel("mediaPlayerPanel", screen)?.toggle(container);
                      } else if (mouse.button === Qt.RightButton) {
                        TooltipService.hide();
                        var popupWindow = PanelService.getPopupMenuWindow(screen);
