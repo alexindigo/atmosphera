@@ -110,7 +110,7 @@ ColumnLayout {
             backgroundColor: root.selectedTag === modelData ? Color.mPrimary : Color.mSurfaceVariant
             textColor: root.selectedTag === modelData ? Color.mOnPrimary : Color.mOnSurfaceVariant
             onClicked: root.selectedTag = modelData
-            fontSize: Style.fontSizeXS
+            fontSize: Style.fontSizeS
             iconSize: Style.fontSizeS
             fontWeight: Style.fontWeightSemiBold
             buttonRadius: Style.iRadiusM

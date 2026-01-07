@@ -258,6 +258,8 @@ ColumnLayout {
             enabled: !isUpdating
             backgroundColor: Color.mPrimary
             textColor: Color.mOnPrimary
+            fontSize: Style.fontSizeXXS
+            fontWeight: Style.fontWeightMedium
             onClicked: {
               var pid = pluginId;
               var pname = modelData.name;

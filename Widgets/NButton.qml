@@ -46,8 +46,8 @@ Rectangle {
   }
 
   // Dimensions
-  implicitWidth: contentRow.implicitWidth + (Style.marginL * 2)
-  implicitHeight: Math.max(Style.baseWidgetSize, contentRow.implicitHeight + (Style.marginM))
+  implicitWidth: contentRow.implicitWidth + (fontSize * 2)
+  implicitHeight: contentRow.implicitHeight + (fontSize)
 
   // Appearance
   radius: root.buttonRadius
