@@ -122,15 +122,16 @@ Popup {
       return;
     }
 
+    // Get plugin directory
     var pluginDir = PluginRegistry.getPluginDir(pluginId);
     var settingsPath = pluginDir + "/" + pluginManifest.entryPoints.settings;
     var loadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
 
+    // Load settings component (use version counter to avoid caching)
     settingsLoader.setSource("file://" + settingsPath + "?v=" + loadVersion, {
                                "pluginApi": currentPluginApi
                              });
 
-    Logger.d("NPluginSettingsPopup", "Opened settings for plugin:", pluginId);
     open();
   }
 }
