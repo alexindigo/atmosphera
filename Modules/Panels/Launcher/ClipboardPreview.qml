@@ -117,12 +117,13 @@ Item {
       spacing: Style.marginS
       visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
 
-      Image {
+      NImageRounded {
         id: previewImage
         Layout.fillWidth: true
         Layout.fillHeight: true
-        source: imageDataUrl
-        fillMode: Image.PreserveAspectFit
+        radius: Style.marginS
+        imagePath: imageDataUrl
+        imageFillMode: Image.PreserveAspectFit
       }
 
       NDivider {

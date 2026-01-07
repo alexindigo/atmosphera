@@ -981,7 +981,7 @@ SmartPanel {
                       id: imagePreview
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.displayString
-                      radius: Style.radiusM
+                      radius: Style.radiusXS
 
                       // Use provider's image revision for reactive updates
                       readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
