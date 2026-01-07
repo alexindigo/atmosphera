@@ -10,7 +10,7 @@ Rectangle {
   // Public properties
   property int currentIndex: 0
   property real spacing: Style.marginS
-  property real margins: Style.marginXS
+  property real margins: 0
   property real tabHeight: Style.baseWidgetSize
   property bool distributeEvenly: false
   default property alias content: tabRow.children
