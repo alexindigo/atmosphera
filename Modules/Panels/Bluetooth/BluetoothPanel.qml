@@ -169,7 +169,6 @@ SmartPanel {
           // Paired devices
           BluetoothDevicesList {
             label: I18n.tr("bluetooth.panel.paired-devices")
-            tooltipText: I18n.tr("tooltips.connect-disconnect-devices")
             headerMode: "layout"
             property var items: {
               if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
@@ -338,6 +337,10 @@ SmartPanel {
               anchors.margins: Style.marginM
               spacing: Style.marginL
 
+              Item {
+                Layout.fillHeight: true
+              }
+
               RowLayout {
                 Layout.alignment: Qt.AlignHCenter
                 spacing: Style.marginXS
@@ -370,6 +373,10 @@ SmartPanel {
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
+              }
+
+              Item {
+                Layout.fillHeight: true
               }
             }
           }

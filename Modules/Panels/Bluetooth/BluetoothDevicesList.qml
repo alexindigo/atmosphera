@@ -82,7 +82,7 @@ NBox {
         function getContentColor(defaultColor = Color.mOnSurface) {
           if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
             return Color.mPrimary;
-          if (modelData.blocked)
+          if (modelData.blocked || modelData.state === BluetoothDeviceState.Disconnecting)
             return Color.mError;
           return defaultColor;
         }
@@ -92,7 +92,7 @@ NBox {
         radius: Style.radiusM
         clip: true
 
-        color: (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting || modelData.connected || modelData.blocked) ? Qt.alpha(getContentColor(), 0.08) : Color.mSurface
+        color: (modelData.connected && modelData.state !== BluetoothDeviceState.Disconnecting) ? Qt.alpha(getContentColor(), 0.08) : Color.mSurface
 
         // Content column so expanded details are laid out inside the card
         ColumnLayout {
