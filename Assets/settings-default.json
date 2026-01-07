@@ -193,7 +193,7 @@
     "viewMode": "list",
     "showCategories": true,
     "iconMode": "tabler",
-    "showIconBackground": true,
+    "showIconBackground": false,
     "ignoreMouseInput": false,
     "screenshotAnnotationTool": ""
   },
