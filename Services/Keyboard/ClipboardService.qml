@@ -152,11 +152,26 @@ Singleton {
                                  };
                                });
 
-      items = parsed;
+      // Filter out browser junk when copying images
+      const filtered = parsed.filter(item => {
+                                       if (item.isImage)
+                                       return true;
+                                       const p = item.preview;
+                                       // Skip UTF-16 encoded text (has null bytes between chars), chromium browser artifact
+                                       const nullCount = (p.match(/\x00/g) || []).length;
+                                       if (nullCount > p.length * 0.2)
+                                       return false;
+                                       // Skip browser-generated HTML wrapper, firefox
+                                       if (p.toLowerCase().startsWith("<meta http-equiv="))
+                                       return false;
+                                       return true;
+                                     });
+
+      items = filtered;
       loading = false;
 
       // Try to capture current clipboard and associate with newest item
-      if (parsed.length > 0 && !parsed[0].isImage && !root.contentCache[parsed[0].id]) {
+      if (filtered.length > 0 && !filtered[0].isImage && !root.contentCache[filtered[0].id]) {
         root.captureCurrentClipboard();
       }
 
