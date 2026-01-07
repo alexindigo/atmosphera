@@ -615,43 +615,6 @@ Singleton {
     return changed;
   }
 
-  // Auto-add plugin control center widget to shortcuts
-  function autoAddControlCenterWidget(pluginId, position) {
-    var widgetId = "plugin:" + pluginId;
-    var side = (position === "right") ? "right" : "left"; // default to left
-
-    var shortcuts = Settings.data.controlCenter.shortcuts[side];
-
-    // Check if already exists
-    for (var i = 0; i < shortcuts.length; i++) {
-      if (shortcuts[i].id === widgetId)
-        return;
-    }
-
-    // Add to shortcuts
-    shortcuts.push({
-                     "id": widgetId
-                   });
-    Settings.data.controlCenter.shortcuts[side] = shortcuts;
-    Logger.i("PluginService", "Auto-added control center widget", widgetId, "to", side, "shortcuts");
-  }
-
-  // Remove plugin control center widget from shortcuts
-  function removePluginControlCenterWidgetFromShortcuts(pluginId) {
-    var widgetId = "plugin:" + pluginId;
-
-    ["left", "right"].forEach(function (side) {
-      var shortcuts = Settings.data.controlCenter.shortcuts[side];
-      var filtered = shortcuts.filter(function (s) {
-        return s.id !== widgetId;
-      });
-      if (filtered.length !== shortcuts.length) {
-        Settings.data.controlCenter.shortcuts[side] = filtered;
-        Logger.i("PluginService", "Removed control center widget", widgetId, "from", side, "shortcuts");
-      }
-    });
-  }
-
   // Load plugin settings and translations before instantiating components
   // This ensures pluginApi is fully populated before being passed to createObject()
   function loadPluginData(pluginId, manifest, callback) {
@@ -797,11 +760,6 @@ Singleton {
           // Register with ControlCenterWidgetRegistry
           ControlCenterWidgetRegistry.registerPluginWidget(pluginId, ccWidgetComponent, manifest.metadata);
           Logger.i("PluginService", "Loaded control center widget for plugin:", pluginId);
-
-          // Auto-add to shortcuts if configured
-          if (manifest.entryPoints.autoAddToShortcuts) {
-            autoAddControlCenterWidget(pluginId, manifest.entryPoints.autoAddToShortcuts);
-          }
         } else if (ccWidgetComponent.status === Component.Error) {
           root.recordPluginError(pluginId, "controlCenterWidget", ccWidgetComponent.errorString());
         }
@@ -853,10 +811,6 @@ Singleton {
 
     // Unregister from ControlCenterWidgetRegistry
     if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.controlCenterWidget) {
-      // Remove from shortcuts if it was auto-added
-      if (!preserveSettings) {
-        removePluginControlCenterWidgetFromShortcuts(pluginId);
-      }
       ControlCenterWidgetRegistry.unregisterPluginWidget(pluginId);
     }
 

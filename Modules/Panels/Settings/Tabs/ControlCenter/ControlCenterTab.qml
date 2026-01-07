@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Commons
+import qs.Services.Noctalia
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
@@ -56,9 +57,26 @@ ColumnLayout {
     availableWidgets.clear();
     var sortedEntries = ControlCenterWidgetRegistry.getAvailableWidgets().slice().sort();
     sortedEntries.forEach(entry => {
+                            const isPlugin = ControlCenterWidgetRegistry.isPluginWidget(entry);
+                            let displayName = entry;
+                            let badges = [];
+                            if (isPlugin) {
+                              const pluginId = entry.replace("plugin:", "");
+                              const manifest = PluginRegistry.getPluginManifest(pluginId);
+                              if (manifest && manifest.name) {
+                                displayName = manifest.name;
+                              } else {
+                                displayName = pluginId;
+                              }
+                              badges.push({
+                                            "icon": "plugin",
+                                            "color": Color.mSecondary
+                                          });
+                            }
                             availableWidgets.append({
                                                       "key": entry,
-                                                      "name": entry
+                                                      "name": displayName,
+                                                      "badges": badges
                                                     });
                           });
     // Starts empty
