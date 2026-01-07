@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Kaydırma Kilidi"
     },
     "media-mini": {
+      "compact-mode-description": "Medya Oynatıcı Paneli için yerden tasarruf sağlayan bir düzeni etkinleştirin.",
+      "compact-mode-label": "Sıkıştırılmış mod",
       "hide-mode-description": "Ortam çalınmadığında araç takımının nasıl davrandığını kontrol eder.",
       "max-width-description": "Araç takımının en fazla yatay boyutunu ayarlar. Araç takımı daha kısa içerik için küçülecektir.",
       "no-active-player": "Etkin çalar yok",

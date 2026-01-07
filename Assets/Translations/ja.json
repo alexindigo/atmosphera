@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "メディアプレーヤーパネルの省スペースレイアウトを有効にする。",
+      "compact-mode-label": "コンパクトモード",
       "hide-mode-description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
       "max-width-description": "ウィジェットの最大幅を設定します。内容が短い場合は自動的に縮小します。",
       "no-active-player": "アクティブなプレーヤーなし",

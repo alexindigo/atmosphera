@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Helytakarékos elrendezés engedélyezése a médialejátszó panelhez.",
+      "compact-mode-label": "Kompakt mód",
       "hide-mode-description": "Szabályozza a widget viselkedését, ha nincs média lejátszva.",
       "max-width-description": "Beállítja a widget maximális vízszintes méretét. A widget zsugorodik, hogy illeszkedjen a rövidebb tartalomhoz.",
       "no-active-player": "Nincs aktív lejátszó",

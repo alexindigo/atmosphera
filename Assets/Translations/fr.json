@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Verr Maj"
     },
     "media-mini": {
+      "compact-mode-description": "Activer une disposition compacte pour le panneau du lecteur multimédia.",
+      "compact-mode-label": "Mode compact",
       "hide-mode-description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
       "max-width-description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court.",
       "no-active-player": "Aucun lecteur actif",

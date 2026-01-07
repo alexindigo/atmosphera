@@ -171,7 +171,8 @@ Singleton {
                                     "showArtistFirst": true,
                                     "showVisualizer": false,
                                     "showProgressRing": true,
-                                    "visualizerType": "linear"
+                                    "visualizerType": "linear",
+                                    "compactMode": false
                                   },
                                   "Microphone": {
                                     "displayMode": "onhover"

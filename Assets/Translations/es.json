@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Bloq Despl"
     },
     "media-mini": {
+      "compact-mode-description": "Habilitar un diseño que ahorre espacio para el Panel del Reproductor Multimedia.",
+      "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
       "max-width-description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto.",
       "no-active-player": "Sin reproductor activo",

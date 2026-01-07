@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Włącz układ oszczędzający miejsce dla panelu odtwarzacza multimedialnego.",
+      "compact-mode-label": "Tryb kompaktowy",
       "hide-mode-description": "Kontroluje zachowanie widżetu, gdy żadne media nie są odtwarzane.",
       "max-width-description": "Ustawia maksymalną szerokość poziomą widżetu. Widżet skurczy się, aby dopasować się do krótszej zawartości.",
       "no-active-player": "Brak aktywnego odtwarzacza",

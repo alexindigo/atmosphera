@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Rollen-Taste"
     },
     "media-mini": {
+      "compact-mode-description": "Aktiviere ein platzsparendes Layout für das Media Player Panel.",
+      "compact-mode-label": "Kompaktmodus",
       "hide-mode-description": "Steuert das Verhalten des Widgets, wenn keine Medien abgespielt werden.",
       "max-width-description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen.",
       "no-active-player": "Kein aktiver Player",

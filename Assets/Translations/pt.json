@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Ativar um layout que economize espaço para o Painel do Reprodutor de Mídia.",
+      "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
       "max-width-description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto.",
       "no-active-player": "Nenhum player ativo",

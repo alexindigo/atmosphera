@@ -146,6 +146,8 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Schakel een ruimtebesparende lay-out in voor het Media Player Paneel.",
+      "compact-mode-label": "Compacte modus",
       "hide-mode-description": "Bepaalt hoe de widget zich gedraagt wanneer er geen media wordt afgespeeld.",
       "max-width-description": "Stelt de maximale horizontale grootte van de widget in. De widget krimpt mee met kortere inhoud.",
       "no-active-player": "Geen actieve speler",

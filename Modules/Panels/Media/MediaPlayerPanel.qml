@@ -13,8 +13,8 @@ import qs.Widgets.AudioSpectrum
 SmartPanel {
   id: root
 
-  preferredWidth: Math.round(400 * Style.uiScaleRatio)
-  preferredHeight: Math.round((root.showAlbumArt ? 520 : 260) * Style.uiScaleRatio)
+  preferredWidth: Math.round((root.isSideBySide ? 480 : 400) * Style.uiScaleRatio)
+  preferredHeight: Math.round((root.compactMode ? 200 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio)
 
   readonly property var mediaMiniSettings: {
     try {
@@ -38,6 +38,10 @@ SmartPanel {
   readonly property bool showArtistFirst: !!(mediaMiniSettings && mediaMiniSettings.showArtistFirst !== undefined ? mediaMiniSettings.showArtistFirst : true)
   readonly property bool showAlbumArt: !!(mediaMiniSettings && mediaMiniSettings.showAlbumArt !== undefined ? mediaMiniSettings.showAlbumArt : true)
   readonly property bool showVisualizer: !!(mediaMiniSettings && mediaMiniSettings.showVisualizer !== undefined ? mediaMiniSettings.showVisualizer : true)
+  readonly property bool compactMode: !!(mediaMiniSettings && mediaMiniSettings.compactMode !== undefined ? mediaMiniSettings.compactMode : false)
+  readonly property string scrollingMode: (mediaMiniSettings && mediaMiniSettings.scrollingMode !== undefined) ? mediaMiniSettings.scrollingMode : "hover"
+
+  readonly property bool isSideBySide: root.compactMode && root.showAlbumArt
 
   readonly property bool needsCava: root.showVisualizer && root.visualizerType !== "" && root.visualizerType !== "none" && root.isPanelOpen
 
@@ -63,7 +67,7 @@ SmartPanel {
     id: playerContent
     anchors.fill: parent
 
-    readonly property real contentPreferredHeight: (root.showAlbumArt ? 520 : 260) * Style.uiScaleRatio
+    readonly property real contentPreferredHeight: (root.compactMode ? 200 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio
 
     Loader {
       id: visualizerLoaderCompact
@@ -87,7 +91,7 @@ SmartPanel {
       }
     }
 
-    // Main Column
+    // Layout
     ColumnLayout {
       id: mainLayout
       anchors.fill: parent
@@ -212,274 +216,271 @@ SmartPanel {
         }
       }
 
-      // Album Art
+      // Adaptive Content Area
       Item {
-        id: albumArtItem
         Layout.fillWidth: true
-        Layout.fillHeight: root.showAlbumArt
-        Layout.preferredHeight: root.showAlbumArt ? -1 : 0
-        visible: root.showAlbumArt
+        Layout.fillHeight: true
 
-        Item {
+        GridLayout {
           anchors.fill: parent
-          layer.enabled: true
-          layer.effect: MultiEffect {
-            maskEnabled: true
-            maskSource: ShaderEffectSource {
-              sourceItem: maskRect
-              hideSource: true
-            }
-          }
+          columns: root.isSideBySide ? 2 : 1
+          columnSpacing: Style.marginL
+          rowSpacing: Style.marginL
 
-          Rectangle {
-            id: maskRect
-            anchors.fill: parent
-            radius: Style.radiusL
-            color: "white"
-            visible: false
-          }
+          // Album Art (Vertical in normal, Horizontal in compact)
+          Item {
+            id: albumArtItem
+            Layout.preferredWidth: root.compactMode ? Math.round(140 * Style.uiScaleRatio) : parent.width
+            Layout.preferredHeight: root.compactMode ? Math.round(140 * Style.uiScaleRatio) : (root.showAlbumArt ? -1 : 0)
+            Layout.fillWidth: !root.compactMode
+            Layout.fillHeight: !root.compactMode && root.showAlbumArt
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.showAlbumArt
 
-          Rectangle {
-            anchors.fill: parent
-            color: Color.mSurfaceVariant
-          }
+            Item {
+              anchors.fill: parent
+              layer.enabled: true
+              layer.effect: MultiEffect {
+                maskEnabled: true
+                maskSource: ShaderEffectSource {
+                  sourceItem: maskRect
+                  hideSource: true
+                }
+              }
 
-          Image {
-            id: albumArt
-            anchors.fill: parent
-            source: MediaService.trackArtUrl
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-            visible: root.showAlbumArt && source != ""
-          }
+              Rectangle {
+                id: maskRect
+                anchors.fill: parent
+                radius: root.compactMode ? Style.radiusM : Style.radiusL
+                color: "white"
+                visible: false
+              }
 
-          // Fallback Icon
-          NIcon {
-            anchors.centerIn: parent
-            icon: "disc"
-            pointSize: Style.fontSizeXXXL * 2
-            color: Color.mOnSurfaceVariant
-            visible: root.showAlbumArt && albumArt.status !== Image.Ready
-          }
+              Rectangle {
+                anchors.fill: parent
+                color: Color.mSurfaceVariant
+              }
 
-          Loader {
-            anchors.fill: parent
-            anchors.margins: Style.marginS
-            z: 2
-            active: !!(root.needsCava && root.showAlbumArt)
-            sourceComponent: visualizerSource
-          }
-        }
-      }
+              Image {
+                id: albumArt
+                anchors.fill: parent
+                source: MediaService.trackArtUrl
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                visible: root.showAlbumArt && source != ""
+              }
 
-      Component {
-        id: linearComponent
-        NLinearSpectrum {
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.8
-          anchors.bottom: parent.bottom
-          height: parent.height * 0.4
-          width: parent.width
-        }
-      }
+              NIcon {
+                anchors.centerIn: parent
+                icon: "disc"
+                pointSize: root.compactMode ? Style.fontSizeXXL : (Style.fontSizeXXXL * 2)
+                color: Color.mOnSurfaceVariant
+                visible: root.showAlbumArt && albumArt.status !== Image.Ready
+              }
 
-      Component {
-        id: mirroredComponent
-        NMirroredSpectrum {
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.8
-          anchors.centerIn: parent
-          anchors.top: parent.top
-          anchors.bottom: parent.bottom
-          width: parent.width
-        }
-      }
-
-      Component {
-        id: waveComponent
-        NWaveSpectrum {
-          values: CavaService.values
-          fillColor: Color.mPrimary
-          opacity: 0.8
-          anchors.centerIn: parent
-          anchors.top: parent.top
-          anchors.bottom: parent.bottom
-          width: parent.width
-        }
-      }
-
-      ColumnLayout {
-        id: controlsLayout
-        Layout.fillWidth: true
-        spacing: Style.marginS
-
-        // Track Info
-        ColumnLayout {
-          Layout.fillWidth: true
-          spacing: 0
-
-          NText {
-            text: {
-              if (root.showArtistFirst) {
-                return MediaService.trackArtist || (MediaService.trackAlbum || "Unknown Artist");
-              } else {
-                return MediaService.trackTitle || "No Media";
+              Loader {
+                anchors.fill: parent
+                anchors.margins: Style.marginS
+                z: 2
+                active: !!(root.needsCava && root.showAlbumArt)
+                sourceComponent: visualizerSource
               }
             }
-
-            pointSize: Style.fontSizeXL
-            font.weight: Style.fontWeightBold
-            color: Color.mOnSurface
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
-            wrapMode: Text.Wrap
-            maximumLineCount: 2
           }
 
-          NText {
-            text: {
-              if (root.showArtistFirst) {
-                return MediaService.trackTitle || "No Media";
-              } else {
-                return MediaService.trackArtist || (MediaService.trackAlbum || "Unknown Artist");
+          ColumnLayout {
+            id: controlsLayout
+            Layout.fillWidth: true
+            Layout.fillHeight: root.compactMode
+            spacing: root.compactMode ? Style.marginXS : Style.marginS
+
+            ColumnLayout {
+              Layout.fillWidth: true
+              spacing: 0
+
+              NScrollText {
+                Layout.fillWidth: true
+                maxWidth: parent.width
+                text: {
+                  if (root.showArtistFirst) {
+                    return MediaService.trackArtist || (MediaService.trackAlbum || "Unknown Artist");
+                  } else {
+                    return MediaService.trackTitle || "No Media";
+                  }
+                }
+
+                scrollMode: {
+                  if (root.scrollingMode === "always")
+                    return NScrollText.ScrollMode.Always;
+                  if (root.scrollingMode === "hover")
+                    return NScrollText.ScrollMode.Hover;
+                  return NScrollText.ScrollMode.Never;
+                }
+
+                delegate: NText {
+                  pointSize: root.compactMode ? Style.fontSizeL : Style.fontSizeXL
+                  font.weight: Style.fontWeightBold
+                  color: Color.mOnSurface
+                  horizontalAlignment: root.isSideBySide ? Text.AlignLeft : Text.AlignHCenter
+                  elide: Text.ElideNone
+                  wrapMode: Text.NoWrap
+                }
               }
-            }
-            pointSize: Style.fontSizeM
-            color: Color.mOnSurfaceVariant
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
-          }
-        }
 
-        // Progress Bar
-        Item {
-          id: progressWrapper
-          visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
-          Layout.fillWidth: true
-          height: Style.baseWidgetSize * 0.5
+              NScrollText {
+                Layout.fillWidth: true
+                maxWidth: parent.width
+                text: {
+                  if (root.showArtistFirst) {
+                    return MediaService.trackTitle || "No Media";
+                  } else {
+                    return MediaService.trackArtist || (MediaService.trackAlbum || "Unknown Artist");
+                  }
+                }
 
-          property real localSeekRatio: -1
-          property real lastSentSeekRatio: -1
-          property real seekEpsilon: 0.01
-          property real progressRatio: {
-            if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
-              return 0;
-            const r = MediaService.currentPosition / MediaService.trackLength;
-            if (isNaN(r) || !isFinite(r))
-              return 0;
-            return Math.max(0, Math.min(1, r));
-          }
+                scrollMode: {
+                  if (root.scrollingMode === "always")
+                    return NScrollText.ScrollMode.Always;
+                  if (root.scrollingMode === "hover")
+                    return NScrollText.ScrollMode.Hover;
+                  return NScrollText.ScrollMode.Never;
+                }
 
-          Timer {
-            id: seekDebounce
-            interval: 75
-            repeat: false
-            onTriggered: {
-              if (MediaService.isSeeking && progressWrapper.localSeekRatio >= 0) {
-                const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio));
-                if (progressWrapper.lastSentSeekRatio < 0 || Math.abs(next - progressWrapper.lastSentSeekRatio) >= progressWrapper.seekEpsilon) {
-                  MediaService.seekByRatio(next);
-                  progressWrapper.lastSentSeekRatio = next;
+                delegate: NText {
+                  pointSize: root.compactMode ? Style.fontSizeS : Style.fontSizeM
+                  color: Color.mOnSurfaceVariant
+                  horizontalAlignment: root.isSideBySide ? Text.AlignLeft : Text.AlignHCenter
+                  elide: Text.ElideNone
+                  wrapMode: Text.NoWrap
                 }
               }
             }
-          }
 
-          NSlider {
-            id: progressSlider
-            anchors.fill: parent
-            from: 0
-            to: 1
-            stepSize: 0
-            snapAlways: false
-            enabled: MediaService.trackLength > 0 && MediaService.canSeek
-            heightRatio: 0.4
+            Item {
+              id: progressWrapper
+              visible: (MediaService.currentPlayer && MediaService.trackLength > 0)
+              Layout.fillWidth: true
+              Layout.preferredHeight: root.compactMode ? (Style.baseWidgetSize * 0.4) : (Style.baseWidgetSize * 0.5)
 
-            value: (!MediaService.isSeeking) ? progressWrapper.progressRatio : (progressWrapper.localSeekRatio >= 0 ? progressWrapper.localSeekRatio : 0)
+              property real localSeekRatio: -1
+              property real lastSentSeekRatio: -1
+              property real seekEpsilon: 0.01
+              property real progressRatio: {
+                if (!MediaService.currentPlayer || MediaService.trackLength <= 0)
+                  return 0;
+                const r = MediaService.currentPosition / MediaService.trackLength;
+                if (isNaN(r) || !isFinite(r))
+                  return 0;
+                return Math.max(0, Math.min(1, r));
+              }
 
-            onMoved: {
-              progressWrapper.localSeekRatio = value;
-              seekDebounce.restart();
-            }
-            onPressedChanged: {
-              if (pressed) {
-                MediaService.isSeeking = true;
-                progressWrapper.localSeekRatio = value;
-                MediaService.seekByRatio(value);
-                progressWrapper.lastSentSeekRatio = value;
-              } else {
-                seekDebounce.stop();
-                MediaService.seekByRatio(value);
-                MediaService.isSeeking = false;
-                progressWrapper.localSeekRatio = -1;
-                progressWrapper.lastSentSeekRatio = -1;
+              Timer {
+                id: seekDebounce
+                interval: 75
+                repeat: false
+                onTriggered: {
+                  if (MediaService.isSeeking && progressWrapper.localSeekRatio >= 0) {
+                    const next = Math.max(0, Math.min(1, progressWrapper.localSeekRatio));
+                    if (progressWrapper.lastSentSeekRatio < 0 || Math.abs(next - progressWrapper.lastSentSeekRatio) >= progressWrapper.seekEpsilon) {
+                      MediaService.seekByRatio(next);
+                      progressWrapper.lastSentSeekRatio = next;
+                    }
+                  }
+                }
+              }
+
+              NSlider {
+                id: progressSlider
+                anchors.fill: parent
+                from: 0
+                to: 1
+                stepSize: 0
+                snapAlways: false
+                enabled: MediaService.trackLength > 0 && MediaService.canSeek
+                heightRatio: 0.4
+
+                value: (!MediaService.isSeeking) ? progressWrapper.progressRatio : (progressWrapper.localSeekRatio >= 0 ? progressWrapper.localSeekRatio : 0)
+
+                onMoved: {
+                  progressWrapper.localSeekRatio = value;
+                  seekDebounce.restart();
+                }
+                onPressedChanged: {
+                  if (pressed) {
+                    MediaService.isSeeking = true;
+                    progressWrapper.localSeekRatio = value;
+                    MediaService.seekByRatio(value);
+                    progressWrapper.lastSentSeekRatio = value;
+                  } else {
+                    seekDebounce.stop();
+                    MediaService.seekByRatio(value);
+                    MediaService.isSeeking = false;
+                    progressWrapper.localSeekRatio = -1;
+                    progressWrapper.lastSentSeekRatio = -1;
+                  }
+                }
+              }
+
+              NText {
+                anchors.left: parent.left
+                anchors.top: parent.bottom
+                text: MediaService.positionString || "0:00"
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+                visible: parent.visible && !root.isSideBySide
+              }
+              NText {
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                text: MediaService.lengthString || "0:00"
+                pointSize: Style.fontSizeXS
+                color: Color.mOnSurfaceVariant
+                visible: parent.visible && !root.isSideBySide
               }
             }
-          }
 
-          NText {
-            anchors.left: parent.left
-            anchors.top: parent.bottom
-            text: MediaService.positionString || "0:00"
-            pointSize: Style.fontSizeXS
-            color: Color.mOnSurfaceVariant
-            visible: parent.visible
-          }
-          NText {
-            anchors.right: parent.right
-            anchors.top: parent.bottom
-            text: MediaService.lengthString || "0:00"
-            pointSize: Style.fontSizeXS
-            color: Color.mOnSurfaceVariant
-            visible: parent.visible
-          }
-        }
-
-        Item {
-          Layout.preferredHeight: Style.marginS
-        }
-
-        RowLayout {
-          Layout.alignment: Qt.AlignHCenter
-          spacing: Style.marginXL
-
-          NIconButton {
-            icon: "media-prev"
-            baseSize: Style.baseWidgetSize * 1.2
-            onClicked: MediaService.previous()
-          }
-
-          // Play/Pause
-          Rectangle {
-            implicitWidth: Style.baseWidgetSize * 1.8
-            implicitHeight: Style.baseWidgetSize * 1.8
-            radius: Style.radiusL
-            color: Color.mPrimary
-
-            NIcon {
-              anchors.centerIn: parent
-              icon: MediaService.isPlaying ? "media-pause" : "media-play"
-              pointSize: Style.fontSizeXXL
-              color: Color.mOnPrimary
+            Item {
+              Layout.preferredHeight: root.isSideBySide ? 0 : Style.marginS
             }
 
-            MouseArea {
-              anchors.fill: parent
-              cursorShape: Qt.PointingHandCursor
-              hoverEnabled: true
-              onEntered: parent.color = Color.mPrimary
-              onClicked: MediaService.playPause()
-            }
-          }
+            RowLayout {
+              Layout.alignment: Qt.AlignHCenter
+              spacing: root.isSideBySide ? Style.marginL : Style.marginXL
 
-          NIconButton {
-            icon: "media-next"
-            baseSize: Style.baseWidgetSize * 1.2
-            onClicked: MediaService.next()
+              NIconButton {
+                icon: "media-prev"
+                baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
+                onClicked: MediaService.previous()
+              }
+
+              Rectangle {
+                implicitWidth: root.compactMode ? (Style.baseWidgetSize * 1.3) : (Style.baseWidgetSize * 1.8)
+                implicitHeight: root.compactMode ? (Style.baseWidgetSize * 1.3) : (Style.baseWidgetSize * 1.8)
+                radius: root.compactMode ? Style.radiusM : Style.radiusL
+                color: Color.mPrimary
+
+                NIcon {
+                  anchors.centerIn: parent
+                  icon: MediaService.isPlaying ? "media-pause" : "media-play"
+                  pointSize: root.compactMode ? Style.fontSizeL : Style.fontSizeXXL
+                  color: Color.mOnPrimary
+                }
+
+                MouseArea {
+                  anchors.fill: parent
+                  cursorShape: Qt.PointingHandCursor
+                  hoverEnabled: true
+                  onEntered: parent.color = Color.mPrimary
+                  onClicked: MediaService.playPause()
+                }
+              }
+
+              NIconButton {
+                icon: "media-next"
+                baseSize: root.compactMode ? (Style.baseWidgetSize * 0.9) : (Style.baseWidgetSize * 1.2)
+                onClicked: MediaService.next()
+              }
+            }
           }
         }
       }

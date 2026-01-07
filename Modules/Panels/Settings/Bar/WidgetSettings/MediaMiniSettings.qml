@@ -24,6 +24,7 @@ ColumnLayout {
   property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
   property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
   property bool valueShowProgressRing: widgetData.showProgressRing !== undefined ? widgetData.showProgressRing : widgetMetadata.showProgressRing
+  property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -43,6 +44,7 @@ ColumnLayout {
     settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
     settings.useFixedWidth = valueUseFixedWidth;
     settings.showProgressRing = valueShowProgressRing;
+    settings.compactMode = valueCompactMode;
     return settings;
   }
 
@@ -137,6 +139,13 @@ ColumnLayout {
     description: I18n.tr("bar.media-mini.show-progress-ring-description")
     checked: valueShowProgressRing
     onToggled: checked => valueShowProgressRing = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.media-mini.compact-mode-label")
+    description: I18n.tr("bar.media-mini.compact-mode-description")
+    checked: valueCompactMode
+    onToggled: checked => valueCompactMode = checked
   }
 
   NComboBox {
