@@ -982,6 +982,9 @@ SmartPanel {
                       anchors.fill: parent
                       visible: modelData.isImage && !modelData.displayString
                       radius: Style.radiusXS
+                      borderColor: Color.mOnSurface
+                      borderWidth: Style.borderM
+                      imageFillMode: Image.PreserveAspectCrop
 
                       // Use provider's image revision for reactive updates
                       readonly property int _rev: modelData.provider && modelData.provider.imageRevision ? modelData.provider.imageRevision : 0
@@ -1069,11 +1072,10 @@ SmartPanel {
                       anchors.bottom: parent.bottom
                       anchors.right: parent.right
                       anchors.margins: 2
-                      width: formatLabel.width + 6
-                      height: formatLabel.height + 2
-                      radius: Style.radiusM
+                      width: formatLabel.width + Style.marginXXS * 2
+                      height: formatLabel.height + Style.marginXXS
                       color: Color.mSurfaceVariant
-
+                      radius: Style.radiusXXS
                       NText {
                         id: formatLabel
                         anchors.centerIn: parent
@@ -1085,7 +1087,7 @@ SmartPanel {
                           return parts[0] || "IMG";
                         }
                         pointSize: Style.fontSizeXXS
-                        color: Color.mPrimary
+                        color: Color.mOnSurfaceVariant
                       }
                     }
                   }
