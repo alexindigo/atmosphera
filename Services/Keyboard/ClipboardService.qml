@@ -350,8 +350,8 @@ Singleton {
       if (cb)
         cb(content);
     };
-    const idStr = String(id).trim();
-    decodeProc.command = ["sh", "-lc", `cliphist decode ${idStr}`];
+    const idStr = String(id);
+    decodeProc.command = ["cliphist", "decode", idStr];
     decodeProc.running = true;
   }
 
@@ -435,8 +435,7 @@ Singleton {
     const idStr = String(id).trim();
     // Remove from cache
     delete root.contentCache[idStr];
-    // cliphist delete reads entries from stdin in the same format as cliphist list
-    deleteProc.command = ["sh", "-lc", `cliphist list | grep "^${idStr}\\s" | cliphist delete`];
+    deleteProc.command = ["sh", "-c", `echo ${idStr} | cliphist delete`];
     deleteProc.running = true;
   }
 
