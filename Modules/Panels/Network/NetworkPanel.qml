@@ -490,22 +490,28 @@ SmartPanel {
                   id: emptyEthColumn
                   anchors.fill: parent
                   anchors.margins: Style.marginM
-                  spacing: Style.marginM
+                  spacing: Style.marginL
+                  
+                  Item {
+                    Layout.fillHeight: true
+                  }
 
                   NIcon {
                     icon: "ethernet-off"
-                    pointSize: 40
+                    pointSize: 48
                     color: Color.mOnSurfaceVariant
                     Layout.alignment: Qt.AlignHCenter
                   }
 
                   NText {
                     text: I18n.tr("wifi.panel.no-ethernet-devices")
-                    pointSize: Style.fontSizeS
+                    pointSize: Style.fontSizeL
                     color: Color.mOnSurfaceVariant
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
+                    Layout.alignment: Qt.AlignHCenter
+                  }
+
+                  Item {
+                    Layout.fillHeight: true
                   }
                 }
               }
