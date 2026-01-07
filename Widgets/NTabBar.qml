@@ -19,8 +19,14 @@ Rectangle {
   Component.onCompleted: _applyDistribution()
 
   function _applyDistribution() {
-    if (!distributeEvenly)
+    if (!distributeEvenly) {
+      for (var i = 0; i < tabRow.children.length; i++) {
+        var child = tabRow.children[i];
+        child.Layout.fillWidth = true;
+      }
       return;
+    }
+
     for (var i = 0; i < tabRow.children.length; i++) {
       var child = tabRow.children[i];
       child.Layout.fillWidth = true;
