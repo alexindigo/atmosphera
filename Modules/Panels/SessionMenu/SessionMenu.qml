@@ -622,6 +622,57 @@ SmartPanel {
   // Custom power button component
   component PowerButton: Rectangle {
     id: buttonRoot
+    // Keybind indicator and countdown text at far right
+    Item {
+      id: indicatorGroup
+      width: (countdownText.visible ? countdownText.width + Style.marginXS : 0) + numberIndicatorRect.width
+      height: numberIndicatorRect.height
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.right: parent.right
+      anchors.rightMargin: Style.marginM
+      z: 20
+
+      // Countdown as plain text (left of keybind)
+      NText {
+        id: countdownText
+        visible: !Settings.data.sessionMenu.showHeader && buttonRoot.pending && timerActive && pendingAction === modelData.action
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: Math.ceil(timeRemaining / 1000)
+        pointSize: Style.fontSizeS
+        color: Color.mPrimary
+        font.weight: Style.fontWeightBold
+      }
+
+      // Number indicator (keybind)
+      Rectangle {
+        id: numberIndicatorRect
+        anchors.left: countdownText.visible ? countdownText.right : parent.left
+        anchors.leftMargin: countdownText.visible ? Style.marginXS : 0
+        anchors.verticalCenter: parent.verticalCenter
+        width: Style.marginM * 2
+        height: width
+        radius: Math.min(Style.radiusM, height / 2)
+        color: (buttonRoot.isSelected || mouseArea.containsMouse) ? Color.mPrimary : Qt.alpha(Color.mSurfaceVariant, 0.5)
+        border.width: Style.borderS
+        border.color: (buttonRoot.isSelected || mouseArea.containsMouse) ? Color.mPrimary : Color.mOutline
+        visible: Settings.data.sessionMenu.showNumberLabels && buttonRoot.number > 0
+
+        NText {
+          anchors.centerIn: parent
+          text: buttonRoot.number
+          pointSize: Style.fontSizeS
+          color: (buttonRoot.isSelected || mouseArea.containsMouse) ? Color.mOnPrimary : Color.mOnSurface
+
+          Behavior on color {
+            ColorAnimation {
+              duration: Style.animationFast
+              easing.type: Easing.OutCirc
+            }
+          }
+        }
+      }
+    }
 
     property string icon: ""
     property string title: ""
