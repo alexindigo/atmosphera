@@ -63,6 +63,8 @@ SmartPanel {
     id: playerContent
     anchors.fill: parent
 
+    readonly property real contentPreferredHeight: (root.showAlbumArt ? 520 : 260) * Style.uiScaleRatio
+
     Loader {
       id: visualizerLoaderCompact
       anchors.fill: parent
@@ -214,8 +216,8 @@ SmartPanel {
       Item {
         id: albumArtItem
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.minimumHeight: 200
+        Layout.fillHeight: root.showAlbumArt
+        Layout.preferredHeight: root.showAlbumArt ? -1 : 0
         visible: root.showAlbumArt
 
         Item {
