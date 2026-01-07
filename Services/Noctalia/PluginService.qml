@@ -615,6 +615,43 @@ Singleton {
     return changed;
   }
 
+  // Auto-add plugin control center widget to shortcuts
+  function autoAddControlCenterWidget(pluginId, position) {
+    var widgetId = "plugin:" + pluginId;
+    var side = (position === "right") ? "right" : "left"; // default to left
+
+    var shortcuts = Settings.data.controlCenter.shortcuts[side];
+
+    // Check if already exists
+    for (var i = 0; i < shortcuts.length; i++) {
+      if (shortcuts[i].id === widgetId)
+        return;
+    }
+
+    // Add to shortcuts
+    shortcuts.push({
+                     "id": widgetId
+                   });
+    Settings.data.controlCenter.shortcuts[side] = shortcuts;
+    Logger.i("PluginService", "Auto-added control center widget", widgetId, "to", side, "shortcuts");
+  }
+
+  // Remove plugin control center widget from shortcuts
+  function removePluginControlCenterWidgetFromShortcuts(pluginId) {
+    var widgetId = "plugin:" + pluginId;
+
+    ["left", "right"].forEach(function (side) {
+      var shortcuts = Settings.data.controlCenter.shortcuts[side];
+      var filtered = shortcuts.filter(function (s) {
+        return s.id !== widgetId;
+      });
+      if (filtered.length !== shortcuts.length) {
+        Settings.data.controlCenter.shortcuts[side] = filtered;
+        Logger.i("PluginService", "Removed control center widget", widgetId, "from", side, "shortcuts");
+      }
+    });
+  }
+
   // Load plugin settings and translations before instantiating components
   // This ensures pluginApi is fully populated before being passed to createObject()
   function loadPluginData(pluginId, manifest, callback) {
@@ -747,6 +784,29 @@ Singleton {
         }
       }
 
+      // Load control center widget component if provided
+      if (manifest.entryPoints && manifest.entryPoints.controlCenterWidget) {
+        var ccWidgetPath = pluginDir + "/" + manifest.entryPoints.controlCenterWidget;
+        var ccWidgetLoadVersion = PluginRegistry.pluginLoadVersions[pluginId] || 0;
+        var ccWidgetComponent = Qt.createComponent("file://" + ccWidgetPath + "?v=" + ccWidgetLoadVersion);
+
+        if (ccWidgetComponent.status === Component.Ready) {
+          root.loadedPlugins[pluginId].controlCenterWidget = ccWidgetComponent;
+          pluginApi.controlCenterWidget = ccWidgetComponent;
+
+          // Register with ControlCenterWidgetRegistry
+          ControlCenterWidgetRegistry.registerPluginWidget(pluginId, ccWidgetComponent, manifest.metadata);
+          Logger.i("PluginService", "Loaded control center widget for plugin:", pluginId);
+
+          // Auto-add to shortcuts if configured
+          if (manifest.entryPoints.autoAddToShortcuts) {
+            autoAddControlCenterWidget(pluginId, manifest.entryPoints.autoAddToShortcuts);
+          }
+        } else if (ccWidgetComponent.status === Component.Error) {
+          root.recordPluginError(pluginId, "controlCenterWidget", ccWidgetComponent.errorString());
+        }
+      }
+
       Logger.i("PluginService", "Plugin loaded:", pluginId);
       root.pluginLoaded(pluginId);
 
@@ -791,6 +851,15 @@ Singleton {
       LauncherProviderRegistry.unregisterPluginProvider(pluginId);
     }
 
+    // Unregister from ControlCenterWidgetRegistry
+    if (plugin.manifest.entryPoints && plugin.manifest.entryPoints.controlCenterWidget) {
+      // Remove from shortcuts if it was auto-added
+      if (!preserveSettings) {
+        removePluginControlCenterWidgetFromShortcuts(pluginId);
+      }
+      ControlCenterWidgetRegistry.unregisterPluginWidget(pluginId);
+    }
+
     // Destroy Main instance if any
     if (plugin.mainInstance) {
       plugin.mainInstance.destroy();
@@ -820,6 +889,7 @@ Singleton {
         property var barWidget: null
         property var desktopWidget: null
         property var launcherProvider: null
+        property var controlCenterWidget: null
 
         // IPC handlers storage
         property var ipcHandlers: ({})
@@ -832,6 +902,7 @@ Singleton {
         property var saveSettings: null
         property var openPanel: null
         property var closePanel: null
+        property var togglePanel: null
         property var withCurrentScreen: null
         property var tr: null
         property var trp: null
@@ -872,6 +943,16 @@ Singleton {
       // Replace the entire pluginSettings object to trigger QML property bindings
       // Make a shallow copy so bindings detect the change
       api.pluginSettings = Object.assign({}, api.pluginSettings);
+    };
+
+    // ----------------------------------------
+    api.togglePanel = function (screen) {
+      // Toggle this plugin's panel on the specified screen
+      if (!screen) {
+        Logger.w("PluginAPI", "No screen available for toggling panel");
+        return false;
+      }
+      return togglePluginPanel(pluginId, screen);
     };
 
     // ----------------------------------------
@@ -1411,6 +1492,35 @@ Singleton {
     return false;
   }
 
+  // Toggle a plugin's panel - close if open, open if closed
+  function togglePluginPanel(pluginId, screen) {
+    if (!isPluginLoaded(pluginId)) {
+      Logger.w("PluginService", "Cannot toggle panel: plugin not loaded:", pluginId);
+      return false;
+    }
+
+    var plugin = root.loadedPlugins[pluginId];
+    if (!plugin || !plugin.manifest || !plugin.manifest.entryPoints || !plugin.manifest.entryPoints.panel) {
+      Logger.w("PluginService", "Plugin does not provide a panel:", pluginId);
+      return false;
+    }
+
+    // Check if this plugin's panel is already open in any slot
+    for (var slotNum = 1; slotNum <= 2; slotNum++) {
+      var panelName = "pluginPanel" + slotNum;
+      var panel = PanelService.getPanel(panelName, screen);
+
+      if (panel && panel.currentPluginId === pluginId) {
+        // Panel is open for this plugin - toggle it (close)
+        panel.toggle();
+        return true;
+      }
+    }
+
+    // Panel is not open - open it using the existing logic
+    return openPluginPanel(pluginId, screen);
+  }
+
   // ----- Error tracking functions -----
 
   function recordPluginError(pluginId, entryPoint, errorMessage) {
@@ -1506,6 +1616,8 @@ Singleton {
       entryPointFiles.push(entryPoints.panel);
     if (entryPoints.settings)
       entryPointFiles.push(entryPoints.settings);
+    if (entryPoints.controlCenterWidget)
+      entryPointFiles.push(entryPoints.controlCenterWidget);
 
     for (var i = 0; i < entryPointFiles.length; i++) {
       var entryPointFile = entryPointFiles[i];
