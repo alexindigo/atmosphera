@@ -241,7 +241,7 @@ Singleton {
       }
     }
   }
-  
+
   Process {
     id: checkWifiBlocked
     running: false
@@ -323,7 +323,7 @@ Singleton {
   }
 
   // Periodic state polling
- Timer {
+  Timer {
     id: ctlPollTimer
     interval: ctlPollMs
     repeat: true
@@ -422,7 +422,7 @@ Singleton {
   function canDisconnect(device) {
     if (!device) {
       return false;
-    ]
+    }
     return device.connected && !device.pairing && !device.blocked;
   }
   // Status string for a device (translated)

@@ -121,7 +121,7 @@ SmartPanel {
 
   panelContent: Rectangle {
     color: "transparent"
-    
+
     property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.marginL * 2)
 
     ColumnLayout {
@@ -302,7 +302,7 @@ SmartPanel {
                 anchors.fill: parent
                 anchors.margins: Style.marginM
                 spacing: Style.marginL
-                
+
                 Item {
                   Layout.fillHeight: true
                 }
@@ -494,7 +494,7 @@ SmartPanel {
                   anchors.fill: parent
                   anchors.margins: Style.marginM
                   spacing: Style.marginL
-                  
+
                   Item {
                     Layout.fillHeight: true
                   }
