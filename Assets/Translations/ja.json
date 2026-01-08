@@ -399,6 +399,7 @@
     "night-light": "ナイトライト",
     "no": "いいえ",
     "no-results": "結果はありません。",
+    "no-summary": "概要なし",
     "none": "なし",
     "notifications": "通知",
     "official": "公式 (kōshiki)",
@@ -476,9 +477,6 @@
     "always-show": "常に表示する",
     "force-open": "こじ開ける",
     "on-hover": "マウスオーバー時"
-  },
-  "general": {
-    "no-summary": "概要なし"
   },
   "hide-modes": {
     "hidden": "空の場合に非表示",

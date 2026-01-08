@@ -435,7 +435,7 @@ SmartPanel {
                       NText {
                         id: summaryText
                         width: parent.width
-                        text: model.summary || I18n.tr("general.no-summary")
+                        text: model.summary || I18n.tr("common.no-summary")
                         pointSize: Style.fontSizeM
                         color: Color.mOnSurface
                         textFormat: Text.PlainText

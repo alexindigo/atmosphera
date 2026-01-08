@@ -399,6 +399,7 @@
     "night-light": "Lampka nocna",
     "no": "Nie",
     "no-results": "Brak wyników.",
+    "no-summary": "Brak podsumowania",
     "none": "Brak.",
     "notifications": "Powiadomienia",
     "official": "Oficjalny",
@@ -476,9 +477,6 @@
     "always-show": "Zawsze pokazuj",
     "force-open": "Wyważyć.",
     "on-hover": "Po najechaniu kursorem"
-  },
-  "general": {
-    "no-summary": "Brak podsumowania"
   },
   "hide-modes": {
     "hidden": "Ukryj, gdy puste",

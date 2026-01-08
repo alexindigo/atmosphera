@@ -399,6 +399,7 @@
     "night-light": "Veilleuse",
     "no": "Non",
     "no-results": "Aucun résultat",
+    "no-summary": "Aucun résumé",
     "none": "Aucun(e)",
     "notifications": "Notifications",
     "official": "Officiel",
@@ -476,9 +477,6 @@
     "always-show": "Toujours afficher",
     "force-open": "Forcer l'ouverture",
     "on-hover": "Au survol"
-  },
-  "general": {
-    "no-summary": "Aucun résumé"
   },
   "hide-modes": {
     "hidden": "Masquer quand vide",

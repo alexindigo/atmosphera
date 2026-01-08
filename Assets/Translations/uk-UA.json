@@ -399,6 +399,7 @@
     "night-light": "Нічник",
     "no": "Ні",
     "no-results": "Немає результатів",
+    "no-summary": "Немає опису",
     "none": "Жоден",
     "notifications": "Сповіщення",
     "official": "Офіційний",
@@ -476,9 +477,6 @@
     "always-show": "Завжди показувати",
     "force-open": "Зламати силою",
     "on-hover": "При наведенні"
-  },
-  "general": {
-    "no-summary": "Немає опису"
   },
   "hide-modes": {
     "hidden": "Приховувати, коли порожньо",

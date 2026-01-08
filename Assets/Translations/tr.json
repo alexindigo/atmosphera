@@ -399,6 +399,7 @@
     "night-light": "Gece Lambası",
     "no": "Hayır",
     "no-results": "Sonuç bulunamadı",
+    "no-summary": "Özet yok",
     "none": "Hiçbiri",
     "notifications": "Bildirimler",
     "official": "Resmi",
@@ -476,9 +477,6 @@
     "always-show": "Daima göster.",
     "force-open": "Zorla açmak",
     "on-hover": "Üzerine gelindiğinde"
-  },
-  "general": {
-    "no-summary": "Özet yok"
   },
   "hide-modes": {
     "hidden": "Boş olduğunda gizle",

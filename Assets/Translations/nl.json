@@ -399,6 +399,7 @@
     "night-light": "Nachtlampje",
     "no": "Nee",
     "no-results": "Geen resultaten",
+    "no-summary": "Geen samenvatting",
     "none": "Geen",
     "notifications": "Meldingen",
     "official": "Officieel",
@@ -476,9 +477,6 @@
     "always-show": "Altijd weergeven",
     "force-open": "Openbreken",
     "on-hover": "Bij zweven"
-  },
-  "general": {
-    "no-summary": "Geen samenvatting"
   },
   "hide-modes": {
     "hidden": "Verbergen indien leeg",

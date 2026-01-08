@@ -399,6 +399,7 @@
     "night-light": "Nachtlicht",
     "no": "Nein",
     "no-results": "Keine Ergebnisse",
+    "no-summary": "Keine Zusammenfassung",
     "none": "Keine",
     "notifications": "Benachrichtigungen",
     "official": "Offiziell",
@@ -476,9 +477,6 @@
     "always-show": "Immer anzeigen",
     "force-open": "Aufbrechen",
     "on-hover": "Beim Überfahren mit der Maus"
-  },
-  "general": {
-    "no-summary": "Keine Zusammenfassung"
   },
   "hide-modes": {
     "hidden": "Ausblenden, wenn leer",

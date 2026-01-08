@@ -399,6 +399,7 @@
     "night-light": "Ronahiya şevê",
     "no": "Na",
     "no-results": "Ti encam tune.",
+    "no-summary": "Kurte tune ye",
     "none": "Tune",
     "notifications": "Agahdarî",
     "official": "Fermî",
@@ -476,9 +477,6 @@
     "always-show": "Her tim nîşan bide",
     "force-open": "Bişkîne veke",
     "on-hover": "Li ser mişkê"
-  },
-  "general": {
-    "no-summary": "Kurte tune ye"
   },
   "hide-modes": {
     "hidden": "Veşêre dema vala be",

@@ -399,6 +399,7 @@
     "night-light": "Éjszakai fény",
     "no": "Nem",
     "no-results": "Nincs találat",
+    "no-summary": "Nincs összefoglaló",
     "none": "Nincs.",
     "notifications": "Értesítések",
     "official": "Hivatalos",
@@ -476,9 +477,6 @@
     "always-show": "Mindig mutasd",
     "force-open": "Felfeszít",
     "on-hover": "Rámutatáskor"
-  },
-  "general": {
-    "no-summary": "Nincs összefoglaló"
   },
   "hide-modes": {
     "hidden": "Elrejtés, ha üres",

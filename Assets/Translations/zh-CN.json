@@ -399,6 +399,7 @@
     "night-light": "夜灯",
     "no": "否",
     "no-results": "没有结果",
+    "no-summary": "无摘要",
     "none": "无",
     "notifications": "通知",
     "official": "官方",
@@ -476,9 +477,6 @@
     "always-show": "总是显示",
     "force-open": "强行打开",
     "on-hover": "悬停时"
-  },
-  "general": {
-    "no-summary": "无摘要"
   },
   "hide-modes": {
     "hidden": "当为空时隐藏",

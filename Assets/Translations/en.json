@@ -399,6 +399,7 @@
     "night-light": "Night Light",
     "no": "No",
     "no-results": "No results",
+    "no-summary": "No summary",
     "none": "None",
     "notifications": "Notifications",
     "official": "Official",
@@ -476,9 +477,6 @@
     "always-show": "Always show",
     "force-open": "Force open",
     "on-hover": "On hover"
-  },
-  "general": {
-    "no-summary": "No summary"
   },
   "hide-modes": {
     "hidden": "Hide when empty",
