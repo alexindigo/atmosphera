@@ -307,7 +307,7 @@
     },
     "panel": {
       "buttons-discord": "Rejoindre notre Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Donner un avis.",
       "empty": "Les notes de version ne sont pas encore disponibles.",
       "highlight-title": "Points importants",
@@ -339,13 +339,13 @@
     "brightness": "Luminosité",
     "browse": "Parcourir",
     "calendar": "Calendrier",
+    "calendar-panel": "Panneau du calendriere",
     "cancel": "Annuler",
     "cards": "Cartes",
     "charging": "Chargement",
     "check-settings": "Vérifier les paramètres pour plus de détails.",
     "clear": "Clair/Clair(e)",
     "clipboard": "Presse-papiers",
-    "clock-panel": "Panneau d'horloge",
     "close": "Fermer",
     "colors": "Couleurs",
     "command": "Commande",
@@ -589,9 +589,9 @@
       "sources-screen": "Écran"
     },
     "scrolling-modes": {
-      "always": "Défiler Toujours",
-      "hover": "Défiler au Survol",
-      "never": "Ne Jamais Défiler"
+      "always": "Défiler toujours",
+      "hover": "Défiler au survol",
+      "never": "Ne jamais défiler"
     },
     "session-menu-grid-layout": {
       "grid": "Grille",
@@ -761,12 +761,12 @@
       "templates-programs-discord-description-missing": "Aucun client Discord détecté",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programmes",
-      "templates-programs-pywalfox-description": "Écrire {filepath} et exécuter pywalfox update",
+      "templates-programs-pywalfox-description": "Écrire {filepath} et exécuter 'pywalfox update'",
       "templates-programs-spicetify-description": "Écrire {filepath} — le thème Comfy doit être installé et activé manuellement",
       "templates-programs-walker-description": "Écrire {filepath} et définir le thème sur noctalia",
       "templates-programs-yazi-description": "Écrire {filepath} — flavor doit être activée manuellement",
       "templates-programs-zed-description": "Écrire {filepath} — le thème Comfy doit être installé et activé manuellement",
-      "templates-programs-zen-browser-description": "Écrivez dans {filepath} ; copiez dans le fichier chrome/userChrome.css de votre profil Zen.",
+      "templates-programs-zen-browser-description": "Écrire {filepath} — copiez dans le fichier chrome/userChrome.css de votre profil Zen",
       "templates-terminal-description": "Thématisation de l'émulateur de terminal.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Thématisation de l'environnement de bureau et de la boîte à outils d'interface utilisateur.",
@@ -1224,8 +1224,6 @@
       "updating": "Mise à jour..."
     },
     "region": {
-      "clock-panel-desc": "Personnaliser l'apparence du panneau d'horloge.",
-      "clock-panel-title": "Panneau d'horloge",
       "title": "Région"
     },
     "screen-recorder": {

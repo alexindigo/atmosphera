@@ -339,13 +339,13 @@
     "brightness": "Parlaklık",
     "browse": "Göz at",
     "calendar": "Takvim",
+    "calendar-panel": "Takvim paneli",
     "cancel": "İptal",
     "cards": "Kartlar",
     "charging": "Şarj etme",
     "check-settings": "Ayrıntılar için Ayarları Kontrol Et",
     "clear": "Açık",
     "clipboard": "Panoya",
-    "clock-panel": "Saat Paneli",
     "close": "Kapat",
     "colors": "Renkler",
     "command": "Komut",
@@ -589,13 +589,13 @@
       "sources-screen": "Ekran"
     },
     "scrolling-modes": {
-      "always": "Her Zaman Kaydır",
-      "hover": "Üzerine Gelince Kaydır",
-      "never": "Asla Kaydırma"
+      "always": "Her zaman kaydır",
+      "hover": "Üzerine gelince kaydır",
+      "never": "Asla kaydırma"
     },
     "session-menu-grid-layout": {
       "grid": "Izgara",
-      "single-row": "Tek Sıra"
+      "single-row": "Tek sıra"
     },
     "settings-panel-mode": {
       "attached": "Panel çubuğa takılı",
@@ -761,12 +761,12 @@
       "templates-programs-discord-description-missing": "Discord istemcisi algılanmadı",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standart: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programlar",
-      "templates-programs-pywalfox-description": "{filepath} dosyasına yaz ve pywalfox güncellemesini çalıştır",
+      "templates-programs-pywalfox-description": "{filepath} dosyasına yaz ve 'pywalfox update' çalıştır",
       "templates-programs-spicetify-description": "{filepath} dosyasına yaz — Comfy temasının kurulu ve manuel olarak etkinleştirilmiş olması gerekir",
       "templates-programs-walker-description": "{filepath} dosyasına yaz ve temayı noctalia olarak ayarla",
       "templates-programs-yazi-description": "{filepath} dosyasına yaz — flavor manuel etkinleştirilmesi gerekir",
       "templates-programs-zed-description": "{filepath} dosyasına yaz ve yeniden yükle",
-      "templates-programs-zen-browser-description": "{dosya yolu} yazın; Zen profilinizin chrome/userChrome.css dosyasına kopyalayın.",
+      "templates-programs-zen-browser-description": "{dosya yolu} yazın — Zen profilinizin chrome/userChrome.css dosyasına kopyalayın",
       "templates-terminal-description": "Terminal emülatörü temalandırma.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Masaüstü ortamı ve kullanıcı arabilirimi araç seti temalandırma.",
@@ -1224,8 +1224,6 @@
       "updating": "Güncelleniyor..."
     },
     "region": {
-      "clock-panel-desc": "Saat paneli görünümünü özelleştirin.",
-      "clock-panel-title": "Saat paneli",
       "title": "Bölge"
     },
     "screen-recorder": {

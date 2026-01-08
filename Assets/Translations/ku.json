@@ -146,7 +146,7 @@
       "show-scroll-lock-label": "Kilîda Rûpelê Bigere"
     },
     "media-mini": {
-      "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo Panela Lîstikvanê Medyayê.",
+      "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo panela lîstikvanê medyayê.",
       "compact-mode-label": "ڕێگای کورتکراوە",
       "hide-mode-description": "Kontrola ku widget çawa tevdigere dema ku tu medya nayê lîstin.",
       "max-width-description": "Mezinahiya herî zêde ya horizontî ya widgetê diyar dike. Widget dê bi naveroka kurt re were kurtkirin.",
@@ -339,13 +339,13 @@
     "brightness": "Ronahî",
     "browse": "Gerîn",
     "calendar": "Salname",
+    "calendar-panel": "Panela salnameyê",
     "cancel": "Têk bibe",
     "cards": "Kartên",
     "charging": "Barkirin",
     "check-settings": "Ji bo hûragahiyan sazkariyan kontrol bike",
     "clear": "Paqij bike",
     "clipboard": "Klîpbir",
-    "clock-panel": "Panela Saetê",
     "close": "Bigire",
     "colors": "Rengan",
     "command": "Ferman",
@@ -389,7 +389,7 @@
     "logout": "Derketina ji sîstemê",
     "look": "Binêre",
     "media": "Medya",
-    "media-player": "Lîstikvanê Medyayê",
+    "media-player": "Lîstikvanê medyayê",
     "memory": "Bîr",
     "monitors": "Çavdêr",
     "network": "Torağ",
@@ -595,7 +595,7 @@
     },
     "session-menu-grid-layout": {
       "grid": "Tor",
-      "single-row": "Yek Rêz"
+      "single-row": "Yek rêz"
     },
     "settings-panel-mode": {
       "attached": "Panel bi bar ve girêdayî ye",
@@ -761,12 +761,12 @@
       "templates-programs-discord-description-missing": "Mu dîtina muşterîyê Discord tune.",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Apply manually: (load-theme 'noctalia t)",
       "templates-programs-label": "Bername",
-      "templates-programs-pywalfox-description": "Binivîse {filepath} û pywalfox update bimeşîne",
+      "templates-programs-pywalfox-description": "Binivîse {filepath} û 'pywalfox update' bimeşîne",
       "templates-programs-spicetify-description": "{filepath} binivîse — Pêdivî ye ku temaya Comfy bi destan were sazkirin û aktîvkirin",
       "templates-programs-walker-description": "{filepath} binivîse û temayê bike noctalia.",
       "templates-programs-yazi-description": "{filepath} binivîse — divê çêj bi destan were aktîfkirin",
-      "templates-programs-zed-description": "Write {filepath} and reload.",
-      "templates-programs-zen-browser-description": "{filepath} binivîse; kopî bike nav chrome/userChrome.css ya profîla xwe ya Zen.",
+      "templates-programs-zed-description": "Binivîse {filepath} û vegerîne”.",
+      "templates-programs-zen-browser-description": "{filepath} binivîse — kopî bike nav chrome/userChrome.css ya profîla xwe ya Zen",
       "templates-terminal-description": "Şêweya termînalê.",
       "templates-terminal-label": "Termînal",
       "templates-ui-description": "Xuyangavî û amûrên UI yên mijûlkirina sermaseyê.",
@@ -1224,8 +1224,6 @@
       "updating": "Tê rojanekirin..."
     },
     "region": {
-      "clock-panel-desc": "Xuyakirina xuyabûna panela demjimêrê.",
-      "clock-panel-title": "Panela demjimêrê",
       "title": "Herêm"
     },
     "screen-recorder": {

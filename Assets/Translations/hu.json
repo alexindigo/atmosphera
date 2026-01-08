@@ -307,7 +307,7 @@
     },
     "panel": {
       "buttons-discord": "Csatlakozzon a Discordunkhoz",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Adj visszajelzést",
       "empty": "A kiadási jegyzetek még nem érhetők el.",
       "highlight-title": "Főbb újdonságok",
@@ -339,13 +339,13 @@
     "brightness": "Fényerő",
     "browse": "Böngésszen",
     "calendar": "Naptár",
+    "calendar-panel": "Naptár panel",
     "cancel": "Mégse",
     "cards": "Kártyák",
     "charging": "Töltés",
     "check-settings": "Részletekért lásd a Beállításokat",
     "clear": "Tiszta",
     "clipboard": "Vágólap",
-    "clock-panel": "Óra panel",
     "close": "Bezárás",
     "colors": "Színek",
     "command": "Parancs",
@@ -761,12 +761,12 @@
       "templates-programs-discord-description-missing": "Nem észlelt Discord kliens",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programok",
-      "templates-programs-pywalfox-description": "{filepath} írása és a pywalfox update futtatása",
+      "templates-programs-pywalfox-description": "{filepath} írása és a 'pywalfox update' futtatása",
       "templates-programs-spicetify-description": "{filepath} írása — a Comfy témát manuálisan kell telepíteni és aktiválni",
       "templates-programs-walker-description": "{filepath} írása és a téma beállítása noctalia-ra",
       "templates-programs-yazi-description": "{filepath} írása — a stílust kézzel kell aktiválni",
       "templates-programs-zed-description": "{filepath} írása és újratöltés",
-      "templates-programs-zen-browser-description": "Írd be ezt a fájlba: {filepath}; másold be a Zen profilod chrome/userChrome.css fájljába.",
+      "templates-programs-zen-browser-description": "{filepath} írása — másold be a Zen profilod chrome/userChrome.css fájljába",
       "templates-terminal-description": "Terminálemulátor témázás.",
       "templates-terminal-label": "Terminál",
       "templates-ui-description": "Asztali környezet és UI eszközkészlet témázása.",
@@ -1224,8 +1224,6 @@
       "updating": "Frissítés..."
     },
     "region": {
-      "clock-panel-desc": "A óra panel megjelenésének testreszabása.",
-      "clock-panel-title": "Óra panel",
       "title": "Régió"
     },
     "screen-recorder": {

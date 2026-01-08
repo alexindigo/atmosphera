@@ -307,7 +307,7 @@
     },
     "panel": {
       "buttons-discord": "Присоединиться к нашему Discord",
-      "buttons-dismiss": "Ок",
+      "buttons-dismiss": "ОК",
       "buttons-feedback": "Оставьте отзыв",
       "empty": "Примечания к выпуску пока недоступны.",
       "highlight-title": "Основные изменения",
@@ -339,13 +339,13 @@
     "brightness": "Яркость",
     "browse": "Обзор",
     "calendar": "Календарь",
+    "calendar-panel": "Панель календаря",
     "cancel": "Отменить",
     "cards": "Карточки",
     "charging": "Зарядка",
     "check-settings": "Проверьте настройки для получения подробной информации.",
     "clear": "Ясно",
     "clipboard": "Буфер обмена",
-    "clock-panel": "Панель часов",
     "close": "Закрыть",
     "colors": "Цвета",
     "command": "Команда",
@@ -761,12 +761,12 @@
       "templates-programs-discord-description-missing": "Клиент Discord не обнаружен",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартный: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Программы",
-      "templates-programs-pywalfox-description": "Записать {filepath} и запустить pywalfox update",
+      "templates-programs-pywalfox-description": "Записать {filepath} и запустить 'pywalfox update'",
       "templates-programs-spicetify-description": "Записать {filepath} — тему Comfy нужно установить и активировать вручную",
       "templates-programs-walker-description": "Записать {filepath} и установить тему noctalia",
       "templates-programs-yazi-description": "Записать {filepath} — flavor необходимо активировать вручную",
       "templates-programs-zed-description": "Записать {filepath} и перезагрузить",
-      "templates-programs-zen-browser-description": "Запишите в {filepath}; скопируйте в chrome/userChrome.css вашего профиля Zen.",
+      "templates-programs-zen-browser-description": "Запишите в {filepath} — скопируйте в chrome/userChrome.css вашего профиля Zen",
       "templates-terminal-description": "Тематика эмулятора терминала.",
       "templates-terminal-label": "Терминал",
       "templates-ui-description": "Тематика окружения рабочего стола и набора инструментов пользовательского интерфейса.",
@@ -1224,8 +1224,6 @@
       "updating": "Обновление..."
     },
     "region": {
-      "clock-panel-desc": "Настроить внешний вид панели часов.",
-      "clock-panel-title": "Панель часов",
       "title": "Регион"
     },
     "screen-recorder": {
