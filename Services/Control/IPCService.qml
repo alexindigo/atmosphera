@@ -109,6 +109,12 @@ Item {
     function toggle() {
       return IdleInhibitorService.manualToggle();
     }
+    function enable() {
+      IdleInhibitorService.addManualInhibitor(null);
+    }
+    function disable() {
+      IdleInhibitorService.removeManualInhibitor();
+    }
   }
 
   IpcHandler {
