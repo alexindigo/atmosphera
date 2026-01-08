@@ -1501,7 +1501,7 @@ SmartPanel {
           text: {
             if (results.length === 0) {
               if (searchText) {
-                return I18n.tr("launcher.no-results");
+                return I18n.tr("common.no-results");
               }
               // Use provider's empty browsing message if available
               var provider = root.currentProvider;
