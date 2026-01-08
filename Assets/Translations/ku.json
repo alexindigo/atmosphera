@@ -146,13 +146,13 @@
       "show-scroll-lock-label": "Kilîda Rûpelê Bigere"
     },
     "media-mini": {
-      "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo panela lîstikvanê medyayê.",
+      "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo panelê lîstikvanê medyayê.",
       "compact-mode-label": "ڕێگای کورتکراوە",
       "hide-mode-description": "Kontrola ku widget çawa tevdigere dema ku tu medya nayê lîstin.",
       "max-width-description": "Mezinahiya herî zêde ya horizontî ya widgetê diyar dike. Widget dê bi naveroka kurt re were kurtkirin.",
       "no-active-player": "Bê lîstikvanê çalak.",
-      "panel-section-description": "Xuyakirina xuyabûn û reftarên panela pop-up a Media Player.",
-      "panel-section-label": "Panela Lîstikvanê Medyayê",
+      "panel-section-description": "Xuyakirina xuyabûn û reftarên panelê lîstikvanê medyayê.",
+      "panel-section-label": "Panelê lîstikvanê medyayê",
       "scrolling-mode-description": "Kontrola dema ku geroka nivîsê ji bo sernavên rêyên dirêj tê çalak kirin.",
       "scrolling-mode-label": "Moda Gerandinê",
       "show-album-art-description": "Wêneyê albûmê ya strana ku niha lê tê guhdarîkirin nîşan bide.",
@@ -341,7 +341,7 @@
     "brightness": "Ronahî",
     "browse": "Gerîn",
     "calendar": "Salname",
-    "calendar-panel": "Panela salnameyê",
+    "calendar-panel": "Panelê salnameyê",
     "cancel": "Têk bibe",
     "cards": "Kartên",
     "charging": "Barkirin",
@@ -778,7 +778,7 @@
     },
     "control-center": {
       "cards-desc": "Xwerû bike ka kîjan kontrol di navenda kontrolê de û bi çi rêzê de xuya dibin.",
-      "desc": "Vesazkirina cih û reftarên panela navenda kontrolê.",
+      "desc": "Vesazkirina cih û reftarên panelê navenda kontrolê.",
       "position-description": "Dema ku destgeha navenda kontrolê vebe, hilbijêre ka li ku derê bila xuya bibe.",
       "shortcuts-custom-button-command-description": "Fermana ku dema ku bişkok tê tikandin were meşandin.",
       "shortcuts-custom-button-enable-on-state-logic-description": "Çalak bike îkonek duyem û rewşa 'germ' li ser bingeha fermana kontrolê.",
@@ -1006,7 +1006,7 @@
       "settings-icon-mode-label": "Îkonên xwecihî bikar bîne",
       "settings-ignore-mouse-input-description": "Di nav destpêkerê de, danûstandina mişkê û çerxa gerokê neçalak bike.",
       "settings-ignore-mouse-input-label": "Guherandina mişkê paşguh bike",
-      "settings-position-description": "Cihê ku panela destpêkerê lê xuya dibe hilbijêre.",
+      "settings-position-description": "Cihê ku panelê destpêkerê lê xuya dibe hilbijêre.",
       "settings-show-categories-description": "Tabên kategoriyê nîşan bide ji bo parzûnkirina sepanan.",
       "settings-show-categories-label": "Kategoriyan nîşan bide",
       "settings-show-icon-background-description": "Li paş îkonan paşxaneyeke çargoşe ya gilover nîşan bide.",
@@ -1020,7 +1020,7 @@
       "title": "Destpêkar"
     },
     "location": {
-      "calendar-cards-desc": "Rêk bixe û kartên di panela salnameyê de çalak/neçalak bike.",
+      "calendar-cards-desc": "Rêk bixe û kartên di panelê salnameyê de çalak/neçalak bike.",
       "calendar-cards-title": "Kartên salnameyê",
       "calendar-header-label": "Sernavê Salnameyê",
       "calendar-month-label": "Meh",
@@ -1272,12 +1272,12 @@
       "entry-settings-default-info-label": "Fermana xwerû",
       "entry-settings-title": "Vexîne {entry}",
       "entry-settings-tooltip": "Fermanê vesazkirinê",
-      "general-desc": "Maneja reftar û xuyabûna panela menûya rûniştinê.",
+      "general-desc": "Maneja reftar û xuyabûna panelê menûya rûniştinê.",
       "large-buttons-layout-description": "Çawa bişkokên menuya danişînê bên nîşandan hilbijêre.",
       "large-buttons-layout-label": "Rêzika bişkokên mezin",
       "large-buttons-style-description": "Pêşeka danişînê bi bişkokên mezin di şêweya grîd de nîşan bide.",
       "large-buttons-style-label": "Şêwaza bişkokên mezin",
-      "position-description": "Dema ku panela menuya danişînê vebe, hilbijêre ku li ku derê xuya bibe.",
+      "position-description": "Dema ku panelê menuya danişînê vebe, hilbijêre ku li ku derê xuya bibe.",
       "show-header-description": "Sernavê û bişkoka girtinê li jorê menuyê rûniştinê nîşan bide.",
       "show-header-label": "Serpê nîşan bide",
       "show-number-labels-description": "Li ser bişkokan etîketên hejmaran (1-2-3-4...) nîşan bide û ji bo hilbijartina bilez kilîdên hejmaran çalak bike.",
@@ -1338,7 +1338,7 @@
       "scaling-label": "Pîvana navbeynê",
       "scaling-reset-scaling": "Pîvana navbeynê vegerîne",
       "settings-panel-mode-description": "Hilbijêre şêweyê mîhengan (dibe ku ji nû ve vekirinê hewce bike).",
-      "settings-panel-mode-label": "Rewşa panela mîhengan",
+      "settings-panel-mode-label": "Rewşa panelê mîhengan",
       "shadows-description": "Dîsa siya di bin bar û panelan de çalak dike.",
       "shadows-direction-description": "Hilbijêre ku siya ji ku tê avêtin.",
       "shadows-direction-label": "Arasteya siya",
@@ -1384,7 +1384,7 @@
       "settings-recursive-search-label": "Lêgerîna binyadan",
       "settings-select-monitor-folder": "Hilbijêre peldanka dîwarê dîmenderê",
       "settings-selector-description": "Wêneyê dîwarê xwe hilbijêre.",
-      "settings-selector-position-description": "Cihê ku panela hilbijêra dîwêr lê xuya dike hilbijêre.",
+      "settings-selector-position-description": "Cihê ku panelê hilbijêra dîwêr lê xuya dike hilbijêre.",
       "settings-title": "Mîhengên dîwêr"
     }
   },
@@ -1507,8 +1507,8 @@
     },
     "internet-limited": "Pêwendîdar bê înternetê.",
     "ipc": {
-      "powerpanel-deprecated": "PowerPanel bo navê SessionMenu hate guhertin, ev bangewaziya IPC dê di demeke nêz de bê bikaranîn. Ji kerema xwe li şûna wê \"ipc call sessionMenu toggle\" bikar bînin.",
-      "sidepanel-deprecated": "Panela Alîgir wekî Navenda Kontrolê hate guhertin, ev banga IPC dê di demek nêz de were betal kirin. Ji kerema xwe \"ipc call controlCenter toggle\" bikar bînin."
+      "powerpanel-deprecated": "PowerPanel wekî SessionMenu hate guhertin, ev bangewaziya IPC dê di demeke nêz de bê bikaranîn. Ji kerema xwe li şûna wê \"ipc call sessionMenu toggle\" bikar bînin.",
+      "sidepanel-deprecated": "SidePanel wekî ControlPanel hate guhertin, ev banga IPC dê di demek nêz de were betal kirin. Ji kerema xwe \"ipc call controlCenter toggle\" bikar bînin."
     },
     "keyboard-layout": {
       "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin.",

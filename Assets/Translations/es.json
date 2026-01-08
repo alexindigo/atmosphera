@@ -151,7 +151,7 @@
       "hide-mode-description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
       "max-width-description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto.",
       "no-active-player": "Sin reproductor activo",
-      "panel-section-description": "Configurar la apariencia y el comportamiento del panel emergente del reproductor multimedia.",
+      "panel-section-description": "Configurar la apariencia y el comportamiento del panel del reproductor multimedia.",
       "panel-section-label": "Panel del reproductor multimedia",
       "scrolling-mode-description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos.",
       "scrolling-mode-label": "Modo de desplazamiento",

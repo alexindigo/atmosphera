@@ -146,13 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
-      "compact-mode-description": "Ativar um layout que economize espaço para o Painel do Reprodutor de Mídia.",
+      "compact-mode-description": "Ativar um layout que economize espaço para o painel do reprodutor de mídia.",
       "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
       "max-width-description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto.",
       "no-active-player": "Nenhum player ativo",
-      "panel-section-description": "Configure a aparência e o comportamento do painel pop-up do Media Player.",
-      "panel-section-label": "Painel do Reprodutor de Mídia",
+      "panel-section-description": "Configure a aparência e o comportamento do painel do reprodutor de mídia.",
+      "panel-section-label": "Painel do reprodutor de mídia",
       "scrolling-mode-description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos.",
       "scrolling-mode-label": "Modo de rolagem",
       "show-album-art-description": "Exibir a arte do álbum da faixa atualmente sendo reproduzida.",

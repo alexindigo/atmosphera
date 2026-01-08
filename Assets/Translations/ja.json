@@ -151,7 +151,7 @@
       "hide-mode-description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
       "max-width-description": "ウィジェットの最大幅を設定します。内容が短い場合は自動的に縮小します。",
       "no-active-player": "アクティブなプレーヤーなし",
-      "panel-section-description": "メディアプレーヤーのポップアップパネルの表示と動作を設定します。",
+      "panel-section-description": "メディアプレーヤーのパネルの表示と動作を設定します。",
       "panel-section-label": "メディアプレーヤーパネル",
       "scrolling-mode-description": "長いトラックタイトルのスクロール動作を制御します。",
       "scrolling-mode-label": "スクロールモード",

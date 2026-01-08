@@ -151,7 +151,7 @@
       "hide-mode-description": "Contrôle le comportement du widget lorsqu'aucun média n'est en cours de lecture.",
       "max-width-description": "Définit la taille horizontale maximale du widget. Le widget se rétrécira pour s'adapter à un contenu plus court.",
       "no-active-player": "Aucun lecteur actif",
-      "panel-section-description": "Configurer l'apparence et le comportement du panneau contextuel du lecteur multimédia.",
+      "panel-section-description": "Configurer l'apparence et le comportement du panneau du lecteur multimédia.",
       "panel-section-label": "Panneau du lecteur multimédia",
       "scrolling-mode-description": "Contrôler quand le défilement de texte est activé pour les titres de piste longs.",
       "scrolling-mode-label": "Mode de défilement",
