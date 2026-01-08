@@ -601,11 +601,6 @@
       "centered": "Zentriertes Feld",
       "window": "Eigenes Fenster"
     },
-    "shadow-direction": {
-      "bottom": "Unten",
-      "center": "Zentriert",
-      "top": "Oben"
-    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Gespiegelt",

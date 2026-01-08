@@ -601,11 +601,6 @@
       "centered": "Gecentreerd paneel",
       "window": "Apart venster"
     },
-    "shadow-direction": {
-      "bottom": "Onder",
-      "center": "Recht van boven",
-      "top": "Boven"
-    },
     "visualizer-types": {
       "linear": "Lineair",
       "mirrored": "Gespiegeld",

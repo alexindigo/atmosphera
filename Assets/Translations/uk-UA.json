@@ -601,11 +601,6 @@
       "centered": "Центрована панель",
       "window": "Окреме вікно"
     },
-    "shadow-direction": {
-      "bottom": "Знизу",
-      "center": "По центру",
-      "top": "Згори"
-    },
     "visualizer-types": {
       "linear": "Лінійний",
       "mirrored": "Дзеркальний",

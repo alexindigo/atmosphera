@@ -601,11 +601,6 @@
       "centered": "中央に配置",
       "window": "独立したウィンドウ"
     },
-    "shadow-direction": {
-      "bottom": "下",
-      "center": "中央",
-      "top": "上"
-    },
     "visualizer-types": {
       "linear": "リニア",
       "mirrored": "ミラー",

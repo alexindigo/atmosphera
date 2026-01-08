@@ -601,11 +601,6 @@
       "centered": "Centered panel",
       "window": "Separate window"
     },
-    "shadow-direction": {
-      "bottom": "Below",
-      "center": "Overhead",
-      "top": "Above"
-    },
     "visualizer-types": {
       "linear": "Linear",
       "mirrored": "Mirrored",

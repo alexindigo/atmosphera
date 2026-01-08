@@ -601,11 +601,6 @@
       "centered": "居中面板",
       "window": "分离窗口"
     },
-    "shadow-direction": {
-      "bottom": "下方",
-      "center": "居中",
-      "top": "上方"
-    },
     "visualizer-types": {
       "linear": "线性",
       "mirrored": "镜像",
@@ -1223,8 +1218,6 @@
       "updating": "正在更新..."
     },
     "region": {
-      "clock-panel-desc": "自定义时钟面板外观。",
-      "clock-panel-title": "时钟面板",
       "title": "地区"
     },
     "screen-recorder": {

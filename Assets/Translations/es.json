@@ -601,11 +601,6 @@
       "centered": "Panel centrado",
       "window": "Ventana separada"
     },
-    "shadow-direction": {
-      "bottom": "Inferior",
-      "center": "Centro",
-      "top": "Superior"
-    },
     "visualizer-types": {
       "linear": "Lineal",
       "mirrored": "Espejado",

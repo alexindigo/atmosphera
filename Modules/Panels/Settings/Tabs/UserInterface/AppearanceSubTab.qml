@@ -45,7 +45,7 @@ ColumnLayout {
                                                  "p": Qt.point(-2, -2)
                                                },
                                                "top": {
-                                                 "name": I18n.tr("options.shadow-direction.top"),
+                                                 "name": I18n.tr("positions.top"),
                                                  "p": Qt.point(0, -3)
                                                },
                                                "top_right": {
@@ -57,7 +57,7 @@ ColumnLayout {
                                                  "p": Qt.point(-3, 0)
                                                },
                                                "center": {
-                                                 "name": I18n.tr("options.shadow-direction.center"),
+                                                 "name": I18n.tr("positions.center"),
                                                  "p": Qt.point(0, 0)
                                                },
                                                "right": {
@@ -69,7 +69,7 @@ ColumnLayout {
                                                  "p": Qt.point(-2, 2)
                                                },
                                                "bottom": {
-                                                 "name": I18n.tr("options.shadow-direction.bottom"),
+                                                 "name": I18n.tr("positions.bottom"),
                                                  "p": Qt.point(0, 3)
                                                },
                                                "bottom_right": {

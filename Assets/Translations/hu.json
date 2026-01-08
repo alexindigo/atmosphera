@@ -601,11 +601,6 @@
       "centered": "Középre igazított panel",
       "window": "Külön ablak"
     },
-    "shadow-direction": {
-      "bottom": "Alatt",
-      "center": "Felett",
-      "top": "Fölött"
-    },
     "visualizer-types": {
       "linear": "Lineáris",
       "mirrored": "Tükrözött",

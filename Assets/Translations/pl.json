@@ -601,11 +601,6 @@
       "centered": "Panel wyśrodkowany",
       "window": "Oddzielne okno"
     },
-    "shadow-direction": {
-      "bottom": "Poniżej",
-      "center": "Nad głową",
-      "top": "Powyżej"
-    },
     "visualizer-types": {
       "linear": "Liniowy",
       "mirrored": "Lustrzany",
