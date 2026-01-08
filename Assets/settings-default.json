@@ -184,7 +184,7 @@
     "autoPasteClipboard": false,
     "enableClipPreview": true,
     "position": "center",
-    "pinnedExecs": [],
+    "pinnedApps": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
     "terminalCommand": "xterm -e",
