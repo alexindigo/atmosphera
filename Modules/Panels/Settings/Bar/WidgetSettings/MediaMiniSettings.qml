@@ -25,7 +25,7 @@ ColumnLayout {
   property int valueMaxWidth: (widgetData && widgetData.maxWidth !== undefined) ? widgetData.maxWidth : (widgetMetadata && widgetMetadata.maxWidth !== undefined ? widgetMetadata.maxWidth : 145)
   property bool valueUseFixedWidth: (widgetData && widgetData.useFixedWidth !== undefined) ? widgetData.useFixedWidth : (widgetMetadata && widgetMetadata.useFixedWidth !== undefined ? widgetMetadata.useFixedWidth : false)
   property bool valueShowProgressRing: (widgetData && widgetData.showProgressRing !== undefined) ? widgetData.showProgressRing : (widgetMetadata && widgetMetadata.showProgressRing !== undefined ? widgetMetadata.showProgressRing : true)
-  property bool valueCompactMode: (widgetData && widgetData.compactMode !== undefined) ? widgetData.compactMode : (widgetMetadata && widgetMetadata.compactMode !== undefined ? widgetMetadata.compactMode : false)
+  property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {

@@ -486,4 +486,39 @@ SmartPanel {
       }
     }
   }
+
+  // Visualizer Components
+  Component {
+    id: linearComponent
+    NLinearSpectrum {
+      width: parent.width - Style.marginS
+      height: 20
+      values: CavaService.values
+      fillColor: Color.mPrimary
+      opacity: 0.4
+      barPosition: Settings.data.bar.position
+    }
+  }
+
+  Component {
+    id: mirroredComponent
+    NMirroredSpectrum {
+      width: parent.width - Style.marginS
+      height: parent.height - Style.marginS
+      values: CavaService.values
+      fillColor: Color.mPrimary
+      opacity: 0.4
+    }
+  }
+
+  Component {
+    id: waveComponent
+    NWaveSpectrum {
+      width: parent.width - Style.marginS
+      height: parent.height - Style.marginS
+      values: CavaService.values
+      fillColor: Color.mPrimary
+      opacity: 0.4
+    }
+  }
 }
