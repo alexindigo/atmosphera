@@ -211,6 +211,7 @@ SmartPanel {
         // Mode switch (Wi‑Fi / Ethernet)
         NTabBar {
           id: modeTabBar
+          margins: Style.marginS
           Layout.fillWidth: true
           spacing: Style.marginM
           distributeEvenly: true
