@@ -14,7 +14,7 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round((root.isSideBySide ? 480 : 400) * Style.uiScaleRatio)
-  preferredHeight: Math.round((root.compactMode ? 200 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio)
+  preferredHeight: Math.round((root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio)
 
   readonly property var mediaMiniSettings: {
     try {
@@ -67,7 +67,7 @@ SmartPanel {
     id: playerContent
     anchors.fill: parent
 
-    readonly property real contentPreferredHeight: (root.compactMode ? 200 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio
+    readonly property real contentPreferredHeight: (root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio
 
     Loader {
       id: visualizerLoaderCompact
@@ -99,130 +99,148 @@ SmartPanel {
       spacing: Style.marginL
       z: 1
 
-      RowLayout {
+      NBox {
         Layout.fillWidth: true
-        spacing: Style.marginS
+        Layout.preferredHeight: headerRow.implicitHeight + Style.marginM * 2
 
-        NIcon {
-          icon: "music"
-          pointSize: Style.fontSizeL
-          color: Color.mPrimary
-        }
+        RowLayout {
+          id: headerRow
+          anchors.fill: parent
+          anchors.margins: Style.marginM
+          spacing: Style.marginM
 
-        NText {
-          text: I18n.tr("common.media-player")
-          font.weight: Style.fontWeightBold
-          pointSize: Style.fontSizeL
-          color: Color.mOnSurface
-          Layout.fillWidth: true
-        }
-
-        Rectangle {
-          radius: Style.radiusS
-          color: playerSelectorMouse.containsMouse ? Color.mPrimary : "transparent"
-          implicitWidth: playerRow.implicitWidth + Style.marginM
-          implicitHeight: Style.baseWidgetSize * 0.8
-          visible: MediaService.getAvailablePlayers().length > 1
-
-          RowLayout {
-            id: playerRow
-            anchors.centerIn: parent
-            spacing: Style.marginXS
-
-            NText {
-              text: MediaService.currentPlayer ? MediaService.currentPlayer.identity : "Select Player"
-              pointSize: Style.fontSizeXS
-              color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
-            }
-            NIcon {
-              icon: "chevron-down"
-              pointSize: Style.fontSizeXS
-              color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
-            }
+          NIcon {
+            icon: "music"
+            pointSize: Style.fontSizeL
+            color: Color.mPrimary
           }
 
-          MouseArea {
-            id: playerSelectorMouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: playerContextMenu.open()
+          NText {
+            text: I18n.tr("common.media-player")
+            font.weight: Style.fontWeightBold
+            pointSize: Style.fontSizeL
+            color: Color.mOnSurface
+            Layout.fillWidth: true
           }
 
-          Popup {
-            id: playerContextMenu
-            x: 0
-            y: parent.height
-            width: 160
-            padding: Style.marginS
+          Rectangle {
+            radius: Style.radiusS
+            color: playerSelectorMouse.containsMouse ? Color.mPrimary : "transparent"
+            implicitWidth: playerRow.implicitWidth + Style.marginM
+            implicitHeight: Style.baseWidgetSize * 0.8
+            visible: MediaService.getAvailablePlayers().length > 1
 
-            background: Rectangle {
-              color: Color.mSurfaceVariant
-              border.color: Color.mOutline
-              border.width: Style.borderS
-              radius: Style.iRadiusM
+            RowLayout {
+              id: playerRow
+              anchors.centerIn: parent
+              spacing: Style.marginXS
+
+              NText {
+                text: MediaService.currentPlayer ? MediaService.currentPlayer.identity : "Select Player"
+                pointSize: Style.fontSizeXS
+                color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
+              }
+              NIcon {
+                icon: "chevron-down"
+                pointSize: Style.fontSizeXS
+                color: playerSelectorMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurfaceVariant
+              }
             }
 
-            contentItem: ColumnLayout {
-              spacing: 0
-              Repeater {
-                model: MediaService.getAvailablePlayers()
-                delegate: Rectangle {
-                  Layout.fillWidth: true
-                  Layout.preferredHeight: 30
-                  color: "transparent"
+            MouseArea {
+              id: playerSelectorMouse
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onClicked: playerContextMenu.open()
+            }
 
-                  Rectangle {
-                    anchors.fill: parent
-                    color: itemMouse.containsMouse ? Color.mPrimary : "transparent"
-                    radius: Style.iRadiusS
-                  }
+            Popup {
+              id: playerContextMenu
+              x: 0
+              y: parent.height
+              width: 160
+              padding: Style.marginS
 
-                  RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: Style.marginS
-                    spacing: Style.marginS
+              background: Rectangle {
+                color: Color.mSurfaceVariant
+                border.color: Color.mOutline
+                border.width: Style.borderS
+                radius: Style.iRadiusM
+              }
 
-                    NIcon {
-                      visible: MediaService.currentPlayer && MediaService.currentPlayer.identity === modelData.identity
-                      icon: "check"
-                      color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mPrimary
-                      pointSize: Style.fontSizeS
+              contentItem: ColumnLayout {
+                spacing: 0
+                Repeater {
+                  model: MediaService.getAvailablePlayers()
+                  delegate: Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30
+                    color: "transparent"
+
+                    Rectangle {
+                      anchors.fill: parent
+                      color: itemMouse.containsMouse ? Color.mPrimary : "transparent"
+                      radius: Style.iRadiusS
                     }
 
-                    NText {
-                      text: modelData.identity
-                      pointSize: Style.fontSizeS
-                      color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurface
-                      Layout.fillWidth: true
-                      elide: Text.ElideRight
-                    }
-                  }
+                    RowLayout {
+                      anchors.fill: parent
+                      anchors.margins: Style.marginS
+                      spacing: Style.marginS
 
-                  MouseArea {
-                    id: itemMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                      MediaService.currentPlayer = modelData;
-                      playerContextMenu.close();
+                      NIcon {
+                        visible: MediaService.currentPlayer && MediaService.currentPlayer.identity === modelData.identity
+                        icon: "check"
+                        color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mPrimary
+                        pointSize: Style.fontSizeS
+                      }
+
+                      NText {
+                        text: modelData.identity
+                        pointSize: Style.fontSizeS
+                        color: itemMouse.containsMouse ? Color.mOnPrimary : Color.mOnSurface
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
+                      }
+                    }
+
+                    MouseArea {
+                      id: itemMouse
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
+                      onClicked: {
+                        MediaService.currentPlayer = modelData;
+                        playerContextMenu.close();
+                      }
                     }
                   }
                 }
               }
             }
           }
+
+          NIconButton {
+            icon: "close"
+            tooltipText: I18n.tr("common.close")
+            baseSize: Style.baseWidgetSize * 0.8
+            onClicked: root.close()
+          }
         }
       }
 
       // Adaptive Content Area
-      Item {
+      NBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
         GridLayout {
           anchors.fill: parent
+          anchors.leftMargin: root.compactMode ? Style.marginL : Style.marginM
+          anchors.rightMargin: root.compactMode ? Style.marginL : Style.marginM
+          anchors.topMargin: Style.marginM
+          anchors.bottomMargin: Style.marginM
           columns: root.isSideBySide ? 2 : 1
           columnSpacing: Style.marginL
           rowSpacing: Style.marginL
@@ -230,8 +248,8 @@ SmartPanel {
           // Album Art (Vertical in normal, Horizontal in compact)
           Item {
             id: albumArtItem
-            Layout.preferredWidth: root.compactMode ? Math.round(140 * Style.uiScaleRatio) : parent.width
-            Layout.preferredHeight: root.compactMode ? Math.round(140 * Style.uiScaleRatio) : (root.showAlbumArt ? -1 : 0)
+            Layout.preferredWidth: root.compactMode ? Math.round(110 * Style.uiScaleRatio) : parent.width
+            Layout.preferredHeight: root.compactMode ? Math.round(110 * Style.uiScaleRatio) : (root.showAlbumArt ? -1 : 0)
             Layout.fillWidth: !root.compactMode
             Layout.fillHeight: !root.compactMode && root.showAlbumArt
             Layout.alignment: Qt.AlignVCenter
