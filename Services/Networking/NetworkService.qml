@@ -841,7 +841,7 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: {
-        Logger.i("Network", "Wi-Fi state change command executed.");
+        Logger.i("Network", "Wi-Fi state change command executed");
         // Re-check the state to ensure it's in sync
         syncWifiState();
       }

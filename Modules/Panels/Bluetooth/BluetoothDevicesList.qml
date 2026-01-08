@@ -82,7 +82,7 @@ NBox {
         function getContentColor(defaultColor = Color.mOnSurface) {
           if (modelData.pairing || modelData.state === BluetoothDeviceState.Connecting)
             return Color.mPrimary;
-          if (modelData.blocked)
+          if (modelData.blocked || modelData.state === BluetoothDeviceState.Disconnecting)
             return Color.mError;
           return defaultColor;
         }
@@ -92,7 +92,7 @@ NBox {
         radius: Style.radiusM
         clip: true
 
-        color: modelData.connected ? Qt.alpha(getContentColor(), 0.08) : Color.mSurface
+        color: (modelData.connected && modelData.state !== BluetoothDeviceState.Disconnecting) ? Qt.alpha(getContentColor(), 0.08) : Color.mSurface
 
         // Content column so expanded details are laid out inside the card
         ColumnLayout {
@@ -311,6 +311,7 @@ NBox {
               // Row 1: Signal | Battery
               RowLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
                 spacing: Style.marginXS
                 NIcon {
                   icon: BluetoothService.getSignalIcon(modelData)
@@ -337,6 +338,7 @@ NBox {
               }
               RowLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
                 spacing: Style.marginXS
                 NIcon {
                   icon: "battery"

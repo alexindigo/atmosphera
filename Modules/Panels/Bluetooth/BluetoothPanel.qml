@@ -19,11 +19,7 @@ SmartPanel {
     id: panelContent
     color: "transparent"
 
-    // Calculate content height based on header + devices list (or minimum for empty states)
-    property real headerHeight: headerRow.implicitHeight + Style.marginM * 2
-    property real devicesHeight: devicesList.implicitHeight
-    property real calculatedHeight: (devicesHeight !== 0) ? (headerHeight + devicesHeight + Style.marginL * 2 + Style.marginM) : (280 * Style.uiScaleRatio)
-    property real contentPreferredHeight: (BluetoothService.adapter && BluetoothService.adapter.enabled) ? Math.min(root.preferredHeight, calculatedHeight) : Math.min(root.preferredHeight, 280 * Style.uiScaleRatio)
+    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.marginL * 2)
 
     ColumnLayout {
       id: mainColumn
@@ -43,9 +39,9 @@ SmartPanel {
           spacing: Style.marginM
 
           NIcon {
-            icon: "bluetooth"
+            icon: BluetoothService.enabled ? "bluetooth" : "bluetooth-off"
             pointSize: Style.fontSizeXXL
-            color: Color.mPrimary
+            color: BluetoothService.enabled ? Color.mPrimary : Color.mOnSurfaceVariant
           }
 
           NText {
@@ -98,12 +94,14 @@ SmartPanel {
         id: disabledBox
         visible: !(BluetoothService.adapter && BluetoothService.adapter.enabled)
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.preferredHeight: disabledColumn.implicitHeight + Style.marginM * 2
 
         // Center the content within this rectangle
         ColumnLayout {
+          id: disabledColumn
           anchors.fill: parent
-          spacing: Style.marginM
+          anchors.margins: Style.marginM
+          spacing: Style.marginL
 
           Item {
             Layout.fillHeight: true
@@ -171,7 +169,6 @@ SmartPanel {
           // Paired devices
           BluetoothDevicesList {
             label: I18n.tr("bluetooth.panel.paired-devices")
-            tooltipText: I18n.tr("tooltips.connect-disconnect-devices")
             headerMode: "layout"
             property var items: {
               if (!BluetoothService.adapter || !BluetoothService.adapter.devices)
@@ -278,10 +275,12 @@ SmartPanel {
               return (availableCount === 0);
             }
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: emptyColumn.implicitHeight + Style.marginM * 2
 
             ColumnLayout {
+              id: emptyColumn
               anchors.fill: parent
+              anchors.margins: Style.marginM
               spacing: Style.marginL
 
               Item {
@@ -290,7 +289,7 @@ SmartPanel {
 
               NIcon {
                 icon: "bluetooth"
-                pointSize: 64
+                pointSize: 48
                 color: Color.mOnSurfaceVariant
                 Layout.alignment: Qt.AlignHCenter
               }
@@ -320,7 +319,7 @@ SmartPanel {
           // Fallback - No devices, scanning
           NBox {
             Layout.fillWidth: true
-            Layout.preferredHeight: columnScanning.implicitHeight + Style.marginM * 2
+            Layout.preferredHeight: scanningColumn.implicitHeight + Style.marginM * 2
             visible: {
               if (!(BluetoothService.adapter && BluetoothService.adapter.devices) || !BluetoothService.scanningActive) {
                 return false;
@@ -333,11 +332,14 @@ SmartPanel {
             }
 
             ColumnLayout {
-              id: columnScanning
+              id: scanningColumn
               anchors.fill: parent
               anchors.margins: Style.marginM
+              spacing: Style.marginL
 
-              spacing: Style.marginM
+              Item {
+                Layout.fillHeight: true
+              }
 
               RowLayout {
                 Layout.alignment: Qt.AlignHCenter
@@ -371,6 +373,10 @@ SmartPanel {
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
+              }
+
+              Item {
+                Layout.fillHeight: true
               }
             }
           }
