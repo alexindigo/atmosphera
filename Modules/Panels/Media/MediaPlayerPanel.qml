@@ -476,7 +476,7 @@ SmartPanel {
               Rectangle {
                 implicitWidth: root.compactMode ? (Style.baseWidgetSize * 1.3) : (Style.baseWidgetSize * 1.8)
                 implicitHeight: root.compactMode ? (Style.baseWidgetSize * 1.3) : (Style.baseWidgetSize * 1.8)
-                radius: root.compactMode ? Style.radiusM : Style.radiusL
+                radius: root.compactMode ? Style.iRadiusM : Style.iRadiusL
                 color: Color.mPrimary
 
                 NIcon {
