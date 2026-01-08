@@ -601,11 +601,6 @@
       "centered": "Ortalanmış panel",
       "window": "Ayrı pencere"
     },
-    "shadow-direction": {
-      "bottom": "Alt",
-      "center": "Merkez",
-      "top": "Üst"
-    },
     "visualizer-types": {
       "linear": "Doğrusal",
       "mirrored": "Yansıtılmış",

@@ -601,11 +601,6 @@
       "centered": "Центрированная панель",
       "window": "Отдельное окно"
     },
-    "shadow-direction": {
-      "bottom": "Внизу",
-      "center": "Над головой",
-      "top": "Вверху"
-    },
     "visualizer-types": {
       "linear": "Линейный",
       "mirrored": "Зеркальный",
