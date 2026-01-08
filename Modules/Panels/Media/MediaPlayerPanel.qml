@@ -424,23 +424,25 @@ SmartPanel {
               NText {
                 anchors.left: parent.left
                 anchors.top: parent.bottom
+                anchors.topMargin: 2 // Small gap for side-by-side mode
                 text: MediaService.positionString || "0:00"
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurfaceVariant
-                visible: parent.visible && !root.isSideBySide
+                visible: parent.visible
               }
               NText {
                 anchors.right: parent.right
                 anchors.top: parent.bottom
+                anchors.topMargin: 2
                 text: MediaService.lengthString || "0:00"
                 pointSize: Style.fontSizeXS
                 color: Color.mOnSurfaceVariant
-                visible: parent.visible && !root.isSideBySide
+                visible: parent.visible
               }
             }
 
             Item {
-              Layout.preferredHeight: root.isSideBySide ? 0 : Style.marginS
+              Layout.preferredHeight: root.isSideBySide ? Style.marginM : Style.marginS
             }
 
             RowLayout {
