@@ -146,13 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
-      "compact-mode-description": "Ativar um layout que economize espaço para o Painel do Reprodutor de Mídia.",
+      "compact-mode-description": "Ativar um layout que economize espaço para o painel do reprodutor de mídia.",
       "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
       "max-width-description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto.",
       "no-active-player": "Nenhum player ativo",
-      "panel-section-description": "Configure a aparência e o comportamento do painel pop-up do Media Player.",
-      "panel-section-label": "Painel do Reprodutor de Mídia",
+      "panel-section-description": "Configure a aparência e o comportamento do painel do reprodutor de mídia.",
+      "panel-section-label": "Painel do reprodutor de mídia",
       "scrolling-mode-description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos.",
       "scrolling-mode-label": "Modo de rolagem",
       "show-album-art-description": "Exibir a arte do álbum da faixa atualmente sendo reproduzida.",
@@ -309,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Entre no nosso Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Dar feedback",
       "empty": "As notas da versão ainda não estão disponíveis.",
       "highlight-title": "Destaques",
@@ -341,13 +341,13 @@
     "brightness": "Brilho",
     "browse": "Navegar",
     "calendar": "Calendário",
+    "calendar-panel": "Painel do calendário",
     "cancel": "Cancelar",
     "cards": "Cartões",
     "charging": "Carregando",
     "check-settings": "Verifique as configurações para obter detalhes.",
     "clear": "Claro",
     "clipboard": "Área de transferência",
-    "clock-panel": "Painel do Relógio",
     "close": "Fechar",
     "colors": "Cores",
     "command": "Comando",
@@ -588,13 +588,13 @@
       "sources-screen": "Tela"
     },
     "scrolling-modes": {
-      "always": "Rolar Sempre",
-      "hover": "Rolar ao Passar o Mouse",
-      "never": "Nunca Rolar"
+      "always": "Rolar sempre",
+      "hover": "Rolar ao passar o mouse",
+      "never": "Nunca rolar"
     },
     "session-menu-grid-layout": {
       "grid": "Grade",
-      "single-row": "Linha Única"
+      "single-row": "Linha única"
     },
     "settings-panel-mode": {
       "attached": "Painel anexado à barra",
@@ -760,12 +760,12 @@
       "templates-programs-discord-description-missing": "Nenhum cliente Discord detectado",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programas",
-      "templates-programs-pywalfox-description": "Escrever {filepath} e executar pywalfox update",
+      "templates-programs-pywalfox-description": "Escrever {filepath} e executar 'pywalfox update'",
       "templates-programs-spicetify-description": "Escrever {filepath} — o tema Comfy precisa ser instalado e ativado manualmente",
       "templates-programs-walker-description": "Escrever {filepath} e definir tema como noctalia",
       "templates-programs-yazi-description": "Escrever {filepath} — o sabor precisa ser ativado manualmente",
       "templates-programs-zed-description": "Escrever {filepath} e recarregar",
-      "templates-programs-zen-browser-description": "Escreva em {filepath}; copie para o chrome/userChrome.css do seu perfil Zen.",
+      "templates-programs-zen-browser-description": "Escrever {filepath} — copie para o arquivo chrome/userChrome.css do seu perfil Zen",
       "templates-terminal-description": "Tematização do emulador de terminal.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
@@ -1223,8 +1223,6 @@
       "updating": "Atualizando..."
     },
     "region": {
-      "clock-panel-desc": "Personalize a aparência do painel do relógio.",
-      "clock-panel-title": "Painel do relógio",
       "title": "Região"
     },
     "screen-recorder": {
