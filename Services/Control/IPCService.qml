@@ -102,6 +102,14 @@ Item {
     function dismissAll() {
       NotificationService.dismissAllActive();
     }
+
+    function getHistory(): string {
+      return JSON.stringify(NotificationService.getHistorySnapshot(), null, 2);
+    }
+
+    function removeFromHistory(id: string): bool {
+      return NotificationService.removeFromHistory(id);
+    }
   }
 
   IpcHandler {
