@@ -215,6 +215,7 @@ SmartPanel {
       NTabBar {
         id: tabsBox
         Layout.fillWidth: true
+        margins: Style.marginS
         visible: NotificationService.historyList.count > 0 && panelContent.groupByDate
         currentIndex: panelContent.currentRange
         tabHeight: Style.baseWidgetSize * 0.7

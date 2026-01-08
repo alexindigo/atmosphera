@@ -319,6 +319,7 @@ SmartPanel {
       NTabBar {
         id: tabBar
         Layout.fillWidth: true
+        margins: Style.marginS
         currentIndex: panelContent.currentTabIndex
         distributeEvenly: true
         onCurrentIndexChanged: panelContent.currentTabIndex = currentIndex
