@@ -151,6 +151,8 @@
       "hide-mode-description": "控制当没有媒体播放时小部件的行为。",
       "max-width-description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。",
       "no-active-player": "无活动播放器",
+      "panel-section-description": "配置媒体播放器弹出面板的外观和行为。",
+      "panel-section-label": "媒体播放器面板",
       "scrolling-mode-description": "控制何时为长曲目标题启用文本滚动。",
       "scrolling-mode-label": "滚动模式",
       "show-album-art-description": "显示当前播放曲目的专辑封面。",

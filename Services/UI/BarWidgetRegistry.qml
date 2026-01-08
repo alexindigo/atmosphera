@@ -172,7 +172,10 @@ Singleton {
                                     "showVisualizer": false,
                                     "showProgressRing": true,
                                     "visualizerType": "linear",
-                                    "compactMode": false
+                                    "panelShowAlbumArt": true,
+                                    "panelShowVisualizer": true,
+                                    "compactShowAlbumArt": true,
+                                    "compactShowVisualizer": false
                                   },
                                   "Microphone": {
                                     "displayMode": "onhover"

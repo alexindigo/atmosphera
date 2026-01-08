@@ -151,6 +151,8 @@
       "hide-mode-description": "Kontroluje zachowanie widżetu, gdy żadne media nie są odtwarzane.",
       "max-width-description": "Ustawia maksymalną szerokość poziomą widżetu. Widżet skurczy się, aby dopasować się do krótszej zawartości.",
       "no-active-player": "Brak aktywnego odtwarzacza",
+      "panel-section-description": "Skonfiguruj wygląd i zachowanie wyskakującego panelu Odtwarzacza multimediów.",
+      "panel-section-label": "Panel odtwarzacza multimedialnego",
       "scrolling-mode-description": "Kontroluje, kiedy włączone jest przewijanie tekstu dla długich tytułów utworów.",
       "scrolling-mode-label": "Tryb przewijania",
       "show-album-art-description": "Wyświetl okładkę albumu aktualnie odtwarzanego utworu.",

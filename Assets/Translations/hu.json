@@ -151,6 +151,8 @@
       "hide-mode-description": "Szabályozza a widget viselkedését, ha nincs média lejátszva.",
       "max-width-description": "Beállítja a widget maximális vízszintes méretét. A widget zsugorodik, hogy illeszkedjen a rövidebb tartalomhoz.",
       "no-active-player": "Nincs aktív lejátszó",
+      "panel-section-description": "A médialejátszó felugró paneljének megjelenésének és viselkedésének konfigurálása.",
+      "panel-section-label": "Médialejátszó panel",
       "scrolling-mode-description": "Szabályozza, mikor engedélyezett a szöveggörgetés hosszú zenecímek esetén.",
       "scrolling-mode-label": "Görgetési mód",
       "show-album-art-description": "Jelenítse meg a borítóképet az aktuálisan játszott számhoz.",

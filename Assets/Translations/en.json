@@ -151,6 +151,8 @@
       "hide-mode-description": "Controls how the widget behaves when no media is playing.",
       "max-width-description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content.",
       "no-active-player": "No active player",
+      "panel-section-description": "Configure the appearance and behavior of the Media Player popup panel.",
+      "panel-section-label": "Media Player Panel",
       "scrolling-mode-description": "Control when text scrolling is enabled for long track titles.",
       "scrolling-mode-label": "Scrolling mode",
       "show-album-art-description": "Display the album artwork for the currently playing track.",
