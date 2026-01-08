@@ -319,6 +319,8 @@ SmartPanel {
       NTabBar {
         id: tabBar
         Layout.fillWidth: true
+        border.color: Style.boxBorderColor
+        border.width: Style.borderS
         margins: Style.marginS
         currentIndex: panelContent.currentTabIndex
         distributeEvenly: true

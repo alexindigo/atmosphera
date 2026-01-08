@@ -213,6 +213,8 @@ SmartPanel {
           id: modeTabBar
           margins: Style.marginS
           Layout.fillWidth: true
+          border.color: Style.boxBorderColor
+          border.width: Style.borderS
           spacing: Style.marginM
           distributeEvenly: true
           currentIndex: root.panelViewMode === "wifi" ? 0 : 1
