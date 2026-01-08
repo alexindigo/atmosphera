@@ -17,7 +17,7 @@ Rectangle {
   property color textHoverColor: Color.mOnHover
   property bool enabled: true
   property real fontSize: Style.fontSizeM
-  property int fontWeight: Style.fontWeightBold
+  property int fontWeight: Style.fontWeightSemiBold
   property real iconSize: Style.fontSizeL
   property bool outlined: false
   property int horizontalAlignment: Qt.AlignHCenter

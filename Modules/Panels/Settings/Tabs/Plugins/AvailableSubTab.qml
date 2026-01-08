@@ -15,6 +15,7 @@ ColumnLayout {
   property string pluginSearchText: ""
   property string selectedTag: ""
   property int tagsRefreshCounter: 0
+  property int availablePluginsRefreshCounter: 0
 
   // Pseudo tags for filtering by download status
   readonly property var pseudoTags: ["", "downloaded", "notDownloaded"]
@@ -154,6 +155,9 @@ ColumnLayout {
       id: availablePluginsRepeater
 
       model: {
+        // Reference counter to force re-evaluation when plugins are updated
+        void (root.availablePluginsRefreshCounter);
+
         var all = PluginService.availablePlugins || [];
         var filtered = [];
 
@@ -464,53 +468,9 @@ ColumnLayout {
     target: PluginService
 
     function onAvailablePluginsUpdated() {
-      // Force tags to re-evaluate
+      // Force tags and plugins model to re-evaluate
       root.tagsRefreshCounter++;
-
-      // Force model refresh for available plugins
-      availablePluginsRepeater.model = undefined;
-      Qt.callLater(function () {
-        availablePluginsRepeater.model = Qt.binding(function () {
-          var all = PluginService.availablePlugins || [];
-          var filtered = [];
-
-          // Apply filter based on selectedTag
-          for (var i = 0; i < all.length; i++) {
-            var plugin = all[i];
-            var downloaded = plugin.downloaded || false;
-            var pluginTags = plugin.tags || [];
-
-            if (root.selectedTag === "") {
-              filtered.push(plugin);
-            } else if (root.selectedTag === "downloaded") {
-              if (downloaded)
-                filtered.push(plugin);
-            } else if (root.selectedTag === "notDownloaded") {
-              if (!downloaded)
-                filtered.push(plugin);
-            } else {
-              if (pluginTags.indexOf(root.selectedTag) >= 0) {
-                filtered.push(plugin);
-              }
-            }
-          }
-
-          // Move hello-world plugin to the end
-          var helloWorldIndex = -1;
-          for (var h = 0; h < filtered.length; h++) {
-            if (filtered[h].id === "hello-world") {
-              helloWorldIndex = h;
-              break;
-            }
-          }
-          if (helloWorldIndex >= 0) {
-            var helloWorld = filtered.splice(helloWorldIndex, 1)[0];
-            filtered.push(helloWorld);
-          }
-
-          return filtered;
-        });
-      });
+      root.availablePluginsRefreshCounter++;
 
       // Manually trigger update check after a small delay to ensure all registries are loaded
       Qt.callLater(function () {

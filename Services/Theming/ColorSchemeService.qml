@@ -48,7 +48,7 @@ Singleton {
     // First ensure the downloaded schemes directory exists
     Quickshell.execDetached(["mkdir", "-p", downloadedSchemesDirectory]);
     // Find in both preinstalled and downloaded directories
-    findProcess.command = ["find", schemesDirectory, downloadedSchemesDirectory, "-name", "*.json", "-type", "f"];
+    findProcess.command = ["find", "-L", schemesDirectory, downloadedSchemesDirectory, "-mindepth", "2", "-name", "*.json", "-type", "f"];
     findProcess.running = true;
   }
 
