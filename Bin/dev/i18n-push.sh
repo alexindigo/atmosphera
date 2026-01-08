@@ -64,6 +64,15 @@ if ! echo "$COMBINED_JSON" | jq -e '.en' > /dev/null 2>&1; then
     exit 1
 fi
 
+# Confirmation
+echo ""
+read -p "Push $LOCALE_COUNT locale(s) to $API_URL? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 0
+fi
+
 # Push to API
 echo "Pushing to API..."
 RESPONSE=$(echo "$COMBINED_JSON" | curl -s -w "\n%{http_code}" -X POST \

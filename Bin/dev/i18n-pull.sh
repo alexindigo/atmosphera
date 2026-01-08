@@ -22,6 +22,15 @@ echo "API: ${API_BASE}"
 echo "Output: ${OUTPUT_DIR}"
 echo ""
 
+# Confirmation
+read -p "Pull translations and overwrite local files? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 0
+fi
+echo ""
+
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
 
