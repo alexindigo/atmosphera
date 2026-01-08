@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Włącz układ oszczędzający miejsce dla panelu odtwarzacza multimedialnego.",
+      "compact-mode-label": "Tryb kompaktowy",
       "hide-mode-description": "Kontroluje zachowanie widżetu, gdy żadne media nie są odtwarzane.",
       "max-width-description": "Ustawia maksymalną szerokość poziomą widżetu. Widżet skurczy się, aby dopasować się do krótszej zawartości.",
       "no-active-player": "Brak aktywnego odtwarzacza",
+      "panel-section-description": "Skonfiguruj wygląd i zachowanie panelu odtwarzacza multimediów.",
+      "panel-section-label": "Panel odtwarzacza multimedialnego",
       "scrolling-mode-description": "Kontroluje, kiedy włączone jest przewijanie tekstu dla długich tytułów utworów.",
       "scrolling-mode-label": "Tryb przewijania",
       "show-album-art-description": "Wyświetl okładkę albumu aktualnie odtwarzanego utworu.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Dołącz do Discorda",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Przekaż opinię.",
       "empty": "Informacje o wydaniu nie są jeszcze dostępne.",
       "highlight-title": "Najważniejsze zmiany",
@@ -337,13 +341,13 @@
     "brightness": "Jasność",
     "browse": "Przeglądaj",
     "calendar": "Kalendarz",
+    "calendar-panel": "Panel kalendarza",
     "cancel": "Anuluj",
     "cards": "Karty",
     "charging": "Ładowanie",
     "check-settings": "Sprawdź Ustawienia, aby uzyskać szczegóły",
     "clear": "Jasny, przejrzysty, oczywisty.",
     "clipboard": "Schowek",
-    "clock-panel": "Panel zegara",
     "close": "Zamknij",
     "colors": "Kolory",
     "command": "Komenda",
@@ -387,6 +391,7 @@
     "logout": "Wyloguj się",
     "look": "Spójrz.",
     "media": "Media",
+    "media-player": "Odtwarzacz multimedialny",
     "memory": "Pamięć",
     "monitors": "Monitory",
     "network": "Sieć",
@@ -394,6 +399,7 @@
     "night-light": "Lampka nocna",
     "no": "Nie",
     "no-results": "Brak wyników.",
+    "no-summary": "Brak podsumowania",
     "none": "Brak.",
     "notifications": "Powiadomienia",
     "official": "Oficjalny",
@@ -472,9 +478,6 @@
     "force-open": "Wyważyć.",
     "on-hover": "Po najechaniu kursorem"
   },
-  "general": {
-    "no-summary": "Brak podsumowania"
-  },
   "hide-modes": {
     "hidden": "Ukryj, gdy puste",
     "idle": "Ukryj, gdy bezczynny.",
@@ -506,7 +509,6 @@
       "system": "System",
       "webbrowser": "Przeglądarka www"
     },
-    "no-results": "Nie znaleziono wyników.",
     "providers": {
       "applications": "Aplikacje",
       "calculator": "Kalkulator",
@@ -598,11 +600,6 @@
       "attached": "Panel przypięty do paska",
       "centered": "Panel wyśrodkowany",
       "window": "Oddzielne okno"
-    },
-    "shadow-direction": {
-      "bottom": "Poniżej",
-      "center": "Nad głową",
-      "top": "Powyżej"
     },
     "visualizer-types": {
       "linear": "Liniowy",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "Nie wykryto klienta Discord — zainstaluj vencord, vesktop, webcord, armcord, equibop, lightcord lub dorion",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el<br>Zastosuj ręcznie: (load-theme 'noctalia t)",
       "templates-programs-label": "Programy",
-      "templates-programs-pywalfox-description": "Zapisz {filepath} i uruchom pywalfox update",
+      "templates-programs-pywalfox-description": "Zapisz {filepath} i uruchom 'pywalfox update'",
       "templates-programs-spicetify-description": "Zapisz {filepath} — motyw Comfy musi być zainstalowany i aktywowany ręcznie",
       "templates-programs-walker-description": "Zapisz {filepath} i ustaw motyw na noctalia",
       "templates-programs-yazi-description": "Zapisz {filepath} — styl musi być aktywowany ręcznie",
       "templates-programs-zed-description": "Zapisz {filepath} i przeładuj",
-      "templates-programs-zen-browser-description": "Zapisz w {filepath}; skopiuj do chrome/userChrome.css w swoim profilu Zen.",
+      "templates-programs-zen-browser-description": "Zapisz {filepath} — skopiuj do pliku chrome/userChrome.css w swoim profilu Zen",
       "templates-terminal-description": "Motywy emulatora terminala.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Motywy środowiska graficznego i toolkitów UI.",
@@ -1221,8 +1218,6 @@
       "updating": "Aktualizowanie {plugin}..."
     },
     "region": {
-      "clock-panel-desc": "Dostosuj wygląd panelu zegara.",
-      "clock-panel-title": "Panel zegara",
       "title": "Region"
     },
     "screen-recorder": {

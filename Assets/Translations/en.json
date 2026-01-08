@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Enable a space-saving layout for the media player panel.",
+      "compact-mode-label": "Compact mode",
       "hide-mode-description": "Controls how the widget behaves when no media is playing.",
       "max-width-description": "Sets the maximum horizontal size of the widget. The widget will shrink to fit shorter content.",
       "no-active-player": "No active player",
+      "panel-section-description": "Configure the appearance and behavior of the media player panel.",
+      "panel-section-label": "Media player panel",
       "scrolling-mode-description": "Control when text scrolling is enabled for long track titles.",
       "scrolling-mode-label": "Scrolling mode",
       "show-album-art-description": "Display the album artwork for the currently playing track.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Join our Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Give feedback",
       "empty": "Release notes are not available yet.",
       "highlight-title": "Highlights",
@@ -337,13 +341,13 @@
     "brightness": "Brightness",
     "browse": "Browse",
     "calendar": "Calendar",
+    "calendar-panel": "Calendar Panel",
     "cancel": "Cancel",
     "cards": "Cards",
     "charging": "Charging",
     "check-settings": "Check Settings for details",
     "clear": "Clear",
     "clipboard": "Clipboard",
-    "clock-panel": "Clock Panel",
     "close": "Close",
     "colors": "Colors",
     "command": "Command",
@@ -387,6 +391,7 @@
     "logout": "Logout",
     "look": "Look",
     "media": "Media",
+    "media-player": "Media Player",
     "memory": "Memory",
     "monitors": "Monitors",
     "network": "Network",
@@ -394,6 +399,7 @@
     "night-light": "Night Light",
     "no": "No",
     "no-results": "No results",
+    "no-summary": "No summary",
     "none": "None",
     "notifications": "Notifications",
     "official": "Official",
@@ -472,9 +478,6 @@
     "force-open": "Force open",
     "on-hover": "On hover"
   },
-  "general": {
-    "no-summary": "No summary"
-  },
   "hide-modes": {
     "hidden": "Hide when empty",
     "idle": "Hide when idle",
@@ -506,7 +509,6 @@
       "system": "System",
       "webbrowser": "Web Browser"
     },
-    "no-results": "No results found",
     "providers": {
       "applications": "Applications",
       "calculator": "Calculator",
@@ -592,17 +594,12 @@
     },
     "session-menu-grid-layout": {
       "grid": "Grid",
-      "single-row": "Single Row"
+      "single-row": "Single row"
     },
     "settings-panel-mode": {
       "attached": "Panel attached to bar",
       "centered": "Centered panel",
       "window": "Separate window"
-    },
-    "shadow-direction": {
-      "bottom": "Below",
-      "center": "Overhead",
-      "top": "Above"
     },
     "visualizer-types": {
       "linear": "Linear",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "No Discord client detected",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programs",
-      "templates-programs-pywalfox-description": "Write {filepath} and run pywalfox update",
+      "templates-programs-pywalfox-description": "Write {filepath} and run 'pywalfox update'",
       "templates-programs-spicetify-description": "Write {filepath} — Comfy theme needs to be installed and activated manually",
       "templates-programs-walker-description": "Write {filepath} and set theme to noctalia",
       "templates-programs-yazi-description": "Write {filepath} — flavor needs to be activated manually",
       "templates-programs-zed-description": "Write {filepath} and reload",
-      "templates-programs-zen-browser-description": "Write {filepath}; copy into your Zen profile's chrome/userChrome.css",
+      "templates-programs-zen-browser-description": "Write {filepath} — copy into your Zen profile's chrome/userChrome.css",
       "templates-terminal-description": "Terminal emulator theming.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Desktop environment and UI toolkit theming.",
@@ -1221,8 +1218,6 @@
       "updating": "Updating..."
     },
     "region": {
-      "clock-panel-desc": "Customize the clock panel appearance.",
-      "clock-panel-title": "Clock panel",
       "title": "Region"
     },
     "screen-recorder": {
@@ -1311,7 +1306,7 @@
       "animation-speed-label": "Animation speed",
       "animation-speed-reset": "Reset animation speed",
       "appearance-desc": "Customize visual elements like tooltips, borders, and shadows.",
-      "box-border-description": "Displays an outline around content areas.",
+      "box-border-description": "Display an outline around content areas.",
       "box-border-label": "Container outline",
       "box-border-radius-description": "Adjusts the corner roundness of major layout sections, such as sidebars, cards, and content panels.",
       "box-border-radius-label": "Container Radius",

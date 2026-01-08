@@ -83,6 +83,9 @@ Item {
   property bool isDestroying: false
   property bool hovered: false
 
+  // Revision counter to force icon re-evaluation
+  property int iconRevision: 0
+
   property ListModel localWorkspaces: ListModel {}
   property real masterProgress: 0.0
   property bool effectsActive: false
@@ -236,6 +239,14 @@ Item {
       if (showApplications) {
         refreshWorkspaces();
       }
+    }
+  }
+
+  // Refresh icons when DesktopEntries becomes available
+  Connections {
+    target: DesktopEntries.applications
+    function onValuesChanged() {
+      root.iconRevision++;
     }
   }
 
@@ -831,7 +842,10 @@ Item {
 
               width: parent.width
               height: parent.height
-              source: ThemeIcons.iconForAppId(model.appId)
+              source: {
+                root.iconRevision; // Force re-evaluation when revision changes
+                return ThemeIcons.iconForAppId(model.appId?.toLowerCase());
+              }
               smooth: true
               asynchronous: true
               opacity: model.isFocused ? Style.opacityFull : unfocusedIconsOpacity

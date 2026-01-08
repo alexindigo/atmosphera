@@ -13,7 +13,7 @@ Item {
   property bool handleSearch: false
   property string supportedLayouts: "grid" // Only grid layout for emoji
   property int preferredGridColumns: 7 // More columns for compact emoji display
-  property real preferredGridCellRatio: 1.0 // Square cells like apps
+  property real preferredGridCellRatio: 1.15 // Slightly taller than wide to accommodate label
   property bool supportsAutoPaste: true // Emoji can be auto-pasted
 
   property string selectedCategory: "recent"

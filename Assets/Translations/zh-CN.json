@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "滚动锁定"
     },
     "media-mini": {
+      "compact-mode-description": "启用媒体播放器面板的节省空间布局。",
+      "compact-mode-label": "紧凑模式",
       "hide-mode-description": "控制当没有媒体播放时小部件的行为。",
       "max-width-description": "设置小部件的最大水平尺寸。当内容较短时，小部件会自动收缩以适应内容。",
       "no-active-player": "无活动播放器",
+      "panel-section-description": "配置媒体播放器面板的外观和行为。",
+      "panel-section-label": "媒体播放器面板",
       "scrolling-mode-description": "控制何时为长曲目标题启用文本滚动。",
       "scrolling-mode-label": "滚动模式",
       "show-album-art-description": "显示当前播放曲目的专辑封面。",
@@ -337,13 +341,13 @@
     "brightness": "亮度",
     "browse": "浏览",
     "calendar": "日历",
+    "calendar-panel": "日历面板",
     "cancel": "取消",
     "cards": "卡片",
     "charging": "充电",
     "check-settings": "查看设置了解详情",
     "clear": "清晰",
     "clipboard": "剪贴板",
-    "clock-panel": "时钟面板",
     "close": "关闭",
     "colors": "颜色",
     "command": "命令",
@@ -387,6 +391,7 @@
     "logout": "退出登录",
     "look": "看",
     "media": "媒体",
+    "media-player": "媒体播放器",
     "memory": "记忆",
     "monitors": "显示器",
     "network": "网络",
@@ -394,6 +399,7 @@
     "night-light": "夜灯",
     "no": "否",
     "no-results": "没有结果",
+    "no-summary": "无摘要",
     "none": "无",
     "notifications": "通知",
     "official": "官方",
@@ -472,9 +478,6 @@
     "force-open": "强行打开",
     "on-hover": "悬停时"
   },
-  "general": {
-    "no-summary": "无摘要"
-  },
   "hide-modes": {
     "hidden": "当为空时隐藏",
     "idle": "空闲时隐藏",
@@ -506,7 +509,6 @@
       "system": "系统",
       "webbrowser": "网页浏览器"
     },
-    "no-results": "未找到结果",
     "providers": {
       "applications": "应用程序",
       "calculator": "计算器",
@@ -598,11 +600,6 @@
       "attached": "状态栏附属面板",
       "centered": "居中面板",
       "window": "分离窗口"
-    },
-    "shadow-direction": {
-      "bottom": "下方",
-      "center": "居中",
-      "top": "上方"
     },
     "visualizer-types": {
       "linear": "线性",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "未检测到 Discord 客户端",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>标准: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "程序",
-      "templates-programs-pywalfox-description": "写入 {filepath} 并运行 pywalfox update",
+      "templates-programs-pywalfox-description": "写入 {filepath} 并运行 'pywalfox update'",
       "templates-programs-spicetify-description": "写入 {filepath}，Comfy 主题需要手动安装和激活",
       "templates-programs-walker-description": "写入 {filepath} 并将主题设置为 noctalia",
       "templates-programs-yazi-description": "写入 {filepath}，需要手动激活 flavor",
       "templates-programs-zed-description": "写入 {filepath} 并重新加载",
-      "templates-programs-zen-browser-description": "将 {filepath} 写入；复制到你的 Zen 配置文件的 chrome/userChrome.css 中",
+      "templates-programs-zen-browser-description": "写入 {filepath}，复制到你的 Zen 配置文件的 chrome/userChrome.css 中",
       "templates-terminal-description": "终端模拟器主题。",
       "templates-terminal-label": "终端",
       "templates-ui-description": "桌面环境和 UI 工具包主题。",
@@ -1221,8 +1218,6 @@
       "updating": "正在更新..."
     },
     "region": {
-      "clock-panel-desc": "自定义时钟面板外观。",
-      "clock-panel-title": "时钟面板",
       "title": "地区"
     },
     "screen-recorder": {

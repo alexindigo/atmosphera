@@ -453,7 +453,7 @@ Item {
                 id: tabItem
                 width: sidebarList.width - (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
-                radius: Style.radiusS
+                radius: Style.iRadiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : "transparent")
                 readonly property bool selected: index === root.currentTabIndex
                 property bool hovering: false

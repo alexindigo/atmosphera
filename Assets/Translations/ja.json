@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "メディアプレーヤーパネルの省スペースレイアウトを有効にする。",
+      "compact-mode-label": "コンパクトモード",
       "hide-mode-description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
       "max-width-description": "ウィジェットの最大幅を設定します。内容が短い場合は自動的に縮小します。",
       "no-active-player": "アクティブなプレーヤーなし",
+      "panel-section-description": "メディアプレーヤーのパネルの表示と動作を設定します。",
+      "panel-section-label": "メディアプレーヤーパネル",
       "scrolling-mode-description": "長いトラックタイトルのスクロール動作を制御します。",
       "scrolling-mode-label": "スクロールモード",
       "show-album-art-description": "現在再生中のトラックのアルバムアートを表示します。",
@@ -337,13 +341,13 @@
     "brightness": "明るさ",
     "browse": "閲覧 (閲覧する - etsuran suru)",
     "calendar": "カレンダー",
+    "calendar-panel": "カレンダーパネル",
     "cancel": "キャンセル",
     "cards": "カード",
     "charging": "充電中",
     "check-settings": "詳細については設定を確認してください。",
     "clear": "クリア",
     "clipboard": "クリップボード",
-    "clock-panel": "時計パネル",
     "close": "閉じる",
     "colors": "色",
     "command": "コマンド",
@@ -387,6 +391,7 @@
     "logout": "ログアウト",
     "look": "見る (miru)",
     "media": "メディア",
+    "media-player": "メディアプレーヤー",
     "memory": "記憶",
     "monitors": "モニタ",
     "network": "ネットワーク",
@@ -394,6 +399,7 @@
     "night-light": "ナイトライト",
     "no": "いいえ",
     "no-results": "結果はありません。",
+    "no-summary": "概要なし",
     "none": "なし",
     "notifications": "通知",
     "official": "公式 (kōshiki)",
@@ -472,9 +478,6 @@
     "force-open": "こじ開ける",
     "on-hover": "マウスオーバー時"
   },
-  "general": {
-    "no-summary": "概要なし"
-  },
   "hide-modes": {
     "hidden": "空の場合に非表示",
     "idle": "アイドル時に非表示",
@@ -506,7 +509,6 @@
       "system": "システム",
       "webbrowser": "ウェブブラウザ"
     },
-    "no-results": "結果が見つかりませんでした。",
     "providers": {
       "applications": "アプリケーション",
       "calculator": "電卓",
@@ -598,11 +600,6 @@
       "attached": "バーに吸着",
       "centered": "中央に配置",
       "window": "独立したウィンドウ"
-    },
-    "shadow-direction": {
-      "bottom": "下",
-      "center": "中央",
-      "top": "上"
     },
     "visualizer-types": {
       "linear": "リニア",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "Discord クライアントが検出されませんでした",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>標準: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "プログラム",
-      "templates-programs-pywalfox-description": "{filepath} を書き込み、pywalfox update を実行します。",
+      "templates-programs-pywalfox-description": "{filepath} を書き込みます、'pywalfox update' を実行します。",
       "templates-programs-spicetify-description": "{filepath} を書き込みます。Comfy テーマを手動でインストールして有効化する必要があります。",
-      "templates-programs-walker-description": "{filepath} を書き込み、テーマを noctalia に設定します。",
+      "templates-programs-walker-description": "{filepath} を書き込みます、テーマを noctalia に設定します。",
       "templates-programs-yazi-description": "{filepath} を書き込みます。フレーバーは手動で有効化する必要があります。",
-      "templates-programs-zed-description": "{filepath} を書き込み、リロードします。",
-      "templates-programs-zen-browser-description": "{filepath} を記述; Zen プロファイルの chrome/userChrome.css にコピーしてください。",
+      "templates-programs-zed-description": "{filepath} を書き込みます、リロードします。",
+      "templates-programs-zen-browser-description": "{filepath} を書き込みます 。Zen プロファイルの chrome/userChrome.css にコピーしてください。",
       "templates-terminal-description": "ターミナルエミュレータのテーマ設定",
       "templates-terminal-label": "ターミナル",
       "templates-ui-description": "デスクトップ環境と UI ツールキットのテーマ設定",
@@ -1221,8 +1218,6 @@
       "updating": "更新中..."
     },
     "region": {
-      "clock-panel-desc": "時計パネルの外観をカスタマイズします。",
-      "clock-panel-title": "時計パネル",
       "title": "地域"
     },
     "screen-recorder": {

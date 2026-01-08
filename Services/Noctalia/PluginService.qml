@@ -147,12 +147,33 @@ Singleton {
       if (manifest) {
         pluginsToLoad.push(enabledIds[i]);
       } else {
-        Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - cleaning up");
-        // Plugin was deleted from disk but still marked as enabled
-        // Unregister it completely and remove its widget from bar
-        var widgetId = "plugin:" + enabledIds[i];
-        removeWidgetFromBar(widgetId);
-        PluginRegistry.unregisterPlugin(enabledIds[i]);
+        Logger.w("PluginService", "Plugin", enabledIds[i], "is enabled but not found on disk - install");
+        var sourceUrl = PluginRegistry.getPluginSourceUrl(enabledIds[i]);
+        root.installPlugin({
+                             id: enabledIds[i],
+                             source: {
+                               url: sourceUrl
+                             }
+                           }, false, function (success, error, registeredKey) {
+                             if (success) {
+                               ToastService.showNotice(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-success", {
+                                                                                                  "plugin": registeredKey
+                                                                                                }));
+                               // Load the plugin since it was already enabled (state persisted but files were missing)
+                               loadPlugin(registeredKey);
+
+                               // Add plugin widget to bar if it provides one
+                               var manifest = PluginRegistry.getPluginManifest(registeredKey);
+                               if (manifest && manifest.entryPoints && manifest.entryPoints.barWidget) {
+                                 var widgetId = "plugin:" + registeredKey;
+                                 addWidgetToBar(widgetId, "right");
+                               }
+                             } else {
+                               ToastService.showError(I18n.tr("panels.plugins.title"), I18n.tr("panels.plugins.install-error", {
+                                                                                                 "error": error || "Unknown error"
+                                                                                               }));
+                             }
+                           });
       }
     }
 
@@ -900,23 +921,25 @@ Singleton {
     };
 
     // ----------------------------------------
-    api.togglePanel = function (screen) {
+    api.togglePanel = function (screen, buttonItem) {
       // Toggle this plugin's panel on the specified screen
+      // buttonItem: optional, if provided the panel will position near this button
       if (!screen) {
         Logger.w("PluginAPI", "No screen available for toggling panel");
         return false;
       }
-      return togglePluginPanel(pluginId, screen);
+      return togglePluginPanel(pluginId, screen, buttonItem);
     };
 
     // ----------------------------------------
-    api.openPanel = function (screen) {
+    api.openPanel = function (screen, buttonItem) {
       // Open this plugin's panel on the specified screen
+      // buttonItem: optional, if provided the panel will position near this button
       if (!screen) {
         Logger.w("PluginAPI", "No screen available for opening panel");
         return false;
       }
-      return openPluginPanel(pluginId, screen);
+      return openPluginPanel(pluginId, screen, buttonItem);
     };
 
     // ----------------------------------------
@@ -1395,7 +1418,7 @@ Singleton {
   }
 
   // Open a plugin's panel (finds a free slot and loads the panel)
-  function openPluginPanel(pluginId, screen) {
+  function openPluginPanel(pluginId, screen, buttonItem) {
     if (!isPluginLoaded(pluginId)) {
       Logger.w("PluginService", "Cannot open panel: plugin not loaded:", pluginId);
       return false;
@@ -1416,7 +1439,7 @@ Singleton {
       if (panel) {
         // If this slot is already showing this plugin's panel, toggle it
         if (panel.currentPluginId === pluginId) {
-          panel.toggle();
+          panel.toggle(buttonItem);
           return true;
         }
 
@@ -1425,7 +1448,7 @@ Singleton {
           // Set the pluginId first - when panel opens and panelContent loads,
           // Component.onCompleted will call loadPluginPanel automatically
           panel.currentPluginId = pluginId;
-          panel.open();
+          panel.open(buttonItem);
           return true;
         }
       }
@@ -1438,7 +1461,7 @@ Singleton {
       // Set the pluginId first - when panel opens and panelContent loads,
       // Component.onCompleted will call loadPluginPanel automatically
       panel1.currentPluginId = pluginId;
-      panel1.open();
+      panel1.open(buttonItem);
       return true;
     }
 
@@ -1447,7 +1470,8 @@ Singleton {
   }
 
   // Toggle a plugin's panel - close if open, open if closed
-  function togglePluginPanel(pluginId, screen) {
+  // buttonItem: optional, if provided the panel will position near this button
+  function togglePluginPanel(pluginId, screen, buttonItem) {
     if (!isPluginLoaded(pluginId)) {
       Logger.w("PluginService", "Cannot toggle panel: plugin not loaded:", pluginId);
       return false;
@@ -1466,13 +1490,13 @@ Singleton {
 
       if (panel && panel.currentPluginId === pluginId) {
         // Panel is open for this plugin - toggle it (close)
-        panel.toggle();
+        panel.toggle(buttonItem);
         return true;
       }
     }
 
     // Panel is not open - open it using the existing logic
-    return openPluginPanel(pluginId, screen);
+    return openPluginPanel(pluginId, screen, buttonItem);
   }
 
   // ----- Error tracking functions -----

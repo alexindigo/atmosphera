@@ -401,7 +401,7 @@ Singleton {
       property bool enableClipPreview: true
       // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property string position: "center"
-      property list<string> pinnedExecs: []
+      property list<string> pinnedApps: []
       property bool useApp2Unit: false
       property bool sortByMostUsed: true
       property string terminalCommand: "xterm -e"

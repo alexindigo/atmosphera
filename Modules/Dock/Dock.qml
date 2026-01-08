@@ -661,7 +661,13 @@ Loader {
                               modelData.toplevel.activate();
                             } else if (modelData?.appId) {
                               // Pinned app not running - launch it
-                              const app = DesktopEntries.byId(modelData.appId);
+                              // Use ThemeIcons to robustly find the desktop entry
+                              const app = ThemeIcons.findAppEntry(modelData.appId);
+
+                              if (!app) {
+                                Logger.w("Dock", `Could not find desktop entry for pinned app: ${modelData.appId}`);
+                                return;
+                              }
 
                               if (Settings.data.appLauncher.customLaunchPrefixEnabled && Settings.data.appLauncher.customLaunchPrefix) {
                                 // Use custom launch prefix

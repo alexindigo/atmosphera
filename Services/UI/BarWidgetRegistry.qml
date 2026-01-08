@@ -27,6 +27,7 @@ Singleton {
                            "Launcher": launcherComponent,
                            "MediaMini": mediaMiniComponent,
                            "Microphone": microphoneComponent,
+                           "Network": networkComponent,
                            "NightLight": nightLightComponent,
                            "NoctaliaPerformance": noctaliaPerformanceComponent,
                            "NotificationHistory": notificationHistoryComponent,
@@ -39,7 +40,6 @@ Singleton {
                            "Tray": trayComponent,
                            "Volume": volumeComponent,
                            "VPN": vpnComponent,
-                           "Network": networkComponent,
                            "WallpaperSelector": wallpaperSelectorComponent,
                            "Workspace": workspaceComponent
                          })
@@ -171,7 +171,12 @@ Singleton {
                                     "showArtistFirst": true,
                                     "showVisualizer": false,
                                     "showProgressRing": true,
-                                    "visualizerType": "linear"
+                                    "visualizerType": "linear",
+                                    "compactMode": false,
+                                    "panelShowAlbumArt": true,
+                                    "panelShowVisualizer": true,
+                                    "compactShowAlbumArt": true,
+                                    "compactShowVisualizer": false
                                   },
                                   "Microphone": {
                                     "displayMode": "onhover"

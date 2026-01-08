@@ -124,6 +124,62 @@ in
       '';
     };
 
+    plugins = lib.mkOption {
+      type =
+        with lib.types;
+        oneOf [
+          jsonFormat.type
+          str
+          path
+        ];
+      default = { };
+      example = lib.literalExpression ''
+        {
+          sources = [
+            {
+              enabled = true;
+              name = "Official Noctalia Plugins";
+              url = "https://github.com/noctalia-dev/noctalia-plugins";
+            }
+          ];
+          states = {
+            catwalk = {
+              enabled = true;
+              sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+            };
+          };
+          version = 1;
+        }
+      '';
+      description = ''
+        Noctalia shell plugin configuration as an attribute set, string
+        or filepath, to be written to ~/.config/noctalia/plugins.json.
+      '';
+    };
+
+    pluginSettings = lib.mkOption {
+      type =
+        with lib.types;
+        attrsOf (oneOf [
+          jsonFormat.type
+          str
+          path
+        ]);
+      default = { };
+      example = lib.literalExpression ''
+        {
+          catwalk = {
+            minimumThreshold = 25;
+            hideBackground = true;
+          };
+        }
+      '';
+      description = ''
+        Each plugin’s settings as an attribute set, string
+        or filepath, to be written to ~/.config/noctalia/plugins/plugin-name/settings.json.
+      '';
+    };
+
     app2unit.package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.app2unit;
@@ -147,9 +203,13 @@ in
           X-Restart-Triggers =
             lib.optional (cfg.settings != { }) config.xdg.configFile."noctalia/settings.json".source
             ++ lib.optional (cfg.colors != { }) config.xdg.configFile."noctalia/colors.json".source
+            ++ lib.optional (cfg.plugins != { }) config.xdg.configFile."noctalia/plugins.json".source
             ++ lib.optional (
               cfg.user-templates != { }
-            ) config.xdg.configFile."noctalia/user-templates.toml".source;
+            ) config.xdg.configFile."noctalia/user-templates.toml".source
+            ++ lib.mapAttrsToList (
+              name: value: config.xdg.configFile."noctalia/plugins/${name}/settings.json".source
+            ) cfg.pluginSettings;
         };
 
         Service = {
@@ -173,6 +233,9 @@ in
         "noctalia/colors.json" = lib.mkIf (cfg.colors != { }) {
           source = generateJson "colors" cfg.colors;
         };
+        "noctalia/plugins.json" = lib.mkIf (cfg.plugins != { }) {
+          source = generateJson "plugins" cfg.plugins;
+        };
         "noctalia/user-templates.toml" = lib.mkIf (cfg.user-templates != { }) {
           source =
             if lib.isString cfg.user-templates then
@@ -182,7 +245,13 @@ in
             else
               tomlFormat.generate "noctalia-user-templates.toml" cfg.user-templates;
         };
-      };
+      }
+      // lib.mapAttrs' (
+        name: value:
+        lib.nameValuePair "noctalia/plugins/${name}/settings.json" {
+          source = generateJson "${name}-settings" value;
+        }
+      ) cfg.pluginSettings;
 
       assertions = [
         {

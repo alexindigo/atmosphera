@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Увімкнути компактне розташування для панелі медіаплеєра.",
+      "compact-mode-label": "Компактний режим",
       "hide-mode-description": "Керує поведінкою віджета, коли медіа не відтворюється.",
       "max-width-description": "Встановлює максимальний горизонтальний розмір віджета. Віджет зменшується для коротшого вмісту.",
       "no-active-player": "Немає активного плеєра",
+      "panel-section-description": "Налаштуйте зовнішній вигляд та поведінку панелі медіаплеєра.",
+      "panel-section-label": "Панель медіаплеєра",
       "scrolling-mode-description": "Керування, коли увімкнено прокрутку тексту для довгих назв треків.",
       "scrolling-mode-label": "Режим прокрутки",
       "show-album-art-description": "Відображати обкладинку альбому для поточного треку.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Приєднатися до нашого Discord",
-      "buttons-dismiss": "Ок",
+      "buttons-dismiss": "ОК",
       "buttons-feedback": "Надати відгук",
       "empty": "Примітки до релізу ще недоступні.",
       "highlight-title": "Основні зміни",
@@ -337,13 +341,13 @@
     "brightness": "Яскравість",
     "browse": "Перегляд",
     "calendar": "Календар",
+    "calendar-panel": "Панель календаря",
     "cancel": "Скасувати",
     "cards": "Картки",
     "charging": "Заряджання",
     "check-settings": "Перевірте налаштування для деталей.",
     "clear": "Ясний/Прозорий",
     "clipboard": "Буфер обміну",
-    "clock-panel": "Панель годинника",
     "close": "Закрити",
     "colors": "Кольори",
     "command": "Команда",
@@ -387,6 +391,7 @@
     "logout": "Вийти",
     "look": "Подивись",
     "media": "Медіа",
+    "media-player": "Медіапрогравач",
     "memory": "Пам'ять",
     "monitors": "Монітори",
     "network": "Мережа",
@@ -394,6 +399,7 @@
     "night-light": "Нічник",
     "no": "Ні",
     "no-results": "Немає результатів",
+    "no-summary": "Немає опису",
     "none": "Жоден",
     "notifications": "Сповіщення",
     "official": "Офіційний",
@@ -472,9 +478,6 @@
     "force-open": "Зламати силою",
     "on-hover": "При наведенні"
   },
-  "general": {
-    "no-summary": "Немає опису"
-  },
   "hide-modes": {
     "hidden": "Приховувати, коли порожньо",
     "idle": "Приховувати, коли неактивний",
@@ -506,7 +509,6 @@
       "system": "Система",
       "webbrowser": "Веб-браузер"
     },
-    "no-results": "Результатів не знайдено",
     "providers": {
       "applications": "Застосунки",
       "calculator": "Калькулятор",
@@ -598,11 +600,6 @@
       "attached": "Панель прикріплена до панелі",
       "centered": "Центрована панель",
       "window": "Окреме вікно"
-    },
-    "shadow-direction": {
-      "bottom": "Знизу",
-      "center": "По центру",
-      "top": "Згори"
     },
     "visualizer-types": {
       "linear": "Лінійний",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "Клієнт Discord не виявлено",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартний: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Застосунки",
-      "templates-programs-pywalfox-description": "Записати {filepath} та запустити pywalfox update",
+      "templates-programs-pywalfox-description": "Записати {filepath} та запустити 'pywalfox update'",
       "templates-programs-spicetify-description": "Записати {filepath} — тему Comfy потрібно встановити та активувати вручну",
       "templates-programs-walker-description": "Записати {filepath} та встановити тему noctalia",
       "templates-programs-yazi-description": "Записати {filepath} — flavor потрібно активувати вручну",
       "templates-programs-zed-description": "Записати {filepath} та перезавантажити",
-      "templates-programs-zen-browser-description": "Запишіть {filepath}; скопіюйте у chrome/userChrome.css вашого профілю Zen.",
+      "templates-programs-zen-browser-description": "Запишіть {filepath} — скопіюйте у chrome/userChrome.css вашого профілю Zen",
       "templates-terminal-description": "Оформлення емулятора терміналу.",
       "templates-terminal-label": "Термінал",
       "templates-ui-description": "Оформлення робочого середовища та інструментарію інтерфейсу.",
@@ -1221,8 +1218,6 @@
       "updating": "Оновлення..."
     },
     "region": {
-      "clock-panel-desc": "Налаштуйте вигляд панелі годинника.",
-      "clock-panel-title": "Панель годинника",
       "title": "Регіон"
     },
     "screen-recorder": {

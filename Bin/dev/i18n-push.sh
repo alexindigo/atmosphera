@@ -12,8 +12,8 @@ PROJECT_SLUG="${TRANSLATION_PROJECT:-noctalia-shell}"
 TRANSLATIONS_DIR="${1:-Assets/Translations}"
 
 # Check for secret
-if [ -z "$TRANSLATION_PUSH_SECRET" ]; then
-    echo "Error: TRANSLATION_PUSH_SECRET environment variable is required"
+if [ -z "$NOCTALIA_SHELL_TRANSLATION_PUSH_SECRET" ]; then
+    echo "Error: NOCTALIA_SHELL_TRANSLATION_PUSH_SECRET environment variable is required"
     exit 1
 fi
 
@@ -64,11 +64,20 @@ if ! echo "$COMBINED_JSON" | jq -e '.en' > /dev/null 2>&1; then
     exit 1
 fi
 
+# Confirmation
+echo ""
+read -p "Push $LOCALE_COUNT locale(s) to $API_URL? [y/N] " -n 1 -r
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 0
+fi
+
 # Push to API
 echo "Pushing to API..."
 RESPONSE=$(echo "$COMBINED_JSON" | curl -s -w "\n%{http_code}" -X POST \
     "$API_URL/api/projects/$PROJECT_SLUG/push" \
-    -H "Authorization: Bearer $TRANSLATION_PUSH_SECRET" \
+    -H "Authorization: Bearer $NOCTALIA_SHELL_TRANSLATION_PUSH_SECRET" \
     -H "Content-Type: application/json" \
     -d @-)
 

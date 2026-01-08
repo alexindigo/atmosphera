@@ -140,15 +140,19 @@
     "lock-keys": {
       "show-caps-lock-description": "Mostrar el estado de Bloq Mayús.",
       "show-caps-lock-label": "Bloq Mayús",
-      "show-num-lock-description": "Mostrar el estado de bloqueo numérico.",
+      "show-num-lock-description": "Mostrar el estado de Bloq Num.",
       "show-num-lock-label": "Bloq Num",
       "show-scroll-lock-description": "Mostrar el estado de Bloq Despl.",
       "show-scroll-lock-label": "Bloq Despl"
     },
     "media-mini": {
+      "compact-mode-description": "Habilitar un diseño que ahorre espacio para el panel del reproductor multimedia.",
+      "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
       "max-width-description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto.",
       "no-active-player": "Sin reproductor activo",
+      "panel-section-description": "Configurar la apariencia y el comportamiento del panel del reproductor multimedia.",
+      "panel-section-label": "Panel del reproductor multimedia",
       "scrolling-mode-description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos.",
       "scrolling-mode-label": "Modo de desplazamiento",
       "show-album-art-description": "Mostrar la portada del álbum de la pista que se está reproduciendo actualmente.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Únete a nuestro Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Dar retroalimentación",
       "empty": "Las notas de la versión aún no están disponibles.",
       "highlight-title": "Cambios destacados",
@@ -337,13 +341,13 @@
     "brightness": "Brillo",
     "browse": "Navegar",
     "calendar": "Calendario",
+    "calendar-panel": "Panel del calendario",
     "cancel": "Cancelar",
     "cards": "Tarjetas",
     "charging": "Cargando",
     "check-settings": "Consultar la configuración para más detalles.",
     "clear": "Claro",
     "clipboard": "Portapapeles",
-    "clock-panel": "Panel de reloj",
     "close": "Cerrar",
     "colors": "Colores",
     "command": "Comando",
@@ -387,6 +391,7 @@
     "logout": "Cerrar sesión",
     "look": "Mira",
     "media": "Medios",
+    "media-player": "Reproductor multimedia",
     "memory": "Memoria",
     "monitors": "Monitores",
     "network": "Red",
@@ -394,6 +399,7 @@
     "night-light": "Luz de noche",
     "no": "No",
     "no-results": "Sin resultados",
+    "no-summary": "Sin resumen",
     "none": "Ninguno",
     "notifications": "Notificaciones",
     "official": "Oficial",
@@ -472,9 +478,6 @@
     "force-open": "Forzar la apertura",
     "on-hover": "Al pasar el ratón por encima"
   },
-  "general": {
-    "no-summary": "Sin resumen"
-  },
   "hide-modes": {
     "hidden": "Ocultar cuando esté vacío",
     "idle": "Ocultar cuando esté inactivo",
@@ -506,7 +509,6 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "no-results": "No se encontraron resultados.",
     "providers": {
       "applications": "Aplicaciones",
       "calculator": "Calculadora",
@@ -586,9 +588,9 @@
       "sources-screen": "Pantalla"
     },
     "scrolling-modes": {
-      "always": "Desplazar Siempre",
-      "hover": "Desplazar al Pasar",
-      "never": "Nunca Desplazar"
+      "always": "Desplazar siempre",
+      "hover": "Desplazar al pasar",
+      "never": "Nunca desplazar"
     },
     "session-menu-grid-layout": {
       "grid": "Cuadrícula",
@@ -598,11 +600,6 @@
       "attached": "Panel adjunto a la barra",
       "centered": "Panel centrado",
       "window": "Ventana separada"
-    },
-    "shadow-direction": {
-      "bottom": "Inferior",
-      "center": "Centro",
-      "top": "Superior"
     },
     "visualizer-types": {
       "linear": "Lineal",
@@ -758,12 +755,12 @@
       "templates-programs-discord-description-missing": "No se detectó ningún cliente de Discord",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Estándar: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programas",
-      "templates-programs-pywalfox-description": "Escribir {filepath} y ejecutar pywalfox update",
+      "templates-programs-pywalfox-description": "Escribir {filepath} y ejecutar 'pywalfox update'",
       "templates-programs-spicetify-description": "Escribir {filepath} — el tema Comfy debe ser instalado y activado manualmente",
       "templates-programs-walker-description": "Escribir {filepath} y establecer tema a noctalia",
       "templates-programs-yazi-description": "Escribir {filepath} — el sabor debe activarse manualmente",
       "templates-programs-zed-description": "Escribir {filepath} y recargar",
-      "templates-programs-zen-browser-description": "Escribe {filepath}; copia en el archivo chrome/userChrome.css de tu perfil de Zen.",
+      "templates-programs-zen-browser-description": "Escribir {filepath} — copia en el archivo chrome/userChrome.css de tu perfil de Zen",
       "templates-terminal-description": "Tematización del emulador de terminal.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Tematización del entorno de escritorio y de la interfaz de usuario.",
@@ -1221,8 +1218,6 @@
       "updating": "Actualizando..."
     },
     "region": {
-      "clock-panel-desc": "Personalizar la apariencia del panel del reloj.",
-      "clock-panel-title": "Panel de reloj",
       "title": "Región"
     },
     "screen-recorder": {

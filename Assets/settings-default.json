@@ -184,7 +184,7 @@
     "autoPasteClipboard": false,
     "enableClipPreview": true,
     "position": "center",
-    "pinnedExecs": [],
+    "pinnedApps": [],
     "useApp2Unit": false,
     "sortByMostUsed": true,
     "terminalCommand": "xterm -e",
@@ -374,8 +374,7 @@
     "enabledTypes": [
       0,
       1,
-      2,
-      4
+      2
     ],
     "monitors": []
   },
