@@ -166,7 +166,7 @@ Singleton {
                                     "maxWidth": 145,
                                     "useFixedWidth": false,
                                     "hideWhenIdle": false,
-                                    "showAlbumArt": false,
+                                    "showAlbumArt": true,
                                     "showArtistFirst": true,
                                     "showVisualizer": false,
                                     "showProgressRing": true,
