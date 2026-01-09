@@ -178,7 +178,8 @@ Singleton {
                                     "compactShowVisualizer": false
                                   },
                                   "Microphone": {
-                                    "displayMode": "onhover"
+                                    "displayMode": "onhover",
+                                    "middleClickCommand": "pwvucontrol || pavucontrol"
                                   },
                                   "NotificationHistory": {
                                     "showUnreadBadge": true,
@@ -246,7 +247,8 @@ Singleton {
                                     "iconScale": 0.8
                                   },
                                   "Volume": {
-                                    "displayMode": "onhover"
+                                    "displayMode": "onhover",
+                                    "middleClickCommand": "pwvucontrol || pavucontrol"
                                   }
                                 })
 

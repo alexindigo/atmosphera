@@ -33,6 +33,7 @@ Item {
 
   readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
   readonly property string displayMode: (widgetSettings.displayMode !== undefined) ? widgetSettings.displayMode : widgetMetadata.displayMode
+  readonly property string middleClickCommand: (widgetSettings.middleClickCommand !== undefined) ? widgetSettings.middleClickCommand : widgetMetadata.middleClickCommand
 
   // Used to avoid opening the pill on Quickshell startup
   property bool firstVolumeReceived: false
@@ -156,6 +157,8 @@ Item {
         contextMenu.openAtItem(pill, screen);
       }
     }
-    onMiddleClicked: root.openExternalMixer()
+    onMiddleClicked: {
+      Quickshell.execDetached(["sh", "-c", middleClickCommand]);
+    }
   }
 }
