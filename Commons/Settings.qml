@@ -331,10 +331,6 @@ Singleton {
           "enabled": true
         },
         {
-          "id": "timer-card",
-          "enabled": true
-        },
-        {
           "id": "weather-card",
           "enabled": true
         }

@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "г",
-      "minutes": "м",
-      "seconds": "с"
-    },
     "weather-loading": "Завантаження погоди…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Джерела",
     "start": "Почати",
     "stop": "Зупиніться",
-    "stopwatch": "Секундомір",
     "suspend": "Призупинити",
     "templates": "Шаблони",
     "test": "Тест",
     "thresholds": "Порогові значення",
-    "timer": "Таймер",
     "title": "Назва",
     "toast": "Тост",
     "trusted": "Надійний",

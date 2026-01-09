@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "d",
-      "minutes": "x",
-      "seconds": "ç"
-    },
     "weather-loading": "Rewşa bayê tê barkirin…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Çavkanî",
     "start": "Destpêkirin",
     "stop": "Raweste.",
-    "stopwatch": "Demjimêra rawestandinê",
     "suspend": "Rawestîne",
     "templates": "Şablonan",
     "test": "Test",
     "thresholds": "Asteyan",
-    "timer": "Demjimêr",
     "title": "Sernav",
     "toast": "Tost",
     "trusted": "Bawerîpêkirî",

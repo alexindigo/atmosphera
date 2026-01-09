@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "S",
-      "minutes": "d",
-      "seconds": "s"
-    },
     "weather-loading": "Hava durumu yükleniyor..."
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Kaynaklar",
     "start": "Başlat",
     "stop": "Dur",
-    "stopwatch": "Kronometre",
     "suspend": "Askıya almak",
     "templates": "Şablonlar",
     "test": "Test",
     "thresholds": "Eşikler",
-    "timer": "Zamanlayıcı",
     "title": "Başlık",
     "toast": "Tost",
     "trusted": "Güvenilir",

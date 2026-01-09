@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "時間",
-      "minutes": "分",
-      "seconds": "秒"
-    },
     "weather-loading": "天気を読み込み中…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "ソース",
     "start": "開始",
     "stop": "止まれ",
-    "stopwatch": "ストップウォッチ",
     "suspend": "中断 (chūdan)",
     "templates": "テンプレート",
     "test": "テスト",
     "thresholds": "閾値",
-    "timer": "タイマー",
     "title": "タイトル",
     "toast": "トースト",
     "trusted": "信頼できる",

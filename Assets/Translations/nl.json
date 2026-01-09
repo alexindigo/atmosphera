@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "h",
-      "minutes": "m",
-      "seconds": "s"
-    },
     "weather-loading": "Weer laden…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Bronnen",
     "start": "Begin",
     "stop": "Stop.",
-    "stopwatch": "Stopwatch",
     "suspend": "Opschorten",
     "templates": "Sjablonen",
     "test": "Test",
     "thresholds": "Drempels",
-    "timer": "Timer",
     "title": "Titel",
     "toast": "Toast",
     "trusted": "Vertrouwd",

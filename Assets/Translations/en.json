@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "h",
-      "minutes": "m",
-      "seconds": "s"
-    },
     "weather-loading": "Loading weather…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Sources",
     "start": "Start",
     "stop": "Stop",
-    "stopwatch": "Stopwatch",
     "suspend": "Suspend",
     "templates": "Templates",
     "test": "Test",
     "thresholds": "Thresholds",
-    "timer": "Timer",
     "title": "Title",
     "toast": "Toast",
     "trusted": "Trusted",

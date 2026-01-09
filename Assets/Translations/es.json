@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "h",
-      "minutes": "m",
-      "seconds": "s"
-    },
     "weather-loading": "Cargando el clima…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Fuentes",
     "start": "Comienzo",
     "stop": "Pare",
-    "stopwatch": "Cronómetro",
     "suspend": "Suspender",
     "templates": "Plantillas",
     "test": "Prueba",
     "thresholds": "Umbrales",
-    "timer": "Temporizador",
     "title": "Título",
     "toast": "Tostada",
     "trusted": "De confianza",

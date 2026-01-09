@@ -295,11 +295,6 @@
     }
   },
   "calendar": {
-    "timer": {
-      "hours": "h",
-      "minutes": "m",
-      "seconds": "s"
-    },
     "weather-loading": "Wetter wird geladen…"
   },
   "changelog": {
@@ -433,12 +428,10 @@
     "sources": "Quellen",
     "start": "Start",
     "stop": "Stopp",
-    "stopwatch": "Stoppuhr",
     "suspend": "Energie sparen",
     "templates": "Vorlagen",
     "test": "Test",
     "thresholds": "Schwellenwerte",
-    "timer": "Zeitmesser",
     "title": "Titel",
     "toast": "Toast",
     "trusted": "Vertrauenswürdig",
