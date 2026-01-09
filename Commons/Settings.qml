@@ -908,7 +908,24 @@ Singleton {
     }
 
     // -----------------
-    // 3. upgrade user widget settings
+    // 3. remove any non existing desktop widget type
+    const monitorWidgets = adapter.desktopWidgets.monitorWidgets;
+    for (var m = 0; m < monitorWidgets.length; m++) {
+      const monitor = monitorWidgets[m];
+      if (!monitor.widgets)
+        continue;
+      for (var i = monitor.widgets.length - 1; i >= 0; i--) {
+        var desktopWidget = monitor.widgets[i];
+        if (!DesktopWidgetRegistry.hasWidget(desktopWidget.id)) {
+          Logger.w(`Settings`, `!!! Deleted invalid desktop widget ${desktopWidget.id} !!!`);
+          monitor.widgets.splice(i, 1);
+          removedWidget = true;
+        }
+      }
+    }
+
+    // -----------------
+    // 4. upgrade user widget settings
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s];
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
