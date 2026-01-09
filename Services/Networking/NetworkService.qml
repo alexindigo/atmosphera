@@ -1032,7 +1032,7 @@ Singleton {
           }
 
           let security = remainingLine2.substring(thirdLastColonIdx + 1);
-          // This change will add a slash where mixed security protocols are used. 
+          // This change will add a slash where mixed security protocols are used.
           if (security) {
             security = security.replace("WPA2 WPA3", "WPA2/WPA3").replace("WPA1 WPA2", "WPA1/WPA2");
           }
