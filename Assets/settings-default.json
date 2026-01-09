@@ -363,8 +363,7 @@
     "cavaFrameRate": 30,
     "visualizerType": "linear",
     "mprisBlacklist": [],
-    "preferredPlayer": "",
-    "externalMixer": "pwvucontrol || pavucontrol"
+    "preferredPlayer": ""
   },
   "brightness": {
     "brightnessStep": 5,

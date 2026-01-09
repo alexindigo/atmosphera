@@ -86,10 +86,6 @@ Item {
     }
   }
 
-  function openExternalMixer() {
-    Quickshell.execDetached(["sh", "-c", Settings.data.audio.externalMixer]);
-  }
-
   NPopupContextMenu {
     id: contextMenu
 
@@ -100,8 +96,8 @@ Item {
         "icon": AudioService.inputMuted ? "microphone-off" : "microphone"
       },
       {
-        "label": I18n.tr("actions.open-mixer"),
-        "action": "open-mixer",
+        "label": I18n.tr("actions.run-custom-command"),
+        "action": "custom-command",
         "icon": "adjustments"
       },
       {
@@ -119,8 +115,8 @@ Item {
 
                    if (action === "toggle-mute") {
                      AudioService.setInputMuted(!AudioService.inputMuted);
-                   } else if (action === "open-mixer") {
-                     root.openExternalMixer();
+                   } else if (action === "custom-command") {
+                     Quickshell.execDetached(["sh", "-c", middleClickCommand]);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }

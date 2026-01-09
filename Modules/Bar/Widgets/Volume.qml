@@ -59,10 +59,6 @@ Item {
     }
   }
 
-  function openExternalMixer() {
-    Quickshell.execDetached(["sh", "-c", Settings.data.audio.externalMixer]);
-  }
-
   Timer {
     id: externalHideTimer
     running: false
@@ -82,8 +78,8 @@ Item {
         "icon": AudioService.muted ? "volume-off" : "volume"
       },
       {
-        "label": I18n.tr("actions.open-mixer"),
-        "action": "open-mixer",
+        "label": I18n.tr("actions.run-custom-command"),
+        "action": "custom-command",
         "icon": "adjustments"
       },
       {
@@ -102,8 +98,8 @@ Item {
 
                    if (action === "toggle-mute") {
                      AudioService.setOutputMuted(!AudioService.muted);
-                   } else if (action === "open-mixer") {
-                     root.openExternalMixer();
+                   } else if (action === "custom-command") {
+                     Quickshell.execDetached(["sh", "-c", middleClickCommand]);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
