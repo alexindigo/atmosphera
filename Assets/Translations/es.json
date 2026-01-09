@@ -464,9 +464,6 @@
       "tooltip-action": "Perfil de energía",
       "tooltip-disabled": "Instala power-profiles-daemon para usar perfiles de energía"
     },
-    "screen-recorder": {
-      "label-stopped": "Grabar"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi desconectado",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Moderno"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Salida del sistema + entrada del micrófono",
-      "audio-sources-microphone-input": "Entrada del micrófono",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "Salida del sistema",
-      "color-range-full": "Completo",
-      "color-range-limited": "Limitado",
-      "quality-high": "Alta",
-      "quality-medium": "Media",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Muy alta",
-      "sources-portal": "Portal",
-      "sources-screen": "Pantalla"
-    },
     "scrolling-modes": {
       "always": "Desplazar siempre",
       "hover": "Desplazar al pasar",
@@ -1220,35 +1203,6 @@
     "region": {
       "title": "Región"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Se recomienda Opus para el mejor rendimiento y el menor tamaño de audio.",
-      "audio-audio-codec-label": "Códec de audio",
-      "audio-audio-source-description": "Fuente de audio a capturar durante la grabación.",
-      "audio-audio-source-label": "Fuente de audio",
-      "audio-desc": "Configura las opciones de grabación de audio.",
-      "audio-title": "Configuración de audio",
-      "general-copy-to-clipboard-description": "Copiar el archivo al portapapeles después de que termine la grabación.",
-      "general-copy-to-clipboard-label": "Copiar al portapapeles",
-      "general-desc": "Gestiona la salida y el contenido de la grabación de pantalla.",
-      "general-output-folder-description": "Carpeta donde se guardarán las grabaciones de pantalla.",
-      "general-output-folder-label": "Carpeta de salida",
-      "general-select-output-folder": "Seleccionar carpeta de salida",
-      "general-show-cursor-description": "Grabar el cursor del ratón en el video.",
-      "general-show-cursor-label": "Mostrar cursor",
-      "general-title": "Configuración general",
-      "title": "Grabadora de pantalla",
-      "video-color-range-description": "Se recomienda limitado para una mejor compatibilidad.",
-      "video-color-range-label": "Rango de color",
-      "video-desc": "Configura las opciones de grabación de video.",
-      "video-frame-rate-description": "Tasa de fotogramas objetivo para las grabaciones de pantalla.",
-      "video-title": "Configuración de video",
-      "video-video-codec-description": "h264 es el códec más común.",
-      "video-video-codec-label": "Códec de video",
-      "video-video-quality-description": "Una mayor calidad resulta en archivos de mayor tamaño.",
-      "video-video-quality-label": "Calidad de video",
-      "video-video-source-description": "Se recomienda Portal; si aparecen artefactos, prueba Screen.",
-      "video-video-source-label": "Fuente de video"
-    },
     "session-menu": {
       "countdown-duration-description": "Establecer cuánto tiempo dura el temporizador de cuenta regresiva antes de ejecutar acciones de energía.",
       "countdown-duration-label": "Duración de la cuenta regresiva",
@@ -1609,11 +1563,9 @@
     "refresh-wallhaven": "Actualizar resultados de Wallhaven",
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "remove-widget": "Eliminar widget",
-    "screen-recorder-not-installed": "Grabadora de pantalla (no instalada)",
     "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "show-all-devices": "Mostrar todos los dispositivos",
-    "stop-screen-recording": "Grabadora de pantalla",
     "switch-to-dark-mode": "Modo oscuro",
     "switch-to-light-mode": "Modo claro",
     "unmute": "Activar el audio",

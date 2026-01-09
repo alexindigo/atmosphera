@@ -464,9 +464,6 @@
       "tooltip-action": "Profil d'alimentation",
       "tooltip-disabled": "Installez power-profiles-daemon pour utiliser les profils d'alimentation"
     },
-    "screen-recorder": {
-      "label-stopped": "Enregistrer"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi déconnecté",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Moderne"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Sortie système + entrée microphone",
-      "audio-sources-microphone-input": "Entrée microphone",
-      "audio-sources-none": "Pas d'audio",
-      "audio-sources-system-output": "Sortie système",
-      "color-range-full": "Complète",
-      "color-range-limited": "Limitée",
-      "quality-high": "Haute",
-      "quality-medium": "Moyenne",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Très haute",
-      "sources-portal": "Portail",
-      "sources-screen": "Écran"
-    },
     "scrolling-modes": {
       "always": "Défiler toujours",
       "hover": "Défiler au survol",
@@ -1220,35 +1203,6 @@
     "region": {
       "title": "Région"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus est recommandé pour de meilleures performances et une taille audio minimale.",
-      "audio-audio-codec-label": "Codec audio",
-      "audio-audio-source-description": "Source audio à capturer pendant l'enregistrement.",
-      "audio-audio-source-label": "Source audio",
-      "audio-desc": "Configurez les options d'enregistrement audio.",
-      "audio-title": "Paramètres audio",
-      "general-copy-to-clipboard-description": "Copier le fichier dans le presse-papiers une fois l'enregistrement terminé.",
-      "general-copy-to-clipboard-label": "Copier dans le presse-papiers",
-      "general-desc": "Gérez la sortie et le contenu de l'enregistrement d'écran.",
-      "general-output-folder-description": "Dossier où les enregistrements d'écran seront sauvegardés.",
-      "general-output-folder-label": "Dossier de sortie",
-      "general-select-output-folder": "Sélectionner le dossier de sortie",
-      "general-show-cursor-description": "Enregistrez le curseur de la souris dans la vidéo.",
-      "general-show-cursor-label": "Afficher le curseur",
-      "general-title": "Paramètres généraux",
-      "title": "Enregistreur d'écran",
-      "video-color-range-description": "Limitée est recommandée pour une meilleure compatibilité.",
-      "video-color-range-label": "Gamme de couleurs",
-      "video-desc": "Configurez les options d'enregistrement vidéo.",
-      "video-frame-rate-description": "Fréquence d'images cible pour les enregistrements d'écran.",
-      "video-title": "Paramètres vidéo",
-      "video-video-codec-description": "h264 est le codec le plus courant.",
-      "video-video-codec-label": "Codec vidéo",
-      "video-video-quality-description": "Une qualité supérieure entraîne des fichiers de plus grande taille.",
-      "video-video-quality-label": "Qualité vidéo",
-      "video-video-source-description": "Portail est recommandé, si vous obtenez des artefacts, essayez Écran.",
-      "video-video-source-label": "Source vidéo"
-    },
     "session-menu": {
       "countdown-duration-description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
       "countdown-duration-label": "Durée du compte à rebours",
@@ -1609,11 +1563,9 @@
     "refresh-wallhaven": "Actualiser les résultats de Wallhaven",
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
-    "screen-recorder-not-installed": "Enregistreur d'écran (non installé)",
     "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
     "show-all-devices": "Afficher tous les appareils",
-    "stop-screen-recording": "Enregistreur d'écran",
     "switch-to-dark-mode": "Mode sombre",
     "switch-to-light-mode": "Mode clair",
     "unmute": "Réactiver le micro",

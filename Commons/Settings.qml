@@ -64,7 +64,6 @@ Singleton {
 
     // Patch-in the local default, resolved to user's home
     adapter.general.avatarImage = defaultAvatar;
-    adapter.screenRecorder.directory = defaultVideosDirectory;
     adapter.wallpaper.directory = defaultWallpapersDirectory;
     adapter.ui.fontDefault = Qt.application.font.family;
     adapter.ui.fontFixed = "monospace";
@@ -237,9 +236,6 @@ Singleton {
         ]
         property list<var> right: [
           {
-            "id": "ScreenRecorder"
-          },
-          {
             "id": "Tray"
           },
           {
@@ -345,20 +341,6 @@ Singleton {
       ]
     }
 
-    // screen recorder
-    property JsonObject screenRecorder: JsonObject {
-      property string directory: ""
-      property int frameRate: 60
-      property string audioCodec: "opus"
-      property string videoCodec: "h264"
-      property string quality: "very_high"
-      property string colorRange: "limited"
-      property bool showCursor: true
-      property bool copyToClipboard: false
-      property string audioSource: "default_output"
-      property string videoSource: "portal"
-    }
-
     // wallpaper
     property JsonObject wallpaper: JsonObject {
       property bool enabled: true
@@ -430,9 +412,6 @@ Singleton {
           },
           {
             "id": "Bluetooth"
-          },
-          {
-            "id": "ScreenRecorder"
           },
           {
             "id": "WallpaperSelector"

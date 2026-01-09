@@ -87,7 +87,6 @@ SmartPanel {
     Network,
     Notifications,
     Plugins,
-    ScreenRecorder,
     SessionMenu,
     SystemMonitor,
     UserInterface,

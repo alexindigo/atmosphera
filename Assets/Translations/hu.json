@@ -464,9 +464,6 @@
       "tooltip-action": "Energiaprofil",
       "tooltip-disabled": "Telepítse a power-profiles-daemon-t az energiaprofilok használatához"
     },
-    "screen-recorder": {
-      "label-stopped": "Felvétel"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi leválasztva",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Rendszerkimenet + mikrofonbemenet",
-      "audio-sources-microphone-input": "Mikrofonbemenet",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "Rendszerkimenet",
-      "color-range-full": "Teljes",
-      "color-range-limited": "Korlátozott",
-      "quality-high": "Magas",
-      "quality-medium": "Közepes",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Nagyon magas",
-      "sources-portal": "Portál",
-      "sources-screen": "Képernyő"
-    },
     "scrolling-modes": {
       "always": "Mindig görgetés",
       "hover": "Görgetés rámutatáskor",
@@ -1220,35 +1203,6 @@
     "region": {
       "title": "Régió"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Az Opus ajánlott a legjobb teljesítmény és a legkisebb hangméret érdekében.",
-      "audio-audio-codec-label": "Hang kodek",
-      "audio-audio-source-description": "Rögzítés során rögzítendő hangforrás.",
-      "audio-audio-source-label": "Hangforrás",
-      "audio-desc": "Hangrögzítési beállítások konfigurálása.",
-      "audio-title": "Hangbeállítások",
-      "general-copy-to-clipboard-description": "A felvétel befejezése után másold a fájlt a vágólapra.",
-      "general-copy-to-clipboard-label": "Másolás a vágólapra",
-      "general-desc": "Képernyőfelvétel kimenetének és tartalmának kezelése.",
-      "general-output-folder-description": "Mappa, ahová a képernyőfelvételek mentésre kerülnek.",
-      "general-output-folder-label": "Kimeneti mappa",
-      "general-select-output-folder": "Kimeneti mappa kiválasztása",
-      "general-show-cursor-description": "Egérmutató rögzítése a videóban.",
-      "general-show-cursor-label": "Mutató megjelenítése",
-      "general-title": "Általános beállítások",
-      "title": "Képernyőfelvevő",
-      "video-color-range-description": "A korlátozott ajánlott a jobb kompatibilitás érdekében.",
-      "video-color-range-label": "Színtartomány",
-      "video-desc": "Videórögzítési beállítások konfigurálása.",
-      "video-frame-rate-description": "Cél képkockasebesség a képernyőfelvételekhez.",
-      "video-title": "Videóbeállítások",
-      "video-video-codec-description": "A h264 a leggyakoribb kodek.",
-      "video-video-codec-label": "Videó kodek",
-      "video-video-quality-description": "A jobb minőség nagyobb fájlméreteket eredményez.",
-      "video-video-quality-label": "Videó minősége",
-      "video-video-source-description": "A Portal ajánlott, ha hibákat tapasztal, próbálja meg a Képernyőt.",
-      "video-video-source-label": "Videóforrás"
-    },
     "session-menu": {
       "countdown-duration-description": "Állítsa be, mennyi ideig tart a visszaszámlálás az energiagazdálkodási műveletek végrehajtása előtt.",
       "countdown-duration-label": "Visszaszámlálás időtartama",
@@ -1609,11 +1563,9 @@
     "refresh-wallhaven": "Wallhaven eredmények frissítése",
     "refresh-wallpaper-list": "Háttérkép lista frissítése",
     "remove-widget": "Widget eltávolítása",
-    "screen-recorder-not-installed": "Képernyőfelvevő (nincs telepítve)",
     "search-close": "Keresés bezárása",
     "session-menu": "Munkamenet menü",
     "show-all-devices": "Összes eszköz megjelenítése",
-    "stop-screen-recording": "Képernyőfelvevő",
     "switch-to-dark-mode": "Sötét mód",
     "switch-to-light-mode": "Világos mód",
     "unmute": "Némítás feloldása",

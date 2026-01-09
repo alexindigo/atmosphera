@@ -11,7 +11,6 @@ Singleton {
   id: root
 
   // Program availability properties
-  property bool gpuScreenRecorderAvailable: false
   property bool matugenAvailable: false
   property bool nmcliAvailable: false
   property bool wlsunsetAvailable: false
@@ -21,7 +20,6 @@ Singleton {
 
   // Programs to check - maps property names to commands
   readonly property var programsToCheck: ({
-                                            "gpuScreenRecorderAvailable": ["sh", "-c", "command -v gpu-screen-recorder >/dev/null 2>&1 || (command -v flatpak >/dev/null 2>&1 && flatpak list --app | grep -q 'com.dec05eba.gpu_screen_recorder')"],
                                             "matugenAvailable": ["sh", "-c", "command -v matugen"],
                                             "nmcliAvailable": ["sh", "-c", "command -v nmcli"],
                                             "wlsunsetAvailable": ["sh", "-c", "command -v wlsunset"],

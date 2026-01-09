@@ -39,9 +39,6 @@
       ],
       "right": [
         {
-          "id": "ScreenRecorder"
-        },
-        {
           "id": "Tray"
         },
         {
@@ -135,18 +132,6 @@
       }
     ]
   },
-  "screenRecorder": {
-    "directory": "",
-    "frameRate": 60,
-    "audioCodec": "opus",
-    "videoCodec": "h264",
-    "quality": "very_high",
-    "colorRange": "limited",
-    "showCursor": true,
-    "copyToClipboard": false,
-    "audioSource": "default_output",
-    "videoSource": "portal"
-  },
   "wallpaper": {
     "enabled": true,
     "overviewEnabled": false,
@@ -207,9 +192,6 @@
         },
         {
           "id": "Bluetooth"
-        },
-        {
-          "id": "ScreenRecorder"
         },
         {
           "id": "WallpaperSelector"

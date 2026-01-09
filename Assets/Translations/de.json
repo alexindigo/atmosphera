@@ -464,9 +464,6 @@
       "tooltip-action": "Energieprofil",
       "tooltip-disabled": "Installiere power-profiles-daemon, um Energieprofile zu verwenden"
     },
-    "screen-recorder": {
-      "label-stopped": "Aufnehmen"
-    },
     "wifi": {
       "label-disconnected": "WLAN getrennt",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "System-Ausgabe + Mikrofon-Eingabe",
-      "audio-sources-microphone-input": "Mikrofon-Eingabe",
-      "audio-sources-none": "Kein Audio",
-      "audio-sources-system-output": "System-Ausgabe",
-      "color-range-full": "Vollständig",
-      "color-range-limited": "Begrenzt",
-      "quality-high": "Hoch",
-      "quality-medium": "Mittel",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Sehr hoch",
-      "sources-portal": "Portal",
-      "sources-screen": "Bildschirm"
-    },
     "scrolling-modes": {
       "always": "Immer scrollen",
       "hover": "Beim Hover scrollen",
@@ -1220,35 +1203,6 @@
     "region": {
       "title": "Region"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus wird für beste Leistung und kleinste Audio-Größe empfohlen.",
-      "audio-audio-codec-label": "Audio-Codec",
-      "audio-audio-source-description": "Audio-Quelle für die Aufnahme.",
-      "audio-audio-source-label": "Audio-Quelle",
-      "audio-desc": "Audio-Aufnahme-Optionen konfigurieren.",
-      "audio-title": "Audio-Einstellungen",
-      "general-copy-to-clipboard-description": "Kopiere die Datei nach Beendigung der Aufnahme in die Zwischenablage.",
-      "general-copy-to-clipboard-label": "In die Zwischenablage kopieren",
-      "general-desc": "Bildschirmaufnahme-Ausgabe und -Inhalt verwalten.",
-      "general-output-folder-description": "Ordner, in dem Bildschirmaufnahmen gespeichert werden.",
-      "general-output-folder-label": "Ausgabe-Ordner",
-      "general-select-output-folder": "Ausgabe-Ordner auswählen",
-      "general-show-cursor-description": "Mauszeiger im Video aufnehmen.",
-      "general-show-cursor-label": "Cursor anzeigen",
-      "general-title": "Allgemeine Einstellungen",
-      "title": "Bildschirmrekorder",
-      "video-color-range-description": "Begrenzt wird für bessere Kompatibilität empfohlen.",
-      "video-color-range-label": "Farbbereich",
-      "video-desc": "Video-Aufnahme-Optionen konfigurieren.",
-      "video-frame-rate-description": "Ziel-Bildrate für Bildschirmaufnahmen.",
-      "video-title": "Video-Einstellungen",
-      "video-video-codec-description": "h264 ist der gebräuchlichste Codec.",
-      "video-video-codec-label": "Video-Codec",
-      "video-video-quality-description": "Höhere Qualität führt zu größeren Dateigrößen.",
-      "video-video-quality-label": "Video-Qualität",
-      "video-video-source-description": "Portal wird empfohlen, bei Artefakten versuchen Sie Bildschirm.",
-      "video-video-source-label": "Video-Quelle"
-    },
     "session-menu": {
       "countdown-duration-description": "Legen Sie fest, wie lange der Countdown-Timer vor der Ausführung von Energieaktionen dauert.",
       "countdown-duration-label": "Countdown-Dauer",
@@ -1609,11 +1563,9 @@
     "refresh-wallhaven": "Wallhaven-Ergebnisse aktualisieren",
     "refresh-wallpaper-list": "Hintergrundbild-Liste aktualisieren",
     "remove-widget": "Widget entfernen",
-    "screen-recorder-not-installed": "Bildschirmrekorder (nicht installiert)",
     "search-close": "Suche schließen",
     "session-menu": "Sitzungsmenü",
     "show-all-devices": "Alle Geräte anzeigen",
-    "stop-screen-recording": "Bildschirmrekorder",
     "switch-to-dark-mode": "Dunkler Modus",
     "switch-to-light-mode": "Heller Modus",
     "unmute": "Stummschaltung aufheben",

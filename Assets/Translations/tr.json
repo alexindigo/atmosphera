@@ -464,9 +464,6 @@
       "tooltip-action": "Güç profili",
       "tooltip-disabled": "Güç profillerini kullanmak için power-profiles-daemon kur"
     },
-    "screen-recorder": {
-      "label-stopped": "Kaydet"
-    },
     "wifi": {
       "label-disconnected": "Kablosuz Bağlantı Kesik",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Sistem çıktısı + mikrofon girişi",
-      "audio-sources-microphone-input": "Mikrofon girişi",
-      "audio-sources-none": "Ses yok.",
-      "audio-sources-system-output": "Sistem çıktısı",
-      "color-range-full": "Tam",
-      "color-range-limited": "Sınırlı",
-      "quality-high": "Yüksek",
-      "quality-medium": "Orta",
-      "quality-ultra": "Aşırı",
-      "quality-very-high": "Çok yüksek",
-      "sources-portal": "Portal",
-      "sources-screen": "Ekran"
-    },
     "scrolling-modes": {
       "always": "Her zaman kaydır",
       "hover": "Üzerine gelince kaydır",
@@ -1220,35 +1203,6 @@
     "region": {
       "title": "Bölge"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "En iyi performans ve en küçük ses boyutu için Opus önerilir.",
-      "audio-audio-codec-label": "Ses çözücüsü",
-      "audio-audio-source-description": "Kayıt sırasında yakalanacak ses kaynağı.",
-      "audio-audio-source-label": "Ses kaynağı",
-      "audio-desc": "Ses kaydı seçeneklerini yapılandırın.",
-      "audio-title": "Ses ayarları",
-      "general-copy-to-clipboard-description": "Kaydı bitirdikten sonra dosyayı panoya kopyala.",
-      "general-copy-to-clipboard-label": "Panoya kopyala",
-      "general-desc": "Ekran kaydı çıktısını ve içeriğini yönetin.",
-      "general-output-folder-description": "Ekran kayıtlarının kaydedileceği klasör.",
-      "general-output-folder-label": "Çıktı klasörü",
-      "general-select-output-folder": "Çıktı klasörünü seç",
-      "general-show-cursor-description": "Görüntü fare imlecini kaydedin.",
-      "general-show-cursor-label": "İmleci göster",
-      "general-title": "Genel ayarlar",
-      "title": "Ekran kaydedici",
-      "video-color-range-description": "Daha iyi uyumluluk için Sınırlı önerilir.",
-      "video-color-range-label": "Renk aralığı",
-      "video-desc": "Görüntü kaydı seçeneklerini yapılandırın.",
-      "video-frame-rate-description": "Ekran kayıtları için hedef kare hızı.",
-      "video-title": "Görüntü ayarları",
-      "video-video-codec-description": "h264 en yaygın çözücüdür.",
-      "video-video-codec-label": "Görüntü çözücüsü",
-      "video-video-quality-description": "Daha yüksek kalite daha büyük dosya boyutları ile sonuçlanır.",
-      "video-video-quality-label": "Görüntü kalitesi",
-      "video-video-source-description": "Portal önerilir, eğer artefaktlar alırsanız Ekranı deneyin.",
-      "video-video-source-label": "Görüntü kaynağı"
-    },
     "session-menu": {
       "countdown-duration-description": "Güç eylemlerini çalıştırmadan önce geri sayım zamanlayıcısının ne kadar süreceğini ayarlayın.",
       "countdown-duration-label": "Geri sayım süresi",
@@ -1609,11 +1563,9 @@
     "refresh-wallhaven": "Wallhaven sonuçlarını yenile",
     "refresh-wallpaper-list": "Duvar kâğıdı listesini yenile",
     "remove-widget": "Araç takımını kaldır",
-    "screen-recorder-not-installed": "Ekran kaydedici (yüklü değil)",
     "search-close": "Aramayı kapat",
     "session-menu": "Oturum Menüsü",
     "show-all-devices": "Tüm cihazları göster",
-    "stop-screen-recording": "Ekran kaydedici",
     "switch-to-dark-mode": "Koyu mod",
     "switch-to-light-mode": "Açık mod",
     "unmute": "Sessizliği aç",
