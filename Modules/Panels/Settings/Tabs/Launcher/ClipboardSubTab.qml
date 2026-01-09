@@ -28,6 +28,15 @@ ColumnLayout {
   }
 
   NToggle {
+    label: I18n.tr("panels.launcher.settings-clip-wrap-text-label")
+    description: I18n.tr("panels.launcher.settings-clip-wrap-text-description")
+    checked: Settings.data.appLauncher.clipboardWrapText
+    onToggled: checked => Settings.data.appLauncher.clipboardWrapText = checked
+    defaultValue: Settings.getDefaultValue("appLauncher.clipboardWrapText")
+    visible: Settings.data.appLauncher.enableClipboardHistory
+  }
+
+  NToggle {
     label: I18n.tr("panels.launcher.settings-auto-paste-label")
     description: I18n.tr("panels.launcher.settings-auto-paste-description")
     checked: Settings.data.appLauncher.autoPasteClipboard

@@ -1,5 +1,4 @@
 pragma Singleton
-import QtQml
 
 import QtQuick
 import Quickshell
@@ -10,19 +9,22 @@ import "."
 import qs.Commons
 import qs.Services.UI
 
-QtObject {
+Singleton {
   id: root
 
-  // ---- Constants (centralized tunables) ----
+  // Constants (centralized tunables)
   readonly property int ctlPollMs: 1500
   readonly property int ctlPollSoonMs: 250
   readonly property int scanAutoStopMs: 6000
 
   property bool airplaneModeToggled: false
+  property bool lastBluetoothBlocked: false
+  property bool lastWifiBlocked: false
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
 
   // Power/blocked state
-  property bool enabled: false // driven by bluetoothctl
+  readonly property bool enabled: adapter ? adapter.enabled : root.ctlPowered
+  readonly property bool blocked: adapter?.state === BluetoothAdapterState.Blocked
   property bool ctlPowered: false
   property bool ctlDiscovering: false
   property bool ctlDiscoverable: false
@@ -60,7 +62,8 @@ QtObject {
   property bool _discoveryWasRunning: false
   property double _discoveryResumeAtMs: 0
   // Timer used to restore discovery after temporary pause during pair/connect
-  property Timer restoreDiscoveryTimer: Timer {
+  Timer {
+    id: restoreDiscoveryTimer
     repeat: false
     onTriggered: {
       const now = Date.now();
@@ -88,8 +91,9 @@ QtObject {
       if (ms && ms > 0) {
         const now = Date.now();
         const resumeAt = now + ms;
-        if (resumeAt > root._discoveryResumeAtMs)
+        if (resumeAt > root._discoveryResumeAtMs) {
           root._discoveryResumeAtMs = resumeAt;
+        }
         restoreDiscoveryTimer.interval = Math.max(100, root._discoveryResumeAtMs - now);
         restoreDiscoveryTimer.restart();
       }
@@ -97,8 +101,8 @@ QtObject {
   }
 
   // Persistent process for fallback scanning to keep the session alive
-  property Process fallbackScanProcess: Process {
-    id: fallbackProc
+  Process {
+    id: fallbackScanProcess
     // Pipe scan on and a long sleep to bluetoothctl to keep it running
     command: ["sh", "-c", "(echo 'scan on'; sleep 3600) | bluetoothctl"]
     onExited: Logger.d("Bluetooth", "Fallback scan process exited")
@@ -180,7 +184,8 @@ QtObject {
   }
 
   // Auto-stop manual discovery after a short window
-  property Timer manualScanTimer: Timer {
+  Timer {
+    id: manualScanTimer
     repeat: false
     onTriggered: {
       // Logger.e("Bluetooth", "manualScanTimer triggered");
@@ -212,25 +217,72 @@ QtObject {
 
   // No implicit discovery auto-start; state polled from bluetoothctl instead
 
-  // Track adapter state changes (for enabled/disabled logging only; avoid discovery writes here)
-  property Connections adapterConnections: Connections {
+  // Track adapter state changes
+  Connections {
     target: adapter
     function onStateChanged() {
-      if (!adapter)
+      if (!adapter) {
         return;
-      Logger.d("Bluetooth", "Adapter state changed: " + adapter.state);
-      if (adapter.state === BluetoothAdapter.Enabled) {
+      }
+      if (adapter.state === BluetoothAdapter.Enabling || adapter.state === BluetoothAdapter.Disabling) {
+        return;
+      }
+      Logger.i("Bluetooth", "Bluetooth state change command executed");
+      const bluetoothBlockedToggled = (root.blocked !== lastBluetoothBlocked);
+      root.lastBluetoothBlocked = root.blocked;
+      if (bluetoothBlockedToggled) {
+        checkWifiBlocked.running = true;
+      } else if (adapter.state === BluetoothAdapter.Enabled) {
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
         Logger.d("Bluetooth", "Adapter enabled");
-        // Keep UI default to refresh icon; bluetoothctl polling will set ctlDiscovering accordingly.
       } else if (adapter.state === BluetoothAdapter.Disabled) {
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
         Logger.d("Bluetooth", "Adapter disabled");
       }
     }
   }
 
-  // --- bluetoothctl state polling ---
-  property Process ctlShowProcess: Process {
-    id: ctlProc
+  Process {
+    id: checkWifiBlocked
+    running: false
+    command: ["rfkill", "list", "wifi"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        var wifiBlocked = text && text.trim().indexOf("Soft blocked: yes") !== -1;
+        Logger.d("Network", "Wi-Fi adapter was detected as blocked:", wifiBlocked);
+        // Check if airplane mode has been toggled
+        if (wifiBlocked && root.blocked) {
+          root.airplaneModeToggled = true;
+          root.lastWifiBlocked = true;
+          NetworkService.setWifiEnabled(false);
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.enabled"), "plane");
+        } else if (!wifiBlocked && lastWifiBlocked) {
+          root.airplaneModeToggled = true;
+          root.lastWifiBlocked = false;
+          NetworkService.setWifiEnabled(true);
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.disabled"), "plane-off");
+        } else if (adapter.enabled) {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
+          Logger.d("Bluetooth", "Adapter enabled");
+        } else {
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
+          Logger.d("Bluetooth", "Adapter disabled");
+        }
+        root.airplaneModeToggled = false;
+      }
+    }
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim()) {
+          Logger.w("Bluetooth", "rfkill (wifi) stderr:", text.trim());
+        }
+      }
+    }
+  }
+
+  // bluetoothctl state polling
+  Process {
+    id: ctlShowProcess
     running: false
     stdout: StdioCollector {
       id: ctlStdout
@@ -243,7 +295,6 @@ QtObject {
         var mp = text.match(/\bPowered:\s*(yes|no)\b/i);
         if (mp && mp.length > 1) {
           root.ctlPowered = (mp[1].toLowerCase() === "yes");
-          root.enabled = root.ctlPowered;
         }
         var md = text.match(/\bDiscoverable:\s*(yes|no)\b/i);
         if (md && md.length > 1) {
@@ -262,16 +313,18 @@ QtObject {
   }
 
   function pollCtlState() {
-    if (ctlProc.running)
+    if (ctlShowProcess.running) {
       return;
+    }
     try {
-      ctlProc.command = ["bluetoothctl", "show"];
-      ctlProc.running = true;
+      ctlShowProcess.command = ["bluetoothctl", "show"];
+      ctlShowProcess.running = true;
     } catch (_) {}
   }
 
   // Periodic state polling
-  property Timer ctlPollTimer: Timer {
+  Timer {
+    id: ctlPollTimer
     interval: ctlPollMs
     repeat: true
     running: root.enabled
@@ -279,7 +332,8 @@ QtObject {
   }
 
   // Short-delay poll scheduler
-  property Timer pollCtlStateSoonTimer: Timer {
+  Timer {
+    id: pollCtlStateSoonTimer
     interval: ctlPollSoonMs
     repeat: false
     onTriggered: pollCtlState()
@@ -296,12 +350,6 @@ QtObject {
     try {
       btExec(["bluetoothctl", "power", state ? "on" : "off"]);
       root.ctlPowered = !!state;
-      root.enabled = root.ctlPowered;
-      if (state) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
-      } else {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
-      }
       requestCtlPoll(ctlPollSoonMs);
     } catch (e) {
       Logger.w("Bluetooth", "Enable/Disable failed", e);
@@ -335,10 +383,12 @@ QtObject {
       var aHasRealName = aName.indexOf(" ") !== -1 && aName.length > 3;
       var bHasRealName = bName.indexOf(" ") !== -1 && bName.length > 3;
 
-      if (aHasRealName && !bHasRealName)
+      if (aHasRealName && !bHasRealName) {
         return -1;
-      if (!aHasRealName && bHasRealName)
+      }
+      if (!aHasRealName && bHasRealName) {
         return 1;
+      }
 
       var aSignal = (a.signalStrength !== undefined && a.signalStrength > 0) ? a.signalStrength : 0;
       var bSignal = (b.signalStrength !== undefined && b.signalStrength > 0) ? b.signalStrength : 0;
@@ -354,8 +404,9 @@ QtObject {
   }
 
   function canConnect(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
 
     /*
     Paired
@@ -369,14 +420,16 @@ QtObject {
   }
 
   function canDisconnect(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
     return device.connected && !device.pairing && !device.blocked;
   }
   // Status string for a device (translated)
   function getStatusString(device) {
-    if (!device)
+    if (!device) {
       return "";
+    }
     try {
       if (device.pairing)
         return I18n.tr("common.pairing");
@@ -442,15 +495,17 @@ QtObject {
 
   // Separate capability helpers
   function canPair(device) {
-    if (!device)
+    if (!device) {
       return false;
+    }
     return !device.connected && !device.paired && !device.trusted && !device.pairing && !device.blocked;
   }
 
   // Pairing and unpairing helpers
   function pairDevice(device) {
-    if (!device)
+    if (!device) {
       return;
+    }
     ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.pairing"), "bluetooth");
     // Delegate pairing to bluetoothctl which registers/uses its own agent
     try {
@@ -463,8 +518,9 @@ QtObject {
 
   // Pair using bluetoothctl which registers its own BlueZ agent internally.
   function pairWithBluetoothctl(device) {
-    if (!device)
+    if (!device) {
       return;
+    }
     var addr = BluetoothUtils.macFromDevice(device);
     if (!addr || addr.length < 7) {
       Logger.w("Bluetooth", "pairWithBluetoothctl: no valid address for device");
@@ -489,7 +545,7 @@ QtObject {
     btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
   }
 
-  // --- Helper to run bluetoothctl and scripts with consistent error logging ---
+  // Helper to run bluetoothctl and scripts with consistent error logging
   function btExec(args) {
     try {
       Quickshell.execDetached(args);
@@ -500,8 +556,9 @@ QtObject {
 
   // Status key for a device (untranslated)
   function getStatusKey(device) {
-    if (!device)
+    if (!device) {
       return "";
+    }
     try {
       if (device.pairing)
         return "pairing";

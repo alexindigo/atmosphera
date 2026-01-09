@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Включить компактный режим для панели медиаплеера.",
+      "compact-mode-label": "Компактный режим",
       "hide-mode-description": "Управляет поведением виджета, когда медиа не воспроизводится.",
       "max-width-description": "Устанавливает максимальный горизонтальный размер виджета. Виджет будет сжиматься, чтобы соответствовать более короткому содержимому.",
       "no-active-player": "Нет активного плеера",
+      "panel-section-description": "Настроить внешний вид и поведение панели медиаплеера.",
+      "panel-section-label": "Панель медиаплеера",
       "scrolling-mode-description": "Управление включением прокрутки текста для длинных названий треков.",
       "scrolling-mode-label": "Режим прокрутки",
       "show-album-art-description": "Отображать обложку альбома для текущего воспроизводимого трека.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Присоединиться к нашему Discord",
-      "buttons-dismiss": "Ок",
+      "buttons-dismiss": "ОК",
       "buttons-feedback": "Оставьте отзыв",
       "empty": "Примечания к выпуску пока недоступны.",
       "highlight-title": "Основные изменения",
@@ -337,13 +341,13 @@
     "brightness": "Яркость",
     "browse": "Обзор",
     "calendar": "Календарь",
+    "calendar-panel": "Панель календаря",
     "cancel": "Отменить",
     "cards": "Карточки",
     "charging": "Зарядка",
     "check-settings": "Проверьте настройки для получения подробной информации.",
     "clear": "Ясно",
     "clipboard": "Буфер обмена",
-    "clock-panel": "Панель часов",
     "close": "Закрыть",
     "colors": "Цвета",
     "command": "Команда",
@@ -387,6 +391,7 @@
     "logout": "Выйти",
     "look": "Смотри.",
     "media": "СМИ",
+    "media-player": "Медиаплеер",
     "memory": "Память",
     "monitors": "Мониторы",
     "network": "Сеть",
@@ -394,6 +399,7 @@
     "night-light": "Ночник",
     "no": "Нет",
     "no-results": "Нет результатов",
+    "no-summary": "Нет сводки",
     "none": "Ничего",
     "notifications": "Уведомления",
     "official": "Официальный",
@@ -458,9 +464,6 @@
       "tooltip-action": "Профиль питания",
       "tooltip-disabled": "Установите power-profiles-daemon, чтобы использовать профили питания"
     },
-    "screen-recorder": {
-      "label-stopped": "Записать"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi отключен",
       "label-ethernet": "Ethernet"
@@ -471,9 +474,6 @@
     "always-show": "Всегда показывать",
     "force-open": "Взломать силой / Выломать / Вскрыть силой",
     "on-hover": "При наведении"
-  },
-  "general": {
-    "no-summary": "Нет сводки"
   },
   "hide-modes": {
     "hidden": "Скрывать, когда пусто",
@@ -506,13 +506,13 @@
       "system": "Система",
       "webbrowser": "Веб-браузер"
     },
-    "no-results": "Ничего не найдено.",
     "providers": {
       "applications": "Приложения",
       "calculator": "Калькулятор",
       "calculator-deprecated": "Команда >calc устарела и скоро будет удалена. Пожалуйста, вводите математические выражения прямо в поиск.",
       "calculator-description": "Калькулятор — вычисление математических выражений",
       "calculator-enter-expression": "Введите математическое выражение",
+      "calculator-press-enter-to-copy": "Нажмите Enter, чтобы скопировать результат.",
       "clipboard": "История буфера обмена",
       "clipboard-clear-description": "Очистить всю историю буфера обмена",
       "clipboard-clear-description-full": "Удалить все элементы из истории буфера обмена",
@@ -570,20 +570,6 @@
       "quick-settings-style-modern": "Современный"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Системный вывод + ввод с микрофона",
-      "audio-sources-microphone-input": "Ввод с микрофона",
-      "audio-sources-none": "Нет звука",
-      "audio-sources-system-output": "Системный вывод",
-      "color-range-full": "Полный",
-      "color-range-limited": "Ограниченный",
-      "quality-high": "Высокое",
-      "quality-medium": "Среднее",
-      "quality-ultra": "Ультра",
-      "quality-very-high": "Очень высокое",
-      "sources-portal": "Портал",
-      "sources-screen": "Экран"
-    },
     "scrolling-modes": {
       "always": "Всегда прокручивать",
       "hover": "Прокручивать при наведении",
@@ -597,11 +583,6 @@
       "attached": "Панель прикреплена к панели",
       "centered": "Центрированная панель",
       "window": "Отдельное окно"
-    },
-    "shadow-direction": {
-      "bottom": "Внизу",
-      "center": "Над головой",
-      "top": "Вверху"
     },
     "visualizer-types": {
       "linear": "Линейный",
@@ -757,12 +738,12 @@
       "templates-programs-discord-description-missing": "Клиент Discord не обнаружен",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Стандартный: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Программы",
-      "templates-programs-pywalfox-description": "Записать {filepath} и запустить pywalfox update",
+      "templates-programs-pywalfox-description": "Записать {filepath} и запустить 'pywalfox update'",
       "templates-programs-spicetify-description": "Записать {filepath} — тему Comfy нужно установить и активировать вручную",
       "templates-programs-walker-description": "Записать {filepath} и установить тему noctalia",
       "templates-programs-yazi-description": "Записать {filepath} — flavor необходимо активировать вручную",
       "templates-programs-zed-description": "Записать {filepath} и перезагрузить",
-      "templates-programs-zen-browser-description": "Запишите в {filepath}; скопируйте в chrome/userChrome.css вашего профиля Zen.",
+      "templates-programs-zen-browser-description": "Запишите в {filepath} — скопируйте в chrome/userChrome.css вашего профиля Zen",
       "templates-terminal-description": "Тематика эмулятора терминала.",
       "templates-terminal-label": "Терминал",
       "templates-ui-description": "Тематика окружения рабочего стола и набора инструментов пользовательского интерфейса.",
@@ -988,6 +969,8 @@
       "settings-auto-paste-label": "Автоматическая вставка",
       "settings-clip-preview-description": "Показывать предварительный просмотр содержимого буфера обмена при использовании команды >clip.",
       "settings-clip-preview-label": "Включить предварительный просмотр буфера обмена",
+      "settings-clip-wrap-text-description": "Переносить текст в списке буфера обмена вместо обрезания.",
+      "settings-clip-wrap-text-label": "Обернуть текст из буфера обмена",
       "settings-clipboard-history-description": "Доступ к ранее скопированным элементам из запуска.",
       "settings-clipboard-history-label": "Включить историю буфера обмена",
       "settings-custom-launch-prefix-description": "Добавлять префикс к командам с помощью пользовательского запуска (например, 'runapp' для интеграции с systemd).",
@@ -1168,6 +1151,8 @@
       "collision-official-version-exists": "Официальная версия этого плагина уже установлена.",
       "filter-downloaded": "Скачано",
       "filter-not-downloaded": "Не загружено",
+      "filter-tags-description": "Фильтровать плагины по категории или статусу загрузки.",
+      "filter-tags-label": "Теги",
       "hot-reload-description": "Автоматически перезагружать плагины при изменении их файлов. Полезно для разработки плагинов.",
       "hot-reload-label": "Горячая перезагрузка (режим разработки)",
       "hot-reloaded": "Перезагружен плагин: {name}",
@@ -1179,6 +1164,7 @@
       "installed-no-plugins-description": "Установите плагины из раздела \"Доступные плагины\" ниже.",
       "installed-no-plugins-label": "Нет установленных плагинов",
       "installing": "Установка {plugin}...",
+      "open-plugin-page": "Открыть страницу плагина",
       "open-plugins-tab": "Открыть настройки плагинов",
       "plugin-settings-title": "Настройки {plugin}",
       "refresh-refreshing": "Обновление списка плагинов...",
@@ -1208,6 +1194,7 @@
       "update-all-success": "Все плагины успешно обновлены.",
       "update-available": "Доступно новое обновление плагина",
       "update-available-plural": "Доступны новые обновления плагинов ({count})",
+      "update-available_plural": "Доступны обновления плагинов ({count})",
       "update-error": "Не удалось обновить плагин: {plugin}: {error}",
       "update-incompatible": "Требуется Noctalia v{version} или выше",
       "update-pending": "v{current} → v{new} (требуется Noctalia v{required})",
@@ -1216,38 +1203,7 @@
       "updating": "Обновление..."
     },
     "region": {
-      "clock-panel-desc": "Настроить внешний вид панели часов.",
-      "clock-panel-title": "Панель часов",
       "title": "Регион"
-    },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus рекомендуется для лучшей производительности и наименьшего размера аудио.",
-      "audio-audio-codec-label": "Аудиокодек",
-      "audio-audio-source-description": "Источник аудио для захвата во время записи.",
-      "audio-audio-source-label": "Источник аудио",
-      "audio-desc": "Настройка параметров записи аудио.",
-      "audio-title": "Настройки аудио",
-      "general-copy-to-clipboard-description": "Скопировать файл в буфер обмена после завершения записи.",
-      "general-copy-to-clipboard-label": "Скопировать в буфер обмена",
-      "general-desc": "Управление выводом и содержимым записи экрана.",
-      "general-output-folder-description": "Папка, в которую будут сохраняться записи экрана.",
-      "general-output-folder-label": "Выходная папка",
-      "general-select-output-folder": "Выбрать выходную папку",
-      "general-show-cursor-description": "Записывать курсор мыши в видео.",
-      "general-show-cursor-label": "Показывать курсор",
-      "general-title": "Общие настройки",
-      "title": "Запись экрана",
-      "video-color-range-description": "Ограниченный (Limited) рекомендуется для лучшей совместимости.",
-      "video-color-range-label": "Цветовой диапазон",
-      "video-desc": "Настройка параметров записи видео.",
-      "video-frame-rate-description": "Целевая частота кадров для записей экрана.",
-      "video-title": "Настройки видео",
-      "video-video-codec-description": "h264 — самый распространенный кодек.",
-      "video-video-codec-label": "Видеокодек",
-      "video-video-quality-description": "Более высокое качество приводит к большему размеру файла.",
-      "video-video-quality-label": "Качество видео",
-      "video-video-source-description": "Портал (Portal) рекомендуется, если появляются артефакты, попробуйте Экран (Screen).",
-      "video-video-source-label": "Источник видео"
     },
     "session-menu": {
       "countdown-duration-description": "Установить, как долго длится таймер обратного отсчета перед выполнением действий питания.",
@@ -1570,7 +1526,6 @@
     "click-to-start-recording": "Запись экрана (начать запись)",
     "click-to-stop-recording": "Запись экрана (остановить запись)",
     "collapse": "Свернуть боковую панель",
-    "connect-disconnect-devices": "Устройство Bluetooth",
     "copy-address": "Копировать адрес",
     "delete-notification": "Удалить уведомление",
     "do-not-disturb-enabled": "Не беспокоить",
@@ -1610,11 +1565,9 @@
     "refresh-wallhaven": "Обновить результаты Wallhaven",
     "refresh-wallpaper-list": "Обновить список обоев",
     "remove-widget": "Удалить виджет",
-    "screen-recorder-not-installed": "Запись экрана (не установлена)",
     "search-close": "Закрыть поиск",
     "session-menu": "Меню сеанса",
     "show-all-devices": "Показать все устройства",
-    "stop-screen-recording": "Запись экрана",
     "switch-to-dark-mode": "Темный режим",
     "switch-to-light-mode": "Светлый режим",
     "unmute": "Включить звук",

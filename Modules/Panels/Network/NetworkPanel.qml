@@ -122,6 +122,8 @@ SmartPanel {
   panelContent: Rectangle {
     color: "transparent"
 
+    property real contentPreferredHeight: Math.min(root.preferredHeight, mainColumn.implicitHeight + Style.marginL * 2)
+
     ColumnLayout {
       id: mainColumn
       anchors.fill: parent
@@ -211,19 +213,15 @@ SmartPanel {
         // Mode switch (Wi‑Fi / Ethernet)
         NTabBar {
           id: modeTabBar
+          visible: NetworkService.hasEthernet()
+          margins: Style.marginS
           Layout.fillWidth: true
+          border.color: Style.boxBorderColor
+          border.width: Style.borderS
           spacing: Style.marginM
           distributeEvenly: true
           currentIndex: root.panelViewMode === "wifi" ? 0 : 1
           onCurrentIndexChanged: {
-            if (currentIndex === 1 && !NetworkService.hasEthernet()) {
-              // Revert selection if Ethernet is not available and inform the user
-              modeTabBar.currentIndex = 0;
-              if (typeof TooltipService !== "undefined") {
-                TooltipService.show(modeTabBar, I18n.tr("wifi.panel.no-ethernet-devices"));
-              }
-              return;
-            }
             root.panelViewMode = (currentIndex === 0) ? "wifi" : "ethernet";
           }
 
@@ -234,8 +232,6 @@ SmartPanel {
           }
 
           NTabButton {
-            // Dim when no Ethernet devices are detected
-            opacity: NetworkService.hasEthernet() ? 1.0 : 0.5
             text: I18n.tr("control-center.wifi.label-ethernet")
             tabIndex: 1
             checked: modeTabBar.currentIndex === 1
@@ -305,6 +301,7 @@ SmartPanel {
                 id: disabledColumn
                 anchors.fill: parent
                 anchors.margins: Style.marginM
+                spacing: Style.marginL
 
                 Item {
                   Layout.fillHeight: true
@@ -395,7 +392,7 @@ SmartPanel {
 
                 NIcon {
                   icon: "search"
-                  pointSize: 64
+                  pointSize: 48
                   color: Color.mOnSurfaceVariant
                   Layout.alignment: Qt.AlignHCenter
                 }
@@ -496,22 +493,28 @@ SmartPanel {
                   id: emptyEthColumn
                   anchors.fill: parent
                   anchors.margins: Style.marginM
-                  spacing: Style.marginM
+                  spacing: Style.marginL
+
+                  Item {
+                    Layout.fillHeight: true
+                  }
 
                   NIcon {
                     icon: "ethernet-off"
-                    pointSize: 40
+                    pointSize: 48
                     color: Color.mOnSurfaceVariant
                     Layout.alignment: Qt.AlignHCenter
                   }
 
                   NText {
                     text: I18n.tr("wifi.panel.no-ethernet-devices")
-                    pointSize: Style.fontSizeS
+                    pointSize: Style.fontSizeL
                     color: Color.mOnSurfaceVariant
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
+                    Layout.alignment: Qt.AlignHCenter
+                  }
+
+                  Item {
+                    Layout.fillHeight: true
                   }
                 }
               }

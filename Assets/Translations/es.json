@@ -140,15 +140,19 @@
     "lock-keys": {
       "show-caps-lock-description": "Mostrar el estado de Bloq Mayús.",
       "show-caps-lock-label": "Bloq Mayús",
-      "show-num-lock-description": "Mostrar el estado de bloqueo numérico.",
+      "show-num-lock-description": "Mostrar el estado de Bloq Num.",
       "show-num-lock-label": "Bloq Num",
       "show-scroll-lock-description": "Mostrar el estado de Bloq Despl.",
       "show-scroll-lock-label": "Bloq Despl"
     },
     "media-mini": {
+      "compact-mode-description": "Habilitar un diseño que ahorre espacio para el panel del reproductor multimedia.",
+      "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla el comportamiento del widget cuando no se está reproduciendo ningún medio.",
       "max-width-description": "Establece el tamaño horizontal máximo del widget. El widget se reducirá para adaptarse a contenido más corto.",
       "no-active-player": "Sin reproductor activo",
+      "panel-section-description": "Configurar la apariencia y el comportamiento del panel del reproductor multimedia.",
+      "panel-section-label": "Panel del reproductor multimedia",
       "scrolling-mode-description": "Controlar cuándo está habilitado el desplazamiento de texto para títulos de pista largos.",
       "scrolling-mode-label": "Modo de desplazamiento",
       "show-album-art-description": "Mostrar la portada del álbum de la pista que se está reproduciendo actualmente.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Únete a nuestro Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Dar retroalimentación",
       "empty": "Las notas de la versión aún no están disponibles.",
       "highlight-title": "Cambios destacados",
@@ -337,13 +341,13 @@
     "brightness": "Brillo",
     "browse": "Navegar",
     "calendar": "Calendario",
+    "calendar-panel": "Panel del calendario",
     "cancel": "Cancelar",
     "cards": "Tarjetas",
     "charging": "Cargando",
     "check-settings": "Consultar la configuración para más detalles.",
     "clear": "Claro",
     "clipboard": "Portapapeles",
-    "clock-panel": "Panel de reloj",
     "close": "Cerrar",
     "colors": "Colores",
     "command": "Comando",
@@ -387,6 +391,7 @@
     "logout": "Cerrar sesión",
     "look": "Mira",
     "media": "Medios",
+    "media-player": "Reproductor multimedia",
     "memory": "Memoria",
     "monitors": "Monitores",
     "network": "Red",
@@ -394,6 +399,7 @@
     "night-light": "Luz de noche",
     "no": "No",
     "no-results": "Sin resultados",
+    "no-summary": "Sin resumen",
     "none": "Ninguno",
     "notifications": "Notificaciones",
     "official": "Oficial",
@@ -458,9 +464,6 @@
       "tooltip-action": "Perfil de energía",
       "tooltip-disabled": "Instala power-profiles-daemon para usar perfiles de energía"
     },
-    "screen-recorder": {
-      "label-stopped": "Grabar"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi desconectado",
       "label-ethernet": "Ethernet"
@@ -471,9 +474,6 @@
     "always-show": "Siempre mostrar",
     "force-open": "Forzar la apertura",
     "on-hover": "Al pasar el ratón por encima"
-  },
-  "general": {
-    "no-summary": "Sin resumen"
   },
   "hide-modes": {
     "hidden": "Ocultar cuando esté vacío",
@@ -506,13 +506,13 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "no-results": "No se encontraron resultados.",
     "providers": {
       "applications": "Aplicaciones",
       "calculator": "Calculadora",
       "calculator-deprecated": "El comando >calc está obsoleto y será eliminado pronto. Por favor, escribe expresiones matemáticas directamente en la búsqueda en su lugar.",
       "calculator-description": "Calculadora — evalúa expresiones matemáticas",
       "calculator-enter-expression": "Ingresa una expresión matemática",
+      "calculator-press-enter-to-copy": "Presione Enter para copiar el resultado",
       "clipboard": "Historial del portapapeles",
       "clipboard-clear-description": "Limpiar todo el historial del portapapeles",
       "clipboard-clear-description-full": "Eliminar todos los elementos del historial del portapapeles",
@@ -570,24 +570,10 @@
       "quick-settings-style-modern": "Moderno"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Salida del sistema + entrada del micrófono",
-      "audio-sources-microphone-input": "Entrada del micrófono",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "Salida del sistema",
-      "color-range-full": "Completo",
-      "color-range-limited": "Limitado",
-      "quality-high": "Alta",
-      "quality-medium": "Media",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Muy alta",
-      "sources-portal": "Portal",
-      "sources-screen": "Pantalla"
-    },
     "scrolling-modes": {
-      "always": "Desplazar Siempre",
-      "hover": "Desplazar al Pasar",
-      "never": "Nunca Desplazar"
+      "always": "Desplazar siempre",
+      "hover": "Desplazar al pasar",
+      "never": "Nunca desplazar"
     },
     "session-menu-grid-layout": {
       "grid": "Cuadrícula",
@@ -597,11 +583,6 @@
       "attached": "Panel adjunto a la barra",
       "centered": "Panel centrado",
       "window": "Ventana separada"
-    },
-    "shadow-direction": {
-      "bottom": "Inferior",
-      "center": "Centro",
-      "top": "Superior"
     },
     "visualizer-types": {
       "linear": "Lineal",
@@ -757,12 +738,12 @@
       "templates-programs-discord-description-missing": "No se detectó ningún cliente de Discord",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Estándar: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programas",
-      "templates-programs-pywalfox-description": "Escribir {filepath} y ejecutar pywalfox update",
+      "templates-programs-pywalfox-description": "Escribir {filepath} y ejecutar 'pywalfox update'",
       "templates-programs-spicetify-description": "Escribir {filepath} — el tema Comfy debe ser instalado y activado manualmente",
       "templates-programs-walker-description": "Escribir {filepath} y establecer tema a noctalia",
       "templates-programs-yazi-description": "Escribir {filepath} — el sabor debe activarse manualmente",
       "templates-programs-zed-description": "Escribir {filepath} y recargar",
-      "templates-programs-zen-browser-description": "Escribe {filepath}; copia en el archivo chrome/userChrome.css de tu perfil de Zen.",
+      "templates-programs-zen-browser-description": "Escribir {filepath} — copia en el archivo chrome/userChrome.css de tu perfil de Zen",
       "templates-terminal-description": "Tematización del emulador de terminal.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Tematización del entorno de escritorio y de la interfaz de usuario.",
@@ -988,6 +969,8 @@
       "settings-auto-paste-label": "Pegado automático",
       "settings-clip-preview-description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
       "settings-clip-preview-label": "Activar vista previa del portapapeles",
+      "settings-clip-wrap-text-description": "Ajustar el texto en la lista del portapapeles en lugar de truncarlo.",
+      "settings-clip-wrap-text-label": "Ajustar texto del portapapeles",
       "settings-clipboard-history-description": "Accede a los elementos copiados anteriormente desde el lanzador.",
       "settings-clipboard-history-label": "Activar historial del portapapeles",
       "settings-custom-launch-prefix-description": "Prefijar comandos con un lanzador personalizado (ej. 'runapp' para integración con systemd).",
@@ -1168,6 +1151,8 @@
       "collision-official-version-exists": "La versión oficial de este plugin ya está instalada.",
       "filter-downloaded": "Descargado",
       "filter-not-downloaded": "No descargado",
+      "filter-tags-description": "Filtrar plugins por categoría o estado de descarga",
+      "filter-tags-label": "Etiquetas",
       "hot-reload-description": "Recarga automáticamente los plugins cuando sus archivos cambian. Útil para el desarrollo de plugins.",
       "hot-reload-label": "Recarga en caliente (modo desarrollo)",
       "hot-reloaded": "Plugin recargado: {name}",
@@ -1179,6 +1164,7 @@
       "installed-no-plugins-description": "Instale los plugins de la sección Plugins disponibles que se muestra a continuación.",
       "installed-no-plugins-label": "No hay plugins instalados.",
       "installing": "Instalando {plugin}...",
+      "open-plugin-page": "Abrir página del plugin",
       "open-plugins-tab": "Abrir la configuración de los plugins",
       "plugin-settings-title": "Ajustes de {plugin}",
       "refresh-refreshing": "Actualizando la lista de plugins...",
@@ -1208,6 +1194,7 @@
       "update-all-success": "Todos los plugins se actualizaron correctamente.",
       "update-available": "Nueva actualización de plugin disponible",
       "update-available-plural": "Nuevas actualizaciones de plugins disponibles ({count})",
+      "update-available_plural": "Actualizaciones de plugins disponibles ({count})",
       "update-error": "Error al actualizar el plugin: {plugin}: {error}",
       "update-incompatible": "Requiere Noctalia v{version} o superior",
       "update-pending": "v{actual} → v{nuevo} (requiere Noctalia v{requerida})",
@@ -1216,38 +1203,7 @@
       "updating": "Actualizando..."
     },
     "region": {
-      "clock-panel-desc": "Personalizar la apariencia del panel del reloj.",
-      "clock-panel-title": "Panel de reloj",
       "title": "Región"
-    },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Se recomienda Opus para el mejor rendimiento y el menor tamaño de audio.",
-      "audio-audio-codec-label": "Códec de audio",
-      "audio-audio-source-description": "Fuente de audio a capturar durante la grabación.",
-      "audio-audio-source-label": "Fuente de audio",
-      "audio-desc": "Configura las opciones de grabación de audio.",
-      "audio-title": "Configuración de audio",
-      "general-copy-to-clipboard-description": "Copiar el archivo al portapapeles después de que termine la grabación.",
-      "general-copy-to-clipboard-label": "Copiar al portapapeles",
-      "general-desc": "Gestiona la salida y el contenido de la grabación de pantalla.",
-      "general-output-folder-description": "Carpeta donde se guardarán las grabaciones de pantalla.",
-      "general-output-folder-label": "Carpeta de salida",
-      "general-select-output-folder": "Seleccionar carpeta de salida",
-      "general-show-cursor-description": "Grabar el cursor del ratón en el video.",
-      "general-show-cursor-label": "Mostrar cursor",
-      "general-title": "Configuración general",
-      "title": "Grabadora de pantalla",
-      "video-color-range-description": "Se recomienda limitado para una mejor compatibilidad.",
-      "video-color-range-label": "Rango de color",
-      "video-desc": "Configura las opciones de grabación de video.",
-      "video-frame-rate-description": "Tasa de fotogramas objetivo para las grabaciones de pantalla.",
-      "video-title": "Configuración de video",
-      "video-video-codec-description": "h264 es el códec más común.",
-      "video-video-codec-label": "Códec de video",
-      "video-video-quality-description": "Una mayor calidad resulta en archivos de mayor tamaño.",
-      "video-video-quality-label": "Calidad de video",
-      "video-video-source-description": "Se recomienda Portal; si aparecen artefactos, prueba Screen.",
-      "video-video-source-label": "Fuente de video"
     },
     "session-menu": {
       "countdown-duration-description": "Establecer cuánto tiempo dura el temporizador de cuenta regresiva antes de ejecutar acciones de energía.",
@@ -1570,7 +1526,6 @@
     "click-to-start-recording": "Grabadora de pantalla (iniciar grabación)",
     "click-to-stop-recording": "Grabadora de pantalla (detener grabación)",
     "collapse": "Colapsar barra lateral",
-    "connect-disconnect-devices": "Dispositivo Bluetooth",
     "copy-address": "Copiar dirección",
     "delete-notification": "Eliminar notificación",
     "do-not-disturb-enabled": "No molestar",
@@ -1610,11 +1565,9 @@
     "refresh-wallhaven": "Actualizar resultados de Wallhaven",
     "refresh-wallpaper-list": "Actualizar lista de fondos de pantalla",
     "remove-widget": "Eliminar widget",
-    "screen-recorder-not-installed": "Grabadora de pantalla (no instalada)",
     "search-close": "Cerrar búsqueda",
     "session-menu": "Menú de sesión",
     "show-all-devices": "Mostrar todos los dispositivos",
-    "stop-screen-recording": "Grabadora de pantalla",
     "switch-to-dark-mode": "Modo oscuro",
     "switch-to-light-mode": "Modo claro",
     "unmute": "Activar el audio",

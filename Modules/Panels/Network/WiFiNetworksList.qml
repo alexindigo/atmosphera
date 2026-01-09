@@ -109,6 +109,12 @@ NBox {
               icon: NetworkService.signalIcon(modelData.signal, modelData.connected)
               pointSize: Style.fontSizeXXL
               color: modelData.connected ? (NetworkService.internetConnectivity ? Color.mPrimary : Color.mError) : Color.mOnSurface
+              MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: TooltipService.show(parent, NetworkService.getSignalStrengthLabel(modelData.signal) + " (" + modelData.signal + "%)")
+                onExited: TooltipService.hide()
+              }
             }
 
             ColumnLayout {
@@ -128,7 +134,7 @@ NBox {
                 spacing: Style.marginXS
 
                 NText {
-                  text: NetworkService.getSignalStrengthLabel(modelData.signal) + " (" + modelData.signal + "%)"
+                  text: NetworkService.isSecured(modelData.security) ? modelData.security : "Open"
                   pointSize: Style.fontSizeXXS
                   color: Color.mOnSurfaceVariant
                 }
@@ -140,11 +146,7 @@ NBox {
                   visible: !NetworkService.isSecured(modelData.security)
                 }
 
-                NText {
-                  text: " • " + (NetworkService.isSecured(modelData.security) ? modelData.security : "Open")
-                  pointSize: Style.fontSizeXXS
-                  color: Color.mOnSurfaceVariant
-                }
+                // Spacing
 
                 Item {
                   Layout.preferredWidth: Style.marginXXS
@@ -355,6 +357,7 @@ NBox {
               // Row 1: Interface | Band
               RowLayout {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
                 spacing: Style.marginXS
                 NIcon {
                   icon: "network"
@@ -374,6 +377,7 @@ NBox {
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
                   Layout.fillWidth: true
+                  Layout.preferredWidth: 1
                   Layout.alignment: Qt.AlignVCenter
                   wrapMode: root.detailsGrid ? Text.NoWrap : Text.WrapAtWordBoundaryOrAnywhere
                   elide: root.detailsGrid ? Text.ElideRight : Text.ElideNone

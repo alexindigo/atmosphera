@@ -110,19 +110,70 @@ Item {
       height: width
     }
 
-    Image {
-      anchors.fill: parent
-      anchors.margins: Style.marginS
-      source: imageDataUrl
-      visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
-      fillMode: Image.PreserveAspectFit
-    }
-
+    // Preview for image entry
     ColumnLayout {
       anchors.fill: parent
       anchors.margins: Style.marginS
-      spacing: Style.marginXS
+      spacing: Style.marginS
+      visible: isImageContent && !loadingFullContent && imageDataUrl !== ""
+
+      NImageRounded {
+        id: previewImage
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        radius: Style.marginS
+        imagePath: imageDataUrl
+        imageFillMode: Image.PreserveAspectFit
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginS
+      }
+
+      NText {
+        Layout.fillWidth: true
+        text: {
+          const meta = ClipboardService.parseImageMeta(currentItem?.preview);
+          if (meta)
+            return `${meta.fmt} • ${meta.w}×${meta.h} • ${meta.size}`;
+          // Fallback to basic info
+          const format = (currentItem?.mime || "image").split("/")[1]?.toUpperCase() || "Image";
+          return `${format} • ${previewImage.implicitWidth}×${previewImage.implicitHeight}`;
+        }
+        pointSize: Style.fontSizeS
+        color: Color.mOnSurfaceVariant
+      }
+    }
+
+    // Preview for text entry
+    ColumnLayout {
+      anchors.fill: parent
+      anchors.margins: Style.marginS
+      spacing: Style.marginS
       visible: !isImageContent && !loadingFullContent
+
+      NScrollView {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        clip: true
+        horizontalPolicy: Settings.data.appLauncher.clipboardWrapText ? ScrollBar.AlwaysOff : ScrollBar.AsNeeded
+
+        NText {
+          text: fullContent
+          width: Settings.data.appLauncher.clipboardWrapText ? parent.width : implicitWidth
+          wrapMode: Settings.data.appLauncher.clipboardWrapText ? Text.Wrap : Text.NoWrap
+          textFormat: Text.PlainText
+          font.pointSize: Style.fontSizeM
+          font.family: Settings.data.ui.fontFixed
+          color: Color.mOnSurface
+        }
+      }
+
+      NDivider {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.marginS
+      }
 
       NText {
         Layout.fillWidth: true
@@ -135,22 +186,6 @@ Item {
         }
         pointSize: Style.fontSizeS
         color: Color.mOnSurfaceVariant
-      }
-
-      ScrollView {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        clip: true
-
-        NText {
-          text: fullContent
-          width: parent.width
-          wrapMode: Text.Wrap
-          textFormat: Text.PlainText
-          font.pointSize: Style.fontSizeM
-          font.family: Settings.data.ui.fontFixed
-          color: Color.mOnSurface
-        }
       }
     }
   }

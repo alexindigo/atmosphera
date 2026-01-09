@@ -102,8 +102,10 @@ ColumnLayout {
     Layout.fillWidth: true
   }
 
-  NLabel {
-    label: I18n.tr("panels.osd.monitors-desc")
+  NText {
+    text: I18n.tr("panels.osd.monitors-desc")
+    wrapMode: Text.WordWrap
+    Layout.fillWidth: true
   }
 
   Repeater {

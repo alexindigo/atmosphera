@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "メディアプレーヤーパネルの省スペースレイアウトを有効にする。",
+      "compact-mode-label": "コンパクトモード",
       "hide-mode-description": "再生中のメディアがない場合のウィジェットの動作を制御します。",
       "max-width-description": "ウィジェットの最大幅を設定します。内容が短い場合は自動的に縮小します。",
       "no-active-player": "アクティブなプレーヤーなし",
+      "panel-section-description": "メディアプレーヤーのパネルの表示と動作を設定します。",
+      "panel-section-label": "メディアプレーヤーパネル",
       "scrolling-mode-description": "長いトラックタイトルのスクロール動作を制御します。",
       "scrolling-mode-label": "スクロールモード",
       "show-album-art-description": "現在再生中のトラックのアルバムアートを表示します。",
@@ -337,13 +341,13 @@
     "brightness": "明るさ",
     "browse": "閲覧 (閲覧する - etsuran suru)",
     "calendar": "カレンダー",
+    "calendar-panel": "カレンダーパネル",
     "cancel": "キャンセル",
     "cards": "カード",
     "charging": "充電中",
     "check-settings": "詳細については設定を確認してください。",
     "clear": "クリア",
     "clipboard": "クリップボード",
-    "clock-panel": "時計パネル",
     "close": "閉じる",
     "colors": "色",
     "command": "コマンド",
@@ -387,6 +391,7 @@
     "logout": "ログアウト",
     "look": "見る (miru)",
     "media": "メディア",
+    "media-player": "メディアプレーヤー",
     "memory": "記憶",
     "monitors": "モニタ",
     "network": "ネットワーク",
@@ -394,6 +399,7 @@
     "night-light": "ナイトライト",
     "no": "いいえ",
     "no-results": "結果はありません。",
+    "no-summary": "概要なし",
     "none": "なし",
     "notifications": "通知",
     "official": "公式 (kōshiki)",
@@ -458,9 +464,6 @@
       "tooltip-action": "電源プロファイル",
       "tooltip-disabled": "電源プロファイルを使用するには power-profiles-daemon をインストールしてください"
     },
-    "screen-recorder": {
-      "label-stopped": "録画"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi 未接続",
       "label-ethernet": "イーサネット"
@@ -471,9 +474,6 @@
     "always-show": "常に表示する",
     "force-open": "こじ開ける",
     "on-hover": "マウスオーバー時"
-  },
-  "general": {
-    "no-summary": "概要なし"
   },
   "hide-modes": {
     "hidden": "空の場合に非表示",
@@ -506,13 +506,13 @@
       "system": "システム",
       "webbrowser": "ウェブブラウザ"
     },
-    "no-results": "結果が見つかりませんでした。",
     "providers": {
       "applications": "アプリケーション",
       "calculator": "電卓",
       "calculator-deprecated": ">calc コマンドは非推奨となり、まもなく削除されます。代わりに、検索で数式を直接入力してください。",
       "calculator-description": "電卓 — 数式を計算します",
       "calculator-enter-expression": "数式を入力",
+      "calculator-press-enter-to-copy": "結果をコピーするにはEnterキーを押してください。",
       "clipboard": "クリップボード履歴",
       "clipboard-clear-description": "クリップボード履歴をすべて消去",
       "clipboard-clear-description-full": "クリップボード履歴からすべての項目を削除します",
@@ -570,20 +570,6 @@
       "quick-settings-style-modern": "モダン"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "システム出力 + マイク入力",
-      "audio-sources-microphone-input": "マイク入力",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "システム出力",
-      "color-range-full": "フル",
-      "color-range-limited": "リミテッド",
-      "quality-high": "高",
-      "quality-medium": "標準",
-      "quality-ultra": "ウルトラ",
-      "quality-very-high": "最高",
-      "sources-portal": "ポータル",
-      "sources-screen": "スクリーン"
-    },
     "scrolling-modes": {
       "always": "常にスクロール",
       "hover": "ホバー時にスクロール",
@@ -597,11 +583,6 @@
       "attached": "バーに吸着",
       "centered": "中央に配置",
       "window": "独立したウィンドウ"
-    },
-    "shadow-direction": {
-      "bottom": "下",
-      "center": "中央",
-      "top": "上"
     },
     "visualizer-types": {
       "linear": "リニア",
@@ -757,12 +738,12 @@
       "templates-programs-discord-description-missing": "Discord クライアントが検出されませんでした",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>標準: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "プログラム",
-      "templates-programs-pywalfox-description": "{filepath} を書き込み、pywalfox update を実行します。",
+      "templates-programs-pywalfox-description": "{filepath} を書き込みます、'pywalfox update' を実行します。",
       "templates-programs-spicetify-description": "{filepath} を書き込みます。Comfy テーマを手動でインストールして有効化する必要があります。",
-      "templates-programs-walker-description": "{filepath} を書き込み、テーマを noctalia に設定します。",
+      "templates-programs-walker-description": "{filepath} を書き込みます、テーマを noctalia に設定します。",
       "templates-programs-yazi-description": "{filepath} を書き込みます。フレーバーは手動で有効化する必要があります。",
-      "templates-programs-zed-description": "{filepath} を書き込み、リロードします。",
-      "templates-programs-zen-browser-description": "{filepath} を記述; Zen プロファイルの chrome/userChrome.css にコピーしてください。",
+      "templates-programs-zed-description": "{filepath} を書き込みます、リロードします。",
+      "templates-programs-zen-browser-description": "{filepath} を書き込みます 。Zen プロファイルの chrome/userChrome.css にコピーしてください。",
       "templates-terminal-description": "ターミナルエミュレータのテーマ設定",
       "templates-terminal-label": "ターミナル",
       "templates-ui-description": "デスクトップ環境と UI ツールキットのテーマ設定",
@@ -988,6 +969,8 @@
       "settings-auto-paste-label": "自動貼り付け",
       "settings-clip-preview-description": ">clip コマンド使用時に、クリップボードの内容をプレビュー表示します。",
       "settings-clip-preview-label": "クリップボードのプレビューを有効化",
+      "settings-clip-wrap-text-description": "クリップボードのリストでテキストを切り捨てる代わりに、折り返して表示する。",
+      "settings-clip-wrap-text-label": "クリップボードのテキストを折り返す",
       "settings-clipboard-history-description": "以前コピーした項目にランチャーからアクセスできるようにします。",
       "settings-clipboard-history-label": "クリップボード履歴を有効化",
       "settings-custom-launch-prefix-description": "コマンドの先頭にカスタムランチャーを付与します（例: systemd 連携用の 'runapp'）。",
@@ -1168,6 +1151,8 @@
       "collision-official-version-exists": "このプラグインの公式バージョンはすでにインストールされています。",
       "filter-downloaded": "ダウンロード済み",
       "filter-not-downloaded": "未ダウンロード",
+      "filter-tags-description": "カテゴリーまたはダウンロード状況でプラグインを絞り込む",
+      "filter-tags-label": "タグ",
       "hot-reload-description": "ファイルの変更時にプラグインを自動的にリロードします。プラグイン開発に便利です。",
       "hot-reload-label": "ホットリロード（開発モード）",
       "hot-reloaded": "プラグインをリロードしました: {name}",
@@ -1179,6 +1164,7 @@
       "installed-no-plugins-description": "下の「利用可能なプラグイン」セクションからプラグインをインストールしてください。",
       "installed-no-plugins-label": "インストールされているプラグインはありません",
       "installing": "{plugin} をインストール中...",
+      "open-plugin-page": "プラグインページを開く",
       "open-plugins-tab": "プラグイン設定を開く",
       "plugin-settings-title": "{plugin} の設定",
       "refresh-refreshing": "プラグインリストを更新中...",
@@ -1208,6 +1194,7 @@
       "update-all-success": "すべてのプラグインをアップデートしました。",
       "update-available": "新しいプラグインアップデートがあります",
       "update-available-plural": "新しいプラグインアップデートがあります（{count}個）",
+      "update-available_plural": "利用可能なプラグインの更新 ({count})",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
       "update-pending": "v{current} → v{new} (Noctalia v{required} ga hitsuyou)",
@@ -1216,38 +1203,7 @@
       "updating": "更新中..."
     },
     "region": {
-      "clock-panel-desc": "時計パネルの外観をカスタマイズします。",
-      "clock-panel-title": "時計パネル",
       "title": "地域"
-    },
-    "screen-recorder": {
-      "audio-audio-codec-description": "最高のパフォーマンスと最小のファイルサイズを実現する Opus を推奨します。",
-      "audio-audio-codec-label": "オーディオコーデック",
-      "audio-audio-source-description": "録画中にキャプチャする音声ソース。",
-      "audio-audio-source-label": "オーディオソース",
-      "audio-desc": "音声録音のオプションを設定します。",
-      "audio-title": "オーディオ設定",
-      "general-copy-to-clipboard-description": "録画終了後、ファイルをクリップボードにコピーします。",
-      "general-copy-to-clipboard-label": "クリップボードにコピー",
-      "general-desc": "画面録画の出力先や内容を管理します。",
-      "general-output-folder-description": "画面録画ファイルを保存するフォルダ。",
-      "general-output-folder-label": "出力フォルダ",
-      "general-select-output-folder": "出力フォルダを選択",
-      "general-show-cursor-description": "動画にマウスカーソルを含めて録画します。",
-      "general-show-cursor-label": "カーソルを表示",
-      "general-title": "一般",
-      "title": "スクリーンレコーダー",
-      "video-color-range-description": "互換性を高めるため、リミテッドを推奨します。",
-      "video-color-range-label": "カラーレンジ",
-      "video-desc": "映像録画のオプションを設定します。",
-      "video-frame-rate-description": "画面録画のターゲットフレームレート。",
-      "video-title": "ビデオ設定",
-      "video-video-codec-description": "H264 が最も一般的なコーデックです。",
-      "video-video-codec-label": "ビデオコーデック",
-      "video-video-quality-description": "品質を高くすると、ファイルサイズが大きくなります。",
-      "video-video-quality-label": "ビデオ品質",
-      "video-video-source-description": "ポータルを推奨します。映像が乱れる場合はスクリーンを試してください。",
-      "video-video-source-label": "ビデオソース"
     },
     "session-menu": {
       "countdown-duration-description": "カウントダウンタイマーが電源操作を実行するまでの時間を設定します。",
@@ -1570,7 +1526,6 @@
     "click-to-start-recording": "画面録画（録画開始）",
     "click-to-stop-recording": "画面録画（録画停止）",
     "collapse": "サイドバーを折りたたむ",
-    "connect-disconnect-devices": "Bluetooth デバイス",
     "copy-address": "アドレスをコピー",
     "delete-notification": "通知を削除",
     "do-not-disturb-enabled": "おやすみモード",
@@ -1610,11 +1565,9 @@
     "refresh-wallhaven": "Wallhaven の検索結果を更新",
     "refresh-wallpaper-list": "壁紙リストを更新",
     "remove-widget": "ウィジェットを削除",
-    "screen-recorder-not-installed": "スクリーンレコーダー（未インストール）",
     "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
     "show-all-devices": "すべてのデバイスを表示",
-    "stop-screen-recording": "画面録画",
     "switch-to-dark-mode": "ダークモード",
     "switch-to-light-mode": "ライトモード",
     "unmute": "ミュート解除",

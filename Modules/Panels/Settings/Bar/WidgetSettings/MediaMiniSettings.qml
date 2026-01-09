@@ -15,15 +15,17 @@ ColumnLayout {
   // Local state
   property string valueHideMode: "hidden" // Default to 'Hide When Empty'
   // Deprecated: hideWhenIdle now folded into hideMode = "idle"
-  property bool valueHideWhenIdle: widgetData.hideWhenIdle !== undefined ? widgetData.hideWhenIdle : widgetMetadata.hideWhenIdle
-  property bool valueShowAlbumArt: widgetData.showAlbumArt !== undefined ? widgetData.showAlbumArt : widgetMetadata.showAlbumArt
-  property bool valueShowArtistFirst: widgetData.showArtistFirst !== undefined ? widgetData.showArtistFirst : widgetMetadata.showArtistFirst
-  property bool valueShowVisualizer: widgetData.showVisualizer !== undefined ? widgetData.showVisualizer : widgetMetadata.showVisualizer
-  property string valueVisualizerType: widgetData.visualizerType || widgetMetadata.visualizerType
-  property string valueScrollingMode: widgetData.scrollingMode || widgetMetadata.scrollingMode
-  property int valueMaxWidth: widgetData.maxWidth !== undefined ? widgetData.maxWidth : widgetMetadata.maxWidth
-  property bool valueUseFixedWidth: widgetData.useFixedWidth !== undefined ? widgetData.useFixedWidth : widgetMetadata.useFixedWidth
-  property bool valueShowProgressRing: widgetData.showProgressRing !== undefined ? widgetData.showProgressRing : widgetMetadata.showProgressRing
+  property bool valueHideWhenIdle: (widgetData && widgetData.hideWhenIdle !== undefined) ? widgetData.hideWhenIdle : (widgetMetadata && widgetMetadata.hideWhenIdle !== undefined ? widgetMetadata.hideWhenIdle : false)
+  property bool valueShowAlbumArt: (widgetData && widgetData.showAlbumArt !== undefined) ? widgetData.showAlbumArt : (widgetMetadata && widgetMetadata.showAlbumArt !== undefined ? widgetMetadata.showAlbumArt : false)
+  property bool valuePanelShowAlbumArt: (widgetData && widgetData.panelShowAlbumArt !== undefined) ? widgetData.panelShowAlbumArt : (widgetMetadata && widgetMetadata.panelShowAlbumArt !== undefined ? widgetMetadata.panelShowAlbumArt : true)
+  property bool valueShowArtistFirst: (widgetData && widgetData.showArtistFirst !== undefined) ? widgetData.showArtistFirst : (widgetMetadata && widgetMetadata.showArtistFirst !== undefined ? widgetMetadata.showArtistFirst : true)
+  property bool valueShowVisualizer: (widgetData && widgetData.showVisualizer !== undefined) ? widgetData.showVisualizer : (widgetMetadata && widgetMetadata.showVisualizer !== undefined ? widgetMetadata.showVisualizer : false)
+  property string valueVisualizerType: (widgetData && widgetData.visualizerType) || (widgetMetadata && widgetMetadata.visualizerType) || "linear"
+  property string valueScrollingMode: (widgetData && widgetData.scrollingMode) || (widgetMetadata && widgetMetadata.scrollingMode) || "hover"
+  property int valueMaxWidth: (widgetData && widgetData.maxWidth !== undefined) ? widgetData.maxWidth : (widgetMetadata && widgetMetadata.maxWidth !== undefined ? widgetMetadata.maxWidth : 145)
+  property bool valueUseFixedWidth: (widgetData && widgetData.useFixedWidth !== undefined) ? widgetData.useFixedWidth : (widgetMetadata && widgetMetadata.useFixedWidth !== undefined ? widgetMetadata.useFixedWidth : false)
+  property bool valueShowProgressRing: (widgetData && widgetData.showProgressRing !== undefined) ? widgetData.showProgressRing : (widgetMetadata && widgetMetadata.showProgressRing !== undefined ? widgetMetadata.showProgressRing : true)
+  property bool valueCompactMode: widgetData.compactMode !== undefined ? widgetData.compactMode : widgetMetadata.compactMode
 
   Component.onCompleted: {
     if (widgetData && widgetData.hideMode !== undefined) {
@@ -36,6 +38,7 @@ ColumnLayout {
     settings.hideMode = valueHideMode;
     // No longer store hideWhenIdle separately; kept for backward compatibility only
     settings.showAlbumArt = valueShowAlbumArt;
+    settings.panelShowAlbumArt = valuePanelShowAlbumArt;
     settings.showArtistFirst = valueShowArtistFirst;
     settings.showVisualizer = valueShowVisualizer;
     settings.visualizerType = valueVisualizerType;
@@ -43,6 +46,7 @@ ColumnLayout {
     settings.maxWidth = parseInt(widthInput.text) || widgetMetadata.maxWidth;
     settings.useFixedWidth = valueUseFixedWidth;
     settings.showProgressRing = valueShowProgressRing;
+    settings.compactMode = valueCompactMode;
     return settings;
   }
 
@@ -159,5 +163,30 @@ ColumnLayout {
     currentKey: valueScrollingMode
     onSelected: key => valueScrollingMode = key
     minimumWidth: 200
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+    Layout.topMargin: Style.marginS
+  }
+
+  NLabel {
+    label: I18n.tr("bar.media-mini.panel-section-label")
+    description: I18n.tr("bar.media-mini.panel-section-description")
+    labelColor: Color.mPrimary
+  }
+
+  NToggle {
+    label: I18n.tr("bar.media-mini.show-album-art-label")
+    description: I18n.tr("bar.media-mini.show-album-art-description")
+    checked: valuePanelShowAlbumArt
+    onToggled: checked => valuePanelShowAlbumArt = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.media-mini.compact-mode-label")
+    description: I18n.tr("bar.media-mini.compact-mode-description")
+    checked: valueCompactMode
+    onToggled: checked => valueCompactMode = checked
   }
 }

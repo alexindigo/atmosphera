@@ -94,10 +94,6 @@ Item {
     WallpaperTab {}
   }
   Component {
-    id: screenRecorderTab
-    ScreenRecorderTab {}
-  }
-  Component {
     id: aboutTab
     AboutTab {}
   }
@@ -245,12 +241,6 @@ Item {
             "label": "panels.region.title",
             "icon": "settings-location",
             "source": regionTab
-          },
-          {
-            "id": SettingsPanel.Tab.ScreenRecorder,
-            "label": "panels.screen-recorder.title",
-            "icon": "settings-screen-recorder",
-            "source": screenRecorderTab
           },
           {
             "id": SettingsPanel.Tab.SystemMonitor,
@@ -453,7 +443,7 @@ Item {
                 id: tabItem
                 width: sidebarList.width - (sidebarList.verticalScrollBarActive ? Style.marginM : 0)
                 height: tabEntryRow.implicitHeight + Style.marginS * 2
-                radius: Style.radiusS
+                radius: Style.iRadiusS
                 color: selected ? Color.mPrimary : (tabItem.hovering ? Color.mHover : "transparent")
                 readonly property bool selected: index === root.currentTabIndex
                 property bool hovering: false

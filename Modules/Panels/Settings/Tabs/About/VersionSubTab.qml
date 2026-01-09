@@ -167,7 +167,21 @@ ColumnLayout {
   }
 
   RowLayout {
+    Layout.alignment: Qt.AlignHCenter
     spacing: Style.marginXL
+
+    // Noctalia logo
+    Image {
+      source: "../../../../../Assets/noctalia.svg"
+      width: Style.fontSizeXXXL * 2.5 * Style.uiScaleRatio
+      height: width
+      fillMode: Image.PreserveAspectFit
+      sourceSize.width: width
+      sourceSize.height: height
+      mipmap: true
+      smooth: true
+      Layout.alignment: Qt.AlignVCenter
+    }
 
     // Versions
     GridLayout {
@@ -224,8 +238,6 @@ ColumnLayout {
     NButton {
       icon: "sparkles"
       text: I18n.tr("panels.about.changelog")
-      fontSize: Style.fontSizeXS
-      iconSize: Style.fontSizeS
       outlined: true
       onClicked: {
         var screen = PanelService.openedPanel?.screen || Quickshell.screens[0];
@@ -236,8 +248,6 @@ ColumnLayout {
     NButton {
       icon: "heart"
       text: I18n.tr("panels.about.support")
-      fontSize: Style.fontSizeXS
-      iconSize: Style.fontSizeS
       outlined: true
       onClicked: {
         Quickshell.execDetached(["xdg-open", "https://ko-fi.com/lysec"]);

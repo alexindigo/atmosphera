@@ -313,13 +313,13 @@ Variants {
           readonly property int barOffsetTop: {
             if (barPos !== "top")
               return Style.marginM;
-            const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical * Style.marginXL) : 0;
+            const floatMarginV = barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0;
             return Style.barHeight + floatMarginV + Style.marginM;
           }
           readonly property int barOffsetRight: {
             if (barPos !== "right")
               return Style.marginM;
-            const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
+            const floatMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
             return Style.barHeight + floatMarginH + Style.marginM;
           }
 

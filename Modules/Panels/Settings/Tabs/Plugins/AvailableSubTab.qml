@@ -12,8 +12,27 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
-  property string pluginFilter: "all"
   property string pluginSearchText: ""
+  property string selectedTag: ""
+  property int tagsRefreshCounter: 0
+  property int availablePluginsRefreshCounter: 0
+
+  // Pseudo tags for filtering by download status
+  readonly property var pseudoTags: ["", "downloaded", "notDownloaded"]
+
+  readonly property var availableTags: {
+    // Reference counter to force re-evaluation
+    void (root.tagsRefreshCounter);
+    var tags = {};
+    var plugins = PluginService.availablePlugins || [];
+    for (var i = 0; i < plugins.length; i++) {
+      var pluginTags = plugins[i].tags || [];
+      for (var j = 0; j < pluginTags.length; j++) {
+        tags[pluginTags[j]] = true;
+      }
+    }
+    return Object.keys(tags).sort();
+  }
 
   function stripAuthorEmail(author) {
     if (!author)
@@ -25,45 +44,94 @@ ColumnLayout {
     return author;
   }
 
-  // Filter controls
-  RowLayout {
-    spacing: Style.marginM
+  // Tag filter chips in collapsible
+  NCollapsible {
     Layout.fillWidth: true
+    label: I18n.tr("panels.plugins.filter-tags-label")
+    description: I18n.tr("panels.plugins.filter-tags-description")
+    expanded: true
+    contentSpacing: Style.marginXS
 
-    NTabBar {
-      id: filterTabBar
+    Repeater {
+      id: tagRowsRepeater
+      model: {
+        // Combine pseudo tags with actual tags
+        var allTags = root.pseudoTags.concat(root.availableTags);
+        var rows = [];
+        var currentRow = [];
+        var currentWidth = 0;
+        var availableWidth = root.width - Style.marginL * 6;
+        var spacingWidth = Style.marginXS;
+
+        for (var i = 0; i < allTags.length; i++) {
+          var tag = allTags[i];
+          // Estimate button width based on tag
+          var buttonWidth;
+          if (tag === "")
+            buttonWidth = 40;
+          else if (tag === "downloaded")
+            buttonWidth = 90;
+          else if (tag === "notDownloaded")
+            buttonWidth = 110;
+          else
+            buttonWidth = tag.length * 7 + 24;
+
+          if (currentRow.length > 0 && currentWidth + spacingWidth + buttonWidth > availableWidth) {
+            rows.push(currentRow);
+            currentRow = [tag];
+            currentWidth = buttonWidth;
+          } else {
+            currentRow.push(tag);
+            currentWidth += (currentRow.length > 1 ? spacingWidth : 0) + buttonWidth;
+          }
+        }
+        if (currentRow.length > 0) {
+          rows.push(currentRow);
+        }
+        return rows;
+      }
+
+      delegate: Row {
+        Layout.alignment: Qt.AlignHCenter
+        spacing: Style.marginXS
+
+        Repeater {
+          model: modelData
+
+          delegate: NButton {
+            text: {
+              if (modelData === "")
+                return I18n.tr("launcher.categories.all");
+              if (modelData === "downloaded")
+                return I18n.tr("panels.plugins.filter-downloaded");
+              if (modelData === "notDownloaded")
+                return I18n.tr("panels.plugins.filter-not-downloaded");
+              return modelData;
+            }
+            backgroundColor: root.selectedTag === modelData ? Color.mPrimary : Color.mSurfaceVariant
+            textColor: root.selectedTag === modelData ? Color.mOnPrimary : Color.mOnSurfaceVariant
+            onClicked: root.selectedTag = modelData
+            fontSize: Style.fontSizeS
+            iconSize: Style.fontSizeS
+            fontWeight: Style.fontWeightSemiBold
+            buttonRadius: Style.iRadiusM
+          }
+        }
+      }
+    }
+  }
+
+  // Search input with refresh button
+  RowLayout {
+    Layout.fillWidth: true
+    spacing: Style.marginM
+
+    NTextInput {
+      placeholderText: I18n.tr("placeholders.search")
+      inputIconName: "search"
+      text: root.pluginSearchText
+      onTextChanged: root.pluginSearchText = text
       Layout.fillWidth: true
-      spacing: Style.marginM
-      currentIndex: 0
-      onCurrentIndexChanged: {
-        if (currentIndex === 0)
-          root.pluginFilter = "all";
-        else if (currentIndex === 1)
-          root.pluginFilter = "downloaded";
-        else if (currentIndex === 2)
-          root.pluginFilter = "notDownloaded";
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("launcher.categories.all")
-        tabIndex: 0
-        checked: root.pluginFilter === "all"
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("panels.plugins.filter-downloaded")
-        tabIndex: 1
-        checked: root.pluginFilter === "downloaded"
-      }
-
-      NTabButton {
-        Layout.fillWidth: true
-        text: I18n.tr("panels.plugins.filter-not-downloaded")
-        tabIndex: 2
-        checked: root.pluginFilter === "notDownloaded"
-      }
     }
 
     NIconButton {
@@ -78,15 +146,6 @@ ColumnLayout {
     }
   }
 
-  // Search input
-  NTextInput {
-    placeholderText: I18n.tr("placeholders.search")
-    inputIconName: "search"
-    text: root.pluginSearchText
-    onTextChanged: root.pluginSearchText = text
-    Layout.fillWidth: true
-  }
-
   // Available plugins list
   ColumnLayout {
     spacing: Style.marginM
@@ -96,20 +155,34 @@ ColumnLayout {
       id: availablePluginsRepeater
 
       model: {
+        // Reference counter to force re-evaluation when plugins are updated
+        void (root.availablePluginsRefreshCounter);
+
         var all = PluginService.availablePlugins || [];
         var filtered = [];
 
-        // First apply download filter
+        // Apply filter based on selectedTag
         for (var i = 0; i < all.length; i++) {
           var plugin = all[i];
           var downloaded = plugin.downloaded || false;
+          var pluginTags = plugin.tags || [];
 
-          if (root.pluginFilter === "all") {
+          if (root.selectedTag === "") {
+            // "All" - no filter
             filtered.push(plugin);
-          } else if (root.pluginFilter === "downloaded" && downloaded) {
-            filtered.push(plugin);
-          } else if (root.pluginFilter === "notDownloaded" && !downloaded) {
-            filtered.push(plugin);
+          } else if (root.selectedTag === "downloaded") {
+            // Downloaded pseudo tag
+            if (downloaded)
+              filtered.push(plugin);
+          } else if (root.selectedTag === "notDownloaded") {
+            // Not Downloaded pseudo tag
+            if (!downloaded)
+              filtered.push(plugin);
+          } else {
+            // Actual category tag
+            if (pluginTags.indexOf(root.selectedTag) >= 0) {
+              filtered.push(plugin);
+            }
           }
         }
 
@@ -134,29 +207,30 @@ ColumnLayout {
           });
         }
 
+        // Move hello-world plugin to the end
+        var helloWorldIndex = -1;
+        for (var h = 0; h < filtered.length; h++) {
+          if (filtered[h].id === "hello-world") {
+            helloWorldIndex = h;
+            break;
+          }
+        }
+        if (helloWorldIndex >= 0) {
+          var helloWorld = filtered.splice(helloWorldIndex, 1)[0];
+          filtered.push(helloWorld);
+        }
+
         return filtered;
       }
 
       delegate: NBox {
         id: pluginBox
-        property bool isHovered: hoverHandler.hovered
 
         Layout.fillWidth: true
         Layout.leftMargin: Style.borderS
         Layout.rightMargin: Style.borderS
         implicitHeight: Math.round(contentColumn.implicitHeight + Style.marginL * 2)
         color: Color.mSurface
-
-        Behavior on implicitHeight {
-          NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutCubic
-          }
-        }
-
-        HoverHandler {
-          id: hoverHandler
-        }
 
         ColumnLayout {
           id: contentColumn
@@ -171,37 +245,34 @@ ColumnLayout {
             NIcon {
               icon: "plugin"
               pointSize: Style.fontSizeL
-              color: Color.mOnSurface
+              color: Color.mPrimary
             }
 
             NText {
               text: modelData.name
-              color: Color.mOnSurface
+              color: Color.mPrimary
               elide: Text.ElideRight
             }
 
-            // Description excerpt - visible when not hovered
-            NText {
-              visible: !pluginBox.isHovered && modelData.description
-              text: modelData.description || ""
-              font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
-              elide: Text.ElideRight
-              Layout.fillWidth: true
-            }
-
-            // Spacer when hovered or no description
+            // Spacer
             Item {
-              visible: pluginBox.isHovered || !modelData.description
               Layout.fillWidth: true
             }
 
             // Downloaded indicator
             NIcon {
               icon: "circle-check"
-              pointSize: Style.fontSizeL
+              pointSize: Style.baseWidgetSize * 0.5
               color: Color.mPrimary
               visible: modelData.downloaded === true
+            }
+
+            // Open plugin page button
+            NIconButton {
+              icon: "external-link"
+              baseSize: Style.baseWidgetSize * 0.7
+              tooltipText: I18n.tr("panels.plugins.open-plugin-page")
+              onClicked: Qt.openUrlExternally("https://noctalia.dev/plugins/" + modelData.id + "/")
             }
 
             // Install/Uninstall button
@@ -223,9 +294,9 @@ ColumnLayout {
             }
           }
 
-          // Description - visible on hover
+          // Description
           NText {
-            visible: pluginBox.isHovered && modelData.description
+            visible: modelData.description
             text: modelData.description || ""
             font.pointSize: Style.fontSizeXS
             color: Color.mOnSurface
@@ -233,9 +304,8 @@ ColumnLayout {
             Layout.fillWidth: true
           }
 
-          // Details row - visible on hover
+          // Details row
           RowLayout {
-            visible: pluginBox.isHovered
             spacing: Style.marginS
             Layout.fillWidth: true
 
@@ -398,29 +468,9 @@ ColumnLayout {
     target: PluginService
 
     function onAvailablePluginsUpdated() {
-      // Force model refresh for available plugins
-      availablePluginsRepeater.model = undefined;
-      Qt.callLater(function () {
-        availablePluginsRepeater.model = Qt.binding(function () {
-          var all = PluginService.availablePlugins || [];
-          var filtered = [];
-
-          for (var i = 0; i < all.length; i++) {
-            var plugin = all[i];
-            var downloaded = plugin.downloaded || false;
-
-            if (root.pluginFilter === "all") {
-              filtered.push(plugin);
-            } else if (root.pluginFilter === "downloaded" && downloaded) {
-              filtered.push(plugin);
-            } else if (root.pluginFilter === "notDownloaded" && !downloaded) {
-              filtered.push(plugin);
-            }
-          }
-
-          return filtered;
-        });
-      });
+      // Force tags and plugins model to re-evaluate
+      root.tagsRefreshCounter++;
+      root.availablePluginsRefreshCounter++;
 
       // Manually trigger update check after a small delay to ensure all registries are loaded
       Qt.callLater(function () {

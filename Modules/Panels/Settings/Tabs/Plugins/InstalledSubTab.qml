@@ -127,7 +127,7 @@ ColumnLayout {
           NIcon {
             icon: "plugin"
             pointSize: Style.fontSizeXL
-            color: PluginService.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mOnSurface
+            color: PluginService.hasPluginError(modelData.compositeKey) ? Color.mError : Color.mPrimary
           }
 
           ColumnLayout {
@@ -136,7 +136,7 @@ ColumnLayout {
 
             NText {
               text: modelData.name
-              color: Color.mOnSurface
+              color: Color.mPrimary
               elide: Text.ElideRight
               Layout.fillWidth: true
             }
@@ -144,7 +144,7 @@ ColumnLayout {
             NText {
               text: modelData.description
               font.pointSize: Style.fontSizeXS
-              color: Color.mOnSurfaceVariant
+              color: Color.mOnSurface
               wrapMode: Text.WordWrap
               maximumLineCount: 2
               elide: Text.ElideRight
@@ -258,6 +258,8 @@ ColumnLayout {
             enabled: !isUpdating
             backgroundColor: Color.mPrimary
             textColor: Color.mOnPrimary
+            fontSize: Style.fontSizeXXS
+            fontWeight: Style.fontWeightMedium
             onClicked: {
               var pid = pluginId;
               var pname = modelData.name;

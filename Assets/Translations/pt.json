@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Ativar um layout que economize espaço para o painel do reprodutor de mídia.",
+      "compact-mode-label": "Modo compacto",
       "hide-mode-description": "Controla o comportamento do widget quando nenhuma mídia está sendo reproduzida.",
       "max-width-description": "Define o tamanho horizontal máximo do widget. O widget será reduzido para se adequar a conteúdo mais curto.",
       "no-active-player": "Nenhum player ativo",
+      "panel-section-description": "Configure a aparência e o comportamento do painel do reprodutor de mídia.",
+      "panel-section-label": "Painel do reprodutor de mídia",
       "scrolling-mode-description": "Controlar quando a rolagem de texto está habilitada para títulos de faixa longos.",
       "scrolling-mode-label": "Modo de rolagem",
       "show-album-art-description": "Exibir a arte do álbum da faixa atualmente sendo reproduzida.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Entre no nosso Discord",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Dar feedback",
       "empty": "As notas da versão ainda não estão disponíveis.",
       "highlight-title": "Destaques",
@@ -337,13 +341,13 @@
     "brightness": "Brilho",
     "browse": "Navegar",
     "calendar": "Calendário",
+    "calendar-panel": "Painel do calendário",
     "cancel": "Cancelar",
     "cards": "Cartões",
     "charging": "Carregando",
     "check-settings": "Verifique as configurações para obter detalhes.",
     "clear": "Claro",
     "clipboard": "Área de transferência",
-    "clock-panel": "Painel do Relógio",
     "close": "Fechar",
     "colors": "Cores",
     "command": "Comando",
@@ -387,6 +391,7 @@
     "logout": "Sair",
     "look": "Olhe",
     "media": "Mídia",
+    "media-player": "Reprodutor de mídia",
     "memory": "Memória",
     "monitors": "Monitores",
     "network": "Rede",
@@ -394,6 +399,7 @@
     "night-light": "Luz Noturna",
     "no": "Não",
     "no-results": "Nenhum resultado",
+    "no-summary": "Sem resumo",
     "none": "Nenhum.",
     "notifications": "Notificações",
     "official": "Oficial",
@@ -458,9 +464,6 @@
       "tooltip-action": "Perfil de energia",
       "tooltip-disabled": "Instale power-profiles-daemon para usar perfis de energia"
     },
-    "screen-recorder": {
-      "label-stopped": "Gravar"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi desconectado",
       "label-ethernet": "Ethernet"
@@ -471,9 +474,6 @@
     "always-show": "Sempre mostrar",
     "force-open": "Forçar a abertura",
     "on-hover": "Ao passar o mouse"
-  },
-  "general": {
-    "no-summary": "Sem resumo"
   },
   "hide-modes": {
     "hidden": "Ocultar quando vazio",
@@ -506,13 +506,13 @@
       "system": "Sistema",
       "webbrowser": "Navegador web"
     },
-    "no-results": "Nenhum resultado encontrado.",
     "providers": {
       "applications": "Aplicativos",
       "calculator": "Calculadora",
       "calculator-deprecated": "O comando >calc está obsoleto e será removido em breve. Por favor, digite expressões matemáticas diretamente na pesquisa.",
       "calculator-description": "Calculadora — avalie expressões matemáticas",
       "calculator-enter-expression": "Digite uma expressão matemática",
+      "calculator-press-enter-to-copy": "Pressione Enter para copiar o resultado.",
       "clipboard": "Histórico da área de transferência",
       "clipboard-clear-description": "Limpar todo o histórico da área de transferência",
       "clipboard-clear-description-full": "Remover todos os itens do histórico da área de transferência",
@@ -570,38 +570,19 @@
       "quick-settings-style-modern": "Moderno"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Saída do sistema + entrada do microfone",
-      "audio-sources-microphone-input": "Entrada do microfone",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "Saída do sistema",
-      "color-range-full": "Completa",
-      "color-range-limited": "Limitada",
-      "quality-high": "Alta",
-      "quality-medium": "Média",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Muito alta",
-      "sources-portal": "Portal",
-      "sources-screen": "Tela"
-    },
     "scrolling-modes": {
-      "always": "Rolar Sempre",
-      "hover": "Rolar ao Passar o Mouse",
-      "never": "Nunca Rolar"
+      "always": "Rolar sempre",
+      "hover": "Rolar ao passar o mouse",
+      "never": "Nunca rolar"
     },
     "session-menu-grid-layout": {
       "grid": "Grade",
-      "single-row": "Linha Única"
+      "single-row": "Linha única"
     },
     "settings-panel-mode": {
       "attached": "Painel anexado à barra",
       "centered": "Painel centralizado",
       "window": "Janela separada"
-    },
-    "shadow-direction": {
-      "bottom": "Inferior",
-      "center": "Centro",
-      "top": "Superior"
     },
     "visualizer-types": {
       "linear": "Linear",
@@ -757,12 +738,12 @@
       "templates-programs-discord-description-missing": "Nenhum cliente Discord detectado",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Padrão: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programas",
-      "templates-programs-pywalfox-description": "Escrever {filepath} e executar pywalfox update",
+      "templates-programs-pywalfox-description": "Escrever {filepath} e executar 'pywalfox update'",
       "templates-programs-spicetify-description": "Escrever {filepath} — o tema Comfy precisa ser instalado e ativado manualmente",
       "templates-programs-walker-description": "Escrever {filepath} e definir tema como noctalia",
       "templates-programs-yazi-description": "Escrever {filepath} — o sabor precisa ser ativado manualmente",
       "templates-programs-zed-description": "Escrever {filepath} e recarregar",
-      "templates-programs-zen-browser-description": "Escreva em {filepath}; copie para o chrome/userChrome.css do seu perfil Zen.",
+      "templates-programs-zen-browser-description": "Escrever {filepath} — copie para o arquivo chrome/userChrome.css do seu perfil Zen",
       "templates-terminal-description": "Tematização do emulador de terminal.",
       "templates-terminal-label": "Terminal",
       "templates-ui-description": "Tematização do ambiente de desktop e kit de ferramentas de UI.",
@@ -988,6 +969,8 @@
       "settings-auto-paste-label": "Colar automaticamente",
       "settings-clip-preview-description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
       "settings-clip-preview-label": "Ativar pré-visualização da área de transferência",
+      "settings-clip-wrap-text-description": "Quebrar o texto na lista da área de transferência em vez de truncá-lo.",
+      "settings-clip-wrap-text-label": "Quebrar texto da área de transferência",
       "settings-clipboard-history-description": "Acesse itens copiados anteriormente a partir do lançador.",
       "settings-clipboard-history-label": "Ativar histórico da área de transferência",
       "settings-custom-launch-prefix-description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd).",
@@ -1168,6 +1151,8 @@
       "collision-official-version-exists": "A versão oficial deste plugin já está instalada.",
       "filter-downloaded": "Baixado",
       "filter-not-downloaded": "Não Baixado",
+      "filter-tags-description": "Filtrar plugins por categoria ou estado de download",
+      "filter-tags-label": "Etiquetas",
       "hot-reload-description": "Recarrega automaticamente os plugins quando seus arquivos são alterados. Útil para o desenvolvimento de plugins.",
       "hot-reload-label": "Recarga a quente (modo de desenvolvimento)",
       "hot-reloaded": "Plugin recarregado: {name}",
@@ -1179,6 +1164,7 @@
       "installed-no-plugins-description": "Instale os plugins da seção Plugins Disponíveis abaixo.",
       "installed-no-plugins-label": "Nenhum plugin instalado",
       "installing": "Instalando {plugin}...",
+      "open-plugin-page": "Abrir página do plugin",
       "open-plugins-tab": "Abrir configurações de plugins",
       "plugin-settings-title": "Configurações do {plugin}",
       "refresh-refreshing": "Atualizando a lista de plugins...",
@@ -1208,6 +1194,7 @@
       "update-all-success": "Todos os plugins foram atualizados com sucesso.",
       "update-available": "Nova atualização de plugin disponível",
       "update-available-plural": "Novas atualizações de plugin disponíveis ({count})",
+      "update-available_plural": "Atualizações de plugin disponíveis ({count})",
       "update-error": "Falha ao atualizar o plugin: {plugin}: {error}",
       "update-incompatible": "Requer Noctalia v{version} ou superior",
       "update-pending": "v{atual} → v{novo} (requer Noctalia v{requerida})",
@@ -1216,38 +1203,7 @@
       "updating": "Atualizando..."
     },
     "region": {
-      "clock-panel-desc": "Personalize a aparência do painel do relógio.",
-      "clock-panel-title": "Painel do relógio",
       "title": "Região"
-    },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus é recomendado para melhor desempenho e menor tamanho de áudio.",
-      "audio-audio-codec-label": "Codec de áudio",
-      "audio-audio-source-description": "Fonte de áudio a ser capturada durante a gravação.",
-      "audio-audio-source-label": "Fonte de áudio",
-      "audio-desc": "Configure as opções de gravação de áudio.",
-      "audio-title": "Configurações de áudio",
-      "general-copy-to-clipboard-description": "Copiar o arquivo para a área de transferência após a gravação terminar.",
-      "general-copy-to-clipboard-label": "Copiar para a área de transferência",
-      "general-desc": "Gerencie a saída e o conteúdo da gravação de tela.",
-      "general-output-folder-description": "Pasta onde as gravações de tela serão salvas.",
-      "general-output-folder-label": "Pasta de saída",
-      "general-select-output-folder": "Selecionar pasta de saída",
-      "general-show-cursor-description": "Grava o cursor do mouse no vídeo.",
-      "general-show-cursor-label": "Mostrar cursor",
-      "general-title": "Configurações gerais",
-      "title": "Gravador de tela",
-      "video-color-range-description": "Limitada é recomendada para melhor compatibilidade.",
-      "video-color-range-label": "Gama de cores",
-      "video-desc": "Configure as opções de gravação de vídeo.",
-      "video-frame-rate-description": "Taxa de quadros alvo para gravações de tela.",
-      "video-title": "Configurações de vídeo",
-      "video-video-codec-description": "h264 é o codec mais comum.",
-      "video-video-codec-label": "Codec de vídeo",
-      "video-video-quality-description": "Qualidade mais alta resulta em arquivos maiores.",
-      "video-video-quality-label": "Qualidade de vídeo",
-      "video-video-source-description": "Portal é recomendado, se você tiver artefatos, tente Screen.",
-      "video-video-source-label": "Fonte de vídeo"
     },
     "session-menu": {
       "countdown-duration-description": "Definir por quanto tempo o temporizador de contagem regressiva dura antes de executar ações de energia.",
@@ -1570,7 +1526,6 @@
     "click-to-start-recording": "Gravador de tela (iniciar gravação)",
     "click-to-stop-recording": "Gravador de tela (parar gravação)",
     "collapse": "Recolher barra lateral",
-    "connect-disconnect-devices": "Dispositivo Bluetooth",
     "copy-address": "Copiar endereço",
     "delete-notification": "Excluir notificação",
     "do-not-disturb-enabled": "Não perturbe",
@@ -1610,11 +1565,9 @@
     "refresh-wallhaven": "Atualizar resultados do Wallhaven",
     "refresh-wallpaper-list": "Atualizar lista de papéis de parede",
     "remove-widget": "Remover widget",
-    "screen-recorder-not-installed": "Gravador de tela (não instalado)",
     "search-close": "Fechar pesquisa",
     "session-menu": "Menu da Sessão",
     "show-all-devices": "Mostrar todos os dispositivos",
-    "stop-screen-recording": "Gravador de tela",
     "switch-to-dark-mode": "Modo escuro",
     "switch-to-light-mode": "Modo claro",
     "unmute": "Desativar o mudo",

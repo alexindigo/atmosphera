@@ -146,9 +146,13 @@
       "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
+      "compact-mode-description": "Helytakarékos elrendezés engedélyezése a médialejátszó panelhez.",
+      "compact-mode-label": "Kompakt mód",
       "hide-mode-description": "Szabályozza a widget viselkedését, ha nincs média lejátszva.",
       "max-width-description": "Beállítja a widget maximális vízszintes méretét. A widget zsugorodik, hogy illeszkedjen a rövidebb tartalomhoz.",
       "no-active-player": "Nincs aktív lejátszó",
+      "panel-section-description": "A médialejátszó paneljének megjelenésének és viselkedésének konfigurálása.",
+      "panel-section-label": "Médialejátszó panel",
       "scrolling-mode-description": "Szabályozza, mikor engedélyezett a szöveggörgetés hosszú zenecímek esetén.",
       "scrolling-mode-label": "Görgetési mód",
       "show-album-art-description": "Jelenítse meg a borítóképet az aktuálisan játszott számhoz.",
@@ -305,7 +309,7 @@
     },
     "panel": {
       "buttons-discord": "Csatlakozzon a Discordunkhoz",
-      "buttons-dismiss": "Ok",
+      "buttons-dismiss": "OK",
       "buttons-feedback": "Adj visszajelzést",
       "empty": "A kiadási jegyzetek még nem érhetők el.",
       "highlight-title": "Főbb újdonságok",
@@ -337,13 +341,13 @@
     "brightness": "Fényerő",
     "browse": "Böngésszen",
     "calendar": "Naptár",
+    "calendar-panel": "Naptár panel",
     "cancel": "Mégse",
     "cards": "Kártyák",
     "charging": "Töltés",
     "check-settings": "Részletekért lásd a Beállításokat",
     "clear": "Tiszta",
     "clipboard": "Vágólap",
-    "clock-panel": "Óra panel",
     "close": "Bezárás",
     "colors": "Színek",
     "command": "Parancs",
@@ -387,6 +391,7 @@
     "logout": "Kijelentkezés",
     "look": "Nézz!",
     "media": "Média",
+    "media-player": "Médialejátszó",
     "memory": "Memória",
     "monitors": "Monitorok",
     "network": "Hálózat",
@@ -394,6 +399,7 @@
     "night-light": "Éjszakai fény",
     "no": "Nem",
     "no-results": "Nincs találat",
+    "no-summary": "Nincs összefoglaló",
     "none": "Nincs.",
     "notifications": "Értesítések",
     "official": "Hivatalos",
@@ -458,9 +464,6 @@
       "tooltip-action": "Energiaprofil",
       "tooltip-disabled": "Telepítse a power-profiles-daemon-t az energiaprofilok használatához"
     },
-    "screen-recorder": {
-      "label-stopped": "Felvétel"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi leválasztva",
       "label-ethernet": "Ethernet"
@@ -471,9 +474,6 @@
     "always-show": "Mindig mutasd",
     "force-open": "Felfeszít",
     "on-hover": "Rámutatáskor"
-  },
-  "general": {
-    "no-summary": "Nincs összefoglaló"
   },
   "hide-modes": {
     "hidden": "Elrejtés, ha üres",
@@ -506,13 +506,13 @@
       "system": "Rendszer",
       "webbrowser": "Webböngésző"
     },
-    "no-results": "Nincs találat",
     "providers": {
       "applications": "Alkalmazások",
       "calculator": "Számológép",
       "calculator-deprecated": "A >calc parancs elavult, és hamarosan el lesz távolítva. Kérjük, a matematikai kifejezéseket közvetlenül a keresésbe írja be helyette.",
       "calculator-description": "Számológép — matematikai kifejezések kiértékelése",
       "calculator-enter-expression": "Írjon be egy matematikai kifejezést",
+      "calculator-press-enter-to-copy": "Nyomja meg az Entert az eredmény másolásához",
       "clipboard": "Vágólapelőzmények",
       "clipboard-clear-description": "Összes vágólapelőzmény törlése",
       "clipboard-clear-description-full": "Az összes elem eltávolítása a vágólapelőzményekből",
@@ -570,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Rendszerkimenet + mikrofonbemenet",
-      "audio-sources-microphone-input": "Mikrofonbemenet",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "Rendszerkimenet",
-      "color-range-full": "Teljes",
-      "color-range-limited": "Korlátozott",
-      "quality-high": "Magas",
-      "quality-medium": "Közepes",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Nagyon magas",
-      "sources-portal": "Portál",
-      "sources-screen": "Képernyő"
-    },
     "scrolling-modes": {
       "always": "Mindig görgetés",
       "hover": "Görgetés rámutatáskor",
@@ -597,11 +583,6 @@
       "attached": "Panel a sávhoz rögzítve",
       "centered": "Középre igazított panel",
       "window": "Külön ablak"
-    },
-    "shadow-direction": {
-      "bottom": "Alatt",
-      "center": "Felett",
-      "top": "Fölött"
     },
     "visualizer-types": {
       "linear": "Lineáris",
@@ -757,12 +738,12 @@
       "templates-programs-discord-description-missing": "Nem észlelt Discord kliens",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programok",
-      "templates-programs-pywalfox-description": "{filepath} írása és a pywalfox update futtatása",
+      "templates-programs-pywalfox-description": "{filepath} írása és a 'pywalfox update' futtatása",
       "templates-programs-spicetify-description": "{filepath} írása — a Comfy témát manuálisan kell telepíteni és aktiválni",
       "templates-programs-walker-description": "{filepath} írása és a téma beállítása noctalia-ra",
       "templates-programs-yazi-description": "{filepath} írása — a stílust kézzel kell aktiválni",
       "templates-programs-zed-description": "{filepath} írása és újratöltés",
-      "templates-programs-zen-browser-description": "Írd be ezt a fájlba: {filepath}; másold be a Zen profilod chrome/userChrome.css fájljába.",
+      "templates-programs-zen-browser-description": "{filepath} írása — másold be a Zen profilod chrome/userChrome.css fájljába",
       "templates-terminal-description": "Terminálemulátor témázás.",
       "templates-terminal-label": "Terminál",
       "templates-ui-description": "Asztali környezet és UI eszközkészlet témázása.",
@@ -988,6 +969,8 @@
       "settings-auto-paste-label": "Automatikus beillesztés",
       "settings-clip-preview-description": "Mutassa a vágólap tartalmának előnézetét a >clip parancs használatakor.",
       "settings-clip-preview-label": "Vágólap előnézet engedélyezése",
+      "settings-clip-wrap-text-description": "A szöveg tördelése a vágólap listában a csonkítás helyett.",
+      "settings-clip-wrap-text-label": "Clipboard szöveg becsomagolása",
       "settings-clipboard-history-description": "Hozzáférés a korábban másolt elemekhez az indítóból.",
       "settings-clipboard-history-label": "Vágólapelőzmények engedélyezése",
       "settings-custom-launch-prefix-description": "Előtagolja a parancsokat egyéni indítóval (pl. 'runapp' a systemd integrációhoz).",
@@ -1168,6 +1151,8 @@
       "collision-official-version-exists": "A plugin hivatalos verziója már telepítve van.",
       "filter-downloaded": "Letöltött",
       "filter-not-downloaded": "Nincs letöltve",
+      "filter-tags-description": "Bővítmények szűrése kategória vagy letöltési állapot szerint",
+      "filter-tags-label": "Címkék",
       "hot-reload-description": "Automatikusan újratölti a bővítményeket, amikor a fájljaik megváltoznak. Hasznos a bővítményfejlesztéshez.",
       "hot-reload-label": "Gyors újratöltés (fejlesztői mód)",
       "hot-reloaded": "Újratöltött bővítmény: {name}",
@@ -1179,6 +1164,7 @@
       "installed-no-plugins-description": "Telepítsen bővítményeket az alábbi Elérhető bővítmények szakaszból.",
       "installed-no-plugins-label": "Nincs telepített bővítmény",
       "installing": "Telepítés: {plugin}...",
+      "open-plugin-page": "Plugin oldal megnyitása",
       "open-plugins-tab": "Bővítmények beállításainak megnyitása",
       "plugin-settings-title": "{plugin} beállításai",
       "refresh-refreshing": "Bővítmények listájának frissítése...",
@@ -1208,6 +1194,7 @@
       "update-all-success": "Minden bővítmény sikeresen frissítve.",
       "update-available": "Új bővítményfrissítés elérhető",
       "update-available-plural": "Új bővítményfrissítések elérhetők ({count})",
+      "update-available_plural": "Bővítményfrissítések érhetők el ({count})",
       "update-error": "Nem sikerült frissíteni a bővítményt: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} vagy újabb szükséges",
       "update-pending": "v{current} → v{new} (szükséges Noctalia v{required})",
@@ -1216,38 +1203,7 @@
       "updating": "Frissítés..."
     },
     "region": {
-      "clock-panel-desc": "A óra panel megjelenésének testreszabása.",
-      "clock-panel-title": "Óra panel",
       "title": "Régió"
-    },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Az Opus ajánlott a legjobb teljesítmény és a legkisebb hangméret érdekében.",
-      "audio-audio-codec-label": "Hang kodek",
-      "audio-audio-source-description": "Rögzítés során rögzítendő hangforrás.",
-      "audio-audio-source-label": "Hangforrás",
-      "audio-desc": "Hangrögzítési beállítások konfigurálása.",
-      "audio-title": "Hangbeállítások",
-      "general-copy-to-clipboard-description": "A felvétel befejezése után másold a fájlt a vágólapra.",
-      "general-copy-to-clipboard-label": "Másolás a vágólapra",
-      "general-desc": "Képernyőfelvétel kimenetének és tartalmának kezelése.",
-      "general-output-folder-description": "Mappa, ahová a képernyőfelvételek mentésre kerülnek.",
-      "general-output-folder-label": "Kimeneti mappa",
-      "general-select-output-folder": "Kimeneti mappa kiválasztása",
-      "general-show-cursor-description": "Egérmutató rögzítése a videóban.",
-      "general-show-cursor-label": "Mutató megjelenítése",
-      "general-title": "Általános beállítások",
-      "title": "Képernyőfelvevő",
-      "video-color-range-description": "A korlátozott ajánlott a jobb kompatibilitás érdekében.",
-      "video-color-range-label": "Színtartomány",
-      "video-desc": "Videórögzítési beállítások konfigurálása.",
-      "video-frame-rate-description": "Cél képkockasebesség a képernyőfelvételekhez.",
-      "video-title": "Videóbeállítások",
-      "video-video-codec-description": "A h264 a leggyakoribb kodek.",
-      "video-video-codec-label": "Videó kodek",
-      "video-video-quality-description": "A jobb minőség nagyobb fájlméreteket eredményez.",
-      "video-video-quality-label": "Videó minősége",
-      "video-video-source-description": "A Portal ajánlott, ha hibákat tapasztal, próbálja meg a Képernyőt.",
-      "video-video-source-label": "Videóforrás"
     },
     "session-menu": {
       "countdown-duration-description": "Állítsa be, mennyi ideig tart a visszaszámlálás az energiagazdálkodási műveletek végrehajtása előtt.",
@@ -1570,7 +1526,6 @@
     "click-to-start-recording": "Képernyőfelvevő (felvétel indítása)",
     "click-to-stop-recording": "Képernyőfelvevő (felvétel leállítása)",
     "collapse": "Oldalsáv összecsukása",
-    "connect-disconnect-devices": "Bluetooth eszköz",
     "copy-address": "Cím másolása",
     "delete-notification": "Értesítés törlése",
     "do-not-disturb-enabled": "Ne zavarjanak",
@@ -1610,11 +1565,9 @@
     "refresh-wallhaven": "Wallhaven eredmények frissítése",
     "refresh-wallpaper-list": "Háttérkép lista frissítése",
     "remove-widget": "Widget eltávolítása",
-    "screen-recorder-not-installed": "Képernyőfelvevő (nincs telepítve)",
     "search-close": "Keresés bezárása",
     "session-menu": "Munkamenet menü",
     "show-all-devices": "Összes eszköz megjelenítése",
-    "stop-screen-recording": "Képernyőfelvevő",
     "switch-to-dark-mode": "Sötét mód",
     "switch-to-light-mode": "Világos mód",
     "unmute": "Némítás feloldása",
