@@ -381,7 +381,7 @@ Singleton {
       property bool enableClipboardHistory: false
       property bool autoPasteClipboard: false
       property bool enableClipPreview: true
-      property bool clipboardWrapText: false
+      property bool clipboardWrapText: true
       property string position: "center"  // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property list<string> pinnedApps: []
       property bool useApp2Unit: false
