@@ -1010,7 +1010,7 @@ Singleton {
       }
 
       // Use key for singular, key_plural for plural
-      var pluralKey = count === 1 ? key : key + '_plural';
+      var pluralKey = count === 1 ? key : key + '-plural';
 
       // Merge interpolations with count
       var finalInterpolations = {

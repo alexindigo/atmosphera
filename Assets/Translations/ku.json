@@ -587,7 +587,7 @@
     },
     "workspace-labels": {
       "index": "Naverok",
-      "index+name": "Naverok û nav",
+      "index-and-name": "Naverok û nav",
       "name": "Nav"
     }
   },
@@ -1187,7 +1187,6 @@
       "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin.",
       "update-available": "Rojanekirina pêveka nû heye",
       "update-available-plural": "Rojanekirinên pêvekên nû hene ({count})",
-      "update-available_plural": "Nûvekirinên pluginê hene ({count})",
       "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}",
       "update-incompatible": "Pêdivî ye Noctalia v{version} an bilindtir",
       "update-pending": "v{niha} → v{nu} (hewce dike Noctalia v{pêwîst})",

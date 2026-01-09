@@ -587,7 +587,7 @@
     },
     "workspace-labels": {
       "index": "番号",
-      "index+name": "番号 + 名前",
+      "index-and-name": "番号 + 名前",
       "name": "名前"
     }
   },
@@ -1187,7 +1187,6 @@
       "update-all-success": "すべてのプラグインをアップデートしました。",
       "update-available": "新しいプラグインアップデートがあります",
       "update-available-plural": "新しいプラグインアップデートがあります（{count}個）",
-      "update-available_plural": "利用可能なプラグインの更新 ({count})",
       "update-error": "プラグインのアップデートに失敗しました: {plugin}: {error}",
       "update-incompatible": "Noctalia v{version} 以降が必要です。",
       "update-pending": "v{current} → v{new} (Noctalia v{required} ga hitsuyou)",

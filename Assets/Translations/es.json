@@ -587,7 +587,7 @@
     },
     "workspace-labels": {
       "index": "Índice",
-      "index+name": "Índice y Nombre",
+      "index-and-name": "Índice y Nombre",
       "name": "Nombre"
     }
   },
@@ -1187,7 +1187,6 @@
       "update-all-success": "Todos los plugins se actualizaron correctamente.",
       "update-available": "Nueva actualización de plugin disponible",
       "update-available-plural": "Nuevas actualizaciones de plugins disponibles ({count})",
-      "update-available_plural": "Actualizaciones de plugins disponibles ({count})",
       "update-error": "Error al actualizar el plugin: {plugin}: {error}",
       "update-incompatible": "Requiere Noctalia v{version} o superior",
       "update-pending": "v{actual} → v{nuevo} (requiere Noctalia v{requerida})",

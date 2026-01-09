@@ -587,7 +587,7 @@
     },
     "workspace-labels": {
       "index": "Індекс",
-      "index+name": "Індекс та назва",
+      "index-and-name": "Індекс та назва",
       "name": "Назва"
     }
   },
@@ -1187,7 +1187,6 @@
       "update-all-success": "Усі плагіни успішно оновлено.",
       "update-available": "Доступне нове оновлення плагіна",
       "update-available-plural": "Доступні нові оновлення плагінів ({count})",
-      "update-available_plural": "Доступні оновлення плагінів ({count})",
       "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-incompatible": "Потрібна Noctalia v{version} або вище",
       "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
