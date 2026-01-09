@@ -1194,14 +1194,50 @@ SmartPanel {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            NText {
-              anchors.centerIn: parent
-              text: root.results.length > 0 ? root.results[0].name : ""
-              pointSize: 48
-              font.weight: Font.Bold
-              color: Style.textColor
-              horizontalAlignment: Text.AlignHCenter
-              verticalAlignment: Text.AlignVCenter
+            NBox {
+              anchors.fill: parent
+              color: Color.mSurfaceVariant
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+
+              ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Style.marginL
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Item {
+                  Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+                  NText {
+                    text: root.results.length > 0 ? root.results[0].name : ""
+                    pointSize: Style.fontSizeL
+                    font.weight: Font.Bold
+                    color: Color.mPrimary
+                  }
+                }
+
+                ScrollView {
+                  Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+                  Layout.topMargin: Style.fontSizeL + Style.marginXL
+                  Layout.fillWidth: true
+                  Layout.fillHeight: true
+                  clip: true
+                  ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                  contentWidth: availableWidth
+
+                  NText {
+                    width: parent.width
+                    text: root.results.length > 0 ? root.results[0].description : ""
+                    pointSize: Style.fontSizeM
+                    font.weight: Font.Bold
+                    color: Color.mOnSurface
+                    horizontalAlignment: Text.AlignHLeft
+                    verticalAlignment: Text.AlignTop
+                    wrapMode: Text.Wrap
+                    markdownTextEnabled: true
+                  }
+                }
+              }
             }
           }
         }
