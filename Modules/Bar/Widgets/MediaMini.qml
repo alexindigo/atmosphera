@@ -379,8 +379,8 @@ Item {
                          popupWindow.showContextMenu(contextMenu);
                          contextMenu.openAtItem(container, screen);
                        }
-                     } else if (mouse.button === Qt.MiddleButton && hasPlayer && MediaService.canGoPrevious) {
-                       MediaService.previous();
+                     } else if (mouse.button === Qt.MiddleButton && hasPlayer) {
+                       MediaService.playPause();
                        TooltipService.hide();
                      }
                    }
