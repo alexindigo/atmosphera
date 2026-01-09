@@ -130,7 +130,7 @@ ColumnLayout {
     id: imagePicker
     title: I18n.tr("bar.control-center.select-custom-icon")
     selectionMode: "files"
-    nameFilters: ImageCacheService.basicImageFilters
+    nameFilters: ImageCacheService.basicImageFilters.concat(["*.svg"])
     initialPath: Quickshell.env("HOME")
     onAccepted: paths => {
                   if (paths.length > 0) {
