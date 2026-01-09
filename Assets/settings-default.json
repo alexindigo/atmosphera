@@ -168,6 +168,7 @@
     "enableClipboardHistory": false,
     "autoPasteClipboard": false,
     "enableClipPreview": true,
+    "clipboardWrapText": false,
     "position": "center",
     "pinnedApps": [],
     "useApp2Unit": false,

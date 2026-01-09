@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Automatisch plakken",
       "settings-clip-preview-description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
       "settings-clip-preview-label": "Klembordvoorbeeld inschakelen",
+      "settings-clip-wrap-text-description": "Tekst in de klembordlijst wrappen in plaats van af te breken.",
+      "settings-clip-wrap-text-label": "Klembordtekst omwikkelen",
       "settings-clipboard-history-description": "Toegang tot eerder gekopieerde items vanuit de launcher.",
       "settings-clipboard-history-label": "Klembordgeschiedenis inschakelen",
       "settings-custom-launch-prefix-description": "Voorzie commando's van een aangepaste launcher-prefix (bijv. 'runapp' voor systemd-integratie).",

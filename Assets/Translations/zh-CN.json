@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "自动粘贴",
       "settings-clip-preview-description": "在使用 >clip 命令时显示剪贴板内容的预览。",
       "settings-clip-preview-label": "启用剪贴板预览",
+      "settings-clip-wrap-text-description": "将剪贴板列表中的文本换行显示，而不是截断。",
+      "settings-clip-wrap-text-label": "环绕剪贴板文本",
       "settings-clipboard-history-description": "从启动器访问之前复制的项目。",
       "settings-clipboard-history-label": "启用剪贴板历史记录",
       "settings-custom-launch-prefix-description": "使用自定义启动器前缀命令（例如，'runapp'用于systemd集成）。",

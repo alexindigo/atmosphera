@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Автоматична вставка",
       "settings-clip-preview-description": "Показувати попередній перегляд вмісту буфера обміну при використанні команди >clip.",
       "settings-clip-preview-label": "Попередній перегляд буфера обміну",
+      "settings-clip-wrap-text-description": "Переносити текст у списку буфера обміну замість обрізання.",
+      "settings-clip-wrap-text-label": "Загорнути текст з буфера обміну",
       "settings-clipboard-history-description": "Отримати доступ до раніше скопійованих елементів із лаунчера.",
       "settings-clipboard-history-label": "Увімкнути історію буфера обміну",
       "settings-custom-launch-prefix-description": "Додати префікс до команд запуску лаунчером (напр., 'runapp' для інтеграції з systemd).",

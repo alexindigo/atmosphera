@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Colar automaticamente",
       "settings-clip-preview-description": "Mostra uma pré-visualização do conteúdo da área de transferência ao usar o comando >clip.",
       "settings-clip-preview-label": "Ativar pré-visualização da área de transferência",
+      "settings-clip-wrap-text-description": "Quebrar o texto na lista da área de transferência em vez de truncá-lo.",
+      "settings-clip-wrap-text-label": "Quebrar texto da área de transferência",
       "settings-clipboard-history-description": "Acesse itens copiados anteriormente a partir do lançador.",
       "settings-clipboard-history-label": "Ativar histórico da área de transferência",
       "settings-custom-launch-prefix-description": "Prefixar comandos com um inicializador personalizado (ex. 'runapp' para integração systemd).",

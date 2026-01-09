@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Automatikus beillesztés",
       "settings-clip-preview-description": "Mutassa a vágólap tartalmának előnézetét a >clip parancs használatakor.",
       "settings-clip-preview-label": "Vágólap előnézet engedélyezése",
+      "settings-clip-wrap-text-description": "A szöveg tördelése a vágólap listában a csonkítás helyett.",
+      "settings-clip-wrap-text-label": "Clipboard szöveg becsomagolása",
       "settings-clipboard-history-description": "Hozzáférés a korábban másolt elemekhez az indítóból.",
       "settings-clipboard-history-label": "Vágólapelőzmények engedélyezése",
       "settings-custom-launch-prefix-description": "Előtagolja a parancsokat egyéni indítóval (pl. 'runapp' a systemd integrációhoz).",

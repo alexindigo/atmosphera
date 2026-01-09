@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Pegado automático",
       "settings-clip-preview-description": "Muestra una vista previa del contenido del portapapeles al usar el comando >clip.",
       "settings-clip-preview-label": "Activar vista previa del portapapeles",
+      "settings-clip-wrap-text-description": "Ajustar el texto en la lista del portapapeles en lugar de truncarlo.",
+      "settings-clip-wrap-text-label": "Ajustar texto del portapapeles",
       "settings-clipboard-history-description": "Accede a los elementos copiados anteriormente desde el lanzador.",
       "settings-clipboard-history-label": "Activar historial del portapapeles",
       "settings-custom-launch-prefix-description": "Prefijar comandos con un lanzador personalizado (ej. 'runapp' para integración con systemd).",

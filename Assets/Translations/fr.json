@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Collage automatique",
       "settings-clip-preview-description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
       "settings-clip-preview-label": "Activer l'aperçu du presse-papiers",
+      "settings-clip-wrap-text-description": "Envelopper le texte dans la liste du presse-papiers au lieu de le tronquer.",
+      "settings-clip-wrap-text-label": "Envelopper le texte du presse-papiers",
       "settings-clipboard-history-description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
       "settings-clipboard-history-label": "Activer l'historique du presse-papiers",
       "settings-custom-launch-prefix-description": "Préfixer les commandes avec un lanceur personnalisé (ex. 'runapp' pour l'intégration systemd).",

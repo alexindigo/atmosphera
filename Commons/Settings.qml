@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 38
+  readonly property int settingsVersion: 39
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -381,8 +381,8 @@ Singleton {
       property bool enableClipboardHistory: false
       property bool autoPasteClipboard: false
       property bool enableClipPreview: true
-      // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
-      property string position: "center"
+      property bool clipboardWrapText: false
+      property string position: "center"  // Position: center, top_left, top_right, bottom_left, bottom_right, bottom_center, top_center
       property list<string> pinnedApps: []
       property bool useApp2Unit: false
       property bool sortByMostUsed: true

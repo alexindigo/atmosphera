@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Automatisches Einfügen",
       "settings-clip-preview-description": "Zeige eine Vorschau des Inhalts der Zwischenablage an, wenn der Befehl >clip verwendet wird.",
       "settings-clip-preview-label": "Clip-Vorschau aktivieren",
+      "settings-clip-wrap-text-description": "Text in der Zwischenablage-Liste umbrechen, anstatt ihn abzuschneiden.",
+      "settings-clip-wrap-text-label": "Zwischenablage-Text umbrechen",
       "settings-clipboard-history-description": "Zugriff auf zuvor kopierte Elemente über den Launcher.",
       "settings-clipboard-history-label": "Zwischenablageverlauf aktivieren",
       "settings-custom-launch-prefix-description": "Befehle mit einem benutzerdefinierten Launcher präfixieren (z.B. 'runapp' für systemd-Integration).",

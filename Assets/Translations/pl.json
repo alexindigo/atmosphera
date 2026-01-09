@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Automatyczne wklejanie",
       "settings-clip-preview-description": "Pokaż podgląd zawartości schowka przy użyciu polecenia >clip.",
       "settings-clip-preview-label": "Włącz podgląd schowka",
+      "settings-clip-wrap-text-description": "Zawijaj tekst na liście schowka zamiast go obcinać.",
+      "settings-clip-wrap-text-label": "Zawijaj tekst ze schowka",
       "settings-clipboard-history-description": "Dostęp do wcześniej skopiowanych elementów z poziomu launchera.",
       "settings-clipboard-history-label": "Włącz historię schowka",
       "settings-custom-launch-prefix-description": "Poprzedzaj polecenia własnym prefiksem (np. 'runapp' dla integracji z systemd).",

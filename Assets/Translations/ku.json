@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Otomatîkî bixwe ve zeliqandin",
       "settings-clip-preview-description": "Dîmenek pêşdîtinê ya naveroka clipboardê nîşan bide dema ku emrê >clip tê bikaranîn.",
       "settings-clip-preview-label": "Pêşdîtina klîpê çalak bike",
+      "settings-clip-wrap-text-description": "Tekstê di lîsteya clipboardê de bipêçe, li şûna ku were kurtkirin.",
+      "settings-clip-wrap-text-label": "Pêça nivîsa clipboardê",
       "settings-clipboard-history-description": "Gihîştina tiştên ku berê hatine kopîkirin ji destpêkerê.",
       "settings-clipboard-history-label": "Dîroka clipboardê çalak bike",
       "settings-custom-launch-prefix-description": "Fermanên pêşgiran bi destpêkerek xwerû pêşda bikin (mînak, 'runapp' ji bo entegrasyona systemd).",

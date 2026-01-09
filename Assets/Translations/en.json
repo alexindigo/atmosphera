@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Auto paste",
       "settings-clip-preview-description": "Show a preview of the clipboard content when using the >clip command.",
       "settings-clip-preview-label": "Enable clip preview",
+      "settings-clip-wrap-text-description": "Wrap text in the clipboard list instead of truncating it.",
+      "settings-clip-wrap-text-label": "Wrap clipboard text",
       "settings-clipboard-history-description": "Access previously copied items from the launcher.",
       "settings-clipboard-history-label": "Enable clipboard history",
       "settings-custom-launch-prefix-description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",

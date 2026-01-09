@@ -969,6 +969,8 @@
       "settings-auto-paste-label": "Otomatik yapıştırma",
       "settings-clip-preview-description": ">clip komutu kullanılırken panodaki içeriğin önizlemesini gösterir.",
       "settings-clip-preview-label": "Panoyu önizlemeyi etkinleştir",
+      "settings-clip-wrap-text-description": "Panodaki metni kırpmak yerine listeye sığdır.",
+      "settings-clip-wrap-text-label": "Panoyu metni kaydır",
       "settings-clipboard-history-description": "Başlatıcıdan daha önce kopyalanan öğelere erişin.",
       "settings-clipboard-history-label": "Pano geçmişini etkinleştir",
       "settings-custom-launch-prefix-description": "Komutlara özel bir başlatıcı ile ön ek ekleyin (örn., systemd entegrasyonu için 'runapp').",
