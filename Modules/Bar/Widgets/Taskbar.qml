@@ -49,7 +49,7 @@ Rectangle {
     if (!screen || isVerticalBar || !smartWidth || maxTaskbarWidthPercent <= 0)
       return 0;
     var barFloating = Settings.data.bar.floating || false;
-    var barMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal * Style.marginXL) : 0;
+    var barMarginH = barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0;
     var availableWidth = screen.width - (barMarginH * 2);
     return Math.round(availableWidth * (maxTaskbarWidthPercent / 100));
   }

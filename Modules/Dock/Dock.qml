@@ -358,7 +358,7 @@ Loader {
           margins.bottom: {
             switch (Settings.data.bar.position) {
             case "bottom":
-              return (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical * Style.marginXL + floatingMargin : floatingMargin);
+              return (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin);
             default:
               return floatingMargin;
             }

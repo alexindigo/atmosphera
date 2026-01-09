@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 37
+  readonly property int settingsVersion: 38
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -200,8 +200,8 @@ Singleton {
 
       // Floating bar settings
       property bool floating: false
-      property real marginVertical: 0.25
-      property real marginHorizontal: 0.25
+      property int marginVertical: 4
+      property int marginHorizontal: 4
 
       // Bar outer corners (inverted/concave corners at bar edges when not floating)
       property bool outerCorners: true
