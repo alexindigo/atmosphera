@@ -875,7 +875,7 @@ Singleton {
     // -----------------
     const sections = ["left", "center", "right"];
 
-    // 1. remove any non existing widget type
+    // 1. remove any non existing bar widget type
     var removedWidget = false;
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s];
@@ -884,7 +884,7 @@ Singleton {
       for (var i = widgets.length - 1; i >= 0; i--) {
         var widget = widgets[i];
         if (!BarWidgetRegistry.hasWidget(widget.id)) {
-          Logger.w(`Settings`, `!!! Deleted invalid widget ${widget.id} !!!`);
+          Logger.w(`Settings`, `!!! Deleted invalid bar widget ${widget.id} !!!`);
           widgets.splice(i, 1);
           removedWidget = true;
         }
@@ -892,7 +892,23 @@ Singleton {
     }
 
     // -----------------
-    // 2. upgrade user widget settings
+    // 2. remove any non existing control center widget type
+    const ccSections = ["left", "right"];
+    for (var s = 0; s < ccSections.length; s++) {
+      const sectionName = ccSections[s];
+      const shortcuts = adapter.controlCenter.shortcuts[sectionName];
+      for (var i = shortcuts.length - 1; i >= 0; i--) {
+        var shortcut = shortcuts[i];
+        if (!ControlCenterWidgetRegistry.hasWidget(shortcut.id)) {
+          Logger.w(`Settings`, `!!! Deleted invalid control center widget ${shortcut.id} !!!`);
+          shortcuts.splice(i, 1);
+          removedWidget = true;
+        }
+      }
+    }
+
+    // -----------------
+    // 3. upgrade user widget settings
     for (var s = 0; s < sections.length; s++) {
       const sectionName = sections[s];
       for (var i = 0; i < adapter.bar.widgets[sectionName].length; i++) {
