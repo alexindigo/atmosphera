@@ -920,7 +920,7 @@
       "screen-corners-title": "屏幕边角"
     },
     "hooks": {
-      "info-command-info-description": "• 命令通过 shell 执行（sh -c）<br>• 命令在后台运行（分离）<br>• 测试按钮使用当前值执行",
+      "info-command-info-description": "• 命令通过 shell 执行（sh -lc）<br>• 命令在后台运行（分离）<br>• 测试按钮使用当前值执行",
       "info-command-info-label": "钩子命令信息",
       "info-parameters-description": "• 壁纸钩子：$1 = 壁纸路径, $2 = 屏幕名称<br>• 主题切换钩子：$1 = true/false（深色模式状态）<br>• 屏幕锁定/解锁钩子：无参数<br>• 性能模式钩子：无参数",
       "info-parameters-label": "可用参数",

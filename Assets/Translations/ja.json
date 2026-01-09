@@ -920,7 +920,7 @@
       "screen-corners-title": "画面の角"
     },
     "hooks": {
-      "info-command-info-description": "• コマンドはシェル (sh -c) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",
+      "info-command-info-description": "• コマンドはシェル (sh -lc) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",
       "info-command-info-label": "コマンド実行に関する情報",
       "info-parameters-description": "• 壁紙フック: $1 = 壁紙のパス, $2 = 画面名<br>• テーマ切替フック: $1 = true/false（ダークモードの状態）",
       "info-parameters-label": "利用可能なパラメータ（引数）",

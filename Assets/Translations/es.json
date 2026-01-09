@@ -920,7 +920,7 @@
       "screen-corners-title": "Esquinas de la pantalla"
     },
     "hooks": {
-      "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -c)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
+      "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
       "info-command-info-label": "Información de comandos de Hook",
       "info-parameters-description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla<br>• Hook de cambio de tema: $1 = true/false (estado del modo oscuro)",
       "info-parameters-label": "Parámetros disponibles",

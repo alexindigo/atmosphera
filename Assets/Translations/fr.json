@@ -920,7 +920,7 @@
       "screen-corners-title": "Coins de l'écran"
     },
     "hooks": {
-      "info-command-info-description": "• Les commandes sont exécutées via le shell (sh -c)<br>• Les commandes s'exécutent en arrière-plan (détachées)<br>• Les boutons de test s'exécutent avec les valeurs actuelles",
+      "info-command-info-description": "• Les commandes sont exécutées via le shell (sh -lc)<br>• Les commandes s'exécutent en arrière-plan (détachées)<br>• Les boutons de test s'exécutent avec les valeurs actuelles",
       "info-command-info-label": "Informations sur la commande de hook",
       "info-parameters-description": "• Hook Fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran<br>• Hook de bascule de thème : $1 = true/false (état du mode sombre)",
       "info-parameters-label": "Paramètres disponibles",

@@ -920,7 +920,7 @@
       "screen-corners-title": "Schermhoeken"
     },
     "hooks": {
-      "info-command-info-description": "• Commando's worden uitgevoerd via shell (sh -c)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",
+      "info-command-info-description": "• Commando's worden uitgevoerd via shell (sh -lc)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",
       "info-command-info-label": "Informatie over hook-commando's",
       "info-parameters-description": "• Wallpaper-hook: $1 = pad naar achtergrond, $2 = schermnaam<br>• Theme Toggle-hook: $1 = true/false (status donkere modus)",
       "info-parameters-label": "Beschikbare parameters",

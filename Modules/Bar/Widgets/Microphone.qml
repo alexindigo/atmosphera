@@ -116,7 +116,7 @@ Item {
                    if (action === "toggle-mute") {
                      AudioService.setInputMuted(!AudioService.inputMuted);
                    } else if (action === "custom-command") {
-                     Quickshell.execDetached(["sh", "-c", middleClickCommand]);
+                     Quickshell.execDetached(["sh", "-lc", middleClickCommand]);
                    } else if (action === "widget-settings") {
                      BarService.openWidgetSettings(screen, section, sectionWidgetIndex, widgetId, widgetSettings);
                    }
@@ -170,7 +170,7 @@ Item {
       }
     }
     onMiddleClicked: {
-      Quickshell.execDetached(["sh", "-c", middleClickCommand]);
+      Quickshell.execDetached(["sh", "-lc", middleClickCommand]);
     }
   }
 }

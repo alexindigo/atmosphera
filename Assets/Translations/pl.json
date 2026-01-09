@@ -920,7 +920,7 @@
       "screen-corners-title": "Narożniki ekranu"
     },
     "hooks": {
-      "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -c)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
+      "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
       "info-command-info-label": "Informacje o poleceniach Hook",
       "info-parameters-description": "• Hook tapety: $1 = ścieżka tapety, $2 = nazwa ekranu<br>• Hook zmiany motywu: $1 = true/false (stan trybu ciemnego)<br>• Hooki blokady: Brak parametrów",
       "info-parameters-label": "Dostępne parametry",
