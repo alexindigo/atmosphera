@@ -3,7 +3,7 @@
     "clear-history": "Effacer l'historique",
     "close-app": "Fermer {app}",
     "connect-vpn": "Se connecter à {name}",
-    "cycle-visualizer": "Visualiseur de cycle",
+    "cycle-visualizer": "Changer de visualization",
     "disable-bluetooth": "Désactiver le Bluetooth",
     "disable-dnd": "Désactiver le mode Ne pas déranger",
     "disable-wifi": "Désactiver le Wi-Fi",
@@ -18,7 +18,7 @@
     "open-launcher": "Ouvrir le lanceur",
     "open-mixer": "Table de mixage audio",
     "open-settings": "Ouvrir les paramètres",
-    "raise-to-top": "Remonter en haut",
+    "raise-to-top": "Mettre en avant",
     "random-wallpaper": "Fond d'écran aléatoire",
     "toggle-mute": "Activer/désactiver le mode muet",
     "widget-settings": "Paramètres du widget"
@@ -47,7 +47,7 @@
       "device-description": "Sélectionnez le périphérique de batterie à afficher.",
       "device-label": "Dispositif à pile",
       "hide-if-not-detected-description": "Masquer le widget lorsqu'aucune batterie n'est détectée sur le système.",
-      "hide-if-not-detected-label": "Se cacher si non détecté.",
+      "hide-if-not-detected-label": "Caché si non détecté.",
       "low-battery-threshold-description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",
       "low-battery-threshold-label": "Seuil d'avertissement de batterie faible",
       "show-noctalia-performance-description": "Afficher le basculement du mode performance Noctalia dans le panneau batterie.",
@@ -111,7 +111,7 @@
       "max-text-length-vertical-description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte).",
       "max-text-length-vertical-label": "Longueur max du texte (vertical)",
       "middle-click-description": "Commande à exécuter quand le bouton est cliqué au milieu.",
-      "middle-click-label": "Clic milieu",
+      "middle-click-label": "Clic du milieu",
       "middle-click-update-text": "Mettre à jour le texte affiché lors d'un clic molette.",
       "parse-json-description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône.",
       "parse-json-label": "Analyser la sortie en JSON",
@@ -201,7 +201,7 @@
       "network-traffic-label": "Trafic réseau",
       "storage-usage-description": "Afficher les informations d'utilisation de l'espace disque.",
       "storage-usage-label": "Utilisation du stockage",
-      "use-monospace-font-description": "```\nUtilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.\n```",
+      "use-monospace-font-description": "Utilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.",
       "use-monospace-font-label": "Police à chasse fixe"
     },
     "taskbar": {
@@ -245,7 +245,7 @@
       "enable-scrollwheel-description": "Basculer entre les espaces de travail avec la molette de la souris.",
       "enable-scrollwheel-label": "Faites défiler pour changer d'espace de travail.",
       "follow-focused-screen-description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
-      "follow-focused-screen-label": "Suivre l'Écran Ciblé",
+      "follow-focused-screen-label": "Suivre l'écran ciblé",
       "grouped-border-opacity-description": "Définir le niveau d'opacité des bordures des conteneurs d'espace de travail.",
       "grouped-border-opacity-label": "Opacité de la bordure",
       "hide-unoccupied-description": "Ne pas afficher les espaces de travail sans fenêtres.",
@@ -470,7 +470,7 @@
     }
   },
   "display-modes": {
-    "always-hide": "Toujours se cacher",
+    "always-hide": "Toujours caché",
     "always-show": "Toujours afficher",
     "force-open": "Forcer l'ouverture",
     "on-hover": "Au survol"
@@ -1354,7 +1354,7 @@
     "bottom-center": "En bas au centre",
     "bottom-left": "En bas à gauche",
     "bottom-right": "En bas à droite",
-    "center": "Centrer",
+    "center": "Centré",
     "center-left": "Gauche centre",
     "center-right": "Droite centre",
     "close-to-bar": "Près du bouton de la barre",
