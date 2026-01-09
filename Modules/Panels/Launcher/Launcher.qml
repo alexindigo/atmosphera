@@ -129,24 +129,30 @@ SmartPanel {
     return providerSupportedLayouts === "both";
   }
 
-  readonly property bool isGridView: {
+  readonly property string layoutMode: {
     // Command picker always in list view
     if (searchText === ">") {
-      return false;
+      return "list";
     }
     // Respect provider's layout preference
     if (providerSupportedLayouts === "grid") {
-      return true;
+      return "grid";
     }
     if (providerSupportedLayouts === "list") {
-      return false;
+      return "list";
+    }
+    if (providerSupportedLayouts === "single") {
+      return "single";
     }
     // Provider supports both - use user preference or displayString hint
     if (providerHasDisplayString) {
-      return true;
+      return "grid";
     }
-    return Settings.data.appLauncher.viewMode === "grid";
+    return Settings.data.appLauncher.viewMode === "grid" ? "grid" : "list";
   }
+
+  readonly property bool isGridView: layoutMode === "grid"
+  readonly property bool isSingleView: layoutMode === "single"
 
   // Target columns - use provider preference if available, otherwise default to 5
   readonly property int targetGridColumns: {
@@ -233,7 +239,9 @@ SmartPanel {
   }
 
   function onUpPressed() {
-    if (isGridView) {
+    if (isSingleView) {
+      return; // No navigation in single view
+    } else if (isGridView) {
       selectPreviousRow();
     } else {
       selectPreviousWrapped();
@@ -241,7 +249,9 @@ SmartPanel {
   }
 
   function onDownPressed() {
-    if (isGridView) {
+    if (isSingleView) {
+      return; // No navigation in single view
+    } else if (isGridView) {
       selectNextRow();
     } else {
       selectNextWrapped();
@@ -249,7 +259,9 @@ SmartPanel {
   }
 
   function onLeftPressed() {
-    if (isGridView) {
+    if (isSingleView) {
+      return; // No navigation in single view
+    } else if (isGridView) {
       selectPreviousColumn();
     } else {
       // In list view, left = previous item
@@ -258,7 +270,9 @@ SmartPanel {
   }
 
   function onRightPressed() {
-    if (isGridView) {
+    if (isSingleView) {
+      return; // No navigation in single view
+    } else if (isGridView) {
       selectNextColumn();
     } else {
       // In list view, right = next item
@@ -890,7 +904,11 @@ SmartPanel {
           id: resultsViewLoader
           Layout.fillWidth: true
           Layout.fillHeight: true
-          sourceComponent: root.isGridView ? gridViewComponent : listViewComponent
+          sourceComponent: {
+            if (root.isSingleView)
+              return singleViewComponent;
+            return root.isGridView ? gridViewComponent : listViewComponent;
+          }
         }
 
         Component {
@@ -1165,6 +1183,25 @@ SmartPanel {
                            }
                 acceptedButtons: Qt.LeftButton
               }
+            }
+          }
+        }
+
+        Component {
+          id: singleViewComponent
+
+          Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            NText {
+              anchors.centerIn: parent
+              text: root.results.length > 0 ? root.results[0].name : ""
+              pointSize: 48
+              font.weight: Font.Bold
+              color: Style.textColor
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
             }
           }
         }
