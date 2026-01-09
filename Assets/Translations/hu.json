@@ -920,7 +920,7 @@
       "screen-corners-title": "Képernyősarkok"
     },
     "hooks": {
-      "info-command-info-description": "• A parancsok shellen keresztül futnak (sh -c)<br>• A parancsok a háttérben futnak (leválasztva)<br>• A tesztgombok az aktuális értékekkel futnak le",
+      "info-command-info-description": "• A parancsok shellen keresztül futnak (sh -lc)<br>• A parancsok a háttérben futnak (leválasztva)<br>• A tesztgombok az aktuális értékekkel futnak le",
       "info-command-info-label": "Horog parancsinformációk",
       "info-parameters-description": "• Háttérkép horog: $1 = háttérkép elérési útja, $2 = képernyő neve<br>• Témaváltó horog: $1 = igaz/hamis (sötét mód állapota)<br>• Képernyőzár/feloldás horgok: Nincsenek paraméterek<br>• Teljesítmény mód horgok: Nincsenek paraméterek",
       "info-parameters-label": "Elérhető paraméterek",

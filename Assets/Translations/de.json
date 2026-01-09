@@ -920,7 +920,7 @@
       "screen-corners-title": "Bildschirmecken"
     },
     "hooks": {
-      "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -c)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
+      "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
       "info-command-info-label": "Hook-Befehl-Informationen",
       "info-parameters-description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname<br>• Theme-Wechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
       "info-parameters-label": "Verfügbare Parameter",
