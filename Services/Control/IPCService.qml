@@ -36,15 +36,6 @@ Item {
   }
 
   IpcHandler {
-    target: "screenRecorder"
-    function toggle() {
-      if (ScreenRecorderService.isAvailable) {
-        ScreenRecorderService.toggleRecording();
-      }
-    }
-  }
-
-  IpcHandler {
     target: "settings"
     function toggle() {
       if (Settings.data.ui.settingsPanelMode === "window") {

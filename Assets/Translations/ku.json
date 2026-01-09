@@ -464,9 +464,6 @@
       "tooltip-action": "Power profile",
       "tooltip-disabled": "Daemonê power-profiles-daemon saz bike da ku profîlên hêzê bikar bîne"
     },
-    "screen-recorder": {
-      "label-stopped": "Tomar bike"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi qut bû.",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Nûjen"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Derana pergalê + ketana mîkrofonê",
-      "audio-sources-microphone-input": "Ketana mîkrofonê",
-      "audio-sources-none": "Bê deng.",
-      "audio-sources-system-output": "Derana pergal",
-      "color-range-full": "Tijî",
-      "color-range-limited": "Sînorkirî",
-      "quality-high": "Bilind",
-      "quality-medium": "Navîn",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Pir bilind",
-      "sources-portal": "Dergeh",
-      "sources-screen": "Dîmender"
-    },
     "scrolling-modes": {
       "always": "Her tim bigere",
       "hover": "Li ser gerandinê bigere",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "Otomatîkî bixwe ve zeliqandin",
       "settings-clip-preview-description": "Dîmenek pêşdîtinê ya naveroka clipboardê nîşan bide dema ku emrê >clip tê bikaranîn.",
       "settings-clip-preview-label": "Pêşdîtina klîpê çalak bike",
+      "settings-clip-wrap-text-description": "Tekstê di lîsteya clipboardê de bipêçe, li şûna ku were kurtkirin.",
+      "settings-clip-wrap-text-label": "Pêça nivîsa clipboardê",
       "settings-clipboard-history-description": "Gihîştina tiştên ku berê hatine kopîkirin ji destpêkerê.",
       "settings-clipboard-history-label": "Dîroka clipboardê çalak bike",
       "settings-custom-launch-prefix-description": "Fermanên pêşgiran bi destpêkerek xwerû pêşda bikin (mînak, 'runapp' ji bo entegrasyona systemd).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Herêm"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "ئۆپووس بۆ باشترین ئەنجام و بچووکترین قەبارەی دەنگی پێشنیار دەکرێت.",
-      "audio-audio-codec-label": "Kodkirina dengê",
-      "audio-audio-source-description": "Çavkaniya dengî ya ku di dema tomarkirinê de were girtin.",
-      "audio-audio-source-label": "Çavkaniya dengê",
-      "audio-desc": "Vebijarkên tomarkirina dengî saz bike.",
-      "audio-title": "Sazkariyên dengê",
-      "general-copy-to-clipboard-description": "Piştî qedandina tomarkirinê pelê kopî bike clipboardê.",
-      "general-copy-to-clipboard-label": "Kopî bo clipboardê",
-      "general-desc": "Derana tomarkirina dîmenderê û naverokê bi rê ve bibe.",
-      "general-output-folder-description": "Pelda ku dê tomarên dîmenderê lê bên hilanîn.",
-      "general-output-folder-label": "Peldanka deranê",
-      "general-select-output-folder": "Pelda qeydê hilbijêre",
-      "general-show-cursor-description": "Di vîdyoyê de nîşana mişkê tomar bike.",
-      "general-show-cursor-label": "Nîşankar nîşan bide",
-      "general-title": "Sazkariyên giştî",
-      "title": "Tomarkarê dîmenderê",
-      "video-color-range-description": "Ji bo çêtir lihevhatin, sînorkirî tê pêşniyarkirin.",
-      "video-color-range-label": "Rêjeya rengê",
-      "video-desc": "Vebijarkên tomarkirina vîdyoyê saz bike.",
-      "video-frame-rate-description": "ڕێژەی چوارچێوەی ئامانج بۆ تۆمارکردنی شاشە.",
-      "video-title": "Sazkariyên vîdyoyê",
-      "video-video-codec-description": "h264 kodeka herî berbelav e.",
-      "video-video-codec-label": "Kodkirinê vîdyoyê",
-      "video-video-quality-description": "Bilindtir kalîte dibe sedema mezinahiya pelên.",
-      "video-video-quality-label": "Kalîteya vîdyoyê",
-      "video-video-source-description": "Gerîn tê pêşniyarkirin, eger te artefakt dîtin, Screen biceribîne.",
-      "video-video-source-label": "Çavkaniya vîdyoyê"
-    },
     "session-menu": {
       "countdown-duration-description": "Demjimêra heta pêkanîna kiryarên hêzê destnîşan bike.",
       "countdown-duration-label": "Dirêjahiya jimartinê berjêr",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "e.g., 'tiştek nayê lîstin'. Use /regex/ for patterns.",
     "enter-tooltip": "Têketina sernavê amûrê",
     "enter-width-pixels": "Firehiya bi pîxel binivîse",
-    "profile-picture-path": "/home/bikarhêner/.rû",
     "search": "Bigere...",
     "search-icons": "b.m., noctalia, niri, betarî, ewr",
     "search-launcher": "Li navnîşan bigere... an jî ji bo fermanan > bikar bîne",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Nûkirina encamên Wallhavenê",
     "refresh-wallpaper-list": "Nûkirina lîsteya dîwêr",
     "remove-widget": "Rakire amûrekê",
-    "screen-recorder-not-installed": "Tomarkarê dîmenderê (nehatiye sazkirin)",
     "search-close": "Lêgerînê bigire",
     "session-menu": "Menuya danişînê",
     "show-all-devices": "Hemû amûran nîşan bide",
-    "stop-screen-recording": "Tomarkarê dîmenderê",
     "switch-to-dark-mode": "Awaya tarî",
     "switch-to-light-mode": "Awaya ronahî",
     "unmute": "Bêdeng neke",

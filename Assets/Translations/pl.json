@@ -464,9 +464,6 @@
       "tooltip-action": "Profil zasilania",
       "tooltip-disabled": "Zainstaluj power-profiles-daemon, aby korzystać z profili zasilania"
     },
-    "screen-recorder": {
-      "label-stopped": "Nagraj"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi rozłączone",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Nowoczesny"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Wyjście systemowe + mikrofon",
-      "audio-sources-microphone-input": "Wejście mikrofonu",
-      "audio-sources-none": "Brak dźwięku.",
-      "audio-sources-system-output": "Wyjście systemowe",
-      "color-range-full": "Pełny",
-      "color-range-limited": "Ograniczony",
-      "quality-high": "Wysoka",
-      "quality-medium": "Średnia",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Bardzo wysoka",
-      "sources-portal": "Portal",
-      "sources-screen": "Ekran"
-    },
     "scrolling-modes": {
       "always": "Zawsze przewijaj",
       "hover": "Przewijaj po najechaniu",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "Automatyczne wklejanie",
       "settings-clip-preview-description": "Pokaż podgląd zawartości schowka przy użyciu polecenia >clip.",
       "settings-clip-preview-label": "Włącz podgląd schowka",
+      "settings-clip-wrap-text-description": "Zawijaj tekst na liście schowka zamiast go obcinać.",
+      "settings-clip-wrap-text-label": "Zawijaj tekst ze schowka",
       "settings-clipboard-history-description": "Dostęp do wcześniej skopiowanych elementów z poziomu launchera.",
       "settings-clipboard-history-label": "Włącz historię schowka",
       "settings-custom-launch-prefix-description": "Poprzedzaj polecenia własnym prefiksem (np. 'runapp' dla integracji z systemd).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Region"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus jest zalecany dla najlepszej wydajności i najmniejszego rozmiaru pliku.",
-      "audio-audio-codec-label": "Kodek audio",
-      "audio-audio-source-description": "Źródło dźwięku do przechwycenia podczas nagrywania.",
-      "audio-audio-source-label": "Źródło audio",
-      "audio-desc": "Konfiguruj opcje nagrywania dźwięku.",
-      "audio-title": "Ustawienia audio",
-      "general-copy-to-clipboard-description": "Skopiuj plik do schowka po zakończeniu nagrywania.",
-      "general-copy-to-clipboard-label": "Kopiuj do schowka",
-      "general-desc": "Zarządzaj wyjściem i zawartością nagrań ekranu.",
-      "general-output-folder-description": "Folder, w którym będą zapisywane nagrania.",
-      "general-output-folder-label": "Folder wyjściowy",
-      "general-select-output-folder": "Wybierz folder wyjściowy",
-      "general-show-cursor-description": "Nagrywaj kursor myszy na wideo.",
-      "general-show-cursor-label": "Pokaż kursor",
-      "general-title": "Ustawienia ogólne",
-      "title": "Nagrywanie ekranu",
-      "video-color-range-description": "Zakres ograniczony (Limited) jest zalecany dla lepszej kompatybilności.",
-      "video-color-range-label": "Zakres kolorów",
-      "video-desc": "Konfiguruj opcje nagrywania wideo.",
-      "video-frame-rate-description": "Docelowa liczba klatek na sekundę (FPS).",
-      "video-title": "Ustawienia wideo",
-      "video-video-codec-description": "h264 to najczęściej spotykany kodek.",
-      "video-video-codec-label": "Kodek wideo",
-      "video-video-quality-description": "Wyższa jakość skutkuje większym rozmiarem plików.",
-      "video-video-quality-label": "Jakość wideo",
-      "video-video-source-description": "Zalecany jest Portal. Jeśli pojawiają się błędy, spróbuj Ekran (Screen).",
-      "video-video-source-label": "Źródło wideo"
-    },
     "session-menu": {
       "countdown-duration-description": "Ustaw czas odliczania przed wykonaniem akcji zasilania.",
       "countdown-duration-label": "Czas trwania odliczania",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "np. 'nic nie jest odtwarzane'. Użyj /regex/ dla wzorców.",
     "enter-tooltip": "Wpisz tekst podpowiedzi",
     "enter-width-pixels": "Wpisz szerokość w pikselach",
-    "profile-picture-path": "/home/użytkownik/.face",
     "search": "Szukaj...",
     "search-icons": "np. noctalia, niri, battery, cloud",
     "search-launcher": "Szukaj wpisów... lub użyj > dla poleceń",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Odśwież wyniki Wallhaven",
     "refresh-wallpaper-list": "Odśwież listę tapet",
     "remove-widget": "Usuń widżet",
-    "screen-recorder-not-installed": "Nagrywanie ekranu (niezainstalowane)",
     "search-close": "Zamknij wyszukiwanie",
     "session-menu": "Menu sesji",
     "show-all-devices": "Pokaż wszystkie urządzenia.",
-    "stop-screen-recording": "Nagrywanie ekranu",
     "switch-to-dark-mode": "Tryb ciemny",
     "switch-to-light-mode": "Tryb jasny",
     "unmute": "Wyłącz wyciszenie",

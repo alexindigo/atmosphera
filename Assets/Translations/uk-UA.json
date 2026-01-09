@@ -464,9 +464,6 @@
       "tooltip-action": "Профіль живлення",
       "tooltip-disabled": "Встановіть power-profiles-daemon для використання профілів живлення"
     },
-    "screen-recorder": {
-      "label-stopped": "Запис"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi відключено",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Сучасний"
     },
     "frame-rates-fps": "{fps} к/с",
-    "screen-recording": {
-      "audio-sources-both": "Системний вихід + вхід мікрофона",
-      "audio-sources-microphone-input": "Вхід мікрофона",
-      "audio-sources-none": "Немає аудіо",
-      "audio-sources-system-output": "Системний вихід",
-      "color-range-full": "Повний",
-      "color-range-limited": "Обмежений",
-      "quality-high": "Висока",
-      "quality-medium": "Середня",
-      "quality-ultra": "Ультра",
-      "quality-very-high": "Дуже висока",
-      "sources-portal": "Портал",
-      "sources-screen": "Екран"
-    },
     "scrolling-modes": {
       "always": "Завжди прокручувати",
       "hover": "Прокручувати при наведенні",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "Автоматична вставка",
       "settings-clip-preview-description": "Показувати попередній перегляд вмісту буфера обміну при використанні команди >clip.",
       "settings-clip-preview-label": "Попередній перегляд буфера обміну",
+      "settings-clip-wrap-text-description": "Переносити текст у списку буфера обміну замість обрізання.",
+      "settings-clip-wrap-text-label": "Загорнути текст з буфера обміну",
       "settings-clipboard-history-description": "Отримати доступ до раніше скопійованих елементів із лаунчера.",
       "settings-clipboard-history-label": "Увімкнути історію буфера обміну",
       "settings-custom-launch-prefix-description": "Додати префікс до команд запуску лаунчером (напр., 'runapp' для інтеграції з systemd).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Регіон"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus рекомендується для найкращої продуктивності та найменшого розміру аудіо.",
-      "audio-audio-codec-label": "Кодек аудіо",
-      "audio-audio-source-description": "Джерело аудіо для захоплення під час запису.",
-      "audio-audio-source-label": "Джерело аудіо",
-      "audio-desc": "Налаштуйте параметри запису аудіо.",
-      "audio-title": "Налаштування аудіо",
-      "general-copy-to-clipboard-description": "Скопіювати файл у буфер обміну після завершення запису.",
-      "general-copy-to-clipboard-label": "Скопіювати в буфер обміну",
-      "general-desc": "Керуйте виведенням та вмістом запису екрана.",
-      "general-output-folder-description": "Тека, де зберігатимуться записи екрана.",
-      "general-output-folder-label": "Тека виведення",
-      "general-select-output-folder": "Вибрати теку виведення",
-      "general-show-cursor-description": "Записувати курсор миші у відео.",
-      "general-show-cursor-label": "Показувати курсор",
-      "general-title": "Загальні налаштування",
-      "title": "Запис екрана",
-      "video-color-range-description": "Обмежений рекомендується для кращої сумісності.",
-      "video-color-range-label": "Діапазон кольорів",
-      "video-desc": "Налаштуйте параметри запису відео.",
-      "video-frame-rate-description": "Цільова частота кадрів для записів екрана.",
-      "video-title": "Налаштування відео",
-      "video-video-codec-description": "h264 є найпоширенішим кодеком.",
-      "video-video-codec-label": "Кодек відео",
-      "video-video-quality-description": "Вища якість призводить до більшого розміру файлів.",
-      "video-video-quality-label": "Якість відео",
-      "video-video-source-description": "Рекомендується Portal, якщо виникають артефакти, спробуйте Screen.",
-      "video-video-source-label": "Джерело відео"
-    },
     "session-menu": {
       "countdown-duration-description": "Встановити, як довго триває таймер зворотного відліку перед виконанням дій живлення.",
       "countdown-duration-label": "Тривалість зворотного відліку",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "напр., 'нічого не відтворюється'. Використовуйте /regex/ для шаблонів.",
     "enter-tooltip": "Введіть підказку",
     "enter-width-pixels": "Введіть ширину в пікселях",
-    "profile-picture-path": "/home/user/.face",
     "search": "Пошук...",
     "search-icons": "напр., noctalia, niri, battery, cloud",
     "search-launcher": "Пошук записів... або використовуйте > для команд",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Оновити результати Wallhaven",
     "refresh-wallpaper-list": "Оновити список шпалер",
     "remove-widget": "Видалити віджет",
-    "screen-recorder-not-installed": "Запис екрана (не встановлено)",
     "search-close": "Закрити пошук",
     "session-menu": "Меню сеансу",
     "show-all-devices": "Показати всі пристрої",
-    "stop-screen-recording": "Запис екрана",
     "switch-to-dark-mode": "Темний режим",
     "switch-to-light-mode": "Світлий режим",
     "unmute": "Увімкнути звук",

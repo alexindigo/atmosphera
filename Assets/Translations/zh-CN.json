@@ -464,9 +464,6 @@
       "tooltip-action": "电源模式",
       "tooltip-disabled": "安装 power-profiles-daemon 以使用电源模式"
     },
-    "screen-recorder": {
-      "label-stopped": "录制"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi 已断开",
       "label-ethernet": "以太网"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "现代"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "系统输出 + 麦克风输入",
-      "audio-sources-microphone-input": "麦克风输入",
-      "audio-sources-none": "无音频",
-      "audio-sources-system-output": "系统输出",
-      "color-range-full": "完全",
-      "color-range-limited": "有限",
-      "quality-high": "高",
-      "quality-medium": "中等",
-      "quality-ultra": "超高",
-      "quality-very-high": "很高",
-      "sources-portal": "Portal",
-      "sources-screen": "Screen"
-    },
     "scrolling-modes": {
       "always": "始终滚动",
       "hover": "悬停时滚动",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "自动粘贴",
       "settings-clip-preview-description": "在使用 >clip 命令时显示剪贴板内容的预览。",
       "settings-clip-preview-label": "启用剪贴板预览",
+      "settings-clip-wrap-text-description": "将剪贴板列表中的文本换行显示，而不是截断。",
+      "settings-clip-wrap-text-label": "环绕剪贴板文本",
       "settings-clipboard-history-description": "从启动器访问之前复制的项目。",
       "settings-clipboard-history-label": "启用剪贴板历史记录",
       "settings-custom-launch-prefix-description": "使用自定义启动器前缀命令（例如，'runapp'用于systemd集成）。",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "地区"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "推荐使用 Opus 以获得最佳性能和最小的音频大小。",
-      "audio-audio-codec-label": "音频编解码器",
-      "audio-audio-source-description": "录制期间要捕获的音频源。",
-      "audio-audio-source-label": "音频源",
-      "audio-desc": "配置音频录制选项。",
-      "audio-title": "音频设置",
-      "general-copy-to-clipboard-description": "录制完成后将文件复制到剪贴板。",
-      "general-copy-to-clipboard-label": "复制到剪贴板",
-      "general-desc": "管理屏幕录制输出和内容。",
-      "general-output-folder-description": "屏幕录制将保存的文件夹。",
-      "general-output-folder-label": "输出文件夹",
-      "general-select-output-folder": "选择输出文件夹",
-      "general-show-cursor-description": "在视频中录制鼠标光标。",
-      "general-show-cursor-label": "显示光标",
-      "general-title": "常规设置",
-      "title": "屏幕录制",
-      "video-color-range-description": "推荐使用 Limited 以获得更好的兼容性。",
-      "video-color-range-label": "颜色范围",
-      "video-desc": "配置视频录制选项。",
-      "video-frame-rate-description": "屏幕录制的目标帧率。",
-      "video-title": "视频设置",
-      "video-video-codec-description": "h264 是最常见的编解码器。",
-      "video-video-codec-label": "视频编解码器",
-      "video-video-quality-description": "更高的质量会导致更大的文件大小。",
-      "video-video-quality-label": "视频质量",
-      "video-video-source-description": "推荐使用 Portal，如果出现伪影请尝试 Screen。",
-      "video-video-source-label": "视频源"
-    },
     "session-menu": {
       "countdown-duration-description": "设置倒计时计时器在执行电源操作之前持续多长时间。",
       "countdown-duration-label": "倒计时持续时间",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "例如，“nothing is playing”。使用 /regex/ 表示匹配模式。",
     "enter-tooltip": "输入工具提示",
     "enter-width-pixels": "输入宽度（像素）",
-    "profile-picture-path": "/home/user/.face",
     "search": "搜索...",
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "刷新 Wallhaven 结果",
     "refresh-wallpaper-list": "刷新壁纸列表",
     "remove-widget": "移除小部件",
-    "screen-recorder-not-installed": "屏幕录制器（未安装）",
     "search-close": "关闭搜索",
     "session-menu": "会话菜单",
     "show-all-devices": "显示所有设备",
-    "stop-screen-recording": "屏幕录制器",
     "switch-to-dark-mode": "深色模式",
     "switch-to-light-mode": "浅色模式",
     "unmute": "取消静音",

@@ -464,9 +464,6 @@
       "tooltip-action": "Energieprofiel",
       "tooltip-disabled": "Installeer power-profiles-daemon om energieprofielen te gebruiken"
     },
-    "screen-recorder": {
-      "label-stopped": "Opnemen"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi niet verbonden",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Systeemuitvoer + microfooninvoer",
-      "audio-sources-microphone-input": "Microfooninvoer",
-      "audio-sources-none": "Geen audio",
-      "audio-sources-system-output": "Systeemuitvoer",
-      "color-range-full": "Volledig",
-      "color-range-limited": "Beperkt",
-      "quality-high": "Hoog",
-      "quality-medium": "Gemiddeld",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Zeer hoog",
-      "sources-portal": "Portal",
-      "sources-screen": "Scherm"
-    },
     "scrolling-modes": {
       "always": "Altijd scrollen",
       "hover": "Scrollen bij hover",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "Automatisch plakken",
       "settings-clip-preview-description": "Toon een voorbeeld van de inhoud van het klembord bij gebruik van het >clip-commando.",
       "settings-clip-preview-label": "Klembordvoorbeeld inschakelen",
+      "settings-clip-wrap-text-description": "Tekst in de klembordlijst wrappen in plaats van af te breken.",
+      "settings-clip-wrap-text-label": "Klembordtekst omwikkelen",
       "settings-clipboard-history-description": "Toegang tot eerder gekopieerde items vanuit de launcher.",
       "settings-clipboard-history-label": "Klembordgeschiedenis inschakelen",
       "settings-custom-launch-prefix-description": "Voorzie commando's van een aangepaste launcher-prefix (bijv. 'runapp' voor systemd-integratie).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Regio"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus wordt aanbevolen voor de beste prestaties en de kleinste audiogrootte.",
-      "audio-audio-codec-label": "Audiocodec",
-      "audio-audio-source-description": "Audiobron om tijdens de opname vast te leggen.",
-      "audio-audio-source-label": "Audiobron",
-      "audio-desc": "Configureer opties voor audio-opname.",
-      "audio-title": "Audio-instellingen",
-      "general-copy-to-clipboard-description": "Kopieer het bestand naar het klembord nadat de opname is voltooid.",
-      "general-copy-to-clipboard-label": "Kopiëren naar klembord",
-      "general-desc": "Beheer schermopname-uitvoer en inhoud.",
-      "general-output-folder-description": "Map waarin schermopnamen worden opgeslagen.",
-      "general-output-folder-label": "Uitvoermap",
-      "general-select-output-folder": "Uitvoermap selecteren",
-      "general-show-cursor-description": "Neem de muiscursor op in de video.",
-      "general-show-cursor-label": "Cursor tonen",
-      "general-title": "Algemene instellingen",
-      "title": "Schermrecorder",
-      "video-color-range-description": "Beperkt wordt aanbevolen voor betere compatibiliteit.",
-      "video-color-range-label": "Kleurbereik",
-      "video-desc": "Configureer opties voor video-opname.",
-      "video-frame-rate-description": "Doelframesnelheid voor schermopnamen.",
-      "video-title": "Video-instellingen",
-      "video-video-codec-description": "h264 is de meest gebruikte codec.",
-      "video-video-codec-label": "Videocodec",
-      "video-video-quality-description": "Hogere kwaliteit resulteert in grotere bestanden.",
-      "video-video-quality-label": "Videokwaliteit",
-      "video-video-source-description": "Portal wordt aanbevolen; als je artefacten krijgt, probeer dan Screen.",
-      "video-video-source-label": "Videobron"
-    },
     "session-menu": {
       "countdown-duration-description": "Stel in hoe lang de afteltimer duurt voordat energieacties worden uitgevoerd.",
       "countdown-duration-label": "Afteltimer duur",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "bijv. 'er wordt niets afgespeeld'. Gebruik /regex/ voor patronen.",
     "enter-tooltip": "Voer tooltip in",
     "enter-width-pixels": "Voer breedte in pixels in",
-    "profile-picture-path": "/home/user/.face",
     "search": "Zoeken...",
     "search-icons": "bijv. noctalia, niri, battery, cloud",
     "search-launcher": "Items zoeken... of gebruik > voor commando's",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Wallhaven-resultaten verversen",
     "refresh-wallpaper-list": "Achtergrondlijst verversen",
     "remove-widget": "Widget verwijderen",
-    "screen-recorder-not-installed": "Schermrecorder (niet geïnstalleerd)",
     "search-close": "Zoeken sluiten",
     "session-menu": "Sessiemenu",
     "show-all-devices": "Toon alle apparaten",
-    "stop-screen-recording": "Schermrecorder",
     "switch-to-dark-mode": "Donkere modus",
     "switch-to-light-mode": "Lichte modus",
     "unmute": "Dempen opheffen",

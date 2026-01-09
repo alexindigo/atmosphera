@@ -119,7 +119,6 @@ Singleton {
     "settings-color-scheme": "palette",
     "settings-wallpaper": "paint",
     "settings-wallpaper-selector": "library-photo",
-    "settings-screen-recorder": "video",
     "settings-hooks": "link",
     "settings-notifications": "bell",
     "settings-osd": "picture-in-picture",

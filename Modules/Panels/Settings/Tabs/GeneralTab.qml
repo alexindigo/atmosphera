@@ -33,7 +33,7 @@ ColumnLayout {
                      })
       description: I18n.tr("panels.general.profile-picture-description")
       text: Settings.data.general.avatarImage
-      placeholderText: I18n.tr("placeholders.profile-picture-path")
+      placeholderText: '~/.face' // don't translate path
       buttonIcon: "photo"
       buttonTooltip: I18n.tr("panels.general.profile-tooltip")
       onInputEditingFinished: Settings.data.general.avatarImage = text

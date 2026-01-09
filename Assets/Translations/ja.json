@@ -464,9 +464,6 @@
       "tooltip-action": "電源プロファイル",
       "tooltip-disabled": "電源プロファイルを使用するには power-profiles-daemon をインストールしてください"
     },
-    "screen-recorder": {
-      "label-stopped": "録画"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi 未接続",
       "label-ethernet": "イーサネット"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "モダン"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "システム出力 + マイク入力",
-      "audio-sources-microphone-input": "マイク入力",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "システム出力",
-      "color-range-full": "フル",
-      "color-range-limited": "リミテッド",
-      "quality-high": "高",
-      "quality-medium": "標準",
-      "quality-ultra": "ウルトラ",
-      "quality-very-high": "最高",
-      "sources-portal": "ポータル",
-      "sources-screen": "スクリーン"
-    },
     "scrolling-modes": {
       "always": "常にスクロール",
       "hover": "ホバー時にスクロール",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "自動貼り付け",
       "settings-clip-preview-description": ">clip コマンド使用時に、クリップボードの内容をプレビュー表示します。",
       "settings-clip-preview-label": "クリップボードのプレビューを有効化",
+      "settings-clip-wrap-text-description": "クリップボードのリストでテキストを切り捨てる代わりに、折り返して表示する。",
+      "settings-clip-wrap-text-label": "クリップボードのテキストを折り返す",
       "settings-clipboard-history-description": "以前コピーした項目にランチャーからアクセスできるようにします。",
       "settings-clipboard-history-label": "クリップボード履歴を有効化",
       "settings-custom-launch-prefix-description": "コマンドの先頭にカスタムランチャーを付与します（例: systemd 連携用の 'runapp'）。",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "地域"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "最高のパフォーマンスと最小のファイルサイズを実現する Opus を推奨します。",
-      "audio-audio-codec-label": "オーディオコーデック",
-      "audio-audio-source-description": "録画中にキャプチャする音声ソース。",
-      "audio-audio-source-label": "オーディオソース",
-      "audio-desc": "音声録音のオプションを設定します。",
-      "audio-title": "オーディオ設定",
-      "general-copy-to-clipboard-description": "録画終了後、ファイルをクリップボードにコピーします。",
-      "general-copy-to-clipboard-label": "クリップボードにコピー",
-      "general-desc": "画面録画の出力先や内容を管理します。",
-      "general-output-folder-description": "画面録画ファイルを保存するフォルダ。",
-      "general-output-folder-label": "出力フォルダ",
-      "general-select-output-folder": "出力フォルダを選択",
-      "general-show-cursor-description": "動画にマウスカーソルを含めて録画します。",
-      "general-show-cursor-label": "カーソルを表示",
-      "general-title": "一般",
-      "title": "スクリーンレコーダー",
-      "video-color-range-description": "互換性を高めるため、リミテッドを推奨します。",
-      "video-color-range-label": "カラーレンジ",
-      "video-desc": "映像録画のオプションを設定します。",
-      "video-frame-rate-description": "画面録画のターゲットフレームレート。",
-      "video-title": "ビデオ設定",
-      "video-video-codec-description": "H264 が最も一般的なコーデックです。",
-      "video-video-codec-label": "ビデオコーデック",
-      "video-video-quality-description": "品質を高くすると、ファイルサイズが大きくなります。",
-      "video-video-quality-label": "ビデオ品質",
-      "video-video-source-description": "ポータルを推奨します。映像が乱れる場合はスクリーンを試してください。",
-      "video-video-source-label": "ビデオソース"
-    },
     "session-menu": {
       "countdown-duration-description": "カウントダウンタイマーが電源操作を実行するまでの時間を設定します。",
       "countdown-duration-label": "カウントダウンの時間",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "例: 'nothing is playing'。正規表現 (/.../) も使用できます。",
     "enter-tooltip": "ツールチップを入力",
     "enter-width-pixels": "幅を入力（ピクセル）",
-    "profile-picture-path": "/home/user/.face",
     "search": "検索...",
     "search-icons": "例: noctalia, niri, battery, cloud",
     "search-launcher": "項目を検索...（または > でコマンド実行）",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Wallhaven の検索結果を更新",
     "refresh-wallpaper-list": "壁紙リストを更新",
     "remove-widget": "ウィジェットを削除",
-    "screen-recorder-not-installed": "スクリーンレコーダー（未インストール）",
     "search-close": "検索を閉じる",
     "session-menu": "セッションメニュー",
     "show-all-devices": "すべてのデバイスを表示",
-    "stop-screen-recording": "画面録画",
     "switch-to-dark-mode": "ダークモード",
     "switch-to-light-mode": "ライトモード",
     "unmute": "ミュート解除",

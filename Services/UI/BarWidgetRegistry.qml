@@ -32,7 +32,6 @@ Singleton {
                            "NoctaliaPerformance": noctaliaPerformanceComponent,
                            "NotificationHistory": notificationHistoryComponent,
                            "PowerProfile": powerProfileComponent,
-                           "ScreenRecorder": screenRecorderComponent,
                            "SessionMenu": sessionMenuComponent,
                            "Spacer": spacerComponent,
                            "SystemMonitor": systemMonitorComponent,
@@ -308,9 +307,6 @@ Singleton {
   }
   property Component sessionMenuComponent: Component {
     SessionMenu {}
-  }
-  property Component screenRecorderComponent: Component {
-    ScreenRecorder {}
   }
   property Component controlCenterComponent: Component {
     ControlCenter {}

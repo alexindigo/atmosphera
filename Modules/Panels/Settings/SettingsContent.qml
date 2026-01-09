@@ -94,10 +94,6 @@ Item {
     WallpaperTab {}
   }
   Component {
-    id: screenRecorderTab
-    ScreenRecorderTab {}
-  }
-  Component {
     id: aboutTab
     AboutTab {}
   }
@@ -245,12 +241,6 @@ Item {
             "label": "panels.region.title",
             "icon": "settings-location",
             "source": regionTab
-          },
-          {
-            "id": SettingsPanel.Tab.ScreenRecorder,
-            "label": "panels.screen-recorder.title",
-            "icon": "settings-screen-recorder",
-            "source": screenRecorderTab
           },
           {
             "id": SettingsPanel.Tab.SystemMonitor,

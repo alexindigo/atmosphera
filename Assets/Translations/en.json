@@ -464,9 +464,6 @@
       "tooltip-action": "Power Profile",
       "tooltip-disabled": "Install power-profiles-daemon to use power profiles"
     },
-    "screen-recorder": {
-      "label-stopped": "Record"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi disconnected",
       "label-ethernet": "Ethernet"
@@ -573,20 +570,6 @@
       "quick-settings-style-modern": "Modern"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "System output + microphone input",
-      "audio-sources-microphone-input": "Microphone input",
-      "audio-sources-none": "No audio",
-      "audio-sources-system-output": "System output",
-      "color-range-full": "Full",
-      "color-range-limited": "Limited",
-      "quality-high": "High",
-      "quality-medium": "Medium",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Very high",
-      "sources-portal": "Portal",
-      "sources-screen": "Screen"
-    },
     "scrolling-modes": {
       "always": "Scroll always",
       "hover": "Scroll on hover",
@@ -986,6 +969,8 @@
       "settings-auto-paste-label": "Auto paste",
       "settings-clip-preview-description": "Show a preview of the clipboard content when using the >clip command.",
       "settings-clip-preview-label": "Enable clip preview",
+      "settings-clip-wrap-text-description": "Wrap text in the clipboard list instead of truncating it.",
+      "settings-clip-wrap-text-label": "Wrap clipboard text",
       "settings-clipboard-history-description": "Access previously copied items from the launcher.",
       "settings-clipboard-history-label": "Enable clipboard history",
       "settings-custom-launch-prefix-description": "Prefix commands with a custom launcher (e.g., 'runapp' for systemd integration).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Region"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus is recommended for best performance and smallest audio size.",
-      "audio-audio-codec-label": "Audio codec",
-      "audio-audio-source-description": "Audio source to capture during recording.",
-      "audio-audio-source-label": "Audio source",
-      "audio-desc": "Configure audio recording options.",
-      "audio-title": "Audio settings",
-      "general-copy-to-clipboard-description": "Copy the file to clipboard after recording finishes.",
-      "general-copy-to-clipboard-label": "Copy to clipboard",
-      "general-desc": "Manage screen recording output and content.",
-      "general-output-folder-description": "Folder where screen recordings will be saved.",
-      "general-output-folder-label": "Output folder",
-      "general-select-output-folder": "Select output folder",
-      "general-show-cursor-description": "Record mouse cursor in the video.",
-      "general-show-cursor-label": "Show cursor",
-      "general-title": "General settings",
-      "title": "Screen Recorder",
-      "video-color-range-description": "Limited is recommended for better compatibility.",
-      "video-color-range-label": "Color range",
-      "video-desc": "Configure video recording options.",
-      "video-frame-rate-description": "Target frame rate for screen recordings.",
-      "video-title": "Video settings",
-      "video-video-codec-description": "h264 is the most common codec.",
-      "video-video-codec-label": "Video codec",
-      "video-video-quality-description": "Higher quality results in larger file sizes.",
-      "video-video-quality-label": "Video quality",
-      "video-video-source-description": "Portal is recommended, if you get artifacts try Screen.",
-      "video-video-source-label": "Video source"
-    },
     "session-menu": {
       "countdown-duration-description": "Set how long the countdown timer lasts before executing power actions.",
       "countdown-duration-label": "Countdown duration",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "e.g., 'nothing is playing'. Use /regex/ for patterns.",
     "enter-tooltip": "Enter tooltip",
     "enter-width-pixels": "Enter width in pixels",
-    "profile-picture-path": "/home/user/.face",
     "search": "Search...",
     "search-icons": "e.g., noctalia, niri, battery, cloud",
     "search-launcher": "Search entries... or use > for commands",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Refresh Wallhaven results",
     "refresh-wallpaper-list": "Refresh wallpaper list",
     "remove-widget": "Remove widget",
-    "screen-recorder-not-installed": "Screen recorder (not installed)",
     "search-close": "Close search",
     "session-menu": "Session menu",
     "show-all-devices": "Show all devices",
-    "stop-screen-recording": "Screen recorder",
     "switch-to-dark-mode": "Dark Mode",
     "switch-to-light-mode": "Light Mode",
     "unmute": "Unmute",

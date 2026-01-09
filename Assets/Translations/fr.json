@@ -3,7 +3,7 @@
     "clear-history": "Effacer l'historique",
     "close-app": "Fermer {app}",
     "connect-vpn": "Se connecter à {name}",
-    "cycle-visualizer": "Visualiseur de cycle",
+    "cycle-visualizer": "Changer de visualization",
     "disable-bluetooth": "Désactiver le Bluetooth",
     "disable-dnd": "Désactiver le mode Ne pas déranger",
     "disable-wifi": "Désactiver le Wi-Fi",
@@ -18,7 +18,7 @@
     "open-launcher": "Ouvrir le lanceur",
     "open-mixer": "Table de mixage audio",
     "open-settings": "Ouvrir les paramètres",
-    "raise-to-top": "Remonter en haut",
+    "raise-to-top": "Mettre en avant",
     "random-wallpaper": "Fond d'écran aléatoire",
     "toggle-mute": "Activer/désactiver le mode muet",
     "widget-settings": "Paramètres du widget"
@@ -47,7 +47,7 @@
       "device-description": "Sélectionnez le périphérique de batterie à afficher.",
       "device-label": "Dispositif à pile",
       "hide-if-not-detected-description": "Masquer le widget lorsqu'aucune batterie n'est détectée sur le système.",
-      "hide-if-not-detected-label": "Se cacher si non détecté.",
+      "hide-if-not-detected-label": "Caché si non détecté.",
       "low-battery-threshold-description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",
       "low-battery-threshold-label": "Seuil d'avertissement de batterie faible",
       "show-noctalia-performance-description": "Afficher le basculement du mode performance Noctalia dans le panneau batterie.",
@@ -111,7 +111,7 @@
       "max-text-length-vertical-description": "Nombre maximal de caractères à afficher dans la barre verticale (0 pour masquer le texte).",
       "max-text-length-vertical-label": "Longueur max du texte (vertical)",
       "middle-click-description": "Commande à exécuter quand le bouton est cliqué au milieu.",
-      "middle-click-label": "Clic milieu",
+      "middle-click-label": "Clic du milieu",
       "middle-click-update-text": "Mettre à jour le texte affiché lors d'un clic molette.",
       "parse-json-description": "Analyser la sortie de la commande en tant qu'objet JSON pour définir dynamiquement le texte et l'icône.",
       "parse-json-label": "Analyser la sortie en JSON",
@@ -201,7 +201,7 @@
       "network-traffic-label": "Trafic réseau",
       "storage-usage-description": "Afficher les informations d'utilisation de l'espace disque.",
       "storage-usage-label": "Utilisation du stockage",
-      "use-monospace-font-description": "```\nUtilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.\n```",
+      "use-monospace-font-description": "Utilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.",
       "use-monospace-font-label": "Police à chasse fixe"
     },
     "taskbar": {
@@ -245,7 +245,7 @@
       "enable-scrollwheel-description": "Basculer entre les espaces de travail avec la molette de la souris.",
       "enable-scrollwheel-label": "Faites défiler pour changer d'espace de travail.",
       "follow-focused-screen-description": "Afficher les espaces de travail de l'écran actuellement ciblé, plutôt que de l'écran où se trouve la barre.",
-      "follow-focused-screen-label": "Suivre l'Écran Ciblé",
+      "follow-focused-screen-label": "Suivre l'écran ciblé",
       "grouped-border-opacity-description": "Définir le niveau d'opacité des bordures des conteneurs d'espace de travail.",
       "grouped-border-opacity-label": "Opacité de la bordure",
       "hide-unoccupied-description": "Ne pas afficher les espaces de travail sans fenêtres.",
@@ -310,7 +310,7 @@
     "panel": {
       "buttons-discord": "Rejoindre notre Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Donner un avis.",
+      "buttons-feedback": "Donner un avis",
       "empty": "Les notes de version ne sont pas encore disponibles.",
       "highlight-title": "Points importants",
       "released": "Publié le {date}",
@@ -464,16 +464,13 @@
       "tooltip-action": "Profil d'alimentation",
       "tooltip-disabled": "Installez power-profiles-daemon pour utiliser les profils d'alimentation"
     },
-    "screen-recorder": {
-      "label-stopped": "Enregistrer"
-    },
     "wifi": {
       "label-disconnected": "Wi-Fi déconnecté",
       "label-ethernet": "Ethernet"
     }
   },
   "display-modes": {
-    "always-hide": "Toujours se cacher",
+    "always-hide": "Toujours caché",
     "always-show": "Toujours afficher",
     "force-open": "Forcer l'ouverture",
     "on-hover": "Au survol"
@@ -566,27 +563,13 @@
       "density-compact": "Compact",
       "density-default": "Défaut",
       "density-mini": "Mini",
-      "density-spacious": "Spacieux/Spacieuse"
+      "density-spacious": "Spacieux"
     },
     "control-center": {
       "quick-settings-style-classic": "Classique",
       "quick-settings-style-modern": "Moderne"
     },
     "frame-rates-fps": "{fps} FPS",
-    "screen-recording": {
-      "audio-sources-both": "Sortie système + entrée microphone",
-      "audio-sources-microphone-input": "Entrée microphone",
-      "audio-sources-none": "Pas d'audio",
-      "audio-sources-system-output": "Sortie système",
-      "color-range-full": "Complète",
-      "color-range-limited": "Limitée",
-      "quality-high": "Haute",
-      "quality-medium": "Moyenne",
-      "quality-ultra": "Ultra",
-      "quality-very-high": "Très haute",
-      "sources-portal": "Portail",
-      "sources-screen": "Écran"
-    },
     "scrolling-modes": {
       "always": "Défiler toujours",
       "hover": "Défiler au survol",
@@ -698,7 +681,7 @@
       "tray-blacklist-description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
       "tray-blacklist-label": "Liste noire",
       "tray-blacklist-placeholder": "ex: nm-applet, Fcitx*",
-      "tray-pin-application": "Épingler l'Application",
+      "tray-pin-application": "Épingler l'application",
       "tray-unpin-application": "Désépingler l'Application",
       "widgets-desc": "Faites glisser les widgets pour modifier leur ordre. Utilisez le menu contextuel (clic droit) pour transférer les widgets entre les sections ou les supprimer.",
       "widgets-title": "Positionnement des widgets"
@@ -981,11 +964,13 @@
       "execute-title": "Exécution",
       "settings-annotation-tool-description": "Commande à exécuter lorsque l'on clique sur le bouton d'annotation dans l'historique du presse-papiers. L'image sera envoyée à cette commande.",
       "settings-annotation-tool-label": "Outil d'annotation",
-      "settings-annotation-tool-placeholder": "gradia, satty -f -",
+      "settings-annotation-tool-placeholder": "ex: 'gradia', 'satty -f -'",
       "settings-auto-paste-description": "Coller automatiquement l'élément sélectionné du presse-papiers. Nécessite wtype.",
       "settings-auto-paste-label": "Collage automatique",
       "settings-clip-preview-description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
       "settings-clip-preview-label": "Activer l'aperçu du presse-papiers",
+      "settings-clip-wrap-text-description": "Envelopper le texte dans la liste du presse-papiers au lieu de le tronquer.",
+      "settings-clip-wrap-text-label": "Envelopper le texte du presse-papiers",
       "settings-clipboard-history-description": "Accédez aux éléments précédemment copiés depuis le lanceur.",
       "settings-clipboard-history-label": "Activer l'historique du presse-papiers",
       "settings-custom-launch-prefix-description": "Préfixer les commandes avec un lanceur personnalisé (ex. 'runapp' pour l'intégration systemd).",
@@ -1220,35 +1205,6 @@
     "region": {
       "title": "Région"
     },
-    "screen-recorder": {
-      "audio-audio-codec-description": "Opus est recommandé pour de meilleures performances et une taille audio minimale.",
-      "audio-audio-codec-label": "Codec audio",
-      "audio-audio-source-description": "Source audio à capturer pendant l'enregistrement.",
-      "audio-audio-source-label": "Source audio",
-      "audio-desc": "Configurez les options d'enregistrement audio.",
-      "audio-title": "Paramètres audio",
-      "general-copy-to-clipboard-description": "Copier le fichier dans le presse-papiers une fois l'enregistrement terminé.",
-      "general-copy-to-clipboard-label": "Copier dans le presse-papiers",
-      "general-desc": "Gérez la sortie et le contenu de l'enregistrement d'écran.",
-      "general-output-folder-description": "Dossier où les enregistrements d'écran seront sauvegardés.",
-      "general-output-folder-label": "Dossier de sortie",
-      "general-select-output-folder": "Sélectionner le dossier de sortie",
-      "general-show-cursor-description": "Enregistrez le curseur de la souris dans la vidéo.",
-      "general-show-cursor-label": "Afficher le curseur",
-      "general-title": "Paramètres généraux",
-      "title": "Enregistreur d'écran",
-      "video-color-range-description": "Limitée est recommandée pour une meilleure compatibilité.",
-      "video-color-range-label": "Gamme de couleurs",
-      "video-desc": "Configurez les options d'enregistrement vidéo.",
-      "video-frame-rate-description": "Fréquence d'images cible pour les enregistrements d'écran.",
-      "video-title": "Paramètres vidéo",
-      "video-video-codec-description": "h264 est le codec le plus courant.",
-      "video-video-codec-label": "Codec vidéo",
-      "video-video-quality-description": "Une qualité supérieure entraîne des fichiers de plus grande taille.",
-      "video-video-quality-label": "Qualité vidéo",
-      "video-video-source-description": "Portail est recommandé, si vous obtenez des artefacts, essayez Écran.",
-      "video-video-source-label": "Source vidéo"
-    },
     "session-menu": {
       "countdown-duration-description": "Définir la durée du compte à rebours avant d'exécuter les actions d'alimentation.",
       "countdown-duration-label": "Durée du compte à rebours",
@@ -1386,7 +1342,6 @@
     "enter-text-to-collapse": "par ex., 'rien n’est en lecture'. Utilisez /regex/ pour les modèles.",
     "enter-tooltip": "Entrer l'infobulle",
     "enter-width-pixels": "Entrez la largeur en pixels",
-    "profile-picture-path": "/home/user/.face",
     "search": "Rechercher...",
     "search-icons": "ex: noctalia, niri, batterie, nuage",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",
@@ -1398,7 +1353,7 @@
     "bottom-center": "En bas au centre",
     "bottom-left": "En bas à gauche",
     "bottom-right": "En bas à droite",
-    "center": "Centrer",
+    "center": "Centré",
     "center-left": "Gauche centre",
     "center-right": "Droite centre",
     "close-to-bar": "Près du bouton de la barre",
@@ -1609,11 +1564,9 @@
     "refresh-wallhaven": "Actualiser les résultats de Wallhaven",
     "refresh-wallpaper-list": "Actualiser la liste des fonds d'écran",
     "remove-widget": "Supprimer le widget",
-    "screen-recorder-not-installed": "Enregistreur d'écran (non installé)",
     "search-close": "Fermer la recherche",
     "session-menu": "Menu de session",
     "show-all-devices": "Afficher tous les appareils",
-    "stop-screen-recording": "Enregistreur d'écran",
     "switch-to-dark-mode": "Mode sombre",
     "switch-to-light-mode": "Mode clair",
     "unmute": "Réactiver le micro",
