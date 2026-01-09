@@ -920,7 +920,7 @@
       "screen-corners-title": "Quncikên dîmenderê"
     },
     "hooks": {
-      "info-command-info-description": "• Ferman bi rêya shellê (sh -c) tên meşandin<br>• Ferman di paşperdeyê de dimeşin (veqetandî)<br>• Bişkokên ceribandinê bi nirxên heyî dimeşin",
+      "info-command-info-description": "• Ferman bi rêya shellê (sh -lc) tên meşandin<br>• Ferman di paşperdeyê de dimeşin (veqetandî)<br>• Bişkokên ceribandinê bi nirxên heyî dimeşin",
       "info-command-info-label": "Agahiyên fermana hookê",
       "info-parameters-description": "• Hookê dîwarê: $1 = riya dîwarê, $2 = navê ekranê<br>• Hookê guhertina mijarê: $1 = rast/derew (Rewşa Moda Tarî)<br>• Hookên kilîtkirin/vekirina ekranê: Parametre tune<br>• Hookên moda performansê: Parametre tune",
       "info-parameters-label": "Parametreyên berdest",

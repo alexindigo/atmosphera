@@ -920,7 +920,7 @@
       "screen-corners-title": "Cantos da tela"
     },
     "hooks": {
-      "info-command-info-description": "• Comandos são executados via shell (sh -c)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",
+      "info-command-info-description": "• Comandos são executados via shell (sh -lc)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",
       "info-command-info-label": "Informações de Comando do Hook",
       "info-parameters-description": "• Hook de Papel de Parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hook de Alternância de Tema: $1 = true/false (estado do modo escuro)",
       "info-parameters-label": "Parâmetros Disponíveis",
