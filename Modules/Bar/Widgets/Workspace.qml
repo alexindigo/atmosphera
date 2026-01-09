@@ -100,8 +100,8 @@ Item {
 
   signal workspaceChanged(int workspaceId, color accentColor)
 
-  implicitWidth: showApplications ? (isVertical ? groupedGrid.implicitWidth : Math.round(groupedGrid.implicitWidth)) : (isVertical ? Style.barHeight : computeWidth())
-  implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight) : Style.barHeight) : (isVertical ? computeHeight() : Style.barHeight)
+  implicitWidth: showApplications ? (isVertical ? groupedGrid.implicitWidth : Math.round(groupedGrid.implicitWidth + horizontalPadding)) : (isVertical ? Style.barHeight : computeWidth())
+  implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + horizontalPadding * 0.6) : Style.barHeight) : (isVertical ? computeHeight() : Style.barHeight)
 
   function getWorkspaceWidth(ws) {
     const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
@@ -1033,8 +1033,8 @@ Item {
     id: groupedGrid
     visible: showApplications
 
-    x: root.isVertical ? Style.pixelAlignCenter(parent.width, width) : 0
-    y: root.isVertical ? 0 : Style.pixelAlignCenter(parent.height, height)
+    x: root.isVertical ? Style.pixelAlignCenter(parent.width, width) : Math.round(horizontalPadding)
+    y: root.isVertical ? Math.round(horizontalPadding * 0.4) : Style.pixelAlignCenter(parent.height, height)
 
     spacing: Style.marginS
     flow: root.isVertical ? Flow.TopToBottom : Flow.LeftToRight
