@@ -1194,7 +1194,7 @@ Loader {
                       radius: Math.min(Style.iRadiusL, width / 2)
                       color: eyeButtonArea.containsMouse ? Color.mPrimary : "transparent"
                       visible: passwordInput.text.length > 0
-                      enabled: !lockContext.unlockInProgress
+                      enabled: !lockContext.unlockInProgress || lockContext.waitingForPassword
 
                       NIcon {
                         anchors.centerIn: parent
