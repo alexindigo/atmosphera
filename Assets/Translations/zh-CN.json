@@ -1342,7 +1342,6 @@
     "enter-text-to-collapse": "例如，“nothing is playing”。使用 /regex/ 表示匹配模式。",
     "enter-tooltip": "输入工具提示",
     "enter-width-pixels": "输入宽度（像素）",
-    "profile-picture-path": "/home/user/.face",
     "search": "搜索...",
     "search-icons": "例如：noctalia, niri, battery, cloud",
     "search-launcher": "搜索条目...或使用 > 执行命令",

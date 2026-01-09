@@ -1342,7 +1342,6 @@
     "enter-text-to-collapse": "e.g., 'nothing is playing'. Use /regex/ for patterns.",
     "enter-tooltip": "Enter tooltip",
     "enter-width-pixels": "Enter width in pixels",
-    "profile-picture-path": "/home/user/.face",
     "search": "Search...",
     "search-icons": "e.g., noctalia, niri, battery, cloud",
     "search-launcher": "Search entries... or use > for commands",

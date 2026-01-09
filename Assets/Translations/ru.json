@@ -1342,7 +1342,6 @@
     "enter-text-to-collapse": "например, 'ничего не играет'. Используйте /regex/ для шаблонов.",
     "enter-tooltip": "Введите подсказку",
     "enter-width-pixels": "Введите ширину в пикселях",
-    "profile-picture-path": "/home/user/.face",
     "search": "Поиск...",
     "search-icons": "например, noctalia, niri, battery, cloud",
     "search-launcher": "Поиск записей... или используйте > для команд",

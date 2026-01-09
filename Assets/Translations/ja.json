@@ -1342,7 +1342,6 @@
     "enter-text-to-collapse": "例: 'nothing is playing'。正規表現 (/.../) も使用できます。",
     "enter-tooltip": "ツールチップを入力",
     "enter-width-pixels": "幅を入力（ピクセル）",
-    "profile-picture-path": "/home/user/.face",
     "search": "検索...",
     "search-icons": "例: noctalia, niri, battery, cloud",
     "search-launcher": "項目を検索...（または > でコマンド実行）",

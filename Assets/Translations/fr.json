@@ -310,7 +310,7 @@
     "panel": {
       "buttons-discord": "Rejoindre notre Discord",
       "buttons-dismiss": "OK",
-      "buttons-feedback": "Donner un avis.",
+      "buttons-feedback": "Donner un avis",
       "empty": "Les notes de version ne sont pas encore disponibles.",
       "highlight-title": "Points importants",
       "released": "Publié le {date}",
@@ -563,7 +563,7 @@
       "density-compact": "Compact",
       "density-default": "Défaut",
       "density-mini": "Mini",
-      "density-spacious": "Spacieux/Spacieuse"
+      "density-spacious": "Spacieux"
     },
     "control-center": {
       "quick-settings-style-classic": "Classique",
@@ -681,7 +681,7 @@
       "tray-blacklist-description": "Ajouter des règles d'exclusion pour la boîte à miniatures, prend en charge les caractères génériques (*).",
       "tray-blacklist-label": "Liste noire",
       "tray-blacklist-placeholder": "ex: nm-applet, Fcitx*",
-      "tray-pin-application": "Épingler l'Application",
+      "tray-pin-application": "Épingler l'application",
       "tray-unpin-application": "Désépingler l'Application",
       "widgets-desc": "Faites glisser les widgets pour modifier leur ordre. Utilisez le menu contextuel (clic droit) pour transférer les widgets entre les sections ou les supprimer.",
       "widgets-title": "Positionnement des widgets"
@@ -964,7 +964,7 @@
       "execute-title": "Exécution",
       "settings-annotation-tool-description": "Commande à exécuter lorsque l'on clique sur le bouton d'annotation dans l'historique du presse-papiers. L'image sera envoyée à cette commande.",
       "settings-annotation-tool-label": "Outil d'annotation",
-      "settings-annotation-tool-placeholder": "gradia, satty -f -",
+      "settings-annotation-tool-placeholder": "ex: 'gradia', 'satty -f -'",
       "settings-auto-paste-description": "Coller automatiquement l'élément sélectionné du presse-papiers. Nécessite wtype.",
       "settings-auto-paste-label": "Collage automatique",
       "settings-clip-preview-description": "Afficher un aperçu du contenu du presse-papiers lors de l'utilisation de la commande >clip.",
@@ -1342,7 +1342,6 @@
     "enter-text-to-collapse": "par ex., 'rien n’est en lecture'. Utilisez /regex/ pour les modèles.",
     "enter-tooltip": "Entrer l'infobulle",
     "enter-width-pixels": "Entrez la largeur en pixels",
-    "profile-picture-path": "/home/user/.face",
     "search": "Rechercher...",
     "search-icons": "ex: noctalia, niri, batterie, nuage",
     "search-launcher": "Rechercher des entrées... ou utilisez > pour les commandes",
