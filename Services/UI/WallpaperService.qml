@@ -308,9 +308,12 @@ Singleton {
       _setWallpaper(screenName, path);
     } else {
       // If no screenName specified change for all screens
+      // Merge connected screens and cached screens to include disconnected monitors
+      var allScreenNames = new Set(Object.keys(currentWallpapers));
       for (var i = 0; i < Quickshell.screens.length; i++) {
-        _setWallpaper(Quickshell.screens[i].name, path);
+        allScreenNames.add(Quickshell.screens[i].name);
       }
+      allScreenNames.forEach(name => _setWallpaper(name, path));
     }
   }
 
