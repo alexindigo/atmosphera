@@ -635,6 +635,7 @@
       "media-scrolling-title-description": "Enable continuous scrolling for long media titles.",
       "media-scrolling-title-label": "Scrolling title",
       "media-title": "Media players",
+      "on-middle-clicked-description": "Command to execute when the button is middle-clicked.",
       "panel-applications-empty": "No applications are currently playing audio",
       "title": "Audio",
       "visualizer-type-description": "Choose a visualization type for media playback.",
