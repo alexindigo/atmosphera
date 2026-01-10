@@ -509,8 +509,8 @@ Loader {
                   id: dockLayout
                   columns: isVertical ? 1 : -1
                   rows: isVertical ? -1 : 1
-                  rowSpacing: Style.marginM
-                  columnSpacing: Style.marginM
+                  rowSpacing: Style.marginS
+                  columnSpacing: Style.marginS
                   anchors.centerIn: parent
 
                   Repeater {
