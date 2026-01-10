@@ -346,17 +346,17 @@ Loader {
         }
       }
 
-      // Force dock reload when orientation changes to fix anchor/layout issues
-      property bool _orientationReloading: false
-      onIsVerticalChanged: {
-        if (!autoHide && dockLoaded) {
-          _orientationReloading = true;
+      // Force dock reload when position changes to fix anchor/layout issues
+      property bool _positionReloading: false
+      onDockPositionChanged: {
+        if (!autoHide && dockLoaded && !_positionReloading) {
+          _positionReloading = true;
           // Brief unload/reload cycle to reset layout
           Qt.callLater(() => {
                          dockLoaded = false;
                          Qt.callLater(() => {
                                         dockLoaded = true;
-                                        _orientationReloading = false;
+                                        _positionReloading = false;
                                       });
                        });
         }
