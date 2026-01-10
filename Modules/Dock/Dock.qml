@@ -377,37 +377,33 @@ Loader {
           WlrLayershell.namespace: "noctalia-dock-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: exclusive ? ExclusionMode.Auto : ExclusionMode.Ignore
 
-          // Size to fit the dock container exactly
           implicitWidth: dockContainerWrapper.width
           implicitHeight: dockContainerWrapper.height
 
-          // Dynamic anchors based on dock position
+          // Position based on dock setting
           anchors.top: dockPosition === "top"
           anchors.bottom: dockPosition === "bottom"
           anchors.left: dockPosition === "left"
           anchors.right: dockPosition === "right"
 
-          // Calculate margin for the dock's edge based on bar position
-          margins.top: dockPosition === "top" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : floatingMargin) : 0
-          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : floatingMargin) : 0
-          margins.left: dockPosition === "left" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : floatingMargin) : 0
-          margins.right: dockPosition === "right" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : floatingMargin) : 0
+          // Offset past bar when at same edge, plus floating margin
+          margins.top: dockPosition === "top" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
+          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
+          margins.left: dockPosition === "left" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
+          margins.right: dockPosition === "right" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
 
-          // Wrapper item for scale/opacity animations
+          // Container wrapper for animations
           Item {
             id: dockContainerWrapper
             width: dockContainer.width
             height: dockContainer.height
-            // Center along the non-docking axis
             anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
             anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
-            // Anchor to the dock's edge
             anchors.top: dockPosition === "top" ? parent.top : undefined
             anchors.bottom: dockPosition === "bottom" ? parent.bottom : undefined
             anchors.left: dockPosition === "left" ? parent.left : undefined
             anchors.right: dockPosition === "right" ? parent.right : undefined
 
-            // Apply animations to this wrapper
             opacity: hidden ? 0 : 1
             scale: hidden ? 0.85 : 1
 
@@ -438,7 +434,6 @@ Loader {
               border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
 
               // Enable layer caching to reduce GPU usage from continuous animations
-              // (pulse animations on active indicators run infinitely)
               layer.enabled: true
 
               MouseArea {
