@@ -346,6 +346,22 @@ Loader {
         }
       }
 
+      // Force dock reload when orientation changes to fix anchor/layout issues
+      property bool _orientationReloading: false
+      onIsVerticalChanged: {
+        if (!autoHide && dockLoaded) {
+          _orientationReloading = true;
+          // Brief unload/reload cycle to reset layout
+          Qt.callLater(() => {
+                         dockLoaded = false;
+                         Qt.callLater(() => {
+                                        dockLoaded = true;
+                                        _orientationReloading = false;
+                                      });
+                       });
+        }
+      }
+
       Loader {
         id: dockWindowLoader
         active: Settings.data.dock.enabled && (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && dockLoaded && ToplevelManager && (dockApps.length > 0)
