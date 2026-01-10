@@ -712,7 +712,7 @@
       "download-success-title": "Farbschema heruntergeladen",
       "download-title": "Farbschemata herunterladen",
       "predefined-desc": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata.",
-      "predefined-generate-templates-description": "Generiert Matugen-Templates (GTK, Terminal-Themes, etc.) bei der Verwendung vordefinierter Farbschemata.",
+      "predefined-generate-templates-description": "Generiert Matugen-Templates (GTK, Terminal-Themen, etc.) bei der Verwendung vordefinierter Farbschemata.",
       "predefined-generate-templates-label": "Templates für vordefinierte Schemata generieren",
       "predefined-title": "Vordefinierte Farbschemata",
       "templates-compositors-description": "Compositor-Theming.",
@@ -727,14 +727,14 @@
       "templates-programs-code-description-detected": "Auf Standardprofil angewendet — erkannt: {clients}",
       "templates-programs-code-description-missing": "Kein Code-Editor erkannt (VSCode oder VSCodium)",
       "templates-programs-description": "Anwendungsspezifisches Theming.",
-      "templates-programs-discord-description": "Schreibe {filepath} für {client} — das Theme muss manuell aktiviert werden",
+      "templates-programs-discord-description": "Schreibe {filepath} für {client} — das Thema muss manuell aktiviert werden",
       "templates-programs-discord-description-detected": "Erkannt: {clients}",
       "templates-programs-discord-description-missing": "Kein Discord-Client erkannt",
       "templates-programs-emacs-description": "Doom: ~/.config/doom/themes/noctalia.el<br>Standard: ~/.emacs.d/themes/noctalia.el",
       "templates-programs-label": "Programme",
       "templates-programs-pywalfox-description": "Schreibe {filepath} und führe 'pywalfox update' aus",
-      "templates-programs-spicetify-description": "Schreibe {filepath} — das Comfy-Theme muss manuell installiert und aktiviert werden",
-      "templates-programs-walker-description": "Schreibe {filepath} und setzt das Theme auf noctalia",
+      "templates-programs-spicetify-description": "Schreibe {filepath} — das Comfy-Thema muss manuell installiert und aktiviert werden",
+      "templates-programs-walker-description": "Schreibe {filepath} und setzt das Thema auf noctalia",
       "templates-programs-yazi-description": "Schreibe {filepath} — Flavor muss manuell aktiviert werden",
       "templates-programs-zed-description": "Schreibe {filepath} und lade neu",
       "templates-programs-zen-browser-description": "Schreibe {filepath} — kopieren Sie in die Datei chrome/userChrome.css Ihres Zen-Profils",
@@ -924,7 +924,7 @@
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
       "info-command-info-label": "Hook-Befehl-Informationen",
-      "info-parameters-description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname<br>• Theme-Wechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
+      "info-parameters-description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname<br>• Themenwechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
       "info-parameters-label": "Verfügbare Parameter",
       "performance-mode-disabled-description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
       "performance-mode-disabled-label": "Leistungsmodus deaktiviert",
@@ -942,9 +942,9 @@
       "system-hooks-enable-description": "Alle Hook-Befehle aktivieren oder deaktivieren.",
       "system-hooks-enable-label": "Hooks aktivieren",
       "system-hooks-title": "System-Hooks",
-      "theme-changed-description": "Befehl, der ausgeführt wird, wenn das Theme zwischen dunklem und hellem Modus wechselt.",
-      "theme-changed-label": "Theme geändert",
-      "theme-changed-placeholder": "z.B. notify-send \"Theme\" \"Gewechselt\"",
+      "theme-changed-description": "Befehl, der ausgeführt wird, wenn das Thema zwischen dunklem und hellem Modus wechselt.",
+      "theme-changed-label": "Thema geändert",
+      "theme-changed-placeholder": "z.B. notify-send \"Thema\" \"Gewechselt\"",
       "title": "Hooks",
       "wallpaper-changed-description": "Befehl, der ausgeführt wird, wenn sich das Hintergrundbild ändert.",
       "wallpaper-changed-label": "Hintergrundbild geändert",
@@ -1157,7 +1157,7 @@
       "install-success": "{plugin} erfolgreich installiert",
       "installed-description": "Alle lokal installierten Plugins verwalten und konfigurieren.",
       "installed-label": "Installierte Plugins",
-      "installed-no-plugins-description": "Installieren Sie Plugins aus dem Abschnitt \"Verfügbare Plugins\" unten.",
+      "installed-no-plugins-description": "Installieren Sie Plugins aus dem Abschnitt \"Verfügbar\".",
       "installed-no-plugins-label": "Keine Plugins installiert",
       "installing": "{plugin} wird installiert...",
       "open-plugin-page": "Plugin-Seite öffnen",
@@ -1362,7 +1362,6 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} in {seconds} Sekunden...",
-    "lock-and-suspend": "Sperren und Energie sparen",
     "title": "Sitzungsmenü"
   },
   "setup": {
@@ -1407,11 +1406,11 @@
     "cpu-temp": "CPU-Temperatur",
     "cpu-usage": "CPU-Auslastung",
     "disk": "Festplatte",
-    "download-speed": "Download-Geschwindigkeit",
+    "download-speed": "Download-Speed",
     "gpu-temp": "GPU-Temperatur",
-    "load-average": "Lastdurchschnitt",
+    "load-average": "Last-Ø",
     "title": "Systemüberwachung",
-    "upload-speed": "Upload-Geschwindigkeit"
+    "upload-speed": "Upload-Speed"
   },
   "toast": {
     "airplane-mode": {
@@ -1474,18 +1473,6 @@
     "power-profile": {
       "changed": "Energieprofil geändert.",
       "profile-name": "{profile}"
-    },
-    "recording": {
-      "failed-general": "Rekorder wurde mit einem Fehler beendet.",
-      "failed-gpu": "gpu-screen-recorder wurde unerwartet beendet.",
-      "failed-start": "Aufnahme konnte nicht gestartet werden",
-      "no-portals": "Desktop-Portale laufen nicht",
-      "no-portals-desc": "Starten Sie xdg-desktop-portal und ein Compositor-Portal (wlr/hyprland/gnome/kde).",
-      "not-installed": "gpu-screen-recorder nicht installiert",
-      "not-installed-desc": "Bitte installieren Sie gpu-screen-recorder, um Bildschirmaufnahme-Funktionen zu nutzen.",
-      "saved": "Aufnahme gespeichert.",
-      "started": "Aufnahme gestartet.",
-      "stopping": "Aufnahme wird gestoppt…"
     },
     "theming-processor-failed": {
       "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
@@ -1592,7 +1579,7 @@
       "order-desc": "Absteigend",
       "order-label": "Reihenfolge",
       "purity-label": "Inhaltsfilter",
-      "purity-nsfw": "Nicht jugendfrei",
+      "purity-nsfw": "NSFW",
       "purity-sfw": "SFW",
       "purity-sketchy": "Sketchy",
       "ratios-any": "Irgendetwas",
@@ -1717,9 +1704,7 @@
       "excellent": "Ausgezeichnet",
       "fair": "Mäßig",
       "good": "Gut",
-      "poor": "Schlecht",
-      "very-good": "Sehr gut",
-      "weak": "Schwach"
+      "poor": "Schwach"
     }
   }
 }
