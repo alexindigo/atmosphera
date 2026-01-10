@@ -386,11 +386,11 @@ Loader {
           anchors.left: dockPosition === "left"
           anchors.right: dockPosition === "right"
 
-          // Offset past bar when at same edge, plus floating margin
-          margins.top: dockPosition === "top" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
-          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
-          margins.left: dockPosition === "left" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
-          margins.right: dockPosition === "right" ? (barAtSameEdge ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
+          // Offset past bar when at same edge (only if dock is non-exclusive and bar is floating)
+          margins.top: dockPosition === "top" ? (!exclusive && barAtSameEdge && Settings.data.bar.floating ? Style.barHeight + Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : 0
+          margins.bottom: dockPosition === "bottom" ? (!exclusive && barAtSameEdge && Settings.data.bar.floating ? Style.barHeight + Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : 0
+          margins.left: dockPosition === "left" ? (!exclusive && barAtSameEdge && Settings.data.bar.floating ? Style.barHeight + Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : 0
+          margins.right: dockPosition === "right" ? (!exclusive && barAtSameEdge && Settings.data.bar.floating ? Style.barHeight + Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : 0
 
           // Container wrapper for animations
           Item {
