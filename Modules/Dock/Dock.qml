@@ -395,8 +395,6 @@ Loader {
           // Container wrapper for animations
           Item {
             id: dockContainerWrapper
-            width: dockContainer.width
-            height: dockContainer.height
 
             // Helper properties for orthogonal bar detection
             readonly property bool barOnLeft: hasBar && Settings.data.bar.position === "left" && !Settings.data.bar.floating
@@ -404,16 +402,17 @@ Loader {
             readonly property bool barOnTop: hasBar && Settings.data.bar.position === "top" && !Settings.data.bar.floating
             readonly property bool barOnBottom: hasBar && Settings.data.bar.position === "bottom" && !Settings.data.bar.floating
 
-            // Calculate offset to match exclusive mode centering (which respects bar exclusion zone)
-            // If dock is NOT exclusive, we need to manually shift it to match where the exclusive dock would be.
-            // Center of (Screen - Bar) = W/2 +/- Bar/2
-            readonly property real orthoOffset: !exclusive ? Style.barHeight / 2 : 0
+            // Calculate padding needed to shift center to match exclusive mode
+            readonly property int extraTop: (isVertical && !exclusive && barOnTop) ? Style.barHeight : 0
+            readonly property int extraBottom: (isVertical && !exclusive && barOnBottom) ? Style.barHeight : 0
+            readonly property int extraLeft: (!isVertical && !exclusive && barOnLeft) ? Style.barHeight : 0
+            readonly property int extraRight: (!isVertical && !exclusive && barOnRight) ? Style.barHeight : 0
+
+            width: dockContainer.width + extraLeft + extraRight
+            height: dockContainer.height + extraTop + extraBottom
 
             anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
-            anchors.horizontalCenterOffset: !isVertical && !exclusive ? (barOnLeft ? orthoOffset : (barOnRight ? -orthoOffset : 0)) : 0
-
             anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
-            anchors.verticalCenterOffset: isVertical && !exclusive ? (barOnTop ? orthoOffset : (barOnBottom ? -orthoOffset : 0)) : 0
 
             anchors.top: dockPosition === "top" ? parent.top : undefined
             anchors.bottom: dockPosition === "bottom" ? parent.bottom : undefined
@@ -444,7 +443,16 @@ Loader {
               width: isVertical ? Math.round(iconSize * 1.5) : dockLayout.implicitWidth + Style.marginM * 2
               height: isVertical ? dockLayout.implicitHeight + Style.marginM * 2 : Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
-              anchors.centerIn: parent
+
+              // Anchor based on padding to achieve centering shift
+              anchors.horizontalCenter: parent.extraLeft > 0 || parent.extraRight > 0 ? undefined : parent.horizontalCenter
+              anchors.right: parent.extraLeft > 0 ? parent.right : undefined
+              anchors.left: parent.extraRight > 0 ? parent.left : undefined
+
+              anchors.verticalCenter: parent.extraTop > 0 || parent.extraBottom > 0 ? undefined : parent.verticalCenter
+              anchors.bottom: parent.extraTop > 0 ? parent.bottom : undefined
+              anchors.top: parent.extraBottom > 0 ? parent.top : undefined
+
               radius: Style.radiusL
               border.width: Style.borderS
               border.color: Qt.alpha(Color.mOutline, Settings.data.dock.backgroundOpacity)
