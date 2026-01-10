@@ -397,8 +397,24 @@ Loader {
             id: dockContainerWrapper
             width: dockContainer.width
             height: dockContainer.height
+
+            // Helper properties for orthogonal bar detection
+            readonly property bool barOnLeft: hasBar && Settings.data.bar.position === "left" && !Settings.data.bar.floating
+            readonly property bool barOnRight: hasBar && Settings.data.bar.position === "right" && !Settings.data.bar.floating
+            readonly property bool barOnTop: hasBar && Settings.data.bar.position === "top" && !Settings.data.bar.floating
+            readonly property bool barOnBottom: hasBar && Settings.data.bar.position === "bottom" && !Settings.data.bar.floating
+
+            // Calculate offset to match exclusive mode centering (which respects bar exclusion zone)
+            // If dock is NOT exclusive, we need to manually shift it to match where the exclusive dock would be.
+            // Center of (Screen - Bar) = W/2 +/- Bar/2
+            readonly property real orthoOffset: !exclusive ? Style.barHeight / 2 : 0
+
             anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
+            anchors.horizontalCenterOffset: !isVertical && !exclusive ? (barOnLeft ? orthoOffset : (barOnRight ? -orthoOffset : 0)) : 0
+
             anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
+            anchors.verticalCenterOffset: isVertical && !exclusive ? (barOnTop ? orthoOffset : (barOnBottom ? -orthoOffset : 0)) : 0
+
             anchors.top: dockPosition === "top" ? parent.top : undefined
             anchors.bottom: dockPosition === "bottom" ? parent.bottom : undefined
             anchors.left: dockPosition === "left" ? parent.left : undefined
