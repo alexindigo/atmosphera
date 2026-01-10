@@ -772,21 +772,15 @@ Loader {
                         }
                       }
 
-                      // Active indicator - positions at bottom for horizontal, at side for vertical
+                      // Active indicator - always below the icon
                       Rectangle {
                         visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
-                        // For vertical dock, swap width/height
-                        width: isVertical ? iconSize * 0.1 : iconSize * 0.2
-                        height: isVertical ? iconSize * 0.2 : iconSize * 0.1
+                        width: iconSize * 0.2
+                        height: iconSize * 0.1
                         color: Color.mPrimary
                         radius: Style.radiusXS
-                        // For horizontal dock: bottom center
-                        // For vertical dock: beside the icon (inside edge)
-                        anchors.top: isVertical ? undefined : parent.bottom
-                        anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
-                        anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
-                        anchors.left: dockPosition === "right" ? parent.left : undefined
-                        anchors.right: dockPosition === "left" ? parent.right : undefined
+                        anchors.top: parent.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
                       }
                     }
                   }
