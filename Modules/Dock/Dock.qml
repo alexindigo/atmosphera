@@ -77,9 +77,13 @@ Loader {
       readonly property int iconSize: Math.round(12 + 24 * (Settings.data.dock.size ?? 1))
       readonly property int floatingMargin: Settings.data.dock.floatingRatio * Style.marginL
 
+      // Dock position properties
+      readonly property string dockPosition: Settings.data.dock.position
+      readonly property bool isVertical: dockPosition === "left" || dockPosition === "right"
+
       // Bar detection and positioning properties
       readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
-      readonly property bool barAtBottom: hasBar && Settings.data.bar.position === "bottom"
+      readonly property bool barAtSameEdge: hasBar && Settings.data.bar.position === dockPosition
       readonly property int barHeight: Style.barHeight
 
       // Shared state between windows
@@ -291,7 +295,7 @@ Loader {
         }
       }
 
-      // PEEK WINDOW - Always visible when auto-hide is enabled
+      // PEEK WINDOW
       Loader {
         active: (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && autoHide
 
@@ -299,15 +303,25 @@ Loader {
           id: peekWindow
 
           screen: modelData
-          anchors.bottom: true
-          anchors.left: true
-          anchors.right: true
+          // Dynamic anchors based on dock position
+          anchors.top: dockPosition === "top" || isVertical
+          anchors.bottom: dockPosition === "bottom" || isVertical
+          anchors.left: dockPosition === "left" || !isVertical
+          anchors.right: dockPosition === "right" || !isVertical
           focusable: false
           color: "transparent"
 
+          // When bar is at same edge, position peek window past the bar so it receives mouse events
+          margins.top: dockPosition === "top" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.left: dockPosition === "left" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          margins.right: dockPosition === "right" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+
           WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
-          implicitHeight: peekHeight
+          // Larger peek area when bar is at same edge, normal 1px otherwise
+          implicitHeight: barAtSameEdge && !isVertical ? 3 : peekHeight
+          implicitWidth: barAtSameEdge && isVertical ? 3 : peekHeight
 
           MouseArea {
             id: peekArea
@@ -332,7 +346,6 @@ Loader {
         }
       }
 
-      // DOCK WINDOW
       Loader {
         id: dockWindowLoader
         active: Settings.data.dock.enabled && (barIsReady || !hasBar) && modelData && (Settings.data.dock.monitors.length === 0 || Settings.data.dock.monitors.includes(modelData.name)) && dockLoaded && ToplevelManager && (dockApps.length > 0)
@@ -352,25 +365,31 @@ Loader {
           implicitWidth: dockContainerWrapper.width
           implicitHeight: dockContainerWrapper.height
 
-          // Position above the bar if it's at bottom
-          anchors.bottom: true
+          // Dynamic anchors based on dock position
+          anchors.top: dockPosition === "top"
+          anchors.bottom: dockPosition === "bottom"
+          anchors.left: dockPosition === "left"
+          anchors.right: dockPosition === "right"
 
-          margins.bottom: {
-            switch (Settings.data.bar.position) {
-            case "bottom":
-              return (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin);
-            default:
-              return floatingMargin;
-            }
-          }
+          // Calculate margin for the dock's edge based on bar position
+          margins.top: dockPosition === "top" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : floatingMargin) : 0
+          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginVertical + floatingMargin : floatingMargin) : floatingMargin) : 0
+          margins.left: dockPosition === "left" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : floatingMargin) : 0
+          margins.right: dockPosition === "right" ? (barAtSameEdge ? (Style.barHeight + Style.marginM) + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal + floatingMargin : floatingMargin) : floatingMargin) : 0
 
           // Wrapper item for scale/opacity animations
           Item {
             id: dockContainerWrapper
             width: dockContainer.width
             height: dockContainer.height
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
+            // Center along the non-docking axis
+            anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
+            anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
+            // Anchor to the dock's edge
+            anchors.top: dockPosition === "top" ? parent.top : undefined
+            anchors.bottom: dockPosition === "bottom" ? parent.bottom : undefined
+            anchors.left: dockPosition === "left" ? parent.left : undefined
+            anchors.right: dockPosition === "right" ? parent.right : undefined
 
             // Apply animations to this wrapper
             opacity: hidden ? 0 : 1
@@ -393,8 +412,9 @@ Loader {
 
             Rectangle {
               id: dockContainer
-              width: dockLayout.implicitWidth + Style.marginM * 2
-              height: Math.round(iconSize * 1.5)
+              // For vertical dock, swap width and height logic
+              width: isVertical ? Math.round(iconSize * 1.5) : dockLayout.implicitWidth + Style.marginM * 2
+              height: isVertical ? dockLayout.implicitHeight + Style.marginM * 2 : Math.round(iconSize * 1.5)
               color: Qt.alpha(Color.mSurface, Settings.data.dock.backgroundOpacity)
               anchors.centerIn: parent
               radius: Style.radiusL
@@ -434,8 +454,9 @@ Loader {
 
               Item {
                 id: dock
-                width: dockLayout.implicitWidth
-                height: parent.height - (Style.marginM * 2)
+                // Swap dimensions based on orientation
+                width: isVertical ? parent.width - (Style.marginM * 2) : dockLayout.implicitWidth
+                height: isVertical ? dockLayout.implicitHeight : parent.height - (Style.marginM * 2)
                 anchors.centerIn: parent
 
                 function getAppIcon(appData): string {
@@ -444,10 +465,13 @@ Loader {
                   return ThemeIcons.iconForAppId(appData.appId?.toLowerCase());
                 }
 
-                RowLayout {
+                // Use GridLayout for flexible horizontal/vertical arrangement
+                GridLayout {
                   id: dockLayout
-                  spacing: Style.marginM
-                  Layout.preferredHeight: parent.height
+                  columns: isVertical ? 1 : -1
+                  rows: isVertical ? -1 : 1
+                  rowSpacing: Style.marginM
+                  columnSpacing: Style.marginM
                   anchors.centerIn: parent
 
                   Repeater {
@@ -559,6 +583,7 @@ Loader {
                       // Context menu popup
                       DockMenu {
                         id: contextMenu
+                        dockPosition: root.dockPosition // Pass dock position for menu placement
                         onHoveredChanged: {
                           // Only update menuHovered if this menu is current and visible
                           if (root.currentContextMenu === contextMenu && contextMenu.visible) {
@@ -708,15 +733,21 @@ Loader {
                         }
                       }
 
-                      // Active indicator
+                      // Active indicator - positions at bottom for horizontal, at side for vertical
                       Rectangle {
                         visible: Settings.data.dock.inactiveIndicators ? isRunning : isActive
-                        width: iconSize * 0.2
-                        height: iconSize * 0.1
+                        // For vertical dock, swap width/height
+                        width: isVertical ? iconSize * 0.1 : iconSize * 0.2
+                        height: isVertical ? iconSize * 0.2 : iconSize * 0.1
                         color: Color.mPrimary
                         radius: Style.radiusXS
-                        anchors.top: parent.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        // For horizontal dock: bottom center
+                        // For vertical dock: beside the icon (inside edge)
+                        anchors.top: isVertical ? undefined : parent.bottom
+                        anchors.horizontalCenter: isVertical ? undefined : parent.horizontalCenter
+                        anchors.verticalCenter: isVertical ? parent.verticalCenter : undefined
+                        anchors.left: dockPosition === "right" ? parent.left : undefined
+                        anchors.right: dockPosition === "left" ? parent.right : undefined
                       }
                     }
                   }

@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Running Indicators",
       "appearance-pinned-static-description": "Always push pinned app icons to the left in static order.",
       "appearance-pinned-static-label": "Static Pinned Apps",
+      "appearance-position-description": "Choose where the dock appears on screen.",
+      "appearance-position-label": "Position",
       "enabled-description": "Show or hide the dock entirely.",
       "enabled-label": "Enable dock",
       "monitors-desc": "Show dock on specific monitors. Defaults to all if none are chosen.",

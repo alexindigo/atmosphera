@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Futásjelzők",
       "appearance-pinned-static-description": "A rögzített alkalmazásikonok mindig statikus sorrendben kerüljenek balra.",
       "appearance-pinned-static-label": "Statikus rögzített alkalmazások",
+      "appearance-position-description": "Válaszd ki, hogy hol jelenjen meg a Dock a képernyőn.",
+      "appearance-position-label": "Pozíció",
       "enabled-description": "A dokk teljes megjelenítése vagy elrejtése.",
       "enabled-label": "Dokk engedélyezése",
       "monitors-desc": "Dokk megjelenítése meghatározott monitorokon. Alapértelmezés szerint mindegyiken, ha nincs kiválasztva.",

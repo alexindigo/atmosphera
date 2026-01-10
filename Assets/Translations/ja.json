@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "実行インジケーター",
       "appearance-pinned-static-description": "ピン留めされたアプリアイコンを常に左側に寄せて固定します。",
       "appearance-pinned-static-label": "ピン留めアプリの固定配置",
+      "appearance-position-description": "ドックを画面上のどこに表示するかを選択してください。",
+      "appearance-position-label": "位置",
       "enabled-description": "ドックを完全に表示または非表示にします。",
       "enabled-label": "ドックの有効化",
       "monitors-desc": "ドックを表示するディスプレイを選択します。未選択の場合は全てに表示されます。",

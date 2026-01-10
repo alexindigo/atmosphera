@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "运行指示器",
       "appearance-pinned-static-description": "始终将固定的应用图标按静态顺序推到左侧。",
       "appearance-pinned-static-label": "静态固定应用",
+      "appearance-position-description": "选择 Dock 在屏幕上显示的位置。",
+      "appearance-position-label": "位置",
       "enabled-description": "完全显示或隐藏停靠栏",
       "enabled-label": "启用停靠栏",
       "monitors-desc": "在特定显示器上显示停靠栏。如果未选择任何显示器，则默认为全部。",

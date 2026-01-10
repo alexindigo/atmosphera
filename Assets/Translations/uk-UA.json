@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Індикатори бігу",
       "appearance-pinned-static-description": "Завжди закріплюйте значки програм ліворуч у статичному порядку.",
       "appearance-pinned-static-label": "Статично закріплені програми",
+      "appearance-position-description": "Виберіть, де док-станція відображатиметься на екрані.",
+      "appearance-position-label": "Позиція",
       "enabled-description": "Показати або сховати док повністю",
       "enabled-label": "Увімкнути док",
       "monitors-desc": "Показувати док на певних моніторах. За замовчуванням на всіх, якщо не вибрано.",

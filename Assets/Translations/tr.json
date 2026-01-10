@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Çalışan Göstergeler",
       "appearance-pinned-static-description": "Sabit sırada, sabitlenmiş uygulama simgelerini her zaman sola itin.",
       "appearance-pinned-static-label": "Sabitlenmiş Statik Uygulamalar",
+      "appearance-position-description": "Ekran üzerinde dock'un nerede görüneceğini seçin.",
+      "appearance-position-label": "Pozisyon",
       "enabled-description": "Rıhtımı tamamen gösterin veya gizleyin",
       "enabled-label": "Rıhtımı etkinleştir",
       "monitors-desc": "Rıhtımı belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",

@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Бегущие индикаторы",
       "appearance-pinned-static-description": "Всегда перемещайте закреплённые значки приложений влево в статичном порядке.",
       "appearance-pinned-static-label": "Закреплённые статические приложения",
+      "appearance-position-description": "Выберите, где док будет отображаться на экране.",
+      "appearance-position-label": "Позиция",
       "enabled-description": "Показать или скрыть панель приложений целиком",
       "enabled-label": "Включить панель приложений",
       "monitors-desc": "Показывать панель приложений на определенных мониторах. По умолчанию на всех, если ни один не выбран.",

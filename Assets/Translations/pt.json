@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Indicadores de execução",
       "appearance-pinned-static-description": "Sempre posicione os ícones de aplicativos fixados à esquerda em ordem estática.",
       "appearance-pinned-static-label": "Aplicativos Fixados Estaticamente",
+      "appearance-position-description": "Escolha onde o dock aparece na tela.",
+      "appearance-position-label": "Posição",
       "enabled-description": "Mostrar ou ocultar o dock completamente",
       "enabled-label": "Ativar dock",
       "monitors-desc": "Mostrar dock em monitores específicos. O padrão é todos se nenhum for escolhido.",

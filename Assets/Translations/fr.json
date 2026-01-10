@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Indicateurs de fonctionnement",
       "appearance-pinned-static-description": "Toujours pousser les icônes d'applications épinglées vers la gauche dans un ordre statique.",
       "appearance-pinned-static-label": "Applications épinglées statiques",
+      "appearance-position-description": "Choisissez l'emplacement du Dock à l'écran.",
+      "appearance-position-label": "Position",
       "enabled-description": "Afficher ou masquer complètement le dock",
       "enabled-label": "Activer le dock",
       "monitors-desc": "Afficher le dock sur des écrans spécifiques. Par défaut, il s'affiche sur tous les écrans si aucun n'est sélectionné.",

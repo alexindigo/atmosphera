@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Lopende indicatoren",
       "appearance-pinned-static-description": "Zet vastgemaakte app-pictogrammen altijd in statische volgorde aan de linkerkant.",
       "appearance-pinned-static-label": "Statische vastgezette apps",
+      "appearance-position-description": "Kies waar het dock op het scherm verschijnt.",
+      "appearance-position-label": "Positie",
       "enabled-description": "Dock geheel tonen of verbergen.",
       "enabled-label": "Dock inschakelen",
       "monitors-desc": "Dock op specifieke monitoren weergeven. Standaard op alle als er geen zijn gekozen.",

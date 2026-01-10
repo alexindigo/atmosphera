@@ -874,6 +874,8 @@
       "appearance-inactive-indicators-label": "Wskaźniki uruchomionych",
       "appearance-pinned-static-description": "Zawsze spychaj przypięte aplikacje na lewo w stałej kolejności.",
       "appearance-pinned-static-label": "Statyczne przypięte aplikacje",
+      "appearance-position-description": "Wybierz, gdzie dok ma się pojawiać na ekranie.",
+      "appearance-position-label": "Pozycja",
       "enabled-description": "Pokaż lub całkowicie ukryj dok.",
       "enabled-label": "Włącz dok",
       "monitors-desc": "Pokaż dok na konkretnych monitorach. Domyślnie na wszystkich, jeśli żaden nie zostanie wybrany.",
