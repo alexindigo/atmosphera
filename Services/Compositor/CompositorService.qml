@@ -396,14 +396,14 @@ Singleton {
 
   function shutdown() {
     Logger.i("Compositor", "Shutdown requested");
-    HooksService.executeShutdownHook(() => {
+    HooksService.executeSessionHook("shutdown", () => {
       Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
     });
   }
 
   function reboot() {
     Logger.i("Compositor", "Reboot requested");
-    HooksService.executeRebootHook(() => {
+    HooksService.executeSessionHook("reboot", () => {
       Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
     });
   }

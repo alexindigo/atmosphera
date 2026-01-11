@@ -160,41 +160,19 @@ ColumnLayout {
       Layout.fillWidth: true
     }
 
-    // Shutdown Hook Section
+    // Session Hook Section
     NInputAction {
-      id: shutdownHookInput
-      label: I18n.tr("settings.hooks.shutdown.label")
-      description: I18n.tr("settings.hooks.shutdown.description")
-      placeholderText: I18n.tr("settings.hooks.shutdown.placeholder")
-      text: Settings.data.hooks.shutdown
+      id: sessionHookInput
+      label: I18n.tr("panels.hooks.session-label")
+      description: I18n.tr("panels.hooks.session-description")
+      placeholderText: I18n.tr("panels.hooks.session-placeholder")
+      text: Settings.data.hooks.session
       onEditingFinished: {
-        Settings.data.hooks.shutdown = shutdownHookInput.text;
+        Settings.data.hooks.session = sessionHookInput.text;
       }
       onActionClicked: {
-        if (shutdownHookInput.text) {
-          Quickshell.execDetached(["sh", "-c", shutdownHookInput.text]);
-        }
-      }
-      Layout.fillWidth: true
-    }
-
-    NDivider {
-      Layout.fillWidth: true
-    }
-
-    // Reboot Hook Section
-    NInputAction {
-      id: rebootHookInput
-      label: I18n.tr("settings.hooks.reboot.label")
-      description: I18n.tr("settings.hooks.reboot.description")
-      placeholderText: I18n.tr("settings.hooks.reboot.placeholder")
-      text: Settings.data.hooks.reboot
-      onEditingFinished: {
-        Settings.data.hooks.reboot = rebootHookInput.text;
-      }
-      onActionClicked: {
-        if (rebootHookInput.text) {
-          Quickshell.execDetached(["sh", "-c", rebootHookInput.text]);
+        if (sessionHookInput.text) {
+          Quickshell.execDetached(["sh", "-c", sessionHookInput.text + " test"]);
         }
       }
       Layout.fillWidth: true

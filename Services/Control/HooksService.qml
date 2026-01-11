@@ -212,40 +212,22 @@ Singleton {
     powerHookProcess.running = true;
   }
 
-  function executeShutdownHook(callback) {
+  function executeSessionHook(action, callback) {
     if (!Settings.data.hooks?.enabled) {
       callback();
 
       return;
     }
 
-    const script = Settings.data.hooks?.shutdown;
+    const script = Settings.data.hooks?.session;
     if (!script) {
       callback();
 
       return;
     }
 
-    Logger.i("HooksService", "Executing shutdown hook");
-    runPowerHook(script, callback);
-  }
-
-  function executeRebootHook(callback) {
-    if (!Settings.data.hooks?.enabled) {
-      callback();
-
-      return;
-    }
-
-    const script = Settings.data.hooks?.reboot;
-    if (!script) {
-      callback();
-
-      return;
-    }
-
-    Logger.i("HooksService", "Executing reboot hook");
-    runPowerHook(script, callback);
+    Logger.i("HooksService", `Executing session hook for ${action}`);
+    runPowerHook(`${script} ${action}`, callback);
   }
 
   // Initialize the service

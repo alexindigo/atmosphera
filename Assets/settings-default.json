@@ -425,8 +425,7 @@
     "screenUnlock": "",
     "performanceModeEnabled": "",
     "performanceModeDisabled": "",
-    "shutdown": "",
-    "reboot": ""
+    "session": ""
   },
   "desktopWidgets": {
     "enabled": false,
