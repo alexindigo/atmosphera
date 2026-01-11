@@ -131,9 +131,8 @@ Singleton {
       from = "v3.0.0";
     }
 
-    Logger.d("UpdateService", "Fetching upgrade log", "from:", from, "to:", to);
-
     const url = `${upgradeLogBaseUrl}/${from}/${to}`;
+    Logger.i("UpdateService", "Fetching upgrade log:", url);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -314,7 +313,7 @@ Singleton {
     }
 
     // Normalize versions for comparison (strip -git, ensure v prefix)
-    const lastSeen = ensureVersionPrefix(changelogLastSeenVersion);
+    const lastSeen = ensureVersionPrefix(changelogLastSeenVersion.replace(developmentSuffix, ""));
     const target = ensureVersionPrefix(currentVersion.replace(developmentSuffix, ""));
 
     if (lastSeen === target)
