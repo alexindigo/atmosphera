@@ -300,6 +300,8 @@ ColumnLayout {
             font.pointSize: Style.fontSizeXS
             color: Color.mOnSurface
             wrapMode: Text.WordWrap
+            maximumLineCount: 2
+            elide: Text.ElideRight
             Layout.fillWidth: true
           }
 
