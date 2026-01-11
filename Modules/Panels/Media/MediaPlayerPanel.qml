@@ -14,7 +14,15 @@ SmartPanel {
   id: root
 
   preferredWidth: Math.round((root.isSideBySide ? 480 : 400) * Style.uiScaleRatio)
-  preferredHeight: Math.round((root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio)
+  preferredHeight: {
+    // Base content heights
+    const baseHeight = root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260);
+    // Account for mainLayout margins (Style.marginL * 2) which are already scaled
+    const marginL = 13; // Base value from Style.qml before uiScaleRatio
+    // Account for timestamp labels below progress slider (fontSizeXS ~9px + 2px topMargin)
+    const timestampHeight = 11;
+    return Math.round((baseHeight + marginL * 2 + timestampHeight) * Style.uiScaleRatio);
+  }
 
   readonly property var mediaMiniSettings: {
     try {
@@ -67,7 +75,12 @@ SmartPanel {
     id: playerContent
     anchors.fill: parent
 
-    readonly property real contentPreferredHeight: (root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260)) * Style.uiScaleRatio
+    readonly property real contentPreferredHeight: {
+      const baseHeight = (root.compactMode ? 220 : (root.showAlbumArt ? 520 : 260));
+      const marginL = 13;
+      const timestampHeight = 11;
+      return (baseHeight + marginL * 2 + timestampHeight) * Style.uiScaleRatio;
+    }
 
     Loader {
       id: visualizerLoaderCompact
