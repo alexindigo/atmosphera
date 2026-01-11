@@ -95,7 +95,7 @@ Scope {
 
   Process {
     id: occupyFingerprintSensorProc
-    command: [ "fprintd-verify" ]
+    command: ["fprintd-verify"]
   }
 
   PamContext {
