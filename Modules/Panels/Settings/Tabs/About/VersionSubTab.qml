@@ -265,7 +265,7 @@ ColumnLayout {
     // Noctalia logo
     Image {
       source: "../../../../../Assets/noctalia.svg"
-      width: 128 * Style.uiScaleRatio
+      width: 96 * Style.uiScaleRatio
       height: width
       fillMode: Image.PreserveAspectFit
       sourceSize.width: width
