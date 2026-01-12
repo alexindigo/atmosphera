@@ -216,7 +216,8 @@ Singleton {
                                                                       lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${inputFile}"`);
                                                                       const outputPath = output.path.replace("~", homeDir);
                                                                       lines.push(`output_path = "${outputPath}"`);
-                                                                      if (app.postProcess) {
+                                                                      // Add postProcess only on last output
+                                                                      if (app.postProcess && idx === app.outputs.length - 1) {
                                                                         const postHook = escapeTomlString(app.postProcess(mode));
                                                                         lines.push(`post_hook = "${postHook}"`);
                                                                       }
@@ -254,7 +255,12 @@ Singleton {
     // Use heredoc for wallpaper path to avoid all escaping issues
     let script = `cat > '${pathEsc}' << '${delimiter}'\n${content}\n${delimiter}\n`;
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
-    script += `matugen image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
+    script += 'matugen ';
+    if (ProgramCheckerService.matugenVersion >= "3.1.0") {
+      // Matugen 3.1.0+ supports --continue-on-error to process all templates even if some fail
+      script += '--continue-on-error ';
+    }
+    script += `image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
     return script + "\n";
