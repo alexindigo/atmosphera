@@ -397,15 +397,15 @@ Singleton {
   function shutdown() {
     Logger.i("Compositor", "Shutdown requested");
     HooksService.executeSessionHook("shutdown", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
-    });
+                                      Quickshell.execDetached(["sh", "-c", "systemctl poweroff || loginctl poweroff"]);
+                                    });
   }
 
   function reboot() {
     Logger.i("Compositor", "Reboot requested");
     HooksService.executeSessionHook("reboot", () => {
-      Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
-    });
+                                      Quickshell.execDetached(["sh", "-c", "systemctl reboot || loginctl reboot"]);
+                                    });
   }
 
   function suspend() {
