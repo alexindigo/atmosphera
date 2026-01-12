@@ -1178,36 +1178,12 @@ SmartPanel {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: !Settings.data.appLauncher.ignoreMouseInput
-
-                property real entryX: 0
-                property real entryY: 0
-                property bool capturingMovement: false
-
                 onEntered: {
-                  if (root.ignoreMouseHover) {
-                    entryX = mouseX;
-                    entryY = mouseY;
-                    capturingMovement = true;
-                  } else {
+                  if (!root.ignoreMouseHover) {
                     selectedIndex = index;
                   }
                 }
-
-                onPositionChanged: mouse => {
-                                     if (root.ignoreMouseHover && capturingMovement) {
-                                       if (Math.abs(mouse.x - entryX) > 5 || Math.abs(mouse.y - entryY) > 5) {
-                                         root.ignoreMouseHover = false;
-                                         capturingMovement = false;
-                                         selectedIndex = index;
-                                       }
-                                     } else if (!root.ignoreMouseHover && selectedIndex !== index) {
-                                       selectedIndex = index;
-                                     }
-                                   }
-
                 onClicked: mouse => {
-                             root.ignoreMouseHover = false;
-                             capturingMovement = false;
                              if (mouse.button === Qt.LeftButton) {
                                selectedIndex = index;
                                root.activate();
@@ -1573,36 +1549,11 @@ SmartPanel {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: !Settings.data.appLauncher.ignoreMouseInput
-
-                property real entryX: 0
-                property real entryY: 0
-                property bool capturingMovement: false
-
                 onEntered: {
-                  if (root.ignoreMouseHover) {
-                    entryX = mouseX;
-                    entryY = mouseY;
-                    capturingMovement = true;
-                  } else {
-                    selectedIndex = index;
-                  }
+                  root.ignoreMouseHover = false;
+                  selectedIndex = index;
                 }
-
-                onPositionChanged: mouse => {
-                                     if (root.ignoreMouseHover && capturingMovement) {
-                                       if (Math.abs(mouse.x - entryX) > 5 || Math.abs(mouse.y - entryY) > 5) {
-                                         root.ignoreMouseHover = false;
-                                         capturingMovement = false;
-                                         selectedIndex = index;
-                                       }
-                                     } else if (!root.ignoreMouseHover && selectedIndex !== index) {
-                                       selectedIndex = index;
-                                     }
-                                   }
-
                 onClicked: mouse => {
-                             root.ignoreMouseHover = false;
-                             capturingMovement = false;
                              if (mouse.button === Qt.LeftButton) {
                                selectedIndex = index;
                                root.activate();
