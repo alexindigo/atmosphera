@@ -152,7 +152,7 @@
       "max-width-description": "Stellt die maximale Horizontalgröße des Widgets ein. Das Widget wird sich an kürzere Inhalte anpassen.",
       "no-active-player": "Kein aktiver Player",
       "panel-section-description": "Konfigurieren Sie das Aussehen und Verhalten des Medienplayer-Panels.",
-      "panel-section-label": "Medienlayer-Panel",
+      "panel-section-label": "Medienplayer-Panel",
       "scrolling-mode-description": "Steuern, wann Textscrolling für lange Track-Titel aktiviert ist.",
       "scrolling-mode-label": "Scrollmodus",
       "show-album-art-description": "Albumcover des aktuell abgespielten Tracks anzeigen.",
@@ -380,7 +380,7 @@
     "language": "Sprache",
     "loading": "Wird geladen...",
     "local": "Lokal",
-    "location": "Ort",
+    "location": "Position",
     "lock": "Sperren",
     "logout": "Abmelden",
     "look": "Aussehen",
@@ -399,7 +399,7 @@
     "official": "Offiziell",
     "output": "Ausgabe",
     "pair": "Koppeln",
-    "paired": "Gepaart",
+    "paired": "Gekoppelt",
     "pairing": "Koppeln...",
     "panels": "Panels",
     "password": "Passwort",
@@ -454,7 +454,7 @@
   "control-center": {
     "power-profile": {
       "tooltip-action": "Energieprofil",
-      "tooltip-disabled": "Installiere power-profiles-daemon, um Energieprofile zu verwenden"
+      "tooltip-disabled": "Installieren Sie power-profiles-daemon, um Energieprofile zu verwenden"
     },
     "wifi": {
       "label-disconnected": "WLAN getrennt",
@@ -465,7 +465,7 @@
     "always-hide": "Immer verstecken",
     "always-show": "Immer anzeigen",
     "force-open": "Aufbrechen",
-    "on-hover": "Beim Überfahren mit der Maus"
+    "on-hover": "Beim Hover"
   },
   "hide-modes": {
     "hidden": "Ausblenden, wenn leer",
@@ -607,7 +607,7 @@
       "system-disk": "Festplatte:",
       "system-gpu": "GPU:",
       "system-host": "Gastgeber:",
-      "system-install-hint": "Installiere fastfetch, um Systeminformationen anzuzeigen.",
+      "system-install-hint": "Installieren Sie fastfetch, um Systeminformationen anzuzeigen",
       "system-kernel": "Kernel:",
       "system-loading": "Systeminformationen werden geladen...",
       "system-memory": "Speicher",
@@ -618,7 +618,7 @@
       "system-uptime": "Betriebszeit:",
       "system-wm": "WM:",
       "title": "Über",
-      "up-to-date": "Du bist auf dem neuesten Stand!",
+      "up-to-date": "Auf dem neuesten Stand!",
       "update-available": "Update verfügbar",
       "view-commit": "Commit auf GitHub ansehen"
     },
@@ -1426,7 +1426,7 @@
     "download-speed": "Download-Speed",
     "gpu-temp": "GPU-Temperatur",
     "load-average": "Last-Ø",
-    "title": "Systemüberwachung",
+    "title": "Systemmonitor",
     "upload-speed": "Upload-Speed"
   },
   "toast": {

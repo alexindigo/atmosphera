@@ -465,7 +465,7 @@
     "always-hide": "Altijd verbergen",
     "always-show": "Altijd weergeven",
     "force-open": "Openbreken",
-    "on-hover": "Bij zweven"
+    "on-hover": "Bij hover"
   },
   "hide-modes": {
     "hidden": "Verbergen indien leeg",
@@ -607,7 +607,7 @@
       "system-disk": "Schijf:",
       "system-gpu": "GPU:",
       "system-host": "Gastheer/Gastvrouw:",
-      "system-install-hint": "Installeer fastfetch om systeeminformatie te bekijken.",
+      "system-install-hint": "Installeer fastfetch om systeeminformatie te bekijken",
       "system-kernel": "Kernel:",
       "system-loading": "Systeeminformatie laden...",
       "system-memory": "Geheugen:",

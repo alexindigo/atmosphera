@@ -611,7 +611,7 @@
       "system-kernel": "カーネル",
       "system-loading": "システム情報を読み込み中...",
       "system-memory": "記憶",
-      "system-not-installed": "fastfetch がインストールされていません。",
+      "system-not-installed": "fastfetch がインストールされていません",
       "system-os": "OS:",
       "system-packages": "パッケージ：",
       "system-title": "システム情報",
@@ -619,7 +619,7 @@
       "system-wm": "WM:",
       "title": "バージョン情報",
       "up-to-date": "最新の状態です！",
-      "update-available": "アップデートがあります。",
+      "update-available": "アップデートがあります",
       "view-commit": "GitHubでコミットを見る"
     },
     "audio": {
