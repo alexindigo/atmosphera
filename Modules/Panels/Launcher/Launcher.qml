@@ -1058,6 +1058,7 @@ SmartPanel {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
                           visible: modelData.icon && !modelData.displayString
+                          color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
                         }
                       }
 
@@ -1457,6 +1458,7 @@ SmartPanel {
                           icon: modelData.icon
                           pointSize: Style.fontSizeXXXL
                           visible: modelData.icon && !modelData.displayString
+                          color: entry.isSelected ? Color.mOnHover : Color.mOnSurface
                         }
                       }
 
