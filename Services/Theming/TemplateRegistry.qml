@@ -90,7 +90,7 @@ Singleton {
           "path": "~/.local/share/color-schemes/noctalia-alt.colors"
         }
       ],
-      "postProcess": function(mode) {
+      "postProcess": function (mode) {
         // Apply KDE color scheme with workaround for plasma-apply-colorscheme bug
         // KDE requires different name to trigger refresh, so we alternate between two files
         const stateFile = "~/.cache/noctalia/kde-colorscheme-state";
