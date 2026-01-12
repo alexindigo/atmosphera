@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Wetter wird geladen…"
+    "weather-loading": "Wetter wird geladen..."
   },
   "changelog": {
     "error": {
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Schreibe {filepath} — benötigt Mango",
       "templates-compositors-niri-description": "Schreibe {filepath} — benötigt Niri v25.11+",
       "templates-desc": "Farben auf externe Anwendungen anwenden.",
-      "templates-misc-description": "Erstellen Sie Ihre eigenen Vorlagen",
+      "templates-misc-description": "Erstellen Sie Ihre eigenen Vorlagen.",
       "templates-misc-label": "Erweitert",
       "templates-misc-user-templates-description": "Nur aktivieren, wenn Sie wissen, was Sie tun — weitere Informationen finden Sie in unserer Online-Dokumentation",
       "templates-misc-user-templates-label": "Benutzer-Vorlagen aktivieren",
@@ -1151,8 +1151,8 @@
       "hot-reload-description": "Plugins automatisch neu laden, wenn sich ihre Dateien ändern. Nützlich für die Plugin-Entwicklung.",
       "hot-reload-label": "Hot Reload (Entwicklermodus)",
       "hot-reloaded": "Plugin neu geladen: {name}",
-      "install-error": "Installation fehlgeschlagen: {error}",
-      "install-incompatible": "{plugin} benötigt Noctalia v{version} oder höher.",
+      "install-error": "Installation fehlgeschlagen: {error}.",
+      "install-incompatible": "{plugin} benötigt Noctalia v{version} oder höher",
       "install-success": "{plugin} erfolgreich installiert.",
       "installed-description": "Alle lokal installierten Plugins verwalten und konfigurieren.",
       "installed-label": "Installierte Plugins",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
       "update-available": "Neues Plugin-Update verfügbar",
       "update-available-plural": "Neue Plugin-Updates verfügbar ({count})",
-      "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
-      "update-incompatible": "Benötigt Noctalia v{version} oder höher",
+      "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}.",
       "update-pending": "v{aktuell} → v{neu} (benötigt Noctalia v{erforderlich})",
-      "update-success": "{plugin} wurde auf v{version} aktualisiert",
+      "update-success": "{plugin} wurde auf v{version} aktualisiert.",
       "update-version": "v{aktuell} → v{neu}",
       "updating": "Aktualisierung läuft..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Wählen Sie ein Verzeichnis mit Ihren Hintergrundbildern",
       "dir-browse": "Ordner auswählen",
-      "dir-description": "Wählen Sie den Ordner mit Ihren Hintergrundbildern",
+      "dir-description": "Wählen Sie den Ordner mit Ihren Hintergrundbildern.",
       "dir-label": "Hintergrundbild-Verzeichnis",
       "dir-select-title": "Hintergrundbild-Ordner wählen",
       "header": "Wählen Sie Ihr Hintergrundbild",

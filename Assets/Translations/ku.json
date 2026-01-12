@@ -84,7 +84,7 @@
       "icon-description": "Îkonekê ji pirtûkxaneyê an jî dosyeyeke xwerû hilbijêre.",
       "select-custom-icon": "Îkoneke kesane hilbijêre",
       "use-distro-logo-description": "Li şûna îkoneke kesane, logoya belavkirina xwe bi kar bîne.",
-      "use-distro-logo-label": "Li şûna îkonê logoya belavkirina bi kar bîne."
+      "use-distro-logo-label": "Li şûna îkonê logoya belavkirina bi kar bîne"
     },
     "custom-button": {
       "collapse-condition-description": "Ger nivîsa derketî bi vê nirxê re têkildar be, dê bişkok hilweşe.",
@@ -201,7 +201,7 @@
       "network-traffic-label": "Trafîka torê",
       "storage-usage-description": "Agahiyên bikaranîna cîhê dîskê nîşan bide.",
       "storage-usage-label": "Bikaranîna hilanînê",
-      "use-monospace-font-description": "```\nBi kar tîne fonta monospace ji bo firehiya karakterê ya domdar.\n```",
+      "use-monospace-font-description": "Bi kar tîne fonta monospace ji bo firehiya karakterê ya domdar.",
       "use-monospace-font-label": "Tîpa yek-firehî"
     },
     "taskbar": {
@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Rewşa bayê tê barkirin…"
+    "weather-loading": "Rewşa bayê tê barkirin..."
   },
   "changelog": {
     "error": {
@@ -693,7 +693,7 @@
       "dark-mode-switch-description": "Veguherîne bo temayek tarîtir ji bo dîtina hêsantir bi şev.",
       "delete-error-description": "Xwe ji birina {scheme} bi ser neket.",
       "delete-error-title": "Serbirin nemû ye",
-      "delete-success-description": "Bi serkeftî {scheme} hate jêbirin",
+      "delete-success-description": "Bi serkeftî {scheme} hate jêbirin.",
       "delete-success-title": "Şêweya rengan hate jêbirin",
       "download-button": "Bêtir daxîne",
       "download-downloading": "Tê daxistin...",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "{filepath} binivîse — divê Mango hebî",
       "templates-compositors-niri-description": "{filepath} binivîse — divê Niri v25.11+ hebî",
       "templates-desc": "ڕەنگان بخە سەر ئەپڵیکەیشنێن دەرەکی.",
-      "templates-misc-description": "Şablonên xwe biafirîne",
+      "templates-misc-description": "Şablonên xwe biafirîne.",
       "templates-misc-label": "Pêşketî",
       "templates-misc-user-templates-description": "Tenê eger tu dizanî çi dikî çalak bike — serî li belgekirina me ya serhêl bide",
       "templates-misc-user-templates-label": "Şablonên bikarhêner çalak bike",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Nûbarkirina germ (moda pêşvebirinê)",
       "hot-reloaded": "Plugin ji nû ve hate barkirin: {name}",
       "install-error": "Sazkirin bi ser neket: {error}.",
-      "install-incompatible": "{plugin} pêdivî bi Noctalia v{version} an bilindtir heye.",
+      "install-incompatible": "{plugin} pêdivî bi Noctalia v{version} an bilindtir heye",
       "install-success": "Bi serkeftî {plugin} hate sazkirin.",
       "installed-description": "Birêvebir û hemû pêvekên ku herêmî hatine sazkirin mîheng bike.",
       "installed-label": "Pêvekên sazkirî",
@@ -1189,8 +1189,7 @@
       "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin.",
       "update-available": "Rojanekirina pêveka nû heye",
       "update-available-plural": "Rojanekirinên pêvekên nû hene ({count})",
-      "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}",
-      "update-incompatible": "Pêdivî ye Noctalia v{version} an bilindtir",
+      "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}.",
       "update-pending": "v{niha} → v{nu} (hewce dike Noctalia v{pêwîst})",
       "update-success": "{plugin} hate nûkirin bo v{version}.",
       "update-version": "v{niha} → v{nû}",
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Dîrekteriyek ku wêneyên dîwarê te tê de hilbijêre",
       "dir-browse": "Geroka peldanka dîwêr",
-      "dir-description": "Peldêra ku dîwarên te dihewîne hilbijêre",
+      "dir-description": "Peldêra ku dîwarên te dihewîne hilbijêre.",
       "dir-label": "Navnîşana dîwarê",
       "dir-select-title": "Pelê dîwarê hilbijêre",
       "header": "Wêneyê dîwarê xwe hilbijêre",
@@ -1420,7 +1419,7 @@
       "low-desc": "Pîl li ser %{percent} e. Ji kerema xwe şarjê girêde."
     },
     "bluetooth": {
-      "address-copied": "Navnîşan li clipboardê hate kopîkirin",
+      "address-copied": "Navnîşan li clipboardê hate kopîkirin.",
       "confirm-code": "Koda {value} li ser amûra din piştrast bike.",
       "connect-failed": "Têk çû girêdan bi cîhazê re.",
       "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de.",

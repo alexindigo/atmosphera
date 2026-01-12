@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Loading weather…"
+    "weather-loading": "Loading weather..."
   },
   "changelog": {
     "error": {
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Write {filepath} — requires Mango",
       "templates-compositors-niri-description": "Write {filepath} — requires Niri v25.11+",
       "templates-desc": "Apply colors to external applications.",
-      "templates-misc-description": "Create your own templates",
+      "templates-misc-description": "Create your own templates.",
       "templates-misc-label": "Advanced",
       "templates-misc-user-templates-description": "Only enable if you know what you are doing — refer to our online documentation",
       "templates-misc-user-templates-label": "Enable user templates",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Hot reload (dev mode)",
       "hot-reloaded": "Reloaded plugin: {name}",
       "install-error": "Failed to install: {error}.",
-      "install-incompatible": "{plugin} requires Noctalia v{version} or higher.",
+      "install-incompatible": "{plugin} requires Noctalia v{version} or higher",
       "install-success": "Successfully installed {plugin}.",
       "installed-description": "Manage and configure all locally installed plugins.",
       "installed-label": "Installed plugins",
@@ -1189,10 +1189,9 @@
       "update-all-success": "All plugins updated successfully.",
       "update-available": "New plugin update available",
       "update-available-plural": "Plugin updates available ({count})",
-      "update-error": "Failed to update plugin: {plugin}: {error}",
-      "update-incompatible": "Requires Noctalia v{version} or higher",
+      "update-error": "Failed to update plugin: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (requires Noctalia v{required})",
-      "update-success": "Updated {plugin} to v{version}",
+      "update-success": "Updated {plugin} to v{version}.",
       "update-version": "v{current} → v{new}",
       "updating": "Updating..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Choose a directory containing your wallpaper images",
       "dir-browse": "Browse for wallpaper folder",
-      "dir-description": "Choose the folder containing your wallpapers",
+      "dir-description": "Choose the folder containing your wallpapers.",
       "dir-label": "Wallpaper directory",
       "dir-select-title": "Select wallpaper folder",
       "header": "Choose your wallpaper",

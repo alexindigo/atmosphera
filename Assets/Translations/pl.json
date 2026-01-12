@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Ładowanie pogody…"
+    "weather-loading": "Ładowanie pogody..."
   },
   "changelog": {
     "error": {
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Zapisz {filepath} — wymaga Mango",
       "templates-compositors-niri-description": "Zapisz {filepath} — wymaga Niri v25.11+",
       "templates-desc": "Zastosuj kolory w aplikacjach zewnętrznych.",
-      "templates-misc-description": "Twórz własne szablony",
+      "templates-misc-description": "Twórz własne szablony.",
       "templates-misc-label": "Zaawansowane",
       "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online",
       "templates-misc-user-templates-label": "Włącz szablony użytkownika",
@@ -795,7 +795,7 @@
       "clock-style-minimal": "Minimalistyczny",
       "clock-width-description": "Szerokość widżetu zegara w pikselach.",
       "edit-mode-button-label": "Wejdź w tryb edycji",
-      "edit-mode-controls-explanation": "Lewy przycisk myszy: Przesuń widżet\nPrawy przycisk myszy: Zmień rozmiar widżetu",
+      "edit-mode-controls-explanation": "Lewy przycisk myszy: Przesuń widżet.\nPrawy przycisk myszy: Zmień rozmiar widżetu.",
       "edit-mode-description": "Włącz tryb edycji, aby przesuwać i zmieniać pozycję widżetów pulpitu. Gdy włączone, widżety pokazują ramkę przeciągania.",
       "edit-mode-exit-button": "Wyjdź z trybu edycji",
       "edit-mode-grid-snap-label": "Przyciągaj do siatki",
@@ -1146,7 +1146,7 @@
       "collision-official-version-exists": "Oficjalna wersja tej wtyczki jest już zainstalowana.",
       "filter-downloaded": "Pobrane",
       "filter-not-downloaded": "Niepobrane",
-      "filter-tags-description": "Filtruj wtyczki według kategorii lub statusu pobierania.",
+      "filter-tags-description": "Filtruj wtyczki według kategorii lub statusu pobierania",
       "filter-tags-label": "Tagi",
       "hot-reload-description": "Automatycznie przeładuj wtyczki przy zmianie ich plików. Przydatne przy tworzeniu wtyczek.",
       "hot-reload-label": "Gorące przeładowanie (tryb deweloperski)",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie.",
       "update-available": "Dostępna nowa aktualizacja wtyczki",
       "update-available-plural": "Dostępne nowe aktualizacje wtyczek ({count})",
-      "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
-      "update-incompatible": "Wymaga Noctalia v{version} lub nowszej",
+      "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}.",
       "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",
-      "update-success": "Zaktualizowano {plugin} do v{version}",
+      "update-success": "Zaktualizowano {plugin} do v{version}.",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Wybierz katalog zawierający obrazy tapet",
       "dir-browse": "Przeglądaj folder tapet",
-      "dir-description": "Wybierz folder zawierający twoje tapety",
+      "dir-description": "Wybierz folder zawierający twoje tapety.",
       "dir-label": "Katalog tapet",
       "dir-select-title": "Wybierz folder tapet",
       "header": "Wybierz tapetę",

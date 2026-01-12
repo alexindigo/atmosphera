@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Завантаження погоди…"
+    "weather-loading": "Завантаження погоди..."
   },
   "changelog": {
     "error": {
@@ -622,9 +622,9 @@
       "media-primary-player-description": "Введіть ключове слово для ідентифікації основного плеєра.",
       "media-primary-player-label": "Основний плеєр",
       "media-primary-player-placeholder": "напр. spotify, vlc, mpv",
-      "media-scrolling-speed-description": "Час у секундах для прокрутки назви від початку до кінця",
+      "media-scrolling-speed-description": "Час у секундах для прокрутки назви від початку до кінця.",
       "media-scrolling-speed-label": "Швидкість прокрутки",
-      "media-scrolling-title-description": "Увімкнути безперервну прокрутку для довгих назв медіа",
+      "media-scrolling-title-description": "Увімкнути безперервну прокрутку для довгих назв медіа.",
       "media-scrolling-title-label": "Прокрутка назви",
       "media-title": "Медіаплеєри",
       "on-middle-clicked-description": "Команда для виконання при натисканні середньою кнопкою миші.",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Записати {filepath} — потребує mango",
       "templates-compositors-niri-description": "Записати {filepath} — потребує niri v25.11+",
       "templates-desc": "Застосовувати кольори до зовнішніх застосункiв.",
-      "templates-misc-description": "Створіть власні шаблони",
+      "templates-misc-description": "Створіть власні шаблони.",
       "templates-misc-label": "Розширено",
       "templates-misc-user-templates-description": "Увімкніть лише якщо ви знаєте, що робите — зверніться до нашої онлайн-документації",
       "templates-misc-user-templates-label": "Увімкнути користувацькі шаблони",
@@ -875,7 +875,7 @@
       "appearance-pinned-static-label": "Статично закріплені програми",
       "appearance-position-description": "Виберіть, де док відображатиметься на екрані.",
       "appearance-position-label": "Позиція",
-      "enabled-description": "Показати або сховати док повністю",
+      "enabled-description": "Показати або сховати док повністю.",
       "enabled-label": "Увімкнути док",
       "monitors-desc": "Показувати док на певних моніторах. За замовчуванням на всіх, якщо не вибрано.",
       "monitors-only-same-monitor-description": "Показувати лише застосунки з монітора, де розташовано Dock.",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Гаряче перезавантаження (режим розробки)",
       "hot-reloaded": "Перезавантажено плагін: {name}",
       "install-error": "Не вдалося встановити: {error}.",
-      "install-incompatible": "{plugin} вимагає Noctalia v{version} або вище.",
+      "install-incompatible": "{plugin} вимагає Noctalia v{version} або вище",
       "install-success": "Успішно встановлено {plugin}.",
       "installed-description": "Керуйте та налаштовуйте всі локально встановлені плагіни.",
       "installed-label": "Встановлені плагіни",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Усі плагіни успішно оновлено.",
       "update-available": "Доступне нове оновлення плагіна",
       "update-available-plural": "Доступні нові оновлення плагінів ({count})",
-      "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
-      "update-incompatible": "Потрібна Noctalia v{version} або вище",
+      "update-error": "Не вдалося оновити плагін: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
-      "update-success": "Оновлено {plugin} до версії {version}",
+      "update-success": "Оновлено {plugin} до версії {version}.",
       "update-version": "v{current} → v{new}",
       "updating": "Оновлення..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Виберіть теку, що містить ваші зображення шпалер",
       "dir-browse": "Огляд теки шпалер",
-      "dir-description": "Виберіть теку, що містить ваші шпалери",
+      "dir-description": "Виберіть теку, що містить ваші шпалери.",
       "dir-label": "Тека шпалер",
       "dir-select-title": "Вибрати теку шпалер",
       "header": "Виберіть ваші шпалери",

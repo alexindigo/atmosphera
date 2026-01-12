@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Chargement de la météo…"
+    "weather-loading": "Chargement de la météo..."
   },
   "changelog": {
     "error": {
@@ -622,9 +622,9 @@
       "media-primary-player-description": "Entrez un mot-clé pour identifier votre lecteur principal.",
       "media-primary-player-label": "Lecteur principal",
       "media-primary-player-placeholder": "ex. spotify, vlc, mpv",
-      "media-scrolling-speed-description": "Temps en secondes pour que le titre défile du début à la fin",
+      "media-scrolling-speed-description": "Temps en secondes pour que le titre défile du début à la fin.",
       "media-scrolling-speed-label": "Vitesse de défilement",
-      "media-scrolling-title-description": "Activer le défilement continu pour les titres multimédias longs",
+      "media-scrolling-title-description": "Activer le défilement continu pour les titres multimédias longs.",
       "media-scrolling-title-label": "Titre défilant",
       "media-title": "Lecteurs multimédias",
       "on-middle-clicked-description": "Commande à exécuter lorsque le bouton du milieu est cliqué.",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Écrire {filepath} — requiert Mango",
       "templates-compositors-niri-description": "Écrire {filepath} — requiert Niri v25.11+",
       "templates-desc": "Appliquer des couleurs aux applications externes.",
-      "templates-misc-description": "Créez vos propres modèles",
+      "templates-misc-description": "Créez vos propres modèles.",
       "templates-misc-label": "Avancé",
       "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne",
       "templates-misc-user-templates-label": "Activer les modèles utilisateur",
@@ -875,7 +875,7 @@
       "appearance-pinned-static-label": "Applications épinglées statiques",
       "appearance-position-description": "Choisissez l'emplacement du Dock à l'écran.",
       "appearance-position-label": "Position",
-      "enabled-description": "Afficher ou masquer complètement le dock",
+      "enabled-description": "Afficher ou masquer complètement le dock.",
       "enabled-label": "Activer le dock",
       "monitors-desc": "Afficher le dock sur des écrans spécifiques. Par défaut, il s'affiche sur tous les écrans si aucun n'est sélectionné.",
       "monitors-only-same-monitor-description": "Afficher uniquement les applications de l'écran où se trouve le dock.",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Rechargement à chaud (mode développement)",
       "hot-reloaded": "Plugin rechargé : {name}",
       "install-error": "Échec de l'installation : {error}.",
-      "install-incompatible": "{plugin} nécessite Noctalia v{version} ou une version ultérieure.",
+      "install-incompatible": "{plugin} nécessite Noctalia v{version} ou une version ultérieure",
       "install-success": "Installation de {plugin} réussie.",
       "installed-description": "Gérer et configurer tous les plugins installés localement.",
       "installed-label": "Plugins installés",
@@ -1189,8 +1189,7 @@
       "update-all-success": "Tous les plugins ont été mis à jour avec succès.",
       "update-available": "Nouvelle mise à jour de plugin disponible",
       "update-available-plural": "Nouvelles mises à jour d'extensions disponibles ({count})",
-      "update-error": "Échec de la mise à jour du plugin : {plugin} : {error}",
-      "update-incompatible": "Nécessite Noctalia v{version} ou une version ultérieure.",
+      "update-error": "Échec de la mise à jour du plugin : {plugin} : {error}.",
       "update-pending": "v{current} → v{new} (nécessite Noctalia v{required})",
       "update-success": "Mise à jour du plugin {plugin} vers la version {version}.",
       "update-version": "v{actuel} → v{nouveau}",
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Choisissez un répertoire contenant vos fonds d'écran",
       "dir-browse": "Parcourir le dossier",
-      "dir-description": "Choisissez le dossier contenant vos fonds d'écran",
+      "dir-description": "Choisissez le dossier contenant vos fonds d'écran.",
       "dir-label": "Répertoire des fonds d'écran",
       "dir-select-title": "Sélectionner le dossier des fonds d'écran",
       "header": "Choisissez votre fond d'écran",

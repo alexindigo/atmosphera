@@ -201,7 +201,7 @@
       "network-traffic-label": "Tráfico de red",
       "storage-usage-description": "Mostrar la información del uso del espacio en disco.",
       "storage-usage-label": "Uso de almacenamiento",
-      "use-monospace-font-description": "```\nUtilice fuente monoespaciada para un ancho de carácter consistente.\n```",
+      "use-monospace-font-description": "Utilice fuente monoespaciada para un ancho de carácter consistente.",
       "use-monospace-font-label": "Fuente monoespaciada"
     },
     "taskbar": {
@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Cargando el clima…"
+    "weather-loading": "Cargando el clima..."
   },
   "changelog": {
     "error": {
@@ -518,7 +518,7 @@
       "emoji": "Selector de emojis",
       "emoji-loading": "Cargando emojis...",
       "emoji-loading-description": "Por favor espera",
-      "emoji-no-recent": "Aún no hay emojis recientes.",
+      "emoji-no-recent": "Aún no hay emojis recientes",
       "emoji-search-description": "Buscar y copiar emojis"
     }
   },
@@ -622,9 +622,9 @@
       "media-primary-player-description": "Ingresa una palabra clave para identificar tu reproductor principal.",
       "media-primary-player-label": "Reproductor principal",
       "media-primary-player-placeholder": "ej. spotify, vlc, mpv",
-      "media-scrolling-speed-description": "Tiempo en segundos para que el título se desplace del inicio al final",
+      "media-scrolling-speed-description": "Tiempo en segundos para que el título se desplace del inicio al final.",
       "media-scrolling-speed-label": "Velocidad de desplazamiento",
-      "media-scrolling-title-description": "Activar desplazamiento continuo para títulos de medios largos",
+      "media-scrolling-title-description": "Activar desplazamiento continuo para títulos de medios largos.",
       "media-scrolling-title-label": "Título con desplazamiento",
       "media-title": "Reproductores multimedia",
       "on-middle-clicked-description": "Comando para ejecutar cuando se hace clic con el botón central.",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Escribir {filepath} — requiere Mango",
       "templates-compositors-niri-description": "Escribir {filepath} — requiere Niri v25.11+",
       "templates-desc": "Aplicar colores a aplicaciones externas.",
-      "templates-misc-description": "Crea tus propias plantillas",
+      "templates-misc-description": "Crea tus propias plantillas.",
       "templates-misc-label": "Avanzado",
       "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea",
       "templates-misc-user-templates-label": "Habilitar plantillas de usuario",
@@ -875,7 +875,7 @@
       "appearance-pinned-static-label": "Aplicaciones ancladas estáticas",
       "appearance-position-description": "Elige dónde aparece el dock en la pantalla.",
       "appearance-position-label": "Posición",
-      "enabled-description": "Mostrar u ocultar el dock por completo",
+      "enabled-description": "Mostrar u ocultar el dock por completo.",
       "enabled-label": "Habilitar dock",
       "monitors-desc": "Mostrar el dock en monitores específicos. Por defecto, se muestra en todos si no se elige ninguno.",
       "monitors-only-same-monitor-description": "Mostrar solo las aplicaciones del monitor donde se encuentra el dock.",
@@ -1140,7 +1140,7 @@
       "available-description": "Navegar e instalar plugins desde fuentes configuradas.",
       "available-label": "Plugins disponibles",
       "available-no-plugins-description": "Comprueba las fuentes de tu plugin o actualiza la lista.",
-      "available-no-plugins-label": "No hay plugins disponibles.",
+      "available-no-plugins-label": "No hay plugins disponibles",
       "collision-already-installed": "Este plugin ya está instalado.",
       "collision-custom-version-exists": "Ya hay instalada una versión personalizada de \"{source}\".",
       "collision-official-version-exists": "La versión oficial de este plugin ya está instalada.",
@@ -1152,12 +1152,12 @@
       "hot-reload-label": "Recarga en caliente (modo desarrollo)",
       "hot-reloaded": "Plugin recargado: {name}",
       "install-error": "Error al instalar: {error}.",
-      "install-incompatible": "{plugin} requiere Noctalia v{version} o superior.",
+      "install-incompatible": "{plugin} requiere Noctalia v{version} o superior",
       "install-success": "Se instaló {plugin} correctamente.",
       "installed-description": "Gestiona y configura todos los plugins instalados localmente.",
       "installed-label": "Plugins instalados",
       "installed-no-plugins-description": "Instale los plugins de la sección \"Disponible\".",
-      "installed-no-plugins-label": "No hay plugins instalados.",
+      "installed-no-plugins-label": "No hay plugins instalados",
       "installing": "Instalando {plugin}...",
       "open-plugin-page": "Abrir página del plugin",
       "open-plugins-tab": "Abrir la configuración de los plugins",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Todos los plugins se actualizaron correctamente.",
       "update-available": "Nueva actualización de plugin disponible",
       "update-available-plural": "Nuevas actualizaciones de plugins disponibles ({count})",
-      "update-error": "Error al actualizar el plugin: {plugin}: {error}",
-      "update-incompatible": "Requiere Noctalia v{version} o superior",
+      "update-error": "Error al actualizar el plugin: {plugin}: {error}.",
       "update-pending": "v{actual} → v{nuevo} (requiere Noctalia v{requerida})",
-      "update-success": "{plugin} actualizado a la versión {version}",
+      "update-success": "{plugin} actualizado a la versión {version}.",
       "update-version": "v{actual} → v{nuevo}",
       "updating": "Actualizando..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Elige un directorio que contenga tus fondos",
       "dir-browse": "Seleccionar carpeta",
-      "dir-description": "Elige la carpeta que contiene tus fondos",
+      "dir-description": "Elige la carpeta que contiene tus fondos.",
       "dir-label": "Directorio de fondos",
       "dir-select-title": "Seleccionar carpeta de fondos",
       "header": "Elige tu fondo",

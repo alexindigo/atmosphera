@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Weer laden…"
+    "weather-loading": "Weer laden..."
   },
   "changelog": {
     "error": {
@@ -355,7 +355,7 @@
     "devices": "Apparaten",
     "disabled": "Uitgeschakeld",
     "discharging": "Afvoeren",
-    "disconnect": "Verbreek de verbinding.",
+    "disconnect": "Verbreek de verbinding",
     "disconnected": "Verbinding verbroken",
     "disconnecting": "Verbinding verbroken...",
     "download": "Download",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Schrijf {filepath} — vereist Mango",
       "templates-compositors-niri-description": "Schrijf {filepath} — vereist Niri v25.11+",
       "templates-desc": "Pas kleuren toe op externe applicaties.",
-      "templates-misc-description": "Maak uw eigen sjablonen",
+      "templates-misc-description": "Maak uw eigen sjablonen.",
       "templates-misc-label": "Geavanceerd",
       "templates-misc-user-templates-description": "Alleen inschakelen als u weet wat u doet — raadpleeg onze online documentatie",
       "templates-misc-user-templates-label": "Gebruikerssjablonen inschakelen",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Hot reload (ontwikkelmodus)",
       "hot-reloaded": "Plugin opnieuw geladen: {name}",
       "install-error": "Installatie mislukt: {error}.",
-      "install-incompatible": "{plugin} vereist Noctalia v{version} of hoger.",
+      "install-incompatible": "{plugin} vereist Noctalia v{version} of hoger",
       "install-success": "{plugin} succesvol geïnstalleerd.",
       "installed-description": "Beheer en configureer alle lokaal geïnstalleerde plugins.",
       "installed-label": "Geïnstalleerde plug-ins",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Alle plugins succesvol bijgewerkt.",
       "update-available": "Nieuwe plugin update beschikbaar",
       "update-available-plural": "Nieuwe plugin updates beschikbaar ({count})",
-      "update-error": "Plugin bijwerken mislukt: {plugin}: {error}",
-      "update-incompatible": "Vereist Noctalia v{version} of hoger",
+      "update-error": "Plugin bijwerken mislukt: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (vereist Noctalia v{required})",
-      "update-success": "{plugin} is bijgewerkt naar v{version}",
+      "update-success": "{plugin} is bijgewerkt naar v{version}.",
       "update-version": "v{huidig} → v{nieuw}",
       "updating": "Bezig met updaten..."
     },
@@ -1244,7 +1243,7 @@
       "threshold-warning": "Waarschuwingsdrempel",
       "thresholds-section-description": "Pas de waarschuwing/kritieke drempels en de pollingsintervallen voor elke systeemmetriek aan.",
       "use-custom-highlight-colors-description": "Indien uitgeschakeld, worden de standaard markeerkleuren van het thema gebruikt.",
-      "use-custom-highlight-colors-label": "Gebruik aangepaste markeerkleuren.",
+      "use-custom-highlight-colors-label": "Gebruik aangepaste markeerkleuren",
       "warning-color-label": "Waarschuwingskleur"
     },
     "user-interface": {
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Kies een map met je achtergrondafbeeldingen",
       "dir-browse": "Bladeren naar achtergrondmap",
-      "dir-description": "Kies de map met je achtergronden",
+      "dir-description": "Kies de map met je achtergronden.",
       "dir-label": "Achtergrondmap",
       "dir-select-title": "Achtergrondmap selecteren",
       "header": "Kies je achtergrond",
@@ -1385,7 +1384,7 @@
       "select-prompt": "Selecteer hieronder een achtergrond",
       "subheader": "Zet de toon met een mooie achtergrond."
     },
-    "welcome-note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen."
+    "welcome-note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

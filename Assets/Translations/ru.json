@@ -201,7 +201,7 @@
       "network-traffic-label": "Сетевой трафик",
       "storage-usage-description": "Показывать информацию об использовании дискового пространства.",
       "storage-usage-label": "Использование хранилища",
-      "use-monospace-font-description": "```\nИспользуйте моноширинный шрифт для единообразной ширины символов.\n```",
+      "use-monospace-font-description": "Используйте моноширинный шрифт для единообразной ширины символов.",
       "use-monospace-font-label": "Моноширинный шрифт"
     },
     "taskbar": {
@@ -243,7 +243,7 @@
       "character-count-description": "Количество символов для отображения из имен рабочих пространств (1-10).",
       "character-count-label": "Количество символов",
       "enable-scrollwheel-description": "Переключайтесь между рабочими пространствами с помощью колеса прокрутки мыши.",
-      "enable-scrollwheel-label": "Прокрутите, чтобы переключить рабочие столы.",
+      "enable-scrollwheel-label": "Прокрутите, чтобы переключить рабочие столы",
       "follow-focused-screen-description": "Отображать рабочие пространства с текущего активного экрана, а не с экрана, на котором расположена панель.",
       "follow-focused-screen-label": "Следовать за активным экраном",
       "grouped-border-opacity-description": "Установить уровень прозрачности для границ контейнера рабочей области.",
@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Загрузка погоды…"
+    "weather-loading": "Загрузка погоды..."
   },
   "changelog": {
     "error": {
@@ -462,7 +462,7 @@
     }
   },
   "display-modes": {
-    "always-hide": "Всегда прячься.",
+    "always-hide": "Всегда прячься",
     "always-show": "Всегда показывать",
     "force-open": "Взломать силой / Выломать / Вскрыть силой",
     "on-hover": "При наведении"
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "Записать {filepath} — требуется Mango",
       "templates-compositors-niri-description": "Записать {filepath} — требуется Niri v25.11+",
       "templates-desc": "Применение цветов к внешним приложениям.",
-      "templates-misc-description": "Создайте свои собственные шаблоны",
+      "templates-misc-description": "Создайте свои собственные шаблоны.",
       "templates-misc-label": "Дополнительно",
       "templates-misc-user-templates-description": "Включайте только если вы знаете, что делаете — обратитесь к нашей онлайн-документации",
       "templates-misc-user-templates-label": "Включить пользовательские шаблоны",
@@ -875,7 +875,7 @@
       "appearance-pinned-static-label": "Закреплённые статические приложения",
       "appearance-position-description": "Выберите, где док будет отображаться на экране.",
       "appearance-position-label": "Позиция",
-      "enabled-description": "Показать или скрыть док целиком",
+      "enabled-description": "Показать или скрыть док целиком.",
       "enabled-label": "Включить док",
       "monitors-desc": "Показывать док на определённых мониторах. По умолчанию на всех, если ни один не выбран.",
       "monitors-only-same-monitor-description": "Показывать только приложения с монитора, где находится док.",
@@ -1140,19 +1140,19 @@
       "available-description": "Просмотр и установка плагинов из настроенных источников.",
       "available-label": "Доступные плагины",
       "available-no-plugins-description": "Проверьте исходники вашего плагина или обновите список.",
-      "available-no-plugins-label": "Нет доступных плагинов.",
+      "available-no-plugins-label": "Нет доступных плагинов",
       "collision-already-installed": "Этот плагин уже установлен.",
       "collision-custom-version-exists": "Пользовательская версия из \"{source}\" уже установлена.",
       "collision-official-version-exists": "Официальная версия этого плагина уже установлена.",
       "filter-downloaded": "Скачано",
       "filter-not-downloaded": "Не загружено",
-      "filter-tags-description": "Фильтровать плагины по категории или статусу загрузки.",
+      "filter-tags-description": "Фильтровать плагины по категории или статусу загрузки",
       "filter-tags-label": "Теги",
       "hot-reload-description": "Автоматически перезагружать плагины при изменении их файлов. Полезно для разработки плагинов.",
       "hot-reload-label": "Горячая перезагрузка (режим разработки)",
       "hot-reloaded": "Перезагружен плагин: {name}",
       "install-error": "Не удалось установить: {error}.",
-      "install-incompatible": "{plugin} требует Noctalia версии {version} или выше.",
+      "install-incompatible": "{plugin} требует Noctalia версии {version} или выше",
       "install-success": "Успешно установлен {plugin}.",
       "installed-description": "Управляйте и настраивайте все локально установленные плагины.",
       "installed-label": "Установленные плагины",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Все плагины успешно обновлены.",
       "update-available": "Доступно новое обновление плагина",
       "update-available-plural": "Доступны новые обновления плагинов ({count})",
-      "update-error": "Не удалось обновить плагин: {plugin}: {error}",
-      "update-incompatible": "Требуется Noctalia v{version} или выше",
+      "update-error": "Не удалось обновить плагин: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (требуется Noctalia v{required})",
-      "update-success": "Плагин {plugin} обновлён до версии {version}",
+      "update-success": "Плагин {plugin} обновлён до версии {version}.",
       "update-version": "v{текущее} → v{новое}",
       "updating": "Обновление..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Выберите каталог, содержащий ваши изображения обоев",
       "dir-browse": "Обзор папки с обоями",
-      "dir-description": "Выберите папку, содержащую ваши обои",
+      "dir-description": "Выберите папку, содержащую ваши обои.",
       "dir-label": "Каталог обоев",
       "dir-select-title": "Выбрать папку с обоями",
       "header": "Выберите свои обои",

@@ -201,7 +201,7 @@
       "network-traffic-label": "Hálózati forgalom",
       "storage-usage-description": "Lemezterület-használati információk megjelenítése.",
       "storage-usage-label": "Tárhelyhasználat",
-      "use-monospace-font-description": "```\nHasználj monospace betűtípust az egységes karakter-szélességhez.\n```",
+      "use-monospace-font-description": "Használj monospace betűtípust az egységes karakter-szélességhez.",
       "use-monospace-font-label": "Monospace betűtípus"
     },
     "taskbar": {
@@ -295,7 +295,7 @@
     }
   },
   "calendar": {
-    "weather-loading": "Időjárás betöltése…"
+    "weather-loading": "Időjárás betöltése..."
   },
   "changelog": {
     "error": {
@@ -394,7 +394,7 @@
     "no": "Nem",
     "no-results": "Nincs találat",
     "no-summary": "Nincs összefoglaló",
-    "none": "Nincs.",
+    "none": "Nincs",
     "notifications": "Értesítések",
     "official": "Hivatalos",
     "output": "Kimenet",
@@ -719,7 +719,7 @@
       "templates-compositors-mango-description": "{filepath} írása — ehhez Mango szükséges",
       "templates-compositors-niri-description": "{filepath} írása — ehhez Niri v25.11+ szükséges",
       "templates-desc": "Színek alkalmazása külő alkalmazásokra.",
-      "templates-misc-description": "Hozzon létre saját sablonokat",
+      "templates-misc-description": "Hozzon létre saját sablonokat.",
       "templates-misc-label": "Haladó",
       "templates-misc-user-templates-description": "Csak akkor engedélyezze, ha tudja, mit csinál — lásd az online dokumentációt",
       "templates-misc-user-templates-label": "Felhasználói sablonok engedélyezése",
@@ -1076,8 +1076,8 @@
       "sounds-desc": "Értesítési hangeffektusok és hangerő beállítása.",
       "sounds-enabled-description": "Hanghatások engedélyezése a bejövő értesítésekhez.",
       "sounds-enabled-label": "Értesítési hangok engedélyezése",
-      "sounds-excluded-apps-description": "Kizárt alkalmazások",
-      "sounds-excluded-apps-label": "A beállított értesítési hang lejátszásának kihagyása bizonyos alkalmazásoknál, amelyek saját beépített hangokkal rendelkeznek.",
+      "sounds-excluded-apps-description": "A beállított értesítési hang lejátszásának kihagyása bizonyos alkalmazásoknál, amelyek saját beépített hangokkal rendelkeznek.",
+      "sounds-excluded-apps-label": "Kizárt alkalmazások",
       "sounds-excluded-apps-placeholder": "discord,firefox,chrome,chromium,edge",
       "sounds-files-critical-description": "A kritikus prioritású értesítésekhez lejátszott hangfájl útvonala.",
       "sounds-files-critical-label": "Kritikus sürgősségi hang",
@@ -1152,7 +1152,7 @@
       "hot-reload-label": "Gyors újratöltés (fejlesztői mód)",
       "hot-reloaded": "Újratöltött bővítmény: {name}",
       "install-error": "Sikertelen telepítés: {error}.",
-      "install-incompatible": "A {plugin} pluginhez Noctalia v{version} vagy újabb verzió szükséges.",
+      "install-incompatible": "A {plugin} pluginhez Noctalia v{version} vagy újabb verzió szükséges",
       "install-success": "Sikeresen telepítve: {plugin}.",
       "installed-description": "Az összes helyileg telepített bővítmény kezelése és beállítása.",
       "installed-label": "Telepített bővítmények",
@@ -1189,10 +1189,9 @@
       "update-all-success": "Minden bővítmény sikeresen frissítve.",
       "update-available": "Új bővítményfrissítés elérhető",
       "update-available-plural": "Új bővítményfrissítések elérhetők ({count})",
-      "update-error": "Nem sikerült frissíteni a bővítményt: {plugin}: {error}",
-      "update-incompatible": "Noctalia v{version} vagy újabb szükséges",
+      "update-error": "Nem sikerült frissíteni a bővítményt: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (szükséges Noctalia v{required})",
-      "update-success": "A(z) {plugin} frissítve lett a v{version} verzióra",
+      "update-success": "A(z) {plugin} frissítve lett a v{version} verzióra.",
       "update-version": "v{current} → v{new}",
       "updating": "Frissítés..."
     },
@@ -1374,7 +1373,7 @@
     "wallpaper": {
       "choose-dir": "Válassza ki a könyvtárat, amely tartalmazza a háttérképeit",
       "dir-browse": "Háttérkép mappa böngészése",
-      "dir-description": "Válassza ki a háttérképeit tartalmazó mappát",
+      "dir-description": "Válassza ki a háttérképeit tartalmazó mappát.",
       "dir-label": "Háttérkép könyvtár",
       "dir-select-title": "Háttérkép mappa kiválasztása",
       "header": "Válassza ki a háttérképét",
@@ -1696,7 +1695,7 @@
       "no-networks": "Nem található Wi‑Fi-hálózat",
       "saved": "Mentve",
       "scan-again": "Keresés újra",
-      "searching": "Hálózatok keresése…",
+      "searching": "Hálózatok keresése...",
       "title": "Wi‑Fi"
     },
     "signal": {
