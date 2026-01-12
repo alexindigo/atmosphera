@@ -62,7 +62,23 @@ SmartPanel {
   property var activeProvider: null
   property bool resultsReady: false
   property var pluginProviderInstances: ({}) // Track plugin provider instances
-  property bool ignoreMouseHover: Settings.data.appLauncher.ignoreMouseInput
+  property bool ignoreMouseHover: true // Transient flag, should always be true on init
+
+  // Global mouse tracking for movement detection across delegates
+  property real globalLastMouseX: 0
+  property real globalLastMouseY: 0
+  property bool globalMouseInitialized: false
+  property bool mouseTrackingReady: false // Delay tracking until panel is settled
+
+  Timer {
+    id: mouseTrackingDelayTimer
+    interval: Style.animationNormal + 50 // Wait for panel animation to complete + safety margin
+    repeat: false
+    onTriggered: {
+      root.mouseTrackingReady = true;
+      root.globalMouseInitialized = false; // Reset so we get fresh initial position
+    }
+  }
 
   // Default provider for regular search (applications)
   readonly property var defaultProvider: appsProvider
@@ -181,6 +197,9 @@ SmartPanel {
   onOpened: {
     resultsReady = false;
     ignoreMouseHover = true;
+    globalMouseInitialized = false;
+    mouseTrackingReady = false;
+    mouseTrackingDelayTimer.restart();
 
     // Sync plugin providers first
     syncPluginProviders();
@@ -742,40 +761,28 @@ SmartPanel {
       }
     }
 
-    MouseArea {
-      id: mouseMovementDetector
-      anchors.fill: parent
-      z: -999
-      hoverEnabled: true
-      propagateComposedEvents: true
-      acceptedButtons: Qt.NoButton
+    HoverHandler {
+      id: globalHoverHandler
       enabled: !Settings.data.appLauncher.ignoreMouseInput
 
-      property real lastX: 0
-      property real lastY: 0
-      property bool initialized: false
+      onPointChanged: {
+        if (!root.mouseTrackingReady) {
+          return;
+        }
 
-      onPositionChanged: mouse => {
-                           if (!initialized) {
-                             lastX = mouse.x;
-                             lastY = mouse.y;
-                             initialized = true;
-                             return;
-                           }
+        if (!root.globalMouseInitialized) {
+          root.globalLastMouseX = point.position.x;
+          root.globalLastMouseY = point.position.y;
+          root.globalMouseInitialized = true;
+          return;
+        }
 
-                           const deltaX = Math.abs(mouse.x - lastX);
-                           const deltaY = Math.abs(mouse.y - lastY);
-                           if (deltaX > 1 || deltaY > 1) {
-                             root.ignoreMouseHover = false;
-                             lastX = mouse.x;
-                             lastY = mouse.y;
-                           }
-                         }
-
-      Connections {
-        target: root
-        function onOpened() {
-          mouseMovementDetector.initialized = false;
+        const deltaX = Math.abs(point.position.x - root.globalLastMouseX);
+        const deltaY = Math.abs(point.position.y - root.globalLastMouseY);
+        if (deltaX + deltaY >= 5) {
+          root.ignoreMouseHover = false;
+          root.globalLastMouseX = point.position.x;
+          root.globalLastMouseY = point.position.y;
         }
       }
     }
@@ -1549,9 +1556,11 @@ SmartPanel {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: !Settings.data.appLauncher.ignoreMouseInput
+
                 onEntered: {
-                  root.ignoreMouseHover = false;
-                  selectedIndex = index;
+                  if (!root.ignoreMouseHover) {
+                    selectedIndex = index;
+                  }
                 }
                 onClicked: mouse => {
                              if (mouse.button === Qt.LeftButton) {
