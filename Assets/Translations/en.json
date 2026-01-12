@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Commands are executed via shell (sh -lc)<br>• Commands run in background (detached)<br>• Test buttons execute with current values",
       "info-command-info-label": "Hook command information",
-      "info-parameters-description": "• Wallpaper hooks: $1 = wallpaper path, $2 = screen name<br>• Theme toggle hooks: $1 = true/false (Dark Mode state)",
+      "info-parameters-description": "• Wallpaper hook: $1 = wallpaper path, $2 = screen name<br>• Theme toggle hook: $1 = true/false (Dark Mode state)<br>• Screen lock/unlock hooks: No parameters<br>• Performance mode hooks: No parameters<br>• Session hook: $1 = action (shutdown/reboot)",
       "info-parameters-label": "Available parameters",
       "performance-mode-disabled-description": "Command to be executed when Noctalia Performance Mode is disabled.",
       "performance-mode-disabled-label": "Performance mode disabled",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Command to be executed when the lock screen is unlocked.",
       "screen-unlock-label": "Screen unlocked",
       "screen-unlock-placeholder": "e.g., notify-send \"Screen\" \"Unlocked\"",
+      "session-description": "Command to be executed before shutdown or reboot. Receives action type as $1 (shutdown/reboot).",
+      "session-label": "Session end",
+      "session-placeholder": "e.g., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Configure commands to be executed when system events occur.",
       "system-hooks-enable-description": "Enable or disable all hook commands.",
       "system-hooks-enable-label": "Enable hooks",
