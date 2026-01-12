@@ -473,16 +473,42 @@ SmartPanel {
     selectedIndex = 0;
   }
 
+  // Check if current provider allows wrap navigation (default true)
+  readonly property bool allowWrapNavigation: {
+    var provider = activeProvider || currentProvider;
+    return provider && provider.wrapNavigation !== undefined ? provider.wrapNavigation : true;
+  }
+
   // Navigation functions
+  function selectNext() {
+    if (results.length > 0 && selectedIndex < results.length - 1) {
+      selectedIndex++;
+    }
+  }
+
+  function selectPrevious() {
+    if (results.length > 0 && selectedIndex > 0) {
+      selectedIndex--;
+    }
+  }
+
   function selectNextWrapped() {
     if (results.length > 0) {
-      selectedIndex = (selectedIndex + 1) % results.length;
+      if (allowWrapNavigation) {
+        selectedIndex = (selectedIndex + 1) % results.length;
+      } else {
+        selectNext();
+      }
     }
   }
 
   function selectPreviousWrapped() {
     if (results.length > 0) {
-      selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length;
+      if (allowWrapNavigation) {
+        selectedIndex = (((selectedIndex - 1) % results.length) + results.length) % results.length;
+      } else {
+        selectPrevious();
+      }
     }
   }
 
