@@ -160,6 +160,11 @@ Singleton {
           "requiresThemesFolder": false
         },
         {
+          "name": "legcord",
+          "path": "~/.config/legcord",
+          "requiresThemesFolder": false
+        },
+        {
           "name": "equibop",
           "path": "~/.config/equibop",
           "requiresThemesFolder": false
