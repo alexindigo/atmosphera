@@ -177,7 +177,8 @@
     "iconMode": "tabler",
     "showIconBackground": false,
     "ignoreMouseInput": false,
-    "screenshotAnnotationTool": ""
+    "screenshotAnnotationTool": "",
+    "overviewLayer": false
   },
   "controlCenter": {
     "position": "close_to_bar_button",

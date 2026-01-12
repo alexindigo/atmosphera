@@ -393,6 +393,7 @@ Singleton {
       property bool showIconBackground: false
       property bool ignoreMouseInput: false
       property string screenshotAnnotationTool: ""
+      property bool overviewLayer: false
     }
 
     // control center

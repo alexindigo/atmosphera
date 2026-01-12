@@ -998,6 +998,8 @@
       "settings-icon-mode-label": "Use native icons",
       "settings-ignore-mouse-input-description": "Disable mouse interaction and scrollwheel in the launcher.",
       "settings-ignore-mouse-input-label": "Ignore mouse input",
+      "settings-overlay-layer-description": "Display the launcher on the overlay layer, above fullscreen windows. When enabled, the launcher will not attach to the bar.",
+      "settings-overlay-layer-label": "Show above fullscreen",
       "settings-position-description": "Choose where the launcher panel appears.",
       "settings-show-categories-description": "Show category tabs for filtering applications.",
       "settings-show-categories-label": "Show categories",

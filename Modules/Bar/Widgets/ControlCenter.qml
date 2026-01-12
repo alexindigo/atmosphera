@@ -124,7 +124,7 @@ NIconButton {
                    }
 
                    if (action === "open-launcher") {
-                     PanelService.getPanel("launcherPanel", screen)?.toggle();
+                     PanelService.toggleLauncher(screen);
                    } else if (action === "open-settings") {
                      var panel = PanelService.getPanel("settingsPanel", screen);
                      panel.requestedTab = SettingsPanel.Tab.General;
@@ -151,7 +151,7 @@ NIconButton {
       contextMenu.openAtItem(root, screen);
     }
   }
-  onMiddleClicked: PanelService.getPanel("launcherPanel", screen)?.toggle()
+  onMiddleClicked: PanelService.toggleLauncher(screen)
 
   IconImage {
     id: customOrDistroLogo
