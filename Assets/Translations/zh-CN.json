@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• 命令通过 shell 执行（sh -lc）<br>• 命令在后台运行（分离）<br>• 测试按钮使用当前值执行",
       "info-command-info-label": "钩子命令信息",
-      "info-parameters-description": "• 壁纸钩子：$1 = 壁纸路径, $2 = 屏幕名称<br>• 主题切换钩子：$1 = true/false（深色模式状态）",
+      "info-parameters-description": "• 壁纸钩子：$1 = 壁纸路径，$2 = 屏幕名称<br>• 主题切换钩子：$1 = true/false（深色模式状态）<br>• 屏幕锁定/解锁钩子：无参数<br>• 性能模式钩子：无参数<br>• 会话钩子：$1 = 操作（关机/重启）",
       "info-parameters-label": "可用参数",
       "performance-mode-disabled-description": "禁用 Noctalia 性能模式时执行的命令。",
       "performance-mode-disabled-label": "性能模式已禁用",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "屏幕解锁时执行的命令。",
       "screen-unlock-label": "屏幕已解锁",
       "screen-unlock-placeholder": "例如：notify-send \"屏幕\" \"已解锁\"",
+      "session-description": "在关机或重启前执行的命令。接收操作类型作为 $1（关机/重启）。",
+      "session-label": "会话结束",
+      "session-placeholder": "例如，notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "配置在系统事件发生时执行的命令。",
       "system-hooks-enable-description": "启用或禁用所有钩子命令。",
       "system-hooks-enable-label": "启用钩子",

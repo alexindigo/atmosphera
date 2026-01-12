@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
       "info-command-info-label": "Hook-Befehl-Informationen",
-      "info-parameters-description": "• Hintergrundbild-Hook: $1 = Hintergrundbild-Pfad, $2 = Bildschirmname<br>• Themenwechsel-Hook: $1 = true/false (Dunkelmodus-Status)",
+      "info-parameters-description": "• Wallpaper-Hook: $1 = Wallpaper-Pfad, $2 = Bildschirmname<br>• Theme-Umschalt-Hook: $1 = true/false (Dark-Mode-Status)<br>• Bildschirm-Sperr-/Entsperr-Hooks: Keine Parameter<br>• Performance-Modus-Hooks: Keine Parameter<br>• Session-Hook: $1 = Aktion (Herunterfahren/Neustart)",
       "info-parameters-label": "Verfügbare Parameter",
       "performance-mode-disabled-description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
       "performance-mode-disabled-label": "Leistungsmodus deaktiviert",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
       "screen-unlock-label": "Bildschirm entsperrt",
       "screen-unlock-placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\"",
+      "session-description": "Befehl, der vor dem Herunterfahren oder Neustart ausgeführt werden soll. Empfängt den Aktionstyp als $1 (Shutdown/Neustart).",
+      "session-label": "Sitzungsende",
+      "session-placeholder": "z.B. notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Befehle konfigurieren, die bei Systemereignissen ausgeführt werden.",
       "system-hooks-enable-description": "Alle Hook-Befehle aktivieren oder deaktivieren.",
       "system-hooks-enable-label": "Hooks aktivieren",

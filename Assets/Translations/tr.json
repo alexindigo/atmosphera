@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Komutlar kabuk (sh -lc) ile yürütülür<br>• Komutlar arka planda yürütülür (ayrık)<br>• Test düğmeleri mevcut değerlerle yürütülür",
       "info-command-info-label": "Hook komut bilgisi",
-      "info-parameters-description": "• Duvar kâğıdı hooks: $1 = duvar kâğıdı yolu, $2 = ekran adı<br>• Tema geçiş hooks: $1 = true/false (koyu mod durumu)",
+      "info-parameters-description": "• Duvar kağıdı kancası: $1 = duvar kağıdı yolu, $2 = ekran adı<br>• Tema değiştirme kancası: $1 = doğru/yanlış (Karanlık Mod durumu)<br>• Ekran kilitleme/kilidi açma kancaları: Parametre yok<br>• Performans modu kancaları: Parametre yok<br>• Oturum kancası: $1 = eylem (kapatma/yeniden başlatma)",
       "info-parameters-label": "Kullanılabilir parametreler",
       "performance-mode-disabled-description": "Noctalia performans modu devre dışı bırakıldığında çalıştırılacak komut.",
       "performance-mode-disabled-label": "Performans modu devre dışı bırakıldı",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Ekran kilidi açıldığında çalıştırılacak komut.",
       "screen-unlock-label": "Ekran kilidi açıldı",
       "screen-unlock-placeholder": "örn., notify-send \"Ekran\" \"Açıldı\"",
+      "session-description": "Kapatma veya yeniden başlatma öncesinde çalıştırılacak komut. Eylem türünü $1 olarak alır (kapatma/yeniden başlatma).",
+      "session-label": "Oturum sonu",
+      "session-placeholder": "örn., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Sistem olayları gerçekleştiğinde çalıştırılacak komutları yapılandırın.",
       "system-hooks-enable-description": "Tüm kanca komutlarını etkinleştirin veya devre dışı bırakın.",
       "system-hooks-enable-label": "Hooks etkinleştir",

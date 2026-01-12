@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• A parancsok shellen keresztül futnak (sh -lc)<br>• A parancsok a háttérben futnak (leválasztva)<br>• A tesztgombok az aktuális értékekkel futnak le",
       "info-command-info-label": "Hook parancsinformációk",
-      "info-parameters-description": "• Háttérkép hooks: $1 = háttérkép elérési útja, $2 = képernyő neve<br>• Témaváltó hooks: $1 = igaz/hamis (sötét mód állapota)",
+      "info-parameters-description": "• Háttérkép horog: $1 = háttérkép útvonala, $2 = képernyő neve<br>• Téma váltó horog: $1 = igaz/hamis (Sötét mód állapota)<br>• Képernyő zárolás/feloldás horgok: Nincsenek paraméterek<br>• Teljesítmény mód horgok: Nincsenek paraméterek<br>• Munkamenet horog: $1 = művelet (leállítás/újraindítás)",
       "info-parameters-label": "Elérhető paraméterek",
       "performance-mode-disabled-description": "Parancs, amely akkor fut le, ha a Noctalia teljesítmény mód ki van kapcsolva.",
       "performance-mode-disabled-label": "Teljesítmény mód kikapcsolva",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Parancs, amely a zárképernyő feloldásakor fut le.",
       "screen-unlock-label": "Képernyő feloldva",
       "screen-unlock-placeholder": "pl. notify-send \"Képernyő\" \"feloldva\"",
+      "session-description": "Parancs, amely a leállítás vagy újraindítás előtt végrehajtásra kerül. A művelet típusát $1-ként kapja meg (leállítás/újraindítás).",
+      "session-label": "Munkamenet vége",
+      "session-placeholder": "pl., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Parancsok, amelyek a rendszeresemények bekövetkezésekor futnak le.",
       "system-hooks-enable-description": "Összes hook parancs engedélyezése vagy letiltása.",
       "system-hooks-enable-label": "Hooks engedélyezése",

@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Commando's worden uitgevoerd via shell (sh -lc)<br>• Commando's draaien op de achtergrond (losgekoppeld)<br>• Testknoppen worden uitgevoerd met de huidige waarden",
       "info-command-info-label": "Informatie over hook-commando's",
-      "info-parameters-description": "• Wallpaper-hook: $1 = pad naar achtergrond, $2 = schermnaam<br>• Theme-toggle-hook: $1 = true/false (status donkere modus)",
+      "info-parameters-description": "• Achtergrond-hook: $1 = pad naar achtergrond, $2 = schermnaam<br>• Thema-schakel-hook: $1 = true/false (Dark Mode-status)<br>• Schermvergrendeling/ontgrendeling-hooks: Geen parameters<br>• Prestatiemodus-hooks: Geen parameters<br>• Sessie-hook: $1 = actie (afsluiten/herstarten)",
       "info-parameters-label": "Beschikbare parameters",
       "performance-mode-disabled-description": "Commando dat wordt uitgevoerd wanneer de Noctalia prestatiemodus wordt uitgeschakeld.",
       "performance-mode-disabled-label": "Prestatiemodus uitgeschakeld",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Commando dat wordt uitgevoerd wanneer het scherm wordt ontgrendeld.",
       "screen-unlock-label": "Scherm ontgrendeld",
       "screen-unlock-placeholder": "bijv. notify-send \"Scherm\" \"Ontgrendeld\"",
+      "session-description": "Commando dat moet worden uitgevoerd voor het afsluiten of opnieuw opstarten. Ontvangt actietype als $1 (afsluiten/opnieuw opstarten).",
+      "session-label": "Sessie beëindigen",
+      "session-placeholder": "bijv. notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Configureer commando's die worden uitgevoerd wanneer systeemgebeurtenissen plaatsvinden.",
       "system-hooks-enable-description": "Schakel alle hook-commando's in of uit.",
       "system-hooks-enable-label": "Hooks inschakelen",

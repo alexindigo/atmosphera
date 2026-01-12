@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Les commandes sont exécutées via le shell (sh -lc)<br>• Les commandes s'exécutent en arrière-plan (détachées)<br>• Les boutons de test s'exécutent avec les valeurs actuelles",
       "info-command-info-label": "Informations sur la commande de hook",
-      "info-parameters-description": "• Hooks fond d'écran : $1 = chemin du fond d'écran, $2 = nom de l'écran<br>• Hooks de bascule de thème : $1 = true/false (état du mode sombre)",
+      "info-parameters-description": "• Crochet de fond d'écran : $1 = chemin d'accès au fond d'écran, $2 = nom de l'écran<br>• Crochet de bascule de thème : $1 = vrai/faux (état du mode sombre)<br>• Crochets de verrouillage/déverrouillage d'écran : Aucun paramètre<br>• Crochets de mode de performance : Aucun paramètre<br>• Crochet de session : $1 = action (arrêt/redémarrage)",
       "info-parameters-label": "Paramètres disponibles",
       "performance-mode-disabled-description": "Commande à exécuter lorsque le mode performance noctalia est désactivé.",
       "performance-mode-disabled-label": "mode performance désactivé",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Commande à exécuter lorsque l'écran est déverrouillé.",
       "screen-unlock-label": "Écran déverrouillé",
       "screen-unlock-placeholder": "ex: notify-send \"Écran\" \"Déverrouillé\"",
+      "session-description": "Commande à exécuter avant l'arrêt ou le redémarrage. Reçoit le type d'action comme $1 (arrêt/redémarrage).",
+      "session-label": "Fin de session",
+      "session-placeholder": "p. ex., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Configurez des commandes à exécuter lors d'événements système.",
       "system-hooks-enable-description": "Activer ou désactiver toutes les commandes de hook.",
       "system-hooks-enable-label": "Activer les hooks",

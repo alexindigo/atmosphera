@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• コマンドはシェル (sh -lc) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",
       "info-command-info-label": "コマンド実行に関する情報",
-      "info-parameters-description": "• 壁紙フック: $1 = 壁紙のパス, $2 = 画面名<br>• テーマ切替フック: $1 = true/false（ダークモードの状態）",
+      "info-parameters-description": "• 壁紙フック：$1 = 壁紙パス、$2 = 画面名<br>• テーマ切り替えフック：$1 = true/false（ダークモードの状態）<br>• 画面ロック/ロック解除フック：パラメータなし<br>• パフォーマンスモードフック：パラメータなし<br>• セッションフック：$1 = アクション（シャットダウン/再起動）",
       "info-parameters-label": "利用可能なパラメータ（引数）",
       "performance-mode-disabled-description": "Noctalia パフォーマンスモードが無効になった際に実行されるコマンド。",
       "performance-mode-disabled-label": "パフォーマンスモード無効時",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "画面ロックが解除された際に実行されるコマンド。",
       "screen-unlock-label": "画面ロック解除時",
       "screen-unlock-placeholder": "例: notify-send \"Screen\" \"Unlocked\"",
+      "session-description": "シャットダウンまたは再起動の前に実行されるコマンド。アクションタイプを $1 (シャットダウン/再起動) として受け取ります。",
+      "session-label": "セッション終了",
+      "session-placeholder": "例：notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "システムイベントが発生した際に実行するコマンドを設定します。",
       "system-hooks-enable-description": "すべてのフックコマンドの有効・無効を切り替えます。",
       "system-hooks-enable-label": "フックの有効化",

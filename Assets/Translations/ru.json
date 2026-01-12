@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Команды выполняются через shell (sh -lc)<br>• Команды выполняются в фоновом режиме (отдельно)<br>• Кнопки 'Тест' выполняются с текущими значениями",
       "info-command-info-label": "Информация о команде хука",
-      "info-parameters-description": "• Хуки обоев: $1 = путь к обоям, $2 = имя экрана<br>• Хуки переключения темы: $1 = true/false (состояние темного режима)",
+      "info-parameters-description": "• Хук обоев: $1 = путь к обоям, $2 = имя экрана<br>• Хук переключения темы: $1 = true/false (состояние темного режима)<br>• Хуки блокировки/разблокировки экрана: Без параметров<br>• Хуки режима производительности: Без параметров<br>• Хук сеанса: $1 = действие (выключение/перезагрузка)",
       "info-parameters-label": "Доступные параметры",
       "performance-mode-disabled-description": "Команда для выполнения при выключении режима производительности Noctalia.",
       "performance-mode-disabled-label": "Режим производительности выключен",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Команда для выполнения при разблокировке экрана.",
       "screen-unlock-label": "Экран разблокирован",
       "screen-unlock-placeholder": "например, notify-send \"Экран\" \"Разблокирован\"",
+      "session-description": "Команда, выполняемая перед выключением или перезагрузкой. Получает тип действия как $1 (shutdown/reboot).",
+      "session-label": "Конец сессии",
+      "session-placeholder": "например, notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Настройка команд для выполнения при системных событиях.",
       "system-hooks-enable-description": "Включить или отключить все команды хуков.",
       "system-hooks-enable-label": "Включить хуки",

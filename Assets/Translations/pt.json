@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Comandos são executados via shell (sh -lc)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",
       "info-command-info-label": "Informações de comando do hook",
-      "info-parameters-description": "• Hooks de papel de parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hooks de alternância de tema: $1 = true/false (estado do modo escuro)",
+      "info-parameters-description": "• Hook de papel de parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hook de alternância de tema: $1 = verdadeiro/falso (estado do modo escuro)<br>• Hooks de bloqueio/desbloqueio de tela: Sem parâmetros<br>• Hooks de modo de desempenho: Sem parâmetros<br>• Hook de sessão: $1 = ação (desligar/reiniciar)",
       "info-parameters-label": "Parâmetros disponíveis",
       "performance-mode-disabled-description": "Comando a ser executado quando o modo de desempenho noctalia é desabilitado.",
       "performance-mode-disabled-label": "Modo de desempenho desabilitado",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Comando a ser executado quando a tela é desbloqueada.",
       "screen-unlock-label": "Tela desbloqueada",
       "screen-unlock-placeholder": "ex., notify-send \"Tela\" \"Desbloqueada\"",
+      "session-description": "Comando a ser executado antes do desligamento ou reinicialização. Recebe o tipo de ação como $1 (desligamento/reinicialização).",
+      "session-label": "Fim da sessão",
+      "session-placeholder": "p. ex., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Configure comandos para serem executados quando eventos do sistema ocorrerem.",
       "system-hooks-enable-description": "Ativa ou desativa todos os comandos de hook.",
       "system-hooks-enable-label": "Ativar hooks",

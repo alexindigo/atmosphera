@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
       "info-command-info-label": "Información de comandos de hook",
-      "info-parameters-description": "• Hooks de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla<br>• Hooks de cambio de tema: $1 = true/false (estado del modo oscuro)",
+      "info-parameters-description": "• Hook de fondo de pantalla: $1 = ruta del fondo de pantalla, $2 = nombre de la pantalla<br>• Hook de alternancia de tema: $1 = verdadero/falso (estado del modo oscuro)<br>• Hooks de bloqueo/desbloqueo de pantalla: Sin parámetros<br>• Hooks de modo de rendimiento: Sin parámetros<br>• Hook de sesión: $1 = acción (apagado/reinicio)",
       "info-parameters-label": "Parámetros disponibles",
       "performance-mode-disabled-description": "Comando a ejecutar cuando se deshabilita el modo de rendimiento de Noctalia.",
       "performance-mode-disabled-label": "Modo de rendimiento deshabilitado",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Comando a ejecutar cuando se desbloquea la pantalla.",
       "screen-unlock-label": "Pantalla desbloqueada",
       "screen-unlock-placeholder": "ej., notify-send \"Pantalla\" \"Desbloqueada\"",
+      "session-description": "Comando que se ejecutará antes del apagado o reinicio. Recibe el tipo de acción como $1 (apagado/reinicio).",
+      "session-label": "Fin de la sesión",
+      "session-placeholder": "p. ej., notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Configura comandos para que se ejecuten cuando ocurran eventos del sistema.",
       "system-hooks-enable-description": "Activa o desactiva todos los comandos de hooks.",
       "system-hooks-enable-label": "Activar hooks",

@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Ferman bi rêya shellê (sh -lc) tên meşandin<br>• Ferman di paşperdeyê de dimeşin (veqetandî)<br>• Bişkokên ceribandinê bi nirxên heyî dimeşin",
       "info-command-info-label": "Agahiyên fermana hook",
-      "info-parameters-description": "• Hooks dîwarê: $1 = riya dîwarê, $2 = navê ekranê<br>• Hooks guhertina mijarê: $1 = rast/derew (Rewşa Moda Tarî)",
+      "info-parameters-description": "• Hooka dîwêr: $1 = rêya dîwêr, $2 = navê ekranê<br>• Hooka guherîna mijarê: $1 = rast/derew (rewşa Moda Tarî)<br>• Hookên kilîtkirin/vekirina ekranê: Parametre tune<br>• Hookên moda performansê: Parametre tune<br>• Hooka danişînê: $1 = çalakî (girtin/ji nû ve destpêkirin)",
       "info-parameters-label": "Parametreyên berdest",
       "performance-mode-disabled-description": "Fermana ku dema moda performansê ya Noctalia bêbandor dibe, tê meşandin.",
       "performance-mode-disabled-label": "Rewaya kar rawestayî ye",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Fermana ku dema ekrana kilîtkirî vebe, bê tetbîqkirin.",
       "screen-unlock-label": "Ekrana vekirî ye",
       "screen-unlock-placeholder": "notify-send \"Screen\" \"Unlocked\"",
+      "session-description": "Fermana ku berî girtin an ji nû ve destpêkirinê were darve kirin. Cureya çalakiyê wekî $1 (girtin/ji nû ve destpêkirin) distîne.",
+      "session-label": "Dawiya rûniştinê",
+      "session-placeholder": "mînak, notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Fermanan saz bike ku dema bûyerên pergalê çêdibin werin darvekirin.",
       "system-hooks-enable-description": "Hemû fermanên hook çalak bike an jî neçalak bike.",
       "system-hooks-enable-label": "Hooks çalak bike",

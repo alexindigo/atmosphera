@@ -940,7 +940,7 @@
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
       "info-command-info-label": "Informacje o poleceniach hook",
-      "info-parameters-description": "• Hooks tapety: $1 = ścieżka tapety, $2 = nazwa ekranu<br>• Hooks zmiany motywu: $1 = true/false (stan trybu ciemnego)",
+      "info-parameters-description": "• Hak do tapety: $1 = ścieżka do tapety, $2 = nazwa ekranu<br>• Hak przełączania motywu: $1 = prawda/fałsz (stan trybu ciemnego)<br>• Haki blokowania/odblokowywania ekranu: Brak parametrów<br>• Haki trybu wydajności: Brak parametrów<br>• Hak sesji: $1 = akcja (zamknięcie/restart)",
       "info-parameters-label": "Dostępne parametry",
       "performance-mode-disabled-description": "Komenda do wykonania, gdy tryb wydajności Noctalia zostanie wyłączony.",
       "performance-mode-disabled-label": "Tryb wydajności wyłączony",
@@ -954,6 +954,9 @@
       "screen-unlock-description": "Polecenie do wykonania, gdy ekran zostanie odblokowany.",
       "screen-unlock-label": "Ekran odblokowany",
       "screen-unlock-placeholder": "np. notify-send \"Ekran\" \"Odblokowany\"",
+      "session-description": "Polecenie do wykonania przed zamknięciem lub ponownym uruchomieniem. Otrzymuje typ akcji jako $1 (zamknięcie/ponowne uruchomienie).",
+      "session-label": "Koniec sesji",
+      "session-placeholder": "np. notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Konfiguruj polecenia do wykonania podczas zdarzeń systemowych.",
       "system-hooks-enable-description": "Włącz lub wyłącz wszystkie polecenia hook.",
       "system-hooks-enable-label": "Włącz hooks",
