@@ -294,9 +294,6 @@
       "signal-text-very-poor": "信号：非常差"
     }
   },
-  "calendar": {
-    "weather-loading": "正在加载天气..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "无法加载更新日志数据，请稍后再试。",
@@ -446,6 +443,7 @@
     "volumes": "音量",
     "wallpaper": "壁纸",
     "weather": "天气",
+    "weather-loading": "正在加载天气...",
     "week": "周",
     "widgets": "小部件",
     "width": "宽度",

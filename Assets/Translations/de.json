@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Signal: Sehr schlecht"
     }
   },
-  "calendar": {
-    "weather-loading": "Wetter wird geladen..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Changelog-Daten konnten nicht geladen werden. Bitte versuche es später erneut.",
@@ -446,6 +443,7 @@
     "volumes": "Lautstärken",
     "wallpaper": "Hintergrundbild",
     "weather": "Wetter",
+    "weather-loading": "Wetter wird geladen...",
     "week": "Woche",
     "widgets": "Widgets",
     "width": "Breite",

@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Sinyal: Çok zayıf"
     }
   },
-  "calendar": {
-    "weather-loading": "Hava durumu yükleniyor..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Değişiklik günlüğü verileri yüklenemedi. Lütfen daha sonra tekrar dene.",
@@ -446,6 +443,7 @@
     "volumes": "Hacimler",
     "wallpaper": "Duvar kağıdı",
     "weather": "Hava durumu",
+    "weather-loading": "Hava durumu yükleniyor...",
     "week": "Hafta",
     "widgets": "Araçlar",
     "width": "Genişlik",

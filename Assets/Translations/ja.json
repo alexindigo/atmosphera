@@ -294,9 +294,6 @@
       "signal-text-very-poor": "信号：非常に悪い"
     }
   },
-  "calendar": {
-    "weather-loading": "天気を読み込み中..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "変更履歴データを読み込めませんでした。後ほど再試行してください。",
@@ -446,6 +443,7 @@
     "volumes": "ボリューム",
     "wallpaper": "壁紙",
     "weather": "天気",
+    "weather-loading": "天気を読み込み中...",
     "week": "週",
     "widgets": "ウィジェット",
     "width": "幅",

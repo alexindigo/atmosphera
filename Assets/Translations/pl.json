@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Sygnał: Bardzo słaby"
     }
   },
-  "calendar": {
-    "weather-loading": "Ładowanie pogody..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Nie można załadować dziennika zmian. Spróbuj ponownie później.",
@@ -446,6 +443,7 @@
     "volumes": "Tomy",
     "wallpaper": "Tapeta",
     "weather": "Pogoda",
+    "weather-loading": "Ładowanie pogody...",
     "week": "Tydzień",
     "widgets": "Widżety",
     "width": "Szerokość",
@@ -1719,8 +1717,8 @@
     },
     "signal": {
       "excellent": "Doskonały",
-      "good": "Dobry",
       "fair": "Przeciętny",
+      "good": "Dobry",
       "poor": "Słaby"
     }
   }

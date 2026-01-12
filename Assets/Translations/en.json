@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Signal: Very poor"
     }
   },
-  "calendar": {
-    "weather-loading": "Loading weather..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Unable to load changelog data. Please try again later.",
@@ -446,6 +443,7 @@
     "volumes": "Volumes",
     "wallpaper": "Wallpaper",
     "weather": "Weather",
+    "weather-loading": "Loading weather...",
     "week": "Week",
     "widgets": "Widgets",
     "width": "Width",

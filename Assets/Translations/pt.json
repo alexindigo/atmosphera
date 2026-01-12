@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Sinal: Muito fraco"
     }
   },
-  "calendar": {
-    "weather-loading": "Carregando o clima..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Não foi possível carregar os dados do changelog. Tente novamente mais tarde.",
@@ -446,6 +443,7 @@
     "volumes": "Volumes",
     "wallpaper": "Papel de parede",
     "weather": "Tempo",
+    "weather-loading": "Carregando o clima...",
     "week": "Semana",
     "widgets": "Widgets",
     "width": "Largura",

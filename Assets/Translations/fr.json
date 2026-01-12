@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Signal : Très faible"
     }
   },
-  "calendar": {
-    "weather-loading": "Chargement de la météo..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Impossible de charger les données du journal des modifications. Veuillez réessayer plus tard.",
@@ -446,6 +443,7 @@
     "volumes": "Volumes",
     "wallpaper": "Fond d’écran",
     "weather": "Météo",
+    "weather-loading": "Chargement de la météo...",
     "week": "Semaine",
     "widgets": "Widgets",
     "width": "Largeur",

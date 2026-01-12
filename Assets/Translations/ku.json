@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Nîşan: Gelekî qels"
     }
   },
-  "calendar": {
-    "weather-loading": "Rewşa bayê tê barkirin..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Agahiyên guhertinê barkirin pêkan nebû. Ji kerema xwe re paşê dîsa biceribîne.",
@@ -446,6 +443,7 @@
     "volumes": "Cild",
     "wallpaper": "Dîwarê xuyanî",
     "weather": "Hewa",
+    "weather-loading": "Rewşa bayê tê barkirin...",
     "week": "Hefte",
     "widgets": "Amûr",
     "width": "Firehî",

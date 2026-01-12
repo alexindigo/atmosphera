@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Сигнал: Очень слабый"
     }
   },
-  "calendar": {
-    "weather-loading": "Загрузка погоды..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Не удалось загрузить данные журнала изменений. Пожалуйста, попробуйте позже.",
@@ -446,6 +443,7 @@
     "volumes": "Тома",
     "wallpaper": "Обои",
     "weather": "Погода",
+    "weather-loading": "Загрузка погоды...",
     "week": "Неделя",
     "widgets": "Виджеты",
     "width": "Ширина",

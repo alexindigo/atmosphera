@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Jelerősség: Nagyon gyenge"
     }
   },
-  "calendar": {
-    "weather-loading": "Időjárás betöltése..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Nem sikerült betölteni a változási napló adatait. Kérjük, próbálja újra később.",
@@ -446,6 +443,7 @@
     "volumes": "Kötetek",
     "wallpaper": "Háttérkép",
     "weather": "Időjárás",
+    "weather-loading": "Időjárás betöltése...",
     "week": "Hét",
     "widgets": "Widgetek",
     "width": "Szélesség",

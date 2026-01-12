@@ -294,9 +294,6 @@
       "signal-text-very-poor": "Signaal: Zeer slecht"
     }
   },
-  "calendar": {
-    "weather-loading": "Weer laden..."
-  },
   "changelog": {
     "error": {
       "fetch-failed": "Kan changeloggegevens niet laden. Probeer het later opnieuw.",
@@ -446,6 +443,7 @@
     "volumes": "Volumes",
     "wallpaper": "Achtergrond",
     "weather": "Weer",
+    "weather-loading": "Weer laden...",
     "week": "Week",
     "widgets": "Widgets",
     "width": "Breedte",
