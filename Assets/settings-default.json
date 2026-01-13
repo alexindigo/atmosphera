@@ -81,7 +81,8 @@
     "shadowOffsetY": 3,
     "language": "",
     "allowPanelsOnScreenWithoutBar": true,
-    "showChangelogOnStartup": true
+    "showChangelogOnStartup": true,
+    "telemetryEnabled": true
   },
   "ui": {
     "fontDefault": "",
