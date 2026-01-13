@@ -4,7 +4,6 @@ import Quickshell.Wayland
 
 import qs.Commons
 import qs.Modules.MainScreen
-import qs.Services.Compositor
 import qs.Services.Noctalia
 import qs.Services.UI
 
@@ -27,9 +26,6 @@ Variants {
         var monitors = Settings.data.bar.monitors || [];
         shouldLoad = monitors.length === 0 || monitors.includes(modelData?.name);
       }
-
-      // If niri and in overview, hide everything
-      shouldLoad = shouldLoad && (!CompositorService.isNiri || !CompositorService.backend.overviewActive);
 
       if (shouldLoad) {
         Logger.d("AllScreens", "Screen activated: ", modelData?.name);
