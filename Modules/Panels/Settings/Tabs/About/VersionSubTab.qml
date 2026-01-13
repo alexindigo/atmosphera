@@ -766,7 +766,7 @@ ColumnLayout {
     label: I18n.tr("panels.about.telemetry-enabled")
     description: I18n.tr("panels.about.telemetry-desc")
     checked: Settings.data.general.telemetryEnabled
-    onCheckedChanged: Settings.data.general.telemetryEnabled = checked
+    onToggled: checked => Settings.data.general.telemetryEnabled = checked
   }
 
   NButton {
