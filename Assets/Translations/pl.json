@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Klawisze blokady",
       "types-title": "Zdarzenia wyzwalające OSD",
       "types-volume-description": "Pokazuj OSD podczas zmiany głośności wyjścia audio.",
-      "types-volume-label": "Głośność wyjściowa"
+      "types-volume-label": "Głośność wyjściowa",
+      "types-media-description": "Pokazuj OSD podczas zmiany stanu odtwarzania multimediów (odtwarzanie, pauza, pominięcie).",
+      "types-media-label": "Odtwarzanie multimediów"
     },
     "plugins": {
       "available-description": "Przeglądaj i instaluj wtyczki ze skonfigurowanych źródeł.",

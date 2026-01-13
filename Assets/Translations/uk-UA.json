@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Клавіші блокування",
       "types-title": "Події, що запускають OSD",
       "types-volume-description": "Показувати OSD, коли змінюється гучність аудіовиходу.",
-      "types-volume-label": "Вихідна гучність"
+      "types-volume-label": "Вихідна гучність",
+      "types-media-description": "Показувати OSD, коли змінюється стан відтворення медіа (відтворення, пауза, пропуск).",
+      "types-media-label": "Відтворення медіа"
     },
     "plugins": {
       "available-description": "Переглядайте та встановлюйте плагіни з налаштованих джерел.",

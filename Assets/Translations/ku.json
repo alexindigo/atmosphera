@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Kilîtên qeflê",
       "types-title": "Bûyerên destpêker ên OSD",
       "types-volume-description": "Dema ku asta dengê derketina bihîstwerê diguhere, OSD nîşan bide.",
-      "types-volume-label": "Hêjmara derketinê"
+      "types-volume-label": "Hêjmara derketinê",
+      "types-media-description": "Dema ku status of medya derbarê lêdan diguhere (lê dan, rawestandin, pêçkirin), OSD nîşan bide.",
+      "types-media-label": "Lêdana medya"
     },
     "plugins": {
       "available-description": "گەڕان بکە و پڵەگینەکان لە سەرچاوە ڕێکخراوەکان دابمەزرێنە.",

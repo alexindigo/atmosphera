@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Touches de verrouillage",
       "types-title": "Événements de déclenchement OSD",
       "types-volume-description": "Afficher l'OSD lorsque le volume de sortie audio change.",
-      "types-volume-label": "Volume de sortie"
+      "types-volume-label": "Volume de sortie",
+      "types-media-description": "Afficher l'OSD lorsque l'état de la lecture multimedia change (lecture, pause, saut).",
+      "types-media-label": "Lecture multimédia"
     },
     "plugins": {
       "available-description": "Parcourir et installer des plugins à partir des sources configurées.",

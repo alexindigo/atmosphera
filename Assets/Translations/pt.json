@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Teclas de bloqueio",
       "types-title": "Eventos de disparo OSD",
       "types-volume-description": "Mostrar o OSD quando o volume de saída de áudio mudar.",
-      "types-volume-label": "Volume de saída"
+      "types-volume-label": "Volume de saída",
+      "types-media-description": "Mostrar o OSD quando o estado da reprodução de mídia mudar (reproduzir, pausar, pular).",
+      "types-media-label": "Reprodução de mídia"
     },
     "plugins": {
       "available-description": "Navegue e instale plugins a partir de fontes configuradas.",

@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Lock keys",
       "types-title": "OSD trigger events",
       "types-volume-description": "Show OSD when audio output volume changes.",
-      "types-volume-label": "Output volume"
+      "types-volume-label": "Output volume",
+      "types-media-description": "Show OSD when media playback state changes (play, pause, skip).",
+      "types-media-label": "Media playback"
     },
     "plugins": {
       "available-description": "Browse and install plugins from configured sources.",

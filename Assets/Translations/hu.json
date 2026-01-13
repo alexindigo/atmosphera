@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Zárolási gombok",
       "types-title": "OSD kiváltó események",
       "types-volume-description": "OSD megjelenítése a hangkimenet hangerejének változásakor.",
-      "types-volume-label": "Kimeneti hangerő"
+      "types-volume-label": "Kimeneti hangerő",
+      "types-media-description": "OSD megjelenítése a médialejátszás állapotának megváltozásakor (lejátszás, szünet, kihagyás).",
+      "types-media-label": "Médialejátszás"
     },
     "plugins": {
       "available-description": "Bővítmények böngészése és telepítése a beállított forrásokból.",

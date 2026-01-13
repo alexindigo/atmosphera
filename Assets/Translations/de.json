@@ -1160,7 +1160,9 @@
       "types-lockkey-label": "Feststelltasten",
       "types-title": "OSD-Auslöseereignisse",
       "types-volume-description": "OSD anzeigen, wenn sich die Ausgabelautstärke ändert.",
-      "types-volume-label": "Ausgangslautstärke"
+      "types-volume-label": "Ausgangslautstärke",
+      "types-media-description": "OSD anzeigen, wenn sich der Medienwiedergabestatus ändert (Wiedergabe, Pause, Überspulen).",
+      "types-media-label": "Medienwiedergabe"
     },
     "plugins": {
       "available-description": "Plugins aus konfigurierten Quellen durchsuchen und installieren.",
