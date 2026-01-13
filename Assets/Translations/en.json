@@ -617,7 +617,7 @@
       "system-uptime": "Uptime:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetry data copied to clipboard",
-      "telemetry-desc": "Help improve Noctalia by sending completely anonymous system information on startup.",
+      "telemetry-desc": "Help improve Noctalia by sharing anonymous system info (screen resolution, compositor, distro). Sent once at startup, no tracking, data auto-deleted after 30 days.",
       "telemetry-enabled": "Send anonymous system information",
       "telemetry-show-data": "View data",
       "telemetry-title": "Privacy",

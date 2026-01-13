@@ -617,7 +617,7 @@
       "system-uptime": "正常运行时间：",
       "system-wm": "窗口管理器：",
       "telemetry-data-copied": "遥测数据已复制到剪贴板",
-      "telemetry-desc": "启动时发送完全匿名的系统信息，以帮助改进 Noctalia。",
+      "telemetry-desc": "通过分享匿名系统信息（屏幕分辨率、合成器、发行版）来帮助改进 Noctalia。 启动时发送一次，不进行跟踪，数据会在 30 天后自动删除。",
       "telemetry-enabled": "发送匿名系统信息",
       "telemetry-show-data": "查看数据",
       "telemetry-title": "隐私",

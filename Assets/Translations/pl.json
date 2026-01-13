@@ -617,7 +617,7 @@
       "system-uptime": "Czas pracy:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Dane telemetryczne skopiowane do schowka.",
-      "telemetry-desc": "Pomóż ulepszyć Noctalię, wysyłając całkowicie anonimowe informacje o systemie podczas uruchamiania.",
+      "telemetry-desc": "Pomóż ulepszyć Noctalię, udostępniając anonimowe informacje o systemie (rozdzielczość ekranu, kompozytor, dystrybucja). Wysyłane raz przy uruchomieniu, bez śledzenia, dane usuwane automatycznie po 30 dniach.",
       "telemetry-enabled": "Wyślij anonimowe informacje o systemie.",
       "telemetry-show-data": "Wyświetl dane",
       "telemetry-title": "Prywatność",

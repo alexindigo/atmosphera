@@ -617,7 +617,7 @@
       "system-uptime": "Uptime:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetriegegevens gekopieerd naar klembord",
-      "telemetry-desc": "Help Noctalia te verbeteren door bij het opstarten volledig anonieme systeeminformatie te verzenden.",
+      "telemetry-desc": "Help Noctalia te verbeteren door anonieme systeeminformatie (schermresolutie, compositor, distributie) te delen. Wordt eenmalig bij het opstarten verzonden, geen tracking, data wordt na 30 dagen automatisch verwijderd.",
       "telemetry-enabled": "Anonieme systeeminformatie verzenden",
       "telemetry-show-data": "Gegevens bekijken",
       "telemetry-title": "Privacy",

@@ -617,7 +617,7 @@
       "system-uptime": "Temps de disponibilité :",
       "system-wm": "WM :",
       "telemetry-data-copied": "Données de télémétrie copiées dans le presse-papiers",
-      "telemetry-desc": "Aidez à améliorer Noctalia en envoyant des informations système complètement anonymes au démarrage.",
+      "telemetry-desc": "Aidez à améliorer Noctalia en partageant des informations système anonymes (résolution d'écran, compositeur, distribution). Envoyé une fois au démarrage, pas de suivi, les données sont automatiquement supprimées après 30 jours.",
       "telemetry-enabled": "Envoyer des informations système anonymes",
       "telemetry-show-data": "Afficher les données",
       "telemetry-title": "Confidentialité",

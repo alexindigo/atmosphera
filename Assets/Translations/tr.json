@@ -617,7 +617,7 @@
       "system-uptime": "Çalışma süresi:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetri verileri panoya kopyalandı.",
-      "telemetry-desc": "Noctalia'yı başlatılırken tamamen anonim sistem bilgileri göndererek geliştirmeye yardımcı olun.",
+      "telemetry-desc": "Anonim sistem bilgisi (ekran çözünürlüğü, kompozitör, dağıtım) paylaşarak Noctalia'yı geliştirmeye yardımcı olun. Başlangıçta bir kez gönderilir, izleme yapılmaz, veriler 30 gün sonra otomatik olarak silinir.",
       "telemetry-enabled": "Anonim sistem bilgisi gönder.",
       "telemetry-show-data": "Verileri görüntüle",
       "telemetry-title": "Gizlilik",

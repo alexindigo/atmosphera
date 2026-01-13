@@ -617,7 +617,7 @@
       "system-uptime": "Betriebszeit:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetriedaten in die Zwischenablage kopiert",
-      "telemetry-desc": "Helfen Sie mit, Noctalia zu verbessern, indem Sie beim Start vollständig anonyme Systeminformationen senden.",
+      "telemetry-desc": "Hilf mit, Noctalia zu verbessern, indem du anonyme Systeminformationen (Bildschirmauflösung, Compositor, Distribution) teilst. Einmaliger Versand beim Start, kein Tracking, Daten werden nach 30 Tagen automatisch gelöscht.",
       "telemetry-enabled": "Anonyme Systeminformationen senden",
       "telemetry-show-data": "Daten anzeigen",
       "telemetry-title": "Datenschutz",
