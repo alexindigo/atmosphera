@@ -483,12 +483,15 @@ Loader {
                         "en": "dddd, MMMM d",
                         "es": "dddd, d 'de' MMMM",
                         "fr": "dddd d MMMM",
+                        "hu": "dddd, MMMM d.",
                         "ja": "yyyy年M月d日 dddd",
+                        "ku": "dddd, dê MMMM",
                         "nl": "dddd d MMMM",
                         "pt": "dddd, d 'de' MMMM",
                         "zh": "yyyy年M月d日 dddd"
                       };
-                      return I18n.locale.toString(Time.now, formats[lang] || "dddd, d MMMM");
+                      var dateString = I18n.locale.toString(Time.now, formats[lang] || "dddd, d MMMM");
+                      return dateString.charAt(0).toUpperCase() + dateString.slice(1);
                     }
                     pointSize: Style.fontSizeXL
                     color: Color.mOnSurfaceVariant
@@ -1030,6 +1033,10 @@ Loader {
                         elide: Text.ElideRight
                       }
                     }
+                  }
+
+                  Item {
+                    Layout.preferredWidth: Style.marginM
                   }
                 }
 
