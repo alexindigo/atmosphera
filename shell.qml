@@ -102,6 +102,7 @@ ShellRoot {
         PowerProfileService.init();
         HostService.init();
         GitHubService.init();
+        TelemetryService.init();
 
         delayedInitTimer.running = true;
         checkSetupWizard();
