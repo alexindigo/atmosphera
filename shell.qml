@@ -178,17 +178,6 @@ ShellRoot {
       return;
     }
 
-    // Wait for HostService to be fully ready
-    if (!HostService.isReady) {
-      Qt.callLater(checkSetupWizard);
-      return;
-    }
-
-    // No setup wizard on NixOS
-    if (HostService.isNixOS) {
-      return;
-    }
-
     setupWizardTimer.start();
   }
 
