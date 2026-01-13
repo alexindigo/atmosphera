@@ -303,20 +303,20 @@ Singleton {
     // Deep copy actions to preserve them even if QML object clears list
     var safeActions = [];
     if (notification.actions) {
-        for (var i = 0; i < notification.actions.length; i++) {
-            safeActions.push({
-                "identifier": notification.actions[i].identifier,
-                "actionObject": notification.actions[i]
-            });
-        }
+      for (var i = 0; i < notification.actions.length; i++) {
+        safeActions.push({
+                           "identifier": notification.actions[i].identifier,
+                           "actionObject": notification.actions[i]
+                         });
+      }
     }
     notifData.cachedActions = safeActions;
     notifData.metadata.originalId = data.originalId;
-    
+
     notification.tracked = true;
-    
+
     function onClosed() {
-        userDismissNotification(internalId);
+      userDismissNotification(internalId);
     }
     notification.closed.connect(onClosed);
     notifData.onClosed = onClosed;
@@ -339,21 +339,23 @@ Singleton {
     // Deep copy actions
     var safeActions = [];
     if (notification.actions) {
-        for (var i = 0; i < notification.actions.length; i++) {
-            safeActions.push({
-                "identifier": notification.actions[i].identifier,
-                "actionObject": notification.actions[i]
-            });
-        }
+      for (var i = 0; i < notification.actions.length; i++) {
+        safeActions.push({
+                           "identifier": notification.actions[i].identifier,
+                           "actionObject": notification.actions[i]
+                         });
+      }
     }
 
     // Store notification data
     activeNotifications[data.id] = {
       "notification": notification,
       "watcher": watcher,
-      "cachedActions": safeActions, // Cache actions
+      "cachedActions": safeActions // Cache actions
+                       ,
       "metadata": {
-        "originalId": data.originalId, // Store original ID
+        "originalId": data.originalId // Store original ID
+                      ,
         "timestamp": data.timestamp.getTime(),
         "duration": calculateDuration(data),
         "urgency": data.urgency,
@@ -363,9 +365,9 @@ Singleton {
     };
 
     notification.tracked = true;
-    
+
     function onClosed() {
-        userDismissNotification(data.id);
+      userDismissNotification(data.id);
     }
     notification.closed.connect(onClosed);
     activeNotifications[data.id].onClosed = onClosed;
@@ -432,8 +434,10 @@ Singleton {
       "timestamp": time,
       "progress": 1.0,
       "originalImage": image,
-      "cachedImage": image,  // Start with original, update when cached
-      "originalId": n.originalId || n.id || 0, // Ensure originalId is passed through
+      "cachedImage": image  // Start with original, update when cached
+                     ,
+      "originalId": n.originalId || n.id || 0 // Ensure originalId is passed through
+                    ,
       "actionsJson": JSON.stringify((n.actions || []).map(a => ({
                                                                   "text": (a.text || "").trim() || "Action",
                                                                   "identifier": a.identifier || ""
@@ -774,7 +778,7 @@ Singleton {
   function userDismissNotification(id) {
     const index = findNotificationIndex(id);
     if (index >= 0) {
-        activeList.remove(index);
+      activeList.remove(index);
     }
   }
 
@@ -799,77 +803,67 @@ Singleton {
     // 1. Try invoking via live object
     let invoked = false;
     const notifData = activeNotifications[id];
-    
-    if (!notifData) {
-        // No data
-    } else if (!notifData.notification) {
-        // No notification object
-    } else {
-        // Use cached actions if live actions are empty (which happens if app closed notification)
-        const actionsToUse = (notifData.notification.actions && notifData.notification.actions.length > 0) 
-                             ? notifData.notification.actions 
-                             : (notifData.cachedActions || []);
 
-        if (actionsToUse && actionsToUse.length > 0) {
-            
-             for (const item of actionsToUse) {
-               const id = item.identifier; // Works for both raw object and wrapper (if properties match)
-               const actionObj = item.actionObject ? item.actionObject : item; // Unwrap if wrapper
-              
-              if (id === actionId) {
-                 if (actionObj.invoke) {
-                     try {
-                        actionObj.invoke();
-                        invoked = true;
-                     } catch (e) {
-                        if (manualInvoke(notifData.metadata.originalId, id)) {
-                             invoked = true;
-                        }
-                     }
-                 } else {
-                     if (manualInvoke(notifData.metadata.originalId, id)) {
-                         invoked = true;
-                     }
-                 }
+    if (!notifData) {
+      // No data
+    } else if (!notifData.notification) {
+      // No notification object
+    } else {
+      // Use cached actions if live actions are empty (which happens if app closed notification)
+      const actionsToUse = (notifData.notification.actions && notifData.notification.actions.length > 0) ? notifData.notification.actions : (notifData.cachedActions || []);
+
+      if (actionsToUse && actionsToUse.length > 0) {
+        for (const item of actionsToUse) {
+          const id = item.identifier; // Works for both raw object and wrapper (if properties match)
+          const actionObj = item.actionObject ? item.actionObject : item; // Unwrap if wrapper
+
+          if (id === actionId) {
+            if (actionObj.invoke) {
+              try {
+                actionObj.invoke();
+                invoked = true;
+              } catch (e) {
+                if (manualInvoke(notifData.metadata.originalId, id)) {
+                  invoked = true;
+                }
+              }
+            } else {
+              if (manualInvoke(notifData.metadata.originalId, id)) {
+                invoked = true;
               }
             }
+          }
         }
+      }
     }
 
     if (!invoked) {
-        return false;
+      return false;
     }
 
     // Clear actions after use
     updateModel(activeList, id, "actionsJson", "[]");
     updateModel(historyList, id, "actionsJson", "[]");
     saveHistory();
-    
+
     return true;
   }
-  
+
   function manualInvoke(originalId, actionId) {
     if (!originalId) {
-        return false;
+      return false;
     }
-    
+
     try {
-        // Construct the signal emission using dbus-send
-        // dbus-send --session --type=signal /org/freedesktop/Notifications org.freedesktop.Notifications.ActionInvoked uint32:ID string:"KEY"
-        const args = [
-            "dbus-send", "--session",
-            "--type=signal",
-            "/org/freedesktop/Notifications",
-            "org.freedesktop.Notifications.ActionInvoked",
-            "uint32:" + originalId,
-            "string:" + actionId
-        ];
-        
-        Quickshell.execDetached(args);
-        return true;
+      // Construct the signal emission using dbus-send
+      // dbus-send --session --type=signal /org/freedesktop/Notifications org.freedesktop.Notifications.ActionInvoked uint32:ID string:"KEY"
+      const args = ["dbus-send", "--session", "--type=signal", "/org/freedesktop/Notifications", "org.freedesktop.Notifications.ActionInvoked", "uint32:" + originalId, "string:" + actionId];
+
+      Quickshell.execDetached(args);
+      return true;
     } catch (e) {
-        Logger.e("NotificationService", "Manual invoke failed: " + e);
-        return false;
+      Logger.e("NotificationService", "Manual invoke failed: " + e);
+      return false;
     }
   }
 

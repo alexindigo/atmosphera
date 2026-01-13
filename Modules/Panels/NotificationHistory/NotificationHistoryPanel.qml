@@ -333,7 +333,7 @@ SmartPanel {
                 property string notificationId: model.id
                 property bool isExpanded: scrollView.expandedId === notificationId
                 property bool canExpand: summaryText.truncated || bodyText.truncated || (actionsList.length > 0) // Explicitly allow expand if actions exist
-                
+
                 // Parse actions safely
                 property var actionsList: {
                   try {
@@ -467,13 +467,13 @@ SmartPanel {
                         elide: Text.ElideRight
                         visible: text.length > 0
                       }
-                      
+
                       // Actions Flow
                       Flow {
                         width: parent.width
                         spacing: Style.marginS
                         visible: notificationDelegate.actionsList.length > 0
-                        
+
                         Repeater {
                           model: notificationDelegate.actionsList
                           delegate: NButton {
@@ -483,12 +483,12 @@ SmartPanel {
                             textColor: Color.mOnPrimary
                             outlined: false
                             implicitHeight: 24
-                            
+
                             // Capture modelData in a property to avoid reference errors
                             property var actionData: modelData
-                            
+
                             fontWeight: Style.fontWeightRegular // Use regular font weight
-                            
+
                             onClicked: {
                               NotificationService.invokeAction(notificationDelegate.notificationId, actionData.identifier);
                             }
