@@ -869,6 +869,9 @@ Singleton {
         property var launcherProvider: null
         property var controlCenterWidget: null
 
+        // Panel state: which screen the plugin's panel is currently open on (null if closed)
+        property var panelOpenScreen: null
+
         // IPC handlers storage
         property var ipcHandlers: ({})
 
