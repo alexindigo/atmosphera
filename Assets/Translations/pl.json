@@ -143,7 +143,9 @@
       "show-num-lock-description": "Wyświetl status Num Lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Wyświetl status Scroll Lock.",
-      "show-scroll-lock-label": "Scroll Lock"
+      "show-scroll-lock-label": "Scroll Lock",
+      "hide-when-off-label": "Ukryj gdy wyłączony",
+      "hide-when-off-description": "Ukryj wskaźnik, gdy klawisz jest nieaktywny."
     },
     "media-mini": {
       "compact-mode-description": "Włącz układ oszczędzający miejsce dla panelu odtwarzacza multimedialnego.",

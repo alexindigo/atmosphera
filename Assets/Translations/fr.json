@@ -143,7 +143,9 @@
       "show-num-lock-description": "Afficher l'état du verrouillage numérique.",
       "show-num-lock-label": "Verr Num",
       "show-scroll-lock-description": "Afficher l'état du verrouillage du défilement.",
-      "show-scroll-lock-label": "Verr Maj"
+      "show-scroll-lock-label": "Verr Maj",
+      "hide-when-off-label": "Masquer lorsque désactivé",
+      "hide-when-off-description": "Masquer l'indicateur lorsque la touche n'est pas active."
     },
     "media-mini": {
       "compact-mode-description": "Activer une disposition compacte pour le panneau du lecteur multimédia.",

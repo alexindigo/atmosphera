@@ -143,7 +143,9 @@
       "show-num-lock-description": "Отображать статус Num Lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Отображать статус Scroll Lock.",
-      "show-scroll-lock-label": "Scroll Lock"
+      "show-scroll-lock-label": "Scroll Lock",
+      "hide-when-off-label": "Скрывать, когда отключено",
+      "hide-when-off-description": "Скрыть индикатор, когда клавиша неактивна."
     },
     "media-mini": {
       "compact-mode-description": "Включить компактный режим для панели медиаплеера.",

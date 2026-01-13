@@ -1,1 +1,14 @@
-{}
+{
+    "bar": {
+        "lock-keys": {
+            "show-caps-lock-description": "顯示大寫鎖定狀態。",
+            "show-caps-lock-label": "大寫鎖定",
+            "show-num-lock-description": "顯示數字鎖定鍵狀態。",
+            "show-num-lock-label": "數字鎖定",
+            "show-scroll-lock-description": "顯示滾動鎖定狀態。",
+            "show-scroll-lock-label": "滾動鎖定",
+            "hide-when-off-label": "關閉時隱藏",
+            "hide-when-off-description": "當按鍵不活躍時隱藏指示器。"
+        }
+    }
+}

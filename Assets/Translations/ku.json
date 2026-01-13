@@ -143,7 +143,9 @@
       "show-num-lock-description": "Rewşa Num Lock nîşan bide.",
       "show-num-lock-label": "Girtina jimareyan",
       "show-scroll-lock-description": "Rewşa Scroll Lock nîşan bide.",
-      "show-scroll-lock-label": "Girtina rêçêkirinê"
+      "show-scroll-lock-label": "Girtina rêçêkirinê",
+      "hide-when-off-label": "Veşêre gava ku ne çalak e",
+      "hide-when-off-description": "Eger nexwan çalak nabe nîşanek veşêre."
     },
     "media-mini": {
       "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo panelê lîstikvanê medyayê.",
