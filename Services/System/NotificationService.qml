@@ -300,7 +300,7 @@ Singleton {
     const notifData = activeNotifications[internalId];
     notifData.notification = notification;
 
-    // Deep copy actions to preserve them even if QML object clears the list
+    // Deep copy actions to preserve them even if QML object clears list
     var safeActions = [];
     if (notification.actions) {
         for (var i = 0; i < notification.actions.length; i++) {
