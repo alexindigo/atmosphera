@@ -10,7 +10,64 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  // Choose icon based on charge and charging state
+  // Primary battery device (prioritizes laptop over Bluetooth)
+  readonly property var primaryDevice: {
+    var laptopBattery = findLaptopBattery();
+    if (laptopBattery !== null) {
+      return laptopBattery;
+    }
+
+    var bluetoothDevice = findBluetoothBatteryDevice();
+    if (bluetoothDevice !== null) {
+      return bluetoothDevice;
+    }
+
+    return null;
+  }
+
+  readonly property string primaryBatteryType: {
+    if (findLaptopBattery() !== null) {
+      return "laptop";
+    } else if (findBluetoothBatteryDevice() !== null) {
+      return "bluetooth";
+    }
+    return "none";
+  }
+
+  readonly property real batteryPercentage: {
+    if (primaryBatteryType === "laptop" && primaryDevice) {
+      return (primaryDevice.percentage || 0) * 100;
+    } else if (primaryBatteryType === "bluetooth" && primaryDevice) {
+      return (primaryDevice.battery || 0) * 100;
+    }
+    return 0;
+  }
+
+  readonly property bool batteryCharging: {
+    if (primaryBatteryType === "laptop" && primaryDevice) {
+      return primaryDevice.state === UPowerDeviceState.Charging;
+    }
+    return false;
+  }
+
+  readonly property bool batteryReady: {
+    if (primaryBatteryType === "laptop" && primaryDevice) {
+      return primaryDevice.ready && primaryDevice.percentage !== undefined;
+    } else if (primaryBatteryType === "bluetooth" && primaryDevice) {
+      return primaryDevice.connected && primaryDevice.batteryAvailable && primaryDevice.battery !== undefined;
+    }
+    return false;
+  }
+
+  readonly property bool batteryPresent: {
+    if (primaryBatteryType === "laptop" && primaryDevice) {
+      return (primaryDevice.type === UPowerDeviceType.Battery && primaryDevice.isPresent !== undefined) ? primaryDevice.isPresent : (primaryDevice.ready && primaryDevice.percentage !== undefined);
+    } else if (primaryBatteryType === "bluetooth" && primaryDevice) {
+      return primaryDevice.connected === true;
+    }
+    return false;
+  }
+
   function getIcon(percent, charging, isReady) {
     if (!isReady) {
       return "battery-exclamation";
@@ -31,7 +88,6 @@ Singleton {
     }
   }
 
-  // Find first connected Bluetooth device with battery (gamepad, etc.)
   function findBluetoothBatteryDevice() {
     if (!BluetoothService.devices) {
       return null;
@@ -46,14 +102,10 @@ Singleton {
     return null;
   }
 
-  // Find laptop battery device, only returns actual battery (not displayDevice as fallback)
   function findLaptopBattery() {
-    // First check displayDevice if it's a laptop battery
     if (UPower.displayDevice && UPower.displayDevice.isLaptopBattery) {
       return UPower.displayDevice;
     }
-
-    // Then search through all devices
     if (!UPower.devices) {
       return null;
     }
@@ -68,7 +120,6 @@ Singleton {
     return null;
   }
 
-  // Check if any battery is available (laptop or Bluetooth/gamepad)
   function hasAnyBattery() {
     var laptopBattery = findLaptopBattery();
     var bluetoothDevice = findBluetoothBatteryDevice();
