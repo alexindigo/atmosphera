@@ -1160,9 +1160,7 @@
       "types-lockkey-label": "ロックキー",
       "types-title": "OSD のトリガーイベント",
       "types-volume-description": "出力音量が変更された時に OSD を表示します。",
-      "types-volume-label": "出力音量",
-      "types-media-description": "メディア再生状態が変更された時に OSD を表示します(再生、一時停止、スキップ)。",
-      "types-media-label": "メディア再生"
+      "types-volume-label": "出力音量"
     },
     "plugins": {
       "available-description": "設定されたソースからプラグインを参照してインストールします。",

@@ -1160,9 +1160,7 @@
       "types-lockkey-label": "Kilit tuşları",
       "types-title": "OSD tetikleme olayları",
       "types-volume-description": "Ses çıkış düzeyi değiştiğinde OSD'yi göster.",
-      "types-volume-label": "Çıkış sesi",
-      "types-media-description": "Medya oynatma durumu değiştiğinde OSD'yi göster (oynat, duraklat, atla).",
-      "types-media-label": "Medya oynatma"
+      "types-volume-label": "Çıkış sesi"
     },
     "plugins": {
       "available-description": "Yapılandırılmış kaynaklardan eklentilere göz atın ve yükleyin.",

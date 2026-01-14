@@ -1160,9 +1160,7 @@
       "types-lockkey-label": "Vergrendeltoetsen",
       "types-title": "OSD triggergebeurtenissen",
       "types-volume-description": "Toon het OSD wanneer het uitvoervolume verandert.",
-      "types-volume-label": "Uitvoervolume",
-      "types-media-description": "Toon het OSD wanneer de mediastatus verandert (afspelen, pauzeren, overslaan).",
-      "types-media-label": "Media afspelen"
+      "types-volume-label": "Uitvoervolume"
     },
     "plugins": {
       "available-description": "Blader door en installeer plugins vanuit geconfigureerde bronnen.",

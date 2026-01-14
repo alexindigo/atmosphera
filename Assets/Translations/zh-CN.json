@@ -1160,9 +1160,7 @@
       "types-lockkey-label": "锁定键",
       "types-title": "OSD 触发事件",
       "types-volume-description": "当音频输出音量发生变化时显示 OSD。",
-      "types-volume-label": "输出音量",
-      "types-media-description": "当媒体播放状态发生变化时显示 OSD（播放、暂停、跳过）。",
-      "types-media-label": "媒体播放"
+      "types-volume-label": "输出音量"
     },
     "plugins": {
       "available-description": "浏览并安装来自已配置源的插件。",
