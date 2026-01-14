@@ -85,6 +85,8 @@
       "display-command-output-stream-description": "輸入一個要持續執行的指令",
       "dynamic-text": "動態文字",
       "hide-mode-always-expanded": "總是展開",
+      "ipc-identifier-description": "IPC 命令的唯一識別碼。使用此識別碼以及「qs -c noctalia-shell ipc call cb [動作] [識別碼]」透過 IPC 控制此按鈕。",
+      "ipc-identifier-label": "IPC 識別碼",
       "left-click-description": "在點擊左鍵時要執行的指令",
       "left-click-label": "點擊左鍵",
       "middle-click-description": "在點擊中鍵時要執行的指令",
@@ -478,6 +480,8 @@
       "title": "音訊"
     },
     "bar": {
+      "appearance-hide-on-overview-description": "當合成器概觀處於活動狀態時，隱藏欄並關閉面板。",
+      "appearance-hide-on-overview-label": "在概觀中隱藏列",
       "appearance-margins-horizontal": "水平",
       "appearance-margins-vertical": "垂直",
       "monitors-title": "在顯示器顯示",
@@ -701,6 +705,7 @@
   },
   "placeholders": {
     "command-example": "echo \"Hello World\"",
+    "enter-ipc-identifier": "輸入 IPC 命令的唯一識別碼",
     "enter-text-to-collapse": "例如: 'nothing is playing'. 也可用 /regex/ 指定格式",
     "search-icons": "例如: noctalia, niri, battery, cloud"
   },

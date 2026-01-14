@@ -103,7 +103,7 @@
       "hide-mode-label": "Hide mode",
       "hide-mode-max-transparent": "Max expanded but transparent",
       "icon-description": "Select an icon from the library.",
-      "ipc-identifier-description": "Unique identifier for IPC commands. Use this identifier with 'qs -c noctalia-loner ipc call cb [action] [identifier]' to control this button via IPC.",
+      "ipc-identifier-description": "Unique identifier for IPC commands. Use this identifier with 'qs -c noctalia-shell ipc call cb [action] [identifier]' to control this button via IPC.",
       "ipc-identifier-label": "IPC Identifier",
       "left-click-description": "Command to execute when the button is left-clicked.",
       "left-click-label": "Left click",
