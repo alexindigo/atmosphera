@@ -4,7 +4,7 @@
 if [ "$#" -ne 1 ]; then
     # Print usage information to standard error.
     echo "Error: No application specified." >&2
-    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri}" >&2
+    echo "Usage: $0 {kitty|ghostty|foot|alacritty|wezterm|fuzzel|walker|pywalfox|cava|niri|hyprland|mango}" >&2
     exit 1
 fi
 
@@ -266,7 +266,7 @@ cava)
 niri)
     echo "🎨 Applying 'noctalia' theme to niri..."
     CONFIG_FILE="$HOME/.config/niri/config.kdl"
-    INCLUDE_LINE='include "./noctalia.kdl"'
+    INCLUDE_LINE='\ninclude "./noctalia.kdl"\n'
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -289,7 +289,7 @@ niri)
 hyprland)
     echo "🎨 Applying 'noctalia' theme to Hyprland..."
     CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
-    INCLUDE_LINE="source = ~/.config/hypr/noctalia/noctalia-colors.conf"
+    INCLUDE_LINE="\nsource = ~/.config/hypr/noctalia/noctalia-colors.conf\n"
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -320,7 +320,7 @@ mango)
     THEME_FILE="$CONFIG_DIR/noctalia.conf"
     BACKUP_FILE="$CONFIG_DIR/theme.conf.bak"
     # This sources the noctalia theme file
-    SOURCE_LINE="source = $THEME_FILE"
+    SOURCE_LINE="\nsource = $THEME_FILE\n"
 
     # Color variables that should be moved to theme file
     COLOR_VARS="shadowscolor|rootcolor|bordercolor|focuscolor|maximizescreencolor|urgentcolor|scratchpadcolor|globalcolor|overlaycolor"
