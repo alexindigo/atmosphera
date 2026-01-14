@@ -5,9 +5,9 @@ import Quickshell.Io
 import qs.Commons
 import qs.Modules.Bar.Extras
 import qs.Modules.Panels.Settings
+import qs.Services.Control
 import qs.Services.UI
 import qs.Widgets
-import qs.Services.Control
 
 Item {
   id: root
