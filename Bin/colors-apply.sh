@@ -266,13 +266,13 @@ cava)
 niri)
     echo "🎨 Applying 'noctalia' theme to niri..."
     CONFIG_FILE="$HOME/.config/niri/config.kdl"
-    INCLUDE_LINE='\ninclude "./noctalia.kdl"\n'
+    INCLUDE_LINE='include "./noctalia.kdl"'
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
         echo "Config file not found, creating $CONFIG_FILE..."
         mkdir -p "$(dirname "$CONFIG_FILE")"
-        echo "$INCLUDE_LINE" >"$CONFIG_FILE"
+        echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
         echo "Created new config file with noctalia theme."
     else
         # Check if include line already exists
@@ -280,7 +280,7 @@ niri)
             echo "Theme already included, skipping modification."
         else
             # Add the include line to the end of the file
-            echo "$INCLUDE_LINE" >>"$CONFIG_FILE"
+            echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
             echo "✅ Added noctalia theme include to config."
         fi
     fi
@@ -289,13 +289,13 @@ niri)
 hyprland)
     echo "🎨 Applying 'noctalia' theme to Hyprland..."
     CONFIG_FILE="$HOME/.config/hypr/hyprland.conf"
-    INCLUDE_LINE="\nsource = ~/.config/hypr/noctalia/noctalia-colors.conf\n"
+    INCLUDE_LINE="source = ~/.config/hypr/noctalia/noctalia-colors.conf"
 
     # Check if the config file exists.
     if [ ! -f "$CONFIG_FILE" ]; then
         echo "Config file not found, creating $CONFIG_FILE..."
         mkdir -p "$(dirname "$CONFIG_FILE")"
-        echo "$INCLUDE_LINE" >"$CONFIG_FILE"
+        echo -e "\n$INCLUDE_LINE\n" >"$CONFIG_FILE"
         echo "Created new config file with noctalia theme."
     else
         # Check if include line already exists
@@ -303,7 +303,7 @@ hyprland)
             echo "Theme already included, skipping modification."
         else
             # Add the include line to the end of the file
-            echo "$INCLUDE_LINE" >>"$CONFIG_FILE"
+            echo -e "\n$INCLUDE_LINE\n" >>"$CONFIG_FILE"
             echo "✅ Added noctalia theme include to config."
         fi
     fi
@@ -320,7 +320,7 @@ mango)
     THEME_FILE="$CONFIG_DIR/noctalia.conf"
     BACKUP_FILE="$CONFIG_DIR/theme.conf.bak"
     # This sources the noctalia theme file
-    SOURCE_LINE="\nsource = $THEME_FILE\n"
+    SOURCE_LINE="source = $THEME_FILE"
 
     # Color variables that should be moved to theme file
     COLOR_VARS="shadowscolor|rootcolor|bordercolor|focuscolor|maximizescreencolor|urgentcolor|scratchpadcolor|globalcolor|overlaycolor"
@@ -363,10 +363,10 @@ mango)
         if [ -f "$MAIN_CONFIG" ]; then
             echo "" >>"$MAIN_CONFIG"
             echo "# This sources the noctalia theme" >>"$MAIN_CONFIG"
-            echo "$SOURCE_LINE" >>"$MAIN_CONFIG"
+            echo -e "\n$SOURCE_LINE\n" >>"$MAIN_CONFIG"
         else
             echo "# This sources the noctalia theme" >"$MAIN_CONFIG"
-            echo "$SOURCE_LINE" >>"$MAIN_CONFIG"
+            echo -e "\n$SOURCE_LINE\n" >>"$MAIN_CONFIG"
         fi
 
         echo "✅ Added noctalia theme to config."
