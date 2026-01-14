@@ -143,7 +143,9 @@
       "show-num-lock-description": "显示数字锁定键状态。",
       "show-num-lock-label": "数字锁定",
       "show-scroll-lock-description": "显示滚动锁定状态。",
-      "show-scroll-lock-label": "滚动锁定"
+      "show-scroll-lock-label": "滚动锁定",
+      "hide-when-off-label": "关闭时隐藏",
+      "hide-when-off-description": "当按键不活跃时隐藏指示器。"
     },
     "media-mini": {
       "compact-mode-description": "启用媒体播放器面板的节省空间布局。",

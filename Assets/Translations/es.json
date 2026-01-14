@@ -143,7 +143,9 @@
       "show-num-lock-description": "Mostrar el estado de Bloq Num.",
       "show-num-lock-label": "Bloq Num",
       "show-scroll-lock-description": "Mostrar el estado de Bloq Despl.",
-      "show-scroll-lock-label": "Bloq Despl"
+      "show-scroll-lock-label": "Bloq Despl",
+      "hide-when-off-label": "Ocultar cuando está desactivado",
+      "hide-when-off-description": "Ocultar el indicador cuando la tecla no está activa."
     },
     "media-mini": {
       "compact-mode-description": "Habilitar un diseño que ahorre espacio para el panel del reproductor multimedia.",

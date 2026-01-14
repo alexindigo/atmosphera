@@ -145,7 +145,9 @@
       "show-num-lock-description": "Display Num Lock status.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Display Scroll Lock status.",
-      "show-scroll-lock-label": "Scroll Lock"
+      "show-scroll-lock-label": "Scroll Lock",
+      "hide-when-off-label": "Hide when off",
+      "hide-when-off-description": "Hide the indicator when the key is not active."
     },
     "media-mini": {
       "compact-mode-description": "Enable a space-saving layout for the media player panel.",

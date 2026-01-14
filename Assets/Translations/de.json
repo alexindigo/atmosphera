@@ -143,7 +143,9 @@
       "show-num-lock-description": "Num-Lock-Status anzeigen.",
       "show-num-lock-label": "Num-Taste",
       "show-scroll-lock-description": "Scroll-Lock-Status anzeigen.",
-      "show-scroll-lock-label": "Rollen-Taste"
+      "show-scroll-lock-label": "Rollen-Taste",
+      "hide-when-off-label": "Ausblenden, wenn deaktiviert",
+      "hide-when-off-description": "Verstecke die Anzeige, wenn die Taste nicht aktiv ist."
     },
     "media-mini": {
       "compact-mode-description": "Aktiviere ein platzsparendes Layout für das Medienplayer-Panel.",

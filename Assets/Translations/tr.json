@@ -143,7 +143,9 @@
       "show-num-lock-description": "Sayı Kilidi durumunu göster.",
       "show-num-lock-label": "Sayı Kilidi",
       "show-scroll-lock-description": "Kaydırma Kilidi durumunu göster.",
-      "show-scroll-lock-label": "Kaydırma Kilidi"
+      "show-scroll-lock-label": "Kaydırma Kilidi",
+      "hide-when-off-label": "Kapatıldığında gizle",
+      "hide-when-off-description": "Tuş etkin olmadığında göstergeyi gizle."
     },
     "media-mini": {
       "compact-mode-description": "Medya oynatıcı paneli için yerden tasarruf sağlayan bir düzeni etkinleştirin.",

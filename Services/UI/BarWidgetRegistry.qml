@@ -155,7 +155,8 @@ Singleton {
                                     "showScrollLock": true,
                                     "capsLockIcon": "letter-c",
                                     "numLockIcon": "letter-n",
-                                    "scrollLockIcon": "letter-s"
+                                    "scrollLockIcon": "letter-s",
+                                    "hideWhenOff": false
                                   },
                                   "Launcher": {
                                     "icon": "rocket",
