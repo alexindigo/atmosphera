@@ -142,7 +142,8 @@ Singleton {
                                       "vertical": 10
                                     },
                                     "enableColorization": false,
-                                    "colorizeSystemIcon": "none"
+                                    "colorizeSystemIcon": "none",
+                                    "ipcIdentifier": ""
                                   },
                                   "KeyboardLayout": {
                                     "displayMode": "onhover",
