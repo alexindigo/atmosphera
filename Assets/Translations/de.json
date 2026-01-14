@@ -1068,7 +1068,7 @@
       "show-hibernate-description": "Die Option 'Ruhezustand' in den Energieaktionen anzeigen.",
       "show-hibernate-label": "Ruhezustand anzeigen",
       "show-session-buttons-description": "Zugriff auf die Energieeinstellungen vom Sperrbildschirm aus erlauben.",
-      "show-session-buttons-label": "Leistungsregler",
+      "show-session-buttons-label": "Energieoptionen",
       "title": "Sperrbildschirm"
     },
     "network": {
