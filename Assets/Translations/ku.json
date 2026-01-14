@@ -138,14 +138,14 @@
       "show-icon-description": "Nîşana şêweya klavyeyê nîşan bide."
     },
     "lock-keys": {
+      "hide-when-off-description": "Eger nexwan çalak nabe nîşanek veşêre.",
+      "hide-when-off-label": "Veşêre gava ku ne çalak e",
       "show-caps-lock-description": "Rewşa Caps Lock nîşan bide.",
       "show-caps-lock-label": "Girtina hûrfên mezîn",
       "show-num-lock-description": "Rewşa Num Lock nîşan bide.",
       "show-num-lock-label": "Girtina jimareyan",
       "show-scroll-lock-description": "Rewşa Scroll Lock nîşan bide.",
-      "show-scroll-lock-label": "Girtina rêçêkirinê",
-      "hide-when-off-label": "Veşêre gava ku ne çalak e",
-      "hide-when-off-description": "Eger nexwan çalak nabe nîşanek veşêre."
+      "show-scroll-lock-label": "Girtina rêçêkirinê"
     },
     "media-mini": {
       "compact-mode-description": "Çalak bike sêwirandinek ku cih digire ji bo panelê lîstikvanê medyayê.",

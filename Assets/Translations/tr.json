@@ -138,14 +138,14 @@
       "show-icon-description": "Klavye düzeni simgesini görüntüle."
     },
     "lock-keys": {
+      "hide-when-off-description": "Tuş etkin olmadığında göstergeyi gizle.",
+      "hide-when-off-label": "Kapatıldığında gizle",
       "show-caps-lock-description": "Büyük Harf Kilidi düğmesi durumunu göster.",
       "show-caps-lock-label": "Büyük Harf Kilidi",
       "show-num-lock-description": "Sayı Kilidi durumunu göster.",
       "show-num-lock-label": "Sayı Kilidi",
       "show-scroll-lock-description": "Kaydırma Kilidi durumunu göster.",
-      "show-scroll-lock-label": "Kaydırma Kilidi",
-      "hide-when-off-label": "Kapatıldığında gizle",
-      "hide-when-off-description": "Tuş etkin olmadığında göstergeyi gizle."
+      "show-scroll-lock-label": "Kaydırma Kilidi"
     },
     "media-mini": {
       "compact-mode-description": "Medya oynatıcı paneli için yerden tasarruf sağlayan bir düzeni etkinleştirin.",

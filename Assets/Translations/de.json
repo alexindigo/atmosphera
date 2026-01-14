@@ -138,14 +138,14 @@
       "show-icon-description": "Das Tastaturlayout-Symbol anzeigen."
     },
     "lock-keys": {
+      "hide-when-off-description": "Verstecke die Anzeige, wenn die Taste nicht aktiv ist.",
+      "hide-when-off-label": "Ausblenden, wenn deaktiviert",
       "show-caps-lock-description": "Caps-Lock-Status anzeigen.",
       "show-caps-lock-label": "Feststelltaste",
       "show-num-lock-description": "Num-Lock-Status anzeigen.",
       "show-num-lock-label": "Num-Taste",
       "show-scroll-lock-description": "Scroll-Lock-Status anzeigen.",
-      "show-scroll-lock-label": "Rollen-Taste",
-      "hide-when-off-label": "Ausblenden, wenn deaktiviert",
-      "hide-when-off-description": "Verstecke die Anzeige, wenn die Taste nicht aktiv ist."
+      "show-scroll-lock-label": "Rollen-Taste"
     },
     "media-mini": {
       "compact-mode-description": "Aktiviere ein platzsparendes Layout für das Medienplayer-Panel.",

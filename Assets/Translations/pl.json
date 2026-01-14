@@ -138,14 +138,14 @@
       "show-icon-description": "Wyświetl ikonę układu klawiatury."
     },
     "lock-keys": {
+      "hide-when-off-description": "Ukryj wskaźnik, gdy klawisz jest nieaktywny.",
+      "hide-when-off-label": "Ukryj gdy wyłączony",
       "show-caps-lock-description": "Wyświetl status Caps Lock.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Wyświetl status Num Lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Wyświetl status Scroll Lock.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Ukryj gdy wyłączony",
-      "hide-when-off-description": "Ukryj wskaźnik, gdy klawisz jest nieaktywny."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Włącz układ oszczędzający miejsce dla panelu odtwarzacza multimedialnego.",

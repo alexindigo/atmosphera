@@ -138,14 +138,14 @@
       "show-icon-description": "Billentse a billentyűzetkiosztás ikont."
     },
     "lock-keys": {
+      "hide-when-off-description": "Az indikátor elrejtése, ha a billentyű nem aktív.",
+      "hide-when-off-label": "Elrejtés kikapcsolt állapotban",
       "show-caps-lock-description": "Caps Lock állapot megjelenítése.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Num Lock állapot megjelenítése.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Scroll Lock állapot megjelenítése.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Elrejtés kikapcsolt állapotban",
-      "hide-when-off-description": "Az indikátor elrejtése, ha a billentyű nem aktív."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Helytakarékos elrendezés engedélyezése a médialejátszó panelhez.",

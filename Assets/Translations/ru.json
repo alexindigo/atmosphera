@@ -138,14 +138,14 @@
       "show-icon-description": "Отображать значок раскладки клавиатуры."
     },
     "lock-keys": {
+      "hide-when-off-description": "Скрыть индикатор, когда клавиша неактивна.",
+      "hide-when-off-label": "Скрывать, когда отключено",
       "show-caps-lock-description": "Отображать статус Caps Lock.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Отображать статус Num Lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Отображать статус Scroll Lock.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Скрывать, когда отключено",
-      "hide-when-off-description": "Скрыть индикатор, когда клавиша неактивна."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Включить компактный режим для панели медиаплеера.",

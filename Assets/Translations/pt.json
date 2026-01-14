@@ -138,14 +138,14 @@
       "show-icon-description": "Exibir o ícone do layout do teclado."
     },
     "lock-keys": {
+      "hide-when-off-description": "Ocultar o indicador quando a tecla não está ativa.",
+      "hide-when-off-label": "Ocultar quando desativado",
       "show-caps-lock-description": "Exibir o status do Bloq Caps.",
       "show-caps-lock-label": "Bloq Caps",
       "show-num-lock-description": "Exibir o status do Bloq Num.",
       "show-num-lock-label": "Bloq Num",
       "show-scroll-lock-description": "Exibir o status do Bloq Rol.",
-      "show-scroll-lock-label": "Bloq Rol",
-      "hide-when-off-label": "Ocultar quando desativado",
-      "hide-when-off-description": "Ocultar o indicador quando a tecla não está ativa."
+      "show-scroll-lock-label": "Bloq Rol"
     },
     "media-mini": {
       "compact-mode-description": "Ativar um layout que economize espaço para o painel do reprodutor de mídia.",

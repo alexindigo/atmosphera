@@ -138,14 +138,14 @@
       "show-icon-description": "キーボードレイアウトのアイコンを表示します。"
     },
     "lock-keys": {
+      "hide-when-off-description": "キーがアクティブでないときインジケーターを非表示にします。",
+      "hide-when-off-label": "オフの時に非表示",
       "show-caps-lock-description": "Caps Lock の状態を表示します。",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Num Lock の状態を表示します。",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Scroll Lock の状態を表示します。",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "オフの時に非表示",
-      "hide-when-off-description": "キーがアクティブでないときインジケーターを非表示にします。"
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "メディアプレーヤーパネルの省スペースレイアウトを有効にする。",

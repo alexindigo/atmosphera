@@ -138,14 +138,14 @@
       "show-icon-description": "Toon het toetsenbordindeling-icoon."
     },
     "lock-keys": {
+      "hide-when-off-description": "Verberg de indicator wanneer de toets niet actief is.",
+      "hide-when-off-label": "Verbergen wanneer uitgeschakeld",
       "show-caps-lock-description": "Toon de status van caps lock.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Toon de status van num lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Toon de status van scroll lock.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Verbergen wanneer uitgeschakeld",
-      "hide-when-off-description": "Verberg de indicator wanneer de toets niet actief is."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Schakel een ruimtebesparende lay-out in voor het mediaplayerpaneel.",

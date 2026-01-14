@@ -140,14 +140,14 @@
       "show-icon-description": "Display the keyboard layout icon."
     },
     "lock-keys": {
+      "hide-when-off-description": "Hide the indicator when the key is not active.",
+      "hide-when-off-label": "Hide when off",
       "show-caps-lock-description": "Display Caps Lock status.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Display Num Lock status.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Display Scroll Lock status.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Hide when off",
-      "hide-when-off-description": "Hide the indicator when the key is not active."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Enable a space-saving layout for the media player panel.",
@@ -681,6 +681,8 @@
       "appearance-desc": "Customize the bar's appearance and position.",
       "appearance-floating-description": "Display the bar as a floating 'pill'.",
       "appearance-floating-label": "Floating bar",
+      "appearance-hide-on-overview-description": "Hide the bar and close panels when the compositor overview is active.",
+      "appearance-hide-on-overview-label": "Hide bar on overview",
       "appearance-margins-description": "Adjust the margins around the floating bar.",
       "appearance-margins-horizontal": "Horizontal",
       "appearance-margins-label": "Margins",
@@ -695,8 +697,6 @@
       "appearance-show-outline-label": "Show widget outlines",
       "appearance-use-separate-opacity-description": "Enable to use a separate opacity value for the bar background.",
       "appearance-use-separate-opacity-label": "Use separate bar opacity",
-      "appearance-hide-on-overview-description": "Hide the bar and close panels when the compositor overview is active.",
-      "appearance-hide-on-overview-label": "Hide bar on overview",
       "monitors-desc": "Show bar on specific monitors. Defaults to all if none are chosen.",
       "monitors-title": "Monitors display",
       "title": "Bar",

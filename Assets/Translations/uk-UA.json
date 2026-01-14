@@ -138,14 +138,14 @@
       "show-icon-description": "Показувати піктограму розкладки клавіатури."
     },
     "lock-keys": {
+      "hide-when-off-description": "Приховувати індикатор, коли клавіша неактивна.",
+      "hide-when-off-label": "Приховувати коли вимкнено",
       "show-caps-lock-description": "Відображати стан caps lock.",
       "show-caps-lock-label": "Caps Lock",
       "show-num-lock-description": "Відображати стан num lock.",
       "show-num-lock-label": "Num Lock",
       "show-scroll-lock-description": "Відображати стан scroll lock.",
-      "show-scroll-lock-label": "Scroll Lock",
-      "hide-when-off-label": "Приховувати коли вимкнено",
-      "hide-when-off-description": "Приховувати індикатор, коли клавіша неактивна."
+      "show-scroll-lock-label": "Scroll Lock"
     },
     "media-mini": {
       "compact-mode-description": "Увімкнути компактне розташування для панелі медіаплеєра.",
