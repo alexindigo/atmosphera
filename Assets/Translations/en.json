@@ -691,6 +691,8 @@
       "appearance-show-outline-label": "Show widget outlines",
       "appearance-use-separate-opacity-description": "Enable to use a separate opacity value for the bar background.",
       "appearance-use-separate-opacity-label": "Use separate bar opacity",
+      "appearance-hide-on-overview-description": "Hide the bar and close panels when the compositor overview is active.",
+      "appearance-hide-on-overview-label": "Hide bar on overview",
       "monitors-desc": "Show bar on specific monitors. Defaults to all if none are chosen.",
       "monitors-title": "Monitors display",
       "title": "Bar",
