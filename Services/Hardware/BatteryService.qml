@@ -56,7 +56,7 @@ Singleton {
     if (!primaryDevice || !isLaptopBattery) {
       return false;
     }
-    return primaryDevice.state === UPowerDeviceState.Charging;
+    return primaryDevice.state !== undefined && primaryDevice.state === UPowerDeviceState.Charging;
   }
 
   readonly property bool batteryReady: {
@@ -64,9 +64,9 @@ Singleton {
       return false;
     }
     if (isLaptopBattery) {
-      return primaryDevice.ready && primaryDevice.percentage !== undefined;
+      return (primaryDevice.ready === true) && primaryDevice.percentage !== undefined;
     }
-    return primaryDevice.connected && primaryDevice.batteryAvailable && primaryDevice.battery !== undefined;
+    return (primaryDevice.connected === true) && (primaryDevice.batteryAvailable === true) && primaryDevice.battery !== undefined;
   }
 
   readonly property bool batteryPresent: {
