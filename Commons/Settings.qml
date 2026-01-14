@@ -620,31 +620,8 @@ Singleton {
 
     // templates toggles
     property JsonObject templates: JsonObject {
-      property bool gtk: false
-      property bool qt: false
-      property bool kcolorscheme: false
-      property bool alacritty: false
-      property bool kitty: false
-      property bool ghostty: false
-      property bool foot: false
-      property bool wezterm: false
-      property bool fuzzel: false
-      property bool discord: false
-      property bool pywalfox: false
-      property bool vicinae: false
-      property bool walker: false
-      property bool code: false
-      property bool spicetify: false
-      property bool telegram: false
-      property bool cava: false
-      property bool yazi: false
-      property bool emacs: false
-      property bool niri: false
-      property bool hyprland: false
-      property bool mango: false
-      property bool zed: false
-      property bool helix: false
-      property bool zenBrowser: false
+      property list<var> activeTemplates: []
+      // Format: [{ "id": "gtk", "enabled": true }, { "id": "qt", "enabled": true }, ...]
       property bool enableUserTemplates: false
     }
 
