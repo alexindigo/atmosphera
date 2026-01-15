@@ -402,7 +402,8 @@
     "screenLock": "",
     "screenUnlock": "",
     "performanceModeEnabled": "",
-    "performanceModeDisabled": ""
+    "performanceModeDisabled": "",
+    "session": ""
   },
   "desktopWidgets": {
     "enabled": false,
