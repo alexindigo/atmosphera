@@ -173,41 +173,13 @@ ColumnLayout {
   }
 
   // Category filter chips
-  NCollapsible {
-    Layout.fillWidth: true
+  NTagFilter {
+    tags: root.availableCategories
+    selectedTag: root.selectedCategory
+    onSelectedTagChanged: root.selectedCategory = selectedTag
     label: I18n.tr("panels.color-scheme.templates-filter-label")
     description: I18n.tr("panels.color-scheme.templates-filter-description")
     expanded: true
-    contentSpacing: Style.marginXS
-
-    Flow {
-      Layout.fillWidth: true
-      spacing: Style.marginXS
-      flow: Flow.LeftToRight
-
-      Repeater {
-        model: [""].concat(root.availableCategories)
-
-        delegate: NButton {
-          text: {
-            if (modelData === "")
-              return I18n.tr("launcher.categories.all");
-            // Special case for UI to keep it uppercase
-            if (modelData === "system")
-              return "System";
-            // Capitalize first letter for others
-            return modelData.charAt(0).toUpperCase() + modelData.slice(1);
-          }
-          backgroundColor: root.selectedCategory === modelData ? Color.mPrimary : Color.mSurfaceVariant
-          textColor: root.selectedCategory === modelData ? Color.mOnPrimary : Color.mOnSurfaceVariant
-          onClicked: root.selectedCategory = modelData
-          fontSize: Style.fontSizeS
-          iconSize: Style.fontSizeS
-          fontWeight: Style.fontWeightSemiBold
-          buttonRadius: Style.iRadiusM
-        }
-      }
-    }
   }
 
   // Search/filter input row
