@@ -20,6 +20,7 @@ Singleton {
   readonly property string baseDir: Settings.cacheDir + "images/"
   readonly property string wpThumbDir: baseDir + "wallpapers/thumbnails/"
   readonly property string wpLargeDir: baseDir + "wallpapers/large/"
+  readonly property string wpOverviewDir: baseDir + "wallpapers/overview/"
   readonly property string notificationsDir: baseDir + "notifications/"
   readonly property string contributorsDir: baseDir + "contributors/"
 
@@ -62,12 +63,13 @@ Singleton {
   function createDirectories() {
     Quickshell.execDetached(["mkdir", "-p", wpThumbDir]);
     Quickshell.execDetached(["mkdir", "-p", wpLargeDir]);
+    Quickshell.execDetached(["mkdir", "-p", wpOverviewDir]);
     Quickshell.execDetached(["mkdir", "-p", notificationsDir]);
     Quickshell.execDetached(["mkdir", "-p", contributorsDir]);
   }
 
   function cleanupOldCache() {
-    const dirs = [wpThumbDir, wpLargeDir, notificationsDir, contributorsDir];
+    const dirs = [wpThumbDir, wpLargeDir, wpOverviewDir, notificationsDir, contributorsDir];
     dirs.forEach(function (dir) {
       Quickshell.execDetached(["find", dir, "-type", "f", "-mtime", "+30", "-delete"]);
     });
@@ -189,6 +191,31 @@ Singleton {
   }
 
   // -------------------------------------------------
+  // Public API: Get Blurred Overview (for Niri overview background)
+  // -------------------------------------------------
+  function getBlurredOverview(sourcePath, width, height, tintColor, callback) {
+    if (!sourcePath || sourcePath === "") {
+      callback("", false);
+      return;
+    }
+
+    if (!imageMagickAvailable) {
+      Logger.d("ImageCache", "ImageMagick not available for overview blur, using original:", sourcePath);
+      callback(sourcePath, false);
+      return;
+    }
+
+    getMtime(sourcePath, function (mtime) {
+      const cacheKey = generateOverviewKey(sourcePath, width, height, tintColor, mtime);
+      const cachedPath = wpOverviewDir + cacheKey + ".png";
+
+      processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
+        startOverviewProcessing(sourcePath, cachedPath, width, height, tintColor, cacheKey);
+      });
+    });
+  }
+
+  // -------------------------------------------------
   // Cache Key Generation
   // -------------------------------------------------
   function generateThumbnailKey(sourcePath, mtime) {
@@ -206,6 +233,11 @@ Singleton {
       return Checksum.sha256(appName + "|" + summary);
     }
     return Checksum.sha256(imageUri);
+  }
+
+  function generateOverviewKey(sourcePath, width, height, tintColor, mtime) {
+    const keyString = sourcePath + "@" + width + "x" + height + "@" + tintColor + "@" + (mtime || "unknown");
+    return Checksum.sha256(keyString);
   }
 
   // -------------------------------------------------
@@ -284,6 +316,20 @@ Singleton {
 
     // Use Lanczos filter for high-quality downscaling, subtle unsharp mask, and PNG for lossless output
     const command = `magick '${srcEsc}' -auto-orient -filter Lanczos -resize '${width}x${height}^' -unsharp 0x0.5 '${dstEsc}'`;
+
+    runProcess(command, cacheKey, outputPath, sourcePath);
+  }
+
+  // -------------------------------------------------
+  // ImageMagick Processing: Blurred Overview
+  // -------------------------------------------------
+  function startOverviewProcessing(sourcePath, outputPath, width, height, tintColor, cacheKey) {
+    const srcEsc = sourcePath.replace(/'/g, "'\\''");
+    const dstEsc = outputPath.replace(/'/g, "'\\''");
+
+    // Resize to cover, center crop, apply Gaussian blur (radius 16 ≈ Qt blurMax: 32),
+    // then composite a tinted overlay at 60% opacity
+    const command = `magick '${srcEsc}' -auto-orient -resize '${width}x${height}^' -gravity center -extent ${width}x${height} -blur 0x16 \\( +clone -fill '${tintColor}' -colorize 100 -alpha set -channel A -evaluate set 60% +channel \\) -composite '${dstEsc}'`;
 
     runProcess(command, cacheKey, outputPath, sourcePath);
   }
