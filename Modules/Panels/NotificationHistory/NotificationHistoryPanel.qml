@@ -259,6 +259,9 @@ SmartPanel {
           ScrollBar.vertical.policy: ScrollBar.AsNeeded
           clip: true
 
+          // Track which notification is expanded
+          property string expandedId: ""
+
           ColumnLayout {
             width: parent.width
             spacing: Style.marginM
@@ -308,9 +311,6 @@ SmartPanel {
                 }
               }
             }
-
-            // Track which notification is expanded
-            property string expandedId: ""
 
             // Notification list container
             Item {
