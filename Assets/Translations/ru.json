@@ -415,7 +415,7 @@
     "random": "Случайный",
     "reboot": "Перезагрузить",
     "refresh": "Обновить",
-    "required": "Обязательно",
+    "required": "(обязательно)",
     "reset": "Сброс",
     "resume": "Продолжить",
     "save": "Сохранить",
@@ -1207,7 +1207,7 @@
       "update-error": "Не удалось обновить плагин: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (требуется Noctalia v{required})",
       "update-success": "Плагин {plugin} обновлён до версии {version}.",
-      "update-version": "v{текущее} → v{новое}",
+      "update-version": "v{current} → v{new}",
       "updating": "Обновление..."
     },
     "region": {

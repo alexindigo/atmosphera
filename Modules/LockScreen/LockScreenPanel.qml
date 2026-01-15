@@ -106,7 +106,7 @@ Item {
     radius: Style.radiusL
     color: Color.mSurface
 
-    width: 750
+    width: Settings.data.general.showHibernateOnLockScreen ? 800 : 750
 
     ColumnLayout {
       anchors.fill: parent
@@ -121,6 +121,11 @@ Item {
         visible: !Settings.data.general.compactLockScreen
 
         // Media widget with visualizer
+        Item {
+          Layout.preferredWidth: Style.marginM
+          visible: MediaService.currentPlayer && MediaService.canPlay
+        }
+
         Rectangle {
           Layout.preferredWidth: 220
           // Expand to take remaining space when weather is hidden
@@ -312,7 +317,7 @@ Item {
           spacing: Style.marginXS
 
           Repeater {
-            model: MediaService.currentPlayer && MediaService.canPlay ? 3 : 4
+            model: MediaService.currentPlayer && MediaService.canPlay ? 2 : 4
             delegate: ColumnLayout {
               Layout.fillWidth: true
               spacing: Style.marginXXS + 1

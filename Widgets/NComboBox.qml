@@ -91,8 +91,8 @@ RowLayout {
       }
     }
     return I18n.tr("panels.indicator.default-value", {
-      "value": displayValue
-    });
+                     "value": displayValue
+                   });
   }
 
   function itemCount() {

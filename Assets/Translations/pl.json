@@ -415,7 +415,7 @@
     "random": "Losowy",
     "reboot": "Restart",
     "refresh": "Odśwież",
-    "required": "Wymagane",
+    "required": "(wymagane)",
     "reset": "Zresetuj",
     "resume": "Wznów",
     "save": "Zapisz",
@@ -1205,7 +1205,7 @@
       "update-available": "Dostępna nowa aktualizacja wtyczki",
       "update-available-plural": "Dostępne nowe aktualizacje wtyczek ({count})",
       "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}.",
-      "update-pending": "v{bieżąca} → v{nowa} (wymaga Noctalii v{wymagana})",
+      "update-pending": "v{current} → v{new} (wymaga Noctalii v{required})",
       "update-success": "Zaktualizowano {plugin} do v{version}.",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."

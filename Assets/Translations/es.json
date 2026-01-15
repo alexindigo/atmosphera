@@ -415,7 +415,7 @@
     "random": "Aleatorio",
     "reboot": "Reiniciar",
     "refresh": "Refrescar",
-    "required": "Obligatorio",
+    "required": "(obligatorio)",
     "reset": "Restablecer",
     "resume": "Reanudar",
     "save": "Guardar",
@@ -1205,9 +1205,9 @@
       "update-available": "Nueva actualización de plugin disponible",
       "update-available-plural": "Nuevas actualizaciones de plugins disponibles ({count})",
       "update-error": "Error al actualizar el plugin: {plugin}: {error}.",
-      "update-pending": "v{actual} → v{nuevo} (requiere Noctalia v{requerida})",
+      "update-pending": "v{current} → v{new} (requiere Noctalia v{required})",
       "update-success": "{plugin} actualizado a la versión {version}.",
-      "update-version": "v{actual} → v{nuevo}",
+      "update-version": "v{current} → v{new}",
       "updating": "Actualizando..."
     },
     "region": {

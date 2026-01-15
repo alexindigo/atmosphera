@@ -415,7 +415,7 @@
     "random": "Bêserûber",
     "reboot": "Restart",
     "refresh": "Nûkirin",
-    "required": "Pêwîst",
+    "required": "(pêwîst)",
     "reset": "Vegerandin",
     "resume": "Berdewam kirin",
     "save": "Tomar bike",
@@ -1204,10 +1204,10 @@
       "update-all-success": "Hemû pêvek bi serkeftî hatin nûkirin.",
       "update-available": "Rojanekirina pêveka nû heye",
       "update-available-plural": "Rojanekirinên pêvekên nû hene ({count})",
-      "update-error": "ڕێ ل نوو کرنەیا پلاکینێ هاتە گرتن: {plugin}: {error}.",
-      "update-pending": "v{niha} → v{nu} (hewce dike Noctalia v{pêwîst})",
+      "update-error": "Nekarî plugîn nûve bikin: {plugin}: {error}.",
+      "update-pending": "v{current} → v{new} (hewce dike Noctalia v{required})",
       "update-success": "{plugin} hate nûkirin bo v{version}.",
-      "update-version": "v{niha} → v{nû}",
+      "update-version": "v{current} → v{new}",
       "updating": "Tê rojanekirin..."
     },
     "region": {

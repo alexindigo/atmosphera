@@ -183,6 +183,11 @@ Singleton {
           "name": "vencord",
           "path": "~/.config/Vencord",
           "requiresThemesFolder": false
+        },
+        {
+          "name": "betterdiscord",
+          "path": "~/.config/BetterDiscord",
+          "requiresThemesFolder": false
         }
       ]
     },
