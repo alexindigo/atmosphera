@@ -175,8 +175,10 @@
       "visualizer-type-label": "Type de visualiseur"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Masquer l'icône de notification quand il n'y a pas de notifications non lues.",
-      "hide-widget-when-zero-label": "Masquer l'icône quand zéro",
+      "hide-widget-when-zero-description": "Masquer l’icône de notification lorsqu’il n’y a aucune notification.",
+      "hide-widget-when-zero-label": "Masquer l’icône sans notifications",
+      "hide-widget-when-zero-unread-description": "Masquer l’icône de notification lorsqu’il n’y a aucune notification non lue.",
+      "hide-widget-when-zero-unread-label": "Masquer l’icône sans notifications non lues",
       "show-unread-badge-description": "Afficher un badge montrant le nombre de notifications non lues.",
       "show-unread-badge-label": "Afficher le badge non lu"
     },
@@ -474,7 +476,7 @@
   "hide-modes": {
     "hidden": "Masquer quand vide",
     "idle": "Masquer quand inactif",
-    "transparent": "Transparent lorsqu'il est vide",
+    "transparent": "Transparent quand vide",
     "visible": "Toujours visible"
   },
   "launcher": {

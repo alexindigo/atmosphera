@@ -175,8 +175,10 @@
       "visualizer-type-label": "Cureyê dîtbarîker"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Îkona agahdarkirinê veşêre dema ku agahdarkirinên nexwendî tune bin.",
-      "hide-widget-when-zero-label": "Îkona veşêre dema ku sifir be",
+      "hide-widget-when-zero-description": "Dema ku ti agahdarî tune be, îkona agahdarîyê veşêre.",
+      "hide-widget-when-zero-label": "Îkonê bê agahdarî veşêre",
+      "hide-widget-when-zero-unread-description": "Dema ku ti agahdarîya nexwendî tune be, îkona agahdarîyê veşêre.",
+      "hide-widget-when-zero-unread-label": "Îkonê bê nexwendî veşêre",
       "show-unread-badge-description": "Nîşaneyekê nîşan bide ku hejmara agahiyên nehatine xwendin nîşan dide.",
       "show-unread-badge-label": "Nîşana ne xwendî nîşan bide"
     },

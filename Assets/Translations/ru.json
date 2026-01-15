@@ -175,8 +175,10 @@
       "visualizer-type-label": "Тип визуализатора"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Скрыть значок уведомлений, когда нет непрочитанных уведомлений.",
-      "hide-widget-when-zero-label": "Скрыть значок, если ноль",
+      "hide-widget-when-zero-description": "Скрывать значок уведомлений, если уведомлений нет.",
+      "hide-widget-when-zero-label": "Скрывать значок без уведомлений",
+      "hide-widget-when-zero-unread-description": "Скрывать значок уведомлений, если нет непрочитанных.",
+      "hide-widget-when-zero-unread-label": "Скрывать значок без непрочитанных",
       "show-unread-badge-description": "Отображать значок, показывающий количество непрочитанных уведомлений.",
       "show-unread-badge-label": "Показывать значок непрочитанных"
     },

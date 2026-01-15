@@ -175,8 +175,10 @@
       "visualizer-type-label": "Visualizer-Typ"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Benachrichtigungssymbol ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind.",
-      "hide-widget-when-zero-label": "Symbol ausblenden, wenn null",
+      "hide-widget-when-zero-description": "Benachrichtigungssymbol ausblenden, wenn keine Benachrichtigungen vorhanden sind.",
+      "hide-widget-when-zero-label": "Symbol bei keinen Benachrichtigungen ausblenden",
+      "hide-widget-when-zero-unread-description": "Benachrichtigungssymbol ausblenden, wenn keine ungelesenen Benachrichtigungen vorhanden sind.",
+      "hide-widget-when-zero-unread-label": "Symbol bei keinen ungelesenen Benachrichtigungen ausblenden",
       "show-unread-badge-description": "Badge mit der Anzahl ungelesener Benachrichtigungen anzeigen.",
       "show-unread-badge-label": "Badge für ungelesene Nachrichten anzeigen"
     },

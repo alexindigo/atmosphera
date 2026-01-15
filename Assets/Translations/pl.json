@@ -175,8 +175,10 @@
       "visualizer-type-label": "Typ wizualizatora"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Ukryj ikonę powiadomień, gdy nie ma nieprzeczytanych powiadomień.",
-      "hide-widget-when-zero-label": "Ukryj ikonę, gdy zero",
+      "hide-widget-when-zero-description": "Ukryj ikonę powiadomień, gdy nie ma żadnych powiadomień.",
+      "hide-widget-when-zero-label": "Ukryj ikonę bez powiadomień",
+      "hide-widget-when-zero-unread-description": "Ukryj ikonę powiadomień, gdy nie ma nieprzeczytanych powiadomień.",
+      "hide-widget-when-zero-unread-label": "Ukryj ikonę bez nieprzeczytanych",
       "show-unread-badge-description": "Wyświetl plakietkę z liczbą nieprzeczytanych powiadomień.",
       "show-unread-badge-label": "Pokaż plakietkę nieprzeczytanych"
     },
