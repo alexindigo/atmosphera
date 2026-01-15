@@ -66,10 +66,10 @@ Loader {
       }
 
       function requestBlurredOverview() {
-        requestBlurredOverviewWithTint(tintColor.toString());
+        requestBlurredOverviewWithTint(tintColor.toString(), Settings.data.colorSchemes.darkMode);
       }
 
-      function requestBlurredOverviewWithTint(tint) {
+      function requestBlurredOverviewWithTint(tint, isDarkMode) {
         if (!wallpaper || isSolidColor)
           return;
 
@@ -82,7 +82,7 @@ Loader {
           fadeOutAnim.start();
         }
 
-        ImageCacheService.getBlurredOverview(wallpaper, targetWidth, targetHeight, tint, function (path, success) {
+        ImageCacheService.getBlurredOverview(wallpaper, targetWidth, targetHeight, tint, isDarkMode, function (path, success) {
           if (path) {
             useQtBlur = !success; // Use Qt blur fallback if ImageMagick failed
             pendingWallpaper = path;
@@ -125,12 +125,12 @@ Loader {
         target: Color
         function onMSurfaceChanged() {
           if (!isSolidColor && wallpaper && Settings.data.colorSchemes.darkMode) {
-            requestBlurredOverviewWithTint(Color.mSurface.toString());
+            requestBlurredOverviewWithTint(Color.mSurface.toString(), true);
           }
         }
         function onMOnSurfaceChanged() {
           if (!isSolidColor && wallpaper && !Settings.data.colorSchemes.darkMode) {
-            requestBlurredOverviewWithTint(Color.mOnSurface.toString());
+            requestBlurredOverviewWithTint(Color.mOnSurface.toString(), false);
           }
         }
       }

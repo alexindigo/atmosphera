@@ -193,7 +193,7 @@ Singleton {
   // -------------------------------------------------
   // Public API: Get Blurred Overview (for Niri overview background)
   // -------------------------------------------------
-  function getBlurredOverview(sourcePath, width, height, tintColor, callback) {
+  function getBlurredOverview(sourcePath, width, height, tintColor, isDarkMode, callback) {
     if (!sourcePath || sourcePath === "") {
       callback("", false);
       return;
@@ -206,11 +206,11 @@ Singleton {
     }
 
     getMtime(sourcePath, function (mtime) {
-      const cacheKey = generateOverviewKey(sourcePath, width, height, tintColor, mtime);
+      const cacheKey = generateOverviewKey(sourcePath, width, height, tintColor, isDarkMode, mtime);
       const cachedPath = wpOverviewDir + cacheKey + ".png";
 
       processRequest(cacheKey, cachedPath, sourcePath, callback, function () {
-        startOverviewProcessing(sourcePath, cachedPath, width, height, tintColor, cacheKey);
+        startOverviewProcessing(sourcePath, cachedPath, width, height, tintColor, isDarkMode, cacheKey);
       });
     });
   }
@@ -235,8 +235,8 @@ Singleton {
     return Checksum.sha256(imageUri);
   }
 
-  function generateOverviewKey(sourcePath, width, height, tintColor, mtime) {
-    const keyString = sourcePath + "@" + width + "x" + height + "@" + tintColor + "@" + (mtime || "unknown");
+  function generateOverviewKey(sourcePath, width, height, tintColor, isDarkMode, mtime) {
+    const keyString = sourcePath + "@" + width + "x" + height + "@" + tintColor + "@" + (isDarkMode ? "dark" : "light") + "@" + (mtime || "unknown");
     return Checksum.sha256(keyString);
   }
 
@@ -323,13 +323,12 @@ Singleton {
   // -------------------------------------------------
   // ImageMagick Processing: Blurred Overview
   // -------------------------------------------------
-  function startOverviewProcessing(sourcePath, outputPath, width, height, tintColor, cacheKey) {
+  function startOverviewProcessing(sourcePath, outputPath, width, height, tintColor, isDarkMode, cacheKey) {
     const srcEsc = sourcePath.replace(/'/g, "'\\''");
     const dstEsc = outputPath.replace(/'/g, "'\\''");
 
-    // Resize to cover, center crop, apply Gaussian blur (radius 16 ≈ Qt blurMax: 32),
-    // then composite a tinted overlay at 60% opacity
-    const command = `magick '${srcEsc}' -auto-orient -resize '${width}x${height}^' -gravity center -extent ${width}x${height} -blur 0x16 \\( +clone -fill '${tintColor}' -colorize 100 -alpha set -channel A -evaluate set 60% +channel \\) -composite '${dstEsc}'`;
+    // Resize, blur, then tint overlay
+    const command = `magick '${srcEsc}' -auto-orient -resize '${width}x${height}^' -gravity center -extent ${width}x${height} -gaussian-blur 0x5 \\( +clone -fill '${tintColor}' -colorize 100 -alpha set -channel A -evaluate set 50% +channel \\) -composite '${dstEsc}'`;
 
     runProcess(command, cacheKey, outputPath, sourcePath);
   }
