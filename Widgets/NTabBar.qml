@@ -38,12 +38,27 @@ Rectangle {
   implicitWidth: tabRow.implicitWidth + (margins * 2)
   implicitHeight: tabHeight + (margins * 2)
   color: Color.mSurfaceVariant
-  radius: Style.iRadiusS
+  radius: Style.iRadiusM
 
   RowLayout {
     id: tabRow
     anchors.fill: parent
     anchors.margins: margins
     spacing: root.spacing
+
+    onChildrenChanged: {
+      var kids = children;
+      var len = kids.length;
+      for (var i = 0; i < len; i++) {
+        var child = kids[i];
+        // Safely set properties if they exist
+        if ("isFirst" in child)
+          child.isFirst = (i === 0);
+        if ("isLast" in child)
+          child.isLast = (i === len - 1);
+      }
+      // Re-run distribution logic if needed by the layout
+      root._applyDistribution();
+    }
   }
 }
