@@ -758,8 +758,8 @@ Popup {
           root.colorSelected(root.selectedColor);
           // Delay close to prevent click propagation to elements behind the dialog
           Qt.callLater(() => {
-            root.close();
-          });
+                         root.close();
+                       });
         }
       }
     }

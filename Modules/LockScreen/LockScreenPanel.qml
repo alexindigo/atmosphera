@@ -600,7 +600,8 @@ Item {
               anchors.fill: parent
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
-              onClicked: if (lockContext) lockContext.tryUnlock()
+              onClicked: if (lockContext)
+                           lockContext.tryUnlock()
             }
 
             Behavior on color {
