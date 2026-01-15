@@ -424,7 +424,7 @@
     "security": "Güvenlik",
     "select": "Seç",
     "shortcuts": "Kısayollar",
-    "shutdown": "Kapatma",
+    "shutdown": "Kapat",
     "signal": "Sinyal",
     "sound": "Ses",
     "sources": "Kaynaklar",
@@ -524,13 +524,12 @@
       "emoji-loading-description": "Lütfen bekleyin",
       "emoji-no-recent": "Henüz yeni emoji yok",
       "emoji-search-description": "Emoji arama ve kopyalama"
-    }
+    },
+    "result": "sonuç",
+    "results": "sonuçlar"
   },
   "lock-screen": {
-    "authenticating": "Doğrulanıyor...",
-    "password": "Parolanızı girin...",
-    "restart": "Yeniden başlat",
-    "shut-down": "Kapat"
+    "password": "Parolanızı girin..."
   },
   "notifications": {
     "panel": {
@@ -1048,7 +1047,7 @@
       "compact-lockscreen-label": "Kompakt ekran kilidi",
       "lock-on-suspend-description": "Sistemi askıya alırken otomatik olarak ekranı kilitler.",
       "lock-on-suspend-label": "Askıya alırken kilitle",
-      "show-hibernate-description": "Güç işlemlerinde 'hazırda beklet' seçeneğini göster.",
+      "show-hibernate-description": "Güç kontrollerinde ‘hazırda beklet’ seçeneğini göster.",
       "show-hibernate-label": "Hazırda beklet seçeneğini göster",
       "show-session-buttons-description": "Kilit ekranından güç ayarlarına erişime izin ver.",
       "show-session-buttons-label": "Güç kontrolleri",
@@ -1348,6 +1347,7 @@
     "command-example": "echo \"Hello World\"",
     "enter-command": "Çalıştırılacak komutu girin (uygulama veya özel komut)",
     "enter-ipc-identifier": "IPC komutları için benzersiz bir tanımlayıcı girin",
+    "enter-path": "Yolu girin...",
     "enter-text-to-collapse": "örn., 'nothing is playing'. Desenler için /regex/ kullanın.",
     "enter-tooltip": "Araç ipucunu girin",
     "enter-width-pixels": "Genişliği piksel olarak girin",
@@ -1675,10 +1675,12 @@
       "year-two-digit": "İki haneli sayı olarak yıl (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Dosya ve klasörlerde ara...",
+      "item": "öğe",
+      "items": "öğeler",
       "select-current": "Mevcudu seç",
       "select-file": "Dosya seç",
       "select-folder": "Klasör seç",
+      "selected:": "Seçilen:",
       "title": "Dosya seçici"
     },
     "file-picker-title": "Bir dosya seçin",

@@ -684,7 +684,54 @@ Loader {
               radius: Style.radiusL
               color: Color.mSurface
 
-              width: 750
+              // Measure text widths to determine minimum button width (for container width calculation)
+              Item {
+                id: buttonRowTextMeasurer
+                visible: false
+                property real iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
+                property real fontSize: Settings.data.general.compactLockScreen ? Style.fontSizeS : Style.fontSizeM
+                property real spacing: Style.marginXS
+                property real padding: 18 // Approximate horizontal padding per button
+
+                // Measure all button text widths
+                NText {
+                  id: logoutText
+                  text: I18n.tr("common.logout")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                }
+                NText {
+                  id: suspendText
+                  text: I18n.tr("common.suspend")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                }
+                NText {
+                  id: hibernateText
+                  text: Settings.data.general.showHibernateOnLockScreen ? I18n.tr("common.hibernate") : ""
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                }
+                NText {
+                  id: rebootText
+                  text: I18n.tr("common.reboot")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                }
+                NText {
+                  id: shutdownText
+                  text: I18n.tr("common.shutdown")
+                  font.pointSize: buttonRowTextMeasurer.fontSize
+                }
+
+                // Calculate maximum width needed
+                property real maxTextWidth: Math.max(logoutText.implicitWidth, Math.max(suspendText.implicitWidth, Math.max(hibernateText.implicitWidth, Math.max(rebootText.implicitWidth, shutdownText.implicitWidth))))
+                property real minButtonWidth: maxTextWidth + iconSize + spacing + padding
+              }
+
+              // Calculate minimum width based on button requirements
+              // Button row needs: margins + buttons (4 or 5 depending on hibernate visibility) + spacings + margins
+              // Plus ColumnLayout margins (14 on each side = 28 total)
+              property int buttonCount: Settings.data.general.showHibernateOnLockScreen ? 5 : 4
+              property int spacingCount: buttonCount - 1
+              property real minButtonRowWidth: buttonRowTextMeasurer.minButtonWidth > 0 ? (buttonCount * buttonRowTextMeasurer.minButtonWidth) + (spacingCount * 10) + (2 * Style.marginM) + 28 + (2 * Style.marginM) : 750
+              width: Math.max(750, minButtonRowWidth)
 
               ColumnLayout {
                 anchors.fill: parent
@@ -699,6 +746,11 @@ Loader {
                   visible: !Settings.data.general.compactLockScreen
 
                   // Media widget with visualizer
+                  Item {
+                    Layout.preferredWidth: Style.marginM
+                    visible: MediaService.currentPlayer && MediaService.canPlay
+                  }
+
                   Rectangle {
                     Layout.preferredWidth: 220
                     // Expand to take remaining space when weather is hidden
@@ -890,7 +942,7 @@ Loader {
                     spacing: 4
 
                     Repeater {
-                      model: MediaService.currentPlayer && MediaService.canPlay ? 3 : 4
+                      model: MediaService.currentPlayer && MediaService.canPlay ? 2 : 4
                       delegate: ColumnLayout {
                         Layout.fillWidth: true
                         spacing: 3

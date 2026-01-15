@@ -356,8 +356,8 @@
     "date": "Datum",
     "delete": "Löschen",
     "devices": "Geräte",
-    "disabled": "Behindert",
-    "discharging": "Entladung",
+    "disabled": "Deaktiviert",
+    "discharging": "Entladen",
     "disconnect": "Trennen",
     "disconnected": "Getrennt",
     "disconnecting": "Verbindung wird getrennt...",
@@ -383,7 +383,7 @@
     "language": "Sprache",
     "loading": "Wird geladen...",
     "local": "Lokal",
-    "location": "Position",
+    "location": "Standort",
     "lock": "Sperren",
     "logout": "Abmelden",
     "look": "Aussehen",
@@ -413,7 +413,7 @@
     "position": "Position",
     "previous": "Zurück",
     "random": "Zufällig",
-    "reboot": "Neustart",
+    "reboot": "Neu starten",
     "refresh": "Aktualisieren",
     "reset": "Zurücksetzen",
     "resume": "Fortsetzen",
@@ -440,7 +440,7 @@
     "uninstall": "Deinstallieren",
     "unknown": "Unbekannt",
     "unpair": "Entkoppeln",
-    "unpin": "Anheften lösen",
+    "unpin": "Loslösen",
     "update": "Aktualisieren",
     "upload": "Hochladen",
     "version": "Version",
@@ -524,13 +524,12 @@
       "emoji-loading-description": "Bitte warten",
       "emoji-no-recent": "Noch keine kürzlich verwendeten Emojis",
       "emoji-search-description": "Emojis suchen und kopieren"
-    }
+    },
+    "result": "Ergebnis",
+    "results": "Ergebnisse"
   },
   "lock-screen": {
-    "authenticating": "Authentifizierung...",
-    "password": "Passwort eingeben...",
-    "restart": "Neu starten",
-    "shut-down": "Herunterfahren"
+    "password": "Passwort eingeben..."
   },
   "notifications": {
     "panel": {
@@ -935,7 +934,7 @@
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
       "info-command-info-label": "Hook-Befehl-Informationen",
-      "info-parameters-description": "• Wallpaper-Hook: $1 = Wallpaper-Pfad, $2 = Bildschirmname<br>• Theme-Umschalt-Hook: $1 = true/false (Dark-Mode-Status)<br>• Bildschirm-Sperr-/Entsperr-Hooks: Keine Parameter<br>• Performance-Modus-Hooks: Keine Parameter<br>• Session-Hook: $1 = Aktion (Herunterfahren/Neustart)",
+      "info-parameters-description": "• Wallpaper-Hook: $1 = Wallpaper-Pfad, $2 = Bildschirmname<br>• Themenwechsel-Hook: $1 = true/false (Dunkelmodus-Status)<br>• Bildschirm-Sperr-/Entsperr-Hooks: Keine Parameter<br>• Leistungsmodus-Hooks: Keine Parameter<br>• Session-Hook: $1 = Aktion (Herunterfahren/Neustart)",
       "info-parameters-label": "Verfügbare Parameter",
       "performance-mode-disabled-description": "Befehl, der ausgeführt wird, wenn der Noctalia-Leistungsmodus deaktiviert wird.",
       "performance-mode-disabled-label": "Leistungsmodus deaktiviert",
@@ -949,7 +948,7 @@
       "screen-unlock-description": "Befehl, der ausgeführt wird, wenn der Bildschirm entsperrt wird.",
       "screen-unlock-label": "Bildschirm entsperrt",
       "screen-unlock-placeholder": "z.B. notify-send \"Bildschirm\" \"Entsperrt\"",
-      "session-description": "Befehl, der vor dem Herunterfahren oder Neustart ausgeführt werden soll. Empfängt den Aktionstyp als $1 (Shutdown/Neustart).",
+      "session-description": "Befehl, der vor dem Herunterfahren oder Neustart ausgeführt werden soll. Empfängt den Aktionstyp als $1 (Herunterfahren/Neustart).",
       "session-label": "Sitzungsende",
       "session-placeholder": "z.B. notify-send \"Session\" \"$1\"",
       "system-hooks-desc": "Befehle konfigurieren, die bei Systemereignissen ausgeführt werden.",
@@ -1048,7 +1047,7 @@
       "compact-lockscreen-label": "Kompakter Sperrbildschirm",
       "lock-on-suspend-description": "Den Bildschirm beim Energiesparen automatisch sperren.",
       "lock-on-suspend-label": "Sperren beim Energiesparen",
-      "show-hibernate-description": "Die Option 'Ruhezustand' in den Energieaktionen anzeigen.",
+      "show-hibernate-description": "Die Option 'Ruhezustand' in den Energieoptionen anzeigen.",
       "show-hibernate-label": "Ruhezustand anzeigen",
       "show-session-buttons-description": "Zugriff auf die Energieeinstellungen vom Sperrbildschirm aus erlauben.",
       "show-session-buttons-label": "Energieoptionen",
@@ -1348,6 +1347,7 @@
     "command-example": "echo \"Hallo Welt\"",
     "enter-command": "Befehl eingeben (App oder benutzerdefiniertes Skript)",
     "enter-ipc-identifier": "Geben Sie eine eindeutige Kennung für IPC-Befehle ein",
+    "enter-path": "Pfad eingeben...",
     "enter-text-to-collapse": "z.B. 'nothing is playing'. Verwenden Sie /regex/ für Muster.",
     "enter-tooltip": "Tooltip eingeben",
     "enter-width-pixels": "Breite in Pixeln eingeben",
@@ -1675,10 +1675,12 @@
       "year-two-digit": "Jahr als zweistellige Zahl (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Dateien und Ordner suchen...",
+      "item": "Element",
+      "items": "Elemente",
       "select-current": "Aktuelles Objekt auswählen",
       "select-file": "Datei auswählen",
       "select-folder": "Ordner auswählen",
+      "selected:": "Ausgewählt:",
       "title": "Dateiauswahl"
     },
     "file-picker-title": "Datei auswählen",

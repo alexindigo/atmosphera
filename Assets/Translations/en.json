@@ -524,13 +524,12 @@
       "emoji-loading-description": "Please wait",
       "emoji-no-recent": "No recent emojis yet",
       "emoji-search-description": "Search and copy emojis"
-    }
+    },
+    "result": "result",
+    "results": "results"
   },
   "lock-screen": {
-    "authenticating": "Authenticating...",
-    "password": "Enter your password...",
-    "restart": "Restart",
-    "shut-down": "Shut down"
+    "password": "Enter your password..."
   },
   "notifications": {
     "panel": {
@@ -718,7 +717,7 @@
       "color-source-use-wallpaper-colors-description": "Generate color schemes from your wallpaper using Matugen. Automatically extracts colors to create a cohesive theme.",
       "color-source-use-wallpaper-colors-label": "Use wallpaper colors",
       "dark-mode-mode-description": "Enables automatic switching between Light and Dark Mode.",
-      "dark-mode-mode-label": "Dark mode schedule",
+      "dark-mode-mode-label": "Dark Mode schedule",
       "dark-mode-mode-manual": "Manual",
       "dark-mode-mode-off": "Off",
       "dark-mode-switch-description": "Switches to a darker theme for easier viewing at night.",
@@ -1048,7 +1047,7 @@
       "compact-lockscreen-label": "Compact lock screen",
       "lock-on-suspend-description": "Automatically lock the screen when suspending the system.",
       "lock-on-suspend-label": "Lock on suspend",
-      "show-hibernate-description": "Show the option 'hibernate' in the energy actions.",
+      "show-hibernate-description": "Show the option 'hibernate' in the power controls.",
       "show-hibernate-label": "Show hibernate",
       "show-session-buttons-description": "Allow access to power settings from the lock screen.",
       "show-session-buttons-label": "Power controls",
@@ -1348,6 +1347,7 @@
     "command-example": "echo \"Hello World\"",
     "enter-command": "Enter command to execute (app or custom script)",
     "enter-ipc-identifier": "Enter unique identifier for IPC commands",
+    "enter-path": "Enter path...",
     "enter-text-to-collapse": "e.g., 'nothing is playing'. Use /regex/ for patterns.",
     "enter-tooltip": "Enter tooltip",
     "enter-width-pixels": "Enter width in pixels",
@@ -1563,7 +1563,7 @@
     "search-close": "Close search",
     "session-menu": "Session menu",
     "show-all-devices": "Show all devices",
-    "switch-to-dark-mode": "Dark mode",
+    "switch-to-dark-mode": "Dark Mode",
     "switch-to-light-mode": "Light Mode",
     "unmute": "Unmute",
     "up": "Parent directory",
@@ -1675,10 +1675,12 @@
       "year-two-digit": "Year as two-digit number (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Search files and folders...",
+      "item": "item",
+      "items": "items",
       "select-current": "Select Current",
       "select-file": "Select File",
       "select-folder": "Select Folder",
+      "selected": "Selected:",
       "title": "File Picker"
     },
     "file-picker-title": "Select a file",

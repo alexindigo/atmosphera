@@ -470,13 +470,12 @@
       "clipboard-search-description": "搜尋剪貼簿歷史",
       "command-description": "執行 shell 指令",
       "emoji-loading-description": "請稍候"
-    }
+    },
+    "result": "結果",
+    "results": "結果"
   },
   "lock-screen": {
-    "authenticating": "驗證中...",
-    "password": "請輸入你的密碼...",
-    "restart": "重新啟動",
-    "shut-down": "關機"
+    "password": "請輸入你的密碼..."
   },
   "notifications": {
     "panel": {
@@ -793,7 +792,7 @@
     "hooks": {
       "info-command-info-description": "• 指令將透過 shell (sh -lc) 執行<br>• 指令會在背景 (detached) 執行<br>• 測試按鈕會以當下填寫的內容執行",
       "info-command-info-label": "hook 指令的說明",
-      "info-parameters-description": "• 桌布的 hook: $1 = 桌布路徑, $2 = 螢幕名稱<br>• 主題切換的 hook: $1 = true/false (深色模式啟用或否)<br>• 畫面鎖定/解鎖的 hook: 沒有參數<br>• 效能模式的 hook: 沒有參數<br>• 工作階段的 hook: $1 = 執行動作 (shutdown/reboot)",
+      "info-parameters-description": "• 桌布的 hook: $1 = 桌布路徑, $2 = 螢幕名稱<br>• 主題切換的 hook: $1 = true/false (深色模式啟用或否)<br>• 畫面鎖定/解鎖的 hook: 沒有參數<br>• 效能模式的 hook: 沒有參數<br>• 工作階段的 hook: $1 = 執行動作 (關機/重新啟動)",
       "info-parameters-label": "可用參數",
       "performance-mode-disabled-description": "Noctalia 效能模式停用時要執行的指令",
       "performance-mode-disabled-label": "效能模式停用時",
@@ -807,7 +806,7 @@
       "screen-unlock-description": "在鎖定畫面解鎖時要執行的指令",
       "screen-unlock-label": "畫面解鎖時",
       "screen-unlock-placeholder": "例如: notify-send \"Screen\" \"Unlocked\"",
-      "session-description": "在關機或重新啟動前要執行的指令, 接收到的執行動作會視為 $1 (shutdown/reboot)",
+      "session-description": "在關機或重新啟動前要執行的指令, 接收到的執行動作會視為 $1 (關機/重新啟動)",
       "session-label": "工作階段結束時",
       "session-placeholder": "例如: notify-send \"Session\" \"$1\"",
       "system-hooks-enable-description": "啟用或停用所有的 hook 指令",
@@ -962,6 +961,7 @@
   "placeholders": {
     "command-example": "echo \"Hello World\"",
     "enter-ipc-identifier": "輸入 IPC 命令的唯一識別碼",
+    "enter-path": "輸入路徑...",
     "enter-text-to-collapse": "例如: 'nothing is playing'. 也可用 /regex/ 指定格式",
     "enter-tooltip": "輸入提示框文字",
     "search-icons": "例如: noctalia, niri, battery, cloud",
@@ -1230,9 +1230,11 @@
       "year-two-digit": "二位數西曆年 (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "選擇檔案及文件夾...",
+      "item": "項目",
+      "items": "項目",
       "select-file": "選擇檔案",
-      "select-folder": "選擇文件夾"
+      "select-folder": "選擇文件夾",
+      "selected:": "已選取:"
     },
     "file-picker-title": "選擇一個檔案",
     "tooltip-placeholder": "暫用文字"

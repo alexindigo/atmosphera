@@ -413,7 +413,7 @@
     "position": "Позиція",
     "previous": "Попередній",
     "random": "Випадковий",
-    "reboot": "Перезавантаження",
+    "reboot": "Перезапустити",
     "refresh": "Оновити",
     "reset": "Скинути",
     "resume": "Продовжити",
@@ -424,7 +424,7 @@
     "security": "Безпека",
     "select": "Вибрати",
     "shortcuts": "Ярлики",
-    "shutdown": "Вимкнення",
+    "shutdown": "Вимкнути",
     "signal": "Сигнал",
     "sound": "Звук",
     "sources": "Джерела",
@@ -524,13 +524,12 @@
       "emoji-loading-description": "Зачекайте, будь ласка",
       "emoji-no-recent": "Немає нещодавніх емодзі",
       "emoji-search-description": "Пошук і копіювання емодзі"
-    }
+    },
+    "result": "результат",
+    "results": "результати"
   },
   "lock-screen": {
-    "authenticating": "Автентифікація...",
-    "password": "Введіть ваш пароль...",
-    "restart": "Перезапустити",
-    "shut-down": "Вимкнути"
+    "password": "Введіть ваш пароль..."
   },
   "notifications": {
     "panel": {
@@ -1048,7 +1047,7 @@
       "compact-lockscreen-label": "Компактний екран блокування",
       "lock-on-suspend-description": "Автоматично блокувати екран при призупиненні системи.",
       "lock-on-suspend-label": "Блокувати при призупиненні",
-      "show-hibernate-description": "Показувати опцію 'сплячий режим' у діях живлення.",
+      "show-hibernate-description": "Показувати опцію ‘сплячий режим’ в елементах керування живленням.",
       "show-hibernate-label": "Показувати сплячий режим",
       "show-session-buttons-description": "Дозволити доступ до налаштувань живлення з екрана блокування.",
       "show-session-buttons-label": "Елементи керування живленням",
@@ -1348,6 +1347,7 @@
     "command-example": "echo \"Привіт, Світ\"",
     "enter-command": "Введіть команду для виконання (застосунок або власний скрипт)",
     "enter-ipc-identifier": "Введіть унікальний ідентифікатор для команд IPC",
+    "enter-path": "Введіть шлях...",
     "enter-text-to-collapse": "напр., 'нічого не відтворюється'. Використовуйте /regex/ для шаблонів.",
     "enter-tooltip": "Введіть підказку",
     "enter-width-pixels": "Введіть ширину в пікселях",
@@ -1675,10 +1675,12 @@
       "year-two-digit": "Рік як двозначне число (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Пошук файлів та тек...",
+      "item": "елемент",
+      "items": "елементи",
       "select-current": "Вибрати поточне",
       "select-file": "Вибрати файл",
       "select-folder": "Вибрати теку",
+      "selected:": "Вибрано:",
       "title": "Вибір файлу"
     },
     "file-picker-title": "Виберіть файл",
