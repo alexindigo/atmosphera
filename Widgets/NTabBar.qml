@@ -51,13 +51,11 @@ Rectangle {
       var len = kids.length;
       for (var i = 0; i < len; i++) {
         var child = kids[i];
-        // Safely set properties if they exist
         if ("isFirst" in child)
           child.isFirst = (i === 0);
         if ("isLast" in child)
           child.isLast = (i === len - 1);
       }
-      // Re-run distribution logic if needed by the layout
       root._applyDistribution();
     }
   }
