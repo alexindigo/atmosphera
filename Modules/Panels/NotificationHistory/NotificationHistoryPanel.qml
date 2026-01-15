@@ -152,7 +152,7 @@ SmartPanel {
       NBox {
         id: headerBox
         Layout.fillWidth: true
-        implicitHeight: header.implicitHeight + (Style.marginM * 2)
+        implicitHeight: header.implicitHeight + Style.marginXL
 
         ColumnLayout {
           id: header
@@ -270,7 +270,7 @@ SmartPanel {
             NBox {
               visible: !panelContent.hasNotificationsInCurrentRange()
               Layout.fillWidth: true
-              Layout.preferredHeight: emptyState.implicitHeight + Style.marginM * 2
+              Layout.preferredHeight: emptyState.implicitHeight + Style.marginXL
 
               ColumnLayout {
                 id: emptyState
@@ -330,7 +330,7 @@ SmartPanel {
                     id: notificationDelegate
                     width: parent.width
                     visible: panelContent.isInCurrentRange(model.timestamp)
-                    height: visible ? contentColumn.height + (Style.marginM * 2) : 0
+                    height: visible ? contentColumn.height + Style.marginXL : 0
 
                     property string notificationId: model.id
                     property bool isExpanded: scrollView.expandedId === notificationId
