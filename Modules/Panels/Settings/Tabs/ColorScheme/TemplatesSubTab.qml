@@ -24,7 +24,7 @@ ColumnLayout {
                      });
     }
 
-    // Add terminals
+    // Add terminals with category "terminal"
     for (var i = 0; i < TemplateRegistry.terminals.length; i++) {
       var t = TemplateRegistry.terminals[i];
       templates.push({
@@ -74,7 +74,7 @@ ColumnLayout {
       templates.push({
                        "id": app.id,
                        "name": app.name,
-                       "category": app.category || "applications",
+                       "category": app.category || "misc",
                        "tooltip": getDesc(path)
                      });
     }
@@ -85,24 +85,43 @@ ColumnLayout {
     return templates;
   }
 
+  // Category filter
+  property string selectedCategory: ""
+
+  // Build available categories dynamically
+  readonly property var availableCategories: {
+    var cats = {};
+    for (var i = 0; i < allTemplates.length; i++) {
+      cats[allTemplates[i].category] = true;
+    }
+    return Object.keys(cats).sort();
+  }
+
   // Filter toggle
   property bool showOnlyActive: false
 
-  // Filtered templates based on search and toggle
+  // Filtered templates based on category, search, and toggle
   property string searchText: ""
   readonly property var filteredTemplates: {
-    // Search overrides toggle
+    var result = allTemplates;
+
+    // Filter by category first (unless searching)
+    if (selectedCategory !== "" && searchText.trim() === "") {
+      result = result.filter(t => t.category === selectedCategory);
+    }
+
+    // Search overrides category filter
     if (searchText.trim() !== "") {
       var query = searchText.toLowerCase().trim();
-      return allTemplates.filter(t => t.name.toLowerCase().includes(query));
+      result = result.filter(t => t.name.toLowerCase().includes(query));
     }
 
-    // Filter by active if enabled
-    if (showOnlyActive) {
-      return allTemplates.filter(t => isTemplateActive(t.id));
+    // Filter by active if enabled (and not searching)
+    if (showOnlyActive && searchText.trim() === "") {
+      result = result.filter(t => isTemplateActive(t.id));
     }
 
-    return allTemplates;
+    return result;
   }
 
   // Check if a template is active
@@ -151,6 +170,44 @@ ColumnLayout {
     text: I18n.tr("panels.color-scheme.templates-desc")
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
+  }
+
+  // Category filter chips
+  NCollapsible {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.color-scheme.templates-filter-label")
+    description: I18n.tr("panels.color-scheme.templates-filter-description")
+    expanded: true
+    contentSpacing: Style.marginXS
+
+    Flow {
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+      flow: Flow.LeftToRight
+
+      Repeater {
+        model: [""].concat(root.availableCategories)
+
+        delegate: NButton {
+          text: {
+            if (modelData === "")
+              return I18n.tr("launcher.categories.all");
+            // Special case for UI to keep it uppercase
+            if (modelData === "system")
+              return "System";
+            // Capitalize first letter for others
+            return modelData.charAt(0).toUpperCase() + modelData.slice(1);
+          }
+          backgroundColor: root.selectedCategory === modelData ? Color.mPrimary : Color.mSurfaceVariant
+          textColor: root.selectedCategory === modelData ? Color.mOnPrimary : Color.mOnSurfaceVariant
+          onClicked: root.selectedCategory = modelData
+          fontSize: Style.fontSizeS
+          iconSize: Style.fontSizeS
+          fontWeight: Style.fontWeightSemiBold
+          buttonRadius: Style.iRadiusM
+        }
+      }
+    }
   }
 
   // Search/filter input row
