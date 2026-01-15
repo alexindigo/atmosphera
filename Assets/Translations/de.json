@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Templates für vordefinierte Schemata generieren",
       "predefined-title": "Vordefinierte Farbschemata",
       "templates-desc": "Farben auf externe Anwendungen anwenden.",
+      "templates-filter-description": "Vorlagen aus einer bestimmten Kategorie anzeigen.",
+      "templates-filter-label": "Nach Kategorie filtern",
       "templates-misc-description": "Erstellen Sie Ihre eigenen Vorlagen.",
       "templates-misc-label": "Erweitert",
       "templates-misc-user-templates-description": "Nur aktivieren, wenn Sie wissen, was Sie tun — weitere Informationen finden Sie in unserer Online-Dokumentation",

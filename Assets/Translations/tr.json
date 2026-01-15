@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Önceden tanımlanmış şemalar için şablonlar oluşturun",
       "predefined-title": "Önceden tanımlanmış renk şemaları",
       "templates-desc": "Renkleri harici uygulamalara uygula.",
+      "templates-filter-description": "Belirli bir kategoriden şablonları göster.",
+      "templates-filter-label": "Kategoriye göre filtrele",
       "templates-misc-description": "Kendi şablonlarınızı oluşturun.",
       "templates-misc-label": "Gelişmiş",
       "templates-misc-user-templates-description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin — çevrimiçi belgelerimize bakın",

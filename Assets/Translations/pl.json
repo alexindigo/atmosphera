@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Generuj szablony dla predefiniowanych schematów",
       "predefined-title": "Predefiniowane schematy kolorów",
       "templates-desc": "Zastosuj kolory w aplikacjach zewnętrznych.",
+      "templates-filter-description": "Pokaż szablony z określonej kategorii.",
+      "templates-filter-label": "Filtruj według kategorii",
       "templates-misc-description": "Twórz własne szablony.",
       "templates-misc-label": "Zaawansowane",
       "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online",

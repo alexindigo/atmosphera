@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Генерировать шаблоны для предопределенных схем",
       "predefined-title": "Предопределенные цветовые схемы",
       "templates-desc": "Применение цветов к внешним приложениям.",
+      "templates-filter-description": "Показать шаблоны из определенной категории.",
+      "templates-filter-label": "Фильтровать по категории",
       "templates-misc-description": "Создайте свои собственные шаблоны.",
       "templates-misc-label": "Дополнительно",
       "templates-misc-user-templates-description": "Включайте только если вы знаете, что делаете — обратитесь к нашей онлайн-документации",

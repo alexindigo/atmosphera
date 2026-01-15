@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Générer des modèles pour les schémas prédéfinis",
       "predefined-title": "Jeux de couleurs prédéfinis",
       "templates-desc": "Appliquer des couleurs aux applications externes.",
+      "templates-filter-description": "Afficher les modèles d'une catégorie spécifique.",
+      "templates-filter-label": "Filtrer par catégorie",
       "templates-misc-description": "Créez vos propres modèles.",
       "templates-misc-label": "Avancé",
       "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne",

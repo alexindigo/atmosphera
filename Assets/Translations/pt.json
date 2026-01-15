@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Gerar modelos para esquemas predefinidos",
       "predefined-title": "Esquemas de cores predefinidos",
       "templates-desc": "Aplicar cores a aplicações externas.",
+      "templates-filter-description": "Mostrar templates de uma categoria específica.",
+      "templates-filter-label": "Filtrar por categoria",
       "templates-misc-description": "Crie seus próprios modelos.",
       "templates-misc-label": "Avançado",
       "templates-misc-user-templates-description": "Ative apenas se souber o que está fazendo — consulte nossa documentação online",

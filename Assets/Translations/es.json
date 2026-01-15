@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Generar plantillas para esquemas predefinidos",
       "predefined-title": "Esquemas de colores predefinidos",
       "templates-desc": "Aplicar colores a aplicaciones externas.",
+      "templates-filter-description": "Mostrar plantillas de una categoría específica.",
+      "templates-filter-label": "Filtrar por categoría",
       "templates-misc-description": "Crea tus propias plantillas.",
       "templates-misc-label": "Avanzado",
       "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea",

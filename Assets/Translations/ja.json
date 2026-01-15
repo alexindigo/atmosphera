@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "プリセット配色のテンプレートを生成する",
       "predefined-title": "プリセット配色",
       "templates-desc": "外部アプリケーションに配色を適用します。",
+      "templates-filter-description": "特定のカテゴリのテンプレートを表示します。",
+      "templates-filter-label": "カテゴリで絞り込む",
       "templates-misc-description": "独自のテンプレートを作成。",
       "templates-misc-label": "詳細設定",
       "templates-misc-user-templates-description": "操作方法を理解している場合のみ有効にしてください。オンラインドキュメントを参照してください。",

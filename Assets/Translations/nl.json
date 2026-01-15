@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "Sjablonen genereren voor vooraf gedefinieerde schema's",
       "predefined-title": "Vooraf gedefinieerde kleurenschema's",
       "templates-desc": "Pas kleuren toe op externe applicaties.",
+      "templates-filter-description": "Sjablonen uit een specifieke categorie weergeven.",
+      "templates-filter-label": "Filteren op categorie",
       "templates-misc-description": "Maak uw eigen sjablonen.",
       "templates-misc-label": "Geavanceerd",
       "templates-misc-user-templates-description": "Alleen inschakelen als u weet wat u doet — raadpleeg onze online documentatie",

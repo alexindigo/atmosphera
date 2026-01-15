@@ -746,6 +746,8 @@
       "predefined-generate-templates-label": "为预定义方案生成模板",
       "predefined-title": "预定义配色方案",
       "templates-desc": "将颜色应用于外部应用程序。",
+      "templates-filter-description": "显示特定类别的模板。",
+      "templates-filter-label": "按类别筛选",
       "templates-misc-description": "创建您自己的模板。",
       "templates-misc-label": "高级",
       "templates-misc-user-templates-description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档",
