@@ -750,7 +750,7 @@
       "templates-misc-label": "Haladó",
       "templates-misc-user-templates-description": "Csak akkor engedélyezze, ha tudja, mit csinál — lásd az online dokumentációt",
       "templates-misc-user-templates-label": "Felhasználói sablonok engedélyezése",
-      "templates-none-detected": "Nem észlelt",
+      "templates-none-detected": "Nem észlelt semmit",
       "templates-write-path": "Írja: {filepath}",
       "title": "Színséma"
     },
