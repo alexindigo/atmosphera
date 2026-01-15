@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.Commons
 import qs.Widgets
 
-Rectangle {
+Item {
   id: root
 
   // Public properties
@@ -16,6 +16,11 @@ Rectangle {
   property bool isLast: false
   // Internal state
   property bool isHovered: false
+  // Styling
+  property color fillColor: root.isHovered ? Color.mHover : (root.checked ? Color.mPrimary : Color.mSurface)
+  property color borderColor: Color.mOutline
+  property real borderWidth: Style.borderS
+  property real radius: Style.iRadiusM
 
   signal clicked
 
@@ -23,63 +28,82 @@ Rectangle {
   Layout.fillHeight: true
   implicitWidth: tabText.implicitWidth + Style.marginM * 2
 
-  // Styling
-  radius: (isFirst || isLast) ? Style.iRadiusM : 0
-  color: root.isHovered ? Color.mHover : (root.checked ? Color.mPrimary : Color.mSurface)
-  border.color: Color.mOutline
-  border.width: Style.borderS
+  onFillColorChanged: canvas.requestPaint()
+  onBorderColorChanged: canvas.requestPaint()
+  onIsFirstChanged: canvas.requestPaint()
+  onIsLastChanged: canvas.requestPaint()
+  onWidthChanged: canvas.requestPaint()
+  onHeightChanged: canvas.requestPaint()
 
-  // Squares off the RIGHT side of FIRST tab (but not if also last).
-  Item {
-    visible: root.isFirst && !root.isLast
-    width: root.radius
-    anchors {
-      right: parent.right
-      top: parent.top
-      bottom: parent.bottom
-    }
-    clip: true
+  Canvas {
+    id: canvas
+    anchors.fill: parent
 
-    Rectangle {
-      width: parent.width + root.border.width * 2
-      anchors {
-        right: parent.right
-        top: parent.top
-        bottom: parent.bottom
-      }
+    onPaint: {
+      var ctx = getContext("2d");
+      ctx.clearRect(0, 0, width, height);
 
-      color: root.color
-      border.width: root.border.width
-      border.color: root.border.color
+      var r = root.radius;
+      var bw = root.borderWidth;
+      var halfBw = bw / 2;
+
+      // Determine corner radii
+      var tlr = root.isFirst ? r : 0; // top-left
+      var blr = root.isFirst ? r : 0; // bottom-left
+      var trr = root.isLast ? r : 0; // top-right
+      var brr = root.isLast ? r : 0; // bottom-right
+
+      // Draw inset for border
+      var x = halfBw;
+      var y = halfBw;
+      var w = width - bw;
+      var h = height - bw;
+
+      ctx.beginPath();
+      // Start at top-left after the corner
+      ctx.moveTo(x + tlr, y);
+      // Top edge to top-right corner
+      ctx.lineTo(x + w - trr, y);
+      // Top-right corner
+      if (trr > 0)
+        ctx.arcTo(x + w, y, x + w, y + trr, trr);
+      else
+        ctx.lineTo(x + w, y);
+      // Right edge to bottom-right corner
+      ctx.lineTo(x + w, y + h - brr);
+      // Bottom-right corner
+      if (brr > 0)
+        ctx.arcTo(x + w, y + h, x + w - brr, y + h, brr);
+      else
+        ctx.lineTo(x + w, y + h);
+      // Bottom edge to bottom-left corner
+      ctx.lineTo(x + blr, y + h);
+      // Bottom-left corner
+      if (blr > 0)
+        ctx.arcTo(x, y + h, x, y + h - blr, blr);
+      else
+        ctx.lineTo(x, y + h);
+      // Left edge to top-left corner
+      ctx.lineTo(x, y + tlr);
+      // Top-left corner
+      if (tlr > 0)
+        ctx.arcTo(x, y, x + tlr, y, tlr);
+      else
+        ctx.lineTo(x, y);
+      ctx.closePath();
+
+      // Fill
+      ctx.fillStyle = root.fillColor;
+      ctx.fill();
+
+      // Stroke
+      ctx.strokeStyle = root.borderColor;
+      ctx.lineWidth = bw;
+      ctx.stroke();
     }
   }
 
-  // Squares off the LEFT side of LAST tab (but not if also first).
-  Item {
-    visible: root.isLast && !root.isFirst
-    width: root.radius
-    anchors {
-      left: parent.left
-      top: parent.top
-      bottom: parent.bottom
-    }
-    clip: true
-
-    Rectangle {
-      width: parent.width + root.border.width * 2
-      anchors {
-        left: parent.left
-        top: parent.top
-        bottom: parent.bottom
-      }
-
-      color: root.color
-      border.width: root.border.width
-      border.color: root.border.color
-    }
-  }
-
-  Behavior on color {
+  Behavior on fillColor {
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
