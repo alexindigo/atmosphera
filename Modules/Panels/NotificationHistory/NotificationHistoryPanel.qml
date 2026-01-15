@@ -218,7 +218,7 @@ SmartPanel {
             Layout.fillWidth: true
             visible: NotificationService.historyList.count > 0 && panelContent.groupByDate
             currentIndex: panelContent.currentRange
-            tabHeight: Style.baseWidgetSize * 0.7
+            tabHeight: Style.toOdd(Style.baseWidgetSize * 0.8)
             spacing: Style.marginXS
             distributeEvenly: true
 

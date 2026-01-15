@@ -88,10 +88,10 @@ Rectangle {
 
   NText {
     id: tabText
+    y: Style.pixelAlignCenter(parent.height, height)
     anchors {
       left: parent.left
       right: parent.right
-      verticalCenter: parent.verticalCenter
       leftMargin: Style.marginS
       rightMargin: Style.marginS
     }
