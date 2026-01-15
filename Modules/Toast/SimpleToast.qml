@@ -99,6 +99,9 @@ Item {
   MouseArea {
     anchors.fill: background
     acceptedButtons: Qt.LeftButton
+    hoverEnabled: true
+    onEntered: hideTimer.stop()
+    onExited: hideTimer.restart()
     onClicked: root.hide()
     cursorShape: Qt.PointingHandCursor
   }
