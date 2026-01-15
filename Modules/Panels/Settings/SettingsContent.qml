@@ -140,133 +140,133 @@ Item {
 
   function updateTabsModel() {
     let newTabs = [
-      {
-        "id": SettingsPanel.Tab.General,
-        "label": "common.general",
-        "icon": "settings-general",
-        "source": generalTab
-      },
-      {
-        "id": SettingsPanel.Tab.UserInterface,
-        "label": "panels.user-interface.title",
-        "icon": "settings-user-interface",
-        "source": userInterfaceTab
-      },
-      {
-        "id": SettingsPanel.Tab.ColorScheme,
-        "label": "panels.color-scheme.title",
-        "icon": "settings-color-scheme",
-        "source": colorSchemeTab
-      },
-      {
-        "id": SettingsPanel.Tab.Wallpaper,
-        "label": "common.wallpaper",
-        "icon": "settings-wallpaper",
-        "source": wallpaperTab
-      },
-      {
-        "id": SettingsPanel.Tab.Bar,
-        "label": "panels.bar.title",
-        "icon": "settings-bar",
-        "source": barTab
-      },
-      {
-        "id": SettingsPanel.Tab.Dock,
-        "label": "panels.dock.title",
-        "icon": "settings-dock",
-        "source": dockTab
-      },
-      {
-        "id": SettingsPanel.Tab.DesktopWidgets,
-        "label": "panels.desktop-widgets.title",
-        "icon": "clock",
-        "source": desktopWidgetsTab
-      },
-      {
-        "id": SettingsPanel.Tab.ControlCenter,
-        "label": "panels.control-center.title",
-        "icon": "settings-control-center",
-        "source": controlCenterTab
-      },
-      {
-        "id": SettingsPanel.Tab.Launcher,
-        "label": "panels.launcher.title",
-        "icon": "settings-launcher",
-        "source": launcherTab
-      },
-      {
-        "id": SettingsPanel.Tab.Notifications,
-        "label": "common.notifications",
-        "icon": "settings-notifications",
-        "source": notificationsTab
-      },
-      {
-        "id": SettingsPanel.Tab.OSD,
-        "label": "panels.osd.title",
-        "icon": "settings-osd",
-        "source": osdTab
-      },
-      {
-        "id": SettingsPanel.Tab.LockScreen,
-        "label": "panels.lock-screen.title",
-        "icon": "settings-lock-screen",
-        "source": lockScreenTab
-      },
-      {
-        "id": SettingsPanel.Tab.SessionMenu,
-        "label": "session-menu.title",
-        "icon": "settings-session-menu",
-        "source": sessionMenuTab
-      },
-      {
-        "id": SettingsPanel.Tab.Audio,
-        "label": "panels.audio.title",
-        "icon": "settings-audio",
-        "source": audioTab
-      },
-      {
-        "id": SettingsPanel.Tab.Display,
-        "label": "panels.display.title",
-        "icon": "settings-display",
-        "source": displayTab
-      },
-      {
-        "id": SettingsPanel.Tab.Network,
-        "label": "common.network",
-        "icon": "settings-network",
-        "source": networkTab
-      },
-      {
-        "id": SettingsPanel.Tab.Location,
-        "label": "panels.region.title",
-        "icon": "settings-location",
-        "source": regionTab
-      },
-      {
-        "id": SettingsPanel.Tab.SystemMonitor,
-        "label": "system-monitor.title",
-        "icon": "settings-system-monitor",
-        "source": systemMonitorTab
-      },
-      {
-        "id": SettingsPanel.Tab.Plugins,
-        "label": "panels.plugins.title",
-        "icon": "plugin",
-        "source": pluginsTab
-      },
-      {
-        "id": SettingsPanel.Tab.Hooks,
-        "label": "panels.hooks.title",
-        "icon": "settings-hooks",
-        "source": hooksTab
-      },
-      {
-        "id": SettingsPanel.Tab.About,
-        "label": "panels.about.title",
-        "icon": "settings-about",
-        "source": aboutTab
-      }
-    ];
+          {
+            "id": SettingsPanel.Tab.General,
+            "label": "common.general",
+            "icon": "settings-general",
+            "source": generalTab
+          },
+          {
+            "id": SettingsPanel.Tab.UserInterface,
+            "label": "panels.user-interface.title",
+            "icon": "settings-user-interface",
+            "source": userInterfaceTab
+          },
+          {
+            "id": SettingsPanel.Tab.ColorScheme,
+            "label": "panels.color-scheme.title",
+            "icon": "settings-color-scheme",
+            "source": colorSchemeTab
+          },
+          {
+            "id": SettingsPanel.Tab.Wallpaper,
+            "label": "common.wallpaper",
+            "icon": "settings-wallpaper",
+            "source": wallpaperTab
+          },
+          {
+            "id": SettingsPanel.Tab.Bar,
+            "label": "panels.bar.title",
+            "icon": "settings-bar",
+            "source": barTab
+          },
+          {
+            "id": SettingsPanel.Tab.Dock,
+            "label": "panels.dock.title",
+            "icon": "settings-dock",
+            "source": dockTab
+          },
+          {
+            "id": SettingsPanel.Tab.DesktopWidgets,
+            "label": "panels.desktop-widgets.title",
+            "icon": "clock",
+            "source": desktopWidgetsTab
+          },
+          {
+            "id": SettingsPanel.Tab.ControlCenter,
+            "label": "panels.control-center.title",
+            "icon": "settings-control-center",
+            "source": controlCenterTab
+          },
+          {
+            "id": SettingsPanel.Tab.Launcher,
+            "label": "panels.launcher.title",
+            "icon": "settings-launcher",
+            "source": launcherTab
+          },
+          {
+            "id": SettingsPanel.Tab.Notifications,
+            "label": "common.notifications",
+            "icon": "settings-notifications",
+            "source": notificationsTab
+          },
+          {
+            "id": SettingsPanel.Tab.OSD,
+            "label": "panels.osd.title",
+            "icon": "settings-osd",
+            "source": osdTab
+          },
+          {
+            "id": SettingsPanel.Tab.LockScreen,
+            "label": "panels.lock-screen.title",
+            "icon": "settings-lock-screen",
+            "source": lockScreenTab
+          },
+          {
+            "id": SettingsPanel.Tab.SessionMenu,
+            "label": "session-menu.title",
+            "icon": "settings-session-menu",
+            "source": sessionMenuTab
+          },
+          {
+            "id": SettingsPanel.Tab.Audio,
+            "label": "panels.audio.title",
+            "icon": "settings-audio",
+            "source": audioTab
+          },
+          {
+            "id": SettingsPanel.Tab.Display,
+            "label": "panels.display.title",
+            "icon": "settings-display",
+            "source": displayTab
+          },
+          {
+            "id": SettingsPanel.Tab.Network,
+            "label": "common.network",
+            "icon": "settings-network",
+            "source": networkTab
+          },
+          {
+            "id": SettingsPanel.Tab.Location,
+            "label": "panels.region.title",
+            "icon": "settings-location",
+            "source": regionTab
+          },
+          {
+            "id": SettingsPanel.Tab.SystemMonitor,
+            "label": "system-monitor.title",
+            "icon": "settings-system-monitor",
+            "source": systemMonitorTab
+          },
+          {
+            "id": SettingsPanel.Tab.Plugins,
+            "label": "panels.plugins.title",
+            "icon": "plugin",
+            "source": pluginsTab
+          },
+          {
+            "id": SettingsPanel.Tab.Hooks,
+            "label": "panels.hooks.title",
+            "icon": "settings-hooks",
+            "source": hooksTab
+          },
+          {
+            "id": SettingsPanel.Tab.About,
+            "label": "panels.about.title",
+            "icon": "settings-about",
+            "source": aboutTab
+          }
+        ];
 
     root.tabsModel = newTabs;
   }
