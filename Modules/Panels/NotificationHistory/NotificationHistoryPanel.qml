@@ -142,7 +142,7 @@ SmartPanel {
       totalHeight = visibleCount * avgNotificationHeight + (visibleCount - 1) * Style.marginM;
       return totalHeight;
     }
-    property real calculatedHeight: headerHeight + tabsHeight + contentHeight + (Style.marginL * 2) + (Style.marginM * 2)
+    property real calculatedHeight: headerHeight + tabsHeight + contentHeight + (Style.marginL * 2) + (Style.marginXL)
     property real contentPreferredHeight: {
       if (NotificationService.historyList.count === 0) {
         // Empty state: smaller height
@@ -162,7 +162,7 @@ SmartPanel {
       NBox {
         id: headerBox
         Layout.fillWidth: true
-        implicitHeight: header.implicitHeight + (Style.marginM * 2)
+        implicitHeight: header.implicitHeight + (Style.marginXL)
 
         ColumnLayout {
           id: header
@@ -328,7 +328,7 @@ SmartPanel {
                 id: notificationDelegate
                 width: parent.width
                 visible: panelContent.isInCurrentRange(model.timestamp)
-                height: visible ? contentColumn.height + (Style.marginM * 2) : 0
+                height: visible ? contentColumn.height + (Style.marginXL) : 0
 
                 property string notificationId: model.id
                 property bool isExpanded: scrollView.expandedId === notificationId
