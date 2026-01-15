@@ -1047,7 +1047,7 @@
       "compact-lockscreen-label": "Компактный экран блокировки",
       "lock-on-suspend-description": "Автоматически блокировать экран при приостановке работы системы.",
       "lock-on-suspend-label": "Блокировать при приостановке",
-      "show-hibernate-description": "Показывать опцию ‘спящий режим’ в элементах управления питанием.",
+      "show-hibernate-description": "Показывать опцию 'спящий режим' в элементах управления питанием.",
       "show-hibernate-label": "Показывать спящий режим",
       "show-session-buttons-description": "Разрешить доступ к настройкам питания с экрана блокировки.",
       "show-session-buttons-label": "Элементы управления питанием",
