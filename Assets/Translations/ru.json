@@ -749,7 +749,7 @@
       "templates-filter-label": "Фильтровать по категории",
       "templates-misc-description": "Создайте свои собственные шаблоны.",
       "templates-misc-label": "Дополнительно",
-      "templates-misc-user-templates-description": "Включайте только если вы знаете, что делаете — обратитесь к нашей онлайн-документации",
+      "templates-misc-user-templates-description": "Включайте только если вы знаете, что делаете — обратитесь к нашей онлайн-документации.",
       "templates-misc-user-templates-label": "Включить пользовательские шаблоны",
       "templates-none-detected": "Не обнаружено",
       "templates-write-path": "Записывает: {filepath}",

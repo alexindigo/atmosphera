@@ -749,7 +749,7 @@
       "templates-filter-label": "Kategoriye göre filtrele",
       "templates-misc-description": "Kendi şablonlarınızı oluşturun.",
       "templates-misc-label": "Gelişmiş",
-      "templates-misc-user-templates-description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin — çevrimiçi belgelerimize bakın",
+      "templates-misc-user-templates-description": "Yalnızca ne yaptığınızı biliyorsanız etkinleştirin — çevrimiçi belgelerimize bakın.",
       "templates-misc-user-templates-label": "Kullanıcı şablonlarını etkinleştir",
       "templates-none-detected": "Hiçbiri algılanmadı",
       "templates-write-path": "Yazıyor: {filepath}",

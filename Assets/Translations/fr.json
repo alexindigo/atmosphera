@@ -749,7 +749,7 @@
       "templates-filter-label": "Filtrer par catégorie",
       "templates-misc-description": "Créez vos propres modèles.",
       "templates-misc-label": "Avancé",
-      "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne",
+      "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne.",
       "templates-misc-user-templates-label": "Activer les modèles utilisateur",
       "templates-none-detected": "Aucun détecté",
       "templates-write-path": "Écrit : {filepath}",

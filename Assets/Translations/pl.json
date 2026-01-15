@@ -749,7 +749,7 @@
       "templates-filter-label": "Filtruj według kategorii",
       "templates-misc-description": "Twórz własne szablony.",
       "templates-misc-label": "Zaawansowane",
-      "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online",
+      "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online.",
       "templates-misc-user-templates-label": "Włącz szablony użytkownika",
       "templates-none-detected": "Nie wykryto",
       "templates-write-path": "Zapisuje: {filepath}",

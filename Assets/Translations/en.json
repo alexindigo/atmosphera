@@ -749,7 +749,7 @@
       "templates-filter-label": "Filter by category",
       "templates-misc-description": "Create your own templates.",
       "templates-misc-label": "Advanced",
-      "templates-misc-user-templates-description": "Only enable if you know what you are doing — refer to our online documentation",
+      "templates-misc-user-templates-description": "Only enable if you know what you are doing — refer to our online documentation.",
       "templates-misc-user-templates-label": "Enable user templates",
       "templates-none-detected": "None detected",
       "templates-write-path": "Writes: {filepath}",

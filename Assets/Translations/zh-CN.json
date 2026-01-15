@@ -749,7 +749,7 @@
       "templates-filter-label": "按类别筛选",
       "templates-misc-description": "创建您自己的模板。",
       "templates-misc-label": "高级",
-      "templates-misc-user-templates-description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档",
+      "templates-misc-user-templates-description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档。",
       "templates-misc-user-templates-label": "启用用户模板",
       "templates-none-detected": "未检测到",
       "templates-write-path": "写入：{filepath}",

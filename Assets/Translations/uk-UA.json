@@ -749,7 +749,7 @@
       "templates-filter-label": "Фільтрувати за категорією",
       "templates-misc-description": "Створіть власні шаблони.",
       "templates-misc-label": "Розширено",
-      "templates-misc-user-templates-description": "Увімкніть лише якщо ви знаєте, що робите — зверніться до нашої онлайн-документації",
+      "templates-misc-user-templates-description": "Увімкніть лише якщо ви знаєте, що робите — зверніться до нашої онлайн-документації.",
       "templates-misc-user-templates-label": "Увімкнути користувацькі шаблони",
       "templates-none-detected": "Не виявлено",
       "templates-write-path": "Записує: {filepath}",

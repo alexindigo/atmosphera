@@ -749,7 +749,7 @@
       "templates-filter-label": "Filtrar por categoría",
       "templates-misc-description": "Crea tus propias plantillas.",
       "templates-misc-label": "Avanzado",
-      "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea",
+      "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea.",
       "templates-misc-user-templates-label": "Habilitar plantillas de usuario",
       "templates-none-detected": "Ninguno detectado",
       "templates-write-path": "Escribe: {filepath}",
