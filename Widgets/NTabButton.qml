@@ -41,7 +41,7 @@ Rectangle {
     clip: true
 
     Rectangle {
-      width: parent.width + border.width
+      width: parent.width + root.border.width * 2
       anchors {
         right: parent.right
         top: parent.top
@@ -66,7 +66,7 @@ Rectangle {
     clip: true
 
     Rectangle {
-      width: parent.width + border.width
+      width: parent.width + root.border.width * 2
       anchors {
         left: parent.left
         top: parent.top
