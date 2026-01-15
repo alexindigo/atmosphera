@@ -91,8 +91,8 @@ RowLayout {
       }
     }
     return I18n.tr("panels.indicator.default-value", {
-                     "value": displayValue
-                   });
+      "value": displayValue
+    });
   }
 
   function itemCount() {
@@ -226,7 +226,7 @@ RowLayout {
             implicitHeight: 100
             color: "transparent"
             opacity: parent.active ? 0.3 : 0.0
-            radius: Style.iRadiusM / 2
+            radius: Style.iRadiusXS
 
             Behavior on opacity {
               NumberAnimation {
