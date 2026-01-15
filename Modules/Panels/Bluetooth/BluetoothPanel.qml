@@ -436,16 +436,16 @@ SmartPanel {
           // Clear text when overlay appears
           onVisibleChanged: {
             if (visible) {
-               text = "";
-               inputItem.forceActiveFocus();
+              text = "";
+              inputItem.forceActiveFocus();
             }
           }
           // Submit on Enter
           inputItem.onAccepted: {
-             if (text.length > 0) {
-                 BluetoothService.submitPin(text);
-                 text = "";
-             }
+            if (text.length > 0) {
+              BluetoothService.submitPin(text);
+              text = "";
+            }
           }
         }
 
