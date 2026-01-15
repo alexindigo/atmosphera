@@ -540,9 +540,9 @@ Singleton {
     _pauseDiscoveryFor(totalPauseMs);
 
     // Prefer external dev script for pairing/connecting; executed detached
-    const scriptPath = Quickshell.shellDir + "/Bin/bluetooth-connect.sh";
-    // Use bash explicitly to avoid relying on executable bit in all environments
-    btExec(["bash", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
+    const scriptPath = Quickshell.shellDir + "/Bin/bluetooth-connect.py";
+    // Use python3 explicitly
+    btExec(["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)]);
   }
 
   // Helper to run bluetoothctl and scripts with consistent error logging
