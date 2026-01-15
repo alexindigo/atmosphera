@@ -24,10 +24,10 @@ Rectangle {
   Layout.fillHeight: true
   implicitWidth: tabText.implicitWidth + Style.marginM * 2
 
-  topLeftRadius: isFirst ? Style.iRadiusM : 0
-  bottomLeftRadius: isFirst ? Style.iRadiusM : 0
-  topRightRadius: isLast ? Style.iRadiusM : 0
-  bottomRightRadius: isLast ? Style.iRadiusM : 0
+  topLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXS
+  bottomLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXS
+  topRightRadius: isLast ? Style.iRadiusM : Style.iRadiusXXS
+  bottomRightRadius: isLast ? Style.iRadiusM : Style.iRadiusXXS
 
   color: root.isHovered ? Color.mHover : (root.checked ? Color.mPrimary : Color.mSurface)
   border.color: Color.mOutline
