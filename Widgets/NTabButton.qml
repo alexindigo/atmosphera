@@ -29,9 +29,9 @@ Rectangle {
   border.color: Color.mOutline
   border.width: Style.borderS
 
-  // Squares off the RIGHT side of FIRST tab.
+  // Squares off the RIGHT side of FIRST tab (but not if also last).
   Item {
-    visible: root.isFirst
+    visible: root.isFirst && !root.isLast
     width: root.radius
     anchors {
       right: parent.right
@@ -54,9 +54,9 @@ Rectangle {
     }
   }
 
-  // Squares off the LEFT side of LAST tab.
+  // Squares off the LEFT side of LAST tab (but not if also first).
   Item {
-    visible: root.isLast
+    visible: root.isLast && !root.isFirst
     width: root.radius
     anchors {
       left: parent.left
