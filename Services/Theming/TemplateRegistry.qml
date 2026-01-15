@@ -135,7 +135,7 @@ Singleton {
           "path": "~/.cache/wal/colors.json"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} pywalfox`
+      "postProcess": mode => `${colorsApplyScript} pywalfox ${mode}`
     } // CONSOLIDATED DISCORD CLIENTS
     ,
     {
