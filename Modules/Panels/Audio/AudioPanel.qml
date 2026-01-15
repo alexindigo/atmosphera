@@ -282,7 +282,7 @@ SmartPanel {
       // HEADER
       NBox {
         Layout.fillWidth: true
-        implicitHeight: header.implicitHeight + (Style.marginM * 2)
+        implicitHeight: header.implicitHeight + (Style.marginXL)
 
         ColumnLayout {
           id: header
@@ -360,7 +360,7 @@ SmartPanel {
             // Output Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginXL)
 
               RowLayout {
                 id: outputVolumeColumn
@@ -425,7 +425,7 @@ SmartPanel {
             // Input Volume
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginXL)
 
               RowLayout {
                 id: inputVolumeColumn
@@ -500,7 +500,7 @@ SmartPanel {
                 id: appBox
                 required property PwNode modelData
                 Layout.fillWidth: true
-                Layout.preferredHeight: appRow.implicitHeight + (Style.marginM * 2)
+                Layout.preferredHeight: appRow.implicitHeight + (Style.marginXL)
                 visible: !isCaptureStream
 
                 // Track individual node to ensure properties are bound
@@ -802,7 +802,7 @@ SmartPanel {
 
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: outputColumn.implicitHeight + (Style.marginXL)
 
               ColumnLayout {
                 id: outputColumn
@@ -844,7 +844,7 @@ SmartPanel {
 
             NBox {
               Layout.fillWidth: true
-              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginM * 2)
+              Layout.preferredHeight: inputColumn.implicitHeight + (Style.marginXL)
 
               ColumnLayout {
                 id: inputColumn

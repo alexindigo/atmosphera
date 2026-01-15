@@ -22,7 +22,7 @@ Rectangle {
 
   // Sizing
   Layout.fillHeight: true
-  implicitWidth: tabText.implicitWidth + Style.marginM * 2
+  implicitWidth: tabText.implicitWidth + Style.marginXL
 
   topLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXXS
   bottomLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXXS
