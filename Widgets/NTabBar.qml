@@ -9,7 +9,7 @@ Rectangle {
 
   // Public properties
   property int currentIndex: 0
-  property real spacing: Style.marginS
+  property real spacing: Style.marginXS
   property real margins: 0
   property real tabHeight: Style.baseWidgetSize
   property bool distributeEvenly: false
@@ -17,6 +17,27 @@ Rectangle {
 
   onDistributeEvenlyChanged: _applyDistribution()
   Component.onCompleted: _applyDistribution()
+
+  function _updateFirstLast() {
+    var kids = tabRow.children;
+    var len = kids.length;
+    var firstVisible = -1;
+    var lastVisible = -1;
+    for (var i = 0; i < len; i++) {
+      if (kids[i].visible) {
+        if (firstVisible === -1)
+          firstVisible = i;
+        lastVisible = i;
+      }
+    }
+    for (var i = 0; i < len; i++) {
+      var child = kids[i];
+      if ("isFirst" in child)
+        child.isFirst = (i === firstVisible);
+      if ("isLast" in child)
+        child.isLast = (i === lastVisible);
+    }
+  }
 
   function _applyDistribution() {
     if (!distributeEvenly) {
@@ -47,15 +68,11 @@ Rectangle {
     spacing: root.spacing
 
     onChildrenChanged: {
-      var kids = children;
-      var len = kids.length;
-      for (var i = 0; i < len; i++) {
-        var child = kids[i];
-        if ("isFirst" in child)
-          child.isFirst = (i === 0);
-        if ("isLast" in child)
-          child.isLast = (i === len - 1);
+      for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+        child.visibleChanged.connect(root._updateFirstLast);
       }
+      root._updateFirstLast();
       root._applyDistribution();
     }
   }

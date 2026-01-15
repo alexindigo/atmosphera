@@ -14,6 +14,7 @@ Rectangle {
   property real pointSize: Style.fontSizeM
   property bool isFirst: false
   property bool isLast: false
+
   // Internal state
   property bool isHovered: false
 
@@ -21,63 +22,16 @@ Rectangle {
 
   // Sizing
   Layout.fillHeight: true
-  implicitWidth: tabText.implicitWidth + Style.marginM * 2
+  implicitWidth: tabText.implicitWidth + Style.marginXL
 
-  // Styling
-  radius: (isFirst || isLast) ? Style.iRadiusM : 0
+  topLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXXS
+  bottomLeftRadius: isFirst ? Style.iRadiusM : Style.iRadiusXXXS
+  topRightRadius: isLast ? Style.iRadiusM : Style.iRadiusXXXS
+  bottomRightRadius: isLast ? Style.iRadiusM : Style.iRadiusXXXS
+
   color: root.isHovered ? Color.mHover : (root.checked ? Color.mPrimary : Color.mSurface)
   border.color: Color.mOutline
   border.width: Style.borderS
-
-  // Squares off the RIGHT side of FIRST tab.
-  Item {
-    visible: root.isFirst
-    width: root.radius
-    anchors {
-      right: parent.right
-      top: parent.top
-      bottom: parent.bottom
-    }
-    clip: true
-
-    Rectangle {
-      width: parent.width + border.width
-      anchors {
-        right: parent.right
-        top: parent.top
-        bottom: parent.bottom
-      }
-
-      color: root.color
-      border.width: root.border.width
-      border.color: root.border.color
-    }
-  }
-
-  // Squares off the LEFT side of LAST tab.
-  Item {
-    visible: root.isLast
-    width: root.radius
-    anchors {
-      left: parent.left
-      top: parent.top
-      bottom: parent.bottom
-    }
-    clip: true
-
-    Rectangle {
-      width: parent.width + border.width
-      anchors {
-        left: parent.left
-        top: parent.top
-        bottom: parent.bottom
-      }
-
-      color: root.color
-      border.width: root.border.width
-      border.color: root.border.color
-    }
-  }
 
   Behavior on color {
     ColorAnimation {
@@ -88,10 +42,10 @@ Rectangle {
 
   NText {
     id: tabText
+    y: Style.pixelAlignCenter(parent.height, height)
     anchors {
       left: parent.left
       right: parent.right
-      verticalCenter: parent.verticalCenter
       leftMargin: Style.marginS
       rightMargin: Style.marginS
     }
