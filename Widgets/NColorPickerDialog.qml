@@ -396,7 +396,7 @@ Popup {
             NColorSlider {
               id: selectedSlider
               Layout.fillHeight: true
-              rainbowMode: root.editMode === "h"
+              rainbowMode: root.editMode === NColorPickerDialog.EditMode.H
               topColor: {
                 if (rainbowMode)
                   return "transparent";
@@ -758,8 +758,8 @@ Popup {
           root.colorSelected(root.selectedColor);
           // Delay close to prevent click propagation to elements behind the dialog
           Qt.callLater(() => {
-                         root.close();
-                       });
+            root.close();
+          });
         }
       }
     }
