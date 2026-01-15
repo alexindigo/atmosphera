@@ -1677,6 +1677,7 @@
     "file-picker": {
       "item": "項目",
       "items": "項目",
+      "select-current": "現在のフォルダを選択する",
       "select-file": "ファイルを選択する",
       "select-folder": "フォルダを選択する",
       "selected:": "選択済み:",
