@@ -125,7 +125,7 @@ Item {
           Layout.preferredWidth: Style.marginM
           visible: MediaService.currentPlayer && MediaService.canPlay
         }
-        
+
         Rectangle {
           Layout.preferredWidth: 220
           // Expand to take remaining space when weather is hidden
