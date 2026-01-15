@@ -415,7 +415,7 @@
     "random": "Rastgele",
     "reboot": "Yeniden başlat",
     "refresh": "Yenile",
-    "required": "Gerekli",
+    "required": "(gerekli)",
     "reset": "Sıfırla",
     "resume": "Sürdür",
     "save": "Kaydet",
@@ -1206,9 +1206,9 @@
       "update-available": "Yeni eklenti güncellemesi mevcut",
       "update-available-plural": "Yeni eklenti güncellemeleri mevcut ({count})",
       "update-error": "Eklenti güncellenemedi: {plugin}: {error}.",
-      "update-pending": "v{mevcut} → v{yeni} (Noctalia v{gerekli} gerektirir)",
+      "update-pending": "v{current} → v{new} (Noctalia v{required} gerektirir)",
       "update-success": "{plugin} v{version} sürümüne güncellendi.",
-      "update-version": "v{mevcut} → v{yeni}",
+      "update-version": "v{current} → v{new}",
       "updating": "Güncelleniyor..."
     },
     "region": {

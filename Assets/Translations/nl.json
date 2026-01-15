@@ -415,7 +415,7 @@
     "random": "Willekeurig",
     "reboot": "Herstarten",
     "refresh": "Vernieuwen",
-    "required": "Vereist",
+    "required": "(vereist)",
     "reset": "Resetten",
     "resume": "Hervatten",
     "save": "Opslaan",
@@ -1208,7 +1208,7 @@
       "update-error": "Plugin bijwerken mislukt: {plugin}: {error}.",
       "update-pending": "v{current} → v{new} (vereist Noctalia v{required})",
       "update-success": "{plugin} is bijgewerkt naar v{version}.",
-      "update-version": "v{huidig} → v{nieuw}",
+      "update-version": "v{current} → v{new}",
       "updating": "Bezig met updaten..."
     },
     "region": {
