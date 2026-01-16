@@ -99,7 +99,7 @@ SmartPanel {
     function countForRange(range) {
       return rangeCounts[range] || 0;
     }
-    
+
     function hasNotificationsInCurrentRange() {
       var m = NotificationService.historyList;
       if (!m || m.count === 0) {
