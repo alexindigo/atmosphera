@@ -362,7 +362,7 @@
     "disconnect": "Desconectar",
     "disconnected": "Desconectado(a)",
     "disconnecting": "Desconectando...",
-    "download": "Download",
+    "download": "Baixar",
     "duration": "Duração",
     "enabled": "Ativado",
     "events": "Eventos",
@@ -444,7 +444,7 @@
     "unpair": "Desemparelhar",
     "unpin": "Desafixar",
     "update": "Atualização",
-    "upload": "Envio",
+    "upload": "Enviar",
     "version": "Versão",
     "visualizer": "Visualizador",
     "volume": "Volume",
@@ -526,13 +526,12 @@
       "emoji-loading-description": "Por favor, aguarde",
       "emoji-no-recent": "Ainda não há emojis recentes",
       "emoji-search-description": "Buscar e copiar emojis"
-    }
+    },
+    "result": "resultado",
+    "results": "resultados"
   },
   "lock-screen": {
-    "authenticating": "Autenticando...",
-    "password": "Digite sua senha...",
-    "restart": "Reiniciar",
-    "shut-down": "Desligar"
+    "password": "Digite sua senha..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "Filtrar por categoria",
       "templates-misc-description": "Crie seus próprios modelos.",
       "templates-misc-label": "Avançado",
-      "templates-misc-user-templates-description": "Ative apenas se souber o que está fazendo — consulte nossa documentação online",
+      "templates-misc-user-templates-description": "Ative apenas se souber o que está fazendo — consulte nossa documentação online.",
       "templates-misc-user-templates-label": "Ativar modelos do usuário",
       "templates-none-detected": "Nenhum detectado",
       "templates-write-path": "Escreve: {filepath}",
@@ -937,12 +936,12 @@
     "hooks": {
       "info-command-info-description": "• Comandos são executados via shell (sh -lc)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",
       "info-command-info-label": "Informações de comando do hook",
-      "info-parameters-description": "• Hook de papel de parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hook de alternância de tema: $1 = verdadeiro/falso (estado do modo escuro)<br>• Hooks de bloqueio/desbloqueio de tela: Sem parâmetros<br>• Hooks de modo de desempenho: Sem parâmetros<br>• Hook de sessão: $1 = ação (desligar/reiniciar)",
+      "info-parameters-description": "• Hook de papel de parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hook de alternância de tema: $1 = verdadeiro/falso (estado do modo escuro)<br>• Hooks de bloqueio/desbloqueio de tela: Sem parâmetros<br>• Hooks de modo de desempenho: Sem parâmetros<br>• Hook de sessão: $1 = ação (desligamento/reinicialização)",
       "info-parameters-label": "Parâmetros disponíveis",
-      "performance-mode-disabled-description": "Comando a ser executado quando o modo de desempenho noctalia é desabilitado.",
+      "performance-mode-disabled-description": "Comando a ser executado quando o modo de desempenho Noctalia é desabilitado.",
       "performance-mode-disabled-label": "Modo de desempenho desabilitado",
       "performance-mode-disabled-placeholder": "ex., notify-send \"Desempenho\" \"Modo desabilitado\"",
-      "performance-mode-enabled-description": "Comando a ser executado quando o modo de desempenho noctalia é habilitado.",
+      "performance-mode-enabled-description": "Comando a ser executado quando o modo de desempenho Noctalia é habilitado.",
       "performance-mode-enabled-label": "Modo de desempenho habilitado",
       "performance-mode-enabled-placeholder": "ex., notify-send \"Desempenho\" \"Modo habilitado\"",
       "screen-lock-description": "Comando a ser executado quando a tela é bloqueada.",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "Tela de bloqueio compacta",
       "lock-on-suspend-description": "Bloquear a tela automaticamente ao suspender o sistema.",
       "lock-on-suspend-label": "Bloquear ao suspender",
-      "show-hibernate-description": "Mostrar a opção 'hibernar' nas ações de energia.",
+      "show-hibernate-description": "Mostrar a opção 'hibernar' nos controles de energia.",
       "show-hibernate-label": "Mostrar hibernar",
       "show-session-buttons-description": "Permitir acesso às configurações de energia a partir da tela de bloqueio.",
       "show-session-buttons-label": "Controles de energia",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Olá, mundo\"",
     "enter-command": "Digite o comando para executar (app ou script personalizado)",
     "enter-ipc-identifier": "Introduza um identificador exclusivo para comandos IPC",
+    "enter-path": "Digite o caminho...",
     "enter-text-to-collapse": "por exemplo, 'nada está sendo reproduzido'. Use /regex/ para padrões.",
     "enter-tooltip": "Inserir dica de ferramenta",
     "enter-width-pixels": "Digite a largura em pixels",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "Ano com dois dígitos (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Pesquisar arquivos e pastas...",
+      "item": "item",
+      "items": "itens",
       "select-current": "Selecionar atual",
       "select-file": "Selecionar arquivo",
       "select-folder": "Selecionar pasta",
+      "selected:": "Selecionado:",
       "title": "Seletor de arquivos"
     },
     "file-picker-title": "Selecione um arquivo",

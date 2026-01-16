@@ -526,13 +526,12 @@
       "emoji-loading-description": "Kérjük, várjon",
       "emoji-no-recent": "Nincsenek még legutóbbi emojik",
       "emoji-search-description": "Emojik keresése és másolása"
-    }
+    },
+    "result": "eredmény",
+    "results": "eredmények"
   },
   "lock-screen": {
-    "authenticating": "Hitelesítés...",
-    "password": "Adja meg jelszavát...",
-    "restart": "Újraindítás",
-    "shut-down": "Leállítás"
+    "password": "Adja meg jelszavát..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "Szűrés kategória szerint",
       "templates-misc-description": "Hozzon létre saját sablonokat.",
       "templates-misc-label": "Haladó",
-      "templates-misc-user-templates-description": "Csak akkor engedélyezze, ha tudja, mit csinál — lásd az online dokumentációt",
+      "templates-misc-user-templates-description": "Csak akkor engedélyezze, ha tudja, mit csinál — lásd az online dokumentációt.",
       "templates-misc-user-templates-label": "Felhasználói sablonok engedélyezése",
       "templates-none-detected": "Nem észlelt semmit",
       "templates-write-path": "Írja: {filepath}",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "Kompakt zárolási képernyő",
       "lock-on-suspend-description": "A képernyő automatikus zárolása a rendszer felfüggesztésekor.",
       "lock-on-suspend-label": "Zárolás felfüggesztéskor",
-      "show-hibernate-description": "A 'hibernálás' lehetőség megjelenítése az energiagazdálkodási műveletek között.",
+      "show-hibernate-description": "A 'hibernálás' lehetőség megjelenítése az energiakezelési műveletek között.",
       "show-hibernate-label": "Hibernálás megjelenítése",
       "show-session-buttons-description": "Engedélyezi a hozzáférést az energiabeállításokhoz a zárolási képernyőről.",
       "show-session-buttons-label": "Energiakezelés",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Hello World\"",
     "enter-command": "Adja meg a végrehajtandó parancsot (alkalmazás vagy egyéni parancsfájl)",
     "enter-ipc-identifier": "Adja meg az IPC parancsok egyedi azonosítóját",
+    "enter-path": "Útvonal megadása...",
     "enter-text-to-collapse": "pl. 'semmi sem játszik'. Használjon /regex/-et mintákhoz.",
     "enter-tooltip": "Adja meg a buboréksúgót",
     "enter-width-pixels": "Adja meg a szélességet képpontban",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "Év két számjeggyel (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Fájlok és mappák keresése...",
+      "item": "elem",
+      "items": "elemek",
       "select-current": "Aktuális kijelölése",
       "select-file": "Fájl kijelölése",
       "select-folder": "Mappa kiválasztása",
+      "selected:": "Kiválasztva:",
       "title": "Fájlválasztó"
     },
     "file-picker-title": "Fájl kiválasztása",

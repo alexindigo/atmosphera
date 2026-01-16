@@ -362,7 +362,7 @@
     "disconnect": "Rozłącz",
     "disconnected": "Rozłączone",
     "disconnecting": "Rozłączanie...",
-    "download": "Pobieranie",
+    "download": "Pobierz",
     "duration": "Czas trwania",
     "enabled": "Włączone",
     "events": "Wydarzenia",
@@ -386,7 +386,7 @@
     "local": "Lokalny",
     "location": "Lokalizacja",
     "lock": "Zablokuj",
-    "logout": "Wyloguj się",
+    "logout": "Wyloguj",
     "look": "Wygląd",
     "media": "Media",
     "media-player": "Odtwarzacz multimedialny",
@@ -414,7 +414,7 @@
     "position": "Pozycja",
     "previous": "Poprzedni",
     "random": "Losowy",
-    "reboot": "Uruchom ponownie",
+    "reboot": "Restart",
     "refresh": "Odśwież",
     "required": "(wymagane)",
     "reset": "Zresetuj",
@@ -426,7 +426,7 @@
     "security": "Bezpieczeństwo",
     "select": "Wybierz",
     "shortcuts": "Skróty",
-    "shutdown": "Wyłączanie",
+    "shutdown": "Wyłącz",
     "signal": "Sygnał",
     "sound": "Dźwięk",
     "sources": "Źródła",
@@ -444,7 +444,7 @@
     "unpair": "Rozłącz parę",
     "unpin": "Odepnij",
     "update": "Aktualizacja",
-    "upload": "Wysyłanie",
+    "upload": "Wyślij",
     "version": "Wersja",
     "visualizer": "Wizualizator",
     "volume": "Objętość",
@@ -526,13 +526,12 @@
       "emoji-loading-description": "Proszę czekać",
       "emoji-no-recent": "Brak ostatnich emoji",
       "emoji-search-description": "Szukaj i kopiuj emoji"
-    }
+    },
+    "result": "wynik",
+    "results": "wyniki"
   },
   "lock-screen": {
-    "authenticating": "Uwierzytelnianie...",
-    "password": "Wprowadź hasło...",
-    "restart": "Restart",
-    "shut-down": "Wyłącz"
+    "password": "Wprowadź hasło..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "Filtruj według kategorii",
       "templates-misc-description": "Twórz własne szablony.",
       "templates-misc-label": "Zaawansowane",
-      "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online",
+      "templates-misc-user-templates-description": "Włącz tylko jeśli wiesz co robisz — zapoznaj się z dokumentacją online.",
       "templates-misc-user-templates-label": "Włącz szablony użytkownika",
       "templates-none-detected": "Nie wykryto",
       "templates-write-path": "Zapisuje: {filepath}",
@@ -937,7 +936,7 @@
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
       "info-command-info-label": "Informacje o poleceniach hook",
-      "info-parameters-description": "• Hak do tapety: $1 = ścieżka do tapety, $2 = nazwa ekranu<br>• Hak przełączania motywu: $1 = prawda/fałsz (stan trybu ciemnego)<br>• Haki blokowania/odblokowywania ekranu: Brak parametrów<br>• Haki trybu wydajności: Brak parametrów<br>• Hak sesji: $1 = akcja (zamknięcie/restart)",
+      "info-parameters-description": "• Hak do tapety: $1 = ścieżka do tapety, $2 = nazwa ekranu<br>• Hak przełączania motywu: $1 = prawda/fałsz (stan trybu ciemnego)<br>• Haki blokowania/odblokowywania ekranu: Brak parametrów<br>• Haki trybu wydajności: Brak parametrów<br>• Hak sesji: $1 = akcja (zamknięcie/ponowne uruchomienie))",
       "info-parameters-label": "Dostępne parametry",
       "performance-mode-disabled-description": "Komenda do wykonania, gdy tryb wydajności Noctalia zostanie wyłączony.",
       "performance-mode-disabled-label": "Tryb wydajności wyłączony",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "Kompaktowy ekran blokady",
       "lock-on-suspend-description": "Automatycznie blokuj ekran podczas uśpienia systemu.",
       "lock-on-suspend-label": "Blokuj przy uśpieniu",
-      "show-hibernate-description": "Pokaż opcję 'hibernacja' w akcjach zasilania.",
+      "show-hibernate-description": "Pokaż opcję 'hibernacja' w kontrolkach zasilania.",
       "show-hibernate-label": "Pokaż hibernację",
       "show-session-buttons-description": "Zezwalaj na dostęp do ustawień zasilania z poziomu ekranu blokady.",
       "show-session-buttons-label": "Kontrolki zasilania",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Witaj świecie\"",
     "enter-command": "Wpisz polecenie do wykonania (aplikacja lub skrypt)",
     "enter-ipc-identifier": "Wprowadź unikalny identyfikator dla poleceń IPC",
+    "enter-path": "Wprowadź ścieżkę...",
     "enter-text-to-collapse": "np. 'nic nie jest odtwarzane'. Użyj /regex/ dla wzorców.",
     "enter-tooltip": "Wpisz tekst podpowiedzi",
     "enter-width-pixels": "Wpisz szerokość w pikselach",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "Rok jako liczba dwucyfrowa (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Szukaj plików i folderów...",
+      "item": "element",
+      "items": "elementy",
       "select-current": "Wybierz bieżący",
       "select-file": "Wybierz plik",
       "select-folder": "Wybierz folder",
+      "selected:": "Zaznaczone:",
       "title": "Wybór plików"
     },
     "file-picker-title": "Wybierz plik",

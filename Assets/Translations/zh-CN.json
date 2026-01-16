@@ -526,13 +526,12 @@
       "emoji-loading-description": "请稍候",
       "emoji-no-recent": "尚无最近使用的表情符号",
       "emoji-search-description": "搜索和复制表情符号"
-    }
+    },
+    "result": "结果",
+    "results": "结果"
   },
   "lock-screen": {
-    "authenticating": "正在验证...",
-    "password": "请输入密码...",
-    "restart": "重启",
-    "shut-down": "关机"
+    "password": "请输入密码..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "按类别筛选",
       "templates-misc-description": "创建您自己的模板。",
       "templates-misc-label": "高级",
-      "templates-misc-user-templates-description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档",
+      "templates-misc-user-templates-description": "仅在您知道自己在做什么时启用，请参阅我们的在线文档。",
       "templates-misc-user-templates-label": "启用用户模板",
       "templates-none-detected": "未检测到",
       "templates-write-path": "写入：{filepath}",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "紧凑型锁屏",
       "lock-on-suspend-description": "系统挂起时自动锁定屏幕。",
       "lock-on-suspend-label": "挂起时锁定",
-      "show-hibernate-description": "在电源操作中显示'休眠'选项。",
+      "show-hibernate-description": "在电源控制中显示'休眠'选项。",
       "show-hibernate-label": "显示休眠",
       "show-session-buttons-description": "允许从锁屏访问电源设置。",
       "show-session-buttons-label": "电源控制",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Hello World\"",
     "enter-command": "输入要执行的命令（应用程序或自定义脚本）",
     "enter-ipc-identifier": "输入 IPC 命令的唯一标识符",
+    "enter-path": "输入路径...",
     "enter-text-to-collapse": "例如，“nothing is playing”。使用 /regex/ 表示匹配模式。",
     "enter-tooltip": "输入工具提示",
     "enter-width-pixels": "输入宽度（像素）",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "年份为两位数 (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "搜索文件和文件夹...",
+      "item": "项目",
+      "items": "项目",
       "select-current": "选择当前",
       "select-file": "选择文件",
       "select-folder": "选择文件夹",
+      "selected:": "已选择:",
       "title": "文件选择器"
     },
     "file-picker-title": "选择文件",

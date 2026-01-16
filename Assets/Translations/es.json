@@ -362,7 +362,7 @@
     "disconnect": "Desconectar",
     "disconnected": "Desconectado",
     "disconnecting": "Desconectando...",
-    "download": "Descarga",
+    "download": "Descargar",
     "duration": "Duración",
     "enabled": "Activado",
     "events": "Eventos",
@@ -444,7 +444,7 @@
     "unpair": "Desvincular",
     "unpin": "Desanclar",
     "update": "Actualizar",
-    "upload": "Subida",
+    "upload": "Subir",
     "version": "Versión",
     "visualizer": "Visualizador",
     "volume": "Volumen",
@@ -526,13 +526,12 @@
       "emoji-loading-description": "Por favor espera",
       "emoji-no-recent": "Aún no hay emojis recientes",
       "emoji-search-description": "Buscar y copiar emojis"
-    }
+    },
+    "result": "resultado",
+    "results": "resultados"
   },
   "lock-screen": {
-    "authenticating": "Autenticando...",
-    "password": "Ingresa tu contraseña...",
-    "restart": "Reiniciar",
-    "shut-down": "Apagar"
+    "password": "Ingresa tu contraseña..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "Filtrar por categoría",
       "templates-misc-description": "Crea tus propias plantillas.",
       "templates-misc-label": "Avanzado",
-      "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea",
+      "templates-misc-user-templates-description": "Solo habilita si sabes lo que estás haciendo — consulta nuestra documentación en línea.",
       "templates-misc-user-templates-label": "Habilitar plantillas de usuario",
       "templates-none-detected": "Ninguno detectado",
       "templates-write-path": "Escribe: {filepath}",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "Pantalla de bloqueo compacta",
       "lock-on-suspend-description": "Bloquear la pantalla automáticamente al suspender el sistema.",
       "lock-on-suspend-label": "Bloquear al suspender",
-      "show-hibernate-description": "Mostrar la opción 'hibernar' en las acciones de energía.",
+      "show-hibernate-description": "Mostrar la opción 'hibernar' en los controles de energía.",
       "show-hibernate-label": "Mostrar hibernar",
       "show-session-buttons-description": "Permitir el acceso a la configuración de energía desde la pantalla de bloqueo.",
       "show-session-buttons-label": "Controles de energía",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Hola, mundo\"",
     "enter-command": "Ingresa el comando a ejecutar (aplicación o script personalizado)",
     "enter-ipc-identifier": "Introduzca un identificador único para los comandos IPC",
+    "enter-path": "Ingrese la ruta...",
     "enter-text-to-collapse": "por ejemplo, 'no se está reproduciendo nada'. Usa /regex/ para patrones.",
     "enter-tooltip": "Introducir información sobre herramientas",
     "enter-width-pixels": "Ingresa el ancho en píxeles",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "Año como número de dos dígitos (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Buscar archivos y carpetas...",
+      "item": "elemento",
+      "items": "elementos",
       "select-current": "Seleccionar actual",
       "select-file": "Seleccionar archivo",
       "select-folder": "Seleccionar carpeta",
+      "selected:": "Seleccionado:",
       "title": "Selector de archivos"
     },
     "file-picker-title": "Seleccionar un archivo",

@@ -362,7 +362,7 @@
     "disconnect": "Déconnecter",
     "disconnected": "Déconnecté",
     "disconnecting": "Déconnexion...",
-    "download": "Téléchargement",
+    "download": "Télécharger",
     "duration": "Durée",
     "enabled": "Activé",
     "events": "Événements",
@@ -426,7 +426,7 @@
     "security": "Sécurité",
     "select": "Sélectionner",
     "shortcuts": "Raccourcis",
-    "shutdown": "Arrêt",
+    "shutdown": "Éteindre",
     "signal": "Signal",
     "sound": "Son",
     "sources": "Sources",
@@ -444,7 +444,7 @@
     "unpair": "Déjumeler",
     "unpin": "Détacher",
     "update": "Mise à jour",
-    "upload": "Envio",
+    "upload": "Téléverser",
     "version": "Version",
     "visualizer": "Visualiseur",
     "volume": "Volume",
@@ -526,13 +526,12 @@
       "emoji-loading-description": "Veuillez patienter",
       "emoji-no-recent": "Aucun emoji récent pour le moment",
       "emoji-search-description": "Rechercher et copier des émojis"
-    }
+    },
+    "result": "résultat",
+    "results": "résultats"
   },
   "lock-screen": {
-    "authenticating": "Authentification...",
-    "password": "Entrez votre mot de passe...",
-    "restart": "Redémarrer",
-    "shut-down": "Éteindre"
+    "password": "Entrez votre mot de passe..."
   },
   "notifications": {
     "panel": {
@@ -752,7 +751,7 @@
       "templates-filter-label": "Filtrer par catégorie",
       "templates-misc-description": "Créez vos propres modèles.",
       "templates-misc-label": "Avancé",
-      "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne",
+      "templates-misc-user-templates-description": "N'activez que si vous savez ce que vous faites — consultez notre documentation en ligne.",
       "templates-misc-user-templates-label": "Activer les modèles utilisateur",
       "templates-none-detected": "Aucun détecté",
       "templates-write-path": "Écrit : {filepath}",
@@ -939,7 +938,7 @@
       "info-command-info-label": "Informations sur la commande de hook",
       "info-parameters-description": "• Crochet de fond d'écran : $1 = chemin d'accès au fond d'écran, $2 = nom de l'écran<br>• Crochet de bascule de thème : $1 = vrai/faux (état du mode sombre)<br>• Crochets de verrouillage/déverrouillage d'écran : Aucun paramètre<br>• Crochets de mode de performance : Aucun paramètre<br>• Crochet de session : $1 = action (arrêt/redémarrage)",
       "info-parameters-label": "Paramètres disponibles",
-      "performance-mode-disabled-description": "Commande à exécuter lorsque le mode performance noctalia est désactivé.",
+      "performance-mode-disabled-description": "Commande à exécuter lorsque le mode performance Noctalia est désactivé.",
       "performance-mode-disabled-label": "mode performance désactivé",
       "performance-mode-disabled-placeholder": "ex: notify-send \"Performance\" \"Mode désactivé\"",
       "performance-mode-enabled-description": "Commande à exécuter lorsque le mode performance Noctalia est activé.",
@@ -1050,7 +1049,7 @@
       "compact-lockscreen-label": "Écran de verrouillage compact",
       "lock-on-suspend-description": "Verrouiller automatiquement l'écran lors de la mise en veille du système.",
       "lock-on-suspend-label": "Verrouiller à la suspension",
-      "show-hibernate-description": "Afficher l’option 'hiberner' dans les actions d’énergie.",
+      "show-hibernate-description": "Afficher l’option 'hiberner' dans les commandes d'alimentation.",
       "show-hibernate-label": "Afficher l’hibernation",
       "show-session-buttons-description": "Autoriser l'accès aux paramètres d'alimentation depuis l'écran de verrouillage.",
       "show-session-buttons-label": "Commandes d'alimentation",
@@ -1350,6 +1349,7 @@
     "command-example": "echo \"Bonjour le monde\"",
     "enter-command": "Entrez la commande à exécuter (application ou script personnalisé)",
     "enter-ipc-identifier": "Entrez un identifiant unique pour les commandes IPC",
+    "enter-path": "Entrez le chemin...",
     "enter-text-to-collapse": "par ex., 'rien n’est en lecture'. Utilisez /regex/ pour les modèles.",
     "enter-tooltip": "Entrer l'infobulle",
     "enter-width-pixels": "Entrez la largeur en pixels",
@@ -1685,10 +1685,12 @@
       "year-two-digit": "Année sur deux chiffres (00-99)"
     },
     "file-picker": {
-      "search-placeholder": "Rechercher des fichiers et des dossiers...",
+      "item": "élément",
+      "items": "éléments",
       "select-current": "Sélectionner Actuel",
       "select-file": "Sélectionner un fichier",
       "select-folder": "Sélectionner un dossier",
+      "selected:": "Sélectionné :",
       "title": "Sélecteur de fichiers"
     },
     "file-picker-title": "Sélectionner un fichier",
