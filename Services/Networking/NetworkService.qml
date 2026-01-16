@@ -871,7 +871,9 @@ Singleton {
           return;
         }
         if (result === "full" || result === "none" || result === "unknown") {
-          connectivityCheckProcess.failedChecks = 0;
+          if (connectivityCheckProcess.failedChecks !== 0) {
+            connectivityCheckProcess.failedChecks = 0;
+          }
           if (result !== root.networkConnectivity) {
             root.networkConnectivity = result;
             root.scan();
