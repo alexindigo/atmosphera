@@ -351,6 +351,7 @@
     "connect": "Csatlakozás",
     "connected": "Csatlakoztatva",
     "connecting": "Csatlakozás...",
+    "continue": "Folytatás",
     "contributors": "Közreműködők",
     "countdown": "Visszaszámlálás",
     "date": "Dátum",
@@ -1380,6 +1381,7 @@
     "title": "Munkamenet menü"
   },
   "setup": {
+    "all-done": "Kész!",
     "appearance": {
       "subheader": "Válasszon sötét módot és színes forrásokat (Matugen vagy előre meghatározott)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Tapasztalat testreszabása",
       "subheader": "Állítsa be a sáv pozícióját, sűrűségét, méretezését és egyebeket."
     },
+    "skip-setup": "Beállítás kihagyása",
+    "telemetry-wizard-done": "Értettem!",
+    "telemetry-wizard-note": "Te irányítasz – bármikor engedélyezheted vagy letilthatod a Beállításokban",
+    "telemetry-wizard-subtitle": "Anonim analitikát adtunk hozzá, hogy segítsük a Noctalia fejlesztését",
+    "telemetry-wizard-title": "Adatvédelmi frissítés",
     "wallpaper": {
       "choose-dir": "Válassza ki a könyvtárat, amely tartalmazza a háttérképeit",
       "dir-browse": "Háttérkép mappa böngészése",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Válasszon egy háttérképet alább",
       "subheader": "Teremtsen hangulatot egy gyönyörű háttérrel."
     },
-    "welcome-note": "Csak néhány alapvető dolog az induláshoz – a teljes beállítási lehetőség a beállításokban található"
+    "welcome-note": "Csak néhány alapvető dolog az induláshoz – a teljes beállítási lehetőség a beállításokban található",
+    "welcome-subtitle": "Tegyük egyedivé az asztalod",
+    "welcome-title": "Üdvözöl a Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

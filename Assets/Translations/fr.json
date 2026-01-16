@@ -351,6 +351,7 @@
     "connect": "Connecter",
     "connected": "Connecté",
     "connecting": "Connexion en cours...",
+    "continue": "Continuer",
     "contributors": "Contributeurs",
     "countdown": "Compte à rebours",
     "date": "Date",
@@ -1380,6 +1381,7 @@
     "title": "Menu de session"
   },
   "setup": {
+    "all-done": "Terminé !",
     "appearance": {
       "subheader": "Choisissez le mode sombre et la source des couleurs (Matugen ou prédéfinie)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Personnaliser votre expérience",
       "subheader": "Ajustez la position de la barre, la densité, l'échelle et plus encore."
     },
+    "skip-setup": "Ignorer la configuration",
+    "telemetry-wizard-done": "Bien reçu !",
+    "telemetry-wizard-note": "Vous avez le contrôle : activez ou désactivez cette option à tout moment dans les Paramètres",
+    "telemetry-wizard-subtitle": "Nous avons ajouté des analyses anonymes pour aider à améliorer Noctalia",
+    "telemetry-wizard-title": "Mise à jour de la confidentialité",
     "wallpaper": {
       "choose-dir": "Choisissez un répertoire contenant vos fonds d'écran",
       "dir-browse": "Parcourir le dossier",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Sélectionnez un fond ci-dessous",
       "subheader": "Définissez l'ambiance avec un joli fond."
     },
-    "welcome-note": "Quelques réglages de base pour démarrer — toutes les options sont dans paramètres"
+    "welcome-note": "Quelques réglages de base pour démarrer — toutes les options sont dans paramètres",
+    "welcome-subtitle": "Personnalisons votre bureau pour qu'il soit unique",
+    "welcome-title": "Bienvenue dans Noctalia !"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

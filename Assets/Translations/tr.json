@@ -351,6 +351,7 @@
     "connect": "Bağlan",
     "connected": "Bağlı",
     "connecting": "Bağlanıyor...",
+    "continue": "Devam Et",
     "contributors": "Katkıda bulunanlar",
     "countdown": "Geri sayım",
     "date": "Tarih",
@@ -1380,6 +1381,7 @@
     "title": "Oturum menüsü"
   },
   "setup": {
+    "all-done": "Tamamlandı!",
     "appearance": {
       "subheader": "Karanlık modu ve renk kaynaklarını seçin (Matugen veya önceden tanımlanmış)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Deneyiminizi özelleştirin",
       "subheader": "Araç çubuğu konumunu, yoğunluğunu, ölçeğini ve daha fazlasını ayarlayın."
     },
+    "skip-setup": "Kurulumu Atla",
+    "telemetry-wizard-done": "Anlaşıldı!",
+    "telemetry-wizard-note": "Kontrol sizde — istediğiniz zaman Ayarlar'dan etkinleştirebilir veya devre dışı bırakabilirsiniz",
+    "telemetry-wizard-subtitle": "Noctalia'yı geliştirmeye yardımcı olmak için anonim analizler ekledik",
+    "telemetry-wizard-title": "Gizlilik Güncellemesi",
     "wallpaper": {
       "choose-dir": "Duvar kâğıdı görüntülerinizi içeren bir dizin seçin",
       "dir-browse": "Duvar kâğıdı klasörüne göz at",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Aşağıdan bir duvar kâğıdı seçin",
       "subheader": "Güzel bir arka planla ortamı ayarlayın."
     },
-    "welcome-note": "Başlamanız için birkaç temel ayar — tam seçenekler ayarlar'da"
+    "welcome-note": "Başlamanız için birkaç temel ayar — tam seçenekler ayarlar'da",
+    "welcome-subtitle": "Masaüstünüzü size özel yapalım",
+    "welcome-title": "Noctalia'ya hoş geldiniz!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

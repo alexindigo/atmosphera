@@ -351,6 +351,7 @@
     "connect": "Conectar",
     "connected": "Conectado",
     "connecting": "Conectando...",
+    "continue": "Continuar",
     "contributors": "Colaboradores",
     "countdown": "Cuenta regresiva",
     "date": "Fecha",
@@ -1380,6 +1381,7 @@
     "title": "Menú de sesión"
   },
   "setup": {
+    "all-done": "¡Listo!",
     "appearance": {
       "subheader": "Elige modo oscuro y fuentes de color (Matugen o predefinido)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Personaliza tu experiencia",
       "subheader": "Ajusta la posición de la barra, densidad, escala y más."
     },
+    "skip-setup": "Omitir la configuración",
+    "telemetry-wizard-done": "¡Entendido!",
+    "telemetry-wizard-note": "Tienes el control: activa o desactiva esto cuando quieras en los Ajustes",
+    "telemetry-wizard-subtitle": "Hemos añadido analíticas anónimas para ayudar a mejorar Noctalia",
+    "telemetry-wizard-title": "Actualización de privacidad",
     "wallpaper": {
       "choose-dir": "Elige un directorio que contenga tus fondos",
       "dir-browse": "Seleccionar carpeta",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Selecciona un fondo abajo",
       "subheader": "Define el ambiente con un bonito fondo."
     },
-    "welcome-note": "Solo algunos conceptos básicos para empezar: todas las opciones están en configuración"
+    "welcome-note": "Solo algunos conceptos básicos para empezar: todas las opciones están en configuración",
+    "welcome-subtitle": "Hagamos que tu escritorio sea único",
+    "welcome-title": "¡Bienvenido a Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

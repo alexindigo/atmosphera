@@ -351,6 +351,7 @@
     "connect": "Verbinden",
     "connected": "Verbunden",
     "connecting": "Verbinden...",
+    "continue": "Fortsetzen",
     "contributors": "Mitwirkende",
     "countdown": "Countdown",
     "date": "Datum",
@@ -1380,6 +1381,7 @@
     "title": "Sitzungsmenü"
   },
   "setup": {
+    "all-done": "Fertig!",
     "appearance": {
       "subheader": "Dunkelmodus und Farbquellen wählen (Matugen oder vordefiniert)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Erlebnis anpassen",
       "subheader": "Leistenposition, Dichte, Skalierung und mehr einstellen."
     },
+    "skip-setup": "Einrichtung überspringen",
+    "telemetry-wizard-done": "Verstanden!",
+    "telemetry-wizard-note": "Sie haben die Kontrolle – aktivieren oder deaktivieren Sie dies jederzeit in den Einstellungen",
+    "telemetry-wizard-subtitle": "Wir haben anonyme Analysen hinzugefügt, um Noctalia zu verbessern",
+    "telemetry-wizard-title": "Datenschutz-Update",
     "wallpaper": {
       "choose-dir": "Wählen Sie ein Verzeichnis mit Ihren Hintergrundbildern",
       "dir-browse": "Ordner auswählen",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Wählen Sie unten ein Hintergrundbild",
       "subheader": "Bestimmen Sie die Stimmung mit einem schönen Hintergrund."
     },
-    "welcome-note": "Nur ein paar Grundeinstellungen – alle Optionen befinden sich in den Einstellungen"
+    "welcome-note": "Nur ein paar Grundeinstellungen – alle Optionen befinden sich in den Einstellungen",
+    "welcome-subtitle": "Gestalten wir Ihren Desktop einzigartig",
+    "welcome-title": "Willkommen bei Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

@@ -351,6 +351,7 @@
     "connect": "接続",
     "connected": "接続済み",
     "connecting": "接続中...",
+    "continue": "続ける",
     "contributors": "貢献者",
     "countdown": "カウントダウン",
     "date": "日付",
@@ -1380,6 +1381,7 @@
     "title": "セッションメニュー"
   },
   "setup": {
+    "all-done": "完了！",
     "appearance": {
       "subheader": "ダークモードとカラースキーム（Matugen またはプリセット）を選択します。"
     },
@@ -1387,6 +1389,11 @@
       "header": "自分好みにカスタマイズ",
       "subheader": "バーの位置や密度、インターフェースのスケールなどを調整します。"
     },
+    "skip-setup": "セットアップをスキップ",
+    "telemetry-wizard-done": "了解しました！",
+    "telemetry-wizard-note": "設定でいつでも有効または無効にできます。",
+    "telemetry-wizard-subtitle": "Noctaliaの改善に役立つ匿名分析を追加しました",
+    "telemetry-wizard-title": "プライバシーアップデート",
     "wallpaper": {
       "choose-dir": "壁紙画像が含まれているフォルダを選択します",
       "dir-browse": "壁紙フォルダを参照",
@@ -1401,7 +1408,9 @@
       "select-prompt": "以下から壁紙を選択します",
       "subheader": "美しい背景で雰囲気を演出しましょう。"
     },
-    "welcome-note": "まずは基本設定から始めましょう。詳細なオプションは「設定」にあります。"
+    "welcome-note": "まずは基本設定から始めましょう。詳細なオプションは「設定」にあります。",
+    "welcome-subtitle": "デスクトップをあなただけのものにしましょう",
+    "welcome-title": "Noctaliaへようこそ！"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

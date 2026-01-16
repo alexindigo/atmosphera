@@ -351,6 +351,7 @@
     "connect": "Połącz",
     "connected": "Połączone",
     "connecting": "Łączenie...",
+    "continue": "Kontynuuj",
     "contributors": "Współtwórcy",
     "countdown": "Odliczanie",
     "date": "Data",
@@ -1380,6 +1381,7 @@
     "title": "Menu sesji"
   },
   "setup": {
+    "all-done": "Gotowe!",
     "appearance": {
       "subheader": "Wybierz tryb ciemny i źródła kolorów (Matugen lub predefiniowane)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Dostosuj swoje doświadczenie",
       "subheader": "Dostosuj pozycję paska, zagęszczenie, skalowanie i inne."
     },
+    "skip-setup": "Pomiń konfigurację",
+    "telemetry-wizard-done": "Rozumiem!",
+    "telemetry-wizard-note": "Masz kontrolę – możesz to włączyć lub wyłączyć w dowolnym momencie w Ustawieniach",
+    "telemetry-wizard-subtitle": "Dodaliśmy anonimowe analizy, aby pomóc w ulepszaniu Noctalia",
+    "telemetry-wizard-title": "Aktualizacja prywatności",
     "wallpaper": {
       "choose-dir": "Wybierz katalog zawierający obrazy tapet",
       "dir-browse": "Przeglądaj folder tapet",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Wybierz tapetę poniżej",
       "subheader": "Ustaw nastrój dzięki pięknemu tłu."
     },
-    "welcome-note": "Tylko kilka podstaw na początek — pełne opcje znajdują się w ustawieniach"
+    "welcome-note": "Tylko kilka podstaw na początek — pełne opcje znajdują się w ustawieniach",
+    "welcome-subtitle": "Sprawmy, aby Twój pulpit był wyjątkowy",
+    "welcome-title": "Witamy w Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

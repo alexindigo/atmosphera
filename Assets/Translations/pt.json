@@ -351,6 +351,7 @@
     "connect": "Conectar",
     "connected": "Conectado(a)",
     "connecting": "Conectando...",
+    "continue": "Continuar",
     "contributors": "Colaboradores",
     "countdown": "Contagem regressiva",
     "date": "Data",
@@ -1380,6 +1381,7 @@
     "title": "Menu da sessão"
   },
   "setup": {
+    "all-done": "Concluído!",
     "appearance": {
       "subheader": "Escolha o modo escuro e as fontes de cores (Matugen ou predefinidas)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Personalizar a sua experiência",
       "subheader": "Ajuste a posição da barra, densidade, escala e mais."
     },
+    "skip-setup": "Ignorar configuração",
+    "telemetry-wizard-done": "Entendi!",
+    "telemetry-wizard-note": "Você está no controle — ative ou desative isso a qualquer momento nas Configurações",
+    "telemetry-wizard-subtitle": "Adicionámos análises anónimas para ajudar a melhorar o Noctalia",
+    "telemetry-wizard-title": "Atualização de privacidade",
     "wallpaper": {
       "choose-dir": "Escolha um diretório contendo seus papéis de parede",
       "dir-browse": "Procurar pasta",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Selecione um papel de parede abaixo",
       "subheader": "Defina o ambiente com um belo fundo."
     },
-    "welcome-note": "Apenas alguns ajustes básicos para começar - o restante está em configurações"
+    "welcome-note": "Apenas alguns ajustes básicos para começar - o restante está em configurações",
+    "welcome-subtitle": "Vamos tornar o seu ambiente de trabalho único",
+    "welcome-title": "Bem-vindo ao Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

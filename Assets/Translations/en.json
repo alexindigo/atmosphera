@@ -351,6 +351,7 @@
     "connect": "Connect",
     "connected": "Connected",
     "connecting": "Connecting...",
+    "continue": "Continue",
     "contributors": "Contributors",
     "countdown": "Countdown",
     "date": "Date",
@@ -1380,6 +1381,7 @@
     "title": "Session Menu"
   },
   "setup": {
+    "all-done": "All Done!",
     "appearance": {
       "subheader": "Choose Dark Mode and color sources (Matugen or predefined)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Customize your experience",
       "subheader": "Adjust bar position, density, scaling and more."
     },
+    "skip-setup": "Skip Setup",
+    "telemetry-wizard-done": "Got it!",
+    "telemetry-wizard-note": "You're in control — enable or disable this anytime in Settings",
+    "telemetry-wizard-subtitle": "We've added anonymous analytics to help improve Noctalia",
+    "telemetry-wizard-title": "Privacy Update",
     "wallpaper": {
       "choose-dir": "Choose a directory containing your wallpaper images",
       "dir-browse": "Browse for wallpaper folder",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Select a wallpaper below",
       "subheader": "Set the mood with a beautiful background."
     },
-    "welcome-note": "Just a few basics to get you started — full options are in the settings"
+    "welcome-note": "Just a few basics to get you started — full options are in the settings",
+    "welcome-subtitle": "Let's make your desktop uniquely yours",
+    "welcome-title": "Welcome to Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

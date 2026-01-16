@@ -351,6 +351,7 @@
     "connect": "Girêdan",
     "connected": "Girêdayî",
     "connecting": "Tê girêdan...",
+    "continue": "Berdewam",
     "contributors": "Beşdar",
     "countdown": "Jimartin",
     "date": "Dîrok",
@@ -1380,6 +1381,7 @@
     "title": "Menuya danişînê"
   },
   "setup": {
+    "all-done": "Hemû Temam!",
     "appearance": {
       "subheader": "Moda tarî hilbijêre û çavkaniyên rengan (Matugen an pêşdiyarkirî) hilbijêre."
     },
@@ -1387,6 +1389,11 @@
       "header": "Xweserkirina ezmûna xwe bike",
       "subheader": "Rewşa bar, dendikbûn, pîvan û hwd. eyar bike."
     },
+    "skip-setup": "Sazkirinê Derbas Bike",
+    "telemetry-wizard-done": "Gihîşt!",
+    "telemetry-wizard-note": "Hûn di kontrolê de ne - hûn dikarin vê yekê di Mîhengan de her dem çalak an neçalak bikin",
+    "telemetry-wizard-subtitle": "Me analîtîkên anonîm zêde kirin da ku alîkariya başkirina Noctalia bikin",
+    "telemetry-wizard-title": "Nûkirina Nepenîtiyê",
     "wallpaper": {
       "choose-dir": "Dîrekteriyek ku wêneyên dîwarê te tê de hilbijêre",
       "dir-browse": "Geroka peldanka dîwêr",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Wêneyekî dîwarê jêrîn hilbijêre",
       "subheader": "Bi dîmenek xweşik hestê saz bike."
     },
-    "welcome-note": "Tenê çend bingehîn ji bo ku hûn dest pê bikin — vebijarkên tevahî di mîhengan de ne"
+    "welcome-note": "Tenê çend bingehîn ji bo ku hûn dest pê bikin — vebijarkên tevahî di mîhengan de ne",
+    "welcome-subtitle": "Werin em sermaseya we bêhempa bikin",
+    "welcome-title": "Bi xêr hatî Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

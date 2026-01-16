@@ -351,6 +351,7 @@
     "connect": "连接",
     "connected": "已连接",
     "connecting": "正在连接...",
+    "continue": "继续",
     "contributors": "贡献者",
     "countdown": "倒计时",
     "date": "日期",
@@ -1380,6 +1381,7 @@
     "title": "会话菜单"
   },
   "setup": {
+    "all-done": "完成！",
     "appearance": {
       "subheader": "选择深色模式与配色来源（Matugen 或预设）。"
     },
@@ -1387,6 +1389,11 @@
       "header": "自定义体验",
       "subheader": "调整状态栏位置、密度、缩放等。"
     },
+    "skip-setup": "跳过设置",
+    "telemetry-wizard-done": "明白了！",
+    "telemetry-wizard-note": "您拥有控制权 — 随时可以在“设置”中启用或禁用此功能",
+    "telemetry-wizard-subtitle": "我们添加了匿名分析功能，以帮助改进 Noctalia",
+    "telemetry-wizard-title": "隐私更新",
     "wallpaper": {
       "choose-dir": "选择包含壁纸图片的目录",
       "dir-browse": "浏览文件夹",
@@ -1401,7 +1408,9 @@
       "select-prompt": "在下方选择一张壁纸",
       "subheader": "用精美壁纸营造氛围。"
     },
-    "welcome-note": "先进行一些基础设置——更多选项可在“设置”中找到"
+    "welcome-note": "先进行一些基础设置——更多选项可在“设置”中找到",
+    "welcome-subtitle": "让我们一起打造独一无二的桌面",
+    "welcome-title": "欢迎来到 Noctalia！"
   },
   "system": {
     "cpu-temperature": "{temp}°C",

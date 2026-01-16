@@ -351,6 +351,7 @@
     "connect": "Verbinden",
     "connected": "Verbonden",
     "connecting": "Verbinden...",
+    "continue": "Doorgaan",
     "contributors": "Medewerkers",
     "countdown": "Aftellen",
     "date": "Datum",
@@ -1380,6 +1381,7 @@
     "title": "Sessie-menu"
   },
   "setup": {
+    "all-done": "Klaar!",
     "appearance": {
       "subheader": "Kies donkere modus en kleurbronnen (Matugen of vooraf gedefinieerd)."
     },
@@ -1387,6 +1389,11 @@
       "header": "Pas je ervaring aan",
       "subheader": "Pas balkpositie, dichtheid, schaal en meer aan."
     },
+    "skip-setup": "Setup overslaan",
+    "telemetry-wizard-done": "Begrepen!",
+    "telemetry-wizard-note": "Je hebt de controle - schakel dit op elk moment in of uit in de Instellingen",
+    "telemetry-wizard-subtitle": "We hebben anonieme analyses toegevoegd om Noctalia te helpen verbeteren",
+    "telemetry-wizard-title": "Privacy-update",
     "wallpaper": {
       "choose-dir": "Kies een map met je achtergrondafbeeldingen",
       "dir-browse": "Bladeren naar achtergrondmap",
@@ -1401,7 +1408,9 @@
       "select-prompt": "Selecteer hieronder een achtergrond",
       "subheader": "Zet de toon met een mooie achtergrond."
     },
-    "welcome-note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen"
+    "welcome-note": "Een paar basisinstellingen om je op weg te helpen – alle opties vind je in instellingen",
+    "welcome-subtitle": "Laten we uw bureaublad uniek maken",
+    "welcome-title": "Welkom bij Noctalia!"
   },
   "system": {
     "cpu-temperature": "{temp}°C",
