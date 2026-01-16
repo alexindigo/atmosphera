@@ -11,10 +11,13 @@ Singleton {
   id: root
 
   // Version properties
-  readonly property string baseVersion: "4.0.1"
+  readonly property string baseVersion: "4.0.2"
   readonly property bool isDevelopment: true
   readonly property string developmentSuffix: "-git"
   readonly property string currentVersion: `v${!isDevelopment ? baseVersion : baseVersion + developmentSuffix}`
+
+  // Telemetry was introduced in this version - users upgrading from earlier need to see the wizard
+  readonly property string telemetryIntroVersion: "4.0.2"
 
   // URLs
   readonly property string discordUrl: "https://discord.noctalia.dev"
@@ -35,6 +38,7 @@ Singleton {
   property string changelogLastSeenVersion: ""
   property bool changelogStateLoaded: false
   property bool pendingShowRequest: false
+  property bool pendingTelemetryWizardCheck: false
 
   // Fix for FileView race condition
   property bool saveInProgress: false
@@ -53,6 +57,7 @@ Singleton {
   }
 
   signal popupQueued(string fromVersion, string toVersion)
+  signal telemetryWizardNeeded
 
   function init() {
     if (initialized)
@@ -211,6 +216,47 @@ Singleton {
     return 0;
   }
 
+  // Check if user is upgrading from a version before telemetry was introduced
+  function shouldShowTelemetryWizard() {
+    if (!changelogStateLoaded)
+      return false;
+    if (Settings.isFreshInstall)
+      return false;
+    if (Settings.shouldOpenSetupWizard)
+      return false;
+
+    // No previous version recorded but settings exist - assume upgrading from old version
+    // (e.g., user deleted shell-state.json but has existing settings)
+    if (!changelogLastSeenVersion || changelogLastSeenVersion === "")
+      return true;
+
+    // Check if last seen version is before telemetry introduction
+    return compareVersions(changelogLastSeenVersion, telemetryIntroVersion) < 0;
+  }
+
+  // Called by shell.qml to check for telemetry wizard after init
+  // If state isn't loaded yet, sets a pending flag and emits telemetryWizardNeeded later
+  function checkTelemetryWizardOrChangelog() {
+    Logger.d("UpdateService", "checkTelemetryWizardOrChangelog called, stateLoaded:", changelogStateLoaded);
+    if (!changelogStateLoaded) {
+      // State not loaded yet, set pending flags
+      Logger.d("UpdateService", "State not loaded yet, setting pending flags");
+      pendingTelemetryWizardCheck = true;
+      pendingShowRequest = true;
+      return;
+    }
+
+    // State is already loaded, check immediately
+    const needsTelemetryWizard = shouldShowTelemetryWizard();
+    Logger.d("UpdateService", "shouldShowTelemetryWizard:", needsTelemetryWizard, "lastSeenVersion:", changelogLastSeenVersion);
+    if (needsTelemetryWizard) {
+      Logger.i("UpdateService", "Emitting telemetryWizardNeeded signal");
+      root.telemetryWizardNeeded();
+    } else {
+      showLatestChangelog();
+    }
+  }
+
   function parseReleaseNotes(body) {
     if (!body)
       return [];
@@ -239,19 +285,11 @@ Singleton {
       return;
     }
 
-    const monitors = Settings.data.bar.monitors || [];
-    const allowPanelsOnScreenWithoutBar = Settings.data.general.allowPanelsOnScreenWithoutBar;
-
-    function canShowPanelsOnScreen(screen) {
-      const name = screen?.name || "";
-      return allowPanelsOnScreenWithoutBar || monitors.length === 0 || monitors.includes(name);
-    }
-
     let targetScreen = viewChangelogTargetScreen;
 
     if (targetScreen) {
       // Explicit screen requested - validate it
-      if (!canShowPanelsOnScreen(targetScreen)) {
+      if (!PanelService.canShowPanelsOnScreen(targetScreen)) {
         Logger.w("UpdateService", "Changelog cannot be shown on screen without bar:", targetScreen.name);
         popupScheduled = false;
         viewChangelogTargetScreen = null;
@@ -259,13 +297,7 @@ Singleton {
       }
     } else {
       // No explicit screen - find one that can show panels
-      for (let i = 0; i < Quickshell.screens.length; i++) {
-        if (canShowPanelsOnScreen(Quickshell.screens[i])) {
-          targetScreen = Quickshell.screens[i];
-          break;
-        }
-      }
-
+      targetScreen = PanelService.findScreenForPanels();
       if (!targetScreen) {
         Logger.w("UpdateService", "No screen available to show changelog");
         popupScheduled = false;
@@ -367,6 +399,19 @@ Singleton {
       Logger.e("UpdateService", "Failed to load changelog state:", error);
     }
     changelogStateLoaded = true;
+
+    // Handle pending telemetry wizard check first
+    if (pendingTelemetryWizardCheck) {
+      pendingTelemetryWizardCheck = false;
+      if (shouldShowTelemetryWizard()) {
+        root.telemetryWizardNeeded();
+      } else if (pendingShowRequest) {
+        pendingShowRequest = false;
+        Qt.callLater(root.showLatestChangelog);
+      }
+      return;
+    }
+
     if (pendingShowRequest) {
       pendingShowRequest = false;
       Qt.callLater(root.showLatestChangelog);
