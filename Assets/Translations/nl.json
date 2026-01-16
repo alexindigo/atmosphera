@@ -175,8 +175,10 @@
       "visualizer-type-label": "Type visualizer"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Verberg het meldingspictogram wanneer er geen ongelezen meldingen zijn.",
-      "hide-widget-when-zero-label": "Pictogram verbergen bij nul",
+      "hide-widget-when-zero-description": "Het meldingspictogram verbergen wanneer er geen meldingen zijn.",
+      "hide-widget-when-zero-label": "Pictogram verbergen zonder meldingen",
+      "hide-widget-when-zero-unread-description": "Het meldingspictogram verbergen wanneer er geen ongelezen meldingen zijn.",
+      "hide-widget-when-zero-unread-label": "Pictogram verbergen zonder ongelezen meldingen",
       "show-unread-badge-description": "Toon een badge met het aantal ongelezen meldingen.",
       "show-unread-badge-label": "Ongelezen-badge tonen"
     },

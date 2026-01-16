@@ -175,8 +175,10 @@
       "visualizer-type-label": "可视化器类型"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "当没有未读通知时隐藏通知图标。",
-      "hide-widget-when-zero-label": "空时隐藏图标",
+      "hide-widget-when-zero-description": "没有通知时隐藏通知图标。",
+      "hide-widget-when-zero-label": "无通知时隐藏图标",
+      "hide-widget-when-zero-unread-description": "没有未读通知时隐藏通知图标。",
+      "hide-widget-when-zero-unread-label": "无未读时隐藏图标",
       "show-unread-badge-description": "显示一个用于展示未读通知数量的徽章。",
       "show-unread-badge-label": "显示未读徽章"
     },

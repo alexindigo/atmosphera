@@ -165,8 +165,10 @@
       "visualizer-type-label": "視覺效果樣式"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "如果沒有未讀通知就隱藏通知圖示",
-      "hide-widget-when-zero-label": "零通知時隱藏圖示",
+      "hide-widget-when-zero-description": "沒有通知時隱藏通知圖示。",
+      "hide-widget-when-zero-label": "無通知時隱藏圖示",
+      "hide-widget-when-zero-unread-description": "沒有未讀通知時隱藏通知圖示。",
+      "hide-widget-when-zero-unread-label": "無未讀時隱藏圖示",
       "show-unread-badge-description": "顯示帶有數量的未讀標記",
       "show-unread-badge-label": "顯示未讀標記"
     },

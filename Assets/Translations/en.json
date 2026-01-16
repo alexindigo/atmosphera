@@ -175,8 +175,10 @@
       "visualizer-type-label": "Visualizer type"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "Hide the notification icon when there are no unread notifications.",
-      "hide-widget-when-zero-label": "Hide icon when zero",
+      "hide-widget-when-zero-description": "Hide the notification icon when there are no notifications.",
+      "hide-widget-when-zero-label": "Hide icon when no notifications",
+      "hide-widget-when-zero-unread-description": "Hide the notification icon when there are no unread notifications.",
+      "hide-widget-when-zero-unread-label": "Hide icon when no unread notifications",
       "show-unread-badge-description": "Display a badge showing the number of unread notifications.",
       "show-unread-badge-label": "Show unread badge"
     },

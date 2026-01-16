@@ -175,8 +175,10 @@
       "visualizer-type-label": "ビジュアライザーの種類"
     },
     "notification-history": {
-      "hide-widget-when-zero-description": "未読通知がない場合、通知アイコンを非表示にします。",
-      "hide-widget-when-zero-label": "ゼロのときはアイコンを隠す",
+      "hide-widget-when-zero-description": "通知がない場合に通知アイコンを非表示にします。",
+      "hide-widget-when-zero-label": "通知なしでアイコンを非表示",
+      "hide-widget-when-zero-unread-description": "未読の通知がない場合に通知アイコンを非表示にします。",
+      "hide-widget-when-zero-unread-label": "未読なしでアイコンを非表示",
       "show-unread-badge-description": "未読通知の数を表示するバッジを表示します。",
       "show-unread-badge-label": "未読バッジを表示"
     },
