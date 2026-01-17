@@ -650,11 +650,10 @@ Variants {
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
-              family: Settings.data.ui.fontFixed
               font.weight: Style.fontWeightRegular
+              horizontalAlignment: Text.AlignLeft
               elide: Text.ElideRight
               Layout.fillWidth: true
-              horizontalAlignment: Text.AlignHCenter
               Layout.alignment: Qt.AlignVCenter
             }
 
@@ -792,15 +791,14 @@ Variants {
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeXS
-              family: Settings.data.ui.fontFixed
               font.weight: Style.fontWeightRegular
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignHCenter
-              horizontalAlignment: Text.AlignHCenter
+              horizontalAlignment: Text.AlignLeft
               verticalAlignment: Text.AlignVCenter
-              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
               elide: Text.ElideRight
               wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+              Layout.fillWidth: true
+              Layout.alignment: Qt.AlignHCenter
+              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
             }
 
             Item {
