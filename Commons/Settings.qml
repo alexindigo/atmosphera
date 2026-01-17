@@ -136,24 +136,10 @@ Singleton {
         root.isFreshInstall = true;
         writeAdapter();
 
-        // Also write to fallback if set
-        if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-          settingsFallbackFileView.writeAdapter();
-        }
-
         // We started without settings, we should open the setupWizard
         root.shouldOpenSetupWizard = true;
       }
     }
-  }
-
-  // Fallback FileView for writing settings to alternate location
-  FileView {
-    id: settingsFallbackFileView
-    path: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") || ""
-    adapter: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") ? adapter : null
-    printErrors: false
-    watchChanges: false
   }
 
   // FileView to load default settings for comparison
@@ -742,10 +728,6 @@ Singleton {
   // Public function to trigger immediate settings saving
   function saveImmediate() {
     settingsFileView.writeAdapter();
-    // Write to fallback location if set
-    if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-      settingsFallbackFileView.writeAdapter();
-    }
     root.settingsSaved(); // Emit signal after saving
   }
 
