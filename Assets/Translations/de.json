@@ -533,7 +533,10 @@
     "results": "Ergebnisse"
   },
   "lock-screen": {
-    "password": "Passwort eingeben..."
+    "authenticating": "Authentifizierung...",
+    "password": "Passwort eingeben...",
+    "restart": "Neu starten",
+    "shut-down": "Herunterfahren"
   },
   "notifications": {
     "panel": {
@@ -899,6 +902,7 @@
       "title": "Dock"
     },
     "general": {
+      "copy-settings": "Einstellungen kopieren",
       "fonts-default-description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
       "fonts-default-label": "Standard-Schriftart",
       "fonts-default-placeholder": "Standard-Schriftart auswählen...",
@@ -933,7 +937,8 @@
       "screen-corners-show-corners-label": "Bildschirmecken anzeigen",
       "screen-corners-solid-black-description": "Schwarze Ecken anstelle der Statusleisten-Hintergrundfarbe verwenden.",
       "screen-corners-solid-black-label": "Schwarze Ecken",
-      "screen-corners-title": "Bildschirmecken"
+      "screen-corners-title": "Bildschirmecken",
+      "settings-copied": "Einstellungen in die Zwischenablage kopiert"
     },
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
@@ -1150,6 +1155,8 @@
       "types-input-volume-label": "Eingangslautstärke",
       "types-lockkey-description": "OSD anzeigen, wenn Feststelltaste, Num-Taste oder Rollen-Taste umgeschaltet werden.",
       "types-lockkey-label": "Feststelltasten",
+      "types-media-description": "OSD anzeigen, wenn sich der Medienwiedergabestatus ändert (Wiedergabe, Pause, Überspringen).",
+      "types-media-label": "Medienwiedergabe",
       "types-title": "OSD-Auslöseereignisse",
       "types-volume-description": "OSD anzeigen, wenn sich die Ausgabelautstärke ändert.",
       "types-volume-label": "Ausgangslautstärke"
@@ -1689,10 +1696,11 @@
     "file-picker": {
       "item": "Element",
       "items": "Elemente",
+      "search-placeholder": "Dateien und Ordner suchen...",
       "select-current": "Aktuelles Objekt auswählen",
       "select-file": "Datei auswählen",
       "select-folder": "Ordner auswählen",
-      "selected:": "Ausgewählt:",
+      "selected": "Ausgewählt:",
       "title": "Dateiauswahl"
     },
     "file-picker-title": "Datei auswählen",

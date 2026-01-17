@@ -533,7 +533,10 @@
     "results": "結果"
   },
   "lock-screen": {
-    "password": "パスワードを入力..."
+    "authenticating": "認証中...",
+    "password": "パスワードを入力...",
+    "restart": "再起動",
+    "shut-down": "シャットダウン"
   },
   "notifications": {
     "panel": {
@@ -899,6 +902,7 @@
       "title": "ドック"
     },
     "general": {
+      "copy-settings": "設定をコピー",
       "fonts-default-description": "インターフェース全体で使用されるメインフォント。",
       "fonts-default-label": "メインフォント",
       "fonts-default-placeholder": "フォントを選択...",
@@ -933,7 +937,8 @@
       "screen-corners-show-corners-label": "画面の角を表示する",
       "screen-corners-solid-black-description": "バーの背景色の代わりに、黒一色を使用します。",
       "screen-corners-solid-black-label": "角を黒く塗りつぶす",
-      "screen-corners-title": "画面の角"
+      "screen-corners-title": "画面の角",
+      "settings-copied": "設定をクリップボードにコピーしました"
     },
     "hooks": {
       "info-command-info-description": "• コマンドはシェル (sh -lc) 経由で実行されます<br>• コマンドはバックグラウンドで実行されます<br>• テストボタンは現在の設定値を使って実行されます",
@@ -1150,6 +1155,8 @@
       "types-input-volume-label": "入力音量",
       "types-lockkey-description": "Caps Lock、Num Lock、Scroll Lock の切り替え時に OSD を表示します。",
       "types-lockkey-label": "ロックキー",
+      "types-media-description": "メディア再生状態（再生、一時停止、スキップ）が変化したときにOSDを表示します。",
+      "types-media-label": "メディア再生",
       "types-title": "OSD のトリガーイベント",
       "types-volume-description": "出力音量が変更された時に OSD を表示します。",
       "types-volume-label": "出力音量"
@@ -1689,10 +1696,11 @@
     "file-picker": {
       "item": "項目",
       "items": "項目",
+      "search-placeholder": "ファイルとフォルダを検索...",
       "select-current": "現在のフォルダを選択する",
       "select-file": "ファイルを選択する",
       "select-folder": "フォルダを選択する",
-      "selected:": "選択済み:",
+      "selected": "選択済み:",
       "title": "ファイル選択"
     },
     "file-picker-title": "ファイルを選択してください",

@@ -533,7 +533,10 @@
     "results": "results"
   },
   "lock-screen": {
-    "password": "Enter your password..."
+    "authenticating": "Authenticating...",
+    "password": "Enter your password...",
+    "restart": "Restart",
+    "shut-down": "Shut down"
   },
   "notifications": {
     "panel": {
@@ -1152,11 +1155,11 @@
       "types-input-volume-label": "Input volume",
       "types-lockkey-description": "Show OSD when Caps Lock, Num Lock, or Scroll Lock are toggled.",
       "types-lockkey-label": "Lock keys",
+      "types-media-description": "Show OSD when media playback state changes (play, pause, skip).",
+      "types-media-label": "Media playback",
       "types-title": "OSD trigger events",
       "types-volume-description": "Show OSD when audio output volume changes.",
-      "types-volume-label": "Output volume",
-      "types-media-description": "Show OSD when media playback state changes (play, pause, skip).",
-      "types-media-label": "Media playback"
+      "types-volume-label": "Output volume"
     },
     "plugins": {
       "available-description": "Browse and install plugins from configured sources.",
@@ -1693,6 +1696,7 @@
     "file-picker": {
       "item": "item",
       "items": "items",
+      "search-placeholder": "Search files and folders...",
       "select-current": "Select Current",
       "select-file": "Select File",
       "select-folder": "Select Folder",

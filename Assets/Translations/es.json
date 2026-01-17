@@ -533,7 +533,10 @@
     "results": "resultados"
   },
   "lock-screen": {
-    "password": "Ingresa tu contraseña..."
+    "authenticating": "Autenticando...",
+    "password": "Ingresa tu contraseña...",
+    "restart": "Reiniciar",
+    "shut-down": "Apagar"
   },
   "notifications": {
     "panel": {
@@ -899,6 +902,7 @@
       "title": "Dock"
     },
     "general": {
+      "copy-settings": "Copiar ajustes",
       "fonts-default-description": "Fuente principal utilizada en toda la interfaz.",
       "fonts-default-label": "Fuente predeterminada",
       "fonts-default-placeholder": "Seleccionar fuente predeterminada...",
@@ -933,7 +937,8 @@
       "screen-corners-show-corners-label": "Mostrar esquinas de la pantalla",
       "screen-corners-solid-black-description": "Usa negro sólido en lugar del color de fondo de la barra.",
       "screen-corners-solid-black-label": "Esquinas negras sólidas",
-      "screen-corners-title": "Esquinas de la pantalla"
+      "screen-corners-title": "Esquinas de la pantalla",
+      "settings-copied": "Ajustes copiados al portapapeles"
     },
     "hooks": {
       "info-command-info-description": "• Los comandos se ejecutan a través de shell (sh -lc)<br>• Los comandos se ejecutan en segundo plano (desvinculados)<br>• Los botones de prueba se ejecutan con los valores actuales",
@@ -1150,6 +1155,8 @@
       "types-input-volume-label": "Volumen de entrada",
       "types-lockkey-description": "Mostrar el OSD cuando se activen o desactiven Bloq Mayús, Bloq Num o Bloq Despl.",
       "types-lockkey-label": "Teclas de bloqueo",
+      "types-media-description": "Mostrar OSD cuando cambie el estado de reproducción multimedia (reproducir, pausar, saltar).",
+      "types-media-label": "Reproducción de medios",
       "types-title": "Eventos de activación OSD",
       "types-volume-description": "Mostrar el OSD cuando cambie el volumen de salida de audio.",
       "types-volume-label": "Volumen de salida"
@@ -1689,10 +1696,11 @@
     "file-picker": {
       "item": "elemento",
       "items": "elementos",
+      "search-placeholder": "Buscar archivos y carpetas...",
       "select-current": "Seleccionar actual",
       "select-file": "Seleccionar archivo",
       "select-folder": "Seleccionar carpeta",
-      "selected:": "Seleccionado:",
+      "selected": "Seleccionado:",
       "title": "Selector de archivos"
     },
     "file-picker-title": "Seleccionar un archivo",
