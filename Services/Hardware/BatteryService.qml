@@ -76,7 +76,7 @@ Singleton {
     }
     if (isLaptopBattery) {
       var hasIsPresent = primaryDevice.type === UPowerDeviceType.Battery && primaryDevice.isPresent !== undefined;
-      return hasIsPresent ? primaryDevice.isPresent : (primaryDevice.ready && primaryDevice.percentage !== undefined);
+      return hasIsPresent ? (primaryDevice.isPresent === true) : (primaryDevice.ready && primaryDevice.percentage !== undefined);
     }
     return primaryDevice.connected === true;
   }
@@ -99,7 +99,7 @@ Singleton {
     id: healthProcess
     command: ["sh", "-c", "upower -i $(upower -e | grep battery | head -n 1) 2>/dev/null | grep -iE 'capacity'"]
     stdout: SplitParser {
-      onRead: data => {
+      onRead: function(data) {
         var line = data.trim();
         if (line === "") return;
 
