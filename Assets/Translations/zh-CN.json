@@ -899,6 +899,7 @@
       "title": "停靠栏"
     },
     "general": {
+      "copy-settings": "复制设置",
       "fonts-default-description": "整个界面使用的主要字体。",
       "fonts-default-label": "默认字体",
       "fonts-default-placeholder": "选择默认字体...",
@@ -933,7 +934,8 @@
       "screen-corners-show-corners-label": "显示屏幕圆角",
       "screen-corners-solid-black-description": "使用实心黑色而非状态栏背景色。",
       "screen-corners-solid-black-label": "实心黑色边角",
-      "screen-corners-title": "屏幕边角"
+      "screen-corners-title": "屏幕边角",
+      "settings-copied": "设置已复制到剪贴板"
     },
     "hooks": {
       "info-command-info-description": "• 命令通过 shell 执行（sh -lc）<br>• 命令在后台运行（分离）<br>• 测试按钮使用当前值执行",
