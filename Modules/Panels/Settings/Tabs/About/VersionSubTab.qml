@@ -794,10 +794,21 @@ ColumnLayout {
     onToggled: checked => Settings.data.general.telemetryEnabled = checked
   }
 
-  NButton {
-    icon: "eye"
-    text: I18n.tr("panels.about.telemetry-show-data")
-    outlined: true
-    onClicked: root.copyTelemetryData()
+  RowLayout {
+    spacing: Style.marginM
+
+    NButton {
+      icon: "eye"
+      text: I18n.tr("panels.about.telemetry-show-data")
+      outlined: true
+      onClicked: root.copyTelemetryData()
+    }
+
+    NButton {
+      icon: "shield-lock"
+      text: I18n.tr("panels.about.privacy-policy")
+      outlined: true
+      onClicked: Quickshell.execDetached(["xdg-open", "https://noctalia.dev/privacy"])
+    }
   }
 }
