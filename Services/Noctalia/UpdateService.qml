@@ -31,7 +31,7 @@ Singleton {
   property string changelogToVersion: ""
   property string previousVersion: ""
   property string changelogCurrentVersion: ""
-  property var releaseHighlights: []
+  property string releaseContent: ""
   property string lastShownVersion: ""
   property bool popupScheduled: false
   property string fetchError: ""
@@ -145,22 +145,13 @@ Singleton {
         Logger.d("UpdateService", "Response text length:", request.responseText ? request.responseText.length : 0);
 
         if (request.status >= 200 && request.status < 300) {
-          const content = request.responseText || "";
-          Logger.d("UpdateService", "Successfully fetched upgrade log, parsing...");
-          const entries = parseReleaseNotes(content);
-          Logger.d("UpdateService", "Parsed entries count:", entries.length);
-          releaseHighlights = [
-                {
-                  "version": toVersion,
-                  "date": "",
-                  "entries": entries
-                }
-              ];
+          releaseContent = request.responseText || "";
+          Logger.d("UpdateService", "Successfully fetched upgrade log");
           fetchError = "";
           openWhenReady();
         } else {
           Logger.w("UpdateService", "Failed to fetch upgrade log, status:", request.status);
-          releaseHighlights = [];
+          releaseContent = "";
 
           if (request.status === 404) {
             // Changelog not available for this version range - skip silently
@@ -257,26 +248,6 @@ Singleton {
     }
   }
 
-  function parseReleaseNotes(body) {
-    if (!body)
-      return [];
-
-    const lines = body.split(/\r?\n/);
-    var entries = [];
-
-    for (var i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      entries.push(line);
-    }
-
-    // Remove trailing blank lines
-    while (entries.length > 0 && entries[entries.length - 1].trim().length === 0) {
-      entries.pop();
-    }
-
-    return entries;
-  }
-
   function openWhenReady() {
     if (!popupScheduled)
       return;
@@ -366,7 +337,7 @@ Singleton {
       return;
 
     const target = ensureVersionPrefix(currentVersion.replace(developmentSuffix, ""));
-    const fromVersion = "v3.0.0";
+    const fromVersion = "v3.7.2";
 
     previousVersion = fromVersion;
     changelogCurrentVersion = target;
