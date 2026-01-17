@@ -171,7 +171,7 @@ Singleton {
   // Query geocoding API to convert location name to coordinates
   function geocodeLocation(locationName, callback, errorCallback) {
     Logger.d("Location", "Geocoding location name");
-    var geoUrl = "https://assets.noctalia.dev/geocode.php?city=" + encodeURIComponent(locationName) + "&language=en&format=json";
+    var geoUrl = "https://noctalia.dev:7777/geocode?city=" + encodeURIComponent(locationName);
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
