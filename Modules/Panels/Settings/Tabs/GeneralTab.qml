@@ -2,11 +2,11 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import "../../../../Helpers/QtObj2JS.js" as QtObj2JS
 import qs.Commons
 import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
-import "../../../../Helpers/QtObj2JS.js" as QtObj2JS
 
 ColumnLayout {
   id: root
