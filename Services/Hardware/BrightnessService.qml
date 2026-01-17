@@ -39,6 +39,10 @@ Singleton {
     monitors.forEach(m => m.decreaseBrightness());
   }
 
+  function setBrightness(value: real): void {
+    monitors.forEach(m => m.setBrightnessDebounced(value));
+  }
+
   function getDetectedDisplays(): list<var> {
     return detectedDisplays;
   }
