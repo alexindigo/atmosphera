@@ -39,7 +39,7 @@ ColumnLayout {
     onToggled: checked => valueHideWhenZero = checked
     visible: !valueHideWhenZeroUnread
   }
-  
+
   NToggle {
     label: I18n.tr("bar.notification-history.hide-widget-when-zero-unread-label")
     description: I18n.tr("bar.notification-history.hide-widget-when-zero-unread-description")
