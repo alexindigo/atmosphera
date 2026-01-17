@@ -973,7 +973,7 @@ Singleton {
       const hasMedia = title !== "" || artist !== "";
 
       if (hasMedia && (titleChanged || playStateChanged)) {
-        const icon = isPlaying ? "player-play" : "player-pause";
+        const icon = isPlaying ? "media-play" : "media-pause";
         let message = "";
 
         if (artist && title) {
