@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Enregistrer l'urgence faible dans l'historique",
       "history-normal-urgency-description": "Enregistrer les notifications de priorité normale dans l'historique.",
       "history-normal-urgency-label": "Enregistrer l'urgence normale dans l'historique",
+      "media-toast-description": "Afficher une notification toast lorsque l'état de lecture du média change.",
+      "media-toast-label": "Média",
       "monitors-desc": "Afficher les notifications sur des moniteurs spécifiques. Par défaut, sur tous si aucun n'est choisi.",
       "settings-always-on-top-description": "Afficher les notifications au-dessus des fenêtres en plein écran et des autres applications.",
       "settings-background-opacity-description": "Ajuster l'opacité des arrière-plans de notifications.",

@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "低緊急度を履歴に保存",
       "history-normal-urgency-description": "通常優先度の通知を履歴に保存します。",
       "history-normal-urgency-label": "通常緊急度を履歴に保存",
+      "media-toast-description": "メディアの再生状態が変化したときにトーストを表示します。",
+      "media-toast-label": "メディア",
       "monitors-desc": "通知を表示するディスプレイを選択します。未選択の場合は全てに表示されます。",
       "settings-always-on-top-description": "全画面ウィンドウや他のレイヤーよりも手前に通知を表示します。",
       "settings-background-opacity-description": "通知の背景の不透明度を調整します。",

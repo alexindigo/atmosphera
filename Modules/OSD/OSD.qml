@@ -19,8 +19,7 @@ Variants {
     Volume,
     InputVolume,
     Brightness,
-    LockKey,
-    Media
+    LockKey
   }
 
   model: Quickshell.screens.filter(screen => (Settings.data.osd.monitors.includes(screen.name) || Settings.data.osd.monitors.length === 0) && Settings.data.osd.enabled)
@@ -39,11 +38,6 @@ Variants {
 
     // Lock Key States
     property string lastLockKeyChanged: ""  // "caps", "num", "scroll", or ""
-
-    // Media States
-    property string mediaAction: "" // "play", "pause", or ""
-    property string mediaTrackTitle: ""
-    property string mediaTrackArtist: ""
 
     // Current values (computed properties)
     readonly property real currentVolume: AudioService.volume
@@ -84,12 +78,6 @@ Variants {
         return currentBrightness <= 0.5 ? "brightness-low" : "brightness-high";
       case OSD.Type.LockKey:
         return "keyboard";
-      case OSD.Type.Media:
-        if (root.mediaAction === "pause")
-          return "media-pause";
-        if (root.mediaAction === "play")
-          return "media-play";
-        return "music";
       default:
         return "";
       }
@@ -105,8 +93,7 @@ Variants {
         return currentBrightness;
       case OSD.Type.LockKey:
         return 1.0; // Always show 100% when showing lock key status
-      case OSD.Type.Media:
-        return 1.0; // Always show full for media
+
       default:
         return 0;
       }
@@ -123,21 +110,6 @@ Variants {
       if (currentOSDType === OSD.Type.LockKey) {
         // For lock keys, return the pre-determined status text
         return lastLockKeyChanged;
-      }
-
-      if (currentOSDType === OSD.Type.Media) {
-        // For media, show the action or track info
-        if (root.mediaTrackTitle) {
-          return root.mediaTrackTitle;
-        }
-        switch (root.mediaAction) {
-        case "play":
-          return "Playing";
-        case "pause":
-          return "Paused";
-        default:
-          return "Media";
-        }
       }
 
       const value = getCurrentValue();
@@ -212,14 +184,6 @@ Variants {
         return;
       }
       showOSD(OSD.Type.Brightness);
-    }
-
-    // Media Control handling
-    function triggerMediaAction(action) {
-      root.mediaAction = action;
-      root.mediaTrackTitle = MediaService.trackTitle;
-      root.mediaTrackArtist = MediaService.trackArtist;
-      showOSD(OSD.Type.Media);
     }
 
     // Check if a specific OSD type is enabled
@@ -317,48 +281,6 @@ Variants {
       target: BrightnessService
       function onMonitorsChanged() {
         connectBrightnessMonitors();
-      }
-    }
-
-    // Media playback monitoring
-    Connections {
-      target: MediaService
-
-      function onIsPlayingChanged() {
-        if (MediaService.isPlaying) {
-          root.mediaAction = "play";
-          root.mediaTrackTitle = MediaService.trackTitle;
-          root.mediaTrackArtist = MediaService.trackArtist;
-          showOSD(OSD.Type.Media);
-        } else {
-          // Show OSD when track is paused
-          root.mediaAction = "pause";
-          root.mediaTrackTitle = MediaService.trackTitle;
-          root.mediaTrackArtist = MediaService.trackArtist;
-          showOSD(OSD.Type.Media);
-        }
-      }
-
-      function onCurrentPlayerChanged() {
-        // Show OSD when a new player takes over
-        if (MediaService.currentPlayer) {
-          root.mediaTrackTitle = MediaService.trackTitle;
-          root.mediaTrackArtist = MediaService.trackArtist;
-          if (MediaService.isPlaying) {
-            root.mediaAction = "play";
-            showOSD(OSD.Type.Media);
-          }
-        }
-      }
-
-      function onTrackTitleChanged() {
-        // Show OSD when track changes
-        root.mediaTrackTitle = MediaService.trackTitle;
-        root.mediaTrackArtist = MediaService.trackArtist;
-        root.mediaAction = "play";
-        if (MediaService.isPlaying) {
-          showOSD(OSD.Type.Media);
-        }
       }
     }
 
@@ -632,21 +554,9 @@ Variants {
               Layout.alignment: Qt.AlignVCenter
             }
 
-            // Media Information Text (replaces progress bar)
-            NText {
-              visible: root.currentOSDType === OSD.Type.Media
-              text: root.getDisplayPercentage()
-              color: Color.mOnSurface
-              pointSize: Style.fontSizeS
-              horizontalAlignment: Text.AlignLeft
-              elide: Text.ElideRight
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignVCenter
-            }
-
             // Progress Bar for Volume/Brightness
             Rectangle {
-              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+              visible: root.currentOSDType !== OSD.Type.LockKey
               Layout.fillWidth: true
               Layout.alignment: Qt.AlignVCenter
               height: panel.barThickness
@@ -678,7 +588,7 @@ Variants {
 
             // Percentage Text for Volume/Brightness
             NText {
-              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+              visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
@@ -700,8 +610,8 @@ Variants {
             anchors.fill: parent
             anchors.topMargin: Style.marginL
             anchors.bottomMargin: Style.marginL
-            spacing: root.currentOSDType === OSD.Type.LockKey || root.currentOSDType === OSD.Type.Media ? Style.marginM : Style.marginS
-            clip: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+            spacing: root.currentOSDType === OSD.Type.LockKey ? Style.marginM : Style.marginS
+            clip: root.currentOSDType !== OSD.Type.LockKey
 
             ColumnLayout {
               id: textVerticalLayout
@@ -759,7 +669,7 @@ Variants {
             }
 
             NText {
-              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+              visible: root.currentOSDType !== OSD.Type.LockKey
               text: root.getDisplayPercentage()
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
@@ -771,24 +681,10 @@ Variants {
               Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
             }
 
-            NText {
-              visible: root.currentOSDType === OSD.Type.Media
-              text: root.getDisplayPercentage()
-              color: Color.mOnSurface
-              pointSize: Style.fontSizeXS
-              horizontalAlignment: Text.AlignLeft
-              verticalAlignment: Text.AlignVCenter
-              elide: Text.ElideRight
-              wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-              Layout.fillWidth: true
-              Layout.alignment: Qt.AlignHCenter
-              Layout.preferredHeight: Math.round(20 * Style.uiScaleRatio)
-            }
-
             Item {
-              visible: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+              visible: root.currentOSDType !== OSD.Type.LockKey
               Layout.fillWidth: true
-              Layout.fillHeight: root.currentOSDType !== OSD.Type.LockKey && root.currentOSDType !== OSD.Type.Media
+              Layout.fillHeight: root.currentOSDType !== OSD.Type.LockKey
 
               Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter

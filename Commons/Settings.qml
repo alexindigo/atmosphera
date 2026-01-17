@@ -578,6 +578,7 @@ Singleton {
         property string lowSoundFile: ""
         property string excludedApps: "discord,firefox,chrome,chromium,edge"
       }
+      property bool enableMediaToast: true
     }
 
     // on-screen display
@@ -587,7 +588,7 @@ Singleton {
       property int autoHideMs: 2000
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
-      property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness, OSD.Type.Media]
+      property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness]
       property list<string> monitors: [] // holds osd visibility per monitor
     }
 

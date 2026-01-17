@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Salvar urgência baixa no histórico",
       "history-normal-urgency-description": "Salvar notificações de prioridade normal no histórico.",
       "history-normal-urgency-label": "Salvar urgência normal no histórico",
+      "media-toast-description": "Mostrar um toast quando o estado de reprodução de mídia mudar.",
+      "media-toast-label": "Multimédia",
       "monitors-desc": "Mostra a notificação em monitores específicos. O padrão é todos, se nenhum for escolhido.",
       "settings-always-on-top-description": "Exibe notificações acima de janelas em tela cheia e outras camadas.",
       "settings-background-opacity-description": "Ajustar a opacidade dos fundos das notificações.",

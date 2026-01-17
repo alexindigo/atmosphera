@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Odeślij niską pilność do historii",
       "history-normal-urgency-description": "Zapisuj powiadomienia o normalnym priorytecie w historii.",
       "history-normal-urgency-label": "Zapisz normalny priorytet do historii",
+      "media-toast-description": "Wyświetl toast, gdy zmieni się stan odtwarzania multimediów.",
+      "media-toast-label": "Media",
       "monitors-desc": "Pokazuj powiadomienia na konkretnych monitorach. Domyślnie na wszystkich.",
       "settings-always-on-top-description": "Wyświetlaj powiadomienia nad oknami pełnoekranowymi i innymi warstwami.",
       "settings-background-opacity-description": "Dostosuj przezroczystość tła powiadomień.",

@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Save low urgency to history",
       "history-normal-urgency-description": "Save normal priority notifications to history.",
       "history-normal-urgency-label": "Save normal urgency to history",
+      "media-toast-description": "Show a toast when media playback state changes.",
+      "media-toast-label": "Media",
       "monitors-desc": "Show notification on specific monitors. Defaults to all if none are chosen.",
       "settings-always-on-top-description": "Display notifications above fullscreen windows and other layers.",
       "settings-background-opacity-description": "Adjust the opacity of notification backgrounds.",

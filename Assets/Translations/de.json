@@ -427,7 +427,7 @@
     "search": "Suche",
     "security": "Sicherheit",
     "select": "Auswählen",
-    "shortcuts": "Tastenkombinationen",
+    "shortcuts": "Kurzbefehle",
     "shutdown": "Herunterfahren",
     "signal": "Signal",
     "sound": "Ton",
@@ -674,7 +674,7 @@
       "volumes-mute-output-description": "Die Haupt-Audio-Ausgabe des Systems stummschalten.",
       "volumes-mute-output-label": "Audio-Ausgabe stummschalten",
       "volumes-output-volume-description": "Systemweite Lautstärke.",
-      "volumes-step-size-description": "Schrittgröße für Lautstärkeänderungen anpassen (Mausrad, Tastenkombinationen).",
+      "volumes-step-size-description": "Schrittgröße für Lautstärkeänderungen anpassen (Mausrad, Tastenkürzel).",
       "volumes-step-size-label": "Lautstärke-Schrittgröße",
       "volumes-volume-overdrive-description": "Erlaubt das Anheben der Lautstärke über 100%. Wird möglicherweise nicht von aller Hardware unterstützt.",
       "volumes-volume-overdrive-label": "Lautstärke-Übersteuerung erlauben"
@@ -838,7 +838,7 @@
       "weather-show-background-description": "Zeige den Hintergrundcontainer für das Wetter-Widget an."
     },
     "display": {
-      "monitors-brightness-step-description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkombinationen).",
+      "monitors-brightness-step-description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkürzel).",
       "monitors-brightness-step-label": "Helligkeits-Schrittgröße",
       "monitors-brightness-unavailable-ddc-disabled": "Helligkeitssteuerung nicht verfügbar. Aktivieren Sie \"Externe Helligkeitsunterstützung\", um die Helligkeit dieses Displays zu steuern.",
       "monitors-brightness-unavailable-generic": "Die Helligkeitssteuerung ist für dieses Display nicht verfügbar.",
@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Niedrige Dringlichkeit im Verlauf speichern",
       "history-normal-urgency-description": "Normale Prioritätsbenachrichtigungen im Verlauf speichern.",
       "history-normal-urgency-label": "Normale Dringlichkeit im Verlauf speichern",
+      "media-toast-description": "Eine Toast-Benachrichtigung anzeigen, wenn sich der Wiedergabestatus von Medien ändert.",
+      "media-toast-label": "Medien",
       "monitors-desc": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt.",
       "settings-always-on-top-description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen.",
       "settings-background-opacity-description": "Transparenz der Benachrichtigungshintergründe anpassen.",

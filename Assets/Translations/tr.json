@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Düşük aciliyeti geçmişe kaydet",
       "history-normal-urgency-description": "Normal öncelikli bildirimleri geçmişe kaydet.",
       "history-normal-urgency-label": "Normal aciliyeti geçmişe kaydet",
+      "media-toast-description": "Medya oynatma durumu değiştiğinde bir bildirim göster.",
+      "media-toast-label": "Medya",
       "monitors-desc": "Bildirimleri belirli ekranlarda gösterin. Hiçbiri seçilmezse varsayılan olarak tümünde gösterilir.",
       "settings-always-on-top-description": "Bildirimleri tam ekran pencerelerinin ve diğer katmanların üzerinde görüntüle.",
       "settings-background-opacity-description": "Bildirim arka planlarının opaklığını ayarlayın.",

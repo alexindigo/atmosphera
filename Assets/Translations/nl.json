@@ -1088,6 +1088,8 @@
       "history-low-urgency-label": "Lage urgentie opslaan in geschiedenis",
       "history-normal-urgency-description": "Meldingen met normale prioriteit opslaan in de geschiedenis.",
       "history-normal-urgency-label": "Normale urgentie opslaan in geschiedenis",
+      "media-toast-description": "Een toast weergeven wanneer de afspeelstatus van media verandert.",
+      "media-toast-label": "Media",
       "monitors-desc": "Meldingen op specifieke monitoren tonen. Standaard op alle als er geen zijn gekozen.",
       "settings-always-on-top-description": "Toon meldingen boven fullscreen-vensters en andere lagen.",
       "settings-background-opacity-description": "Pas de dekking van meldingsachtergronden aan.",
