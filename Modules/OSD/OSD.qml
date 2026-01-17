@@ -86,9 +86,9 @@ Variants {
         return "keyboard";
       case OSD.Type.Media:
         if (root.mediaAction === "pause")
-          return "player-pause";
+          return "media-pause";
         if (root.mediaAction === "play")
-          return "player-play";
+          return "media-play";
         return "music";
       default:
         return "";
