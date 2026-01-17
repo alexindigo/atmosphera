@@ -578,7 +578,7 @@ Singleton {
         property string lowSoundFile: ""
         property string excludedApps: "discord,firefox,chrome,chromium,edge"
       }
-      property bool enableMediaToast: true
+      property bool enableMediaToast: false
     }
 
     // on-screen display

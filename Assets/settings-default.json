@@ -332,6 +332,7 @@
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
     "enableKeyboardLayoutToast": true,
+    "enableMediaToast": false,
     "saveToHistory": {
       "low": true,
       "normal": true,
