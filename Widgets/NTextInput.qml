@@ -20,6 +20,8 @@ ColumnLayout {
   property var defaultValue: undefined
   property string settingsPath: ""
 
+  property color textColor: Color.mOnSurface
+
   property alias text: input.text
   property alias placeholderText: input.placeholderText
   property alias inputMethodHints: input.inputMethodHints
@@ -147,6 +149,9 @@ ColumnLayout {
             echoMode: TextInput.Normal
             readOnly: root.readOnly
             placeholderTextColor: Qt.alpha(Color.mOnSurfaceVariant, 0.6)
+            color: root.textColor
+            selectionColor: Color.mPrimary
+            selectedTextColor: Color.mOnPrimary
 
             selectByMouse: true
 
