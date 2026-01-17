@@ -332,7 +332,6 @@
     "normalUrgencyDuration": 8,
     "criticalUrgencyDuration": 15,
     "enableKeyboardLayoutToast": true,
-    "enableMediaToast": false,
     "saveToHistory": {
       "low": true,
       "normal": true,
@@ -346,7 +345,8 @@
       "normalSoundFile": "",
       "lowSoundFile": "",
       "excludedApps": "discord,firefox,chrome,chromium,edge"
-    }
+    },
+    "enableMediaToast": false
   },
   "osd": {
     "enabled": true,
@@ -357,8 +357,7 @@
     "enabledTypes": [
       0,
       1,
-      2,
-      4
+      2
     ],
     "monitors": []
   },
