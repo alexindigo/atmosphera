@@ -173,10 +173,6 @@ Variants {
           return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
         }
       }
-      // For media, use primary color
-      if (currentOSDType === OSD.Type.Media) {
-        return Color.mPrimary;
-      }
       return Color.mPrimary;
     }
 
@@ -194,10 +190,6 @@ Variants {
         } else if (lastLockKeyChanged.startsWith("SCROLL")) {
           return LockKeysService.scrollLockOn ? Color.mPrimary : Color.mOnSurfaceVariant;
         }
-      }
-
-      if (currentOSDType === OSD.Type.Media) {
-        return Color.mPrimary;
       }
 
       return Color.mOnSurface;
