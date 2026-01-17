@@ -104,7 +104,7 @@ Singleton {
                                              var ddcModelMatch = d.match(/(This monitor does not support DDC\/CI|Invalid display)/);
                                              var modelMatch = d.match(/Model:\s*(.*)/);
                                              var busMatch = d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/);
-                                             var connectorMatch = d.match(/DRM connector:\s*card\d+-(.+)/);
+                                             var connectorMatch = d.match(/DRM[_ ]connector:\s*card\d+-(.+)/);
                                              var ddcModel = ddcModelMatch ? ddcModelMatch.length > 0 : false;
                                              var model = modelMatch ? modelMatch[1] : "Unknown";
                                              var bus = busMatch ? busMatch[1] : "Unknown";
