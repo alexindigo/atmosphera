@@ -343,6 +343,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${colorsApplyScript} mango`
+    },
+    {
+      "id": "btop",
+      "name": "btop",
+      "category": "misc",
+      "input": "btop.theme",
+      "outputs": [
+        {
+          "path": "~/.config/btop/themes/noctalia.theme"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} btop`
     }
   ]
 
