@@ -1034,7 +1034,7 @@
       "bluetooth-rssi-polling-description": "透過 bluetoothctl 定期取樣連接裝置的 RSSI 值; 不一定每個裝置都可用; 啟用時會使用最少資源",
       "bluetooth-rssi-polling-label": "回報藍牙訊號",
       "desc": "管理 Wi-Fi 及藍牙連線",
-      "wifi-description": "管理無線網路 (需要 NetworkManger 套件)"
+      "wifi-description": "管理無線網路 (需要 NetworkManager 套件)"
     },
     "notifications": {
       "duration-critical-urgency-description": "設定非常危急的通知該顯示多久",
