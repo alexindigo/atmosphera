@@ -928,8 +928,8 @@ def generate_material_dark(palette: list[Color]) -> dict[str, str]:
 
     mOutline = _adjust_surface(base_primary, 0.30, 0.40)
     
-    # Dark foreground for bright backgrounds
-    dark_fg = Color.from_hsl(base_primary.to_hsl()[0], 0.7, 0.10)
+    # Dark foreground for bright backgrounds (Material 3 T20 ≈ L=0.15)
+    dark_fg = Color.from_hsl(base_primary.to_hsl()[0], 0.7, 0.15)
     
     # Ensure contrast
     on_primary = _ensure_contrast(dark_fg, primary_adjusted, 4.5)
@@ -1074,8 +1074,8 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     
     mOutline = _adjust_surface(palette[0], 0.10, 0.30)
     
-    # Contrasting foregrounds for accent colors
-    dark_fg = Color.from_hsl(palette[0].to_hsl()[0], 0.3, 0.08)
+    # Contrasting foregrounds for accent colors (Material 3 T20 ≈ L=0.15)
+    dark_fg = Color.from_hsl(palette[0].to_hsl()[0], 0.3, 0.15)
     on_primary = _ensure_contrast(dark_fg, primary_adjusted, 4.5)
     on_secondary = _ensure_contrast(dark_fg, secondary_adjusted, 4.5)
     on_tertiary = _ensure_contrast(dark_fg, tertiary_adjusted, 4.5)
