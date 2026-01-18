@@ -1594,6 +1594,7 @@
     "fill-modes": {
       "crop": "Vágás (Kitöltés)",
       "fit": "Illesztés (Tartalmazás)",
+      "repeat": "Ismétlés (Mozaik)",
       "stretch": "Nyújtás"
     },
     "no-match": "Nincs találat.",

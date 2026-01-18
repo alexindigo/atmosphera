@@ -1594,6 +1594,7 @@
     "fill-modes": {
       "crop": "Recortar (Rellenar)",
       "fit": "Ajustar (Contener)",
+      "repeat": "Repetir (Mosaico)",
       "stretch": "Estirar"
     },
     "no-match": "No se encontraron coincidencias.",

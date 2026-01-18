@@ -1501,6 +1501,7 @@
     "fill-modes": {
       "crop": "裁切 (填滿)",
       "fit": "調整 (收容)",
+      "repeat": "重複 (平鋪)",
       "stretch": "延展"
     },
     "no-match": "沒有相關結果",

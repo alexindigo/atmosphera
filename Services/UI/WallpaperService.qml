@@ -165,6 +165,11 @@ Singleton {
                            "name": I18n.tr("wallpaper.fill-modes.stretch"),
                            "uniform": 3.0
                          });
+    fillModeModel.append({
+                           "key": "repeat",
+                           "name": I18n.tr("wallpaper.fill-modes.repeat"),
+                           "uniform": 4.0
+                         });
 
     // Populate transitionsModel with translated names
     transitionsModel.append({
