@@ -194,7 +194,6 @@ ColumnLayout {
   NToggle {
     label: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
     description: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
-    enabled: ProgramCheckerService.matugenAvailable
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  Settings.data.colorSchemes.useWallpaperColors = checked;
@@ -210,78 +209,15 @@ ColumnLayout {
   }
 
   NToggle {
-    label: "Use Internal Generator"
-    description: "Use experimental Python generator instead of Matugen"
-    enabled: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.pythonAvailable
-    visible: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.pythonAvailable
-    checked: Settings.data.colorSchemes.generationBackend === "internal"
-    onToggled: checked => {
-                 Settings.data.colorSchemes.generationBackend = checked ? "internal" : "matugen";
-                 AppThemeService.generate();
-               }
-  }
-
-  NToggle {
     label: "Use Material Design"
     description: "Generate Material Design colors (on) or simpler accents (off)"
-    enabled: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend === "internal"
-    visible: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend === "internal"
+    enabled: Settings.data.colorSchemes.useWallpaperColors
+    visible: Settings.data.colorSchemes.useWallpaperColors
     checked: Settings.data.colorSchemes.internalThemerMode === "material"
     onToggled: checked => {
                  Settings.data.colorSchemes.internalThemerMode = checked ? "material" : "normal";
                  AppThemeService.generate();
                }
-  }
-
-  NComboBox {
-    label: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-label")
-    description: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-description")
-    enabled: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend !== "internal"
-    visible: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend !== "internal"
-
-    model: [
-      {
-        "key": "scheme-content",
-        "name": "Content"
-      },
-      {
-        "key": "scheme-expressive",
-        "name": "Expressive"
-      },
-      {
-        "key": "scheme-fidelity",
-        "name": "Fidelity"
-      },
-      {
-        "key": "scheme-fruit-salad",
-        "name": "Fruit Salad"
-      },
-      {
-        "key": "scheme-monochrome",
-        "name": "Monochrome"
-      },
-      {
-        "key": "scheme-neutral",
-        "name": "Neutral"
-      },
-      {
-        "key": "scheme-rainbow",
-        "name": "Rainbow"
-      },
-      {
-        "key": "scheme-tonal-spot",
-        "name": "Tonal Spot"
-      }
-    ]
-
-    currentKey: Settings.data.colorSchemes.matugenSchemeType
-
-    onSelected: key => {
-                  Settings.data.colorSchemes.matugenSchemeType = key;
-                  AppThemeService.generate();
-                }
-
-    defaultValue: Settings.getDefaultValue("colorSchemes.matugenSchemeType")
   }
 
   NDivider {

@@ -107,7 +107,7 @@ in
         {
           templates = {
             neovim = {
-              input_path = "~/.config/matugen/templates/template.lua";
+              input_path = "~/.config/noctalia/templates/template.lua";
               output_path = "~/.config/nvim/generated.lua";
               post_hook = "pkill -SIGUSR1 nvim";
             };
@@ -115,7 +115,7 @@ in
         }
       '';
       description = ''
-        Template definitions for Matugen, to be written to ~/.config/noctalia/user-templates.toml.
+        Template definitions for Noctalia, to be written to ~/.config/noctalia/user-templates.toml.
 
         This option accepts:
         - a Nix attrset (converted to TOML automatically)

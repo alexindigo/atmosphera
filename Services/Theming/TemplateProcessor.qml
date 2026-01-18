@@ -13,7 +13,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  readonly property string dynamicConfigPath: Settings.cacheDir + "matugen.dynamic.toml"
+  readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
 
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
@@ -50,25 +50,19 @@ Singleton {
   }
 
   /**
-  * Process wallpaper colors using matugen CLI
-  * Dual-path architecture (wallpaper uses matugen CLI)
+  * Process wallpaper colors using internal themer
+  * Dual-path architecture (wallpaper generation)
   */
   function processWallpaperColors(wallpaperPath, mode) {
-    const content = buildMatugenConfig();
+    const content = buildThemeConfig();
     if (!content)
       return;
     const wp = wallpaperPath.replace(/'/g, "'\\''");
-    
-    // Determine backend
-    let backend = Settings.data.colorSchemes.generationBackend;
-    if (!backend) backend = "matugen"; // Default
-    
-    // Fallback if matugen not available but python is
-    if (backend === "matugen" && !ProgramCheckerService.matugenAvailable && ProgramCheckerService.pythonAvailable) {
-        backend = "internal";
-    }
 
-    const script = buildMatugenScript(content, wp, mode, backend);
+    // Always use internal backend (colors.py)
+    let backend = "internal";
+
+    const script = buildGenerationScript(content, wp, mode, backend);
 
     generateProcess.generator = backend;
     generateProcess.command = ["sh", "-lc", script];
@@ -144,9 +138,9 @@ Singleton {
   }
 
   // ================================================================================
-  // WALLPAPER-BASED GENERATION (matugen CLI)
+  // WALLPAPER-BASED GENERATION (internal python)
   // ================================================================================
-  function buildMatugenConfig() {
+  function buildThemeConfig() {
     var lines = [];
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
 
@@ -166,14 +160,14 @@ Singleton {
     const homeDir = Quickshell.env("HOME");
     // Noctalia colors JSON
     lines.push("[templates.noctalia]");
-    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/MatugenTemplates/noctalia.json"');
+    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Theming/noctalia.json"');
     lines.push('output_path = "' + Settings.configDir + 'colors.json"');
 
     // Terminal templates
     TemplateRegistry.terminals.forEach(terminal => {
                                          if (isTemplateEnabled(terminal.id)) {
                                            lines.push(`\n[templates.${terminal.id}]`);
-                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${terminal.matugenPath}"`);
+                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
                                            const postHook = terminal.postHook || `${TemplateRegistry.colorsApplyScript} ${terminal.id}`;
@@ -193,7 +187,7 @@ Singleton {
                                                                       // Check if this specific client is detected
                                                                       if (isDiscordClientEnabled(client.name)) {
                                                                         lines.push(`\n[templates.discord_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
+                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
                                                                         const outputPath = client.path.replace("~", homeDir) + "/themes/noctalia.theme.css";
                                                                         lines.push(`output_path = "${outputPath}"`);
                                                                       }
@@ -206,7 +200,7 @@ Singleton {
                                                                       // Check if this specific client is detected
                                                                       if (isCodeClientEnabled(client.name)) {
                                                                         lines.push(`\n[templates.code_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
+                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
                                                                         const expandedPath = client.path.replace("~", homeDir);
                                                                         lines.push(`output_path = "${expandedPath}"`);
                                                                       }
@@ -222,7 +216,7 @@ Singleton {
                                                 const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
 
                                                 lines.push(`\n[templates.emacs]`);
-                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}"`);
+                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
                                                 lines.push(`output_path = "${standardPath}"`);
                                                 // Move to doom if doom exists, then remove empty .emacs.d/themes and .emacs.d directories
                                                 // Check directories are empty before removing
@@ -236,7 +230,7 @@ Singleton {
                                                 app.outputs.forEach((output, idx) => {
                                                                       lines.push(`\n[templates.${app.id}_${idx}]`);
                                                                       const inputFile = output.input || app.input;
-                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/MatugenTemplates/${inputFile}"`);
+                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${inputFile}"`);
                                                                       const outputPath = output.path.replace("~", homeDir);
                                                                       lines.push(`output_path = "${outputPath}"`);
                                                                       if (app.postProcess) {
@@ -269,31 +263,21 @@ Singleton {
     return false;
   }
 
-  function buildMatugenScript(content, wallpaper, mode, backend) {
-    const delimiter = "MATUGEN_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
+  function buildGenerationScript(content, wallpaper, mode, backend) {
+    const delimiter = "THEME_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
     const wpDelimiter = "WALLPAPER_PATH_EOF_" + Math.random().toString(36).substr(2, 9);
 
     // Use heredoc for wallpaper path to avoid all escaping issues
     let script = `cat > '${pathEsc}' << '${delimiter}'\n${content}\n${delimiter}\n`;
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
-    
-    if (backend === "internal") {
-        // Use colors.py (Python implementation)
-        const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
-        const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
-        script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType} `;
-        // Note: colors.py handles template rendering via --config, effectively mimicking matugen
-    } else {
-        // Use Matugen (Rust implementation)
-        script += 'matugen ';
-        if (ProgramCheckerService.matugenVersion >= "3.1.0") {
-          // Matugen 3.1.0+ supports --continue-on-error to process all templates even if some fail
-          script += '--continue-on-error ';
-        }
-        script += `image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
-    }
-    
+
+    // Use colors.py (Python implementation)
+    const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+    const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+    // We pass --type for compatibility but it is ignored by internal logic unless needed
+    script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
+
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode, backend);
 
     return script + "\n";
@@ -310,7 +294,7 @@ Singleton {
                                  if (!isDiscordClientEnabled(client.name))
                                  return;
 
-                                 const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${discordApp.input}`;
+                                 const templatePath = `${Quickshell.shellDir}/Assets/Theming/${discordApp.input}`;
                                  const outputPath = `${client.path}/themes/noctalia.theme.css`.replace("~", homeDir);
                                  const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
                                  const baseConfigDir = outputDir.replace("/themes", "");
@@ -340,7 +324,7 @@ Singleton {
                               if (!isCodeClientEnabled(client.name))
                               return;
 
-                              const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${codeApp.input}`;
+                              const templatePath = `${Quickshell.shellDir}/Assets/Theming/${codeApp.input}`;
                               const outputPath = client.path.replace("~", homeDir);
                               const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
 
@@ -385,7 +369,7 @@ Singleton {
       const doomConfigDir = doomDir.substring(0, doomDir.lastIndexOf('/'));
       const standardPath = app.outputs[1].path.replace("~", homeDir);
       const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
-      const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
+      const templatePath = `${Quickshell.shellDir}/Assets/Theming/${app.input}`;
 
       let script = "";
       script += `if [ -d "${doomConfigDir}" ]; then\n`;
@@ -405,13 +389,13 @@ Singleton {
                  });
     } else {
       app.outputs.forEach((output, idx) => {
-                            const templatePath = `${Quickshell.shellDir}/Assets/MatugenTemplates/${app.input}`;
+                            const templatePath = `${Quickshell.shellDir}/Assets/Theming/${app.input}`;
                             const outputPath = output.path.replace("~", homeDir);
                             const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
 
                             let script = "";
                             script += `mkdir -p ${outputDir}\n`;
-                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/MatugenTemplates/${output.input}` : templatePath;
+                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/Theming/${output.input}` : templatePath;
                             script += `cp '${templateFile}' '${outputPath}'\n`;
                             script += replaceColorsInFile(outputPath, palette);
                             if (hasDualModePatterns && darkPalette && lightPalette) {
@@ -581,13 +565,15 @@ Singleton {
     // If input is a shell variable (starts with $), use double quotes to allow expansion
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
-    
+
     if (backend === "internal") {
-         const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
-         const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
-         script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+      const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+      const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+      script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     } else {
-         script += `  matugen image ${inputQuoted} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+      // Fallback to internal if backend param is weird
+      const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+      script += `  python3 "${scriptPath}" ${inputQuoted} --material --config '${userConfigPath}' --mode ${mode}\n`;
     }
     script += "fi";
 
@@ -612,7 +598,10 @@ Singleton {
                                "colors": palette
                              }, null, 2) + "\n";
     script += "EOF\n";
-    script += `  matugen json '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+
+    const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+    // Call colors.py with JSON file as first arg (it will detect extension)
+    script += `  python3 "${scriptPath}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;

@@ -10,7 +10,6 @@
   cava,
   cliphist,
   ddcutil,
-  matugen,
   wlsunset,
   wl-clipboard,
   imagemagick,
@@ -52,7 +51,6 @@ let
     cava
     cliphist
     ddcutil
-    matugen
     wlsunset
     wl-clipboard
     imagemagick

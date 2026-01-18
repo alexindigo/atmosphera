@@ -1279,6 +1279,10 @@ class TemplateRenderer:
 
         hex_color = mode_data.get(key)
         if not hex_color:
+             # Fallback to unmapped name (e.g. if input JSON uses standard keys)
+             hex_color = mode_data.get(color_name)
+        
+        if not hex_color:
             return f"{{{{UNKNOWN_KEY_{key}}}}}"
 
         # Apply format
@@ -1454,28 +1458,63 @@ def main() -> int:
         print(f"Error: Image not found: {args.image}", file=sys.stderr)
         return 1
     
-    if not args.image.is_file():
-        print(f"Error: Not a file: {args.image}", file=sys.stderr)
-        return 1
     
-    # Read image
-    try:
-        pixels = read_image(args.image)
-    except ImageReadError as e:
-        print(f"Error reading image: {e}", file=sys.stderr)
-        return 1
-    except Exception as e:
-        print(f"Unexpected error reading image: {e}", file=sys.stderr)
-        return 1
-    
-    # Extract palette
-    # Use more colors for Material mode
-    k = 5  # Extract 5 dominant colors for both modes
-    palette = extract_palette(pixels, k=k)
-    
-    if not palette:
-        print("Error: Could not extract colors from image", file=sys.stderr)
-        return 1
+    # Check if input is a JSON palette (Predefined Scheme bypass)
+    if args.image.suffix.lower() == '.json':
+        try:
+            with open(args.image, 'r') as f:
+                input_data = json.load(f)
+            
+            # Expect {"colors": ...} or direct dict
+            colors_data = input_data.get("colors", input_data)
+            
+            # Flatten QML-style object structure if needed
+            # structure: key -> { default: { hex: "#..." } } or key -> "#..."
+            flat_colors = {}
+            for k, v in colors_data.items():
+                if isinstance(v, dict) and 'default' in v and 'hex' in v['default']:
+                    flat_colors[k] = v['default']['hex']
+                elif isinstance(v, str):
+                    flat_colors[k] = v
+                else:
+                    # Best effort fallback
+                    flat_colors[k] = str(v)
+            
+            # Pre-populate result (bypass extraction)
+            result = {}
+            # Assign to both/all modes since predefined scheme usually provides the correct palette for the requested mode
+            result["dark"] = flat_colors
+            result["light"] = flat_colors
+            
+            # Skip extraction logic
+            palette = None 
+        except Exception as e:
+            print(f"Error reading JSON palette: {e}", file=sys.stderr)
+            return 1
+    else:
+        # Standard Image Extraction
+        # Validate image path is a file
+        if not args.image.is_file():
+             print(f"Error: Not a file: {args.image}", file=sys.stderr)
+             return 1
+
+        # Read image
+        try:
+            pixels = read_image(args.image)
+        except ImageReadError as e:
+            print(f"Error reading image: {e}", file=sys.stderr)
+            return 1
+        except Exception as e:
+            print(f"Unexpected error reading image: {e}", file=sys.stderr)
+            return 1
+        
+        # Extract palette
+        k = 5
+        palette = extract_palette(pixels, k=k)
+        
+        if not palette:
+            print("Error: Could not extract colors from image", file=sys.stderr)
+            return 1
     
     # Determine which themes to generate
     use_material = not args.normal
@@ -1496,14 +1535,15 @@ def main() -> int:
     
     result: dict[str, dict[str, str]] = {}
     
-    if arg_dark:
-        result["dark"] = generate_theme(palette, "dark", use_material)
-    elif arg_light:
-        result["light"] = generate_theme(palette, "light", use_material)
-    else:
-        # Generate both (default)
-        result["dark"] = generate_theme(palette, "dark", use_material)
-        result["light"] = generate_theme(palette, "light", use_material)
+    if palette:
+        if arg_dark:
+            result["dark"] = generate_theme(palette, "dark", use_material)
+        elif arg_light:
+            result["light"] = generate_theme(palette, "light", use_material)
+        else:
+            # Generate both (default)
+            result["dark"] = generate_theme(palette, "dark", use_material)
+            result["light"] = generate_theme(palette, "light", use_material)
     
     # Output JSON
     json_output = json.dumps(result, indent=2)

@@ -13,7 +13,7 @@ Singleton {
   Connections {
     target: WallpaperService
 
-    // When the wallpaper changes, regenerate with Matugen if necessary
+    // When the wallpaper changes, regenerate theme if necessary
     function onWallpaperChanged(screenName, path) {
       if (screenName === Screen.name && Settings.data.colorSchemes.useWallpaperColors) {
         generateFromWallpaper();
