@@ -586,6 +586,7 @@ Singleton {
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
+      property bool volumeFeedback: false
     }
 
     // brightness
