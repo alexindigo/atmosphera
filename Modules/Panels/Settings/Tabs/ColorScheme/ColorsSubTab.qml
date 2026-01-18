@@ -208,16 +208,27 @@ ColumnLayout {
                }
   }
 
-  NToggle {
-    label: "Use Material Design"
-    description: "Generate Material Design colors (on) or simpler accents (off)"
+  NComboBox {
+    Layout.fillWidth: true
+    label: I18n.tr("panels.color-scheme.wallpaper-method-label")
+    description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
     visible: Settings.data.colorSchemes.useWallpaperColors
-    checked: Settings.data.colorSchemes.internalThemerMode === "material"
-    onToggled: checked => {
-                 Settings.data.colorSchemes.internalThemerMode = checked ? "material" : "normal";
-                 AppThemeService.generate();
-               }
+    model: [
+      {
+        "key": "default",
+        "name": I18n.tr("common.default")
+      },
+      {
+        "key": "material",
+        "name": "Material Design" // Do not translate
+      }
+    ]
+    currentKey: Settings.data.colorSchemes.extractionMethod
+    onSelected: key => {
+                  Settings.data.colorSchemes.extractionMethod = key;
+                  AppThemeService.generate();
+                }
   }
 
   NDivider {

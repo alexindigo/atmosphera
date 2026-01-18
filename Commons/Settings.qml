@@ -602,7 +602,7 @@ Singleton {
       property string schedulingMode: "off"
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
-      property string internalThemerMode: "material"
+      property string extractionMethod: "default"
     }
 
     // templates toggles

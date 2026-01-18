@@ -357,6 +357,7 @@
     "contributors": "Mitwirkende",
     "countdown": "Countdown",
     "date": "Datum",
+    "default": "Standard",
     "delete": "Löschen",
     "devices": "Geräte",
     "disabled": "Deaktiviert",
@@ -719,11 +720,7 @@
       "widgets-title": "Widget-Positionierung"
     },
     "color-scheme": {
-      "color-source-desc": "Haupteinstellungen für Noctalias Farben.",
-      "color-source-matugen-scheme-type-description": "Wählen Sie die Farbschema-Generierungsmethode, die Matugen verwenden soll, um Farben aus Ihrem Hintergrundbild zu erstellen.",
-      "color-source-matugen-scheme-type-label": "Matugen-Schema-Typ",
-      "color-source-title": "Farbquelle",
-      "color-source-use-wallpaper-colors-description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design.",
+      "color-source-use-wallpaper-colors-description": "Generiere Farbschemata aus deinem Hintergrundbild. Extrahiert automatisch Farben, um ein stimmiges Theme zu erstellen.",
       "color-source-use-wallpaper-colors-label": "Hintergrundbild-Farben verwenden",
       "dark-mode-mode-description": "Ermöglicht einen automatischen Wechsel zwischem hellen und dunklen Modus.",
       "dark-mode-mode-label": "Automatischer Dunkelmodus",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Benutzer-Vorlagen aktivieren",
       "templates-none-detected": "Keine erkannt",
       "templates-write-path": "Schreibt: {filepath}",
-      "title": "Farbschema"
+      "title": "Farbschema",
+      "wallpaper-method-description": "Wähle deine bevorzugte Farbgewinnungsmethode.",
+      "wallpaper-method-label": "Farbgewinnungsmethode"
     },
     "control-center": {
       "cards-desc": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",

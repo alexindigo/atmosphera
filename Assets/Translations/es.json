@@ -357,6 +357,7 @@
     "contributors": "Colaboradores",
     "countdown": "Cuenta regresiva",
     "date": "Fecha",
+    "default": "Predeterminado",
     "delete": "Borrar",
     "devices": "Dispositivos",
     "disabled": "Desactivado",
@@ -719,11 +720,7 @@
       "widgets-title": "Posicionamiento de widgets"
     },
     "color-scheme": {
-      "color-source-desc": "Configuración principal de los colores de Noctalia.",
-      "color-source-matugen-scheme-type-description": "Elige el método de generación de esquemas de color que Matugen usará para crear colores a partir de tu fondo de pantalla.",
-      "color-source-matugen-scheme-type-label": "Tipo de esquema Matugen",
-      "color-source-title": "Fuente de color",
-      "color-source-use-wallpaper-colors-description": "Generar esquemas de color desde tu fondo de pantalla usando Matugen. Extrae automáticamente colores para crear un tema cohesivo.",
+      "color-source-use-wallpaper-colors-description": "Genera esquemas de color a partir de tu fondo de pantalla. Extrae automáticamente los colores para crear un tema cohesivo.",
       "color-source-use-wallpaper-colors-label": "Usar colores del fondo de pantalla",
       "dark-mode-mode-description": "Permite el cambio automático entre el modo claro y el modo oscuro.",
       "dark-mode-mode-label": "Programación del modo oscuro",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Habilitar plantillas de usuario",
       "templates-none-detected": "Ninguno detectado",
       "templates-write-path": "Escribe: {filepath}",
-      "title": "Esquema de colores"
+      "title": "Esquema de colores",
+      "wallpaper-method-description": "Elige tu método de extracción de color favorito.",
+      "wallpaper-method-label": "Método de extracción de color"
     },
     "control-center": {
       "cards-desc": "Personaliza qué controles aparecen en el centro de control y en qué orden.",

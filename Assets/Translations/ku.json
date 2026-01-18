@@ -357,6 +357,7 @@
     "contributors": "Beşdar",
     "countdown": "Jimartin",
     "date": "Dîrok",
+    "default": "Xwerû",
     "delete": "Jêbirin",
     "devices": "Amûr",
     "disabled": "Nabe kar",
@@ -719,11 +720,7 @@
       "widgets-title": "Cihkirina widgetan"
     },
     "color-scheme": {
-      "color-source-desc": "Mîhengên sereke yên rengên Noctalia.",
-      "color-source-matugen-scheme-type-description": "Rêbazê hilberîna şema rengan hilbijêre ku Matugen dê bikar bîne da ku rengan ji dîwarê te biafirîne.",
-      "color-source-matugen-scheme-type-label": "Şêweya şemaya Matugen",
-      "color-source-title": "Çavkaniya rengê",
-      "color-source-use-wallpaper-colors-description": "Bi Matugenê ji dîwarê xwe şemayên rengan çêbike. Rengan bixweber derdixe da ku temayeke hevgirtî çêbike.",
+      "color-source-use-wallpaper-colors-description": "Ji dîwarê xwe şemayên rengan çêbike. Rengan bixweber derdixe da ku temayek hevgirtî biafirîne.",
       "color-source-use-wallpaper-colors-label": "Rengên dîwêr bikar bîne",
       "dark-mode-mode-description": "Veguhestina otomatîkî di navbera moda ronahî û tarî de çalak dike.",
       "dark-mode-mode-label": "Bernameya Moda Tarî",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Şablonên bikarhêner çalak bike",
       "templates-none-detected": "Tiştek nehat dîtin",
       "templates-write-path": "Dinivîse: {filepath}",
-      "title": "Şêweya rengan"
+      "title": "Şêweya rengan",
+      "wallpaper-method-description": "Rêbaza xweya bijare ya derxistina rengan hilbijêre.",
+      "wallpaper-method-label": "Rêbaza derxistina rengan"
     },
     "control-center": {
       "cards-desc": "Xwerû bike ka kîjan kontrol di navenda kontrolê de û bi çi rêzê de xuya dibin.",

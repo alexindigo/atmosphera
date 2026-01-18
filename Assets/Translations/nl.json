@@ -357,6 +357,7 @@
     "contributors": "Medewerkers",
     "countdown": "Aftellen",
     "date": "Datum",
+    "default": "Standaard",
     "delete": "Verwijderen",
     "devices": "Apparaten",
     "disabled": "Uitgeschakeld",
@@ -719,11 +720,7 @@
       "widgets-title": "Widgetpositionering"
     },
     "color-scheme": {
-      "color-source-desc": "Hoofdinstellingen voor Noctalia's kleuren.",
-      "color-source-matugen-scheme-type-description": "Kies de methode voor het genereren van kleurenschema's die Matugen zal gebruiken om kleuren te maken van je achtergrond.",
-      "color-source-matugen-scheme-type-label": "Matugen-schema type",
-      "color-source-title": "Kleurbron",
-      "color-source-use-wallpaper-colors-description": "Genereer kleurenschema's uit je achtergrond met Matugen. Kleuren worden automatisch geëxtraheerd om een samenhangend thema te maken.",
+      "color-source-use-wallpaper-colors-description": "Genereer kleurenschema's van je achtergrond. Extraheert automatisch kleuren om een samenhangend thema te creëren.",
       "color-source-use-wallpaper-colors-label": "Achtergrondkleuren gebruiken",
       "dark-mode-mode-description": "Schakelt automatisch tussen lichte en donkere modus.",
       "dark-mode-mode-label": "Schema voor donkere modus",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Gebruikerssjablonen inschakelen",
       "templates-none-detected": "Geen gedetecteerd",
       "templates-write-path": "Schrijft: {filepath}",
-      "title": "Kleurschema"
+      "title": "Kleurschema",
+      "wallpaper-method-description": "Kies je favoriete methode voor kleur extractie.",
+      "wallpaper-method-label": "Kleurextractiemethode"
     },
     "control-center": {
       "cards-desc": "Pas aan welke bedieningselementen in het bedieningscentrum verschijnen en in welke volgorde.",

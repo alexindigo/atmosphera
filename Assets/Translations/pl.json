@@ -357,6 +357,7 @@
     "contributors": "Współtwórcy",
     "countdown": "Odliczanie",
     "date": "Data",
+    "default": "Domyślny",
     "delete": "Usuń",
     "devices": "Urządzenia",
     "disabled": "Wyłączone",
@@ -719,11 +720,7 @@
       "widgets-title": "Pozycjonowanie widżetów"
     },
     "color-scheme": {
-      "color-source-desc": "Główne ustawienia kolorów Noctalia.",
-      "color-source-matugen-scheme-type-description": "Wybierz metodę generowania schematu kolorów, której Matugen użyje do tworzenia kolorów z twojej tapety.",
-      "color-source-matugen-scheme-type-label": "Typ schematu Matugen",
-      "color-source-title": "Źródło kolorów",
-      "color-source-use-wallpaper-colors-description": "Generuj schematy kolorów z tapety za pomocą Matugen. Automatycznie dopasowuje motyw.",
+      "color-source-use-wallpaper-colors-description": "Generuj schematy kolorów z tapety. Automatycznie wyodrębnia kolory, aby stworzyć spójny motyw.",
       "color-source-use-wallpaper-colors-label": "Użyj kolorów tapety",
       "dark-mode-mode-description": "Włącza automatyczne przełączanie między trybem jasnym a ciemnym.",
       "dark-mode-mode-label": "Harmonogram trybu ciemnego",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Włącz szablony użytkownika",
       "templates-none-detected": "Nie wykryto",
       "templates-write-path": "Zapisuje: {filepath}",
-      "title": "Schemat kolorów"
+      "title": "Schemat kolorów",
+      "wallpaper-method-description": "Wybierz swoją ulubioną metodę ekstrakcji kolorów.",
+      "wallpaper-method-label": "Metoda ekstrakcji kolorów"
     },
     "control-center": {
       "cards-desc": "Dostosuj, które kontrolki pojawiają się w centrum sterowania i w jakiej kolejności.",

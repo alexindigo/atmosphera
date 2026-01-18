@@ -270,7 +270,7 @@ Singleton {
 
     // Use template-processor.py (Python implementation)
     const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
-    const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--normal" : "--material";
     // We pass --type for compatibility but it is ignored by internal logic unless needed
     script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
 
@@ -563,7 +563,7 @@ Singleton {
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
     const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
-    const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--normal" : "--material";
     script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
