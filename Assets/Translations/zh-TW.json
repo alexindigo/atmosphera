@@ -1396,9 +1396,6 @@
       "enabled": "勿擾模式已啟用",
       "enabled-desc": "你會在歷史通知找到這些通知"
     },
-    "ipc": {
-      "powerpanel-deprecated": "電源面板已經改名為工作階段選單, 這個 IPC 呼叫將會棄用, 請改用 \"ipc call sessionMenu toggle\""
-    },
     "keyboard-layout": {
       "changed": "切換鍵盤佈局為 {layout}",
       "title": "鍵盤"

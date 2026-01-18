@@ -1484,10 +1484,6 @@
       "enabled-desc": "Ezeket az értesítéseket az előzményekben találja"
     },
     "internet-limited": "Csatlakoztatva internet nélkül",
-    "ipc": {
-      "powerpanel-deprecated": "A PowerPanel átnevezésre került SessionMenu-re, ez az IPC-hívás hamarosan elavul. Kérjük, használja helyette az \"ipc call sessionMenu toggle\" parancsot.",
-      "sidepanel-deprecated": "A SidePanel átnevezésre került ControlCenter-re, ez az IPC-hívás hamarosan elavul. Kérjük, használja helyette az \"ipc call controlCenter toggle\" parancsot."
-    },
     "keyboard-layout": {
       "changed": "Billentyűzetkiosztás megváltozott: {layout}.",
       "title": "Billentyűzet"

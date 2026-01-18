@@ -1484,10 +1484,6 @@
       "enabled-desc": "通知は履歴に保存されます"
     },
     "internet-limited": "インターネット未接続",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel は SessionMenu に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call sessionMenu toggle\" を使用してください。",
-      "sidepanel-deprecated": "SidePanel は ControlCenter に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call controlCenter toggle\" を使用してください。"
-    },
     "keyboard-layout": {
       "changed": "キーボードレイアウトを {layout} に変更しました。",
       "title": "キーボード"

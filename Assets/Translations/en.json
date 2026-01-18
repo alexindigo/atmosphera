@@ -1484,10 +1484,6 @@
       "enabled-desc": "You'll find these notifications in your history"
     },
     "internet-limited": "Connected without internet",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.",
-      "sidepanel-deprecated": "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead."
-    },
     "keyboard-layout": {
       "changed": "Keyboard layout changed to {layout}.",
       "title": "Keyboard"

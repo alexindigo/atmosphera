@@ -1484,10 +1484,6 @@
       "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin"
     },
     "internet-limited": "Pêwendîdar bê înternetê",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel wekî SessionMenu hate guhertin, ev bangewaziya IPC dê di demeke nêz de bê bikaranîn. Ji kerema xwe li şûna wê \"ipc call sessionMenu toggle\" bikar bînin.",
-      "sidepanel-deprecated": "SidePanel wekî ControlCenter hate guhertin, ev banga IPC dê di demek nêz de were betal kirin. Ji kerema xwe \"ipc call controlCenter toggle\" bikar bînin."
-    },
     "keyboard-layout": {
       "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin.",
       "title": "Klavyeya"

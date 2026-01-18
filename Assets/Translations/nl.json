@@ -1484,10 +1484,6 @@
       "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis"
     },
     "internet-limited": "Verbonden zonder internet",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel is hernoemd naar SessionMenu, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call sessionMenu toggle\".",
-      "sidepanel-deprecated": "SidePanel is hernoemd naar ControlCenter, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call controlCenter toggle\"."
-    },
     "keyboard-layout": {
       "changed": "Toetsenbordindeling gewijzigd naar {layout}.",
       "title": "Toetsenbord"

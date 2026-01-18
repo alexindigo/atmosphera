@@ -1484,10 +1484,6 @@
       "enabled-desc": "Bu bildirimleri geçmişinizde bulacaksınız"
     },
     "internet-limited": "İnternetsiz bağlandı",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel artık SessionMenu olarak adlandırılıyor, bu IPC çağrısı yakında kullanımdan kaldırılacak. Lütfen \"ipc call sessionMenu toggle\" kullanın.",
-      "sidepanel-deprecated": "SidePanel artık ControlCenter olarak adlandırılıyor, bu IPC çağrısı yakında kullanımdan kaldırılacak. Lütfen \"ipc call controlCenter toggle\" kullanın."
-    },
     "keyboard-layout": {
       "changed": "Klavye düzeni {layout} olarak değiştirildi.",
       "title": "Klavye"

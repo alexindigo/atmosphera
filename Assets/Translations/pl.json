@@ -1484,10 +1484,6 @@
       "enabled-desc": "Powiadomienia znajdziesz w swojej historii"
     },
     "internet-limited": "Połączono bez dostępu do internetu",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel zmienił nazwę na SessionMenu, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call sessionMenu toggle\".",
-      "sidepanel-deprecated": "SidePanel zmienił nazwę na ControlCenter, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call controlCenter toggle\"."
-    },
     "keyboard-layout": {
       "changed": "Układ klawiatury zmieniony na {layout}.",
       "title": "Klawiatura"

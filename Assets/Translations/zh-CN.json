@@ -1484,10 +1484,6 @@
       "enabled-desc": "您可以在历史记录中找到这些通知"
     },
     "internet-limited": "已连接但无互联网",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel 已重命名为 SessionMenu，此 IPC 调用将很快弃用。请改用 \"ipc call sessionMenu toggle\"。",
-      "sidepanel-deprecated": "SidePanel 已重命名为 ControlCenter，此 IPC 调用将很快弃用。请改用 \"ipc call controlCenter toggle\"。"
-    },
     "keyboard-layout": {
       "changed": "键盘布局已更改为 {layout}。",
       "title": "键盘"

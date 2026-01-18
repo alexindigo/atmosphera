@@ -1484,10 +1484,6 @@
       "enabled-desc": "Ви знайдете ці сповіщення в своїй історії"
     },
     "internet-limited": "Підключено без інтернету",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel перейменовано на SessionMenu, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call sessionMenu toggle\" замість цього.",
-      "sidepanel-deprecated": "SidePanel перейменовано на ControlCenter, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call controlCenter toggle\" замість цього."
-    },
     "keyboard-layout": {
       "changed": "Розкладка клавіатури змінена на {layout}.",
       "title": "Клавіатура"

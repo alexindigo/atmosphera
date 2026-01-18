@@ -1484,10 +1484,6 @@
       "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf"
     },
     "internet-limited": "Verbunden ohne Internet",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel wurde in SessionMenu umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call sessionMenu toggle\".",
-      "sidepanel-deprecated": "SidePanel wurde in ControlCenter umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call controlCenter toggle\"."
-    },
     "keyboard-layout": {
       "changed": "Tastaturlayout geändert zu {layout}.",
       "title": "Tastatur"

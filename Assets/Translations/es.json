@@ -1484,10 +1484,6 @@
       "enabled-desc": "Encontrarás estas notificaciones en tu historial"
     },
     "internet-limited": "Conectado sin Internet",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel ha sido renombrado a SessionMenu, esta llamada IPC será obsoleta pronto. Por favor, usa \"ipc call sessionMenu toggle\" en su lugar.",
-      "sidepanel-deprecated": "SidePanel ha sido renombrado a ControlCenter, esta llamada IPC será obsoleta pronto. Por favor, usa \"ipc call controlCenter toggle\" en su lugar."
-    },
     "keyboard-layout": {
       "changed": "Distribución de teclado cambiada a {layout}.",
       "title": "Teclado"
