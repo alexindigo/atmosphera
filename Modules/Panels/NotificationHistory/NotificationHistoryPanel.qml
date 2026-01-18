@@ -334,7 +334,7 @@ SmartPanel {
 
                     property string notificationId: model.id
                     property bool isExpanded: scrollView.expandedId === notificationId
-                    property bool canExpand: summaryText.truncated || bodyText.truncated || (actionsList.length > 0) // Explicitly allow expand if actions exist
+                    property bool canExpand: summaryText.truncated || bodyText.truncated
 
                     // Parse actions safely
                     property var actionsList: {
@@ -470,31 +470,6 @@ SmartPanel {
                             visible: text.length > 0
                           }
 
-                          // Actions Flow
-                          Flow {
-                            width: parent.width
-                            spacing: Style.marginS
-                            visible: notificationDelegate.actionsList.length > 0
-
-                            Repeater {
-                              model: notificationDelegate.actionsList
-                              delegate: NButton {
-                                text: modelData.text
-                                fontSize: Style.fontSizeS
-                                backgroundColor: Color.mPrimary
-                                textColor: Color.mOnPrimary
-                                outlined: false
-                                implicitHeight: 24
-
-                                // Capture modelData in a property to avoid reference errors
-                                property var actionData: modelData
-                                onClicked: {
-                                  NotificationService.invokeAction(notificationDelegate.notificationId, actionData.identifier);
-                                }
-                              }
-                            }
-                          }
-
                           // Expand indicator
                           Row {
                             width: parent.width
@@ -518,6 +493,31 @@ SmartPanel {
                               icon: "chevron-down"
                               pointSize: Style.fontSizeS
                               color: Color.mPrimary
+                            }
+                          }
+
+                          // Actions Flow
+                          Flow {
+                            width: parent.width
+                            spacing: Style.marginS
+                            visible: notificationDelegate.actionsList.length > 0
+
+                            Repeater {
+                              model: notificationDelegate.actionsList
+                              delegate: NButton {
+                                text: modelData.text
+                                fontSize: Style.fontSizeS
+                                backgroundColor: Color.mPrimary
+                                textColor: Color.mOnPrimary
+                                outlined: false
+                                implicitHeight: 24
+
+                                // Capture modelData in a property to avoid reference errors
+                                property var actionData: modelData
+                                onClicked: {
+                                  NotificationService.invokeAction(notificationDelegate.notificationId, actionData.identifier);
+                                }
+                              }
                             }
                           }
                         }
