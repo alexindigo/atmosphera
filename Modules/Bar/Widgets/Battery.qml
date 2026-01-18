@@ -131,26 +131,26 @@ Item {
   implicitHeight: pill.height
   // http://upower.freedesktop.org/docs/Device.html#Device.properties
   function chargingStatus(state) {
-      switch (state) {
-        case UPowerDeviceState.Charging: // 1
-        case UPowerDeviceState.FullyCharged: // 4
-        case UPowerDeviceState.PendingCharge: // 5
-          return true
-
-        case UPowerDeviceState.Discharging: // 2 
-        case UPowerDeviceState.Empty: // 3
-        case UPowerDeviceState.PendingDischarge: // 6
-          return false
-        
-        default:
-          return true // unknown state 0 Fix #1417
-      }
+    switch (state) {
+    case UPowerDeviceState.Charging: // 1
+    case UPowerDeviceState.FullyCharged: // 4
+    case UPowerDeviceState.PendingCharge: // 5
+      return true;
+    case UPowerDeviceState.Discharging: // 2
+    case UPowerDeviceState.Empty: // 3
+    case UPowerDeviceState.PendingDischarge: // 6
+      return false;
+    default:
+      return true; // unknown state 0 Fix #1417
+    }
   }
 
   function maybeNotify(currentPercent, isCharging) {
     if (!isCharging && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
       hasNotifiedLowBattery = true;
-      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {"percent": Math.round(currentPercent)}));
+      ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
+                                                                       "percent": Math.round(currentPercent)
+                                                                     }));
       // Logger.e("Battery", "Low battery at " + currentPercent + "%", "isCharging: " + isCharging); // debug
     } else if (hasNotifiedLowBattery && (isCharging || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;

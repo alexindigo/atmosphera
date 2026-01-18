@@ -75,7 +75,6 @@ ColumnLayout {
     }
   }
 
-
   // Mute Toggle
   ColumnLayout {
     spacing: Style.marginS

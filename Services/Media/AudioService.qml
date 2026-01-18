@@ -329,10 +329,10 @@ Singleton {
 
     const feedbackVolume = currentVolume;
     SoundService.playSound("volume-change.wav", {
-      volume: feedbackVolume,
-      fallback: false,
-      repeat:  false
-    });
+                             volume: feedbackVolume,
+                             fallback: false,
+                             repeat: false
+                           });
   }
 
   function setInputMuted(muted: bool) {
