@@ -518,7 +518,7 @@ Singleton {
 
   // Interaction state
   property bool pinRequired: false
-  
+
   function submitPin(pin) {
     if (pairingProcess.running) {
       pairingProcess.write(pin + "\n");
@@ -538,7 +538,7 @@ Singleton {
     id: pairingProcess
     stdout: SplitParser {
       onRead: data => {
-        var chunk = data; 
+        var chunk = data;
         if (chunk.indexOf("[PIN_REQ]") !== -1) {
           root.pinRequired = true;
           Logger.i("Bluetooth", "PIN required for pairing");
@@ -570,7 +570,7 @@ Singleton {
     }
 
     Logger.i("Bluetooth", "pairWithBluetoothctl", addr);
-    
+
     // Stop any previous pairing attempt
     if (pairingProcess.running) {
       pairingProcess.kill();
@@ -587,9 +587,8 @@ Singleton {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    // TEST MODE: Mock script
-    const scriptPath = Quickshell.shellDir + "/Bin/test-pin-mock.py";
-    
+    const scriptPath = Quickshell.shellDir + "/Scripts/network/bluetooth-connect.py";
+
     pairingProcess.command = ["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)];
     pairingProcess.running = true;
   }

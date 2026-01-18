@@ -14,7 +14,7 @@ def log(msg):
 
 def main():
     if len(sys.argv) < 5:
-        log("Usage: bluetooth-connect.sh <addr> <pairWaitSeconds> <attempts> <intervalSec>")
+        log("Usage: bluetooth-connect.py <addr> <pairWaitSeconds> <attempts> <intervalSec>")
         sys.exit(2)
 
     addr = sys.argv[1]
