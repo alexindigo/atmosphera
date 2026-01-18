@@ -209,11 +209,35 @@ ColumnLayout {
                }
   }
 
+  NToggle {
+    label: "Use Internal Generator"
+    description: "Use experimental Python generator instead of Matugen"
+    enabled: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.pythonAvailable
+    visible: Settings.data.colorSchemes.useWallpaperColors && ProgramCheckerService.pythonAvailable
+    checked: Settings.data.colorSchemes.generationBackend === "internal"
+    onToggled: checked => {
+                 Settings.data.colorSchemes.generationBackend = checked ? "internal" : "matugen";
+                 AppThemeService.generate();
+               }
+  }
+
+  NToggle {
+    label: "Use Material Design"
+    description: "Generate Material Design colors (on) or simpler accents (off)"
+    enabled: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend === "internal"
+    visible: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend === "internal"
+    checked: Settings.data.colorSchemes.internalThemerMode === "material"
+    onToggled: checked => {
+                 Settings.data.colorSchemes.internalThemerMode = checked ? "material" : "normal";
+                 AppThemeService.generate();
+               }
+  }
+
   NComboBox {
     label: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-label")
     description: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-description")
-    enabled: Settings.data.colorSchemes.useWallpaperColors
-    visible: Settings.data.colorSchemes.useWallpaperColors
+    enabled: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend !== "internal"
+    visible: Settings.data.colorSchemes.useWallpaperColors && Settings.data.colorSchemes.generationBackend !== "internal"
 
     model: [
       {

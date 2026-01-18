@@ -58,9 +58,19 @@ Singleton {
     if (!content)
       return;
     const wp = wallpaperPath.replace(/'/g, "'\\''");
-    const script = buildMatugenScript(content, wp, mode);
+    
+    // Determine backend
+    let backend = Settings.data.colorSchemes.generationBackend;
+    if (!backend) backend = "matugen"; // Default
+    
+    // Fallback if matugen not available but python is
+    if (backend === "matugen" && !ProgramCheckerService.matugenAvailable && ProgramCheckerService.pythonAvailable) {
+        backend = "internal";
+    }
 
-    generateProcess.generator = "matugen";
+    const script = buildMatugenScript(content, wp, mode, backend);
+
+    generateProcess.generator = backend;
     generateProcess.command = ["sh", "-lc", script];
     generateProcess.running = true;
   }
@@ -259,7 +269,7 @@ Singleton {
     return false;
   }
 
-  function buildMatugenScript(content, wallpaper, mode) {
+  function buildMatugenScript(content, wallpaper, mode, backend) {
     const delimiter = "MATUGEN_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
     const wpDelimiter = "WALLPAPER_PATH_EOF_" + Math.random().toString(36).substr(2, 9);
@@ -267,13 +277,24 @@ Singleton {
     // Use heredoc for wallpaper path to avoid all escaping issues
     let script = `cat > '${pathEsc}' << '${delimiter}'\n${content}\n${delimiter}\n`;
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
-    script += 'matugen ';
-    if (ProgramCheckerService.matugenVersion >= "3.1.0") {
-      // Matugen 3.1.0+ supports --continue-on-error to process all templates even if some fail
-      script += '--continue-on-error ';
+    
+    if (backend === "internal") {
+        // Use colors.py (Python implementation)
+        const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+        const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+        script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType} `;
+        // Note: colors.py handles template rendering via --config, effectively mimicking matugen
+    } else {
+        // Use Matugen (Rust implementation)
+        script += 'matugen ';
+        if (ProgramCheckerService.matugenVersion >= "3.1.0") {
+          // Matugen 3.1.0+ supports --continue-on-error to process all templates even if some fail
+          script += '--continue-on-error ';
+        }
+        script += `image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
     }
-    script += `image "$NOCTALIA_WP_PATH" --config '${pathEsc}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}`;
-    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
+    
+    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode, backend);
 
     return script + "\n";
   }
@@ -550,7 +571,7 @@ Singleton {
   // ================================================================================
   // USER TEMPLATES, advanced usage
   // ================================================================================
-  function buildUserTemplateCommand(input, mode) {
+  function buildUserTemplateCommand(input, mode, backend) {
     if (!Settings.data.templates.enableUserTemplates)
       return "";
 
@@ -560,7 +581,14 @@ Singleton {
     // If input is a shell variable (starts with $), use double quotes to allow expansion
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
-    script += `  matugen image ${inputQuoted} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+    
+    if (backend === "internal") {
+         const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+         const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+         script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+    } else {
+         script += `  matugen image ${inputQuoted} --config '${userConfigPath}' --mode ${mode} --type ${Settings.data.colorSchemes.matugenSchemeType}\n`;
+    }
     script += "fi";
 
     return script;
