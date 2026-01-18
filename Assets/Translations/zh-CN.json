@@ -680,7 +680,9 @@
       "volumes-step-size-description": "调整音量变化的步长（滚轮、键盘快捷键）。",
       "volumes-step-size-label": "音量步长",
       "volumes-volume-overdrive-description": "允许将音量提高到100%以上。可能不被所有硬件支持。",
-      "volumes-volume-overdrive-label": "允许音量过载"
+      "volumes-volume-overdrive-label": "允许音量过载",
+      "volumes-volume-feedback-label": "播放音量反馈",
+      "volumes-volume-feedback-description": "调整音量时播放反馈音效"
     },
     "bar": {
       "appearance-background-opacity-description": "为状态栏设置背景不透明度。",
