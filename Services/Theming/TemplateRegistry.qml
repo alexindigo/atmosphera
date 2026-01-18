@@ -8,7 +8,7 @@ import qs.Commons
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/theming/template-apply.sh'
 
   // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [

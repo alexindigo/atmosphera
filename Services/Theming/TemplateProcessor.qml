@@ -273,7 +273,7 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use colors.py (Python implementation)
-    const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+    const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
     const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
     // We pass --type for compatibility but it is ignored by internal logic unless needed
     script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
@@ -567,12 +567,12 @@ Singleton {
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
     if (backend === "internal") {
-      const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+      const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
       const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
       script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     } else {
       // Fallback to internal if backend param is weird
-      const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+      const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
       script += `  python3 "${scriptPath}" ${inputQuoted} --material --config '${userConfigPath}' --mode ${mode}\n`;
     }
     script += "fi";
