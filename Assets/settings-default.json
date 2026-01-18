@@ -83,7 +83,7 @@
     "language": "",
     "allowPanelsOnScreenWithoutBar": true,
     "showChangelogOnStartup": true,
-    "telemetryEnabled": true
+    "telemetryEnabled": false
   },
   "ui": {
     "fontDefault": "",
@@ -247,6 +247,8 @@
     "gpuCriticalThreshold": 90,
     "memWarningThreshold": 80,
     "memCriticalThreshold": 90,
+    "swapWarningThreshold": 80,
+    "swapCriticalThreshold": 90,
     "diskWarningThreshold": 80,
     "diskCriticalThreshold": 90,
     "cpuPollingInterval": 3000,
@@ -254,7 +256,7 @@
     "gpuPollingInterval": 3000,
     "enableDgpuMonitoring": false,
     "memPollingInterval": 3000,
-    "diskPollingInterval": 3000,
+    "diskPollingInterval": 30000,
     "networkPollingInterval": 3000,
     "loadAvgPollingInterval": 3000,
     "useCustomColors": false,
@@ -345,7 +347,8 @@
       "normalSoundFile": "",
       "lowSoundFile": "",
       "excludedApps": "discord,firefox,chrome,chromium,edge"
-    }
+    },
+    "enableMediaToast": false
   },
   "osd": {
     "enabled": true,
@@ -366,7 +369,8 @@
     "cavaFrameRate": 30,
     "visualizerType": "linear",
     "mprisBlacklist": [],
-    "preferredPlayer": ""
+    "preferredPlayer": "",
+    "volumeFeedback": false
   },
   "brightness": {
     "brightnessStep": 5,
@@ -380,11 +384,11 @@
     "schedulingMode": "off",
     "manualSunrise": "06:30",
     "manualSunset": "18:30",
-    "matugenSchemeType": "scheme-fruit-salad"
+    "extractionMethod": "default"
   },
   "templates": {
     "activeTemplates": [],
-    "enableUserTemplates": false
+    "enableUserTheming": false
   },
   "nightLight": {
     "enabled": false,

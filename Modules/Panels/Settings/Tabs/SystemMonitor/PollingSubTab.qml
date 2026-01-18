@@ -10,6 +10,10 @@ ColumnLayout {
   spacing: Style.marginL
   Layout.fillWidth: true
 
+  NLabel {
+    Layout.fillWidth: true
+    description: I18n.tr("panels.system-monitor.polling-section-description")
+  }
   // CPU Polling
   RowLayout {
     Layout.fillWidth: true
@@ -133,8 +137,8 @@ ColumnLayout {
     }
 
     NSpinBox {
-      from: 250
-      to: 10000
+      from: 1000
+      to: 60000
       stepSize: 250
       value: Settings.data.systemMonitor.diskPollingInterval
       defaultValue: Settings.getDefaultValue("systemMonitor.diskPollingInterval")
@@ -163,10 +167,5 @@ ColumnLayout {
       onValueChanged: Settings.data.systemMonitor.networkPollingInterval = value
       suffix: " ms"
     }
-  }
-
-  NLabel {
-    Layout.fillWidth: true
-    description: I18n.tr("panels.system-monitor.polling-section-description")
   }
 }

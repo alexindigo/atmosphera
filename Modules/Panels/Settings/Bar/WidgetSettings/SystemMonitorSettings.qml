@@ -23,6 +23,7 @@ ColumnLayout {
   property bool valueShowLoadAverage: widgetData.showLoadAverage !== undefined ? widgetData.showLoadAverage : widgetMetadata.showLoadAverage
   property bool valueShowMemoryUsage: widgetData.showMemoryUsage !== undefined ? widgetData.showMemoryUsage : widgetMetadata.showMemoryUsage
   property bool valueShowMemoryAsPercent: widgetData.showMemoryAsPercent !== undefined ? widgetData.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
+  property bool valueShowSwapUsage: widgetData.showSwapUsage !== undefined ? widgetData.showSwapUsage : widgetMetadata.showSwapUsage
   property bool valueShowNetworkStats: widgetData.showNetworkStats !== undefined ? widgetData.showNetworkStats : widgetMetadata.showNetworkStats
   property bool valueShowDiskUsage: widgetData.showDiskUsage !== undefined ? widgetData.showDiskUsage : widgetMetadata.showDiskUsage
   property string valueDiskPath: widgetData.diskPath !== undefined ? widgetData.diskPath : widgetMetadata.diskPath
@@ -38,6 +39,7 @@ ColumnLayout {
     settings.showLoadAverage = valueShowLoadAverage;
     settings.showMemoryUsage = valueShowMemoryUsage;
     settings.showMemoryAsPercent = valueShowMemoryAsPercent;
+    settings.showSwapUsage = valueShowSwapUsage;
     settings.showNetworkStats = valueShowNetworkStats;
     settings.showDiskUsage = valueShowDiskUsage;
     settings.diskPath = valueDiskPath;
@@ -125,6 +127,15 @@ ColumnLayout {
     checked: valueShowMemoryAsPercent
     onToggled: checked => valueShowMemoryAsPercent = checked
     visible: valueShowMemoryUsage
+  }
+
+  NToggle {
+    id: showSwapUsage
+    Layout.fillWidth: true
+    label: I18n.tr("bar.system-monitor.swap-usage-label")
+    description: I18n.tr("bar.system-monitor.swap-usage-description")
+    checked: valueShowSwapUsage
+    onToggled: checked => valueShowSwapUsage = checked
   }
 
   NToggle {
