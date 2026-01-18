@@ -85,9 +85,7 @@ ColumnLayout {
       monitors: monitors,
       ui: {
         scaleRatio: Settings.data.general.scaleRatio,
-        fontDefault: Settings.data.ui.fontDefault || "default",
         fontDefaultScale: Settings.data.ui.fontDefaultScale,
-        fontFixed: Settings.data.ui.fontFixed || "default",
         fontFixedScale: Settings.data.ui.fontFixedScale
       }
     };
