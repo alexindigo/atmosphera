@@ -685,6 +685,7 @@ SmartPanel {
                           // Grid: Row 0, Col 0 | List: Row 0
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             spacing: Style.marginXS
                             Layout.row: 0
                             Layout.column: 0
@@ -735,6 +736,7 @@ SmartPanel {
                           // Grid: Row 1, Col 0 | List: Row 1
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             Layout.row: 1
                             Layout.column: 0
                             spacing: Style.marginXS
@@ -769,6 +771,7 @@ SmartPanel {
                           // Grid: Row 2, Col 0 | List: Row 2
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             Layout.row: 2
                             Layout.column: 0
                             spacing: Style.marginXS
@@ -801,6 +804,7 @@ SmartPanel {
                           // Grid: Row 2, Col 1 | List: Row 5 (Last)
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             Layout.row: ethernetDetailsGrid ? 2 : 5
                             Layout.column: ethernetDetailsGrid ? 1 : 0
                             spacing: Style.marginXS
@@ -833,6 +837,7 @@ SmartPanel {
                           // Grid: Row 0, Col 1 | List: Row 3
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             Layout.row: ethernetDetailsGrid ? 0 : 3
                             Layout.column: ethernetDetailsGrid ? 1 : 0
                             spacing: Style.marginXS
@@ -883,6 +888,7 @@ SmartPanel {
                           // Grid: Row 1, Col 1 | List: Row 4
                           RowLayout {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: 1
                             Layout.row: ethernetDetailsGrid ? 1 : 4
                             Layout.column: ethernetDetailsGrid ? 1 : 0
                             spacing: Style.marginXS
