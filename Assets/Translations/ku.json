@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Pîl kêm e",
-      "low-desc": "Pîl li ser %{percent} e. Ji kerema xwe şarjê girêde."
+      "low-desc": "Pîl li ser %{percent} e. Ji kerema xwe şarjê girêde"
     },
     "bluetooth": {
-      "address-copied": "Navnîşan li clipboardê hate kopîkirin.",
+      "address-copied": "Navnîşan li clipboardê hate kopîkirin",
       "confirm-code": "Koda {value} li ser amûra din piştrast bike.",
-      "connect-failed": "Têk çû girêdan bi cîhazê re.",
-      "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de.",
-      "discoverable-change-failed": "ڕا گۆڕینی باری دۆزراوە نەکرا.",
-      "discoverable-disabled": "Dîtbar neçalak kirin.",
-      "discoverable-enabled": "Hêzdar kirin.",
+      "connect-failed": "Têk çû girêdan bi cîhazê re",
+      "disconnect-failed": "Têkçûn di qutkirina ji cîhazê de",
+      "discoverable-change-failed": "ڕا گۆڕینی باری دۆزراوە نەکرا",
+      "discoverable-disabled": "Dîtbar neçalak kirin",
+      "discoverable-enabled": "Hêzdar kirin",
       "display-code": "Koda {value} li ser amûra din binivîse.",
-      "forget-failed": "Têk çû ku amûr were jibîrkirin.",
-      "pair-failed": "Cîhaz bi hev ve nehat girêdan.",
+      "forget-failed": "Têk çû ku amûr were jibîrkirin",
+      "pair-failed": "Cîhaz bi hev ve nehat girêdan",
       "passkey-required": "Pêdivî bi şîfreya amûrê heye.",
       "pincode-required": "Koda PIN ji hêla cîhazê ve tê xwestin.",
-      "state-change-failed": "فشل گوهارتنا حاله‌تا بلوتوثێ."
+      "state-change-failed": "فشل گوهارتنا حاله‌تا بلوتوثێ"
     },
     "clipboard": {
       "long-text": "Teksta dirêj",
       "unavailable": "Dîroka clipboardê tune ye",
-      "unavailable-desc": "Serlêdana 'cliphist' nehatiye sazkirin. Ji bo bikaranîna taybetmendiyên dîroka clipboardê, ji kerema xwe wê saz bikin."
+      "unavailable-desc": "Serlêdana 'cliphist' nehatiye sazkirin. Ji bo bikaranîna taybetmendiyên dîroka clipboardê, ji kerema xwe wê saz bikin"
     },
     "do-not-disturb": {
       "disabled": "Dengê dernexîne neçalak e",
-      "disabled-desc": "Hemû agahdarî tên nîşandan.",
+      "disabled-desc": "Hemû agahdarî tên nîşandan",
       "enabled": "Dengê dernexîne çalak e",
-      "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin."
+      "enabled-desc": "Hûn ê van agahdariyan di dîroka xwe de bibînin"
     },
-    "internet-limited": "Pêwendîdar bê înternetê.",
+    "internet-limited": "Pêwendîdar bê înternetê",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel wekî SessionMenu hate guhertin, ev bangewaziya IPC dê di demeke nêz de bê bikaranîn. Ji kerema xwe li şûna wê \"ipc call sessionMenu toggle\" bikar bînin.",
       "sidepanel-deprecated": "SidePanel wekî ControlPanel hate guhertin, ev banga IPC dê di demek nêz de were betal kirin. Ji kerema xwe \"ipc call controlCenter toggle\" bikar bînin."
@@ -1498,13 +1498,13 @@
       "label": "Amûra dawî ya navenda kontrolê hate rakirin"
     },
     "night-light": {
-      "forced": "Çalakdarkirina bi zorê.",
-      "normal": "Moda normal.",
-      "not-installed": "wlsunset nehatiye sazkirin."
+      "forced": "Çalakdarkirina bi zorê",
+      "normal": "Moda normal",
+      "not-installed": "wlsunset nehatiye sazkirin"
     },
     "noctalia-performance": {
-      "disabled": "Rewşa performansê hat betalkirin.",
-      "enabled": "Rewşa performansê çalak bû.",
+      "disabled": "Rewşa performansê hat betalkirin",
+      "enabled": "Rewşa performansê çalak bû",
       "label": "Performansa Noctalîa"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Pêvajoya şêma rengê ya pêşdiyarkirî têk çû"
     },
     "vpn": {
-      "connected": "Hat girêdan bi '{name}' re.",
-      "disconnected": "Ji '{name}' qut bû."
+      "connected": "Hat girêdan bi '{name}' re",
+      "disconnected": "Ji '{name}' qut bû"
     },
     "wallpaper-colors": {
-      "disabled": "Rengên dîwêr hatine bêbandorkirin.",
-      "enabled": "Rengên dîwêr hatine çalak kirin.",
+      "disabled": "Rengên dîwêr hatine bêbandorkirin",
+      "enabled": "Rengên dîwêr hatine çalak kirin",
       "label": "Afirandina rengên dîwêr",
-      "not-installed": "Matugen nehatiye sazkirin — ji bo derxistina rengê dîwêr hewce ye."
+      "not-installed": "Matugen nehatiye sazkirin — ji bo derxistina rengê dîwêr hewce ye"
     },
     "wifi": {
-      "connected": "Bi '{ssid}' ve hat girêdan.",
-      "connection-failed": "Girêdan têk çû.",
-      "connection-timeout": "Demja girêdanê bi dawî bû.",
-      "disabled": "Neçalakkirî.",
-      "disconnected": "Ji '{ssid}' qut bû.",
-      "enabled": "Çalakkirî.",
+      "connected": "Bi '{ssid}' ve hat girêdan",
+      "connection-failed": "Girêdan têk çû",
+      "connection-timeout": "Demja girêdanê bi dawî bû",
+      "disabled": "Neçalakkirî",
+      "disconnected": "Ji '{ssid}' qut bû",
+      "enabled": "Çalakkirî",
       "incorrect-password": "Borînpeyva şaş.",
       "network-not-found": "Tor nehat dîtin."
     }

@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Alacsony akkumulátor",
-      "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt."
+      "low-desc": "Az akkumulátor {percent}%-on van. Kérjük, csatlakoztassa a töltőt"
     },
     "bluetooth": {
-      "address-copied": "Cím a vágólapra másolva.",
+      "address-copied": "Cím a vágólapra másolva",
       "confirm-code": "Erősítse meg a {value} kódot a másik eszközön.",
-      "connect-failed": "Nem sikerült csatlakozni az eszközhöz.",
-      "disconnect-failed": "Nem sikerült leválasztani az eszközről.",
-      "discoverable-change-failed": "Nem sikerült megváltoztatni a felfedezhetőság állapotát.",
-      "discoverable-disabled": "Felfedezhetőség kikapcsolva.",
-      "discoverable-enabled": "Felfedezhetőség bekapcsolva.",
+      "connect-failed": "Nem sikerült csatlakozni az eszközhöz",
+      "disconnect-failed": "Nem sikerült leválasztani az eszközről",
+      "discoverable-change-failed": "Nem sikerült megváltoztatni a felfedezhetőság állapotát",
+      "discoverable-disabled": "Felfedezhetőség kikapcsolva",
+      "discoverable-enabled": "Felfedezhetőség bekapcsolva",
       "display-code": "Adja meg a {value} kódot a másik eszközön.",
-      "forget-failed": "Nem sikerült elfelejteni az eszközt.",
-      "pair-failed": "Nem sikerült párosítani az eszközt.",
+      "forget-failed": "Nem sikerült elfelejteni az eszközt",
+      "pair-failed": "Nem sikerült párosítani az eszközt",
       "passkey-required": "Az eszköz által megkövetelt jelszó.",
       "pincode-required": "Az eszköz által megkövetelt PIN.",
-      "state-change-failed": "Nem sikerült megváltoztatni a Bluetooth állapotot."
+      "state-change-failed": "Nem sikerült megváltoztatni a Bluetooth állapotot"
     },
     "clipboard": {
       "long-text": "Hosszú szöveg",
       "unavailable": "A vágólapelőzmények nem elérhetők",
-      "unavailable-desc": "A 'cliphist' alkalmazás nincs telepítve. Telepítse a vágólapelőzmények funkcióinak használatához."
+      "unavailable-desc": "A 'cliphist' alkalmazás nincs telepítve. Telepítse a vágólapelőzmények funkcióinak használatához"
     },
     "do-not-disturb": {
       "disabled": "Ne zavarjanak kikapcsolása",
-      "disabled-desc": "Minden értesítés megjelenítése.",
+      "disabled-desc": "Minden értesítés megjelenítése",
       "enabled": "Ne zavarjanak bekapcsolva",
-      "enabled-desc": "Ezeket az értesítéseket az előzményekben találja."
+      "enabled-desc": "Ezeket az értesítéseket az előzményekben találja"
     },
-    "internet-limited": "Csatlakoztatva internet nélkül.",
+    "internet-limited": "Csatlakoztatva internet nélkül",
     "ipc": {
       "powerpanel-deprecated": "A PowerPanel átnevezésre került SessionMenu-re, ez az IPC-hívás hamarosan elavul. Kérjük, használja helyette az \"ipc call sessionMenu toggle\" parancsot.",
       "sidepanel-deprecated": "A SidePanel átnevezésre került ControlCenter-re, ez az IPC-hívás hamarosan elavul. Kérjük, használja helyette az \"ipc call controlCenter toggle\" parancsot."
@@ -1498,13 +1498,13 @@
       "label": "Utolsó vezérlőközpont widget eltávolítva"
     },
     "night-light": {
-      "forced": "Kényszerített aktiválás.",
-      "normal": "Normál mód.",
-      "not-installed": "wlsunset nincs telepítve."
+      "forced": "Kényszerített aktiválás",
+      "normal": "Normál mód",
+      "not-installed": "wlsunset nincs telepítve"
     },
     "noctalia-performance": {
-      "disabled": "Teljesítmény mód kikapcsolva.",
-      "enabled": "Teljesítmény mód bekapcsolva.",
+      "disabled": "Teljesítmény mód kikapcsolva",
+      "enabled": "Teljesítmény mód bekapcsolva",
       "label": "Noctalia Teljesítmény"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Előre definiált színséma feldolgozása sikertelen"
     },
     "vpn": {
-      "connected": "Csatlakozva a(z) „{name}” hálózathoz.",
-      "disconnected": "Kapcsolat megszakadt a(z) „{name}” hálózattal."
+      "connected": "Csatlakozva a(z) „{name}” hálózathoz",
+      "disconnected": "Kapcsolat megszakadt a(z) „{name}” hálózattal"
     },
     "wallpaper-colors": {
-      "disabled": "Háttérkép színek kikapcsolva.",
-      "enabled": "Háttérkép színek bekapcsolva.",
+      "disabled": "Háttérkép színek kikapcsolva",
+      "enabled": "Háttérkép színek bekapcsolva",
       "label": "Háttérkép színek generálása",
-      "not-installed": "Matugen nincs telepítve – szükséges a háttérkép színeinek kinyeréséhez."
+      "not-installed": "Matugen nincs telepítve – szükséges a háttérkép színeinek kinyeréséhez"
     },
     "wifi": {
-      "connected": "Csatlakozva a(z) „{ssid}” hálózathoz.",
-      "connection-failed": "Csatlakozás sikertelen.",
-      "connection-timeout": "Csatlakozási időtúllépés.",
-      "disabled": "Kikapcsolva.",
-      "disconnected": "Kapcsolat megszakadt a(z) „{ssid}” hálózattal.",
-      "enabled": "Bekapcsolva.",
+      "connected": "Csatlakozva a(z) „{ssid}” hálózathoz",
+      "connection-failed": "Csatlakozás sikertelen",
+      "connection-timeout": "Csatlakozási időtúllépés",
+      "disabled": "Kikapcsolva",
+      "disconnected": "Kapcsolat megszakadt a(z) „{ssid}” hálózattal",
+      "enabled": "Bekapcsolva",
       "incorrect-password": "Helytelen jelszó.",
       "network-not-found": "Hálózat nem található."
     }

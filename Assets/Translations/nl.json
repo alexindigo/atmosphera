@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Batterij bijna leeg",
-      "low-desc": "De batterij is op {percent}%. Sluit de oplader aan."
+      "low-desc": "De batterij is op {percent}%. Sluit de oplader aan"
     },
     "bluetooth": {
-      "address-copied": "Adres gekopieerd naar klembord.",
+      "address-copied": "Adres gekopieerd naar klembord",
       "confirm-code": "Bevestig code {value} op het andere apparaat.",
-      "connect-failed": "Verbinding met apparaat mislukt.",
-      "disconnect-failed": "Verbinding verbreken met apparaat mislukt.",
-      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt.",
-      "discoverable-disabled": "Zichtbaar uitgeschakeld.",
-      "discoverable-enabled": "Zichtbaar ingeschakeld.",
+      "connect-failed": "Verbinding met apparaat mislukt",
+      "disconnect-failed": "Verbinding verbreken met apparaat mislukt",
+      "discoverable-change-failed": "Zichtbaarheidsstatus wijzigen mislukt",
+      "discoverable-disabled": "Zichtbaar uitgeschakeld",
+      "discoverable-enabled": "Zichtbaar ingeschakeld",
       "display-code": "Voer code {value} in op het andere apparaat.",
-      "forget-failed": "Apparaat vergeten mislukt.",
-      "pair-failed": "Apparaat koppelen mislukt.",
+      "forget-failed": "Apparaat vergeten mislukt",
+      "pair-failed": "Apparaat koppelen mislukt",
       "passkey-required": "Passkey vereist door het apparaat.",
       "pincode-required": "PIN-code vereist door het apparaat.",
-      "state-change-failed": "Bluetooth‑status wijzigen mislukt."
+      "state-change-failed": "Bluetooth‑status wijzigen mislukt"
     },
     "clipboard": {
       "long-text": "Lange tekst",
       "unavailable": "Klembordgeschiedenis niet beschikbaar",
-      "unavailable-desc": "De toepassing 'cliphist' is niet geïnstalleerd. Installeer deze om functies voor klembordgeschiedenis te gebruiken."
+      "unavailable-desc": "De toepassing 'cliphist' is niet geïnstalleerd. Installeer deze om functies voor klembordgeschiedenis te gebruiken"
     },
     "do-not-disturb": {
       "disabled": "'Niet storen' uitgeschakeld",
-      "disabled-desc": "Alle meldingen worden weergegeven.",
+      "disabled-desc": "Alle meldingen worden weergegeven",
       "enabled": "'Niet storen' ingeschakeld",
-      "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis."
+      "enabled-desc": "Je vindt deze meldingen terug in je geschiedenis"
     },
-    "internet-limited": "Verbonden zonder internet.",
+    "internet-limited": "Verbonden zonder internet",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel is hernoemd naar SessionMenu, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel is hernoemd naar ControlCenter, deze IPC-aanroep wordt binnenkort verouderd. Gebruik in plaats daarvan \"ipc call controlCenter toggle\"."
@@ -1498,13 +1498,13 @@
       "label": "Laatste bedieningscentrumwidget verwijderd"
     },
     "night-light": {
-      "forced": "Geforceerde activatie.",
-      "normal": "Normale modus.",
-      "not-installed": "wlsunset niet geïnstalleerd."
+      "forced": "Geforceerde activatie",
+      "normal": "Normale modus",
+      "not-installed": "wlsunset niet geïnstalleerd"
     },
     "noctalia-performance": {
-      "disabled": "Prestatiemodus uitgeschakeld.",
-      "enabled": "Prestatiemodus ingeschakeld.",
+      "disabled": "Prestatiemodus uitgeschakeld",
+      "enabled": "Prestatiemodus ingeschakeld",
       "label": "Noctalia Performance"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Verwerken van vooraf gedefinieerd kleurenschema mislukt"
     },
     "vpn": {
-      "connected": "Verbonden met '{name}'.",
-      "disconnected": "Verbinding met '{name}' verbroken."
+      "connected": "Verbonden met '{name}'",
+      "disconnected": "Verbinding met '{name}' verbroken"
     },
     "wallpaper-colors": {
-      "disabled": "Achtergrondkleuren uitgeschakeld.",
-      "enabled": "Achtergrondkleuren ingeschakeld.",
+      "disabled": "Achtergrondkleuren uitgeschakeld",
+      "enabled": "Achtergrondkleuren ingeschakeld",
       "label": "Achtergrondkleuren genereren",
-      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren."
+      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren"
     },
     "wifi": {
-      "connected": "Verbonden met '{ssid}'.",
-      "connection-failed": "Verbinding mislukt.",
-      "connection-timeout": "Time-out bij verbinding.",
-      "disabled": "Wi-Fi uitgeschakeld.",
-      "disconnected": "Verbinding met '{ssid}' verbroken.",
-      "enabled": "Wi-Fi ingeschakeld.",
+      "connected": "Verbonden met '{ssid}'",
+      "connection-failed": "Verbinding mislukt",
+      "connection-timeout": "Time-out bij verbinding",
+      "disabled": "Wi-Fi uitgeschakeld",
+      "disconnected": "Verbinding met '{ssid}' verbroken",
+      "enabled": "Wi-Fi ingeschakeld",
       "incorrect-password": "Onjuist wachtwoord.",
       "network-not-found": "Netwerk niet gevonden."
     }

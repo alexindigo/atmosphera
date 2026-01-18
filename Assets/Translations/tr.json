@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Düşük batarya",
-      "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın."
+      "low-desc": "Batarya % {percent}. Lütfen şarj bağlantısını yapın"
     },
     "bluetooth": {
-      "address-copied": "Adres panoya kopyalandı.",
+      "address-copied": "Adres panoya kopyalandı",
       "confirm-code": "Diğer cihazdaki {value} kodunu onayla.",
-      "connect-failed": "Cihaza bağlanılamadı.",
-      "disconnect-failed": "Cihazla bağlantı kesilemedi.",
-      "discoverable-change-failed": "Keşfedilebilir durum değiştirilemedi.",
-      "discoverable-disabled": "Keşfedilebilir devre dışı.",
-      "discoverable-enabled": "Keşfedilebilir etkinleştirildi.",
+      "connect-failed": "Cihaza bağlanılamadı",
+      "disconnect-failed": "Cihazla bağlantı kesilemedi",
+      "discoverable-change-failed": "Keşfedilebilir durum değiştirilemedi",
+      "discoverable-disabled": "Keşfedilebilir devre dışı",
+      "discoverable-enabled": "Keşfedilebilir etkinleştirildi",
       "display-code": "Diğer cihazda {value} kodunu girin.",
-      "forget-failed": "Cihazı unutma başarısız oldu.",
-      "pair-failed": "Cihaz eşleştirilemedi.",
+      "forget-failed": "Cihazı unutma başarısız oldu",
+      "pair-failed": "Cihaz eşleştirilemedi",
       "passkey-required": "Cihaz tarafından istenen geçiş anahtarı.",
       "pincode-required": "Cihaz tarafından PIN kodu gerekiyor.",
-      "state-change-failed": "Bluetooth durumu değiştirilemedi."
+      "state-change-failed": "Bluetooth durumu değiştirilemedi"
     },
     "clipboard": {
       "long-text": "Uzun metin",
       "unavailable": "Panoya geçmişi kullanılamıyor",
-      "unavailable-desc": "'cliphist' uygulaması kurulu değil. Lütfen panoya geçmişi özelliklerini kullanmak için kurun."
+      "unavailable-desc": "'cliphist' uygulaması kurulu değil. Lütfen panoya geçmişi özelliklerini kullanmak için kurun"
     },
     "do-not-disturb": {
       "disabled": "'Rahatsız etme' devre dışı",
-      "disabled-desc": "Tüm bildirimler gösteriliyor.",
+      "disabled-desc": "Tüm bildirimler gösteriliyor",
       "enabled": "'Rahatsız etme' etin",
-      "enabled-desc": "Bu bildirimleri geçmişinizde bulacaksınız."
+      "enabled-desc": "Bu bildirimleri geçmişinizde bulacaksınız"
     },
-    "internet-limited": "İnternetsiz bağlandı.",
+    "internet-limited": "İnternetsiz bağlandı",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel artık SessionMenu olarak adlandırılıyor, bu IPC çağrısı yakında kullanımdan kaldırılacak. Lütfen \"ipc call sessionMenu toggle\" kullanın.",
       "sidepanel-deprecated": "SidePanel artık ControlCenter olarak adlandırılıyor, bu IPC çağrısı yakında kullanımdan kaldırılacak. Lütfen \"ipc call controlCenter toggle\" kullanın."
@@ -1498,13 +1498,13 @@
       "label": "Son kontrol merkezi araç takımı kaldırıldı"
     },
     "night-light": {
-      "forced": "Zorla etkinleştirme.",
-      "normal": "Normal mod.",
-      "not-installed": "wlsunset kurulu değil."
+      "forced": "Zorla etkinleştirme",
+      "normal": "Normal mod",
+      "not-installed": "wlsunset kurulu değil"
     },
     "noctalia-performance": {
-      "disabled": "Performans modu devre dışı bırakıldı.",
-      "enabled": "Performans modu etkinleştirildi.",
+      "disabled": "Performans modu devre dışı bırakıldı",
+      "enabled": "Performans modu etkinleştirildi",
       "label": "Noctalia Performans"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu"
     },
     "vpn": {
-      "connected": "'{name}' ile bağlantı kuruldu.",
-      "disconnected": "'{name}' bağlantısı kesildi."
+      "connected": "'{name}' ile bağlantı kuruldu",
+      "disconnected": "'{name}' bağlantısı kesildi"
     },
     "wallpaper-colors": {
-      "disabled": "Duvar kâğıdı renkleri devre dışı.",
-      "enabled": "Duvar kâğıdı renkleri etkin.",
+      "disabled": "Duvar kâğıdı renkleri devre dışı",
+      "enabled": "Duvar kâğıdı renkleri etkin",
       "label": "Duvar kâğıdı renkleri oluşturma",
-      "not-installed": "Matugen kurulu değil — duvar kâğıdı renk çıkarmak için gerekli."
+      "not-installed": "Matugen kurulu değil — duvar kâğıdı renk çıkarmak için gerekli"
     },
     "wifi": {
-      "connected": "'{ssid}' ile bağlandı.",
-      "connection-failed": "Bağlantı başarısız.",
-      "connection-timeout": "Bağlantı zaman aşımı.",
-      "disabled": "Devre dışı.",
-      "disconnected": "'{ssid}' bağlantısı kesildi.",
-      "enabled": "Etkin.",
+      "connected": "'{ssid}' ile bağlandı",
+      "connection-failed": "Bağlantı başarısız",
+      "connection-timeout": "Bağlantı zaman aşımı",
+      "disabled": "Devre dışı",
+      "disconnected": "'{ssid}' bağlantısı kesildi",
+      "enabled": "Etkin",
       "incorrect-password": "Yanlış şifre.",
       "network-not-found": "Ağ bulunamadı."
     }

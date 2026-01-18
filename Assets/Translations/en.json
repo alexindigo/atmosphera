@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Low battery",
-      "low-desc": "Battery is at {percent}%. Please connect the charger."
+      "low-desc": "Battery is at {percent}%. Please connect the charger"
     },
     "bluetooth": {
-      "address-copied": "Address copied to clipboard.",
+      "address-copied": "Address copied to clipboard",
       "confirm-code": "Confirm code {value} on the other device.",
-      "connect-failed": "Failed to connect to device.",
-      "disconnect-failed": "Failed to disconnect from device.",
-      "discoverable-change-failed": "Failed to change discoverable state.",
-      "discoverable-disabled": "Discoverable disabled.",
-      "discoverable-enabled": "Discoverable enabled.",
+      "connect-failed": "Failed to connect to device",
+      "disconnect-failed": "Failed to disconnect from device",
+      "discoverable-change-failed": "Failed to change discoverable state",
+      "discoverable-disabled": "Discoverable disabled",
+      "discoverable-enabled": "Discoverable enabled",
       "display-code": "Enter code {value} on the other device.",
-      "forget-failed": "Failed to forget device.",
-      "pair-failed": "Failed to pair device.",
+      "forget-failed": "Failed to forget device",
+      "pair-failed": "Failed to pair device",
       "passkey-required": "Passkey required by the device.",
       "pincode-required": "PIN code required by the device.",
-      "state-change-failed": "Failed to change Bluetooth state."
+      "state-change-failed": "Failed to change Bluetooth state"
     },
     "clipboard": {
       "long-text": "Long text",
       "unavailable": "Clipboard history unavailable",
-      "unavailable-desc": "The 'cliphist' application is not installed. Please install it to use clipboard history features."
+      "unavailable-desc": "The 'cliphist' application is not installed. Please install it to use clipboard history features"
     },
     "do-not-disturb": {
       "disabled": "Do Not Disturb disabled",
-      "disabled-desc": "Showing all notifications.",
+      "disabled-desc": "Showing all notifications",
       "enabled": "Do Not Disturb enabled",
-      "enabled-desc": "You'll find these notifications in your history."
+      "enabled-desc": "You'll find these notifications in your history"
     },
-    "internet-limited": "Connected without internet.",
+    "internet-limited": "Connected without internet",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel has been renamed to SessionMenu, this IPC call will be deprecated soon. Please use \"ipc call sessionMenu toggle\" instead.",
       "sidepanel-deprecated": "SidePanel has been renamed to ControlCenter, this IPC call will be deprecated soon. Please use \"ipc call controlCenter toggle\" instead."
@@ -1498,13 +1498,13 @@
       "label": "Last control center widget removed"
     },
     "night-light": {
-      "forced": "Forced activation.",
-      "normal": "Normal mode.",
-      "not-installed": "wlsunset not installed."
+      "forced": "Forced activation",
+      "normal": "Normal mode",
+      "not-installed": "wlsunset not installed"
     },
     "noctalia-performance": {
-      "disabled": "Performance mode disabled.",
-      "enabled": "Performance mode enabled.",
+      "disabled": "Performance mode disabled",
+      "enabled": "Performance mode enabled",
       "label": "Noctalia Performance"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Predefined color scheme processing failed"
     },
     "vpn": {
-      "connected": "Connected to '{name}'.",
-      "disconnected": "Disconnected from '{name}'."
+      "connected": "Connected to '{name}'",
+      "disconnected": "Disconnected from '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Wallpaper colors disabled.",
-      "enabled": "Wallpaper colors enabled.",
+      "disabled": "Wallpaper colors disabled",
+      "enabled": "Wallpaper colors enabled",
       "label": "Wallpaper colors",
       "not-installed": "Matugen not installed — required for wallpaper color extraction."
     },
     "wifi": {
-      "connected": "Connected to '{ssid}'.",
-      "connection-failed": "Connection failed.",
-      "connection-timeout": "Connection timeout.",
-      "disabled": "Disabled.",
-      "disconnected": "Disconnected from '{ssid}'.",
-      "enabled": "Enabled.",
+      "connected": "Connected to '{ssid}'",
+      "connection-failed": "Connection failed",
+      "connection-timeout": "Connection timeout",
+      "disabled": "Disabled",
+      "disconnected": "Disconnected from '{ssid}'",
+      "enabled": "Enabled",
       "incorrect-password": "Incorrect password.",
       "network-not-found": "Network not found."
     }

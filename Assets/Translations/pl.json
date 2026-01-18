@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Słaba bateria",
-      "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę."
+      "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę"
     },
     "bluetooth": {
-      "address-copied": "Adres skopiowany do schowka.",
+      "address-copied": "Adres skopiowany do schowka",
       "confirm-code": "Potwierdź kod {value} na drugim urządzeniu.",
-      "connect-failed": "Nie udało się połączyć z urządzeniem.",
-      "disconnect-failed": "Nie udało się rozłączyć z urządzeniem.",
-      "discoverable-change-failed": "Nie udało się zmienić stanu wykrywalności.",
-      "discoverable-disabled": "Wykrywalność wyłączona.",
-      "discoverable-enabled": "Wykrywalność włączona.",
+      "connect-failed": "Nie udało się połączyć z urządzeniem",
+      "disconnect-failed": "Nie udało się rozłączyć z urządzeniem",
+      "discoverable-change-failed": "Nie udało się zmienić stanu wykrywalności",
+      "discoverable-disabled": "Wykrywalność wyłączona",
+      "discoverable-enabled": "Wykrywalność włączona",
       "display-code": "Wprowadź kod {value} na drugim urządzeniu.",
-      "forget-failed": "Nie udało się zapomnieć urządzenia.",
-      "pair-failed": "Nie udało się sparować urządzenia.",
+      "forget-failed": "Nie udało się zapomnieć urządzenia",
+      "pair-failed": "Nie udało się sparować urządzenia",
       "passkey-required": "Wymagany klucz dostępu przez urządzenie.",
       "pincode-required": "Kod PIN wymagany przez urządzenie.",
-      "state-change-failed": "Nie udało się zmienić stanu Bluetooth."
+      "state-change-failed": "Nie udało się zmienić stanu Bluetooth"
     },
     "clipboard": {
       "long-text": "Długi tekst",
       "unavailable": "Historia schowka niedostępna",
-      "unavailable-desc": "Aplikacja 'cliphist' nie jest zainstalowana. Zainstaluj ją, aby korzystać z historii schowka."
+      "unavailable-desc": "Aplikacja 'cliphist' nie jest zainstalowana. Zainstaluj ją, aby korzystać z historii schowka"
     },
     "do-not-disturb": {
       "disabled": "Nie przeszkadzać wyłączone",
-      "disabled-desc": "Pokazywanie wszystkich powiadomień.",
+      "disabled-desc": "Pokazywanie wszystkich powiadomień",
       "enabled": "Nie przeszkadzać włączone",
-      "enabled-desc": "Powiadomienia znajdziesz w swojej historii."
+      "enabled-desc": "Powiadomienia znajdziesz w swojej historii"
     },
-    "internet-limited": "Połączono bez dostępu do internetu.",
+    "internet-limited": "Połączono bez dostępu do internetu",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel zmienił nazwę na SessionMenu, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel zmienił nazwę na ControlCenter, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call controlCenter toggle\"."
@@ -1498,13 +1498,13 @@
       "label": "Ostatni widżet centrum sterowania usunięty"
     },
     "night-light": {
-      "forced": "Wymuszona aktywacja.",
-      "normal": "Tryb normalny.",
-      "not-installed": "wlsunset nie jest zainstalowany."
+      "forced": "Wymuszona aktywacja",
+      "normal": "Tryb normalny",
+      "not-installed": "wlsunset nie jest zainstalowany"
     },
     "noctalia-performance": {
-      "disabled": "Tryb wydajności wyłączony.",
-      "enabled": "Tryb wydajności włączony.",
+      "disabled": "Tryb wydajności wyłączony",
+      "enabled": "Tryb wydajności włączony",
       "label": "Wydajność Noctalia"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Błąd przetwarzania predefiniowanego schematu kolorów"
     },
     "vpn": {
-      "connected": "Połączono z '{name}'.",
-      "disconnected": "Rozłączono z '{name}'."
+      "connected": "Połączono z '{name}'",
+      "disconnected": "Rozłączono z '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Kolory tapety wyłączone.",
-      "enabled": "Kolory tapety włączone.",
+      "disabled": "Kolory tapety wyłączone",
+      "enabled": "Kolory tapety włączone",
       "label": "Generowanie kolorów tapety",
-      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów."
+      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów"
     },
     "wifi": {
-      "connected": "Połączono z '{ssid}'.",
-      "connection-failed": "Połączenie nieudane.",
-      "connection-timeout": "Przekroczenie czasu połączenia.",
-      "disabled": "Wyłączone.",
-      "disconnected": "Rozłączono z '{ssid}'.",
-      "enabled": "Włączone.",
+      "connected": "Połączono z '{ssid}'",
+      "connection-failed": "Połączenie nieudane",
+      "connection-timeout": "Przekroczenie czasu połączenia",
+      "disabled": "Wyłączone",
+      "disconnected": "Rozłączono z '{ssid}'",
+      "enabled": "Włączone",
       "incorrect-password": "Nieprawidłowe hasło.",
       "network-not-found": "Nie znaleziono sieci."
     }

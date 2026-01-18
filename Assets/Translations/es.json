@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Batería baja",
-      "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador."
+      "low-desc": "La batería está al {percent}%. Por favor, conecta el cargador"
     },
     "bluetooth": {
-      "address-copied": "Dirección copiada al portapapeles.",
+      "address-copied": "Dirección copiada al portapapeles",
       "confirm-code": "Confirma el código {value} en el otro dispositivo.",
-      "connect-failed": "Error al conectar con el dispositivo.",
-      "disconnect-failed": "Error al desconectar del dispositivo.",
-      "discoverable-change-failed": "Error al cambiar el estado de visibilidad.",
-      "discoverable-disabled": "Visible desactivado.",
-      "discoverable-enabled": "Visible activado.",
+      "connect-failed": "Error al conectar con el dispositivo",
+      "disconnect-failed": "Error al desconectar del dispositivo",
+      "discoverable-change-failed": "Error al cambiar el estado de visibilidad",
+      "discoverable-disabled": "Visible desactivado",
+      "discoverable-enabled": "Visible activado",
       "display-code": "Introduce el código {value} en el otro dispositivo.",
-      "forget-failed": "Error al olvidar el dispositivo.",
-      "pair-failed": "Error al emparejar el dispositivo.",
+      "forget-failed": "Error al olvidar el dispositivo",
+      "pair-failed": "Error al emparejar el dispositivo",
       "passkey-required": "Se requiere una clave de acceso del dispositivo.",
       "pincode-required": "Se requiere el código PIN del dispositivo.",
-      "state-change-failed": "Error al cambiar el estado de Bluetooth."
+      "state-change-failed": "Error al cambiar el estado de Bluetooth"
     },
     "clipboard": {
       "long-text": "Texto largo",
       "unavailable": "Historial del portapapeles no disponible",
-      "unavailable-desc": "La aplicación 'cliphist' no está instalada. Por favor, instálala para usar las funciones de historial del portapapeles."
+      "unavailable-desc": "La aplicación 'cliphist' no está instalada. Por favor, instálala para usar las funciones de historial del portapapeles"
     },
     "do-not-disturb": {
       "disabled": "'No molestar' desactivado",
-      "disabled-desc": "Mostrando todas las notificaciones.",
+      "disabled-desc": "Mostrando todas las notificaciones",
       "enabled": "'No molestar' activado",
-      "enabled-desc": "Encontrarás estas notificaciones en tu historial."
+      "enabled-desc": "Encontrarás estas notificaciones en tu historial"
     },
-    "internet-limited": "Conectado sin Internet.",
+    "internet-limited": "Conectado sin Internet",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel ha sido renombrado a SessionMenu, esta llamada IPC será obsoleta pronto. Por favor, usa \"ipc call sessionMenu toggle\" en su lugar.",
       "sidepanel-deprecated": "SidePanel ha sido renombrado a ControlCenter, esta llamada IPC será obsoleta pronto. Por favor, usa \"ipc call controlCenter toggle\" en su lugar."
@@ -1498,13 +1498,13 @@
       "label": "Se eliminó el último widget del centro de control"
     },
     "night-light": {
-      "forced": "Activación forzada.",
-      "normal": "Modo normal.",
-      "not-installed": "wlsunset no está instalado."
+      "forced": "Activación forzada",
+      "normal": "Modo normal",
+      "not-installed": "wlsunset no está instalado"
     },
     "noctalia-performance": {
-      "disabled": "Modo de rendimiento desactivado.",
-      "enabled": "Modo de rendimiento activado.",
+      "disabled": "Modo de rendimiento desactivado",
+      "enabled": "Modo de rendimiento activado",
       "label": "Noctalia Rendimiento"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Falló el procesamiento del esquema de color predefinido"
     },
     "vpn": {
-      "connected": "Conectado a '{name}'.",
-      "disconnected": "Desconectado de '{name}'."
+      "connected": "Conectado a '{name}'",
+      "disconnected": "Desconectado de '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Colores del fondo de pantalla desactivados.",
-      "enabled": "Colores del fondo de pantalla activados.",
+      "disabled": "Colores del fondo de pantalla desactivados",
+      "enabled": "Colores del fondo de pantalla activados",
       "label": "Generación de colores para fondos de pantalla",
-      "not-installed": "Matugen no instalado — requerido para extraer colores del fondo de pantalla."
+      "not-installed": "Matugen no instalado — requerido para extraer colores del fondo de pantalla"
     },
     "wifi": {
-      "connected": "Conectado a '{ssid}'.",
-      "connection-failed": "Error de conexión.",
-      "connection-timeout": "Tiempo de conexión agotado.",
-      "disabled": "Desactivado.",
-      "disconnected": "Desconectado de '{ssid}'.",
-      "enabled": "Activado.",
+      "connected": "Conectado a '{ssid}'",
+      "connection-failed": "Error de conexión",
+      "connection-timeout": "Tiempo de conexión agotado",
+      "disabled": "Desactivado",
+      "disconnected": "Desconectado de '{ssid}'",
+      "enabled": "Activado",
       "incorrect-password": "Contraseña incorrecta.",
       "network-not-found": "Red no encontrada."
     }

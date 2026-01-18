@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "电量低",
-      "low-desc": "电量为 {percent}%。请连接充电器。"
+      "low-desc": "电量为 {percent}%。请连接充电器"
     },
     "bluetooth": {
-      "address-copied": "地址已复制到剪贴板。",
+      "address-copied": "地址已复制到剪贴板",
       "confirm-code": "在另一台设备上确认代码 {value}。",
-      "connect-failed": "无法连接到设备。",
-      "disconnect-failed": "无法断开与设备的连接。",
-      "discoverable-change-failed": "无法更改可发现状态。",
-      "discoverable-disabled": "可发现性已禁用。",
-      "discoverable-enabled": "已启用可发现性。",
+      "connect-failed": "无法连接到设备",
+      "disconnect-failed": "无法断开与设备的连接",
+      "discoverable-change-failed": "无法更改可发现状态",
+      "discoverable-disabled": "可发现性已禁用",
+      "discoverable-enabled": "已启用可发现性",
       "display-code": "在另一台设备上输入代码 {value}。",
-      "forget-failed": "无法忘记设备。",
-      "pair-failed": "配对设备失败。",
+      "forget-failed": "无法忘记设备",
+      "pair-failed": "配对设备失败",
       "passkey-required": "设备需要通行密钥。",
       "pincode-required": "设备需要PIN码。",
-      "state-change-failed": "无法更改蓝牙状态。"
+      "state-change-failed": "无法更改蓝牙状态"
     },
     "clipboard": {
       "long-text": "长文本",
       "unavailable": "剪贴板历史记录不可用",
-      "unavailable-desc": "未安装 'cliphist' 应用程序。请安装它以使用剪贴板历史记录功能。"
+      "unavailable-desc": "未安装 'cliphist' 应用程序。请安装它以使用剪贴板历史记录功能"
     },
     "do-not-disturb": {
       "disabled": "'勿扰模式'已禁用",
-      "disabled-desc": "显示所有通知。",
+      "disabled-desc": "显示所有通知",
       "enabled": "'勿扰模式'已启用",
-      "enabled-desc": "您可以在历史记录中找到这些通知。"
+      "enabled-desc": "您可以在历史记录中找到这些通知"
     },
-    "internet-limited": "已连接但无互联网。",
+    "internet-limited": "已连接但无互联网",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel 已重命名为 SessionMenu，此 IPC 调用将很快弃用。请改用 \"ipc call sessionMenu toggle\"。",
       "sidepanel-deprecated": "SidePanel 已重命名为 ControlCenter，此 IPC 调用将很快弃用。请改用 \"ipc call controlCenter toggle\"。"
@@ -1498,13 +1498,13 @@
       "label": "最后一个控制中心小部件已移除"
     },
     "night-light": {
-      "forced": "强制激活。",
-      "normal": "正常模式。",
-      "not-installed": "未安装 wlsunset。"
+      "forced": "强制激活",
+      "normal": "正常模式",
+      "not-installed": "未安装 wlsunset"
     },
     "noctalia-performance": {
-      "disabled": "性能模式已禁用。",
-      "enabled": "已启用性能模式。",
+      "disabled": "性能模式已禁用",
+      "enabled": "已启用性能模式",
       "label": "Noctalia 性能"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "预定义的颜色方案处理失败"
     },
     "vpn": {
-      "connected": "已连接到“{name}”。",
-      "disconnected": "已断开与“{name}”的连接。"
+      "connected": "已连接到“{name}”",
+      "disconnected": "已断开与“{name}”的连接"
     },
     "wallpaper-colors": {
-      "disabled": "壁纸颜色已禁用。",
-      "enabled": "壁纸颜色已启用。",
+      "disabled": "壁纸颜色已禁用",
+      "enabled": "壁纸颜色已启用",
       "label": "壁纸颜色生成",
       "not-installed": "Matugen 未安装 — 壁纸颜色提取所需。"
     },
     "wifi": {
-      "connected": "已连接到 '{ssid}'。",
-      "connection-failed": "连接失败。",
-      "connection-timeout": "连接超时。",
-      "disabled": "已禁用。",
-      "disconnected": "已断开与 '{ssid}' 的连接。",
-      "enabled": "已启用。",
+      "connected": "已连接到 '{ssid}'",
+      "connection-failed": "连接失败",
+      "connection-timeout": "连接超时",
+      "disabled": "已禁用",
+      "disconnected": "已断开与 '{ssid}' 的连接",
+      "enabled": "已启用",
       "incorrect-password": "密码错误。",
       "network-not-found": "未找到网络。"
     }

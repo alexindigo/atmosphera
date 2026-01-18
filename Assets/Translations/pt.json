@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Bateria fraca",
-      "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador."
+      "low-desc": "A bateria está em {percent}%. Por favor, conecte o carregador"
     },
     "bluetooth": {
-      "address-copied": "Endereço copiado para a área de transferência.",
+      "address-copied": "Endereço copiado para a área de transferência",
       "confirm-code": "Confirme o código {value} no outro dispositivo.",
-      "connect-failed": "Falha ao conectar ao dispositivo.",
-      "disconnect-failed": "Falha ao desconectar do dispositivo.",
-      "discoverable-change-failed": "Falha ao alterar o estado de visibilidade.",
-      "discoverable-disabled": "Visível desativado.",
-      "discoverable-enabled": "Visível ativado.",
+      "connect-failed": "Falha ao conectar ao dispositivo",
+      "disconnect-failed": "Falha ao desconectar do dispositivo",
+      "discoverable-change-failed": "Falha ao alterar o estado de visibilidade",
+      "discoverable-disabled": "Visível desativado",
+      "discoverable-enabled": "Visível ativado",
       "display-code": "Insira o código {value} no outro dispositivo.",
-      "forget-failed": "Falha ao esquecer o dispositivo.",
-      "pair-failed": "Falha ao emparelhar o dispositivo.",
+      "forget-failed": "Falha ao esquecer o dispositivo",
+      "pair-failed": "Falha ao emparelhar o dispositivo",
       "passkey-required": "Senha necessária pelo dispositivo.",
       "pincode-required": "Código PIN exigido pelo dispositivo.",
-      "state-change-failed": "Falha ao alterar o estado do Bluetooth."
+      "state-change-failed": "Falha ao alterar o estado do Bluetooth"
     },
     "clipboard": {
       "long-text": "Texto longo",
       "unavailable": "Histórico da área de transferência indisponível",
-      "unavailable-desc": "O aplicativo 'cliphist' não está instalado. Por favor, instale-o para usar os recursos do histórico da área de transferência."
+      "unavailable-desc": "O aplicativo 'cliphist' não está instalado. Por favor, instale-o para usar os recursos do histórico da área de transferência"
     },
     "do-not-disturb": {
       "disabled": "'Não perturbe' desativado",
-      "disabled-desc": "Mostrando todas as notificações.",
+      "disabled-desc": "Mostrando todas as notificações",
       "enabled": "'Não perturbe' ativado",
-      "enabled-desc": "Você encontrará essas notificações no seu histórico."
+      "enabled-desc": "Você encontrará essas notificações no seu histórico"
     },
-    "internet-limited": "Conectado sem Internet.",
+    "internet-limited": "Conectado sem Internet",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel foi renomeado para SessionMenu, esta chamada de IPC será descontinuada em breve. Por favor, use \"ipc call sessionMenu toggle\".",
       "sidepanel-deprecated": "SidePanel foi renomeado para ControlCenter, esta chamada de IPC será descontinuada em breve. Por favor, use \"ipc call controlCenter toggle\"."
@@ -1498,13 +1498,13 @@
       "label": "Último widget da central de controle removido"
     },
     "night-light": {
-      "forced": "Ativação forçada.",
-      "normal": "Modo normal.",
-      "not-installed": "wlsunset não está instalado."
+      "forced": "Ativação forçada",
+      "normal": "Modo normal",
+      "not-installed": "wlsunset não está instalado"
     },
     "noctalia-performance": {
-      "disabled": "Modo de desempenho desativado.",
-      "enabled": "Modo de desempenho ativado.",
+      "disabled": "Modo de desempenho desativado",
+      "enabled": "Modo de desempenho ativado",
       "label": "Noctalia Desempenho"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "O processamento do esquema de cores predefinido falhou"
     },
     "vpn": {
-      "connected": "Conectado a '{name}'.",
-      "disconnected": "Desconectado de '{name}'."
+      "connected": "Conectado a '{name}'",
+      "disconnected": "Desconectado de '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Cores do papel de parede desativadas.",
-      "enabled": "Cores do papel de parede ativadas.",
+      "disabled": "Cores do papel de parede desativadas",
+      "enabled": "Cores do papel de parede ativadas",
       "label": "Geração de cores para papel de parede",
-      "not-installed": "Matugen não instalado — necessário para extração de cores do papel de parede."
+      "not-installed": "Matugen não instalado — necessário para extração de cores do papel de parede"
     },
     "wifi": {
-      "connected": "Conectado a '{ssid}'.",
-      "connection-failed": "Falha na conexão.",
-      "connection-timeout": "Tempo de conexão esgotado.",
-      "disabled": "Desativado.",
-      "disconnected": "Desconectado de '{ssid}'.",
-      "enabled": "Ativado.",
+      "connected": "Conectado a '{ssid}'",
+      "connection-failed": "Falha na conexão",
+      "connection-timeout": "Tempo de conexão esgotado",
+      "disabled": "Desativado",
+      "disconnected": "Desconectado de '{ssid}'",
+      "enabled": "Ativado",
       "incorrect-password": "Senha incorreta.",
       "network-not-found": "Rede não encontrada."
     }

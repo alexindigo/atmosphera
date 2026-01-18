@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "バッテリー残量低下",
-      "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください。"
+      "low-desc": "バッテリー残量が {percent}% です。充電器を接続してください"
     },
     "bluetooth": {
-      "address-copied": "アドレスをクリップボードにコピーしました。",
+      "address-copied": "アドレスをクリップボードにコピーしました",
       "confirm-code": "別のデバイスでコード{value}を確認してください。",
-      "connect-failed": "デバイスに接続できませんでした。",
-      "disconnect-failed": "デバイスから切断できませんでした。",
-      "discoverable-change-failed": "検出可能な状態の変更に失敗しました。",
-      "discoverable-disabled": "検出不能を無効にしました。",
-      "discoverable-enabled": "検出可能が有効。",
+      "connect-failed": "デバイスに接続できませんでした",
+      "disconnect-failed": "デバイスから切断できませんでした",
+      "discoverable-change-failed": "検出可能な状態の変更に失敗しました",
+      "discoverable-disabled": "検出不能を無効にしました",
+      "discoverable-enabled": "検出可能が有効",
       "display-code": "別のデバイスに{value}のコードを入力してください。",
-      "forget-failed": "デバイスの削除に失敗しました。",
-      "pair-failed": "デバイスのペアリングに失敗しました。",
+      "forget-failed": "デバイスの削除に失敗しました",
+      "pair-failed": "デバイスのペアリングに失敗しました",
       "passkey-required": "デバイスでパスキーが必要です。",
       "pincode-required": "デバイスがPINコードを要求しています。",
-      "state-change-failed": "Bluetoothの状態変更に失敗しました。"
+      "state-change-failed": "Bluetoothの状態変更に失敗しました"
     },
     "clipboard": {
       "long-text": "長いテキスト",
       "unavailable": "クリップボード履歴を利用できません",
-      "unavailable-desc": "cliphist がインストールされていません。クリップボード履歴機能を使用するにはインストールしてください。"
+      "unavailable-desc": "cliphist がインストールされていません。クリップボード履歴機能を使用するにはインストールしてください"
     },
     "do-not-disturb": {
       "disabled": "おやすみモードを無効化",
-      "disabled-desc": "すべての通知を表示します。",
+      "disabled-desc": "すべての通知を表示します",
       "enabled": "おやすみモードを有効化",
-      "enabled-desc": "通知は履歴に保存されます。"
+      "enabled-desc": "通知は履歴に保存されます"
     },
-    "internet-limited": "インターネット未接続。",
+    "internet-limited": "インターネット未接続",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel は SessionMenu に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call sessionMenu toggle\" を使用してください。",
       "sidepanel-deprecated": "SidePanel は ControlCenter に名称変更されました。この IPC コールはまもなく廃止されます。代わりに \"ipc call controlCenter toggle\" を使用してください。"
@@ -1498,13 +1498,13 @@
       "label": "最後のコントロールセンターが削除されました"
     },
     "night-light": {
-      "forced": "強制的に有効化。",
-      "normal": "通常モード。",
-      "not-installed": "wlsunset がインストールされていません。"
+      "forced": "強制的に有効化",
+      "normal": "通常モード",
+      "not-installed": "wlsunset がインストールされていません"
     },
     "noctalia-performance": {
-      "disabled": "パフォーマンスモード: 無効。",
-      "enabled": "パフォーマンスモード: 有効。",
+      "disabled": "パフォーマンスモード: 無効",
+      "enabled": "パフォーマンスモード: 有効",
       "label": "Noctalia パフォーマンス"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "プリセット配色の処理に失敗しました"
     },
     "vpn": {
-      "connected": "{name} に接続しました。",
-      "disconnected": "{name} から切断しました。"
+      "connected": "{name} に接続しました",
+      "disconnected": "{name} から切断しました"
     },
     "wallpaper-colors": {
-      "disabled": "壁紙配色の生成: 無効。",
-      "enabled": "壁紙配色の生成: 有効。",
+      "disabled": "壁紙配色の生成: 無効",
+      "enabled": "壁紙配色の生成: 有効",
       "label": "壁紙配色の生成",
       "not-installed": "Matugen がインストールされていません（壁紙からの色抽出に必要です）。"
     },
     "wifi": {
-      "connected": "{ssid} に接続しました。",
-      "connection-failed": "接続に失敗しました。",
-      "connection-timeout": "接続タイムアウト。",
-      "disabled": "無効。",
-      "disconnected": "{ssid} から切断しました。",
-      "enabled": "有効。",
+      "connected": "{ssid} に接続しました",
+      "connection-failed": "接続に失敗しました",
+      "connection-timeout": "接続タイムアウト",
+      "disabled": "無効",
+      "disconnected": "{ssid} から切断しました",
+      "enabled": "有効",
       "incorrect-password": "パスワードが違います。",
       "network-not-found": "ネットワークが見つかりません。"
     }

@@ -1455,35 +1455,35 @@
     },
     "battery": {
       "low": "Batterie faible",
-      "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur."
+      "low-desc": "La batterie est à {percent}%. Veuillez brancher le chargeur"
     },
     "bluetooth": {
-      "address-copied": "Adresse copiée dans le presse-papiers.",
+      "address-copied": "Adresse copiée dans le presse-papiers",
       "confirm-code": "Confirmer le code {value} sur l'autre appareil.",
-      "connect-failed": "Échec de la connexion à l’appareil.",
-      "disconnect-failed": "Échec de la déconnexion de l’appareil.",
-      "discoverable-change-failed": "Échec du changement d’état détectable.",
-      "discoverable-disabled": "Détectable désactivé.",
-      "discoverable-enabled": "Détectable activé.",
+      "connect-failed": "Échec de la connexion à l’appareil",
+      "disconnect-failed": "Échec de la déconnexion de l’appareil",
+      "discoverable-change-failed": "Échec du changement d’état détectable",
+      "discoverable-disabled": "Détectable désactivé",
+      "discoverable-enabled": "Détectable activé",
       "display-code": "Entrez le code {value} sur l'autre appareil.",
-      "forget-failed": "Échec de l’oubli de l’appareil.",
-      "pair-failed": "Échec de l’appairage de l’appareil.",
+      "forget-failed": "Échec de l’oubli de l’appareil",
+      "pair-failed": "Échec de l’appairage de l’appareil",
       "passkey-required": "Clé d'identification requise par l'appareil.",
       "pincode-required": "Code PIN requis par l'appareil.",
-      "state-change-failed": "Échec du changement d’état du Bluetooth."
+      "state-change-failed": "Échec du changement d’état du Bluetooth"
     },
     "clipboard": {
       "long-text": "Texte long",
       "unavailable": "Historique du presse-papiers indisponible",
-      "unavailable-desc": "L'application 'cliphist' n'est pas installée. Veuillez l'installer pour utiliser les fonctionnalités d'historique du presse-papiers."
+      "unavailable-desc": "L'application 'cliphist' n'est pas installée. Veuillez l'installer pour utiliser les fonctionnalités d'historique du presse-papiers"
     },
     "do-not-disturb": {
       "disabled": "'Ne pas déranger' désactivé",
-      "disabled-desc": "Affichage de toutes les notifications.",
+      "disabled-desc": "Affichage de toutes les notifications",
       "enabled": "'Ne pas déranger' activé",
-      "enabled-desc": "Vous trouverez ces notifications dans votre historique."
+      "enabled-desc": "Vous trouverez ces notifications dans votre historique"
     },
-    "internet-limited": "Connecté sans Internet.",
+    "internet-limited": "Connecté sans Internet",
     "ipc": {
       "powerpanel-deprecated": "PowerPanel a été renommé en SessionMenu, cet appel IPC sera bientôt obsolète. Veuillez utiliser \"ipc call sessionMenu toggle\" à la place.",
       "sidepanel-deprecated": "SidePanel a été renommé en ControlCenter, cet appel IPC sera bientôt obsolète. Veuillez utiliser \"ipc call controlCenter toggle\" à la place."
@@ -1498,13 +1498,13 @@
       "label": "Dernier widget du centre de contrôle supprimé"
     },
     "night-light": {
-      "forced": "Activation forcée.",
-      "normal": "Mode normal.",
-      "not-installed": "wlsunset non installé."
+      "forced": "Activation forcée",
+      "normal": "Mode normal",
+      "not-installed": "wlsunset non installé"
     },
     "noctalia-performance": {
-      "disabled": "Mode performance désactivé.",
-      "enabled": "Mode performance activé.",
+      "disabled": "Mode performance désactivé",
+      "enabled": "Mode performance activé",
       "label": "Noctalia Performance"
     },
     "power-profile": {
@@ -1517,22 +1517,22 @@
       "title-predefined": "Le traitement du schéma de couleurs prédéfini a échoué"
     },
     "vpn": {
-      "connected": "Connecté à '{name}'.",
-      "disconnected": "Déconnecté de '{name}'."
+      "connected": "Connecté à '{name}'",
+      "disconnected": "Déconnecté de '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Couleurs du fond d'écran désactivées.",
-      "enabled": "Couleurs du fond d'écran activées.",
+      "disabled": "Couleurs du fond d'écran désactivées",
+      "enabled": "Couleurs du fond d'écran activées",
       "label": "Génération de couleurs pour fonds d'écran",
-      "not-installed": "Matugen non installé — requis pour l'extraction des couleurs du fond d'écran."
+      "not-installed": "Matugen non installé — requis pour l'extraction des couleurs du fond d'écran"
     },
     "wifi": {
-      "connected": "Connecté à '{ssid}'.",
-      "connection-failed": "Échec de la connexion.",
-      "connection-timeout": "Délai de connexion dépassé.",
-      "disabled": "Désactivé.",
-      "disconnected": "Déconnecté de '{ssid}'.",
-      "enabled": "Activé.",
+      "connected": "Connecté à '{ssid}'",
+      "connection-failed": "Échec de la connexion",
+      "connection-timeout": "Délai de connexion dépassé",
+      "disabled": "Désactivé",
+      "disconnected": "Déconnecté de '{ssid}'",
+      "enabled": "Activé",
       "incorrect-password": "Mot de passe incorrect.",
       "network-not-found": "Réseau introuvable."
     }
