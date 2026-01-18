@@ -12,6 +12,7 @@ NIconButton {
 
   property ShellScreen screen
 
+  enabled: Settings.data.wallpaper.enabled
   baseSize: Style.capsuleHeight
   applyUiScale: false
   customRadius: Style.radiusL
