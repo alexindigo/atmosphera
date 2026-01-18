@@ -8,7 +8,7 @@ import qs.Commons
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/theming/template-apply.sh'
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Scripts/theming/template-apply.sh'
 
   // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [
@@ -430,7 +430,7 @@ Singleton {
     lines.push("");
     lines.push("# Remove this section and add your own templates");
     lines.push("#[templates.placeholder]");
-    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/Theming/noctalia.json\"");
+    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/Templates/noctalia.json\"");
     lines.push("#output_path = \"" + Settings.cacheDir + "placeholder.json\"");
     lines.push("");
 

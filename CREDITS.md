@@ -24,9 +24,6 @@ Noctalia Shell is made possible by the incredible work of many open-source proje
 - **[gpu-screen-recorder](https://git.dec05eba.com/gpu-screen-recorder/about/)** - Hardware-accelerated screen recording
 - **[Cava](https://github.com/karlstav/cava)** - Audio visualizer component
 
-### Theming & Appearance
-- **[Matugen](https://github.com/InioX/matugen)** - Material You color scheme generation from wallpapers
-
 ### Utilities
 - **[cliphist](https://github.com/sentriz/cliphist)** - Clipboard history support
 

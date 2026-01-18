@@ -1457,6 +1457,9 @@ def main() -> int:
         return 1
     
     
+    # Initialize result dictionary
+    result: dict[str, dict[str, str]] = {}
+
     # Check if input is a JSON palette (Predefined Scheme bypass)
     if args.image.suffix.lower() == '.json':
         try:
@@ -1478,8 +1481,6 @@ def main() -> int:
                     # Best effort fallback
                     flat_colors[k] = str(v)
             
-            # Pre-populate result (bypass extraction)
-            result = {}
             # Assign to both/all modes since predefined scheme usually provides the correct palette for the requested mode
             result["dark"] = flat_colors
             result["light"] = flat_colors
@@ -1531,7 +1532,6 @@ def main() -> int:
         arg_light = True
         arg_both = False
     
-    result: dict[str, dict[str, str]] = {}
     
     if palette:
         if arg_dark:

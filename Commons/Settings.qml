@@ -602,7 +602,6 @@ Singleton {
       property string schedulingMode: "off"
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
-      property string generationBackend: "internal"
       property string internalThemerMode: "material"
     }
 
@@ -610,7 +609,7 @@ Singleton {
     property JsonObject templates: JsonObject {
       property list<var> activeTemplates: []
       // Format: [{ "id": "gtk", "enabled": true }, { "id": "qt", "enabled": true }, ...]
-      property bool enableUserTemplates: false
+      property bool enableUserTheming: false
     }
 
     // night light

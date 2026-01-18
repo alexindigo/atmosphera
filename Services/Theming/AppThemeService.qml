@@ -8,7 +8,7 @@ import qs.Services.UI
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Scripts/theming/template-apply.sh'
 
   Connections {
     target: WallpaperService

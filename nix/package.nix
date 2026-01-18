@@ -33,7 +33,7 @@ let
         /.github
         /.gitignore
         /Assets/Screenshots
-        /Bin/dev
+        /Scripts/dev
         /nix
         /LICENSE
         /README.md

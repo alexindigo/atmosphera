@@ -59,12 +59,8 @@ Singleton {
       return;
     const wp = wallpaperPath.replace(/'/g, "'\\''");
 
-    // Always use internal backend (colors.py)
-    let backend = "internal";
+    const script = buildGenerationScript(content, wp, mode);
 
-    const script = buildGenerationScript(content, wp, mode, backend);
-
-    generateProcess.generator = backend;
     generateProcess.command = ["sh", "-lc", script];
     generateProcess.running = true;
   }
@@ -145,10 +141,10 @@ Singleton {
     var mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";
 
     if (Settings.data.colorSchemes.useWallpaperColors) {
-      addWallpaperTemplates(lines, mode);
+      addWallpaperTheming(lines, mode);
     }
 
-    addApplicationTemplates(lines, mode);
+    addApplicationTheming(lines, mode);
 
     if (lines.length > 0) {
       return ["[config]"].concat(lines).join("\n") + "\n";
@@ -156,18 +152,18 @@ Singleton {
     return "";
   }
 
-  function addWallpaperTemplates(lines, mode) {
+  function addWallpaperTheming(lines, mode) {
     const homeDir = Quickshell.env("HOME");
     // Noctalia colors JSON
     lines.push("[templates.noctalia]");
-    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Theming/noctalia.json"');
+    lines.push('input_path = "' + Quickshell.shellDir + '/Assets/Templates/noctalia.json"');
     lines.push('output_path = "' + Settings.configDir + 'colors.json"');
 
     // Terminal templates
     TemplateRegistry.terminals.forEach(terminal => {
                                          if (isTemplateEnabled(terminal.id)) {
                                            lines.push(`\n[templates.${terminal.id}]`);
-                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${terminal.templatePath}"`);
+                                           lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
                                            const postHook = terminal.postHook || `${TemplateRegistry.colorsApplyScript} ${terminal.id}`;
@@ -177,7 +173,7 @@ Singleton {
                                        });
   }
 
-  function addApplicationTemplates(lines, mode) {
+  function addApplicationTheming(lines, mode) {
     const homeDir = Quickshell.env("HOME");
     TemplateRegistry.applications.forEach(app => {
                                             if (app.id === "discord") {
@@ -187,7 +183,7 @@ Singleton {
                                                                       // Check if this specific client is detected
                                                                       if (isDiscordClientEnabled(client.name)) {
                                                                         lines.push(`\n[templates.discord_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
+                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
                                                                         const outputPath = client.path.replace("~", homeDir) + "/themes/noctalia.theme.css";
                                                                         lines.push(`output_path = "${outputPath}"`);
                                                                       }
@@ -200,7 +196,7 @@ Singleton {
                                                                       // Check if this specific client is detected
                                                                       if (isCodeClientEnabled(client.name)) {
                                                                         lines.push(`\n[templates.code_${client.name}]`);
-                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
+                                                                        lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
                                                                         const expandedPath = client.path.replace("~", homeDir);
                                                                         lines.push(`output_path = "${expandedPath}"`);
                                                                       }
@@ -216,7 +212,7 @@ Singleton {
                                                 const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
 
                                                 lines.push(`\n[templates.emacs]`);
-                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${app.input}"`);
+                                                lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${app.input}"`);
                                                 lines.push(`output_path = "${standardPath}"`);
                                                 // Move to doom if doom exists, then remove empty .emacs.d/themes and .emacs.d directories
                                                 // Check directories are empty before removing
@@ -230,7 +226,7 @@ Singleton {
                                                 app.outputs.forEach((output, idx) => {
                                                                       lines.push(`\n[templates.${app.id}_${idx}]`);
                                                                       const inputFile = output.input || app.input;
-                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Theming/${inputFile}"`);
+                                                                      lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${inputFile}"`);
                                                                       const outputPath = output.path.replace("~", homeDir);
                                                                       lines.push(`output_path = "${outputPath}"`);
                                                                       if (app.postProcess) {
@@ -263,7 +259,7 @@ Singleton {
     return false;
   }
 
-  function buildGenerationScript(content, wallpaper, mode, backend) {
+  function buildGenerationScript(content, wallpaper, mode) {
     const delimiter = "THEME_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
     const wpDelimiter = "WALLPAPER_PATH_EOF_" + Math.random().toString(36).substr(2, 9);
@@ -272,13 +268,13 @@ Singleton {
     let script = `cat > '${pathEsc}' << '${delimiter}'\n${content}\n${delimiter}\n`;
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
-    // Use colors.py (Python implementation)
-    const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
+    // Use template-processor.py (Python implementation)
+    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
     const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
     // We pass --type for compatibility but it is ignored by internal logic unless needed
     script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
 
-    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode, backend);
+    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
     return script + "\n";
   }
@@ -294,7 +290,7 @@ Singleton {
                                  if (!isDiscordClientEnabled(client.name))
                                  return;
 
-                                 const templatePath = `${Quickshell.shellDir}/Assets/Theming/${discordApp.input}`;
+                                 const templatePath = `${Quickshell.shellDir}/Assets/Templates/${discordApp.input}`;
                                  const outputPath = `${client.path}/themes/noctalia.theme.css`.replace("~", homeDir);
                                  const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
                                  const baseConfigDir = outputDir.replace("/themes", "");
@@ -324,7 +320,7 @@ Singleton {
                               if (!isCodeClientEnabled(client.name))
                               return;
 
-                              const templatePath = `${Quickshell.shellDir}/Assets/Theming/${codeApp.input}`;
+                              const templatePath = `${Quickshell.shellDir}/Assets/Templates/${codeApp.input}`;
                               const outputPath = client.path.replace("~", homeDir);
                               const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
 
@@ -369,7 +365,7 @@ Singleton {
       const doomConfigDir = doomDir.substring(0, doomDir.lastIndexOf('/'));
       const standardPath = app.outputs[1].path.replace("~", homeDir);
       const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
-      const templatePath = `${Quickshell.shellDir}/Assets/Theming/${app.input}`;
+      const templatePath = `${Quickshell.shellDir}/Assets/Templates/${app.input}`;
 
       let script = "";
       script += `if [ -d "${doomConfigDir}" ]; then\n`;
@@ -389,13 +385,13 @@ Singleton {
                  });
     } else {
       app.outputs.forEach((output, idx) => {
-                            const templatePath = `${Quickshell.shellDir}/Assets/Theming/${app.input}`;
+                            const templatePath = `${Quickshell.shellDir}/Assets/Templates/${app.input}`;
                             const outputPath = output.path.replace("~", homeDir);
                             const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
 
                             let script = "";
                             script += `mkdir -p ${outputDir}\n`;
-                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/Theming/${output.input}` : templatePath;
+                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/Templates/${output.input}` : templatePath;
                             script += `cp '${templateFile}' '${outputPath}'\n`;
                             script += replaceColorsInFile(outputPath, palette);
                             if (hasDualModePatterns && darkPalette && lightPalette) {
@@ -555,8 +551,8 @@ Singleton {
   // ================================================================================
   // USER TEMPLATES, advanced usage
   // ================================================================================
-  function buildUserTemplateCommand(input, mode, backend) {
-    if (!Settings.data.templates.enableUserTemplates)
+  function buildUserTemplateCommand(input, mode) {
+    if (!Settings.data.templates.enableUserTheming)
       return "";
 
     const userConfigPath = getUserConfigPath();
@@ -566,22 +562,16 @@ Singleton {
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
-    if (backend === "internal") {
-      const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
-      const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
-      script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
-    } else {
-      // Fallback to internal if backend param is weird
-      const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
-      script += `  python3 "${scriptPath}" ${inputQuoted} --material --config '${userConfigPath}' --mode ${mode}\n`;
-    }
+    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
+    const styleFlag = (Settings.data.colorSchemes.internalThemerMode === "normal") ? "--normal" : "--material";
+    script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;
   }
 
   function buildUserTemplateCommandForPredefined(schemeData, mode) {
-    if (!Settings.data.templates.enableUserTemplates)
+    if (!Settings.data.templates.enableUserTheming)
       return "";
 
     const userConfigPath = getUserConfigPath();
@@ -599,8 +589,8 @@ Singleton {
                              }, null, 2) + "\n";
     script += "EOF\n";
 
-    const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
-    // Call colors.py with JSON file as first arg (it will detect extension)
+    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
+    // Call template-processor.py with JSON file as first arg (it will detect extension)
     script += `  python3 "${scriptPath}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
