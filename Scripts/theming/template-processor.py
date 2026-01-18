@@ -1198,7 +1198,7 @@ class TemplateRenderer:
     # Map from Matugen color names to theme keys
     COLOR_MAP = {
         "primary": "mPrimary",
-        "on_primary": "mPrimary",                 # Bright accent for visible decorations
+        "on_primary": "mOnPrimary",               # Dark text for selection contrast
         "primary_container": "mPrimary",         # Mapped to Accent (Bright)
         "on_primary_container": "mPrimary",      # Light text on container -> use bright accent
         "secondary": "mSecondary",
