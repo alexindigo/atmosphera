@@ -237,7 +237,7 @@ Rectangle {
     flow: isVertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
     rows: isVertical ? -1 : 1
     columns: isVertical ? 1 : -1
-    rowSpacing: isVertical ? Style.marginL : 0
+    rowSpacing: isVertical ? (compactMode ? Style.marginL : Style.marginXL) : 0
     columnSpacing: isVertical ? 0 : (Style.marginM)
 
     // CPU Usage Component
@@ -261,7 +261,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -329,7 +329,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -397,7 +397,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -465,7 +465,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -533,7 +533,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -601,7 +601,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -668,7 +668,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -733,7 +733,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
@@ -799,7 +799,7 @@ Rectangle {
 
         Item {
           Layout.preferredWidth: iconSize
-          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.preferredHeight: (compactMode || isVertical) ? iconSize : Style.capsuleHeight
           Layout.alignment: Qt.AlignCenter
           Layout.row: (isVertical && !compactMode) ? 1 : 0
           Layout.column: 0
