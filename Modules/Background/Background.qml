@@ -123,7 +123,7 @@ Variants {
         smooth: true
         mipmap: false
         visible: false
-        cache: false
+        cache: true // Cached so Overview can share the same texture
         asynchronous: true
         onStatusChanged: {
           if (status === Image.Error) {
@@ -141,7 +141,7 @@ Variants {
         smooth: true
         mipmap: false
         visible: false
-        cache: false
+        cache: false // Not cached - temporary during transitions
         asynchronous: true
         onStatusChanged: {
           if (status === Image.Error) {
