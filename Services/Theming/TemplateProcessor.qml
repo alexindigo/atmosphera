@@ -599,7 +599,7 @@ Singleton {
                              }, null, 2) + "\n";
     script += "EOF\n";
 
-    const scriptPath = Quickshell.shellDir + "/Bin/colors.py";
+    const scriptPath = Quickshell.shellDir + "/Bin/theming/template-processor.py";
     // Call colors.py with JSON file as first arg (it will detect extension)
     script += `  python3 "${scriptPath}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
