@@ -383,5 +383,95 @@ SmartPanel {
         }
       }
     }
+
+    // PIN Authentication Overlay
+    Rectangle {
+      id: pinOverlay
+      anchors.fill: parent
+      color: Color.mSurface
+      visible: BluetoothService.pinRequired
+
+      // Trap all input
+      MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+        onClicked: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
+      }
+
+      ColumnLayout {
+        anchors.centerIn: parent
+        width: parent.width * 0.85
+        spacing: Style.marginL
+
+        NIcon {
+          icon: "lock"
+          pointSize: 48
+          color: Color.mPrimary
+          Layout.alignment: Qt.AlignHCenter
+        }
+
+        NText {
+          text: I18n.tr("common.authentication-required")
+          pointSize: Style.fontSizeXL
+          font.weight: Style.fontWeightBold
+          color: Color.mOnSurface
+          horizontalAlignment: Text.AlignHCenter
+        }
+
+        NText {
+          text: I18n.tr("bluetooth.panel.pin-instructions")
+          pointSize: Style.fontSizeM
+          color: Color.mOnSurfaceVariant
+          wrapMode: Text.WordWrap
+          horizontalAlignment: Text.AlignHCenter
+          Layout.fillWidth: true
+        }
+
+        NTextInput {
+          id: pinInput
+          Layout.fillWidth: true
+          placeholderText: "123456"
+          inputIconName: "key"
+          // Clear text when overlay appears
+          onVisibleChanged: {
+            if (visible) {
+              text = "";
+              inputItem.forceActiveFocus();
+            }
+          }
+          // Submit on Enter
+          inputItem.onAccepted: {
+            if (text.length > 0) {
+              BluetoothService.submitPin(text);
+              text = "";
+            }
+          }
+        }
+
+        RowLayout {
+          Layout.alignment: Qt.AlignHCenter
+          spacing: Style.marginM
+
+          NButton {
+            text: I18n.tr("common.cancel")
+            icon: "x"
+            onClicked: BluetoothService.cancelPairing()
+          }
+
+          NButton {
+            text: I18n.tr("common.confirm")
+            icon: "check"
+            backgroundColor: Color.mPrimary
+            textColor: Color.mOnPrimary
+            enabled: pinInput.text.length > 0
+            onClicked: {
+              BluetoothService.submitPin(pinInput.text);
+              pinInput.text = "";
+            }
+          }
+        }
+      }
+    }
   }
 }
