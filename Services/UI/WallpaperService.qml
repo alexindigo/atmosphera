@@ -41,6 +41,8 @@ Singleton {
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
   // Emitted when a wallpaper changes
+  signal wallpaperProcessingComplete(string screenName, string path, string cachedPath)
+  // Emitted when wallpaper processing (resize/cache) is complete. cachedPath is the resized version.
   signal wallpaperDirectoryChanged(string screenName, string directory)
   // Emitted when a monitor's directory changes
   signal wallpaperListChanged(string screenName, int count)

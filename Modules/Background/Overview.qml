@@ -17,6 +17,7 @@ Loader {
 
       required property ShellScreen modelData
       property string wallpaper: ""
+      property string preprocessedWallpaper: "" // Pre-resized wallpaper from Background.qml for blur optimization
       property string cachedWallpaper: ""
       property string pendingWallpaper: ""
       property bool isSolidColor: false
@@ -36,33 +37,23 @@ Loader {
         bgImage.source = "";
       }
 
-      // External state management
+      // External state management - wait for wallpaper processing to complete
+      // before starting blur, to avoid CPU contention on slower systems
       Connections {
         target: WallpaperService
-        function onWallpaperChanged(screenName, path) {
+        function onWallpaperProcessingComplete(screenName, path, cachedPath) {
           if (screenName === modelData.name) {
+            // Use pre-resized image for blur optimization (avoids re-reading/resizing 4K images)
+            preprocessedWallpaper = cachedPath || "";
             wallpaper = path;
           }
         }
       }
 
       function setWallpaperInitial() {
-        if (!WallpaperService || !WallpaperService.isInitialized) {
-          Qt.callLater(setWallpaperInitial);
-          return;
-        }
-
-        // Check if we're in solid color mode
-        if (Settings.data.wallpaper.useSolidColor) {
-          var solidPath = WallpaperService.createSolidColorPath(Settings.data.wallpaper.solidColor.toString());
-          wallpaper = solidPath;
-          return;
-        }
-
-        const wallpaperPath = WallpaperService.getWallpaper(modelData.name);
-        if (wallpaperPath && wallpaperPath !== wallpaper) {
-          wallpaper = wallpaperPath;
-        }
+        // Overview now receives the initial wallpaper via wallpaperProcessingComplete signal
+        // from Background.qml, ensuring blur only starts after main wallpaper is processed.
+        // No direct wallpaper assignment needed here.
       }
 
       function requestBlurredOverview() {
@@ -82,7 +73,10 @@ Loader {
           fadeOutAnim.start();
         }
 
-        ImageCacheService.getBlurredOverview(wallpaper, targetWidth, targetHeight, tint, isDarkMode, function (path, success) {
+        // Use pre-resized image if available (optimization: avoids re-reading/resizing large images)
+        const sourceImage = preprocessedWallpaper || wallpaper;
+
+        ImageCacheService.getBlurredOverview(sourceImage, targetWidth, targetHeight, tint, isDarkMode, function (path, success) {
           if (path) {
             useQtBlur = !success; // Use Qt blur fallback if ImageMagick failed
             pendingWallpaper = path;
