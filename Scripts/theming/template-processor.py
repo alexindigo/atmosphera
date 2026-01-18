@@ -1200,15 +1200,15 @@ class TemplateRenderer:
         "primary": "mPrimary",
         "on_primary": "mOnPrimary",
         "primary_container": "mPrimary",         # Mapped to Accent (Bright)
-        "on_primary_container": "mOnPrimary",    # Mapped to Text on Accent (Dark)
+        "on_primary_container": "mPrimary",      # Light text on container -> use bright accent
         "secondary": "mSecondary",
         "on_secondary": "mOnSecondary",
         "secondary_container": "mSecondary",     # Mapped to Accent
-        "on_secondary_container": "mOnSecondary",# Mapped to Text on Accent
+        "on_secondary_container": "mSecondary",  # Light text on container -> use bright accent
         "tertiary": "mTertiary",
         "on_tertiary": "mOnTertiary",
         "tertiary_container": "mTertiary",       # Mapped to Accent
-        "on_tertiary_container": "mOnTertiary",  # Mapped to Text on Accent
+        "on_tertiary_container": "mTertiary",    # Light text on container -> use bright accent
         "error": "mError",
         "on_error": "mOnError",
         "error_container": "mError",              # Fallback
