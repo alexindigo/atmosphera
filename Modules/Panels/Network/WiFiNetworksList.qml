@@ -550,7 +550,7 @@ NBox {
               }
               // --- Item 6: DNS ---
               // Grid: Row 1, Col 1 | List: Row 4
-            RowLayout {
+              RowLayout {
                 Layout.fillWidth: true
                 Layout.row: root.detailsGrid ? 1 : 4
                 Layout.column: root.detailsGrid ? 1 : 0
