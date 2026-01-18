@@ -357,6 +357,7 @@
     "contributors": "Közreműködők",
     "countdown": "Visszaszámlálás",
     "date": "Dátum",
+    "default": "Alapértelmezett",
     "delete": "Törlés",
     "devices": "Eszközök",
     "disabled": "Letiltva",
@@ -719,11 +720,7 @@
       "widgets-title": "Widgetek elhelyezése"
     },
     "color-scheme": {
-      "color-source-desc": "A Noctalia színeinek fő beállításai.",
-      "color-source-matugen-scheme-type-description": "Válassza ki a színséma-generálási módszert, amellyel a Matugen színeket fog létrehozni a háttérképéből.",
-      "color-source-matugen-scheme-type-label": "Matugen séma típusa",
-      "color-source-title": "Színforrás",
-      "color-source-use-wallpaper-colors-description": "Színsémák generálása a háttérképedből a Matugen használatával. Automatikusan kinyeri a színeket egy egységes téma létrehozásához.",
+      "color-source-use-wallpaper-colors-description": "Színsémák generálása a háttérképedből. Automatikusan kinyeri a színeket, hogy egy egységes témát hozzon létre.",
       "color-source-use-wallpaper-colors-label": "Háttérkép színeinek használata",
       "dark-mode-mode-description": "Engedélyezi az automatikus váltást a világos és sötét mód között.",
       "dark-mode-mode-label": "Sötét mód ütemezése",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Felhasználói sablonok engedélyezése",
       "templates-none-detected": "Nem észlelt semmit",
       "templates-write-path": "Írja: {filepath}",
-      "title": "Színséma"
+      "title": "Színséma",
+      "wallpaper-method-description": "Válaszd ki a kedvenc színkinyerési módszeredet.",
+      "wallpaper-method-label": "Színkivonási módszer"
     },
     "control-center": {
       "cards-desc": "Személyre szabhatja, hogy mely vezérlők jelenjenek meg a vezérlőközpontban és milyen sorrendben.",

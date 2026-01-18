@@ -357,6 +357,7 @@
     "contributors": "貢献者",
     "countdown": "カウントダウン",
     "date": "日付",
+    "default": "デフォルト",
     "delete": "削除",
     "devices": "デバイス",
     "disabled": "無効",
@@ -719,11 +720,7 @@
       "widgets-title": "ウィジェットの配置"
     },
     "color-scheme": {
-      "color-source-desc": "Noctalia のメインカラーを設定します。",
-      "color-source-matugen-scheme-type-description": "Matugen が壁紙から色を作成するために使用する配色生成方法を選択してください。",
-      "color-source-matugen-scheme-type-label": "Matugen のスキームタイプ",
-      "color-source-title": "配色のソース",
-      "color-source-use-wallpaper-colors-description": "Matugen を使用して壁紙から配色を生成します。色を自動抽出して統一感のあるテーマを作成します。",
+      "color-source-use-wallpaper-colors-description": "壁紙から配色を生成します。色を自動的に抽出し、まとまりのあるテーマを作成します。",
       "color-source-use-wallpaper-colors-label": "壁紙の色を使用",
       "dark-mode-mode-description": "ライトモードとダークモードの自動切り替えを有効にします。",
       "dark-mode-mode-label": "ダークモードのスケジュール",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "ユーザーテンプレートを有効化",
       "templates-none-detected": "検出されませんでした",
       "templates-write-path": "書き込み先: {filepath}",
-      "title": "配色"
+      "title": "配色",
+      "wallpaper-method-description": "お好みの色の抽出方法を選択してください。",
+      "wallpaper-method-label": "色の抽出方法"
     },
     "control-center": {
       "cards-desc": "コントロールセンターに表示する項目と、その順序をカスタマイズします。",

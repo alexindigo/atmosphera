@@ -357,6 +357,7 @@
     "contributors": "Учасники",
     "countdown": "Зворотний відлік",
     "date": "Дата",
+    "default": "За замовчуванням",
     "delete": "Видалити",
     "devices": "Пристрої",
     "disabled": "Вимкнено",
@@ -719,11 +720,7 @@
       "widgets-title": "Розміщення віджетів"
     },
     "color-scheme": {
-      "color-source-desc": "Основні налаштування для кольорів Noctalia.",
-      "color-source-matugen-scheme-type-description": "Виберіть метод генерації колірної схеми, який Matugen використовуватиме для створення кольорів з ваших шпалер.",
-      "color-source-matugen-scheme-type-label": "Тип схеми Matugen",
-      "color-source-title": "Джерело кольорів",
-      "color-source-use-wallpaper-colors-description": "Генерувати колірні схеми зі шпалер за допомогою Matugen. Автоматично витягує кольори для створення цілісної теми.",
+      "color-source-use-wallpaper-colors-description": "Створюйте колірні схеми зі своїх шпалер. Автоматично видобуває кольори для створення цілісної теми.",
       "color-source-use-wallpaper-colors-label": "Використовувати кольори шпалер",
       "dark-mode-mode-description": "Увімкнути автоматичне перемикання між світлим і темним режимом.",
       "dark-mode-mode-label": "Розклад темного режиму",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Увімкнути користувацькі шаблони",
       "templates-none-detected": "Не виявлено",
       "templates-write-path": "Записує: {filepath}",
-      "title": "Колірна схема"
+      "title": "Колірна схема",
+      "wallpaper-method-description": "Оберіть свій улюблений метод вилучення кольорів.",
+      "wallpaper-method-label": "Метод вилучення кольору"
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",

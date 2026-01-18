@@ -353,6 +353,7 @@
     "contributors": "貢獻者",
     "countdown": "倒數",
     "date": "日期",
+    "default": "預設",
     "delete": "刪除",
     "devices": "裝置",
     "disabled": "已停用",
@@ -707,11 +708,7 @@
       "widgets-title": "排列小工具"
     },
     "color-scheme": {
-      "color-source-desc": "Noctalia 界面顏色的主要設定",
-      "color-source-matugen-scheme-type-description": "選擇 Matugen 從你的桌布抽色時所使用的生成方式",
-      "color-source-matugen-scheme-type-label": "Matugen 配色模式",
-      "color-source-title": "顏色來源",
-      "color-source-use-wallpaper-colors-description": "使用 Matugen 從你的桌布產生主題配色, 自動抽色並建立一個適合的主題",
+      "color-source-use-wallpaper-colors-description": "從您的桌布產生配色方案。自動提取顏色以建立一個有凝聚力的主題。",
       "color-source-use-wallpaper-colors-label": "使用桌布配色",
       "dark-mode-mode-description": "啟用自動切換淺色及暗色模式",
       "dark-mode-mode-label": "深色模式",
@@ -750,7 +747,9 @@
       "templates-misc-user-templates-label": "啟用使用者模板",
       "templates-none-detected": "未偵測到",
       "templates-write-path": "寫入：{filepath}",
-      "title": "主題配色"
+      "title": "主題配色",
+      "wallpaper-method-description": "選擇您喜歡的顏色提取方法。",
+      "wallpaper-method-label": "色彩提取方法"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",

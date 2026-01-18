@@ -8,45 +8,45 @@ import qs.Commons
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Bin/colors-apply.sh'
+  readonly property string colorsApplyScript: Quickshell.shellDir + '/Scripts/theming/template-apply.sh'
 
-  // Terminal configurations (for wallpaper-based matugen templates)
+  // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [
     {
       "id": "foot",
       "name": "Foot",
-      "matugenPath": "Terminal/foot",
+      "templatePath": "Terminal/foot",
       "outputPath": "~/.config/foot/themes/noctalia"
     },
     {
       "id": "ghostty",
       "name": "Ghostty",
-      "matugenPath": "Terminal/ghostty",
+      "templatePath": "Terminal/ghostty",
       "outputPath": "~/.config/ghostty/themes/noctalia",
       "postHook": "bash -c 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'"
     },
     {
       "id": "kitty",
       "name": "Kitty",
-      "matugenPath": "Terminal/kitty.conf",
+      "templatePath": "Terminal/kitty.conf",
       "outputPath": "~/.config/kitty/themes/noctalia.conf"
     },
     {
       "id": "alacritty",
       "name": "Alacritty",
-      "matugenPath": "Terminal/alacritty.toml",
+      "templatePath": "Terminal/alacritty.toml",
       "outputPath": "~/.config/alacritty/themes/noctalia.toml"
     },
     {
       "id": "wezterm",
       "name": "Wezterm",
-      "matugenPath": "Terminal/wezterm.toml",
+      "templatePath": "Terminal/wezterm.toml",
       "outputPath": "~/.config/wezterm/colors/Noctalia.toml",
       "postHook": "touch ~/.config/wezterm/wezterm.lua"
     }
   ]
 
-  // Application configurations - consolidated from MatugenTemplates + AppThemeService
+  // Application configurations - consolidated from Theming + AppThemeService
   readonly property var applications: [
     {
       "id": "gtk",
@@ -430,14 +430,14 @@ Singleton {
     lines.push("");
     lines.push("# Remove this section and add your own templates");
     lines.push("#[templates.placeholder]");
-    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/MatugenTemplates/noctalia.json\"");
+    lines.push("#input_path = \"" + Quickshell.shellDir + "/Assets/Templates/noctalia.json\"");
     lines.push("#output_path = \"" + Settings.cacheDir + "placeholder.json\"");
     lines.push("");
 
     return lines.join("\n") + "\n";
   }
 
-  // Write user templates TOML file (moved from MatugenTemplates)
+  // Write user templates TOML file (moved from Theming)
   function writeUserTemplatesToml() {
     var userConfigPath = Settings.configDir + "user-templates.toml";
 

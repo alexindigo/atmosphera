@@ -357,6 +357,7 @@
     "contributors": "Участники",
     "countdown": "Обратный отсчёт",
     "date": "Дата",
+    "default": "По умолчанию",
     "delete": "Удалить",
     "devices": "Устройства",
     "disabled": "Отключено",
@@ -719,11 +720,7 @@
       "widgets-title": "Расположение виджетов"
     },
     "color-scheme": {
-      "color-source-desc": "Основные настройки цветов Noctalia.",
-      "color-source-matugen-scheme-type-description": "Выберите метод генерации цветовой схемы, который Matugen будет использовать для создания цветов из ваших обоев.",
-      "color-source-matugen-scheme-type-label": "Тип схемы Matugen",
-      "color-source-title": "Источник цвета",
-      "color-source-use-wallpaper-colors-description": "Генерировать цветовые схемы из ваших обоев с помощью Matugen. Автоматически извлекает цвета для создания целостной темы.",
+      "color-source-use-wallpaper-colors-description": "Создавайте цветовые схемы на основе ваших обоев. Автоматически извлекает цвета для создания целостной темы.",
       "color-source-use-wallpaper-colors-label": "Использовать цвета обоев",
       "dark-mode-mode-description": "Включает автоматическое переключение между светлым и темным режимами.",
       "dark-mode-mode-label": "Расписание темного режима",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Включить пользовательские шаблоны",
       "templates-none-detected": "Не обнаружено",
       "templates-write-path": "Записывает: {filepath}",
-      "title": "Цветовая схема"
+      "title": "Цветовая схема",
+      "wallpaper-method-description": "Выберите ваш любимый метод извлечения цвета.",
+      "wallpaper-method-label": "Метод извлечения цвета"
     },
     "control-center": {
       "cards-desc": "Настройте, какие элементы управления появляются в центре управления и в каком порядке.",

@@ -357,6 +357,7 @@
     "contributors": "Katkıda bulunanlar",
     "countdown": "Geri sayım",
     "date": "Tarih",
+    "default": "Varsayılan",
     "delete": "Sil",
     "devices": "Cihazlar",
     "disabled": "Devre dışı",
@@ -719,11 +720,7 @@
       "widgets-title": "Araç takımlarını konumlandırma"
     },
     "color-scheme": {
-      "color-source-desc": "Noctalia'nın renkleri için ana ayarlar.",
-      "color-source-matugen-scheme-type-description": "Matugen'in duvar kağıdınızdan renkler oluşturmak için kullanacağı renk şeması oluşturma yöntemini seçin.",
-      "color-source-matugen-scheme-type-label": "Matugen şema türü",
-      "color-source-title": "Renk kaynağı",
-      "color-source-use-wallpaper-colors-description": "Matugen kullanarak duvar kâğıdınızdan renk şemaları oluşturun. Bütünleşik bir tema oluşturmak için renkleri otomatik olarak çıkarır.",
+      "color-source-use-wallpaper-colors-description": "Duvar kağıdınızdan renk şemaları oluşturun. Uyumlu bir tema oluşturmak için renkleri otomatik olarak çıkarır.",
       "color-source-use-wallpaper-colors-label": "Duvar kâğıdı renklerini kullan",
       "dark-mode-mode-description": "Işık ve koyu mod arasında otomatik geçişi etkinleştirir.",
       "dark-mode-mode-label": "Koyu mod zamanlaması",
@@ -762,7 +759,9 @@
       "templates-misc-user-templates-label": "Kullanıcı şablonlarını etkinleştir",
       "templates-none-detected": "Hiçbiri algılanmadı",
       "templates-write-path": "Yazıyor: {filepath}",
-      "title": "Renk şeması"
+      "title": "Renk şeması",
+      "wallpaper-method-description": "Favori renk çıkarma yönteminizi seçin.",
+      "wallpaper-method-label": "Renk çıkarma yöntemi"
     },
     "control-center": {
       "cards-desc": "Kontrol merkezinde hangi kontrollerin ve hangi sırada görüneceğini özelleştirin.",
