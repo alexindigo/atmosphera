@@ -93,7 +93,7 @@ Item {
   readonly property bool barFloating: Settings.data.bar.floating
   readonly property real barMarginH: barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
   readonly property real barMarginV: barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0
-  readonly property real attachmentOverlap: 1 // Panel extends 1px into bar area to fix hairline gap with fractional scaling
+  readonly property real attachmentOverlap: 1 // Panel extends into bar area to fix hairline gap with fractional scaling
 
   // Check if bar should be visible on this screen
   readonly property bool barShouldShow: {
@@ -328,6 +328,14 @@ Item {
     panelBackground.targetWidth = panelWidth;
     panelBackground.targetHeight = panelHeight;
 
+    // Pre-compute bar edge positions with overlap (used multiple times below)
+    // For attached panels, we extend slightly into the bar area to prevent hairline gaps
+    var overlap = root.attachmentOverlap;
+    var leftBarEdgeWithOverlap = root.barMarginH + Style.barHeight - overlap;
+    var rightBarEdgeWithOverlap = root.width - root.barMarginH - Style.barHeight + overlap;
+    var topBarEdgeWithOverlap = root.barMarginV + Style.barHeight - overlap;
+    var bottomBarEdgeWithOverlap = root.height - root.barMarginV - Style.barHeight + overlap;
+
     // Calculate position
     var calculatedX;
     var calculatedY;
@@ -338,14 +346,10 @@ Item {
         // For vertical bars
         if (panelContent.allowAttach) {
           // Attached panels: align with bar edge (left or right side)
-          // Subtract attachmentOverlap to extend panel 1px into bar area
           if (root.barPosition === "left") {
-            var leftBarEdge = root.barMarginH + Style.barHeight - root.attachmentOverlap;
-            calculatedX = leftBarEdge;
+            calculatedX = leftBarEdgeWithOverlap;
           } else {
-            // right
-            var rightBarEdge = root.width - root.barMarginH - Style.barHeight + root.attachmentOverlap;
-            calculatedX = rightBarEdge - panelWidth;
+            calculatedX = rightBarEdgeWithOverlap - panelWidth;
           }
         } else {
           // Detached panels: center on button X position
@@ -398,9 +402,7 @@ Item {
         if (root.effectivePanelAnchorRight) {
           // Attached: snap to edge/bar
           if (root.barIsVertical && root.barPosition === "right") {
-            // Add attachmentOverlap to extend panel 1px into bar area
-            var rightBarEdge = root.width - root.barMarginH - Style.barHeight + root.attachmentOverlap;
-            calculatedX = rightBarEdge - panelWidth;
+            calculatedX = rightBarEdgeWithOverlap - panelWidth;
           } else {
             var panelOnSameEdgeAsBar = (root.barPosition === "top" && root.effectivePanelAnchorTop) || (root.barPosition === "bottom" && root.effectivePanelAnchorBottom);
             if (!root.barIsVertical && root.barFloating && panelOnSameEdgeAsBar) {
@@ -419,9 +421,7 @@ Item {
         if (root.effectivePanelAnchorLeft) {
           // Attached: snap to edge/bar
           if (root.barIsVertical && root.barPosition === "left") {
-            // Subtract attachmentOverlap to extend panel 1px into bar area
-            var leftBarEdge = root.barMarginH + Style.barHeight - root.attachmentOverlap;
-            calculatedX = leftBarEdge;
+            calculatedX = leftBarEdgeWithOverlap;
           } else {
             var panelOnSameEdgeAsBar = (root.barPosition === "top" && root.effectivePanelAnchorTop) || (root.barPosition === "bottom" && root.effectivePanelAnchorBottom);
             if (!root.barIsVertical && root.barFloating && panelOnSameEdgeAsBar) {
@@ -441,11 +441,9 @@ Item {
           if (panelContent.allowAttach) {
             // Attach to the bar edge (with overlap into bar area)
             if (root.barPosition === "left") {
-              var leftBarEdge = root.barMarginH + Style.barHeight - root.attachmentOverlap;
-              calculatedX = leftBarEdge;
+              calculatedX = leftBarEdgeWithOverlap;
             } else {
-              var rightBarEdge = root.width - root.barMarginH - Style.barHeight + root.attachmentOverlap;
-              calculatedX = rightBarEdge - panelWidth;
+              calculatedX = rightBarEdgeWithOverlap - panelWidth;
             }
           } else {
             // Not attached: center in available space
@@ -474,15 +472,8 @@ Item {
 
     // Edge snapping for X
     if (panelContent.allowAttach && !root.barFloating && root.width > 0 && panelWidth > 0) {
-      var leftEdgePos = root.barMarginH;
-      if (root.barPosition === "left") {
-        leftEdgePos = root.barMarginH + Style.barHeight;
-      }
-
-      var rightEdgePos = root.width - root.barMarginH - panelWidth;
-      if (root.barPosition === "right") {
-        rightEdgePos = root.width - root.barMarginH - Style.barHeight - panelWidth;
-      }
+      var leftEdgePos = root.barPosition === "left" ? leftBarEdgeWithOverlap : root.barMarginH;
+      var rightEdgePos = root.barPosition === "right" ? rightBarEdgeWithOverlap - panelWidth : root.width - root.barMarginH - panelWidth;
 
       // Only snap to left edge if panel is actually meant to be at left (or no explicit anchor)
       var shouldSnapToLeft = root.effectivePanelAnchorLeft || (!root.hasExplicitHorizontalAnchor && root.barPosition === "left");
@@ -499,20 +490,16 @@ Item {
     // ===== Y POSITIONING =====
     if (root.useButtonPosition && root.height > 0 && panelHeight > 0) {
       if (root.barPosition === "top") {
-        var topBarEdge = root.barMarginV + Style.barHeight;
         if (panelContent.allowAttach) {
-          // Subtract attachmentOverlap to extend panel 1px into bar area
-          calculatedY = topBarEdge - root.attachmentOverlap;
+          calculatedY = topBarEdgeWithOverlap;
         } else {
-          calculatedY = topBarEdge + Style.marginM;
+          calculatedY = root.barMarginV + Style.barHeight + Style.marginM;
         }
       } else if (root.barPosition === "bottom") {
-        var bottomBarEdge = root.height - root.barMarginV - Style.barHeight;
         if (panelContent.allowAttach) {
-          // Add attachmentOverlap to extend panel 1px into bar area
-          calculatedY = bottomBarEdge - panelHeight + root.attachmentOverlap;
+          calculatedY = bottomBarEdgeWithOverlap - panelHeight;
         } else {
-          calculatedY = bottomBarEdge - panelHeight - Style.marginM;
+          calculatedY = root.height - root.barMarginV - Style.barHeight - panelHeight - Style.marginM;
         }
       } else if (root.barIsVertical) {
         var panelY = root.buttonPosition.y + root.buttonHeight / 2 - panelHeight / 2;
@@ -529,28 +516,14 @@ Item {
       }
     } else {
       // Standard anchor positioning
-      var barOffset = 0;
-      if (!panelContent.allowAttach) {
-        if (root.barPosition === "top") {
-          barOffset = root.barMarginV + Style.barHeight + Style.marginM;
-        } else if (root.barPosition === "bottom") {
-          barOffset = root.barMarginV + Style.barHeight + Style.marginM;
-        }
-      } else {
-        if (root.effectivePanelAnchorTop && root.barPosition === "top") {
-          // Subtract attachmentOverlap to extend panel 1px into bar area
-          calculatedY = root.barMarginV + Style.barHeight - root.attachmentOverlap;
-        } else if (root.effectivePanelAnchorBottom && root.barPosition === "bottom") {
-          // Add attachmentOverlap to extend panel 1px into bar area
-          calculatedY = root.height - root.barMarginV - Style.barHeight - panelHeight + root.attachmentOverlap;
-        } else if (!root.hasExplicitVerticalAnchor) {
-          if (root.barPosition === "top") {
-            // Subtract attachmentOverlap to extend panel 1px into bar area
-            calculatedY = root.barMarginV + Style.barHeight - root.attachmentOverlap;
-          } else if (root.barPosition === "bottom") {
-            // Add attachmentOverlap to extend panel 1px into bar area
-            calculatedY = root.height - root.barMarginV - Style.barHeight - panelHeight + root.attachmentOverlap;
-          }
+      var barOffset = !panelContent.allowAttach && (root.barPosition === "top" || root.barPosition === "bottom") ? root.barMarginV + Style.barHeight + Style.marginM : 0;
+
+      if (panelContent.allowAttach && !root.barIsVertical) {
+        // Attached to horizontal bar: position with overlap
+        if ((root.effectivePanelAnchorTop && root.barPosition === "top") || (!root.hasExplicitVerticalAnchor && root.barPosition === "top")) {
+          calculatedY = topBarEdgeWithOverlap;
+        } else if ((root.effectivePanelAnchorBottom && root.barPosition === "bottom") || (!root.hasExplicitVerticalAnchor && root.barPosition === "bottom")) {
+          calculatedY = bottomBarEdgeWithOverlap - panelHeight;
         }
       }
 
@@ -571,26 +544,21 @@ Item {
             calculatedY = (root.height - panelHeight) / 2;
           }
         } else if (root.panelAnchorTop) {
-          // Use raw panelAnchorTop for positioning decision
           if (root.effectivePanelAnchorTop) {
-            // Attached: snap to edge/bar (with overlap into bar area)
-            calculatedY = root.barPosition === "top" ? root.barMarginV + Style.barHeight - root.attachmentOverlap : 0;
+            calculatedY = root.barPosition === "top" ? topBarEdgeWithOverlap : 0;
           } else {
-            // Not attached: position at top with margin
             var topBarOffset = (root.barPosition === "top") ? barOffset : 0;
             calculatedY = topBarOffset + Style.marginL;
           }
         } else if (root.panelAnchorBottom) {
-          // Use raw panelAnchorBottom for positioning decision
           if (root.effectivePanelAnchorBottom) {
-            // Attached: snap to edge/bar (with overlap into bar area)
-            calculatedY = root.barPosition === "bottom" ? root.height - root.barMarginV - Style.barHeight - panelHeight + root.attachmentOverlap : root.height - panelHeight;
+            calculatedY = root.barPosition === "bottom" ? bottomBarEdgeWithOverlap - panelHeight : root.height - panelHeight;
           } else {
-            // Not attached: position at bottom with margin
             var bottomBarOffset = (root.barPosition === "bottom") ? barOffset : 0;
             calculatedY = root.height - panelHeight - bottomBarOffset - Style.marginL;
           }
         } else {
+          // No explicit vertical anchor
           if (root.barIsVertical) {
             if (panelContent.allowAttach) {
               var cornerInset = root.barFloating ? Style.radiusL * 2 : 0;
@@ -602,22 +570,13 @@ Item {
               calculatedY = (root.height - panelHeight) / 2;
             }
           } else {
-            if (panelContent.allowAttach && !root.barIsVertical) {
-              if (root.barPosition === "top") {
-                // Subtract attachmentOverlap to extend panel 1px into bar area
-                calculatedY = root.barMarginV + Style.barHeight - root.attachmentOverlap;
-              } else if (root.barPosition === "bottom") {
-                // Add attachmentOverlap to extend panel 1px into bar area
-                calculatedY = root.height - root.barMarginV - Style.barHeight - panelHeight + root.attachmentOverlap;
-              }
+            // Horizontal bar, not attached
+            if (root.barPosition === "top") {
+              calculatedY = barOffset + Style.marginL;
+            } else if (root.barPosition === "bottom") {
+              calculatedY = Style.marginL;
             } else {
-              if (root.barPosition === "top") {
-                calculatedY = barOffset + Style.marginL;
-              } else if (root.barPosition === "bottom") {
-                calculatedY = Style.marginL;
-              } else {
-                calculatedY = Style.marginL;
-              }
+              calculatedY = Style.marginL;
             }
           }
         }
@@ -626,15 +585,8 @@ Item {
 
     // Edge snapping for Y
     if (panelContent.allowAttach && !root.barFloating && root.height > 0 && panelHeight > 0) {
-      var topEdgePos = root.barMarginV;
-      if (root.barPosition === "top") {
-        topEdgePos = root.barMarginV + Style.barHeight;
-      }
-
-      var bottomEdgePos = root.height - root.barMarginV - panelHeight;
-      if (root.barPosition === "bottom") {
-        bottomEdgePos = root.height - root.barMarginV - Style.barHeight - panelHeight;
-      }
+      var topEdgePos = root.barPosition === "top" ? topBarEdgeWithOverlap : root.barMarginV;
+      var bottomEdgePos = root.barPosition === "bottom" ? bottomBarEdgeWithOverlap - panelHeight : root.height - root.barMarginV - panelHeight;
 
       // Only snap to top edge if panel is actually meant to be at top (or no explicit anchor)
       var shouldSnapToTop = root.effectivePanelAnchorTop || (!root.hasExplicitVerticalAnchor && root.barPosition === "top");
