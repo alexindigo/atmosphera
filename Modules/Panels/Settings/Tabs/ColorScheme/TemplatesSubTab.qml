@@ -286,9 +286,9 @@ ColumnLayout {
   NCheckbox {
     label: I18n.tr("panels.color-scheme.templates-misc-user-templates-label")
     description: I18n.tr("panels.color-scheme.templates-misc-user-templates-description")
-    checked: Settings.data.templates.enableUserTemplates
+    checked: Settings.data.templates.enableUserTheming
     onToggled: checked => {
-                 Settings.data.templates.enableUserTemplates = checked;
+                 Settings.data.templates.enableUserTheming = checked;
                  if (checked) {
                    TemplateRegistry.writeUserTemplatesToml();
                  }

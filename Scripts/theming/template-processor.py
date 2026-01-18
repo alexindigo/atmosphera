@@ -1392,7 +1392,7 @@ Examples:
         help='Generate Material-style colors (default)'
     )
     style_group.add_argument(
-        '--normal',
+        '--default',
         action='store_true',
         help='Generate simpler accent-based palette'
     )
@@ -1516,7 +1516,7 @@ def main() -> int:
             return 1
     
     # Determine which themes to generate
-    use_material = not args.normal
+    use_material = not args.default
     
     # Handle --mode compatibility
     arg_dark = args.dark

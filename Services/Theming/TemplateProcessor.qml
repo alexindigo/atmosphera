@@ -14,6 +14,7 @@ Singleton {
   id: root
 
   readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
+  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/theming/template-processor.py"
 
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
@@ -269,10 +270,9 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use template-processor.py (Python implementation)
-    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--normal" : "--material";
+    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
     // We pass --type for compatibility but it is ignored by internal logic unless needed
-    script += `python3 "${scriptPath}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
+    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
 
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
@@ -562,9 +562,8 @@ Singleton {
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
-    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--normal" : "--material";
-    script += `  python3 "${scriptPath}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
+    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
+    script += `  python3 "${templateProcessorScript}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;
@@ -589,9 +588,10 @@ Singleton {
                              }, null, 2) + "\n";
     script += "EOF\n";
 
-    const scriptPath = Quickshell.shellDir + "/Scripts/theming/template-processor.py";
+    script += "EOF\n";
+
     // Call template-processor.py with JSON file as first arg (it will detect extension)
-    script += `  python3 "${scriptPath}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
+    script += `  python3 "${templateProcessorScript}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;
