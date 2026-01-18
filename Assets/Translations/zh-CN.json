@@ -1181,7 +1181,7 @@
       "hot-reload-label": "热重载（开发模式）",
       "hot-reloaded": "已重新加载插件：{name}",
       "install-error": "安装失败：{error}。",
-      "install-incompatible": "{插件}需要 Noctalia v{版本} 或更高版本",
+      "install-incompatible": "{plugin} 需要 Noctalia v{version} 或更高版本",
       "install-success": "成功安装 {plugin}。",
       "installed-description": "管理和配置所有本地安装的插件。",
       "installed-label": "已安装插件",

@@ -913,7 +913,7 @@
       "screen-corners-solid-black-description": "使用黑色而不是工具列背景色",
       "screen-corners-solid-black-label": "黑色邊角",
       "screen-corners-title": "畫面邊角",
-      "settings-copied": "設定已複製到剪貼簿"
+      "settings-copied": "已複製設定至剪貼簿"
     },
     "hooks": {
       "info-command-info-description": "• 指令將透過 shell (sh -lc) 執行<br>• 指令會在背景 (detached 狀態) 執行<br>• 測試按鈕會以當下填寫的內容執行",
@@ -1607,7 +1607,7 @@
       "search-placeholder": "選擇檔案及文件夾...",
       "select-file": "選擇檔案",
       "select-folder": "選擇文件夾",
-      "selected": "已選取：",
+      "selected": "已選取:",
       "title": "檔案選取器"
     },
     "file-picker-title": "選擇一個檔案",
