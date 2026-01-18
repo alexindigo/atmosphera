@@ -209,6 +209,8 @@
       "network-traffic-label": "Ağ trafiği",
       "storage-usage-description": "Disk alanı kullanım bilgilerini göster.",
       "storage-usage-label": "Depolama kullanımı",
+      "swap-usage-description": "Takas belleği kullanımını göster.",
+      "swap-usage-label": "Takas kullanımı",
       "use-monospace-font-description": "Tekdüze karakter genişliği için tek aralıklı yazı tipini kullanın.",
       "use-monospace-font-label": "Tek aralıklı yazı tipi"
     },

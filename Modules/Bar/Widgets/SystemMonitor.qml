@@ -43,6 +43,7 @@ Rectangle {
   readonly property bool showGpuTemp: (widgetSettings.showGpuTemp !== undefined) ? widgetSettings.showGpuTemp : widgetMetadata.showGpuTemp
   readonly property bool showMemoryUsage: (widgetSettings.showMemoryUsage !== undefined) ? widgetSettings.showMemoryUsage : widgetMetadata.showMemoryUsage
   readonly property bool showMemoryAsPercent: (widgetSettings.showMemoryAsPercent !== undefined) ? widgetSettings.showMemoryAsPercent : widgetMetadata.showMemoryAsPercent
+  readonly property bool showSwapUsage: (widgetSettings.showSwapUsage !== undefined) ? widgetSettings.showSwapUsage : widgetMetadata.showSwapUsage
   readonly property bool showNetworkStats: (widgetSettings.showNetworkStats !== undefined) ? widgetSettings.showNetworkStats : widgetMetadata.showNetworkStats
   readonly property bool showDiskUsage: (widgetSettings.showDiskUsage !== undefined) ? widgetSettings.showDiskUsage : widgetMetadata.showDiskUsage
   readonly property bool showLoadAverage: (widgetSettings.showLoadAverage !== undefined) ? widgetSettings.showLoadAverage : widgetMetadata.showLoadAverage
@@ -79,6 +80,11 @@ Rectangle {
     // Memory
     lines.push(`${I18n.tr("common.memory")}: ${Math.round(SystemStatService.memPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.memGb)})`);
 
+    // Swap (if available)
+    if (SystemStatService.swapTotalGb > 0) {
+      lines.push(`${I18n.tr("bar.system-monitor.swap-usage-label")}: ${Math.round(SystemStatService.swapPercent)}% (${SystemStatService.formatMemoryGb(SystemStatService.swapGb)})`);
+    }
+
     // Network
     lines.push(`${I18n.tr("system-monitor.download-speed")}: ${SystemStatService.formatSpeed(SystemStatService.rxSpeed)}`);
     lines.push(`${I18n.tr("system-monitor.upload-speed")}: ${SystemStatService.formatSpeed(SystemStatService.txSpeed)}`);
@@ -105,6 +111,8 @@ Rectangle {
   readonly property bool gpuCritical: showGpuTemp && SystemStatService.gpuCritical
   readonly property bool memWarning: showMemoryUsage && SystemStatService.memWarning
   readonly property bool memCritical: showMemoryUsage && SystemStatService.memCritical
+  readonly property bool swapWarning: showSwapUsage && SystemStatService.swapWarning
+  readonly property bool swapCritical: showSwapUsage && SystemStatService.swapCritical
   readonly property bool diskWarning: showDiskUsage && SystemStatService.isDiskWarning(diskPath)
   readonly property bool diskCritical: showDiskUsage && SystemStatService.isDiskCritical(diskPath)
 
@@ -567,6 +575,74 @@ Rectangle {
           onLoaded: {
             item.ratio = Qt.binding(() => SystemStatService.memPercent / 100);
             item.statColor = Qt.binding(() => SystemStatService.memColor);
+          }
+        }
+      }
+    }
+
+    // Swap Usage Component
+    Item {
+      id: swapContainer
+      implicitWidth: swapContent.implicitWidth
+      implicitHeight: swapContent.implicitHeight
+      Layout.preferredWidth: isVertical ? root.width : implicitWidth
+      Layout.preferredHeight: compactMode ? implicitHeight : Style.capsuleHeight
+      Layout.alignment: isVertical ? Qt.AlignHCenter : Qt.AlignVCenter
+      visible: showSwapUsage && SystemStatService.swapTotalGb > 0
+
+      GridLayout {
+        id: swapContent
+        anchors.centerIn: parent
+        flow: (isVertical && !compactMode) ? GridLayout.TopToBottom : GridLayout.LeftToRight
+        rows: (isVertical && !compactMode) ? 2 : 1
+        columns: (isVertical && !compactMode) ? 1 : 2
+        rowSpacing: Style.marginXXS
+        columnSpacing: compactMode ? 3 : Style.marginXS
+
+        Item {
+          Layout.preferredWidth: iconSize
+          Layout.preferredHeight: compactMode ? iconSize : Style.capsuleHeight
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: (isVertical && !compactMode) ? 1 : 0
+          Layout.column: 0
+
+          NIcon {
+            icon: "exchange"
+            pointSize: iconSize
+            applyUiScale: false
+            x: Style.pixelAlignCenter(parent.width, width)
+            y: Style.pixelAlignCenter(parent.height, contentHeight)
+            color: (swapWarning || swapCritical) ? SystemStatService.swapColor : Color.mOnSurface
+          }
+        }
+
+        // Text mode
+        NText {
+          visible: !compactMode
+          text: `${Math.round(SystemStatService.swapPercent)}%`
+          family: fontFamily
+          pointSize: Style.barFontSize
+          applyUiScale: false
+          Layout.alignment: Qt.AlignCenter
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+          color: (swapWarning || swapCritical) ? SystemStatService.swapColor : textColor
+          Layout.row: isVertical ? 0 : 0
+          Layout.column: isVertical ? 0 : 1
+        }
+
+        // Compact mode
+        Loader {
+          active: compactMode
+          visible: compactMode
+          sourceComponent: miniGaugeComponent
+          Layout.alignment: Qt.AlignCenter
+          Layout.row: 0
+          Layout.column: 1
+
+          onLoaded: {
+            item.ratio = Qt.binding(() => SystemStatService.swapPercent / 100);
+            item.statColor = Qt.binding(() => SystemStatService.swapColor);
           }
         }
       }

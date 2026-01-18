@@ -209,6 +209,8 @@
       "network-traffic-label": "Сетевой трафик",
       "storage-usage-description": "Показывать информацию об использовании дискового пространства.",
       "storage-usage-label": "Использование хранилища",
+      "swap-usage-description": "Показать использование swap-памяти.",
+      "swap-usage-label": "Использование swap",
       "use-monospace-font-description": "Используйте моноширинный шрифт для единообразной ширины символов.",
       "use-monospace-font-label": "Моноширинный шрифт"
     },

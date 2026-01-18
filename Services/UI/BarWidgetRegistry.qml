@@ -204,6 +204,7 @@ Singleton {
                                     "showLoadAverage": false,
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
+                                    "showSwapUsage": false,
                                     "showNetworkStats": false,
                                     "showDiskUsage": false,
                                     "diskPath": "/"

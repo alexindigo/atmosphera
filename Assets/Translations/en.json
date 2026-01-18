@@ -209,6 +209,8 @@
       "network-traffic-label": "Network traffic",
       "storage-usage-description": "Show disk space usage information.",
       "storage-usage-label": "Storage usage",
+      "swap-usage-description": "Show swap memory usage.",
+      "swap-usage-label": "Swap usage",
       "use-monospace-font-description": "Use monospace font for consistent character width.",
       "use-monospace-font-label": "Monospace font"
     },
@@ -679,10 +681,10 @@
       "volumes-output-volume-description": "System-wide volume level.",
       "volumes-step-size-description": "Adjust the step size for volume changes (scroll wheel, keyboard shortcuts).",
       "volumes-step-size-label": "Volume step size",
-      "volumes-volume-overdrive-description": "Allow raising volume above 100%. May not be supported by all hardware.",
-      "volumes-volume-overdrive-label": "Allow volume overdrive",
+      "volumes-volume-feedback-description": "Play a feedback sound when adjusting volume",
       "volumes-volume-feedback-label": "Play volume feedback sound",
-      "volumes-volume-feedback-description": "Play a feedback sound when adjusting volume"
+      "volumes-volume-overdrive-description": "Allow raising volume above 100%. May not be supported by all hardware.",
+      "volumes-volume-overdrive-label": "Allow volume overdrive"
     },
     "bar": {
       "appearance-background-opacity-description": "Set the background opacity specifically for the bar.",

@@ -137,8 +137,8 @@ ColumnLayout {
     }
 
     NSpinBox {
-      from: 250
-      to: 10000
+      from: 1000
+      to: 60000
       stepSize: 250
       value: Settings.data.systemMonitor.diskPollingInterval
       defaultValue: Settings.getDefaultValue("systemMonitor.diskPollingInterval")

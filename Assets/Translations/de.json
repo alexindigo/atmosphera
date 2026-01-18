@@ -209,6 +209,8 @@
       "network-traffic-label": "Netzwerkverkehr",
       "storage-usage-description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
       "storage-usage-label": "Speichernutzung",
+      "swap-usage-description": "Swap-Speichernutzung anzeigen.",
+      "swap-usage-label": "Swap-Nutzung",
       "use-monospace-font-description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
       "use-monospace-font-label": "Schriftart mit fester Breite"
     },

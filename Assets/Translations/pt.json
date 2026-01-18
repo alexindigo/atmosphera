@@ -209,6 +209,8 @@
       "network-traffic-label": "Tráfego de rede",
       "storage-usage-description": "Mostrar as informações de uso do espaço em disco.",
       "storage-usage-label": "Uso de armazenamento",
+      "swap-usage-description": "Mostrar o uso da memória swap.",
+      "swap-usage-label": "Utilização de swap",
       "use-monospace-font-description": "Use fonte monoespaçada para largura de caractere consistente.",
       "use-monospace-font-label": "Fonte monoespaçada"
     },

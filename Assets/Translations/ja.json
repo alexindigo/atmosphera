@@ -209,6 +209,8 @@
       "network-traffic-label": "ネットワークトラフィック",
       "storage-usage-description": "ストレージの使用状況を表示します。",
       "storage-usage-label": "ストレージ使用量",
+      "swap-usage-description": "スワップメモリの使用状況を表示します。",
+      "swap-usage-label": "スワップ使用量",
       "use-monospace-font-description": "タイプライター体で翻訳します。",
       "use-monospace-font-label": "等幅フォント"
     },

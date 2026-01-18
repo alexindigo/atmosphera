@@ -209,6 +209,8 @@
       "network-traffic-label": "Trafic réseau",
       "storage-usage-description": "Afficher les informations d'utilisation de l'espace disque.",
       "storage-usage-label": "Utilisation du stockage",
+      "swap-usage-description": "Afficher l'utilisation de la mémoire swap.",
+      "swap-usage-label": "Utilisation du swap",
       "use-monospace-font-description": "Utilisez une police de caractères à chasse fixe pour une largeur de caractère uniforme.",
       "use-monospace-font-label": "Police à chasse fixe"
     },

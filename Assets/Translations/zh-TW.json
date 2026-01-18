@@ -206,6 +206,8 @@
       "network-traffic-label": "網路流量",
       "storage-usage-description": "顯示磁碟空間的使用量",
       "storage-usage-label": "磁碟使用量",
+      "swap-usage-description": "顯示交換記憶體使用量。",
+      "swap-usage-label": "交換空間使用量",
       "use-monospace-font-description": "使用等寬字型可以達成一致的字元寬度",
       "use-monospace-font-label": "等寬字型"
     },

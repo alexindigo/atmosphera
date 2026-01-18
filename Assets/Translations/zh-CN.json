@@ -209,6 +209,8 @@
       "network-traffic-label": "网络流量",
       "storage-usage-description": "显示磁盘空间使用信息。",
       "storage-usage-label": "存储使用率",
+      "swap-usage-description": "显示交换内存使用情况。",
+      "swap-usage-label": "交换内存使用量",
       "use-monospace-font-description": "请使用等宽字体以保持字符宽度一致。",
       "use-monospace-font-label": "等宽字体"
     },
@@ -679,10 +681,10 @@
       "volumes-output-volume-description": "系统全局音量级别。",
       "volumes-step-size-description": "调整音量变化的步长（滚轮、键盘快捷键）。",
       "volumes-step-size-label": "音量步长",
-      "volumes-volume-overdrive-description": "允许将音量提高到100%以上。可能不被所有硬件支持。",
-      "volumes-volume-overdrive-label": "允许音量过载",
+      "volumes-volume-feedback-description": "调整音量时播放反馈音效",
       "volumes-volume-feedback-label": "播放音量反馈",
-      "volumes-volume-feedback-description": "调整音量时播放反馈音效"
+      "volumes-volume-overdrive-description": "允许将音量提高到100%以上。可能不被所有硬件支持。",
+      "volumes-volume-overdrive-label": "允许音量过载"
     },
     "bar": {
       "appearance-background-opacity-description": "为状态栏设置背景不透明度。",

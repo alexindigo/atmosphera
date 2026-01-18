@@ -209,6 +209,8 @@
       "network-traffic-label": "Hálózati forgalom",
       "storage-usage-description": "Lemezterület-használati információk megjelenítése.",
       "storage-usage-label": "Tárhelyhasználat",
+      "swap-usage-description": "Swap memória használatának megjelenítése.",
+      "swap-usage-label": "Swap használat",
       "use-monospace-font-description": "Használj monospace betűtípust az egységes karakter-szélességhez.",
       "use-monospace-font-label": "Monospace betűtípus"
     },

@@ -209,6 +209,8 @@
       "network-traffic-label": "Ruch sieciowy",
       "storage-usage-description": "Pokaż informacje o użyciu miejsca na dysku.",
       "storage-usage-label": "Użycie dysku",
+      "swap-usage-description": "Pokaż użycie pamięci wymiany.",
+      "swap-usage-label": "Użycie pamięci wymiany",
       "use-monospace-font-description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
       "use-monospace-font-label": "Czcionka o stałej szerokości znaków"
     },

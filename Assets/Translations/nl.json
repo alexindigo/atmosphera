@@ -209,6 +209,8 @@
       "network-traffic-label": "Netwerkverkeer",
       "storage-usage-description": "Toon informatie over schijfruimtegebruik.",
       "storage-usage-label": "Opslaggebruik",
+      "swap-usage-description": "Toon swap geheugengebruik.",
+      "swap-usage-label": "Swapgebruik",
       "use-monospace-font-description": "Gebruik een monospace lettertype voor een consistente tekenbreedte.",
       "use-monospace-font-label": "Lettertype met vaste breedte"
     },

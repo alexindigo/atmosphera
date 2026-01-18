@@ -209,6 +209,8 @@
       "network-traffic-label": "Trafîka torê",
       "storage-usage-description": "Agahiyên bikaranîna cîhê dîskê nîşan bide.",
       "storage-usage-label": "Bikaranîna hilanînê",
+      "swap-usage-description": "Bikaranîna bîra swapê nîşan bide.",
+      "swap-usage-label": "Bikaranîna Swapê",
       "use-monospace-font-description": "Bi kar tîne fonta monospace ji bo firehiya karakterê ya domdar.",
       "use-monospace-font-label": "Tîpa yek-firehî"
     },
