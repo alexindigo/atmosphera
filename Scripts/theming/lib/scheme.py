@@ -91,7 +91,7 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
     on_surface = _hex_to_color(scheme_data["mOnSurface"])
     surface_variant = _hex_to_color(scheme_data["mSurfaceVariant"])
     on_surface_variant = _hex_to_color(scheme_data["mOnSurfaceVariant"])
-    outline = _hex_to_color(scheme_data["mOutline"])
+    outline_raw = _hex_to_color(scheme_data["mOutline"])
     shadow = _hex_to_color(scheme_data.get("mShadow", scheme_data["mSurface"]))
 
     # Generate container colors
@@ -221,6 +221,9 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
         # Dim is darker than highest, bright is lighter than surface
         surface_dim = Color.from_hsl(sv_h, sv_s, max(sv_l - 0.12, 0.50))
         surface_bright = Color.from_hsl(surface_h, surface_s, min(surface_l + 0.03, 0.98))
+
+    # Ensure outline has sufficient contrast against surface (3:1 minimum for UI)
+    outline = ensure_contrast(outline_raw, surface, 3.0)
 
     # Generate outline variant
     outline_h, outline_s, outline_l = outline.to_hsl()
