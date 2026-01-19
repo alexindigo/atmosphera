@@ -142,12 +142,14 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     on_tertiary = ensure_contrast(dark_fg, tertiary_adjusted, 7.0)
     on_error = ensure_contrast(dark_fg, error, 7.0)
 
-    # "On" colors for containers - light text on dark containers
-    light_fg = Color.from_hsl(primary_h, 0.15, 0.90)
-    on_primary_container = ensure_contrast(light_fg, primary_container, 4.5)
-    on_secondary_container = ensure_contrast(Color.from_hsl(secondary.to_hsl()[0], 0.15, 0.90), secondary_container, 4.5)
-    on_tertiary_container = ensure_contrast(Color.from_hsl(tertiary.to_hsl()[0], 0.15, 0.90), tertiary_container, 4.5)
-    on_error_container = ensure_contrast(Color.from_hsl(0, 0.15, 0.90), error_container, 4.5)
+    # "On" colors for containers - light text on dark containers, tinted with respective color
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.90), primary_container, 4.5)
+    sec_h, sec_s, _ = secondary.to_hsl()
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.90), secondary_container, 4.5)
+    ter_h, ter_s, _ = tertiary.to_hsl()
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.90), tertiary_container, 4.5)
+    err_h, err_s, _ = error.to_hsl()
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.90), error_container, 4.5)
 
     # Shadow and scrim
     shadow = surface
@@ -310,13 +312,15 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     on_tertiary = ensure_contrast(light_fg, tertiary_adjusted, 7.0)
     on_error = ensure_contrast(light_fg, error, 7.0)
 
-    # "On" colors for containers - dark text on light containers
+    # "On" colors for containers - dark text on light containers, tinted with respective color
     primary_h, primary_s, _ = primary.to_hsl()
-    dark_fg = Color.from_hsl(primary_h, 0.15, 0.15)
-    on_primary_container = ensure_contrast(dark_fg, primary_container, 4.5)
-    on_secondary_container = ensure_contrast(Color.from_hsl(secondary.to_hsl()[0], 0.15, 0.15), secondary_container, 4.5)
-    on_tertiary_container = ensure_contrast(Color.from_hsl(tertiary.to_hsl()[0], 0.15, 0.15), tertiary_container, 4.5)
-    on_error_container = ensure_contrast(Color.from_hsl(0, 0.15, 0.15), error_container, 4.5)
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.15), primary_container, 4.5)
+    sec_h, sec_s, _ = secondary.to_hsl()
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.15), secondary_container, 4.5)
+    ter_h, ter_s, _ = tertiary.to_hsl()
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.15), tertiary_container, 4.5)
+    err_h, err_s, _ = error.to_hsl()
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.15), error_container, 4.5)
 
     # Fixed colors - high-chroma accents consistent across light/dark
     # In light mode: darker versions of accent colors
