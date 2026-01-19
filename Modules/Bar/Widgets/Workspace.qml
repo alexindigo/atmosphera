@@ -34,7 +34,7 @@ Item {
     return {};
   }
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property real baseDimensionRatio: 0.65 * (widgetSettings.labelMode === "none" ? 0.75 : 1)
 
@@ -899,7 +899,7 @@ Item {
                           }
               onEntered: {
                 groupedTaskbarItem.itemHovered = true;
-                TooltipService.show(groupedTaskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection());
+                TooltipService.show(groupedTaskbarItem, model.title || model.appId || "Unknown app.", BarService.getTooltipDirection(root.screen?.name));
               }
               onExited: {
                 groupedTaskbarItem.itemHovered = false;

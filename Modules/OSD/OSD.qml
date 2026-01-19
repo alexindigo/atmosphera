@@ -420,12 +420,14 @@ Variants {
       anchors.left: isLeft
       anchors.right: isRight
 
+      readonly property string screenBarPosition: Settings.getBarPositionForScreen(root.modelData?.name)
+
       function calculateMargin(isAnchored, position) {
         if (!isAnchored)
           return 0;
 
         let base = Style.marginM;
-        if (Settings.data.bar.position === position) {
+        if (screenBarPosition === position) {
           const isVertical = position === "top" || position === "bottom";
           const floatExtra = Math.ceil(Settings.data.bar.floating ? (isVertical ? Settings.data.bar.marginVertical : Settings.data.bar.marginHorizontal) : 0);
           return Style.barHeight + base + floatExtra;

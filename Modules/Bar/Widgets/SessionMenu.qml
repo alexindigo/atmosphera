@@ -52,7 +52,7 @@ NIconButton {
   customRadius: Style.radiusL
   icon: "power"
   tooltipText: I18n.tr("tooltips.session-menu")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
   colorFg: root.iconColor
   colorBorder: "transparent"

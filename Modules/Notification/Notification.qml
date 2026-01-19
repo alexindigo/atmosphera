@@ -76,7 +76,7 @@ Variants {
       readonly property bool isRight: location.endsWith("_right")
       readonly property bool isCentered: location === "top" || location === "bottom"
 
-      readonly property string barPos: Settings.data.bar.position
+      readonly property string barPos: Settings.getBarPositionForScreen(notifWindow.screen?.name)
       readonly property bool isFloating: Settings.data.bar.floating
 
       readonly property int notifWidth: Math.round(440 * Style.uiScaleRatio)

@@ -32,7 +32,7 @@ Rectangle {
     return {};
   }
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
   readonly property bool compactMode: widgetSettings.compactMode !== undefined ? widgetSettings.compactMode : widgetMetadata.compactMode
@@ -170,7 +170,7 @@ Rectangle {
                  }
                }
     onEntered: {
-      TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection());
+      TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection(root.screen?.name));
       tooltipRefreshTimer.start();
     }
     onExited: {

@@ -83,7 +83,7 @@ Loader {
 
       // Bar detection and positioning properties
       readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
-      readonly property bool barAtSameEdge: hasBar && Settings.data.bar.position === dockPosition
+      readonly property bool barAtSameEdge: hasBar && Settings.getBarPositionForScreen(modelData?.name) === dockPosition
       readonly property int barHeight: Style.barHeight
 
       // Shared state between windows
@@ -401,10 +401,11 @@ Loader {
             id: dockContainerWrapper
 
             // Helper properties for orthogonal bar detection
-            readonly property bool barOnLeft: hasBar && Settings.data.bar.position === "left" && !Settings.data.bar.floating
-            readonly property bool barOnRight: hasBar && Settings.data.bar.position === "right" && !Settings.data.bar.floating
-            readonly property bool barOnTop: hasBar && Settings.data.bar.position === "top" && !Settings.data.bar.floating
-            readonly property bool barOnBottom: hasBar && Settings.data.bar.position === "bottom" && !Settings.data.bar.floating
+            readonly property string screenBarPosition: Settings.getBarPositionForScreen(modelData?.name)
+            readonly property bool barOnLeft: hasBar && screenBarPosition === "left" && !Settings.data.bar.floating
+            readonly property bool barOnRight: hasBar && screenBarPosition === "right" && !Settings.data.bar.floating
+            readonly property bool barOnTop: hasBar && screenBarPosition === "top" && !Settings.data.bar.floating
+            readonly property bool barOnBottom: hasBar && screenBarPosition === "bottom" && !Settings.data.bar.floating
 
             // Calculate padding needed to shift center to match exclusive mode
             readonly property int extraTop: (isVertical && !exclusive && barOnTop) ? Style.barHeight : 0

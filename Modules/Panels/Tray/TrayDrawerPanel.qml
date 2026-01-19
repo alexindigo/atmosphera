@@ -242,7 +242,7 @@ SmartPanel {
                              if (modelData.hasMenu && modelData.menu && panelContent.popupMenuWindow && panelContent.trayMenu && panelContent.trayMenu.item) {
                                panelContent.popupMenuWindow.open();
 
-                               const barPosition = Settings.data.bar.position;
+                               const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
                                let menuX, menuY;
 
                                if (barPosition === "left") {
@@ -275,7 +275,7 @@ SmartPanel {
                 if (panelContent.popupMenuWindow) {
                   panelContent.popupMenuWindow.close();
                 }
-                TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+                TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
               }
               onExited: TooltipService.hide()
             }

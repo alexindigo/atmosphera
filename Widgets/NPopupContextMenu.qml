@@ -21,7 +21,7 @@ PopupWindow {
   property real minWidth: 120
   property real calculatedWidth: 180
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
 
   signal triggered(string action, var item)
 

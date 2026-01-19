@@ -19,7 +19,8 @@ Item {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property bool isVerticalBar: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right")
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -190,7 +191,7 @@ Item {
       fillColor: root.fillColor
       showMinimumSignal: true
       vertical: root.isVerticalBar
-      barPosition: Settings.data.bar.position
+      barPosition: root.barPosition
     }
   }
 

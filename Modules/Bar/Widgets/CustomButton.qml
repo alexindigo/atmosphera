@@ -31,7 +31,8 @@ Item {
     return {};
   }
 
-  readonly property bool isVerticalBar: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   readonly property string customIcon: widgetSettings.icon || widgetMetadata.icon
   readonly property string leftClickExec: widgetSettings.leftClickExec || widgetMetadata.leftClickExec

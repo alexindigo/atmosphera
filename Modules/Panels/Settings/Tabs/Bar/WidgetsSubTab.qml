@@ -25,6 +25,7 @@ ColumnLayout {
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
   }
+
   // Left Section
   NSectionEditor {
     sectionName: "Left"

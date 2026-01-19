@@ -256,8 +256,9 @@ Singleton {
     return false;
   }
 
-  function getTooltipDirection() {
-    switch (Settings.data.bar.position) {
+  function getTooltipDirection(screenName) {
+    const position = Settings.getBarPositionForScreen(screenName);
+    switch (position) {
     case "right":
       return "left";
     case "left":

@@ -320,28 +320,29 @@ PanelWindow {
       // Screen reference
       property ShellScreen screen: root.screen
 
-      // Bar background positioning properties
-      readonly property string barPosition: Settings.data.bar.position || "top"
+      // Bar background positioning properties (per-screen)
+      readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
       readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
       readonly property bool barFloating: Settings.data.bar.floating || false
       readonly property real barMarginH: barFloating ? Math.floor(Settings.data.bar.marginHorizontal) : 0
       readonly property real barMarginV: barFloating ? Math.floor(Settings.data.bar.marginVertical) : 0
+      readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
       // Expose bar dimensions directly on this Item for BarBackground
       // Use screen dimensions directly
       x: {
         if (barPosition === "right")
-          return screen.width - Style.barHeight - barMarginH;
+          return screen.width - barHeight - barMarginH;
         return barMarginH;
       }
       y: {
         if (barPosition === "bottom")
-          return screen.height - Style.barHeight - barMarginV;
+          return screen.height - barHeight - barMarginV;
         return barMarginV;
       }
       width: {
         if (barIsVertical) {
-          return Style.barHeight;
+          return barHeight;
         }
         return screen.width - barMarginH * 2;
       }
@@ -349,7 +350,7 @@ PanelWindow {
         if (barIsVertical) {
           return screen.height - barMarginV * 2;
         }
-        return Style.barHeight;
+        return barHeight;
       }
 
       // Corner states (same as Bar.qml)
