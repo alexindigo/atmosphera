@@ -7,19 +7,28 @@ A CLI tool that extracts dominant colors from wallpaper images and generates:
 - Simpler accent based color theme using HSL (Hue, Saturation, Lightness) color space.
 
 Usage:
-    python3 template-processor.py IMAGE_PATH [OPTIONS]
+    python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --material    Generate Material-style colors (default)
-    --normal      Generate simpler accent-based palette
-    --dark        Generate dark theme only
-    --light       Generate light theme only
-    --both        Generate both themes (default)
-    --output FILE Write JSON to file (stdout if omitted)
+    --material       Generate Material-style colors (default)
+    --default        Generate simpler accent-based palette
+    --dark           Generate dark theme only
+    --light          Generate light theme only
+    --both           Generate both themes (default)
+    -o, --output     Write JSON output to file (stdout if omitted)
+    -r, --render     Render a template (input_path:output_path)
+    -c, --config     Path to Matugen TOML configuration file
+    --mode           Override theme mode: dark or light (Matugen compat)
+    -t, --type       Scheme type (ignored, Matugen compat)
+
+Input:
+    Can be an image file (PNG/JPG) or a JSON color palette file.
 
 Example:
     python3 template-processor.py ~/wallpaper.png --material --both
     python3 template-processor.py ~/wallpaper.jpg --dark -o theme.json
+    python3 template-processor.py ~/wallpaper.png -r template.txt:output.txt
+    python3 template-processor.py ~/wallpaper.png -c ~/.config/matugen/config.toml
 
 Author: Noctalia Team
 License: MIT
@@ -46,14 +55,15 @@ def parse_args() -> argparse.Namespace:
 Examples:
   python3 template-processor.py wallpaper.png --material --both
   python3 template-processor.py wallpaper.jpg --dark -o theme.json
-  python3 template-processor.py ~/Pictures/bg.png --normal --light
+  python3 template-processor.py ~/Pictures/bg.png --default --light
+  python3 template-processor.py wallpaper.png -r template.txt:output.txt
         """
     )
 
     parser.add_argument(
         'image',
         type=Path,
-        help='Path to wallpaper image (PNG/JPG)'
+        help='Path to wallpaper image (PNG/JPG) or JSON color palette'
     )
 
     # Theme style (mutually exclusive)
