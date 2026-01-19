@@ -41,6 +41,7 @@ A beautiful, minimal desktop shell for Wayland that actually gets out of your wa
 - 🪟 Native support for Niri, Hyprland, Sway, MangoWC and labwc
 - ⚡ Built on Quickshell for performance
 - 🎯 Minimalist design philosophy
+- 🔌 Plugin support ([explore plugins](https://noctalia.dev/plugins/))
 - 🔧 Easily customizable to match your style
 - 🎨 Many color schemes available
 ---
