@@ -55,6 +55,7 @@ Rectangle {
 
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
   readonly property bool density: Settings.data.bar.density
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.65)
 
@@ -418,7 +419,7 @@ Rectangle {
                              } else {
                                // For horizontal bars: center horizontally and position below
                                menuX = (width / 2) - (trayMenu.item.width / 2);
-                               menuY = (barPosition === "top") ? Style.barHeight + Style.marginS - 2 : Style.barHeight + Style.marginS - 2;
+                               menuY = (barPosition === "top") ? barHeight + Style.marginS - 2 : barHeight + Style.marginS - 2;
                              }
                              trayMenu.item.trayItem = modelData;
                              trayMenu.item.widgetSection = root.section;
