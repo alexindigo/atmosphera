@@ -4,3 +4,4 @@
 .vscode
 *.code-workspace
 RELEASE.md
+__pycache__
