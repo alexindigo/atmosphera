@@ -30,8 +30,9 @@ Item {
     return {};
   }
 
-  // Bar orientation
-  readonly property bool isVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  // Bar orientation (per-screen)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isVertical: barPosition === "left" || barPosition === "right"
 
   // Widget settings
   readonly property string hideMode: (widgetSettings.hideMode !== undefined) ? widgetSettings.hideMode : "hidden"
@@ -387,7 +388,7 @@ Item {
 
         onEntered: {
           if (isVertical || scrollingMode === "never") {
-            TooltipService.show(root, title, BarService.getTooltipDirection());
+            TooltipService.show(root, title, BarService.getTooltipDirection(root.screen?.name));
           }
         }
         onExited: TooltipService.hide()
@@ -404,7 +405,7 @@ Item {
       values: CavaService.values
       fillColor: Color.mPrimary
       opacity: 0.4
-      barPosition: Settings.data.bar.position
+      barPosition: root.barPosition
     }
   }
 

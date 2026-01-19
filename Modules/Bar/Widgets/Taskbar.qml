@@ -20,7 +20,7 @@ Rectangle {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
@@ -672,7 +672,7 @@ Rectangle {
           }
           onEntered: {
             root.hoveredWindowId = taskbarItem.modelData.id;
-            TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection());
+            TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection(root.screen?.name));
           }
           onExited: {
             root.hoveredWindowId = "";

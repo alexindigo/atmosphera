@@ -53,7 +53,7 @@ Rectangle {
     return {};
   }
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVertical: barPosition === "left" || barPosition === "right"
   readonly property bool density: Settings.data.bar.density
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.65)
@@ -290,7 +290,7 @@ Rectangle {
       id: chevronIconBefore
       visible: root.drawerEnabled && dropdownItems.length > 0 && BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-      tooltipDirection: BarService.getTooltipDirection()
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
       baseSize: Style.capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL
@@ -433,7 +433,7 @@ Rectangle {
               if (popupMenuWindow) {
                 popupMenuWindow.close();
               }
-              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection());
+              TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));
             }
             onExited: TooltipService.hide()
           }
@@ -446,7 +446,7 @@ Rectangle {
       id: chevronIconAfter
       visible: root.drawerEnabled && dropdownItems.length > 0 && !BarService.getPillDirection(root)
       tooltipText: I18n.tr("tooltips.open-tray-dropdown")
-      tooltipDirection: BarService.getTooltipDirection()
+      tooltipDirection: BarService.getTooltipDirection(root.screen?.name)
       baseSize: Style.capsuleHeight
       applyUiScale: false
       customRadius: Style.radiusL

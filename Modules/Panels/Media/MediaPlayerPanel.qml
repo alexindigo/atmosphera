@@ -484,7 +484,7 @@ SmartPanel {
       values: CavaService.values
       fillColor: Color.mPrimary
       opacity: 0.4
-      barPosition: Settings.data.bar.position
+      barPosition: Settings.getBarPositionForScreen(root.screen?.name)
     }
   }
 

@@ -58,7 +58,8 @@
           "id": "ControlCenter"
         }
       ]
-    }
+    },
+    "screenOverrides": []
   },
   "general": {
     "avatarImage": "",

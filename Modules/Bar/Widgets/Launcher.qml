@@ -32,7 +32,7 @@ NIconButton {
 
   icon: iconName
   tooltipText: I18n.tr("actions.open-launcher")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   baseSize: Style.capsuleHeight
   applyUiScale: false
   customRadius: Style.radiusL

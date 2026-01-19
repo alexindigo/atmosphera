@@ -160,4 +160,78 @@ Singleton {
   function toEven(n) {
     return Math.floor(n / 2) * 2;
   }
+
+  // Get bar height for a specific density and orientation
+  function getBarHeightForDensity(density, isVertical) {
+    let h;
+    switch (density) {
+    case "mini":
+      h = isVertical ? 23 : 21;
+      break;
+    case "compact":
+      h = isVertical ? 27 : 25;
+      break;
+    case "comfortable":
+      h = isVertical ? 39 : 37;
+      break;
+    case "spacious":
+      h = isVertical ? 49 : 47;
+      break;
+    default:
+    case "default":
+      h = isVertical ? 33 : 31;
+    }
+    return toOdd(h);
+  }
+
+  // Get capsule height for a specific density and bar height
+  function getCapsuleHeightForDensity(density, barHeight) {
+    let h;
+    switch (density) {
+    case "mini":
+      h = Math.round(barHeight * 0.90);
+      break;
+    case "compact":
+      h = Math.round(barHeight * 0.85);
+      break;
+    case "comfortable":
+      h = Math.round(barHeight * 0.75);
+      break;
+    case "spacious":
+      h = Math.round(barHeight * 0.65);
+      break;
+    default:
+      h = Math.round(barHeight * 0.82);
+      break;
+    }
+    return toOdd(h);
+  }
+
+  // Get bar font size for a specific bar height, capsule height, and orientation
+  function getBarFontSizeForDensity(barHeight, capsuleHeight, isVertical) {
+    const baseFontSize = Math.max(1, (barHeight / capsuleHeight) * Style.fontSizeXXS);
+    return isVertical ? baseFontSize * 0.9 : baseFontSize;
+  }
+
+  // Convenience functions for per-screen bar sizing
+  function getBarHeightForScreen(screenName) {
+    var density = Settings.getBarDensityForScreen(screenName);
+    var position = Settings.getBarPositionForScreen(screenName);
+    var isVertical = position === "left" || position === "right";
+    return getBarHeightForDensity(density, isVertical);
+  }
+
+  function getCapsuleHeightForScreen(screenName) {
+    var barHeight = getBarHeightForScreen(screenName);
+    var density = Settings.getBarDensityForScreen(screenName);
+    return getCapsuleHeightForDensity(density, barHeight);
+  }
+
+  function getBarFontSizeForScreen(screenName) {
+    var barHeight = getBarHeightForScreen(screenName);
+    var capsuleHeight = getCapsuleHeightForScreen(screenName);
+    var position = Settings.getBarPositionForScreen(screenName);
+    var isVertical = position === "left" || position === "right";
+    return getBarFontSizeForDensity(barHeight, capsuleHeight, isVertical);
+  }
 }

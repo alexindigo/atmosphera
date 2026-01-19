@@ -14,7 +14,7 @@ PanelWindow {
   id: root
 
   readonly property bool exclusive: Settings.data.bar.exclusive
-  readonly property string barPosition: Settings.data.bar.position || "top"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
   readonly property real barMarginH: barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0

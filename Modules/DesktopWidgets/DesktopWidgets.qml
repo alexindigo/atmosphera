@@ -307,7 +307,7 @@ Variants {
           id: editModeControlsPanel
           visible: DesktopWidgetRegistry.editMode && Settings.data.desktopWidgets.enabled
 
-          readonly property string barPos: Settings.data.bar.position || "top"
+          readonly property string barPos: Settings.getBarPositionForScreen(window.screen?.name)
           readonly property bool barFloating: Settings.data.bar.floating || false
 
           readonly property int barOffsetTop: {

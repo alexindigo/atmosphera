@@ -143,7 +143,7 @@ Item {
       readonly property bool isRight: location.endsWith("_right")
       readonly property bool isCentered: location === "top" || location === "bottom"
 
-      readonly property string barPos: Settings.data.bar.position
+      readonly property string barPos: Settings.getBarPositionForScreen(panel.screen?.name)
       readonly property bool isFloating: Settings.data.bar.floating
 
       // Calculate bar offsets for each edge separately
