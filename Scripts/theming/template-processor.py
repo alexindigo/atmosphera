@@ -196,6 +196,12 @@ def shift_hue(color: Color, degrees: float) -> Color:
     return Color.from_hsl(new_h, s, l)
 
 
+def hue_distance(h1: float, h2: float) -> float:
+    """Calculate minimum angular distance between two hues (0-180)."""
+    diff = abs(h1 - h2)
+    return min(diff, 360 - diff)
+
+
 def _adjust_surface(color: Color, s_max: float, l_target: float) -> Color:
     """Derive a surface color from a base color with saturation limit and target lightness."""
     h, s, _ = color.to_hsl()
@@ -855,21 +861,21 @@ def derive_harmonious_colors(primary: Color) -> tuple[Color, Color, Color]:
     """
     Derive secondary and tertiary colors as harmonious complements to primary.
     
-    Uses color theory:
-    - Secondary: Analogous (30° hue shift) - similar but distinct
-    - Tertiary: Split-complementary (150° hue shift) - contrasting but harmonious
-    - Quaternary: Complementary (180° hue shift) - for accents
+    Uses hue shifts for visual distinction (matugen-compatible):
+    - Secondary: 30° hue shift (analogous, slightly cooler/warmer)
+    - Tertiary: 60° hue shift (distinct accent color)
+    - Quaternary: 180° hue shift (complementary)
     
     Returns:
         Tuple of (secondary, tertiary, quaternary) colors
     """
     h, s, l = primary.to_hsl()
     
-    # Secondary: analogous - similar warmth/coolness, shifted hue
-    secondary = Color.from_hsl((h + 30) % 360, s, l)
+    # Secondary: 30° analogous hue shift with slightly lower saturation
+    secondary = Color.from_hsl((h + 30) % 360, s * 0.8, l)
     
-    # Tertiary: split-complementary - provides contrast while staying harmonious
-    tertiary = Color.from_hsl((h + 150) % 360, s, l)
+    # Tertiary: 60° hue shift for clear distinction
+    tertiary = Color.from_hsl((h + 60) % 360, s * 0.9, l)
     
     # Quaternary: complementary - opposite on color wheel
     quaternary = Color.from_hsl((h + 180) % 360, s, l)
@@ -1036,9 +1042,35 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     surfaces saturated with the primary hue. Outputs same keys as Material.
     """
     # Use extracted colors directly (wallust style)
+    # But check if colors are distinct enough - if not, derive from primary
     primary = palette[0] if palette else Color(255, 245, 155)
-    secondary = palette[1] if len(palette) > 1 else shift_hue(primary, 30)
-    tertiary = palette[2] if len(palette) > 2 else shift_hue(primary, 60)
+    primary_h, primary_s, primary_l = primary.to_hsl()
+    
+    # Secondary: use palette[1] only if hue is >30° different, otherwise derive
+    MIN_HUE_DISTANCE = 30
+    if len(palette) > 1:
+        sec_h, _, _ = palette[1].to_hsl()
+        if hue_distance(primary_h, sec_h) > MIN_HUE_DISTANCE:
+            secondary = palette[1]
+        else:
+            # Colors too similar - shift hue by 60°
+            secondary = shift_hue(primary, 60)
+    else:
+        secondary = shift_hue(primary, 60)
+    
+    # Tertiary: use palette[2] only if hue is >30° different from both primary and secondary
+    if len(palette) > 2:
+        ter_h, _, _ = palette[2].to_hsl()
+        sec_h, _, _ = secondary.to_hsl()
+        if hue_distance(primary_h, ter_h) > MIN_HUE_DISTANCE and hue_distance(sec_h, ter_h) > MIN_HUE_DISTANCE:
+            tertiary = palette[2]
+        else:
+            # Colors too similar - shift hue by 120° from primary
+            tertiary = shift_hue(primary, 120)
+    else:
+        tertiary = shift_hue(primary, 120)
+    
+    # Quaternary: complementary
     quaternary = palette[3] if len(palette) > 3 else shift_hue(primary, 180)
     error = find_error_color(palette)
     
