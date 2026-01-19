@@ -405,6 +405,9 @@ Singleton {
           },
           {
             "id": "WallpaperSelector"
+          },
+          {
+            "id": "NoctaliaPerformance"
           }
         ]
         property list<var> right: [
