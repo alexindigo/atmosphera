@@ -203,6 +203,26 @@ class MaterialScheme:
             # Background (alias for surface)
             'background': self.neutral_palette.get_hex(tones['surface']),
             'on_background': self.neutral_palette.get_hex(tones['on_surface']),
+
+            # Surface dim and bright
+            'surface_dim': self.neutral_palette.get_hex(87 if not is_dark else 6),
+            'surface_bright': self.neutral_palette.get_hex(98 if not is_dark else 24),
+
+            # Fixed colors - consistent across light/dark modes (MD3 spec)
+            'primary_fixed': self.primary_palette.get_hex(90),
+            'primary_fixed_dim': self.primary_palette.get_hex(80),
+            'on_primary_fixed': self.primary_palette.get_hex(10),
+            'on_primary_fixed_variant': self.primary_palette.get_hex(30),
+
+            'secondary_fixed': self.secondary_palette.get_hex(90),
+            'secondary_fixed_dim': self.secondary_palette.get_hex(80),
+            'on_secondary_fixed': self.secondary_palette.get_hex(10),
+            'on_secondary_fixed_variant': self.secondary_palette.get_hex(30),
+
+            'tertiary_fixed': self.tertiary_palette.get_hex(90),
+            'tertiary_fixed_dim': self.tertiary_palette.get_hex(80),
+            'on_tertiary_fixed': self.tertiary_palette.get_hex(10),
+            'on_tertiary_fixed_variant': self.tertiary_palette.get_hex(30),
         }
 
         return scheme
