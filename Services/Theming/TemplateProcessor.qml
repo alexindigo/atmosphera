@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-import Quickshell.Io
 import qs.Commons
 import qs.Services.System
 import qs.Services.Theming
@@ -66,76 +65,70 @@ Singleton {
     generateProcess.running = true;
   }
 
-  // Queue for processing templates one by one
-  property var templateQueue: []
-  property var currentTemplateContext: null
+  readonly property string schemeJsonPath: Settings.cacheDir + "predefined-scheme.json"
+  readonly property string predefinedConfigPath: Settings.cacheDir + "theming.predefined.toml"
 
   /**
-  * Process predefined color scheme using sed scripts
-  * Dual-path architecture (predefined uses sed scripts)
-  * Templates are processed one by one for better error reporting
+  * Process predefined color scheme using Python template processor
+  * Uses --scheme flag to expand 14-color scheme to full 48-color palette
   */
   function processPredefinedScheme(schemeData, mode) {
+    // 1. Handle terminal themes (pre-rendered file copy)
     handleTerminalThemes(mode);
 
-    const colors = schemeData[mode];
-    const homeDir = Quickshell.env("HOME");
-
-    // Build queue of templates to process
-    templateQueue = buildTemplateQueue(colors, mode, schemeData, homeDir);
-
-    // Add user templates if enabled
-    const userScript = buildUserTemplateCommandForPredefined(schemeData, mode);
-    if (userScript) {
-      templateQueue.push({
-                           id: "user-templates",
-                           script: userScript
-                         });
-    }
-
-    // Start processing
-    processNextTemplate();
-  }
-
-  function buildTemplateQueue(colors, mode, schemeData, homeDir) {
-    const queue = [];
-
-    TemplateRegistry.applications.forEach(app => {
-                                            if (app.id === "discord") {
-                                              if (isTemplateEnabled("discord")) {
-                                                const items = buildDiscordTemplateItems(app, colors, homeDir);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            } else if (app.id === "code") {
-                                              if (isTemplateEnabled("code")) {
-                                                const items = buildCodeTemplateItems(app, colors, homeDir);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            } else {
-                                              if (isTemplateEnabled(app.id)) {
-                                                const items = buildAppTemplateItems(app, colors, mode, homeDir, schemeData);
-                                                items.forEach(item => queue.push(item));
-                                              }
-                                            }
-                                          });
-    return queue;
-  }
-
-  function processNextTemplate() {
-    if (templateQueue.length === 0) {
-      currentTemplateContext = null;
+    // 2. Build TOML config for application templates
+    const tomlContent = buildPredefinedTemplateConfig(mode);
+    if (!tomlContent) {
+      Logger.d("TemplateProcessor", "No application templates enabled for predefined scheme");
       return;
     }
 
-    const item = templateQueue.shift();
-    currentTemplateContext = item;
+    // 3. Build script to write files and run Python
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
+    const configPathEsc = predefinedConfigPath.replace(/'/g, "'\\''");
 
-    templateProcess.command = ["sh", "-lc", item.script];
-    templateProcess.running = true;
+    // Use heredoc delimiters for safe JSON/TOML content
+    const schemeDelimiter = "SCHEME_JSON_EOF_" + Math.random().toString(36).substr(2, 9);
+    const tomlDelimiter = "TOML_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
+
+    let script = "";
+
+    // Write scheme JSON
+    script += `cat > '${schemeJsonPathEsc}' << '${schemeDelimiter}'\n`;
+    script += JSON.stringify(schemeData, null, 2) + "\n";
+    script += `${schemeDelimiter}\n`;
+
+    // Write TOML config
+    script += `cat > '${configPathEsc}' << '${tomlDelimiter}'\n`;
+    script += tomlContent + "\n";
+    script += `${tomlDelimiter}\n`;
+
+    // Run Python template processor with --scheme flag
+    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}' --mode ${mode}\n`;
+
+    // Add user templates if enabled
+    script += buildUserTemplateCommandForPredefined(schemeData, mode);
+
+    generateProcess.generator = "predefined";
+    generateProcess.command = ["sh", "-lc", script];
+    generateProcess.running = true;
+  }
+
+  /**
+  * Build TOML config for predefined scheme templates (excludes terminal themes)
+  */
+  function buildPredefinedTemplateConfig(mode) {
+    var lines = [];
+    addApplicationTheming(lines, mode);
+
+    if (lines.length > 0) {
+      return ["[config]"].concat(lines).join("\n") + "\n";
+    }
+    return "";
   }
 
   // ================================================================================
-  // WALLPAPER-BASED GENERATION (internal python)
+  // WALLPAPER-BASED GENERATION
   // ================================================================================
   function buildThemeConfig() {
     var lines = [];
@@ -280,197 +273,6 @@ Singleton {
   }
 
   // ================================================================================
-  // PREDEFINED SCHEME GENERATION (queue-based, template by template)
-  // ================================================================================
-  function buildDiscordTemplateItems(discordApp, colors, homeDir) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
-
-    discordApp.clients.forEach(client => {
-                                 if (!isDiscordClientEnabled(client.name))
-                                 return;
-
-                                 const templatePath = `${Quickshell.shellDir}/Assets/Templates/${discordApp.input}`;
-                                 const outputPath = `${client.path}/themes/noctalia.theme.css`.replace("~", homeDir);
-                                 const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-                                 const baseConfigDir = outputDir.replace("/themes", "");
-
-                                 let script = "";
-                                 script += `if [ -d "${baseConfigDir}" ]; then\n`;
-                                 script += `  mkdir -p ${outputDir}\n`;
-                                 script += `  cp '${templatePath}' '${outputPath}'\n`;
-                                 script += `  ${replaceColorsInFile(outputPath, palette)}`;
-                                 script += `fi\n`;
-
-                                 items.push({
-                                              id: `discord-${client.name}`,
-                                              outputPath: outputPath,
-                                              script: script
-                                            });
-                               });
-
-    return items;
-  }
-
-  function buildCodeTemplateItems(codeApp, colors, homeDir) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
-
-    codeApp.clients.forEach(client => {
-                              if (!isCodeClientEnabled(client.name))
-                              return;
-
-                              const templatePath = `${Quickshell.shellDir}/Assets/Templates/${codeApp.input}`;
-                              const outputPath = client.path.replace("~", homeDir);
-                              const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-
-                              let baseConfigDir = "";
-                              if (client.name === "code") {
-                                baseConfigDir = homeDir + "/.vscode";
-                              } else if (client.name === "codium") {
-                                baseConfigDir = homeDir + "/.vscode-oss";
-                              }
-
-                              let script = "";
-                              script += `if [ -d "${baseConfigDir}" ]; then\n`;
-                              script += `  mkdir -p ${outputDir}\n`;
-                              script += `  cp '${templatePath}' '${outputPath}'\n`;
-                              script += `  ${replaceColorsInFile(outputPath, palette)}`;
-                              script += `fi\n`;
-
-                              items.push({
-                                           id: `code-${client.name}`,
-                                           outputPath: outputPath,
-                                           script: script
-                                         });
-                            });
-
-    return items;
-  }
-
-  function buildAppTemplateItems(app, colors, mode, homeDir, schemeData) {
-    const items = [];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, app.strict || false);
-
-    const hasDualModePatterns = app.dualMode || false;
-    let darkPalette, lightPalette;
-    if (hasDualModePatterns && schemeData) {
-      darkPalette = ColorPaletteGenerator.generatePalette(schemeData.dark, true, app.strict || false);
-      lightPalette = ColorPaletteGenerator.generatePalette(schemeData.light, false, app.strict || false);
-    }
-
-    if (app.id === "emacs" && app.checkDoomFirst) {
-      const doomPath = app.outputs[0].path.replace("~", homeDir);
-      const doomDir = doomPath.substring(0, doomPath.lastIndexOf('/'));
-      const doomConfigDir = doomDir.substring(0, doomDir.lastIndexOf('/'));
-      const standardPath = app.outputs[1].path.replace("~", homeDir);
-      const standardDir = standardPath.substring(0, standardPath.lastIndexOf('/'));
-      const templatePath = `${Quickshell.shellDir}/Assets/Templates/${app.input}`;
-
-      let script = "";
-      script += `if [ -d "${doomConfigDir}" ]; then\n`;
-      script += `  mkdir -p ${doomDir}\n`;
-      script += `  cp '${templatePath}' '${doomPath}'\n`;
-      script += replaceColorsInFile(doomPath, palette);
-      script += `else\n`;
-      script += `  mkdir -p ${standardDir}\n`;
-      script += `  cp '${templatePath}' '${standardPath}'\n`;
-      script += replaceColorsInFile(standardPath, palette);
-      script += `fi\n`;
-
-      items.push({
-                   id: app.id,
-                   outputPath: doomPath,
-                   script: script
-                 });
-    } else {
-      app.outputs.forEach((output, idx) => {
-                            const templatePath = `${Quickshell.shellDir}/Assets/Templates/${app.input}`;
-                            const outputPath = output.path.replace("~", homeDir);
-                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-
-                            let script = "";
-                            script += `mkdir -p ${outputDir}\n`;
-                            const templateFile = output.input ? `${Quickshell.shellDir}/Assets/Templates/${output.input}` : templatePath;
-                            script += `cp '${templateFile}' '${outputPath}'\n`;
-                            script += replaceColorsInFile(outputPath, palette);
-                            if (hasDualModePatterns && darkPalette && lightPalette) {
-                              script += replaceColorsInFileWithMode(outputPath, darkPalette, lightPalette);
-                            }
-
-                            // Add postProcess only on last output
-                            if (app.postProcess && idx === app.outputs.length - 1) {
-                              script += app.postProcess(mode);
-                            }
-
-                            items.push({
-                                         id: app.outputs.length > 1 ? `${app.id}-${idx}` : app.id,
-                                         outputPath: outputPath,
-                                         script: script
-                                       });
-                          });
-    }
-
-    return items;
-  }
-
-  function replaceColorsInFile(filePath, colors) {
-    let expressions = [];
-
-    Object.keys(colors).forEach(colorKey => {
-                                  const colorData = colors[colorKey].default;
-                                  const hexValue = colorData.hex;
-                                  const hexStrippedValue = colorData.hex_stripped;
-
-                                  const escapedHex = hexValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                  const escapedHexStripped = hexStrippedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                  // Batch all replacements into a single sed command to avoid ARG_MAX limits
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.hex}}/${escapedHex}/g'`);
-
-                                  // HSL components
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.hue}}/${colorData.hue}/g'`);
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.saturation}}/${colorData.saturation}/g'`);
-                                  expressions.push(`-e 's/{{colors\\.${colorKey}\\.default\\.lightness}}/${colorData.lightness}/g'`);
-                                });
-    return `sed -i ${expressions.join(' ')} '${filePath}'\n`;
-  }
-
-  function replaceColorsInFileWithMode(filePath, darkColors, lightColors) {
-    let expressions = [];
-
-    // Replace dark mode patterns
-    Object.keys(darkColors).forEach(colorKey => {
-                                      const colorData = darkColors[colorKey].default;
-                                      const escapedHex = colorData.hex.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                      const escapedHexStripped = colorData.hex_stripped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.hex}}/${escapedHex}/g'`);
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.hue}}/${colorData.hue}/g'`);
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.saturation}}/${colorData.saturation}/g'`);
-                                      expressions.push(`-e 's/{{colors\\.${colorKey}\\.dark\\.lightness}}/${colorData.lightness}/g'`);
-                                    });
-
-    // Replace light mode patterns
-    Object.keys(lightColors).forEach(colorKey => {
-                                       const colorData = lightColors[colorKey].default;
-                                       const escapedHex = colorData.hex.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                       const escapedHexStripped = colorData.hex_stripped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.hex_stripped}}/${escapedHexStripped}/g'`);
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.hex}}/${escapedHex}/g'`);
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.hue}}/${colorData.hue}/g'`);
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.saturation}}/${colorData.saturation}/g'`);
-                                       expressions.push(`-e 's/{{colors\\.${colorKey}\\.light\\.lightness}}/${colorData.lightness}/g'`);
-                                     });
-
-    // Batch all replacements into a single sed command to avoid ARG_MAX limits
-    return `sed -i ${expressions.join(' ')} '${filePath}'\n`;
-  }
-
-  // ================================================================================
   // TERMINAL THEMES (predefined schemes use pre-rendered files)
   // ================================================================================
   function escapeShellPath(path) {
@@ -574,24 +376,14 @@ Singleton {
       return "";
 
     const userConfigPath = getUserConfigPath();
-    const colors = schemeData[mode];
-    const palette = ColorPaletteGenerator.generatePalette(colors, Settings.data.colorSchemes.darkMode, false);
 
-    const tempJsonPath = Settings.cacheDir + "predefined-colors.json";
-    const tempJsonPathEsc = tempJsonPath.replace(/'/g, "'\\''");
+    // Reuse the scheme JSON already written by processPredefinedScheme()
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
 
     let script = "\n# Execute user templates with predefined scheme colors\n";
     script += `if [ -f '${userConfigPath}' ]; then\n`;
-    script += `  cat > '${tempJsonPathEsc}' << 'EOF'\n`;
-    script += JSON.stringify({
-                               "colors": palette
-                             }, null, 2) + "\n";
-    script += "EOF\n";
-
-    script += "EOF\n";
-
-    // Call template-processor.py with JSON file as first arg (it will detect extension)
-    script += `  python3 "${templateProcessorScript}" '${tempJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
+    // Use --scheme flag with the already-written scheme JSON
+    script += `  python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;
@@ -630,49 +422,6 @@ Singleton {
       onStreamFinished: {
         if (this.text)
         Logger.d("TemplateProcessor", "stdout:", this.text);
-      }
-    }
-
-    stderr: StdioCollector {
-      onStreamFinished: {
-        if (this.text && this.text.trim() !== "") {
-          // Log template errors/warnings from Python script
-          Logger.e("TemplateProcessor", this.text.trim());
-        }
-      }
-    }
-  }
-
-  // ------------
-  // Process for queue-based template processing (predefined schemes)
-  Process {
-    id: templateProcess
-    workingDirectory: Quickshell.shellDir
-    running: false
-
-    onExited: function (exitCode) {
-      if (exitCode !== 0) {
-        const ctx = currentTemplateContext;
-        const errText = stderr.text ? stderr.text.trim() : "";
-        const outText = stdout.text ? stdout.text.trim() : "";
-        const description = errText || outText || "Unknown error";
-
-        Logger.e("TemplateProcessor", `Template "${ctx?.id}" failed (exit code ${exitCode}): ${description}`);
-        if (ctx?.outputPath) {
-          Logger.e("TemplateProcessor", `  Output path: ${ctx.outputPath}`);
-        }
-        Logger.d("TemplateProcessor", `  Script: ${ctx?.script?.substring(0, 300)}`);
-      }
-
-      // Continue with next template regardless of success/failure
-      processNextTemplate();
-    }
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        if (this.text && this.text.trim() !== "") {
-          Logger.d("TemplateProcessor", "templateProcess stdout:", this.text.trim());
-        }
       }
     }
 

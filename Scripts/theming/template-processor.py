@@ -41,7 +41,7 @@ import sys
 from pathlib import Path
 
 # Import from lib package
-from lib import read_image, ImageReadError, extract_palette, generate_theme, TemplateRenderer
+from lib import read_image, ImageReadError, extract_palette, generate_theme, TemplateRenderer, expand_predefined_scheme
 
 
 def parse_args() -> argparse.Namespace:
@@ -62,7 +62,8 @@ Examples:
     parser.add_argument(
         'image',
         type=Path,
-        help='Path to wallpaper image (PNG/JPG) or JSON color palette'
+        nargs='?',
+        help='Path to wallpaper image (PNG/JPG) or JSON color palette (not required if --scheme is used)'
     )
 
     # Theme style (mutually exclusive)
@@ -121,6 +122,12 @@ Examples:
         help='Theme mode: dark or light'
     )
 
+    parser.add_argument(
+        '--scheme',
+        type=Path,
+        help='Path to predefined scheme JSON file (bypasses image extraction)'
+    )
+
     return parser.parse_args()
 
 
@@ -128,95 +135,121 @@ def main() -> int:
     """Main entry point."""
     args = parse_args()
 
-    # Validate image path
-    if not args.image.exists():
-        print(f"Error: Image not found: {args.image}", file=sys.stderr)
-        return 1
-
     # Initialize result dictionary
     result: dict[str, dict[str, str]] = {}
 
-    # Check if input is a JSON palette (Predefined Scheme bypass)
-    if args.image.suffix.lower() == '.json':
-        try:
-            with open(args.image, 'r') as f:
-                input_data = json.load(f)
-
-            # Expect {"colors": ...} or direct dict
-            colors_data = input_data.get("colors", input_data)
-
-            # Flatten QML-style object structure if needed
-            # structure: key -> { default: { hex: "#..." } } or key -> "#..."
-            flat_colors = {}
-            for k, v in colors_data.items():
-                if isinstance(v, dict) and 'default' in v and 'hex' in v['default']:
-                    flat_colors[k] = v['default']['hex']
-                elif isinstance(v, str):
-                    flat_colors[k] = v
-                else:
-                    # Best effort fallback
-                    flat_colors[k] = str(v)
-
-            # Assign to both/all modes since predefined scheme usually provides the correct palette for the requested mode
-            result["dark"] = flat_colors
-            result["light"] = flat_colors
-
-            # Skip extraction logic
-            palette = None
-        except Exception as e:
-            print(f"Error reading JSON palette: {e}", file=sys.stderr)
-            return 1
-    else:
-        # Standard Image Extraction
-        # Validate image path is a file
-        if not args.image.is_file():
-            print(f"Error: Not a file: {args.image}", file=sys.stderr)
-            return 1
-
-        # Read image
-        try:
-            pixels = read_image(args.image)
-        except ImageReadError as e:
-            print(f"Error reading image: {e}", file=sys.stderr)
-            return 1
-        except Exception as e:
-            print(f"Unexpected error reading image: {e}", file=sys.stderr)
-            return 1
-
-        # Extract palette
-        k = 5
-        palette = extract_palette(pixels, k=k)
-
-        if not palette:
-            print("Error: Could not extract colors from image", file=sys.stderr)
-            return 1
-
-    # Determine which themes to generate
-    use_material = args.material
-
-    # Handle --mode compatibility
-    arg_dark = args.dark
-    arg_light = args.light
-    arg_both = args.both
-
+    # Determine mode from arguments
     if args.mode == 'dark':
-        arg_dark = True
-        arg_light = False
-        arg_both = False
+        modes = ["dark"]
     elif args.mode == 'light':
-        arg_dark = False
-        arg_light = True
-        arg_both = False
+        modes = ["light"]
+    elif args.dark:
+        modes = ["dark"]
+    elif args.light:
+        modes = ["light"]
+    else:
+        modes = ["dark", "light"]
 
-    if palette:
-        if arg_dark:
-            result["dark"] = generate_theme(palette, "dark", use_material)
-        elif arg_light:
-            result["light"] = generate_theme(palette, "light", use_material)
+    # Path 1: Predefined scheme (--scheme flag)
+    if args.scheme:
+        if not args.scheme.exists():
+            print(f"Error: Scheme file not found: {args.scheme}", file=sys.stderr)
+            return 1
+
+        try:
+            with open(args.scheme, 'r') as f:
+                scheme_data = json.load(f)
+
+            # Scheme format: {"dark": {"mPrimary": "#...", ...}, "light": {...}}
+            # or single mode: {"mPrimary": "#...", ...}
+            for mode in modes:
+                if mode in scheme_data:
+                    # Multi-mode format
+                    result[mode] = expand_predefined_scheme(scheme_data[mode], mode)
+                elif "mPrimary" in scheme_data:
+                    # Single-mode format - use same colors for requested mode
+                    result[mode] = expand_predefined_scheme(scheme_data, mode)
+                else:
+                    print(f"Error: Invalid scheme format - missing '{mode}' or 'mPrimary'", file=sys.stderr)
+                    return 1
+
+        except json.JSONDecodeError as e:
+            print(f"Error parsing scheme JSON: {e}", file=sys.stderr)
+            return 1
+        except KeyError as e:
+            print(f"Error: Missing required color in scheme: {e}", file=sys.stderr)
+            return 1
+        except Exception as e:
+            print(f"Error processing scheme: {e}", file=sys.stderr)
+            return 1
+
+    # Path 2: Image-based extraction (default)
+    else:
+        # Validate image argument is provided
+        if args.image is None:
+            print("Error: Image path is required (unless --scheme is used)", file=sys.stderr)
+            return 1
+
+        # Validate image path
+        if not args.image.exists():
+            print(f"Error: Image not found: {args.image}", file=sys.stderr)
+            return 1
+
+        # Check if input is a JSON palette (legacy Predefined Scheme bypass)
+        if args.image.suffix.lower() == '.json':
+            try:
+                with open(args.image, 'r') as f:
+                    input_data = json.load(f)
+
+                # Expect {"colors": ...} or direct dict
+                colors_data = input_data.get("colors", input_data)
+
+                # Flatten QML-style object structure if needed
+                # structure: key -> { default: { hex: "#..." } } or key -> "#..."
+                flat_colors = {}
+                for k, v in colors_data.items():
+                    if isinstance(v, dict) and 'default' in v and 'hex' in v['default']:
+                        flat_colors[k] = v['default']['hex']
+                    elif isinstance(v, str):
+                        flat_colors[k] = v
+                    else:
+                        # Best effort fallback
+                        flat_colors[k] = str(v)
+
+                # Assign to requested modes
+                for mode in modes:
+                    result[mode] = flat_colors
+
+            except Exception as e:
+                print(f"Error reading JSON palette: {e}", file=sys.stderr)
+                return 1
         else:
-            # Generate both (default)
-            result["dark"] = generate_theme(palette, "dark", use_material)
-            result["light"] = generate_theme(palette, "light", use_material)
+            # Standard Image Extraction
+            if not args.image.is_file():
+                print(f"Error: Not a file: {args.image}", file=sys.stderr)
+                return 1
+
+            try:
+                pixels = read_image(args.image)
+            except ImageReadError as e:
+                print(f"Error reading image: {e}", file=sys.stderr)
+                return 1
+            except Exception as e:
+                print(f"Unexpected error reading image: {e}", file=sys.stderr)
+                return 1
+
+            # Extract palette
+            k = 5
+            palette = extract_palette(pixels, k=k)
+
+            if not palette:
+                print("Error: Could not extract colors from image", file=sys.stderr)
+                return 1
+
+            # Generate theme for each mode
+            use_material = args.material
+            for mode in modes:
+                result[mode] = generate_theme(palette, mode, use_material)
 
     # Output JSON
     json_output = json.dumps(result, indent=2)

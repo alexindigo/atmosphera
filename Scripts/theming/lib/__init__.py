@@ -17,6 +17,7 @@ from .image import read_image, ImageReadError
 from .palette import extract_palette
 from .theme import generate_theme
 from .renderer import TemplateRenderer
+from .scheme import expand_predefined_scheme
 
 __all__ = [
     # Color
@@ -44,4 +45,6 @@ __all__ = [
     "generate_theme",
     # Renderer
     "TemplateRenderer",
+    # Scheme
+    "expand_predefined_scheme",
 ]
