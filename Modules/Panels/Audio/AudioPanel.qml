@@ -534,6 +534,18 @@ SmartPanel {
                   return false;
                 }
 
+                // Helper function to validate if a fuzzy match is actually related
+                function isValidMatch(searchTerm, entry) {
+                  if (!entry)
+                    return false;
+                  var search = searchTerm.toLowerCase();
+                  var id = (entry.id || "").toLowerCase();
+                  var name = (entry.name || "").toLowerCase();
+                  var icon = (entry.icon || "").toLowerCase();
+                  // Match is valid if search term appears in entry or entry appears in search
+                  return id.includes(search) || name.includes(search) || icon.includes(search) || search.includes(id.split('.').pop()) || search.includes(name.replace(/\s+/g, ''));
+                }
+
                 readonly property string appName: {
                   if (!modelData)
                     return "Unknown App";
@@ -562,7 +574,8 @@ SmartPanel {
                     if (binParts.length > 0) {
                       var binName = binParts[binParts.length - 1].toLowerCase();
                       var entry = ThemeIcons.findAppEntry(binName);
-                      if (entry && entry.name)
+                      // Only use entry if it's actually related to binary name
+                      if (entry && entry.name && isValidMatch(binName, entry))
                         return entry.name;
                     }
                   }
@@ -574,7 +587,7 @@ SmartPanel {
 
                   if (appId) {
                     var entry = ThemeIcons.findAppEntry(appId);
-                    if (entry && entry.name)
+                    if (entry && entry.name && isValidMatch(appId, entry))
                       return entry.name;
                     if (!computedAppName) {
                       var parts = appId.split(".");
@@ -612,8 +625,11 @@ SmartPanel {
                     var name = modelData.name || "";
                     if (name) {
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0)
-                        return ThemeIcons.iconForAppId(nameParts[0].toLowerCase(), "application-x-executable");
+                      if (nameParts.length > 0) {
+                        var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
+                        if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
+                          return ThemeIcons.iconFromName(entry.icon, "application-x-executable");
+                      }
                     }
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                   }
@@ -623,12 +639,14 @@ SmartPanel {
                   if (binaryName) {
                     var binParts = binaryName.split("/");
                     if (binParts.length > 0) {
-                      var iconPathFromBinary = ThemeIcons.iconForAppId(binParts[binParts.length - 1].toLowerCase(), "");
-                      if (iconPathFromBinary && iconPathFromBinary !== "")
-                        return iconPathFromBinary;
+                      var binName = binParts[binParts.length - 1].toLowerCase();
+                      var entry = ThemeIcons.findAppEntry(binName);
+                      if (entry && entry.icon && isValidMatch(binName, entry))
+                        return ThemeIcons.iconFromName(entry.icon, "");
                     }
                   }
 
+                  // Try application.icon-name (direct lookup, no validation needed)
                   var iconName = props["application.icon-name"] || "";
                   if (iconName) {
                     var iconPath = ThemeIcons.iconFromName(iconName, "");
@@ -638,25 +656,25 @@ SmartPanel {
 
                   var appId = props["application.id"] || "";
                   if (appId) {
-                    var iconPathFromId = ThemeIcons.iconForAppId(appId.toLowerCase(), "");
-                    if (iconPathFromId && iconPathFromId !== "")
-                      return iconPathFromId;
+                    var entry = ThemeIcons.findAppEntry(appId);
+                    if (entry && entry.icon && isValidMatch(appId, entry))
+                      return ThemeIcons.iconFromName(entry.icon, "");
                   }
 
                   var appName = props["application.name"] || "";
                   if (appName) {
-                    var iconPathFromName = ThemeIcons.iconForAppId(appName.toLowerCase(), "");
-                    if (iconPathFromName && iconPathFromName !== "")
-                      return iconPathFromName;
+                    var entry = ThemeIcons.findAppEntry(appName.toLowerCase());
+                    if (entry && entry.icon && isValidMatch(appName.toLowerCase(), entry))
+                      return ThemeIcons.iconFromName(entry.icon, "");
                   }
 
                   var name = modelData.name || "";
                   if (name) {
                     var nameParts = name.split(/[-_]/);
                     if (nameParts.length > 0) {
-                      var iconPathFromNodeName = ThemeIcons.iconForAppId(nameParts[0].toLowerCase(), "");
-                      if (iconPathFromNodeName && iconPathFromNodeName !== "")
-                        return iconPathFromNodeName;
+                      var entry = ThemeIcons.findAppEntry(nameParts[0].toLowerCase());
+                      if (entry && entry.icon && isValidMatch(nameParts[0].toLowerCase(), entry))
+                        return ThemeIcons.iconFromName(entry.icon, "");
                     }
                   }
 
