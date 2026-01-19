@@ -2,16 +2,16 @@
 """
 Template processor - Wallpaper-based color extraction and theme generation.
 
-A CLI tool that extracts dominant colors from wallpaper images and generates:
-- Material Design 3 color themes using HCT (Hue, Chroma, Tone) color space.
-- Simpler accent based color theme using HSL (Hue, Saturation, Lightness) color space.
+A CLI tool that extracts dominant colors from wallpaper images and generates palettes with optional templating:
+- Material Design 3 using HCT (Hue, Chroma, Tone) color space.
+- Vibrant accent-based using HSL (Hue, Saturation, Lightness) color space.
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --material       Generate Material-style colors (default)
-    --default        Generate simpler accent-based palette
+    --default        Generate vibrant accent-based colors (default)
+    --material       Generate Material Design 3 colors
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -53,10 +53,10 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 template-processor.py wallpaper.png --material --both
-  python3 template-processor.py wallpaper.jpg --dark -o theme.json
-  python3 template-processor.py ~/Pictures/bg.png --default --light
-  python3 template-processor.py wallpaper.png -r template.txt:output.txt
+  python3 template-processor.py wallpaper.png                          # default mode, both themes
+  python3 template-processor.py wallpaper.png --material --dark        # material mode, dark only
+  python3 template-processor.py wallpaper.jpg --dark -o theme.json     # output to file
+  python3 template-processor.py wallpaper.png -r tpl.txt:out.txt       # render template
         """
     )
 
@@ -71,13 +71,13 @@ Examples:
     style_group.add_argument(
         '--material',
         action='store_true',
-        default=True,
-        help='Generate Material-style colors (default)'
+        help='Generate Material Design 3 colors'
     )
     style_group.add_argument(
         '--default',
         action='store_true',
-        help='Generate simpler accent-based palette'
+        default=True,
+        help='Generate vibrant accent-based palette (default)'
     )
 
     # Theme mode (mutually exclusive)
@@ -198,7 +198,7 @@ def main() -> int:
             return 1
 
     # Determine which themes to generate
-    use_material = not args.default
+    use_material = args.material
 
     # Handle --mode compatibility
     arg_dark = args.dark

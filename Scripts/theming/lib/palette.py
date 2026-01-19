@@ -95,7 +95,10 @@ def kmeans_cluster(
         new_centroids = []
         for i, cluster in enumerate(clusters):
             if cluster:
-                avg_h = sum(c[0] for c in cluster) / len(cluster)
+                # Circular mean for hue (hue is 0-360, wraps around)
+                sin_sum = sum(math.sin(math.radians(c[0])) for c in cluster)
+                cos_sum = sum(math.cos(math.radians(c[0])) for c in cluster)
+                avg_h = math.degrees(math.atan2(sin_sum, cos_sum)) % 360
                 avg_s = sum(c[1] for c in cluster) / len(cluster)
                 avg_l = sum(c[2] for c in cluster) / len(cluster)
                 new_centroids.append((avg_h, avg_s, avg_l))
