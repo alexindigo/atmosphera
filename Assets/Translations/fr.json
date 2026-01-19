@@ -771,7 +771,7 @@
       "templates-none-detected": "Aucun détecté",
       "templates-write-path": "Écrit : {filepath}",
       "title": "Jeu de couleurs",
-      "wallpaper-method-description": "Choisissez votre méthode d'extraction de couleur préférée.",
+      "wallpaper-method-description": "Choisissez votre méthode de génération de palette préférée.",
       "wallpaper-method-label": "Méthode d'extraction des couleurs"
     },
     "control-center": {

@@ -771,7 +771,7 @@
       "templates-none-detected": "Не обнаружено",
       "templates-write-path": "Записывает: {filepath}",
       "title": "Цветовая схема",
-      "wallpaper-method-description": "Выберите ваш любимый метод извлечения цвета.",
+      "wallpaper-method-description": "Выберите ваш любимый метод генерации палитры.",
       "wallpaper-method-label": "Метод извлечения цвета"
     },
     "control-center": {

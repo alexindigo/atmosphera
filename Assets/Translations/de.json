@@ -771,7 +771,7 @@
       "templates-none-detected": "Keine erkannt",
       "templates-write-path": "Schreibt: {filepath}",
       "title": "Farbschema",
-      "wallpaper-method-description": "Wähle deine bevorzugte Farbgewinnungsmethode.",
+      "wallpaper-method-description": "Wähle deine bevorzugte Methode zur Palettengenerierung.",
       "wallpaper-method-label": "Farbgewinnungsmethode"
     },
     "control-center": {
