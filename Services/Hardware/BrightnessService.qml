@@ -320,19 +320,20 @@ Singleton {
       }
     }
 
-    // Timer for polling DDC monitor brightness (every 30 seconds)
-    readonly property Timer pollTimer: Timer {
-      interval: 30000
-      repeat: true
-      running: monitor.isDdc
-      triggeredOnStart: true
-      onTriggered: {
-        // Only refresh if not currently setting brightness
-        if (!monitor.commandRunning && isNaN(monitor.queuedBrightness)) {
-          monitor.refreshBrightnessFromSystem();
-        }
-      }
-    }
+    // Disabled as this is very inneficient and create spikes lag on many computers due to I2C being very slow and synchronous.
+    // // Timer for polling DDC monitor brightness (every 30 seconds)
+    // readonly property Timer pollTimer: Timer {
+    //   interval: 30000
+    //   repeat: true
+    //   running: monitor.isDdc
+    //   triggeredOnStart: true
+    //   onTriggered: {
+    //     // Only refresh if not currently setting brightness
+    //     if (!monitor.commandRunning && isNaN(monitor.queuedBrightness)) {
+    //       monitor.refreshBrightnessFromSystem();
+    //     }
+    //   }
+    // }
 
     function setBrightnessDebounced(value: real): void {
       monitor.queuedBrightness = value;
