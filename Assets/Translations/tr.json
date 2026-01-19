@@ -758,7 +758,6 @@
       "download-success-title": "Renk şeması indirildi",
       "download-title": "Renk şemalarını indir",
       "predefined-desc": "Önceden tanımlanmış renk şemaları koleksiyonundan seçim yapın.",
-      "predefined-generate-templates-description": "Önceden tanımlanmış renk şemaları kullanırken Matugen şablonları (GTK, terminal temaları vb.) oluşturun.",
       "predefined-generate-templates-label": "Önceden tanımlanmış şemalar için şablonlar oluşturun",
       "predefined-title": "Önceden tanımlanmış renk şemaları",
       "templates-desc": "Renkleri harici uygulamalara uygula.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Tamamlandı!",
     "appearance": {
-      "subheader": "Karanlık modu ve renk kaynaklarını seçin (Matugen veya önceden tanımlanmış)."
+      "subheader": "Dark Mode'u ve renk kaynaklarını seçin (Duvar kağıdı veya önceden tanımlı)."
     },
     "customize": {
       "header": "Deneyiminizi özelleştirin",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "İnternetsiz bağlandı",
     "keyboard-layout": {
-      "changed": "Klavye düzeni {layout} olarak değiştirildi.",
+      "changed": "Klavye düzeni {layout} olarak değiştirildi",
       "title": "Klavye"
     },
-    "kofi-opened": "Ko-fi sayfası tarayıcınızda açıldı.",
+    "kofi-opened": "Ko-fi sayfası tarayıcınızda açıldı",
     "missing-control-center": {
-      "description": "Kontrol merkezi araç takımı araç çubuğundan kaldırıldı. Araç çubuğundan tekrar erişmek için araç takımını yeniden eklemeniz gerekecek. Araç çubuğuna sağ tıklayarak da açabilirsiniz.",
+      "description": "Kontrol merkezi araç takımı araç çubuğundan kaldırıldı. Araç çubuğundan tekrar erişmek için araç takımını yeniden eklemeniz gerekecek. Araç çubuğuna sağ tıklayarak da açabilirsiniz",
       "label": "Son kontrol merkezi araç takımı kaldırıldı"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia Performans"
     },
     "power-profile": {
-      "changed": "Güç profili değişti.",
+      "changed": "Güç profili değişti",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı.",
-      "title-matugen": "Matugen şablon işleme başarısız oldu",
-      "title-predefined": "Önceden tanımlanmış renk şeması işleme başarısız oldu"
+      "desc-generic": "Şablonlar işlenirken bir hatayla karşılaşıldı",
+      "title": "Şablon işleme başarısız oldu"
     },
     "vpn": {
       "connected": "'{name}' ile bağlantı kuruldu",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Duvar kâğıdı renkleri devre dışı",
       "enabled": "Duvar kâğıdı renkleri etkin",
-      "label": "Duvar kâğıdı renkleri oluşturma",
-      "not-installed": "Matugen kurulu değil — duvar kâğıdı renk çıkarmak için gerekli"
+      "label": "Duvar kâğıdı renkleri oluşturma"
     },
     "wifi": {
       "connected": "'{ssid}' ile bağlandı",
@@ -1540,8 +1537,8 @@
       "disabled": "Devre dışı",
       "disconnected": "'{ssid}' bağlantısı kesildi",
       "enabled": "Etkin",
-      "incorrect-password": "Yanlış şifre.",
-      "network-not-found": "Ağ bulunamadı."
+      "incorrect-password": "Yanlış şifre",
+      "network-not-found": "Ağ bulunamadı"
     }
   },
   "tooltips": {

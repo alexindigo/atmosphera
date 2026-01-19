@@ -109,7 +109,6 @@ Singleton {
     // Add user templates if enabled
     script += buildUserTemplateCommandForPredefined(schemeData, mode);
 
-    generateProcess.generator = "predefined";
     generateProcess.command = ["sh", "-lc", script];
     generateProcess.running = true;
   }
@@ -402,11 +401,9 @@ Singleton {
     running: false
 
     // Error reporting helpers
-    property string generator: ""
-
     function buildErrorMessage() {
+      const title = I18n.tr(`toast.theming-processor-failed.title`);
       const description = (stderr.text && stderr.text.trim() !== "") ? stderr.text.trim() : ((stdout.text && stdout.text.trim() !== "") ? stdout.text.trim() : I18n.tr("toast.theming-processor-failed.desc-generic"));
-      const title = I18n.tr(`toast.theming-processor-failed.title-${generator}`);
       return description;
     }
 

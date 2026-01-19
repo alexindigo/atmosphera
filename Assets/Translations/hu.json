@@ -758,7 +758,6 @@
       "download-success-title": "Színséma letöltve",
       "download-title": "Színsémák letöltése",
       "predefined-desc": "Válasszon az előre definiált színsémák gyűjteményéből.",
-      "predefined-generate-templates-description": "Matugen sablonok generálása (GTK, terminál témák stb.) előre definiált színsémák használatakor.",
       "predefined-generate-templates-label": "Sablonok generálása előre definiált sémákhoz",
       "predefined-title": "Előre definiált színsémák",
       "templates-desc": "Színek alkalmazása külő alkalmazásokra.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Kész!",
     "appearance": {
-      "subheader": "Válasszon sötét módot és színes forrásokat (Matugen vagy előre meghatározott)."
+      "subheader": "Válaszd ki a Dark Mode-ot és a színforrásokat (Háttérkép vagy előre definiált)."
     },
     "customize": {
       "header": "Tapasztalat testreszabása",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Csatlakoztatva internet nélkül",
     "keyboard-layout": {
-      "changed": "Billentyűzetkiosztás megváltozott: {layout}.",
+      "changed": "Billentyűzetkiosztás megváltozott: {layout}",
       "title": "Billentyűzet"
     },
-    "kofi-opened": "A Ko-fi oldal megnyílt a böngészőjében.",
+    "kofi-opened": "A Ko-fi oldal megnyílt a böngészőjében",
     "missing-control-center": {
-      "description": "A vezérlőközpont widget eltávolításra került a sávról. A sávról való újbóli eléréshez újra hozzá kell adnia a widgetet. Jobb kattintással is megnyithatja a sávon.",
+      "description": "A vezérlőközpont widget eltávolításra került a sávról. A sávról való újbóli eléréshez újra hozzá kell adnia a widgetet. Jobb kattintással is megnyithatja a sávon",
       "label": "Utolsó vezérlőközpont widget eltávolítva"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia Teljesítmény"
     },
     "power-profile": {
-      "changed": "Energia profil megváltozott.",
+      "changed": "Energia profil megváltozott",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Hiba történt a sablonok feldolgozása során.",
-      "title-matugen": "A Matugen-sablon feldolgozása sikertelen",
-      "title-predefined": "Előre definiált színséma feldolgozása sikertelen"
+      "desc-generic": "Hiba történt a sablonok feldolgozása során",
+      "title": "A sablonfeldolgozás sikertelen"
     },
     "vpn": {
       "connected": "Csatlakozva a(z) „{name}” hálózathoz",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Háttérkép színek kikapcsolva",
       "enabled": "Háttérkép színek bekapcsolva",
-      "label": "Háttérkép színek generálása",
-      "not-installed": "Matugen nincs telepítve – szükséges a háttérkép színeinek kinyeréséhez"
+      "label": "Háttérkép színek generálása"
     },
     "wifi": {
       "connected": "Csatlakozva a(z) „{ssid}” hálózathoz",
@@ -1541,7 +1538,7 @@
       "disconnected": "Kapcsolat megszakadt a(z) „{ssid}” hálózattal",
       "enabled": "Bekapcsolva",
       "incorrect-password": "Helytelen jelszó.",
-      "network-not-found": "Hálózat nem található."
+      "network-not-found": "Hálózat nem található"
     }
   },
   "tooltips": {

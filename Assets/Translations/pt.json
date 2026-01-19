@@ -758,7 +758,6 @@
       "download-success-title": "Esquema de cores baixado",
       "download-title": "Baixar esquemas de cores",
       "predefined-desc": "Escolha entre uma coleção de esquemas de cores predefinidos.",
-      "predefined-generate-templates-description": "Gera modelos Matugen (GTK, temas de terminal, etc.) ao usar esquemas de cores predefinidos.",
       "predefined-generate-templates-label": "Gerar modelos para esquemas predefinidos",
       "predefined-title": "Esquemas de cores predefinidos",
       "templates-desc": "Aplicar cores a aplicações externas.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Concluído!",
     "appearance": {
-      "subheader": "Escolha o modo escuro e as fontes de cores (Matugen ou predefinidas)."
+      "subheader": "Escolha o Dark Mode e as fontes de cor (Wallpaper ou predefinidas)."
     },
     "customize": {
       "header": "Personalizar a sua experiência",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Conectado sem Internet",
     "keyboard-layout": {
-      "changed": "Layout de teclado alterado para {layout}.",
+      "changed": "Layout de teclado alterado para {layout}",
       "title": "Teclado"
     },
-    "kofi-opened": "Página do Ko-fi aberta no seu navegador.",
+    "kofi-opened": "Página do Ko-fi aberta no seu navegador",
     "missing-control-center": {
-      "description": "O widget da central de controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra.",
+      "description": "O widget da central de controle foi removido da barra. Para acessá-lo novamente pela barra, adicione o widget novamente. Você também pode abri-lo clicando com o botão direito na barra",
       "label": "Último widget da central de controle removido"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia Desempenho"
     },
     "power-profile": {
-      "changed": "Perfil de energia alterado.",
+      "changed": "Perfil de energia alterado",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Ocorreu um erro ao processar os templates.",
-      "title-matugen": "Falha no processamento do template Matugen",
-      "title-predefined": "O processamento do esquema de cores predefinido falhou"
+      "desc-generic": "Ocorreu um erro ao processar os templates",
+      "title": "Falha ao processar o modelo"
     },
     "vpn": {
       "connected": "Conectado a '{name}'",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Cores do papel de parede desativadas",
       "enabled": "Cores do papel de parede ativadas",
-      "label": "Geração de cores para papel de parede",
-      "not-installed": "Matugen não instalado — necessário para extração de cores do papel de parede"
+      "label": "Geração de cores para papel de parede"
     },
     "wifi": {
       "connected": "Conectado a '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "Desativado",
       "disconnected": "Desconectado de '{ssid}'",
       "enabled": "Ativado",
-      "incorrect-password": "Senha incorreta.",
-      "network-not-found": "Rede não encontrada."
+      "incorrect-password": "Senha incorreta",
+      "network-not-found": "Rede não encontrada"
     }
   },
   "tooltips": {

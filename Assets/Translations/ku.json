@@ -758,7 +758,6 @@
       "download-success-title": "Şêweya rengê hate daxistin",
       "download-title": "Dakêşkirina rengên rengîn",
       "predefined-desc": "Ji berhevokek şemayên rengan ên pêşdiyarkirî hilbijêrin.",
-      "predefined-generate-templates-description": "Şablonên Matugen (GTK, temayên termînalê, hwd.) dema ku şemayên rengîn ên pêşwextkirî têne bikar anîn, çêbike.",
       "predefined-generate-templates-label": "Şablonan ji bo şemayên pêşdiyarkirî çêbike",
       "predefined-title": "Şemayên rengan ên pêşdiyarkirî",
       "templates-desc": "ڕەنگان بخە سەر ئەپڵیکەیشنێن دەرەکی.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Hemû Temam!",
     "appearance": {
-      "subheader": "Moda tarî hilbijêre û çavkaniyên rengan (Matugen an pêşdiyarkirî) hilbijêre."
+      "subheader": "Dark Mode û çavkaniyên rengan hilbijêre (Wallpaper an pêşdiyarkirî)."
     },
     "customize": {
       "header": "Xweserkirina ezmûna xwe bike",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Pêwendîdar bê înternetê",
     "keyboard-layout": {
-      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin.",
+      "changed": "Şêwaza kilîtdankê bo {layout} hat guhertin",
       "title": "Klavyeya"
     },
-    "kofi-opened": "Rûpela Ko-fi di geroka te de vebû.",
+    "kofi-opened": "Rûpela Ko-fi di geroka te de vebû",
     "missing-control-center": {
-      "description": "Kurteya kontrolê ji barê hatiye rakirin. Ji bo ku hûn dîsa ji barê bigihîjinê, hûn ê hewce ne ku kurteyê ji nû ve zêde bikin. Her weha hûn dikarin bi rast-klîkkirina li ser barê jî vekin.",
+      "description": "Kurteya kontrolê ji barê hatiye rakirin. Ji bo ku hûn dîsa ji barê bigihîjinê, hûn ê hewce ne ku kurteyê ji nû ve zêde bikin. Her weha hûn dikarin bi rast-klîkkirina li ser barê jî vekin",
       "label": "Amûra dawî ya navenda kontrolê hate rakirin"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Performansa Noctalîa"
     },
     "power-profile": {
-      "changed": "Profîla hêzê hate guhertin.",
+      "changed": "Profîla hêzê hate guhertin",
       "profile-name": "{profîl}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Çewtiyek di dema pêvajoykirina şablonan de rû da.",
-      "title-matugen": "Pêvajoya şablonkirina Matugenê têk çû",
-      "title-predefined": "Pêvajoya şêma rengê ya pêşdiyarkirî têk çû"
+      "desc-generic": "Çewtiyek di dema pêvajoykirina şablonan de rû da",
+      "title": "Pêvajoya şablonê têk çû"
     },
     "vpn": {
       "connected": "Hat girêdan bi '{name}' re",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Rengên dîwêr hatine bêbandorkirin",
       "enabled": "Rengên dîwêr hatine çalak kirin",
-      "label": "Afirandina rengên dîwêr",
-      "not-installed": "Matugen nehatiye sazkirin — ji bo derxistina rengê dîwêr hewce ye"
+      "label": "Afirandina rengên dîwêr"
     },
     "wifi": {
       "connected": "Bi '{ssid}' ve hat girêdan",
@@ -1540,8 +1537,8 @@
       "disabled": "Neçalakkirî",
       "disconnected": "Ji '{ssid}' qut bû",
       "enabled": "Çalakkirî",
-      "incorrect-password": "Borînpeyva şaş.",
-      "network-not-found": "Tor nehat dîtin."
+      "incorrect-password": "Borînpeyva şaş",
+      "network-not-found": "Tor nehat dîtin"
     }
   },
   "tooltips": {

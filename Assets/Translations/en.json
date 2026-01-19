@@ -758,7 +758,6 @@
       "download-success-title": "Color scheme downloaded",
       "download-title": "Download Color Schemes",
       "predefined-desc": "Choose from a collection of predefined color schemes.",
-      "predefined-generate-templates-description": "Generate Matugen templates (GTK, terminal themes, etc.) when using predefined color schemes.",
       "predefined-generate-templates-label": "Generate templates for predefined schemes",
       "predefined-title": "Predefined color schemes",
       "templates-desc": "Apply colors to external applications.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "All Done!",
     "appearance": {
-      "subheader": "Choose Dark Mode and color sources (Matugen or predefined)."
+      "subheader": "Choose Dark Mode and color sources (Wallpaper or predefined)."
     },
     "customize": {
       "header": "Customize your experience",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Connected without internet",
     "keyboard-layout": {
-      "changed": "Keyboard layout changed to {layout}.",
+      "changed": "Keyboard layout changed to {layout}",
       "title": "Keyboard"
     },
-    "kofi-opened": "Ko-fi page opened in your browser.",
+    "kofi-opened": "Ko-fi page opened in your browser",
     "missing-control-center": {
-      "description": "The control center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too.",
+      "description": "The control center widget has been removed from the bar. To access it from the bar again, you will need to re-add the widget. You can open it with right clicking on the bar too",
       "label": "Last control center widget removed"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia Performance"
     },
     "power-profile": {
-      "changed": "Power profile changed.",
+      "changed": "Power profile changed",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Encountered an error while processing templates.",
-      "title-matugen": "Matugen templating processing failed",
-      "title-predefined": "Predefined color scheme processing failed"
+      "desc-generic": "Encountered an error while processing templates",
+      "title": "Templating processing failed"
     },
     "vpn": {
       "connected": "Connected to '{name}'",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Wallpaper colors disabled",
       "enabled": "Wallpaper colors enabled",
-      "label": "Wallpaper colors",
-      "not-installed": "Matugen not installed — required for wallpaper color extraction."
+      "label": "Wallpaper colors"
     },
     "wifi": {
       "connected": "Connected to '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "Disabled",
       "disconnected": "Disconnected from '{ssid}'",
       "enabled": "Enabled",
-      "incorrect-password": "Incorrect password.",
-      "network-not-found": "Network not found."
+      "incorrect-password": "Incorrect password",
+      "network-not-found": "Network not found"
     }
   },
   "tooltips": {

@@ -758,7 +758,6 @@
       "download-success-title": "配色をダウンロードしました",
       "download-title": "配色のダウンロード",
       "predefined-desc": "あらかじめ用意された配色から選択します。",
-      "predefined-generate-templates-description": "プリセット配色を使用する際、Matugen テンプレート（GTK、ターミナルテーマなど）を生成します。",
       "predefined-generate-templates-label": "プリセット配色のテンプレートを生成する",
       "predefined-title": "プリセット配色",
       "templates-desc": "外部アプリケーションに配色を適用します。",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "完了！",
     "appearance": {
-      "subheader": "ダークモードとカラースキーム（Matugen またはプリセット）を選択します。"
+      "subheader": "Dark Modeと色のソース（壁紙または定義済み）を選択します。"
     },
     "customize": {
       "header": "自分好みにカスタマイズ",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "インターネット未接続",
     "keyboard-layout": {
-      "changed": "キーボードレイアウトを {layout} に変更しました。",
+      "changed": "キーボードレイアウトを {layout} に変更しました",
       "title": "キーボード"
     },
-    "kofi-opened": "ブラウザで Ko-fi ページを開きました。",
+    "kofi-opened": "ブラウザで Ko-fi ページを開きました",
     "missing-control-center": {
-      "description": "コントロールセンターウィジェットがバーから削除されました。再度アクセスするには、ウィジェットを追加し直す必要があります。バーを右クリックして開くことも可能です。",
+      "description": "コントロールセンターウィジェットがバーから削除されました。再度アクセスするには、ウィジェットを追加し直す必要があります。バーを右クリックして開くことも可能です",
       "label": "最後のコントロールセンターが削除されました"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia パフォーマンス"
     },
     "power-profile": {
-      "changed": "電源プロファイルを変更しました。",
+      "changed": "電源プロファイルを変更しました",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "テンプレートの処理中にエラーが発生しました。",
-      "title-matugen": "Matugen テンプレート処理に失敗しました",
-      "title-predefined": "プリセット配色の処理に失敗しました"
+      "desc-generic": "テンプレートの処理中にエラーが発生しました",
+      "title": "テンプレート処理に失敗しました"
     },
     "vpn": {
       "connected": "{name} に接続しました",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "壁紙配色の生成: 無効",
       "enabled": "壁紙配色の生成: 有効",
-      "label": "壁紙配色の生成",
-      "not-installed": "Matugen がインストールされていません（壁紙からの色抽出に必要です）。"
+      "label": "壁紙配色の生成"
     },
     "wifi": {
       "connected": "{ssid} に接続しました",
@@ -1540,8 +1537,8 @@
       "disabled": "無効",
       "disconnected": "{ssid} から切断しました",
       "enabled": "有効",
-      "incorrect-password": "パスワードが違います。",
-      "network-not-found": "ネットワークが見つかりません。"
+      "incorrect-password": "パスワードが違います",
+      "network-not-found": "ネットワークが見つかりません"
     }
   },
   "tooltips": {

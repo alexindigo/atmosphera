@@ -750,7 +750,6 @@
       "download-success-title": "配色已下載",
       "download-title": "下載配色",
       "predefined-desc": "從一批預先設計好的配色中選擇",
-      "predefined-generate-templates-description": "使用預定義配色方案時，產生 Matugen 範本（GTK、終端機主題等）。",
       "predefined-generate-templates-label": "為預先設計的配色建立模板",
       "predefined-title": "預先設計的配色",
       "templates-desc": "套用顏色至外部應用程式",
@@ -1356,7 +1355,7 @@
   "setup": {
     "all-done": "完成!",
     "appearance": {
-      "subheader": "選擇深色模式及顏色來源 (Matugen 或現有設計)"
+      "subheader": "選擇 Dark Mode 和色彩來源 (桌布或預先定義)。"
     },
     "customize": {
       "header": "客製你的使用體驗",
@@ -1469,8 +1468,7 @@
     },
     "theming-processor-failed": {
       "desc-generic": "在處理模板時發生錯誤",
-      "title-matugen": "處理 Matugen 模板時失敗",
-      "title-predefined": "處理預先設計的配色失敗"
+      "title": "範本處理失敗"
     },
     "vpn": {
       "connected": "已連至 '{name}'",
@@ -1479,8 +1477,7 @@
     "wallpaper-colors": {
       "disabled": "桌布配色已停用",
       "enabled": "桌布配色已啟用",
-      "label": "桌布配色",
-      "not-installed": "尚未安裝 Matugen 套件 — 自桌布抽色時需要此套件"
+      "label": "桌布配色"
     },
     "wifi": {
       "connected": "已連上 '{ssid}'",

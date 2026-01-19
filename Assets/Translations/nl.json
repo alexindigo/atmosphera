@@ -758,7 +758,6 @@
       "download-success-title": "Kleurenschema gedownload",
       "download-title": "Kleurenschema's downloaden",
       "predefined-desc": "Kies uit een verzameling vooraf gedefinieerde kleurenschema's.",
-      "predefined-generate-templates-description": "Genereer Matugen-sjablonen (GTK, terminalthema's, enz.) bij gebruik van vooraf gedefinieerde kleurenschema's.",
       "predefined-generate-templates-label": "Sjablonen genereren voor vooraf gedefinieerde schema's",
       "predefined-title": "Vooraf gedefinieerde kleurenschema's",
       "templates-desc": "Pas kleuren toe op externe applicaties.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Klaar!",
     "appearance": {
-      "subheader": "Kies donkere modus en kleurbronnen (Matugen of vooraf gedefinieerd)."
+      "subheader": "Kies Dark Mode en kleurbronnen (Wallpaper of vooraf gedefinieerd)."
     },
     "customize": {
       "header": "Pas je ervaring aan",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Verbonden zonder internet",
     "keyboard-layout": {
-      "changed": "Toetsenbordindeling gewijzigd naar {layout}.",
+      "changed": "Toetsenbordindeling gewijzigd naar {layout}",
       "title": "Toetsenbord"
     },
-    "kofi-opened": "Ko-fi-pagina geopend in je browser.",
+    "kofi-opened": "Ko-fi-pagina geopend in je browser",
     "missing-control-center": {
-      "description": "De bedieningscentrumwidget is uit de balk verwijderd. Om er vanuit de balk weer toegang toe te krijgen, moet je de widget opnieuw toevoegen. Je kunt het ook openen door met de rechtermuisknop op de balk te klikken.",
+      "description": "De bedieningscentrumwidget is uit de balk verwijderd. Om er vanuit de balk weer toegang toe te krijgen, moet je de widget opnieuw toevoegen. Je kunt het ook openen door met de rechtermuisknop op de balk te klikken",
       "label": "Laatste bedieningscentrumwidget verwijderd"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia Performance"
     },
     "power-profile": {
-      "changed": "Energieprofiel gewijzigd.",
+      "changed": "Energieprofiel gewijzigd",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Er is een fout opgetreden tijdens het verwerken van sjablonen.",
-      "title-matugen": "Matugen-sjabloonverwerking mislukt",
-      "title-predefined": "Verwerken van vooraf gedefinieerd kleurenschema mislukt"
+      "desc-generic": "Er is een fout opgetreden tijdens het verwerken van sjablonen",
+      "title": "Sjabloonverwerking mislukt"
     },
     "vpn": {
       "connected": "Verbonden met '{name}'",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Achtergrondkleuren uitgeschakeld",
       "enabled": "Achtergrondkleuren ingeschakeld",
-      "label": "Achtergrondkleuren genereren",
-      "not-installed": "Matugen niet geïnstalleerd — vereist voor het extraheren van achtergrondkleuren"
+      "label": "Achtergrondkleuren genereren"
     },
     "wifi": {
       "connected": "Verbonden met '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "Wi-Fi uitgeschakeld",
       "disconnected": "Verbinding met '{ssid}' verbroken",
       "enabled": "Wi-Fi ingeschakeld",
-      "incorrect-password": "Onjuist wachtwoord.",
-      "network-not-found": "Netwerk niet gevonden."
+      "incorrect-password": "Onjuist wachtwoord",
+      "network-not-found": "Netwerk niet gevonden"
     }
   },
   "tooltips": {

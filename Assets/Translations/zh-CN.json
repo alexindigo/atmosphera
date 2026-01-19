@@ -758,7 +758,6 @@
       "download-success-title": "配色方案已下载",
       "download-title": "下载配色方案",
       "predefined-desc": "从预定义配色方案集合中选择。",
-      "predefined-generate-templates-description": "使用预定义配色方案时生成 Matugen 模板（GTK、终端主题等）。",
       "predefined-generate-templates-label": "为预定义方案生成模板",
       "predefined-title": "预定义配色方案",
       "templates-desc": "将颜色应用于外部应用程序。",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "完成！",
     "appearance": {
-      "subheader": "选择深色模式与配色来源（Matugen 或预设）。"
+      "subheader": "选择 Dark Mode 和颜色来源（壁纸或预定义）。"
     },
     "customize": {
       "header": "自定义体验",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "已连接但无互联网",
     "keyboard-layout": {
-      "changed": "键盘布局已更改为 {layout}。",
+      "changed": "键盘布局已更改为 {layout}",
       "title": "键盘"
     },
-    "kofi-opened": "Ko-fi 页面已在您的浏览器中打开。",
+    "kofi-opened": "Ko-fi 页面已在您的浏览器中打开",
     "missing-control-center": {
-      "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它。",
+      "description": "控制中心小部件已从状态栏中移除。要再次从状态栏访问它，您需要重新添加小部件。您也可以通过右键点击状态栏来打开它",
       "label": "最后一个控制中心小部件已移除"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia 性能"
     },
     "power-profile": {
-      "changed": "电源模式已更改。",
+      "changed": "电源模式已更改",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "处理模板时遇到错误。",
-      "title-matugen": "Matugen模板处理失败",
-      "title-predefined": "预定义的颜色方案处理失败"
+      "desc-generic": "处理模板时遇到错误",
+      "title": "模板处理失败"
     },
     "vpn": {
       "connected": "已连接到“{name}”",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "壁纸颜色已禁用",
       "enabled": "壁纸颜色已启用",
-      "label": "壁纸颜色生成",
-      "not-installed": "Matugen 未安装 — 壁纸颜色提取所需。"
+      "label": "壁纸颜色生成"
     },
     "wifi": {
       "connected": "已连接到 '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "已禁用",
       "disconnected": "已断开与 '{ssid}' 的连接",
       "enabled": "已启用",
-      "incorrect-password": "密码错误。",
-      "network-not-found": "未找到网络。"
+      "incorrect-password": "密码错误",
+      "network-not-found": "未找到网络"
     }
   },
   "tooltips": {

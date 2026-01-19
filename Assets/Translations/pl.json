@@ -758,7 +758,6 @@
       "download-success-title": "Schemat kolorów pobrany",
       "download-title": "Pobierz schematy kolorów",
       "predefined-desc": "Wybierz z kolekcji predefiniowanych schematów kolorów.",
-      "predefined-generate-templates-description": "Generuj szablony Matugen (GTK, motywy terminala itp.) przy użyciu predefiniowanych schematów kolorów.",
       "predefined-generate-templates-label": "Generuj szablony dla predefiniowanych schematów",
       "predefined-title": "Predefiniowane schematy kolorów",
       "templates-desc": "Zastosuj kolory w aplikacjach zewnętrznych.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Gotowe!",
     "appearance": {
-      "subheader": "Wybierz tryb ciemny i źródła kolorów (Matugen lub predefiniowane)."
+      "subheader": "Wybierz Dark Mode i źródła kolorów (Tapeta lub predefiniowane)."
     },
     "customize": {
       "header": "Dostosuj swoje doświadczenie",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Połączono bez dostępu do internetu",
     "keyboard-layout": {
-      "changed": "Układ klawiatury zmieniony na {layout}.",
+      "changed": "Układ klawiatury zmieniony na {layout}",
       "title": "Klawiatura"
     },
-    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce.",
+    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce",
     "missing-control-center": {
-      "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek.",
+      "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek",
       "label": "Ostatni widżet centrum sterowania usunięty"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Wydajność Noctalia"
     },
     "power-profile": {
-      "changed": "Profil zasilania zmieniony.",
+      "changed": "Profil zasilania zmieniony",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów.",
-      "title-matugen": "Błąd przetwarzania szablonów Matugen",
-      "title-predefined": "Błąd przetwarzania predefiniowanego schematu kolorów"
+      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów",
+      "title": "Przetwarzanie szablonu nie powiodło się"
     },
     "vpn": {
       "connected": "Połączono z '{name}'",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Kolory tapety wyłączone",
       "enabled": "Kolory tapety włączone",
-      "label": "Generowanie kolorów tapety",
-      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów"
+      "label": "Generowanie kolorów tapety"
     },
     "wifi": {
       "connected": "Połączono z '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "Wyłączone",
       "disconnected": "Rozłączono z '{ssid}'",
       "enabled": "Włączone",
-      "incorrect-password": "Nieprawidłowe hasło.",
-      "network-not-found": "Nie znaleziono sieci."
+      "incorrect-password": "Nieprawidłowe hasło",
+      "network-not-found": "Nie znaleziono sieci"
     }
   },
   "tooltips": {

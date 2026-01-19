@@ -758,7 +758,6 @@
       "download-success-title": "Farbschema heruntergeladen",
       "download-title": "Farbschemata herunterladen",
       "predefined-desc": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata.",
-      "predefined-generate-templates-description": "Generiert Matugen-Templates (GTK, Terminal-Themen, etc.) bei der Verwendung vordefinierter Farbschemata.",
       "predefined-generate-templates-label": "Templates für vordefinierte Schemata generieren",
       "predefined-title": "Vordefinierte Farbschemata",
       "templates-desc": "Farben auf externe Anwendungen anwenden.",
@@ -1407,7 +1406,7 @@
   "setup": {
     "all-done": "Fertig!",
     "appearance": {
-      "subheader": "Dunkelmodus und Farbquellen wählen (Matugen oder vordefiniert)."
+      "subheader": "Wähle Dark Mode und Farbquellen (Wallpaper oder vordefiniert)."
     },
     "customize": {
       "header": "Erlebnis anpassen",
@@ -1496,12 +1495,12 @@
     },
     "internet-limited": "Verbunden ohne Internet",
     "keyboard-layout": {
-      "changed": "Tastaturlayout geändert zu {layout}.",
+      "changed": "Tastaturlayout geändert zu {layout}",
       "title": "Tastatur"
     },
-    "kofi-opened": "Ko-fi-Seite in Ihrem Browser geöffnet.",
+    "kofi-opened": "Ko-fi-Seite in Ihrem Browser geöffnet",
     "missing-control-center": {
-      "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen.",
+      "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen",
       "label": "Letztes Kontrollzentrum-Widget entfernt"
     },
     "night-light": {
@@ -1515,13 +1514,12 @@
       "label": "Noctalia-Performance"
     },
     "power-profile": {
-      "changed": "Energieprofil geändert.",
+      "changed": "Energieprofil geändert",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
-      "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
-      "title-predefined": "Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen"
+      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten",
+      "title": "Vorlagenverarbeitung fehlgeschlagen"
     },
     "vpn": {
       "connected": "Verbunden mit '{name}'",
@@ -1530,8 +1528,7 @@
     "wallpaper-colors": {
       "disabled": "Hintergrundbild-Farben deaktiviert",
       "enabled": "Hintergrundbild-Farben aktiviert",
-      "label": "Hintergrundfarbengenerierung",
-      "not-installed": "Matugen nicht installiert — erforderlich für Hintergrundbild-Farbextraktion"
+      "label": "Hintergrundfarbengenerierung"
     },
     "wifi": {
       "connected": "Verbunden mit '{ssid}'",
@@ -1540,8 +1537,8 @@
       "disabled": "Deaktiviert",
       "disconnected": "Getrennt von '{ssid}'",
       "enabled": "Aktiviert",
-      "incorrect-password": "Falsches Passwort.",
-      "network-not-found": "Netzwerk nicht gefunden."
+      "incorrect-password": "Falsches Passwort",
+      "network-not-found": "Netzwerk nicht gefunden"
     }
   },
   "tooltips": {
