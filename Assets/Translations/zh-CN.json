@@ -1200,7 +1200,7 @@
       "installing": "正在安装 {plugin}...",
       "open-plugin-page": "打开插件页面",
       "open-plugins-tab": "打开插件设置",
-      "plugin-settings-title": "{插件} 设置",
+      "plugin-settings-title": "{plugin} 设置",
       "refresh-refreshing": "正在刷新插件列表...",
       "refresh-tooltip": "刷新可用插件",
       "settings-error-not-loaded": "插件未加载。",
