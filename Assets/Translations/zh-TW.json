@@ -206,8 +206,8 @@
       "network-traffic-label": "網路流量",
       "storage-usage-description": "顯示磁碟空間的使用量",
       "storage-usage-label": "磁碟使用量",
-      "swap-usage-description": "顯示交換記憶體使用量。",
-      "swap-usage-label": "交換空間使用量",
+      "swap-usage-description": "顯示交換記憶體使用量",
+      "swap-usage-label": "交換記憶體使用量",
       "use-monospace-font-description": "使用等寬字型可以達成一致的字元寬度",
       "use-monospace-font-label": "等寬字型"
     },
@@ -702,11 +702,11 @@
       "appearance-use-separate-opacity-label": "分開設定工具列不透明度",
       "monitor-configure-widgets": "設定小工具",
       "monitor-override-settings": "覆寫全域設定",
-      "monitor-override-settings-description": "使用此螢幕的自訂設定。",
+      "monitor-override-settings-description": "在這個顯示器上使用自訂設定",
       "monitor-reset-all": "全部重設",
       "monitor-widgets-title": "小工具設定 - {monitor}",
       "monitors-desc": "只在特定的顯示器顯示工具列, 如果全部取消勾選則會顯示在所有顯示器",
-      "monitors-desc-new": "設定哪些螢幕顯示 Bar，並自訂每個螢幕的設定。",
+      "monitors-desc-new": "設定在哪些螢幕顯示工具列, 並自訂每個螢幕的設定",
       "monitors-title": "在顯示器顯示",
       "title": "工具列",
       "tray-blacklist-description": "新增系統匣的排除項目, 支援萬用字元 (*)",
@@ -719,7 +719,7 @@
       "widgets-title": "排列小工具"
     },
     "color-scheme": {
-      "color-source-use-wallpaper-colors-description": "從您的桌布產生配色方案。自動提取顏色以建立一個有凝聚力的主題。",
+      "color-source-use-wallpaper-colors-description": "從你的桌布產生主題配色, 自動從抽取的顏色建立一個有連貫性的主題",
       "color-source-use-wallpaper-colors-label": "使用桌布配色",
       "dark-mode-mode-description": "啟用自動切換淺色及暗色模式",
       "dark-mode-mode-label": "深色模式",
@@ -759,8 +759,8 @@
       "templates-none-detected": "未偵測到",
       "templates-write-path": "寫入：{filepath}",
       "title": "主題配色",
-      "wallpaper-method-description": "選擇您喜歡的顏色提取方法。",
-      "wallpaper-method-label": "色彩提取方法"
+      "wallpaper-method-description": "選擇你喜歡的顏色抽取方式",
+      "wallpaper-method-label": "色彩提取方式"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",
@@ -1062,7 +1062,7 @@
       "history-low-urgency-label": "儲存低急迫性到歷史通知",
       "history-normal-urgency-description": "將普通急迫的通知存放到歷史通知",
       "history-normal-urgency-label": "儲存普通急迫到歷史通知",
-      "media-toast-description": "媒體播放狀態變更時顯示 Toast 訊息。",
+      "media-toast-description": "媒體播放狀態變更時顯示氣泡訊息。",
       "media-toast-label": "媒體",
       "monitors-desc": "只在特定的顯示器顯示通知, 如果全部取消勾選則會顯示在所有顯示器",
       "settings-always-on-top-description": "在全螢幕視窗與其他層級上方顯示通知。",
@@ -1077,32 +1077,57 @@
       "sounds-excluded-apps-label": "排除的應用程式",
       "sounds-excluded-apps-placeholder": "discord,firefox,chrome,chromium,edge",
       "sounds-files-critical-label": "非常危急的音效",
+      "sounds-files-critical-select-title": "選擇相當危急音效檔",
       "sounds-files-low-label": "低急迫性的音效",
+      "sounds-files-low-select-title": "選擇低急迫性音效檔",
       "sounds-files-normal-label": "普通急迫的音效",
+      "sounds-files-normal-select-title": "選擇普通急迫音效檔",
       "sounds-files-placeholder": "輸入音效檔所在的路徑",
       "sounds-files-select-file": "選擇音效檔",
       "sounds-files-title": "音效檔",
       "sounds-files-unified-label": "通知音效",
       "sounds-files-unified-select-title": "選擇通知音效檔",
+      "sounds-separate-description": "分別為低急迫性, 普通急迫及相當危急通知使用不同的音效檔",
       "sounds-separate-label": "為不同優先級使用不同音效",
       "sounds-title": "音效設定",
       "sounds-unavailable-description": "安裝 qt6 multimedia 套件以啟用通知音效",
       "sounds-unavailable-label": "通知音效無法使用",
       "sounds-volume-description": "調整通知音效的音量大小",
       "sounds-volume-label": "音效音量",
+      "toast-desc": "設定氣泡訊息的外觀及行為",
+      "toast-keyboard-description": "當鍵盤佈局改變時顯示氣泡訊息",
       "toast-keyboard-label": "鍵盤佈局"
     },
     "osd": {
+      "always-on-top-description": "將螢幕顯示在全螢幕視窗與其他層疊之上",
       "always-on-top-label": "總是置頂",
+      "background-opacity-description": "控制螢幕顯示背景的不透明度",
       "background-opacity-label": "背景不透明度",
+      "description": "設定螢幕顯示的指示項目, 如音量及亮度",
+      "duration-auto-hide-description": "調整螢幕顯示消失的時間",
       "duration-auto-hide-label": "在時間後隱藏",
+      "duration-desc": "設定螢幕顯示在自動消失前要顯示多久",
+      "duration-title": "自動隱藏時間",
       "enabled-description": "音量及亮度改變時即時顯示",
+      "enabled-label": "啟用螢幕顯示",
+      "events-desc": "選擇要哪些事件觸發螢幕顯示",
+      "general-desc": "設定螢幕顯示的外觀及行為",
+      "location-description": "設定螢幕顯示在哪裡出現",
+      "monitors-desc": "只在特定的顯示器顯示OSD, 如果全部取消勾選則會顯示在所有顯示器",
+      "title": "螢幕顯示 (OSD)",
+      "types-brightness-description": "當亮度改變時秀出螢幕顯示",
       "types-brightness-label": "亮度",
+      "types-custom-text-description": "顯示從 IPC 傳入的自訂文字訊息",
       "types-custom-text-label": "自訂文字",
+      "types-desc": "選取會觸發螢幕顯示的事件",
+      "types-input-volume-description": "當麥克風改變時秀出螢幕顯示",
       "types-input-volume-label": "輸入音量",
+      "types-lockkey-description": "當 Caps Lock, Num Lock, Scroll Lock 切換時秀出螢幕顯示",
       "types-lockkey-label": "Lock 鍵",
-      "types-media-description": "媒體播放狀態變更時顯示 OSD（播放、暫停、跳過）。",
+      "types-media-description": "媒體播放狀態變更時秀出螢幕顯示 (播放, 暫停, 跳過)",
       "types-media-label": "媒體播放",
+      "types-title": "螢幕顯示的觸發事件",
+      "types-volume-description": "當輸出音量改變時秀出螢幕顯示",
       "types-volume-label": "輸出音量"
     },
     "plugins": {
@@ -1236,7 +1261,7 @@
       "settings-panel-mode-description": "選擇介面設定出現所用的佈局 (可能需要重新打開)",
       "settings-panel-mode-label": "設定面板顯示",
       "shadows-description": "為工具列及面板啟用陰影",
-      "shadows-direction-description": "選擇陰影該投射的方向",
+      "shadows-direction-description": "選擇陰影要投射的方向",
       "shadows-direction-label": "陰影方向",
       "shadows-label": "陰影",
       "title": "使用者介面",
@@ -1314,6 +1339,7 @@
   },
   "session-menu": {
     "action-in-seconds": "將在{seconds}秒後{action}...",
+    "cancel-timer": "取消計時器",
     "title": "工作階段選單"
   },
   "setup": {
@@ -1327,7 +1353,7 @@
     },
     "skip-setup": "跳過設定",
     "telemetry-wizard-done": "了解!",
-    "telemetry-wizard-note": "你隨時可以在 \"設定\" 中啟用或停用此功能",
+    "telemetry-wizard-note": "由你作主 — 你隨時可以在 \"設定\" 中啟用或停用此設定",
     "telemetry-wizard-subtitle": "我們新增了匿名分析功能以協助改善 Noctalia",
     "telemetry-wizard-title": "隱私權更新",
     "wallpaper": {
@@ -1406,6 +1432,7 @@
       "enabled": "勿擾模式已啟用",
       "enabled-desc": "你會在歷史通知找到這些通知"
     },
+    "internet-limited": "已連接但沒有網際網路",
     "keyboard-layout": {
       "changed": "切換鍵盤佈局為 {layout}",
       "title": "鍵盤"
@@ -1417,6 +1444,7 @@
     },
     "night-light": {
       "forced": "強制開啟",
+      "normal": "一般模式",
       "not-installed": "尚未安裝 wlsunset 套件"
     },
     "noctalia-performance": {

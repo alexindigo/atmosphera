@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} em {seconds} segundos...",
+    "cancel-timer": "Cancelar temporizador",
     "title": "Menu da sessão"
   },
   "setup": {

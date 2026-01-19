@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "{seconds} 秒後に {action}...",
+    "cancel-timer": "タイマーをキャンセル",
     "title": "セッションメニュー"
   },
   "setup": {
