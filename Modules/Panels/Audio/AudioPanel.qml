@@ -363,7 +363,7 @@ SmartPanel {
               Layout.fillWidth: true
               Layout.preferredHeight: outputVolumeColumn.implicitHeight + (Style.marginXL)
 
-              RowLayout {
+              ColumnLayout {
                 id: outputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -371,28 +371,28 @@ SmartPanel {
                 anchors.margins: Style.marginM
                 spacing: Style.marginM
 
-                ColumnLayout {
+                RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginXS
 
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginXS
-
-                    NText {
-                      text: I18n.tr("common.output")
-                      pointSize: Style.fontSizeM
-                      color: Color.mPrimary
-                    }
-
-                    NText {
-                      text: AudioService.sink ? (" - " + (AudioService.sink.description || AudioService.sink.name || "")) : ""
-                      pointSize: Style.fontSizeS
-                      color: Color.mOnSurfaceVariant
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
-                    }
+                  NText {
+                    text: I18n.tr("common.output")
+                    pointSize: Style.fontSizeM
+                    color: Color.mPrimary
                   }
+
+                  NText {
+                    text: AudioService.sink ? (" - " + (AudioService.sink.description || AudioService.sink.name || "")) : ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                  }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginM
 
                   NValueSlider {
                     Layout.fillWidth: true
@@ -407,17 +407,27 @@ SmartPanel {
                     onPressedChanged: function (pressed) {
                       localOutputVolumeChanging = pressed;
                     }
-                    text: Math.round(localOutputVolume * 100) + "%"
                   }
-                }
 
-                NIconButton {
-                  icon: AudioService.getOutputIcon()
-                  tooltipText: I18n.tr("tooltips.output-muted")
-                  baseSize: Style.baseWidgetSize * 0.8
-                  onClicked: {
-                    AudioService.suppressOutputOSD();
-                    AudioService.setOutputMuted(!AudioService.muted);
+                  NText {
+                    text: Math.round(localOutputVolume * 100) + "%"
+                    pointSize: Style.fontSizeM
+                    family: Settings.data.ui.fontFixed
+                    color: Color.mOnSurface
+                    opacity: enabled ? 1.0 : 0.6
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: 45 * Style.uiScaleRatio
+                    horizontalAlignment: Text.AlignRight
+                  }
+
+                  NIconButton {
+                    icon: AudioService.getOutputIcon()
+                    tooltipText: I18n.tr("tooltips.output-muted")
+                    baseSize: Style.baseWidgetSize * 0.7
+                    onClicked: {
+                      AudioService.suppressOutputOSD();
+                      AudioService.setOutputMuted(!AudioService.muted);
+                    }
                   }
                 }
               }
@@ -428,7 +438,7 @@ SmartPanel {
               Layout.fillWidth: true
               Layout.preferredHeight: inputVolumeColumn.implicitHeight + (Style.marginXL)
 
-              RowLayout {
+              ColumnLayout {
                 id: inputVolumeColumn
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -436,28 +446,28 @@ SmartPanel {
                 anchors.margins: Style.marginM
                 spacing: Style.marginM
 
-                ColumnLayout {
+                RowLayout {
                   Layout.fillWidth: true
                   spacing: Style.marginXS
 
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Style.marginXS
-
-                    NText {
-                      text: I18n.tr("common.input")
-                      pointSize: Style.fontSizeM
-                      color: Color.mPrimary
-                    }
-
-                    NText {
-                      text: AudioService.source ? (" - " + (AudioService.source.description || AudioService.source.name || "")) : ""
-                      pointSize: Style.fontSizeS
-                      color: Color.mOnSurfaceVariant
-                      elide: Text.ElideRight
-                      Layout.fillWidth: true
-                    }
+                  NText {
+                    text: I18n.tr("common.input")
+                    pointSize: Style.fontSizeM
+                    color: Color.mPrimary
                   }
+
+                  NText {
+                    text: AudioService.source ? (" - " + (AudioService.source.description || AudioService.source.name || "")) : ""
+                    pointSize: Style.fontSizeS
+                    color: Color.mOnSurfaceVariant
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                  }
+                }
+
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginM
 
                   NValueSlider {
                     Layout.fillWidth: true
@@ -472,17 +482,27 @@ SmartPanel {
                     onPressedChanged: function (pressed) {
                       localInputVolumeChanging = pressed;
                     }
-                    text: Math.round(localInputVolume * 100) + "%"
                   }
-                }
 
-                NIconButton {
-                  icon: AudioService.getInputIcon()
-                  tooltipText: I18n.tr("tooltips.input-muted")
-                  baseSize: Style.baseWidgetSize * 0.8
-                  onClicked: {
-                    AudioService.suppressInputOSD();
-                    AudioService.setInputMuted(!AudioService.inputMuted);
+                  NText {
+                    text: Math.round(localInputVolume * 100) + "%"
+                    pointSize: Style.fontSizeM
+                    family: Settings.data.ui.fontFixed
+                    color: Color.mOnSurface
+                    opacity: enabled ? 1.0 : 0.6
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: 45 * Style.uiScaleRatio
+                    horizontalAlignment: Text.AlignRight
+                  }
+
+                  NIconButton {
+                    icon: AudioService.getInputIcon()
+                    tooltipText: I18n.tr("tooltips.input-muted")
+                    baseSize: Style.baseWidgetSize * 0.7
+                    onClicked: {
+                      AudioService.suppressInputOSD();
+                      AudioService.setInputMuted(!AudioService.inputMuted);
+                    }
                   }
                 }
               }
@@ -717,32 +737,48 @@ SmartPanel {
                       Layout.fillWidth: true
                     }
 
-                    NValueSlider {
+                    RowLayout {
                       Layout.fillWidth: true
-                      from: 0
-                      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
-                      value: (appBox.appVolume !== undefined) ? appBox.appVolume : 0.0
-                      stepSize: 0.01
-                      heightRatio: 0.5
-                      enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
-                      onMoved: function (value) {
-                        if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
-                          appBox.nodeAudio.volume = value;
+                      spacing: Style.marginM
+
+                      NValueSlider {
+                        Layout.fillWidth: true
+                        from: 0
+                        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                        value: (appBox.appVolume !== undefined) ? appBox.appVolume : 0.0
+                        stepSize: 0.01
+                        heightRatio: 0.5
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                        onMoved: function (value) {
+                          if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
+                            appBox.nodeAudio.volume = value;
+                          }
                         }
                       }
-                      text: Math.round((appBox.appVolume !== undefined ? appBox.appVolume : 0.0) * 100) + "%"
-                    }
-                  }
 
-                  // Mute Button
-                  NIconButton {
-                    icon: (appBox.appMuted === true) ? "volume-mute" : "volume-high"
-                    tooltipText: (appBox.appMuted === true) ? I18n.tr("tooltips.unmute") : I18n.tr("tooltips.mute")
-                    baseSize: Style.baseWidgetSize * 0.8
-                    enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
-                    onClicked: {
-                      if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
-                        appBox.nodeAudio.muted = !appBox.appMuted;
+                      NText {
+                        text: Math.round((appBox.appVolume !== undefined ? appBox.appVolume : 0.0) * 100) + "%"
+                        pointSize: Style.fontSizeM
+                        family: Settings.data.ui.fontFixed
+                        color: Color.mOnSurface
+                        opacity: enabled ? 1.0 : 0.6
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.preferredWidth: 45 * Style.uiScaleRatio
+                        horizontalAlignment: Text.AlignRight
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                      }
+
+                      // Mute Button
+                      NIconButton {
+                        icon: (appBox.appMuted === true) ? "volume-mute" : "volume-high"
+                        tooltipText: (appBox.appMuted === true) ? I18n.tr("tooltips.unmute") : I18n.tr("tooltips.mute")
+                        baseSize: Style.baseWidgetSize * 0.7
+                        enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)
+                        onClicked: {
+                          if (appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true) {
+                            appBox.nodeAudio.muted = !appBox.appMuted;
+                          }
+                        }
                       }
                     }
                   }
