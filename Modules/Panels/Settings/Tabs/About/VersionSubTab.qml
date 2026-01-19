@@ -335,11 +335,6 @@ ColumnLayout {
     stderr: StdioCollector {}
   }
 
-  NHeader {
-    label: I18n.tr("panels.about.noctalia-title")
-    description: I18n.tr("panels.about.noctalia-desc")
-  }
-
   RowLayout {
     Layout.alignment: Qt.AlignHCenter
     spacing: Style.marginXL
@@ -354,104 +349,111 @@ ColumnLayout {
       sourceSize.height: height
       mipmap: true
       smooth: true
-      Layout.alignment: Qt.AlignVCenter
+      Layout.alignment: Qt.AlignBottom
     }
 
-    // Versions
-    GridLayout {
-      columns: 2
-      rowSpacing: Style.marginXS
-      columnSpacing: Style.marginM
-
-      NText {
-        text: I18n.tr("panels.about.noctalia-latest-version")
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+    ColumnLayout {
+      NHeader {
+        label: I18n.tr("panels.about.noctalia-title")
+        // description: I18n.tr("panels.about.noctalia-desc")
       }
 
-      NText {
-        text: root.latestVersion
-        color: Color.mOnSurface
-        font.weight: Style.fontWeightBold
-      }
-
-      NText {
-        text: I18n.tr("panels.about.noctalia-installed-version")
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-      }
-
-      RowLayout {
-        spacing: Style.marginS
+      // Versions
+      GridLayout {
+        columns: 2
+        rowSpacing: Style.marginXS
+        columnSpacing: Style.marginM
 
         NText {
-          text: root.currentVersion
+          text: I18n.tr("panels.about.noctalia-latest-version")
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+        }
+
+        NText {
+          text: root.latestVersion
           color: Color.mOnSurface
           font.weight: Style.fontWeightBold
         }
 
-        // Update status indicator
-        NIcon {
-          id: upToDateIcon
-          visible: root.isUpToDate
-          icon: "circle-check"
-          pointSize: Style.fontSizeM
-          color: Color.mPrimary
-
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: TooltipService.show(upToDateIcon, I18n.tr("panels.about.up-to-date"))
-            onExited: TooltipService.hide()
-          }
+        NText {
+          text: I18n.tr("panels.about.noctalia-installed-version")
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
         }
 
-        NIcon {
-          id: updateAvailableIcon
-          visible: root.updateAvailable
-          icon: "arrow-up-circle"
-          pointSize: Style.fontSizeS
-          color: Color.mPrimary
+        RowLayout {
+          spacing: Style.marginS
 
-          MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: TooltipService.show(updateAvailableIcon, I18n.tr("panels.about.update-available"))
-            onExited: TooltipService.hide()
+          NText {
+            text: root.currentVersion
+            color: Color.mOnSurface
+            font.weight: Style.fontWeightBold
           }
-        }
-      }
 
-      NText {
-        visible: root.isGitVersion
-        text: I18n.tr("panels.about.noctalia-git-commit")
-        color: Color.mOnSurfaceVariant
-        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-      }
+          // Update status indicator
+          NIcon {
+            id: upToDateIcon
+            visible: root.isUpToDate
+            icon: "circle-check"
+            pointSize: Style.fontSizeM
+            color: Color.mPrimary
 
-      // Clickable git commit
-      NText {
-        id: commitText
-        visible: root.isGitVersion
-        text: root.commitInfo || I18n.tr("common.loading")
-        color: root.commitInfo ? Color.mPrimary : Color.mOnSurface
-        pointSize: Style.fontSizeXS
-        font.underline: commitMouseArea.containsMouse && root.commitInfo
-
-        MouseArea {
-          id: commitMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: root.commitInfo ? Qt.PointingHandCursor : Qt.ArrowCursor
-          onEntered: {
-            if (root.commitInfo) {
-              TooltipService.show(commitText, I18n.tr("panels.about.view-commit"));
+            MouseArea {
+              anchors.fill: parent
+              hoverEnabled: true
+              onEntered: TooltipService.show(upToDateIcon, I18n.tr("panels.about.up-to-date"))
+              onExited: TooltipService.hide()
             }
           }
-          onExited: TooltipService.hide()
-          onClicked: {
-            if (root.commitInfo) {
-              Quickshell.execDetached(["xdg-open", "https://github.com/noctalia-dev/noctalia-shell/commit/" + root.commitInfo]);
+
+          NIcon {
+            id: updateAvailableIcon
+            visible: root.updateAvailable
+            icon: "arrow-up-circle"
+            pointSize: Style.fontSizeS
+            color: Color.mPrimary
+
+            MouseArea {
+              anchors.fill: parent
+              hoverEnabled: true
+              onEntered: TooltipService.show(updateAvailableIcon, I18n.tr("panels.about.update-available"))
+              onExited: TooltipService.hide()
+            }
+          }
+        }
+
+        NText {
+          visible: root.isGitVersion
+          text: I18n.tr("panels.about.noctalia-git-commit")
+          color: Color.mOnSurfaceVariant
+          Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+        }
+
+        // Clickable git commit
+        NText {
+          id: commitText
+          visible: root.isGitVersion
+          text: root.commitInfo || I18n.tr("common.loading")
+          color: root.commitInfo ? Color.mPrimary : Color.mOnSurface
+          pointSize: Style.fontSizeXS
+          font.underline: commitMouseArea.containsMouse && root.commitInfo
+
+          MouseArea {
+            id: commitMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: root.commitInfo ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onEntered: {
+              if (root.commitInfo) {
+                TooltipService.show(commitText, I18n.tr("panels.about.view-commit"));
+              }
+            }
+            onExited: TooltipService.hide()
+            onClicked: {
+              if (root.commitInfo) {
+                Quickshell.execDetached(["xdg-open", "https://github.com/noctalia-dev/noctalia-shell/commit/" + root.commitInfo]);
+              }
             }
           }
         }
@@ -497,12 +499,10 @@ ColumnLayout {
   // System Information Section
   NDivider {
     Layout.fillWidth: true
-    Layout.topMargin: Style.marginM
   }
 
   NHeader {
     label: I18n.tr("panels.about.system-title")
-    Layout.topMargin: Style.marginM
   }
 
   // Loading state
@@ -535,12 +535,15 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-install-hint")
       color: Color.mOnSurfaceVariant
-      font.pointSize: Style.fontSizeXS
+      pointSize: Style.fontSizeXS
     }
   }
 
   // System info grid
   GridLayout {
+    id: sysInfo
+    readonly property real textSize: Style.fontSizeS
+
     visible: !root.systemInfoLoading && root.systemInfoAvailable && root.systemInfo
     Layout.fillWidth: true
     columns: 2
@@ -551,6 +554,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-os")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -558,6 +562,7 @@ ColumnLayout {
         return os?.result?.prettyName || "N/A";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -566,6 +571,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-kernel")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -573,6 +579,7 @@ ColumnLayout {
         return kernel?.result?.release || "N/A";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -581,6 +588,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-host")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -588,6 +596,7 @@ ColumnLayout {
         return title?.result?.hostName || "N/A";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -596,6 +605,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-product")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -603,6 +613,7 @@ ColumnLayout {
         return title?.result?.name || "N/A";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -611,6 +622,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-uptime")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -618,6 +630,7 @@ ColumnLayout {
         return value ? Time.formatVagueHumanReadableDuration(value / 1000) : "-";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -626,6 +639,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-cpu")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -640,6 +654,7 @@ ColumnLayout {
         return cpuText;
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -648,6 +663,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-gpu")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -657,6 +673,7 @@ ColumnLayout {
         return gpu.result.map(g => g.name || "Unknown").join(", ");
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -665,6 +682,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-memory")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -676,6 +694,7 @@ ColumnLayout {
         return used + " / " + total;
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -684,6 +703,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-disk")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -698,6 +718,7 @@ ColumnLayout {
         return used + " / " + total + " (" + rootDisk.filesystem + ")";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -706,6 +727,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-wm")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -719,6 +741,7 @@ ColumnLayout {
         return wmText;
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -727,6 +750,7 @@ ColumnLayout {
     NText {
       text: I18n.tr("panels.about.system-packages")
       color: Color.mOnSurfaceVariant
+      pointSize: sysInfo.textSize
     }
     NText {
       text: {
@@ -762,6 +786,7 @@ ColumnLayout {
         return "N/A";
       }
       color: Color.mOnSurface
+      pointSize: sysInfo.textSize
       Layout.fillWidth: true
       wrapMode: Text.Wrap
     }
@@ -785,6 +810,7 @@ ColumnLayout {
           return name + ": " + (screen?.width || 0) + "x" + (screen?.height || 0) + " @ " + scaleValue + "x";
         }
         color: isLabel ? Color.mOnSurfaceVariant : Color.mOnSurface
+        pointSize: sysInfo.textSize
         Layout.fillWidth: !isLabel
         wrapMode: Text.Wrap
       }
