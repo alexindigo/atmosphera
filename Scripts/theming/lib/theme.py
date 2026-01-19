@@ -132,8 +132,8 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.80)
     on_surface_variant = ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
 
-    outline = adjust_surface(palette[0], 0.10, 0.30)
-    outline_variant = adjust_surface(palette[0], 0.10, 0.40)
+    outline = ensure_contrast(adjust_surface(palette[0], 0.10, 0.30), surface, 3.0)
+    outline_variant = ensure_contrast(adjust_surface(palette[0], 0.10, 0.40), surface, 3.0)
 
     # Contrasting foregrounds - dark text on bright accent colors
     dark_fg = Color.from_hsl(palette[0].to_hsl()[0], 0.20, 0.12)  # Darker for better contrast
@@ -371,8 +371,8 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
 
     # Outline uses primary hue, more saturated
     surface_h, surface_s, _ = palette[0].to_hsl()
-    outline = Color.from_hsl(surface_h, max(surface_s * 0.4, 0.25), 0.65)
-    outline_variant = Color.from_hsl(surface_h, max(surface_s * 0.3, 0.20), 0.75)
+    outline = ensure_contrast(Color.from_hsl(surface_h, max(surface_s * 0.4, 0.25), 0.65), surface, 3.0)
+    outline_variant = ensure_contrast(Color.from_hsl(surface_h, max(surface_s * 0.3, 0.20), 0.75), surface, 3.0)
     shadow = Color.from_hsl(surface_h, max(surface_s * 0.3, 0.15), 0.80)
     scrim = Color(0, 0, 0)  # Pure black
 
