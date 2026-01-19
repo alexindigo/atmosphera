@@ -1,5 +1,6 @@
 {
   version ? "dirty",
+  pamConfig ? "login",
   lib,
   stdenvNoCC,
   # build
@@ -88,6 +89,7 @@ stdenvNoCC.mkDerivation {
 
   preFixup = ''
     qtWrapperArgs+=(
+      --set NOCTALIA_PAM_CONFIG ${pamConfig}
       --prefix PATH : ${lib.makeBinPath runtimeDeps}
       --add-flags "-p $out/share/noctalia-shell"
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}

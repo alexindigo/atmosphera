@@ -19,38 +19,14 @@ Scope {
   property string infoMessage: ""
   property bool pamAvailable: typeof PamContext !== "undefined"
 
-  // Determine PAM config based on OS
-  // On NixOS: use /etc/pam.d/login
-  // Otherwise: use generated config in configDir
-  readonly property string pamConfigDirectory: {
-    if (HostService.isReady && HostService.isNixOS) {
-      return "/etc/pam.d";
-    }
-    return Settings.configDir + "pam";
-  }
-  readonly property string pamConfig: {
-    if (HostService.isReady && HostService.isNixOS) {
-      return "login";
-    }
-    return "password.conf";
-  }
+  readonly property string pamConfigDirectory: Quickshell.env("NOCTALIA_PAM_CONFIG") ? "/etc/pam.d" : Settings.configDir + "pam"
+  readonly property string pamConfig: Quickshell.env("NOCTALIA_PAM_CONFIG") || "password.conf"
 
   Component.onCompleted: {
-    if (HostService.isReady) {
-      if (HostService.isNixOS) {
-        Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
-      } else {
-        Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
-      }
+    if (Quickshell.env("NOCTALIA_PAM_CONFIG")) {
+      Logger.i("LockContext", "NOCTALIA_PAM_CONFIG is set, using system PAM config: /etc/pam.d/" + pamConfig);
     } else {
-      // Wait for HostService to be ready
-      HostService.isReadyChanged.connect(function () {
-        if (HostService.isNixOS) {
-          Logger.i("LockContext", "NixOS detected, using system PAM config: /etc/pam.d/login");
-        } else {
-          Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
-        }
-      });
+      Logger.i("LockContext", "Using generated PAM config:", pamConfigDirectory + "/" + pamConfig);
     }
   }
 
@@ -100,9 +76,6 @@ Scope {
 
   PamContext {
     id: pam
-    // Use custom PAM config to ensure predictable password-only authentication
-    // On NixOS: uses /etc/pam.d/login
-    // Otherwise: uses config created in Settings.qml and stored in configDir/pam/
     configDirectory: root.pamConfigDirectory
     config: root.pamConfig
     user: HostService.username
