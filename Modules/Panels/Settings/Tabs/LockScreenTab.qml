@@ -41,4 +41,35 @@ ColumnLayout {
     visible: Settings.data.general.showSessionButtonsOnLockScreen
     defaultValue: Settings.getDefaultValue("general.showSessionButtonsOnLockScreen")
   }
+
+  NToggle {
+    label: I18n.tr("panels.session-menu.enable-countdown-label")
+    description: I18n.tr("panels.session-menu.enable-countdown-description")
+    checked: Settings.data.general.enableLockScreenCountdown
+    onToggled: checked => Settings.data.general.enableLockScreenCountdown = checked
+    visible: Settings.data.general.showSessionButtonsOnLockScreen
+    defaultValue: Settings.getDefaultValue("general.enableLockScreenCountdown")
+  }
+
+  ColumnLayout {
+    visible: Settings.data.general.showSessionButtonsOnLockScreen && Settings.data.general.enableLockScreenCountdown
+    spacing: Style.marginXXS
+    Layout.fillWidth: true
+
+    NLabel {
+      label: I18n.tr("panels.session-menu.countdown-duration-label")
+      description: I18n.tr("panels.session-menu.countdown-duration-description")
+    }
+
+    NValueSlider {
+      Layout.fillWidth: true
+      from: 1000
+      to: 30000
+      stepSize: 1000
+      value: Settings.data.general.lockScreenCountdownDuration
+      onMoved: value => Settings.data.general.lockScreenCountdownDuration = value
+      text: Math.round(Settings.data.general.lockScreenCountdownDuration / 1000) + "s"
+      defaultValue: Settings.getDefaultValue("general.lockScreenCountdownDuration")
+    }
+  }
 }

@@ -275,6 +275,8 @@ Singleton {
       property bool allowPanelsOnScreenWithoutBar: true
       property bool showChangelogOnStartup: true
       property bool telemetryEnabled: false
+      property bool enableLockScreenCountdown: true
+      property int lockScreenCountdownDuration: 10000
     }
 
     // ui

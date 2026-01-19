@@ -203,6 +203,64 @@ Loader {
               }
             }
 
+            // Countdown notification
+            Rectangle {
+              width: countdownRowLayout.implicitWidth + Style.marginXL * 1.5
+              height: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.bottom: parent.bottom
+              anchors.bottomMargin: (Settings.data.general.compactLockScreen ? 280 : 360) * Style.uiScaleRatio
+              radius: Style.radiusL
+              color: Color.mSurface
+              visible: panelComponent.timerActive
+              opacity: visible ? 1.0 : 0.0
+
+              RowLayout {
+                id: countdownRowLayout
+                anchors.fill: parent
+                anchors.margins: Style.marginM
+                spacing: Style.marginM
+
+                NIcon {
+                  icon: "clock"
+                  pointSize: Style.fontSizeXL
+                  color: Color.mPrimary
+                }
+
+                NText {
+                  text: I18n.tr("session-menu.action-in-seconds", {
+                                  "action": I18n.tr("common." + panelComponent.pendingAction),
+                                  "seconds": Math.ceil(panelComponent.timeRemaining / 1000)
+                                })
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeL
+                  horizontalAlignment: Text.AlignHCenter
+                  font.weight: Style.fontWeightBold
+                }
+
+                Item {
+                  Layout.fillWidth: true
+                }
+
+                NIconButton {
+                  icon: "x"
+                  tooltipText: I18n.tr("session-menu.cancel-timer")
+                  baseSize: 32
+                  colorBg: Qt.alpha(Color.mPrimary, 0.1)
+                  colorFg: Color.mPrimary
+                  colorBgHover: Color.mPrimary
+                  onClicked: panelComponent.cancelTimer()
+                }
+              }
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Style.animationNormal
+                  easing.type: Easing.OutCubic
+                }
+              }
+            }
+
             // Hidden input that receives actual text
             TextInput {
               id: passwordInput

@@ -26,6 +26,79 @@ Item {
     }
   }
 
+  // Timer properties
+  readonly property int timerDuration: Settings.data.general.lockScreenCountdownDuration
+  property string pendingAction: ""
+  property bool timerActive: false
+  property int timeRemaining: 0
+
+  // Timer management functions
+  function startTimer(action) {
+    // Check if global countdown is disabled
+    if (!Settings.data.general.enableLockScreenCountdown) {
+      executeAction(action);
+      return;
+    }
+
+    if (timerActive && pendingAction === action) {
+      // Second click - execute immediately
+      executeAction(action);
+      return;
+    }
+
+    pendingAction = action;
+    timeRemaining = timerDuration;
+    timerActive = true;
+    countdownTimer.start();
+  }
+
+  function cancelTimer() {
+    timerActive = false;
+    pendingAction = "";
+    timeRemaining = 0;
+    countdownTimer.stop();
+  }
+
+  function executeAction(action) {
+    // Stop timer but don't reset other properties yet
+    countdownTimer.stop();
+
+    // Execute the action
+    switch (action) {
+    case "logout":
+      CompositorService.logout();
+      break;
+    case "suspend":
+      CompositorService.suspend();
+      break;
+    case "hibernate":
+      CompositorService.hibernate();
+      break;
+    case "reboot":
+      CompositorService.reboot();
+      break;
+    case "shutdown":
+      CompositorService.shutdown();
+      break;
+    }
+
+    // Reset timer state
+    cancelTimer();
+  }
+
+  // Countdown timer
+  Timer {
+    id: countdownTimer
+    interval: 100
+    repeat: true
+    onTriggered: {
+      timeRemaining -= interval;
+      if (timeRemaining <= 0) {
+        executeAction(pendingAction);
+      }
+    }
+  }
+
   // Compact status indicators container (compact mode only)
   Rectangle {
     width: {
@@ -666,7 +739,7 @@ Item {
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
             buttonRadius: Style.radiusL
-            onClicked: CompositorService.logout()
+            onClicked: startTimer("logout")
           }
         }
 
@@ -686,7 +759,7 @@ Item {
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
             buttonRadius: Style.radiusL
-            onClicked: CompositorService.suspend()
+            onClicked: startTimer("suspend")
           }
         }
 
@@ -707,7 +780,7 @@ Item {
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
             buttonRadius: Style.radiusL
-            onClicked: CompositorService.hibernate()
+            onClicked: startTimer("hibernate")
           }
         }
 
@@ -727,7 +800,7 @@ Item {
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
             buttonRadius: Style.radiusL
-            onClicked: CompositorService.reboot()
+            onClicked: startTimer("reboot")
           }
         }
 
@@ -747,7 +820,7 @@ Item {
             iconSize: Settings.data.general.compactLockScreen ? Style.fontSizeM : Style.fontSizeL
             horizontalAlignment: Qt.AlignHCenter
             buttonRadius: Style.radiusL
-            onClicked: CompositorService.shutdown()
+            onClicked: startTimer("shutdown")
           }
         }
       }
