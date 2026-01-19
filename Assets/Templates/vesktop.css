@@ -69,6 +69,12 @@ body {
 
   /* other options */
   --small-user-panel: off; /* off: default user panel, on: smaller user panel like in old discord */
+
+  /* checkbox overrides (midnight.css uses placeholder colors) */
+  --checkbox-background-selected-default: {{colors.secondary.default.hex}};
+  --checkbox-border-selected-default: {{colors.secondary.default.hex}};
+  --checkbox-background-hover: {{colors.secondary.default.hex}};
+  --checkbox-border-hover: {{colors.secondary.default.hex}};
 }
 
 /* color options */
