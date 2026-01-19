@@ -14,9 +14,9 @@
   wl-clipboard,
   imagemagick,
   wget,
+  python3,
   # calendar support
   calendarSupport ? false,
-  python3,
   evolution-data-server,
   libical,
   glib,
@@ -55,8 +55,8 @@ let
     wl-clipboard
     imagemagick
     wget
-  ]
-  ++ lib.optional calendarSupport (python3.withPackages (pp: [ pp.pygobject3 ]));
+    (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
+  ];
 
   giTypelibPath = lib.makeSearchPath "lib/girepository-1.0" [
     evolution-data-server
