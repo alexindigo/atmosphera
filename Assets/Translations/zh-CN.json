@@ -771,7 +771,7 @@
       "templates-none-detected": "未检测到",
       "templates-write-path": "写入：{filepath}",
       "title": "配色方案",
-      "wallpaper-method-description": "选择您喜欢的颜色提取方法。",
+      "wallpaper-method-description": "选择您喜欢的调色板生成方法。",
       "wallpaper-method-label": "颜色提取方法"
     },
     "control-center": {

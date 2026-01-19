@@ -771,7 +771,7 @@
       "templates-none-detected": "None detected",
       "templates-write-path": "Writes: {filepath}",
       "title": "Color Scheme",
-      "wallpaper-method-description": "Choose your favorite color extraction method.",
+      "wallpaper-method-description": "Choose your favorite palette generation method.",
       "wallpaper-method-label": "Color extraction method"
     },
     "control-center": {

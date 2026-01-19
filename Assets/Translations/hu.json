@@ -771,7 +771,7 @@
       "templates-none-detected": "Nem észlelt semmit",
       "templates-write-path": "Írja: {filepath}",
       "title": "Színséma",
-      "wallpaper-method-description": "Válaszd ki a kedvenc színkinyerési módszeredet.",
+      "wallpaper-method-description": "Válaszd ki a kedvenc palettagenerálási módszeredet.",
       "wallpaper-method-label": "Színkivonási módszer"
     },
     "control-center": {
@@ -1378,7 +1378,7 @@
     "enter-width-pixels": "Adja meg a szélességet képpontban",
     "search": "Keresés...",
     "search-icons": "pl. noctalia, niri, battery, cloud",
-    "search-launcher": "Bejegyzések keresése... vagy használjon >-t a parancsokhoz",
+    "search-launcher": "Keressen bejegyzéseket vagy írja be „>”-t a parancsokhoz",
     "search-wallhaven": "Wallhaven keresése...",
     "search-wallpapers": "Írja be a háttérképek szűréséhez..."
   },

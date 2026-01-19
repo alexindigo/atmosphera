@@ -771,7 +771,7 @@
       "templates-none-detected": "検出されませんでした",
       "templates-write-path": "書き込み先: {filepath}",
       "title": "配色",
-      "wallpaper-method-description": "お好みの色の抽出方法を選択してください。",
+      "wallpaper-method-description": "お好みのパレット生成方法を選択してください。",
       "wallpaper-method-label": "色の抽出方法"
     },
     "control-center": {

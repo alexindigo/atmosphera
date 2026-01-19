@@ -763,7 +763,7 @@
       "templates-none-detected": "未偵測到",
       "templates-write-path": "寫入：{filepath}",
       "title": "主題配色",
-      "wallpaper-method-description": "選擇你喜歡的顏色抽取方式",
+      "wallpaper-method-description": "選擇您喜歡的調色盤產生方法。",
       "wallpaper-method-label": "色彩提取方式"
     },
     "control-center": {

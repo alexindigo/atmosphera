@@ -771,7 +771,7 @@
       "templates-none-detected": "Nie wykryto",
       "templates-write-path": "Zapisuje: {filepath}",
       "title": "Schemat kolorów",
-      "wallpaper-method-description": "Wybierz swoją ulubioną metodę ekstrakcji kolorów.",
+      "wallpaper-method-description": "Wybierz swoją ulubioną metodę generowania palety.",
       "wallpaper-method-label": "Metoda ekstrakcji kolorów"
     },
     "control-center": {

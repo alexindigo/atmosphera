@@ -771,7 +771,7 @@
       "templates-none-detected": "Nenhum detectado",
       "templates-write-path": "Escreve: {filepath}",
       "title": "Esquema de cores",
-      "wallpaper-method-description": "Escolha o seu método de extração de cores favorito.",
+      "wallpaper-method-description": "Escolha o seu método de geração de paleta favorito.",
       "wallpaper-method-label": "Método de extração de cor"
     },
     "control-center": {

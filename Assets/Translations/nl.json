@@ -771,7 +771,7 @@
       "templates-none-detected": "Geen gedetecteerd",
       "templates-write-path": "Schrijft: {filepath}",
       "title": "Kleurschema",
-      "wallpaper-method-description": "Kies je favoriete methode voor kleur extractie.",
+      "wallpaper-method-description": "Kies je favoriete methode voor het genereren van paletten.",
       "wallpaper-method-label": "Kleurextractiemethode"
     },
     "control-center": {
