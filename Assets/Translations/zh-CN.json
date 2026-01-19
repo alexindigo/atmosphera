@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "在 {seconds} 秒后将{action}...",
+    "cancel-timer": "取消定时器",
     "title": "会话菜单"
   },
   "setup": {

@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} over {seconds} seconden...",
+    "cancel-timer": "Timer annuleren",
     "title": "Sessie-menu"
   },
   "setup": {

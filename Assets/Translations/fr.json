@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} dans {seconds} secondes...",
+    "cancel-timer": "Annuler le minuteur",
     "title": "Menu de session"
   },
   "setup": {

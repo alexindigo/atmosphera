@@ -1401,6 +1401,7 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} in {seconds} Sekunden...",
+    "cancel-timer": "Timer abbrechen",
     "title": "Sitzungsmenü"
   },
   "setup": {
