@@ -84,7 +84,9 @@
     "language": "",
     "allowPanelsOnScreenWithoutBar": true,
     "showChangelogOnStartup": true,
-    "telemetryEnabled": false
+    "telemetryEnabled": false,
+    "enableLockScreenCountdown": true,
+    "lockScreenCountdownDuration": 10000
   },
   "ui": {
     "fontDefault": "",

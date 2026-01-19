@@ -176,9 +176,9 @@
     },
     "notification-history": {
       "hide-widget-when-zero-description": "Az értesítési ikon elrejtése, ha nincs értesítés.",
-      "hide-widget-when-zero-label": "Ikon elrejtése értesítések nélkül",
+      "hide-widget-when-zero-label": "Ikon elrejtése, amikor nincs értesítés",
       "hide-widget-when-zero-unread-description": "Az értesítési ikon elrejtése, ha nincs olvasatlan értesítés.",
-      "hide-widget-when-zero-unread-label": "Ikon elrejtése olvasatlan nélkül",
+      "hide-widget-when-zero-unread-label": "Ikon elrejtése, amikor nincs olvasatlan értesítés",
       "show-unread-badge-description": "Jelenítsen meg egy jelvényt, amely mutatja az olvasatlan értesítések számát.",
       "show-unread-badge-label": "Olvasatlan jelvény megjelenítése"
     },
@@ -209,8 +209,8 @@
       "network-traffic-label": "Hálózati forgalom",
       "storage-usage-description": "Lemezterület-használati információk megjelenítése.",
       "storage-usage-label": "Tárhelyhasználat",
-      "swap-usage-description": "Swap memória használatának megjelenítése.",
-      "swap-usage-label": "Swap használat",
+      "swap-usage-description": "Cserehely memória használatának megjelenítése.",
+      "swap-usage-label": "Cserehely használat",
       "use-monospace-font-description": "Használj monospace betűtípust az egységes karakter-szélességhez.",
       "use-monospace-font-label": "Monospace betűtípus"
     },
@@ -634,7 +634,7 @@
       "system-uptime": "Üzemidő:",
       "system-wm": "WM:",
       "telemetry-data-copied": "Telemetriai adatok a vágólapra másolva",
-      "telemetry-desc": "Segíts a Noctalia fejlesztésében anonim rendszerinformációk (képernyőfelbontás, kompozitor, disztribúció) megosztásával. Egyszer kerül elküldésre indításkor, nincs nyomon követés, az adatok 30 nap után automatikusan törlődnek.",
+      "telemetry-desc": "Segítsen a Noctalia fejlesztésében anonim rendszerinformációk (képernyőfelbontás, kompozitor, disztribúció) megosztásával. Egyszer kerül elküldésre indításkor, nincs nyomon követés, az adatok 30 nap után automatikusan törlődnek.",
       "telemetry-enabled": "Névtelen rendszerinformációk küldése",
       "telemetry-show-data": "Adatok megtekintése",
       "telemetry-title": "Adatvédelem",
