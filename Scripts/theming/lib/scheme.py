@@ -14,7 +14,7 @@ Output: Full 48-color palette matching generate_theme() output.
 
 from typing import Literal
 
-from .color import Color, adjust_surface
+from .color import Color
 from .contrast import ensure_contrast
 
 ThemeMode = Literal["dark", "light"]
@@ -57,6 +57,14 @@ def _make_fixed_light(base: Color) -> tuple[Color, Color]:
     return fixed, fixed_dim
 
 
+def _interpolate_color(c1: Color, c2: Color, t: float) -> Color:
+    """Interpolate between two colors. t=0 returns c1, t=1 returns c2."""
+    r = int(c1.r + (c2.r - c1.r) * t)
+    g = int(c1.g + (c2.g - c1.g) * t)
+    b = int(c1.b + (c2.b - c1.b) * t)
+    return Color(max(0, min(255, r)), max(0, min(255, g)), max(0, min(255, b)))
+
+
 def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> dict[str, str]:
     """
     Expand 14-color predefined scheme to full 48-color palette.
@@ -84,6 +92,7 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
     surface_variant = _hex_to_color(scheme_data["mSurfaceVariant"])
     on_surface_variant = _hex_to_color(scheme_data["mOnSurfaceVariant"])
     outline = _hex_to_color(scheme_data["mOutline"])
+    shadow = _hex_to_color(scheme_data.get("mShadow", scheme_data["mSurface"]))
 
     # Generate container colors
     if is_dark:
@@ -182,26 +191,36 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
             Color.from_hsl(tertiary_h, 0.15, 0.85), tertiary_fixed_dim, 4.5
         )
 
-    # Generate surface containers from the surface color
-    surface_h, surface_s, _ = surface.to_hsl()
-    base_surface = Color.from_hsl(surface_h, surface_s, 0.5)
+    # Generate surface containers using mSurfaceVariant as the middle container
+    # This respects the scheme author's color choices
+    surface_h, surface_s, surface_l = surface.to_hsl()
+    sv_h, sv_s, sv_l = surface_variant.to_hsl()
+
+    # surface_container = mSurfaceVariant (direct assignment)
+    surface_container = surface_variant
 
     if is_dark:
-        surface_container_lowest = adjust_surface(base_surface, 0.85, 0.06)
-        surface_container_low = adjust_surface(base_surface, 0.85, 0.10)
-        surface_container = adjust_surface(base_surface, 0.70, 0.20)
-        surface_container_high = adjust_surface(base_surface, 0.75, 0.18)
-        surface_container_highest = adjust_surface(base_surface, 0.70, 0.22)
-        surface_dim = adjust_surface(base_surface, 0.85, 0.08)
-        surface_bright = adjust_surface(base_surface, 0.75, 0.24)
+        # Dark mode: surface is darkest, surface_variant is the middle container
+        # Lower containers interpolate between surface and surface_variant
+        surface_container_lowest = _interpolate_color(surface, surface_variant, 0.2)
+        surface_container_low = _interpolate_color(surface, surface_variant, 0.5)
+        # Higher containers go beyond surface_variant (lighter)
+        surface_container_high = Color.from_hsl(sv_h, sv_s, min(sv_l + 0.04, 0.40))
+        surface_container_highest = Color.from_hsl(sv_h, sv_s, min(sv_l + 0.08, 0.45))
+        # Dim is darker than surface, bright is lighter than highest container
+        surface_dim = Color.from_hsl(surface_h, surface_s, max(surface_l - 0.04, 0.02))
+        surface_bright = Color.from_hsl(sv_h, sv_s, min(sv_l + 0.12, 0.50))
     else:
-        surface_container_lowest = adjust_surface(base_surface, 0.85, 0.96)
-        surface_container_low = adjust_surface(base_surface, 0.85, 0.92)
-        surface_container = adjust_surface(base_surface, 0.80, 0.86)
-        surface_container_high = adjust_surface(base_surface, 0.75, 0.84)
-        surface_container_highest = adjust_surface(base_surface, 0.70, 0.80)
-        surface_dim = adjust_surface(base_surface, 0.85, 0.82)
-        surface_bright = adjust_surface(base_surface, 0.90, 0.95)
+        # Light mode: surface is lightest, surface_variant is the middle container
+        # Lower containers interpolate between surface and surface_variant
+        surface_container_lowest = _interpolate_color(surface, surface_variant, 0.2)
+        surface_container_low = _interpolate_color(surface, surface_variant, 0.5)
+        # Higher containers go beyond surface_variant (darker)
+        surface_container_high = Color.from_hsl(sv_h, sv_s, max(sv_l - 0.04, 0.60))
+        surface_container_highest = Color.from_hsl(sv_h, sv_s, max(sv_l - 0.08, 0.55))
+        # Dim is darker than highest, bright is lighter than surface
+        surface_dim = Color.from_hsl(sv_h, sv_s, max(sv_l - 0.12, 0.50))
+        surface_bright = Color.from_hsl(surface_h, surface_s, min(surface_l + 0.03, 0.98))
 
     # Generate outline variant
     outline_h, outline_s, outline_l = outline.to_hsl()
@@ -210,8 +229,7 @@ def expand_predefined_scheme(scheme_data: dict[str, str], mode: ThemeMode) -> di
     else:
         outline_variant = Color.from_hsl(outline_h, outline_s, min(outline_l + 0.15, 0.9))
 
-    # Shadow and scrim
-    shadow = surface  # Use surface color for shadow in dark mode
+    # Scrim is always black
     scrim = Color(0, 0, 0)
 
     # Inverse colors
