@@ -634,7 +634,6 @@ SmartPanel {
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                   }
 
-                  // Try binary name first (fixes Electron apps like vesktop)
                   var binaryName = props["application.process.binary"] || "";
                   if (binaryName) {
                     var binParts = binaryName.split("/");
@@ -646,9 +645,8 @@ SmartPanel {
                     }
                   }
 
-                  // Try application.icon-name (direct lookup, no validation needed)
                   var iconName = props["application.icon-name"] || "";
-                  if (iconName) {
+                  if (iconName && ThemeIcons.iconExists(iconName)) {
                     var iconPath = ThemeIcons.iconFromName(iconName, "");
                     if (iconPath && iconPath !== "")
                       return iconPath;
