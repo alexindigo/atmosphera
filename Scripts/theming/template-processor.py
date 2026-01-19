@@ -702,56 +702,56 @@ class MaterialScheme:
 
         scheme = {
             # Primary colors
-            'mPrimary': self.primary_palette.get_hex(tones['primary']),
-            'mOnPrimary': self.primary_palette.get_hex(tones['on_primary']),
-            'mPrimaryContainer': self.primary_palette.get_hex(tones['primary_container']),
-            'mOnPrimaryContainer': self.primary_palette.get_hex(tones['on_primary_container']),
+            'primary': self.primary_palette.get_hex(tones['primary']),
+            'on_primary': self.primary_palette.get_hex(tones['on_primary']),
+            'primary_container': self.primary_palette.get_hex(tones['primary_container']),
+            'on_primary_container': self.primary_palette.get_hex(tones['on_primary_container']),
 
             # Secondary colors
-            'mSecondary': self.secondary_palette.get_hex(tones['secondary']),
-            'mOnSecondary': self.secondary_palette.get_hex(tones['on_secondary']),
-            'mSecondaryContainer': self.secondary_palette.get_hex(tones['secondary_container']),
-            'mOnSecondaryContainer': self.secondary_palette.get_hex(tones['on_secondary_container']),
+            'secondary': self.secondary_palette.get_hex(tones['secondary']),
+            'on_secondary': self.secondary_palette.get_hex(tones['on_secondary']),
+            'secondary_container': self.secondary_palette.get_hex(tones['secondary_container']),
+            'on_secondary_container': self.secondary_palette.get_hex(tones['on_secondary_container']),
 
             # Tertiary colors
-            'mTertiary': self.tertiary_palette.get_hex(tones['tertiary']),
-            'mOnTertiary': self.tertiary_palette.get_hex(tones['on_tertiary']),
-            'mTertiaryContainer': self.tertiary_palette.get_hex(tones['tertiary_container']),
-            'mOnTertiaryContainer': self.tertiary_palette.get_hex(tones['on_tertiary_container']),
+            'tertiary': self.tertiary_palette.get_hex(tones['tertiary']),
+            'on_tertiary': self.tertiary_palette.get_hex(tones['on_tertiary']),
+            'tertiary_container': self.tertiary_palette.get_hex(tones['tertiary_container']),
+            'on_tertiary_container': self.tertiary_palette.get_hex(tones['on_tertiary_container']),
 
             # Error colors
-            'mError': self.error_palette.get_hex(tones['error']),
-            'mOnError': self.error_palette.get_hex(tones['on_error']),
-            'mErrorContainer': self.error_palette.get_hex(tones['error_container']),
-            'mOnErrorContainer': self.error_palette.get_hex(tones['on_error_container']),
+            'error': self.error_palette.get_hex(tones['error']),
+            'on_error': self.error_palette.get_hex(tones['on_error']),
+            'error_container': self.error_palette.get_hex(tones['error_container']),
+            'on_error_container': self.error_palette.get_hex(tones['on_error_container']),
 
             # Surface colors
-            'mSurface': self.neutral_palette.get_hex(tones['surface']),
-            'mOnSurface': self.neutral_palette.get_hex(tones['on_surface']),
-            'mSurfaceVariant': self.neutral_variant_palette.get_hex(tones['surface_variant']),
-            'mOnSurfaceVariant': self.neutral_variant_palette.get_hex(tones['on_surface_variant']),
+            'surface': self.neutral_palette.get_hex(tones['surface']),
+            'on_surface': self.neutral_palette.get_hex(tones['on_surface']),
+            'surface_variant': self.neutral_variant_palette.get_hex(tones['surface_variant']),
+            'on_surface_variant': self.neutral_variant_palette.get_hex(tones['on_surface_variant']),
 
             # Surface containers
-            'mSurfaceContainerLowest': self.neutral_palette.get_hex(tones['surface_container_lowest']),
-            'mSurfaceContainerLow': self.neutral_palette.get_hex(tones['surface_container_low']),
-            'mSurfaceContainer': self.neutral_palette.get_hex(tones['surface_container']),
-            'mSurfaceContainerHigh': self.neutral_palette.get_hex(tones['surface_container_high']),
-            'mSurfaceContainerHighest': self.neutral_palette.get_hex(tones['surface_container_highest']),
+            'surface_container_lowest': self.neutral_palette.get_hex(tones['surface_container_lowest']),
+            'surface_container_low': self.neutral_palette.get_hex(tones['surface_container_low']),
+            'surface_container': self.neutral_palette.get_hex(tones['surface_container']),
+            'surface_container_high': self.neutral_palette.get_hex(tones['surface_container_high']),
+            'surface_container_highest': self.neutral_palette.get_hex(tones['surface_container_highest']),
 
             # Outline and other
-            'mOutline': self.neutral_variant_palette.get_hex(tones['outline']),
-            'mOutlineVariant': self.neutral_variant_palette.get_hex(tones['outline_variant']),
-            'mShadow': self.neutral_palette.get_hex(tones['shadow']),
-            'mScrim': self.neutral_palette.get_hex(tones['scrim']),
+            'outline': self.neutral_variant_palette.get_hex(tones['outline']),
+            'outline_variant': self.neutral_variant_palette.get_hex(tones['outline_variant']),
+            'shadow': self.neutral_palette.get_hex(tones['shadow']),
+            'scrim': self.neutral_palette.get_hex(tones['scrim']),
 
             # Inverse colors
-            'mInverseSurface': self.neutral_palette.get_hex(tones['inverse_surface']),
-            'mInverseOnSurface': self.neutral_palette.get_hex(tones['inverse_on_surface']),
-            'mInversePrimary': self.primary_palette.get_hex(tones['inverse_primary']),
+            'inverse_surface': self.neutral_palette.get_hex(tones['inverse_surface']),
+            'inverse_on_surface': self.neutral_palette.get_hex(tones['inverse_on_surface']),
+            'inverse_primary': self.primary_palette.get_hex(tones['inverse_primary']),
 
             # Background (alias for surface)
-            'mBackground': self.neutral_palette.get_hex(tones['surface']),
-            'mOnBackground': self.neutral_palette.get_hex(tones['on_surface']),
+            'background': self.neutral_palette.get_hex(tones['surface']),
+            'on_background': self.neutral_palette.get_hex(tones['on_surface']),
         }
 
         return scheme
@@ -1786,26 +1786,26 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     base_surface = Color.from_hsl(surface_hue, s, 0.5) # l doesn't matter for next step
     
     # Preserving saturation (up to 0.9) to be true to primary color
-    mSurface = _adjust_surface(base_surface, 0.90, 0.12)
-    mSurfaceVariant = _adjust_surface(base_surface, 0.80, 0.16)
+    surface = _adjust_surface(base_surface, 0.90, 0.12)
+    surface_variant = _adjust_surface(base_surface, 0.80, 0.16)
 
     # Surface containers - progressive lightness for visual hierarchy (keep primary hue)
-    mSurfaceContainerLowest = _adjust_surface(base_surface, 0.85, 0.06)
-    mSurfaceContainerLow = _adjust_surface(base_surface, 0.85, 0.10)
-    mSurfaceContainer = _adjust_surface(base_surface, 0.70, 0.20)
-    mSurfaceContainerHigh = _adjust_surface(base_surface, 0.75, 0.18)
-    mSurfaceContainerHighest = _adjust_surface(base_surface, 0.70, 0.22)
+    surface_container_lowest = _adjust_surface(base_surface, 0.85, 0.06)
+    surface_container_low = _adjust_surface(base_surface, 0.85, 0.10)
+    surface_container = _adjust_surface(base_surface, 0.70, 0.20)
+    surface_container_high = _adjust_surface(base_surface, 0.75, 0.18)
+    surface_container_highest = _adjust_surface(base_surface, 0.70, 0.22)
 
     # Text colors - desaturated
     text_h, _, _ = palette[0].to_hsl()
     base_on_surface = Color.from_hsl(text_h, 0.05, 0.95)
-    mOnSurface = _ensure_contrast(base_on_surface, mSurface, 4.5)
+    on_surface = _ensure_contrast(base_on_surface, surface, 4.5)
 
     base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.80)
-    mOnSurfaceVariant = _ensure_contrast(base_on_surface_variant, mSurfaceVariant, 4.5)
-    
-    mOutline = _adjust_surface(palette[0], 0.10, 0.30)
-    mOutlineVariant = _adjust_surface(palette[0], 0.10, 0.40)
+    on_surface_variant = _ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
+
+    outline = _adjust_surface(palette[0], 0.10, 0.30)
+    outline_variant = _adjust_surface(palette[0], 0.10, 0.40)
 
     # Contrasting foregrounds - dark text on bright accent colors
     dark_fg = Color.from_hsl(palette[0].to_hsl()[0], 0.20, 0.12)  # Darker for better contrast
@@ -1822,18 +1822,18 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     on_error_container = _ensure_contrast(Color.from_hsl(0, 0.15, 0.90), error_container, 4.5)
 
     # Shadow and scrim
-    shadow = mSurface
-    mScrim = Color(0, 0, 0)  # Pure black
+    shadow = surface
+    scrim = Color(0, 0, 0)  # Pure black
 
     # Inverse colors - for inverted surfaces (light surface on dark theme)
     inv_h = palette[0].to_hsl()[0]
-    mInverseSurface = Color.from_hsl(inv_h, 0.08, 0.90)
-    mInverseOnSurface = Color.from_hsl(inv_h, 0.05, 0.15)
-    mInversePrimary = Color.from_hsl(primary_h, max(primary_s * 0.8, 0.5), 0.40)
+    inverse_surface = Color.from_hsl(inv_h, 0.08, 0.90)
+    inverse_on_surface = Color.from_hsl(inv_h, 0.05, 0.15)
+    inverse_primary = Color.from_hsl(primary_h, max(primary_s * 0.8, 0.5), 0.40)
 
     # Background aliases (same as surface in MD3)
-    mBackground = mSurface
-    mOnBackground = mOnSurface
+    background = surface
+    on_background = on_surface
 
     # Fixed colors - high-chroma accents consistent across light/dark
     # In dark mode: lighter versions of accent colors
@@ -1856,68 +1856,68 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     on_tertiary_fixed_variant = _ensure_contrast(Color.from_hsl(tertiary.to_hsl()[0], 0.15, 0.20), tertiary_fixed_dim, 4.5)
 
     # Surface dim - darker than surface for dimmed areas
-    mSurfaceDim = _adjust_surface(base_surface, 0.85, 0.08)
+    surface_dim = _adjust_surface(base_surface, 0.85, 0.08)
     # Surface bright - lighter than surface
-    mSurfaceBright = _adjust_surface(base_surface, 0.75, 0.24)
+    surface_bright = _adjust_surface(base_surface, 0.75, 0.24)
 
     return {
         # Primary
-        "mPrimary": primary_adjusted.to_hex(),
-        "mOnPrimary": on_primary.to_hex(),
-        "mPrimaryContainer": primary_container.to_hex(),
-        "mOnPrimaryContainer": on_primary_container.to_hex(),
-        "mPrimaryFixed": primary_fixed.to_hex(),
-        "mPrimaryFixedDim": primary_fixed_dim.to_hex(),
-        "mOnPrimaryFixed": on_primary_fixed.to_hex(),
-        "mOnPrimaryFixedVariant": on_primary_fixed_variant.to_hex(),
+        "primary": primary_adjusted.to_hex(),
+        "on_primary": on_primary.to_hex(),
+        "primary_container": primary_container.to_hex(),
+        "on_primary_container": on_primary_container.to_hex(),
+        "primary_fixed": primary_fixed.to_hex(),
+        "primary_fixed_dim": primary_fixed_dim.to_hex(),
+        "on_primary_fixed": on_primary_fixed.to_hex(),
+        "on_primary_fixed_variant": on_primary_fixed_variant.to_hex(),
         # Secondary
-        "mSecondary": secondary_adjusted.to_hex(),
-        "mOnSecondary": on_secondary.to_hex(),
-        "mSecondaryContainer": secondary_container.to_hex(),
-        "mOnSecondaryContainer": on_secondary_container.to_hex(),
-        "mSecondaryFixed": secondary_fixed.to_hex(),
-        "mSecondaryFixedDim": secondary_fixed_dim.to_hex(),
-        "mOnSecondaryFixed": on_secondary_fixed.to_hex(),
-        "mOnSecondaryFixedVariant": on_secondary_fixed_variant.to_hex(),
+        "secondary": secondary_adjusted.to_hex(),
+        "on_secondary": on_secondary.to_hex(),
+        "secondary_container": secondary_container.to_hex(),
+        "on_secondary_container": on_secondary_container.to_hex(),
+        "secondary_fixed": secondary_fixed.to_hex(),
+        "secondary_fixed_dim": secondary_fixed_dim.to_hex(),
+        "on_secondary_fixed": on_secondary_fixed.to_hex(),
+        "on_secondary_fixed_variant": on_secondary_fixed_variant.to_hex(),
         # Tertiary
-        "mTertiary": tertiary_adjusted.to_hex(),
-        "mOnTertiary": on_tertiary.to_hex(),
-        "mTertiaryContainer": tertiary_container.to_hex(),
-        "mOnTertiaryContainer": on_tertiary_container.to_hex(),
-        "mTertiaryFixed": tertiary_fixed.to_hex(),
-        "mTertiaryFixedDim": tertiary_fixed_dim.to_hex(),
-        "mOnTertiaryFixed": on_tertiary_fixed.to_hex(),
-        "mOnTertiaryFixedVariant": on_tertiary_fixed_variant.to_hex(),
+        "tertiary": tertiary_adjusted.to_hex(),
+        "on_tertiary": on_tertiary.to_hex(),
+        "tertiary_container": tertiary_container.to_hex(),
+        "on_tertiary_container": on_tertiary_container.to_hex(),
+        "tertiary_fixed": tertiary_fixed.to_hex(),
+        "tertiary_fixed_dim": tertiary_fixed_dim.to_hex(),
+        "on_tertiary_fixed": on_tertiary_fixed.to_hex(),
+        "on_tertiary_fixed_variant": on_tertiary_fixed_variant.to_hex(),
         # Error
-        "mError": error.to_hex(),
-        "mOnError": on_error.to_hex(),
-        "mErrorContainer": error_container.to_hex(),
-        "mOnErrorContainer": on_error_container.to_hex(),
+        "error": error.to_hex(),
+        "on_error": on_error.to_hex(),
+        "error_container": error_container.to_hex(),
+        "on_error_container": on_error_container.to_hex(),
         # Surface
-        "mSurface": mSurface.to_hex(),
-        "mOnSurface": mOnSurface.to_hex(),
-        "mSurfaceVariant": mSurfaceVariant.to_hex(),
-        "mOnSurfaceVariant": mOnSurfaceVariant.to_hex(),
-        "mSurfaceDim": mSurfaceDim.to_hex(),
-        "mSurfaceBright": mSurfaceBright.to_hex(),
+        "surface": surface.to_hex(),
+        "on_surface": on_surface.to_hex(),
+        "surface_variant": surface_variant.to_hex(),
+        "on_surface_variant": on_surface_variant.to_hex(),
+        "surface_dim": surface_dim.to_hex(),
+        "surface_bright": surface_bright.to_hex(),
         # Surface containers
-        "mSurfaceContainerLowest": mSurfaceContainerLowest.to_hex(),
-        "mSurfaceContainerLow": mSurfaceContainerLow.to_hex(),
-        "mSurfaceContainer": mSurfaceContainer.to_hex(),
-        "mSurfaceContainerHigh": mSurfaceContainerHigh.to_hex(),
-        "mSurfaceContainerHighest": mSurfaceContainerHighest.to_hex(),
+        "surface_container_lowest": surface_container_lowest.to_hex(),
+        "surface_container_low": surface_container_low.to_hex(),
+        "surface_container": surface_container.to_hex(),
+        "surface_container_high": surface_container_high.to_hex(),
+        "surface_container_highest": surface_container_highest.to_hex(),
         # Outline and other
-        "mOutline": mOutline.to_hex(),
-        "mOutlineVariant": mOutlineVariant.to_hex(),
-        "mShadow": shadow.to_hex(),
-        "mScrim": mScrim.to_hex(),
+        "outline": outline.to_hex(),
+        "outline_variant": outline_variant.to_hex(),
+        "shadow": shadow.to_hex(),
+        "scrim": scrim.to_hex(),
         # Inverse
-        "mInverseSurface": mInverseSurface.to_hex(),
-        "mInverseOnSurface": mInverseOnSurface.to_hex(),
-        "mInversePrimary": mInversePrimary.to_hex(),
+        "inverse_surface": inverse_surface.to_hex(),
+        "inverse_on_surface": inverse_on_surface.to_hex(),
+        "inverse_primary": inverse_primary.to_hex(),
         # Background
-        "mBackground": mBackground.to_hex(),
-        "mOnBackground": mOnBackground.to_hex(),
+        "background": background.to_hex(),
+        "on_background": on_background.to_hex(),
     }
 
 
@@ -1957,23 +1957,23 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
 
     # Surface: COLORFUL light - a pastel, saturated version of primary
     # Preserving saturation (up to 0.9) to be true to primary color
-    mSurface = _adjust_surface(palette[0], 0.90, 0.90)
-    mSurfaceVariant = _adjust_surface(palette[0], 0.80, 0.78)  # Darker than surface
+    surface = _adjust_surface(palette[0], 0.90, 0.90)
+    surface_variant = _adjust_surface(palette[0], 0.80, 0.78)  # Darker than surface
 
     # Surface containers - progressive darkening for light mode (keep primary hue)
-    mSurfaceContainerLowest = _adjust_surface(palette[0], 0.85, 0.96)   # Lightest
-    mSurfaceContainerLow = _adjust_surface(palette[0], 0.85, 0.92)
-    mSurfaceContainer = _adjust_surface(palette[0], 0.80, 0.86)
-    mSurfaceContainerHigh = _adjust_surface(palette[0], 0.75, 0.84)
-    mSurfaceContainerHighest = _adjust_surface(palette[0], 0.70, 0.80)  # Darkest
+    surface_container_lowest = _adjust_surface(palette[0], 0.85, 0.96)   # Lightest
+    surface_container_low = _adjust_surface(palette[0], 0.85, 0.92)
+    surface_container = _adjust_surface(palette[0], 0.80, 0.86)
+    surface_container_high = _adjust_surface(palette[0], 0.75, 0.84)
+    surface_container_highest = _adjust_surface(palette[0], 0.70, 0.80)  # Darkest
 
     # Foreground colors - tinted with primary hue
     text_h, _, _ = palette[0].to_hsl()
     base_on_surface = Color.from_hsl(text_h, 0.05, 0.10)
-    mOnSurface = _ensure_contrast(base_on_surface, mSurface, 4.5)
+    on_surface = _ensure_contrast(base_on_surface, surface, 4.5)
 
     base_on_surface_variant = Color.from_hsl(text_h, 0.05, 0.90)  # Light text on darker variant
-    mOnSurfaceVariant = _ensure_contrast(base_on_surface_variant, mSurfaceVariant, 4.5)
+    on_surface_variant = _ensure_contrast(base_on_surface_variant, surface_variant, 4.5)
     
     # Contrasting foregrounds - light text on dark accent colors
     light_fg = Color.from_hsl(text_h, 0.1, 0.98)  # Brighter for better contrast
@@ -2011,84 +2011,84 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     on_tertiary_fixed_variant = _ensure_contrast(Color.from_hsl(tertiary.to_hsl()[0], 0.15, 0.85), tertiary_fixed_dim, 4.5)
 
     # Surface dim - slightly darker than surface
-    mSurfaceDim = _adjust_surface(palette[0], 0.85, 0.82)
+    surface_dim = _adjust_surface(palette[0], 0.85, 0.82)
     # Surface bright - brighter than surface
-    mSurfaceBright = _adjust_surface(palette[0], 0.90, 0.95)
+    surface_bright = _adjust_surface(palette[0], 0.90, 0.95)
 
     # Outline uses primary hue, more saturated
     surface_h, surface_s, _ = palette[0].to_hsl()
-    mOutline = Color.from_hsl(surface_h, max(surface_s * 0.4, 0.25), 0.65)
-    mOutlineVariant = Color.from_hsl(surface_h, max(surface_s * 0.3, 0.20), 0.75)
+    outline = Color.from_hsl(surface_h, max(surface_s * 0.4, 0.25), 0.65)
+    outline_variant = Color.from_hsl(surface_h, max(surface_s * 0.3, 0.20), 0.75)
     shadow = Color.from_hsl(surface_h, max(surface_s * 0.3, 0.15), 0.80)
-    mScrim = Color(0, 0, 0)  # Pure black
+    scrim = Color(0, 0, 0)  # Pure black
 
     # Inverse colors - for inverted surfaces (dark surface on light theme)
-    mInverseSurface = Color.from_hsl(surface_h, 0.08, 0.15)
-    mInverseOnSurface = Color.from_hsl(surface_h, 0.05, 0.90)
-    mInversePrimary = Color.from_hsl(primary_h, max(primary_s * 0.8, 0.5), 0.70)
+    inverse_surface = Color.from_hsl(surface_h, 0.08, 0.15)
+    inverse_on_surface = Color.from_hsl(surface_h, 0.05, 0.90)
+    inverse_primary = Color.from_hsl(primary_h, max(primary_s * 0.8, 0.5), 0.70)
 
     # Background aliases (same as surface in MD3)
-    mBackground = mSurface
-    mOnBackground = mOnSurface
+    background = surface
+    on_background = on_surface
 
     return {
         # Primary
-        "mPrimary": primary_adjusted.to_hex(),
-        "mOnPrimary": on_primary.to_hex(),
-        "mPrimaryContainer": primary_container.to_hex(),
-        "mOnPrimaryContainer": on_primary_container.to_hex(),
-        "mPrimaryFixed": primary_fixed.to_hex(),
-        "mPrimaryFixedDim": primary_fixed_dim.to_hex(),
-        "mOnPrimaryFixed": on_primary_fixed.to_hex(),
-        "mOnPrimaryFixedVariant": on_primary_fixed_variant.to_hex(),
+        "primary": primary_adjusted.to_hex(),
+        "on_primary": on_primary.to_hex(),
+        "primary_container": primary_container.to_hex(),
+        "on_primary_container": on_primary_container.to_hex(),
+        "primary_fixed": primary_fixed.to_hex(),
+        "primary_fixed_dim": primary_fixed_dim.to_hex(),
+        "on_primary_fixed": on_primary_fixed.to_hex(),
+        "on_primary_fixed_variant": on_primary_fixed_variant.to_hex(),
         # Secondary
-        "mSecondary": secondary_adjusted.to_hex(),
-        "mOnSecondary": on_secondary.to_hex(),
-        "mSecondaryContainer": secondary_container.to_hex(),
-        "mOnSecondaryContainer": on_secondary_container.to_hex(),
-        "mSecondaryFixed": secondary_fixed.to_hex(),
-        "mSecondaryFixedDim": secondary_fixed_dim.to_hex(),
-        "mOnSecondaryFixed": on_secondary_fixed.to_hex(),
-        "mOnSecondaryFixedVariant": on_secondary_fixed_variant.to_hex(),
+        "secondary": secondary_adjusted.to_hex(),
+        "on_secondary": on_secondary.to_hex(),
+        "secondary_container": secondary_container.to_hex(),
+        "on_secondary_container": on_secondary_container.to_hex(),
+        "secondary_fixed": secondary_fixed.to_hex(),
+        "secondary_fixed_dim": secondary_fixed_dim.to_hex(),
+        "on_secondary_fixed": on_secondary_fixed.to_hex(),
+        "on_secondary_fixed_variant": on_secondary_fixed_variant.to_hex(),
         # Tertiary
-        "mTertiary": tertiary_adjusted.to_hex(),
-        "mOnTertiary": on_tertiary.to_hex(),
-        "mTertiaryContainer": tertiary_container.to_hex(),
-        "mOnTertiaryContainer": on_tertiary_container.to_hex(),
-        "mTertiaryFixed": tertiary_fixed.to_hex(),
-        "mTertiaryFixedDim": tertiary_fixed_dim.to_hex(),
-        "mOnTertiaryFixed": on_tertiary_fixed.to_hex(),
-        "mOnTertiaryFixedVariant": on_tertiary_fixed_variant.to_hex(),
+        "tertiary": tertiary_adjusted.to_hex(),
+        "on_tertiary": on_tertiary.to_hex(),
+        "tertiary_container": tertiary_container.to_hex(),
+        "on_tertiary_container": on_tertiary_container.to_hex(),
+        "tertiary_fixed": tertiary_fixed.to_hex(),
+        "tertiary_fixed_dim": tertiary_fixed_dim.to_hex(),
+        "on_tertiary_fixed": on_tertiary_fixed.to_hex(),
+        "on_tertiary_fixed_variant": on_tertiary_fixed_variant.to_hex(),
         # Error
-        "mError": error.to_hex(),
-        "mOnError": on_error.to_hex(),
-        "mErrorContainer": error_container.to_hex(),
-        "mOnErrorContainer": on_error_container.to_hex(),
+        "error": error.to_hex(),
+        "on_error": on_error.to_hex(),
+        "error_container": error_container.to_hex(),
+        "on_error_container": on_error_container.to_hex(),
         # Surface
-        "mSurface": mSurface.to_hex(),
-        "mOnSurface": mOnSurface.to_hex(),
-        "mSurfaceVariant": mSurfaceVariant.to_hex(),
-        "mOnSurfaceVariant": mOnSurfaceVariant.to_hex(),
-        "mSurfaceDim": mSurfaceDim.to_hex(),
-        "mSurfaceBright": mSurfaceBright.to_hex(),
+        "surface": surface.to_hex(),
+        "on_surface": on_surface.to_hex(),
+        "surface_variant": surface_variant.to_hex(),
+        "on_surface_variant": on_surface_variant.to_hex(),
+        "surface_dim": surface_dim.to_hex(),
+        "surface_bright": surface_bright.to_hex(),
         # Surface containers
-        "mSurfaceContainerLowest": mSurfaceContainerLowest.to_hex(),
-        "mSurfaceContainerLow": mSurfaceContainerLow.to_hex(),
-        "mSurfaceContainer": mSurfaceContainer.to_hex(),
-        "mSurfaceContainerHigh": mSurfaceContainerHigh.to_hex(),
-        "mSurfaceContainerHighest": mSurfaceContainerHighest.to_hex(),
+        "surface_container_lowest": surface_container_lowest.to_hex(),
+        "surface_container_low": surface_container_low.to_hex(),
+        "surface_container": surface_container.to_hex(),
+        "surface_container_high": surface_container_high.to_hex(),
+        "surface_container_highest": surface_container_highest.to_hex(),
         # Outline and other
-        "mOutline": mOutline.to_hex(),
-        "mOutlineVariant": mOutlineVariant.to_hex(),
-        "mShadow": shadow.to_hex(),
-        "mScrim": mScrim.to_hex(),
+        "outline": outline.to_hex(),
+        "outline_variant": outline_variant.to_hex(),
+        "shadow": shadow.to_hex(),
+        "scrim": scrim.to_hex(),
         # Inverse
-        "mInverseSurface": mInverseSurface.to_hex(),
-        "mInverseOnSurface": mInverseOnSurface.to_hex(),
-        "mInversePrimary": mInversePrimary.to_hex(),
+        "inverse_surface": inverse_surface.to_hex(),
+        "inverse_on_surface": inverse_on_surface.to_hex(),
+        "inverse_primary": inverse_primary.to_hex(),
         # Background
-        "mBackground": mBackground.to_hex(),
-        "mOnBackground": mOnBackground.to_hex(),
+        "background": background.to_hex(),
+        "on_background": on_background.to_hex(),
     }
 
 
@@ -2116,82 +2116,14 @@ class TemplateRenderer:
     """
     Renders templates using the generated theme colors.
     Compatible with Matugen-style {{colors.name.mode.format}} tags.
+
+    Theme data now uses snake_case keys directly (e.g., 'primary', 'surface_container').
     """
-    
-    # Map from Matugen color names to theme keys
-    # Now properly maps to MaterialScheme generated keys
-    COLOR_MAP = {
-        # Primary colors
-        "primary": "mPrimary",
-        "on_primary": "mOnPrimary",
-        "primary_container": "mPrimaryContainer",
-        "on_primary_container": "mOnPrimaryContainer",
 
-        # Secondary colors
-        "secondary": "mSecondary",
-        "on_secondary": "mOnSecondary",
-        "secondary_container": "mSecondaryContainer",
-        "on_secondary_container": "mOnSecondaryContainer",
-
-        # Tertiary colors
-        "tertiary": "mTertiary",
-        "on_tertiary": "mOnTertiary",
-        "tertiary_container": "mTertiaryContainer",
-        "on_tertiary_container": "mOnTertiaryContainer",
-
-        # Error colors
-        "error": "mError",
-        "on_error": "mOnError",
-        "error_container": "mErrorContainer",
-        "on_error_container": "mOnErrorContainer",
-
-        # Surface colors
-        "surface": "mSurface",
-        "on_surface": "mOnSurface",
-        "surface_variant": "mSurfaceVariant",
-        "on_surface_variant": "mOnSurfaceVariant",
-
-        # Outline and misc
-        "outline": "mOutline",
-        "outline_variant": "mOutlineVariant",
-        "shadow": "mShadow",
-        "scrim": "mScrim",
-
-        # Inverse colors
-        "inverse_surface": "mInverseSurface",
-        "inverse_on_surface": "mInverseOnSurface",
-        "inverse_primary": "mInversePrimary",
-
-        # Background (alias for surface in MD3)
-        "background": "mBackground",
-        "on_background": "mOnBackground",
-
-        # Surface Containers (Material 3)
-        "surface_container_lowest": "mSurfaceContainerLowest",
-        "surface_container_low": "mSurfaceContainerLow",
-        "surface_container": "mSurfaceContainer",
-        "surface_container_high": "mSurfaceContainerHigh",
-        "surface_container_highest": "mSurfaceContainerHighest",
-        "surface_dim": "mSurfaceDim",
-        "surface_bright": "mSurfaceBright",
-
-        # Fixed colors (Material 3)
-        "primary_fixed": "mPrimaryFixed",
-        "primary_fixed_dim": "mPrimaryFixedDim",
-        "on_primary_fixed": "mOnPrimaryFixed",
-        "on_primary_fixed_variant": "mOnPrimaryFixedVariant",
-        "secondary_fixed": "mSecondaryFixed",
-        "secondary_fixed_dim": "mSecondaryFixedDim",
-        "on_secondary_fixed": "mOnSecondaryFixed",
-        "on_secondary_fixed_variant": "mOnSecondaryFixedVariant",
-        "tertiary_fixed": "mTertiaryFixed",
-        "tertiary_fixed_dim": "mTertiaryFixedDim",
-        "on_tertiary_fixed": "mOnTertiaryFixed",
-        "on_tertiary_fixed_variant": "mOnTertiaryFixedVariant",
-
-        # Custom/Noctalia keys
-        "hover": "mSurfaceContainerHigh",  # Fallback
-        "on_hover": "mOnSurface",  # Fallback
+    # Aliases for custom/legacy keys
+    COLOR_ALIASES = {
+        "hover": "surface_container_high",
+        "on_hover": "on_surface",
     }
 
     def __init__(self, theme_data: dict[str, dict[str, str]]):
@@ -2199,10 +2131,8 @@ class TemplateRenderer:
 
     def _get_color_value(self, color_name: str, mode: str, format_type: str) -> str:
         """Get processed color value for a template tag."""
-        # Map color name to theme key
-        key = self.COLOR_MAP.get(color_name)
-        if not key:
-            return f"{{{{UNKNOWN_COLOR_{color_name}}}}}"
+        # Resolve aliases (e.g., hover -> surface_container_high)
+        key = self.COLOR_ALIASES.get(color_name, color_name)
 
         # Get relevant mode data
         # Handle 'default' mode (active mode if only one generated, or first available)
@@ -2215,10 +2145,6 @@ class TemplateRenderer:
             return f"{{{{UNKNOWN_MODE_{mode}}}}}"
 
         hex_color = mode_data.get(key)
-        if not hex_color:
-             # Fallback to unmapped name (e.g. if input JSON uses standard keys)
-             hex_color = mode_data.get(color_name)
-        
         if not hex_color:
             return f"{{{{UNKNOWN_KEY_{key}}}}}"
 
