@@ -53,17 +53,25 @@ class TemplateRenderer:
         if not hex_color:
             return f"{{{{UNKNOWN_KEY_{key}}}}}"
 
-        # Apply format
+        # Apply format - matches matugen output format
         if format_type == "hex":
             return hex_color
         elif format_type == "hex_stripped":
             return hex_color.lstrip('#')
         elif format_type == "rgb":
             c = Color.from_hex(hex_color)
-            return f"{c.r}, {c.g}, {c.b}"
+            return f"rgb({c.r}, {c.g}, {c.b})"
         elif format_type == "rgba":
             c = Color.from_hex(hex_color)
-            return f"{c.r}, {c.g}, {c.b}, 1.0"
+            return f"rgba({c.r}, {c.g}, {c.b}, 1)"
+        elif format_type == "hsl":
+            c = Color.from_hex(hex_color)
+            h, s, l = c.to_hsl()
+            return f"hsl({int(h)}, {int(s * 100)}%, {int(l * 100)}%)"
+        elif format_type == "hsla":
+            c = Color.from_hex(hex_color)
+            h, s, l = c.to_hsl()
+            return f"hsla({int(h)}, {int(s * 100)}%, {int(l * 100)}%, 1)"
         elif format_type in ("hue", "saturation", "lightness"):
             c = Color.from_hex(hex_color)
             h, s, l = c.to_hsl()
@@ -73,6 +81,16 @@ class TemplateRenderer:
                 return str(int(s * 100))
             if format_type == "lightness":
                 return str(int(l * 100))
+        elif format_type in ("red", "green", "blue", "alpha"):
+            c = Color.from_hex(hex_color)
+            if format_type == "red":
+                return str(c.r)
+            if format_type == "green":
+                return str(c.g)
+            if format_type == "blue":
+                return str(c.b)
+            if format_type == "alpha":
+                return "1.0"
 
         return hex_color
 
