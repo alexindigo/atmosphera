@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
+import Quickshell.Widgets
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Services.Media
@@ -533,162 +534,132 @@ SmartPanel {
                   return false;
                 }
 
-                // Get app name from properties (reactive computed property)
-                // Access modelData.ready to ensure reactivity when node becomes ready
                 readonly property string appName: {
-                  if (!modelData) {
+                  if (!modelData)
                     return "Unknown App";
-                  }
 
                   var props = modelData.properties;
                   var desc = modelData.description || "";
                   var name = modelData.name || "";
 
-                  // If properties aren't available yet, try description or name
                   if (!props) {
-                    if (desc) {
+                    if (desc)
                       return desc;
-                    }
                     if (name) {
-                      // Try to extract meaningful name from node name
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0) {
-                        var extracted = nameParts[0];
-                        if (extracted) {
-                          return extracted.charAt(0).toUpperCase() + extracted.slice(1);
-                        }
-                      }
+                      if (nameParts.length > 0 && nameParts[0])
+                        return nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1);
                       return name;
                     }
                     return "Unknown App";
                   }
 
-                  // Try to get application name from various properties
+                  var binaryName = props["application.process.binary"] || "";
+
+                  // Try binary name first (fixes Electron apps like vesktop)
+                  if (binaryName) {
+                    var binParts = binaryName.split("/");
+                    if (binParts.length > 0) {
+                      var binName = binParts[binParts.length - 1].toLowerCase();
+                      var entry = ThemeIcons.findAppEntry(binName);
+                      if (entry && entry.name)
+                        return entry.name;
+                    }
+                  }
+
                   var computedAppName = props["application.name"] || "";
                   var mediaName = props["media.name"] || "";
                   var mediaTitle = props["media.title"] || "";
                   var appId = props["application.id"] || "";
-                  var binaryName = props["application.process.binary"] || "";
 
-                  // If we have application.id, try to extract app name from it (e.g., "firefox.desktop" -> "firefox")
-                  if (!computedAppName && appId) {
-                    var parts = appId.split(".");
-                    if (parts.length > 0) {
-                      computedAppName = parts[0];
-                      // Capitalize first letter and format nicely
-                      if (computedAppName) {
-                        computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                      }
+                  if (appId) {
+                    var entry = ThemeIcons.findAppEntry(appId);
+                    if (entry && entry.name)
+                      return entry.name;
+                    if (!computedAppName) {
+                      var parts = appId.split(".");
+                      if (parts.length > 0 && parts[0])
+                        computedAppName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
                     }
                   }
 
-                  // Try binary name as fallback
                   if (!computedAppName && binaryName) {
                     var binParts = binaryName.split("/");
-                    if (binParts.length > 0) {
-                      computedAppName = binParts[binParts.length - 1];
-                      if (computedAppName) {
-                        computedAppName = computedAppName.charAt(0).toUpperCase() + computedAppName.slice(1);
-                      }
-                    }
+                    if (binParts.length > 0 && binParts[binParts.length - 1])
+                      computedAppName = binParts[binParts.length - 1].charAt(0).toUpperCase() + binParts[binParts.length - 1].slice(1);
                   }
 
-                  // Priority: application.name > media.title > media.name > binary > description > name
                   var result = computedAppName || mediaTitle || mediaName || binaryName || desc || name;
 
-                  // If we still don't have a good name, try to extract from node name
                   if (!result || result === "" || result === "Unknown App") {
                     if (name) {
-                      // Try to extract meaningful name from node name (e.g., "firefox-1234" -> "firefox")
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0) {
-                        result = nameParts[0];
-                        // Capitalize first letter
-                        if (result) {
-                          result = result.charAt(0).toUpperCase() + result.slice(1);
-                        }
-                      }
+                      if (nameParts.length > 0 && nameParts[0])
+                        result = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1);
                     }
                   }
 
                   return result || "Unknown App";
                 }
 
-                // Get app icon from properties (returns file path)
                 readonly property string appIcon: {
-                  if (!modelData) {
+                  if (!modelData)
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
-                  }
 
                   var props = modelData.properties;
+
                   if (!props) {
-                    // Try to get icon from app name
                     var name = modelData.name || "";
                     if (name) {
-                      // Extract app name from node name (e.g., "firefox-1234" -> "firefox")
                       var nameParts = name.split(/[-_]/);
-                      if (nameParts.length > 0) {
-                        var appName = nameParts[0].toLowerCase();
-                        return ThemeIcons.iconFromName(appName, "application-x-executable");
-                      }
+                      if (nameParts.length > 0)
+                        return ThemeIcons.iconForAppId(nameParts[0].toLowerCase(), "application-x-executable");
                     }
                     return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                   }
 
-                  // Try application.icon-name first (from Pipewire)
-                  var iconName = props["application.icon-name"] || "";
-                  if (iconName) {
-                    var iconPath = ThemeIcons.iconFromName(iconName, "");
-                    if (iconPath && iconPath !== "") {
-                      return iconPath;
-                    }
-                  }
-
-                  // Try to get app ID and resolve from desktop entry
-                  var appId = props["application.id"] || "";
-                  if (appId) {
-                    var iconPathFromId = ThemeIcons.iconForAppId(appId.toLowerCase(), "");
-                    if (iconPathFromId && iconPathFromId !== "") {
-                      return iconPathFromId;
-                    }
-                  }
-
-                  // Try application.name
-                  var appName = props["application.name"] || "";
-                  if (appName) {
-                    var iconPathFromName = ThemeIcons.iconFromName(appName.toLowerCase(), "");
-                    if (iconPathFromName && iconPathFromName !== "") {
-                      return iconPathFromName;
-                    }
-                  }
-
-                  // Try binary name
+                  // Try binary name first (fixes Electron apps like vesktop)
                   var binaryName = props["application.process.binary"] || "";
                   if (binaryName) {
                     var binParts = binaryName.split("/");
                     if (binParts.length > 0) {
-                      var binName = binParts[binParts.length - 1].toLowerCase();
-                      var iconPathFromBinary = ThemeIcons.iconFromName(binName, "");
-                      if (iconPathFromBinary && iconPathFromBinary !== "") {
+                      var iconPathFromBinary = ThemeIcons.iconForAppId(binParts[binParts.length - 1].toLowerCase(), "");
+                      if (iconPathFromBinary && iconPathFromBinary !== "")
                         return iconPathFromBinary;
-                      }
                     }
                   }
 
-                  // Try node name as fallback
+                  var iconName = props["application.icon-name"] || "";
+                  if (iconName) {
+                    var iconPath = ThemeIcons.iconFromName(iconName, "");
+                    if (iconPath && iconPath !== "")
+                      return iconPath;
+                  }
+
+                  var appId = props["application.id"] || "";
+                  if (appId) {
+                    var iconPathFromId = ThemeIcons.iconForAppId(appId.toLowerCase(), "");
+                    if (iconPathFromId && iconPathFromId !== "")
+                      return iconPathFromId;
+                  }
+
+                  var appName = props["application.name"] || "";
+                  if (appName) {
+                    var iconPathFromName = ThemeIcons.iconForAppId(appName.toLowerCase(), "");
+                    if (iconPathFromName && iconPathFromName !== "")
+                      return iconPathFromName;
+                  }
+
                   var name = modelData.name || "";
                   if (name) {
                     var nameParts = name.split(/[-_]/);
                     if (nameParts.length > 0) {
-                      var extractedName = nameParts[0].toLowerCase();
-                      var iconPathFromNodeName = ThemeIcons.iconFromName(extractedName, "");
-                      if (iconPathFromNodeName && iconPathFromNodeName !== "") {
+                      var iconPathFromNodeName = ThemeIcons.iconForAppId(nameParts[0].toLowerCase(), "");
+                      if (iconPathFromNodeName && iconPathFromNodeName !== "")
                         return iconPathFromNodeName;
-                      }
                     }
                   }
 
-                  // Final fallback
                   return ThemeIcons.iconFromName("application-x-executable", "application-x-executable");
                 }
 
@@ -699,18 +670,12 @@ SmartPanel {
                   spacing: Style.marginM
 
                   // App Icon
-                  Image {
+                  IconImage {
                     id: appIconImage
                     Layout.preferredWidth: Style.baseWidgetSize
                     Layout.preferredHeight: Style.baseWidgetSize
                     source: appBox.appIcon
-                    sourceSize.width: Style.baseWidgetSize * 2
-                    sourceSize.height: Style.baseWidgetSize * 2
                     smooth: true
-                    mipmap: true
-                    antialiasing: true
-                    fillMode: Image.PreserveAspectFit
-                    cache: true
                     asynchronous: true
 
                     // Fallback icon if image fails to load
