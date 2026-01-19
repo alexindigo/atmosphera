@@ -874,8 +874,8 @@ def derive_harmonious_colors(primary: Color) -> tuple[Color, Color, Color]:
     # Secondary: 30° analogous hue shift with slightly lower saturation
     secondary = Color.from_hsl((h + 30) % 360, s * 0.8, l)
     
-    # Tertiary: 60° hue shift for clear distinction
-    tertiary = Color.from_hsl((h + 60) % 360, s * 0.9, l)
+    # Tertiary: complementary (180° shift) for strong contrast
+    tertiary = Color.from_hsl((h + 180) % 360, s * 0.9, l)
     
     # Quaternary: complementary - opposite on color wheel
     quaternary = Color.from_hsl((h + 180) % 360, s, l)
@@ -906,7 +906,8 @@ def generate_material_dark(palette: list[Color]) -> dict[str, str]:
     # Adjust colors for dark theme
     # Primary should be bright enough to stand out on dark surface
     h, s, _ = primary.to_hsl()
-    primary_adjusted = Color.from_hsl(h, min(s, 0.7), 0.75)
+    # More vibrant primary: higher saturation floor and brighter
+    primary_adjusted = Color.from_hsl(h, max(s, 0.65), 0.80)
     
     h, s, _ = secondary.to_hsl()
     secondary_adjusted = Color.from_hsl(h, min(s, 0.6), 0.70)
@@ -920,8 +921,9 @@ def generate_material_dark(palette: list[Color]) -> dict[str, str]:
     surface_variant = Color.from_hsl(surface_h, 0.5, 0.10)
     
     base_primary = primary # Use primary for hue base
-    mSurface = _adjust_surface(base_primary, 0.6, 0.05)
-    mSurfaceVariant = _adjust_surface(base_primary, 0.45, 0.14)   # Slightly lighter/diff saturation
+    # Surface less dark (0.08 instead of 0.05)
+    mSurface = _adjust_surface(base_primary, 0.5, 0.08)
+    mSurfaceVariant = _adjust_surface(base_primary, 0.40, 0.14)
 
     # Foreground colors - Ensure they are readable but not too saturated (avoid yellow text)
     # Use primary hue but low saturation (0.05) for text
