@@ -17,9 +17,8 @@ Options:
     --both           Generate both themes (default)
     -o, --output     Write JSON output to file (stdout if omitted)
     -r, --render     Render a template (input_path:output_path)
-    -c, --config     Path to Matugen TOML configuration file
-    --mode           Override theme mode: dark or light (Matugen compat)
-    -t, --type       Scheme type (ignored, Matugen compat)
+    -c, --config     Path to TOML configuration file with template definitions
+    --mode           Theme mode: dark or light
 
 Input:
     Can be an image file (PNG/JPG) or a JSON color palette file.
@@ -28,7 +27,7 @@ Example:
     python3 template-processor.py ~/wallpaper.png --material --both
     python3 template-processor.py ~/wallpaper.jpg --dark -o theme.json
     python3 template-processor.py ~/wallpaper.png -r template.txt:output.txt
-    python3 template-processor.py ~/wallpaper.png -c ~/.config/matugen/config.toml
+    python3 template-processor.py ~/wallpaper.png -c config.toml --mode dark
 
 Author: Noctalia Team
 License: MIT
@@ -111,20 +110,15 @@ Examples:
         help='Render a template (input_path:output_path)'
     )
 
-    # Matugen compatibility arguments
     parser.add_argument(
         '--config', '-c',
         type=Path,
-        help='Path to Matugen TOML configuration file'
+        help='Path to TOML configuration file with template definitions'
     )
     parser.add_argument(
         '--mode',
         choices=['dark', 'light'],
-        help='Override theme mode (for Matugen compatibility)'
-    )
-    parser.add_argument(
-        '--type', '-t',
-        help='Scheme type (ignored, for Matugen compatibility)'
+        help='Theme mode: dark or light'
     )
 
     return parser.parse_args()

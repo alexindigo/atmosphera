@@ -634,7 +634,12 @@ Singleton {
     }
 
     stderr: StdioCollector {
-      onStreamFinished: {}
+      onStreamFinished: {
+        if (this.text && this.text.trim() !== "") {
+          // Log template errors/warnings from Python script
+          Logger.e("TemplateProcessor", this.text.trim());
+        }
+      }
     }
   }
 
@@ -664,11 +669,20 @@ Singleton {
     }
 
     stdout: StdioCollector {
-      onStreamFinished: {}
+      onStreamFinished: {
+        if (this.text && this.text.trim() !== "") {
+          Logger.d("TemplateProcessor", "templateProcess stdout:", this.text.trim());
+        }
+      }
     }
 
     stderr: StdioCollector {
-      onStreamFinished: {}
+      onStreamFinished: {
+        if (this.text && this.text.trim() !== "") {
+          // Log template errors/warnings from Python script
+          Logger.e("TemplateProcessor", this.text.trim());
+        }
+      }
     }
   }
 

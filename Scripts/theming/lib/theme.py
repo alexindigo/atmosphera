@@ -64,10 +64,10 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
         if hue_distance(primary_h, sec_h) > MIN_HUE_DISTANCE:
             secondary = palette[1]
         else:
-            # Colors too similar - shift hue by 60°
-            secondary = shift_hue(primary, 60)
+            # Colors too similar - shift hue by 30° to stay in same color family
+            secondary = shift_hue(primary, 30)
     else:
-        secondary = shift_hue(primary, 60)
+        secondary = shift_hue(primary, 30)
 
     # Tertiary: use palette[2] only if hue is >30° different from both primary and secondary
     if len(palette) > 2:
@@ -76,10 +76,10 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
         if hue_distance(primary_h, ter_h) > MIN_HUE_DISTANCE and hue_distance(sec_h, ter_h) > MIN_HUE_DISTANCE:
             tertiary = palette[2]
         else:
-            # Colors too similar - shift hue by 120° from primary
-            tertiary = shift_hue(primary, 120)
+            # Colors too similar - shift hue by 60° from primary to stay closer to original
+            tertiary = shift_hue(primary, 60)
     else:
-        tertiary = shift_hue(primary, 120)
+        tertiary = shift_hue(primary, 60)
 
     # Quaternary: complementary
     quaternary = palette[3] if len(palette) > 3 else shift_hue(primary, 180)
@@ -258,10 +258,32 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     More vibrant than Material - uses palette colors directly and keeps
     surfaces saturated with the primary hue. Outputs same keys as Material.
     """
-    # Use extracted colors directly
+    # Use extracted colors directly, but check if distinct enough
     primary = palette[0] if palette else Color(93, 101, 245)
-    secondary = palette[1] if len(palette) > 1 else shift_hue(primary, 30)
-    tertiary = palette[2] if len(palette) > 2 else shift_hue(primary, 60)
+    primary_h, _, _ = primary.to_hsl()
+
+    # Secondary: use palette[1] only if hue is >30° different
+    MIN_HUE_DISTANCE = 30
+    if len(palette) > 1:
+        sec_h, _, _ = palette[1].to_hsl()
+        if hue_distance(primary_h, sec_h) > MIN_HUE_DISTANCE:
+            secondary = palette[1]
+        else:
+            secondary = shift_hue(primary, 30)
+    else:
+        secondary = shift_hue(primary, 30)
+
+    # Tertiary: use palette[2] only if hue is >30° different from both
+    if len(palette) > 2:
+        ter_h, _, _ = palette[2].to_hsl()
+        sec_h, _, _ = secondary.to_hsl()
+        if hue_distance(primary_h, ter_h) > MIN_HUE_DISTANCE and hue_distance(sec_h, ter_h) > MIN_HUE_DISTANCE:
+            tertiary = palette[2]
+        else:
+            tertiary = shift_hue(primary, 60)
+    else:
+        tertiary = shift_hue(primary, 60)
+
     quaternary = palette[3] if len(palette) > 3 else shift_hue(primary, 180)
     error = find_error_color(palette)
 
