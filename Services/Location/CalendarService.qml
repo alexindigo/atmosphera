@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Location.Calendar
+import qs.Services.System
 
 Singleton {
   id: root
@@ -114,8 +115,12 @@ Singleton {
       return;
     }
 
-    // EvolutionDataServer.init(root);
-    Khal.init(root);
+    if (ProgramCheckerService.khalAvailable) {
+      Khal.init();
+    }
+    if (ProgramCheckerService.pythonAvailable) {
+      EvolutionDataServer.init();
+    }
   }
 
   function loadCalendars() {
