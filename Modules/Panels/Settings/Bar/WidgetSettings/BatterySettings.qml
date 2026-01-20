@@ -179,7 +179,7 @@ ColumnLayout {
     checked: valueHideIfNotDetected
     onToggled: checked => valueHideIfNotDetected = checked
   }
-  
+
   NToggle {
     label: I18n.tr("bar.battery.hide-if-idle-label")
     description: I18n.tr("bar.battery.hide-if-idle-description")

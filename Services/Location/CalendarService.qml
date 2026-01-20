@@ -124,14 +124,14 @@ Singleton {
       return;
     }
 
-    dataProvider.loadCalendars()
+    dataProvider.loadCalendars();
   }
   function loadEvents(daysAhead = 31, daysBehind = 14) {
     if (!root.available || !dataProvider) {
       return;
     }
 
-    dataProvider.loadEvents(daysAhead, daysBehind)
+    dataProvider.loadEvents(daysAhead, daysBehind);
   }
 
   // Helper to format date/time

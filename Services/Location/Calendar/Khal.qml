@@ -23,7 +23,7 @@ Singleton {
     const startDate = new Date(now.getTime() - (daysBehind * 24 * 60 * 60 * 1000));
 
     loadEventsProcess.startTime = formatDateYMD(startDate);
-    loadEventsProcess.duration = `${daysAhead + daysBehind}d`
+    loadEventsProcess.duration = `${daysAhead + daysBehind}d`;
     loadEventsProcess.running = true;
 
     Logger.d("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${loadEventsProcess.startTime}  ${loadEventsProcess.duration}`);
@@ -37,7 +37,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         CalendarService.available = true;
-        CalendarService.dataProvider = CalendarService.dataProvider || root
+        CalendarService.dataProvider = CalendarService.dataProvider || root;
       }
 
       if (CalendarService.available) {
@@ -96,17 +96,7 @@ Singleton {
     property string startTime: ""
     property string duration: ""
 
-    command: [
-      "khal", "list", "--once",
-      "--json", "uid",
-      "--json", "title",
-      "--json", "start-long-full",
-      "--json", "end-long-full",
-      "--json", "calendar",
-      "--json", "description",
-      "--json", "location",
-      startTime, duration
-    ]
+    command: ["khal", "list", "--once", "--json", "uid", "--json", "title", "--json", "start-long-full", "--json", "end-long-full", "--json", "calendar", "--json", "description", "--json", "location", startTime, duration]
 
     stdout: StdioCollector {
       onStreamFinished: {
@@ -145,18 +135,19 @@ Singleton {
     const result = [];
 
     for (const line of text.split("\n")) {
-      if (!line.trim()) continue;
+      if (!line.trim())
+        continue;
       const dayEvents = JSON.parse(line);
       for (const event of dayEvents) {
         result.push({
-          uid: event.uid,
-          calendar: event.calendar,
-          summary: event.title,
-          start: parseTimestamp(event["start-long-full"]),
-          end: parseTimestamp(event["end-long-full"]),
-          location: event.location,
-          description: event.description
-        });
+                      uid: event.uid,
+                      calendar: event.calendar,
+                      summary: event.title,
+                      start: parseTimestamp(event["start-long-full"]),
+                      end: parseTimestamp(event["end-long-full"]),
+                      location: event.location,
+                      description: event.description
+                    });
       }
     }
 
@@ -167,7 +158,7 @@ Singleton {
     // The actual timeStr format depends on user's khal configuration
     // for longdatetimeformat. Here we assume it's a reasonable to be
     // recognized by js Date parser.
-    return Math.floor((Date.parse(timeStr)).valueOf() / 1000)
+    return Math.floor((Date.parse(timeStr)).valueOf() / 1000);
   }
 
   function formatDateYMD(date) {
