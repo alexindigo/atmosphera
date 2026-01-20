@@ -51,7 +51,6 @@ Item {
   readonly property int testPercent: 35
   readonly property bool testCharging: false
   readonly property bool testPluggedIn: false
-  readonly property int testWattage: 8
   readonly property string deviceNativePath: widgetSettings.deviceNativePath || ""
 
   function findBatteryDevice(nativePath) {
@@ -129,8 +128,6 @@ Item {
   readonly property real percent: testMode ? testPercent : (isReady ? (hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : 0)
   readonly property bool charging: testMode ? testCharging : (isReady ? chargingStatus(battery.state) : false)  // Assuming not charging if battery is not ready
   readonly property bool isPluggedIn: testMode ? testPluggedIn : (isReady ? getPluggedInStatus(battery.state) : false) // We can be plugged in or charging but can't both.
-  readonly property int minChargingWatt: testMode ? testWattage : 5 // 5w shouldn't be too much?
-  // That's could be something user customizable with settings?
 
   property bool hasNotifiedLowBattery: false
 
@@ -140,10 +137,8 @@ Item {
   function chargingStatus(state) {
     switch (state) {
     case UPowerDeviceState.Charging: // 1
-      if (battery.changeRate !== undefined && battery.changeRate > minChargingWatt) {
-        Logger.e("Battery", "Battery is charging (Battery is charging with " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)", "Minimum watt: " + minChargingWatt); // debug
-        return true;
-      }
+      Logger.e("Battery", "Battery is charging (Battery is charging with " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
+      return true;
     case UPowerDeviceState.Discharging: // 2
     case UPowerDeviceState.Empty: // 3
     case UPowerDeviceState.PendingDischarge: // 6
@@ -153,11 +148,15 @@ Item {
     }
   }
   function getPluggedInStatus(state) {
+    // Treat low charge rate (< 5W) as plugged in but not actively charging (grace period)
+    if (state === UPowerDeviceState.Charging && battery.changeRate !== undefined && Math.abs(battery.changeRate) < 5) {
+      return true;
+    }
     switch (state) {
-      case UPowerDeviceState.FullyCharged: // 4
-      case UPowerDeviceState.PendingCharge: // 5
-        Logger.e("Battery", "Battery is NOT charging (Battery is charging with " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)", "Minimum watt: " + minChargingWatt); // debug
-        return true;
+    case UPowerDeviceState.FullyCharged: // 4
+    case UPowerDeviceState.PendingCharge: // 5
+      Logger.e("Battery", "Battery is NOT charging (Power rate: " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
+      return true;
     default:
       return false;
     }
@@ -168,7 +167,7 @@ Item {
       ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
                                                                        "percent": Math.round(currentPercent)
                                                                      }));
-      Logger.e("Battery", "Low battery at " + (Math.floor(currentPercent).toFixed(1)) + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn, "isReady: " + isReady ); // debug
+      Logger.e("Battery", "Low battery at " + (Math.floor(currentPercent).toFixed(1)) + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn, "isReady: " + isReady); // debug
     } else if (hasNotifiedLowBattery && (isCharging || isPluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
     }
