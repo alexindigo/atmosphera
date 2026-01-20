@@ -1223,7 +1223,7 @@
       "uninstall-dialog-description": "Biztosan el szeretné távolítani a(z) {plugin} bővítményt? Ez eltávolítja az összes bővítményadatot.",
       "uninstall-dialog-title": "Bővítmény eltávolítása",
       "uninstall-error": "Sikertelen eltávolítás: {error}.",
-      "uninstall-success": "A(z) {plugin} sikeresen eltávolítva.",
+      "uninstall-success": "{plugin} sikeresen eltávolítva.",
       "uninstalling": "{plugin} eltávolítása...",
       "update-all": "Összes frissítése ({count})",
       "update-all-success": "Minden bővítmény sikeresen frissítve.",

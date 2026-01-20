@@ -206,13 +206,13 @@
       "memory-percentage-description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen.",
       "memory-percentage-label": "Speicher als Prozentsatz",
       "memory-usage-description": "Aktuelle RAM-Nutzungsinformationen anzeigen.",
-      "memory-usage-label": "Speicherverbrauch",
+      "memory-usage-label": "Speicherauslastung",
       "network-traffic-description": "Upload- und Download-Geschwindigkeiten anzeigen.",
       "network-traffic-label": "Netzwerkverkehr",
       "storage-usage-description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
-      "storage-usage-label": "Speichernutzung",
+      "storage-usage-label": "Datenträgerauslastung",
       "swap-usage-description": "Swap-Speichernutzung anzeigen.",
-      "swap-usage-label": "Swap-Nutzung",
+      "swap-usage-label": "Swap-Auslastung",
       "use-monospace-font-description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
       "use-monospace-font-label": "Schriftart mit fester Breite"
     },
@@ -772,8 +772,8 @@
       "templates-none-detected": "Keine erkannt",
       "templates-write-path": "Schreibt: {filepath}",
       "title": "Farbschema",
-      "wallpaper-method-description": "Wähle deine bevorzugte Methode zur Palettengenerierung.",
-      "wallpaper-method-label": "Farbgewinnungsmethode"
+      "wallpaper-method-description": "Wählen Sie Ihre bevorzugte Methode zur Palettengenerierung.",
+      "wallpaper-method-label": "Farbextraktionsmethode"
     },
     "control-center": {
       "cards-desc": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",
