@@ -35,17 +35,21 @@ def kmeans_cluster(
     colors: list[RGB],
     k: int = 5,
     iterations: int = 10
-) -> list[tuple[RGB, int]]:
+) -> list[tuple[RGB, RGB, int]]:
     """
     Perform K-means clustering on colors in Lab color space.
 
     Lab space is perceptually uniform, matching matugen's approach.
-    Returns list of (centroid_rgb, cluster_size) tuples, sorted by cluster size.
+    Returns list of (centroid_rgb, representative_rgb, cluster_size) tuples,
+    sorted by cluster size.
+
+    - centroid_rgb: averaged color from the cluster (smoother, blended)
+    - representative_rgb: actual image pixel closest to centroid
     """
     if len(colors) < k:
-        # Not enough colors, return what we have
+        # Not enough colors, return what we have (same color for centroid and representative)
         unique = list(set(colors))
-        return [(c, colors.count(c)) for c in unique[:k]]
+        return [(c, c, colors.count(c)) for c in unique[:k]]
 
     # Convert to Lab for perceptual clustering (like matugen's WSMeans)
     colors_lab = [rgb_to_lab(*c) for c in colors]
@@ -97,15 +101,17 @@ def kmeans_cluster(
         if dist < cluster_representatives[cluster_idx][1]:
             cluster_representatives[cluster_idx] = (colors[idx], dist)
 
-    # Use representative pixels (actual image colors) instead of computed centroids
+    # Return both centroid (averaged) and representative (actual pixel) colors
     results = []
     for i in range(k):
         if cluster_counts[i] > 0:
-            rgb = cluster_representatives[i][0]
-            results.append((rgb, cluster_counts[i]))
+            # Convert Lab centroid back to RGB
+            centroid_rgb = lab_to_rgb(*centroids[i])
+            representative_rgb = cluster_representatives[i][0]
+            results.append((centroid_rgb, representative_rgb, cluster_counts[i]))
 
     # Sort by cluster size (most common first)
-    results.sort(key=lambda x: -x[1])
+    results.sort(key=lambda x: -x[2])
 
     return results
 
@@ -344,14 +350,20 @@ def extract_palette(
         if len(filtered) < cluster_count * 2:
             filtered = sampled
 
-    # Cluster
+    # Cluster - returns (centroid_rgb, representative_rgb, count) tuples
     clusters = kmeans_cluster(filtered, k=cluster_count)
 
     # Score colors based on method
+    # Vibrant (chroma): use centroid colors (averaged, smoother - original behavior)
+    # M3 (population): use representative colors (actual pixels - matugen behavior)
     if scoring == "chroma":
-        scored = _score_colors_chroma(clusters)
+        # Use centroid colors for vibrant mode
+        colors_for_scoring = [(c[0], c[2]) for c in clusters]
+        scored = _score_colors_chroma(colors_for_scoring)
     else:
-        scored = _score_colors_population(clusters, total_sampled)
+        # Use representative colors for M3 schemes
+        colors_for_scoring = [(c[1], c[2]) for c in clusters]
+        scored = _score_colors_population(colors_for_scoring, total_sampled)
 
     # Extract colors
     final_colors = [c[0] for c in scored]
