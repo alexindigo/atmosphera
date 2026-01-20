@@ -136,11 +136,20 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     if 160 <= surface_hue <= 200:
         surface_hue = (surface_hue + 10) % 360
 
-    base_surface = Color.from_hsl(surface_hue, s, 0.5)  # l doesn't matter for next step
+    # Reduce saturation for warm hues (red/orange/yellow) - they feel overwhelming as surfaces
+    # Warm hues: 0-60 and 300-360
+    if surface_hue < 60 or surface_hue > 300:
+        surface_saturation_cap = 0.35  # More desaturated for warm colors
+    elif 60 <= surface_hue < 120:
+        surface_saturation_cap = 0.50  # Moderate for yellow-greens
+    else:
+        surface_saturation_cap = 0.90  # Keep cool colors vibrant
 
-    # Preserving saturation (up to 0.9) to be true to primary color
-    surface = adjust_surface(base_surface, 0.90, 0.12)
-    surface_variant = adjust_surface(base_surface, 0.80, 0.16)
+    base_surface = Color.from_hsl(surface_hue, min(s, surface_saturation_cap), 0.5)
+
+    # Preserving saturation (up to the cap) to be true to primary color
+    surface = adjust_surface(base_surface, surface_saturation_cap, 0.12)
+    surface_variant = adjust_surface(base_surface, min(0.80, surface_saturation_cap), 0.16)
 
     # Surface containers - progressive lightness for visual hierarchy (keep primary hue)
     surface_container_lowest = adjust_surface(base_surface, 0.85, 0.06)
