@@ -17,6 +17,10 @@ SmartPanel {
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
+  onOpened: {
+    BatteryService.refreshHealth();
+  }
+
   panelContent: Item {
     id: panelContent
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
@@ -304,7 +308,6 @@ SmartPanel {
           RowLayout {
             Layout.fillWidth: true
             spacing: Style.marginS
-            visible: healthAvailable
 
             ColumnLayout {
               RowLayout {
@@ -317,8 +320,8 @@ SmartPanel {
                 }
 
                 NText {
-                  text: capacityLevel !== "" ? capacityLevel : ""
-                  visible: capacityLevel !== ""
+                  text: capacityLevel
+                  visible: healthAvailable && healthPercent > 0 && capacityLevel !== ""
                   color: {
                     var level = capacityLevel.toLowerCase();
                     if (level === "normal" || level === "full" || level === "good" || level === "high") {
@@ -344,7 +347,10 @@ SmartPanel {
                   anchors.verticalCenter: parent.verticalCenter
                   height: parent.height
                   radius: parent.radius
+                  visible: healthAvailable && healthPercent > 0
                   width: {
+                    if (!healthAvailable || healthPercent <= 0)
+                      return 0;
                     var ratio = Math.max(0, Math.min(1, healthPercent / 100));
                     return parent.width * ratio;
                   }
@@ -354,7 +360,7 @@ SmartPanel {
             }
 
             NText {
-              text: healthPercent >= 0 ? `${healthPercent}%` : "--"
+              text: healthAvailable && healthPercent > 0 ? `${healthPercent}%` : I18n.tr("common.not-available")
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold

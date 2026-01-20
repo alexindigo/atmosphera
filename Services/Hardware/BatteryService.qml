@@ -119,17 +119,8 @@ Singleton {
     }
   }
 
-  Timer {
-    id: healthRefreshTimer
-    interval: 60000
-    running: root.isLaptopBattery
-    repeat: true
-    triggeredOnStart: true
-    onTriggered: root.refreshHealth()
-  }
-
-  onPrimaryDeviceChanged: {
-    if (primaryDevice) {
+  Component.onCompleted: {
+    if (isLaptopBattery) {
       Qt.callLater(refreshHealth);
     }
   }
