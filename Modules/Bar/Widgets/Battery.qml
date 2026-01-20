@@ -137,7 +137,7 @@ Item {
   function chargingStatus(state) {
     switch (state) {
     case UPowerDeviceState.Charging: // 1
-      Logger.e("Battery", "Battery is charging (Battery is charging with " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
+      // Logger.e("Battery", "Battery is charging (Battery is charging with " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
       return true;
     case UPowerDeviceState.Discharging: // 2
     case UPowerDeviceState.Empty: // 3
@@ -155,7 +155,7 @@ Item {
     switch (state) {
     case UPowerDeviceState.FullyCharged: // 4
     case UPowerDeviceState.PendingCharge: // 5
-      Logger.e("Battery", "Battery is NOT charging (Power rate: " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
+      // Logger.e("Battery", "Battery is NOT charging (Power rate: " + (Math.floor(battery.changeRate * 10) / 10).toFixed(1) + "W)"); // debug
       return true;
     default:
       return false;
@@ -167,7 +167,7 @@ Item {
       ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
                                                                        "percent": Math.round(currentPercent)
                                                                      }));
-      Logger.e("Battery", "Low battery at " + (Math.floor(currentPercent).toFixed(1)) + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn, "isReady: " + isReady); // debug
+      // Logger.e("Battery", "Low battery at " + (Math.floor(currentPercent).toFixed(1)) + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn, "isReady: " + isReady); // debug
     } else if (hasNotifiedLowBattery && (isCharging || isPluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
     }
@@ -260,23 +260,16 @@ Item {
                            }));
       }
       if (battery.changeRate !== undefined) {
-        const rate = battery.changeRate;
-        if (rate > 0) {
-          lines.push(charging ? I18n.tr("battery.charging-rate", {
-                                          "rate": rate.toFixed(2)
-                                        }) : I18n.tr("battery.discharging-rate", {
-                                                       "rate": rate.toFixed(2)
-                                                     }));
-        } else if (rate < 0) {
-          lines.push(I18n.tr("battery.discharging-rate", {
-                               "rate": Math.abs(rate).toFixed(2)
-                             }));
+        const rate = Math.abs(battery.changeRate);
+        if (charging) {
+          lines.push(I18n.tr("common.charging"));
+          lines.push(I18n.tr("battery.charging-rate", {"rate": rate.toFixed(2)}));
+        } else if (isPluggedIn) {
+          lines.push(I18n.tr("battery.plugged-in"));
         } else {
-          // Rate is 0 - check if plugged in (charging state) or idle
-          lines.push(isPluggedIn ? I18n.tr("battery.plugged-in") : I18n.tr("common.idle"));
+          lines.push(I18n.tr("common.discharging"));
+          lines.push(I18n.tr("battery.discharging-rate", {"rate": rate.toFixed(2)}));
         }
-      } else {
-        lines.push(charging ? I18n.tr("common.charging") : I18n.tr("common.discharging"));
       }
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
         lines.push(I18n.tr("battery.health", {
