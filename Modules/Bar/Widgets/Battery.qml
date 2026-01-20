@@ -134,11 +134,11 @@ Item {
   function chargingStatus(state) {
     switch (state) {
     case UPowerDeviceState.Charging: // 1
-    case UPowerDeviceState.FullyCharged: // 4
-    case UPowerDeviceState.PendingCharge: // 5
       return true;
     case UPowerDeviceState.Discharging: // 2
     case UPowerDeviceState.Empty: // 3
+    case UPowerDeviceState.FullyCharged: // 4
+    case UPowerDeviceState.PendingCharge: // 5
     case UPowerDeviceState.PendingDischarge: // 6
       return false;
     default:
