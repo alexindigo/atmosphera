@@ -35,7 +35,7 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  readonly property real warningThreshold: 100 // widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
+  readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
   // Only show low battery warning if device is ready (prevents false positive during initialization)
@@ -149,7 +149,7 @@ Item {
     case UPowerDeviceState.PendingDischarge: // 6
       return false;
     default:
-      return true; // unknown state 0 Fix #1417
+      return false; // unknown state 0 Fix #1417
     }
   }
   function getPluggedInStatus(state) {
@@ -162,13 +162,13 @@ Item {
       return false;
     }
   }
-  function maybeNotify(currentPercent, isCharging, isPluggedIn) {
-    if ((!isCharging && !isPluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
+  function maybeNotify(currentPercent, isCharging, isPluggedIn, isReady) {
+    if (isReady && (!isCharging && !isPluggedIn) && !hasNotifiedLowBattery && currentPercent <= warningThreshold) {
       hasNotifiedLowBattery = true;
       ToastService.showWarning(I18n.tr("toast.battery.low"), I18n.tr("toast.battery.low-desc", {
                                                                        "percent": Math.round(currentPercent)
                                                                      }));
-      Logger.e("Battery", "Low battery at " + currentPercent + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn); // debug
+      Logger.e("Battery", "Low battery at " + (Math.floor(currentPercent).toFixed(1)) + "%", "isCharging: " + isCharging, "isPluggedIn: " + isPluggedIn, "isReady: " + isReady ); // debug
     } else if (hasNotifiedLowBattery && (isCharging || isPluggedIn || currentPercent > warningThreshold + 5)) {
       hasNotifiedLowBattery = false;
     }
@@ -182,7 +182,7 @@ Item {
     target: battery
     function onPercentageChanged() {
       if (battery) {
-        maybeNotify(getCurrentPercent(), chargingStatus(battery.state), getPluggedInStatus(battery.state));
+        maybeNotify(getCurrentPercent(), chargingStatus(battery.state), getPluggedInStatus(battery.state), isReady);
       }
     }
     function onStateChanged() {
@@ -190,7 +190,7 @@ Item {
         if (chargingStatus(battery.state) || getPluggedInStatus(battery.state)) {
           hasNotifiedLowBattery = false;
         }
-        maybeNotify(getCurrentPercent(), chargingStatus(battery.state), getPluggedInStatus(battery.state));
+        maybeNotify(getCurrentPercent(), chargingStatus(battery.state), getPluggedInStatus(battery.state), isReady);
       }
     }
   }
@@ -199,7 +199,7 @@ Item {
     target: bluetoothDevice
     function onBatteryChanged() {
       if (bluetoothDevice && hasBluetoothBattery) {
-        maybeNotify(bluetoothDevice.battery * 100, battery ? chargingStatus(battery.state) : false, battery ? getPluggedInStatus(battery.state) : false);
+        maybeNotify(bluetoothDevice.battery * 100, battery ? chargingStatus(battery.state) : false, battery ? getPluggedInStatus(battery.state) : false, true);
       }
     }
   }
