@@ -40,7 +40,7 @@ ColumnLayout {
       if (exitCode === 0) {
         Settings.data.nightLight.enabled = true;
         NightLightService.apply();
-        ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("toast.wifi.enabled"), "nightlight-on");
+        ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("common.enabled"), "nightlight-on");
       } else {
         Settings.data.nightLight.enabled = false;
         ToastService.showWarning(I18n.tr("common.night-light"), I18n.tr("toast.night-light.not-installed"));
