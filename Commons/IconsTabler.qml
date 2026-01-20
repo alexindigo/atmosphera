@@ -79,6 +79,7 @@ Singleton {
     "star-off": "star-off",
     "battery-exclamation": "battery-exclamation",
     "common.charging": "common.charging",
+    "battery-charging-2": "battery-charging-2",
     "battery-4": "battery-4",
     "battery-3": "battery-3",
     "battery-2": "battery-2",
