@@ -35,7 +35,7 @@ Item {
   readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
-  readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
+  readonly property real warningThreshold: 100 // widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
   readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
   // Only show low battery warning if device is ready (prevents false positive during initialization)
@@ -149,7 +149,7 @@ Item {
     case UPowerDeviceState.PendingDischarge: // 6
       return false;
     default:
-      return false; // unknown state 0 Fix #1417
+      return true; // unknown state 0 Fix #1417
     }
   }
   function getPluggedInStatus(state) {
