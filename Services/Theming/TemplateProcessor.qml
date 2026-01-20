@@ -13,7 +13,7 @@ Singleton {
   id: root
 
   readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
-  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/theming/template-processor.py"
+  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/python/src/theming/template-processor.py"
 
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
@@ -159,7 +159,7 @@ Singleton {
                                            lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
-                                           const postHook = terminal.postHook || `${TemplateRegistry.colorsApplyScript} ${terminal.id}`;
+                                           const postHook = terminal.postHook || `${TemplateRegistry.templateApplyScript} ${terminal.id}`;
                                            const postHookEsc = escapeTomlString(postHook);
                                            lines.push(`post_hook = "${postHookEsc}"`);
                                          }
@@ -294,7 +294,7 @@ Singleton {
                                            const hyphenPath = escapeShellPath(templatePaths.hyphen);
                                            const spacePath = escapeShellPath(templatePaths.space);
                                            commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal} (tried both hyphen and space patterns)"; fi`);
-                                           commands.push(`${TemplateRegistry.colorsApplyScript} ${terminal}`);
+                                           commands.push(`${TemplateRegistry.templateApplyScript} ${terminal}`);
                                          }
                                        });
 

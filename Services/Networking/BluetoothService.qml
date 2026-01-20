@@ -587,7 +587,7 @@ Singleton {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    const scriptPath = Quickshell.shellDir + "/Scripts/network/bluetooth-connect.py";
+    const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-connect.py";
 
     pairingProcess.command = ["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)];
     pairingProcess.running = true;
