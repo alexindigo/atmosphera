@@ -104,25 +104,25 @@ class MaterialScheme:
         self.primary_palette = TonalPalette(source_color.hue, source_color.chroma)
 
         # Secondary: same hue, reduced chroma
-        # Formula: max(chroma - 32, chroma * 0.5)
-        secondary_chroma = max(source_color.chroma - 32.0, source_color.chroma * 0.5)
+        # Formula: max(chroma - 24, chroma * 0.6) - slightly more vibrant than stock MD3
+        secondary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
         self.secondary_palette = TonalPalette(source_color.hue, secondary_chroma)
 
         # Tertiary: analogous color (simplified as 60° rotation)
         # In full implementation this uses TemperatureCache for analogous colors
         tertiary_hue = (source_color.hue + 60.0) % 360.0
-        tertiary_chroma = max(source_color.chroma - 32.0, source_color.chroma * 0.5)
+        tertiary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
         self.tertiary_palette = TonalPalette(tertiary_hue, tertiary_chroma)
 
         # Error: red hue with high chroma
         self.error_palette = TonalPalette(25.0, 84.0)  # Material red
 
-        # Neutral: source hue, low chroma (chroma / 8)
-        neutral_chroma = source_color.chroma / 8.0
+        # Neutral: source hue, low chroma (chroma / 6) - slightly tinted surfaces
+        neutral_chroma = source_color.chroma / 6.0
         self.neutral_palette = TonalPalette(source_color.hue, neutral_chroma)
 
         # Neutral variant: source hue, slightly more chroma than neutral
-        neutral_variant_chroma = (source_color.chroma / 8.0) + 4.0
+        neutral_variant_chroma = (source_color.chroma / 6.0) + 4.0
         self.neutral_variant_palette = TonalPalette(source_color.hue, neutral_variant_chroma)
 
     @classmethod
