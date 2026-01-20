@@ -262,7 +262,7 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use template-processor.py (Python implementation)
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
+    const styleFlag = (Settings.data.colorSchemes.generationMethod === "vibrant") ? "--vibrant" : "--material";
     // We pass --type for compatibility but it is ignored by internal logic unless needed
     script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
 
@@ -363,7 +363,7 @@ Singleton {
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
+    const styleFlag = (Settings.data.colorSchemes.generationMethod === "vibrant") ? "--vibrant" : "--material";
     script += `  python3 "${templateProcessorScript}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 

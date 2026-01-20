@@ -453,6 +453,7 @@
     "update": "Mise à jour",
     "upload": "Téléverser",
     "version": "Version",
+    "vibrant": "Vibrant",
     "visualizer": "Visualiseur",
     "volume": "Volume",
     "volumes": "Volumes",
@@ -773,7 +774,7 @@
       "templates-write-path": "Écrit : {filepath}",
       "title": "Jeu de couleurs",
       "wallpaper-method-description": "Choisissez votre méthode de génération de palette préférée.",
-      "wallpaper-method-label": "Méthode d'extraction des couleurs"
+      "wallpaper-method-label": "Méthode de génération de palette"
     },
     "control-center": {
       "cards-desc": "Personnalisez les commandes qui apparaissent dans le centre de contrôle et leur ordre d'affichage.",

@@ -446,6 +446,7 @@
     "update": "更新",
     "upload": "上傳",
     "version": "版本",
+    "vibrant": "鮮明",
     "visualizer": "視覺效果",
     "volume": "音量",
     "volumes": "音量",
@@ -765,7 +766,7 @@
       "templates-write-path": "寫入: {filepath}",
       "title": "主題配色",
       "wallpaper-method-description": "選擇你喜歡的配色生成方法",
-      "wallpaper-method-label": "色彩提取方式"
+      "wallpaper-method-label": "調色盤產生方法"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",

@@ -390,7 +390,7 @@
     "schedulingMode": "off",
     "manualSunrise": "06:30",
     "manualSunset": "18:30",
-    "extractionMethod": "default"
+    "generationMethod": "material"
   },
   "templates": {
     "activeTemplates": [],

@@ -453,6 +453,7 @@
     "update": "Güncelleme",
     "upload": "Yükle",
     "version": "Sürüm",
+    "vibrant": "Canlı",
     "visualizer": "Görselleştirici",
     "volume": "Hacim",
     "volumes": "Hacimler",
@@ -773,7 +774,7 @@
       "templates-write-path": "Yazıyor: {filepath}",
       "title": "Renk şeması",
       "wallpaper-method-description": "Favori palet oluşturma yönteminizi seçin.",
-      "wallpaper-method-label": "Renk çıkarma yöntemi"
+      "wallpaper-method-label": "Palet oluşturma yöntemi"
     },
     "control-center": {
       "cards-desc": "Kontrol merkezinde hangi kontrollerin ve hangi sırada görüneceğini özelleştirin.",

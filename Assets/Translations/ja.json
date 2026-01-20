@@ -453,6 +453,7 @@
     "update": "アップデート",
     "upload": "アップロード",
     "version": "バージョン",
+    "vibrant": "鮮やか",
     "visualizer": "ビジュアライザー",
     "volume": "ボリューム",
     "volumes": "ボリューム",
@@ -773,7 +774,7 @@
       "templates-write-path": "書き込み先: {filepath}",
       "title": "配色",
       "wallpaper-method-description": "お好みのパレット生成方法を選択してください。",
-      "wallpaper-method-label": "色の抽出方法"
+      "wallpaper-method-label": "パレット生成方法"
     },
     "control-center": {
       "cards-desc": "コントロールセンターに表示する項目と、その順序をカスタマイズします。",

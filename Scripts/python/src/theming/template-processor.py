@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Template processor - Wallpaper-based color extraction and theme generation.
+Noctalia's Template processor - Wallpaper-based color extraction and theme generation.
 
 A CLI tool that extracts dominant colors from wallpaper images and generates palettes with optional templating:
 - Material Design 3 using HCT (Hue, Chroma, Tone) color space.
@@ -10,8 +10,8 @@ Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --default        Generate vibrant accent-based colors (default)
-    --material       Generate Material Design 3 colors
+    --material       Generate Material Design 3 colors (default)
+    --vibrant        Generate vibrant accent-based colors
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -53,7 +53,7 @@ def parse_args() -> argparse.Namespace:
         epilog="""
 Examples:
   python3 template-processor.py wallpaper.png                          # default mode, both themes
-  python3 template-processor.py wallpaper.png --material --dark        # material mode, dark only
+  python3 template-processor.py wallpaper.png --vibrant --dark         # vibrant mode, dark only
   python3 template-processor.py wallpaper.jpg --dark -o theme.json     # output to file
   python3 template-processor.py wallpaper.png -r tpl.txt:out.txt       # render template
         """
@@ -71,13 +71,12 @@ Examples:
     style_group.add_argument(
         '--material',
         action='store_true',
-        help='Generate Material Design 3 colors'
+        help='Generate Material Design 3 colors (default)'
     )
     style_group.add_argument(
-        '--default',
+        '--vibrant',
         action='store_true',
-        default=True,
-        help='Generate vibrant accent-based palette (default)'
+        help='Generate vibrant accent-based palette'
     )
 
     # Theme mode (mutually exclusive)
@@ -247,7 +246,7 @@ def main() -> int:
                 return 1
 
             # Generate theme for each mode
-            use_material = args.material
+            use_material = not args.vibrant
             for mode in modes:
                 result[mode] = generate_theme(palette, mode, use_material)
 

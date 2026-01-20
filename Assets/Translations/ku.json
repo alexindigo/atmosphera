@@ -453,6 +453,7 @@
     "update": "Nûkirin",
     "upload": "Barkirin",
     "version": "Guherto",
+    "vibrant": "Geş",
     "visualizer": "Dîmender",
     "volume": "Hêjmar",
     "volumes": "Cild",
@@ -773,7 +774,7 @@
       "templates-write-path": "Dinivîse: {filepath}",
       "title": "Şêweya rengan",
       "wallpaper-method-description": "Rêbaza xweya bijarte ya hilberîna paletê hilbijêre.",
-      "wallpaper-method-label": "Rêbaza derxistina rengan"
+      "wallpaper-method-label": "Rêbaza çêkirina paletê"
     },
     "control-center": {
       "cards-desc": "Xwerû bike ka kîjan kontrol di navenda kontrolê de û bi çi rêzê de xuya dibin.",

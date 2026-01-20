@@ -453,6 +453,7 @@
     "update": "Оновлення",
     "upload": "Вивантажити",
     "version": "Версія",
+    "vibrant": "Яскравий",
     "visualizer": "Візуалізатор",
     "volume": "Об'єм",
     "volumes": "Обсяги",
@@ -773,7 +774,7 @@
       "templates-write-path": "Записує: {filepath}",
       "title": "Колірна схема",
       "wallpaper-method-description": "Оберіть свій улюблений метод створення палітри.",
-      "wallpaper-method-label": "Метод вилучення кольору"
+      "wallpaper-method-label": "Метод створення палітри"
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",

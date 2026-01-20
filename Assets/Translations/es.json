@@ -453,6 +453,7 @@
     "update": "Actualizar",
     "upload": "Subir",
     "version": "Versión",
+    "vibrant": "Vibrante",
     "visualizer": "Visualizador",
     "volume": "Volumen",
     "volumes": "Volúmenes",
@@ -773,7 +774,7 @@
       "templates-write-path": "Escribe: {filepath}",
       "title": "Esquema de colores",
       "wallpaper-method-description": "Elige tu método de generación de paleta favorito.",
-      "wallpaper-method-label": "Método de extracción de color"
+      "wallpaper-method-label": "Método de generación de paleta"
     },
     "control-center": {
       "cards-desc": "Personaliza qué controles aparecen en el centro de control y en qué orden.",

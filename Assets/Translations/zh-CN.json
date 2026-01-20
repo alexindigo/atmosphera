@@ -453,6 +453,7 @@
     "update": "更新",
     "upload": "上传",
     "version": "版本",
+    "vibrant": "鲜艳",
     "visualizer": "可视化工具",
     "volume": "音量",
     "volumes": "音量",
@@ -773,7 +774,7 @@
       "templates-write-path": "写入：{filepath}",
       "title": "配色方案",
       "wallpaper-method-description": "选择您喜欢的调色板生成方法。",
-      "wallpaper-method-label": "颜色提取方法"
+      "wallpaper-method-label": "调色板生成方法"
     },
     "control-center": {
       "cards-desc": "自定义在控制中心显示的控制项及其顺序。",

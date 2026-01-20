@@ -453,6 +453,7 @@
     "update": "Update",
     "upload": "Uploaden",
     "version": "Versie",
+    "vibrant": "Levendig",
     "visualizer": "Visualiseerder",
     "volume": "Volume",
     "volumes": "Volumes",
@@ -773,7 +774,7 @@
       "templates-write-path": "Schrijft: {filepath}",
       "title": "Kleurschema",
       "wallpaper-method-description": "Kies je favoriete methode voor het genereren van paletten.",
-      "wallpaper-method-label": "Kleurextractiemethode"
+      "wallpaper-method-label": "Paletgeneratiemethode"
     },
     "control-center": {
       "cards-desc": "Pas aan welke bedieningselementen in het bedieningscentrum verschijnen en in welke volgorde.",

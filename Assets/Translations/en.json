@@ -453,6 +453,7 @@
     "update": "Update",
     "upload": "Upload",
     "version": "Version",
+    "vibrant": "Vibrant",
     "visualizer": "Visualizer",
     "volume": "Volume",
     "volumes": "Volumes",
@@ -773,7 +774,7 @@
       "templates-write-path": "Writes: {filepath}",
       "title": "Color Scheme",
       "wallpaper-method-description": "Choose your favorite palette generation method.",
-      "wallpaper-method-label": "Color extraction method"
+      "wallpaper-method-label": "Palette generation method"
     },
     "control-center": {
       "cards-desc": "Customize which controls appear in the control center and in what order.",

@@ -453,6 +453,7 @@
     "update": "Frissítés",
     "upload": "Feltöltés",
     "version": "Verzió",
+    "vibrant": "Élénk",
     "visualizer": "Vizualizáló",
     "volume": "Térfogat",
     "volumes": "Kötetek",
@@ -773,7 +774,7 @@
       "templates-write-path": "Írja: {filepath}",
       "title": "Színséma",
       "wallpaper-method-description": "Válassza ki a kedvenc palettagenerálási módszereit.",
-      "wallpaper-method-label": "Színkivonási módszer"
+      "wallpaper-method-label": "Paletta generálási módszer"
     },
     "control-center": {
       "cards-desc": "Személyre szabhatja, hogy mely vezérlők jelenjenek meg a vezérlőközpontban és milyen sorrendben.",

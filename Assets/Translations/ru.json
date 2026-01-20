@@ -453,6 +453,7 @@
     "update": "Обновление",
     "upload": "Загрузить",
     "version": "Версия",
+    "vibrant": "Яркий",
     "visualizer": "Визуализатор",
     "volume": "Объём",
     "volumes": "Тома",
@@ -773,7 +774,7 @@
       "templates-write-path": "Записывает: {filepath}",
       "title": "Цветовая схема",
       "wallpaper-method-description": "Выберите ваш любимый метод генерации палитры.",
-      "wallpaper-method-label": "Метод извлечения цвета"
+      "wallpaper-method-label": "Метод генерации палитры"
     },
     "control-center": {
       "cards-desc": "Настройте, какие элементы управления появляются в центре управления и в каком порядке.",

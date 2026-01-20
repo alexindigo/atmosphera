@@ -453,6 +453,7 @@
     "update": "Aktualisieren",
     "upload": "Hochladen",
     "version": "Version",
+    "vibrant": "Lebhaft",
     "visualizer": "Visualisierer",
     "volume": "Lautstärke",
     "volumes": "Lautstärken",
@@ -773,7 +774,7 @@
       "templates-write-path": "Schreibt: {filepath}",
       "title": "Farbschema",
       "wallpaper-method-description": "Wählen Sie Ihre bevorzugte Methode zur Palettengenerierung.",
-      "wallpaper-method-label": "Farbextraktionsmethode"
+      "wallpaper-method-label": "Methode zur Palettengenerierung"
     },
     "control-center": {
       "cards-desc": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",
