@@ -42,7 +42,7 @@ Item {
   readonly property bool isLowBattery: isReady && (!charging && !isPluggedIn) && percent <= warningThreshold
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready (after initialization)
-  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (charging || battery.state === UPowerDeviceState.Discharging) : true))
+  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (!charging && !isPluggedIn) : true))
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
@@ -262,14 +262,12 @@ Item {
       if (battery.changeRate !== undefined) {
         const rate = Math.abs(battery.changeRate);
         if (charging) {
-          lines.push(I18n.tr("common.charging"));
           lines.push(I18n.tr("battery.charging-rate", {
                                "rate": rate.toFixed(2)
                              }));
         } else if (isPluggedIn) {
           lines.push(I18n.tr("battery.plugged-in"));
         } else {
-          lines.push(I18n.tr("common.discharging"));
           lines.push(I18n.tr("battery.discharging-rate", {
                                "rate": rate.toFixed(2)
                              }));
