@@ -4,44 +4,69 @@ Theme generation functions for Material and Normal modes.
 This module provides functions for generating complete color themes
 from a color palette, supporting both Material Design 3 and a more
 vibrant "wallust-style" theme.
+
+Supported scheme types:
+- tonal-spot: Default Android 12-13 scheme (recommended)
+- fruit-salad: Bold/playful with hue rotation
+- rainbow: Chromatic accents with grayscale neutrals
+- vibrant: Preserves wallpaper colors directly (legacy)
 """
 
 from typing import Literal
 
 from .color import Color, shift_hue, hue_distance, adjust_surface
 from .contrast import ensure_contrast
-from .material import MaterialScheme
+from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent
 from .palette import find_error_color
 
-# Type alias
+# Type aliases
 ThemeMode = Literal["dark", "light"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "vibrant"]
+
+# Map scheme type strings to classes
+SCHEME_CLASSES = {
+    "tonal-spot": SchemeTonalSpot,
+    "fruit-salad": SchemeFruitSalad,
+    "rainbow": SchemeRainbow,
+    # "vibrant" uses generate_normal_* functions, not a scheme class
+}
 
 
-def generate_material_dark(palette: list[Color]) -> dict[str, str]:
+def generate_material_dark(palette: list[Color], scheme_type: str = "tonal-spot") -> dict[str, str]:
     """
     Generate Material Design 3 dark theme from palette using HCT color space.
 
-    Uses proper Material Design 3 tonal palettes and tone values for
-    perceptually accurate and consistent theming.
+    Args:
+        palette: List of extracted colors (primary color is index 0)
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow"
+
+    Returns:
+        Dictionary of color token names to hex values
     """
     primary = palette[0] if palette else Color(255, 245, 155)
 
-    # Create Material scheme from primary color
-    scheme = MaterialScheme.from_rgb(primary.r, primary.g, primary.b)
+    # Get the appropriate scheme class
+    scheme_class = SCHEME_CLASSES.get(scheme_type, SchemeTonalSpot)
+    scheme = scheme_class.from_rgb(primary.r, primary.g, primary.b)
     return scheme.get_dark_scheme()
 
 
-def generate_material_light(palette: list[Color]) -> dict[str, str]:
+def generate_material_light(palette: list[Color], scheme_type: str = "tonal-spot") -> dict[str, str]:
     """
     Generate Material Design 3 light theme from palette using HCT color space.
 
-    Uses proper Material Design 3 tonal palettes and tone values for
-    perceptually accurate and consistent theming.
+    Args:
+        palette: List of extracted colors (primary color is index 0)
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow"
+
+    Returns:
+        Dictionary of color token names to hex values
     """
     primary = palette[0] if palette else Color(93, 101, 245)
 
-    # Create Material scheme from primary color
-    scheme = MaterialScheme.from_rgb(primary.r, primary.g, primary.b)
+    # Get the appropriate scheme class
+    scheme_class = SCHEME_CLASSES.get(scheme_type, SchemeTonalSpot)
+    scheme = scheme_class.from_rgb(primary.r, primary.g, primary.b)
     return scheme.get_light_scheme()
 
 
@@ -449,14 +474,26 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
 def generate_theme(
     palette: list[Color],
     mode: ThemeMode,
-    material: bool = True
+    scheme_type: str = "tonal-spot"
 ) -> dict[str, str]:
-    """Generate theme for specified mode."""
-    if material:
-        if mode == "dark":
-            return generate_material_dark(palette)
-        return generate_material_light(palette)
-    else:
+    """
+    Generate theme for specified mode and scheme type.
+
+    Args:
+        palette: List of extracted colors
+        mode: "dark" or "light"
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow", "vibrant"
+
+    Returns:
+        Dictionary of color token names to hex values
+    """
+    # Handle vibrant mode separately (uses legacy generate_normal_* functions)
+    if scheme_type == "vibrant":
         if mode == "dark":
             return generate_normal_dark(palette)
         return generate_normal_light(palette)
+
+    # All other schemes use Material Design 3 generation
+    if mode == "dark":
+        return generate_material_dark(palette, scheme_type)
+    return generate_material_light(palette, scheme_type)

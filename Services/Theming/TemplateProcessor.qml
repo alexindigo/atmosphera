@@ -252,6 +252,13 @@ Singleton {
     return false;
   }
 
+  // Get scheme type, defaulting to tonal-spot if not a recognized value
+  function getSchemeType() {
+    const method = Settings.data.colorSchemes.generationMethod;
+    const validTypes = ["tonal-spot", "fruit-salad", "rainbow", "vibrant"];
+    return validTypes.includes(method) ? method : "tonal-spot";
+  }
+
   function buildGenerationScript(content, wallpaper, mode) {
     const delimiter = "THEME_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
@@ -262,9 +269,8 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use template-processor.py (Python implementation)
-    const styleFlag = (Settings.data.colorSchemes.generationMethod === "vibrant") ? "--vibrant" : "--material";
-    // We pass --type for compatibility but it is ignored by internal logic unless needed
-    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
+    const schemeType = getSchemeType();
+    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' --mode ${mode} `;
 
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
@@ -363,8 +369,8 @@ Singleton {
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
-    const styleFlag = (Settings.data.colorSchemes.generationMethod === "vibrant") ? "--vibrant" : "--material";
-    script += `  python3 "${templateProcessorScript}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
+    const schemeType = getSchemeType();
+    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;

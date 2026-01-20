@@ -7,12 +7,13 @@ using perceptual color distance calculations and k-means clustering.
 
 import math
 
-from .color import Color, rgb_to_hsl, hsl_to_rgb, hue_distance
+from .color import Color, rgb_to_hsl, hsl_to_rgb, hue_distance, rgb_to_lab, lab_to_rgb, lab_distance
 from .hct import Cam16, Hct
 
 # Type aliases
 RGB = tuple[int, int, int]
 HSL = tuple[float, float, float]
+LAB = tuple[float, float, float]
 
 
 def downsample_pixels(pixels: list[RGB], factor: int = 4) -> list[RGB]:
@@ -30,100 +31,78 @@ def downsample_pixels(pixels: list[RGB], factor: int = 4) -> list[RGB]:
     return pixels[::step]
 
 
-def color_distance_hsl(c1: HSL, c2: HSL) -> float:
-    """
-    Calculate perceptual distance between two colors in HSL space.
-
-    Hue is weighted less for low-saturation colors (grays).
-    """
-    h1, s1, l1 = c1
-    h2, s2, l2 = c2
-
-    # Hue distance (circular)
-    dh = min(abs(h1 - h2), 360 - abs(h1 - h2)) / 180.0
-
-    # Weight hue by average saturation (grays have similar hues but shouldn't match)
-    avg_sat = (s1 + s2) / 2
-    dh_weighted = dh * avg_sat
-
-    ds = abs(s1 - s2)
-    dl = abs(l1 - l2)
-
-    return (dh_weighted ** 2 + ds ** 2 + dl ** 2) ** 0.5
-
-
 def kmeans_cluster(
     colors: list[RGB],
     k: int = 5,
-    iterations: int = 15
+    iterations: int = 10
 ) -> list[tuple[RGB, int]]:
     """
-    Perform K-means clustering on colors.
+    Perform K-means clustering on colors in Lab color space.
 
+    Lab space is perceptually uniform, matching matugen's approach.
     Returns list of (centroid_rgb, cluster_size) tuples, sorted by cluster size.
-    Uses deterministic initialization for reproducible results.
     """
     if len(colors) < k:
         # Not enough colors, return what we have
         unique = list(set(colors))
         return [(c, colors.count(c)) for c in unique[:k]]
 
-    # Convert to HSL for perceptual clustering
-    colors_hsl = [rgb_to_hsl(*c) for c in colors]
+    # Convert to Lab for perceptual clustering (like matugen's WSMeans)
+    colors_lab = [rgb_to_lab(*c) for c in colors]
 
     # Deterministic initialization: pick evenly spaced colors from sorted list
-    sorted_indices = sorted(range(len(colors_hsl)), key=lambda i: colors_hsl[i])
+    # Sort by L (lightness) first for better spread
+    sorted_indices = sorted(range(len(colors_lab)), key=lambda i: colors_lab[i][0])
     step = len(sorted_indices) // k
-    centroids = [colors_hsl[sorted_indices[i * step]] for i in range(k)]
+    centroids = [colors_lab[sorted_indices[i * step]] for i in range(k)]
 
     # K-means iterations
+    assignments = [0] * len(colors_lab)
     for _ in range(iterations):
         # Assign colors to nearest centroid
-        clusters: list[list[HSL]] = [[] for _ in range(k)]
-
-        for color in colors_hsl:
+        for idx, color in enumerate(colors_lab):
             min_dist = float('inf')
-            min_idx = 0
+            min_cluster = 0
             for i, centroid in enumerate(centroids):
-                dist = color_distance_hsl(color, centroid)
+                dist = lab_distance(color, centroid)
                 if dist < min_dist:
                     min_dist = dist
-                    min_idx = i
-            clusters[min_idx].append(color)
+                    min_cluster = i
+            assignments[idx] = min_cluster
 
-        # Update centroids
+        # Update centroids (simple mean in Lab space)
         new_centroids = []
-        for i, cluster in enumerate(clusters):
-            if cluster:
-                # Circular mean for hue (hue is 0-360, wraps around)
-                sin_sum = sum(math.sin(math.radians(c[0])) for c in cluster)
-                cos_sum = sum(math.cos(math.radians(c[0])) for c in cluster)
-                avg_h = math.degrees(math.atan2(sin_sum, cos_sum)) % 360
-                avg_s = sum(c[1] for c in cluster) / len(cluster)
-                avg_l = sum(c[2] for c in cluster) / len(cluster)
-                new_centroids.append((avg_h, avg_s, avg_l))
+        for i in range(k):
+            cluster_colors = [colors_lab[j] for j in range(len(colors_lab)) if assignments[j] == i]
+            if cluster_colors:
+                avg_L = sum(c[0] for c in cluster_colors) / len(cluster_colors)
+                avg_a = sum(c[1] for c in cluster_colors) / len(cluster_colors)
+                avg_b = sum(c[2] for c in cluster_colors) / len(cluster_colors)
+                new_centroids.append((avg_L, avg_a, avg_b))
             else:
                 new_centroids.append(centroids[i])
 
         centroids = new_centroids
 
-    # Final assignment and counting
+    # Final assignment and count, also find representative pixel (closest to centroid)
     cluster_counts = [0] * k
-    for color in colors_hsl:
-        min_dist = float('inf')
-        min_idx = 0
-        for i, centroid in enumerate(centroids):
-            dist = color_distance_hsl(color, centroid)
-            if dist < min_dist:
-                min_dist = dist
-                min_idx = i
-        cluster_counts[min_idx] += 1
+    cluster_representatives: list[tuple[RGB, float]] = [(colors[0], float('inf'))] * k
 
-    # Convert centroids back to RGB and pair with counts
+    for idx, color_lab in enumerate(colors_lab):
+        cluster_idx = assignments[idx]
+        cluster_counts[cluster_idx] += 1
+
+        # Track the pixel closest to the centroid as the representative
+        dist = lab_distance(color_lab, centroids[cluster_idx])
+        if dist < cluster_representatives[cluster_idx][1]:
+            cluster_representatives[cluster_idx] = (colors[idx], dist)
+
+    # Use representative pixels (actual image colors) instead of computed centroids
     results = []
-    for i, centroid in enumerate(centroids):
-        rgb = hsl_to_rgb(*centroid)
-        results.append((rgb, cluster_counts[i]))
+    for i in range(k):
+        if cluster_counts[i] > 0:
+            rgb = cluster_representatives[i][0]
+            results.append((rgb, cluster_counts[i]))
 
     # Sort by cluster size (most common first)
     results.sort(key=lambda x: -x[1])
@@ -131,105 +110,261 @@ def kmeans_cluster(
     return results
 
 
-def extract_palette(pixels: list[RGB], k: int = 5) -> list[Color]:
-    """
-    Extract K dominant colors from pixel data using CAM16 chroma filtering.
+def _hue_distance(h1: float, h2: float) -> float:
+    """Calculate circular distance between two hues (0-360)."""
+    diff = abs(h1 - h2)
+    return min(diff, 360.0 - diff)
 
-    Uses the same approach as matugen: filter by CAM16 chroma >= 5.0 to
-    ensure we get colorful, usable theme colors.
+
+def _score_colors_chroma(
+    colors_with_counts: list[tuple[RGB, int]],
+) -> list[tuple[Color, float]]:
+    """
+    Score colors prioritizing chroma (vibrancy).
+
+    This is the original scoring algorithm that picks the most colorful colors.
+    Used for "vibrant" mode.
 
     Args:
-        pixels: List of RGB tuples
-        k: Number of colors to extract
+        colors_with_counts: List of (RGB, count) tuples from clustering
 
     Returns:
-        List of Color objects, sorted by dominance
+        List of (Color, score) tuples, sorted by score descending
     """
-    # Downsample for performance
-    sampled = downsample_pixels(pixels, factor=4)
-
-    # Filter using CAM16 chroma (like matugen does with chroma >= 5.0)
-    # This is more perceptually accurate than HSL saturation filtering
-    filtered = []
-    for p in sampled:
-        try:
-            cam = Cam16.from_rgb(p[0], p[1], p[2])
-            # Keep colors with sufficient chroma (colorfulness)
-            # matugen uses chroma >= 5.0
-            if cam.chroma >= 5.0:
-                filtered.append(p)
-        except (ValueError, ZeroDivisionError):
-            # Skip invalid colors
-            continue
-
-    # Fall back to tone-based filter if CAM16 filtering removed too many
-    if len(filtered) < k * 10:
-        filtered = []
-        for p in sampled:
-            try:
-                hct = Hct.from_rgb(p[0], p[1], p[2])
-                # Keep colors with reasonable tone (not too dark or bright)
-                if 15.0 < hct.tone < 85.0:
-                    filtered.append(p)
-            except (ValueError, ZeroDivisionError):
-                continue
-
-    if len(filtered) < k * 10:
-        filtered = sampled
-
-    # Cluster
-    clusters = kmeans_cluster(filtered, k=k)
-
-    # Score colors like Material's Score algorithm
-    # Prioritizes colors that will work well as theme source colors
     result_colors = []
-    for rgb, count in clusters:
+    for rgb, count in colors_with_counts:
         color = Color.from_rgb(rgb)
         try:
             hct = color.to_hct()
 
-            # Calculate score based on Material Design principles:
-            # 1. Chroma contribution - prefer colorful colors
+            # Chroma contribution - prefer colorful colors
             chroma_score = hct.chroma
 
-            # 2. Tone penalty - prefer mid-tones (40-60 is ideal)
-            # Penalize very dark (<20) or very bright (>80) colors
+            # Tone penalty - prefer mid-tones (40-60 is ideal)
             if hct.tone < 20:
-                tone_penalty = (20 - hct.tone) * 2  # Heavy penalty for dark
+                tone_penalty = (20 - hct.tone) * 2
             elif hct.tone > 80:
-                tone_penalty = (hct.tone - 80) * 1.5  # Moderate penalty for bright
+                tone_penalty = (hct.tone - 80) * 1.5
             elif hct.tone < 40:
-                tone_penalty = (40 - hct.tone) * 0.5  # Light penalty for somewhat dark
+                tone_penalty = (40 - hct.tone) * 0.5
             elif hct.tone > 60:
-                tone_penalty = (hct.tone - 60) * 0.3  # Very light penalty
+                tone_penalty = (hct.tone - 60) * 0.3
             else:
-                tone_penalty = 0  # Ideal tone range
+                tone_penalty = 0
 
-            # 3. Hue penalty - slight penalty for yellow-green hues (less popular)
-            hue = hct.hue
-            if 80 < hue < 110:  # Yellow-green range
+            # Hue penalty - slight penalty for yellow-green hues
+            if 80 < hct.hue < 110:
                 hue_penalty = 5
             else:
                 hue_penalty = 0
 
-            # Combined score: chroma contribution minus penalties, weighted by count
+            # Combined score: chroma minus penalties, weighted by count
             score = (chroma_score - tone_penalty - hue_penalty) * math.sqrt(count)
-
-            result_colors.append((color, score, hct.chroma, hct.tone))
+            result_colors.append((color, score))
         except (ValueError, ZeroDivisionError):
-            result_colors.append((color, 0.0, 0.0, 50.0))
+            result_colors.append((color, 0.0))
 
-    # Sort by score (highest first)
     result_colors.sort(key=lambda x: -x[1])
+    return result_colors
 
-    # Extract just the colors
-    final_colors = [c[0] for c in result_colors]
+
+def _score_colors_population(
+    colors_with_counts: list[tuple[RGB, int]],
+    total_pixels: int
+) -> list[tuple[Color, float]]:
+    """
+    Score colors using Material Design's Score algorithm.
+
+    This matches matugen's scoring approach exactly:
+    - Build per-hue population histogram (360 buckets)
+    - Calculate "excited proportions" (±15° hue window sum)
+    - Score: proportion * 100 * 0.7 + (chroma - 48) * weight
+    - Filter by chroma >= 5 and proportion >= 1%
+    - Deduplicate by maximizing hue distance
+
+    Args:
+        colors_with_counts: List of (RGB, count) tuples from clustering
+        total_pixels: Total number of pixels in the sample
+
+    Returns:
+        List of (Color, score) tuples, sorted by score descending
+    """
+    # Constants matching Material Score
+    TARGET_CHROMA = 48.0
+    WEIGHT_PROPORTION = 0.7
+    WEIGHT_CHROMA_ABOVE = 0.3
+    WEIGHT_CHROMA_BELOW = 0.1
+    CUTOFF_CHROMA = 5.0
+    CUTOFF_EXCITED_PROPORTION = 0.01
+
+    # Build per-hue population histogram (360 buckets)
+    hue_population = [0] * 360
+    population_sum = 0
+
+    colors_hct: list[tuple[Color, Hct, int]] = []
+    for rgb, count in colors_with_counts:
+        try:
+            color = Color.from_rgb(rgb)
+            hct = color.to_hct()
+            hue_bucket = int(hct.hue) % 360
+            hue_population[hue_bucket] += count
+            population_sum += count
+            colors_hct.append((color, hct, count))
+        except (ValueError, ZeroDivisionError):
+            continue
+
+    if not colors_hct or population_sum == 0:
+        # Fallback: return colors without scoring
+        result = []
+        for rgb, count in colors_with_counts:
+            color = Color.from_rgb(rgb)
+            result.append((color, float(count)))
+        return sorted(result, key=lambda x: -x[1])
+
+    # Calculate "excited proportions" - sum of proportions in ±15° hue window
+    hue_excited_proportions = [0.0] * 360
+    for hue in range(360):
+        proportion = hue_population[hue] / population_sum
+        # Spread to neighboring hues (±15°, so 30° total window)
+        for offset in range(-14, 16):
+            neighbor_hue = (hue + offset) % 360
+            hue_excited_proportions[neighbor_hue] += proportion
+
+    # Score each color
+    scored_hcts: list[tuple[Color, Hct, float]] = []
+    for color, hct, count in colors_hct:
+        hue_bucket = int(hct.hue) % 360
+        proportion = hue_excited_proportions[hue_bucket]
+
+        # Filter by chroma and proportion
+        if hct.chroma < CUTOFF_CHROMA:
+            continue
+        if proportion <= CUTOFF_EXCITED_PROPORTION:
+            continue
+
+        # Proportion score (70% weight)
+        proportion_score = proportion * 100.0 * WEIGHT_PROPORTION
+
+        # Chroma score: (chroma - target) * weight
+        # This gives bonus for high chroma, penalty for low chroma
+        if hct.chroma < TARGET_CHROMA:
+            chroma_weight = WEIGHT_CHROMA_BELOW
+        else:
+            chroma_weight = WEIGHT_CHROMA_ABOVE
+        chroma_score = (hct.chroma - TARGET_CHROMA) * chroma_weight
+
+        score = proportion_score + chroma_score
+        scored_hcts.append((color, hct, score))
+
+    if not scored_hcts:
+        # Fallback if filtering removed everything
+        result = []
+        for rgb, count in colors_with_counts:
+            color = Color.from_rgb(rgb)
+            result.append((color, float(count)))
+        return sorted(result, key=lambda x: -x[1])
+
+    # Sort by score descending
+    scored_hcts.sort(key=lambda x: -x[2])
+
+    # Deduplicate by hue distance - pick colors maximizing hue diversity
+    # Start at 90° minimum distance, decrease to 15° if needed
+    chosen_colors: list[tuple[Color, float]] = []
+
+    for min_hue_diff in range(90, 14, -1):
+        chosen_colors.clear()
+        for color, hct, score in scored_hcts:
+            # Check if this hue is far enough from all chosen colors
+            is_far_enough = True
+            for chosen_color, _ in chosen_colors:
+                chosen_hct = chosen_color.to_hct()
+                if _hue_distance(hct.hue, chosen_hct.hue) < min_hue_diff:
+                    is_far_enough = False
+                    break
+
+            if is_far_enough:
+                chosen_colors.append((color, score))
+
+            # Stop if we have enough colors (4 is Material default)
+            if len(chosen_colors) >= 4:
+                break
+
+        # If we found enough colors, stop decreasing threshold
+        if len(chosen_colors) >= 4:
+            break
+
+    # If deduplication yielded nothing, fall back to top scored
+    if not chosen_colors:
+        chosen_colors = [(c, s) for c, h, s in scored_hcts[:4]]
+
+    return chosen_colors
+
+
+def extract_palette(
+    pixels: list[RGB],
+    k: int = 5,
+    scoring: str = "population"
+) -> list[Color]:
+    """
+    Extract K dominant colors from pixel data.
+
+    Args:
+        pixels: List of RGB tuples
+        k: Number of colors to extract
+        scoring: Scoring method - "population" (matugen-like, representative colors)
+                 or "chroma" (vibrant, most colorful colors)
+
+    Returns:
+        List of Color objects, sorted by score
+    """
+    # Downsample for performance
+    sampled = downsample_pixels(pixels, factor=4)
+    total_sampled = len(sampled)
+
+    # For population scoring, we need many clusters then score/filter them
+    # For chroma scoring, fewer clusters work fine
+    if scoring == "population":
+        # Use more clusters for Material scoring (like matugen's 128-256)
+        cluster_count = min(128, max(k * 10, len(set(sampled)) // 10))
+        # Don't pre-filter for population scoring - let the Score algorithm filter
+        # This matches matugen which quantizes all pixels, then filters in scoring
+        filtered = sampled
+    else:
+        cluster_count = k
+        # For chroma scoring, filter to colorful pixels
+        filtered = []
+        for p in sampled:
+            try:
+                cam = Cam16.from_rgb(p[0], p[1], p[2])
+                if cam.chroma >= 5.0:
+                    filtered.append(p)
+            except (ValueError, ZeroDivisionError):
+                continue
+
+        if len(filtered) < cluster_count * 2:
+            filtered = sampled
+
+    # Cluster
+    clusters = kmeans_cluster(filtered, k=cluster_count)
+
+    # Score colors based on method
+    if scoring == "chroma":
+        scored = _score_colors_chroma(clusters)
+    else:
+        scored = _score_colors_population(clusters, total_sampled)
+
+    # Extract colors
+    final_colors = [c[0] for c in scored]
 
     # Ensure we have enough colors by deriving from primary using HCT
     while len(final_colors) < k:
+        if not final_colors:
+            final_colors.append(Color.from_hex("#6750A4"))
+            continue
+
         primary = final_colors[0]
         primary_hct = primary.to_hct()
-        offset = len(final_colors) * 60.0  # 60° hue rotation in HCT
+        offset = len(final_colors) * 60.0
         new_hct = Hct((primary_hct.hue + offset) % 360.0, primary_hct.chroma, primary_hct.tone)
         final_colors.append(Color.from_hct(new_hct))
 

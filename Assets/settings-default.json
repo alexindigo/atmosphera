@@ -390,7 +390,7 @@
     "schedulingMode": "off",
     "manualSunrise": "06:30",
     "manualSunset": "18:30",
-    "generationMethod": "material"
+    "generationMethod": "tonal-spot"
   },
   "templates": {
     "activeTemplates": [],

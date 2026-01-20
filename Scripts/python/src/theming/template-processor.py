@@ -2,16 +2,19 @@
 """
 Noctalia's Template processor - Wallpaper-based color extraction and theme generation.
 
-A CLI tool that extracts dominant colors from wallpaper images and generates palettes with optional templating:
-- Material Design 3 using HCT (Hue, Chroma, Tone) color space.
-- Vibrant accent-based using HSL (Hue, Saturation, Lightness) color space.
+A CLI tool that extracts dominant colors from wallpaper images and generates palettes with optional templating.
+
+Supported scheme types:
+- tonal-spot: Default Android 12-13 Material You scheme (recommended)
+- fruit-salad: Bold/playful with -50° hue rotation
+- rainbow: Chromatic accents with grayscale neutrals
+- vibrant: Preserves wallpaper colors directly
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --material       Generate Material Design 3 colors (default)
-    --vibrant        Generate vibrant accent-based colors
+    --scheme-type    Scheme type: tonal-spot (default), fruit-salad, rainbow, vibrant
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -24,7 +27,8 @@ Input:
     Can be an image file (PNG/JPG) or a JSON color palette file.
 
 Example:
-    python3 template-processor.py ~/wallpaper.png --material --both
+    python3 template-processor.py ~/wallpaper.png --scheme-type tonal-spot
+    python3 template-processor.py ~/wallpaper.png --scheme-type fruit-salad --dark
     python3 template-processor.py ~/wallpaper.jpg --dark -o theme.json
     python3 template-processor.py ~/wallpaper.png -r template.txt:output.txt
     python3 template-processor.py ~/wallpaper.png -c config.toml --mode dark
@@ -66,17 +70,24 @@ Examples:
         help='Path to wallpaper image (PNG/JPG) or JSON color palette (not required if --scheme is used)'
     )
 
-    # Theme style (mutually exclusive)
-    style_group = parser.add_mutually_exclusive_group()
-    style_group.add_argument(
+    # Scheme type selection
+    parser.add_argument(
+        '--scheme-type',
+        choices=['tonal-spot', 'fruit-salad', 'rainbow', 'vibrant'],
+        default='tonal-spot',
+        help='Color scheme type (default: tonal-spot)'
+    )
+
+    # Legacy flags for backward compatibility
+    parser.add_argument(
         '--material',
         action='store_true',
-        help='Generate Material Design 3 colors (default)'
+        help='(deprecated) Alias for --scheme-type tonal-spot'
     )
-    style_group.add_argument(
+    parser.add_argument(
         '--vibrant',
         action='store_true',
-        help='Generate vibrant accent-based palette'
+        help='(deprecated) Alias for --scheme-type vibrant'
     )
 
     # Theme mode (mutually exclusive)
@@ -237,18 +248,27 @@ def main() -> int:
                 print(f"Unexpected error reading image: {e}", file=sys.stderr)
                 return 1
 
-            # Extract palette
+            # Determine scheme type (handle legacy flags)
+            scheme_type = args.scheme_type
+            if args.vibrant:
+                scheme_type = "vibrant"
+            elif args.material:
+                scheme_type = "tonal-spot"
+
+            # Extract palette with appropriate scoring method
+            # vibrant mode uses chroma-based scoring (picks most colorful colors)
+            # M3 schemes use population-based scoring (picks most representative colors)
             k = 5
-            palette = extract_palette(pixels, k=k)
+            scoring = "chroma" if scheme_type == "vibrant" else "population"
+            palette = extract_palette(pixels, k=k, scoring=scoring)
 
             if not palette:
                 print("Error: Could not extract colors from image", file=sys.stderr)
                 return 1
 
             # Generate theme for each mode
-            use_material = not args.vibrant
             for mode in modes:
-                result[mode] = generate_theme(palette, mode, use_material)
+                result[mode] = generate_theme(palette, mode, scheme_type)
 
     # Output JSON
     json_output = json.dumps(result, indent=2)

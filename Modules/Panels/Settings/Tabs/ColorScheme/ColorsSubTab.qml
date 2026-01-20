@@ -219,8 +219,16 @@ ColumnLayout {
     enabled: Settings.data.colorSchemes.useWallpaperColors
     model: [
       {
-        "key": "material",
-        "name": "Material Design" // Do not translate
+        "key": "tonal-spot",
+        "name": "M3-Tonal Spot"
+      },
+      {
+        "key": "fruit-salad",
+        "name": "M3-Fruit Salad"
+      },
+      {
+        "key": "rainbow",
+        "name": "M3-Rainbow"
       },
       {
         "key": "vibrant",

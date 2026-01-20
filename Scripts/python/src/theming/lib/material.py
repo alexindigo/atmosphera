@@ -1,137 +1,118 @@
 """
 Material Design 3 color scheme implementation.
 
-This module provides the MaterialScheme class for generating MD3 color schemes
+This module provides scheme classes for generating MD3 color schemes
 from a source color using the HCT color space.
+
+Supported schemes (matching Matugen):
+- SchemeTonalSpot: Default Android 12-13 scheme, mid-vibrancy
+- SchemeFruitSalad: Bold/playful with -50° hue rotation
+- SchemeRainbow: Chromatic accents with grayscale neutrals
+- SchemeContent: Preserves source color's chroma (legacy "material" mode)
 """
 
 from .hct import Hct, TonalPalette
 
 
-class MaterialScheme:
-    """
-    Material Design 3 color scheme generator.
+# =============================================================================
+# Tone Values (shared across all schemes)
+# =============================================================================
 
-    Implements the official Material Design 3 color system using HCT color space.
-    Based on SchemeContent variant which preserves the source color's character.
-    """
+# Tone values for Material Design 3 (dark theme)
+DARK_TONES = {
+    'primary': 80,
+    'on_primary': 20,
+    'primary_container': 30,
+    'on_primary_container': 90,
+    'secondary': 80,
+    'on_secondary': 20,
+    'secondary_container': 30,
+    'on_secondary_container': 90,
+    'tertiary': 80,
+    'on_tertiary': 20,
+    'tertiary_container': 30,
+    'on_tertiary_container': 90,
+    'error': 80,
+    'on_error': 20,
+    'error_container': 30,
+    'on_error_container': 90,
+    'surface': 6,
+    'on_surface': 90,
+    'surface_variant': 30,
+    'on_surface_variant': 80,
+    'surface_container_lowest': 4,
+    'surface_container_low': 10,
+    'surface_container': 12,
+    'surface_container_high': 17,
+    'surface_container_highest': 22,
+    'outline': 60,
+    'outline_variant': 30,
+    'shadow': 0,
+    'scrim': 0,
+    'inverse_surface': 90,
+    'inverse_on_surface': 20,
+    'inverse_primary': 40,
+}
 
-    # Tone values for Material Design 3 (dark theme)
-    DARK_TONES = {
-        'primary': 80,
-        'on_primary': 20,
-        'primary_container': 30,
-        'on_primary_container': 90,
-        'secondary': 80,
-        'on_secondary': 20,
-        'secondary_container': 30,
-        'on_secondary_container': 90,
-        'tertiary': 80,
-        'on_tertiary': 20,
-        'tertiary_container': 30,
-        'on_tertiary_container': 90,
-        'error': 80,
-        'on_error': 20,
-        'error_container': 30,
-        'on_error_container': 90,
-        'surface': 6,
-        'on_surface': 90,
-        'surface_variant': 30,
-        'on_surface_variant': 80,
-        'surface_container_lowest': 4,
-        'surface_container_low': 10,
-        'surface_container': 12,
-        'surface_container_high': 17,
-        'surface_container_highest': 22,
-        'outline': 60,
-        'outline_variant': 30,
-        'shadow': 0,
-        'scrim': 0,
-        'inverse_surface': 90,
-        'inverse_on_surface': 20,
-        'inverse_primary': 40,
-    }
+# Tone values for Material Design 3 (light theme)
+LIGHT_TONES = {
+    'primary': 40,
+    'on_primary': 100,
+    'primary_container': 90,
+    'on_primary_container': 10,
+    'secondary': 40,
+    'on_secondary': 100,
+    'secondary_container': 90,
+    'on_secondary_container': 10,
+    'tertiary': 40,
+    'on_tertiary': 100,
+    'tertiary_container': 90,
+    'on_tertiary_container': 10,
+    'error': 40,
+    'on_error': 100,
+    'error_container': 90,
+    'on_error_container': 10,
+    'surface': 98,
+    'on_surface': 10,
+    'surface_variant': 90,
+    'on_surface_variant': 30,
+    'surface_container_lowest': 100,
+    'surface_container_low': 96,
+    'surface_container': 94,
+    'surface_container_high': 92,
+    'surface_container_highest': 90,
+    'outline': 50,
+    'outline_variant': 80,
+    'shadow': 0,
+    'scrim': 0,
+    'inverse_surface': 20,
+    'inverse_on_surface': 95,
+    'inverse_primary': 80,
+}
 
-    # Tone values for Material Design 3 (light theme)
-    LIGHT_TONES = {
-        'primary': 40,
-        'on_primary': 100,
-        'primary_container': 90,
-        'on_primary_container': 10,
-        'secondary': 40,
-        'on_secondary': 100,
-        'secondary_container': 90,
-        'on_secondary_container': 10,
-        'tertiary': 40,
-        'on_tertiary': 100,
-        'tertiary_container': 90,
-        'on_tertiary_container': 10,
-        'error': 40,
-        'on_error': 100,
-        'error_container': 90,
-        'on_error_container': 10,
-        'surface': 98,
-        'on_surface': 10,
-        'surface_variant': 90,
-        'on_surface_variant': 30,
-        'surface_container_lowest': 100,
-        'surface_container_low': 96,
-        'surface_container': 94,
-        'surface_container_high': 92,
-        'surface_container_highest': 90,
-        'outline': 50,
-        'outline_variant': 80,
-        'shadow': 0,
-        'scrim': 0,
-        'inverse_surface': 20,
-        'inverse_on_surface': 95,
-        'inverse_primary': 80,
-    }
+
+# =============================================================================
+# Base Scheme Class
+# =============================================================================
+
+class _BaseScheme:
+    """Base class for all Material Design 3 schemes."""
+
+    # Error palette is the same for all schemes
+    error_palette: TonalPalette
 
     def __init__(self, source_color: Hct):
-        """
-        Create a Material Design 3 scheme from a source color.
-
-        Args:
-            source_color: The source color in HCT space
-        """
+        """Initialize with source color. Subclasses must set palettes."""
         self.source = source_color
-
-        # Create tonal palettes for each color role
-        # SchemeContent-style: preserves source color characteristics
-
-        # Primary: source color's hue and chroma (unchanged)
-        self.primary_palette = TonalPalette(source_color.hue, source_color.chroma)
-
-        # Secondary: same hue, reduced chroma
-        # Formula: max(chroma - 24, chroma * 0.6) - slightly more vibrant than stock MD3
-        secondary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
-        self.secondary_palette = TonalPalette(source_color.hue, secondary_chroma)
-
-        # Tertiary: analogous color (simplified as 60° rotation)
-        # In full implementation this uses TemperatureCache for analogous colors
-        tertiary_hue = (source_color.hue + 60.0) % 360.0
-        tertiary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
-        self.tertiary_palette = TonalPalette(tertiary_hue, tertiary_chroma)
-
-        # Error: red hue with high chroma
         self.error_palette = TonalPalette(25.0, 84.0)  # Material red
 
-        # Neutral: source hue, low chroma (chroma / 6) - slightly tinted surfaces
-        neutral_chroma = source_color.chroma / 6.0
-        self.neutral_palette = TonalPalette(source_color.hue, neutral_chroma)
-
-        # Neutral variant: source hue, slightly more chroma than neutral
-        neutral_variant_chroma = (source_color.chroma / 6.0) + 4.0
-        self.neutral_variant_palette = TonalPalette(source_color.hue, neutral_variant_chroma)
-
     @classmethod
-    def from_rgb(cls, r: int, g: int, b: int) -> 'MaterialScheme':
+    def from_rgb(cls, r: int, g: int, b: int) -> '_BaseScheme':
         """Create scheme from RGB color."""
         return cls(Hct.from_rgb(r, g, b))
 
     @classmethod
-    def from_hex(cls, hex_color: str) -> 'MaterialScheme':
+    def from_hex(cls, hex_color: str) -> '_BaseScheme':
         """Create scheme from hex color string."""
         hex_color = hex_color.lstrip('#')
         r = int(hex_color[0:2], 16)
@@ -149,7 +130,7 @@ class MaterialScheme:
 
     def _generate_scheme(self, is_dark: bool) -> dict[str, str]:
         """Generate scheme with appropriate tone values."""
-        tones = self.DARK_TONES if is_dark else self.LIGHT_TONES
+        tones = DARK_TONES if is_dark else LIGHT_TONES
 
         scheme = {
             # Primary colors
@@ -227,6 +208,149 @@ class MaterialScheme:
 
         return scheme
 
+
+# =============================================================================
+# Scheme Implementations
+# =============================================================================
+
+class SchemeTonalSpot(_BaseScheme):
+    """
+    Tonal Spot scheme - the default Android 12-13 Material You scheme.
+
+    Uses fixed chroma values for consistent, harmonious palettes:
+    - Primary: source hue, chroma 48
+    - Secondary: source hue, chroma 16
+    - Tertiary: hue +60°, chroma 24
+    - Neutrals: low chroma (tinted with source hue)
+    """
+
+    def __init__(self, source_color: Hct):
+        super().__init__(source_color)
+
+        # Primary: source hue with fixed chroma 48
+        self.primary_palette = TonalPalette(source_color.hue, 48.0)
+
+        # Secondary: source hue with lower chroma 16
+        self.secondary_palette = TonalPalette(source_color.hue, 16.0)
+
+        # Tertiary: 60° hue rotation with chroma 24
+        tertiary_hue = (source_color.hue + 60.0) % 360.0
+        self.tertiary_palette = TonalPalette(tertiary_hue, 24.0)
+
+        # Neutral: source hue with very low chroma (tinted grays)
+        self.neutral_palette = TonalPalette(source_color.hue, 4.0)
+
+        # Neutral variant: slightly more chroma for contrast
+        self.neutral_variant_palette = TonalPalette(source_color.hue, 8.0)
+
+
+class SchemeFruitSalad(_BaseScheme):
+    """
+    Fruit Salad scheme - bold, playful theme with hue rotation.
+
+    Designed for expressive, colorful themes:
+    - Primary: hue -50°, chroma 48
+    - Secondary: hue -50°, chroma 36
+    - Tertiary: source hue (original), chroma 36
+    - Neutrals: tinted (chroma 10-16)
+    """
+
+    def __init__(self, source_color: Hct):
+        super().__init__(source_color)
+
+        # Rotate hue by -50° for primary and secondary
+        rotated_hue = (source_color.hue - 50.0) % 360.0
+
+        # Primary: rotated hue with chroma 48
+        self.primary_palette = TonalPalette(rotated_hue, 48.0)
+
+        # Secondary: rotated hue with chroma 36
+        self.secondary_palette = TonalPalette(rotated_hue, 36.0)
+
+        # Tertiary: original source hue with chroma 36
+        self.tertiary_palette = TonalPalette(source_color.hue, 36.0)
+
+        # Neutral: source hue with higher chroma (tinted)
+        self.neutral_palette = TonalPalette(source_color.hue, 10.0)
+
+        # Neutral variant: even more tinted
+        self.neutral_variant_palette = TonalPalette(source_color.hue, 16.0)
+
+
+class SchemeRainbow(_BaseScheme):
+    """
+    Rainbow scheme - chromatic accents with grayscale neutrals.
+
+    Same structure as Tonal Spot but with pure grayscale neutrals:
+    - Primary: source hue, chroma 48
+    - Secondary: source hue, chroma 16
+    - Tertiary: hue +60°, chroma 24
+    - Neutrals: pure grayscale (chroma 0)
+    """
+
+    def __init__(self, source_color: Hct):
+        super().__init__(source_color)
+
+        # Primary: source hue with fixed chroma 48
+        self.primary_palette = TonalPalette(source_color.hue, 48.0)
+
+        # Secondary: source hue with lower chroma 16
+        self.secondary_palette = TonalPalette(source_color.hue, 16.0)
+
+        # Tertiary: 60° hue rotation with chroma 24
+        tertiary_hue = (source_color.hue + 60.0) % 360.0
+        self.tertiary_palette = TonalPalette(tertiary_hue, 24.0)
+
+        # Neutral: pure grayscale (chroma 0)
+        self.neutral_palette = TonalPalette(0.0, 0.0)
+
+        # Neutral variant: also grayscale
+        self.neutral_variant_palette = TonalPalette(0.0, 0.0)
+
+
+class SchemeContent(_BaseScheme):
+    """
+    Content scheme - preserves source color's chroma.
+
+    This is the legacy "material" mode that preserves the extracted
+    color's characteristics:
+    - Primary: source hue and chroma (unchanged)
+    - Secondary: same hue, reduced chroma
+    - Tertiary: hue +60°, reduced chroma
+    - Neutrals: low chroma (tinted with source hue)
+    """
+
+    def __init__(self, source_color: Hct):
+        super().__init__(source_color)
+
+        # Primary: preserve source color's hue and chroma
+        self.primary_palette = TonalPalette(source_color.hue, source_color.chroma)
+
+        # Secondary: same hue, reduced chroma
+        secondary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
+        self.secondary_palette = TonalPalette(source_color.hue, secondary_chroma)
+
+        # Tertiary: 60° hue rotation with reduced chroma
+        tertiary_hue = (source_color.hue + 60.0) % 360.0
+        tertiary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
+        self.tertiary_palette = TonalPalette(tertiary_hue, tertiary_chroma)
+
+        # Neutral: source hue, low chroma (chroma / 6)
+        neutral_chroma = source_color.chroma / 6.0
+        self.neutral_palette = TonalPalette(source_color.hue, neutral_chroma)
+
+        # Neutral variant: slightly more chroma
+        neutral_variant_chroma = (source_color.chroma / 6.0) + 4.0
+        self.neutral_variant_palette = TonalPalette(source_color.hue, neutral_variant_chroma)
+
+
+# Backward compatibility alias
+MaterialScheme = SchemeContent
+
+
+# =============================================================================
+# Helper Functions
+# =============================================================================
 
 def harmonize_color(design_color: Hct, source_color: Hct, amount: float = 0.5) -> Hct:
     """
