@@ -37,11 +37,12 @@ Item {
   readonly property string displayMode: widgetSettings.displayMode !== undefined ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property real warningThreshold: widgetSettings.warningThreshold !== undefined ? widgetSettings.warningThreshold : widgetMetadata.warningThreshold
   readonly property bool hideIfNotDetected: widgetSettings.hideIfNotDetected !== undefined ? widgetSettings.hideIfNotDetected : widgetMetadata.hideIfNotDetected
+  readonly property bool hideIfIdle: widgetSettings.hideIfIdle !== undefined ? widgetSettings.hideIfIdle : widgetMetadata.hideIfIdle
   // Only show low battery warning if device is ready (prevents false positive during initialization)
   readonly property bool isLowBattery: isReady && !charging && percent <= warningThreshold
 
   // Visibility: show if hideIfNotDetected is false, or if battery is ready (after initialization)
-  readonly property bool shouldShow: !hideIfNotDetected || isReady
+  readonly property bool shouldShow: !hideIfNotDetected || (isReady && (hideIfIdle ? (charging || battery.state === UPowerDeviceState.Discharging) : true))
   visible: shouldShow
   opacity: shouldShow ? 1.0 : 0.0
 
