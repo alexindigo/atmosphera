@@ -115,12 +115,8 @@ Singleton {
       return;
     }
 
-    if (ProgramCheckerService.khalAvailable) {
-      Khal.init();
-    }
-    if (ProgramCheckerService.pythonAvailable) {
-      EvolutionDataServer.init();
-    }
+    Khal.init();
+    EvolutionDataServer.init();
   }
 
   function loadCalendars() {

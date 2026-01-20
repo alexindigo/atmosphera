@@ -17,18 +17,17 @@ Singleton {
   property bool gnomeCalendarAvailable: false
   property bool pythonAvailable: false
   property bool wtypeAvailable: false
-  property bool khalAvailable: false
 
   // Programs to check - maps property names to commands
   readonly property var programsToCheck: ({
-    "nmcliAvailable": ["sh", "-c", "command -v nmcli"],
-    "wlsunsetAvailable": ["sh", "-c", "command -v wlsunset"],
-    "app2unitAvailable": ["sh", "-c", "command -v app2unit"],
-    "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
-    "wtypeAvailable": ["sh", "-c", "command -v wtype"],
-    "pythonAvailable": ["sh", "-c", "command -v python3"],
-    "khalAvailable": ["sh", "-c", "command -v khal"]
-  })
+                                            "nmcliAvailable": ["sh", "-c", "command -v nmcli"],
+                                            "wlsunsetAvailable": ["sh", "-c", "command -v wlsunset"],
+                                            "app2unitAvailable": ["sh", "-c", "command -v app2unit"],
+                                            "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
+                                            "gnomeCalendarAvailable": ["sh", "-c", "command -v gnome-calendar"],
+                                            "wtypeAvailable": ["sh", "-c", "command -v wtype"],
+                                            "pythonAvailable": ["sh", "-c", "command -v python3"]
+                                          })
 
   // Discord client auto-detection
   property var availableDiscordClients: []
