@@ -263,12 +263,16 @@ Item {
         const rate = Math.abs(battery.changeRate);
         if (charging) {
           lines.push(I18n.tr("common.charging"));
-          lines.push(I18n.tr("battery.charging-rate", {"rate": rate.toFixed(2)}));
+          lines.push(I18n.tr("battery.charging-rate", {
+                               "rate": rate.toFixed(2)
+                             }));
         } else if (isPluggedIn) {
           lines.push(I18n.tr("battery.plugged-in"));
         } else {
           lines.push(I18n.tr("common.discharging"));
-          lines.push(I18n.tr("battery.discharging-rate", {"rate": rate.toFixed(2)}));
+          lines.push(I18n.tr("battery.discharging-rate", {
+                               "rate": rate.toFixed(2)
+                             }));
         }
       }
       if (battery.healthPercentage !== undefined && battery.healthPercentage > 0) {
