@@ -191,6 +191,10 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   NToggle {
     label: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
     description: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
@@ -213,7 +217,6 @@ ColumnLayout {
     label: I18n.tr("panels.color-scheme.wallpaper-method-label")
     description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
-    visible: Settings.data.colorSchemes.useWallpaperColors
     model: [
       {
         "key": "material",
