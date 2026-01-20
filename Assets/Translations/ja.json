@@ -48,6 +48,8 @@
       "device-default": "デフォルト（表示デバイス）",
       "device-description": "表示するバッテリーデバイスを選択します。",
       "device-label": "バッテリーデバイス",
+      "hide-if-idle-description": "バッテリーが充電または放電していないときは、ウィジェットを非表示にします。",
+      "hide-if-idle-label": "アイドル時に隠す",
       "hide-if-not-detected-description": "システムでバッテリーが検出されない場合は、ウィジェットを非表示にします。",
       "hide-if-not-detected-label": "検出されなければ隠れる",
       "low-battery-threshold-description": "バッテリー残量がこのパーセンテージを下回ると警告を表示します。",

@@ -48,6 +48,8 @@
       "device-default": "Standaard (weergaveapparaat)",
       "device-description": "Selecteer welk batterijapparaat u wilt weergeven.",
       "device-label": "Batterijapparaat",
+      "hide-if-idle-description": "Verberg de widget wanneer de batterij niet wordt opgeladen of ontladen.",
+      "hide-if-idle-label": "Verbergen indien inactief",
       "hide-if-not-detected-description": "Verberg de widget als er geen batterij op het systeem wordt gedetecteerd.",
       "hide-if-not-detected-label": "Verbergen indien niet gedetecteerd",
       "low-battery-threshold-description": "Toon een waarschuwing wanneer de batterij onder dit percentage komt.",

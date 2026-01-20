@@ -48,6 +48,8 @@
       "device-default": "Domyślne (urządzenie wyświetlające)",
       "device-description": "Wybierz, które urządzenie baterii ma być wyświetlane.",
       "device-label": "Urządzenie baterii",
+      "hide-if-idle-description": "Ukryj widżet, gdy bateria nie jest ładowana ani rozładowywana.",
+      "hide-if-idle-label": "Ukryj, gdy bezczynny",
       "hide-if-not-detected-description": "Ukryj widżet, gdy w systemie nie zostanie wykryta bateria.",
       "hide-if-not-detected-label": "Ukryj się, jeśli nie wykryto",
       "low-battery-threshold-description": "Pokaż ostrzeżenie, gdy poziom baterii spadnie poniżej tego procentu.",

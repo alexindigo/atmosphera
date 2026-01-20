@@ -48,6 +48,8 @@
       "device-default": "默认（显示设备）",
       "device-description": "选择要显示的电池设备。",
       "device-label": "电池设备",
+      "hide-if-idle-description": "当电池未充电或放电时，隐藏小部件。",
+      "hide-if-idle-label": "空闲时隐藏",
       "hide-if-not-detected-description": "当系统未检测到电池时，隐藏该小部件。",
       "hide-if-not-detected-label": "如果未被发现，则隐藏",
       "low-battery-threshold-description": "当电量低于此百分比时显示警告。",

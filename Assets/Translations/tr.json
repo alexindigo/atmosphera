@@ -48,6 +48,8 @@
       "device-default": "Varsayılan (Bileşik aygıt)",
       "device-description": "Görüntülenecek pil cihazını seçin.",
       "device-label": "Pil cihazı",
+      "hide-if-idle-description": "Pil şarj olmuyor veya deşarj olmuyorken aracı gizle.",
+      "hide-if-idle-label": "Boşta kalınca gizle",
       "hide-if-not-detected-description": "Sistemde pil algılanmadığında araç çubuğunu gizle.",
       "hide-if-not-detected-label": "Algılanmazsa gizle",
       "low-battery-threshold-description": "Batarya bu yüzdeye düştüğünde uyarı göster.",

@@ -48,6 +48,8 @@
       "device-default": "Par défaut (périphérique d'affichage)",
       "device-description": "Sélectionnez le périphérique de batterie à afficher.",
       "device-label": "Dispositif à pile",
+      "hide-if-idle-description": "Masquer le widget lorsque la batterie n'est ni en charge ni en décharge.",
+      "hide-if-idle-label": "Masquer en cas d'inactivité",
       "hide-if-not-detected-description": "Masquer le widget lorsqu'aucune batterie n'est détectée sur le système.",
       "hide-if-not-detected-label": "Caché si non détecté",
       "low-battery-threshold-description": "Afficher un avertissement lorsque la batterie tombe en dessous de ce pourcentage.",

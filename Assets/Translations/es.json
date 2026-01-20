@@ -48,6 +48,8 @@
       "device-default": "Predeterminado (Dispositivo de visualización)",
       "device-description": "Seleccione qué dispositivo de batería mostrar.",
       "device-label": "Dispositivo de batería",
+      "hide-if-idle-description": "Ocultar el widget cuando la batería no se esté cargando ni descargando.",
+      "hide-if-idle-label": "Ocultar cuando esté inactivo",
       "hide-if-not-detected-description": "Ocultar el widget cuando no se detecte batería en el sistema.",
       "hide-if-not-detected-label": "Ocultar si no se detecta",
       "low-battery-threshold-description": "Muestra una advertencia cuando la batería cae por debajo de este porcentaje.",

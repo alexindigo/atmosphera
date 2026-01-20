@@ -48,6 +48,8 @@
       "device-default": "Kesane (Amûra nîşandanê)",
       "device-description": "Ka kîjan amûrê betarî hilbijêre ku were nîşandan.",
       "device-label": "Amûrê betarî",
+      "hide-if-idle-description": "Dema ku pîl ne tê barkirin an valakirin, widgetê veşêre.",
+      "hide-if-idle-label": "Dema de bêkar veşêre",
       "hide-if-not-detected-description": "Dema pîl li ser pergalê neyê dîtin, widgetê veşêre.",
       "hide-if-not-detected-label": "Veşêre eger nehat dîtin",
       "low-battery-threshold-description": "Dema ku betarî ji vê rêjeyê kêmtir bibe, hişyariyekê nîşan bide.",
