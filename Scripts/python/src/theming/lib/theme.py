@@ -21,7 +21,7 @@ from .palette import find_error_color
 
 # Type aliases
 ThemeMode = Literal["dark", "light"]
-SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "vibrant"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"]
 
 # Map scheme type strings to classes
 SCHEME_CLASSES = {
@@ -168,13 +168,14 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     on_error = ensure_contrast(dark_fg, error, 7.0)
 
     # "On" colors for containers - light text on dark containers, tinted with respective color
-    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.90), primary_container, 4.5)
+    # Explicitly prefer_light=True since containers in dark mode are dark
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.90), primary_container, 4.5, prefer_light=True)
     sec_h, sec_s, _ = secondary.to_hsl()
-    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.90), secondary_container, 4.5)
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.90), secondary_container, 4.5, prefer_light=True)
     ter_h, ter_s, _ = tertiary.to_hsl()
-    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.90), tertiary_container, 4.5)
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.90), tertiary_container, 4.5, prefer_light=True)
     err_h, err_s, _ = error.to_hsl()
-    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.90), error_container, 4.5)
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.90), error_container, 4.5, prefer_light=True)
 
     # Shadow and scrim
     shadow = surface
@@ -360,14 +361,15 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     on_error = ensure_contrast(light_fg, error, 7.0)
 
     # "On" colors for containers - dark text on light containers, tinted with respective color
+    # Explicitly prefer_light=False since containers in light mode are light
     primary_h, primary_s, _ = primary.to_hsl()
-    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.15), primary_container, 4.5)
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.15), primary_container, 4.5, prefer_light=False)
     sec_h, sec_s, _ = secondary.to_hsl()
-    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.15), secondary_container, 4.5)
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.15), secondary_container, 4.5, prefer_light=False)
     ter_h, ter_s, _ = tertiary.to_hsl()
-    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.15), tertiary_container, 4.5)
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.15), tertiary_container, 4.5, prefer_light=False)
     err_h, err_s, _ = error.to_hsl()
-    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.15), error_container, 4.5)
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.15), error_container, 4.5, prefer_light=False)
 
     # Fixed colors - high-chroma accents consistent across light/dark
     # In light mode: darker versions of accent colors
@@ -482,13 +484,14 @@ def generate_theme(
     Args:
         palette: List of extracted colors
         mode: "dark" or "light"
-        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow", "vibrant"
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"
 
     Returns:
         Dictionary of color token names to hex values
     """
-    # Handle vibrant mode separately (uses legacy generate_normal_* functions)
-    if scheme_type == "vibrant":
+    # Handle vibrant/faithful modes (use generate_normal_* functions)
+    # Both use same theme generation, but different color extraction (handled in palette.py)
+    if scheme_type in ("vibrant", "faithful"):
         if mode == "dark":
             return generate_normal_dark(palette)
         return generate_normal_light(palette)

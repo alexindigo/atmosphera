@@ -8,7 +8,8 @@ Supported scheme types:
 - tonal-spot: Default Android 12-13 Material You scheme (recommended)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
-- vibrant: Preserves wallpaper colors directly
+- vibrant: Colorful with smooth blended colors
+- faithful: Colorful with actual wallpaper pixels
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
@@ -73,7 +74,7 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'fruit-salad', 'rainbow', 'vibrant'],
+        choices=['tonal-spot', 'fruit-salad', 'rainbow', 'vibrant', 'faithful'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
     )
@@ -256,10 +257,16 @@ def main() -> int:
                 scheme_type = "tonal-spot"
 
             # Extract palette with appropriate scoring method
-            # vibrant mode uses chroma-based scoring (picks most colorful colors)
-            # M3 schemes use population-based scoring (picks most representative colors)
+            # - vibrant: chroma scoring with centroid averaging (smooth blended colors)
+            # - faithful: chroma scoring with representative pixels (actual wallpaper colors)
+            # - M3 schemes: population scoring (most representative colors)
             k = 5
-            scoring = "chroma" if scheme_type == "vibrant" else "population"
+            if scheme_type == "vibrant":
+                scoring = "chroma"
+            elif scheme_type == "faithful":
+                scoring = "chroma-representative"
+            else:
+                scoring = "population"
             palette = extract_palette(pixels, k=k, scoring=scoring)
 
             if not palette:

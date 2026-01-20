@@ -255,7 +255,7 @@ Singleton {
   // Get scheme type, defaulting to tonal-spot if not a recognized value
   function getSchemeType() {
     const method = Settings.data.colorSchemes.generationMethod;
-    const validTypes = ["tonal-spot", "fruit-salad", "rainbow", "vibrant"];
+    const validTypes = ["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"];
     return validTypes.includes(method) ? method : "tonal-spot";
   }
 

@@ -234,6 +234,10 @@ ColumnLayout {
         "key": "vibrant",
         "name": I18n.tr("common.vibrant")
       },
+      {
+        "key": "faithful",
+        "name": I18n.tr("common.faithful")
+      },
     ]
     currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {

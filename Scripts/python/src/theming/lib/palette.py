@@ -317,8 +317,10 @@ def extract_palette(
     Args:
         pixels: List of RGB tuples
         k: Number of colors to extract
-        scoring: Scoring method - "population" (matugen-like, representative colors)
-                 or "chroma" (vibrant, most colorful colors)
+        scoring: Scoring method:
+                 - "population": matugen-like, representative colors (M3 schemes)
+                 - "chroma": vibrant, chroma-prioritized with centroid averaging
+                 - "chroma-representative": chroma-prioritized with actual pixels (faithful)
 
     Returns:
         List of Color objects, sorted by score
@@ -335,9 +337,15 @@ def extract_palette(
         # Don't pre-filter for population scoring - let the Score algorithm filter
         # This matches matugen which quantizes all pixels, then filters in scoring
         filtered = sampled
+    elif scoring == "chroma-representative":
+        # Faithful mode: more clusters, no pre-filtering
+        # This picks actual dominant colors from the image without averaging
+        cluster_count = 48
+        filtered = sampled  # No colorfulness filter - let scoring handle it
     else:
+        # Vibrant mode: fewer clusters with colorfulness pre-filter
         cluster_count = k
-        # For chroma scoring, filter to colorful pixels
+        # Filter to colorful pixels for smoother averaged results
         filtered = []
         for p in sampled:
             try:
@@ -354,11 +362,16 @@ def extract_palette(
     clusters = kmeans_cluster(filtered, k=cluster_count)
 
     # Score colors based on method
-    # Vibrant (chroma): use centroid colors (averaged, smoother - original behavior)
-    # M3 (population): use representative colors (actual pixels - matugen behavior)
+    # - chroma: centroid colors (averaged, smoother - vibrant mode)
+    # - chroma-representative: representative pixels with chroma scoring (faithful mode)
+    # - population: representative colors with Material scoring (M3 schemes)
     if scoring == "chroma":
-        # Use centroid colors for vibrant mode
+        # Use centroid colors for vibrant mode (smoother, blended)
         colors_for_scoring = [(c[0], c[2]) for c in clusters]
+        scored = _score_colors_chroma(colors_for_scoring)
+    elif scoring == "chroma-representative":
+        # Use representative colors with chroma scoring (faithful mode)
+        colors_for_scoring = [(c[1], c[2]) for c in clusters]
         scored = _score_colors_chroma(colors_for_scoring)
     else:
         # Use representative colors for M3 schemes
