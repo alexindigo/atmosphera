@@ -4,7 +4,7 @@ Template rendering for Matugen compatibility.
 This module provides the TemplateRenderer class for processing template files
 using the {{colors.name.mode.format}} syntax compatible with Matugen.
 
-Supports pipe filters: {{ colors.primary.dark.hex | set_alpha: 0.5 | grayscale }}
+Supports pipe filters: {{ colors.primary.dark.hex | set_alpha 0.5 | grayscale }}
 """
 
 import re
@@ -27,7 +27,7 @@ class TemplateRenderer:
 
     Supports filters via pipe syntax:
         {{ colors.primary.dark.hex | grayscale }}
-        {{ colors.primary.dark.rgba | set_alpha: 0.5 }}
+        {{ colors.primary.dark.rgba | set_alpha 0.5 }}
 
     Theme data uses snake_case keys (e.g., 'primary', 'surface_container').
     """
@@ -133,10 +133,13 @@ class TemplateRenderer:
             return color.to_hex()
 
     def _parse_filter(self, filter_str: str) -> tuple[str, Optional[str]]:
-        """Parse a filter string into (name, argument)."""
+        """Parse a filter string into (name, argument).
+
+        Uses matugen syntax (space-separated): | set_alpha 0.5
+        """
         filter_str = filter_str.strip()
-        if ':' in filter_str:
-            name, arg = filter_str.split(':', 1)
+        if ' ' in filter_str:
+            name, arg = filter_str.split(None, 1)
             return name.strip(), arg.strip()
         return filter_str, None
 
