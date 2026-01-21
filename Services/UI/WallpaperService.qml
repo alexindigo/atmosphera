@@ -41,6 +41,8 @@ Singleton {
   // Signals for reactive UI updates
   signal wallpaperChanged(string screenName, string path)
   // Emitted when a wallpaper changes
+  signal wallpaperProcessingComplete(string screenName, string path, string cachedPath)
+  // Emitted when wallpaper processing (resize/cache) is complete. cachedPath is the resized version.
   signal wallpaperDirectoryChanged(string screenName, string directory)
   // Emitted when a monitor's directory changes
   signal wallpaperListChanged(string screenName, int count)
@@ -75,7 +77,7 @@ Singleton {
         root.wallpaperDirectoryChanged(screenName, root.getMonitorDirectory(screenName));
       }
     }
-    function onRandomEnabledChanged() {
+    function onAutomationEnabledChanged() {
       root.toggleRandomWallpaper();
     }
     function onRandomIntervalSecChanged() {
@@ -84,7 +86,7 @@ Singleton {
     function onWallpaperChangeModeChanged() {
       // Reset alphabetical indices when mode changes
       root.alphabeticalIndices = {};
-      if (Settings.data.wallpaper.randomEnabled) {
+      if (Settings.data.wallpaper.automationEnabled) {
         root.restartRandomWallpaperTimer();
         root.setNextWallpaper();
       }
@@ -162,6 +164,11 @@ Singleton {
                            "key": "stretch",
                            "name": I18n.tr("wallpaper.fill-modes.stretch"),
                            "uniform": 3.0
+                         });
+    fillModeModel.append({
+                           "key": "repeat",
+                           "name": I18n.tr("wallpaper.fill-modes.repeat"),
+                           "uniform": 4.0
                          });
 
     // Populate transitionsModel with translated names
@@ -437,7 +444,7 @@ Singleton {
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
     Logger.d("Wallpaper", "toggleRandomWallpaper");
-    if (Settings.data.wallpaper.randomEnabled) {
+    if (Settings.data.wallpaper.automationEnabled) {
       restartRandomWallpaperTimer();
       setNextWallpaper();
     }
@@ -455,7 +462,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function restartRandomWallpaperTimer() {
-    if (Settings.data.wallpaper.randomEnabled) {
+    if (Settings.data.wallpaper.automationEnabled) {
       randomWallpaperTimer.restart();
     }
   }
@@ -606,7 +613,7 @@ Singleton {
   Timer {
     id: randomWallpaperTimer
     interval: Settings.data.wallpaper.randomIntervalSec * 1000
-    running: Settings.data.wallpaper.randomEnabled
+    running: Settings.data.wallpaper.automationEnabled
     repeat: true
     onTriggered: setNextWallpaper()
     triggeredOnStart: false

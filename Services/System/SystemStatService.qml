@@ -25,6 +25,9 @@ Singleton {
   property string gpuType: "" // "amd", "intel", "nvidia"
   property real memGb: 0
   property real memPercent: 0
+  property real swapGb: 0
+  property real swapPercent: 0
+  property real swapTotalGb: 0
   property var diskPercents: ({})
   property var diskUsedGb: ({}) // Used space in GB per mount point
   property var diskSizeGb: ({}) // Total size in GB per mount point
@@ -64,6 +67,8 @@ Singleton {
   readonly property int gpuCriticalThreshold: Settings.data.systemMonitor.gpuCriticalThreshold
   readonly property int memWarningThreshold: Settings.data.systemMonitor.memWarningThreshold
   readonly property int memCriticalThreshold: Settings.data.systemMonitor.memCriticalThreshold
+  readonly property int swapWarningThreshold: Settings.data.systemMonitor.swapWarningThreshold
+  readonly property int swapCriticalThreshold: Settings.data.systemMonitor.swapCriticalThreshold
   readonly property int diskWarningThreshold: Settings.data.systemMonitor.diskWarningThreshold
   readonly property int diskCriticalThreshold: Settings.data.systemMonitor.diskCriticalThreshold
 
@@ -76,6 +81,8 @@ Singleton {
   readonly property bool gpuCritical: gpuAvailable && gpuTemp >= gpuCriticalThreshold
   readonly property bool memWarning: memPercent >= memWarningThreshold
   readonly property bool memCritical: memPercent >= memCriticalThreshold
+  readonly property bool swapWarning: swapPercent >= swapWarningThreshold
+  readonly property bool swapCritical: swapPercent >= swapCriticalThreshold
 
   // Helper functions for disk (disk path is dynamic)
   function isDiskWarning(diskPath) {
@@ -91,6 +98,7 @@ Singleton {
   readonly property color tempColor: tempCritical ? criticalColor : (tempWarning ? warningColor : Color.mPrimary)
   readonly property color gpuColor: gpuCritical ? criticalColor : (gpuWarning ? warningColor : Color.mPrimary)
   readonly property color memColor: memCritical ? criticalColor : (memWarning ? warningColor : Color.mPrimary)
+  readonly property color swapColor: swapCritical ? criticalColor : (swapWarning ? warningColor : Color.mPrimary)
 
   function getDiskColor(diskPath) {
     return isDiskCritical(diskPath) ? criticalColor : (isDiskWarning(diskPath) ? warningColor : Color.mPrimary);
@@ -702,12 +710,18 @@ Singleton {
     const lines = text.split('\n');
     let memTotal = 0;
     let memAvailable = 0;
+    let swapTotal = 0;
+    let swapFree = 0;
 
     for (const line of lines) {
       if (line.startsWith('MemTotal:')) {
         memTotal = parseInt(line.split(/\s+/)[1]) || 0;
       } else if (line.startsWith('MemAvailable:')) {
         memAvailable = parseInt(line.split(/\s+/)[1]) || 0;
+      } else if (line.startsWith('SwapTotal:')) {
+        swapTotal = parseInt(line.split(/\s+/)[1]) || 0;
+      } else if (line.startsWith('SwapFree:')) {
+        swapFree = parseInt(line.split(/\s+/)[1]) || 0;
       }
     }
 
@@ -719,6 +733,17 @@ Singleton {
       }
       root.memGb = (usageKb / 1048576).toFixed(1); // 1024*1024 = 1048576
       root.memPercent = Math.round((usageKb / memTotal) * 100);
+    }
+
+    // Swap usage
+    root.swapTotalGb = (swapTotal / 1048576).toFixed(1);
+    if (swapTotal > 0) {
+      const swapUsedKb = swapTotal - swapFree;
+      root.swapGb = (swapUsedKb / 1048576).toFixed(1);
+      root.swapPercent = Math.round((swapUsedKb / swapTotal) * 100);
+    } else {
+      root.swapGb = 0;
+      root.swapPercent = 0;
     }
   }
 

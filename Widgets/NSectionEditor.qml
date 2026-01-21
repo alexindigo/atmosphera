@@ -307,11 +307,16 @@ NBox {
                   var section = root.availableSections[i];
                   if (section !== root.sectionId) {
                     var label = root.getSectionLabel(section);
-                    // Capitalize first letter
-                    var capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+                    var displayLabel = I18n.tr("positions." + section);
+
+                    // If translation missing (returns key), fallback to capitalized label
+                    if (displayLabel === "positions." + section) {
+                      displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
+                    }
+
                     items.push({
                                  "label": I18n.tr("tooltips.move-to-section", {
-                                                    "section": capitalizedLabel
+                                                    "section": displayLabel
                                                   }),
                                  "action": section,
                                  "icon": root.getSectionIcon(section),

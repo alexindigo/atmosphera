@@ -48,6 +48,8 @@
       "device-default": "Пристрій відображення за замовчуванням",
       "device-description": "Виберіть пристрій з акумулятором для відображення.",
       "device-label": "Пристрій живлення від батареї",
+      "hide-if-idle-description": "Приховати віджет, коли акумулятор не заряджається та не розряджається.",
+      "hide-if-idle-label": "Приховати, коли неактивний",
       "hide-if-not-detected-description": "Приховати віджет, коли в системі не виявлено акумулятор.",
       "hide-if-not-detected-label": "Приховати, якщо не виявлено",
       "low-battery-threshold-description": "Показувати попередження, коли батарея падає нижче цього відсотка.",
@@ -209,6 +211,8 @@
       "network-traffic-label": "Мережевий трафік",
       "storage-usage-description": "Показувати інформацію про використання дискового простору.",
       "storage-usage-label": "Використання сховища",
+      "swap-usage-description": "Показати використання swap-пам'яті.",
+      "swap-usage-label": "Використання swap",
       "use-monospace-font-description": "Використовуйте моноширинний шрифт для забезпечення сталої ширини символів.",
       "use-monospace-font-label": "Моноширинний шрифт"
     },
@@ -357,6 +361,7 @@
     "contributors": "Учасники",
     "countdown": "Зворотний відлік",
     "date": "Дата",
+    "default": "За замовчуванням",
     "delete": "Видалити",
     "devices": "Пристрої",
     "disabled": "Вимкнено",
@@ -369,6 +374,7 @@
     "enabled": "Увімкнено",
     "events": "Події",
     "execute": "Виконати",
+    "faithful": "Вірний",
     "focus": "Зосередженість",
     "frequency": "Частота",
     "gateway": "Шлюз",
@@ -448,6 +454,7 @@
     "update": "Оновлення",
     "upload": "Вивантажити",
     "version": "Версія",
+    "vibrant": "Яскравий",
     "visualizer": "Візуалізатор",
     "volume": "Об'єм",
     "volumes": "Обсяги",
@@ -533,7 +540,10 @@
     "results": "результати"
   },
   "lock-screen": {
-    "password": "Введіть ваш пароль..."
+    "authenticating": "Автентифікація...",
+    "password": "Введіть ваш пароль...",
+    "restart": "Перезапустити",
+    "shut-down": "Вимкнути"
   },
   "notifications": {
     "panel": {
@@ -609,6 +619,7 @@
       "noctalia-installed-version": "Встановлена версія:",
       "noctalia-latest-version": "Остання версія:",
       "noctalia-title": "Оболонка Noctalia",
+      "privacy-policy": "Політика конфіденційності",
       "support": "Підтримати нас",
       "system-cpu": "ЦП:",
       "system-disk": "Диск:",
@@ -622,6 +633,7 @@
       "system-not-installed": "fastfetch не встановлено",
       "system-os": "ОС:",
       "system-packages": "Пакунки:",
+      "system-product": "Продукт:",
       "system-title": "Інформація про систему",
       "system-uptime": "Час безперебійної роботи:",
       "system-wm": "WM:\nВМ:",
@@ -673,6 +685,8 @@
       "volumes-output-volume-description": "Системний рівень гучності.",
       "volumes-step-size-description": "Налаштуйте крок зміни гучності (колесо миші, гарячі клавіші).",
       "volumes-step-size-label": "Крок зміни гучності",
+      "volumes-volume-feedback-description": "Відтворювати звук зворотного зв'язку під час регулювання гучності",
+      "volumes-volume-feedback-label": "Відтворити звук зворотного зв'язку гучності",
       "volumes-volume-overdrive-description": "Дозволити підвищення гучності понад 100%. Може не підтримуватись усім обладнанням.",
       "volumes-volume-overdrive-label": "Гучність понад 100%"
     },
@@ -702,7 +716,13 @@
       "appearance-show-outline-label": "Показувати контури віджетів",
       "appearance-use-separate-opacity-description": "Увімкнути використання окремого значення прозорості для фону панелі.",
       "appearance-use-separate-opacity-label": "Використовувати окрему прозорість стовпців",
+      "monitor-configure-widgets": "Налаштувати віджети",
+      "monitor-override-settings": "Перевизначити глобальні налаштування",
+      "monitor-override-settings-description": "Використовувати власні налаштування для цього монітора.",
+      "monitor-reset-all": "Скинути все",
+      "monitor-widgets-title": "Налаштування віджета - {monitor}",
       "monitors-desc": "Показувати панель на певних моніторах. За замовчуванням на всіх, якщо не вибрано.",
+      "monitors-desc-new": "Налаштуйте, на яких моніторах відображати Bar, та налаштуйте параметри для кожного монітора.",
       "monitors-title": "Відображення на моніторах",
       "title": "Панель",
       "tray-blacklist-description": "Додайте правила виключення з трея, підтримує шаблони (*).",
@@ -710,30 +730,27 @@
       "tray-blacklist-placeholder": "напр., nm-applet, Fcitx*",
       "tray-pin-application": "Закріпити застосунок",
       "tray-unpin-application": "Відкріпити застосунок",
+      "use-global-widgets": "Використовувати глобальні віджети",
       "widgets-desc": "Перетягуйте віджети, щоб змінити їх порядок. Використовуйте контекстне меню (клік правою кнопкою миші), щоб переміщувати віджети між секціями або видаляти їх.",
       "widgets-title": "Розміщення віджетів"
     },
     "color-scheme": {
-      "color-source-desc": "Основні налаштування для кольорів Noctalia.",
-      "color-source-matugen-scheme-type-description": "Виберіть метод генерації колірної схеми, який Matugen використовуватиме для створення кольорів з ваших шпалер.",
-      "color-source-matugen-scheme-type-label": "Тип схеми Matugen",
-      "color-source-title": "Джерело кольорів",
-      "color-source-use-wallpaper-colors-description": "Генерувати колірні схеми зі шпалер за допомогою Matugen. Автоматично витягує кольори для створення цілісної теми.",
+      "color-source-use-wallpaper-colors-description": "Створюйте колірні схеми зі своїх шпалер. Автоматично видобуває кольори для створення цілісної теми.",
       "color-source-use-wallpaper-colors-label": "Використовувати кольори шпалер",
       "dark-mode-mode-description": "Увімкнути автоматичне перемикання між світлим і темним режимом.",
       "dark-mode-mode-label": "Розклад темного режиму",
       "dark-mode-mode-manual": "Вручну",
       "dark-mode-mode-off": "Вимкнено",
       "dark-mode-switch-description": "Перемикає на темнішу тему для зручного перегляду вночі.",
-      "delete-error-description": "Не вдалося видалити {scheme}.",
+      "delete-error-description": "Не вдалося видалити {scheme}",
       "delete-error-title": "Помилка видалення",
-      "delete-success-description": "{scheme} успішно видалено.",
+      "delete-success-description": "{scheme} успішно видалено",
       "delete-success-title": "Кольорову схему видалено",
       "download-button": "Завантажити ще",
       "download-downloading": "Завантаження...",
       "download-empty": "Немає доступних кольорових схем",
       "download-error-api-error": "Помилка API: {status}",
-      "download-error-description": "Не вдалося завантажити {scheme}.",
+      "download-error-description": "Не вдалося завантажити {scheme}",
       "download-error-download-failed": "Помилка завантаження з кодом виходу: {code}",
       "download-error-invalid-response": "Невірний формат відповіді API",
       "download-error-no-files": "Файли для схеми не знайдено",
@@ -741,11 +758,10 @@
       "download-error-rate-limit": "Перевищено ліміт запитів GitHub API",
       "download-error-title": "Помилка завантаження",
       "download-fetching": "Отримання доступних кольорових схем...",
-      "download-success-description": "{scheme} успішно завантажено.",
+      "download-success-description": "{scheme} успішно завантажено",
       "download-success-title": "Кольорову схему завантажено",
       "download-title": "Завантажити кольорові схеми",
       "predefined-desc": "Виберіть із колекції попередньо визначених колірних схем.",
-      "predefined-generate-templates-description": "Генерувати шаблони Matugen (GTK, теми терміналу тощо) при використанні попередньо визначених колірних схем.",
       "predefined-generate-templates-label": "Генерувати шаблони для попередньо визначених схем",
       "predefined-title": "Попередньо визначені колірні схеми",
       "templates-desc": "Застосовувати кольори до зовнішніх застосункiв.",
@@ -757,7 +773,9 @@
       "templates-misc-user-templates-label": "Увімкнути користувацькі шаблони",
       "templates-none-detected": "Не виявлено",
       "templates-write-path": "Записує: {filepath}",
-      "title": "Колірна схема"
+      "title": "Колірна схема",
+      "wallpaper-method-description": "Оберіть свій улюблений метод створення палітри.",
+      "wallpaper-method-label": "Метод створення палітри"
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",
@@ -899,6 +917,7 @@
       "title": "Док"
     },
     "general": {
+      "copy-settings": "Копіювати налаштування",
       "fonts-default-description": "Основний шрифт, що використовується в інтерфейсі.",
       "fonts-default-label": "Стандартний шрифт",
       "fonts-default-placeholder": "Виберіть стандартний шрифт...",
@@ -933,7 +952,8 @@
       "screen-corners-show-corners-label": "Показувати кути екрана",
       "screen-corners-solid-black-description": "Використовувати суцільний чорний колір замість кольору фону панелі.",
       "screen-corners-solid-black-label": "Суцільні чорні кути",
-      "screen-corners-title": "Кути екрана"
+      "screen-corners-title": "Кути екрана",
+      "settings-copied": "Налаштування скопійовано до буфера обміну"
     },
     "hooks": {
       "info-command-info-description": "• Команди виконуються через оболонку (sh -lc)<br>• Команди запускаються у фоні (відокремлено)<br>• Кнопки тестування виконують команди з поточними значеннями",
@@ -1083,6 +1103,8 @@
       "history-low-urgency-label": "Зберігати низьку терміновість в історії",
       "history-normal-urgency-description": "Зберігати сповіщення з нормальним пріоритетом в історії.",
       "history-normal-urgency-label": "Зберігати нормальну терміновість в історії",
+      "media-toast-description": "Показувати спливаюче повідомлення, коли змінюється стан відтворення медіа.",
+      "media-toast-label": "Медіа",
       "monitors-desc": "Показувати сповіщення на певних моніторах. За замовчуванням на всіх, якщо не вибрано.",
       "settings-always-on-top-description": "Відображати сповіщення поверх повноекранних вікон та інших шарів.",
       "settings-background-opacity-description": "Налаштуйте непрозорість фону сповіщень.",
@@ -1150,6 +1172,8 @@
       "types-input-volume-label": "Вхідна гучність",
       "types-lockkey-description": "Показувати OSD, коли перемикаються Caps Lock, Num Lock або Scroll Lock.",
       "types-lockkey-label": "Клавіші блокування",
+      "types-media-description": "Показувати Екранне меню (OSD) при зміні стану відтворення медіа (відтворення, пауза, пропуск).",
+      "types-media-label": "Відтворення медіа",
       "types-title": "Події, що запускають OSD",
       "types-volume-description": "Показувати OSD, коли змінюється гучність аудіовиходу.",
       "types-volume-label": "Вихідна гучність"
@@ -1159,9 +1183,9 @@
       "available-label": "Доступні плагіни",
       "available-no-plugins-description": "Перевірте вихідні коди вашого плагіна або оновіть список.",
       "available-no-plugins-label": "Немає доступних плагінів",
-      "collision-already-installed": "Цей плагін вже встановлено.",
-      "collision-custom-version-exists": "Вже встановлено власну версію з \"{source}\".",
-      "collision-official-version-exists": "Офіційна версія цього плагіна вже встановлена.",
+      "collision-already-installed": "Цей плагін вже встановлено",
+      "collision-custom-version-exists": "Вже встановлено власну версію з \"{source}\"",
+      "collision-official-version-exists": "Офіційна версія цього плагіна вже встановлена",
       "filter-downloaded": "Завантажено",
       "filter-not-downloaded": "Не завантажено",
       "filter-tags-description": "Фільтрувати плагіни за категорією або статусом завантаження",
@@ -1169,9 +1193,9 @@
       "hot-reload-description": "Автоматично перезавантажувати плагіни при зміні їхніх файлів. Корисно для розробки плагінів.",
       "hot-reload-label": "Гаряче перезавантаження (режим розробки)",
       "hot-reloaded": "Перезавантажено плагін: {name}",
-      "install-error": "Не вдалося встановити: {error}.",
+      "install-error": "Не вдалося встановити: {error}",
       "install-incompatible": "{plugin} вимагає Noctalia v{version} або вище",
-      "install-success": "Успішно встановлено {plugin}.",
+      "install-success": "Успішно встановлено {plugin}",
       "installed-description": "Керуйте та налаштовуйте всі локально встановлені плагіни.",
       "installed-label": "Встановлені плагіни",
       "installed-no-plugins-description": "Встановіть плагіни з розділу \"Доступний\".",
@@ -1182,16 +1206,16 @@
       "plugin-settings-title": "Налаштування {plugin}",
       "refresh-refreshing": "Оновлення списку плагінів...",
       "refresh-tooltip": "Оновити доступні плагіни",
-      "settings-error-not-loaded": "Плагін не завантажено.",
-      "settings-saved": "Налаштування плагіна збережено.",
+      "settings-error-not-loaded": "Плагін не завантажено",
+      "settings-saved": "Налаштування плагіна збережено",
       "settings-tooltip": "Налаштування плагіна",
       "source-custom": "Власне джерело",
       "sources-add-custom": "Додати власний репозиторій",
       "sources-add-dialog-description": "Додати репозиторій GitHub як джерело плагінів.",
-      "sources-add-dialog-error": "Не вдалося додати джерело плагінів.",
+      "sources-add-dialog-error": "Не вдалося додати джерело плагінів",
       "sources-add-dialog-name": "Назва репозиторію",
       "sources-add-dialog-name-placeholder": "Мої власні плагіни",
-      "sources-add-dialog-success": "Джерело плагіна успішно додано.",
+      "sources-add-dialog-success": "Джерело плагіна успішно додано",
       "sources-add-dialog-title": "Додати джерело плагіна",
       "sources-add-dialog-url": "URL репозиторію",
       "sources-description": "Керування репозиторіями плагінів.",
@@ -1200,16 +1224,16 @@
       "title": "Плагіни",
       "uninstall-dialog-description": "Ви впевнені, що хочете видалити {plugin}? Це призведе до видалення всіх даних плагіна.",
       "uninstall-dialog-title": "Видалити плагін",
-      "uninstall-error": "Не вдалося видалити: {error}.",
-      "uninstall-success": "Успішно видалено {plugin}.",
+      "uninstall-error": "Не вдалося видалити: {error}",
+      "uninstall-success": "Успішно видалено {plugin}",
       "uninstalling": "Видалення {plugin}...",
       "update-all": "Оновити все ({count})",
-      "update-all-success": "Усі плагіни успішно оновлено.",
+      "update-all-success": "Усі плагіни успішно оновлено",
       "update-available": "Доступне нове оновлення плагіна",
       "update-available-plural": "Доступні нові оновлення плагінів ({count})",
-      "update-error": "Не вдалося оновити плагін: {plugin}: {error}.",
+      "update-error": "Не вдалося оновити плагін: {plugin}: {error}",
       "update-pending": "v{current} → v{new} (потрібно Noctalia v{required})",
-      "update-success": "Оновлено {plugin} до версії {version}.",
+      "update-success": "Оновлено {plugin} до версії {version}",
       "update-version": "v{current} → v{new}",
       "updating": "Оновлення..."
     },
@@ -1380,12 +1404,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} через {seconds} секунд...",
+    "cancel-timer": "Скасувати таймер",
     "title": "Меню сеансу"
   },
   "setup": {
     "all-done": "Готово!",
     "appearance": {
-      "subheader": "Виберіть темний режим та джерела кольорів (Matugen або попередньо визначені)."
+      "subheader": "Виберіть Dark Mode та джерела кольору (Шпалери або попередньо визначені)."
     },
     "customize": {
       "header": "Налаштуйте ваш досвід",
@@ -1444,86 +1469,78 @@
     },
     "battery": {
       "low": "Низький заряд батареї",
-      "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій."
+      "low-desc": "Рівень заряду: {percent}%. Будь ласка, підключіть зарядний пристрій"
     },
     "bluetooth": {
-      "address-copied": "Адресу скопійовано до буфера обміну.",
+      "address-copied": "Адресу скопійовано до буфера обміну",
       "confirm-code": "Підтвердьте код {value} на іншому пристрої.",
-      "connect-failed": "Не вдалося під'єднатися до пристрою.",
-      "disconnect-failed": "Не вдалося від'єднатися від пристрою.",
-      "discoverable-change-failed": "Не вдалося змінити стан видимості.",
-      "discoverable-disabled": "Виявлення вимкнено.",
-      "discoverable-enabled": "Виявлення ввімкнено.",
+      "connect-failed": "Не вдалося під'єднатися до пристрою",
+      "disconnect-failed": "Не вдалося від'єднатися від пристрою",
+      "discoverable-change-failed": "Не вдалося змінити стан видимості",
+      "discoverable-disabled": "Виявлення вимкнено",
+      "discoverable-enabled": "Виявлення ввімкнено",
       "display-code": "Введіть код {value} на іншому пристрої.",
-      "forget-failed": "Не вдалося забути пристрій.",
-      "pair-failed": "Не вдалося створити пару з пристроєм.",
+      "forget-failed": "Не вдалося забути пристрій",
+      "pair-failed": "Не вдалося створити пару з пристроєм",
       "passkey-required": "Потрібен ключ доступу, що зберігається на пристрої.",
       "pincode-required": "PIN-код, необхідний пристроєм.",
-      "state-change-failed": "Не вдалося змінити стан Bluetooth."
+      "state-change-failed": "Не вдалося змінити стан Bluetooth"
     },
     "clipboard": {
       "long-text": "Довгий текст",
       "unavailable": "Історія буфера обміну недоступна",
-      "unavailable-desc": "Застосунок 'cliphist' не встановлений. Будь ласка, встановіть його для використання функцій історії буфера обміну."
+      "unavailable-desc": "Застосунок 'cliphist' не встановлений. Будь ласка, встановіть його для використання функцій історії буфера обміну"
     },
     "do-not-disturb": {
       "disabled": "'Не турбувати' вимкнено",
-      "disabled-desc": "Показ усіх сповіщень.",
+      "disabled-desc": "Показ усіх сповіщень",
       "enabled": "'Не турбувати' увімкнено",
-      "enabled-desc": "Ви знайдете ці сповіщення в своїй історії."
+      "enabled-desc": "Ви знайдете ці сповіщення в своїй історії"
     },
-    "internet-limited": "Підключено без інтернету.",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel перейменовано на SessionMenu, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call sessionMenu toggle\" замість цього.",
-      "sidepanel-deprecated": "SidePanel перейменовано на ControlCenter, цей виклик IPC незабаром буде застарілим. Будь ласка, використовуйте \"ipc call controlCenter toggle\" замість цього."
-    },
+    "internet-limited": "Підключено без інтернету",
     "keyboard-layout": {
-      "changed": "Розкладка клавіатури змінена на {layout}.",
+      "changed": "Розкладка клавіатури змінена на {layout}",
       "title": "Клавіатура"
     },
-    "kofi-opened": "Сторінка Ko-fi відкрита у вашому браузері.",
+    "kofi-opened": "Сторінка Ko-fi відкрита у вашому браузері",
     "missing-control-center": {
-      "description": "Віджет центру керування видалено з панелі. Щоб знову отримати до нього доступ з панелі, вам потрібно повторно додати віджет. Ви також можете відкрити його, клацнувши правою кнопкою миші на панелі.",
+      "description": "Віджет центру керування видалено з панелі. Щоб знову отримати до нього доступ з панелі, вам потрібно повторно додати віджет. Ви також можете відкрити його, клацнувши правою кнопкою миші на панелі",
       "label": "Останній віджет центру керування видалено"
     },
     "night-light": {
-      "forced": "Примусова активація.",
-      "normal": "Звичайний режим.",
-      "not-installed": "wlsunset не встановлено."
+      "forced": "Примусова активація",
+      "normal": "Звичайний режим",
+      "not-installed": "wlsunset не встановлено"
     },
     "noctalia-performance": {
-      "disabled": "Режим продуктивності вимкнено.",
-      "enabled": "Режим продуктивності ввімкнено.",
+      "disabled": "Режим продуктивності вимкнено",
+      "enabled": "Режим продуктивності ввімкнено",
       "label": "Продуктивність Noctalia"
     },
     "power-profile": {
-      "changed": "Профіль живлення змінено.",
+      "changed": "Профіль живлення змінено",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Виникла помилка під час обробки шаблонів.",
-      "title-matugen": "Помилка обробки шаблонів Matugen",
-      "title-predefined": "Помилка обробки попередньо визначеної колірної схеми"
+      "desc-generic": "Виникла помилка під час обробки шаблонів",
+      "title": "Помилка обробки шаблонів"
     },
     "vpn": {
-      "connected": "Підключено до '{name}'.",
-      "disconnected": "Відключено від '{name}'."
+      "connected": "Підключено до '{name}'",
+      "disconnected": "Відключено від '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Кольори шпалер вимкнено.",
-      "enabled": "Кольори шпалер увімкнено.",
-      "label": "Генерація кольорів шпалер",
-      "not-installed": "Matugen не встановлено — потрібний для витягу кольорів зі шпалер."
+      "disabled": "Кольори шпалер вимкнено",
+      "enabled": "Кольори шпалер увімкнено",
+      "label": "Генерація кольорів шпалер"
     },
     "wifi": {
-      "connected": "Підключено до '{ssid}'.",
-      "connection-failed": "З'єднання не вдалося.",
-      "connection-timeout": "Час очікування з'єднання вичерпано.",
-      "disabled": "Вимкнено.",
-      "disconnected": "Відключено від '{ssid}'.",
-      "enabled": "Увімкнено.",
-      "incorrect-password": "Неправильний пароль.",
-      "network-not-found": "Мережу не знайдено."
+      "connected": "Підключено до '{ssid}'",
+      "connection-failed": "З'єднання не вдалося",
+      "connection-timeout": "Час очікування з'єднання вичерпано",
+      "disconnected": "Відключено від '{ssid}'",
+      "incorrect-password": "Неправильний пароль",
+      "network-not-found": "Мережу не знайдено"
     }
   },
   "tooltips": {
@@ -1587,6 +1604,7 @@
     "fill-modes": {
       "crop": "Обрізати (Заповнити)",
       "fit": "Вмістити (Вписати)",
+      "repeat": "Повторити (Плитка)",
       "stretch": "Розтягнути"
     },
     "no-match": "Збігів не знайдено.",
@@ -1689,10 +1707,11 @@
     "file-picker": {
       "item": "елемент",
       "items": "елементи",
+      "search-placeholder": "Пошук файлів та тек...",
       "select-current": "Вибрати поточне",
       "select-file": "Вибрати файл",
       "select-folder": "Вибрати теку",
-      "selected:": "Вибрано:",
+      "selected": "Вибрано:",
       "title": "Вибір файлу"
     },
     "file-picker-title": "Виберіть файл",

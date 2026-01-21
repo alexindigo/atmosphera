@@ -191,10 +191,13 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   NToggle {
     label: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
     description: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
-    enabled: ProgramCheckerService.matugenAvailable
     checked: Settings.data.colorSchemes.useWallpaperColors
     onToggled: checked => {
                  Settings.data.colorSchemes.useWallpaperColors = checked;
@@ -210,54 +213,37 @@ ColumnLayout {
   }
 
   NComboBox {
-    label: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-label")
-    description: I18n.tr("panels.color-scheme.color-source-matugen-scheme-type-description")
+    Layout.fillWidth: true
+    label: I18n.tr("panels.color-scheme.wallpaper-method-label")
+    description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
-    visible: Settings.data.colorSchemes.useWallpaperColors
-
     model: [
       {
-        "key": "scheme-content",
-        "name": "Content"
+        "key": "tonal-spot",
+        "name": "M3-Tonal Spot"
       },
       {
-        "key": "scheme-expressive",
-        "name": "Expressive"
+        "key": "fruit-salad",
+        "name": "M3-Fruit Salad"
       },
       {
-        "key": "scheme-fidelity",
-        "name": "Fidelity"
+        "key": "rainbow",
+        "name": "M3-Rainbow"
       },
       {
-        "key": "scheme-fruit-salad",
-        "name": "Fruit Salad"
+        "key": "vibrant",
+        "name": I18n.tr("common.vibrant")
       },
       {
-        "key": "scheme-monochrome",
-        "name": "Monochrome"
+        "key": "faithful",
+        "name": I18n.tr("common.faithful")
       },
-      {
-        "key": "scheme-neutral",
-        "name": "Neutral"
-      },
-      {
-        "key": "scheme-rainbow",
-        "name": "Rainbow"
-      },
-      {
-        "key": "scheme-tonal-spot",
-        "name": "Tonal Spot"
-      }
     ]
-
-    currentKey: Settings.data.colorSchemes.matugenSchemeType
-
+    currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {
-                  Settings.data.colorSchemes.matugenSchemeType = key;
+                  Settings.data.colorSchemes.generationMethod = key;
                   AppThemeService.generate();
                 }
-
-    defaultValue: Settings.getDefaultValue("colorSchemes.matugenSchemeType")
   }
 
   NDivider {

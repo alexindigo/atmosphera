@@ -20,8 +20,9 @@ Rectangle {
   property int sectionWidgetIndex: -1
   property int sectionWidgetsCount: 0
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
   property var widgetMetadata: BarWidgetRegistry.widgetMetadata[widgetId]
   property var widgetSettings: {
@@ -672,7 +673,7 @@ Rectangle {
           }
           onEntered: {
             root.hoveredWindowId = taskbarItem.modelData.id;
-            TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection());
+            TooltipService.show(taskbarItem, taskbarItem.title, BarService.getTooltipDirection(root.screen?.name));
           }
           onExited: {
             root.hoveredWindowId = "";
@@ -742,13 +743,13 @@ Rectangle {
       let menuX, menuY;
       if (root.barPosition === "top") {
         menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
-        menuY = Style.barHeight + Style.marginS;
+        menuY = barHeight + Style.marginS;
       } else if (root.barPosition === "bottom") {
         const menuHeight = 12 + contextMenu.model.length * contextMenu.itemHeight;
         menuX = globalPos.x + (item.width / 2) - (contextMenu.implicitWidth / 2);
         menuY = -menuHeight - Style.marginS;
       } else if (root.barPosition === "left") {
-        menuX = Style.barHeight + Style.marginS;
+        menuX = barHeight + Style.marginS;
         menuY = globalPos.y + (item.height / 2) - (contextMenu.implicitHeight / 2);
       } else {
         // right

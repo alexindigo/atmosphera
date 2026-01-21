@@ -14,11 +14,12 @@ PanelWindow {
 
   property bool exclusive: Settings.data.bar.exclusive !== undefined ? Settings.data.bar.exclusive : false
 
-  readonly property string barPosition: Settings.data.bar.position || "top"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
   readonly property real barMarginH: barFloating ? Settings.data.bar.marginHorizontal : 0
   readonly property real barMarginV: barFloating ? Settings.data.bar.marginVertical : 0
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
   // Invisible - just reserves space
   color: "transparent"
@@ -45,9 +46,9 @@ PanelWindow {
       // Vertical bar: reserve bar height + margin on the anchored edge only
       if (barFloating) {
         // For left bar, reserve left margin; for right bar, reserve right margin
-        return Style.barHeight + barMarginH;
+        return barHeight + barMarginH;
       }
-      return Style.barHeight;
+      return barHeight;
     }
     return 0; // Auto-width when left/right anchors are true
   }
@@ -57,9 +58,9 @@ PanelWindow {
       // Horizontal bar: reserve bar height + margin on the anchored edge only
       if (barFloating) {
         // For top bar, reserve top margin; for bottom bar, reserve bottom margin
-        return Style.barHeight + barMarginV;
+        return barHeight + barMarginV;
       }
-      return Style.barHeight;
+      return barHeight;
     }
     return 0; // Auto-height when top/bottom anchors are true
   }

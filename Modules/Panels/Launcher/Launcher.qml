@@ -36,12 +36,13 @@ SmartPanel {
   preferredHeightRatio: 0.5
 
   // Positioning
+  readonly property string screenBarPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property string panelPosition: {
     if (Settings.data.appLauncher.position === "follow_bar") {
-      if (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") {
-        return `center_${Settings.data.bar.position}`;
+      if (screenBarPosition === "left" || screenBarPosition === "right") {
+        return `center_${screenBarPosition}`;
       } else {
-        return `${Settings.data.bar.position}_center`;
+        return `${screenBarPosition}_center`;
       }
     } else {
       return Settings.data.appLauncher.position;

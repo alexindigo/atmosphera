@@ -91,7 +91,8 @@ Singleton {
                                     "deviceNativePath": "",
                                     "showPowerProfiles": false,
                                     "showNoctaliaPerformance": false,
-                                    "hideIfNotDetected": true
+                                    "hideIfNotDetected": true,
+                                    "hideIfIdle": false
                                   },
                                   "Bluetooth": {
                                     "displayMode": "onhover"
@@ -204,6 +205,7 @@ Singleton {
                                     "showLoadAverage": false,
                                     "showMemoryUsage": true,
                                     "showMemoryAsPercent": false,
+                                    "showSwapUsage": false,
                                     "showNetworkStats": false,
                                     "showDiskUsage": false,
                                     "diskPath": "/"

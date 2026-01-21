@@ -29,12 +29,13 @@ PanelWindow {
   WlrLayershell.layer: WlrLayer.Top
   WlrLayershell.exclusionMode: ExclusionMode.Ignore // Don't reserve space - BarExclusionZone in MainScreen handles that
 
-  // Position and size to match bar location
-  readonly property string barPosition: Settings.data.bar.position || "top"
+  // Position and size to match bar location (per-screen)
+  readonly property string barPosition: Settings.getBarPositionForScreen(barWindow.screen?.name)
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
   readonly property real barMarginH: Math.ceil(barFloating ? Settings.data.bar.marginHorizontal : 0)
   readonly property real barMarginV: Math.ceil(barFloating ? Settings.data.bar.marginVertical : 0)
+  readonly property real barHeight: Style.getBarHeightForScreen(barWindow.screen?.name)
 
   // Anchor to the bar's edge
   anchors {
@@ -53,8 +54,8 @@ PanelWindow {
   }
 
   // Set a tight window size
-  implicitWidth: barIsVertical ? Style.barHeight : barWindow.screen.width
-  implicitHeight: barIsVertical ? barWindow.screen.height : Style.barHeight
+  implicitWidth: barIsVertical ? barHeight : barWindow.screen.width
+  implicitHeight: barIsVertical ? barWindow.screen.height : barHeight
 
   // Bar content - just the widgets, no background
   Bar {

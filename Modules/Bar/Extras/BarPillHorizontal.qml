@@ -41,9 +41,9 @@ Item {
   property bool showPill: false
   property bool shouldAnimateHide: false
 
-  readonly property int pillHeight: Style.capsuleHeight
-  readonly property int pillPaddingHorizontal: Math.round(Style.capsuleHeight * 0.2)
-  readonly property int pillOverlap: Math.round(Style.capsuleHeight * 0.5)
+  readonly property int pillHeight: Style.getCapsuleHeightForScreen(screen?.name)
+  readonly property int pillPaddingHorizontal: Math.round(pillHeight * 0.2)
+  readonly property int pillOverlap: Math.round(pillHeight * 0.5)
   readonly property int pillMaxWidth: Math.max(1, Math.round(textItem.implicitWidth + pillPaddingHorizontal * 2 + pillOverlap))
 
   // Always prioritize hover color, then the custom one and finally the fallback color
@@ -258,7 +258,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
+      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(root.screen?.name), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }

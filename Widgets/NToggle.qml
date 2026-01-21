@@ -30,6 +30,7 @@ RowLayout {
                                                                                   }) : ""
 
   NLabel {
+    Layout.fillWidth: true
     label: root.label
     description: root.description
     visible: root.label !== "" || root.description !== ""

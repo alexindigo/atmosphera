@@ -29,7 +29,7 @@ Rectangle {
     return {};
   }
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
   readonly property var now: Time.now
 
@@ -164,7 +164,7 @@ Rectangle {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     onEntered: {
       if (!PanelService.getPanel("clockPanel", screen)?.active) {
-        TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection());
+        TooltipService.show(root, buildTooltipText(), BarService.getTooltipDirection(root.screen?.name));
         tooltipRefreshTimer.start();
       }
     }

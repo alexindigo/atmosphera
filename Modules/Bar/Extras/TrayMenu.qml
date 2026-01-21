@@ -84,7 +84,7 @@ PopupWindow {
   }
   anchor.rect.y: {
     if (anchorItem && screen) {
-      const barPosition = Settings.data.bar.position;
+      const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
 
       // Calculate base Y offset (relative to anchor item)
       let baseY = anchorY;
@@ -138,7 +138,7 @@ PopupWindow {
     if (isSubMenu) {
       return anchorY;
     }
-    return anchorY + (Settings.data.bar.position === "bottom" ? -implicitHeight : Style.barHeight);
+    return anchorY + (Settings.getBarPositionForScreen(root.screen?.name) === "bottom" ? -implicitHeight : Style.getBarHeightForScreen(root.screen?.name));
   }
 
   function showAt(item, x, y) {
@@ -328,7 +328,7 @@ PopupWindow {
 
                                  // Determine submenu opening direction
                                  let openLeft = false;
-                                 const barPosition = Settings.data.bar.position;
+                                 const barPosition = Settings.getBarPositionForScreen(root.screen?.name);
                                  const globalPos = entry.mapToItem(null, 0, 0);
 
                                  if (barPosition === "right") {

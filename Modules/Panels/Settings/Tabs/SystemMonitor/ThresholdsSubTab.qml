@@ -23,7 +23,9 @@ ColumnLayout {
     rowSpacing: Style.marginM
 
     // Header row
-    Item { Layout.fillWidth: true }
+    Item {
+      Layout.fillWidth: true
+    }
 
     NText {
       Layout.alignment: Qt.AlignHCenter
@@ -176,6 +178,39 @@ ColumnLayout {
       onValueChanged: Settings.data.systemMonitor.memCriticalThreshold = value
     }
 
+    // Swap Usage
+    NText {
+      text: I18n.tr("bar.system-monitor.swap-usage-label")
+      pointSize: Style.fontSizeL
+    }
+
+    NSpinBox {
+      Layout.alignment: Qt.AlignHCenter
+      from: 0
+      to: 100
+      stepSize: 5
+      value: Settings.data.systemMonitor.swapWarningThreshold
+      defaultValue: Settings.getDefaultValue("systemMonitor.swapWarningThreshold")
+      suffix: "%"
+      onValueChanged: {
+        Settings.data.systemMonitor.swapWarningThreshold = value;
+        if (Settings.data.systemMonitor.swapCriticalThreshold < value) {
+          Settings.data.systemMonitor.swapCriticalThreshold = value;
+        }
+      }
+    }
+
+    NSpinBox {
+      Layout.alignment: Qt.AlignHCenter
+      from: Settings.data.systemMonitor.swapWarningThreshold
+      to: 100
+      stepSize: 5
+      value: Settings.data.systemMonitor.swapCriticalThreshold
+      defaultValue: Settings.getDefaultValue("systemMonitor.swapCriticalThreshold")
+      suffix: "%"
+      onValueChanged: Settings.data.systemMonitor.swapCriticalThreshold = value
+    }
+
     // Disk Usage
     NText {
       text: I18n.tr("panels.system-monitor.disk-section-label")
@@ -209,5 +244,4 @@ ColumnLayout {
       onValueChanged: Settings.data.systemMonitor.diskCriticalThreshold = value
     }
   }
-
 }

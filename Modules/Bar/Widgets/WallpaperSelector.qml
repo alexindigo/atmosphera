@@ -12,12 +12,13 @@ NIconButton {
 
   property ShellScreen screen
 
+  enabled: Settings.data.wallpaper.enabled
   baseSize: Style.capsuleHeight
   applyUiScale: false
   customRadius: Style.radiusL
   icon: "wallpaper-selector"
   tooltipText: I18n.tr("tooltips.wallpaper-selector")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   colorBg: Style.capsuleColor
   colorFg: Color.mOnSurface
   colorBorder: "transparent"

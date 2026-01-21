@@ -83,8 +83,8 @@ Loader {
 
       // Bar detection and positioning properties
       readonly property bool hasBar: modelData && modelData.name ? (Settings.data.bar.monitors.includes(modelData.name) || (Settings.data.bar.monitors.length === 0)) : false
-      readonly property bool barAtSameEdge: hasBar && Settings.data.bar.position === dockPosition
-      readonly property int barHeight: Style.barHeight
+      readonly property bool barAtSameEdge: hasBar && Settings.getBarPositionForScreen(modelData?.name) === dockPosition
+      readonly property int barHeight: Style.getBarHeightForScreen(modelData?.name)
 
       // Shared state between windows
       property bool dockHovered: false
@@ -102,6 +102,9 @@ Loader {
       // Combined model of running apps and pinned apps
       property var dockApps: []
 
+      // Track the session order of apps (transient reordering)
+      property var sessionAppOrder: []
+
       // Revision counter to force icon re-evaluation
       property int iconRevision: 0
 
@@ -109,6 +112,83 @@ Loader {
       function closeAllContextMenus() {
         if (currentContextMenu && currentContextMenu.visible) {
           currentContextMenu.hide();
+        }
+      }
+
+      function getAppKey(appData) {
+        if (!appData)
+          return null;
+        // prefer toplevel object identity for running apps to distinguish instances
+        if (appData.toplevel)
+          return appData.toplevel;
+        // fallback to appId for pinned-only apps
+        return appData.appId;
+      }
+
+      function sortDockApps(apps) {
+        if (!sessionAppOrder || sessionAppOrder.length === 0) {
+          return apps;
+        }
+
+        const sorted = [];
+        const remaining = [...apps];
+
+        // 1. Pick apps that are in the session order
+        for (let i = 0; i < sessionAppOrder.length; i++) {
+          const key = sessionAppOrder[i];
+          const idx = remaining.findIndex(app => getAppKey(app) === key);
+          if (idx !== -1) {
+            sorted.push(remaining[idx]);
+            remaining.splice(idx, 1);
+          }
+        }
+
+        // 2. Append any new/remaining apps
+        remaining.forEach(app => sorted.push(app));
+
+        return sorted;
+      }
+
+      function reorderApps(fromIndex, toIndex) {
+        if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= dockApps.length || toIndex >= dockApps.length)
+          return;
+
+        const list = [...dockApps];
+        const item = list.splice(fromIndex, 1)[0];
+        list.splice(toIndex, 0, item);
+
+        dockApps = list;
+        sessionAppOrder = dockApps.map(getAppKey);
+        savePinnedOrder();
+      }
+
+      function savePinnedOrder() {
+        const currentPinned = Settings.data.dock.pinnedApps || [];
+        const newPinned = [];
+        const seen = new Set();
+
+        // Extract pinned apps in their current visual order
+        dockApps.forEach(app => {
+                           if (app.appId && !seen.has(app.appId)) {
+                             const isPinned = currentPinned.some(p => normalizeAppId(p) === normalizeAppId(app.appId));
+
+                             if (isPinned) {
+                               newPinned.push(app.appId);
+                               seen.add(app.appId);
+                             }
+                           }
+                         });
+
+        // Check if any pinned apps were missed (unlikely if dockApps is correct)
+        currentPinned.forEach(p => {
+                                if (!seen.has(p)) {
+                                  newPinned.push(p);
+                                  seen.add(p);
+                                }
+                              });
+
+        if (JSON.stringify(currentPinned) !== JSON.stringify(newPinned)) {
+          Settings.data.dock.pinnedApps = newPinned;
         }
       }
 
@@ -235,7 +315,11 @@ Loader {
           pushPinned();
         }
 
-        dockApps = combined;
+        dockApps = sortDockApps(combined);
+        // Sync session order if needed (e.g. first run or new apps added)
+        if (!sessionAppOrder || sessionAppOrder.length === 0 || sessionAppOrder.length !== dockApps.length) {
+          sessionAppOrder = dockApps.map(getAppKey);
+        }
       }
 
       // Timer to unload dock after hide animation completes
@@ -312,10 +396,10 @@ Loader {
           color: "transparent"
 
           // When bar is at same edge, position peek window past the bar so it receives mouse events
-          margins.top: dockPosition === "top" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
-          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
-          margins.left: dockPosition === "left" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
-          margins.right: dockPosition === "right" && barAtSameEdge ? (Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          margins.top: dockPosition === "top" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.bottom: dockPosition === "bottom" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0)) : 0
+          margins.left: dockPosition === "left" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
+          margins.right: dockPosition === "right" && barAtSameEdge ? (barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0)) : 0
 
           WlrLayershell.namespace: "noctalia-dock-peek-" + (screen?.name || "unknown")
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -391,26 +475,27 @@ Loader {
           anchors.right: dockPosition === "right"
 
           // Offset past bar when at same edge (skip bar offset if dock is exclusive - exclusion zones stack)
-          margins.top: dockPosition === "top" ? (barAtSameEdge && !exclusive ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
-          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge && !exclusive ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
-          margins.left: dockPosition === "left" ? (barAtSameEdge && !exclusive ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
-          margins.right: dockPosition === "right" ? (barAtSameEdge && !exclusive ? Style.barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
+          margins.top: dockPosition === "top" ? (barAtSameEdge && !exclusive ? barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
+          margins.bottom: dockPosition === "bottom" ? (barAtSameEdge && !exclusive ? barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginVertical : 0) + floatingMargin : floatingMargin) : 0
+          margins.left: dockPosition === "left" ? (barAtSameEdge && !exclusive ? barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
+          margins.right: dockPosition === "right" ? (barAtSameEdge && !exclusive ? barHeight + (Settings.data.bar.floating ? Settings.data.bar.marginHorizontal : 0) + floatingMargin : floatingMargin) : 0
 
           // Container wrapper for animations
           Item {
             id: dockContainerWrapper
 
             // Helper properties for orthogonal bar detection
-            readonly property bool barOnLeft: hasBar && Settings.data.bar.position === "left" && !Settings.data.bar.floating
-            readonly property bool barOnRight: hasBar && Settings.data.bar.position === "right" && !Settings.data.bar.floating
-            readonly property bool barOnTop: hasBar && Settings.data.bar.position === "top" && !Settings.data.bar.floating
-            readonly property bool barOnBottom: hasBar && Settings.data.bar.position === "bottom" && !Settings.data.bar.floating
+            readonly property string screenBarPosition: Settings.getBarPositionForScreen(modelData?.name)
+            readonly property bool barOnLeft: hasBar && screenBarPosition === "left" && !Settings.data.bar.floating
+            readonly property bool barOnRight: hasBar && screenBarPosition === "right" && !Settings.data.bar.floating
+            readonly property bool barOnTop: hasBar && screenBarPosition === "top" && !Settings.data.bar.floating
+            readonly property bool barOnBottom: hasBar && screenBarPosition === "bottom" && !Settings.data.bar.floating
 
             // Calculate padding needed to shift center to match exclusive mode
-            readonly property int extraTop: (isVertical && !exclusive && barOnTop) ? Style.barHeight : 0
-            readonly property int extraBottom: (isVertical && !exclusive && barOnBottom) ? Style.barHeight : 0
-            readonly property int extraLeft: (!isVertical && !exclusive && barOnLeft) ? Style.barHeight : 0
-            readonly property int extraRight: (!isVertical && !exclusive && barOnRight) ? Style.barHeight : 0
+            readonly property int extraTop: (isVertical && !exclusive && barOnTop) ? barHeight : 0
+            readonly property int extraBottom: (isVertical && !exclusive && barOnBottom) ? barHeight : 0
+            readonly property int extraLeft: (!isVertical && !exclusive && barOnLeft) ? barHeight : 0
+            readonly property int extraRight: (!isVertical && !exclusive && barOnRight) ? barHeight : 0
 
             width: dockContainer.width + extraLeft + extraRight
             height: dockContainer.height + extraTop + extraBottom
@@ -542,6 +627,20 @@ Loader {
                       }
                       property bool isRunning: modelData && (modelData.type === "running" || modelData.type === "pinned-running")
 
+                      // Store index for drag-and-drop
+                      property int modelIndex: index
+                      objectName: "dockAppButton"
+
+                      DropArea {
+                        anchors.fill: parent
+                        keys: ["dock-app"]
+                        onDropped: function (drop) {
+                          if (drop.source && drop.source.objectName === "dockAppButton" && drop.source !== appButton) {
+                            root.reorderApps(drop.source.modelIndex, appButton.modelIndex);
+                          }
+                        }
+                      }
+
                       // Listen for the toplevel being closed
                       Connections {
                         target: modelData?.toplevel
@@ -550,33 +649,25 @@ Loader {
                         }
                       }
 
-                      IconImage {
-                        id: appIcon
+                      // Draggable container for the icon
+                      Item {
+                        id: iconContainer
                         width: iconSize
                         height: iconSize
-                        anchors.centerIn: parent
-                        source: {
-                          root.iconRevision; // Force re-evaluation when revision changes
-                          return dock.getAppIcon(modelData);
-                        }
-                        visible: source.toString() !== ""
-                        smooth: true
-                        asynchronous: true
 
-                        // Dim pinned apps that aren't running
-                        opacity: appButton.isRunning ? 1.0 : Settings.data.dock.deadOpacity
+                        // When dragging, remove anchors so MouseArea can position it
+                        anchors.centerIn: dragging ? undefined : parent
 
-                        scale: appButton.hovered ? 1.15 : 1.0
+                        property bool dragging: appMouseArea.drag.active
 
-                        // Apply dock-specific colorization shader only to non-focused apps
-                        layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
-                        layer.effect: ShaderEffect {
-                          property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
-                          property real colorizeMode: 0.0 // Dock mode (grayscale)
+                        Drag.active: dragging
+                        Drag.source: appButton
+                        Drag.hotSpot.x: width / 2
+                        Drag.hotSpot.y: height / 2
+                        Drag.keys: ["dock-app"]
 
-                          fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
-                        }
-
+                        z: dragging ? 1000 : 0
+                        scale: dragging ? 1.1 : (appButton.hovered ? 1.15 : 1.0)
                         Behavior on scale {
                           NumberAnimation {
                             duration: Style.animationNormal
@@ -585,36 +676,51 @@ Loader {
                           }
                         }
 
-                        Behavior on opacity {
-                          NumberAnimation {
-                            duration: Style.animationFast
-                            easing.type: Easing.OutQuad
+                        IconImage {
+                          id: appIcon
+                          anchors.fill: parent
+                          source: {
+                            root.iconRevision; // Force re-evaluation when revision changes
+                            return dock.getAppIcon(modelData);
+                          }
+                          visible: source.toString() !== ""
+                          smooth: true
+                          asynchronous: true
+
+                          // Dim pinned apps that aren't running
+                          opacity: appButton.isRunning ? 1.0 : Settings.data.dock.deadOpacity
+
+                          // Apply dock-specific colorization shader only to non-focused apps
+                          layer.enabled: !appButton.isActive && Settings.data.dock.colorizeIcons
+                          layer.effect: ShaderEffect {
+                            property color targetColor: Settings.data.colorSchemes.darkMode ? Color.mOnSurface : Color.mSurfaceVariant
+                            property real colorizeMode: 0.0 // Dock mode (grayscale)
+
+                            fragmentShader: Qt.resolvedUrl(Quickshell.shellDir + "/Shaders/qsb/appicon_colorize.frag.qsb")
+                          }
+
+                          Behavior on opacity {
+                            NumberAnimation {
+                              duration: Style.animationFast
+                              easing.type: Easing.OutQuad
+                            }
                           }
                         }
-                      }
 
-                      // Fall back if no icon
-                      NIcon {
-                        anchors.centerIn: parent
-                        visible: !appIcon.visible
-                        icon: "question-mark"
-                        pointSize: iconSize * 0.7
-                        color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
-                        opacity: appButton.isRunning ? 1.0 : 0.6
-                        scale: appButton.hovered ? 1.15 : 1.0
+                        // Fall back if no icon
+                        NIcon {
+                          anchors.centerIn: parent
+                          visible: !appIcon.visible
+                          icon: "question-mark"
+                          pointSize: iconSize * 0.7
+                          color: appButton.isActive ? Color.mPrimary : Color.mOnSurfaceVariant
+                          opacity: appButton.isRunning ? 1.0 : 0.6
 
-                        Behavior on scale {
-                          NumberAnimation {
-                            duration: Style.animationFast
-                            easing.type: Easing.OutBack
-                            easing.overshoot: 1.2
-                          }
-                        }
-
-                        Behavior on opacity {
-                          NumberAnimation {
-                            duration: Style.animationFast
-                            easing.type: Easing.OutQuad
+                          Behavior on opacity {
+                            NumberAnimation {
+                              duration: Style.animationFast
+                              easing.type: Easing.OutQuad
+                            }
                           }
                         }
                       }
@@ -668,6 +774,26 @@ Loader {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+
+                        // Only allow left-click dragging via axis control
+                        drag.target: iconContainer
+                        drag.axis: (pressedButtons & Qt.LeftButton) ? Drag.XAndYAxis : Drag.None
+                        preventStealing: true
+
+                        onPressed: {
+                          var p1 = appButton.mapFromItem(dockContainer, 0, 0);
+                          var p2 = appButton.mapFromItem(dockContainer, dockContainer.width, dockContainer.height);
+                          drag.minimumX = p1.x;
+                          drag.maximumX = p2.x - iconContainer.width;
+                          drag.minimumY = p1.y;
+                          drag.maximumY = p2.y - iconContainer.height;
+                        }
+
+                        onReleased: {
+                          if (iconContainer.Drag.active) {
+                            iconContainer.Drag.drop();
+                          }
+                        }
 
                         onEntered: {
                           anyAppHovered = true;

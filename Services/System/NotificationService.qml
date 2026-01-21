@@ -934,4 +934,123 @@ Singleton {
   onDoNotDisturbChanged: {
     ToastService.showNotice(doNotDisturb ? I18n.tr("toast.do-not-disturb.enabled") : I18n.tr("toast.do-not-disturb.disabled"), doNotDisturb ? I18n.tr("toast.do-not-disturb.enabled-desc") : I18n.tr("toast.do-not-disturb.disabled-desc"), doNotDisturb ? "bell-off" : "bell");
   }
+
+  // Media toast functionality
+  property string previousMediaTitle: ""
+  property string previousMediaArtist: ""
+  property bool previousMediaIsPlaying: false
+  property bool mediaToastInitialized: false
+
+  Timer {
+    id: mediaToastInitTimer
+    interval: 3000 // Wait 3 seconds after startup to avoid initial toast
+    running: true
+    onTriggered: {
+      root.mediaToastInitialized = true;
+      root.previousMediaTitle = MediaService.trackTitle;
+      root.previousMediaArtist = MediaService.trackArtist;
+      root.previousMediaIsPlaying = MediaService.isPlaying;
+    }
+  }
+
+  Timer {
+    id: mediaToastDebounce
+    interval: 250 // Dynamic interval based on player
+    onTriggered: {
+      checkMediaToast();
+    }
+  }
+
+  function checkMediaToast() {
+    if (!Settings.data.notifications.enableMediaToast || !mediaToastInitialized)
+      return;
+
+    if (doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
+      return;
+
+    // Re-evaluate player identity here to handle race conditions where
+    // the identity wasn't updated yet when the timer started.
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi", "zen"];
+    const isBrowser = browsers.some(b => player.includes(b));
+
+    // Safety check: If it's a browser, ensure we waited long enough.
+    // If we started with a short interval (e.g. 250ms because we thought it was Spotify),
+    // correct it now and wait the full duration.
+    if (isBrowser && mediaToastDebounce.interval < 1500) {
+      mediaToastDebounce.interval = 1500;
+      mediaToastDebounce.restart();
+      return;
+    }
+
+    const title = MediaService.trackTitle || "";
+    const artist = MediaService.trackArtist || "";
+    const isPlaying = MediaService.isPlaying;
+
+    // Only show toast if something meaningful changed
+    const titleChanged = title !== previousMediaTitle && title !== "";
+    const playStateChanged = isPlaying !== previousMediaIsPlaying;
+    const hasMedia = title !== "" || artist !== "";
+
+    // Browser Specific Logic:
+    // If a browser reports a new title but is PAUSED, ignore it.
+    if (isBrowser && !isPlaying && titleChanged) {
+      previousMediaTitle = title;
+      previousMediaArtist = artist;
+      previousMediaIsPlaying = isPlaying;
+      return;
+    }
+
+    if (hasMedia && (titleChanged || playStateChanged)) {
+      const icon = isPlaying ? "media-play" : "media-pause";
+      let message = "";
+
+      if (artist && title) {
+        message = artist + " — " + title;
+      } else if (title) {
+        message = title;
+      } else if (artist) {
+        message = artist;
+      }
+
+      if (message !== "") {
+        const toastTitle = isPlaying ? I18n.tr("common.play") : I18n.tr("common.pause");
+        ToastService.showNotice(toastTitle, message, icon, 3000);
+      }
+    }
+
+    previousMediaTitle = title;
+    previousMediaArtist = artist;
+    previousMediaIsPlaying = isPlaying;
+  }
+
+  Connections {
+    target: MediaService
+
+    function onTrackTitleChanged() {
+      restartDebounce();
+    }
+
+    function onTrackArtistChanged() {
+      restartDebounce();
+    }
+
+    function onIsPlayingChanged() {
+      restartDebounce();
+    }
+
+    function onPlayerIdentityChanged() {
+      restartDebounce();
+    }
+  }
+
+  function restartDebounce() {
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi"];
+    const isBrowser = browsers.some(b => player.includes(b));
+
+    // Use long delay for browsers to filter hover previews, short for music apps
+    mediaToastDebounce.interval = isBrowser ? 1500 : 250;
+    mediaToastDebounce.restart();
+  }
 }

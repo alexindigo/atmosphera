@@ -26,6 +26,7 @@ Singleton {
   }
 
   property var currentPlayer: null
+  property string playerIdentity: currentPlayer ? (currentPlayer.identity || "") : ""
   property real currentPosition: 0
   property bool isSeeking: false
   property int selectedPlayerIndex: 0

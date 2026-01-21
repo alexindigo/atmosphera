@@ -25,7 +25,7 @@ Singleton {
   - Default cache directory: ~/.cache/noctalia
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 40
+  readonly property int settingsVersion: 42
   readonly property bool isDebug: Quickshell.env("NOCTALIA_DEBUG") === "1"
   readonly property string shellName: "noctalia"
   readonly property string configDir: Quickshell.env("NOCTALIA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/"
@@ -49,7 +49,9 @@ Singleton {
     Quickshell.execDetached(["mkdir", "-p", cacheDir]);
 
     // Ensure PAM config file exists in configDir (create once, never override)
-    ensurePamConfig();
+    if (!Quickshell.env("NOCTALIA_PAM_CONFIG")) {
+      ensurePamConfig();
+    }
 
     // Mark directories as created and trigger file loading
     directoriesCreated = true;
@@ -136,24 +138,10 @@ Singleton {
         root.isFreshInstall = true;
         writeAdapter();
 
-        // Also write to fallback if set
-        if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-          settingsFallbackFileView.writeAdapter();
-        }
-
         // We started without settings, we should open the setupWizard
         root.shouldOpenSetupWizard = true;
       }
     }
-  }
-
-  // Fallback FileView for writing settings to alternate location
-  FileView {
-    id: settingsFallbackFileView
-    path: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") || ""
-    adapter: Quickshell.env("NOCTALIA_SETTINGS_FALLBACK") ? adapter : null
-    printErrors: false
-    watchChanges: false
   }
 
   // FileView to load default settings for comparison
@@ -258,6 +246,10 @@ Singleton {
           }
         ]
       }
+
+      // Per-screen overrides for position and widgets
+      // Format: [{ "name": "HDMI-1", "position": "left" }, { "name": "DP-1", "position": "bottom", "widgets": {...} }]
+      property list<var> screenOverrides: []
     }
 
     // general
@@ -284,7 +276,9 @@ Singleton {
       property string language: ""
       property bool allowPanelsOnScreenWithoutBar: true
       property bool showChangelogOnStartup: true
-      property bool telemetryEnabled: true
+      property bool telemetryEnabled: false
+      property bool enableLockScreenCountdown: true
+      property int lockScreenCountdownDuration: 10000
     }
 
     // ui
@@ -354,7 +348,7 @@ Singleton {
       property color fillColor: "#000000"
       property bool useSolidColor: false
       property color solidColor: "#1a1a2e"
-      property bool randomEnabled: false // Deprecated: use wallpaperChangeMode instead
+      property bool automationEnabled: false
       property string wallpaperChangeMode: "random" // "random" or "alphabetical"
       property int randomIntervalSec: 300 // 5 min
       property int transitionDuration: 1500 // 1500 ms
@@ -415,6 +409,9 @@ Singleton {
           },
           {
             "id": "WallpaperSelector"
+          },
+          {
+            "id": "NoctaliaPerformance"
           }
         ]
         property list<var> right: [
@@ -470,6 +467,8 @@ Singleton {
       property int gpuCriticalThreshold: 90
       property int memWarningThreshold: 80
       property int memCriticalThreshold: 90
+      property int swapWarningThreshold: 80
+      property int swapCriticalThreshold: 90
       property int diskWarningThreshold: 80
       property int diskCriticalThreshold: 90
       property int cpuPollingInterval: 3000
@@ -477,7 +476,7 @@ Singleton {
       property int gpuPollingInterval: 3000
       property bool enableDgpuMonitoring: false // Opt-in: reading dGPU sysfs/nvidia-smi wakes it from D3cold, draining battery
       property int memPollingInterval: 3000
-      property int diskPollingInterval: 3000
+      property int diskPollingInterval: 30000
       property int networkPollingInterval: 3000
       property int loadAvgPollingInterval: 3000
       property bool useCustomColors: false
@@ -578,6 +577,7 @@ Singleton {
         property string lowSoundFile: ""
         property string excludedApps: "discord,firefox,chrome,chromium,edge"
       }
+      property bool enableMediaToast: false
     }
 
     // on-screen display
@@ -587,7 +587,7 @@ Singleton {
       property int autoHideMs: 2000
       property bool overlayLayer: true
       property real backgroundOpacity: 1.0
-      property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness, OSD.Type.Media]
+      property list<var> enabledTypes: [OSD.Type.Volume, OSD.Type.InputVolume, OSD.Type.Brightness]
       property list<string> monitors: [] // holds osd visibility per monitor
     }
 
@@ -599,6 +599,7 @@ Singleton {
       property string visualizerType: "linear"
       property list<string> mprisBlacklist: []
       property string preferredPlayer: ""
+      property bool volumeFeedback: false
     }
 
     // brightness
@@ -615,14 +616,14 @@ Singleton {
       property string schedulingMode: "off"
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
-      property string matugenSchemeType: "scheme-fruit-salad"
+      property string generationMethod: "tonal-spot"
     }
 
     // templates toggles
     property JsonObject templates: JsonObject {
       property list<var> activeTemplates: []
       // Format: [{ "id": "gtk", "enabled": true }, { "id": "qt", "enabled": true }, ...]
-      property bool enableUserTemplates: false
+      property bool enableUserTheming: false
     }
 
     // night light
@@ -739,13 +740,179 @@ Singleton {
   }
 
   // -----------------------------------------------------
+  // Helper to find a screen override entry by name in the array
+  // Format: [{ "name": "HDMI-A-1", "position": "left" }, ...]
+  // Note: QML's list<var> is not a true JS array, so we check for .length instead of Array.isArray()
+  function _findScreenOverride(screenName) {
+    var overrides = data.bar.screenOverrides;
+    if (!screenName || !overrides || overrides.length === undefined) {
+      return null;
+    }
+    for (var i = 0; i < overrides.length; i++) {
+      if (overrides[i] && overrides[i].name === screenName) {
+        return overrides[i];
+      }
+    }
+    return null;
+  }
+
+  // Helper to find index of a screen override entry
+  function _findScreenOverrideIndex(screenName) {
+    var overrides = data.bar.screenOverrides;
+    if (!screenName || !overrides || overrides.length === undefined) {
+      return -1;
+    }
+    for (var i = 0; i < overrides.length; i++) {
+      if (overrides[i] && overrides[i].name === screenName) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  // -----------------------------------------------------
+  // Check if a screen's overrides are enabled
+  // Returns true if enabled flag is true or undefined (backward compat)
+  // Returns false only if enabled is explicitly false
+  function isScreenOverrideEnabled(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (!override) {
+      return false;
+    }
+    return override.enabled !== false;
+  }
+
+  // -----------------------------------------------------
+  // Get effective bar position for a screen (with inheritance)
+  // If the screen has a position override and overrides are enabled, use it; otherwise use global default
+  function getBarPositionForScreen(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (override && override.enabled !== false && override.position !== undefined) {
+      return override.position;
+    }
+    return data.bar.position || "top";
+  }
+
+  // -----------------------------------------------------
+  // Get effective bar widgets for a screen (with inheritance)
+  // If the screen has widget overrides and overrides are enabled, use them; otherwise use global defaults
+  function getBarWidgetsForScreen(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (override && override.enabled !== false && override.widgets !== undefined) {
+      return override.widgets;
+    }
+    return data.bar.widgets;
+  }
+
+  // -----------------------------------------------------
+  // Get effective bar density for a screen (with inheritance)
+  // If the screen has a density override and overrides are enabled, use it; otherwise use global default
+  function getBarDensityForScreen(screenName) {
+    var override = _findScreenOverride(screenName);
+    if (override && override.enabled !== false && override.density !== undefined) {
+      return override.density;
+    }
+    return data.bar.density || "default";
+  }
+
+  // -----------------------------------------------------
+  // Check if a screen has any overrides, optionally for a specific property
+  function hasScreenOverride(screenName, property) {
+    var override = _findScreenOverride(screenName);
+    if (!override) {
+      return false;
+    }
+    if (property) {
+      return override[property] !== undefined;
+    }
+    // Check if screen has any override property (besides "name")
+    var keys = Object.keys(override);
+    return keys.length > 1 || (keys.length === 1 && keys[0] !== "name");
+  }
+
+  // -----------------------------------------------------
+  // Get the screen override entry directly (for in-place modifications)
+  // Returns the actual entry object from the array, not a copy
+  function getScreenOverrideEntry(screenName) {
+    return _findScreenOverride(screenName);
+  }
+
+  // -----------------------------------------------------
+  // Set a per-screen override
+  function setScreenOverride(screenName, property, value) {
+    if (!screenName)
+      return;
+
+    var overrides = JSON.parse(JSON.stringify(data.bar.screenOverrides || []));
+    if (overrides.length === undefined) {
+      overrides = [];
+    }
+
+    var index = -1;
+    for (var i = 0; i < overrides.length; i++) {
+      if (overrides[i] && overrides[i].name === screenName) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index === -1) {
+      // Create new entry
+      var newEntry = {
+        "name": screenName
+      };
+      newEntry[property] = value;
+      overrides.push(newEntry);
+    } else {
+      // Update existing entry
+      overrides[index][property] = value;
+    }
+    data.bar.screenOverrides = overrides;
+  }
+
+  // -----------------------------------------------------
+  // Clear a per-screen override (revert to global default)
+  // If property is null, clears all overrides for that screen
+  function clearScreenOverride(screenName, property) {
+    if (!screenName)
+      return;
+
+    var overrides = data.bar.screenOverrides;
+    if (!overrides || overrides.length === undefined) {
+      return;
+    }
+
+    overrides = JSON.parse(JSON.stringify(overrides));
+
+    var index = -1;
+    for (var i = 0; i < overrides.length; i++) {
+      if (overrides[i] && overrides[i].name === screenName) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index === -1) {
+      return;
+    }
+
+    if (property) {
+      delete overrides[index][property];
+      // Remove screen entry if only "name" remains
+      var keys = Object.keys(overrides[index]);
+      if (keys.length <= 1 && (keys.length === 0 || keys[0] === "name")) {
+        overrides.splice(index, 1);
+      }
+    } else {
+      overrides.splice(index, 1);
+    }
+    data.bar.screenOverrides = overrides;
+  }
+
+  // -----------------------------------------------------
   // Public function to trigger immediate settings saving
   function saveImmediate() {
     settingsFileView.writeAdapter();
-    // Write to fallback location if set
-    if (Quickshell.env("NOCTALIA_SETTINGS_FALLBACK")) {
-      settingsFallbackFileView.writeAdapter();
-    }
     root.settingsSaved(); // Emit signal after saving
   }
 
@@ -932,7 +1099,7 @@ Singleton {
     var pamConfigFile = pamConfigDir + "/password.conf";
 
     // Check if file already exists
-    fileCheckPamProcess.command = ["sh", "-c", `grep -q '^ID=nixos' /etc/os-release || test -f ${pamConfigFile}`];
+    fileCheckPamProcess.command = ["test", "-f", pamConfigFile];
     fileCheckPamProcess.running = true;
   }
 
@@ -967,7 +1134,7 @@ Singleton {
     onExited: function (exitCode) {
       if (exitCode === 0) {
         // File exists, skip creation
-        Logger.d("Settings", "On NixOS or PAM config file already exists, skipping creation");
+        Logger.d("Settings", "PAM config file already exists, skipping creation");
       } else {
         // File doesn't exist, create it
         doCreatePamConfig();

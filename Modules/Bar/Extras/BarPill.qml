@@ -22,7 +22,7 @@ Item {
   property color customBackgroundColor: "transparent"
   property color customTextIconColor: "transparent"
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool isVerticalBar: barPosition === "left" || barPosition === "right"
 
   signal shown

@@ -48,6 +48,8 @@
       "device-default": "Domyślne (urządzenie wyświetlające)",
       "device-description": "Wybierz, które urządzenie baterii ma być wyświetlane.",
       "device-label": "Urządzenie baterii",
+      "hide-if-idle-description": "Ukryj widżet, gdy bateria nie jest ładowana ani rozładowywana.",
+      "hide-if-idle-label": "Ukryj, gdy bezczynny",
       "hide-if-not-detected-description": "Ukryj widżet, gdy w systemie nie zostanie wykryta bateria.",
       "hide-if-not-detected-label": "Ukryj się, jeśli nie wykryto",
       "low-battery-threshold-description": "Pokaż ostrzeżenie, gdy poziom baterii spadnie poniżej tego procentu.",
@@ -209,6 +211,8 @@
       "network-traffic-label": "Ruch sieciowy",
       "storage-usage-description": "Pokaż informacje o użyciu miejsca na dysku.",
       "storage-usage-label": "Użycie dysku",
+      "swap-usage-description": "Pokaż użycie pamięci wymiany.",
+      "swap-usage-label": "Użycie pamięci wymiany",
       "use-monospace-font-description": "Użyj czcionki o stałej szerokości znaków dla zachowania spójnej szerokości znaków.",
       "use-monospace-font-label": "Czcionka o stałej szerokości znaków"
     },
@@ -357,6 +361,7 @@
     "contributors": "Współtwórcy",
     "countdown": "Odliczanie",
     "date": "Data",
+    "default": "Domyślny",
     "delete": "Usuń",
     "devices": "Urządzenia",
     "disabled": "Wyłączone",
@@ -369,6 +374,7 @@
     "enabled": "Włączone",
     "events": "Wydarzenia",
     "execute": "Wykonaj",
+    "faithful": "Wierny",
     "focus": "Skupienie",
     "frequency": "Częstotliwość",
     "gateway": "Brama",
@@ -448,6 +454,7 @@
     "update": "Aktualizacja",
     "upload": "Wyślij",
     "version": "Wersja",
+    "vibrant": "Żywy",
     "visualizer": "Wizualizator",
     "volume": "Objętość",
     "volumes": "Tomy",
@@ -533,7 +540,10 @@
     "results": "wyniki"
   },
   "lock-screen": {
-    "password": "Wprowadź hasło..."
+    "authenticating": "Uwierzytelnianie...",
+    "password": "Wprowadź hasło...",
+    "restart": "Restart",
+    "shut-down": "Wyłącz"
   },
   "notifications": {
     "panel": {
@@ -609,6 +619,7 @@
       "noctalia-installed-version": "Zainstalowana wersja:",
       "noctalia-latest-version": "Najnowsza wersja:",
       "noctalia-title": "Noctalia shell",
+      "privacy-policy": "Polityka prywatności",
       "support": "Wesprzyj nas",
       "system-cpu": "Procesor:",
       "system-disk": "Dysk:",
@@ -622,6 +633,7 @@
       "system-not-installed": "fastfetch nie jest zainstalowany",
       "system-os": "System operacyjny:",
       "system-packages": "Paczki:",
+      "system-product": "Produkt:",
       "system-title": "Informacje o systemie",
       "system-uptime": "Czas pracy:",
       "system-wm": "WM:",
@@ -673,6 +685,8 @@
       "volumes-output-volume-description": "Poziom głośności całego systemu.",
       "volumes-step-size-description": "Dostosuj skok zmiany głośności (kółko myszy, skróty klawiszowe).",
       "volumes-step-size-label": "Skok głośności",
+      "volumes-volume-feedback-description": "Odtwarzaj dźwięk zwrotny podczas regulacji głośności",
+      "volumes-volume-feedback-label": "Odtwórz dźwięk sprzężenia zwrotnego głośności",
       "volumes-volume-overdrive-description": "Pozwól na zwiększenie głośności powyżej 100%. Może nie być obsługiwane przez każdy sprzęt.",
       "volumes-volume-overdrive-label": "Zezwalaj na wzmocnienie głośności (overdrive)"
     },
@@ -702,7 +716,13 @@
       "appearance-show-outline-label": "Pokaż obramowanie widżetów",
       "appearance-use-separate-opacity-description": "Umożliwia użycie oddzielnej wartości krycia dla tła paska.",
       "appearance-use-separate-opacity-label": "Użyj osobnej przezroczystości słupków",
+      "monitor-configure-widgets": "Skonfiguruj widżety",
+      "monitor-override-settings": "Zastąp ustawienia globalne",
+      "monitor-override-settings-description": "Użyj niestandardowych ustawień dla tego monitora.",
+      "monitor-reset-all": "Zresetuj wszystko",
+      "monitor-widgets-title": "Konfiguracja widgetu - {monitor}",
       "monitors-desc": "Pokaż pasek na konkretnych monitorach. Domyślnie na wszystkich, jeśli żaden nie zostanie wybrany.",
+      "monitors-desc-new": "Skonfiguruj, które monitory wyświetlają Bar i dostosuj ustawienia dla każdego monitora.",
       "monitors-title": "Wyświetlanie na monitorach",
       "title": "Pasek",
       "tray-blacklist-description": "Dodaj reguły wykluczenia zasobnika, obsługuje maski (*).",
@@ -710,30 +730,27 @@
       "tray-blacklist-placeholder": "np. nm-applet, Fcitx*",
       "tray-pin-application": "Przypnij aplikację",
       "tray-unpin-application": "Odepnij aplikację",
+      "use-global-widgets": "Używaj globalnych widżetów",
       "widgets-desc": "Przeciągnij widżety, aby zmienić ich kolejność. Użyj menu pod prawym przyciskiem, aby przenosić lub usuwać widżety.",
       "widgets-title": "Pozycjonowanie widżetów"
     },
     "color-scheme": {
-      "color-source-desc": "Główne ustawienia kolorów Noctalia.",
-      "color-source-matugen-scheme-type-description": "Wybierz metodę generowania schematu kolorów, której Matugen użyje do tworzenia kolorów z twojej tapety.",
-      "color-source-matugen-scheme-type-label": "Typ schematu Matugen",
-      "color-source-title": "Źródło kolorów",
-      "color-source-use-wallpaper-colors-description": "Generuj schematy kolorów z tapety za pomocą Matugen. Automatycznie dopasowuje motyw.",
+      "color-source-use-wallpaper-colors-description": "Generuj schematy kolorów z tapety. Automatycznie wyodrębnia kolory, aby stworzyć spójny motyw.",
       "color-source-use-wallpaper-colors-label": "Użyj kolorów tapety",
       "dark-mode-mode-description": "Włącza automatyczne przełączanie między trybem jasnym a ciemnym.",
       "dark-mode-mode-label": "Harmonogram trybu ciemnego",
       "dark-mode-mode-manual": "Ręcznie",
       "dark-mode-mode-off": "Wyłączony",
       "dark-mode-switch-description": "Przełącza na ciemniejszy motyw dla łatwiejszego oglądania w nocy.",
-      "delete-error-description": "Nie udało się usunąć {scheme}.",
+      "delete-error-description": "Nie udało się usunąć {scheme}",
       "delete-error-title": "Usuwanie nieudane",
-      "delete-success-description": "Pomyślnie usunięto {scheme}.",
+      "delete-success-description": "Pomyślnie usunięto {scheme}",
       "delete-success-title": "Schemat kolorów usunięty",
       "download-button": "Pobierz więcej",
       "download-downloading": "Pobieranie...",
       "download-empty": "Brak dostępnych schematów kolorów",
       "download-error-api-error": "Błąd API: {status}",
-      "download-error-description": "Nie udało się pobrać {scheme}.",
+      "download-error-description": "Nie udało się pobrać {scheme}",
       "download-error-download-failed": "Pobieranie nieudane z kodem: {code}",
       "download-error-invalid-response": "Nieprawidłowy format odpowiedzi API",
       "download-error-no-files": "Nie znaleziono plików dla schematu",
@@ -741,11 +758,10 @@
       "download-error-rate-limit": "Przekroczono limit zapytań GitHub API",
       "download-error-title": "Pobieranie nieudane",
       "download-fetching": "Pobieranie dostępnych schematów kolorów...",
-      "download-success-description": "Pomyślnie pobrano {scheme}.",
+      "download-success-description": "Pomyślnie pobrano {scheme}",
       "download-success-title": "Schemat kolorów pobrany",
       "download-title": "Pobierz schematy kolorów",
       "predefined-desc": "Wybierz z kolekcji predefiniowanych schematów kolorów.",
-      "predefined-generate-templates-description": "Generuj szablony Matugen (GTK, motywy terminala itp.) przy użyciu predefiniowanych schematów kolorów.",
       "predefined-generate-templates-label": "Generuj szablony dla predefiniowanych schematów",
       "predefined-title": "Predefiniowane schematy kolorów",
       "templates-desc": "Zastosuj kolory w aplikacjach zewnętrznych.",
@@ -757,7 +773,9 @@
       "templates-misc-user-templates-label": "Włącz szablony użytkownika",
       "templates-none-detected": "Nie wykryto",
       "templates-write-path": "Zapisuje: {filepath}",
-      "title": "Schemat kolorów"
+      "title": "Schemat kolorów",
+      "wallpaper-method-description": "Wybierz swoją ulubioną metodę generowania palety.",
+      "wallpaper-method-label": "Metoda generowania palety"
     },
     "control-center": {
       "cards-desc": "Dostosuj, które kontrolki pojawiają się w centrum sterowania i w jakiej kolejności.",
@@ -899,6 +917,7 @@
       "title": "Dok"
     },
     "general": {
+      "copy-settings": "Kopiuj ustawienia",
       "fonts-default-description": "Główna czcionka używana w całym interfejsie.",
       "fonts-default-label": "Czcionka domyślna",
       "fonts-default-placeholder": "Wybierz czcionkę domyślną...",
@@ -933,7 +952,8 @@
       "screen-corners-show-corners-label": "Pokaż narożniki ekranu",
       "screen-corners-solid-black-description": "Użyj jednolitej czerni zamiast koloru tła paska.",
       "screen-corners-solid-black-label": "Jednolicie czarne narożniki",
-      "screen-corners-title": "Narożniki ekranu"
+      "screen-corners-title": "Narożniki ekranu",
+      "settings-copied": "Ustawienia skopiowane do schowka"
     },
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
@@ -1083,6 +1103,8 @@
       "history-low-urgency-label": "Odeślij niską pilność do historii",
       "history-normal-urgency-description": "Zapisuj powiadomienia o normalnym priorytecie w historii.",
       "history-normal-urgency-label": "Zapisz normalny priorytet do historii",
+      "media-toast-description": "Wyświetl toast, gdy zmieni się stan odtwarzania multimediów.",
+      "media-toast-label": "Media",
       "monitors-desc": "Pokazuj powiadomienia na konkretnych monitorach. Domyślnie na wszystkich.",
       "settings-always-on-top-description": "Wyświetlaj powiadomienia nad oknami pełnoekranowymi i innymi warstwami.",
       "settings-background-opacity-description": "Dostosuj przezroczystość tła powiadomień.",
@@ -1150,6 +1172,8 @@
       "types-input-volume-label": "Głośność wejściowa",
       "types-lockkey-description": "Pokazuj OSD podczas przełączania Caps Lock, Num Lock lub Scroll Lock.",
       "types-lockkey-label": "Klawisze blokady",
+      "types-media-description": "Wyświetlaj OSD, gdy zmieni się stan odtwarzania multimediów (odtwarzanie, pauza, pomijanie).",
+      "types-media-label": "Odtwarzanie multimediów",
       "types-title": "Zdarzenia wyzwalające OSD",
       "types-volume-description": "Pokazuj OSD podczas zmiany głośności wyjścia audio.",
       "types-volume-label": "Głośność wyjściowa"
@@ -1159,9 +1183,9 @@
       "available-label": "Dostępne wtyczki",
       "available-no-plugins-description": "Sprawdź źródła wtyczek lub odśwież listę.",
       "available-no-plugins-label": "Brak dostępnych wtyczek",
-      "collision-already-installed": "Ta wtyczka jest już zainstalowana.",
-      "collision-custom-version-exists": "Niestandardowa wersja z \"{source}\" jest już zainstalowana.",
-      "collision-official-version-exists": "Oficjalna wersja tej wtyczki jest już zainstalowana.",
+      "collision-already-installed": "Ta wtyczka jest już zainstalowana",
+      "collision-custom-version-exists": "Niestandardowa wersja z \"{source}\" jest już zainstalowana",
+      "collision-official-version-exists": "Oficjalna wersja tej wtyczki jest już zainstalowana",
       "filter-downloaded": "Pobrane",
       "filter-not-downloaded": "Niepobrane",
       "filter-tags-description": "Filtruj wtyczki według kategorii lub statusu pobierania",
@@ -1169,9 +1193,9 @@
       "hot-reload-description": "Automatycznie przeładuj wtyczki przy zmianie ich plików. Przydatne przy tworzeniu wtyczek.",
       "hot-reload-label": "Gorące przeładowanie (tryb deweloperski)",
       "hot-reloaded": "Przeładowano wtyczkę: {name}",
-      "install-error": "Błąd instalacji: {error}.",
+      "install-error": "Błąd instalacji: {error}",
       "install-incompatible": "{plugin} wymaga Noctalii w wersji v{version} lub wyższej",
-      "install-success": "Pomyślnie zainstalowano {plugin}.",
+      "install-success": "Pomyślnie zainstalowano {plugin}",
       "installed-description": "Zarządzaj i konfiguruj lokalnie zainstalowane wtyczki.",
       "installed-label": "Zainstalowane wtyczki",
       "installed-no-plugins-description": "Zainstaluj wtyczki z sekcji \"Dostępne\".",
@@ -1182,16 +1206,16 @@
       "plugin-settings-title": "Ustawienia {plugin}",
       "refresh-refreshing": "Odświeżanie listy wtyczek...",
       "refresh-tooltip": "Odśwież dostępne wtyczki",
-      "settings-error-not-loaded": "Wtyczka nie została załadowana.",
-      "settings-saved": "Ustawienia wtyczki zapisane.",
+      "settings-error-not-loaded": "Wtyczka nie została załadowana",
+      "settings-saved": "Ustawienia wtyczki zapisane",
       "settings-tooltip": "Ustawienia wtyczki",
       "source-custom": "Źródło niestandardowe",
       "sources-add-custom": "Dodaj własne repozytorium",
       "sources-add-dialog-description": "Dodaj repozytorium GitHub jako źródło wtyczek.",
-      "sources-add-dialog-error": "Nie udało się dodać źródła wtyczek.",
+      "sources-add-dialog-error": "Nie udało się dodać źródła wtyczek",
       "sources-add-dialog-name": "Nazwa repozytorium",
       "sources-add-dialog-name-placeholder": "Moje własne wtyczki",
-      "sources-add-dialog-success": "Źródło wtyczek dodane pomyślnie.",
+      "sources-add-dialog-success": "Źródło wtyczek dodane pomyślnie",
       "sources-add-dialog-title": "Dodaj źródło wtyczek",
       "sources-add-dialog-url": "Adres URL repozytorium",
       "sources-description": "Zarządzaj repozytoriami wtyczek.",
@@ -1200,16 +1224,16 @@
       "title": "Wtyczki",
       "uninstall-dialog-description": "Czy na pewno chcesz odinstalować {plugin}? Spowoduje to usunięcie wszystkich danych wtyczki.",
       "uninstall-dialog-title": "Odinstaluj wtyczkę",
-      "uninstall-error": "Błąd odinstalowywania: {error}.",
-      "uninstall-success": "Pomyślnie odinstalowano {plugin}.",
+      "uninstall-error": "Błąd odinstalowywania: {error}",
+      "uninstall-success": "Pomyślnie odinstalowano {plugin}",
       "uninstalling": "Odinstalowywanie {plugin}...",
       "update-all": "Aktualizuj wszystkie ({count})",
-      "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie.",
+      "update-all-success": "Wszystkie wtyczki zaktualizowane pomyślnie",
       "update-available": "Dostępna nowa aktualizacja wtyczki",
       "update-available-plural": "Dostępne nowe aktualizacje wtyczek ({count})",
-      "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}.",
+      "update-error": "Błąd aktualizacji wtyczki {plugin}: {error}",
       "update-pending": "v{current} → v{new} (wymaga Noctalii v{required})",
-      "update-success": "Zaktualizowano {plugin} do v{version}.",
+      "update-success": "Zaktualizowano {plugin} do v{version}",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualizowanie {plugin}..."
     },
@@ -1380,12 +1404,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} za {seconds} sekund...",
+    "cancel-timer": "Anuluj timer",
     "title": "Menu sesji"
   },
   "setup": {
     "all-done": "Gotowe!",
     "appearance": {
-      "subheader": "Wybierz tryb ciemny i źródła kolorów (Matugen lub predefiniowane)."
+      "subheader": "Wybierz Dark Mode i źródła kolorów (Tapeta lub predefiniowane)."
     },
     "customize": {
       "header": "Dostosuj swoje doświadczenie",
@@ -1444,86 +1469,78 @@
     },
     "battery": {
       "low": "Słaba bateria",
-      "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę."
+      "low-desc": "Poziom baterii wynosi {percent}%. Podłącz ładowarkę"
     },
     "bluetooth": {
-      "address-copied": "Adres skopiowany do schowka.",
+      "address-copied": "Adres skopiowany do schowka",
       "confirm-code": "Potwierdź kod {value} na drugim urządzeniu.",
-      "connect-failed": "Nie udało się połączyć z urządzeniem.",
-      "disconnect-failed": "Nie udało się rozłączyć z urządzeniem.",
-      "discoverable-change-failed": "Nie udało się zmienić stanu wykrywalności.",
-      "discoverable-disabled": "Wykrywalność wyłączona.",
-      "discoverable-enabled": "Wykrywalność włączona.",
+      "connect-failed": "Nie udało się połączyć z urządzeniem",
+      "disconnect-failed": "Nie udało się rozłączyć z urządzeniem",
+      "discoverable-change-failed": "Nie udało się zmienić stanu wykrywalności",
+      "discoverable-disabled": "Wykrywalność wyłączona",
+      "discoverable-enabled": "Wykrywalność włączona",
       "display-code": "Wprowadź kod {value} na drugim urządzeniu.",
-      "forget-failed": "Nie udało się zapomnieć urządzenia.",
-      "pair-failed": "Nie udało się sparować urządzenia.",
+      "forget-failed": "Nie udało się zapomnieć urządzenia",
+      "pair-failed": "Nie udało się sparować urządzenia",
       "passkey-required": "Wymagany klucz dostępu przez urządzenie.",
       "pincode-required": "Kod PIN wymagany przez urządzenie.",
-      "state-change-failed": "Nie udało się zmienić stanu Bluetooth."
+      "state-change-failed": "Nie udało się zmienić stanu Bluetooth"
     },
     "clipboard": {
       "long-text": "Długi tekst",
       "unavailable": "Historia schowka niedostępna",
-      "unavailable-desc": "Aplikacja 'cliphist' nie jest zainstalowana. Zainstaluj ją, aby korzystać z historii schowka."
+      "unavailable-desc": "Aplikacja 'cliphist' nie jest zainstalowana. Zainstaluj ją, aby korzystać z historii schowka"
     },
     "do-not-disturb": {
       "disabled": "Nie przeszkadzać wyłączone",
-      "disabled-desc": "Pokazywanie wszystkich powiadomień.",
+      "disabled-desc": "Pokazywanie wszystkich powiadomień",
       "enabled": "Nie przeszkadzać włączone",
-      "enabled-desc": "Powiadomienia znajdziesz w swojej historii."
+      "enabled-desc": "Powiadomienia znajdziesz w swojej historii"
     },
-    "internet-limited": "Połączono bez dostępu do internetu.",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel zmienił nazwę na SessionMenu, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call sessionMenu toggle\".",
-      "sidepanel-deprecated": "SidePanel zmienił nazwę na ControlCenter, to wywołanie IPC zostanie wkrótce wycofane. Użyj \"ipc call controlCenter toggle\"."
-    },
+    "internet-limited": "Połączono bez dostępu do internetu",
     "keyboard-layout": {
-      "changed": "Układ klawiatury zmieniony na {layout}.",
+      "changed": "Układ klawiatury zmieniony na {layout}",
       "title": "Klawiatura"
     },
-    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce.",
+    "kofi-opened": "Strona Ko-fi otwarta w przeglądarce",
     "missing-control-center": {
-      "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek.",
+      "description": "Widżet centrum sterowania został usunięty z paska. Aby mieć do niego dostęp, musisz go dodać ponownie. Możesz go również otworzyć, klikając prawym przyciskiem na pasek",
       "label": "Ostatni widżet centrum sterowania usunięty"
     },
     "night-light": {
-      "forced": "Wymuszona aktywacja.",
-      "normal": "Tryb normalny.",
-      "not-installed": "wlsunset nie jest zainstalowany."
+      "forced": "Wymuszona aktywacja",
+      "normal": "Tryb normalny",
+      "not-installed": "wlsunset nie jest zainstalowany"
     },
     "noctalia-performance": {
-      "disabled": "Tryb wydajności wyłączony.",
-      "enabled": "Tryb wydajności włączony.",
+      "disabled": "Tryb wydajności wyłączony",
+      "enabled": "Tryb wydajności włączony",
       "label": "Wydajność Noctalia"
     },
     "power-profile": {
-      "changed": "Profil zasilania zmieniony.",
+      "changed": "Profil zasilania zmieniony",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów.",
-      "title-matugen": "Błąd przetwarzania szablonów Matugen",
-      "title-predefined": "Błąd przetwarzania predefiniowanego schematu kolorów"
+      "desc-generic": "Napotkano błąd podczas przetwarzania szablonów",
+      "title": "Przetwarzanie szablonu nie powiodło się"
     },
     "vpn": {
-      "connected": "Połączono z '{name}'.",
-      "disconnected": "Rozłączono z '{name}'."
+      "connected": "Połączono z '{name}'",
+      "disconnected": "Rozłączono z '{name}'"
     },
     "wallpaper-colors": {
-      "disabled": "Kolory tapety wyłączone.",
-      "enabled": "Kolory tapety włączone.",
-      "label": "Generowanie kolorów tapety",
-      "not-installed": "Matugen nie jest zainstalowany — wymagany do ekstrakcji kolorów."
+      "disabled": "Kolory tapety wyłączone",
+      "enabled": "Kolory tapety włączone",
+      "label": "Generowanie kolorów tapety"
     },
     "wifi": {
-      "connected": "Połączono z '{ssid}'.",
-      "connection-failed": "Połączenie nieudane.",
-      "connection-timeout": "Przekroczenie czasu połączenia.",
-      "disabled": "Wyłączone.",
-      "disconnected": "Rozłączono z '{ssid}'.",
-      "enabled": "Włączone.",
-      "incorrect-password": "Nieprawidłowe hasło.",
-      "network-not-found": "Nie znaleziono sieci."
+      "connected": "Połączono z '{ssid}'",
+      "connection-failed": "Połączenie nieudane",
+      "connection-timeout": "Przekroczenie czasu połączenia",
+      "disconnected": "Rozłączono z '{ssid}'",
+      "incorrect-password": "Nieprawidłowe hasło",
+      "network-not-found": "Nie znaleziono sieci"
     }
   },
   "tooltips": {
@@ -1587,6 +1604,7 @@
     "fill-modes": {
       "crop": "Przytnij (Wypełnij)",
       "fit": "Dopasuj (Zmieść)",
+      "repeat": "Powtórz (Kafel)",
       "stretch": "Rozciągnij"
     },
     "no-match": "Nie znaleziono dopasowania.",
@@ -1689,10 +1707,11 @@
     "file-picker": {
       "item": "element",
       "items": "elementy",
+      "search-placeholder": "Szukaj plików i folderów...",
       "select-current": "Wybierz bieżący",
       "select-file": "Wybierz plik",
       "select-folder": "Wybierz folder",
-      "selected:": "Zaznaczone:",
+      "selected": "Wybrano:",
       "title": "Wybór plików"
     },
     "file-picker-title": "Wybierz plik",

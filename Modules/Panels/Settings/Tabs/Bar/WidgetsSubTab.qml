@@ -25,9 +25,10 @@ ColumnLayout {
     wrapMode: Text.WordWrap
     Layout.fillWidth: true
   }
+
   // Left Section
   NSectionEditor {
-    sectionName: "Left"
+    sectionName: I18n.tr("positions.left")
     sectionId: "left"
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
@@ -43,7 +44,7 @@ ColumnLayout {
 
   // Center Section
   NSectionEditor {
-    sectionName: "Center"
+    sectionName: I18n.tr("positions.center")
     sectionId: "center"
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry
@@ -59,7 +60,7 @@ ColumnLayout {
 
   // Right Section
   NSectionEditor {
-    sectionName: "Right"
+    sectionName: I18n.tr("positions.right")
     sectionId: "right"
     settingsDialogComponent: Qt.resolvedUrl(Quickshell.shellDir + "/Modules/Panels/Settings/Bar/BarWidgetSettingsDialog.qml")
     widgetRegistry: BarWidgetRegistry

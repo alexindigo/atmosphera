@@ -21,7 +21,8 @@ PopupWindow {
   property real minWidth: 120
   property real calculatedWidth: 180
 
-  readonly property string barPosition: Settings.data.bar.position
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
 
   signal triggered(string action, var item)
 
@@ -144,7 +145,7 @@ PopupWindow {
         baseY = -(implicitHeight + Style.marginM);
       } else if (root.barPosition === "top") {
         // For top bar: position menu below bar
-        baseY = Style.barHeight + Style.marginM;
+        baseY = barHeight + Style.marginM;
       } else {
         // For left/right bar: vertically center on anchor
         baseY = anchorCenterY - (implicitHeight / 2);
@@ -169,7 +170,7 @@ PopupWindow {
     if (root.barPosition === "bottom") {
       return -implicitHeight - Style.marginM;
     }
-    return Style.barHeight;
+    return barHeight;
   }
 
   Component.onCompleted: {

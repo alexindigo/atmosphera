@@ -119,6 +119,7 @@ Item {
   }
 
   Rectangle {
+    visible: !Settings.data.wallpaper.useSolidColor
     anchors.fill: parent
     gradient: Gradient {
       GradientStop {

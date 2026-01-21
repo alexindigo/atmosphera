@@ -14,8 +14,9 @@ PanelWindow {
   id: root
 
   readonly property bool exclusive: Settings.data.bar.exclusive
-  readonly property string barPosition: Settings.data.bar.position || "top"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
   readonly property bool barFloating: Settings.data.bar.floating || false
   readonly property real barMarginH: barFloating ? Math.ceil(Settings.data.bar.marginHorizontal) : 0
   readonly property real barMarginV: barFloating ? Math.ceil(Settings.data.bar.marginVertical) : 0
@@ -43,7 +44,7 @@ PanelWindow {
   implicitWidth: {
     if (barIsVertical) {
       // Vertical bar: reserve bar height + margin on the anchored edge only
-      return Style.barHeight + barMarginH - fractOffset;
+      return barHeight + barMarginH - fractOffset;
     }
     return 0; // Auto-width when left/right anchors are true
   }
@@ -51,7 +52,7 @@ PanelWindow {
   implicitHeight: {
     if (!barIsVertical) {
       // Horizontal bar: reserve bar height + margin on the anchored edge only
-      return Style.barHeight + barMarginV - fractOffset;
+      return barHeight + barMarginV - fractOffset;
     }
     return 0; // Auto-height when top/bottom anchors are true
   }

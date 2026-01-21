@@ -27,11 +27,13 @@ Item {
     return {};
   }
 
-  readonly property bool isBarVertical: Settings.data.bar.position === "left" || Settings.data.bar.position === "right"
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+  readonly property real barHeight: Style.getBarHeightForScreen(screen?.name)
   readonly property int spacerSize: widgetSettings.width !== undefined ? widgetSettings.width : widgetMetadata.width
 
-  implicitWidth: isBarVertical ? Style.barHeight : spacerSize
-  implicitHeight: isBarVertical ? spacerSize : Style.barHeight
+  implicitWidth: isBarVertical ? barHeight : spacerSize
+  implicitHeight: isBarVertical ? spacerSize : barHeight
   width: implicitWidth
   height: implicitHeight
 }

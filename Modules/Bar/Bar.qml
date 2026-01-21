@@ -33,10 +33,21 @@ Item {
   // Expose the actual bar Item for unified background system
   readonly property var barItem: barRegion
 
-  // Bar positioning properties
-  readonly property string barPosition: Settings.data.bar.position || "top"
+  // Bar positioning properties (per-screen)
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
   readonly property bool barIsVertical: barPosition === "left" || barPosition === "right"
   readonly property bool barFloating: Settings.data.bar.floating || false
+
+  // Bar density (per-screen)
+  readonly property string barDensity: Settings.getBarDensityForScreen(screen?.name)
+
+  // Bar sizing based on per-screen density
+  readonly property real barHeight: Style.getBarHeightForDensity(barDensity, barIsVertical)
+  readonly property real capsuleHeight: Style.getCapsuleHeightForDensity(barDensity, barHeight)
+  readonly property real barFontSize: Style.getBarFontSizeForDensity(barHeight, capsuleHeight, barIsVertical)
+
+  // Bar widgets (per-screen)
+  readonly property var barWidgets: Settings.getBarWidgetsForScreen(screen?.name)
 
   // Fill the parent (the Loader)
   anchors.fill: parent
@@ -72,10 +83,10 @@ Item {
         id: bar
 
         // Position and size the bar content based on orientation
-        x: (root.barPosition === "right") ? (parent.width - Style.barHeight) : 0
-        y: (root.barPosition === "bottom") ? (parent.height - Style.barHeight) : 0
-        width: root.barIsVertical ? Style.barHeight : parent.width
-        height: root.barIsVertical ? parent.height : Style.barHeight
+        x: (root.barPosition === "right") ? (parent.width - root.barHeight) : 0
+        y: (root.barPosition === "bottom") ? (parent.height - root.barHeight) : 0
+        width: root.barIsVertical ? root.barHeight : parent.width
+        height: root.barIsVertical ? parent.height : root.barHeight
 
         // Corner states for new unified background system
         // State -1: No radius (flat/square corner)
@@ -196,7 +207,7 @@ Item {
 
         Loader {
           anchors.fill: parent
-          sourceComponent: (Settings.data.bar.position === "left" || Settings.data.bar.position === "right") ? verticalBarComponent : horizontalBarComponent
+          sourceComponent: root.barIsVertical ? verticalBarComponent : horizontalBarComponent
         }
       }
     }
@@ -217,7 +228,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.left)
+          model: root.filterValidWidgets(root.barWidgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -228,7 +239,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "left",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.left.length
+                            "sectionWidgetsCount": root.barWidgets.left.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -242,7 +253,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.center)
+          model: root.filterValidWidgets(root.barWidgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -253,7 +264,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "center",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.center.length
+                            "sectionWidgetsCount": root.barWidgets.center.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -268,7 +279,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.right)
+          model: root.filterValidWidgets(root.barWidgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -279,7 +290,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "right",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.right.length
+                            "sectionWidgetsCount": root.barWidgets.right.length
                           })
             Layout.alignment: Qt.AlignHCenter
           }
@@ -305,7 +316,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.left)
+          model: root.filterValidWidgets(root.barWidgets.left)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -316,7 +327,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "left",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.left.length
+                            "sectionWidgetsCount": root.barWidgets.left.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }
@@ -332,7 +343,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.center)
+          model: root.filterValidWidgets(root.barWidgets.center)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -343,7 +354,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "center",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.center.length
+                            "sectionWidgetsCount": root.barWidgets.center.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }
@@ -360,7 +371,7 @@ Item {
         spacing: Style.marginS
 
         Repeater {
-          model: root.filterValidWidgets(Settings.data.bar.widgets.right)
+          model: root.filterValidWidgets(root.barWidgets.right)
           delegate: BarWidgetLoader {
             required property var modelData
             required property int index
@@ -371,7 +382,7 @@ Item {
                             "widgetId": modelData.id,
                             "section": "right",
                             "sectionWidgetIndex": index,
-                            "sectionWidgetsCount": Settings.data.bar.widgets.right.length
+                            "sectionWidgetsCount": root.barWidgets.right.length
                           })
             Layout.alignment: Qt.AlignVCenter
           }

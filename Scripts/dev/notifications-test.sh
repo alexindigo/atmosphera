@@ -46,7 +46,7 @@ gdbus call --session \
           0 \
           "dialog-question" \
           "Confirmation Required" \
-          "Do you want to proceed with the action?" \
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Do you want to proceed with the action? " \
           "['default', 'OK', 'cancel', 'Cancel', 'maybe', 'Maybe', 'undecided', 'Undecided']" \
           "{}" \
           5000

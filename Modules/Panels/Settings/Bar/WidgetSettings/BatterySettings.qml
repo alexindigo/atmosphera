@@ -20,6 +20,7 @@ ColumnLayout {
   property bool valueShowPowerProfiles: widgetData.showPowerProfiles !== undefined ? widgetData.showPowerProfiles : widgetMetadata.showPowerProfiles
   property bool valueShowNoctaliaPerformance: widgetData.showNoctaliaPerformance !== undefined ? widgetData.showNoctaliaPerformance : widgetMetadata.showNoctaliaPerformance
   property bool valueHideIfNotDetected: widgetData.hideIfNotDetected !== undefined ? widgetData.hideIfNotDetected : widgetMetadata.hideIfNotDetected
+  property bool valueHideIfIdle: widgetData.hideIfIdle !== undefined ? widgetData.hideIfIdle : widgetMetadata.hideIfIdle
 
   // Build model of available battery devices
   function buildDeviceModel() {
@@ -86,6 +87,7 @@ ColumnLayout {
     settings.showPowerProfiles = valueShowPowerProfiles;
     settings.showNoctaliaPerformance = valueShowNoctaliaPerformance;
     settings.hideIfNotDetected = valueHideIfNotDetected;
+    settings.hideIfIdle = valueHideIfIdle;
     if (valueDeviceNativePath && valueDeviceNativePath !== "") {
       settings.deviceNativePath = valueDeviceNativePath;
     } else {
@@ -174,7 +176,14 @@ ColumnLayout {
   NToggle {
     label: I18n.tr("bar.battery.hide-if-not-detected-label")
     description: I18n.tr("bar.battery.hide-if-not-detected-description")
-    checked: root.valueHideIfNotDetected
-    onToggled: checked => root.valueHideIfNotDetected = checked
+    checked: valueHideIfNotDetected
+    onToggled: checked => valueHideIfNotDetected = checked
+  }
+
+  NToggle {
+    label: I18n.tr("bar.battery.hide-if-idle-label")
+    description: I18n.tr("bar.battery.hide-if-idle-description")
+    checked: valueHideIfIdle
+    onToggled: checked => valueHideIfIdle = checked
   }
 }

@@ -39,7 +39,7 @@ Item {
   property bool shouldAnimateHide: false
 
   // Sizing logic for vertical bars
-  readonly property int buttonSize: Style.capsuleHeight
+  readonly property int buttonSize: Style.getCapsuleHeightForScreen(screen?.name)
   readonly property int pillHeight: buttonSize
   readonly property int pillOverlap: Math.round(buttonSize * 0.5)
   readonly property int maxPillWidth: rotateText ? Math.max(buttonSize, Math.round(textItem.implicitHeight + Style.marginXL)) : buttonSize
@@ -297,7 +297,7 @@ Item {
     onEntered: {
       hovered = true;
       root.entered();
-      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
+      TooltipService.show(root, root.tooltipText, BarService.getTooltipDirection(root.screen?.name), (forceOpen || forceClose) ? Style.tooltipDelay : Style.tooltipDelayLong);
       if (forceClose) {
         return;
       }

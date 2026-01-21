@@ -151,6 +151,9 @@ SmartPanel {
                          "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
                        });
       }
+      if (!charging && isPluggedIn) {
+        return I18n.tr("battery.plugged-in"); // i18n: Could be Plugged in, not charging? Ask maintainers if i not forgot
+      }
       return I18n.tr("common.idle");
     }
     readonly property string iconName: BatteryService.getIcon(percent, charging, isPluggedIn, isReady)
@@ -220,7 +223,7 @@ SmartPanel {
 
           NIcon {
             pointSize: Style.fontSizeXXL
-            color: charging ? Color.mPrimary : Color.mOnSurface
+            color: (charging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
             icon: iconName
           }
 

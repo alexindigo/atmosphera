@@ -30,13 +30,13 @@ QtObject {
                                "id": templateId,
                                "enabled": true
                              });
-        logger.d("Migration39", "Migrated enabled template: " + templateId);
+        logger.d("Migration40", "Migrated enabled template: " + templateId);
       }
     }
 
     // Write the new format
     adapter.templates.activeTemplates = activeTemplates;
-    logger.i("Migration39", "Migrated " + activeTemplates.length + " templates to new array format");
+    logger.i("Migration40", "Migrated " + activeTemplates.length + " templates to new array format");
 
     return true;
   }

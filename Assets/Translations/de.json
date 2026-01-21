@@ -46,15 +46,17 @@
     },
     "battery": {
       "device-default": "Standard (Anzeigegerät)",
-      "device-description": "Wählen Sie das anzuzeigende Batteriegerät aus.",
-      "device-label": "Batteriebetriebenes Gerät",
-      "hide-if-not-detected-description": "Verberge das Widget, wenn keine Batterie im System erkannt wird.",
+      "device-description": "Wählen Sie das anzuzeigende Akkugerät aus.",
+      "device-label": "Akkugerät",
+      "hide-if-idle-description": "Das Widget ausblenden, wenn der Akku nicht geladen oder entladen wird.",
+      "hide-if-idle-label": "Ausblenden, wenn im Leerlauf",
+      "hide-if-not-detected-description": "Widget ausblenden, wenn kein Akku im System erkannt wird.",
       "hide-if-not-detected-label": "Ausblenden, wenn nicht erkannt",
-      "low-battery-threshold-description": "Warnung anzeigen, wenn Batterie unter diesen Prozentsatz fällt.",
-      "low-battery-threshold-label": "Schwellenwert für niedrigen Batteriestand",
-      "show-noctalia-performance-description": "Zeige den Noctalia-Leistungsmodus-Schalter im Batterie-Panel an.<br>Deaktiviert Schatten und Animationen in Noctalia, um Ressourcen zu sparen.",
+      "low-battery-threshold-description": "Warnung anzeigen, wenn Akku unter diesen Prozentsatz fällt.",
+      "low-battery-threshold-label": "Schwellenwert für niedrigen Akkustand",
+      "show-noctalia-performance-description": "Zeige den Noctalia-Leistungsmodus-Schalter im Akku-Panel an.<br>Deaktiviert Schatten und Animationen in Noctalia, um Ressourcen zu sparen.",
       "show-noctalia-performance-label": "Noctalia-Performance-Schalter anzeigen",
-      "show-power-profile-description": "Zeige die Auswahl des Energieprofils im Batterie-Panel an.",
+      "show-power-profile-description": "Zeige die Auswahl des Energieprofils im Akku-Panel an.",
       "show-power-profile-label": "Energieprofil-Steuerung anzeigen"
     },
     "clock": {
@@ -204,11 +206,13 @@
       "memory-percentage-description": "Speicherverbrauch als Prozentsatz statt absolute Werte anzeigen.",
       "memory-percentage-label": "Speicher als Prozentsatz",
       "memory-usage-description": "Aktuelle RAM-Nutzungsinformationen anzeigen.",
-      "memory-usage-label": "Speicherverbrauch",
+      "memory-usage-label": "Speicherauslastung",
       "network-traffic-description": "Upload- und Download-Geschwindigkeiten anzeigen.",
       "network-traffic-label": "Netzwerkverkehr",
       "storage-usage-description": "Festplattenspeicher-Nutzungsinformationen anzeigen.",
-      "storage-usage-label": "Speichernutzung",
+      "storage-usage-label": "Datenträgerauslastung",
+      "swap-usage-description": "Swap-Speichernutzung anzeigen.",
+      "swap-usage-label": "Swap-Auslastung",
       "use-monospace-font-description": "Verwende eine Monospace-Schriftart für eine konsistente Zeichenbreite.",
       "use-monospace-font-label": "Schriftart mit fester Breite"
     },
@@ -274,7 +278,7 @@
     "discharging-rate": "Entladerate: {rate} W",
     "health": "Zustand: {percent}%",
     "inhibit-idle-description": "Hält das System wach.",
-    "no-battery-detected": "Keine Batterie erkannt",
+    "no-battery-detected": "Kein Akku erkannt",
     "plugged-in": "Angeschlossen",
     "power-profile": "Energieprofil",
     "time-left": "Verbleibende Zeit: {time}",
@@ -336,7 +340,7 @@
     "automation": "Automatisierung",
     "available": "Verfügbar",
     "back": "Zurück",
-    "battery": "Batterie",
+    "battery": "Akku",
     "bluetooth": "Bluetooth",
     "brightness": "Helligkeit",
     "browse": "Durchsuchen",
@@ -357,6 +361,7 @@
     "contributors": "Mitwirkende",
     "countdown": "Countdown",
     "date": "Datum",
+    "default": "Standard",
     "delete": "Löschen",
     "devices": "Geräte",
     "disabled": "Deaktiviert",
@@ -369,6 +374,7 @@
     "enabled": "Aktiviert",
     "events": "Ereignisse",
     "execute": "Ausführen",
+    "faithful": "Originalgetreu",
     "focus": "Fokus",
     "frequency": "Frequenz",
     "gateway": "Gateway",
@@ -427,7 +433,7 @@
     "search": "Suche",
     "security": "Sicherheit",
     "select": "Auswählen",
-    "shortcuts": "Tastenkombinationen",
+    "shortcuts": "Kurzbefehle",
     "shutdown": "Herunterfahren",
     "signal": "Signal",
     "sound": "Ton",
@@ -448,6 +454,7 @@
     "update": "Aktualisieren",
     "upload": "Hochladen",
     "version": "Version",
+    "vibrant": "Lebhaft",
     "visualizer": "Visualisierer",
     "volume": "Lautstärke",
     "volumes": "Lautstärken",
@@ -533,7 +540,10 @@
     "results": "Ergebnisse"
   },
   "lock-screen": {
-    "password": "Passwort eingeben..."
+    "authenticating": "Authentifizierung...",
+    "password": "Passwort eingeben...",
+    "restart": "Neu starten",
+    "shut-down": "Herunterfahren"
   },
   "notifications": {
     "panel": {
@@ -609,6 +619,7 @@
       "noctalia-installed-version": "Installierte Version:",
       "noctalia-latest-version": "Neueste Version:",
       "noctalia-title": "Noctalia Shell",
+      "privacy-policy": "Datenschutzbestimmungen",
       "support": "Unterstütze uns",
       "system-cpu": "CPU:",
       "system-disk": "Festplatte:",
@@ -622,6 +633,7 @@
       "system-not-installed": "fastfetch ist nicht installiert",
       "system-os": "Betriebssystem:",
       "system-packages": "Pakete:",
+      "system-product": "Produkt:",
       "system-title": "Systeminformationen",
       "system-uptime": "Betriebszeit:",
       "system-wm": "WM:",
@@ -671,8 +683,10 @@
       "volumes-mute-output-description": "Die Haupt-Audio-Ausgabe des Systems stummschalten.",
       "volumes-mute-output-label": "Audio-Ausgabe stummschalten",
       "volumes-output-volume-description": "Systemweite Lautstärke.",
-      "volumes-step-size-description": "Schrittgröße für Lautstärkeänderungen anpassen (Mausrad, Tastenkombinationen).",
+      "volumes-step-size-description": "Schrittgröße für Lautstärkeänderungen anpassen (Mausrad, Tastenkürzel).",
       "volumes-step-size-label": "Lautstärke-Schrittgröße",
+      "volumes-volume-feedback-description": "Einen Feedback-Sound abspielen, wenn die Lautstärke angepasst wird",
+      "volumes-volume-feedback-label": "Lautstärke-Feedback-Sound abspielen",
       "volumes-volume-overdrive-description": "Erlaubt das Anheben der Lautstärke über 100%. Wird möglicherweise nicht von aller Hardware unterstützt.",
       "volumes-volume-overdrive-label": "Lautstärke-Übersteuerung erlauben"
     },
@@ -702,7 +716,13 @@
       "appearance-show-outline-label": "Widget-Umrisse anzeigen",
       "appearance-use-separate-opacity-description": "Ermöglicht die Verwendung eines separaten Deckkraftwerts für den Leistenhintergrund.",
       "appearance-use-separate-opacity-label": "Separate Leisten-Deckkraft",
+      "monitor-configure-widgets": "Widgets konfigurieren",
+      "monitor-override-settings": "Globale Einstellungen überschreiben",
+      "monitor-override-settings-description": "Benutzerdefinierte Einstellungen für diesen Monitor verwenden.",
+      "monitor-reset-all": "Alles zurücksetzen",
+      "monitor-widgets-title": "Widget-Konfiguration - {monitor}",
       "monitors-desc": "Statusleiste auf bestimmten Monitoren anzeigen. Standardmäßig auf allen.",
+      "monitors-desc-new": "Konfiguriere, welche Monitore die Bar anzeigen und passe die Einstellungen pro Monitor an.",
       "monitors-title": "Monitor-Anzeige",
       "title": "Statusleiste",
       "tray-blacklist-description": "Ausschlussregeln für die Tray-Symbolleiste hinzufügen, unterstützt Platzhalter (*).",
@@ -710,30 +730,27 @@
       "tray-blacklist-placeholder": "z.B., nm-applet, Fcitx*",
       "tray-pin-application": "Anwendung anheften",
       "tray-unpin-application": "Anheftung aufheben",
+      "use-global-widgets": "Globale Widgets verwenden",
       "widgets-desc": "Ziehen Sie Widgets, um ihre Reihenfolge zu ändern. Verwenden Sie das Rechtsklick-Menü, um Widgets zwischen Abschnitten zu verschieben oder sie zu entfernen.",
       "widgets-title": "Widget-Positionierung"
     },
     "color-scheme": {
-      "color-source-desc": "Haupteinstellungen für Noctalias Farben.",
-      "color-source-matugen-scheme-type-description": "Wählen Sie die Farbschema-Generierungsmethode, die Matugen verwenden soll, um Farben aus Ihrem Hintergrundbild zu erstellen.",
-      "color-source-matugen-scheme-type-label": "Matugen-Schema-Typ",
-      "color-source-title": "Farbquelle",
-      "color-source-use-wallpaper-colors-description": "Farbschemata aus Ihrem Hintergrundbild mit Matugen generieren. Extrahiert automatisch Farben für ein kohärentes Design.",
+      "color-source-use-wallpaper-colors-description": "Generiere Farbschemata aus deinem Hintergrundbild. Extrahiert automatisch Farben, um ein stimmiges Theme zu erstellen.",
       "color-source-use-wallpaper-colors-label": "Hintergrundbild-Farben verwenden",
       "dark-mode-mode-description": "Ermöglicht einen automatischen Wechsel zwischem hellen und dunklen Modus.",
       "dark-mode-mode-label": "Automatischer Dunkelmodus",
       "dark-mode-mode-manual": "Manuell",
       "dark-mode-mode-off": "Aus",
       "dark-mode-switch-description": "Wechselt zu einem dunkleren Theme für einfachere Betrachtung bei Nacht.",
-      "delete-error-description": "Fehler beim Löschen von {scheme}.",
+      "delete-error-description": "Fehler beim Löschen von {scheme}",
       "delete-error-title": "Löschen fehlgeschlagen",
-      "delete-success-description": "{scheme} wurde erfolgreich gelöscht.",
+      "delete-success-description": "{scheme} wurde erfolgreich gelöscht",
       "delete-success-title": "Farbschema gelöscht",
       "download-button": "Mehr herunterladen",
       "download-downloading": "Wird heruntergeladen...",
       "download-empty": "Keine Farbschemata verfügbar",
       "download-error-api-error": "API-Fehler: {status}",
-      "download-error-description": "Fehler beim Herunterladen von {scheme}.",
+      "download-error-description": "Fehler beim Herunterladen von {scheme}",
       "download-error-download-failed": "Download fehlgeschlagen mit Exit-Code: {code}",
       "download-error-invalid-response": "Ungültiges API-Antwortformat",
       "download-error-no-files": "Keine Dateien für Schema gefunden",
@@ -741,11 +758,10 @@
       "download-error-rate-limit": "GitHub API-Ratenlimit überschritten",
       "download-error-title": "Download fehlgeschlagen",
       "download-fetching": "Verfügbare Farbschemata werden abgerufen...",
-      "download-success-description": "{scheme} wurde erfolgreich heruntergeladen.",
+      "download-success-description": "{scheme} wurde erfolgreich heruntergeladen",
       "download-success-title": "Farbschema heruntergeladen",
       "download-title": "Farbschemata herunterladen",
       "predefined-desc": "Wählen Sie aus einer Sammlung vordefinierter Farbschemata.",
-      "predefined-generate-templates-description": "Generiert Matugen-Templates (GTK, Terminal-Themen, etc.) bei der Verwendung vordefinierter Farbschemata.",
       "predefined-generate-templates-label": "Templates für vordefinierte Schemata generieren",
       "predefined-title": "Vordefinierte Farbschemata",
       "templates-desc": "Farben auf externe Anwendungen anwenden.",
@@ -757,7 +773,9 @@
       "templates-misc-user-templates-label": "Benutzer-Vorlagen aktivieren",
       "templates-none-detected": "Keine erkannt",
       "templates-write-path": "Schreibt: {filepath}",
-      "title": "Farbschema"
+      "title": "Farbschema",
+      "wallpaper-method-description": "Wählen Sie Ihre bevorzugte Methode zur Palettengenerierung.",
+      "wallpaper-method-label": "Methode zur Palettengenerierung"
     },
     "control-center": {
       "cards-desc": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",
@@ -835,7 +853,7 @@
       "weather-show-background-description": "Zeige den Hintergrundcontainer für das Wetter-Widget an."
     },
     "display": {
-      "monitors-brightness-step-description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkombinationen).",
+      "monitors-brightness-step-description": "Schrittgröße für Helligkeitsänderungen anpassen (Mausrad und Tastenkürzel).",
       "monitors-brightness-step-label": "Helligkeits-Schrittgröße",
       "monitors-brightness-unavailable-ddc-disabled": "Helligkeitssteuerung nicht verfügbar. Aktivieren Sie \"Externe Helligkeitsunterstützung\", um die Helligkeit dieses Displays zu steuern.",
       "monitors-brightness-unavailable-generic": "Die Helligkeitssteuerung ist für dieses Display nicht verfügbar.",
@@ -899,6 +917,7 @@
       "title": "Dock"
     },
     "general": {
+      "copy-settings": "Einstellungen kopieren",
       "fonts-default-description": "Hauptschriftart für die gesamte Benutzeroberfläche.",
       "fonts-default-label": "Standard-Schriftart",
       "fonts-default-placeholder": "Standard-Schriftart auswählen...",
@@ -933,7 +952,8 @@
       "screen-corners-show-corners-label": "Bildschirmecken anzeigen",
       "screen-corners-solid-black-description": "Schwarze Ecken anstelle der Statusleisten-Hintergrundfarbe verwenden.",
       "screen-corners-solid-black-label": "Schwarze Ecken",
-      "screen-corners-title": "Bildschirmecken"
+      "screen-corners-title": "Bildschirmecken",
+      "settings-copied": "Einstellungen in die Zwischenablage kopiert"
     },
     "hooks": {
       "info-command-info-description": "• Befehle werden über Shell ausgeführt (sh -lc)<br>• Befehle laufen im Hintergrund (getrennt)<br>• Test-Buttons führen mit aktuellen Werten aus",
@@ -1083,6 +1103,8 @@
       "history-low-urgency-label": "Niedrige Dringlichkeit im Verlauf speichern",
       "history-normal-urgency-description": "Normale Prioritätsbenachrichtigungen im Verlauf speichern.",
       "history-normal-urgency-label": "Normale Dringlichkeit im Verlauf speichern",
+      "media-toast-description": "Eine Toast-Benachrichtigung anzeigen, wenn sich der Wiedergabestatus von Medien ändert.",
+      "media-toast-label": "Medien",
       "monitors-desc": "Benachrichtigungen auf bestimmten Monitoren anzeigen. Standardmäßig werden sie auf allen Monitoren angezeigt.",
       "settings-always-on-top-description": "Benachrichtigungen über Vollbildfenstern und anderen Ebenen anzeigen.",
       "settings-background-opacity-description": "Transparenz der Benachrichtigungshintergründe anpassen.",
@@ -1150,6 +1172,8 @@
       "types-input-volume-label": "Eingangslautstärke",
       "types-lockkey-description": "OSD anzeigen, wenn Feststelltaste, Num-Taste oder Rollen-Taste umgeschaltet werden.",
       "types-lockkey-label": "Feststelltasten",
+      "types-media-description": "OSD anzeigen, wenn sich der Medienwiedergabestatus ändert (Wiedergabe, Pause, Überspringen).",
+      "types-media-label": "Medienwiedergabe",
       "types-title": "OSD-Auslöseereignisse",
       "types-volume-description": "OSD anzeigen, wenn sich die Ausgabelautstärke ändert.",
       "types-volume-label": "Ausgangslautstärke"
@@ -1159,9 +1183,9 @@
       "available-label": "Verfügbare Plugins",
       "available-no-plugins-description": "Überprüfen Sie Ihre Plugin-Quellen oder aktualisieren Sie die Liste.",
       "available-no-plugins-label": "Keine Plugins verfügbar",
-      "collision-already-installed": "Dieses Plugin ist bereits installiert.",
-      "collision-custom-version-exists": "Eine benutzerdefinierte Version von \"{source}\" ist bereits installiert.",
-      "collision-official-version-exists": "Die offizielle Version dieses Plugins ist bereits installiert.",
+      "collision-already-installed": "Dieses Plugin ist bereits installiert",
+      "collision-custom-version-exists": "Eine benutzerdefinierte Version von \"{source}\" ist bereits installiert",
+      "collision-official-version-exists": "Die offizielle Version dieses Plugins ist bereits installiert",
       "filter-downloaded": "Heruntergeladen",
       "filter-not-downloaded": "Nicht heruntergeladen",
       "filter-tags-description": "Filter-Plugins nach Kategorie oder Download-Status filtern",
@@ -1169,9 +1193,9 @@
       "hot-reload-description": "Plugins automatisch neu laden, wenn sich ihre Dateien ändern. Nützlich für die Plugin-Entwicklung.",
       "hot-reload-label": "Hot Reload (Entwicklermodus)",
       "hot-reloaded": "Plugin neu geladen: {name}",
-      "install-error": "Installation fehlgeschlagen: {error}.",
+      "install-error": "Installation fehlgeschlagen: {error}",
       "install-incompatible": "{plugin} benötigt Noctalia v{version} oder höher",
-      "install-success": "{plugin} erfolgreich installiert.",
+      "install-success": "{plugin} erfolgreich installiert",
       "installed-description": "Alle lokal installierten Plugins verwalten und konfigurieren.",
       "installed-label": "Installierte Plugins",
       "installed-no-plugins-description": "Installieren Sie Plugins aus dem Abschnitt \"Verfügbar\".",
@@ -1182,16 +1206,16 @@
       "plugin-settings-title": "{plugin} Einstellungen",
       "refresh-refreshing": "Aktualisiere Plugin-Liste...",
       "refresh-tooltip": "Verfügbare Plugins aktualisieren",
-      "settings-error-not-loaded": "Plugin nicht geladen.",
-      "settings-saved": "Plugin-Einstellungen gespeichert.",
+      "settings-error-not-loaded": "Plugin nicht geladen",
+      "settings-saved": "Plugin-Einstellungen gespeichert",
       "settings-tooltip": "Plugin-Einstellungen",
       "source-custom": "Benutzerdefinierte Quelle",
       "sources-add-custom": "Benutzerdefiniertes Repository hinzufügen",
       "sources-add-dialog-description": "Ein GitHub-Repository als Plugin-Quelle hinzufügen.",
-      "sources-add-dialog-error": "Fehler beim Hinzufügen der Plugin-Quelle.",
+      "sources-add-dialog-error": "Fehler beim Hinzufügen der Plugin-Quelle",
       "sources-add-dialog-name": "Repository-Name",
       "sources-add-dialog-name-placeholder": "Meine benutzerdefinierten Plugins",
-      "sources-add-dialog-success": "Plugin-Quelle erfolgreich hinzugefügt.",
+      "sources-add-dialog-success": "Plugin-Quelle erfolgreich hinzugefügt",
       "sources-add-dialog-title": "Plugin-Quelle hinzufügen",
       "sources-add-dialog-url": "Repository-URL",
       "sources-description": "Plugin-Repositories verwalten.",
@@ -1200,16 +1224,16 @@
       "title": "Plugins",
       "uninstall-dialog-description": "Sind Sie sicher, dass Sie {plugin} deinstallieren möchten? Dadurch werden alle Plugin-Daten entfernt.",
       "uninstall-dialog-title": "Plugin deinstallieren",
-      "uninstall-error": "Deinstallation fehlgeschlagen: {error}.",
-      "uninstall-success": "{plugin} wurde erfolgreich deinstalliert.",
+      "uninstall-error": "Deinstallation fehlgeschlagen: {error}",
+      "uninstall-success": "{plugin} wurde erfolgreich deinstalliert",
       "uninstalling": "{Plugin} wird deinstalliert...",
       "update-all": "Alle aktualisieren ({count})",
-      "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert.",
+      "update-all-success": "Alle Plugins wurden erfolgreich aktualisiert",
       "update-available": "Neues Plugin-Update verfügbar",
       "update-available-plural": "Neue Plugin-Updates verfügbar ({count})",
-      "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}.",
+      "update-error": "Fehler beim Aktualisieren des Plugins: {plugin}: {error}",
       "update-pending": "v{current} → v{new} (benötigt Noctalia v{required})",
-      "update-success": "{plugin} wurde auf v{version} aktualisiert.",
+      "update-success": "{plugin} wurde auf v{version} aktualisiert",
       "update-version": "v{current} → v{new}",
       "updating": "Aktualisierung läuft..."
     },
@@ -1366,7 +1390,7 @@
     "bottom-center": "Unten mittig",
     "bottom-left": "Unten links",
     "bottom-right": "Unten rechts",
-    "center": "Zentrieren",
+    "center": "Zentriert",
     "center-left": "Links mittig",
     "center-right": "Rechts mittig",
     "close-to-bar": "Nah zur Leisten-Schaltfläche",
@@ -1380,12 +1404,13 @@
   },
   "session-menu": {
     "action-in-seconds": "{action} in {seconds} Sekunden...",
+    "cancel-timer": "Timer abbrechen",
     "title": "Sitzungsmenü"
   },
   "setup": {
     "all-done": "Fertig!",
     "appearance": {
-      "subheader": "Dunkelmodus und Farbquellen wählen (Matugen oder vordefiniert)."
+      "subheader": "Wähle Dark Mode und Farbquellen (Wallpaper oder vordefiniert)."
     },
     "customize": {
       "header": "Erlebnis anpassen",
@@ -1443,87 +1468,79 @@
       "title": "Flugmodus"
     },
     "battery": {
-      "low": "Niedriger Batteriestand",
-      "low-desc": "Batterie ist bei {percent}%. Bitte schließen Sie das Ladegerät an."
+      "low": "Niedriger Akkustand",
+      "low-desc": "Akku ist bei {percent}%. Bitte schließen Sie das Ladegerät an"
     },
     "bluetooth": {
-      "address-copied": "Adresse in die Zwischenablage kopiert.",
+      "address-copied": "Adresse in die Zwischenablage kopiert",
       "confirm-code": "Bestätigungscode {value} auf dem anderen Gerät bestätigen.",
-      "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen.",
-      "disconnect-failed": "Trennen vom Gerät fehlgeschlagen.",
-      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen.",
-      "discoverable-disabled": "Sichtbar deaktiviert.",
-      "discoverable-enabled": "Sichtbar aktiviert.",
+      "connect-failed": "Verbindung mit dem Gerät fehlgeschlagen",
+      "disconnect-failed": "Trennen vom Gerät fehlgeschlagen",
+      "discoverable-change-failed": "Ändern des Sichtbarkeitsstatus fehlgeschlagen",
+      "discoverable-disabled": "Sichtbar deaktiviert",
+      "discoverable-enabled": "Sichtbar aktiviert",
       "display-code": "Geben Sie den Code {value} auf dem anderen Gerät ein.",
-      "forget-failed": "Entfernen des Geräts fehlgeschlagen.",
-      "pair-failed": "Koppeln des Geräts fehlgeschlagen.",
+      "forget-failed": "Entfernen des Geräts fehlgeschlagen",
+      "pair-failed": "Koppeln des Geräts fehlgeschlagen",
       "passkey-required": "Passwortschlüssel vom Gerät erforderlich.",
       "pincode-required": "PIN-Code vom Gerät erforderlich.",
-      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen."
+      "state-change-failed": "Ändern des Bluetooth-Status fehlgeschlagen"
     },
     "clipboard": {
       "long-text": "Langer Text",
       "unavailable": "Zwischenablageverlauf nicht verfügbar",
-      "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablageverlauf-Features zu nutzen."
+      "unavailable-desc": "Die 'cliphist' Anwendung ist nicht installiert. Bitte installieren Sie sie, um Zwischenablageverlauf-Features zu nutzen"
     },
     "do-not-disturb": {
       "disabled": "'Nicht stören' deaktiviert",
-      "disabled-desc": "Alle Benachrichtigungen werden angezeigt.",
+      "disabled-desc": "Alle Benachrichtigungen werden angezeigt",
       "enabled": "'Nicht stören' aktiviert",
-      "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf."
+      "enabled-desc": "Sie finden diese Benachrichtigungen in Ihrem Verlauf"
     },
-    "internet-limited": "Verbunden ohne Internet.",
-    "ipc": {
-      "powerpanel-deprecated": "PowerPanel wurde in SessionMenu umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call sessionMenu toggle\".",
-      "sidepanel-deprecated": "SidePanel wurde in ControlCenter umbenannt, dieser IPC-Aufruf wird bald veraltet sein. Bitte verwenden Sie stattdessen \"ipc call controlCenter toggle\"."
-    },
+    "internet-limited": "Verbunden ohne Internet",
     "keyboard-layout": {
-      "changed": "Tastaturlayout geändert zu {layout}.",
+      "changed": "Tastaturlayout geändert zu {layout}",
       "title": "Tastatur"
     },
-    "kofi-opened": "Ko-fi-Seite in Ihrem Browser geöffnet.",
+    "kofi-opened": "Ko-fi-Seite in Ihrem Browser geöffnet",
     "missing-control-center": {
-      "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen.",
+      "description": "Das Kontrollzentrum-Widget wurde aus der Leiste entfernt. Um es erneut über die Leiste zu öffnen, fügen Sie das Widget wieder hinzu. Sie können es auch durch Rechtsklick auf die Leiste öffnen",
       "label": "Letztes Kontrollzentrum-Widget entfernt"
     },
     "night-light": {
-      "forced": "Aktivierung erzwungen.",
-      "normal": "Normaler Modus.",
-      "not-installed": "wlsunset nicht installiert."
+      "forced": "Aktivierung erzwungen",
+      "normal": "Normaler Modus",
+      "not-installed": "wlsunset nicht installiert"
     },
     "noctalia-performance": {
-      "disabled": "Leistungsmodus deaktiviert.",
-      "enabled": "Leistungsmodus aktiviert.",
+      "disabled": "Leistungsmodus deaktiviert",
+      "enabled": "Leistungsmodus aktiviert",
       "label": "Noctalia-Performance"
     },
     "power-profile": {
-      "changed": "Energieprofil geändert.",
+      "changed": "Energieprofil geändert",
       "profile-name": "{profile}"
     },
     "theming-processor-failed": {
-      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten.",
-      "title-matugen": "Matugen-Templating-Verarbeitung fehlgeschlagen",
-      "title-predefined": "Verarbeitung des vordefinierten Farbschemas ist fehlgeschlagen"
+      "desc-generic": "Beim Verarbeiten von Vorlagen ist ein Fehler aufgetreten",
+      "title": "Vorlagenverarbeitung fehlgeschlagen"
     },
     "vpn": {
-      "connected": "Verbunden mit '{name}'.",
-      "disconnected": "Verbindung zu '{name}' getrennt."
+      "connected": "Verbunden mit '{name}'",
+      "disconnected": "Verbindung zu '{name}' getrennt"
     },
     "wallpaper-colors": {
-      "disabled": "Hintergrundbild-Farben deaktiviert.",
-      "enabled": "Hintergrundbild-Farben aktiviert.",
-      "label": "Hintergrundfarbengenerierung",
-      "not-installed": "Matugen nicht installiert — erforderlich für Hintergrundbild-Farbextraktion."
+      "disabled": "Hintergrundbild-Farben deaktiviert",
+      "enabled": "Hintergrundbild-Farben aktiviert",
+      "label": "Hintergrundfarbengenerierung"
     },
     "wifi": {
-      "connected": "Verbunden mit '{ssid}'.",
-      "connection-failed": "Verbindung fehlgeschlagen.",
-      "connection-timeout": "Zeitüberschreitung bei der Verbindung.",
-      "disabled": "Deaktiviert.",
-      "disconnected": "Getrennt von '{ssid}'.",
-      "enabled": "Aktiviert.",
-      "incorrect-password": "Falsches Passwort.",
-      "network-not-found": "Netzwerk nicht gefunden."
+      "connected": "Verbunden mit '{ssid}'",
+      "connection-failed": "Verbindung fehlgeschlagen",
+      "connection-timeout": "Zeitüberschreitung bei der Verbindung",
+      "disconnected": "Getrennt von '{ssid}'",
+      "incorrect-password": "Falsches Passwort",
+      "network-not-found": "Netzwerk nicht gefunden"
     }
   },
   "tooltips": {
@@ -1587,6 +1604,7 @@
     "fill-modes": {
       "crop": "Zuschneiden (Füllen)",
       "fit": "Einpassen (Beibehalten)",
+      "repeat": "Wiederholen (Kachel)",
       "stretch": "Strecken"
     },
     "no-match": "Keine Übereinstimmung gefunden.",
@@ -1689,10 +1707,11 @@
     "file-picker": {
       "item": "Element",
       "items": "Elemente",
+      "search-placeholder": "Dateien und Ordner suchen...",
       "select-current": "Aktuelles Objekt auswählen",
       "select-file": "Datei auswählen",
       "select-folder": "Ordner auswählen",
-      "selected:": "Ausgewählt:",
+      "selected": "Ausgewählt:",
       "title": "Dateiauswahl"
     },
     "file-picker-title": "Datei auswählen",

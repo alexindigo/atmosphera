@@ -69,14 +69,14 @@ Singleton {
     function onWifiEnabledChanged() {
       if (Settings.data.network.wifiEnabled) {
         if (!BluetoothService.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.enabled"), "wifi");
+          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.enabled"), "wifi");
         }
         // Perform a scan to update the UI
         delayedScanTimer.interval = 3000;
         delayedScanTimer.restart();
       } else {
         if (!BluetoothService.airplaneModeToggled) {
-          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("toast.wifi.disabled"), "wifi-off");
+          ToastService.showNotice(I18n.tr("wifi.panel.title"), I18n.tr("common.disabled"), "wifi-off");
         }
         // Clear networks so the widget icon changes
         root.networks = ({});

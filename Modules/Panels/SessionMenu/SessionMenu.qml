@@ -602,7 +602,7 @@ SmartPanel {
 
           NIconButton {
             icon: timerActive ? "stop" : "close"
-            tooltipText: timerActive ? I18n.tr("common.timer") : I18n.tr("common.close")
+            tooltipText: timerActive ? I18n.tr("session-menu.cancel-timer") : I18n.tr("common.close")
             Layout.alignment: Qt.AlignVCenter
             baseSize: Style.baseWidgetSize * 0.7
             colorBg: timerActive ? Qt.alpha(Color.mError, 0.08) : "transparent"

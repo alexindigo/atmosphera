@@ -150,6 +150,22 @@ SmartPanel {
               }
             }
 
+            // Swap Usage (only visible if swap is enabled)
+            Item {
+              Layout.fillWidth: true
+              implicitHeight: cpuGauge.implicitHeight
+              visible: SystemStatService.swapTotalGb > 0
+
+              NCircleStat {
+                anchors.centerIn: parent
+                ratio: SystemStatService.swapPercent / 100
+                icon: "exchange"
+                suffix: "%"
+                fillColor: SystemStatService.swapColor
+                tooltipText: I18n.tr("bar.system-monitor.swap-usage-label") + `: ${Math.round(SystemStatService.swapPercent)}%`
+              }
+            }
+
             // Disk Usage
             Item {
               Layout.fillWidth: true
@@ -180,7 +196,14 @@ SmartPanel {
             spacing: Style.marginS
 
             // Number of visible gauges in top row
-            readonly property int topRowGaugeCount: SystemStatService.gpuAvailable ? 5 : 4
+            readonly property int topRowGaugeCount: {
+              let count = 4; // CPU, CPU Temp, Memory, Disk
+              if (SystemStatService.gpuAvailable)
+                count++;
+              if (SystemStatService.swapTotalGb > 0)
+                count++;
+              return count;
+            }
 
             // Download gauge with speed below (same width as top row items)
             Item {
@@ -295,6 +318,33 @@ SmartPanel {
 
                   NText {
                     text: SystemStatService.formatMemoryGb(SystemStatService.memGb)
+                    pointSize: Style.fontSizeXS
+                    color: Color.mOnSurface
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                  }
+                }
+
+                // Swap details (only visible if swap is enabled)
+                RowLayout {
+                  Layout.fillWidth: true
+                  spacing: Style.marginS
+                  visible: SystemStatService.swapTotalGb > 0
+
+                  NIcon {
+                    icon: "exchange"
+                    pointSize: Style.fontSizeM
+                    color: Color.mOnSurfaceVariant
+                  }
+
+                  NText {
+                    text: I18n.tr("bar.system-monitor.swap-usage-label") + ":"
+                    pointSize: Style.fontSizeXS
+                    color: Color.mOnSurfaceVariant
+                  }
+
+                  NText {
+                    text: `${SystemStatService.formatMemoryGb(SystemStatService.swapGb)} / ${SystemStatService.formatMemoryGb(SystemStatService.swapTotalGb)}`
                     pointSize: Style.fontSizeXS
                     color: Color.mOnSurface
                     Layout.fillWidth: true

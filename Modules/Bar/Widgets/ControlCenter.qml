@@ -82,7 +82,7 @@ NIconButton {
   // If using distro logo, don't use theme icon.
   icon: (customIconPath === "" && !useDistroLogo) ? customIcon : ""
   tooltipText: I18n.tr("tooltips.open-control-center")
-  tooltipDirection: BarService.getTooltipDirection()
+  tooltipDirection: BarService.getTooltipDirection(screen?.name)
   baseSize: Style.capsuleHeight
   applyUiScale: false
   customRadius: Style.radiusL
