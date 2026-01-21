@@ -452,8 +452,8 @@ Singleton {
       Logger.d("TemplateProcessor", `debounceTimer fired: processRunning=${generateProcess.running}`);
       // Kill any running process before starting new one
       if (generateProcess.running) {
-        Logger.d("TemplateProcessor", "debounceTimer: killing running process");
-        generateProcess.kill();
+        Logger.d("TemplateProcessor", "debounceTimer: stopping running process");
+        generateProcess.running = false;
         // executePendingRequest will be called from onExited
       } else {
         executePendingRequest();
