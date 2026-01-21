@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.System
 
 Item {
   id: root
@@ -563,7 +564,7 @@ Item {
                            const command = prefix.concat(app.command);
                            Quickshell.execDetached(command);
                          }
-                       } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+                       } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
                          Logger.d("ApplicationsProvider", `Using app2unit for: ${app.id}`);
                          if (app.runInTerminal)
                          Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);

@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.Commons
 import qs.Services.Compositor
+import qs.Services.System
 import qs.Services.UI
 import qs.Widgets
 
@@ -286,7 +287,7 @@ Rectangle {
           const command = prefix.concat(app.command);
           Quickshell.execDetached(command);
         }
-      } else if (Settings.data.appLauncher.useApp2Unit && app.id) {
+      } else if (Settings.data.appLauncher.useApp2Unit && ProgramCheckerService.app2unitAvailable && app.id) {
         Logger.d("Taskbar", `Using app2unit for: ${app.id}`);
         if (app.runInTerminal)
           Quickshell.execDetached(["app2unit", "--", app.id + ".desktop"]);
