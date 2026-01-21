@@ -26,7 +26,7 @@ ColumnLayout {
                    Settings.data.nightLight.enabled = false;
                    Settings.data.nightLight.forced = false;
                    NightLightService.apply();
-                   ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("toast.wifi.disabled"), "nightlight-off");
+                   ToastService.showNotice(I18n.tr("common.night-light"), I18n.tr("common.disabled"), "nightlight-off");
                  }
                }
   }
