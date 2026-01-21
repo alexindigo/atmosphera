@@ -29,7 +29,7 @@ Singleton {
     Logger.d("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${loadEventsProcess.startTime}  ${loadEventsProcess.duration}`);
   }
 
-  // Process to check for evolution-data-server libraries
+  // Process to check for khal installation
   Process {
     id: availabilityCheckProcess
     running: false
@@ -65,11 +65,7 @@ Singleton {
           Logger.d("Calendar", `Found ${calendars.length} calendar(s)`);
 
           // Auto-load events after discovering calendars
-          // Only load if we have calendars and no cached events
-          if (calendars.length > 0 && CalendarService.events.length === 0) {
-            loadEvents();
-          } else if (calendars.length > 0) {
-            // If we already have cached events, load in background
+          if (calendars.length > 0) {
             loadEvents();
           }
         } catch (e) {

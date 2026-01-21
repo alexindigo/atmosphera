@@ -84,11 +84,7 @@ Singleton {
           Logger.d("Calendar", `Found ${result.length} calendar(s)`);
 
           // Auto-load events after discovering calendars
-          // Only load if we have calendars and no cached events
-          if (result.length > 0 && CalendarService.events.length === 0) {
-            loadEvents();
-          } else if (result.length > 0) {
-            // If we already have cached events, load in background
+          if (result.length > 0) {
             loadEvents();
           }
         } catch (e) {
