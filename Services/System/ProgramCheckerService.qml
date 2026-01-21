@@ -51,12 +51,7 @@ Singleton {
       // Use the actual config path from the client, removing ~ prefix
       var checkPath = configPath.startsWith("~") ? configPath.substring(2) : configPath.substring(1);
 
-      // Check if this client requires themes folder to exist
-      if (client.requiresThemesFolder) {
-        scriptParts.push("if [ -d \"$HOME/" + checkPath + "/themes\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
-      } else {
-        scriptParts.push("if [ -d \"$HOME/" + checkPath + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
-      }
+      scriptParts.push("if [ -d \"$HOME/" + checkPath + "\" ]; then available_clients=\"$available_clients " + clientName + "\"; fi;");
     }
 
     scriptParts.push("echo \"$available_clients\"");

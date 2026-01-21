@@ -147,48 +147,39 @@ Singleton {
       "clients": [
         {
           "name": "vesktop",
-          "path": "~/.config/vesktop",
-          "requiresThemesFolder": false
+          "path": "~/.config/vesktop"
         },
         {
           "name": "webcord",
-          "path": "~/.config/webcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/webcord"
         },
         {
           "name": "armcord",
-          "path": "~/.config/armcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/armcord"
         },
         {
           "name": "equibop",
-          "path": "~/.config/equibop",
-          "requiresThemesFolder": false
+          "path": "~/.config/equibop"
         },
         {
           "name": "equicord",
-          "path": "~/.config/Equicord",
-          "requiresThemesFolder": false
+          "path": "~/.config/Equicord"
         },
         {
           "name": "lightcord",
-          "path": "~/.config/lightcord",
-          "requiresThemesFolder": false
+          "path": "~/.config/lightcord"
         },
         {
           "name": "dorion",
-          "path": "~/.config/dorion",
-          "requiresThemesFolder": false
+          "path": "~/.config/dorion"
         },
         {
           "name": "vencord",
-          "path": "~/.config/Vencord",
-          "requiresThemesFolder": false
+          "path": "~/.config/Vencord"
         },
         {
           "name": "betterdiscord",
-          "path": "~/.config/BetterDiscord",
-          "requiresThemesFolder": false
+          "path": "~/.config/BetterDiscord"
         }
       ]
     },
@@ -379,8 +370,7 @@ Singleton {
                                    clients.push({
                                                   "name": client.name,
                                                   "configPath": client.path,
-                                                  "themePath": `${client.path}/themes/noctalia.theme.css`,
-                                                  "requiresThemesFolder": client.requiresThemesFolder || false
+                                                  "themePath": `${client.path}/themes/noctalia.theme.css`
                                                 });
                                  });
     }
@@ -406,8 +396,7 @@ Singleton {
                                 clients.push({
                                                "name": client.name,
                                                "configPath": baseConfigDir,
-                                               "themePath": themePath,
-                                               "requiresThemesFolder": false
+                                               "themePath": themePath
                                              });
                               });
     }
