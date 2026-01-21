@@ -77,7 +77,7 @@ Singleton {
         root.wallpaperDirectoryChanged(screenName, root.getMonitorDirectory(screenName));
       }
     }
-    function onRandomEnabledChanged() {
+    function onAutomationEnabledChanged() {
       root.toggleRandomWallpaper();
     }
     function onRandomIntervalSecChanged() {
@@ -86,7 +86,7 @@ Singleton {
     function onWallpaperChangeModeChanged() {
       // Reset alphabetical indices when mode changes
       root.alphabeticalIndices = {};
-      if (Settings.data.wallpaper.randomEnabled) {
+      if (Settings.data.wallpaper.automationEnabled) {
         root.restartRandomWallpaperTimer();
         root.setNextWallpaper();
       }
@@ -444,7 +444,7 @@ Singleton {
   // -------------------------------------------------------------------
   function toggleRandomWallpaper() {
     Logger.d("Wallpaper", "toggleRandomWallpaper");
-    if (Settings.data.wallpaper.randomEnabled) {
+    if (Settings.data.wallpaper.automationEnabled) {
       restartRandomWallpaperTimer();
       setNextWallpaper();
     }
@@ -462,7 +462,7 @@ Singleton {
 
   // -------------------------------------------------------------------
   function restartRandomWallpaperTimer() {
-    if (Settings.data.wallpaper.randomEnabled) {
+    if (Settings.data.wallpaper.automationEnabled) {
       randomWallpaperTimer.restart();
     }
   }
@@ -613,7 +613,7 @@ Singleton {
   Timer {
     id: randomWallpaperTimer
     interval: Settings.data.wallpaper.randomIntervalSec * 1000
-    running: Settings.data.wallpaper.randomEnabled
+    running: Settings.data.wallpaper.automationEnabled
     repeat: true
     onTriggered: setNextWallpaper()
     triggeredOnStart: false

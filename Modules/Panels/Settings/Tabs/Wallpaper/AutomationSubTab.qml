@@ -14,12 +14,12 @@ ColumnLayout {
   NToggle {
     label: I18n.tr("panels.wallpaper.automation-scheduled-change-label")
     description: I18n.tr("panels.wallpaper.automation-scheduled-change-description")
-    checked: Settings.data.wallpaper.randomEnabled
-    onToggled: checked => Settings.data.wallpaper.randomEnabled = checked
+    checked: Settings.data.wallpaper.automationEnabled
+    onToggled: checked => Settings.data.wallpaper.automationEnabled = checked
   }
 
   ColumnLayout {
-    enabled: Settings.data.wallpaper.randomEnabled
+    enabled: Settings.data.wallpaper.automationEnabled
     spacing: Style.marginL
     Layout.fillWidth: true
 
