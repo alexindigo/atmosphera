@@ -9,6 +9,7 @@ Singleton {
   id: root
 
   readonly property string templateApplyScript: Quickshell.shellDir + '/Scripts/bash/template-apply.sh'
+  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/bash/gtk-refresh.sh'
 
   // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [
@@ -55,13 +56,13 @@ Singleton {
       "input": "gtk.css",
       "outputs": [
         {
-          "path": "~/.config/gtk-3.0/gtk.css"
+          "path": "~/.config/gtk-3.0/noctalia.css"
         },
         {
-          "path": "~/.config/gtk-4.0/gtk.css"
+          "path": "~/.config/gtk-4.0/noctalia.css"
         }
       ],
-      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}`
+      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode} && ${gtkRefreshScript}`
     },
     {
       "id": "qt",
