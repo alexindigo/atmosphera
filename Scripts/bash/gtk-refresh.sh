@@ -21,19 +21,15 @@ apply_gtk3_colors() {
         exit 1
     fi
 
-    if [ -L "$gtk_css" ] && [ "$(readlink "$gtk_css")" = "noctalia.css" ]; then
-        echo "GTK3 symlink already exists and is correct."
-    else
-        if [ -L "$gtk_css" ]; then
-            rm "$gtk_css"
-        elif [ -f "$gtk_css" ]; then
-            mv "$gtk_css" "$gtk_css.backup.$(date +%s)"
-            echo "Backed up existing gtk.css"
-        fi
-
-        ln -s "noctalia.css" "$gtk_css"
-        echo "Created symlink: $gtk_css -> noctalia.css"
+    if [ -L "$gtk_css" ]; then
+        rm "$gtk_css"
+    elif [ -f "$gtk_css" ]; then
+        mv "$gtk_css" "$gtk_css.backup.$(date +%s)"
+        echo "Backed up existing gtk.css"
     fi
+
+    ln -s "noctalia.css" "$gtk_css"
+    echo "Created symlink: $gtk_css -> noctalia.css"
 }
 
 apply_gtk4_colors() {
@@ -77,14 +73,8 @@ refresh_theme() {
     dconf write /org/gnome/desktop/interface/color-scheme "'$temp_scheme'"
     
     # 3. Toggle Theme
-    # Use a real theme to force the refresh (HighContrast is usually available)
-    temp_theme="HighContrast"
-    if [ "$current_theme" == "HighContrast" ]; then
-        temp_theme="Adwaita"
-    fi
-
-    gsettings set org.gnome.desktop.interface gtk-theme "$temp_theme"
-    dconf write /org/gnome/desktop/interface/gtk-theme "'$temp_theme'"
+    gsettings set org.gnome.desktop.interface gtk-theme ""
+    dconf write /org/gnome/desktop/interface/gtk-theme "''"
     
     sleep 0.5
     
