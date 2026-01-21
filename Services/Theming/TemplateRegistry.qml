@@ -9,7 +9,7 @@ Singleton {
   id: root
 
   readonly property string templateApplyScript: Quickshell.shellDir + '/Scripts/bash/template-apply.sh'
-  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/python/src/theming/gtk_refresh.py'
+  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/python/src/theming/gtk-refresh.py'
   // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [
     {
