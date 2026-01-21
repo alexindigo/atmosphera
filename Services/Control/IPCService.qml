@@ -356,13 +356,13 @@ Item {
     }
 
     function toggleAutomation() {
-      Settings.data.wallpaper.randomEnabled = !Settings.data.wallpaper.randomEnabled;
+      Settings.data.wallpaper.automationEnabled = !Settings.data.wallpaper.automationEnabled;
     }
     function disableAutomation() {
-      Settings.data.wallpaper.randomEnabled = false;
+      Settings.data.wallpaper.automationEnabled = false;
     }
     function enableAutomation() {
-      Settings.data.wallpaper.randomEnabled = true;
+      Settings.data.wallpaper.automationEnabled = true;
     }
   }
 
