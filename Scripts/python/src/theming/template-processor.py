@@ -47,7 +47,11 @@ import sys
 from pathlib import Path
 
 # Import from lib package
-from lib import read_image, ImageReadError, extract_palette, generate_theme, TemplateRenderer, expand_predefined_scheme
+from lib import (
+    read_image, ImageReadError, extract_palette, generate_theme,
+    TemplateRenderer, expand_predefined_scheme,
+    extract_source_color, source_color_to_rgb, Color
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -242,18 +246,20 @@ def main() -> int:
             # Determine scheme type
             scheme_type = args.scheme_type
 
-            # Extract palette with appropriate scoring method
-            # - vibrant: chroma scoring with centroid averaging (smooth blended colors)
-            # - faithful: chroma scoring with representative pixels (actual wallpaper colors)
-            # - M3 schemes: population scoring (most representative colors)
-            k = 5
-            if scheme_type == "vibrant":
-                scoring = "chroma"
-            elif scheme_type == "faithful":
-                scoring = "chroma-representative"
+            # Extract palette based on scheme type:
+            # - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Use Wu quantizer + Score
+            #   This matches matugen's color extraction exactly
+            # - vibrant/faithful: Use k-means clustering for colorful/representative colors
+            if scheme_type in ("vibrant", "faithful"):
+                # K-means based extraction for vibrant/faithful modes
+                k = 5
+                scoring = "chroma" if scheme_type == "vibrant" else "chroma-representative"
+                palette = extract_palette(pixels, k=k, scoring=scoring)
             else:
-                scoring = "population"
-            palette = extract_palette(pixels, k=k, scoring=scoring)
+                # Wu quantizer + Score algorithm (matches matugen)
+                source_argb = extract_source_color(pixels)
+                r, g, b = source_color_to_rgb(source_argb)
+                palette = [Color(r, g, b)]
 
             if not palette:
                 print("Error: Could not extract colors from image", file=sys.stderr)
