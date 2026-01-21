@@ -939,9 +939,11 @@
     },
     "hooks": {
       "info-command-info-description": "• 指令將透過 shell (sh -lc) 執行<br>• 指令會在背景 (detached 狀態) 執行<br>• 測試按鈕會以當下填寫的內容執行",
-      "info-command-info-label": "hook 指令的說明",
       "info-parameters-description": "• 桌布的 hook: $1 = 桌布路徑, $2 = 螢幕名稱<br>• 主題切換的 hook: $1 = true/false (深色模式啟用或否)<br>• 畫面鎖定/解鎖的 hook: 沒有參數<br>• 效能模式的 hook: 沒有參數<br>• 工作階段的 hook: $1 = 執行動作 (shutdown/reboot)",
       "info-parameters-label": "可用參數",
+      "noctalia-started-description": "Noctalia 完成載入時要執行的指令。",
+      "noctalia-started-label": "Noctalia 已啟動",
+      "noctalia-started-placeholder": "例如 notify-send 'Noctalia 已載入'",
       "performance-mode-disabled-description": "Noctalia 效能模式停用時要執行的指令",
       "performance-mode-disabled-label": "效能模式停用時",
       "performance-mode-disabled-placeholder": "例如: notify-send \"Performance\" \"Mode disabled\"",

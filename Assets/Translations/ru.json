@@ -959,9 +959,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Команды выполняются через shell (sh -lc)<br>• Команды выполняются в фоновом режиме (отдельно)<br>• Кнопки 'Тест' выполняются с текущими значениями",
-      "info-command-info-label": "Информация о команде хука",
       "info-parameters-description": "• Хук обоев: $1 = путь к обоям, $2 = имя экрана<br>• Хук переключения темы: $1 = true/false (состояние темного режима)<br>• Хуки блокировки/разблокировки экрана: Без параметров<br>• Хуки режима производительности: Без параметров<br>• Хук сеанса: $1 = действие (выключением/перезагрузкой)",
       "info-parameters-label": "Доступные параметры",
+      "noctalia-started-description": "Команда для выполнения после завершения загрузки Noctalia.",
+      "noctalia-started-label": "Noctalia запущена",
+      "noctalia-started-placeholder": "например, notify-send 'Noctalia загружена'",
       "performance-mode-disabled-description": "Команда для выполнения при выключении режима производительности Noctalia.",
       "performance-mode-disabled-label": "Режим производительности выключен",
       "performance-mode-disabled-placeholder": "например, notify-send \"Производительность\" \"Режим выключен\"",

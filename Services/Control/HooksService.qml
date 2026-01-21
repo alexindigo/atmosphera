@@ -263,6 +263,25 @@ Singleton {
     runPowerHook(`${script} ${action}`, callback);
   }
 
+  // Execute startup hook
+  function executeStartupHook() {
+    if (!Settings.data.hooks?.enabled) {
+      return;
+    }
+
+    const script = Settings.data.hooks?.startup;
+    if (!script || script === "") {
+      return;
+    }
+
+    try {
+      Quickshell.execDetached(["sh", "-lc", script]);
+      Logger.d("HooksService", `Executed startup hook: ${script}`);
+    } catch (e) {
+      Logger.e("HooksService", `Failed to execute startup hook: ${e}`);
+    }
+  }
+
   // Initialize the service
   function init() {
     Logger.i("HooksService", "Service started");
@@ -274,6 +293,8 @@ Singleton {
                    }
                    // Initialize performance mode state tracking
                    wasPerformanceModeEnabled = PowerProfileService.noctaliaPerformanceMode;
+                   // Execute startup hook
+                   executeStartupHook();
                  });
   }
 }

@@ -959,9 +959,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Comandos são executados via shell (sh -lc)<br>• Comandos rodam em segundo plano (desanexados)<br>• Botões de teste executam com os valores atuais",
-      "info-command-info-label": "Informações de comando do hook",
       "info-parameters-description": "• Hook de papel de parede: $1 = caminho do papel de parede, $2 = nome da tela<br>• Hook de alternância de tema: $1 = verdadeiro/falso (estado do modo escuro)<br>• Hooks de bloqueio/desbloqueio de tela: Sem parâmetros<br>• Hooks de modo de desempenho: Sem parâmetros<br>• Hook de sessão: $1 = ação (desligamento/reinicialização)",
       "info-parameters-label": "Parâmetros disponíveis",
+      "noctalia-started-description": "Comando para executar quando o Noctalia terminar de carregar.",
+      "noctalia-started-label": "Noctalia Iniciado",
+      "noctalia-started-placeholder": "p. ex. notify-send 'Noctalia Carregado'",
       "performance-mode-disabled-description": "Comando a ser executado quando o modo de desempenho Noctalia é desabilitado.",
       "performance-mode-disabled-label": "Modo de desempenho desabilitado",
       "performance-mode-disabled-placeholder": "ex., notify-send \"Desempenho\" \"Modo desabilitado\"",

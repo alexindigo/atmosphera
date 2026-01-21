@@ -647,6 +647,7 @@ Singleton {
       property string screenUnlock: ""
       property string performanceModeEnabled: ""
       property string performanceModeDisabled: ""
+      property string startup: ""
       property string session: ""
     }
 

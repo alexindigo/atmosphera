@@ -959,9 +959,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Polecenia są wykonywane przez powłokę (sh -lc)<br>• Polecenia działają w tle (detached)<br>• Przyciski testowe wykonują się z aktualnymi wartościami",
-      "info-command-info-label": "Informacje o poleceniach hook",
       "info-parameters-description": "• Hak do tapety: $1 = ścieżka do tapety, $2 = nazwa ekranu<br>• Hak przełączania motywu: $1 = prawda/fałsz (stan trybu ciemnego)<br>• Haki blokowania/odblokowywania ekranu: Brak parametrów<br>• Haki trybu wydajności: Brak parametrów<br>• Hak sesji: $1 = akcja (zamknięcie/ponowne uruchomienie))",
       "info-parameters-label": "Dostępne parametry",
+      "noctalia-started-description": "Polecenie do wykonania po zakończeniu ładowania Noctalii.",
+      "noctalia-started-label": "Noctalia uruchomiona",
+      "noctalia-started-placeholder": "np. notify-send 'Noctalia załadowany'",
       "performance-mode-disabled-description": "Komenda do wykonania, gdy tryb wydajności Noctalia zostanie wyłączony.",
       "performance-mode-disabled-label": "Tryb wydajności wyłączony",
       "performance-mode-disabled-placeholder": "notify-send \"Wydajność\" \"Tryb wyłączony\"",

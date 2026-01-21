@@ -959,9 +959,11 @@
     },
     "hooks": {
       "info-command-info-description": "• Ferman bi rêya shellê (sh -lc) tên meşandin<br>• Ferman di paşperdeyê de dimeşin (veqetandî)<br>• Bişkokên ceribandinê bi nirxên heyî dimeşin",
-      "info-command-info-label": "Agahiyên fermana hook",
       "info-parameters-description": "• Hooka dîwêr: $1 = rêya dîwêr, $2 = navê ekranê<br>• Hooka guherîna mijarê: $1 = rast/derew (rewşa Moda Tarî)<br>• Hookên kilîtkirin/vekirina ekranê: Parametre tune<br>• Hookên moda performansê: Parametre tune<br>• Hooka danişînê: $1 = çalakî (girtin/ji nû ve destpêkirin)",
       "info-parameters-label": "Parametreyên berdest",
+      "noctalia-started-description": "Fermana ku dema Noctalia barkirina xwe qedand pêk were.",
+      "noctalia-started-label": "Noctalia Hêla Destpêkirin",
+      "noctalia-started-placeholder": "mînak notify-send 'Noctalia hate barkirin'",
       "performance-mode-disabled-description": "Fermana ku dema moda performansê ya Noctalia bêbandor dibe, tê meşandin.",
       "performance-mode-disabled-label": "Rewaya kar rawestayî ye",
       "performance-mode-disabled-placeholder": "notify-send \"Performans\" \"Moda neçalak\"",

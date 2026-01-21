@@ -959,9 +959,11 @@
     },
     "hooks": {
       "info-command-info-description": "• A parancsok shellen keresztül futnak (sh -lc)<br>• A parancsok a háttérben futnak (leválasztva)<br>• A tesztgombok az aktuális értékekkel futnak le",
-      "info-command-info-label": "Hook parancsinformációk",
       "info-parameters-description": "• Háttérkép horog: $1 = háttérkép útvonala, $2 = képernyő neve<br>• Téma váltó horog: $1 = igaz/hamis (Sötét mód állapota)<br>• Képernyő zárolás/feloldás horgok: Nincsenek paraméterek<br>• Teljesítmény mód horgok: Nincsenek paraméterek<br>• Munkamenet horog: $1 = művelet (leállítás/újraindítás)",
       "info-parameters-label": "Elérhető paraméterek",
+      "noctalia-started-description": "Parancs, ami akkor fut le, amikor a Noctalia betöltése befejeződött.",
+      "noctalia-started-label": "Noctalia elindult",
+      "noctalia-started-placeholder": "pl. notify-send 'Noctalia betöltve'",
       "performance-mode-disabled-description": "Parancs, amely akkor fut le, ha a Noctalia teljesítmény mód ki van kapcsolva.",
       "performance-mode-disabled-label": "Teljesítmény mód kikapcsolva",
       "performance-mode-disabled-placeholder": "pl. notify-send \"Teljesítmény\" \"Mód kikapcsolva\"",
