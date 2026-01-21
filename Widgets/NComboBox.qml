@@ -192,7 +192,7 @@ RowLayout {
 
       onOpened: {
         listView.currentIndex = combo.currentIndex;
-        listView.positionViewAtIndex(combo.currentIndex);
+        listView.positionViewAtIndex(combo.currentIndex, ListView.Beginning);
       }
 
       contentItem: ListView {
