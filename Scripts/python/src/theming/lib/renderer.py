@@ -285,6 +285,10 @@ class TemplateRenderer:
 
         result = re.sub(pattern, replace, template_text)
 
+        # Process escape sequences (matugen-compatible)
+        # \\ in template becomes \ in output
+        result = result.replace('\\\\', '\\')
+
         if self._error_count > 0:
             print(f"Template rendering completed with {self._error_count} error(s)", file=sys.stderr)
 
