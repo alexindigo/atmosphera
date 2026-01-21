@@ -21,14 +21,15 @@ from .palette import find_error_color
 
 # Type aliases
 ThemeMode = Literal["dark", "light"]
-SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "content", "vibrant", "faithful"]
 
 # Map scheme type strings to classes
 SCHEME_CLASSES = {
     "tonal-spot": SchemeTonalSpot,
     "fruit-salad": SchemeFruitSalad,
     "rainbow": SchemeRainbow,
-    # "vibrant" uses generate_normal_* functions, not a scheme class
+    "content": SchemeContent,
+    # "vibrant" and "faithful" uses generate_normal_* functions, not a scheme class
 }
 
 

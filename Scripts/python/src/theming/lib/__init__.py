@@ -10,8 +10,8 @@ This package provides:
 """
 
 from .color import Color, rgb_to_hsl, hsl_to_rgb, adjust_surface
-from .hct import Hct, Cam16, TonalPalette
-from .material import MaterialScheme, harmonize_color
+from .hct import Hct, Cam16, TonalPalette, TemperatureCache, fix_if_disliked
+from .material import MaterialScheme, SchemeContent, harmonize_color
 from .contrast import ensure_contrast, contrast_ratio, is_dark
 from .image import read_image, ImageReadError
 from .palette import extract_palette
@@ -29,8 +29,11 @@ __all__ = [
     "Hct",
     "Cam16",
     "TonalPalette",
+    "TemperatureCache",
+    "fix_if_disliked",
     # Material
     "MaterialScheme",
+    "SchemeContent",
     "harmonize_color",
     # Contrast
     "ensure_contrast",

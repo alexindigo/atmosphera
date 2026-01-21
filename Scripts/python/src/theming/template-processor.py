@@ -6,6 +6,7 @@ A CLI tool that extracts dominant colors from wallpaper images and generates pal
 
 Supported scheme types:
 - tonal-spot: Default Android 12-13 Material You scheme (recommended)
+- content: Preserves source color's chroma with temperature-based tertiary (matugen default)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
 - vibrant: Colorful with smooth blended colors
@@ -15,7 +16,7 @@ Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --scheme-type    Scheme type: tonal-spot (default), fruit-salad, rainbow, vibrant
+    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, vibrant, faithful
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -57,10 +58,11 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 template-processor.py wallpaper.png                          # default mode, both themes
-  python3 template-processor.py wallpaper.png --vibrant --dark         # vibrant mode, dark only
-  python3 template-processor.py wallpaper.jpg --dark -o theme.json     # output to file
-  python3 template-processor.py wallpaper.png -r tpl.txt:out.txt       # render template
+  python3 template-processor.py wallpaper.png                                      # tonal-spot (default), both themes
+  python3 template-processor.py wallpaper.png --scheme-type content --dark         # content scheme, dark only
+  python3 template-processor.py wallpaper.jpg --dark -o theme.json                 # output to file
+  python3 template-processor.py wallpaper.png -r template.txt:output.txt           # render template
+  python3 template-processor.py wallpaper.png -c config.toml --mode dark           # render config, dark only
         """
     )
 
@@ -74,21 +76,9 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'fruit-salad', 'rainbow', 'vibrant', 'faithful'],
+        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'vibrant', 'faithful'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
-    )
-
-    # Legacy flags for backward compatibility
-    parser.add_argument(
-        '--material',
-        action='store_true',
-        help='(deprecated) Alias for --scheme-type tonal-spot'
-    )
-    parser.add_argument(
-        '--vibrant',
-        action='store_true',
-        help='(deprecated) Alias for --scheme-type vibrant'
     )
 
     # Theme mode (mutually exclusive)
@@ -206,7 +196,7 @@ def main() -> int:
             print(f"Error: Image not found: {args.image}", file=sys.stderr)
             return 1
 
-        # Check if input is a JSON palette (legacy Predefined Scheme bypass)
+        # Check if input is a JSON palette (Predefined Color Scheme)
         if args.image.suffix.lower() == '.json':
             try:
                 with open(args.image, 'r') as f:
@@ -249,12 +239,8 @@ def main() -> int:
                 print(f"Unexpected error reading image: {e}", file=sys.stderr)
                 return 1
 
-            # Determine scheme type (handle legacy flags)
+            # Determine scheme type
             scheme_type = args.scheme_type
-            if args.vibrant:
-                scheme_type = "vibrant"
-            elif args.material:
-                scheme_type = "tonal-spot"
 
             # Extract palette with appropriate scoring method
             # - vibrant: chroma scoring with centroid averaging (smooth blended colors)

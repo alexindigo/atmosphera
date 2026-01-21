@@ -59,6 +59,7 @@ Singleton {
   * Uses debouncing to prevent spawning multiple processes when spamming wallpaper changes
   */
   function processWallpaperColors(wallpaperPath, mode) {
+    Logger.d("TemplateProcessor", `processWallpaperColors called: path=${wallpaperPath}, mode=${mode}`);
     pendingWallpaperRequest = {
       wallpaperPath: wallpaperPath,
       mode: mode
@@ -68,9 +69,12 @@ Singleton {
   }
 
   function executeWallpaperColors(wallpaperPath, mode) {
+    Logger.d("TemplateProcessor", `executeWallpaperColors: path=${wallpaperPath}, mode=${mode}`);
     const content = buildThemeConfig();
-    if (!content)
+    if (!content) {
+      Logger.d("TemplateProcessor", "executeWallpaperColors: no config content, aborting");
       return;
+    }
     const wp = wallpaperPath.replace(/'/g, "'\\''");
 
     const script = buildGenerationScript(content, wp, mode);
@@ -279,7 +283,7 @@ Singleton {
   // Get scheme type, defaulting to tonal-spot if not a recognized value
   function getSchemeType() {
     const method = Settings.data.colorSchemes.generationMethod;
-    const validTypes = ["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"];
+    const validTypes = ["tonal-spot", "content", "fruit-salad", "rainbow", "vibrant", "faithful"];
     return validTypes.includes(method) ? method : "tonal-spot";
   }
 
@@ -426,6 +430,7 @@ Singleton {
   // DEBOUNCE TIMER
   // ================================================================================
   function executePendingRequest() {
+    Logger.d("TemplateProcessor", `executePendingRequest: hasWallpaper=${!!pendingWallpaperRequest}, hasPredefined=${!!pendingPredefinedRequest}`);
     if (pendingWallpaperRequest) {
       const req = pendingWallpaperRequest;
       pendingWallpaperRequest = null;
@@ -434,6 +439,8 @@ Singleton {
       const req = pendingPredefinedRequest;
       pendingPredefinedRequest = null;
       executePredefinedScheme(req.schemeData, req.mode);
+    } else {
+      Logger.d("TemplateProcessor", "executePendingRequest: no pending request");
     }
   }
 
@@ -442,8 +449,10 @@ Singleton {
     interval: 150
     repeat: false
     onTriggered: {
+      Logger.d("TemplateProcessor", `debounceTimer fired: processRunning=${generateProcess.running}`);
       // Kill any running process before starting new one
       if (generateProcess.running) {
+        Logger.d("TemplateProcessor", "debounceTimer: killing running process");
         generateProcess.kill();
         // executePendingRequest will be called from onExited
       } else {
@@ -468,6 +477,7 @@ Singleton {
     }
 
     onExited: function (exitCode) {
+      Logger.d("TemplateProcessor", `generateProcess exited: exitCode=${exitCode}`);
       // Only log errors for non-killed processes (exitCode 0 = success, negative = signal/killed)
       if (exitCode > 0) {
         const description = generateProcess.buildErrorMessage();
@@ -476,6 +486,7 @@ Singleton {
       }
       // Execute any pending request (handles both kill case and 400ms interval case)
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
+        Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");
         executePendingRequest();
       }
     }

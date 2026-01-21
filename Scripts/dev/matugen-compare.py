@@ -6,7 +6,7 @@ Usage:
     ./compare-matugen.py <wallpaper_path>
     ./compare-matugen.py ~/Pictures/Wallpapers/example.png
 
-Compares all M3 schemes (tonal-spot, fruit-salad, rainbow) and shows
+Compares all M3 schemes (tonal-spot, fruit-salad, rainbow, content) and shows
 a table with hue differences.
 """
 
@@ -92,7 +92,7 @@ def run_matugen(image_path: Path, scheme: str) -> dict | None:
 
 def compare_schemes(image_path: Path) -> None:
     """Compare all M3 schemes between our processor and matugen."""
-    schemes = ["tonal-spot", "fruit-salad", "rainbow"]
+    schemes = ["tonal-spot", "fruit-salad", "rainbow", "content"]
     color_keys = ["primary", "secondary", "tertiary", "surface", "on_surface"]
 
     print(f"\nComparing: {image_path.name}\n")
