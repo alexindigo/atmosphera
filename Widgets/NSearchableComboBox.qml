@@ -218,7 +218,7 @@ RowLayout {
     }
 
     popup: Popup {
-      y: combo.height
+      y: combo.height + Style.marginS
       width: combo.width
       height: Math.round((root.popupHeight + 60) * Style.uiScaleRatio)
       padding: Style.marginM
