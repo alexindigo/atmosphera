@@ -310,3 +310,44 @@ def lab_distance(lab1: LAB, lab2: LAB) -> float:
     da = lab1[1] - lab2[1]
     db = lab1[2] - lab2[2]
     return math.sqrt(dL * dL + da * da + db * db)
+
+
+def find_closest_color(
+    compare_to: str,
+    colors: list[dict[str, str]]
+) -> str:
+    """
+    Find the closest named color from a list (matugen-compatible).
+
+    Uses Lab color space Euclidean distance for perceptual color matching.
+
+    Args:
+        compare_to: Hex color to compare (e.g., "#ff5500")
+        colors: List of {"name": "...", "color": "#..."} dicts
+
+    Returns:
+        Name of the closest color, or empty string if no colors provided
+    """
+    if not colors:
+        return ""
+
+    # Parse target color
+    target = Color.from_hex(compare_to)
+    target_lab = rgb_to_lab(target.r, target.g, target.b)
+
+    closest_name = ""
+    closest_dist = float('inf')
+
+    for entry in colors:
+        try:
+            entry_color = Color.from_hex(entry["color"])
+            entry_lab = rgb_to_lab(entry_color.r, entry_color.g, entry_color.b)
+            dist = lab_distance(target_lab, entry_lab)
+            if dist < closest_dist:
+                closest_dist = dist
+                closest_name = entry["name"]
+        except (KeyError, ValueError):
+            # Skip invalid entries
+            continue
+
+    return closest_name
