@@ -775,7 +775,9 @@
       "templates-write-path": "写入：{filepath}",
       "title": "配色方案",
       "wallpaper-method-description": "选择您喜欢的调色板生成方法。",
-      "wallpaper-method-label": "调色板生成方法"
+      "wallpaper-method-label": "调色板生成方法",
+      "wallpaper-monitor-source-description": "选择用于提取壁纸颜色的显示器。",
+      "wallpaper-monitor-source-label": "颜色生成源"
     },
     "control-center": {
       "cards-desc": "自定义在控制中心显示的控制项及其顺序。",

@@ -775,7 +775,9 @@
       "templates-write-path": "Écrit : {filepath}",
       "title": "Jeu de couleurs",
       "wallpaper-method-description": "Choisissez votre méthode de génération de palette préférée.",
-      "wallpaper-method-label": "Méthode de génération de palette"
+      "wallpaper-method-label": "Méthode de génération de palette",
+      "wallpaper-monitor-source-description": "Sélectionnez le moniteur à utiliser pour extraire les couleurs du fond d'écran.",
+      "wallpaper-monitor-source-label": "Source de génération des couleurs"
     },
     "control-center": {
       "cards-desc": "Personnalisez les commandes qui apparaissent dans le centre de contrôle et leur ordre d'affichage.",

@@ -13,7 +13,15 @@ Singleton {
 
     // When the wallpaper changes, regenerate theme if necessary
     function onWallpaperChanged(screenName, path) {
-      if (screenName === Screen.name && Settings.data.colorSchemes.useWallpaperColors) {
+      if (!Settings.data.colorSchemes.useWallpaperColors)
+        return;
+
+      var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+      if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+        effectiveMonitor = Screen.name;
+      }
+
+      if (screenName === effectiveMonitor) {
         generateFromWallpaper();
       }
     }
@@ -24,6 +32,12 @@ Singleton {
     function onDarkModeChanged() {
       Logger.d("AppThemeService", "Detected dark mode change");
       generate();
+    }
+    function onMonitorForColorsChanged() {
+      if (Settings.data.colorSchemes.useWallpaperColors) {
+        Logger.d("AppThemeService", "Monitor for colors changed to:", Settings.data.colorSchemes.monitorForColors);
+        generateFromWallpaper();
+      }
     }
   }
 
@@ -42,9 +56,14 @@ Singleton {
   }
 
   function generateFromWallpaper() {
-    const wp = WallpaperService.getWallpaper(Screen.name);
+    var effectiveMonitor = Settings.data.colorSchemes.monitorForColors;
+    if (effectiveMonitor === "" || effectiveMonitor === undefined) {
+      effectiveMonitor = Screen.name;
+    }
+
+    const wp = WallpaperService.getWallpaper(effectiveMonitor);
     if (!wp) {
-      Logger.e("AppThemeService", "No wallpaper found");
+      Logger.e("AppThemeService", "No wallpaper found for monitor:", effectiveMonitor);
       return;
     }
     const mode = Settings.data.colorSchemes.darkMode ? "dark" : "light";

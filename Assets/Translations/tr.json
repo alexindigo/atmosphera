@@ -775,7 +775,9 @@
       "templates-write-path": "Yazıyor: {filepath}",
       "title": "Renk şeması",
       "wallpaper-method-description": "Favori palet oluşturma yönteminizi seçin.",
-      "wallpaper-method-label": "Palet oluşturma yöntemi"
+      "wallpaper-method-label": "Palet oluşturma yöntemi",
+      "wallpaper-monitor-source-description": "Duvar kağıdı renklerini çıkarmak için hangi monitörün kullanılacağını seçin.",
+      "wallpaper-monitor-source-label": "Renk oluşturma kaynağı"
     },
     "control-center": {
       "cards-desc": "Kontrol merkezinde hangi kontrollerin ve hangi sırada görüneceğini özelleştirin.",

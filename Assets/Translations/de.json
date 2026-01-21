@@ -775,7 +775,9 @@
       "templates-write-path": "Schreibt: {filepath}",
       "title": "Farbschema",
       "wallpaper-method-description": "Wählen Sie Ihre bevorzugte Methode zur Palettengenerierung.",
-      "wallpaper-method-label": "Methode zur Palettengenerierung"
+      "wallpaper-method-label": "Methode zur Palettengenerierung",
+      "wallpaper-monitor-source-description": "Wähle den Monitor aus, der für die Extraktion der Wallpaper-Farben verwendet werden soll.",
+      "wallpaper-monitor-source-label": "Quelle der Farberzeugung"
     },
     "control-center": {
       "cards-desc": "Passen Sie an, welche Steuerelemente im Kontrollzentrum angezeigt werden und in welcher Reihenfolge.",

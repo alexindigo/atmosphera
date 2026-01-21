@@ -775,7 +775,9 @@
       "templates-write-path": "Записує: {filepath}",
       "title": "Колірна схема",
       "wallpaper-method-description": "Оберіть свій улюблений метод створення палітри.",
-      "wallpaper-method-label": "Метод створення палітри"
+      "wallpaper-method-label": "Метод створення палітри",
+      "wallpaper-monitor-source-description": "Виберіть монітор, який використовувати для вилучення кольорів шпалер.",
+      "wallpaper-monitor-source-label": "Джерело генерації кольору"
     },
     "control-center": {
       "cards-desc": "Налаштуйте, які елементи керування з'являються в центрі керування та в якому порядку.",

@@ -767,7 +767,9 @@
       "templates-write-path": "寫入: {filepath}",
       "title": "主題配色",
       "wallpaper-method-description": "選擇你喜歡的配色生成方法",
-      "wallpaper-method-label": "調色盤產生方法"
+      "wallpaper-method-label": "調色盤產生方法",
+      "wallpaper-monitor-source-description": "選取要用於擷取桌布顏色的螢幕。",
+      "wallpaper-monitor-source-label": "色彩產生來源"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",

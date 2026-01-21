@@ -617,6 +617,7 @@ Singleton {
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
       property string generationMethod: "tonal-spot"
+      property string monitorForColors: ""
     }
 
     // templates toggles

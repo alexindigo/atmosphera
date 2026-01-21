@@ -775,7 +775,9 @@
       "templates-write-path": "Dinivîse: {filepath}",
       "title": "Şêweya rengan",
       "wallpaper-method-description": "Rêbaza xweya bijarte ya hilberîna paletê hilbijêre.",
-      "wallpaper-method-label": "Rêbaza çêkirina paletê"
+      "wallpaper-method-label": "Rêbaza çêkirina paletê",
+      "wallpaper-monitor-source-description": "Ji bo derxistina rengên dîwêrê, kîjan monitorê bikar bîne hilbijêre.",
+      "wallpaper-monitor-source-label": "Çavkaniya hilberîna rengan"
     },
     "control-center": {
       "cards-desc": "Xwerû bike ka kîjan kontrol di navenda kontrolê de û bi çi rêzê de xuya dibin.",

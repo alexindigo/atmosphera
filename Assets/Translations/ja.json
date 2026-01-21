@@ -775,7 +775,9 @@
       "templates-write-path": "書き込み先: {filepath}",
       "title": "配色",
       "wallpaper-method-description": "お好みのパレット生成方法を選択してください。",
-      "wallpaper-method-label": "パレット生成方法"
+      "wallpaper-method-label": "パレット生成方法",
+      "wallpaper-monitor-source-description": "壁紙の色を抽出するために使用するモニターを選択してください。",
+      "wallpaper-monitor-source-label": "色の生成元"
     },
     "control-center": {
       "cards-desc": "コントロールセンターに表示する項目と、その順序をカスタマイズします。",

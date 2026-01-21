@@ -775,7 +775,9 @@
       "templates-write-path": "Escreve: {filepath}",
       "title": "Esquema de cores",
       "wallpaper-method-description": "Escolha o seu método de geração de paleta favorito.",
-      "wallpaper-method-label": "Método de geração de paleta"
+      "wallpaper-method-label": "Método de geração de paleta",
+      "wallpaper-monitor-source-description": "Selecione qual monitor usar para extrair as cores do papel de parede.",
+      "wallpaper-monitor-source-label": "Fonte de geração de cores"
     },
     "control-center": {
       "cards-desc": "Personalize quais controles aparecem na central de controle e em que ordem.",

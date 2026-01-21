@@ -775,7 +775,9 @@
       "templates-write-path": "Zapisuje: {filepath}",
       "title": "Schemat kolorów",
       "wallpaper-method-description": "Wybierz swoją ulubioną metodę generowania palety.",
-      "wallpaper-method-label": "Metoda generowania palety"
+      "wallpaper-method-label": "Metoda generowania palety",
+      "wallpaper-monitor-source-description": "Wybierz monitor, który ma być używany do wydobywania kolorów tapety.",
+      "wallpaper-monitor-source-label": "Źródło generowania kolorów"
     },
     "control-center": {
       "cards-desc": "Dostosuj, które kontrolki pojawiają się w centrum sterowania i w jakiej kolejności.",

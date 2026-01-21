@@ -775,7 +775,9 @@
       "templates-write-path": "Írja: {filepath}",
       "title": "Színséma",
       "wallpaper-method-description": "Válassza ki a kedvenc palettagenerálási módszereit.",
-      "wallpaper-method-label": "Paletta generálási módszer"
+      "wallpaper-method-label": "Paletta generálási módszer",
+      "wallpaper-monitor-source-description": "Válaszd ki, melyik monitort használd a háttérkép színeinek kinyeréséhez.",
+      "wallpaper-monitor-source-label": "Színgenerálási forrás"
     },
     "control-center": {
       "cards-desc": "Személyre szabhatja, hogy mely vezérlők jelenjenek meg a vezérlőközpontban és milyen sorrendben.",
