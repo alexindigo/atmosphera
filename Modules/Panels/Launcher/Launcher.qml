@@ -871,10 +871,10 @@ SmartPanel {
                   } else if (event.key === Qt.Key_Backtab) {
                     root.onBackTabPressed();
                     event.accepted = true;
-                  } else if (event.key === Qt.Key_Left) {
+                  } else if (event.key === Qt.Key_Left && root.isGridView) {
                     root.onLeftPressed();
                     event.accepted = true;
-                  } else if (event.key === Qt.Key_Right) {
+                  } else if (event.key === Qt.Key_Right && root.isGridView) {
                     root.onRightPressed();
                     event.accepted = true;
                   } else if (event.key === Qt.Key_Up) {
