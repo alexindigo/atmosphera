@@ -357,7 +357,8 @@ Singleton {
 
     function instantiateAndOpen() {
       var dialog = component.createObject(popupMenuWindow.dialogParent, {
-                                            "showToastOnSave": true
+                                            "showToastOnSave": true,
+                                            "screen": screen
                                           });
 
       if (dialog) {
