@@ -43,11 +43,20 @@ Singleton {
     if (!app2unitAvailable && Settings.data.appLauncher.useApp2Unit) {
       Settings.data.appLauncher.useApp2Unit = false;
     }
+    if (!wlsunsetAvailable && Settings.data.nightLight.enabled) {
+      Settings.data.nightLight.enabled = false;
+    }
   }
 
   onApp2unitAvailableChanged: {
     if (!app2unitAvailable && Settings.data.appLauncher.useApp2Unit) {
       Settings.data.appLauncher.useApp2Unit = false;
+    }
+  }
+
+  onWlsunsetAvailableChanged: {
+    if (!wlsunsetAvailable && Settings.data.nightLight.enabled) {
+      Settings.data.nightLight.enabled = false;
     }
   }
 
