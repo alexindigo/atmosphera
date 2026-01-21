@@ -1190,7 +1190,7 @@
       "uninstall-dialog-description": "你確定想要移除 {plugin}? 這樣會移除所有模組的資料",
       "uninstall-dialog-title": "移除外掛模組",
       "uninstall-error": "移除失敗: {error}",
-      "uninstall-success": "成功移除 {plugin}...",
+      "uninstall-success": "成功移除 {plugin}",
       "uninstalling": "正在移除 {plugin}...",
       "update-all": "將全部 {count} 個都更新",
       "update-all-success": "已成功更新所有的外掛模組",
@@ -1499,9 +1499,7 @@
       "connected": "已連上 '{ssid}'",
       "connection-failed": "連線失敗",
       "connection-timeout": "連線逾時",
-      "disabled": "已停用",
       "disconnected": "已自 '{ssid}' 斷開連線",
-      "enabled": "已啟用",
       "incorrect-password": "密碼錯誤",
       "network-not-found": "找不到網路"
     }
