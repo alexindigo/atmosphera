@@ -135,10 +135,11 @@ Singleton {
     script += `${tomlDelimiter}\n`;
 
     // Run Python template processor with --scheme flag
-    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}' --mode ${mode}\n`;
+    // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
+    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${configPathEsc}'\n`;
 
     // Add user templates if enabled
-    script += buildUserTemplateCommandForPredefined(schemeData, mode);
+    script += buildUserTemplateCommandForPredefined(schemeData);
 
     generateProcess.command = ["sh", "-lc", script];
     generateProcess.running = true;
@@ -300,10 +301,11 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use template-processor.py (Python implementation)
+    // Don't pass --mode so templates get both dark and light colors (e.g., zed.json needs both)
     const schemeType = getSchemeType();
-    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' --mode ${mode} `;
+    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' `;
 
-    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
+    script += buildUserTemplateCommand("$NOCTALIA_WP_PATH");
 
     return script + "\n";
   }
@@ -389,7 +391,7 @@ Singleton {
   // ================================================================================
   // USER TEMPLATES, advanced usage
   // ================================================================================
-  function buildUserTemplateCommand(input, mode) {
+  function buildUserTemplateCommand(input) {
     if (!Settings.data.templates.enableUserTheming)
       return "";
 
@@ -401,13 +403,14 @@ Singleton {
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
     const schemeType = getSchemeType();
-    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}' --mode ${mode}\n`;
+    // Don't pass --mode so user templates get both dark and light colors
+    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}'\n`;
     script += "fi";
 
     return script;
   }
 
-  function buildUserTemplateCommandForPredefined(schemeData, mode) {
+  function buildUserTemplateCommandForPredefined(schemeData) {
     if (!Settings.data.templates.enableUserTheming)
       return "";
 
@@ -419,7 +422,8 @@ Singleton {
     let script = "\n# Execute user templates with predefined scheme colors\n";
     script += `if [ -f '${userConfigPath}' ]; then\n`;
     // Use --scheme flag with the already-written scheme JSON
-    script += `  python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}' --mode ${mode}\n`;
+    // Don't pass --mode so user templates get both dark and light colors
+    script += `  python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --config '${userConfigPath}'\n`;
     script += "fi";
 
     return script;
