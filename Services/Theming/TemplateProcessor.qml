@@ -12,6 +12,9 @@ import qs.Services.UI
 Singleton {
   id: root
 
+  // Signal emitted when color generation completes successfully (for wallpaper-based theming)
+  signal colorsGenerated
+
   readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
   readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/python/src/theming/template-processor.py"
 
@@ -488,6 +491,9 @@ Singleton {
       if (pendingWallpaperRequest || pendingPredefinedRequest) {
         Logger.d("TemplateProcessor", "generateProcess onExited: has pending request, executing");
         executePendingRequest();
+      } else if (exitCode === 0) {
+        // No pending request and successful completion - emit signal
+        root.colorsGenerated();
       }
     }
 
