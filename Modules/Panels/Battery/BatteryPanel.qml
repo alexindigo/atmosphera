@@ -219,7 +219,7 @@ SmartPanel {
 
           NIcon {
             pointSize: Style.fontSizeXXL
-            color: (charging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface 
+            color: (charging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
             icon: iconName
           }
 
