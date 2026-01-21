@@ -344,7 +344,6 @@ Loader {
             menuHovered = false;
           }
           if (autoHide && !dockHovered && !anyAppHovered && !peekHovered && !menuHovered) {
-            closeAllContextMenus();
             hidden = true;
             unloadTimer.restart(); // Start unload timer when hiding
           } else if (autoHide && !dockHovered && !peekHovered) {

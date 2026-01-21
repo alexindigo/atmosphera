@@ -59,8 +59,8 @@ Rectangle {
   readonly property bool density: Settings.data.bar.density
   readonly property int iconSize: Style.toOdd(Style.capsuleHeight * 0.65)
 
-  property list<string> blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
-  property list<string> pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
+  property var blacklist: widgetSettings.blacklist || widgetMetadata.blacklist || [] // Read from settings
+  property var pinned: widgetSettings.pinned || widgetMetadata.pinned || [] // Pinned items (shown inline)
   property bool drawerEnabled: widgetSettings.drawerEnabled !== undefined ? widgetSettings.drawerEnabled : (widgetMetadata.drawerEnabled !== undefined ? widgetMetadata.drawerEnabled : true) // Enable drawer panel
   property bool hidePassive: widgetSettings.hidePassive !== undefined ? widgetSettings.hidePassive : true // Hide passive status items
   property var filteredItems: [] // Items to show inline (pinned)
@@ -112,6 +112,21 @@ Rectangle {
   }
 
   function _performFilteredItemsUpdate() {
+    // Force a fresh read of settings to ensure we have the latest blacklist
+    var currentSettings = {};
+    if (section && sectionWidgetIndex >= 0) {
+      var w = Settings.data.bar.widgets[section];
+      if (w && sectionWidgetIndex < w.length) {
+        currentSettings = w[sectionWidgetIndex];
+      }
+    }
+
+    // Update local properties with fresh data
+    if (currentSettings.blacklist !== undefined)
+      root.blacklist = currentSettings.blacklist;
+    if (currentSettings.pinned !== undefined)
+      root.pinned = currentSettings.pinned;
+
     let newItems = [];
     if (SystemTray.items && SystemTray.items.values) {
       const trayItems = SystemTray.items.values;
