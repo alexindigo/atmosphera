@@ -248,8 +248,8 @@ def _read_image_imagemagick(path: Path) -> list[RGB]:
     # -resize: downsample for performance (we don't need full resolution for color extraction)
     # ppm: output as PPM format (easy to parse)
 
-    # Downsample to max 200x200 for performance
-    resize_spec = "200x200>"
+    # Resize to 112x112 to match matugen's color extraction
+    resize_spec = "112x112!"
 
     try:
         # Try 'magick convert' first (ImageMagick 7+), fallback to 'convert' (ImageMagick 6)
