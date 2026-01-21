@@ -15,6 +15,10 @@ Singleton {
   readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
   readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/python/src/theming/template-processor.py"
 
+  // Debounce state for wallpaper processing
+  property var pendingWallpaperRequest: null
+  property var pendingPredefinedRequest: null
+
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
                                           "Noctalia (legacy)": "Noctalia-legacy",
@@ -52,8 +56,18 @@ Singleton {
   /**
   * Process wallpaper colors using internal themer
   * Dual-path architecture (wallpaper generation)
+  * Uses debouncing to prevent spawning multiple processes when spamming wallpaper changes
   */
   function processWallpaperColors(wallpaperPath, mode) {
+    pendingWallpaperRequest = {
+      wallpaperPath: wallpaperPath,
+      mode: mode
+    };
+    pendingPredefinedRequest = null;
+    debounceTimer.restart();
+  }
+
+  function executeWallpaperColors(wallpaperPath, mode) {
     const content = buildThemeConfig();
     if (!content)
       return;
@@ -71,8 +85,18 @@ Singleton {
   /**
   * Process predefined color scheme using Python template processor
   * Uses --scheme flag to expand 14-color scheme to full 48-color palette
+  * Uses debouncing to prevent spawning multiple processes when spamming scheme changes
   */
   function processPredefinedScheme(schemeData, mode) {
+    pendingPredefinedRequest = {
+      schemeData: schemeData,
+      mode: mode
+    };
+    pendingWallpaperRequest = null;
+    debounceTimer.restart();
+  }
+
+  function executePredefinedScheme(schemeData, mode) {
     // 1. Handle terminal themes (pre-rendered file copy)
     handleTerminalThemes(mode);
 
@@ -399,6 +423,36 @@ Singleton {
   }
 
   // ================================================================================
+  // DEBOUNCE TIMER
+  // ================================================================================
+  function executePendingRequest() {
+    if (pendingWallpaperRequest) {
+      const req = pendingWallpaperRequest;
+      pendingWallpaperRequest = null;
+      executeWallpaperColors(req.wallpaperPath, req.mode);
+    } else if (pendingPredefinedRequest) {
+      const req = pendingPredefinedRequest;
+      pendingPredefinedRequest = null;
+      executePredefinedScheme(req.schemeData, req.mode);
+    }
+  }
+
+  Timer {
+    id: debounceTimer
+    interval: 150
+    repeat: false
+    onTriggered: {
+      // Kill any running process before starting new one
+      if (generateProcess.running) {
+        generateProcess.kill();
+        // executePendingRequest will be called from onExited
+      } else {
+        executePendingRequest();
+      }
+    }
+  }
+
+  // ================================================================================
   // PROCESSES
   // ================================================================================
   Process {
@@ -414,10 +468,15 @@ Singleton {
     }
 
     onExited: function (exitCode) {
-      if (exitCode !== 0) {
+      // Only log errors for non-killed processes (exitCode 0 = success, negative = signal/killed)
+      if (exitCode > 0) {
         const description = generateProcess.buildErrorMessage();
-        Logger.e("TemplateProcessor", `Process failed (generator: ${generator}) with exit code`, exitCode, description);
+        Logger.e("TemplateProcessor", `Process failed with exit code`, exitCode, description);
         Logger.d("TemplateProcessor", "Failed command:", command.join(" ").substring(0, 500));
+      }
+      // Execute any pending request (handles both kill case and 400ms interval case)
+      if (pendingWallpaperRequest || pendingPredefinedRequest) {
+        executePendingRequest();
       }
     }
 
