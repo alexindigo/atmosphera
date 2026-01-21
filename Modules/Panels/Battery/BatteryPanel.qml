@@ -114,9 +114,9 @@ SmartPanel {
     readonly property bool isReady: battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery)
     readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
     readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
-    readonly property bool healthAvailable: BatteryService.healthAvailable
-    readonly property int healthPercent: BatteryService.healthPercent
-    readonly property string capacityLevel: BatteryService.capacityLevel
+    readonly property bool isPluggedIn: isReady ? (battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge) : false
+    readonly property bool healthAvailable: (isReady && battery.healthSupported) || BatteryService.healthAvailable
+    readonly property int healthPercent: (isReady && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
 
     function getDeviceName() {
       if (!isReady) {
@@ -153,7 +153,7 @@ SmartPanel {
       }
       return I18n.tr("common.idle");
     }
-    readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
+    readonly property string iconName: BatteryService.getIcon(percent, charging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
     readonly property var batteryWidgetSettings: batteryWidgetInstance ? batteryWidgetInstance.widgetSettings : null
@@ -318,23 +318,6 @@ SmartPanel {
                   color: Color.mOnSurface
                   pointSize: Style.fontSizeS
                 }
-
-                NText {
-                  text: capacityLevel
-                  visible: healthAvailable && healthPercent > 0 && capacityLevel !== ""
-                  color: {
-                    var level = capacityLevel.toLowerCase();
-                    if (level === "normal" || level === "full" || level === "good" || level === "high") {
-                      return Color.mPrimary;
-                    } else if (level === "low" || level === "critical") {
-                      return Color.mError;
-                    } else {
-                      return Color.mTertiary;
-                    }
-                  }
-                  pointSize: Style.fontSizeS
-                  font.weight: Style.fontWeightBold
-                }
               }
 
               Rectangle {
@@ -347,7 +330,7 @@ SmartPanel {
                   anchors.verticalCenter: parent.verticalCenter
                   height: parent.height
                   radius: parent.radius
-                  visible: healthAvailable && healthPercent > 0
+                  visible: healthAvailable
                   width: {
                     if (!healthAvailable || healthPercent <= 0)
                       return 0;
@@ -360,7 +343,7 @@ SmartPanel {
             }
 
             NText {
-              text: healthAvailable && healthPercent > 0 ? `${healthPercent}%` : I18n.tr("common.not-available")
+              text: healthAvailable ? `${healthPercent}%` : I18n.tr("common.not-available")
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
               font.weight: Style.fontWeightBold

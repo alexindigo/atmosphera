@@ -125,12 +125,15 @@ Singleton {
     }
   }
 
-  function getIcon(percent, charging, isReady) {
+  function getIcon(percent, charging, pluggedIn, isReady) {
     if (!isReady) {
       return "battery-exclamation";
     }
     if (charging) {
       return "common.charging";
+    }
+    if (pluggedIn) {
+      return "battery-charging-2";
     }
     if (percent >= 90) {
       return "battery-4";
