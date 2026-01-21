@@ -185,10 +185,15 @@ RowLayout {
     }
 
     popup: Popup {
-      y: combo.height
-      implicitWidth: combo.width - Style.marginM
+      y: combo.height + Style.marginS
+      implicitWidth: combo.width
       implicitHeight: Math.min(Math.round(root.popupHeight * Style.uiScaleRatio), listView.contentHeight + Style.marginXL)
       padding: Style.marginM
+
+      onOpened: {
+        listView.currentIndex = combo.currentIndex;
+        listView.positionViewAtIndex(combo.currentIndex);
+      }
 
       contentItem: ListView {
         id: listView
