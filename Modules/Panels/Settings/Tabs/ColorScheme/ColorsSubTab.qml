@@ -220,15 +220,19 @@ ColumnLayout {
     model: [
       {
         "key": "tonal-spot",
-        "name": "M3-Tonal Spot"
+        "name": "M3-Tonal Spot" // Do not translate
+      },
+      {
+        "key": "content",
+        "name": "M3-Content" // Do not translate
       },
       {
         "key": "fruit-salad",
-        "name": "M3-Fruit Salad"
+        "name": "M3-Fruit Salad" // Do not translate
       },
       {
         "key": "rainbow",
-        "name": "M3-Rainbow"
+        "name": "M3-Rainbow" // Do not translate
       },
       {
         "key": "vibrant",

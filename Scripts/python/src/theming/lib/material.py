@@ -8,10 +8,10 @@ Supported schemes (matching Matugen):
 - SchemeTonalSpot: Default Android 12-13 scheme, mid-vibrancy
 - SchemeFruitSalad: Bold/playful with -50° hue rotation
 - SchemeRainbow: Chromatic accents with grayscale neutrals
-- SchemeContent: Preserves source color's chroma (legacy "material" mode)
+- SchemeContent: Preserves source color's chroma
 """
 
-from .hct import Hct, TonalPalette
+from .hct import Hct, TonalPalette, TemperatureCache, fix_if_disliked
 
 
 # =============================================================================
@@ -312,35 +312,38 @@ class SchemeContent(_BaseScheme):
     """
     Content scheme - preserves source color's chroma.
 
-    This is the legacy "material" mode that preserves the extracted
-    color's characteristics:
-    - Primary: source hue and chroma (unchanged)
-    - Secondary: same hue, reduced chroma
-    - Tertiary: hue +60°, reduced chroma
-    - Neutrals: low chroma (tinted with source hue)
+    This is the Material Design 3 "content" scheme that preserves the source
+    color's characteristics while creating harmonious palettes:
+    - Primary: source hue and chroma (full preservation)
+    - Secondary: same hue, reduced chroma: max(chroma - 32, chroma * 0.5)
+    - Tertiary: analogous color from temperature analysis (warm-cool harmony)
+    - Neutrals: low chroma (chroma / 8, tinted with source hue)
     """
 
     def __init__(self, source_color: Hct):
         super().__init__(source_color)
 
-        # Primary: preserve source color's hue and chroma
+        # Primary: preserve source color's hue and chroma (full preservation)
         self.primary_palette = TonalPalette(source_color.hue, source_color.chroma)
 
         # Secondary: same hue, reduced chroma
-        secondary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
+        # Formula from matugen: max(chroma - 32, chroma * 0.5)
+        secondary_chroma = max(source_color.chroma - 32.0, source_color.chroma * 0.5)
         self.secondary_palette = TonalPalette(source_color.hue, secondary_chroma)
 
-        # Tertiary: 60° hue rotation with reduced chroma
-        tertiary_hue = (source_color.hue + 60.0) % 360.0
-        tertiary_chroma = max(source_color.chroma - 24.0, source_color.chroma * 0.6)
-        self.tertiary_palette = TonalPalette(tertiary_hue, tertiary_chroma)
+        # Tertiary: use analogous color from temperature analysis
+        # Get 3 analogous colors with 6 divisions, pick the last one (most different)
+        temp_cache = TemperatureCache(source_color)
+        analogous_colors = temp_cache.analogous(3, 6)
+        tertiary_hct = fix_if_disliked(analogous_colors[-1])
+        self.tertiary_palette = TonalPalette.from_hct(tertiary_hct)
 
-        # Neutral: source hue, low chroma (chroma / 6)
-        neutral_chroma = source_color.chroma / 6.0
+        # Neutral: source hue, low chroma (chroma / 8)
+        neutral_chroma = source_color.chroma / 8.0
         self.neutral_palette = TonalPalette(source_color.hue, neutral_chroma)
 
-        # Neutral variant: slightly more chroma
-        neutral_variant_chroma = (source_color.chroma / 6.0) + 4.0
+        # Neutral variant: slightly more chroma (chroma / 8 + 4)
+        neutral_variant_chroma = (source_color.chroma / 8.0) + 4.0
         self.neutral_variant_palette = TonalPalette(source_color.hue, neutral_variant_chroma)
 
 
