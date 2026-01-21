@@ -26,16 +26,21 @@ ColumnLayout {
   }
 
   NToggle {
-    visible: Settings.data.wallpaper.enabled && CompositorService.isNiri
+    enabled: Settings.data.wallpaper.enabled
+    visible: CompositorService.isNiri
     label: I18n.tr("panels.wallpaper.settings-enable-overview-label")
     description: I18n.tr("panels.wallpaper.settings-enable-overview-description")
-    checked: Settings.data.wallpaper.overviewEnabled
+    checked: Settings.data.wallpaper.enabled && Settings.data.wallpaper.overviewEnabled
     onToggled: checked => Settings.data.wallpaper.overviewEnabled = checked
     defaultValue: Settings.getDefaultValue("wallpaper.overviewEnabled")
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   ColumnLayout {
-    visible: Settings.data.wallpaper.enabled
+    enabled: Settings.data.wallpaper.enabled
     spacing: Style.marginL
     Layout.fillWidth: true
 
@@ -49,20 +54,6 @@ ColumnLayout {
       Layout.fillWidth: true
       onInputEditingFinished: Settings.data.wallpaper.directory = text
       onButtonClicked: root.openMainFolderPicker()
-    }
-
-    RowLayout {
-      NLabel {
-        label: I18n.tr("tooltips.wallpaper-selector")
-        description: I18n.tr("panels.wallpaper.settings-selector-description")
-        Layout.alignment: Qt.AlignTop
-      }
-
-      NIconButton {
-        icon: "wallpaper-selector"
-        tooltipText: I18n.tr("tooltips.wallpaper-selector")
-        onClicked: PanelService.getPanel("wallpaperPanel", root.screen)?.toggle()
-      }
     }
 
     NToggle {
@@ -119,6 +110,31 @@ ColumnLayout {
             }
           }
         }
+      }
+    }
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
+  ColumnLayout {
+    enabled: Settings.data.wallpaper.enabled
+    spacing: Style.marginL
+    Layout.fillWidth: true
+
+    RowLayout {
+
+      NLabel {
+        label: I18n.tr("tooltips.wallpaper-selector")
+        description: I18n.tr("panels.wallpaper.settings-selector-description")
+        Layout.alignment: Qt.AlignTop
+      }
+
+      NIconButton {
+        icon: "wallpaper-selector"
+        tooltipText: I18n.tr("tooltips.wallpaper-selector")
+        onClicked: PanelService.getPanel("wallpaperPanel", root.screen)?.toggle()
       }
     }
 

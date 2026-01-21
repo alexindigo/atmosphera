@@ -27,7 +27,7 @@ Singleton {
       // Toast: dark/light mode switched
       const enabled = !!Settings.data.colorSchemes.darkMode;
       const label = enabled ? I18n.tr("tooltips.switch-to-dark-mode") : I18n.tr("tooltips.switch-to-light-mode");
-      const description = I18n.tr("toast.wifi.enabled");
+      const description = I18n.tr("common.enabled");
       ToastService.showNotice(label, description, "dark-mode");
     }
   }

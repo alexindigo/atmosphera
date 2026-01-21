@@ -110,6 +110,7 @@ SmartPanel {
     readonly property bool isReady: battery && battery.ready && isDevicePresent && (battery.percentage !== undefined || hasBluetoothBattery)
     readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
     readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
+    readonly property bool isPluggedIn: isReady ? (battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge) : false
     readonly property bool healthAvailable: isReady && battery.healthSupported
     readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
 
@@ -146,9 +147,12 @@ SmartPanel {
                          "time": Time.formatVagueHumanReadableDuration(battery.timeToEmpty)
                        });
       }
+      if (!charging && isPluggedIn) {
+        return I18n.tr("battery.plugged-in"); // i18n: Could be Plugged in, not charging? Ask maintainers if i not forgot
+      }
       return I18n.tr("common.idle");
     }
-    readonly property string iconName: BatteryService.getIcon(percent, charging, isReady)
+    readonly property string iconName: BatteryService.getIcon(percent, charging, isPluggedIn, isReady)
 
     property var batteryWidgetInstance: BarService.lookupWidget("Battery", screen ? screen.name : null)
     readonly property var batteryWidgetSettings: batteryWidgetInstance ? batteryWidgetInstance.widgetSettings : null
@@ -215,7 +219,7 @@ SmartPanel {
 
           NIcon {
             pointSize: Style.fontSizeXXL
-            color: charging ? Color.mPrimary : Color.mOnSurface
+            color: (charging || isPluggedIn) ? Color.mPrimary : Color.mOnSurface
             icon: iconName
           }
 

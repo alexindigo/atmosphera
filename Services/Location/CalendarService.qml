@@ -4,8 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import qs.Services.Location.Calendar
-import qs.Services.System
 
 Singleton {
   id: root
@@ -16,8 +14,6 @@ Singleton {
   property bool available: false
   property string lastError: ""
   property var calendars: ([])
-
-  property var dataProvider: null
 
   // Persistent cache
   property string cacheFile: Settings.cacheDir + "calendar.json"
@@ -59,25 +55,6 @@ Singleton {
     onTriggered: cacheFileView.writeAdapter()
   }
 
-  function setEvents(newEvents) {
-    root.events = newEvents;
-    cacheAdapter.cachedEvents = newEvents;
-    cacheAdapter.lastUpdate = new Date().toISOString();
-    saveCache();
-  }
-
-  function setCalendars(newCalendars) {
-    root.calendars = newCalendars;
-    cacheAdapter.cachedCalendars = newCalendars;
-    saveCache();
-  }
-
-  function loadCachedEvents() {
-    if (cacheAdapter.cachedEvents.length > 0) {
-      root.events = cacheAdapter.cachedEvents;
-    }
-  }
-
   function saveCache() {
     saveDebounce.restart();
   }
@@ -110,33 +87,167 @@ Singleton {
 
   // Core functions
   function checkAvailability() {
-    if (!Settings.data.location.showCalendarEvents) {
+    if (Settings.data.location.showCalendarEvents) {
+      availabilityCheckProcess.running = true;
+    } else {
       root.available = false;
-      return;
     }
-
-    Khal.init();
-    EvolutionDataServer.init();
   }
 
   function loadCalendars() {
-    if (!root.available || !dataProvider) {
-      return;
-    }
-
-    dataProvider.loadCalendars();
+    listCalendarsProcess.running = true;
   }
+
   function loadEvents(daysAhead = 31, daysBehind = 14) {
-    if (!root.available || !dataProvider) {
+    if (!Settings.data.location.showCalendarEvents) {
+      root.loading = false;
+      root.events = [];
       return;
     }
+    if (loading)
+      return;
+    loading = true;
+    lastError = "";
 
-    dataProvider.loadEvents(daysAhead, daysBehind);
+    const now = new Date();
+    const startDate = new Date(now.getTime() - (daysBehind * 24 * 60 * 60 * 1000));
+    const endDate = new Date(now.getTime() + (daysAhead * 24 * 60 * 60 * 1000));
+
+    loadEventsProcess.startTime = Math.floor(startDate.getTime() / 1000);
+    loadEventsProcess.endTime = Math.floor(endDate.getTime() / 1000);
+    loadEventsProcess.running = true;
+
+    Logger.d("Calendar", `Loading events (${daysBehind} days behind, ${daysAhead} days ahead): ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`);
   }
 
   // Helper to format date/time
   function formatDateTime(timestamp) {
     const date = new Date(timestamp * 1000);
     return Qt.formatDateTime(date, "yyyy-MM-dd hh:mm");
+  }
+
+  // Process to check for evolution-data-server libraries
+  Process {
+    id: availabilityCheckProcess
+    running: false
+    command: ["sh", "-c", "command -v python3 >/dev/null 2>&1 && python3 " + root.checkCalendarAvailableScript + " || echo 'unavailable: python3 not installed'"]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const result = text.trim();
+        root.available = result === "available";
+
+        if (root.available) {
+          Logger.i("Calendar", "EDS libraries available");
+          loadCalendars();
+        } else {
+          Logger.w("Calendar", "EDS libraries not available: " + result);
+          root.lastError = "Evolution Data Server libraries not installed";
+        }
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.d("Calendar", "Availability check error: " + text);
+          root.available = false;
+          root.lastError = "Failed to check library availability";
+        }
+      }
+    }
+  }
+
+  // Process to list available calendars
+  Process {
+    id: listCalendarsProcess
+    running: false
+    command: ["python3", root.listCalendarsScript]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        try {
+          const result = JSON.parse(text.trim());
+          root.calendars = result;
+          cacheAdapter.cachedCalendars = result;
+          saveCache();
+
+          Logger.d("Calendar", `Found ${result.length} calendar(s)`);
+
+          // Auto-load events after discovering calendars
+          // Only load if we have calendars and no cached events
+          if (result.length > 0 && root.events.length === 0) {
+            loadEvents();
+          } else if (result.length > 0) {
+            // If we already have cached events, load in background
+            loadEvents();
+          }
+        } catch (e) {
+          Logger.d("Calendar", "Failed to parse calendars: " + e);
+          root.lastError = "Failed to parse calendar list";
+        }
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        if (text.trim()) {
+          Logger.d("Calendar", "List calendars error: " + text);
+          root.lastError = text.trim();
+        }
+      }
+    }
+  }
+
+  // Process to load events
+  Process {
+    id: loadEventsProcess
+    running: false
+    property int startTime: 0
+    property int endTime: 0
+
+    command: ["python3", root.calendarEventsScript, startTime.toString(), endTime.toString()]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        root.loading = false;
+
+        try {
+          const result = JSON.parse(text.trim());
+          root.events = result;
+          cacheAdapter.cachedEvents = result;
+          cacheAdapter.lastUpdate = new Date().toISOString();
+          saveCache();
+
+          Logger.d("Calendar", `Loaded ${result.length} event(s)`);
+        } catch (e) {
+          Logger.d("Calendar", "Failed to parse events: " + e);
+          root.lastError = "Failed to parse events";
+
+          // Fall back to cached events if available
+          if (cacheAdapter.cachedEvents.length > 0) {
+            root.events = cacheAdapter.cachedEvents;
+            Logger.d("Calendar", "Using cached events");
+          }
+        }
+      }
+    }
+
+    stderr: StdioCollector {
+      onStreamFinished: {
+        root.loading = false;
+
+        if (text.trim()) {
+          Logger.d("Calendar", "Load events error: " + text);
+          root.lastError = text.trim();
+
+          // Fall back to cached events if available
+          if (cacheAdapter.cachedEvents.length > 0) {
+            root.events = cacheAdapter.cachedEvents;
+            Logger.d("Calendar", "Using cached events due to error");
+          }
+        }
+      }
+    }
   }
 }

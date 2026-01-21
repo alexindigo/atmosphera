@@ -369,6 +369,7 @@
     "enabled": "已啟用",
     "events": "事件",
     "execute": "執行",
+    "faithful": "忠實",
     "focus": "關注",
     "frequency": "頻率",
     "gateway": "網路閘道",
@@ -446,6 +447,7 @@
     "update": "更新",
     "upload": "上傳",
     "version": "版本",
+    "vibrant": "鮮明",
     "visualizer": "視覺效果",
     "volume": "音量",
     "volumes": "音量",
@@ -765,7 +767,7 @@
       "templates-write-path": "寫入: {filepath}",
       "title": "主題配色",
       "wallpaper-method-description": "選擇你喜歡的配色生成方法",
-      "wallpaper-method-label": "色彩提取方式"
+      "wallpaper-method-label": "調色盤產生方法"
     },
     "control-center": {
       "cards-desc": "自訂控制中心出現的控制項目及排序",
@@ -1189,7 +1191,7 @@
       "uninstall-dialog-description": "你確定想要移除 {plugin}? 這樣會移除所有模組的資料",
       "uninstall-dialog-title": "移除外掛模組",
       "uninstall-error": "移除失敗: {error}",
-      "uninstall-success": "成功移除 {plugin}...",
+      "uninstall-success": "成功移除 {plugin}",
       "uninstalling": "正在移除 {plugin}...",
       "update-all": "將全部 {count} 個都更新",
       "update-all-success": "已成功更新所有的外掛模組",
@@ -1498,9 +1500,7 @@
       "connected": "已連上 '{ssid}'",
       "connection-failed": "連線失敗",
       "connection-timeout": "連線逾時",
-      "disabled": "已停用",
       "disconnected": "已自 '{ssid}' 斷開連線",
-      "enabled": "已啟用",
       "incorrect-password": "密碼錯誤",
       "network-not-found": "找不到網路"
     }

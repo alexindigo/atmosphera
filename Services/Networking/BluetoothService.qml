@@ -233,10 +233,10 @@ Singleton {
       if (bluetoothBlockedToggled) {
         checkWifiBlocked.running = true;
       } else if (adapter.state === BluetoothAdapter.Enabled) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
         Logger.d("Bluetooth", "Adapter enabled");
       } else if (adapter.state === BluetoothAdapter.Disabled) {
-        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
+        ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
         Logger.d("Bluetooth", "Adapter disabled");
       }
     }
@@ -255,17 +255,17 @@ Singleton {
           root.airplaneModeToggled = true;
           root.lastWifiBlocked = true;
           NetworkService.setWifiEnabled(false);
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.enabled"), "plane");
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.enabled"), "plane");
         } else if (!wifiBlocked && lastWifiBlocked) {
           root.airplaneModeToggled = true;
           root.lastWifiBlocked = false;
           NetworkService.setWifiEnabled(true);
-          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("toast.wifi.disabled"), "plane-off");
+          ToastService.showNotice(I18n.tr("toast.airplane-mode.title"), I18n.tr("common.disabled"), "plane-off");
         } else if (adapter.enabled) {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.enabled"), "bluetooth");
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.enabled"), "bluetooth");
           Logger.d("Bluetooth", "Adapter enabled");
         } else {
-          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("toast.wifi.disabled"), "bluetooth-off");
+          ToastService.showNotice(I18n.tr("common.bluetooth"), I18n.tr("common.disabled"), "bluetooth-off");
           Logger.d("Bluetooth", "Adapter disabled");
         }
         root.airplaneModeToggled = false;
@@ -587,7 +587,7 @@ Singleton {
     const totalPauseMs = (pairWait * 1000) + (attempts * intervalSec * 1000) + 2000;
     _pauseDiscoveryFor(totalPauseMs);
 
-    const scriptPath = Quickshell.shellDir + "/Scripts/network/bluetooth-connect.py";
+    const scriptPath = Quickshell.shellDir + "/Scripts/python/src/network/bluetooth-connect.py";
 
     pairingProcess.command = ["python3", scriptPath, String(addr), String(pairWait), String(attempts), String(intervalSec)];
     pairingProcess.running = true;

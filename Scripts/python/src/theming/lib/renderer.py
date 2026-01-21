@@ -17,7 +17,7 @@ try:
 except ImportError:
     tomllib = None
 
-from .color import Color
+from .color import Color, find_closest_color
 
 
 class TemplateRenderer:
@@ -285,6 +285,10 @@ class TemplateRenderer:
 
         result = re.sub(pattern, replace, template_text)
 
+        # Process escape sequences (matugen-compatible)
+        # \\ in template becomes \ in output
+        result = result.replace('\\\\', '\\')
+
         if self._error_count > 0:
             print(f"Template rendering completed with {self._error_count} error(s)", file=sys.stderr)
 
@@ -318,6 +322,10 @@ class TemplateRenderer:
             self._current_file = None
         return success
 
+    def _substitute_closest_color(self, text: str, closest_color: str) -> str:
+        """Substitute {{closest_color}} in text."""
+        return re.sub(r"\{\{\s*closest_color\s*\}\}", closest_color, text)
+
     def process_config_file(self, config_path: Path):
         """Process Matugen TOML configuration file."""
         if not tomllib:
@@ -339,10 +347,38 @@ class TemplateRenderer:
 
                 self.render_file(Path(input_path).expanduser(), Path(output_path).expanduser())
 
+                # Handle closest_color if configured (matugen-compatible)
+                closest_color_value = ""
+                colors_to_compare = template.get("colors_to_compare")
+                compare_to = template.get("compare_to")
+
+                if colors_to_compare and compare_to:
+                    # Render compare_to to get the actual hex color
+                    rendered_compare_to = self.render(compare_to)
+                    # Find the closest color name
+                    closest_color_value = find_closest_color(rendered_compare_to, colors_to_compare)
+
+                # Execute pre_hook if specified
+                pre_hook = template.get("pre_hook")
+                if pre_hook:
+                    import subprocess
+                    # Substitute closest_color first, then render color variables
+                    if closest_color_value:
+                        pre_hook = self._substitute_closest_color(pre_hook, closest_color_value)
+                    pre_hook = self.render(pre_hook)
+                    try:
+                        subprocess.run(pre_hook, shell=True, check=False)
+                    except Exception as e:
+                        print(f"Error running pre_hook for {name}: {e}", file=sys.stderr)
+
                 # Execute post_hook if specified
                 post_hook = template.get("post_hook")
                 if post_hook:
                     import subprocess
+                    # Substitute closest_color first, then render color variables
+                    if closest_color_value:
+                        post_hook = self._substitute_closest_color(post_hook, closest_color_value)
+                    post_hook = self.render(post_hook)
                     try:
                         subprocess.run(post_hook, shell=True, check=False)
                     except Exception as e:

@@ -955,60 +955,102 @@ Singleton {
 
   Timer {
     id: mediaToastDebounce
-    interval: 300 // Debounce rapid changes
+    interval: 250 // Dynamic interval based on player
     onTriggered: {
-      if (!Settings.data.notifications.enableMediaToast || !mediaToastInitialized)
+      checkMediaToast();
+    }
+  }
+
+  function checkMediaToast() {
+    if (!Settings.data.notifications.enableMediaToast || !mediaToastInitialized)
       return;
 
-      if (doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
+    if (doNotDisturb || PowerProfileService.noctaliaPerformanceMode)
       return;
 
-      const title = MediaService.trackTitle || "";
-      const artist = MediaService.trackArtist || "";
-      const isPlaying = MediaService.isPlaying;
+    // Re-evaluate player identity here to handle race conditions where
+    // the identity wasn't updated yet when the timer started.
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi", "zen"];
+    const isBrowser = browsers.some(b => player.includes(b));
 
-      // Only show toast if something meaningful changed
-      const titleChanged = title !== previousMediaTitle && title !== "";
-      const playStateChanged = isPlaying !== previousMediaIsPlaying;
-      const hasMedia = title !== "" || artist !== "";
+    // Safety check: If it's a browser, ensure we waited long enough.
+    // If we started with a short interval (e.g. 250ms because we thought it was Spotify),
+    // correct it now and wait the full duration.
+    if (isBrowser && mediaToastDebounce.interval < 1500) {
+      mediaToastDebounce.interval = 1500;
+      mediaToastDebounce.restart();
+      return;
+    }
 
-      if (hasMedia && (titleChanged || playStateChanged)) {
-        const icon = isPlaying ? "media-play" : "media-pause";
-        let message = "";
+    const title = MediaService.trackTitle || "";
+    const artist = MediaService.trackArtist || "";
+    const isPlaying = MediaService.isPlaying;
 
-        if (artist && title) {
-          message = artist + " — " + title;
-        } else if (title) {
-          message = title;
-        } else if (artist) {
-          message = artist;
-        }
+    // Only show toast if something meaningful changed
+    const titleChanged = title !== previousMediaTitle && title !== "";
+    const playStateChanged = isPlaying !== previousMediaIsPlaying;
+    const hasMedia = title !== "" || artist !== "";
 
-        if (message !== "") {
-          const toastTitle = isPlaying ? I18n.tr("common.play") : I18n.tr("common.pause");
-          ToastService.showNotice(toastTitle, message, icon, 3000);
-        }
-      }
-
+    // Browser Specific Logic:
+    // If a browser reports a new title but is PAUSED, ignore it.
+    if (isBrowser && !isPlaying && titleChanged) {
       previousMediaTitle = title;
       previousMediaArtist = artist;
       previousMediaIsPlaying = isPlaying;
+      return;
     }
+
+    if (hasMedia && (titleChanged || playStateChanged)) {
+      const icon = isPlaying ? "media-play" : "media-pause";
+      let message = "";
+
+      if (artist && title) {
+        message = artist + " — " + title;
+      } else if (title) {
+        message = title;
+      } else if (artist) {
+        message = artist;
+      }
+
+      if (message !== "") {
+        const toastTitle = isPlaying ? I18n.tr("common.play") : I18n.tr("common.pause");
+        ToastService.showNotice(toastTitle, message, icon, 3000);
+      }
+    }
+
+    previousMediaTitle = title;
+    previousMediaArtist = artist;
+    previousMediaIsPlaying = isPlaying;
   }
 
   Connections {
     target: MediaService
 
     function onTrackTitleChanged() {
-      mediaToastDebounce.restart();
+      restartDebounce();
     }
 
     function onTrackArtistChanged() {
-      mediaToastDebounce.restart();
+      restartDebounce();
     }
 
     function onIsPlayingChanged() {
-      mediaToastDebounce.restart();
+      restartDebounce();
     }
+
+    function onPlayerIdentityChanged() {
+      restartDebounce();
+    }
+  }
+
+  function restartDebounce() {
+    const player = (MediaService.playerIdentity || "").toLowerCase();
+    const browsers = ["firefox", "chromium", "chrome", "brave", "edge", "opera", "vivaldi"];
+    const isBrowser = browsers.some(b => player.includes(b));
+
+    // Use long delay for browsers to filter hover previews, short for music apps
+    mediaToastDebounce.interval = isBrowser ? 1500 : 250;
+    mediaToastDebounce.restart();
   }
 }

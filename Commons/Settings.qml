@@ -616,7 +616,7 @@ Singleton {
       property string schedulingMode: "off"
       property string manualSunrise: "06:30"
       property string manualSunset: "18:30"
-      property string extractionMethod: "default"
+      property string generationMethod: "tonal-spot"
     }
 
     // templates toggles

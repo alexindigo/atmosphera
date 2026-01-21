@@ -13,7 +13,7 @@ Singleton {
   id: root
 
   readonly property string dynamicConfigPath: Settings.cacheDir + "theming.dynamic.toml"
-  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/theming/template-processor.py"
+  readonly property string templateProcessorScript: Quickshell.shellDir + "/Scripts/python/src/theming/template-processor.py"
 
   readonly property var schemeNameMap: ({
                                           "Noctalia (default)": "Noctalia-default",
@@ -159,7 +159,7 @@ Singleton {
                                            lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
-                                           const postHook = terminal.postHook || `${TemplateRegistry.colorsApplyScript} ${terminal.id}`;
+                                           const postHook = terminal.postHook || `${TemplateRegistry.templateApplyScript} ${terminal.id}`;
                                            const postHookEsc = escapeTomlString(postHook);
                                            lines.push(`post_hook = "${postHookEsc}"`);
                                          }
@@ -252,6 +252,13 @@ Singleton {
     return false;
   }
 
+  // Get scheme type, defaulting to tonal-spot if not a recognized value
+  function getSchemeType() {
+    const method = Settings.data.colorSchemes.generationMethod;
+    const validTypes = ["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"];
+    return validTypes.includes(method) ? method : "tonal-spot";
+  }
+
   function buildGenerationScript(content, wallpaper, mode) {
     const delimiter = "THEME_CONFIG_EOF_" + Math.random().toString(36).substr(2, 9);
     const pathEsc = dynamicConfigPath.replace(/'/g, "'\\''");
@@ -262,9 +269,8 @@ Singleton {
     script += `NOCTALIA_WP_PATH=$(cat << '${wpDelimiter}'\n${wallpaper}\n${wpDelimiter}\n)\n`;
 
     // Use template-processor.py (Python implementation)
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
-    // We pass --type for compatibility but it is ignored by internal logic unless needed
-    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" ${styleFlag} --config '${pathEsc}' --mode ${mode} `;
+    const schemeType = getSchemeType();
+    script += `python3 "${templateProcessorScript}" "$NOCTALIA_WP_PATH" --scheme-type ${schemeType} --config '${pathEsc}' --mode ${mode} `;
 
     script += buildUserTemplateCommand("$NOCTALIA_WP_PATH", mode);
 
@@ -294,7 +300,7 @@ Singleton {
                                            const hyphenPath = escapeShellPath(templatePaths.hyphen);
                                            const spacePath = escapeShellPath(templatePaths.space);
                                            commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal} (tried both hyphen and space patterns)"; fi`);
-                                           commands.push(`${TemplateRegistry.colorsApplyScript} ${terminal}`);
+                                           commands.push(`${TemplateRegistry.templateApplyScript} ${terminal}`);
                                          }
                                        });
 
@@ -363,8 +369,8 @@ Singleton {
     // Otherwise, use single quotes for safety with file paths
     const inputQuoted = input.startsWith("$") ? `"${input}"` : `'${input.replace(/'/g, "'\\''")}'`;
 
-    const styleFlag = (Settings.data.colorSchemes.extractionMethod === "default") ? "--default" : "--material";
-    script += `  python3 "${templateProcessorScript}" ${inputQuoted} ${styleFlag} --config '${userConfigPath}' --mode ${mode}\n`;
+    const schemeType = getSchemeType();
+    script += `  python3 "${templateProcessorScript}" ${inputQuoted} --scheme-type ${schemeType} --config '${userConfigPath}' --mode ${mode}\n`;
     script += "fi";
 
     return script;

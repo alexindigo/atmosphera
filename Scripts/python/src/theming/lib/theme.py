@@ -4,44 +4,69 @@ Theme generation functions for Material and Normal modes.
 This module provides functions for generating complete color themes
 from a color palette, supporting both Material Design 3 and a more
 vibrant "wallust-style" theme.
+
+Supported scheme types:
+- tonal-spot: Default Android 12-13 scheme (recommended)
+- fruit-salad: Bold/playful with hue rotation
+- rainbow: Chromatic accents with grayscale neutrals
+- vibrant: Preserves wallpaper colors directly (legacy)
 """
 
 from typing import Literal
 
 from .color import Color, shift_hue, hue_distance, adjust_surface
 from .contrast import ensure_contrast
-from .material import MaterialScheme
+from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent
 from .palette import find_error_color
 
-# Type alias
+# Type aliases
 ThemeMode = Literal["dark", "light"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"]
+
+# Map scheme type strings to classes
+SCHEME_CLASSES = {
+    "tonal-spot": SchemeTonalSpot,
+    "fruit-salad": SchemeFruitSalad,
+    "rainbow": SchemeRainbow,
+    # "vibrant" uses generate_normal_* functions, not a scheme class
+}
 
 
-def generate_material_dark(palette: list[Color]) -> dict[str, str]:
+def generate_material_dark(palette: list[Color], scheme_type: str = "tonal-spot") -> dict[str, str]:
     """
     Generate Material Design 3 dark theme from palette using HCT color space.
 
-    Uses proper Material Design 3 tonal palettes and tone values for
-    perceptually accurate and consistent theming.
+    Args:
+        palette: List of extracted colors (primary color is index 0)
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow"
+
+    Returns:
+        Dictionary of color token names to hex values
     """
     primary = palette[0] if palette else Color(255, 245, 155)
 
-    # Create Material scheme from primary color
-    scheme = MaterialScheme.from_rgb(primary.r, primary.g, primary.b)
+    # Get the appropriate scheme class
+    scheme_class = SCHEME_CLASSES.get(scheme_type, SchemeTonalSpot)
+    scheme = scheme_class.from_rgb(primary.r, primary.g, primary.b)
     return scheme.get_dark_scheme()
 
 
-def generate_material_light(palette: list[Color]) -> dict[str, str]:
+def generate_material_light(palette: list[Color], scheme_type: str = "tonal-spot") -> dict[str, str]:
     """
     Generate Material Design 3 light theme from palette using HCT color space.
 
-    Uses proper Material Design 3 tonal palettes and tone values for
-    perceptually accurate and consistent theming.
+    Args:
+        palette: List of extracted colors (primary color is index 0)
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow"
+
+    Returns:
+        Dictionary of color token names to hex values
     """
     primary = palette[0] if palette else Color(93, 101, 245)
 
-    # Create Material scheme from primary color
-    scheme = MaterialScheme.from_rgb(primary.r, primary.g, primary.b)
+    # Get the appropriate scheme class
+    scheme_class = SCHEME_CLASSES.get(scheme_type, SchemeTonalSpot)
+    scheme = scheme_class.from_rgb(primary.r, primary.g, primary.b)
     return scheme.get_light_scheme()
 
 
@@ -111,11 +136,20 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     if 160 <= surface_hue <= 200:
         surface_hue = (surface_hue + 10) % 360
 
-    base_surface = Color.from_hsl(surface_hue, s, 0.5)  # l doesn't matter for next step
+    # Reduce saturation for warm hues (red/orange/yellow) - they feel overwhelming as surfaces
+    # Warm hues: 0-60 and 300-360
+    if surface_hue < 60 or surface_hue > 300:
+        surface_saturation_cap = 0.35  # More desaturated for warm colors
+    elif 60 <= surface_hue < 120:
+        surface_saturation_cap = 0.50  # Moderate for yellow-greens
+    else:
+        surface_saturation_cap = 0.90  # Keep cool colors vibrant
 
-    # Preserving saturation (up to 0.9) to be true to primary color
-    surface = adjust_surface(base_surface, 0.90, 0.12)
-    surface_variant = adjust_surface(base_surface, 0.80, 0.16)
+    base_surface = Color.from_hsl(surface_hue, min(s, surface_saturation_cap), 0.5)
+
+    # Preserving saturation (up to the cap) to be true to primary color
+    surface = adjust_surface(base_surface, surface_saturation_cap, 0.12)
+    surface_variant = adjust_surface(base_surface, min(0.80, surface_saturation_cap), 0.16)
 
     # Surface containers - progressive lightness for visual hierarchy (keep primary hue)
     surface_container_lowest = adjust_surface(base_surface, 0.85, 0.06)
@@ -143,13 +177,14 @@ def generate_normal_dark(palette: list[Color]) -> dict[str, str]:
     on_error = ensure_contrast(dark_fg, error, 7.0)
 
     # "On" colors for containers - light text on dark containers, tinted with respective color
-    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.90), primary_container, 4.5)
+    # Explicitly prefer_light=True since containers in dark mode are dark
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.90), primary_container, 4.5, prefer_light=True)
     sec_h, sec_s, _ = secondary.to_hsl()
-    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.90), secondary_container, 4.5)
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.90), secondary_container, 4.5, prefer_light=True)
     ter_h, ter_s, _ = tertiary.to_hsl()
-    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.90), tertiary_container, 4.5)
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.90), tertiary_container, 4.5, prefer_light=True)
     err_h, err_s, _ = error.to_hsl()
-    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.90), error_container, 4.5)
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.90), error_container, 4.5, prefer_light=True)
 
     # Shadow and scrim
     shadow = surface
@@ -335,14 +370,15 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
     on_error = ensure_contrast(light_fg, error, 7.0)
 
     # "On" colors for containers - dark text on light containers, tinted with respective color
+    # Explicitly prefer_light=False since containers in light mode are light
     primary_h, primary_s, _ = primary.to_hsl()
-    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.15), primary_container, 4.5)
+    on_primary_container = ensure_contrast(Color.from_hsl(primary_h, primary_s, 0.15), primary_container, 4.5, prefer_light=False)
     sec_h, sec_s, _ = secondary.to_hsl()
-    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.15), secondary_container, 4.5)
+    on_secondary_container = ensure_contrast(Color.from_hsl(sec_h, sec_s, 0.15), secondary_container, 4.5, prefer_light=False)
     ter_h, ter_s, _ = tertiary.to_hsl()
-    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.15), tertiary_container, 4.5)
+    on_tertiary_container = ensure_contrast(Color.from_hsl(ter_h, ter_s, 0.15), tertiary_container, 4.5, prefer_light=False)
     err_h, err_s, _ = error.to_hsl()
-    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.15), error_container, 4.5)
+    on_error_container = ensure_contrast(Color.from_hsl(err_h, err_s, 0.15), error_container, 4.5, prefer_light=False)
 
     # Fixed colors - high-chroma accents consistent across light/dark
     # In light mode: darker versions of accent colors
@@ -449,14 +485,27 @@ def generate_normal_light(palette: list[Color]) -> dict[str, str]:
 def generate_theme(
     palette: list[Color],
     mode: ThemeMode,
-    material: bool = True
+    scheme_type: str = "tonal-spot"
 ) -> dict[str, str]:
-    """Generate theme for specified mode."""
-    if material:
-        if mode == "dark":
-            return generate_material_dark(palette)
-        return generate_material_light(palette)
-    else:
+    """
+    Generate theme for specified mode and scheme type.
+
+    Args:
+        palette: List of extracted colors
+        mode: "dark" or "light"
+        scheme_type: One of "tonal-spot", "fruit-salad", "rainbow", "vibrant", "faithful"
+
+    Returns:
+        Dictionary of color token names to hex values
+    """
+    # Handle vibrant/faithful modes (use generate_normal_* functions)
+    # Both use same theme generation, but different color extraction (handled in palette.py)
+    if scheme_type in ("vibrant", "faithful"):
         if mode == "dark":
             return generate_normal_dark(palette)
         return generate_normal_light(palette)
+
+    # All other schemes use Material Design 3 generation
+    if mode == "dark":
+        return generate_material_dark(palette, scheme_type)
+    return generate_material_light(palette, scheme_type)

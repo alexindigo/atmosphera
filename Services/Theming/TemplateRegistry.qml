@@ -8,7 +8,8 @@ import qs.Commons
 Singleton {
   id: root
 
-  readonly property string colorsApplyScript: Quickshell.shellDir + '/Scripts/theming/template-apply.sh'
+  readonly property string templateApplyScript: Quickshell.shellDir + '/Scripts/bash/template-apply.sh'
+  readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/bash/gtk-refresh.sh'
 
   // Terminal configurations (for wallpaper-based templates)
   readonly property var terminals: [
@@ -55,13 +56,13 @@ Singleton {
       "input": "gtk.css",
       "outputs": [
         {
-          "path": "~/.config/gtk-3.0/gtk.css"
+          "path": "~/.config/gtk-3.0/noctalia.css"
         },
         {
-          "path": "~/.config/gtk-4.0/gtk.css"
+          "path": "~/.config/gtk-4.0/noctalia.css"
         }
       ],
-      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode}`
+      "postProcess": mode => `gsettings set org.gnome.desktop.interface color-scheme prefer-${mode} && ${gtkRefreshScript}`
     },
     {
       "id": "qt",
@@ -98,7 +99,7 @@ Singleton {
           "path": "~/.config/fuzzel/themes/noctalia"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} fuzzel`
+      "postProcess": () => `${templateApplyScript} fuzzel`
     },
     {
       "id": "vicinae",
@@ -110,7 +111,7 @@ Singleton {
           "path": "~/.local/share/vicinae/themes/noctalia.toml"
         }
       ],
-      "postProcess": () => `cp --update=none ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${colorsApplyScript} vicinae`
+      "postProcess": () => `cp --update=none ${Quickshell.shellDir}/Assets/noctalia.svg ~/.local/share/vicinae/themes/noctalia.svg && ${templateApplyScript} vicinae`
     },
     {
       "id": "walker",
@@ -122,7 +123,7 @@ Singleton {
           "path": "~/.config/walker/themes/noctalia/style.css"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} walker`,
+      "postProcess": () => `${templateApplyScript} walker`,
       "strict": true // Use strict mode for palette generation (preserves custom surface/outline values)
     },
     {
@@ -135,7 +136,7 @@ Singleton {
           "path": "~/.cache/wal/colors.json"
         }
       ],
-      "postProcess": mode => `${colorsApplyScript} pywalfox ${mode}`
+      "postProcess": mode => `${templateApplyScript} pywalfox ${mode}`
     } // CONSOLIDATED DISCORD CLIENTS
     ,
     {
@@ -280,7 +281,7 @@ Singleton {
           "path": "~/.config/cava/themes/noctalia"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} cava`
+      "postProcess": () => `${templateApplyScript} cava`
     },
     {
       "id": "yazi",
@@ -318,7 +319,7 @@ Singleton {
           "path": "~/.config/niri/noctalia.kdl"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} niri`
+      "postProcess": () => `${templateApplyScript} niri`
     },
     {
       "id": "hyprland",
@@ -330,7 +331,7 @@ Singleton {
           "path": "~/.config/hypr/noctalia/noctalia-colors.conf"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} hyprland`
+      "postProcess": () => `${templateApplyScript} hyprland`
     },
     {
       "id": "hyprtoolkit",
@@ -353,7 +354,7 @@ Singleton {
           "path": "~/.config/mango/noctalia.conf"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} mango`
+      "postProcess": () => `${templateApplyScript} mango`
     },
     {
       "id": "btop",
@@ -365,7 +366,7 @@ Singleton {
           "path": "~/.config/btop/themes/noctalia.theme"
         }
       ],
-      "postProcess": () => `${colorsApplyScript} btop`
+      "postProcess": () => `${templateApplyScript} btop`
     }
   ]
 

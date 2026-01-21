@@ -191,6 +191,10 @@ ColumnLayout {
     }
   }
 
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   NToggle {
     label: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-label")
     description: I18n.tr("panels.color-scheme.color-source-use-wallpaper-colors-description")
@@ -213,20 +217,31 @@ ColumnLayout {
     label: I18n.tr("panels.color-scheme.wallpaper-method-label")
     description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
-    visible: Settings.data.colorSchemes.useWallpaperColors
     model: [
       {
-        "key": "default",
-        "name": I18n.tr("common.default")
+        "key": "tonal-spot",
+        "name": "M3-Tonal Spot"
       },
       {
-        "key": "material",
-        "name": "Material Design" // Do not translate
-      }
+        "key": "fruit-salad",
+        "name": "M3-Fruit Salad"
+      },
+      {
+        "key": "rainbow",
+        "name": "M3-Rainbow"
+      },
+      {
+        "key": "vibrant",
+        "name": I18n.tr("common.vibrant")
+      },
+      {
+        "key": "faithful",
+        "name": I18n.tr("common.faithful")
+      },
     ]
-    currentKey: Settings.data.colorSchemes.extractionMethod
+    currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {
-                  Settings.data.colorSchemes.extractionMethod = key;
+                  Settings.data.colorSchemes.generationMethod = key;
                   AppThemeService.generate();
                 }
   }
