@@ -307,10 +307,10 @@ NBox {
                   var section = root.availableSections[i];
                   if (section !== root.sectionId) {
                     var label = root.getSectionLabel(section);
-                    var displayLabel = I18n.tr("positions." + section);
-
-                    // If translation missing (returns key), fallback to capitalized label
-                    if (displayLabel === "positions." + section) {
+                    var displayLabel = '';
+                    if (I18n.hasTranslation("positions." + section)) {
+                      displayLabel = I18n.tr("positions." + section);
+                    } else {
                       displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
                     }
 
