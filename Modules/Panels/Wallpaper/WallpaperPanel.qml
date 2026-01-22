@@ -106,11 +106,13 @@ SmartPanel {
     if (view?.gridView?.activeFocus) {
       let gridView = view.gridView;
       if (gridView.currentIndex >= 0 && gridView.currentIndex < gridView.model.length) {
-        let path = gridView.model[gridView.currentIndex];
-        if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-          WallpaperService.changeWallpaper(path, undefined);
+        let item = gridView.model[gridView.currentIndex];
+        if (item.isDirectory) {
+          WallpaperService.setBrowsePath(view.targetScreen.name, item.path);
+        } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+          WallpaperService.changeWallpaper(item.path, undefined);
         } else {
-          WallpaperService.changeWallpaper(path, view.targetScreen.name);
+          WallpaperService.changeWallpaper(item.path, view.targetScreen.name);
         }
       }
     }
@@ -300,28 +302,6 @@ SmartPanel {
                 settingsPanel.requestedTab = SettingsPanel.Tab.Wallpaper;
                 settingsPanel.open();
               }
-            }
-
-            NIconButton {
-              icon: "refresh"
-              tooltipText: Settings.data.wallpaper.useWallhaven ? I18n.tr("tooltips.refresh-wallhaven") : I18n.tr("tooltips.refresh-wallpaper-list")
-              baseSize: Style.baseWidgetSize * 0.8
-              onClicked: {
-                if (Settings.data.wallpaper.useWallhaven) {
-                  if (typeof WallhavenService !== "undefined") {
-                    WallhavenService.search(Settings.data.wallpaper.wallhavenQuery, 1);
-                  }
-                } else {
-                  WallpaperService.refreshWallpapersList();
-                }
-              }
-            }
-            //Hide Wallpaper Filenames
-            NIconButton {
-              icon: Settings.data.wallpaper.hideWallpaperFilenames ? "eye-closed" : "eye"
-              tooltipText: Settings.data.wallpaper.hideWallpaperFilenames ? I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-show") : I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-hide")
-              baseSize: Style.baseWidgetSize * 0.8
-              onClicked: Settings.data.wallpaper.hideWallpaperFilenames = !Settings.data.wallpaper.hideWallpaperFilenames
             }
 
             NIconButton {
@@ -612,23 +592,52 @@ SmartPanel {
     // Local reactive state for this screen
     property list<string> wallpapersList: []
     property string currentWallpaper: ""
-    property list<string> filteredWallpapers: []
-    property var wallpapersWithNames: [] // Cached basenames
+    property var filteredItems: [] // Combined list of { path, name, isDirectory }
+    property var wallpapersWithNames: [] // Cached basenames for files
+    property var directoriesList: [] // List of directories in browse mode
+
+    // Browse mode properties
+    property string currentBrowsePath: WallpaperService.getCurrentBrowsePath(targetScreen?.name ?? "")
+    property bool isBrowseMode: Settings.data.wallpaper.viewMode === "browse"
 
     // Expose updateFiltered as a proper function property
     function updateFiltered() {
+      var combinedItems = [];
+
+      // In browse mode, add directories first
+      if (isBrowseMode) {
+        for (var i = 0; i < directoriesList.length; i++) {
+          var dirPath = directoriesList[i];
+          combinedItems.push({
+            "path": dirPath,
+            "name": dirPath.split('/').pop(),
+            "isDirectory": true
+          });
+        }
+      }
+
+      // Add files
+      for (var i = 0; i < wallpapersList.length; i++) {
+        combinedItems.push({
+          "path": wallpapersList[i],
+          "name": wallpapersList[i].split('/').pop(),
+          "isDirectory": false
+        });
+      }
+
+      // Apply filter if text is present
       if (!panelContent.filterText || panelContent.filterText.trim().length === 0) {
-        filteredWallpapers = wallpapersList;
+        filteredItems = combinedItems;
         return;
       }
 
-      const results = FuzzySort.go(panelContent.filterText.trim(), wallpapersWithNames, {
+      const results = FuzzySort.go(panelContent.filterText.trim(), combinedItems, {
                                      "key": 'name',
                                      "limit": 200
                                    });
-      // Map back to path list
-      filteredWallpapers = results.map(function (r) {
-        return r.obj.path;
+      // Map back to item list
+      filteredItems = results.map(function (r) {
+        return r.obj;
       });
     }
 
@@ -645,11 +654,21 @@ SmartPanel {
       }
       function onWallpaperDirectoryChanged(screenName, directory) {
         if (targetScreen !== null && screenName === targetScreen.name) {
+          // Reset browse path when root directory changes
+          if (isBrowseMode) {
+            WallpaperService.navigateToRoot(targetScreen.name);
+          }
           refreshWallpaperScreenData();
         }
       }
       function onWallpaperListChanged(screenName, count) {
         if (targetScreen !== null && screenName === targetScreen.name) {
+          refreshWallpaperScreenData();
+        }
+      }
+      function onBrowsePathChanged(screenName, path) {
+        if (targetScreen !== null && screenName === targetScreen.name) {
+          currentBrowsePath = path;
           refreshWallpaperScreenData();
         }
       }
@@ -659,24 +678,124 @@ SmartPanel {
       if (targetScreen === null) {
         return;
       }
-      wallpapersList = WallpaperService.getWallpapersList(targetScreen.name);
-      Logger.d("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name);
-
-      // Pre-compute basenames once for better performance
-      wallpapersWithNames = wallpapersList.map(function (p) {
-        return {
-          "path": p,
-          "name": p.split('/').pop()
-        };
-      });
 
       currentWallpaper = WallpaperService.getWallpaper(targetScreen.name);
-      updateFiltered();
+
+      if (isBrowseMode) {
+        // In browse mode, scan current directory for both files and directories
+        var browsePath = WallpaperService.getCurrentBrowsePath(targetScreen.name);
+        currentBrowsePath = browsePath;
+
+        WallpaperService.scanDirectoryWithDirs(targetScreen.name, browsePath, function(result) {
+          wallpapersList = result.files;
+          directoriesList = result.directories;
+          Logger.d("WallpaperPanel", "Browse mode: Got", wallpapersList.length, "files and", directoriesList.length, "directories for screen", targetScreen.name);
+          updateFiltered();
+        });
+      } else {
+        // Normal mode: just use the wallpaper list from service
+        wallpapersList = WallpaperService.getWallpapersList(targetScreen.name);
+        directoriesList = [];
+        Logger.d("WallpaperPanel", "Got", wallpapersList.length, "wallpapers for screen", targetScreen.name);
+        updateFiltered();
+      }
+    }
+
+    // Helper function to cycle view modes
+    function cycleViewMode() {
+      var mode = Settings.data.wallpaper.viewMode;
+      if (mode === "single") {
+        Settings.data.wallpaper.viewMode = "recursive";
+      } else if (mode === "recursive") {
+        Settings.data.wallpaper.viewMode = "browse";
+      } else {
+        Settings.data.wallpaper.viewMode = "single";
+      }
+    }
+
+    // Helper function to get icon for current view mode
+    function getViewModeIcon() {
+      var mode = Settings.data.wallpaper.viewMode;
+      if (mode === "single") return "folder";
+      if (mode === "recursive") return "folders";
+      return "folder-open";
+    }
+
+    // Helper function to get tooltip for current view mode
+    function getViewModeTooltip() {
+      var mode = Settings.data.wallpaper.viewMode;
+      var modeName;
+      if (mode === "single") modeName = I18n.tr("panels.wallpaper.view-mode-single");
+      else if (mode === "recursive") modeName = I18n.tr("panels.wallpaper.view-mode-recursive");
+      else modeName = I18n.tr("panels.wallpaper.view-mode-browse");
+      return I18n.tr("panels.wallpaper.view-mode-cycle-tooltip").replace("{mode}", modeName);
     }
 
     ColumnLayout {
       anchors.fill: parent
       spacing: Style.marginM
+
+      // Combined toolbar: navigation (left) + actions (right)
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginS
+
+        // Left side: navigation (back, home, path)
+        NIconButton {
+          icon: "arrow-left"
+          tooltipText: I18n.tr("wallpaper.browse.go-up")
+          enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
+          onClicked: WallpaperService.navigateUp(targetScreen?.name ?? "")
+          baseSize: Style.baseWidgetSize * 0.8
+        }
+
+        NIconButton {
+          icon: "home"
+          tooltipText: I18n.tr("wallpaper.browse.go-root")
+          enabled: isBrowseMode && currentBrowsePath !== WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
+          onClicked: WallpaperService.navigateToRoot(targetScreen?.name ?? "")
+          baseSize: Style.baseWidgetSize * 0.8
+        }
+
+        NScrollText {
+          text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
+          Layout.fillWidth: true
+          scrollMode: NScrollText.ScrollMode.Hover
+          NText {
+            text: isBrowseMode ? currentBrowsePath : WallpaperService.getMonitorDirectory(targetScreen?.name ?? "")
+            pointSize: Style.fontSizeS
+            color: Color.mOnSurfaceVariant
+          }
+        }
+
+        // Right side: actions (view mode, hide filenames, refresh)
+        NIconButton {
+          icon: getViewModeIcon()
+          tooltipText: getViewModeTooltip()
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: cycleViewMode()
+        }
+
+        NIconButton {
+          icon: Settings.data.wallpaper.hideWallpaperFilenames ? "eye-closed" : "eye"
+          tooltipText: Settings.data.wallpaper.hideWallpaperFilenames ? I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-show") : I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-hide")
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: Settings.data.wallpaper.hideWallpaperFilenames = !Settings.data.wallpaper.hideWallpaperFilenames
+        }
+
+        NIconButton {
+          icon: "refresh"
+          tooltipText: I18n.tr("tooltips.refresh-wallpaper-list")
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: {
+            if (isBrowseMode) {
+              refreshWallpaperScreenData();
+            } else {
+              WallpaperService.refreshWallpapersList();
+            }
+          }
+        }
+      }
 
       GridView {
         id: wallpaperGridView
@@ -692,7 +811,7 @@ SmartPanel {
         keyNavigationWraps: false
         currentIndex: -1
 
-        model: filteredWallpapers
+        model: filteredItems
 
         onModelChanged: {
           // Reset selection when model changes
@@ -738,12 +857,14 @@ SmartPanel {
 
         Keys.onPressed: event => {
                           if (event.key === Qt.Key_Return || event.key === Qt.Key_Space) {
-                            if (currentIndex >= 0 && currentIndex < filteredWallpapers.length) {
-                              let path = filteredWallpapers[currentIndex];
-                              if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
-                                WallpaperService.changeWallpaper(path, undefined);
+                            if (currentIndex >= 0 && currentIndex < filteredItems.length) {
+                              let item = filteredItems[currentIndex];
+                              if (item.isDirectory) {
+                                WallpaperService.setBrowsePath(targetScreen.name, item.path);
+                              } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                                WallpaperService.changeWallpaper(item.path, undefined);
                               } else {
-                                WallpaperService.changeWallpaper(path, targetScreen.name);
+                                WallpaperService.changeWallpaper(item.path, targetScreen.name);
                               }
                             }
                             event.accepted = true;
@@ -808,20 +929,21 @@ SmartPanel {
             anchors.fill: parent
             anchors.margins: Style.marginXS
 
-            property string wallpaperPath: modelData
-            property bool isSelected: (wallpaperPath === currentWallpaper)
-            property string filename: wallpaperPath.split('/').pop()
+            property string wallpaperPath: modelData.path ?? ""
+            property bool isDirectory: modelData.isDirectory ?? false
+            property bool isSelected: !isDirectory && (wallpaperPath === currentWallpaper)
+            property string filename: modelData.name ?? wallpaperPath.split('/').pop()
             property string cachedPath: ""
 
             spacing: Style.marginXS
 
             Component.onCompleted: {
-              if (ImageCacheService.initialized) {
+              if (!isDirectory && ImageCacheService.initialized) {
                 ImageCacheService.getThumbnail(wallpaperPath, function (path, success) {
                   if (wallpaperItem)
                     wallpaperItem.cachedPath = success ? path : wallpaperPath;
                 });
-              } else {
+              } else if (!isDirectory) {
                 cachedPath = wallpaperPath;
               }
             }
@@ -829,11 +951,43 @@ SmartPanel {
             Item {
               id: imageContainer
               Layout.fillWidth: true
-              Layout.preferredHeight: Math.round(wallpaperGridView.itemSize * 0.67)
+              Layout.fillHeight: true
 
+              property real imageHeight: Math.round(wallpaperGridView.itemSize * 0.67)
+
+              // Directory display
+              Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: imageContainer.imageHeight
+                color: Color.mSurfaceVariant
+                radius: Style.radiusM
+                visible: wallpaperItem.isDirectory
+                border.color: wallpaperGridView.currentIndex === index ? Color.mHover : Color.mSurface
+                border.width: Math.max(1, Style.borderL * 1.5)
+
+                ColumnLayout {
+                  anchors.centerIn: parent
+                  spacing: Style.marginS
+
+                  NIcon {
+                    icon: "folder"
+                    pointSize: Style.fontSizeXXL
+                    color: Color.mPrimary
+                    Layout.alignment: Qt.AlignHCenter
+                  }
+                }
+              }
+
+              // Image display (for non-directories)
               NImageRounded {
                 id: img
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: imageContainer.imageHeight
+                visible: !wallpaperItem.isDirectory
                 imagePath: wallpaperItem.cachedPath
                 radius: Style.radiusM
                 borderColor: {
@@ -849,12 +1003,15 @@ SmartPanel {
                 imageFillMode: Image.PreserveAspectCrop
               }
 
-              // Loading/error state background
+              // Loading/error state background (for non-directories)
               Rectangle {
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: imageContainer.imageHeight
                 color: Color.mSurfaceVariant
                 radius: Style.radiusM
-                visible: img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === ""
+                visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || img.status === Image.Error || wallpaperItem.cachedPath === "")
 
                 NIcon {
                   icon: "image"
@@ -865,8 +1022,9 @@ SmartPanel {
               }
 
               NBusyIndicator {
-                anchors.centerIn: parent
-                visible: img.status === Image.Loading || wallpaperItem.cachedPath === ""
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: (imageContainer.imageHeight - height) / 2
+                visible: !wallpaperItem.isDirectory && (img.status === Image.Loading || wallpaperItem.cachedPath === "")
                 running: visible
                 size: 18
               }
@@ -892,7 +1050,10 @@ SmartPanel {
               }
 
               Rectangle {
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: imageContainer.imageHeight
                 color: Color.mSurface
                 radius: Style.radiusM
                 opacity: (hoverHandler.hovered || wallpaperItem.isSelected || wallpaperGridView.currentIndex === index) ? 0 : 0.3
@@ -911,7 +1072,9 @@ SmartPanel {
                 onTapped: {
                   wallpaperGridView.forceActiveFocus();
                   wallpaperGridView.currentIndex = index;
-                  if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
+                  if (wallpaperItem.isDirectory) {
+                    WallpaperService.setBrowsePath(targetScreen.name, wallpaperItem.wallpaperPath);
+                  } else if (Settings.data.wallpaper.setWallpaperOnAllMonitors) {
                     WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, undefined);
                   } else {
                     WallpaperService.changeWallpaper(wallpaperItem.wallpaperPath, targetScreen.name);
@@ -942,7 +1105,7 @@ SmartPanel {
         radius: Style.radiusM
         border.color: Color.mOutline
         border.width: Style.borderS
-        visible: (filteredWallpapers.length === 0 && !WallpaperService.scanning) || WallpaperService.scanning
+        visible: (filteredItems.length === 0 && !WallpaperService.scanning) || WallpaperService.scanning
         Layout.fillWidth: true
         Layout.preferredHeight: 130
 
@@ -956,7 +1119,7 @@ SmartPanel {
 
         ColumnLayout {
           anchors.fill: parent
-          visible: filteredWallpapers.length === 0 && !WallpaperService.scanning
+          visible: filteredItems.length === 0 && !WallpaperService.scanning
           Item {
             Layout.fillHeight: true
           }
@@ -967,13 +1130,13 @@ SmartPanel {
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
-            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : I18n.tr("wallpaper.no-wallpaper")
+            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.no-match") : (isBrowseMode ? I18n.tr("wallpaper.browse.empty-directory") : I18n.tr("wallpaper.no-wallpaper"))
             color: Color.mOnSurface
             font.weight: Style.fontWeightBold
             Layout.alignment: Qt.AlignHCenter
           }
           NText {
-            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : I18n.tr("wallpaper.configure-directory")
+            text: (panelContent.filterText && panelContent.filterText.length > 0) ? I18n.tr("wallpaper.try-different-search") : (isBrowseMode ? I18n.tr("wallpaper.browse.go-up-hint") : I18n.tr("wallpaper.configure-directory"))
             color: Color.mOnSurfaceVariant
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter

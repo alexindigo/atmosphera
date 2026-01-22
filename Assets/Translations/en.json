@@ -1370,8 +1370,12 @@
       "settings-monitor-specific-description": "Set a different wallpaper folder for each monitor.",
       "settings-monitor-specific-label": "Monitor-specific directories",
       "settings-monitor-specific-tooltip": "Monitor wallpaper folder",
-      "settings-recursive-search-description": "Also search for wallpapers in subfolders of the wallpaper directory.",
-      "settings-recursive-search-label": "Search subfolders",
+      "settings-view-mode-description": "Choose how wallpapers are displayed from your directory.",
+      "settings-view-mode-label": "Viewing mode",
+      "view-mode-browse": "Browse directories",
+      "view-mode-cycle-tooltip": "View mode: {mode} (click to change)",
+      "view-mode-recursive": "Flattened subdirectories",
+      "view-mode-single": "Root directory",
       "settings-select-monitor-folder": "Select monitor wallpaper folder",
       "settings-selector-description": "Choose your wallpaper.",
       "settings-selector-position-description": "Choose where the wallpaper selector panel appears.",
@@ -1604,6 +1608,12 @@
     "wallpaper-selector": "Wallpaper selector"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "This directory is empty.",
+      "go-root": "Go to wallpaper root",
+      "go-up": "Go to parent folder",
+      "go-up-hint": "Use the back button to navigate up."
+    },
     "configure-directory": "Configure your wallpaper directory with images.",
     "fill-modes": {
       "crop": "Crop (Fill)",

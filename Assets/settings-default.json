@@ -139,7 +139,7 @@
     "directory": "",
     "monitorDirectories": [],
     "enableMultiMonitorDirectories": false,
-    "recursiveSearch": false,
+    "viewMode": "single",
     "setWallpaperOnAllMonitors": true,
     "fillMode": "crop",
     "fillColor": "#000000",
