@@ -96,12 +96,16 @@ Singleton {
   Process {
     id: healthProcess
     command: ["sh", "-c", "upower -i $(upower -e | grep battery | head -n 1) 2>/dev/null | grep -iE 'capacity'"]
+    environment: ({
+                    "LC_ALL": "C"
+                  })
+
     stdout: SplitParser {
       onRead: function(data) {
         var line = data.trim();
         if (line === "") return;
 
-        var capacityMatch = line.match(/capacity:\s*([0-9.,]+)%/i);
+        var capacityMatch = line.match(/^\s*capacity:\s*(\d+(?:\.\d+)?)\s*%/i);
         if (capacityMatch) {
           root.healthPercent = Math.round(parseFloat(capacityMatch[1].replace(',', '.')));
           root.healthAvailable = true;
