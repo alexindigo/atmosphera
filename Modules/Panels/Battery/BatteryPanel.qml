@@ -17,6 +17,10 @@ SmartPanel {
   preferredWidth: Math.round(440 * Style.uiScaleRatio)
   preferredHeight: Math.round(460 * Style.uiScaleRatio)
 
+  onOpened: {
+    BatteryService.refreshHealth();
+  }
+
   panelContent: Item {
     id: panelContent
     property real contentPreferredHeight: mainLayout.implicitHeight + Style.marginL * 2
@@ -111,8 +115,8 @@ SmartPanel {
     readonly property int percent: isReady ? Math.round(hasBluetoothBattery ? (bluetoothDevice.battery * 100) : (battery.percentage * 100)) : -1
     readonly property bool charging: isReady ? battery.state === UPowerDeviceState.Charging : false
     readonly property bool isPluggedIn: isReady ? (battery.state === UPowerDeviceState.FullyCharged || battery.state === UPowerDeviceState.PendingCharge) : false
-    readonly property bool healthAvailable: isReady && battery.healthSupported
-    readonly property int healthPercent: healthAvailable ? Math.round(battery.healthPercentage) : -1
+    readonly property bool healthAvailable: (isReady && battery.healthSupported) || BatteryService.healthAvailable
+    readonly property int healthPercent: (isReady && battery.healthSupported) ? Math.round(battery.healthPercentage) : BatteryService.healthPercent
 
     function getDeviceName() {
       if (!isReady) {
@@ -306,17 +310,46 @@ SmartPanel {
 
           RowLayout {
             Layout.fillWidth: true
-            spacing: Style.marginL
-            visible: healthAvailable
+            spacing: Style.marginS
+
+            ColumnLayout {
+              RowLayout {
+                spacing: Style.marginXS
+
+                NText {
+                  text: I18n.tr("battery.battery-health") + ":"
+                  color: Color.mOnSurface
+                  pointSize: Style.fontSizeS
+                }
+              }
+
+              Rectangle {
+                Layout.fillWidth: true
+                height: Math.round(8 * Style.uiScaleRatio)
+                radius: Math.min(Style.radiusL, height / 2)
+                color: Color.mSurfaceVariant
+
+                Rectangle {
+                  anchors.verticalCenter: parent.verticalCenter
+                  height: parent.height
+                  radius: parent.radius
+                  visible: healthAvailable
+                  width: {
+                    if (!healthAvailable || healthPercent <= 0)
+                      return 0;
+                    var ratio = Math.max(0, Math.min(1, healthPercent / 100));
+                    return parent.width * ratio;
+                  }
+                  color: healthPercent >= 80 ? Color.mPrimary : (healthPercent >= 50 ? Color.mTertiary : Color.mError)
+                }
+              }
+            }
 
             NText {
-              text: I18n.tr("battery.health", {
-                              "percent": healthPercent
-                            })
+              text: healthAvailable ? `${healthPercent}%` : I18n.tr("common.not-available")
               color: Color.mOnSurface
               pointSize: Style.fontSizeS
-              font.weight: Style.fontWeightMedium
-              Layout.fillWidth: true
+              font.weight: Style.fontWeightBold
             }
           }
         }
