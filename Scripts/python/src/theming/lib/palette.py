@@ -268,6 +268,31 @@ def _score_colors_count(
     return result_colors
 
 
+def _score_colors_muted(
+    colors_with_counts: list[tuple[RGB, int]],
+) -> list[tuple[Color, float]]:
+    """
+    Score colors for muted mode - pure pixel count without chroma filtering.
+
+    Unlike count scoring which filters to chroma >= 10, this accepts all colors
+    including grayscale. Designed for monochrome/monotonal wallpapers where
+    the dominant color may have very low or zero saturation.
+
+    Args:
+        colors_with_counts: List of (RGB, count) tuples from clustering
+
+    Returns:
+        List of (Color, score) tuples, sorted by count descending
+    """
+    result = []
+    for rgb, count in colors_with_counts:
+        color = Color.from_rgb(rgb)
+        result.append((color, float(count)))
+
+    result.sort(key=lambda x: -x[1])
+    return result
+
+
 def _score_colors_population(
     colors_with_counts: list[tuple[RGB, int]],
     total_pixels: int
@@ -415,6 +440,7 @@ def extract_palette(
                  - "population": matugen-like, representative colors (M3 schemes)
                  - "chroma": vibrant, chroma-prioritized with centroid averaging
                  - "count": area-dominant, picks by pixel count (faithful mode)
+                 - "muted": like count but without chroma filtering (monochrome wallpapers)
 
     Returns:
         List of Color objects, sorted by score
@@ -435,6 +461,11 @@ def extract_palette(
         # Faithful mode: many clusters to capture color diversity, no pre-filtering
         # Scoring will filter to colorful colors and pick by count
         cluster_count = 48
+        filtered = sampled
+    elif scoring == "muted":
+        # Muted mode: similar to count but accepts low-chroma colors
+        # For monochrome/monotonal wallpapers
+        cluster_count = 24
         filtered = sampled
     else:
         # Vibrant mode: more clusters to capture high-chroma colors that might
@@ -459,6 +490,7 @@ def extract_palette(
     # Score colors based on method
     # - chroma: centroid colors (averaged, smoother - vibrant mode)
     # - count: representative pixels by area dominance (faithful mode)
+    # - muted: like count but accepts low/zero chroma (monochrome wallpapers)
     # - population: representative colors with Material scoring (M3 schemes)
     if scoring == "chroma":
         # Use centroid colors for vibrant mode (smoother, blended)
@@ -468,6 +500,10 @@ def extract_palette(
         # Use representative colors with count scoring (faithful mode)
         colors_for_scoring = [(c[1], c[2]) for c in clusters]
         scored = _score_colors_count(colors_for_scoring)
+    elif scoring == "muted":
+        # Use representative colors with muted scoring (no chroma filter)
+        colors_for_scoring = [(c[1], c[2]) for c in clusters]
+        scored = _score_colors_muted(colors_for_scoring)
     else:
         # Use representative colors for M3 schemes
         colors_for_scoring = [(c[1], c[2]) for c in clusters]

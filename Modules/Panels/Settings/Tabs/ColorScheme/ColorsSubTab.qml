@@ -272,6 +272,10 @@ ColumnLayout {
         "key": "faithful",
         "name": I18n.tr("common.faithful")
       },
+      {
+        "key": "muted",
+        "name": I18n.tr("common.color-muted")
+      },
     ]
     currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {

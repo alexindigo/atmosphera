@@ -12,6 +12,7 @@ Scheme types:
 - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Compared with matugen
 - vibrant: Prioritizes the most saturated colors regardless of area
 - faithful: Prioritizes dominant colors by area coverage
+- muted: Preserves hue but caps saturation low (for monochrome wallpapers)
 """
 
 import argparse
@@ -113,20 +114,21 @@ def run_matugen(image_path: Path, scheme: str) -> dict | None:
         return None
 
 
-def analyze_vibrant_faithful(image_path: Path) -> None:
-    """Analyze vibrant and faithful mode outputs."""
+def analyze_vibrant_faithful_muted(image_path: Path) -> None:
+    """Analyze vibrant, faithful, and muted mode outputs."""
     print("\n" + "=" * 78)
-    print("VIBRANT vs FAITHFUL COMPARISON")
+    print("VIBRANT vs FAITHFUL vs MUTED COMPARISON")
     print("=" * 78)
     print()
     print("Vibrant:  Prioritizes the most saturated colors regardless of area")
     print("Faithful: Prioritizes dominant colors by area coverage")
+    print("Muted:    Preserves hue but caps saturation low (monochrome wallpapers)")
     print()
     print("-" * 78)
     print(f"{'Mode':<12} {'Color':<12} {'Hex':<10} {'Hue':>8} {'Chroma':>8}  {'Name':<10}")
     print("-" * 78)
 
-    for scheme in ["vibrant", "faithful"]:
+    for scheme in ["vibrant", "faithful", "muted"]:
         colors = run_our_processor(image_path, scheme)
         if not colors:
             print(f"{scheme}: Failed to get colors")
@@ -149,26 +151,36 @@ def analyze_vibrant_faithful(image_path: Path) -> None:
     # Summary comparison
     vibrant = run_our_processor(image_path, "vibrant")
     faithful = run_our_processor(image_path, "faithful")
+    muted = run_our_processor(image_path, "muted")
 
-    if vibrant and faithful:
+    if vibrant and faithful and muted:
         print()
         print("Summary:")
         v_hct = get_hct(vibrant.get("primary", "#000000"))
         f_hct = get_hct(faithful.get("primary", "#000000"))
+        m_hct = get_hct(muted.get("primary", "#000000"))
 
         v_name = hue_to_name(v_hct.hue)
         f_name = hue_to_name(f_hct.hue)
+        m_name = hue_to_name(m_hct.hue)
 
-        diff = hue_diff(v_hct.hue, f_hct.hue)
+        vf_diff = hue_diff(v_hct.hue, f_hct.hue)
 
         print(f"  Vibrant primary:  {vibrant.get('primary')} ({v_name}, hue {v_hct.hue:.0f}°, chroma {v_hct.chroma:.1f})")
         print(f"  Faithful primary: {faithful.get('primary')} ({f_name}, hue {f_hct.hue:.0f}°, chroma {f_hct.chroma:.1f})")
-        print(f"  Hue difference:   {diff:.1f}°")
+        print(f"  Muted primary:    {muted.get('primary')} ({m_name}, hue {m_hct.hue:.0f}°, chroma {m_hct.chroma:.1f})")
+        print(f"  V-F hue diff:     {vf_diff:.1f}°")
 
-        if diff > 60:
-            print(f"  → Modes picked DIFFERENT color families ({v_name} vs {f_name})")
+        if vf_diff > 60:
+            print(f"  → Vibrant/Faithful picked DIFFERENT color families ({v_name} vs {f_name})")
         else:
-            print(f"  → Modes picked SIMILAR colors")
+            print(f"  → Vibrant/Faithful picked SIMILAR colors")
+
+        # Note the muted chroma reduction
+        if m_hct.chroma < 20:
+            print(f"  → Muted successfully reduced chroma to {m_hct.chroma:.1f}")
+        else:
+            print(f"  → Muted chroma still moderately high ({m_hct.chroma:.1f})")
 
 
 def compare_m3_schemes(image_path: Path, has_matugen: bool) -> None:
@@ -293,8 +305,8 @@ def main() -> int:
         except (subprocess.CalledProcessError, FileNotFoundError):
             print("Note: matugen not found, skipping M3 comparison")
 
-    # Always show vibrant vs faithful first (most useful)
-    analyze_vibrant_faithful(args.wallpaper)
+    # Always show vibrant vs faithful vs muted first (most useful)
+    analyze_vibrant_faithful_muted(args.wallpaper)
 
     # Then show M3 schemes
     compare_m3_schemes(args.wallpaper, has_matugen)
