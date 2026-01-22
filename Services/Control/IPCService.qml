@@ -617,4 +617,14 @@ Item {
       Settings.data.location.name = name;
     }
   }
+
+  IpcHandler {
+    target: "systemMonitor"
+    function toggle() {
+      root.screenDetector.withCurrentScreen(screen => {
+                                              var panel = PanelService.getPanel("systemStatsPanel", screen);
+                                              panel?.toggle(null, "SystemMonitor");
+                                            });
+    }
+  }
 }
