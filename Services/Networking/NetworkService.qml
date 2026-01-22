@@ -875,6 +875,9 @@ Singleton {
             connectivityCheckProcess.failedChecks = 0;
           }
           if (result !== root.networkConnectivity) {
+            if (result === "full") {
+              root.internetConnectivity = true;
+            }
             root.networkConnectivity = result;
             root.scan();
           }
