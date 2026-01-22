@@ -491,7 +491,13 @@ Singleton {
   // -------------------------------------------------------------------
   function getCurrentBrowsePath(screenName) {
     if (currentBrowsePaths[screenName] !== undefined) {
-      return currentBrowsePaths[screenName];
+      var stored = currentBrowsePaths[screenName];
+      var root = getMonitorDirectory(screenName);
+      if (root && stored.startsWith(root)) {
+        return stored;
+      }
+      // Stored path is outside the root directory, reset it
+      delete currentBrowsePaths[screenName];
     }
     return getMonitorDirectory(screenName);
   }
@@ -509,14 +515,14 @@ Singleton {
     var currentPath = getCurrentBrowsePath(screenName);
     var rootPath = getMonitorDirectory(screenName);
 
-    // Don't go above the root directory
-    if (currentPath === rootPath)
+    // Don't navigate if root is invalid or we're already at root
+    if (!rootPath || currentPath === rootPath)
       return;
 
     // Get parent directory
     var parentPath = currentPath.replace(/\/[^\/]+\/?$/, "");
     if (parentPath === "")
-      parentPath = "/";
+      parentPath = rootPath;
 
     // Don't go above root
     if (!parentPath.startsWith(rootPath)) {

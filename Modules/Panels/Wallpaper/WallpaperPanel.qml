@@ -776,10 +776,10 @@ SmartPanel {
 
         // Right side: actions (view mode, hide filenames, refresh)
         NComboBox {
-          Layout.fillWidth: true
           enabled: Settings.data.colorSchemes.useWallpaperColors
           baseSize: 0.8
           minimumWidth: 180
+          maximumWidth: 180
           model: TemplateProcessor.schemeTypes
           currentKey: Settings.data.colorSchemes.generationMethod
           onSelected: key => {

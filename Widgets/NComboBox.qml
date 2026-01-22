@@ -7,6 +7,7 @@ import qs.Widgets
 RowLayout {
   id: root
 
+  property real maximumWidth: 200
   property real minimumWidth: 200
   property real popupHeight: 180
 
@@ -25,7 +26,6 @@ RowLayout {
   signal selected(string key)
 
   spacing: Style.marginL
-  Layout.fillWidth: true
   opacity: enabled ? 1.0 : 0.6
 
   // Less strict comparison with != (instead of !==) so it can properly compare int vs string (ex for FPS: 30 and "30")
@@ -135,6 +135,7 @@ RowLayout {
   ComboBox {
     id: combo
 
+    Layout.maximumWidth: Math.round(root.maximumWidth * Style.uiScaleRatio)
     Layout.minimumWidth: Math.round(root.minimumWidth * Style.uiScaleRatio)
     Layout.preferredHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
     implicitWidth: Layout.minimumWidth
