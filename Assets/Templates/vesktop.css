@@ -239,3 +239,9 @@ body {
   background-color: var(--accent-3) !important;
   border-color: var(--accent-3) !important;
 }
+
+[data-slate-node="element"],
+[data-slate-node="text"],
+[data-slate-string="true"] {
+  color: var(--text-3) !important;
+}
