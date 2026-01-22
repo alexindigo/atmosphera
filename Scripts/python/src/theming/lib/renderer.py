@@ -54,9 +54,10 @@ class TemplateRenderer:
         "desaturate": 1,
     }
 
-    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True):
+    def __init__(self, theme_data: dict[str, dict[str, str]], verbose: bool = True, default_mode: str = "dark"):
         self.theme_data = theme_data
         self.verbose = verbose
+        self.default_mode = default_mode
         self._current_file: Optional[str] = None
         self._error_count = 0
 
@@ -78,7 +79,7 @@ class TemplateRenderer:
         key = self.COLOR_ALIASES.get(color_name, color_name)
 
         if mode == "default":
-            mode_data = self.theme_data.get("dark") or self.theme_data.get("light")
+            mode_data = self.theme_data.get(self.default_mode) or self.theme_data.get("dark") or self.theme_data.get("light")
         else:
             mode_data = self.theme_data.get(mode)
 

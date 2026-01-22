@@ -133,6 +133,13 @@ Examples:
         help='Path to predefined scheme JSON file (bypasses image extraction)'
     )
 
+    parser.add_argument(
+        '--default-mode',
+        choices=['dark', 'light'],
+        default='dark',
+        help='Theme mode to use for "default" in templates (default: dark)'
+    )
+
     return parser.parse_args()
 
 
@@ -284,7 +291,7 @@ def main() -> int:
 
     # Process templates
     if args.render or args.config:
-        renderer = TemplateRenderer(result)
+        renderer = TemplateRenderer(result, default_mode=args.default_mode)
 
         if args.render:
             for render_spec in args.render:
