@@ -126,10 +126,10 @@ def _score_colors_chroma(
     colors_with_counts: list[tuple[RGB, int]],
 ) -> list[tuple[Color, float]]:
     """
-    Score colors prioritizing chroma (vibrancy).
+    Score colors prioritizing chroma (vibrancy) over area coverage.
 
-    This is the original scoring algorithm that picks the most colorful colors.
-    Used for "vibrant" mode.
+    Uses count^0.3 weighting so saturated colors win even with small area.
+    Used for "vibrant" mode to find the most eye-catching colors.
 
     Args:
         colors_with_counts: List of (RGB, count) tuples from clustering

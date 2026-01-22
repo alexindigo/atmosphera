@@ -9,7 +9,8 @@ Supported scheme types:
 - tonal-spot: Default Android 12-13 scheme (recommended)
 - fruit-salad: Bold/playful with hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
-- vibrant: Preserves wallpaper colors directly (legacy)
+- vibrant: Prioritizes the most saturated colors regardless of area
+- faithful: Prioritizes dominant colors by area coverage
 """
 
 from typing import Literal
