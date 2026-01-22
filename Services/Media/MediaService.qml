@@ -146,7 +146,7 @@ Singleton {
     let controllablePlayers = [];
     for (var i = 0; i < finalPlayers.length; i++) {
       let player = finalPlayers[i];
-      if (player && player.canControl) {
+      if (player && player.canPlay) {
         controllablePlayers.push(player);
       }
     }
