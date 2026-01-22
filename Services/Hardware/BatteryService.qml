@@ -60,6 +60,13 @@ Singleton {
     return primaryDevice.state !== undefined && primaryDevice.state === UPowerDeviceState.Charging;
   }
 
+  readonly property bool batteryPluggedIn: {
+    if (!primaryDevice || !isLaptopBattery) {
+      return false;
+    }
+    return primaryDevice.state !== undefined && (primaryDevice.state === UPowerDeviceState.FullyCharged || primaryDevice.state === UPowerDeviceState.PendingCharge);
+  }
+
   readonly property bool batteryReady: {
     if (!primaryDevice) {
       return false;

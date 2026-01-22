@@ -164,7 +164,7 @@ NBox {
                 NIcon {
                   icon: {
                     var b = BluetoothService.getBatteryPercent(modelData);
-                    return BatteryService.getIcon(b !== null ? b : 0, false, b !== null);
+                    return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
                   }
                   pointSize: Style.fontSizeXS
                   color: getContentColor(Color.mOnSurface)
@@ -347,7 +347,7 @@ NBox {
                 NIcon {
                   icon: {
                     var b = BluetoothService.getBatteryPercent(modelData);
-                    return BatteryService.getIcon(b !== null ? b : 0, false, b !== null);
+                    return BatteryService.getIcon(b !== null ? b : 0, false, false, b !== null);
                   }
                   pointSize: Style.fontSizeXS
                   color: Color.mOnSurface
