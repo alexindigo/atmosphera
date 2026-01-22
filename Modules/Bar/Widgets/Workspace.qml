@@ -89,6 +89,7 @@ Item {
   property int iconRevision: 0
 
   property ListModel localWorkspaces: ListModel {}
+  property int lastFocusedWorkspaceId: -1
   property real masterProgress: 0.0
   property bool effectsActive: false
   property color effectColor: Color.mPrimary
@@ -230,7 +231,6 @@ Item {
     target: CompositorService
     function onWorkspacesChanged() {
       refreshWorkspaces();
-      root.triggerUnifiedWave();
     }
     function onWindowListChanged() {
       if (showApplications || showLabelsOnlyWhenOccupied) {
@@ -299,6 +299,10 @@ Item {
     for (var i = 0; i < localWorkspaces.count; i++) {
       const ws = localWorkspaces.get(i);
       if (ws.isFocused === true) {
+        if (root.lastFocusedWorkspaceId !== -1 && root.lastFocusedWorkspaceId !== ws.id) {
+          root.triggerUnifiedWave();
+        }
+        root.lastFocusedWorkspaceId = ws.id;
         root.workspaceChanged(ws.id, Color.mPrimary);
         break;
       }
