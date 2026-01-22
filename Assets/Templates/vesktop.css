@@ -245,3 +245,8 @@ body {
 [data-slate-string="true"] {
   color: var(--text-3) !important;
 }
+
+[class*="eyebrow"][class*="badge"][class*="expressive"] {
+  color: var(--accent-1) !important;
+  background-color: color-mix(in srgb, var(--accent-1) 15%, transparent) !important;
+}
