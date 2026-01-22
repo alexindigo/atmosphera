@@ -175,42 +175,94 @@ def _score_colors_chroma(
     return result_colors
 
 
+def _hue_to_family(hue: float) -> int:
+    """
+    Map hue to perceptual color family.
+
+    Uses non-uniform ranges that match human color perception:
+    - 0: RED (330-30°, wraps around)
+    - 1: ORANGE (30-60°)
+    - 2: YELLOW (60-105°)
+    - 3: GREEN (105-190°, includes green-leaning teal)
+    - 4: BLUE (190-270°, includes cyan)
+    - 5: PURPLE (270-330°)
+    """
+    if hue >= 330 or hue < 30:
+        return 0  # RED
+    elif hue < 60:
+        return 1  # ORANGE
+    elif hue < 105:
+        return 2  # YELLOW
+    elif hue < 190:
+        return 3  # GREEN (includes green-leaning teal)
+    elif hue < 270:
+        return 4  # BLUE (includes cyan)
+    else:
+        return 5  # PURPLE
+
+
 def _score_colors_count(
     colors_with_counts: list[tuple[RGB, int]],
 ) -> list[tuple[Color, float]]:
     """
-    Score colors prioritizing pixel count (area coverage) over chroma.
+    Score colors prioritizing pixel count (area coverage) by hue family.
 
-    Filters to colors with chroma >= 10 to avoid grays, then sorts purely by count.
-    Used for "faithful" mode to find the actual dominant color by area.
+    Groups colors into perceptual hue families, sums counts per family,
+    then picks the dominant family. This is more faithful to human perception
+    where we see "green" as a category, not individual shades.
 
     Args:
         colors_with_counts: List of (RGB, count) tuples from clustering
 
     Returns:
-        List of (Color, score) tuples, sorted by count descending
+        List of (Color, score) tuples, sorted by family dominance then count
     """
     MIN_CHROMA = 10.0  # Filter out near-gray colors
 
-    result_colors = []
+    # First pass: collect colorful colors and group by hue family
+    hue_families: dict[int, list[tuple[Color, float, float, int]]] = {}  # family -> [(color, hue, chroma, count), ...]
+
     for rgb, count in colors_with_counts:
         color = Color.from_rgb(rgb)
         try:
             hct = color.to_hct()
-            # Only include colors with enough chroma to be "colorful"
             if hct.chroma >= MIN_CHROMA:
-                # Score is just count - area dominates completely
-                # Add tiny chroma bonus as tiebreaker only
-                score = count * 1000 + hct.chroma
-                result_colors.append((color, score))
+                family = _hue_to_family(hct.hue)
+                if family not in hue_families:
+                    hue_families[family] = []
+                hue_families[family].append((color, hct.hue, hct.chroma, count))
         except (ValueError, ZeroDivisionError):
             pass
 
-    # If all colors were filtered out (very gray image), fall back to including grays
-    if not result_colors:
+    # If no colorful colors found, fall back to all colors
+    if not hue_families:
+        result = []
         for rgb, count in colors_with_counts:
             color = Color.from_rgb(rgb)
-            result_colors.append((color, float(count)))
+            result.append((color, float(count)))
+        result.sort(key=lambda x: -x[1])
+        return result
+
+    # Calculate total count per hue family
+    family_totals: list[tuple[int, int]] = []
+    for family, colors in hue_families.items():
+        total = sum(c[3] for c in colors)
+        family_totals.append((family, total))
+
+    # Sort families by total count (dominant family first)
+    family_totals.sort(key=lambda x: -x[1])
+
+    # Build result: colors from dominant families first, sorted by count within each family
+    result_colors = []
+    for family, _ in family_totals:
+        family_colors = hue_families[family]
+        # Sort by count descending, chroma as tiebreaker
+        family_colors.sort(key=lambda x: (-x[3], -x[2]))
+        for color, hue, chroma, count in family_colors:
+            # Score encodes family rank + count for proper ordering
+            family_rank = next(i for i, (f, _) in enumerate(family_totals) if f == family)
+            score = (len(family_totals) - family_rank) * 1000000 + count * 1000 + chroma
+            result_colors.append((color, score))
 
     result_colors.sort(key=lambda x: -x[1])
     return result_colors
