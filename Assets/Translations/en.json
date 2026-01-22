@@ -1459,14 +1459,14 @@
     "widget-settings-title": "{widget} Settings"
   },
   "system-monitor": {
-    "cpu-temp": "CPU Temp",
-    "cpu-usage": "CPU Usage",
+    "cpu-temp": "CPU temp",
+    "cpu-usage": "CPU usage",
     "disk": "Disk",
-    "download-speed": "Download Speed",
-    "gpu-temp": "GPU Temp",
-    "load-average": "Load Avg",
+    "download-speed": "Download speed",
+    "gpu-temp": "GPU temp",
+    "load-average": "Load avg",
     "title": "System Monitor",
-    "upload-speed": "Upload Speed"
+    "upload-speed": "Upload speed"
   },
   "toast": {
     "airplane-mode": {
