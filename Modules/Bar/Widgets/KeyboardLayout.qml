@@ -71,9 +71,9 @@ Item {
     oppositeDirection: BarService.getPillDirection(root)
     icon: root.showIcon ? "keyboard" : ""
     autoHide: false // Important to be false so we can hover as long as we want
-    text: currentLayout.toUpperCase()
+    text: currentLayout
     tooltipText: I18n.tr("tooltips.keyboard-layout", {
-                           "layout": currentLayout.toUpperCase()
+                           "layout": currentLayout
                          })
     // When icon is disabled, always show the layout text
     forceOpen: !root.showIcon || root.displayMode === "forceOpen"
