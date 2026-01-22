@@ -2,17 +2,18 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 RowLayout {
   id: root
 
-  property real maximumWidth: 200
   property real minimumWidth: 200
   property real popupHeight: 180
 
   property string label: ""
   property string description: ""
+  property string tooltip: ""
   property var model
   property string currentKey: ""
   property string placeholder: ""
@@ -135,7 +136,6 @@ RowLayout {
   ComboBox {
     id: combo
 
-    Layout.maximumWidth: Math.round(root.maximumWidth * Style.uiScaleRatio)
     Layout.minimumWidth: Math.round(root.minimumWidth * Style.uiScaleRatio)
     Layout.preferredHeight: Math.round(root.preferredHeight * Style.uiScaleRatio)
     implicitWidth: Layout.minimumWidth
@@ -159,6 +159,22 @@ RowLayout {
       Behavior on border.color {
         ColorAnimation {
           duration: Style.animationFast
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+        onEntered: {
+          if (root.tooltip != "") {
+            TooltipService.show(root, root.tooltip);
+          }
+        }
+        onExited: {
+          if (root.tooltip != "") {
+            TooltipService.hide();
+          }
         }
       }
     }
@@ -284,8 +300,9 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             onContainsMouseChanged: {
-              if (containsMouse)
+              if (containsMouse) {
                 listView.currentIndex = delegateRect.index;
+              }
             }
             onClicked: {
               var item = root.getItem(delegateRect.index);

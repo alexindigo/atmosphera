@@ -776,10 +776,11 @@ SmartPanel {
 
         // Right side: actions (view mode, hide filenames, refresh)
         NComboBox {
-          enabled: Settings.data.colorSchemes.useWallpaperColors
+          visible: Settings.data.colorSchemes.useWallpaperColors
           baseSize: 0.8
-          minimumWidth: 180
-          maximumWidth: 180
+          Layout.minimumWidth: 200
+          minimumWidth: 200
+          tooltip: I18n.tr("panels.color-scheme.wallpaper-method-label")
           model: TemplateProcessor.schemeTypes
           currentKey: Settings.data.colorSchemes.generationMethod
           onSelected: key => {
@@ -1004,7 +1005,7 @@ SmartPanel {
 
                   NIcon {
                     icon: "folder"
-                    pointSize: Style.fontSizeXXL
+                    pointSize: Style.fontSizeXXXL
                     color: Color.mPrimary
                     Layout.alignment: Qt.AlignHCenter
                   }
