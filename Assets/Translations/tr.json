@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Pil sağlığı",
     "battery-level": "Pil seviyesi",
+    "capacity-level": "Kapasite: {level}",
     "charging-rate": "Şarj oranı: {rate} W",
     "discharging-rate": "Deşarj oranı: {rate} W",
     "health": "Sağlık: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Ekran duvar kâğıdı klasörünü seç",
       "settings-selector-description": "Duvar kâğıdınızı seçin.",
       "settings-selector-position-description": "Duvar kâğıdı seçici panelinin nerede görüneceğini seçin.",
-      "settings-title": "Duvar kâğıdı ayarları"
+      "settings-title": "Duvar kâğıdı ayarları",
+      "settings-view-mode-description": "Duvar kağıtlarının dizininizden nasıl görüntüleneceğini seçin.",
+      "settings-view-mode-label": "Görüntüleme modu",
+      "view-mode-browse": "Dizinlere göz at",
+      "view-mode-cycle-tooltip": "Görünüm modu: {mode} (değiştirmek için tıklayın)",
+      "view-mode-recursive": "Düzleştirilmiş alt dizinler",
+      "view-mode-single": "Kök dizin"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Duvar kâğıdı seçici"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Bu dizin boş.",
+      "go-root": "Duvar kağıdı köküne git",
+      "go-up": "Üst klasöre git",
+      "go-up-hint": "Yukarı gitmek için geri düğmesini kullanın."
+    },
     "configure-directory": "Resimler içeren duvar kâğıdı dizininizi yapılandırın.",
     "fill-modes": {
       "crop": "Kırp (Doldur)",

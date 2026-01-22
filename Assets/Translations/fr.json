@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "État de la batterie",
     "battery-level": "Niveau de batterie",
+    "capacity-level": "Capacité : {level}",
     "charging-rate": "Taux de charge : {rate} W",
     "discharging-rate": "Taux de décharge : {rate} W",
     "health": "État : {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Sélectionner le dossier des fonds d'écran du moniteur",
       "settings-selector-description": "Choisissez votre fond d’écran.",
       "settings-selector-position-description": "Choisissez l'emplacement d'affichage du panneau de sélection du fond d'écran.",
-      "settings-title": "Paramètres du fond d'écran"
+      "settings-title": "Paramètres du fond d'écran",
+      "settings-view-mode-description": "Choisissez comment les fonds d'écran sont affichés depuis votre répertoire.",
+      "settings-view-mode-label": "Mode d'affichage",
+      "view-mode-browse": "Parcourir les répertoires",
+      "view-mode-cycle-tooltip": "Mode d'affichage : {mode} (cliquez pour modifier)",
+      "view-mode-recursive": "Sous-répertoires aplatis",
+      "view-mode-single": "Répertoire racine"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Sélecteur de fond d'écran"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Ce répertoire est vide.",
+      "go-root": "Aller à la racine du fond d'écran",
+      "go-up": "Aller au dossier parent",
+      "go-up-hint": "Utilisez le bouton de retour pour naviguer vers le haut."
+    },
     "configure-directory": "Configurez votre répertoire de fonds d'écran avec des images.",
     "fill-modes": {
       "crop": "Recadrer (Remplir)",

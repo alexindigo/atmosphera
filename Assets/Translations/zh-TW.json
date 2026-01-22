@@ -269,7 +269,9 @@
     }
   },
   "battery": {
+    "battery-health": "電池健康度",
     "battery-level": "電池電量",
+    "capacity-level": "容量：{level}",
     "charging-rate": "充電速率: {rate} W",
     "discharging-rate": "放電速率: {rate} W",
     "health": "健康度: {percent}%",
@@ -1335,7 +1337,13 @@
       "settings-select-monitor-folder": "選擇顯示器所使用的桌布文件夾",
       "settings-selector-description": "選擇你的桌布",
       "settings-selector-position-description": "選擇挑選桌布面板要在哪裡出現",
-      "settings-title": "桌布設定"
+      "settings-title": "桌布設定",
+      "settings-view-mode-description": "選擇如何從您的目錄顯示桌布。",
+      "settings-view-mode-label": "檢視模式",
+      "view-mode-browse": "瀏覽目錄",
+      "view-mode-cycle-tooltip": "檢視模式：{mode} (點擊以變更)",
+      "view-mode-recursive": "扁平化的子目錄",
+      "view-mode-single": "根目錄"
     }
   },
   "placeholders": {
@@ -1563,6 +1571,12 @@
     "wallpaper-selector": "挑選桌布"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "這個目錄是空的。",
+      "go-root": "前往桌布根目錄",
+      "go-up": "前往上層資料夾",
+      "go-up-hint": "使用返回按鈕向上導航。"
+    },
     "configure-directory": "設定你的桌布目錄",
     "fill-modes": {
       "crop": "裁切 (填滿)",

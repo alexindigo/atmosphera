@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Состояние батареи",
     "battery-level": "Уровень заряда батареи",
+    "capacity-level": "Ёмкость: {level}",
     "charging-rate": "Скорость зарядки: {rate} Вт",
     "discharging-rate": "Скорость разрядки: {rate} Вт",
     "health": "Здоровье: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Выбрать папку с обоями для монитора",
       "settings-selector-description": "Выберите обои.",
       "settings-selector-position-description": "Выберите, где появляется панель выбора обоев.",
-      "settings-title": "Настройки обоев"
+      "settings-title": "Настройки обоев",
+      "settings-view-mode-description": "Выберите способ отображения обоев из вашей директории.",
+      "settings-view-mode-label": "Режим просмотра",
+      "view-mode-browse": "Просмотр каталогов",
+      "view-mode-cycle-tooltip": "Режим просмотра: {mode} (нажмите, чтобы изменить)",
+      "view-mode-recursive": "Сглаженные подкаталоги",
+      "view-mode-single": "Корневой каталог"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Выбор обоев"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Этот каталог пуст.",
+      "go-root": "Перейти в корневую папку обоев",
+      "go-up": "Перейти в родительскую папку",
+      "go-up-hint": "Используйте кнопку «Назад» для навигации вверх."
+    },
     "configure-directory": "Настройте свой каталог обоев с изображениями.",
     "fill-modes": {
       "crop": "Обрезать (Заполнить)",

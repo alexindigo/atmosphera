@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Estado da bateria",
     "battery-level": "Nível da bateria",
+    "capacity-level": "Capacidade: {level}",
     "charging-rate": "Taxa de carregamento: {rate} W",
     "discharging-rate": "Taxa de descarregamento: {rate} W",
     "health": "Saúde: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Selecionar pasta de papéis de parede do monitor",
       "settings-selector-description": "Escolha o seu papel de parede.",
       "settings-selector-position-description": "Escolha onde o painel do seletor de papel de parede aparece.",
-      "settings-title": "Configurações de papel de parede"
+      "settings-title": "Configurações de papel de parede",
+      "settings-view-mode-description": "Escolha como os papéis de parede são exibidos a partir do seu diretório.",
+      "settings-view-mode-label": "Modo de visualização",
+      "view-mode-browse": "Navegar em diretórios",
+      "view-mode-cycle-tooltip": "Modo de visualização: {mode} (clique para alterar)",
+      "view-mode-recursive": "Subdiretórios achatados",
+      "view-mode-single": "Diretório raiz"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Seletor de papel de parede"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Este diretório está vazio.",
+      "go-root": "Ir para a raiz do papel de parede",
+      "go-up": "Ir para a pasta pai",
+      "go-up-hint": "Use o botão voltar para navegar para cima."
+    },
     "configure-directory": "Configure seu diretório de papéis de parede com imagens.",
     "fill-modes": {
       "crop": "Cortar (Preencher)",

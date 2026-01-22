@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Akkuzustand",
     "battery-level": "Akkustand",
+    "capacity-level": "Kapazität: {level}",
     "charging-rate": "Laderate: {rate} W",
     "discharging-rate": "Entladerate: {rate} W",
     "health": "Zustand: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
       "settings-selector-description": "Wählen Sie Ihr Hintergrundbild aus.",
       "settings-selector-position-description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
-      "settings-title": "Hintergrundbild-Einstellungen"
+      "settings-title": "Hintergrundbild-Einstellungen",
+      "settings-view-mode-description": "Wählen Sie aus, wie Hintergrundbilder aus Ihrem Verzeichnis angezeigt werden.",
+      "settings-view-mode-label": "Ansichtsmodus",
+      "view-mode-browse": "Verzeichnisse durchsuchen",
+      "view-mode-cycle-tooltip": "Ansichtsmodus: {mode} (Klicken zum Ändern)",
+      "view-mode-recursive": "Vereinfachte Unterverzeichnisse",
+      "view-mode-single": "Stammverzeichnis"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Hintergrundbild-Auswahl"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Dieses Verzeichnis ist leer.",
+      "go-root": "Zum Wallpaper-Stammverzeichnis gehen",
+      "go-up": "Zum übergeordneten Ordner gehen",
+      "go-up-hint": "Verwende die Zurück-Taste, um nach oben zu navigieren."
+    },
     "configure-directory": "Konfigurieren Sie Ihr Hintergrundbild-Verzeichnis mit Bildern.",
     "fill-modes": {
       "crop": "Zuschneiden (Füllen)",

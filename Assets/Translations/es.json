@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Estado de la batería",
     "battery-level": "Nivel de batería",
+    "capacity-level": "Capacidad: {level}",
     "charging-rate": "Tasa de carga: {rate} W",
     "discharging-rate": "Tasa de descarga: {rate} W",
     "health": "Salud: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
       "settings-selector-description": "Elige tu fondo de pantalla.",
       "settings-selector-position-description": "Elige dónde aparece el panel selector de fondo de pantalla.",
-      "settings-title": "Configuración del fondo de pantalla"
+      "settings-title": "Configuración del fondo de pantalla",
+      "settings-view-mode-description": "Elige cómo se muestran los fondos de pantalla desde tu directorio.",
+      "settings-view-mode-label": "Modo de visualización",
+      "view-mode-browse": "Explorar directorios",
+      "view-mode-cycle-tooltip": "Modo de visualización: {mode} (clic para cambiar)",
+      "view-mode-recursive": "Subdirectorios aplanados",
+      "view-mode-single": "Directorio raíz"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Selector de fondos de pantalla"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Este directorio está vacío.",
+      "go-root": "Ir a la raíz del fondo de pantalla",
+      "go-up": "Ir a la carpeta superior",
+      "go-up-hint": "Usa el botón de atrás para navegar hacia arriba."
+    },
     "configure-directory": "Configura tu directorio de fondos de pantalla con imágenes.",
     "fill-modes": {
       "crop": "Recortar (Rellenar)",

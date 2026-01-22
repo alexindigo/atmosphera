@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Batterijconditie",
     "battery-level": "Accuniveau",
+    "capacity-level": "Capaciteit: {level}",
     "charging-rate": "Laadsnelheid: {rate} W",
     "discharging-rate": "Ontlaadsnelheid: {rate} W",
     "health": "Gezondheid: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Achtergrondmap voor monitor selecteren",
       "settings-selector-description": "Kies je achtergrond.",
       "settings-selector-position-description": "Kies waar het achtergrondselectiepaneel verschijnt.",
-      "settings-title": "Achtergrondinstellingen"
+      "settings-title": "Achtergrondinstellingen",
+      "settings-view-mode-description": "Kies hoe achtergronden uit uw map worden weergegeven.",
+      "settings-view-mode-label": "Weergavemodus",
+      "view-mode-browse": "Blader door mappen",
+      "view-mode-cycle-tooltip": "Weergavemodus: {mode} (klik om te wijzigen)",
+      "view-mode-recursive": "Afgevlakte submappen",
+      "view-mode-single": "Rootdirectory"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Achtergrondkiezer"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Deze map is leeg.",
+      "go-root": "Ga naar de root van de achtergrond",
+      "go-up": "Ga naar de bovenliggende map",
+      "go-up-hint": "Gebruik de terugknop om omhoog te navigeren."
+    },
     "configure-directory": "Configureer je achtergrondmap met afbeeldingen.",
     "fill-modes": {
       "crop": "Bijsnijden (vullend)",

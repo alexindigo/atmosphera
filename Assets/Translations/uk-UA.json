@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Стан батареї",
     "battery-level": "Рівень заряду акумулятора",
+    "capacity-level": "Місткість: {level}",
     "charging-rate": "Швидкість зарядки: {rate} Вт",
     "discharging-rate": "Швидкість розрядки: {rate} Вт",
     "health": "Стан: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Вибрати теку шпалер монітора",
       "settings-selector-description": "Виберіть свої шпалери.",
       "settings-selector-position-description": "Виберіть, де відображатиметься панель вибору шпалер.",
-      "settings-title": "Налаштування шпалер"
+      "settings-title": "Налаштування шпалер",
+      "settings-view-mode-description": "Оберіть спосіб відображення шпалер з вашого каталогу.",
+      "settings-view-mode-label": "Режим перегляду",
+      "view-mode-browse": "Перегляд каталогів",
+      "view-mode-cycle-tooltip": "Режим перегляду: {mode} (натисніть, щоб змінити)",
+      "view-mode-recursive": "Зведені підкаталоги",
+      "view-mode-single": "Кореневий каталог"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Вибір шпалер"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Цей каталог порожній.",
+      "go-root": "Перейти до кореневої папки шпалер",
+      "go-up": "Перейти до батьківської папки",
+      "go-up-hint": "Використовуйте кнопку «Назад» для навігації вгору."
+    },
     "configure-directory": "Налаштуйте вашу теку шпалер зі зображеннями.",
     "fill-modes": {
       "crop": "Обрізати (Заповнити)",

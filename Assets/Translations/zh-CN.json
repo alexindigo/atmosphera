@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "电池健康度",
     "battery-level": "电池电量",
+    "capacity-level": "容量：{level}",
     "charging-rate": "充电速率：{rate} W",
     "discharging-rate": "放电速率：{rate} W",
     "health": "健康状况：{percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "选择显示器壁纸文件夹",
       "settings-selector-description": "选择你的壁纸。",
       "settings-selector-position-description": "选择壁纸选择面板的显示位置。",
-      "settings-title": "壁纸设置"
+      "settings-title": "壁纸设置",
+      "settings-view-mode-description": "选择从您的目录显示壁纸的方式。",
+      "settings-view-mode-label": "查看模式",
+      "view-mode-browse": "浏览目录",
+      "view-mode-cycle-tooltip": "查看模式：{mode}（点击更改）",
+      "view-mode-recursive": "扁平化子目录",
+      "view-mode-single": "根目录"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "壁纸选择器"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "此目录为空。",
+      "go-root": "转到壁纸根目录",
+      "go-up": "转到父文件夹",
+      "go-up-hint": "使用后退按钮向上导航。"
+    },
     "configure-directory": "配置您的壁纸图片目录。",
     "fill-modes": {
       "crop": "裁剪（填充）",

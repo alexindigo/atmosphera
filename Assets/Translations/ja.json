@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "バッテリーの状態",
     "battery-level": "バッテリー残量",
+    "capacity-level": "容量: {level}",
     "charging-rate": "充電速度: {rate} W",
     "discharging-rate": "放電速度: {rate} W",
     "health": "状態: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "ディスプレイ別の壁紙フォルダを選択",
       "settings-selector-description": "壁紙を選択します。",
       "settings-selector-position-description": "壁紙選択パネルの表示位置を選択します。",
-      "settings-title": "壁紙設定"
+      "settings-title": "壁紙設定",
+      "settings-view-mode-description": "ディレクトリから壁紙をどのように表示するかを選択します。",
+      "settings-view-mode-label": "表示モード",
+      "view-mode-browse": "ディレクトリを参照",
+      "view-mode-cycle-tooltip": "表示モード: {mode} (クリックして変更)",
+      "view-mode-recursive": "フラット化されたサブディレクトリ",
+      "view-mode-single": "ルートディレクトリ"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "壁紙選択パネル"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "このディレクトリは空です。",
+      "go-root": "壁紙のルートに移動",
+      "go-up": "親フォルダーへ移動",
+      "go-up-hint": "戻るボタンを使って上に移動します。"
+    },
     "configure-directory": "画像ファイルが含まれる壁紙フォルダを設定してください。",
     "fill-modes": {
       "crop": "拡大する",

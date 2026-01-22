@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Stan baterii",
     "battery-level": "Poziom baterii",
+    "capacity-level": "Pojemność: {level}",
     "charging-rate": "Prędkość ładowania: {rate} W",
     "discharging-rate": "Prędkość rozładowywania: {rate} W",
     "health": "Kondycja: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Wybierz folder tapet monitora",
       "settings-selector-description": "Wybierz swoją tapetę.",
       "settings-selector-position-description": "Wybierz, gdzie pojawia się panel wyboru tapety.",
-      "settings-title": "Ustawienia tapet"
+      "settings-title": "Ustawienia tapet",
+      "settings-view-mode-description": "Wybierz sposób wyświetlania tapet z Twojego katalogu.",
+      "settings-view-mode-label": "Tryb wyświetlania",
+      "view-mode-browse": "Przeglądaj katalogi",
+      "view-mode-cycle-tooltip": "Tryb widoku: {mode} (kliknij, aby zmienić)",
+      "view-mode-recursive": "Spłaszczone podkatalogi",
+      "view-mode-single": "Katalog główny"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Wybór tapety"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Ten katalog jest pusty.",
+      "go-root": "Przejdź do katalogu głównego tapety",
+      "go-up": "Przejdź do folderu nadrzędnego",
+      "go-up-hint": "Użyj przycisku wstecz, aby przejść w górę."
+    },
     "configure-directory": "Skonfiguruj swój katalog z obrazami tapet.",
     "fill-modes": {
       "crop": "Przytnij (Wypełnij)",

@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Akkumulátor állapota",
     "battery-level": "Akkumulátor töltöttségi szintje",
+    "capacity-level": "Kapacitás: {level}",
     "charging-rate": "Töltési sebesség: {rate} W",
     "discharging-rate": "Merülési sebesség: {rate} W",
     "health": "Állapot: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Monitor háttérkép mappa kiválasztása",
       "settings-selector-description": "Válassza ki a háttérképét.",
       "settings-selector-position-description": "Válassza ki, hol jelenjen meg a háttérkép választó panel.",
-      "settings-title": "Háttérkép beállítások"
+      "settings-title": "Háttérkép beállítások",
+      "settings-view-mode-description": "Válaszd ki, hogyan jelenjenek meg a háttérképek a könyvtáradból.",
+      "settings-view-mode-label": "Megtekintési mód",
+      "view-mode-browse": "Könyvtárak böngészése",
+      "view-mode-cycle-tooltip": "Nézet mód: {mode} (kattintson a módosításhoz)",
+      "view-mode-recursive": "Egybesimított alkönyvtárak",
+      "view-mode-single": "Gyökérkönyvtár"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Háttérképválasztó"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Ez a könyvtár üres.",
+      "go-root": "Ugrás a háttérkép gyökerébe",
+      "go-up": "Ugrás a szülő mappába",
+      "go-up-hint": "A visszagombbal navigálhatsz felfelé."
+    },
     "configure-directory": "A háttérképkönyvtár képekkel való konfigurálása.",
     "fill-modes": {
       "crop": "Vágás (Kitöltés)",

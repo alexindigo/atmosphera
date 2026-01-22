@@ -273,7 +273,9 @@
     }
   },
   "battery": {
+    "battery-health": "Rewşa Pîlê",
     "battery-level": "Asta bataryayê",
+    "capacity-level": "Kapasîte: {level}",
     "charging-rate": "Rêjeya barkirinê: {rate} W",
     "discharging-rate": "Rêjeya valabûna betariyê: {rate} W",
     "health": "Tendûrûstî: {percent}%",
@@ -1373,7 +1375,13 @@
       "settings-select-monitor-folder": "Hilbijêre peldanka dîwarê dîmenderê",
       "settings-selector-description": "Wêneyê dîwarê xwe hilbijêre.",
       "settings-selector-position-description": "Cihê ku panelê hilbijêra dîwêr lê xuya dike hilbijêre.",
-      "settings-title": "Mîhengên dîwêr"
+      "settings-title": "Mîhengên dîwêr",
+      "settings-view-mode-description": "Ji bo dîmendana dîwêrên ji pelrêça xwe rêbazek hilbijêre.",
+      "settings-view-mode-label": "Awayê dîtinê",
+      "view-mode-browse": "Navîgasyon di peldankan de",
+      "view-mode-cycle-tooltip": "Awayê dîtinê: {mode} (bitikîne da biguherî)",
+      "view-mode-recursive": "Binkêşkên jêrîn ên rûxandî",
+      "view-mode-single": "Peldaîna bingehîn"
     }
   },
   "placeholders": {
@@ -1602,6 +1610,12 @@
     "wallpaper-selector": "Hilbijêrê wêneyê dîwêr"
   },
   "wallpaper": {
+    "browse": {
+      "empty-directory": "Ev peldank vala ye.",
+      "go-root": "Biçe peldanka sereke ya dîwêr",
+      "go-up": "Biçe peldanka dê û bav",
+      "go-up-hint": "Ji bo ku hûn ber bi jor ve biçin, bişkoka paş bikar bînin."
+    },
     "configure-directory": "Rêgeha wêneyê dîwêrê xwe bi wêneyan re bi rêkxistin bike.",
     "fill-modes": {
       "crop": "Birîn (Dagirtin)",
