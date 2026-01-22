@@ -37,7 +37,8 @@ ghostty)
             # Add the new theme include line to the end of the file.
             echo "theme = noctalia" >>"$CONFIG_FILE"
         fi
-        pkill -SIGUSR2 ghostty
+        # Only signal if ghostty is running
+        pgrep -x ghostty >/dev/null && pkill -SIGUSR2 ghostty || true
     else
         echo "Error: ghostty config file not found at $CONFIG_FILE" >&2
         exit 1

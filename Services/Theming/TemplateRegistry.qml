@@ -10,39 +10,44 @@ Singleton {
 
   readonly property string templateApplyScript: Quickshell.shellDir + '/Scripts/bash/template-apply.sh'
   readonly property string gtkRefreshScript: Quickshell.shellDir + '/Scripts/python/src/theming/gtk-refresh.py'
+
   // Terminal configurations (for wallpaper-based templates)
+  // Each terminal must define a postHook that sets up config includes and triggers reload
   readonly property var terminals: [
     {
       "id": "foot",
       "name": "Foot",
-      "templatePath": "Terminal/foot",
-      "outputPath": "~/.config/foot/themes/noctalia"
+      "templatePath": "terminal/foot",
+      "outputPath": "~/.config/foot/themes/noctalia",
+      "postHook": `${templateApplyScript} foot`
     },
     {
       "id": "ghostty",
       "name": "Ghostty",
-      "templatePath": "Terminal/ghostty",
+      "templatePath": "terminal/ghostty",
       "outputPath": "~/.config/ghostty/themes/noctalia",
-      "postHook": "bash -c 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'"
+      "postHook": `${templateApplyScript} ghostty`
     },
     {
       "id": "kitty",
       "name": "Kitty",
-      "templatePath": "Terminal/kitty.conf",
-      "outputPath": "~/.config/kitty/themes/noctalia.conf"
+      "templatePath": "terminal/kitty.conf",
+      "outputPath": "~/.config/kitty/themes/noctalia.conf",
+      "postHook": `${templateApplyScript} kitty`
     },
     {
       "id": "alacritty",
       "name": "Alacritty",
-      "templatePath": "Terminal/alacritty.toml",
-      "outputPath": "~/.config/alacritty/themes/noctalia.toml"
+      "templatePath": "terminal/alacritty.toml",
+      "outputPath": "~/.config/alacritty/themes/noctalia.toml",
+      "postHook": `${templateApplyScript} alacritty`
     },
     {
       "id": "wezterm",
       "name": "Wezterm",
-      "templatePath": "Terminal/wezterm.toml",
+      "templatePath": "terminal/wezterm.toml",
       "outputPath": "~/.config/wezterm/colors/Noctalia.toml",
-      "postHook": "touch ~/.config/wezterm/wezterm.lua"
+      "postHook": `${templateApplyScript} wezterm`
     }
   ]
 

@@ -29,14 +29,6 @@ Singleton {
                                           "Rose Pine": "Rosepine"
                                         })
 
-  readonly property var terminalPaths: ({
-                                          "foot": "~/.config/foot/themes/noctalia",
-                                          "ghostty": "~/.config/ghostty/themes/noctalia",
-                                          "kitty": "~/.config/kitty/themes/noctalia.conf",
-                                          "alacritty": "~/.config/alacritty/themes/noctalia.toml",
-                                          "wezterm": "~/.config/wezterm/colors/Noctalia.toml"
-                                        })
-
   // Check if a template is enabled in the activeTemplates array
   function isTemplateEnabled(templateId) {
     const activeTemplates = Settings.data.templates.activeTemplates;
@@ -192,8 +184,7 @@ Singleton {
                                            lines.push(`input_path = "${Quickshell.shellDir}/Assets/Templates/${terminal.templatePath}"`);
                                            const outputPath = terminal.outputPath.replace("~", homeDir);
                                            lines.push(`output_path = "${outputPath}"`);
-                                           const postHook = terminal.postHook || `${TemplateRegistry.templateApplyScript} ${terminal.id}`;
-                                           const postHookEsc = escapeTomlString(postHook);
+                                           const postHookEsc = escapeTomlString(terminal.postHook);
                                            lines.push(`post_hook = "${postHookEsc}"`);
                                          }
                                        });
@@ -324,18 +315,20 @@ Singleton {
     const commands = [];
     const homeDir = Quickshell.env("HOME");
 
-    Object.keys(terminalPaths).forEach(terminal => {
-                                         if (isTemplateEnabled(terminal)) {
-                                           const outputPath = terminalPaths[terminal].replace("~", homeDir);
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           const outputPath = terminal.outputPath.replace("~", homeDir);
                                            const outputDir = outputPath.substring(0, outputPath.lastIndexOf('/'));
-                                           const templatePaths = getTerminalColorsTemplate(terminal, mode);
+                                           const templatePaths = getTerminalColorsTemplate(terminal.id, mode);
 
                                            commands.push(`mkdir -p ${escapeShellPath(outputDir)}`);
                                            // Try hyphen first (most common), then space (for schemes like "Rosey AMOLED")
                                            const hyphenPath = escapeShellPath(templatePaths.hyphen);
                                            const spacePath = escapeShellPath(templatePaths.space);
-                                           commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal} (tried both hyphen and space patterns)"; fi`);
-                                           commands.push(`${TemplateRegistry.templateApplyScript} ${terminal}`);
+                                           commands.push(`if [ -f ${hyphenPath} ]; then cp -f ${hyphenPath} ${escapeShellPath(outputPath)}; elif [ -f ${spacePath} ]; then cp -f ${spacePath} ${escapeShellPath(outputPath)}; else echo "ERROR: Template file not found for ${terminal.id} (tried both hyphen and space patterns)"; fi`);
+
+                                           // Always use the apply script to set the theme and attempt hot reloading
+                                           commands.push(terminal.postHook);
                                          }
                                        });
 
