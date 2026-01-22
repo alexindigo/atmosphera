@@ -344,7 +344,13 @@ def main() -> int:
             return 0
 
         try:
-            terminal_colors = TerminalColors.from_dict(mode_data["terminal"])
+            # Extract scheme UI colors for derivation (mPrimary, mOnPrimary, mSecondary)
+            scheme_colors = {
+                "mPrimary": mode_data.get("mPrimary"),
+                "mOnPrimary": mode_data.get("mOnPrimary"),
+                "mSecondary": mode_data.get("mSecondary"),
+            }
+            terminal_colors = TerminalColors.from_dict(mode_data["terminal"], scheme_colors)
             generator = TerminalGenerator(terminal_colors)
 
             for terminal_id, output_path in terminal_outputs.items():

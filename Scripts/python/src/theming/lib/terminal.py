@@ -7,14 +7,29 @@ Supports: foot, ghostty, kitty, alacritty, wezterm
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+
+
+def darken_hex(color: str, percent: float) -> str:
+    """Darken a hex color by a percentage (0-100)."""
+    hex_color = color.lstrip("#")
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    factor = 1 - (percent / 100)
+    r = max(0, int(r * factor))
+    g = max(0, int(g * factor))
+    b = max(0, int(b * factor))
+
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 @dataclass
 class TerminalColors:
     """Terminal color scheme data."""
 
+    # Base colors (from JSON)
     foreground: str
     background: str
     cursor: str
@@ -24,36 +39,61 @@ class TerminalColors:
     normal: dict[str, str]  # black, red, green, yellow, blue, magenta, cyan, white
     bright: dict[str, str]  # same keys
 
-    # Extended colors (optional, for wezterm etc.)
-    compose_cursor: Optional[str] = None
-    scrollbar_thumb: Optional[str] = None
-    split: Optional[str] = None
-    visual_bell: Optional[str] = None
-
-    # Indexed colors (optional)
-    indexed: dict[int, str] = field(default_factory=dict)
-
-    # Tab bar colors (optional, for wezterm)
-    tab_bar: Optional[dict] = None
+    # WezTerm extended colors (always derived)
+    compose_cursor: str
+    scrollbar_thumb: str
+    split: str
+    visual_bell: str
+    indexed: dict[int, str]
+    tab_bar: dict
 
     @classmethod
-    def from_dict(cls, data: dict) -> "TerminalColors":
-        """Create TerminalColors from a dictionary (JSON schema format)."""
+    def from_dict(cls, data: dict, scheme: dict) -> "TerminalColors":
+        """Create TerminalColors with auto-derived WezTerm extended colors.
+
+        Args:
+            data: Terminal color data (foreground, background, cursor, normal, bright, etc.)
+            scheme: Scheme UI colors (mPrimary, mOnPrimary, mSecondary)
+        """
+        # Base colors
+        foreground = data["foreground"]
+        background = data["background"]
+        cursor = data["cursor"]
+        cursor_text = data.get("cursorText", background)
+        selection_fg = data.get("selectionFg", foreground)
+        selection_bg = data.get("selectionBg", "#585b70")
+        normal = data["normal"]
+        bright = data["bright"]
+
+        # Scheme accent colors
+        m_primary = scheme.get("mPrimary", cursor)
+        m_on_primary = scheme.get("mOnPrimary", cursor_text)
+        m_secondary = scheme.get("mSecondary", normal["yellow"])
+
         return cls(
-            foreground=data["foreground"],
-            background=data["background"],
-            cursor=data["cursor"],
-            cursor_text=data.get("cursorText", data["background"]),
-            selection_fg=data.get("selectionFg", data["foreground"]),
-            selection_bg=data.get("selectionBg", data.get("cursor", "#585b70")),
-            normal=data["normal"],
-            bright=data["bright"],
-            compose_cursor=data.get("composeCursor"),
-            scrollbar_thumb=data.get("scrollbarThumb"),
-            split=data.get("split"),
-            visual_bell=data.get("visualBell"),
-            indexed=data.get("indexed", {}),
-            tab_bar=data.get("tabBar"),
+            foreground=foreground,
+            background=background,
+            cursor=cursor,
+            cursor_text=cursor_text,
+            selection_fg=selection_fg,
+            selection_bg=selection_bg,
+            normal=normal,
+            bright=bright,
+            # Derived WezTerm colors
+            compose_cursor=cursor,
+            scrollbar_thumb=selection_bg,
+            split=bright["black"],
+            visual_bell=normal["black"],
+            indexed={16: m_secondary, 17: cursor},
+            tab_bar={
+                "background": darken_hex(background, 10),
+                "inactiveTabEdge": selection_bg,
+                "activeTab": {"bg": m_primary, "fg": m_on_primary},
+                "inactiveTab": {"bg": darken_hex(background, 5), "fg": foreground},
+                "inactiveTabHover": {"bg": background, "fg": foreground},
+                "newTab": {"bg": selection_bg, "fg": foreground},
+                "newTabHover": {"bg": bright["black"], "fg": foreground},
+            },
         )
 
 
@@ -188,6 +228,7 @@ class TerminalGenerator:
     def generate_wezterm(self) -> str:
         """Generate wezterm theme (full TOML with metadata)."""
         c = self.colors
+        tb = c.tab_bar
         lines = ["[colors]"]
 
         # Ansi colors array
@@ -196,7 +237,6 @@ class TerminalGenerator:
             lines.append(f'    "{self._ensure_hash(c.normal[name])}",')
         lines.append("]")
 
-        # Primary
         lines.append(f'background = "{self._ensure_hash(c.background)}"')
 
         # Brights array
@@ -206,122 +246,44 @@ class TerminalGenerator:
         lines.append("]")
 
         # Extended colors
-        if c.compose_cursor:
-            lines.append(f'compose_cursor = "{self._ensure_hash(c.compose_cursor)}"')
-
+        lines.append(f'compose_cursor = "{self._ensure_hash(c.compose_cursor)}"')
         lines.append(f'cursor_bg = "{self._ensure_hash(c.cursor)}"')
         lines.append(f'cursor_border = "{self._ensure_hash(c.cursor)}"')
         lines.append(f'cursor_fg = "{self._ensure_hash(c.cursor_text)}"')
         lines.append(f'foreground = "{self._ensure_hash(c.foreground)}"')
-
-        if c.scrollbar_thumb:
-            lines.append(f'scrollbar_thumb = "{self._ensure_hash(c.scrollbar_thumb)}"')
-
+        lines.append(f'scrollbar_thumb = "{self._ensure_hash(c.scrollbar_thumb)}"')
         lines.append(f'selection_bg = "{self._ensure_hash(c.selection_bg)}"')
         lines.append(f'selection_fg = "{self._ensure_hash(c.selection_fg)}"')
-
-        if c.split:
-            lines.append(f'split = "{self._ensure_hash(c.split)}"')
-
-        if c.visual_bell:
-            lines.append(f'visual_bell = "{self._ensure_hash(c.visual_bell)}"')
+        lines.append(f'split = "{self._ensure_hash(c.split)}"')
+        lines.append(f'visual_bell = "{self._ensure_hash(c.visual_bell)}"')
 
         # Indexed colors
-        if c.indexed:
+        lines.append("")
+        lines.append("[colors.indexed]")
+        for idx, color in sorted(c.indexed.items()):
+            lines.append(f'{idx} = "{self._ensure_hash(color)}"')
+
+        # Tab bar
+        lines.append("")
+        lines.append("[colors.tab_bar]")
+        lines.append(f'background = "{self._ensure_hash(tb["background"])}"')
+        lines.append(f'inactive_tab_edge = "{self._ensure_hash(tb["inactiveTabEdge"])}"')
+
+        for section, key in [
+            ("activeTab", "active_tab"),
+            ("inactiveTab", "inactive_tab"),
+            ("inactiveTabHover", "inactive_tab_hover"),
+            ("newTab", "new_tab"),
+            ("newTabHover", "new_tab_hover"),
+        ]:
             lines.append("")
-            lines.append("[colors.indexed]")
-            for idx, color in sorted(c.indexed.items()):
-                lines.append(f'{idx} = "{self._ensure_hash(color)}"')
-
-        # Tab bar (optional)
-        if c.tab_bar:
-            tb = c.tab_bar
-            lines.append("")
-            lines.append("[colors.tab_bar]")
-            if "background" in tb:
-                lines.append(f'background = "{self._ensure_hash(tb["background"])}"')
-            if "inactiveTabEdge" in tb:
-                lines.append(
-                    f'inactive_tab_edge = "{self._ensure_hash(tb["inactiveTabEdge"])}"'
-                )
-
-            # Active tab
-            if "activeTab" in tb:
-                at = tb["activeTab"]
-                lines.append("")
-                lines.append("[colors.tab_bar.active_tab]")
-                lines.append(f'bg_color = "{self._ensure_hash(at.get("bg", c.cursor))}"')
-                lines.append(
-                    f'fg_color = "{self._ensure_hash(at.get("fg", c.cursor_text))}"'
-                )
-                lines.append('intensity = "Normal"')
-                lines.append("italic = false")
-                lines.append("strikethrough = false")
-                lines.append('underline = "None"')
-
-            # Inactive tab
-            if "inactiveTab" in tb:
-                it = tb["inactiveTab"]
-                lines.append("")
-                lines.append("[colors.tab_bar.inactive_tab]")
-                lines.append(
-                    f'bg_color = "{self._ensure_hash(it.get("bg", c.background))}"'
-                )
-                lines.append(
-                    f'fg_color = "{self._ensure_hash(it.get("fg", c.foreground))}"'
-                )
-                lines.append('intensity = "Normal"')
-                lines.append("italic = false")
-                lines.append("strikethrough = false")
-                lines.append('underline = "None"')
-
-            # Inactive tab hover
-            if "inactiveTabHover" in tb:
-                ith = tb["inactiveTabHover"]
-                lines.append("")
-                lines.append("[colors.tab_bar.inactive_tab_hover]")
-                lines.append(
-                    f'bg_color = "{self._ensure_hash(ith.get("bg", c.background))}"'
-                )
-                lines.append(
-                    f'fg_color = "{self._ensure_hash(ith.get("fg", c.foreground))}"'
-                )
-                lines.append('intensity = "Normal"')
-                lines.append("italic = false")
-                lines.append("strikethrough = false")
-                lines.append('underline = "None"')
-
-            # New tab
-            if "newTab" in tb:
-                nt = tb["newTab"]
-                lines.append("")
-                lines.append("[colors.tab_bar.new_tab]")
-                lines.append(
-                    f'bg_color = "{self._ensure_hash(nt.get("bg", c.selection_bg))}"'
-                )
-                lines.append(
-                    f'fg_color = "{self._ensure_hash(nt.get("fg", c.foreground))}"'
-                )
-                lines.append('intensity = "Normal"')
-                lines.append("italic = false")
-                lines.append("strikethrough = false")
-                lines.append('underline = "None"')
-
-            # New tab hover
-            if "newTabHover" in tb:
-                nth = tb["newTabHover"]
-                lines.append("")
-                lines.append("[colors.tab_bar.new_tab_hover]")
-                lines.append(
-                    f'bg_color = "{self._ensure_hash(nth.get("bg", c.bright["black"]))}"'
-                )
-                lines.append(
-                    f'fg_color = "{self._ensure_hash(nth.get("fg", c.foreground))}"'
-                )
-                lines.append('intensity = "Normal"')
-                lines.append("italic = false")
-                lines.append("strikethrough = false")
-                lines.append('underline = "None"')
+            lines.append(f"[colors.tab_bar.{key}]")
+            lines.append(f'bg_color = "{self._ensure_hash(tb[section]["bg"])}"')
+            lines.append(f'fg_color = "{self._ensure_hash(tb[section]["fg"])}"')
+            lines.append('intensity = "Normal"')
+            lines.append("italic = false")
+            lines.append("strikethrough = false")
+            lines.append('underline = "None"')
 
         # Metadata
         lines.append("")

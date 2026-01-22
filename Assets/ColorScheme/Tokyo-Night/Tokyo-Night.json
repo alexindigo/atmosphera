@@ -42,31 +42,7 @@
       "selectionFg": "#c0caf5",
       "selectionBg": "#283457",
       "cursorText": "#1a1b26",
-      "cursor": "#c0caf5",
-      "tabBar": {
-        "background": "#191b28",
-        "inactiveTabEdge": "#16161e",
-        "activeTab": {
-          "bg": "#1a1b26",
-          "fg": "#7aa2f7"
-        },
-        "inactiveTab": {
-          "bg": "#16161e",
-          "fg": "#545c7e"
-        },
-        "inactiveTabHover": {
-          "bg": "#16161e",
-          "fg": "#7aa2f7"
-        },
-        "newTab": {
-          "bg": "#191b28",
-          "fg": "#7aa2f7"
-        },
-        "newTabHover": {
-          "bg": "#7aa2f7",
-          "fg": "#16161e"
-        }
-      }
+      "cursor": "#c0caf5"
     }
   },
   "light": {
@@ -112,31 +88,7 @@
       "selectionFg": "#3760bf",
       "selectionBg": "#99a7df",
       "cursorText": "#e1e2e7",
-      "cursor": "#3760bf",
-      "tabBar": {
-        "background": "#191b28",
-        "inactiveTabEdge": "#e9e9ec",
-        "activeTab": {
-          "bg": "#e1e2e7",
-          "fg": "#2e7de9"
-        },
-        "inactiveTab": {
-          "bg": "#e9e9ec",
-          "fg": "#8990b3"
-        },
-        "inactiveTabHover": {
-          "bg": "#e9e9ec",
-          "fg": "#2e7de9"
-        },
-        "newTab": {
-          "bg": "#191b28",
-          "fg": "#2e7de9"
-        },
-        "newTabHover": {
-          "bg": "#2e7de9",
-          "fg": "#e9e9ec"
-        }
-      }
+      "cursor": "#3760bf"
     }
   }
 }
