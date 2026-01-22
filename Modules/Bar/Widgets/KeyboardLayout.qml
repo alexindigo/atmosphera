@@ -33,6 +33,9 @@ Item {
     return {};
   }
 
+  readonly property string barPosition: Settings.getBarPositionForScreen(screen?.name)
+  readonly property bool isBarVertical: barPosition === "left" || barPosition === "right"
+
   readonly property string displayMode: (widgetSettings.displayMode !== undefined) ? widgetSettings.displayMode : widgetMetadata.displayMode
   readonly property bool showIcon: (widgetSettings.showIcon !== undefined) ? widgetSettings.showIcon : widgetMetadata.showIcon
 
@@ -72,7 +75,7 @@ Item {
     oppositeDirection: BarService.getPillDirection(root)
     icon: root.showIcon ? "keyboard" : ""
     autoHide: false // Important to be false so we can hover as long as we want
-    text: currentLayout
+    text: isBarVertical ? currentLayout.substring(0, 3).toUpperCase() : currentLayout
     tooltipText: KeyboardLayoutService.fullLayoutName
     // When icon is disabled, always show the layout text
     forceOpen: !root.showIcon || root.displayMode === "forceOpen"
