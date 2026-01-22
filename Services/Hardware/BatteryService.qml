@@ -107,7 +107,7 @@ Singleton {
 
         var capacityMatch = line.match(/^\s*capacity:\s*(\d+(?:\.\d+)?)\s*%/i);
         if (capacityMatch) {
-          root.healthPercent = Math.round(parseFloat(capacityMatch[1].replace(',', '.')));
+          root.healthPercent = Math.round(parseFloat(capacityMatch[1]));
           root.healthAvailable = true;
           Logger.d("Battery", "Health retrieved from CLI:", root.healthPercent + "%");
         }
