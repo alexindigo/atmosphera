@@ -106,9 +106,10 @@ Item {
   implicitWidth: showApplications ? (isVertical ? groupedGrid.implicitWidth : Math.round(groupedGrid.implicitWidth + horizontalPadding * hasLabel)) : (isVertical ? barHeight : computeWidth())
   implicitHeight: showApplications ? (isVertical ? Math.round(groupedGrid.implicitHeight + horizontalPadding * 0.6 * hasLabel) : barHeight) : (isVertical ? computeHeight() : barHeight)
 
-  function getWorkspaceWidth(ws) {
+  function getWorkspaceWidth(ws, activeOverride) {
     const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
-    const factor = ws.isActive ? 2.2 : 1;
+    const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+    const factor = isActive ? 2.2 : 1;
 
     // Don't calculate text width if labels are off
     if (labelMode === "none") {
@@ -130,9 +131,10 @@ Item {
     return Style.toOdd(Math.max(d * factor, textWidth + padding));
   }
 
-  function getWorkspaceHeight(ws) {
+  function getWorkspaceHeight(ws, activeOverride) {
     const d = Math.round(Style.capsuleHeight * root.baseDimensionRatio);
-    const factor = ws.isActive ? 2.2 : 1;
+    const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+    const factor = isActive ? 2.2 : 1;
     return Style.toOdd(d * factor);
   }
 
@@ -253,8 +255,7 @@ Item {
   }
 
   function refreshWorkspaces() {
-    localWorkspaces.clear();
-
+    var targetList = [];
     var focusedOutput = null;
     if (followFocusedScreen) {
       for (var i = 0; i < CompositorService.workspaces.count; i++) {
@@ -279,14 +280,49 @@ Item {
           // For grouped mode, attach windows to each workspace
           var workspaceData = Object.assign({}, ws);
           workspaceData.windows = CompositorService.getWindowsForWorkspace(ws.id);
-          localWorkspaces.append(workspaceData);
+          targetList.push(workspaceData);
         } else {
-          localWorkspaces.append(ws);
+          targetList.push(ws);
         }
       }
     }
-    workspaceRepeaterHorizontal.model = localWorkspaces;
-    workspaceRepeaterVertical.model = localWorkspaces;
+
+    // In-place update to preserve delegates for animations
+    var i = 0;
+    while (i < localWorkspaces.count || i < targetList.length) {
+      if (i < localWorkspaces.count && i < targetList.length) {
+        var existing = localWorkspaces.get(i);
+        var target = targetList[i];
+        if (existing.id === target.id) {
+          // Update properties if changed - Explicit list to avoid ListElement iteration issues
+          var keys = ["idx", "name", "output", "isFocused", "isActive", "isUrgent", "isOccupied"];
+          var changed = false;
+          for (var k = 0; k < keys.length; k++) {
+            var key = keys[k];
+            if (existing[key] !== target[key]) {
+              localWorkspaces.setProperty(i, key, target[key]);
+              changed = true;
+            }
+          }
+          if (changed) {
+            // Force verify active state transition
+            // console.log("Workspace " + existing.id + " updated. isActive: " + target.isActive);
+          }
+          i++;
+        } else {
+          // ID mismatch, remove existing and re-evaluate this index
+          localWorkspaces.remove(i);
+        }
+      } else if (i < localWorkspaces.count) {
+        // Excess items in local, remove them
+        localWorkspaces.remove(i);
+      } else {
+        // More items in target, append them
+        localWorkspaces.append(targetList[i]);
+        i++;
+      }
+    }
+
     updateWorkspaceFocus();
   }
 
@@ -497,8 +533,47 @@ Item {
       model: localWorkspaces
       Item {
         id: workspacePillContainer
-        width: root.getWorkspaceWidth(model)
         height: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
+
+        states: [
+          State {
+            name: "active"
+            when: model.isActive
+            PropertyChanges {
+              target: workspacePillContainer
+              width: root.getWorkspaceWidth(model, true)
+            }
+          },
+          State {
+            name: "inactive"
+            when: !model.isActive
+            PropertyChanges {
+              target: workspacePillContainer
+              width: root.getWorkspaceWidth(model, false)
+            }
+          }
+        ]
+
+        transitions: [
+          Transition {
+            from: "inactive"
+            to: "active"
+            NumberAnimation {
+              property: "width"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          },
+          Transition {
+            from: "active"
+            to: "inactive"
+            NumberAnimation {
+              property: "width"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+        ]
 
         Rectangle {
           id: pill
@@ -563,19 +638,7 @@ Item {
             }
             hoverEnabled: true
           }
-          // Material 3-inspired smooth animation for width, height, scale, color, opacity, and radius
-          Behavior on width {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
-          Behavior on height {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
+          // Material 3-inspired smooth animation for scale, color, opacity, and radius
           Behavior on scale {
             NumberAnimation {
               duration: Style.animationNormal
@@ -647,7 +710,46 @@ Item {
       Item {
         id: workspacePillContainerVertical
         width: Style.toOdd(Style.capsuleHeight * root.baseDimensionRatio)
-        height: root.getWorkspaceHeight(model)
+
+        states: [
+          State {
+            name: "active"
+            when: model.isActive
+            PropertyChanges {
+              target: workspacePillContainerVertical
+              height: root.getWorkspaceHeight(model, true)
+            }
+          },
+          State {
+            name: "inactive"
+            when: !model.isActive
+            PropertyChanges {
+              target: workspacePillContainerVertical
+              height: root.getWorkspaceHeight(model, false)
+            }
+          }
+        ]
+
+        transitions: [
+          Transition {
+            from: "inactive"
+            to: "active"
+            NumberAnimation {
+              property: "height"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          },
+          Transition {
+            from: "active"
+            to: "inactive"
+            NumberAnimation {
+              property: "height"
+              duration: Style.animationNormal
+              easing.type: Easing.OutBack
+            }
+          }
+        ]
 
         Rectangle {
           id: pillVertical
@@ -712,19 +814,7 @@ Item {
             }
             hoverEnabled: true
           }
-          // Material 3-inspired smooth animation for width, height, scale, color, opacity, and radius
-          Behavior on width {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
-          Behavior on height {
-            NumberAnimation {
-              duration: Style.animationNormal
-              easing.type: Easing.OutBack
-            }
-          }
+          // Material 3-inspired smooth animation for scale, color, opacity, and radius
           Behavior on scale {
             NumberAnimation {
               duration: Style.animationNormal
