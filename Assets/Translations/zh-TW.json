@@ -1337,6 +1337,8 @@
       "settings-select-monitor-folder": "選擇顯示器所使用的桌布文件夾",
       "settings-selector-description": "選擇你的桌布",
       "settings-selector-position-description": "選擇挑選桌布面板要在哪裡出現",
+      "settings-show-hidden-files-tooltip-hide": "隱藏隱藏檔案",
+      "settings-show-hidden-files-tooltip-show": "顯示隱藏檔案",
       "settings-title": "桌布設定",
       "settings-view-mode-description": "選擇如何從您的目錄顯示桌布。",
       "settings-view-mode-label": "檢視模式",

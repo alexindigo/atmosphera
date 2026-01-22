@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "ディスプレイ別の壁紙フォルダを選択",
       "settings-selector-description": "壁紙を選択します。",
       "settings-selector-position-description": "壁紙選択パネルの表示位置を選択します。",
+      "settings-show-hidden-files-tooltip-hide": "隠しファイルを隠す",
+      "settings-show-hidden-files-tooltip-show": "隠しファイルを表示",
       "settings-title": "壁紙設定",
       "settings-view-mode-description": "ディレクトリから壁紙をどのように表示するかを選択します。",
       "settings-view-mode-label": "表示モード",

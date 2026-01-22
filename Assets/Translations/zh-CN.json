@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "选择显示器壁纸文件夹",
       "settings-selector-description": "选择你的壁纸。",
       "settings-selector-position-description": "选择壁纸选择面板的显示位置。",
+      "settings-show-hidden-files-tooltip-hide": "隐藏隐藏文件",
+      "settings-show-hidden-files-tooltip-show": "显示隐藏文件",
       "settings-title": "壁纸设置",
       "settings-view-mode-description": "选择从您的目录显示壁纸的方式。",
       "settings-view-mode-label": "查看模式",

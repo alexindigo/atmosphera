@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "Achtergrondmap voor monitor selecteren",
       "settings-selector-description": "Kies je achtergrond.",
       "settings-selector-position-description": "Kies waar het achtergrondselectiepaneel verschijnt.",
+      "settings-show-hidden-files-tooltip-hide": "Verborgen bestanden verbergen",
+      "settings-show-hidden-files-tooltip-show": "Verborgen bestanden weergeven",
       "settings-title": "Achtergrondinstellingen",
       "settings-view-mode-description": "Kies hoe achtergronden uit uw map worden weergegeven.",
       "settings-view-mode-label": "Weergavemodus",

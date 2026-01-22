@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "Seleccionar carpeta de fondos de pantalla del monitor",
       "settings-selector-description": "Elige tu fondo de pantalla.",
       "settings-selector-position-description": "Elige dónde aparece el panel selector de fondo de pantalla.",
+      "settings-show-hidden-files-tooltip-hide": "Ocultar archivos ocultos",
+      "settings-show-hidden-files-tooltip-show": "Mostrar archivos ocultos",
       "settings-title": "Configuración del fondo de pantalla",
       "settings-view-mode-description": "Elige cómo se muestran los fondos de pantalla desde tu directorio.",
       "settings-view-mode-label": "Modo de visualización",

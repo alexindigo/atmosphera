@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "Ekran duvar kâğıdı klasörünü seç",
       "settings-selector-description": "Duvar kâğıdınızı seçin.",
       "settings-selector-position-description": "Duvar kâğıdı seçici panelinin nerede görüneceğini seçin.",
+      "settings-show-hidden-files-tooltip-hide": "Gizli dosyaları gizle",
+      "settings-show-hidden-files-tooltip-show": "Gizli dosyaları göster",
       "settings-title": "Duvar kâğıdı ayarları",
       "settings-view-mode-description": "Duvar kağıtlarının dizininizden nasıl görüntüleneceğini seçin.",
       "settings-view-mode-label": "Görüntüleme modu",

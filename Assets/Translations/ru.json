@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "Выбрать папку с обоями для монитора",
       "settings-selector-description": "Выберите обои.",
       "settings-selector-position-description": "Выберите, где появляется панель выбора обоев.",
+      "settings-show-hidden-files-tooltip-hide": "Скрыть скрытые файлы",
+      "settings-show-hidden-files-tooltip-show": "Показать скрытые файлы",
       "settings-title": "Настройки обоев",
       "settings-view-mode-description": "Выберите способ отображения обоев из вашей директории.",
       "settings-view-mode-label": "Режим просмотра",

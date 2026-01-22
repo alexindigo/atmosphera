@@ -1375,6 +1375,8 @@
       "settings-select-monitor-folder": "Monitor-Hintergrundbild-Ordner auswählen",
       "settings-selector-description": "Wählen Sie Ihr Hintergrundbild aus.",
       "settings-selector-position-description": "Wählen Sie aus, wo das Hintergrundbild-Auswahlfeld angezeigt wird.",
+      "settings-show-hidden-files-tooltip-hide": "Versteckte Dateien ausblenden",
+      "settings-show-hidden-files-tooltip-show": "Versteckte Dateien anzeigen",
       "settings-title": "Hintergrundbild-Einstellungen",
       "settings-view-mode-description": "Wählen Sie aus, wie Hintergrundbilder aus Ihrem Verzeichnis angezeigt werden.",
       "settings-view-mode-label": "Ansichtsmodus",
