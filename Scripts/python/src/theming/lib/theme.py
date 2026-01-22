@@ -9,6 +9,7 @@ Supported scheme types:
 - tonal-spot: Default Android 12-13 scheme (recommended)
 - fruit-salad: Bold/playful with hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
+- monochrome: Pure grayscale M3 scheme (chroma = 0)
 - vibrant: Prioritizes the most saturated colors regardless of area
 - faithful: Prioritizes dominant colors by area coverage
 - muted: Preserves hue but caps saturation low (for monochrome wallpapers)
@@ -18,12 +19,12 @@ from typing import Literal
 
 from .color import Color, shift_hue, hue_distance, adjust_surface
 from .contrast import ensure_contrast
-from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent
+from .material import SchemeTonalSpot, SchemeFruitSalad, SchemeRainbow, SchemeContent, SchemeMonochrome
 from .palette import find_error_color
 
 # Type aliases
 ThemeMode = Literal["dark", "light"]
-SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "content", "vibrant", "faithful", "muted"]
+SchemeType = Literal["tonal-spot", "fruit-salad", "rainbow", "content", "monochrome", "vibrant", "faithful", "muted"]
 
 # Map scheme type strings to classes
 SCHEME_CLASSES = {
@@ -31,6 +32,7 @@ SCHEME_CLASSES = {
     "fruit-salad": SchemeFruitSalad,
     "rainbow": SchemeRainbow,
     "content": SchemeContent,
+    "monochrome": SchemeMonochrome,
     # "vibrant", "faithful", and "muted" use generate_*_* functions, not a scheme class
 }
 

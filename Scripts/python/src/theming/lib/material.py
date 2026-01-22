@@ -90,6 +90,34 @@ LIGHT_TONES = {
     'inverse_primary': 80,
 }
 
+# Monochrome scheme uses different tone values (from material-colors library)
+# Primary/tertiary get special treatment for higher contrast in grayscale
+MONOCHROME_DARK_TONES = {
+    **DARK_TONES,
+    'primary': 100,              # White (was 80)
+    'on_primary': 10,            # Near-black (was 20)
+    'primary_container': 85,     # Light gray (was 30)
+    'on_primary_container': 0,   # Black (was 90)
+    'tertiary': 90,              # Light gray (was 80)
+    'on_tertiary': 10,           # Near-black (was 20)
+    'tertiary_container': 60,    # Mid gray (was 30)
+    'on_tertiary_container': 0,  # Black (was 90)
+    'secondary_container': 30,   # Same as normal
+}
+
+MONOCHROME_LIGHT_TONES = {
+    **LIGHT_TONES,
+    'primary': 0,                # Black (was 40)
+    'on_primary': 90,            # Light gray (was 100)
+    'primary_container': 25,     # Dark gray (was 90)
+    'on_primary_container': 100, # White (was 10)
+    'tertiary': 25,              # Dark gray (was 40)
+    'on_tertiary': 90,           # Light gray (was 100)
+    'tertiary_container': 49,    # Mid gray (was 90)
+    'on_tertiary_container': 100, # White (was 10)
+    'secondary_container': 90,   # Same as normal
+}
+
 
 # =============================================================================
 # Base Scheme Class
@@ -345,6 +373,119 @@ class SchemeContent(_BaseScheme):
         # Neutral variant: slightly more chroma (chroma / 8 + 4)
         neutral_variant_chroma = (source_color.chroma / 8.0) + 4.0
         self.neutral_variant_palette = TonalPalette(source_color.hue, neutral_variant_chroma)
+
+
+class SchemeMonochrome(_BaseScheme):
+    """
+    Material Design 3 Monochrome scheme.
+
+    All color palettes use chroma=0.0, producing a pure grayscale theme.
+    Only the error color retains saturation for accessibility.
+
+    Uses special tone mappings (different from other M3 schemes) for higher
+    contrast in grayscale - e.g., primary is tone 100 (white) in dark mode.
+
+    Palette configuration:
+    - Primary: chroma 0.0 (grayscale)
+    - Secondary: chroma 0.0 (grayscale)
+    - Tertiary: chroma 0.0 (grayscale)
+    - Neutral: chroma 0.0 (grayscale)
+    - Neutral variant: chroma 0.0 (grayscale)
+    - Error: hue 25°, chroma 84 (vibrant red)
+    """
+
+    def __init__(self, source_color: Hct):
+        super().__init__(source_color)
+
+        # All palettes use chroma=0 (grayscale)
+        # Source hue is preserved but irrelevant at chroma 0
+        self.primary_palette = TonalPalette(source_color.hue, 0.0)
+        self.secondary_palette = TonalPalette(source_color.hue, 0.0)
+        self.tertiary_palette = TonalPalette(source_color.hue, 0.0)
+        self.neutral_palette = TonalPalette(source_color.hue, 0.0)
+        self.neutral_variant_palette = TonalPalette(source_color.hue, 0.0)
+
+        # Error palette keeps vibrant red for accessibility
+        self.error_palette = TonalPalette(25.0, 84.0)
+
+    def _generate_scheme(self, is_dark: bool) -> dict[str, str]:
+        """Generate scheme with monochrome-specific tone values."""
+        # Monochrome uses different tones for higher contrast in grayscale
+        tones = MONOCHROME_DARK_TONES if is_dark else MONOCHROME_LIGHT_TONES
+
+        scheme = {
+            # Primary colors
+            'primary': self.primary_palette.get_hex(tones['primary']),
+            'on_primary': self.primary_palette.get_hex(tones['on_primary']),
+            'primary_container': self.primary_palette.get_hex(tones['primary_container']),
+            'on_primary_container': self.primary_palette.get_hex(tones['on_primary_container']),
+
+            # Secondary colors
+            'secondary': self.secondary_palette.get_hex(tones['secondary']),
+            'on_secondary': self.secondary_palette.get_hex(tones['on_secondary']),
+            'secondary_container': self.secondary_palette.get_hex(tones['secondary_container']),
+            'on_secondary_container': self.secondary_palette.get_hex(tones['on_secondary_container']),
+
+            # Tertiary colors
+            'tertiary': self.tertiary_palette.get_hex(tones['tertiary']),
+            'on_tertiary': self.tertiary_palette.get_hex(tones['on_tertiary']),
+            'tertiary_container': self.tertiary_palette.get_hex(tones['tertiary_container']),
+            'on_tertiary_container': self.tertiary_palette.get_hex(tones['on_tertiary_container']),
+
+            # Error colors
+            'error': self.error_palette.get_hex(tones['error']),
+            'on_error': self.error_palette.get_hex(tones['on_error']),
+            'error_container': self.error_palette.get_hex(tones['error_container']),
+            'on_error_container': self.error_palette.get_hex(tones['on_error_container']),
+
+            # Surface colors
+            'surface': self.neutral_palette.get_hex(tones['surface']),
+            'on_surface': self.neutral_palette.get_hex(tones['on_surface']),
+            'surface_variant': self.neutral_variant_palette.get_hex(tones['surface_variant']),
+            'on_surface_variant': self.neutral_variant_palette.get_hex(tones['on_surface_variant']),
+
+            # Surface containers
+            'surface_container_lowest': self.neutral_palette.get_hex(tones['surface_container_lowest']),
+            'surface_container_low': self.neutral_palette.get_hex(tones['surface_container_low']),
+            'surface_container': self.neutral_palette.get_hex(tones['surface_container']),
+            'surface_container_high': self.neutral_palette.get_hex(tones['surface_container_high']),
+            'surface_container_highest': self.neutral_palette.get_hex(tones['surface_container_highest']),
+
+            # Outline and other
+            'outline': self.neutral_variant_palette.get_hex(tones['outline']),
+            'outline_variant': self.neutral_variant_palette.get_hex(tones['outline_variant']),
+            'shadow': self.neutral_palette.get_hex(tones['shadow']),
+            'scrim': self.neutral_palette.get_hex(tones['scrim']),
+
+            # Inverse colors
+            'inverse_surface': self.neutral_palette.get_hex(tones['inverse_surface']),
+            'inverse_on_surface': self.neutral_palette.get_hex(tones['inverse_on_surface']),
+            'inverse_primary': self.primary_palette.get_hex(tones['inverse_primary']),
+
+            # Background (same as surface in MD3)
+            'background': self.neutral_palette.get_hex(tones['surface']),
+            'on_background': self.neutral_palette.get_hex(tones['on_surface']),
+
+            # Surface dim and bright
+            'surface_dim': self.neutral_palette.get_hex(tones['surface']),
+            'surface_bright': self.neutral_palette.get_hex(tones['surface_container_highest'] + 5),
+
+            # Fixed colors
+            'primary_fixed': self.primary_palette.get_hex(90),
+            'primary_fixed_dim': self.primary_palette.get_hex(80),
+            'on_primary_fixed': self.primary_palette.get_hex(10),
+            'on_primary_fixed_variant': self.primary_palette.get_hex(30),
+            'secondary_fixed': self.secondary_palette.get_hex(90),
+            'secondary_fixed_dim': self.secondary_palette.get_hex(80),
+            'on_secondary_fixed': self.secondary_palette.get_hex(10),
+            'on_secondary_fixed_variant': self.secondary_palette.get_hex(30),
+            'tertiary_fixed': self.tertiary_palette.get_hex(90),
+            'tertiary_fixed_dim': self.tertiary_palette.get_hex(80),
+            'on_tertiary_fixed': self.tertiary_palette.get_hex(10),
+            'on_tertiary_fixed_variant': self.tertiary_palette.get_hex(30),
+        }
+
+        return scheme
 
 
 # Backward compatibility alias

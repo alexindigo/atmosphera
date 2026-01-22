@@ -265,6 +265,10 @@ ColumnLayout {
         "name": "M3-Rainbow" // Do not translate
       },
       {
+        "key": "monochrome",
+        "name": "M3-Monochrome" // Do not translate
+      },
+      {
         "key": "vibrant",
         "name": I18n.tr("common.vibrant")
       },

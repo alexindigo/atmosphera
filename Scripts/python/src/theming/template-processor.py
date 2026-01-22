@@ -9,6 +9,7 @@ Supported scheme types:
 - content: Preserves source color's chroma with temperature-based tertiary (matugen default)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
+- monochrome: Pure grayscale M3 scheme (chroma = 0, only error has color)
 - vibrant: Prioritizes the most saturated colors regardless of area coverage
 - faithful: Prioritizes dominant colors by area, what you see is what you get
 - muted: Preserves hue but caps saturation low (for monochrome/monotonal wallpapers)
@@ -17,7 +18,7 @@ Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
 
 Options:
-    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, vibrant, faithful, muted
+    --scheme-type    Scheme type: tonal-spot (default), content, fruit-salad, rainbow, monochrome, vibrant, faithful, muted
     --dark           Generate dark theme only
     --light          Generate light theme only
     --both           Generate both themes (default)
@@ -82,7 +83,7 @@ Examples:
     # Scheme type selection
     parser.add_argument(
         '--scheme-type',
-        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'vibrant', 'faithful', 'muted'],
+        choices=['tonal-spot', 'content', 'fruit-salad', 'rainbow', 'monochrome', 'vibrant', 'faithful', 'muted'],
         default='tonal-spot',
         help='Color scheme type (default: tonal-spot)'
     )

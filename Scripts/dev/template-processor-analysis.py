@@ -185,7 +185,7 @@ def analyze_vibrant_faithful_muted(image_path: Path) -> None:
 
 def compare_m3_schemes(image_path: Path, has_matugen: bool) -> None:
     """Compare all M3 schemes between our processor and matugen."""
-    schemes = ["tonal-spot", "fruit-salad", "rainbow", "content"]
+    schemes = ["tonal-spot", "fruit-salad", "rainbow", "content", "monochrome"]
     color_keys = ["primary", "secondary", "tertiary", "surface", "on_surface"]
 
     print("\n" + "=" * 78)
