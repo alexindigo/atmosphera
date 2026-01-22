@@ -20,30 +20,213 @@ Singleton {
 
   property bool reloadColors: false
 
+  // Flag indicating theme colors are currently transitioning (for widgets to disable their own animations)
+  property bool isTransitioning: false
+
+  // Timer to reset isTransitioning after animation completes
+  Timer {
+    id: transitionTimer
+    interval: Style.animationSlowest + 50 // Small buffer after animation
+    onTriggered: root.isTransitioning = false
+  }
+
   // --- Key Colors: These are the main accent colors that define your app's style
-  readonly property color mPrimary: customColorsData.mPrimary
-  readonly property color mOnPrimary: customColorsData.mOnPrimary
-  readonly property color mSecondary: customColorsData.mSecondary
-  readonly property color mOnSecondary: customColorsData.mOnSecondary
-  readonly property color mTertiary: customColorsData.mTertiary
-  readonly property color mOnTertiary: customColorsData.mOnTertiary
+  property color mPrimary: defaultColors.mPrimary
+  property color mOnPrimary: defaultColors.mOnPrimary
+  property color mSecondary: defaultColors.mSecondary
+  property color mOnSecondary: defaultColors.mOnSecondary
+  property color mTertiary: defaultColors.mTertiary
+  property color mOnTertiary: defaultColors.mOnTertiary
 
   // --- Utility Colors: These colors serve specific, universal purposes like indicating errors
-  readonly property color mError: customColorsData.mError
-  readonly property color mOnError: customColorsData.mOnError
+  property color mError: defaultColors.mError
+  property color mOnError: defaultColors.mOnError
 
   // --- Surface and Variant Colors: These provide additional options for surfaces and their contents, creating visual hierarchy
-  readonly property color mSurface: customColorsData.mSurface
-  readonly property color mOnSurface: customColorsData.mOnSurface
+  property color mSurface: defaultColors.mSurface
+  property color mOnSurface: defaultColors.mOnSurface
 
-  readonly property color mSurfaceVariant: customColorsData.mSurfaceVariant
-  readonly property color mOnSurfaceVariant: customColorsData.mOnSurfaceVariant
+  property color mSurfaceVariant: defaultColors.mSurfaceVariant
+  property color mOnSurfaceVariant: defaultColors.mOnSurfaceVariant
 
-  readonly property color mOutline: customColorsData.mOutline
-  readonly property color mShadow: customColorsData.mShadow
+  property color mOutline: defaultColors.mOutline
+  property color mShadow: defaultColors.mShadow
 
-  readonly property color mHover: customColorsData.mHover
-  readonly property color mOnHover: customColorsData.mOnHover
+  property color mHover: defaultColors.mHover
+  property color mOnHover: defaultColors.mOnHover
+
+  // --- Color transition animations ---
+  Behavior on mPrimary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnPrimary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mSecondary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnSecondary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mTertiary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnTertiary {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mError {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnError {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mSurface {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnSurface {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mSurfaceVariant {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnSurfaceVariant {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOutline {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mShadow {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mHover {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+  Behavior on mOnHover {
+    ColorAnimation {
+      duration: Style.animationSlowest
+      easing.type: Easing.OutCubic
+    }
+  }
+
+  // Helper to start transition and update a color
+  function startTransition() {
+    root.isTransitioning = true;
+    transitionTimer.restart();
+  }
+
+  // Update colors when customColorsData changes (imperative assignment enables Behavior animations)
+  Connections {
+    target: customColorsData
+    function onMPrimaryChanged() {
+      startTransition();
+      root.mPrimary = customColorsData.mPrimary;
+    }
+    function onMOnPrimaryChanged() {
+      startTransition();
+      root.mOnPrimary = customColorsData.mOnPrimary;
+    }
+    function onMSecondaryChanged() {
+      startTransition();
+      root.mSecondary = customColorsData.mSecondary;
+    }
+    function onMOnSecondaryChanged() {
+      startTransition();
+      root.mOnSecondary = customColorsData.mOnSecondary;
+    }
+    function onMTertiaryChanged() {
+      startTransition();
+      root.mTertiary = customColorsData.mTertiary;
+    }
+    function onMOnTertiaryChanged() {
+      startTransition();
+      root.mOnTertiary = customColorsData.mOnTertiary;
+    }
+    function onMErrorChanged() {
+      startTransition();
+      root.mError = customColorsData.mError;
+    }
+    function onMOnErrorChanged() {
+      startTransition();
+      root.mOnError = customColorsData.mOnError;
+    }
+    function onMSurfaceChanged() {
+      startTransition();
+      root.mSurface = customColorsData.mSurface;
+    }
+    function onMOnSurfaceChanged() {
+      startTransition();
+      root.mOnSurface = customColorsData.mOnSurface;
+    }
+    function onMSurfaceVariantChanged() {
+      startTransition();
+      root.mSurfaceVariant = customColorsData.mSurfaceVariant;
+    }
+    function onMOnSurfaceVariantChanged() {
+      startTransition();
+      root.mOnSurfaceVariant = customColorsData.mOnSurfaceVariant;
+    }
+    function onMOutlineChanged() {
+      startTransition();
+      root.mOutline = customColorsData.mOutline;
+    }
+    function onMShadowChanged() {
+      startTransition();
+      root.mShadow = customColorsData.mShadow;
+    }
+    function onMHoverChanged() {
+      startTransition();
+      root.mHover = customColorsData.mHover;
+    }
+    function onMOnHoverChanged() {
+      startTransition();
+      root.mOnHover = customColorsData.mOnHover;
+    }
+  }
 
   // --------------------------------
   // Default colors: Rose Pine

@@ -579,6 +579,7 @@ Item {
             }
           }
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -727,6 +728,7 @@ Item {
             }
           }
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic
@@ -957,6 +959,7 @@ Item {
           }
 
           Behavior on color {
+            enabled: !Color.isTransitioning
             ColorAnimation {
               duration: Style.animationFast
               easing.type: Easing.InOutCubic

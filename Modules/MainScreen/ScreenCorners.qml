@@ -52,8 +52,9 @@ Item {
         strokeWidth: -1 // No stroke, fill only
         fillColor: shouldShow ? cornerColor : "transparent"
 
-        // Smooth color animation
+        // Smooth color animation (disabled during theme transitions to sync with Color.qml)
         Behavior on fillColor {
+          enabled: !Color.isTransitioning
           ColorAnimation {
             duration: Style.animationFast
           }

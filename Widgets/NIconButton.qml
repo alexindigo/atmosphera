@@ -42,6 +42,7 @@ Rectangle {
   border.width: Style.borderS
 
   Behavior on color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.InOutQuad
@@ -58,6 +59,7 @@ Rectangle {
     y: Style.pixelAlignCenter(root.height, contentHeight)
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad
