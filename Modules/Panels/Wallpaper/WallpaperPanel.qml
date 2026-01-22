@@ -814,8 +814,13 @@ SmartPanel {
         model: filteredItems
 
         onModelChanged: {
-          // Reset selection when model changes
+          // Reset selection and scroll position when model changes
           currentIndex = -1;
+          positionViewAtBeginning();
+        }
+
+        Component.onCompleted: {
+          positionViewAtBeginning();
         }
 
         // Capture clicks on empty areas to give focus to GridView
@@ -1242,15 +1247,20 @@ SmartPanel {
           model: wallpapers || []
 
           onModelChanged: {
-            // Reset selection when model changes
+            // Reset selection and scroll position when model changes
             currentIndex = -1;
+            positionViewAtBeginning();
+          }
+
+          Component.onCompleted: {
+            positionViewAtBeginning();
           }
 
           property int columns: (screen.width > 1920) ? 5 : 4
           property int itemSize: cellWidth
 
           cellWidth: Math.floor((width - leftMargin - rightMargin) / columns)
-          cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + (Settings.data.wallpaper.hideWallpaperFilenames ? 0 : Style.fontSizeXS + Style.marginM)
+          cellHeight: Math.floor(itemSize * 0.7) + Style.marginXS + Style.fontSizeXS + Style.marginM
 
           leftMargin: Style.marginS
           rightMargin: Style.marginS
@@ -1330,76 +1340,112 @@ SmartPanel {
             }
           }
 
-          delegate: ColumnLayout {
-            id: wallhavenItem
+          delegate: Item {
+            id: wallhavenItemWrapper
+            width: wallhavenGridView.cellWidth
+            height: wallhavenGridView.cellHeight
 
-            required property var modelData
-            required property int index
-            property string thumbnailUrl: (modelData && typeof WallhavenService !== "undefined") ? WallhavenService.getThumbnailUrl(modelData, "large") : ""
-            property string wallpaperId: (modelData && modelData.id) ? modelData.id : ""
+            ColumnLayout {
+              id: wallhavenItem
+              anchors.fill: parent
+              anchors.margins: Style.marginXS
 
-            width: wallhavenGridView.itemSize
-            spacing: Style.marginXS
+              property string thumbnailUrl: (modelData && typeof WallhavenService !== "undefined") ? WallhavenService.getThumbnailUrl(modelData, "large") : ""
+              property string wallpaperId: (modelData && modelData.id) ? modelData.id : ""
 
-            Rectangle {
-              id: imageContainer
-              Layout.fillWidth: true
-              Layout.preferredHeight: Math.round(wallhavenGridView.itemSize * 0.67)
-              color: "transparent"
+              spacing: Style.marginXS
 
-              Image {
-                id: img
-                source: thumbnailUrl
-                anchors.fill: parent
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                cache: true
-                smooth: true
-                sourceSize.width: Math.round(wallhavenGridView.itemSize * 0.67)
-                sourceSize.height: Math.round(wallhavenGridView.itemSize * 0.67)
-              }
+              Item {
+                id: imageContainer
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-              Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-                border.color: wallhavenGridView.currentIndex === index ? Color.mHover : Color.mSurface
-                border.width: Math.max(1, Style.borderL * 1.5)
-              }
+                property real imageHeight: Math.round(wallhavenGridView.itemSize * 0.67)
 
-              Rectangle {
-                anchors.fill: parent
-                color: Color.mSurface
-                opacity: hoverHandler.hovered || wallhavenGridView.currentIndex === index ? 0 : 0.3
-                Behavior on opacity {
-                  NumberAnimation {
-                    duration: Style.animationFast
+                NImageRounded {
+                  id: img
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  height: imageContainer.imageHeight
+                  imagePath: wallhavenItem.thumbnailUrl
+                  radius: Style.radiusM
+                  borderColor: {
+                    if (wallhavenGridView.currentIndex === index) {
+                      return Color.mHover;
+                    }
+                    return Color.mSurface;
+                  }
+                  borderWidth: Math.max(1, Style.borderL * 1.5)
+                  imageFillMode: Image.PreserveAspectCrop
+                }
+
+                // Loading/error state background
+                Rectangle {
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  height: imageContainer.imageHeight
+                  color: Color.mSurfaceVariant
+                  radius: Style.radiusM
+                  visible: img.status === Image.Loading || img.status === Image.Error || wallhavenItem.thumbnailUrl === ""
+
+                  NIcon {
+                    icon: "image"
+                    pointSize: Style.fontSizeL
+                    color: Color.mOnSurfaceVariant
+                    anchors.centerIn: parent
+                  }
+                }
+
+                NBusyIndicator {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  y: (imageContainer.imageHeight - height) / 2
+                  visible: img.status === Image.Loading
+                  running: visible
+                  size: 18
+                }
+
+                Rectangle {
+                  anchors.left: parent.left
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  height: imageContainer.imageHeight
+                  color: Color.mSurface
+                  radius: Style.radiusM
+                  opacity: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? 0 : 0.3
+                  Behavior on opacity {
+                    NumberAnimation {
+                      duration: Style.animationFast
+                    }
+                  }
+                }
+
+                HoverHandler {
+                  id: hoverHandler
+                }
+
+                TapHandler {
+                  onTapped: {
+                    wallhavenGridView.forceActiveFocus();
+                    wallhavenGridView.currentIndex = index;
+                    wallhavenDownloadAndApply(modelData);
                   }
                 }
               }
 
-              HoverHandler {
-                id: hoverHandler
+              NText {
+                text: wallhavenItem.wallpaperId || I18n.tr("common.unknown")
+                visible: !Settings.data.wallpaper.hideWallpaperFilenames
+                color: (hoverHandler.hovered || wallhavenGridView.currentIndex === index) ? Color.mOnSurface : Color.mOnSurfaceVariant
+                pointSize: Style.fontSizeXS
+                Layout.fillWidth: true
+                Layout.leftMargin: Style.marginS
+                Layout.rightMargin: Style.marginS
+                Layout.alignment: Qt.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
               }
-
-              TapHandler {
-                onTapped: {
-                  wallhavenGridView.currentIndex = index;
-                  wallhavenDownloadAndApply(modelData);
-                }
-              }
-            }
-
-            NText {
-              text: wallpaperId || I18n.tr("common.unknown")
-              visible: !Settings.data.wallpaper.hideWallpaperFilenames
-              color: hoverHandler.hovered || wallhavenGridView.currentIndex === index ? Color.mOnSurface : Color.mOnSurfaceVariant
-              pointSize: Style.fontSizeXS
-              Layout.fillWidth: true
-              Layout.leftMargin: Style.marginS
-              Layout.rightMargin: Style.marginS
-              Layout.alignment: Qt.AlignHCenter
-              horizontalAlignment: Text.AlignHCenter
-              elide: Text.ElideRight
             }
           }
         }
