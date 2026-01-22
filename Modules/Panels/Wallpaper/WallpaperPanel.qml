@@ -609,20 +609,20 @@ SmartPanel {
         for (var i = 0; i < directoriesList.length; i++) {
           var dirPath = directoriesList[i];
           combinedItems.push({
-            "path": dirPath,
-            "name": dirPath.split('/').pop(),
-            "isDirectory": true
-          });
+                               "path": dirPath,
+                               "name": dirPath.split('/').pop(),
+                               "isDirectory": true
+                             });
         }
       }
 
       // Add files
       for (var i = 0; i < wallpapersList.length; i++) {
         combinedItems.push({
-          "path": wallpapersList[i],
-          "name": wallpapersList[i].split('/').pop(),
-          "isDirectory": false
-        });
+                             "path": wallpapersList[i],
+                             "name": wallpapersList[i].split('/').pop(),
+                             "isDirectory": false
+                           });
       }
 
       // Apply filter if text is present
@@ -686,7 +686,7 @@ SmartPanel {
         var browsePath = WallpaperService.getCurrentBrowsePath(targetScreen.name);
         currentBrowsePath = browsePath;
 
-        WallpaperService.scanDirectoryWithDirs(targetScreen.name, browsePath, function(result) {
+        WallpaperService.scanDirectoryWithDirs(targetScreen.name, browsePath, function (result) {
           wallpapersList = result.files;
           directoriesList = result.directories;
           Logger.d("WallpaperPanel", "Browse mode: Got", wallpapersList.length, "files and", directoriesList.length, "directories for screen", targetScreen.name);
@@ -716,8 +716,10 @@ SmartPanel {
     // Helper function to get icon for current view mode
     function getViewModeIcon() {
       var mode = Settings.data.wallpaper.viewMode;
-      if (mode === "single") return "folder";
-      if (mode === "recursive") return "folders";
+      if (mode === "single")
+        return "folder";
+      if (mode === "recursive")
+        return "folders";
       return "folder-open";
     }
 
@@ -725,9 +727,12 @@ SmartPanel {
     function getViewModeTooltip() {
       var mode = Settings.data.wallpaper.viewMode;
       var modeName;
-      if (mode === "single") modeName = I18n.tr("panels.wallpaper.view-mode-single");
-      else if (mode === "recursive") modeName = I18n.tr("panels.wallpaper.view-mode-recursive");
-      else modeName = I18n.tr("panels.wallpaper.view-mode-browse");
+      if (mode === "single")
+        modeName = I18n.tr("panels.wallpaper.view-mode-single");
+      else if (mode === "recursive")
+        modeName = I18n.tr("panels.wallpaper.view-mode-recursive");
+      else
+        modeName = I18n.tr("panels.wallpaper.view-mode-browse");
       return I18n.tr("panels.wallpaper.view-mode-cycle-tooltip").replace("{mode}", modeName);
     }
 
@@ -777,10 +782,17 @@ SmartPanel {
         }
 
         NIconButton {
-          icon: Settings.data.wallpaper.hideWallpaperFilenames ? "eye-closed" : "eye"
+          icon: Settings.data.wallpaper.hideWallpaperFilenames ? "id-off" : "id"
           tooltipText: Settings.data.wallpaper.hideWallpaperFilenames ? I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-show") : I18n.tr("panels.wallpaper.settings-hide-wallpaper-filenames-tooltip-hide")
           baseSize: Style.baseWidgetSize * 0.8
           onClicked: Settings.data.wallpaper.hideWallpaperFilenames = !Settings.data.wallpaper.hideWallpaperFilenames
+        }
+
+        NIconButton {
+          icon: Settings.data.wallpaper.showHiddenFiles ? "eye" : "eye-closed"
+          tooltipText: Settings.data.wallpaper.showHiddenFiles ? I18n.tr("panels.wallpaper.settings-show-hidden-files-tooltip-hide") : I18n.tr("panels.wallpaper.settings-show-hidden-files-tooltip-show")
+          baseSize: Style.baseWidgetSize * 0.8
+          onClicked: Settings.data.wallpaper.showHiddenFiles = !Settings.data.wallpaper.showHiddenFiles
         }
 
         NIconButton {
