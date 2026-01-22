@@ -5,6 +5,7 @@ import Quickshell
 import qs.Commons
 import qs.Modules.MainScreen
 import qs.Modules.Panels.Settings
+import qs.Services.Theming
 import qs.Services.UI
 import qs.Widgets
 
@@ -774,6 +775,21 @@ SmartPanel {
         }
 
         // Right side: actions (view mode, hide filenames, refresh)
+        NComboBox {
+          Layout.fillWidth: true
+          label: I18n.tr("panels.color-scheme.wallpaper-method-label")
+          description: I18n.tr("panels.color-scheme.wallpaper-method-description")
+          enabled: Settings.data.colorSchemes.useWallpaperColors
+          baseSize: 0.8
+          minimumWidth: 180
+          model: TemplateProcessor.schemeTypes
+          currentKey: Settings.data.colorSchemes.generationMethod
+          onSelected: key => {
+                        Settings.data.colorSchemes.generationMethod = key;
+                        AppThemeService.generate();
+                      }
+        }
+
         NIconButton {
           icon: getViewModeIcon()
           tooltipText: getViewModeTooltip()

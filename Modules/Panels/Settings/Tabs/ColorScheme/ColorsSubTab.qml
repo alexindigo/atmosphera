@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import "."
 import qs.Commons
 import qs.Services.System
 import qs.Services.Theming
@@ -247,40 +246,7 @@ ColumnLayout {
     label: I18n.tr("panels.color-scheme.wallpaper-method-label")
     description: I18n.tr("panels.color-scheme.wallpaper-method-description")
     enabled: Settings.data.colorSchemes.useWallpaperColors
-    model: [
-      {
-        "key": "tonal-spot",
-        "name": "M3-Tonal Spot" // Do not translate
-      },
-      {
-        "key": "content",
-        "name": "M3-Content" // Do not translate
-      },
-      {
-        "key": "fruit-salad",
-        "name": "M3-Fruit Salad" // Do not translate
-      },
-      {
-        "key": "rainbow",
-        "name": "M3-Rainbow" // Do not translate
-      },
-      {
-        "key": "monochrome",
-        "name": "M3-Monochrome" // Do not translate
-      },
-      {
-        "key": "vibrant",
-        "name": I18n.tr("common.vibrant")
-      },
-      {
-        "key": "faithful",
-        "name": I18n.tr("common.faithful")
-      },
-      {
-        "key": "muted",
-        "name": I18n.tr("common.color-muted")
-      },
-    ]
+    model: TemplateProcessor.schemeTypes
     currentKey: Settings.data.colorSchemes.generationMethod
     onSelected: key => {
                   Settings.data.colorSchemes.generationMethod = key;

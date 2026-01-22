@@ -17,8 +17,9 @@ RowLayout {
   property string placeholder: ""
   property var defaultValue: undefined
   property string settingsPath: ""
+  property real baseSize: 1.0
 
-  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1)
+  readonly property real preferredHeight: Math.round(Style.baseWidgetSize * 1.1 * root.baseSize)
   readonly property var comboBox: combo
 
   signal selected(string key)
