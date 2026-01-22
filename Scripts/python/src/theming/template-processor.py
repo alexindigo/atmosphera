@@ -269,14 +269,9 @@ def main() -> int:
                 # K-means with chroma scoring for vibrant, blended colors
                 palette = extract_palette(pixels, k=5, scoring="chroma")
             elif scheme_type == "faithful":
-                # Wu quantizer for dominant color (primary), k-means for accent colors
-                # This ensures primary reflects the most visually prominent area
-                source_argb = extract_source_color(pixels)
-                r, g, b = source_color_to_rgb(source_argb)
-                primary = Color(r, g, b)
-                # Get additional colors via k-means for secondary/tertiary
-                additional = extract_palette(pixels, k=4, scoring="chroma-representative")
-                palette = [primary] + additional[:4]
+                # K-means with count scoring - picks dominant color by area coverage
+                # This ensures primary reflects what you actually see in the image
+                palette = extract_palette(pixels, k=5, scoring="count")
             else:
                 # Wu quantizer + Score algorithm (matches matugen)
                 source_argb = extract_source_color(pixels)
