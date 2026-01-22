@@ -261,7 +261,7 @@ SmartPanel {
       // Charge level + health/time
       NBox {
         Layout.fillWidth: true
-        height: chargeLayout.implicitHeight + Style.marginL * 2
+        implicitHeight: chargeLayout.implicitHeight + Style.marginL * 2
         visible: isReady
 
         ColumnLayout {
