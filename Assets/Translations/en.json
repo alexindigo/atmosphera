@@ -1367,6 +1367,8 @@
       "settings-folder-label": "Wallpaper folder",
       "settings-hide-wallpaper-filenames-tooltip-hide": "Hide filenames",
       "settings-hide-wallpaper-filenames-tooltip-show": "Show filenames",
+      "settings-show-hidden-files-tooltip-hide": "Hide hidden files",
+      "settings-show-hidden-files-tooltip-show": "Show hidden files",
       "settings-monitor-specific-description": "Set a different wallpaper folder for each monitor.",
       "settings-monitor-specific-label": "Monitor-specific directories",
       "settings-monitor-specific-tooltip": "Monitor wallpaper folder",
