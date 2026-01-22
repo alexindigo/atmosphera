@@ -273,7 +273,7 @@
     }
   },
   "battery": {
-    "battery-health": "Batterijconditie",
+    "battery-health": "Accuconditie",
     "battery-level": "Accuniveau",
     "capacity-level": "Capaciteit: {level}",
     "charging-rate": "Laadsnelheid: {rate} W",
