@@ -1,9 +1,9 @@
 pragma Singleton
-import QtQuick
 
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
+import QtQuick
 import qs.Commons
 import qs.Services.Networking
 import qs.Services.UI
@@ -83,13 +83,11 @@ Singleton {
 
   property bool healthAvailable: false
   property int healthPercent: -1
-  property string capacityLevel: ""
 
   function refreshHealth() {
     if (!isLaptopBattery || !primaryDevice) {
       healthAvailable = false;
       healthPercent = -1;
-      capacityLevel = "";
       return;
     }
     healthProcess.running = true;
@@ -99,22 +97,15 @@ Singleton {
     id: healthProcess
     command: ["sh", "-c", "upower -i $(upower -e | grep battery | head -n 1) 2>/dev/null | grep -iE 'capacity'"]
     stdout: SplitParser {
-      onRead: function (data) {
+      onRead: function(data) {
         var line = data.trim();
-        if (line === "")
-          return;
+        if (line === "") return;
 
-        var capacityMatch = line.match(/^\s*capacity:\s*(\d+(?:\.\d+)?)\s*%/i);
+        var capacityMatch = line.match(/capacity:\s*([0-9.,]+)%/i);
         if (capacityMatch) {
-          root.healthPercent = Math.round(parseFloat(capacityMatch[1]));
+          root.healthPercent = Math.round(parseFloat(capacityMatch[1].replace(',', '.')));
           root.healthAvailable = true;
           Logger.d("Battery", "Health retrieved from CLI:", root.healthPercent + "%");
-        }
-
-        var levelMatch = line.match(/^\s*capacity-level:\s*(.+)/i);
-        if (levelMatch) {
-          root.capacityLevel = levelMatch[1].trim();
-          Logger.d("Battery", "Capacity level:", root.capacityLevel);
         }
       }
     }
