@@ -9,8 +9,8 @@ Supported scheme types:
 - content: Preserves source color's chroma with temperature-based tertiary (matugen default)
 - fruit-salad: Bold/playful with -50° hue rotation
 - rainbow: Chromatic accents with grayscale neutrals
-- vibrant: Colorful with smooth blended colors
-- faithful: Colorful with actual wallpaper pixels
+- vibrant: Prioritizes the most saturated colors regardless of area coverage
+- faithful: Prioritizes dominant colors by area, what you see is what you get
 
 Usage:
     python3 template-processor.py IMAGE_OR_JSON [OPTIONS]
@@ -263,12 +263,20 @@ def main() -> int:
             # Extract palette based on scheme type:
             # - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Use Wu quantizer + Score
             #   This matches matugen's color extraction exactly
-            # - vibrant/faithful: Use k-means clustering for colorful/representative colors
-            if scheme_type in ("vibrant", "faithful"):
-                # K-means based extraction for vibrant/faithful modes
-                k = 5
-                scoring = "chroma" if scheme_type == "vibrant" else "chroma-representative"
-                palette = extract_palette(pixels, k=k, scoring=scoring)
+            # - vibrant: Use k-means clustering for colorful/blended colors
+            # - faithful: Use Wu quantizer for primary (dominant by area), k-means for accents
+            if scheme_type == "vibrant":
+                # K-means with chroma scoring for vibrant, blended colors
+                palette = extract_palette(pixels, k=5, scoring="chroma")
+            elif scheme_type == "faithful":
+                # Wu quantizer for dominant color (primary), k-means for accent colors
+                # This ensures primary reflects the most visually prominent area
+                source_argb = extract_source_color(pixels)
+                r, g, b = source_color_to_rgb(source_argb)
+                primary = Color(r, g, b)
+                # Get additional colors via k-means for secondary/tertiary
+                additional = extract_palette(pixels, k=4, scoring="chroma-representative")
+                palette = [primary] + additional[:4]
             else:
                 # Wu quantizer + Score algorithm (matches matugen)
                 source_argb = extract_source_color(pixels)

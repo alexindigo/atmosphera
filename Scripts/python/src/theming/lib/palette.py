@@ -164,9 +164,9 @@ def _score_colors_chroma(
             else:
                 hue_penalty = 0
 
-            # Combined score: chroma minus penalties, weighted heavily by count
-            # Using count directly to strongly favor more prominent colors (area coverage)
-            score = (chroma_score - tone_penalty - hue_penalty) * count
+            # Combined score: chroma minus penalties, balanced with count
+            # Using count^0.3 so chroma dominates while still considering area
+            score = (chroma_score - tone_penalty - hue_penalty) * (count ** 0.3)
             result_colors.append((color, score))
         except (ValueError, ZeroDivisionError):
             result_colors.append((color, 0.0))
