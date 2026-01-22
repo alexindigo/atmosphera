@@ -267,7 +267,7 @@ Loader {
               width: 0
               height: 0
               visible: false
-              enabled: !lockContext.unlockInProgress || lockContext.waitingForPassword
+              enabled: !lockContext.unlockInProgress
               font.pointSize: Style.fontSizeM
               color: Color.mPrimary
               echoMode: TextInput.Password
