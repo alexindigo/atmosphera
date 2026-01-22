@@ -62,13 +62,13 @@ async def refresh_theme():
         
     temp_scheme = "default" if current_scheme == "prefer-dark" else "prefer-dark"
 
-    await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", temp_scheme)
-    await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'{temp_scheme}'")
+    # await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", temp_scheme)
+    # await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'{temp_scheme}'")
     
-    await run_command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "")
-    await run_command("dconf", "write", "/org/gnome/desktop/interface/gtk-theme", "''")
+    # await run_command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "")
+    # await run_command("dconf", "write", "/org/gnome/desktop/interface/gtk-theme", "''")
     
-    await asyncio.sleep(0.01)
+    # await asyncio.sleep(0.01)
     
     await run_command("gsettings", "set", "org.gnome.desktop.interface", "color-scheme", current_scheme)
     await run_command("dconf", "write", "/org/gnome/desktop/interface/color-scheme", f"'{current_scheme}'")
