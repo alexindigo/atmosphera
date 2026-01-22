@@ -250,3 +250,8 @@ body {
   color: var(--accent-1) !important;
   background-color: color-mix(in srgb, var(--accent-1) 15%, transparent) !important;
 }
+
+._3b95d7d910416e54-bar.ef3116c2da186559-unreadMentionsBar._3b95d7d910416e54-mention._3b95d7d910416e54-active {
+    color: var(--text-1) !important;        /* text color like eyebrow badge */
+    background-color: var(--accent-1) !important;  /* solid accent background */
+}
