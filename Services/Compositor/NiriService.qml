@@ -328,6 +328,7 @@ Item {
       }
 
       windowListChanged();
+      updateWorkspaces();
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowOpenedOrChanged:", e);
     }
@@ -348,6 +349,7 @@ Item {
 
         windows.splice(windowIndex, 1);
         windowListChanged();
+        updateWorkspaces();
       }
     } catch (e) {
       Logger.e("NiriService", "Error handling WindowClosed:", e);
