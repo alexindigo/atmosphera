@@ -777,8 +777,6 @@ SmartPanel {
         // Right side: actions (view mode, hide filenames, refresh)
         NComboBox {
           Layout.fillWidth: true
-          label: I18n.tr("panels.color-scheme.wallpaper-method-label")
-          description: I18n.tr("panels.color-scheme.wallpaper-method-description")
           enabled: Settings.data.colorSchemes.useWallpaperColors
           baseSize: 0.8
           minimumWidth: 180
