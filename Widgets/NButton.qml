@@ -71,6 +71,7 @@ Rectangle {
   opacity: enabled ? 1.0 : 0.6
 
   Behavior on color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
@@ -78,6 +79,7 @@ Rectangle {
   }
 
   Behavior on border.color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.OutCubic
@@ -102,6 +104,7 @@ Rectangle {
       color: contentColor
 
       Behavior on color {
+        enabled: !Color.isTransitioning
         ColorAnimation {
           duration: Style.animationFast
           easing.type: Easing.OutCubic
@@ -119,6 +122,7 @@ Rectangle {
       color: contentColor
 
       Behavior on color {
+        enabled: !Color.isTransitioning
         ColorAnimation {
           duration: Style.animationFast
           easing.type: Easing.OutCubic

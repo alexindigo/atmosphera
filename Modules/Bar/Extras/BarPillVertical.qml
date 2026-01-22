@@ -97,6 +97,7 @@ Item {
     anchors.horizontalCenter: parent.horizontalCenter
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad

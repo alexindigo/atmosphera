@@ -175,6 +175,47 @@ def _score_colors_chroma(
     return result_colors
 
 
+def _score_colors_count(
+    colors_with_counts: list[tuple[RGB, int]],
+) -> list[tuple[Color, float]]:
+    """
+    Score colors prioritizing pixel count (area coverage) over chroma.
+
+    Filters to colors with chroma >= 10 to avoid grays, then sorts purely by count.
+    Used for "faithful" mode to find the actual dominant color by area.
+
+    Args:
+        colors_with_counts: List of (RGB, count) tuples from clustering
+
+    Returns:
+        List of (Color, score) tuples, sorted by count descending
+    """
+    MIN_CHROMA = 10.0  # Filter out near-gray colors
+
+    result_colors = []
+    for rgb, count in colors_with_counts:
+        color = Color.from_rgb(rgb)
+        try:
+            hct = color.to_hct()
+            # Only include colors with enough chroma to be "colorful"
+            if hct.chroma >= MIN_CHROMA:
+                # Score is just count - area dominates completely
+                # Add tiny chroma bonus as tiebreaker only
+                score = count * 1000 + hct.chroma
+                result_colors.append((color, score))
+        except (ValueError, ZeroDivisionError):
+            pass
+
+    # If all colors were filtered out (very gray image), fall back to including grays
+    if not result_colors:
+        for rgb, count in colors_with_counts:
+            color = Color.from_rgb(rgb)
+            result_colors.append((color, float(count)))
+
+    result_colors.sort(key=lambda x: -x[1])
+    return result_colors
+
+
 def _score_colors_population(
     colors_with_counts: list[tuple[RGB, int]],
     total_pixels: int
@@ -321,7 +362,7 @@ def extract_palette(
         scoring: Scoring method:
                  - "population": matugen-like, representative colors (M3 schemes)
                  - "chroma": vibrant, chroma-prioritized with centroid averaging
-                 - "chroma-representative": chroma-prioritized with actual pixels (faithful)
+                 - "count": area-dominant, picks by pixel count (faithful mode)
 
     Returns:
         List of Color objects, sorted by score
@@ -338,14 +379,15 @@ def extract_palette(
         # Don't pre-filter for population scoring - let the Score algorithm filter
         # This matches matugen which quantizes all pixels, then filters in scoring
         filtered = sampled
-    elif scoring == "chroma-representative":
-        # Faithful mode: more clusters, no pre-filtering
-        # This picks actual dominant colors from the image without averaging
+    elif scoring == "count":
+        # Faithful mode: many clusters to capture color diversity, no pre-filtering
+        # Scoring will filter to colorful colors and pick by count
         cluster_count = 48
-        filtered = sampled  # No colorfulness filter - let scoring handle it
+        filtered = sampled
     else:
-        # Vibrant mode: fewer clusters with colorfulness pre-filter
-        cluster_count = k
+        # Vibrant mode: more clusters to capture high-chroma colors that might
+        # otherwise get averaged away, with colorfulness pre-filter
+        cluster_count = 20
         # Filter to colorful pixels for smoother averaged results
         filtered = []
         for p in sampled:
@@ -364,16 +406,16 @@ def extract_palette(
 
     # Score colors based on method
     # - chroma: centroid colors (averaged, smoother - vibrant mode)
-    # - chroma-representative: representative pixels with chroma scoring (faithful mode)
+    # - count: representative pixels by area dominance (faithful mode)
     # - population: representative colors with Material scoring (M3 schemes)
     if scoring == "chroma":
         # Use centroid colors for vibrant mode (smoother, blended)
         colors_for_scoring = [(c[0], c[2]) for c in clusters]
         scored = _score_colors_chroma(colors_for_scoring)
-    elif scoring == "chroma-representative":
-        # Use representative colors with chroma scoring (faithful mode)
+    elif scoring == "count":
+        # Use representative colors with count scoring (faithful mode)
         colors_for_scoring = [(c[1], c[2]) for c in clusters]
-        scored = _score_colors_chroma(colors_for_scoring)
+        scored = _score_colors_count(colors_for_scoring)
     else:
         # Use representative colors for M3 schemes
         colors_for_scoring = [(c[1], c[2]) for c in clusters]

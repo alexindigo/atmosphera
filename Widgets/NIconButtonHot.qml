@@ -64,6 +64,7 @@ Rectangle {
   border.width: Style.borderS
 
   Behavior on color {
+    enabled: !Color.isTransitioning
     ColorAnimation {
       duration: Style.animationFast
       easing.type: Easing.InOutQuad
@@ -93,6 +94,7 @@ Rectangle {
     y: (root.height - height) / 2 + (height - contentHeight) / 2
 
     Behavior on color {
+      enabled: !Color.isTransitioning
       ColorAnimation {
         duration: Style.animationFast
         easing.type: Easing.InOutQuad

@@ -95,13 +95,6 @@ ShapePath {
   startX: barMappedPos.x + tlRadius * tlMultX
   startY: barMappedPos.y
 
-  // Smooth color animation
-  Behavior on fillColor {
-    ColorAnimation {
-      duration: Style.animationFast
-    }
-  }
-
   // ========== PATH DEFINITION ==========
   // Draws a rectangle with potentially inverted corners
   // All coordinates are relative to startX/startY
