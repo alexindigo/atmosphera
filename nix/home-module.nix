@@ -185,7 +185,7 @@ in
     systemd.user.services.noctalia-shell = lib.mkIf cfg.systemd.enable {
       Unit = {
         Description = "Noctalia Shell - Wayland desktop shell";
-        Documentation = "https://docs.noctalia.dev/docs";
+        Documentation = "https://docs.noctalia.dev";
         PartOf = [ config.wayland.systemd.target ];
         After = [ config.wayland.systemd.target ];
         X-Restart-Triggers =
