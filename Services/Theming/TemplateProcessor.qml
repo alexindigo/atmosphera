@@ -96,8 +96,8 @@ Singleton {
   }
 
   function executePredefinedScheme(schemeData, mode) {
-    // 1. Handle terminal themes (pre-rendered file copy)
-    handleTerminalThemes(mode);
+    // 1. Handle terminal themes (runtime generation or pre-rendered file copy)
+    handleTerminalThemes(schemeData, mode);
 
     // 2. Build TOML config for application templates
     const tomlContent = buildPredefinedTemplateConfig(mode);
@@ -304,16 +304,85 @@ Singleton {
   }
 
   // ================================================================================
-  // TERMINAL THEMES (predefined schemes use pre-rendered files)
+  // PREDEFINED COLOR SCHEMES
+  // TERMINAL THEMES (dual-path: runtime generation or legacy pre-rendered file copy)
   // ================================================================================
   function escapeShellPath(path) {
     // Escape single quotes by ending the quoted string, adding an escaped quote, and starting a new quoted string
     return "'" + path.replace(/'/g, "'\\''") + "'";
   }
 
-  function handleTerminalThemes(mode) {
-    const commands = [];
+  function handleTerminalThemes(schemeData, mode) {
     const homeDir = Quickshell.env("HOME");
+
+    // Check if scheme has terminal section (new format)
+    const modeData = schemeData[mode] || schemeData;
+    const hasTerminalSection = modeData && modeData.terminal;
+
+    if (hasTerminalSection) {
+      // New path: runtime generation from JSON terminal colors
+      handleTerminalThemesGenerate(schemeData, mode, homeDir);
+    } else {
+      // Old path: copy pre-rendered files (backward compatibility for DLC schemes)
+      handleTerminalThemesCopy(mode, homeDir);
+    }
+  }
+
+  /**
+  * New path: Generate terminal themes at runtime from scheme's terminal section
+  */
+  function handleTerminalThemesGenerate(schemeData, mode, homeDir) {
+    // Build terminal output mapping for enabled terminals
+    const terminalOutputs = {};
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           const outputPath = terminal.outputPath.replace("~", homeDir);
+                                           terminalOutputs[terminal.id] = outputPath;
+                                         }
+                                       });
+
+    if (Object.keys(terminalOutputs).length === 0) {
+      Logger.d("TemplateProcessor", "No terminal templates enabled for generation");
+      return;
+    }
+
+    // Write scheme JSON to temp file and call Python with --terminal-output
+    const schemeJsonPathEsc = schemeJsonPath.replace(/'/g, "'\\''");
+    const schemeDelimiter = "SCHEME_JSON_EOF_" + Math.random().toString(36).substr(2, 9);
+
+    let script = "";
+
+    // Write scheme JSON
+    script += `cat > '${schemeJsonPathEsc}' << '${schemeDelimiter}'\n`;
+    script += JSON.stringify(schemeData, null, 2) + "\n";
+    script += `${schemeDelimiter}\n`;
+
+    // Create output directories
+    Object.values(terminalOutputs).forEach(path => {
+                                             const dir = path.substring(0, path.lastIndexOf('/'));
+                                             script += `mkdir -p ${escapeShellPath(dir)}; `;
+                                           });
+
+    // Run Python with terminal generation
+    const terminalOutputsJson = JSON.stringify(terminalOutputs).replace(/'/g, "'\\''");
+    script += `python3 "${templateProcessorScript}" --scheme '${schemeJsonPathEsc}' --default-mode ${mode} --terminal-output '${terminalOutputsJson}'; `;
+
+    // Run post-hooks for enabled terminals
+    TemplateRegistry.terminals.forEach(terminal => {
+                                         if (isTemplateEnabled(terminal.id)) {
+                                           script += `${terminal.postHook}; `;
+                                         }
+                                       });
+
+    copyProcess.command = ["sh", "-lc", script];
+    copyProcess.running = true;
+  }
+
+  /**
+  * Old path: Copy pre-rendered terminal files (backward compatibility)
+  */
+  function handleTerminalThemesCopy(mode, homeDir) {
+    const commands = [];
 
     TemplateRegistry.terminals.forEach(terminal => {
                                          if (isTemplateEnabled(terminal.id)) {

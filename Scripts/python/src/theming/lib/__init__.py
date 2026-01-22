@@ -19,6 +19,7 @@ from .quantizer import extract_source_color, source_color_to_rgb
 from .theme import generate_theme
 from .renderer import TemplateRenderer
 from .scheme import expand_predefined_scheme
+from .terminal import TerminalColors, TerminalGenerator
 
 __all__ = [
     # Color
@@ -54,4 +55,7 @@ __all__ = [
     "TemplateRenderer",
     # Scheme
     "expand_predefined_scheme",
+    # Terminal
+    "TerminalColors",
+    "TerminalGenerator",
 ]

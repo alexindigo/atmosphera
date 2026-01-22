@@ -50,7 +50,8 @@ from pathlib import Path
 from lib import (
     read_image, ImageReadError, extract_palette, generate_theme,
     TemplateRenderer, expand_predefined_scheme,
-    extract_source_color, source_color_to_rgb, Color
+    extract_source_color, source_color_to_rgb, Color,
+    TerminalColors, TerminalGenerator
 )
 
 
@@ -138,6 +139,12 @@ Examples:
         choices=['dark', 'light'],
         default='dark',
         help='Theme mode to use for "default" in templates (default: dark)'
+    )
+
+    parser.add_argument(
+        '--terminal-output',
+        type=str,
+        help='JSON mapping of terminal IDs to output paths: {"foot": "/path/to/output", ...}'
     )
 
     return parser.parse_args()
@@ -314,6 +321,46 @@ def main() -> int:
                 print(f"Error: Config file not found: {args.config}", file=sys.stderr)
             else:
                 renderer.process_config_file(args.config)
+
+    # Process terminal output if specified
+    if args.terminal_output and args.scheme:
+        try:
+            terminal_outputs = json.loads(args.terminal_output)
+        except json.JSONDecodeError as e:
+            print(f"Error parsing --terminal-output JSON: {e}", file=sys.stderr)
+            return 1
+
+        # Load scheme to check for terminal section
+        with open(args.scheme, 'r') as f:
+            scheme_data = json.load(f)
+
+        # Determine which mode to use for terminal colors
+        mode = args.default_mode
+
+        # Check if scheme has terminal colors
+        mode_data = scheme_data.get(mode, scheme_data)
+        if "terminal" not in mode_data:
+            print(f"Warning: Scheme has no 'terminal' section for mode '{mode}'", file=sys.stderr)
+            return 0
+
+        try:
+            terminal_colors = TerminalColors.from_dict(mode_data["terminal"])
+            generator = TerminalGenerator(terminal_colors)
+
+            for terminal_id, output_path in terminal_outputs.items():
+                try:
+                    content = generator.generate(terminal_id)
+                    output_file = Path(output_path).expanduser()
+                    output_file.parent.mkdir(parents=True, exist_ok=True)
+                    output_file.write_text(content)
+                except ValueError as e:
+                    print(f"Error generating {terminal_id}: {e}", file=sys.stderr)
+                except IOError as e:
+                    print(f"Error writing {output_path}: {e}", file=sys.stderr)
+
+        except KeyError as e:
+            print(f"Error: Missing required terminal color: {e}", file=sys.stderr)
+            return 1
 
     return 0
 
