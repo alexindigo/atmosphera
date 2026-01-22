@@ -673,4 +673,8 @@ Item {
   function logout() {
     Quickshell.execDetached(["mmsg", "-s", "-q"]);
   }
+
+  function cycleKeyboardLayout() {
+    Logger.w("MangoService", "Keyboard layout cycling not supported");
+  }
 }

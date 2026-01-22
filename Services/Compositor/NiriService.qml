@@ -469,4 +469,12 @@ Item {
       Logger.e("NiriService", "Failed to logout:", e);
     }
   }
+
+  function cycleKeyboardLayout() {
+    try {
+      Quickshell.execDetached(["niri", "msg", "action", "switch-layout", "next"]);
+    } catch (e) {
+      Logger.e("NiriService", "Failed to cycle keyboard layout:", e);
+    }
+  }
 }

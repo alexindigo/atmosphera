@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.Commons
 import qs.Modules.Bar.Extras
+import qs.Services.Compositor
 import qs.Services.Keyboard
 import qs.Services.UI
 import qs.Widgets
@@ -72,13 +73,11 @@ Item {
     icon: root.showIcon ? "keyboard" : ""
     autoHide: false // Important to be false so we can hover as long as we want
     text: currentLayout
-    tooltipText: I18n.tr("tooltips.keyboard-layout", {
-                           "layout": currentLayout
-                         })
+    tooltipText: KeyboardLayoutService.fullLayoutName
     // When icon is disabled, always show the layout text
     forceOpen: !root.showIcon || root.displayMode === "forceOpen"
     forceClose: root.showIcon && root.displayMode === "alwaysHide"
-    onClicked: {}
+    onClicked: CompositorService.cycleKeyboardLayout()
     onRightClicked: {
       var popupMenuWindow = PanelService.getPopupMenuWindow(screen);
       if (popupMenuWindow) {

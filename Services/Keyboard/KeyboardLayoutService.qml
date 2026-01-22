@@ -10,11 +10,13 @@ import qs.Services.UI
 Singleton {
   id: root
   property string currentLayout: I18n.tr("common.unknown")
+  property string fullLayoutName: I18n.tr("common.unknown")
   property string previousLayout: ""
   property bool isInitialized: false
 
   // Updates current layout from various format strings. Called by compositors
   function setCurrentLayout(layoutString) {
+    root.fullLayoutName = layoutString || I18n.tr("common.unknown");
     root.currentLayout = extractLayoutCode(layoutString);
   }
 
