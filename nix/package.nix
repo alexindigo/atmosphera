@@ -1,6 +1,19 @@
 {
   version ? "dirty",
   pamConfig ? "login",
+  extraPackages ? [ ],
+  runtimeDeps ? [
+    brightnessctl
+    cava
+    cliphist
+    ddcutil
+    wlsunset
+    wl-clipboard
+    imagemagick
+    wget
+    (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
+  ],
+
   lib,
   stdenvNoCC,
   # build
@@ -47,18 +60,6 @@ let
       ]);
   };
 
-  runtimeDeps = [
-    brightnessctl
-    cava
-    cliphist
-    ddcutil
-    wlsunset
-    wl-clipboard
-    imagemagick
-    wget
-    (python3.withPackages (pp: lib.optional calendarSupport pp.pygobject3))
-  ];
-
   giTypelibPath = lib.makeSearchPath "lib/girepository-1.0" [
     evolution-data-server
     libical
@@ -90,7 +91,7 @@ stdenvNoCC.mkDerivation {
   preFixup = ''
     qtWrapperArgs+=(
       --set NOCTALIA_PAM_CONFIG ${pamConfig}
-      --prefix PATH : ${lib.makeBinPath runtimeDeps}
+      --prefix PATH : ${lib.makeBinPath (runtimeDeps ++ extraPackages)}
       --add-flags "-p $out/share/noctalia-shell"
       ${lib.optionalString calendarSupport "--prefix GI_TYPELIB_PATH : ${giTypelibPath}"}
     )
