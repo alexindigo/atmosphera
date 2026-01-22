@@ -1,9 +1,9 @@
 pragma Singleton
+import QtQuick
 
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.UPower
-import QtQuick
 import qs.Commons
 import qs.Services.Networking
 import qs.Services.UI
@@ -108,9 +108,10 @@ Singleton {
                   })
 
     stdout: SplitParser {
-      onRead: function(data) {
+      onRead: function (data) {
         var line = data.trim();
-        if (line === "") return;
+        if (line === "")
+          return;
 
         var capacityMatch = line.match(/^\s*capacity:\s*(\d+(?:\.\d+)?)\s*%/i);
         if (capacityMatch) {

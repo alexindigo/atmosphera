@@ -287,6 +287,7 @@ Loader {
                   event.accepted = true;
                 }
               }
+              
               Component.onCompleted: forceActiveFocus()
             }
 
