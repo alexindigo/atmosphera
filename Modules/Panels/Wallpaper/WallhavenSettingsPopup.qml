@@ -518,14 +518,14 @@ Popup {
             "key": "",
             "name": I18n.tr("wallpaper.panel.ratios-any")
           },
-		  {
-			"key": "landscape",
-			"name", "All Wide"
-		  },
-		  {
-			"key": "portrait",
-			"name": "All Portrait"
-		  },
+          {
+            "key": "landscape",
+            "name": "All Wide"
+          },
+          {
+            "key": "portrait",
+            "name": "All Portrait"
+          },
           {
             "key": "16x9",
             "name": "16x9"
